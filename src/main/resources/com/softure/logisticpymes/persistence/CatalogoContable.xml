@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.CatalogoContableMapper">
+
+	<sql id="selectCatalogoContableFragment">
+		select
+			cctg_llave as  llaveTabla
+			,cctg_nombre as  nombre
+			,dctg_fechainicial as  fechaInicial
+			,dctg_fechafinal as  fechaFinal
+			,cctg_codigo as  codigo
+			,cctg_estado as estado
+		from catalogocontable_ctgp a
+	</sql>
+
+	<sql id="whereCatalogoContableFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cctg_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cctg_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and cctg_nombre = #{nombre}
+			</if>
+			<if test="fechaInicialMin!=null">
+				and dctg_fechainicial >= #{fechaInicialMin}
+			</if>
+			<if test="fechaInicialMax!=null">
+				and dctg_fechainicial <![CDATA[ < ]]>  #{fechaInicialMax}
+			</if>
+			<if test="fechaFinalMin!=null">
+				and dctg_fechafinal >= #{fechaFinalMin}
+			</if>
+			<if test="fechaFinalMax!=null">
+				and dctg_fechafinal <![CDATA[ < ]]>  #{fechaFinalMax}
+			</if>
+			<if test="codigo!=null">
+				and cctg_codigo = #{codigo}
+			</if>
+	</sql>
+
+	<sql id="paginationCatalogoContableFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCatalogoContablePrimaryKeyFragment">
+		where
+			cctg_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+		<include refid="selectCatalogoContableFragment" />
+		<include refid="whereCatalogoContableFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+		<include refid="selectCatalogoContableFragment" />
+		<include refid="whereCatalogoContableFragment" />
+		order by cctg_nombre 
+		<include refid="paginationCatalogoContableFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CatalogoContableDTO" resultType="int">
+		select count(*)
+		from catalogocontable_ctgp
+		<include refid="whereCatalogoContableFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+		insert into catalogocontable_ctgp(
+			cctg_llave
+		<if test="nombre!=null">
+			,cctg_nombre
+		</if>
+		<if test="fechaInicial!=null">
+			,dctg_fechainicial
+		</if>
+		<if test="fechaFinal!=null">
+			,dctg_fechafinal
+		</if>
+		<if test="codigo!=null">
+			,cctg_codigo
+		</if>
+		<if test="estado!=null">
+			,cctg_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="fechaInicial!=null">
+			,#{fechaInicial}
+		</if>
+		<if test="fechaFinal!=null">
+			,#{fechaFinal}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+		update catalogocontable_ctgp
+			set
+				cctg_nombre = #{nombre},
+				dctg_fechainicial = #{fechaInicial},
+				dctg_fechafinal = #{fechaFinal},
+				cctg_codigo = #{codigo},
+				cctg_estado =#{estado}
+		<include refid="whereCatalogoContablePrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

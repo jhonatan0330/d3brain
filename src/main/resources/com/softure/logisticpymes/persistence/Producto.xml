@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.ProductoMapper">
+
+	<sql id="selectProductoFragment">
+		select
+			cpro_llave as  llaveTabla
+			,movimiento_descripcion(cpro_documento) as  nombre
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
+			,(select cpdv_textofiltro from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  filtros
+			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
+			,cpro_descripcion as  descripcion
+			,cpro_categoria as  categoria
+			,(select ccpr_nombre from categoriaproducto_cprp where ccpr_llave = cpro_categoria) as  categoriaNombre
+			,cpro_documento as  documento
+			,cpro_productobase as  productoBase
+			,cpro_estado as estado
+		from producto_prop a
+	</sql>
+
+	<sql id="whereProductoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpro_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpro_estado = #{estado}
+			</if>
+			<if test="categoria!=null">
+				and cpro_categoria = #{categoria}
+			</if>
+			<if test="documento!=null">
+				and cpro_documento = #{documento}
+			</if>
+			<if test="productoBase!=null">
+				and cpro_productobase = #{productoBase}
+			</if>
+			<if test="filtroParametro!=null">
+				and ((select upper(cpdv_nombre) from pedidoventa_pdvp where cpdv_llave = cpro_documento)= upper(#{filtroParametro}) or upper(movimiento_descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationProductoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProductoPrimaryKeyFragment">
+		where
+			cpro_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProductoDTO" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" />
+		<include refid="whereProductoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProductoDTO" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" />
+		<include refid="whereProductoFragment" />
+		order by nombre 
+		<include refid="paginationProductoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProductoDTO" resultType="int">
+		select count(*)
+		from producto_prop
+		<include refid="whereProductoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProductoDTO" resultType="ProductoDTO">
+		insert into producto_prop(
+			cpro_llave
+		<if test="imagen!=null">
+			,cpro_imagen
+		</if>
+		<if test="descripcion!=null">
+			,cpro_descripcion
+		</if>
+		<if test="categoria!=null">
+			,cpro_categoria
+		</if>
+		<if test="documento!=null">
+			,cpro_documento
+		</if>
+		<if test="productoBase!=null">
+			,cpro_productobase
+		</if>
+		<if test="estado!=null">
+			,cpro_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="descripcion!=null">
+			,#{descripcion}
+		</if>
+		<if test="categoria!=null">
+			,#{categoria}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="productoBase!=null">
+			,#{productoBase}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProductoDTO" resultType="ProductoDTO">
+		update producto_prop
+			set
+				cpro_imagen = #{imagen},
+				cpro_descripcion = #{descripcion},
+				cpro_categoria = #{categoria},
+				cpro_documento = #{documento},
+				cpro_productobase = #{productoBase},
+				cpro_estado =#{estado}
+		<include refid="whereProductoPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+	<select id="listarProductoCampo" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" /> 
+		where cpro_estado ='A'
+		and cpro_categoria in (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_127' and cppd_estado = 'A' and cppd_campo = #{campo})
+		<if test="filtro!=null">
+		and ((select str_normalize(cpdv_textofiltro) from pedidoventa_pdvp where cpdv_llave = cpro_documento) = upper(#{filtro}) 
+			or upper(movimiento_descripcion(cpro_documento)) like upper('%' || #{filtro} || '%')
+			or (select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) like upper('%' || #{filtro} || '%'))
+		</if>
+		order by codigo
+	</select>
+	
+	<select id="listarProductoPlantillaResponsable" parameterType="ProductoDTO" resultType="ProductoDTO">
+		select 
+			cpro_llave as  llaveTabla
+			,CASE WHEN curp_nombre IS NULL THEN movimiento_descripcion(cpro_documento) ELSE curp_nombre END as  nombre
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
+			,cpro_descripcion as  descripcion
+			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
+			,cpro_categoria as  categoria
+			,(select ccpr_nombre from categoriaproducto_cprp where ccpr_llave = cpro_categoria) as  categoriaNombre
+			,cpro_productobase as  productoBase
+			,cpro_estado as estado
+			,curp_llave as documento
+		from usuariorolproducto_urpp, producto_prop 
+		where cpro_llave = curp_producto and cpro_estado ='A' and curp_estado = 'A' and curp_documento = #{usuarioRol}
+		<if test="filtroParametro!=null"> and ((select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) = upper(#{filtroParametro}) or upper(movimiento_descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))</if>
+			order by codigo
+		<include refid="paginationProductoFragment" />
+	</select>
+	
+	<select id="listarProductoFuncion" resultType="ProductoDTO">
+		select
+			cpro_llave as  llaveTabla
+			,movimiento_descripcion(cpro_documento) as  nombre
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
+			,cpro_descripcion as  descripcion
+			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
+			,cpro_categoria as  categoria
+			,(select ccpr_nombre from categoriaproducto_cprp where ccpr_llave = cpro_categoria) as  categoriaNombre
+			,cpro_productobase as  productoBase
+			,cpro_estado as estado
+		from propiedad_${funcion} (#{documento}, #{filtro}, #{token})
+		order by codigo
+	</select>
+	
+	<select id="listarProductoSimplificado" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" /> 
+		where cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
+		order by codigo
+	</select>
+<!--// END region script-->
+
+</mapper>

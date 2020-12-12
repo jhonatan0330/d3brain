@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.GPSDispositivoMapper">
+
+	<sql id="selectGPSDispositivoFragment">
+		select
+			cgps_llave as  llaveTabla
+			,cgps_usuario as  usuario
+			,cgps_nombre as  nombre
+			,dgps_ultimaconexion as  ultimaConexion
+			,ngps_intervalo as  intervalo
+			,ngps_distancia as  distancia
+			,ngps_acercamiento as  acercamiento
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cgps_usuario) as  usuarioNombre
+			,cgps_estado as estado
+		from gpsdispositivo_gpsp a
+	</sql>
+
+	<sql id="whereGPSDispositivoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cgps_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cgps_estado = #{estado}
+			</if>
+			<if test="usuario!=null">
+				and cgps_usuario = #{usuario}
+			</if>
+			<if test="nombre!=null">
+				and cgps_nombre = #{nombre}
+			</if>
+			<if test="ultimaConexionMin!=null">
+				and dgps_ultimaconexion >= #{ultimaConexionMin}
+			</if>
+			<if test="ultimaConexionMax!=null">
+				and dgps_ultimaconexion <![CDATA[ < ]]>  #{ultimaConexionMax}
+			</if>
+	</sql>
+
+	<sql id="paginationGPSDispositivoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereGPSDispositivoPrimaryKeyFragment">
+		where
+			cgps_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="GPSDispositivoDTO" resultType="GPSDispositivoDTO">
+		<include refid="selectGPSDispositivoFragment" />
+		<include refid="whereGPSDispositivoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="GPSDispositivoDTO" resultType="GPSDispositivoDTO">
+		<include refid="selectGPSDispositivoFragment" />
+		<include refid="whereGPSDispositivoFragment" />
+		<include refid="paginationGPSDispositivoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="GPSDispositivoDTO" resultType="int">
+		select count(*)
+		from gpsdispositivo_gpsp
+		<include refid="whereGPSDispositivoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="GPSDispositivoDTO" resultType="GPSDispositivoDTO">
+		insert into gpsdispositivo_gpsp(
+			cgps_llave
+		<if test="usuario!=null">
+			,cgps_usuario
+		</if>
+		<if test="nombre!=null">
+			,cgps_nombre
+		</if>
+		<if test="ultimaConexion!=null">
+			,dgps_ultimaconexion
+		</if>
+		<if test="intervalo!=null">
+			,ngps_intervalo
+		</if>
+		<if test="distancia!=null">
+			,ngps_distancia
+		</if>
+		<if test="acercamiento!=null">
+			,ngps_acercamiento
+		</if>
+		<if test="estado!=null">
+			,cgps_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="ultimaConexion!=null">
+			,#{ultimaConexion}
+		</if>
+		<if test="intervalo!=null">
+			,#{intervalo}
+		</if>
+		<if test="distancia!=null">
+			,#{distancia}
+		</if>
+		<if test="acercamiento!=null">
+			,#{acercamiento}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="GPSDispositivoDTO" resultType="GPSDispositivoDTO">
+		update gpsdispositivo_gpsp
+			set
+				cgps_usuario = #{usuario},
+				cgps_nombre = #{nombre},
+				dgps_ultimaconexion = #{ultimaConexion},
+				ngps_intervalo = #{intervalo},
+				ngps_distancia = #{distancia},
+				ngps_acercamiento = #{acercamiento},
+				cgps_estado =#{estado}
+		<include refid="whereGPSDispositivoPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

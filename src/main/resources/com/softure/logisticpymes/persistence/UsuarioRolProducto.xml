@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.UsuarioRolProductoMapper">
+
+	<sql id="selectUsuarioRolProductoFragment">
+		select
+			curp_llave as  llaveTabla
+			,curp_documento as  documento
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave  = curp_documento) as  documentoNombre
+			,curp_producto as  producto
+			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = curp_producto) as  productoNombre
+			,curp_nombre as  nombre
+			,nurp_cantidadpromocion as  cantidadPromocion
+			,nurp_cantidadpromocionbase as  cantidadPromocionBase
+			,curp_estado as estado
+		from usuariorolproducto_urpp a
+	</sql>
+
+	<sql id="whereUsuarioRolProductoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and curp_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and curp_estado = #{estado}
+			</if>
+			<if test="documento!=null">
+				and curp_documento = #{documento}
+			</if>
+			<if test="producto!=null">
+				and curp_producto = #{producto}
+			</if>
+			<if test="nombre!=null">
+				and curp_nombre = #{nombre}
+			</if>
+	</sql>
+
+	<sql id="paginationUsuarioRolProductoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereUsuarioRolProductoPrimaryKeyFragment">
+		where
+			curp_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="UsuarioRolProductoDTO" resultType="UsuarioRolProductoDTO">
+		<include refid="selectUsuarioRolProductoFragment" />
+		<include refid="whereUsuarioRolProductoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="UsuarioRolProductoDTO" resultType="UsuarioRolProductoDTO">
+		<include refid="selectUsuarioRolProductoFragment" />
+		<include refid="whereUsuarioRolProductoFragment" />
+		order by productonombre 
+		<include refid="paginationUsuarioRolProductoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="UsuarioRolProductoDTO" resultType="int">
+		select count(*)
+		from usuariorolproducto_urpp
+		<include refid="whereUsuarioRolProductoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="UsuarioRolProductoDTO" resultType="UsuarioRolProductoDTO">
+		insert into usuariorolproducto_urpp(
+			curp_llave
+		<if test="documento!=null">
+			,curp_documento
+		</if>
+		<if test="producto!=null">
+			,curp_producto
+		</if>
+		<if test="nombre!=null">
+			,curp_nombre
+		</if>
+		<if test="cantidadPromocion!=null">
+			,nurp_cantidadpromocion
+		</if>
+		<if test="cantidadPromocionBase!=null">
+			,nurp_cantidadpromocionbase
+		</if>
+		<if test="estado!=null">
+			,curp_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="producto!=null">
+			,#{producto}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="cantidadPromocion!=null">
+			,#{cantidadPromocion}
+		</if>
+		<if test="cantidadPromocionBase!=null">
+			,#{cantidadPromocionBase}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="UsuarioRolProductoDTO" resultType="UsuarioRolProductoDTO">
+		update usuariorolproducto_urpp
+			set
+				curp_documento = #{documento},
+				curp_producto = #{producto},
+				curp_nombre = #{nombre},
+				nurp_cantidadpromocion = #{cantidadPromocion},
+				nurp_cantidadpromocionbase = #{cantidadPromocionBase},
+				curp_estado =#{estado}
+		<include refid="whereUsuarioRolProductoPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

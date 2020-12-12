@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.TarifarioMapper">
+
+	<sql id="selectTarifarioFragment">
+		select
+			ctrf_llave as  llaveTabla
+			,ctrf_nombre as  nombre
+			,ctrf_tiporecurso as  tipoRecurso
+			,btrf_productoopcional as  productoOpcional
+			,btrf_rangovalores as  rangoValores
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tiporecurso) as  tipoRecursoNombre
+			,btrf_rangocantidad as  rangoCantidad
+			,ctrf_estado as estado
+		from tarifario_trfp a
+	</sql>
+
+	<sql id="whereTarifarioFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ctrf_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ctrf_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and ctrf_nombre = #{nombre}
+			</if>
+			<if test="tipoRecurso!=null">
+				and ctrf_tiporecurso = #{tipoRecurso}
+			</if>
+			<if test="productoOpcionalFilter!=null">
+				and btrf_productoopcional = #{productoOpcionalFilter}
+			</if>
+			<if test="rangoValoresFilter!=null">
+				and btrf_rangovalores = #{rangoValoresFilter}
+			</if>
+			<if test="rangoCantidadFilter!=null">
+				and btrf_rangocantidad = #{rangoCantidadFilter}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(ctrf_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationTarifarioFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTarifarioPrimaryKeyFragment">
+		where
+			ctrf_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		<include refid="selectTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		<include refid="selectTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+		order by ctrf_nombre 
+		<include refid="paginationTarifarioFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TarifarioDTO" resultType="int">
+		select count(*)
+		from tarifario_trfp
+		<include refid="whereTarifarioFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		insert into tarifario_trfp(
+			ctrf_llave
+		<if test="nombre!=null">
+			,ctrf_nombre
+		</if>
+		<if test="tipoRecurso!=null">
+			,ctrf_tiporecurso
+		</if>
+		<if test="productoOpcional!=null">
+			,btrf_productoopcional
+		</if>
+		<if test="rangoValores!=null">
+			,btrf_rangovalores
+		</if>
+		<if test="rangoCantidad!=null">
+			,btrf_rangocantidad
+		</if>
+		<if test="estado!=null">
+			,ctrf_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="tipoRecurso!=null">
+			,#{tipoRecurso}
+		</if>
+		<if test="productoOpcional!=null">
+			,#{productoOpcional}
+		</if>
+		<if test="rangoValores!=null">
+			,#{rangoValores}
+		</if>
+		<if test="rangoCantidad!=null">
+			,#{rangoCantidad}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		update tarifario_trfp
+			set
+				ctrf_nombre = #{nombre},
+				ctrf_tiporecurso = #{tipoRecurso},
+				btrf_productoopcional = #{productoOpcional},
+				btrf_rangovalores = #{rangoValores},
+				btrf_rangocantidad = #{rangoCantidad},
+				ctrf_estado =#{estado}
+		<include refid="whereTarifarioPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

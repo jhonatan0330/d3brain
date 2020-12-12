@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.RelacionInternaMapper">
+
+	<sql id="selectRelacionInternaFragment">
+		select
+			crit_llave as  llaveTabla
+			,crit_propiedad as  propiedad
+			,(select cppd_motivo from propiedad_ppdp where cppd_llave = crit_propiedad) as  propiedadNombre
+			,crit_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
+			,crit_campo as  campo
+			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
+			,crit_estado as estado
+		from relacioninterna_ritp a
+	</sql>
+
+	<sql id="whereRelacionInternaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and crit_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and crit_estado = #{estado}
+			</if>
+			<if test="propiedad!=null">
+				and crit_propiedad = #{propiedad}
+			</if>
+			<if test="plantilla!=null">
+				and crit_plantilla = #{plantilla}
+			</if>
+			<if test="campo!=null">
+				and crit_campo = #{campo}
+			</if>
+	</sql>
+
+	<sql id="paginationRelacionInternaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereRelacionInternaPrimaryKeyFragment">
+		where
+			crit_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
+		<include refid="selectRelacionInternaFragment" />
+		<include refid="whereRelacionInternaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
+		<include refid="selectRelacionInternaFragment" />
+		<include refid="whereRelacionInternaFragment" />
+		<include refid="paginationRelacionInternaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="RelacionInternaDTO" resultType="int">
+		select count(*)
+		from relacioninterna_ritp
+		<include refid="whereRelacionInternaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
+		insert into relacioninterna_ritp(
+			crit_llave
+		<if test="propiedad!=null">
+			,crit_propiedad
+		</if>
+		<if test="plantilla!=null">
+			,crit_plantilla
+		</if>
+		<if test="campo!=null">
+			,crit_campo
+		</if>
+		<if test="estado!=null">
+			,crit_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="propiedad!=null">
+			,#{propiedad}
+		</if>
+		<if test="plantilla!=null">
+			,#{plantilla}
+		</if>
+		<if test="campo!=null">
+			,#{campo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
+		update relacioninterna_ritp
+			set
+				crit_propiedad = #{propiedad},
+				crit_plantilla = #{plantilla},
+				crit_campo = #{campo},
+				crit_estado =#{estado}
+		<include refid="whereRelacionInternaPrimaryKeyFragment" />
+	</select>
+
+	<select id="listarRelacion" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
+		<include refid="selectRelacionInternaFragment" />
+
+		<include refid="paginationRelacionInternaFragment" />
+	</select>
+	
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

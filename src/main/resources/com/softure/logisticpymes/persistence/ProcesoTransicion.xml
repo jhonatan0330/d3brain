@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.ProcesoTransicionMapper">
+
+	<sql id="selectProcesoTransicionFragment">
+		select
+			cptr_llave as  llaveTabla
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  procesoNombre
+			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
+			,(select coalesce(max(npes_avance) ,100) from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaOrden
+			,cptr_nombre as  nombre
+			,cptr_proceso as  proceso
+			,cptr_estadopartida as  estadoPartida
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaNombre
+			,cptr_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  plantillaNombre
+			,bptr_documentador as  documentador
+			,cptr_afectasaldo as  afectaSaldo
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  imagen
+			,bptr_rapida as  rapida
+			,cptr_estadollegada as  estadoLLegada
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaNombre
+			,(select cpes_tipo from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaTipo
+			,cptr_estado as estado
+		from procesotransicion_ptrp a
+	</sql>
+
+	<sql id="whereProcesoTransicionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cptr_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cptr_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and cptr_nombre = #{nombre}
+			</if>
+			<if test="proceso!=null">
+				and cptr_proceso = #{proceso}
+			</if>
+			<if test="estadoPartida!=null">
+				and cptr_estadopartida = #{estadoPartida}
+			</if>
+			<if test="plantilla!=null">
+				and cptr_plantilla = #{plantilla}
+			</if>
+			<if test="documentadorFilter!=null">
+				and bptr_documentador = #{documentadorFilter}
+			</if>
+			<if test="afectaSaldo!=null">
+				and cptr_afectasaldo = #{afectaSaldo}
+			</if>
+			<if test="rapidaFilter!=null">
+				and bptr_rapida = #{rapidaFilter}
+			</if>
+			<if test="estadoLLegada!=null">
+				and cptr_estadollegada = #{estadoLLegada}
+			</if>
+	</sql>
+
+	<sql id="paginationProcesoTransicionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProcesoTransicionPrimaryKeyFragment">
+		where
+			cptr_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		<include refid="selectProcesoTransicionFragment" />
+		<include refid="whereProcesoTransicionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		<include refid="selectProcesoTransicionFragment" />
+		<include refid="whereProcesoTransicionFragment" />
+		order by procesonombre 
+		, estadopartidaorden 
+		, estadollegadaorden 
+		, cptr_nombre 
+		<include refid="paginationProcesoTransicionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProcesoTransicionDTO" resultType="int">
+		select count(*)
+		from procesotransicion_ptrp
+		<include refid="whereProcesoTransicionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		insert into procesotransicion_ptrp(
+			cptr_llave
+		<if test="nombre!=null">
+			,cptr_nombre
+		</if>
+		<if test="proceso!=null">
+			,cptr_proceso
+		</if>
+		<if test="estadoPartida!=null">
+			,cptr_estadopartida
+		</if>
+		<if test="plantilla!=null">
+			,cptr_plantilla
+		</if>
+		<if test="documentador!=null">
+			,bptr_documentador
+		</if>
+		<if test="afectaSaldo!=null">
+			,cptr_afectasaldo
+		</if>
+		<if test="rapida!=null">
+			,bptr_rapida
+		</if>
+		<if test="estadoLLegada!=null">
+			,cptr_estadollegada
+		</if>
+		<if test="estado!=null">
+			,cptr_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="proceso!=null">
+			,#{proceso}
+		</if>
+		<if test="estadoPartida!=null">
+			,#{estadoPartida}
+		</if>
+		<if test="plantilla!=null">
+			,#{plantilla}
+		</if>
+		<if test="documentador!=null">
+			,#{documentador}
+		</if>
+		<if test="afectaSaldo!=null">
+			,#{afectaSaldo}
+		</if>
+		<if test="rapida!=null">
+			,#{rapida}
+		</if>
+		<if test="estadoLLegada!=null">
+			,#{estadoLLegada}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		update procesotransicion_ptrp
+			set
+				cptr_nombre = #{nombre},
+				cptr_proceso = #{proceso},
+				cptr_estadopartida = #{estadoPartida},
+				cptr_plantilla = #{plantilla},
+				bptr_documentador = #{documentador},
+				cptr_afectasaldo = #{afectaSaldo},
+				bptr_rapida = #{rapida},
+				cptr_estadollegada = #{estadoLLegada},
+				cptr_estado =#{estado}
+		<include refid="whereProcesoTransicionPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+	<select id="listarTransicionesRol" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		select
+			cptr_llave as  llaveTabla
+			,cptr_nombre as  nombre
+			,cptr_proceso as  proceso
+			,cptr_estadopartida as  estadoPartida
+			,null as  estadoPartidaNombre
+			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
+			,cptr_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  plantillaNombre
+			,bptr_documentador as  documentador
+			,cptr_afectasaldo as  afectaSaldo
+			,bptr_rapida as  rapida
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  imagen
+			,cptr_estadollegada as  estadoLLegada
+			,null as  estadoLlegadaNombre
+			,null as  estadoLlegadaOrden
+			,null as  estadoLlegadaTipo
+			,cptr_estado as estado
+		from procesotransicion_ptrp a
+		where bptr_documentador = true and cptr_estado ='A'
+		<if test="securityToken!=null">
+		and cptr_plantilla in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_77' 
+		and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+			select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))))
+		</if>
+		order by estadopartidaorden 
+		, estadollegadaorden 
+		, nombre
+	</select>
+	
+	<select id="listarTransaccionInicial" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+		<include refid="selectProcesoTransicionFragment" />, proceso_prcp
+		where cprc_llave = cptr_proceso and cptr_estadopartida is null and cptr_estado = 'A' and cprc_estado = 'A'
+		<if test="plantilla!=null">and cptr_plantilla = #{plantilla}</if><if test="proceso!=null">and cptr_proceso = #{proceso}</if>
+	</select>
+	
+	<select id="decision" resultType="java.lang.String">
+		select decision_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
+	</select>
+<!--// END region script-->
+
+</mapper>

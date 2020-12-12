@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.persistence.PlantillaConsecutivoMapper">
+
+	<sql id="selectPlantillaConsecutivoFragment">
+		select
+			cpcn_llave as  llaveTabla
+			,cpcn_caracteristica as  caracteristica
+			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = cpcn_caracteristica) as  caracteristicaNombre
+			,cpcn_valoropcion as  valorOpcion
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpcn_valoropcion) as  opcionNombre
+			,cpcn_consecutivo as  consecutivo
+			,(select ccon_nombre from consecutivo_conp where ccon_llave = cpcn_consecutivo) as  consecutivoNombre
+			,cpcn_estado as estado
+		from plantillaconsecutivo_pcnp a
+	</sql>
+
+	<sql id="wherePlantillaConsecutivoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpcn_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpcn_estado = #{estado}
+			</if>
+			<if test="caracteristica!=null">
+				and cpcn_caracteristica = #{caracteristica}
+			</if>
+			<if test="valorOpcion!=null">
+				and cpcn_valoropcion = #{valorOpcion}
+			</if>
+			<if test="consecutivo!=null">
+				and cpcn_consecutivo = #{consecutivo}
+			</if>
+	</sql>
+
+	<sql id="paginationPlantillaConsecutivoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePlantillaConsecutivoPrimaryKeyFragment">
+		where
+			cpcn_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PlantillaConsecutivoDTO" resultType="PlantillaConsecutivoDTO">
+		<include refid="selectPlantillaConsecutivoFragment" />
+		<include refid="wherePlantillaConsecutivoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PlantillaConsecutivoDTO" resultType="PlantillaConsecutivoDTO">
+		<include refid="selectPlantillaConsecutivoFragment" />
+		<include refid="wherePlantillaConsecutivoFragment" />
+		<include refid="paginationPlantillaConsecutivoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PlantillaConsecutivoDTO" resultType="int">
+		select count(*)
+		from plantillaconsecutivo_pcnp
+		<include refid="wherePlantillaConsecutivoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PlantillaConsecutivoDTO" resultType="PlantillaConsecutivoDTO">
+		insert into plantillaconsecutivo_pcnp(
+			cpcn_llave
+		<if test="caracteristica!=null">
+			,cpcn_caracteristica
+		</if>
+		<if test="valorOpcion!=null">
+			,cpcn_valoropcion
+		</if>
+		<if test="consecutivo!=null">
+			,cpcn_consecutivo
+		</if>
+		<if test="estado!=null">
+			,cpcn_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="caracteristica!=null">
+			,#{caracteristica}
+		</if>
+		<if test="valorOpcion!=null">
+			,#{valorOpcion}
+		</if>
+		<if test="consecutivo!=null">
+			,#{consecutivo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PlantillaConsecutivoDTO" resultType="PlantillaConsecutivoDTO">
+		update plantillaconsecutivo_pcnp
+			set
+				cpcn_caracteristica = #{caracteristica},
+				cpcn_valoropcion = #{valorOpcion},
+				cpcn_consecutivo = #{consecutivo},
+				cpcn_estado =#{estado}
+		<include refid="wherePlantillaConsecutivoPrimaryKeyFragment" />
+	</select>
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>
