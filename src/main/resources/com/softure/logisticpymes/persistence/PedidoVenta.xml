@@ -61,7 +61,7 @@
 				and cpdv_transaccion = #{transaccion}
 			</if>
 			<if test="filtroParametro!=null">
-				and (cpdv_nombre like upper('%' || #{filtroParametro} || '%') or str_normalize(cpdv_textofiltro) like str_normalize('%' || #{filtroParametro} || '%'))
+				and (cpdv_nombre like upper('%' || #{filtroParametro} || '%') or cpdv_textofiltro like '%' || #{filtroParametro} || '%')
 			</if>
 	</sql>
 
@@ -227,7 +227,7 @@
 		<if test="dto.plantilla!=null">and cpdv_plantilla = #{dto.plantilla}</if>
 		<if test="dto.nombre!=null">and cpdv_nombre = #{dto.nombre}</if>
 		<if test="dto.estadoExpediente!=null">and cpdv_estadoexpediente = #{dto.estadoExpediente}</if>
-		<if test="dto.filtroParametro!=null">and (cpdv_nombre like upper('%' || #{dto.filtroParametro} || '%') or str_normalize(cpdv_textofiltro) like str_normalize('%' || #{dto.filtroParametro} || '%'))</if>
+		<if test="dto.filtroParametro!=null">and (cpdv_nombre like upper('%' || #{dto.filtroParametro} || '%') or cpdv_textofiltro like '%' || #{dto.filtroParametro} || '%')</if>
 		<if test="campoFiltro!=null">and cpdv_llave in (select cdrc_documento from campo_documento where cpvc_valoropcion = #{valorFiltro} and cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach>)</if>
 		<if test="dto.caracteristicas!=null">
 			<foreach item="item"  index="index" collection="dto.caracteristicas" >

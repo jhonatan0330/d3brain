@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
+
+import com.softure.logisticpymes.dto.PedidoVentaDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -16,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDineroDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaDineroFilterDTO;
 import com.softure.logisticpymes.persistence.PedidoVentaDineroMapper;
