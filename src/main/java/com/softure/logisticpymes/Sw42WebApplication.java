@@ -2,15 +2,23 @@ package com.softure.logisticpymes;
 
 import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.ProcesoTransicionAutomaticaSvc;
+import com.softure.logisticpymes.servlet.DownloaderServlet;
+import com.softure.logisticpymes.servlet.ReporteServlet;
+import com.softure.logisticpymes.servlet.UploaderServlet;
 import com.softure.java.dto.exception.ServerException;
+
+import javax.servlet.http.HttpServlet;
+
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -31,11 +39,12 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 	@Autowired private Environment env;
 	@Autowired private MensajeSvc mensajeService;
 	@Autowired private ProcesoTransicionAutomaticaSvc transicionservice;
+	
+	@Autowired private AutowireCapableBeanFactory beanFactory;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Sw42WebApplication.class, args);
 	}
-
 
 	@Bean(name = "dataSource")
 	public PooledDataSource dynamicDataSource() {
@@ -78,20 +87,37 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 			transicionservice.programateAll();
 		}
 	}
-
-	/*
-	@Bean(name = "reporteServlet")
-	public ReporteServlet reporteServlet() {
-		return new ReporteServlet();
+	
+	@Bean	
+	public ServletRegistrationBean<HttpServlet> reporteServlet() {
+		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
+		final ReporteServlet servlet = new ReporteServlet();
+		beanFactory.autowireBean(servlet);
+		servRegBean.setServlet(servlet);
+		servRegBean.addUrlMappings("/reporte/*");
+		servRegBean.setLoadOnStartup(1);
+		return servRegBean;
 	}
 
-	@Bean(name = "downloaderServlet")
-	public DownloaderServlet downloaderServlet() {
-		return new DownloaderServlet();
+	@Bean	
+	public ServletRegistrationBean<HttpServlet> uploadServlet() {
+		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
+		final UploaderServlet servlet = new UploaderServlet();
+		beanFactory.autowireBean(servlet);
+		servRegBean.setServlet(servlet);
+		servRegBean.addUrlMappings("/loader/*");
+		servRegBean.setLoadOnStartup(1);
+		return servRegBean;
 	}
-
-	@Bean(name = "uploaderServlet")
-	public UploaderServlet uploaderServlet() {
-		return new UploaderServlet();
-	}*/
+	
+	@Bean	
+	public ServletRegistrationBean<HttpServlet> downloadServlet() {
+		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
+		final DownloaderServlet servlet = new DownloaderServlet();
+		beanFactory.autowireBean(servlet);
+		servRegBean.setServlet(servlet);
+		servRegBean.addUrlMappings("/resource/*");
+		servRegBean.setLoadOnStartup(1);
+		return servRegBean;
+	}
 }
