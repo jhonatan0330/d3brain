@@ -653,6 +653,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	
 	public List<PropiedadDTO> obtenerPropiedades(String tipo, String entidad, String key, String usuario) throws ServerException{
 		if(entidad ==null ) throw new ServerException("El campo esta nulo");
+		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario);
+	}
+	
+	//Los dividi oara optimizar el menu de usuario y asi consultar los estados todas las propiedades
+	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario) throws ServerException{
 		PropiedadFilterDTO filtroOrden = new PropiedadFilterDTO();
 		filtroOrden.setTipo(tipo);
 		filtroOrden.setCampo(entidad);
@@ -790,8 +795,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return propiedadMapper.listarProductoSimplificado(productos);
 	}
 	
-	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String token) throws ServerException{
-		return propiedadMapper.listarPlantillasSimplificar(plantillas, getUserFlex(token), new Date());
+	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario) throws ServerException{
+		return propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
 	}
 // END region aditionalMethods
 

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDineroDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaDineroFilterDTO;
 import com.softure.logisticpymes.persistence.PedidoVentaDineroMapper;
@@ -97,6 +98,12 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 		filtro.setDocumento(documento);
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		return super.consultaUnica(filtro);
+	}
+	
+	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
+			throws ServerException {//La plantilla es para optimizar la consultas de la particion
+		if(documentos==null || documentos.isEmpty()) return null;
+		return pedidoVentaDineroMapper.listar2DocumentoVisible(documentos);
 	}
 // END region aditionalMethods
 

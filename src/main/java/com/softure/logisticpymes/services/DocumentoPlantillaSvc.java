@@ -290,6 +290,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	public List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO dto, boolean todosPermisos)throws ServerException{
 		//boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
+		String usuario = null;
+		if(dto.getSecurityToken() !=null) usuario = getUserFlex(dto.getSecurityToken());
 		List<DocumentoPlantillaDTO> plantillasPermitidas = null;
 		if(todosPermisos) {
 			DocumentoPlantillaFilterDTO filtroFullFilter = new DocumentoPlantillaFilterDTO();
@@ -321,7 +323,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			if(todosPermisos) {
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas);
 			}else {
-				List<PropiedadDTO> consultadas = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, dto.getSecurityToken());
+				List<PropiedadDTO> consultadas = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
 				List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
 				if(!consultadas.isEmpty()) {
 					for (PropiedadDTO iPropiedadDTO : consultadas) {
@@ -330,6 +332,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 				todasPropiedadesEvitandoConsultaBD =  validadas;
 			}
+			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
 				nuevaPlantilla = true;
 				for(DocumentoPlantillaDTO iBD : result){
@@ -361,17 +364,18 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					if(procesoInicial!=null) {
 						for (ProcesoEstadoDTO procesoEstadoDTO : estados) {
 							if(procesoEstadoDTO.getProceso().compareTo(procesoInicial)==0) {
-								System.out.println ("Cargando estado : " + procesoEstadoDTO.getNombre());
 								if(iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(new ArrayList<ProcesoEstadoDTO>());
 								if(procesoEstadoDTO.getPropiedades()==null) {
-									procesoEstadoDTO.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, procesoEstadoDTO.getLlaveTabla(), null, getUserFlex(dto.getSecurityToken())));
-									System.out.println ("Cargando configuracion de estado : " + procesoEstadoDTO.getNombre());									
+									procesoEstadoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
+									for (PropiedadDTO propiedadDTO : todasPropiedadesEstados) {
+										if(propiedadDTO.getCampo().compareTo(procesoEstadoDTO.getLlaveTabla())==0) 
+											procesoEstadoDTO.getPropiedades().add(propiedadDTO);
+									}
 								}
 								if(procesoEstadoDTO.getTransiciones()==null) {
 									procesoEstadoDTO.setTransiciones(new ArrayList<ProcesoTransicionDTO>());
 									for (ProcesoTransicionDTO procesoTransicionDTO : transiciones) {
 										if(procesoTransicionDTO.getEstadoPartida()!=null && procesoTransicionDTO.getEstadoPartida().compareTo(procesoEstadoDTO.getLlaveTabla())==0) {
-											System.out.println ("Cargando transiciones : " + procesoTransicionDTO.getNombre());
 											procesoEstadoDTO.getTransiciones().add(procesoTransicionDTO);
 										}
 									}

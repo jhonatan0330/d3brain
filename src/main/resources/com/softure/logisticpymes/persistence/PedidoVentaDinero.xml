@@ -117,6 +117,10 @@
 
 
 <!--// BEGIN region script-->
+	<select id="listar2DocumentoVisible" resultType="PedidoVentaDineroDTO">
+		<include refid="selectPedidoVentaDineroFragment" />
+		where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
+	</select>
 <!--// END region script-->
 
 </mapper>

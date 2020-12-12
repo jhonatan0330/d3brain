@@ -244,6 +244,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto)throws ServerException{
 		// BEGIN region listarAvanzado
+		System.out.println (new Date().toString() + " : ListarAvanzado");
 		if(dto==null) throw new ServerException("Tronco de error");
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().isEmpty()) dto.setFiltroParametro(null);
 		//Filtros desde un campo
@@ -381,6 +382,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			List<String> estadosFiltro = organizarFiltros(dto);
 			dto.setSecurityToken(secToken);
 			try {
+				System.out.println (new Date().toString() + " : Query avnazado");
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente)
 						, token, null); 
@@ -637,11 +639,13 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	
 	public List<PedidoVentaDTO> listadoCompleto(List<PedidoVentaDTO> result, String securityToken, String campoValor) throws ServerException{
-		if(result !=null && !result.isEmpty()){	
+		if(result !=null && !result.isEmpty()){
+			System.out.println (new Date().toString() + " : Consulta completa");
 			HashMap<String, String> hmap = new HashMap<String, String>();
 			HashMap<String, String> hmapCampo = new HashMap<String, String>();
 			List<PedidoVentaCaracteristicaDTO> base = pedidoVentaCaracteristicaService.listar2DocumentoVisible(result);
 			List<PedidoVentaDTO> hijos = null;
+			List<PedidoVentaDineroDTO> dineroDocumentos = null;
 			if(base!=null && !base.isEmpty()) {
 				hijos = pedidoVentaMapper.listarVisibleRenderNivel2(result);
 				if(hijos!=null && !hijos.isEmpty()) {
@@ -658,11 +662,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 						if(propiedadCuenta!=null) {
 							hmap.put(iterador.getPlantilla(), "TIPO_CUENTA_VALOR");//Para que los tipo cuenta muestre el saldo
 						}else {
-							PropiedadDTO propiedad = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.TOTAL, getUserFlex(securityToken));
+							PropiedadDTO propiedad = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.TOTAL, null);
 							if(propiedad==null) {
 								hmap.put(iterador.getPlantilla(), "");
 							}else {
-								hmap.put(iterador.getPlantilla(), propiedad.getLlaveTabla());															
+								hmap.put(iterador.getPlantilla(), propiedad.getLlaveTabla());
+								if(dineroDocumentos==null) dineroDocumentos = dineroService.listar2DocumentoVisible(result);
 							}
 						}
 					}
@@ -680,7 +685,14 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 								iterador.setDinero(dinero);	
 							}
 						}else {
-							iterador.setDinero(dineroService.consultaPorDocumento(iterador.getLlaveTabla()));
+							if(dineroDocumentos!=null && !dineroDocumentos.isEmpty()) {
+								for (PedidoVentaDineroDTO iPedidoVentaDineroDTO : dineroDocumentos) {
+									if(iterador.getLlaveTabla().compareTo(iPedidoVentaDineroDTO.getDocumento())==0) {
+										iterador.setDinero(iPedidoVentaDineroDTO);
+										break;
+									}
+								}
+							}
 						}
 					}
 				}else {
