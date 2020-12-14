@@ -383,7 +383,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			dto.setSecurityToken(secToken);
 			try {
 				System.out.println (new Date().toString() + " : Query avnazado");
-				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()));//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
+				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente)
 						, token, null); 
@@ -632,7 +632,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				}
 			}
 			if (filtroTexto.compareTo("")!=0) {
-				dto.setTextoFiltro(SoftureUtil.formatFunction(filtroTexto));
+				dto.setTextoFiltro(SoftureUtil.formatFunction(filtroTexto).toUpperCase());
 			}else {
 				dto.setTextoFiltro(null);
 			}
