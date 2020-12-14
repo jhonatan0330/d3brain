@@ -51,6 +51,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO actualizar( ServidorDTO dto, String token) throws ServerException {
 		// BEGIN Servidor_actualizar
+		validateDTO(dto);
 		return super.actualizar(dto, token);
 		// END Servidor_actualizar
 	}
@@ -84,9 +85,11 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO guardar(ServidorDTO dto, String token) throws ServerException {
 		// BEGIN Servidor_guardar
+		validateDTO(dto);
 		return super.guardar(dto, token);
 		// END Servidor_guardar
 	}
+
 
 // BEGIN region aditionalMethods
 	public ServidorDTO obtenerServidorPrincipal(String tipo) throws ServerException {
@@ -96,6 +99,16 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 		List<ServidorDTO> servidores = listarConsulta(filtroFilter);
 		if(servidores==null || servidores.isEmpty()) return null;
 		return servidores.get(0);
+	}
+	
+	private void validateDTO(ServidorDTO dto) throws ServerException {
+		if(dto.getPuerto()!=null) {
+			try {
+				Integer.parseInt(dto.getPuerto());
+			}catch (Exception e) {
+				throw new ServerException("REvisa el valor del puerto que debe ser numerico y sin espacios");
+			}
+		}
 	}
 // END region aditionalMethods
 

@@ -112,6 +112,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO guardar(ProcesoTransicionDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicion_guardar
+		if(dto.getEstadoLLegada()==null) dto.setEstadoLLegada(dto.getEstadoPartida());
 		if(dto.getPlantilla()==null && dto.getDocumentador()) {
 			ProcesoEstadoDTO inicial =null;
 			if(dto.getEstadoPartida()!=null) inicial = estadoService.consultaXId(dto.getEstadoPartida());

@@ -154,22 +154,22 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajeDTO enviarCorreo(MensajeDTO dto, String usuario) throws ServerException {
-		MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
-		ServidorDTO servidor = servidorService.consultaXId(plantilla.getServidor());
-		if(servidor ==null) throw new ServerException("No se encuentra el servidor de correo configurado");
-		if(servidor.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost(servidor.getUrl());
-		mailSender.setPort((servidor.getPuerto()==null)?587:Integer.parseInt(servidor.getPuerto()));
-		mailSender.setUsername(servidor.getUsuario());
-		mailSender.setPassword(servidor.getClave());
-		Properties prop = mailSender.getJavaMailProperties();
-		prop.put("mail.transport.protocol", "smtp");
-		prop.put("mail.smtp.auth", "true");
-		prop.put("mail.smtp.starttls.enable", "true");
-		prop.put("mail.debug", "true");
-		prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 		try {
+			MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
+			ServidorDTO servidor = servidorService.consultaXId(plantilla.getServidor());
+			if(servidor ==null) throw new ServerException("No se encuentra el servidor de correo configurado");
+			if(servidor.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
+			JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+			mailSender.setHost(servidor.getUrl());
+			mailSender.setPort((servidor.getPuerto()==null)?587:Integer.parseInt(servidor.getPuerto()));
+			mailSender.setUsername(servidor.getUsuario());
+			mailSender.setPassword(servidor.getClave());
+			Properties prop = mailSender.getJavaMailProperties();
+			prop.put("mail.transport.protocol", "smtp");
+			prop.put("mail.smtp.auth", "true");
+			prop.put("mail.smtp.starttls.enable", "true");
+			prop.put("mail.debug", "true");
+			prop.put("mail.smtp.ssl.trust", servidor.getUrl());
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			boolean conReporte = (dto.getReporte()!=null);
 			MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage, conReporte);
