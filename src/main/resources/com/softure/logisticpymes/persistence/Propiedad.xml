@@ -419,9 +419,11 @@ COST 100;
 	
 	<select id="consultarTemporizadoresPendientes" resultType="PropiedadDTO">
         <include refid="selectPropiedadFragment" />
-        where cppd_propiedadvalor = 'PROP_140' and cppd_estado = 'A'
-        	and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
-        		where cpta_estado = 'A' and dpta_ejecucion is null)
+			inner join procesotransicion_ptrp on (cppd_campo = cptr_llave and cptr_estado  = 'A')
+			inner join documentoplantilla_dplp on (cdpl_llave = cptr_plantilla and cdpl_estado = 'A')
+		where cppd_propiedadvalor = 'PROP_140' and cppd_estado = 'A'
+			and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
+		        		where cpta_estado = 'A' and dpta_ejecucion is null)
      </select>
      
      <select id="listarProductoSimplificado" resultType="PropiedadDTO">
