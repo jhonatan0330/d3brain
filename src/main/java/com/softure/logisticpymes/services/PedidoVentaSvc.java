@@ -247,6 +247,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		System.out.println (new Date().toString() + " : ListarAvanzado");
 		if(dto==null) throw new ServerException("Tronco de error");
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().isEmpty()) dto.setFiltroParametro(null);
+		if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 		//Filtros desde un campo
 		if(dto.getCampoOrigen()!=null) {
 			DocumentoPlantillaCaracteristicaDTO campoPlantilla = documentoPlantillaCaracteristicaService.consultaXId(dto.getCampoOrigen());
@@ -383,7 +384,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			dto.setSecurityToken(secToken);
 			try {
 				System.out.println (new Date().toString() + " : Query avnazado");
-				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente)
 						, token, null); 
@@ -1011,6 +1011,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			try {
 				List<String>filtrosEstado = organizarFiltros(dto);//Todo esto se hizo porque se null el valor opcion sucede que usabamos == y tocaba choose
 				funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
+				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda , filtrosEstado, parametros);
 			}catch (Exception e) {
 				throw new ServerException(e.getCause().getMessage());

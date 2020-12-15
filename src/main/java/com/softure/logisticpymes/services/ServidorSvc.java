@@ -90,7 +90,6 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 		// END Servidor_guardar
 	}
 
-
 // BEGIN region aditionalMethods
 	public ServidorDTO obtenerServidorPrincipal(String tipo) throws ServerException {
 		ServidorFilterDTO filtroFilter = new ServidorFilterDTO();
