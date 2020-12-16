@@ -376,7 +376,7 @@ public class TipoProceso {
 							List<String> caminosGestionar = getCaminos(pCampo);
 							//BigDecimal saldoZero = pendiente cuadrar lo de un documento de pago con saldo mayor en abonos 
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
-									token, saldoDoc, new ArrayList<String>(), caminosGestionar
+									token, saldoDoc, new ArrayList<String>(), caminosGestionar, null
 									,!modificacion);
 							//if(saldoZero!=null && saldoZero.compareTo(BigDecimal.ZERO)!=0) throw new ServerException("No se puede generar un documento con saldo " + SoftureUtil.formatMoney(saldoZero));
 						}else{
@@ -628,6 +628,7 @@ public class TipoProceso {
 			BigDecimal saldoDocumento, 
 			List<String> plantillasRevisadas, 
 			List<String> caminosGestionables, 
+			List<String> documentosGestionados, 
 			boolean primerLlamado) throws ServerException{
 		if(caminosGestionables==null || caminosGestionables.isEmpty()) return;
 		if(caminosGestionables.size()==1 && caminosGestionables.get(0).isEmpty()) return;
@@ -678,13 +679,26 @@ public class TipoProceso {
 				expedientesAnidados.add( relacionExpediente );
 			}
 			if(expedientesAnidados!=null && !expedientesAnidados.isEmpty()){//Aqui cambie el calculo de los saldos y no se como cuadralos
+				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
+				boolean validadoPreviamente = false;
+				String expedienteId = null;
 				for(DocumentoRelacionExpedienteDTO iExpediente : expedientesAnidados){
-					PedidoVentaDTO expAnidado = pedidoService.consultaXId(iExpediente.getExpedienteDetalle());
-					gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, false);
-					if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
-						saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
-						if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
-							saldoAnidados = BigDecimal.ZERO;
+					expedienteId = iExpediente.getExpedienteDetalle();
+					for (String iValidado : documentosGestionados) {//Para evitar que se generen ciclos validando los mismos documentos
+						if(iValidado.compareTo(expedienteId)==0) {
+							validadoPreviamente= true;
+							break;
+						}
+					}
+					if(!validadoPreviamente) {
+						PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
+						documentosGestionados.add(expedienteId);
+						gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, false);
+						if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
+							saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
+							if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
+								saldoAnidados = BigDecimal.ZERO;
+							}
 						}
 					}
 				}
