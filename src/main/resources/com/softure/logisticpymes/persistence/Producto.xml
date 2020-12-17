@@ -130,6 +130,30 @@
 				cpro_estado =#{estado}
 		<include refid="whereProductoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProductoFragment">
+		select
+			cpro_llave as  llaveTabla
+			,cpro_descripcion as  descripcion
+			,cpro_categoria as  categoria
+			,cpro_documento as  documento
+			,cpro_productobase as  productoBase
+			,cpro_estado as estado
+		from producto_prop a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoDTO">
+		<include refid="selectSimpleProductoFragment" />
+		<include refid="whereProductoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoDTO">
+		<include refid="selectSimpleProductoFragment" />
+		<include refid="whereProductoFragment" />
+		order by nombre 
+		<include refid="paginationProductoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -111,6 +111,29 @@
 				cccd_estado =#{estado}
 		<include refid="whereComprobanteCuentaDetallePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleComprobanteCuentaDetalleFragment">
+		select
+			cccd_llave as  llaveTabla
+			,cccd_cuenta as  cuenta
+			,mccd_debe as  debe
+			,mccd_haber as  haber
+			,cccd_comprobante as  comprobante
+			,cccd_estado as estado
+		from comprobantecuentadetalle_ccdp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectSimpleComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectSimpleComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+		<include refid="paginationComprobanteCuentaDetalleFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

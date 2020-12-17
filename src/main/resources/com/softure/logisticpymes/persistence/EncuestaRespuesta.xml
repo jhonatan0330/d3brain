@@ -139,6 +139,31 @@
 				cers_estado =#{estado}
 		<include refid="whereEncuestaRespuestaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleEncuestaRespuestaFragment">
+		select
+			cers_llave as  llaveTabla
+			,cers_pregunta as  pregunta
+			,ders_fecha as  fecha
+			,cers_usuario as  usuario
+			,bers_respuestaboolean as  respuestaBoolean
+			,cers_respuestaopcion as  respuestaOpcion
+			,cers_comentario as  comentario
+			,cers_estado as estado
+		from encuestarespuesta_ersp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaRespuestaDTO">
+		<include refid="selectSimpleEncuestaRespuestaFragment" />
+		<include refid="whereEncuestaRespuestaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaRespuestaDTO">
+		<include refid="selectSimpleEncuestaRespuestaFragment" />
+		<include refid="whereEncuestaRespuestaFragment" />
+		<include refid="paginationEncuestaRespuestaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

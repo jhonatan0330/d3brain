@@ -169,6 +169,34 @@
 				cpvc_estado =#{estado}
 		<include refid="wherePedidoVentaCaracteristicaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePedidoVentaCaracteristicaFragment">
+		select
+			cpvc_llave as  llaveTabla
+			,cpvc_documento as  documento
+			,cpvc_campo as  campo
+			,cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,mpvc_valornumero as  valorNumero
+			,cpvc_transaccionregistro as  transaccionRegistro
+			,cpvc_transaccioninactivo as  transaccionInactivo
+			,cpvc_estado as estado
+		from pedidoventacaracteristica_pvcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaCaracteristicaDTO">
+		<include refid="selectSimplePedidoVentaCaracteristicaFragment" />
+		<include refid="wherePedidoVentaCaracteristicaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaCaracteristicaDTO">
+		<include refid="selectSimplePedidoVentaCaracteristicaFragment" />
+		<include refid="wherePedidoVentaCaracteristicaFragment" />
+		<include refid="paginationPedidoVentaCaracteristicaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

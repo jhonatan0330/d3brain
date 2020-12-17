@@ -179,6 +179,36 @@
 				corg_estado =#{estado}
 		<include refid="whereOrganizacionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleOrganizacionFragment">
+		select
+			corg_llave as  llaveTabla
+			,corg_nombre as  nombre
+			,corg_principal as  principal
+			,corg_servidor as  servidor
+			,corg_usuariosystem as  usuarioSystem
+			,corg_imagen as  imagen
+			,corg_slogan as  slogan
+			,borg_sincronizacion as  sincronizacion
+			,corg_mensajeingreso as  mensajeIngreso
+			,corg_codigo as  codigo
+			,corg_servidorcorreo as  servidorCorreo
+			,corg_estado as estado
+		from organizacion_orgp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="OrganizacionDTO">
+		<include refid="selectSimpleOrganizacionFragment" />
+		<include refid="whereOrganizacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="OrganizacionDTO">
+		<include refid="selectSimpleOrganizacionFragment" />
+		<include refid="whereOrganizacionFragment" />
+		order by corg_nombre 
+		<include refid="paginationOrganizacionFragment" />
+	</select>
+	
 
 	<select id="obtenerPrincipal" parameterType="OrganizacionDTO" resultType="OrganizacionDTO">
 		<include refid="selectOrganizacionFragment" />

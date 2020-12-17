@@ -140,6 +140,33 @@
 				cepr_estado =#{estado}
 		<include refid="whereEncuestaPreguntaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleEncuestaPreguntaFragment">
+		select
+			cepr_llave as  llaveTabla
+			,cepr_codigo as  codigo
+			,cepr_nombre as  nombre
+			,cepr_grupo as  grupo
+			,cepr_tipo as  tipo
+			,cepr_descripcion as  descripcion
+			,cepr_restriccion as  restriccion
+			,cepr_estado as estado
+		from encuestapregunta_eprp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaPreguntaDTO">
+		<include refid="selectSimpleEncuestaPreguntaFragment" />
+		<include refid="whereEncuestaPreguntaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaPreguntaDTO">
+		<include refid="selectSimpleEncuestaPreguntaFragment" />
+		<include refid="whereEncuestaPreguntaFragment" />
+		order by cepr_codigo 
+		, cepr_nombre 
+		<include refid="paginationEncuestaPreguntaFragment" />
+	</select>
+	
 
 	<select id="listarPermitidas" parameterType="EncuestaPreguntaDTO" resultType="EncuestaPreguntaDTO">
 		<include refid="selectEncuestaPreguntaFragment" />

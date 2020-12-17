@@ -125,6 +125,31 @@
 				curp_estado =#{estado}
 		<include refid="whereUsuarioRolProductoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioRolProductoFragment">
+		select
+			curp_llave as  llaveTabla
+			,curp_documento as  documento
+			,curp_producto as  producto
+			,curp_nombre as  nombre
+			,nurp_cantidadpromocion as  cantidadPromocion
+			,nurp_cantidadpromocionbase as  cantidadPromocionBase
+			,curp_estado as estado
+		from usuariorolproducto_urpp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioRolProductoDTO">
+		<include refid="selectSimpleUsuarioRolProductoFragment" />
+		<include refid="whereUsuarioRolProductoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioRolProductoDTO">
+		<include refid="selectSimpleUsuarioRolProductoFragment" />
+		<include refid="whereUsuarioRolProductoFragment" />
+		order by productonombre 
+		<include refid="paginationUsuarioRolProductoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

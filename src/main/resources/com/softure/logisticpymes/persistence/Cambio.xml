@@ -132,6 +132,31 @@
 				ccmb_estado =#{estado}
 		<include refid="whereCambioPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCambioFragment">
+		select
+			ccmb_llave as  llaveTabla
+			,ccmb_nombre as  nombre
+			,ccmb_motivo as  motivo
+			,dcmb_fecha as  fecha
+			,dcmb_fechaaplicacion as  fechaAplicacion
+			,ccmb_sesionactiva as  sesionActiva
+			,ccmb_estado as estado
+		from cambio_cmbp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CambioDTO">
+		<include refid="selectSimpleCambioFragment" />
+		<include refid="whereCambioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CambioDTO">
+		<include refid="selectSimpleCambioFragment" />
+		<include refid="whereCambioFragment" />
+		order by dcmb_fecha desc
+		<include refid="paginationCambioFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

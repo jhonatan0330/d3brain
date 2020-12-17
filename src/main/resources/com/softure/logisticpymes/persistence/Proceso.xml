@@ -139,6 +139,33 @@
 				cprc_estado =#{estado}
 		<include refid="whereProcesoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProcesoFragment">
+		select
+			cprc_llave as  llaveTabla
+			,cprc_tipo as  tipo
+			,cprc_objetivo as  objetivo
+			,nprc_prioridad as  prioridad
+			,cprc_macroproceso as  macroproceso
+			,cprc_nombre as  nombre
+			,cprc_codigo as  codigo
+			,cprc_estado as estado
+		from proceso_prcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoDTO">
+		<include refid="selectSimpleProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoDTO">
+		<include refid="selectSimpleProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+		order by nprc_prioridad 
+		, cprc_nombre 
+		<include refid="paginationProcesoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

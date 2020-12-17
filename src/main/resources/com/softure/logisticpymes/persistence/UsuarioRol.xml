@@ -142,6 +142,31 @@
 				cerl_estado =#{estado}
 		<include refid="whereUsuarioRolPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioRolFragment">
+		select
+			cerl_llave as  llaveTabla
+			,cerl_usuario as  usuario
+			,cerl_rolacceso as  rolAcceso
+			,cerl_documento as  documento
+			,derl_fechainicial as  fechaInicial
+			,derl_fechafinal as  fechaFinal
+			,cerl_estado as estado
+		from usuariorol_erlp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioRolDTO">
+		<include refid="selectSimpleUsuarioRolFragment" />
+		<include refid="whereUsuarioRolFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioRolDTO">
+		<include refid="selectSimpleUsuarioRolFragment" />
+		<include refid="whereUsuarioRolFragment" />
+		order by usuarionombre 
+		<include refid="paginationUsuarioRolFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

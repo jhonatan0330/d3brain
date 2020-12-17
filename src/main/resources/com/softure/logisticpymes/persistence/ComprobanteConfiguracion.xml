@@ -95,6 +95,27 @@
 				ccnf_estado =#{estado}
 		<include refid="whereComprobanteConfiguracionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleComprobanteConfiguracionFragment">
+		select
+			ccnf_llave as  llaveTabla
+			,ccnf_plantilla as  plantilla
+			,ccnf_catalogo as  catalogo
+			,ccnf_estado as estado
+		from comprobanteconfiguracion_cnfp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ComprobanteConfiguracionDTO">
+		<include refid="selectSimpleComprobanteConfiguracionFragment" />
+		<include refid="whereComprobanteConfiguracionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ComprobanteConfiguracionDTO">
+		<include refid="selectSimpleComprobanteConfiguracionFragment" />
+		<include refid="whereComprobanteConfiguracionFragment" />
+		<include refid="paginationComprobanteConfiguracionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

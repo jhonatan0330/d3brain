@@ -3,8 +3,8 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
-import java.util.Arrays;
 import java.util.Date;
+import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -80,18 +80,17 @@ public class PostPreguntaSvc extends BasicSvc<PostPreguntaDTO, PostPreguntaFilte
 		return super.listarConsulta(dto);
 	}
 	
-	public List<PostPreguntaDTO> listarPreguntasPlantilla(PostPreguntaFilterDTO dto)throws ServerException{
-		// BEGIN region listarPreguntasPlantilla
-		if(dto.getFiltroParametro()==null) throw new ServerException("Por favor colque una palabra clave para la busqueda");
-		if(dto.getFiltroParametro().startsWith(" "))dto.setFiltroParametro(dto.getFiltroParametro().substring(1));
-		List<String> palabrasClave = Arrays.asList(dto.getFiltroParametro().toUpperCase().split(" "));
+	public List<PostPreguntaDTO> listarEnOrden(PostPreguntaFilterDTO dto)throws ServerException{
+		// BEGIN region listarEnOrden
 		paginar(dto);
-		return postPreguntaMapper.listarPreguntasPlantilla(dto, palabrasClave);
-		// END region listarPreguntasPlantilla
+		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return postPreguntaMapper.listarEnOrden(dto);
+		// END region listarEnOrden
 	}
 	public List<PostPreguntaDTO> listarPreguntasSinRespuesta(PostPreguntaFilterDTO dto)throws ServerException{
 		// BEGIN region listarPreguntasSinRespuesta
 		paginar(dto);
+		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		return postPreguntaMapper.listarPreguntasSinRespuesta(dto);
 		// END region listarPreguntasSinRespuesta
 	}

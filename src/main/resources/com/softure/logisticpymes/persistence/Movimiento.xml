@@ -216,6 +216,40 @@
 				cmov_estado =#{estado}
 		<include refid="whereMovimientoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleMovimientoFragment">
+		select
+			cmov_llave as  llaveTabla
+			,cmov_tipo as  tipo
+			,dmov_fecharegistro as  fechaRegistro
+			,dmov_fechaevento as  fechaEvento
+			,cmov_cuenta as  cuenta
+			,mmov_monto as  monto
+			,cmov_turno as  turno
+			,mmov_montoaplicado as  montoAplicado
+			,mmov_saldoinicial as  saldoInicial
+			,mmov_saldofinal as  saldoFinal
+			,cmov_anterior as  anterior
+			,cmov_siguiente as  siguiente
+			,cmov_relacionado as  relacionado
+			,cmov_documento as  documento
+			,cmov_estado as estado
+		from movimiento_movp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="MovimientoDTO">
+		<include refid="selectSimpleMovimientoFragment" />
+		<include refid="whereMovimientoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="MovimientoDTO">
+		<include refid="selectSimpleMovimientoFragment" />
+		<include refid="whereMovimientoFragment" />
+		order by dmov_fecharegistro desc
+		, dmov_fechaevento desc
+		<include refid="paginationMovimientoFragment" />
+	</select>
+	
 
 	<select id="obtenerMovimientoAnteriorFecha" parameterType="MovimientoDTO" resultType="MovimientoDTO">
 		<include refid="selectMovimientoFragment" />

@@ -73,6 +73,25 @@
 				cpvt_estado =#{estado}
 		<include refid="wherePedidoVentaTiempoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePedidoVentaTiempoFragment">
+		select
+			cpvt_llave as  llaveTabla
+			,cpvt_estado as estado
+		from pedidoventatiempo_pvtp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectSimplePedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectSimplePedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+		<include refid="paginationPedidoVentaTiempoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

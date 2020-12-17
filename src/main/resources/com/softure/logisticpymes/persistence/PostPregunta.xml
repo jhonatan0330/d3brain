@@ -7,13 +7,14 @@
 	<sql id="selectPostPreguntaFragment">
 		select
 			cppr_llave as  llaveTabla
+			,cppr_campo as  campo
+			,cppr_tipo as  tipo
+			,(select count(*) from postrespuesta_prsp, postcalificacion_pclp where cpcl_respuesta = cprs_llave and cprs_pregunta = cppr_llave) as  calificaciones
 			,dppr_fecha as  fecha
 			,cppr_autor as  autor
 			,(select cusr_imagen from usuario_usrp where cusr_llave = cppr_autor) as  autorImagen
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppr_autor) as  autorNombre
 			,cppr_pregunta as  pregunta
-			,cppr_keywords as  keywords
-			,(select count(*) from postrespuesta_prsp, postcalificacion_pclp where cpcl_respuesta = cprs_llave and cprs_pregunta = cppr_llave) as  calificaciones
 			,cppr_estado as estado
 		from postpregunta_pprp a
 	</sql>
@@ -25,6 +26,12 @@
 			</if>
 			<if test="estado!=null">
 				and cppr_estado = #{estado}
+			</if>
+			<if test="campo!=null">
+				and cppr_campo = #{campo}
+			</if>
+			<if test="tipo!=null">
+				and cppr_tipo = #{tipo}
 			</if>
 			<if test="fechaMin!=null">
 				and dppr_fecha >= #{fechaMin}
@@ -59,7 +66,7 @@
 	<select id="listar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
 		<include refid="selectPostPreguntaFragment" />
 		<include refid="wherePostPreguntaFragment" />
-		order by dppr_fecha desc
+		order by calificaciones 
 		<include refid="paginationPostPreguntaFragment" />
 	</select>
 
@@ -73,6 +80,12 @@
 	<select id="insertar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
 		insert into postpregunta_pprp(
 			cppr_llave
+		<if test="campo!=null">
+			,cppr_campo
+		</if>
+		<if test="tipo!=null">
+			,cppr_tipo
+		</if>
 		<if test="fecha!=null">
 			,dppr_fecha
 		</if>
@@ -82,14 +95,17 @@
 		<if test="pregunta!=null">
 			,cppr_pregunta
 		</if>
-		<if test="keywords!=null">
-			,cppr_keywords
-		</if>
 		<if test="estado!=null">
 			,cppr_estado
 		</if>
 		) values (
 			#{llaveTabla}
+		<if test="campo!=null">
+			,#{campo}
+		</if>
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
 		<if test="fecha!=null">
 			,#{fecha}
 		</if>
@@ -98,9 +114,6 @@
 		</if>
 		<if test="pregunta!=null">
 			,#{pregunta}
-		</if>
-		<if test="keywords!=null">
-			,#{keywords}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -111,22 +124,47 @@
 	<select id="actualizar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
 		update postpregunta_pprp
 			set
+				cppr_campo = #{campo},
+				cppr_tipo = #{tipo},
 				dppr_fecha = #{fecha},
 				cppr_autor = #{autor},
 				cppr_pregunta = #{pregunta},
-				cppr_keywords = #{keywords},
 				cppr_estado =#{estado}
 		<include refid="wherePostPreguntaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePostPreguntaFragment">
+		select
+			cppr_llave as  llaveTabla
+			,cppr_campo as  campo
+			,cppr_tipo as  tipo
+			,dppr_fecha as  fecha
+			,cppr_autor as  autor
+			,cppr_pregunta as  pregunta
+			,cppr_estado as estado
+		from postpregunta_pprp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PostPreguntaDTO">
+		<include refid="selectSimplePostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PostPreguntaDTO">
+		<include refid="selectSimplePostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+		order by calificaciones 
+		<include refid="paginationPostPreguntaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->
-	<select id="listarPreguntasPlantilla" resultType="PostPreguntaDTO">
+	<select id="listarEnOrden" resultType="PostPreguntaDTO">
 		<include refid="selectPostPreguntaFragment" />
-		where str_normalize(cppr_pregunta) LIKE ANY(ARRAY[<foreach item="item" collection="palabrasClave" separator=",">'%' || #{item} || '%' </foreach>])
-		order by dppr_fecha desc
-		<if test="dto.paginacionRegistroFinal!=null">LIMIT #{dto.paginacionRegistroFinal}</if>
-		<if test="dto.paginacionRegistroInicial!=null">OFFSET #{dto.paginacionRegistroInicial}</if>
+		<include refid="wherePostPreguntaFragment" />
+		order by calificaciones desc 
+		<include refid="paginationPostPreguntaFragment" />
 	</select>
 	
 	<select id="listarPreguntasSinRespuesta" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">

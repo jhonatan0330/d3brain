@@ -169,6 +169,34 @@
 				cccm_estado =#{estado}
 		<include refid="whereCuentaContableMovimientoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCuentaContableMovimientoFragment">
+		select
+			cccm_llave as  llaveTabla
+			,mccm_montoaplicado as  montoAplicado
+			,mccm_saldoinicial as  saldoInicial
+			,mccm_saldofinal as  saldoFinal
+			,cccm_anterior as  anterior
+			,cccm_siguiente as  siguiente
+			,cccm_comprobante as  comprobante
+			,cccm_cuenta as  cuenta
+			,dccm_fechaevento as  fechaEvento
+			,dccm_fecharegistro as  fechaRegistro
+			,cccm_estado as estado
+		from cuentacontablemovimiento_ccmp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectSimpleCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectSimpleCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+		<include refid="paginationCuentaContableMovimientoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

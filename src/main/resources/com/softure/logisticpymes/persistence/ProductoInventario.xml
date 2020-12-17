@@ -141,6 +141,33 @@
 				cpin_estado =#{estado}
 		<include refid="whereProductoInventarioPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProductoInventarioFragment">
+		select
+			cpin_llave as  llaveTabla
+			,cpin_producto as  producto
+			,cpin_bodega as  bodega
+			,mpin_cantidadactual as  cantidadActual
+			,mpin_cantidadminima as  cantidadMinima
+			,mpin_cantidadmaxima as  cantidadMaxima
+			,dpin_fechainicial as  fechaInicial
+			,cpin_estado as estado
+		from productoinventario_pinp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoInventarioDTO">
+		<include refid="selectSimpleProductoInventarioFragment" />
+		<include refid="whereProductoInventarioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoInventarioDTO">
+		<include refid="selectSimpleProductoInventarioFragment" />
+		<include refid="whereProductoInventarioFragment" />
+		order by nombre 
+		, nombrebodega 
+		<include refid="paginationProductoInventarioFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

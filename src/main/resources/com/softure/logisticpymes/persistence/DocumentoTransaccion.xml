@@ -98,6 +98,27 @@
 				ctra_estado =#{estado}
 		<include refid="whereDocumentoTransaccionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDocumentoTransaccionFragment">
+		select
+			ctra_llave as  llaveTabla
+			,dtra_fecha as  fecha
+			,ctra_usuario as  usuario
+			,ctra_estado as estado
+		from documentotransaccion_trap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoTransaccionDTO">
+		<include refid="selectSimpleDocumentoTransaccionFragment" />
+		<include refid="whereDocumentoTransaccionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoTransaccionDTO">
+		<include refid="selectSimpleDocumentoTransaccionFragment" />
+		<include refid="whereDocumentoTransaccionFragment" />
+		<include refid="paginationDocumentoTransaccionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

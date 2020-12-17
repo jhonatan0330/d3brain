@@ -116,6 +116,31 @@
 				ceor_estado =#{estado}
 		<include refid="whereEncuestaOpcionRespuestaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleEncuestaOpcionRespuestaFragment">
+		select
+			ceor_llave as  llaveTabla
+			,ceor_codigo as  codigo
+			,ceor_nombre as  nombre
+			,ceor_imagen as  imagen
+			,ceor_pregunta as  pregunta
+			,ceor_estado as estado
+		from encuestaopcionrespuesta_eorp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaOpcionRespuestaDTO">
+		<include refid="selectSimpleEncuestaOpcionRespuestaFragment" />
+		<include refid="whereEncuestaOpcionRespuestaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaOpcionRespuestaDTO">
+		<include refid="selectSimpleEncuestaOpcionRespuestaFragment" />
+		<include refid="whereEncuestaOpcionRespuestaFragment" />
+		order by ceor_codigo 
+		, ceor_nombre 
+		<include refid="paginationEncuestaOpcionRespuestaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

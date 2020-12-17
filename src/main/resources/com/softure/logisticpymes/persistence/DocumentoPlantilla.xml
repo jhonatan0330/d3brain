@@ -126,6 +126,31 @@
 				cdpl_estado =#{estado}
 		<include refid="whereDocumentoPlantillaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDocumentoPlantillaFragment">
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_objetivo as  objetivo
+			,cdpl_codigo as  codigo
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoPlantillaDTO">
+		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoPlantillaDTO">
+		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+		order by cdpl_nombre 
+		<include refid="paginationDocumentoPlantillaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->
@@ -133,7 +158,7 @@
 		<include refid="selectDocumentoPlantillaFragment" />
 		where cdpl_estado = 'A'
 		and cdpl_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
-			and cppd_propiedadvalor in  ('PROP_77', 'PROP_78', 'PROP_107', 'PROP_108', 'PROP_114') 
+			and cppd_propiedadvalor in ('PROP_77', 'PROP_78', 'PROP_107', 'PROP_108', 'PROP_114') 
 			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
 				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
 			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))

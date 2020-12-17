@@ -253,6 +253,42 @@
 				cppd_estado =#{estado}
 		<include refid="wherePropiedadPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePropiedadFragment">
+		select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,dppd_fechadefinicion as  fechaDefinicion
+			,dppd_fechaimplementacion as  fechaImplementacion
+			,cppd_cambiocreacion as  cambioCreacion
+			,cppd_cambioeliminacion as  cambioEliminacion
+			,cppd_rol as  rol
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_estado as estado
+		from propiedad_ppdp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PropiedadDTO">
+		<include refid="selectSimplePropiedadFragment" />
+		<include refid="wherePropiedadFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PropiedadDTO">
+		<include refid="selectSimplePropiedadFragment" />
+		<include refid="wherePropiedadFragment" />
+		order by nombre 
+		, key 
+		<include refid="paginationPropiedadFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

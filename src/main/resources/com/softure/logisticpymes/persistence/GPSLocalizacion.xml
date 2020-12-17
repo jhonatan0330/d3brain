@@ -114,6 +114,29 @@
 				cgpl_estado =#{estado}
 		<include refid="whereGPSLocalizacionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleGPSLocalizacionFragment">
+		select
+			cgpl_llave as  llaveTabla
+			,cgpl_dispositivo as  dispositivo
+			,dgpl_fecha as  fecha
+			,mgpl_longitud as  longitud
+			,mgpl_latitud as  latitud
+			,cgpl_estado as estado
+		from gpslocalizacion_gplp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="GPSLocalizacionDTO">
+		<include refid="selectSimpleGPSLocalizacionFragment" />
+		<include refid="whereGPSLocalizacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="GPSLocalizacionDTO">
+		<include refid="selectSimpleGPSLocalizacionFragment" />
+		<include refid="whereGPSLocalizacionFragment" />
+		<include refid="paginationGPSLocalizacionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

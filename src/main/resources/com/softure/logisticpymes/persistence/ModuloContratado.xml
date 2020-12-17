@@ -117,6 +117,30 @@
 				cmdc_estado =#{estado}
 		<include refid="whereModuloContratadoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleModuloContratadoFragment">
+		select
+			cmdc_llave as  llaveTabla
+			,cmdc_modulo as  modulo
+			,cmdc_nombre as  nombre
+			,cmdc_identificador as  identificador
+			,cmdc_imagen as  imagen
+			,cmdc_estado as estado
+		from modulocontratado_mdcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ModuloContratadoDTO">
+		<include refid="selectSimpleModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ModuloContratadoDTO">
+		<include refid="selectSimpleModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+		order by cmdc_nombre 
+		<include refid="paginationModuloContratadoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

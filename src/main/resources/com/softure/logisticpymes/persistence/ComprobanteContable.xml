@@ -109,6 +109,28 @@
 				ccom_estado =#{estado}
 		<include refid="whereComprobanteContablePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleComprobanteContableFragment">
+		select
+			ccom_llave as  llaveTabla
+			,dcom_fecha as  fecha
+			,ccom_codigo as  codigo
+			,ccom_documento as  documento
+			,ccom_estado as estado
+		from comprobantecontable_comp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ComprobanteContableDTO">
+		<include refid="selectSimpleComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ComprobanteContableDTO">
+		<include refid="selectSimpleComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+		<include refid="paginationComprobanteContableFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

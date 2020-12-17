@@ -128,6 +128,30 @@
 				caud_estado =#{estado}
 		<include refid="whereAuditoriaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleAuditoriaFragment">
+		select
+			caud_llave as  llaveTabla
+			,caud_usuario as  usuario
+			,caud_clase as  clase
+			,caud_llaveclase as  llaveClase
+			,caud_operacion as  operacion
+			,daud_fecha as  fecha
+			,caud_estado as estado
+		from auditoria_audp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="AuditoriaDTO">
+		<include refid="selectSimpleAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="AuditoriaDTO">
+		<include refid="selectSimpleAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+		<include refid="paginationAuditoriaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

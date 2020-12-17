@@ -121,6 +121,32 @@
 				cpue_estado =#{estado}
 		<include refid="wherePuestoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePuestoFragment">
+		select
+			cpue_llave as  llaveTabla
+			,cpue_campo as  campo
+			,npue_fila as  fila
+			,npue_columna as  columna
+			,cpue_imagen as  imagen
+			,cpue_nombre as  nombre
+			,cpue_estado as estado
+		from puesto_puep a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PuestoDTO">
+		<include refid="selectSimplePuestoFragment" />
+		<include refid="wherePuestoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PuestoDTO">
+		<include refid="selectSimplePuestoFragment" />
+		<include refid="wherePuestoFragment" />
+		order by npue_fila 
+		, npue_columna 
+		<include refid="paginationPuestoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

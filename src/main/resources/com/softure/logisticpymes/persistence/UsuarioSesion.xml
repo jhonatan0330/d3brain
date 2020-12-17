@@ -112,6 +112,28 @@
 				cuss_estado =#{estado}
 		<include refid="whereUsuarioSesionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioSesionFragment">
+		select
+			cuss_llave as  llaveTabla
+			,cuss_usuario as  usuario
+			,duss_fecha as  fecha
+			,duss_fechacierre as  fechaCierre
+			,cuss_estado as estado
+		from usuariosesion_ussp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioSesionDTO">
+		<include refid="selectSimpleUsuarioSesionFragment" />
+		<include refid="whereUsuarioSesionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioSesionDTO">
+		<include refid="selectSimpleUsuarioSesionFragment" />
+		<include refid="whereUsuarioSesionFragment" />
+		<include refid="paginationUsuarioSesionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

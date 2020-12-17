@@ -95,6 +95,27 @@
 				ccad_estado =#{estado}
 		<include refid="whereCuentaAuxiliarDocumentoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCuentaAuxiliarDocumentoFragment">
+		select
+			ccad_llave as  llaveTabla
+			,ccad_documento as  documento
+			,ccad_cuentaauxiliar as  cuentaAuxiliar
+			,ccad_estado as estado
+		from cuentaauxiliardocumento_cadp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaAuxiliarDocumentoDTO">
+		<include refid="selectSimpleCuentaAuxiliarDocumentoFragment" />
+		<include refid="whereCuentaAuxiliarDocumentoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaAuxiliarDocumentoDTO">
+		<include refid="selectSimpleCuentaAuxiliarDocumentoFragment" />
+		<include refid="whereCuentaAuxiliarDocumentoFragment" />
+		<include refid="paginationCuentaAuxiliarDocumentoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

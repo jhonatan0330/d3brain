@@ -109,6 +109,28 @@
 				cpcn_estado =#{estado}
 		<include refid="wherePlantillaConsecutivoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePlantillaConsecutivoFragment">
+		select
+			cpcn_llave as  llaveTabla
+			,cpcn_caracteristica as  caracteristica
+			,cpcn_valoropcion as  valorOpcion
+			,cpcn_consecutivo as  consecutivo
+			,cpcn_estado as estado
+		from plantillaconsecutivo_pcnp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PlantillaConsecutivoDTO">
+		<include refid="selectSimplePlantillaConsecutivoFragment" />
+		<include refid="wherePlantillaConsecutivoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PlantillaConsecutivoDTO">
+		<include refid="selectSimplePlantillaConsecutivoFragment" />
+		<include refid="wherePlantillaConsecutivoFragment" />
+		<include refid="paginationPlantillaConsecutivoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

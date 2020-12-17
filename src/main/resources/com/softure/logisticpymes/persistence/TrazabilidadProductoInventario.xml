@@ -157,6 +157,34 @@
 				ctpi_estado =#{estado}
 		<include refid="whereTrazabilidadProductoInventarioPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleTrazabilidadProductoInventarioFragment">
+		select
+			ctpi_llave as  llaveTabla
+			,dtpi_fecha as  fecha
+			,ctpi_bodega as  bodega
+			,ctpi_producto as  producto
+			,mtpi_cantidadinicial as  cantidadInicial
+			,mtpi_cantidadfinal as  cantidadFinal
+			,mtpi_cantidad as  cantidad
+			,ctpi_deduccionproducto as  deduccionProducto
+			,ctpi_responsable as  responsable
+			,ctpi_estado as estado
+		from trazabilidadproductoinventario_tpip a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectSimpleTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectSimpleTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+		order by dtpi_fecha desc
+		<include refid="paginationTrazabilidadProductoInventarioFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

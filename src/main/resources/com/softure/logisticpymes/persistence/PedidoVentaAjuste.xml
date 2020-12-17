@@ -139,6 +139,31 @@
 				cpva_estado =#{estado}
 		<include refid="wherePedidoVentaAjustePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePedidoVentaAjusteFragment">
+		select
+			cpva_llave as  llaveTabla
+			,cpva_documento as  documento
+			,dpva_fecha as  fecha
+			,cpva_estadoinicial as  estadoInicial
+			,cpva_estadofinal as  estadoFinal
+			,cpva_motivo as  motivo
+			,cpva_responsable as  responsable
+			,cpva_estado as estado
+		from pedidoventaajuste_pvap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaAjusteDTO">
+		<include refid="selectSimplePedidoVentaAjusteFragment" />
+		<include refid="wherePedidoVentaAjusteFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaAjusteDTO">
+		<include refid="selectSimplePedidoVentaAjusteFragment" />
+		<include refid="wherePedidoVentaAjusteFragment" />
+		<include refid="paginationPedidoVentaAjusteFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

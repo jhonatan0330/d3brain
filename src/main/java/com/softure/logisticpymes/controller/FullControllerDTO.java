@@ -3775,6 +3775,15 @@ public class FullControllerDTO {
 		}
 	}
 	
+
+	@RequestMapping(value="/listarEnOrdenPostRespuesta", method=RequestMethod.POST)
+	public List<PostRespuestaDTO> listarEnOrdenPostRespuesta(@RequestBody PostRespuestaFilterDTO dto)throws FlexException {
+		try {
+			return postRespuestaService.listarEnOrden(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
 	
 	@Autowired private GPSLocalizacionSvc gPSLocalizacionService;
 	
@@ -4094,10 +4103,10 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarPreguntasPlantillaPostPregunta", method=RequestMethod.POST)
-	public List<PostPreguntaDTO> listarPreguntasPlantillaPostPregunta(@RequestBody PostPreguntaFilterDTO dto)throws FlexException {
+	@RequestMapping(value="/listarEnOrdenPostPregunta", method=RequestMethod.POST)
+	public List<PostPreguntaDTO> listarEnOrdenPostPregunta(@RequestBody PostPreguntaFilterDTO dto)throws FlexException {
 		try {
-			return postPreguntaService.listarPreguntasPlantilla(dto);
+			return postPreguntaService.listarEnOrden(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

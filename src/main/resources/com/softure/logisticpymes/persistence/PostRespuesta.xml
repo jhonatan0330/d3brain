@@ -123,9 +123,40 @@
 				cprs_estado =#{estado}
 		<include refid="wherePostRespuestaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePostRespuestaFragment">
+		select
+			cprs_llave as  llaveTabla
+			,dprs_fecha as  fecha
+			,cprs_autor as  autor
+			,cprs_pregunta as  pregunta
+			,cprs_respuesta as  respuesta
+			,cprs_estado as estado
+		from postrespuesta_prsp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PostRespuestaDTO">
+		<include refid="selectSimplePostRespuestaFragment" />
+		<include refid="wherePostRespuestaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PostRespuestaDTO">
+		<include refid="selectSimplePostRespuestaFragment" />
+		<include refid="wherePostRespuestaFragment" />
+		order by calificacionespositivas 
+		, dprs_fecha desc
+		<include refid="paginationPostRespuestaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->
+	<select id="listarEnOrden" resultType="PostRespuestaDTO">
+		<include refid="selectPostRespuestaFragment" />
+		<include refid="wherePostRespuestaFragment" />
+		order by calificacionespositivas desc, calificacionesNegativas, dprs_fecha desc
+		<include refid="paginationPostRespuestaFragment" />
+	</select>
 <!--// END region script-->
 
 </mapper>

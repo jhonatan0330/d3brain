@@ -134,6 +134,31 @@
 				cgps_estado =#{estado}
 		<include refid="whereGPSDispositivoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleGPSDispositivoFragment">
+		select
+			cgps_llave as  llaveTabla
+			,cgps_usuario as  usuario
+			,cgps_nombre as  nombre
+			,dgps_ultimaconexion as  ultimaConexion
+			,ngps_intervalo as  intervalo
+			,ngps_distancia as  distancia
+			,ngps_acercamiento as  acercamiento
+			,cgps_estado as estado
+		from gpsdispositivo_gpsp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="GPSDispositivoDTO">
+		<include refid="selectSimpleGPSDispositivoFragment" />
+		<include refid="whereGPSDispositivoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="GPSDispositivoDTO">
+		<include refid="selectSimpleGPSDispositivoFragment" />
+		<include refid="whereGPSDispositivoFragment" />
+		<include refid="paginationGPSDispositivoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

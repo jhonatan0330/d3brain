@@ -218,6 +218,40 @@
 				cdpv_estado =#{estado}
 		<include refid="whereDetallePedidoVentaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDetallePedidoVentaFragment">
+		select
+			cdpv_llave as  llaveTabla
+			,cdpv_documento as  documento
+			,cdpv_producto as  producto
+			,cdpv_productotercero as  productoTercero
+			,mdpv_cantidad as  cantidad
+			,ndpv_cantidadpromocion as  cantidadPromocion
+			,ndpv_cantidadpromocionbase as  cantidadPromocionBase
+			,mdpv_cantidadtotal as  cantidadTotal
+			,mdpv_valorminimo as  valorMinimo
+			,mdpv_valortotal as  valorTotal
+			,mdpv_valorunitario as  valorUnitario
+			,mdpv_valormaximo as  valorMaximo
+			,cdpv_plantilla as  plantilla
+			,mdpv_valorsubtotal as  valorSubtotal
+			,cdpv_transaccionregistro as  transaccionRegistro
+			,cdpv_transaccioninactivo as  transaccionInactivo
+			,cdpv_estado as estado
+		from detallepedidoventa_dpvp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DetallePedidoVentaDTO">
+		<include refid="selectSimpleDetallePedidoVentaFragment" />
+		<include refid="whereDetallePedidoVentaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DetallePedidoVentaDTO">
+		<include refid="selectSimpleDetallePedidoVentaFragment" />
+		<include refid="whereDetallePedidoVentaFragment" />
+		<include refid="paginationDetallePedidoVentaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

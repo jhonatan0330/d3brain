@@ -109,6 +109,28 @@
 				crit_estado =#{estado}
 		<include refid="whereRelacionInternaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleRelacionInternaFragment">
+		select
+			crit_llave as  llaveTabla
+			,crit_propiedad as  propiedad
+			,crit_plantilla as  plantilla
+			,crit_campo as  campo
+			,crit_estado as estado
+		from relacioninterna_ritp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="RelacionInternaDTO">
+		<include refid="selectSimpleRelacionInternaFragment" />
+		<include refid="whereRelacionInternaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="RelacionInternaDTO">
+		<include refid="selectSimpleRelacionInternaFragment" />
+		<include refid="whereRelacionInternaFragment" />
+		<include refid="paginationRelacionInternaFragment" />
+	</select>
+	
 
 	<select id="listarRelacion" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
 		<include refid="selectRelacionInternaFragment" />

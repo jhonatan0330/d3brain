@@ -10,6 +10,9 @@ import org.apache.ibatis.type.Alias;
 public class PostPreguntaFilterDTO extends BasicFilterDTO
 {
 
+	private String campo;
+	private String tipo;
+	private Integer calificaciones;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -17,8 +20,34 @@ public class PostPreguntaFilterDTO extends BasicFilterDTO
 	private String autor;
 	private String autorImagen;
 	private String autorNombre;
-	private Integer calificaciones;
 
+	
+	public void setCampo(String campo) {
+		this.campo = campo;
+	}
+	
+	public String getCampo() {
+		return campo;
+	}
+	
+	
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+	
+	
+	public void setCalificaciones(Integer calificaciones) {
+		this.calificaciones = calificaciones;
+	}
+	
+	public Integer getCalificaciones() {
+		return calificaciones;
+	}
+	
 	
 	public void setFechaMin(Date fechaMin) {
 		this.fechaMin = fechaMin;
@@ -61,15 +90,6 @@ public class PostPreguntaFilterDTO extends BasicFilterDTO
 	
 	public String getAutorNombre() {
 		return autorNombre;
-	}
-	
-	
-	public void setCalificaciones(Integer calificaciones) {
-		this.calificaciones = calificaciones;
-	}
-	
-	public Integer getCalificaciones() {
-		return calificaciones;
 	}
 	
 

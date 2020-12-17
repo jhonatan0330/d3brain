@@ -133,6 +133,31 @@
 				ctrf_estado =#{estado}
 		<include refid="whereTarifarioPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleTarifarioFragment">
+		select
+			ctrf_llave as  llaveTabla
+			,ctrf_nombre as  nombre
+			,ctrf_tiporecurso as  tipoRecurso
+			,btrf_productoopcional as  productoOpcional
+			,btrf_rangovalores as  rangoValores
+			,btrf_rangocantidad as  rangoCantidad
+			,ctrf_estado as estado
+		from tarifario_trfp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TarifarioDTO">
+		<include refid="selectSimpleTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TarifarioDTO">
+		<include refid="selectSimpleTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+		order by ctrf_nombre 
+		<include refid="paginationTarifarioFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

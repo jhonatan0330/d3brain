@@ -124,6 +124,30 @@
 				cctg_estado =#{estado}
 		<include refid="whereCatalogoContablePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCatalogoContableFragment">
+		select
+			cctg_llave as  llaveTabla
+			,cctg_nombre as  nombre
+			,dctg_fechainicial as  fechaInicial
+			,dctg_fechafinal as  fechaFinal
+			,cctg_codigo as  codigo
+			,cctg_estado as estado
+		from catalogocontable_ctgp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CatalogoContableDTO">
+		<include refid="selectSimpleCatalogoContableFragment" />
+		<include refid="whereCatalogoContableFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CatalogoContableDTO">
+		<include refid="selectSimpleCatalogoContableFragment" />
+		<include refid="whereCatalogoContableFragment" />
+		order by cctg_nombre 
+		<include refid="paginationCatalogoContableFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

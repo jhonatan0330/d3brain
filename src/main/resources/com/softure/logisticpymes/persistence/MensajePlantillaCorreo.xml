@@ -112,6 +112,30 @@
 				cmpl_estado =#{estado}
 		<include refid="whereMensajePlantillaCorreoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleMensajePlantillaCorreoFragment">
+		select
+			cmpl_llave as  llaveTabla
+			,cmpl_nombre as  nombre
+			,cmpl_titulo as  titulo
+			,cmpl_texto as  texto
+			,cmpl_servidor as  servidor
+			,cmpl_estado as estado
+		from mensajeplantillacorreo_mplp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="MensajePlantillaCorreoDTO">
+		<include refid="selectSimpleMensajePlantillaCorreoFragment" />
+		<include refid="whereMensajePlantillaCorreoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="MensajePlantillaCorreoDTO">
+		<include refid="selectSimpleMensajePlantillaCorreoFragment" />
+		<include refid="whereMensajePlantillaCorreoFragment" />
+		order by cmpl_nombre 
+		<include refid="paginationMensajePlantillaCorreoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

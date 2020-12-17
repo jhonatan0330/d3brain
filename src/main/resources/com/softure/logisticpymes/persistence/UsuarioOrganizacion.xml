@@ -106,6 +106,28 @@
 				cuor_estado =#{estado}
 		<include refid="whereUsuarioOrganizacionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioOrganizacionFragment">
+		select
+			cuor_llave as  llaveTabla
+			,cuor_usuario as  usuario
+			,cuor_organizacion as  organizacion
+			,cuor_tokenserver as  tokenServer
+			,cuor_estado as estado
+		from usuarioorganizacion_uorp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectSimpleUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectSimpleUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+		<include refid="paginationUsuarioOrganizacionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

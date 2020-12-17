@@ -113,6 +113,30 @@
 				cegr_estado =#{estado}
 		<include refid="whereEncuestaGrupoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleEncuestaGrupoFragment">
+		select
+			cegr_llave as  llaveTabla
+			,cegr_codigo as  codigo
+			,cegr_nombre as  nombre
+			,cegr_encuesta as  encuesta
+			,cegr_estado as estado
+		from encuestagrupo_egrp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaGrupoDTO">
+		<include refid="selectSimpleEncuestaGrupoFragment" />
+		<include refid="whereEncuestaGrupoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaGrupoDTO">
+		<include refid="selectSimpleEncuestaGrupoFragment" />
+		<include refid="whereEncuestaGrupoFragment" />
+		order by cegr_codigo 
+		, cegr_nombre 
+		<include refid="paginationEncuestaGrupoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

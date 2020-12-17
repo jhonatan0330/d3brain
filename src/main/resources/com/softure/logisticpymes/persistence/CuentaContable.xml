@@ -125,6 +125,30 @@
 				ccta_estado =#{estado}
 		<include refid="whereCuentaContablePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCuentaContableFragment">
+		select
+			ccta_llave as  llaveTabla
+			,ccta_codigo as  codigo
+			,ccta_nombre as  nombre
+			,mcta_sobregiro as  sobregiro
+			,ccta_catalogo as  catalogo
+			,ccta_cuentapadre as  cuentaPadre
+			,ccta_estado as estado
+		from cuentacontable_ctap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaContableDTO">
+		<include refid="selectSimpleCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaContableDTO">
+		<include refid="selectSimpleCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+		<include refid="paginationCuentaContableFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

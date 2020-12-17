@@ -4,6 +4,7 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
+import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -79,6 +80,13 @@ public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFi
 		return super.listarConsulta(dto);
 	}
 	
+	public List<PostRespuestaDTO> listarEnOrden(PostRespuestaFilterDTO dto)throws ServerException{
+		// BEGIN region listarEnOrden
+		paginar(dto);
+		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return postRespuestaMapper.listarEnOrden(dto);
+		// END region listarEnOrden
+	}
 
 	@Override
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)

@@ -95,6 +95,27 @@
 				ccap_estado =#{estado}
 		<include refid="whereCuentaAuxiliarPlantillaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCuentaAuxiliarPlantillaFragment">
+		select
+			ccap_llave as  llaveTabla
+			,ccap_cuentaprincipal as  cuentaPrincipal
+			,ccap_plantilla as  plantilla
+			,ccap_estado as estado
+		from cuentaauxiliarplantilla_capp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaAuxiliarPlantillaDTO">
+		<include refid="selectSimpleCuentaAuxiliarPlantillaFragment" />
+		<include refid="whereCuentaAuxiliarPlantillaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaAuxiliarPlantillaDTO">
+		<include refid="selectSimpleCuentaAuxiliarPlantillaFragment" />
+		<include refid="whereCuentaAuxiliarPlantillaFragment" />
+		<include refid="paginationCuentaAuxiliarPlantillaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

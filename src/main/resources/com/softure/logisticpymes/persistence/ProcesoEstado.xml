@@ -130,6 +130,31 @@
 				cpes_estado =#{estado}
 		<include refid="whereProcesoEstadoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProcesoEstadoFragment">
+		select
+			cpes_llave as  llaveTabla
+			,cpes_tipo as  tipo
+			,cpes_estadodocumento as  estadoDocumento
+			,npes_avance as  avance
+			,cpes_nombre as  nombre
+			,cpes_proceso as  proceso
+			,cpes_estado as estado
+		from procesoestado_pesp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoEstadoDTO">
+		<include refid="selectSimpleProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoEstadoDTO">
+		<include refid="selectSimpleProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+		order by npes_avance 
+		<include refid="paginationProcesoEstadoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -12,16 +12,42 @@ public class PostPreguntaDTO extends BasicDTO
 // BEGIN region interfaces  
 // END region interfaces
 {
+	public static final String DASHBOARD = "D";
+	public static final String PLANTILLA = "P";
+	public static final String CAMPO = "C";
+	public static final String TRANSICION = "T";
 
+	private String campo;
+	private String tipo;
+	private Integer calificaciones;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fecha;
 	private String autor;
 	private String autorImagen;
 	private String autorNombre;
 	private String pregunta;
-	private String keywords;
-	private Integer calificaciones;
 
+	public void setCampo(String campo) {
+		this.campo = campo;
+	}
+	
+	public String getCampo() {
+		return campo;
+	}
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	public String getTipo() {
+		return tipo;
+	}
+	public void setCalificaciones(Integer calificaciones) {
+		this.calificaciones = calificaciones;
+	}
+	
+	public Integer getCalificaciones() {
+		return calificaciones;
+	}
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
@@ -56,20 +82,6 @@ public class PostPreguntaDTO extends BasicDTO
 	
 	public String getPregunta() {
 		return pregunta;
-	}
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-	
-	public String getKeywords() {
-		return keywords;
-	}
-	public void setCalificaciones(Integer calificaciones) {
-		this.calificaciones = calificaciones;
-	}
-	
-	public Integer getCalificaciones() {
-		return calificaciones;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

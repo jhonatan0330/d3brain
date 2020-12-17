@@ -152,6 +152,32 @@
 				ctur_estado =#{estado}
 		<include refid="whereTurnoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleTurnoFragment">
+		select
+			ctur_llave as  llaveTabla
+			,dtur_fechaapertura as  fechaApertura
+			,dtur_fechaentrega as  fechaEntrega
+			,mtur_montoinicial as  montoInicial
+			,mtur_montofinal as  montoFinal
+			,ctur_documento as  documento
+			,ctur_usuario as  usuario
+			,ctur_cuenta as  cuenta
+			,ctur_estado as estado
+		from turno_turp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TurnoDTO">
+		<include refid="selectSimpleTurnoFragment" />
+		<include refid="whereTurnoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TurnoDTO">
+		<include refid="selectSimpleTurnoFragment" />
+		<include refid="whereTurnoFragment" />
+		<include refid="paginationTurnoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

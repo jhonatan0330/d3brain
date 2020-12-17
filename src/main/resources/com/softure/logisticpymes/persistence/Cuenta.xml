@@ -136,6 +136,31 @@
 				ccue_estado =#{estado}
 		<include refid="whereCuentaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleCuentaFragment">
+		select
+			ccue_llave as  llaveTabla
+			,ccue_codigo as  codigo
+			,ccue_nombre as  nombre
+			,ccue_documento as  documento
+			,dcue_fechaconciliacion as  fechaConciliacion
+			,bcue_validarturno as  validarTurno
+			,ccue_estado as estado
+		from cuenta_cuep a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaDTO">
+		<include refid="selectSimpleCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaDTO">
+		<include refid="selectSimpleCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+		order by ccue_nombre 
+		<include refid="paginationCuentaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -231,6 +231,40 @@
 				cact_estado =#{estado}
 		<include refid="whereActividadPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleActividadFragment">
+		select
+			cact_llave as  llaveTabla
+			,cact_documento as  documento
+			,cact_responsable as  responsable
+			,cact_comentario as  comentario
+			,dact_fecharegistro as  fechaRegistro
+			,dact_fechaarrancar as  fechaArrancar
+			,cact_usuarioregistro as  usuarioRegistro
+			,dact_fechainactivo as  fechaInactivo
+			,dact_fechaterminar as  fechaTerminar
+			,dact_fechalimite as  fechaLimite
+			,cact_usuarioinactivo as  usuarioInactivo
+			,nact_duracion as  duracion
+			,cact_actividadprevia as  actividadPrevia
+			,cact_actividadsiguiente as  actividadSiguiente
+			,cact_estado as estado
+		from actividad_actp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ActividadDTO">
+		<include refid="selectSimpleActividadFragment" />
+		<include refid="whereActividadFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ActividadDTO">
+		<include refid="selectSimpleActividadFragment" />
+		<include refid="whereActividadFragment" />
+		order by cact_documento 
+		, dact_fechaarrancar desc
+		<include refid="paginationActividadFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

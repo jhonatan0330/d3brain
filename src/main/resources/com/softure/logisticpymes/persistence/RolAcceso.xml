@@ -110,6 +110,29 @@
 				crac_estado =#{estado}
 		<include refid="whereRolAccesoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleRolAccesoFragment">
+		select
+			crac_llave as  llaveTabla
+			,crac_plantilla as  plantilla
+			,brac_permisoscompletos as  permisosCompletos
+			,nrac_minutossesion as  minutosSesion
+			,crac_estado as estado
+		from rolacceso_racp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="RolAccesoDTO">
+		<include refid="selectSimpleRolAccesoFragment" />
+		<include refid="whereRolAccesoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="RolAccesoDTO">
+		<include refid="selectSimpleRolAccesoFragment" />
+		<include refid="whereRolAccesoFragment" />
+		order by nombre 
+		<include refid="paginationRolAccesoFragment" />
+	</select>
+	
 
 	<select id="consultaUsuarioDocumento" parameterType="RolAccesoDTO" resultType="RolAccesoDTO">
 		<include refid="selectRolAccesoFragment" />

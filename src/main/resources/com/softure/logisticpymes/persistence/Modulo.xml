@@ -115,6 +115,30 @@
 				cmod_estado =#{estado}
 		<include refid="whereModuloPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleModuloFragment">
+		select
+			cmod_llave as  llaveTabla
+			,cmod_nombre as  nombre
+			,cmod_url as  url
+			,cmod_descripcion as  descripcion
+			,bmod_movil as  movil
+			,cmod_estado as estado
+		from modulo_modp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ModuloDTO">
+		<include refid="selectSimpleModuloFragment" />
+		<include refid="whereModuloFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ModuloDTO">
+		<include refid="selectSimpleModuloFragment" />
+		<include refid="whereModuloFragment" />
+		order by cmod_nombre 
+		<include refid="paginationModuloFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

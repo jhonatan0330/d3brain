@@ -86,6 +86,26 @@
 				cbod_estado =#{estado}
 		<include refid="whereBodegaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleBodegaFragment">
+		select
+			cbod_llave as  llaveTabla
+			,cbod_documento as  documento
+			,cbod_estado as estado
+		from bodega_bodp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="BodegaDTO">
+		<include refid="selectSimpleBodegaFragment" />
+		<include refid="whereBodegaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="BodegaDTO">
+		<include refid="selectSimpleBodegaFragment" />
+		<include refid="whereBodegaFragment" />
+		<include refid="paginationBodegaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

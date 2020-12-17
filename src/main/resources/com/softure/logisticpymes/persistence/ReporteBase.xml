@@ -170,6 +170,36 @@
 				crpb_estado =#{estado}
 		<include refid="whereReporteBasePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleReporteBaseFragment">
+		select
+			crpb_llave as  llaveTabla
+			,crpb_plantilla as  plantilla
+			,crpb_nombre as  nombre
+			,crpb_codigo as  codigo
+			,brpb_soloexistente as  soloExistente
+			,crpb_variables as  variables
+			,nrpb_version as  version
+			,crpb_descripcion as  descripcion
+			,crpb_servidor as  servidor
+			,brpb_publico as  publico
+			,crpb_estado as estado
+		from reportebase_rpbp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ReporteBaseDTO">
+		<include refid="selectSimpleReporteBaseFragment" />
+		<include refid="whereReporteBaseFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ReporteBaseDTO">
+		<include refid="selectSimpleReporteBaseFragment" />
+		<include refid="whereReporteBaseFragment" />
+		order by plantillanombre 
+		, crpb_nombre 
+		<include refid="paginationReporteBaseFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

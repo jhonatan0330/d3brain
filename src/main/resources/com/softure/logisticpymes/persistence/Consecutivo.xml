@@ -145,6 +145,33 @@
 				ccon_estado =#{estado}
 		<include refid="whereConsecutivoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleConsecutivoFragment">
+		select
+			ccon_llave as  llaveTabla
+			,ccon_nombre as  nombre
+			,ccon_prefijo as  prefijo
+			,ccon_sufijo as  sufijo
+			,mcon_numeroinicial as  numeroInicial
+			,mcon_numerofinal as  numeroFinal
+			,mcon_numeroactual as  numeroActual
+			,bcon_manual as  manual
+			,ccon_estado as estado
+		from consecutivo_conp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ConsecutivoDTO">
+		<include refid="selectSimpleConsecutivoFragment" />
+		<include refid="whereConsecutivoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ConsecutivoDTO">
+		<include refid="selectSimpleConsecutivoFragment" />
+		<include refid="whereConsecutivoFragment" />
+		order by ccon_nombre 
+		<include refid="paginationConsecutivoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

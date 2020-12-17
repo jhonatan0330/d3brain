@@ -195,6 +195,37 @@
 				cmsj_estado =#{estado}
 		<include refid="whereMensajePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleMensajeFragment">
+		select
+			cmsj_llave as  llaveTabla
+			,dmsj_fecha as  fecha
+			,cmsj_titulo as  titulo
+			,cmsj_usuario as  usuario
+			,cmsj_documento as  documento
+			,cmsj_template as  template
+			,cmsj_parametros as  parametros
+			,dmsj_leido as  leido
+			,dmsj_correoenviado as  correoEnviado
+			,cmsj_correoerror as  correoError
+			,cmsj_correo as  correo
+			,cmsj_reporte as  reporte
+			,cmsj_estado as estado
+		from mensaje_msjp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="MensajeDTO">
+		<include refid="selectSimpleMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="MensajeDTO">
+		<include refid="selectSimpleMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+		order by dmsj_fecha desc
+		<include refid="paginationMensajeFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

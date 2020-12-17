@@ -167,6 +167,37 @@
 				cser_estado =#{estado}
 		<include refid="whereServidorPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleServidorFragment">
+		select
+			cser_llave as  llaveTabla
+			,cser_tipo as  tipo
+			,nser_orden as  orden
+			,cser_nombre as  nombre
+			,cser_url as  url
+			,cser_puerto as  puerto
+			,cser_usuario as  usuario
+			,cser_clave as  clave
+			,cser_base as  base
+			,cser_urlconexion as  urlConexion
+			,cser_servidorrespaldo as  servidorRespaldo
+			,cser_estado as estado
+		from servidor_serp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ServidorDTO">
+		<include refid="selectSimpleServidorFragment" />
+		<include refid="whereServidorFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ServidorDTO">
+		<include refid="selectSimpleServidorFragment" />
+		<include refid="whereServidorFragment" />
+		order by cser_tipo 
+		, nser_orden 
+		<include refid="paginationServidorFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

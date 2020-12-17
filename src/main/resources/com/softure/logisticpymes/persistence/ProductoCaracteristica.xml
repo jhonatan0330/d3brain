@@ -143,6 +143,33 @@
 				cpcr_estado =#{estado}
 		<include refid="whereProductoCaracteristicaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProductoCaracteristicaFragment">
+		select
+			cpcr_llave as  llaveTabla
+			,cpcr_objetivo as  objetivo
+			,cpcr_base as  base
+			,cpcr_formato as  formato
+			,cpcr_nombre as  nombre
+			,cpcr_codigo as  codigo
+			,npcr_orden as  orden
+			,cpcr_imagen as  imagen
+			,cpcr_estado as estado
+		from productocaracteristica_pcrp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectSimpleProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectSimpleProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+		order by npcr_orden 
+		<include refid="paginationProductoCaracteristicaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

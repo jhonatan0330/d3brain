@@ -120,6 +120,29 @@
 				cpcl_estado =#{estado}
 		<include refid="wherePostCalificacionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePostCalificacionFragment">
+		select
+			cpcl_llave as  llaveTabla
+			,cpcl_usuario as  usuario
+			,dpcl_fecha as  fecha
+			,cpcl_respuesta as  respuesta
+			,bpcl_positiva as  positiva
+			,cpcl_estado as estado
+		from postcalificacion_pclp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PostCalificacionDTO">
+		<include refid="selectSimplePostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PostCalificacionDTO">
+		<include refid="selectSimplePostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+		<include refid="paginationPostCalificacionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

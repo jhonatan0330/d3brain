@@ -158,6 +158,33 @@
 				cdcp_estado =#{estado}
 		<include refid="whereDetalleCaracteristicaProductoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDetalleCaracteristicaProductoFragment">
+		select
+			cdcp_llave as  llaveTabla
+			,cdcp_entidad as  entidad
+			,cdcp_campo as  campo
+			,ddcp_valorfecha as  valorFecha
+			,cdcp_valortext as  valorText
+			,mdcp_valornumero as  valorNumero
+			,cdcp_valoropcion as  valorOpcion
+			,cdcp_transaccionregistro as  transaccionRegistro
+			,cdcp_transaccioninactivo as  transaccionInactivo
+			,cdcp_estado as estado
+		from detallecaracteristicaproducto_dcpp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DetalleCaracteristicaProductoDTO">
+		<include refid="selectSimpleDetalleCaracteristicaProductoFragment" />
+		<include refid="whereDetalleCaracteristicaProductoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DetalleCaracteristicaProductoDTO">
+		<include refid="selectSimpleDetalleCaracteristicaProductoFragment" />
+		<include refid="whereDetalleCaracteristicaProductoFragment" />
+		<include refid="paginationDetalleCaracteristicaProductoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

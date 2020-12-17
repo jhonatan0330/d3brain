@@ -172,6 +172,39 @@
 				ctar_estado =#{estado}
 		<include refid="whereTarifaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleTarifaFragment">
+		select
+			ctar_llave as  llaveTabla
+			,ctar_tarifario as  tarifario
+			,ctar_producto as  producto
+			,ctar_recurso as  recurso
+			,btar_rangoprecios as  rangoPrecios
+			,mtar_valorminimo as  valorMinimo
+			,mtar_valor as  valor
+			,mtar_valormaximo as  valorMaximo
+			,ntar_cantidadminima as  cantidadMinima
+			,ntar_cantidadmaxima as  cantidadMaxima
+			,mtar_totalminimo as  totalMinimo
+			,ctar_estado as estado
+		from tarifa_tarp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TarifaDTO">
+		<include refid="selectSimpleTarifaFragment" />
+		<include refid="whereTarifaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TarifaDTO">
+		<include refid="selectSimpleTarifaFragment" />
+		<include refid="whereTarifaFragment" />
+		order by ctar_tarifario 
+		, productonombre 
+		, recursonombre 
+		, ntar_cantidadminima 
+		<include refid="paginationTarifaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

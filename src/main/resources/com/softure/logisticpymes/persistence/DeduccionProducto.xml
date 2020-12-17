@@ -142,6 +142,31 @@
 				cdpr_estado =#{estado}
 		<include refid="whereDeduccionProductoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDeduccionProductoFragment">
+		select
+			cdpr_llave as  llaveTabla
+			,cdpr_documento as  documento
+			,cdpr_producto as  producto
+			,ddpr_fecha as  fecha
+			,mdpr_cantidad as  cantidad
+			,cdpr_responsable as  responsable
+			,cdpr_bodega as  bodega
+			,cdpr_estado as estado
+		from deduccionproducto_dprp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DeduccionProductoDTO">
+		<include refid="selectSimpleDeduccionProductoFragment" />
+		<include refid="whereDeduccionProductoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DeduccionProductoDTO">
+		<include refid="selectSimpleDeduccionProductoFragment" />
+		<include refid="whereDeduccionProductoFragment" />
+		<include refid="paginationDeduccionProductoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

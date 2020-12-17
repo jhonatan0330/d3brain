@@ -99,6 +99,29 @@
 				cper_estado =#{estado}
 		<include refid="wherePermisoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePermisoFragment">
+		select
+			cper_llave as  llaveTabla
+			,cper_rolacceso as  rolAcceso
+			,cper_modulo as  modulo
+			,cper_estado as estado
+		from permiso_perp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PermisoDTO">
+		<include refid="selectSimplePermisoFragment" />
+		<include refid="wherePermisoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PermisoDTO">
+		<include refid="selectSimplePermisoFragment" />
+		<include refid="wherePermisoFragment" />
+		order by rolaccesonombre 
+		, modulonombre 
+		<include refid="paginationPermisoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

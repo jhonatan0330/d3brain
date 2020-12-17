@@ -118,6 +118,30 @@
 				cusr_estado =#{estado}
 		<include refid="whereUsuarioPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioFragment">
+		select
+			cusr_llave as  llaveTabla
+			,cusr_identificacion as  identificacion
+			,cusr_nombre as  nombre
+			,cusr_imagen as  imagen
+			,cusr_correo as  correo
+			,cusr_estado as estado
+		from usuario_usrp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioDTO">
+		<include refid="selectSimpleUsuarioFragment" />
+		<include refid="whereUsuarioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioDTO">
+		<include refid="selectSimpleUsuarioFragment" />
+		<include refid="whereUsuarioFragment" />
+		order by cusr_nombre 
+		<include refid="paginationUsuarioFragment" />
+	</select>
+	
 
 	<select id="listarRol" parameterType="UsuarioDTO" resultType="UsuarioDTO">
 		<include refid="selectUsuarioFragment" />

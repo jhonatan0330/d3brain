@@ -107,6 +107,28 @@
 				cuau_estado =#{estado}
 		<include refid="whereUsuarioAutenticacionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleUsuarioAutenticacionFragment">
+		select
+			cuau_llave as  llaveTabla
+			,cuau_usuario as  usuario
+			,cuau_sesion as  sesion
+			,cuau_clave as  clave
+			,cuau_estado as estado
+		from usuarioautenticacion_uaup a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioAutenticacionDTO">
+		<include refid="selectSimpleUsuarioAutenticacionFragment" />
+		<include refid="whereUsuarioAutenticacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioAutenticacionDTO">
+		<include refid="selectSimpleUsuarioAutenticacionFragment" />
+		<include refid="whereUsuarioAutenticacionFragment" />
+		<include refid="paginationUsuarioAutenticacionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

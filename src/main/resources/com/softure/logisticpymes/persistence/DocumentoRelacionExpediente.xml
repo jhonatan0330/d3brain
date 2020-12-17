@@ -125,6 +125,30 @@
 				cdex_estado =#{estado}
 		<include refid="whereDocumentoRelacionExpedientePrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDocumentoRelacionExpedienteFragment">
+		select
+			cdex_llave as  llaveTabla
+			,cdex_campomaestro as  campoMaestro
+			,cdex_expedientedetalle as  expedienteDetalle
+			,cdex_transaccionregistro as  transaccionRegistro
+			,cdex_transaccioninactivo as  transaccionInactivo
+			,mdex_valor as  valor
+			,cdex_estado as estado
+		from documentorelacionexpediente_dexp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoRelacionExpedienteDTO">
+		<include refid="selectSimpleDocumentoRelacionExpedienteFragment" />
+		<include refid="whereDocumentoRelacionExpedienteFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoRelacionExpedienteDTO">
+		<include refid="selectSimpleDocumentoRelacionExpedienteFragment" />
+		<include refid="whereDocumentoRelacionExpedienteFragment" />
+		<include refid="paginationDocumentoRelacionExpedienteFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -162,6 +162,32 @@
 				cenc_estado =#{estado}
 		<include refid="whereEncuestaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleEncuestaFragment">
+		select
+			cenc_llave as  llaveTabla
+			,cenc_nombre as  nombre
+			,denc_fechainicio as  fechaInicio
+			,denc_fechafin as  fechaFin
+			,denc_fechaejecucion as  fechaEjecucion
+			,benc_colaborativa as  colaborativa
+			,cenc_rol as  rol
+			,cenc_cliente as  cliente
+			,cenc_estado as estado
+		from encuesta_encp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaDTO">
+		<include refid="selectSimpleEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaDTO">
+		<include refid="selectSimpleEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+		<include refid="paginationEncuestaFragment" />
+	</select>
+	
 
 	<select id="listarDisponibles" parameterType="EncuestaDTO" resultType="EncuestaDTO">
 		<include refid="selectEncuestaFragment" />

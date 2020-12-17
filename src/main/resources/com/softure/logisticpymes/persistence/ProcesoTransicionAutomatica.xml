@@ -134,6 +134,31 @@
 				cpta_estado =#{estado}
 		<include refid="whereProcesoTransicionAutomaticaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProcesoTransicionAutomaticaFragment">
+		select
+			cpta_llave as  llaveTabla
+			,dpta_fecha as  fecha
+			,cpta_transicion as  transicion
+			,cpta_propiedad as  propiedad
+			,dpta_ejecucion as  ejecucion
+			,cpta_mensaje as  mensaje
+			,cpta_estado as estado
+		from procesotransicionautomatica_ptap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectSimpleProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectSimpleProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+		order by dpta_fecha desc
+		<include refid="paginationProcesoTransicionAutomaticaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

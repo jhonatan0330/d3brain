@@ -118,6 +118,31 @@
 				cpid_estado =#{estado}
 		<include refid="whereProductoInventarioDescuentoPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProductoInventarioDescuentoFragment">
+		select
+			cpid_llave as  llaveTabla
+			,cpid_producto as  producto
+			,cpid_productodescontar as  productoDescontar
+			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
+			,cpid_caracteristica as  caracteristica
+			,cpid_estado as estado
+		from productoinventariodescuento_pidp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+		order by cpid_producto 
+		, productodescontarnombre 
+		<include refid="paginationProductoInventarioDescuentoFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -189,6 +189,37 @@
 				cpdv_estado =#{estado}
 		<include refid="wherePedidoVentaPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimplePedidoVentaFragment">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,cpdv_estadoexpediente as  estadoExpediente
+			,cpdv_textofiltro as  textoFiltro
+			,npdv_historico as  historico
+			,cpdv_transaccion as  transaccion
+			,cpdv_estado as estado
+		from pedidoventa_pdvp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaDTO">
+		<include refid="selectSimplePedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaDTO">
+		<include refid="selectSimplePedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+		order by dpdv_fecha desc
+		, cpdv_nombre 
+		<include refid="paginationPedidoVentaFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

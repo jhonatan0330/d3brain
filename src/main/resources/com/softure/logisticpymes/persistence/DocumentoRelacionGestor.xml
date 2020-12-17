@@ -193,6 +193,36 @@
 				cdrg_estado =#{estado}
 		<include refid="whereDocumentoRelacionGestorPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleDocumentoRelacionGestorFragment">
+		select
+			cdrg_llave as  llaveTabla
+			,cdrg_documentoprincipal as  documentoPrincipal
+			,cdrg_documentomodificador as  documentoModificador
+			,ddrg_fecha as  fecha
+			,cdrg_estadoinicial as  estadoInicial
+			,cdrg_estadofinal as  estadoFinal
+			,cdrg_usuario as  usuario
+			,cdrg_ubicacion as  ubicacion
+			,cdrg_valores as  valores
+			,ddrg_cierre as  cierre
+			,cdrg_nombre as  nombre
+			,cdrg_estado as estado
+		from documentorelaciongestor_drgp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoRelacionGestorDTO">
+		<include refid="selectSimpleDocumentoRelacionGestorFragment" />
+		<include refid="whereDocumentoRelacionGestorFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoRelacionGestorDTO">
+		<include refid="selectSimpleDocumentoRelacionGestorFragment" />
+		<include refid="whereDocumentoRelacionGestorFragment" />
+		order by ddrg_fecha desc
+		<include refid="paginationDocumentoRelacionGestorFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->

@@ -1,5 +1,6 @@
 package com.softure.logisticpymes.persistence;
 
+import java.util.List;
 
 // BEGIN region interImport  
 // END region interImport
@@ -10,5 +11,6 @@ public interface PostRespuestaMapper extends IBasicMapper<PostRespuestaDTO, Post
 	
 
 // BEGIN region aditionalMethods  
+	List<PostRespuestaDTO> listarEnOrden(PostRespuestaFilterDTO dto);
 // END region aditionalMethods
 }

@@ -173,6 +173,37 @@
 				cptr_estado =#{estado}
 		<include refid="whereProcesoTransicionPrimaryKeyFragment" />
 	</select>
+	
+	<sql id="selectSimpleProcesoTransicionFragment">
+		select
+			cptr_llave as  llaveTabla
+			,cptr_nombre as  nombre
+			,cptr_proceso as  proceso
+			,cptr_estadopartida as  estadoPartida
+			,cptr_plantilla as  plantilla
+			,bptr_documentador as  documentador
+			,cptr_afectasaldo as  afectaSaldo
+			,bptr_rapida as  rapida
+			,cptr_estadollegada as  estadoLLegada
+			,cptr_estado as estado
+		from procesotransicion_ptrp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoTransicionDTO">
+		<include refid="selectSimpleProcesoTransicionFragment" />
+		<include refid="whereProcesoTransicionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoTransicionDTO">
+		<include refid="selectSimpleProcesoTransicionFragment" />
+		<include refid="whereProcesoTransicionFragment" />
+		order by procesonombre 
+		, estadopartidaorden 
+		, estadollegadaorden 
+		, cptr_nombre 
+		<include refid="paginationProcesoTransicionFragment" />
+	</select>
+	
 
 
 <!--// BEGIN region script-->
