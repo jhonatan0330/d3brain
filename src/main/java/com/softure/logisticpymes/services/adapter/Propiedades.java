@@ -300,6 +300,7 @@ public class Propiedades {
 			case CUENTA_CERRAR_CAJA : {ruleProperty =  " Si desea cerrar el turno en una caja.\n";break;}
 			case DECISION_SQL : {ruleProperty =  "Genera una funcion que devuelve una cadena de texto, para que las transacciones siguientes lo tomen por el nombre.\n"
 					+ "CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
+			case DEFAULT : {ruleProperty =  "Coloca un valor en el campo (Tipo numero y texto), para los tipo proceso solo funciona para autoload y busca el valor con el id seleccionado.\n";break;}
 			case DESCRIPCION : {ruleProperty =  " Coloca una descripcion al documento segun los campos del mismo.\n";break;}
 			case DESCRIPCION_NIVEL2 : {ruleProperty =  " Toma la descripcion de un campo proceso para el.\n";break;}			
 			case DETALLE_NUMERO_COLUMNAS : {ruleProperty =  " EN la interfaz web coloca el numero de columnas deseado, por defecto 1.\n";break;}
