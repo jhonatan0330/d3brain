@@ -215,6 +215,9 @@ import com.softure.logisticpymes.services.PermisoSvc;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
+import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
+import com.softure.logisticpymes.dto.filter.ReporteEjecucionFilterDTO;
+import com.softure.logisticpymes.services.ReporteEjecucionSvc;
 import com.softure.logisticpymes.dto.ConsecutivoDTO;
 import com.softure.logisticpymes.dto.filter.ConsecutivoFilterDTO;
 import com.softure.logisticpymes.services.ConsecutivoSvc;
@@ -5633,6 +5636,81 @@ public class FullControllerDTO {
 	public UsuarioSesionDTO guardarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	@Autowired private ReporteEjecucionSvc reporteEjecucionService;
+	
+	@RequestMapping(value="/consultaXIdReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO consultaXIdReporteEjecucion(@RequestBody String llave) throws FlexException {
+		try {
+			return reporteEjecucionService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosReporteEjecucion", method=RequestMethod.POST)
+	public int contarResultadosReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return reporteEjecucionService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO consultaUnicaReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return reporteEjecucionService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaReporteEjecucion", method=RequestMethod.POST)
+	public List<ReporteEjecucionDTO> listarConsultaReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return reporteEjecucionService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO activarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return reporteEjecucionService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO inactivarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return reporteEjecucionService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO actualizarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return reporteEjecucionService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarReporteEjecucion", method=RequestMethod.POST)
+	public ReporteEjecucionDTO guardarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return reporteEjecucionService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

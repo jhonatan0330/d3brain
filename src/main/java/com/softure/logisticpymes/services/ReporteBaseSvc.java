@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
+import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
 import com.softure.logisticpymes.dto.filter.ReporteBaseFilterDTO;
 import com.softure.logisticpymes.persistence.ReporteBaseMapper;
 
@@ -42,6 +44,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	public static final String P_KEY = "P_KEY";
+	@Autowired private ReporteEjecucionSvc ejecucionService;
 	// END region servicesReporteBase
 
 	@Override
@@ -177,41 +180,59 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	
 	
 	public byte[] generarReporte(String nombreReporte, String key,Map<String, Object> parametrosJasper, String usuario) throws Exception {
-		ReporteBaseDTO base = consultaXId(nombreReporte);
-		if(base == null) throw new ServerException("Reporte base no encontrado");
-		if(parametrosJasper == null)parametrosJasper = new HashMap<String, Object>();
-		String token = (String) parametrosJasper.get("P_TOKEN");
-		if(usuario ==null) {
-			if(token==null) {
-				if(base.getPublico()) {
-					token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+		ReporteEjecucionDTO ejecucion = new ReporteEjecucionDTO();
+		ejecucion.setFechaInicio(new Date());
+		try {
+			ReporteBaseDTO base = consultaXId(nombreReporte);
+			if(base == null) throw new ServerException("Reporte base no encontrado");
+			ejecucion.setReporte(nombreReporte);
+			ejecucion.setDocumento(key);
+			if(parametrosJasper == null)parametrosJasper = new HashMap<String, Object>();
+			String token = (String) parametrosJasper.get("P_TOKEN");
+			if(usuario ==null) {
+				if(token==null) {
+					if(base.getPublico()) {
+						token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+					}else {
+						throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
+					}
 				}else {
-					throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
+					usuario = getUserFlex(token);
 				}
-			}else {
-				usuario = getUserFlex(token);
 			}
-		}
-		if(key!=null)parametrosJasper.putAll(llenarParametros(key));
-		parametrosJasper.putAll(parametrosPropiedades(base.getLlaveTabla(), usuario));
-		String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
-		String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
-		if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
-		Object propiedadExcel = null;
-		//Seccion del reporte
-		GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
-		byte[] resultado=null;
-		if (tipoReporte!=null && tipoReporte.toUpperCase().equals("XLS")) {
-			propiedadExcel = parametrosJasper.get(Propiedades.REPORTE_EXCEL);
-			if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
-				resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);					
-			}else {
-				resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
+			ejecucion.setUsuario(usuario);
+			if(key!=null)parametrosJasper.putAll(llenarParametros(key));
+			parametrosJasper.putAll(parametrosPropiedades(base.getLlaveTabla(), usuario));
+			String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
+			String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
+			if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
+			Object propiedadExcel = null;
+			//Seccion del reporte
+			GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
+			byte[] resultado=null;
+			if (tipoReporte!=null && tipoReporte.toUpperCase().equals("XLS")) {
+				propiedadExcel = parametrosJasper.get(Propiedades.REPORTE_EXCEL);
+				if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
+					resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);					
+				}else {
+					resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
+				}
+			}else{
+				resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
 			}
-		}else{
-			resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
+			ejecucion.setFechaFin(new Date());
+			try {
+				if(ejecucion.getReporte()!=null)ejecucionService.save(ejecucion);
+			}catch (Exception e) {	}
+			return resultado;	
+		}catch (Exception e) {
+			ejecucion.setError(e.getMessage());
+			ejecucion.setFechaFin(new Date());
+			try {
+				if(ejecucion.getReporte()!=null)ejecucionService.save(ejecucion);
+			}catch (Exception ex) {	}
+			throw new Exception(e.getMessage());
 		}
-		return resultado;
 	}
 	
 // END region aditionalMethods
