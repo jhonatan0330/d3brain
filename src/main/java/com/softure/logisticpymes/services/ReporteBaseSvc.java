@@ -17,6 +17,7 @@ import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.cons.ConstantesGenerales;
 import javax.sql.DataSource;
 import com.softure.java.services.GeneradorReportes;
+import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
-import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
 import com.softure.logisticpymes.dto.filter.ReporteBaseFilterDTO;
 import com.softure.logisticpymes.persistence.ReporteBaseMapper;
 

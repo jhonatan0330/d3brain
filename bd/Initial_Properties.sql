@@ -1,0 +1,293 @@
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
+	VALUES('PROP_01' , 'C', 'TEXTO LARGO', 'BASICA', 'FORMATO', 'T', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_02' , 'C', 'ARCHIVO_TAMANO_MAXIMO', 'ARCHIVO_TAMANO_MAXIMO', 'REQUISITO', 'A');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_03' , 'C', 'BINARIO_VERDADERO', 'BINARIO_VERDADERO', 'FORMATO', 'I');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_04' , 'C', 'BINARIO_FALSO', 'BINARIO_FALSO', 'FORMATO', 'I');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_05' , 'C', 'BODEGA_FIJA', 'BODEGA_FIJA', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_06' , 'C', 'BODEGA_MOVIMIENTO', 'BODEGA_MOVIMIENTO', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_07' , 'C', 'CONFIGURACION_PLANTILLA_TIPO', 'CONFIGURACION_PLANTILLA_TIPO', 'REQUISITO', 'G');	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_08' , 'C', 'CONFIGURACION_ENTIDAD', 'CONFIGURACION_ENTIDAD', 'REQUISITO' ,'G', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_09' , 'C', 'TIPO DE MOVIMIENTO', 'CUENTA_MOVIMIENTO', 'REQUISITO', 'Z', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_11' , 'C', 'CUENTA_ABRIR_CAJA', 'CUENTA_ABRIR_CAJA', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_12' , 'C', 'CUENTA_CERRAR_CAJA', 'CUENTA_CERRAR_CAJA', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_13' , 'C', 'DETALLE_NUMERO_COLUMNAS', 'DETALLE_NUMERO_COLUMNAS', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_14' , 'C', 'DETALLE_TECLADO', 'DETALLE_TECLADO', 'REQUISITO', 'J', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_15' , 'C', 'DETALLE_TARIFARIO', 'DETALLE_TARIFARIO', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_16' , 'C', 'DETALLE_OCULTAR_IMAGENES', 'DETALLE_OCULTAR_IMAGENES', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_17' , 'C', 'UNICO_PRODUCTO', 'UNICO_PRODUCTO', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_18' , 'C', 'DETALLE_FORMULA', 'DETALLE_FORMULA', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_19' , 'C', 'FUENTE DE DATOS', 'PLANTILLA_AUXILIAR', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_20' , 'C', 'AUTOLOAD', 'AUTOLOAD', 'REQUISITO', 'Z', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_22' , 'C', 'FECHA_SIN_CALENDAR', 'FECHA_SIN_CALENDAR', 'REQUISITO', 'F', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_23' , 'C', 'FECHA_MAXIMA', 'FECHA_MAXIMA', 'REQUISITO', 'F');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_24' , 'C', 'FECHA_MINIMA', 'FECHA_MINIMA', 'REQUISITO', 'F');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_25' , 'C', 'FECHA_RANGO', 'FECHA_RANGO', 'REQUISITO', 'F');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_26' , 'C', 'FECHA_RANGO_MAXIMO', 'FECHA_RANGO_MAXIMO', 'REQUISITO', 'F');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_27' , 'C', 'FORMATO MONEDA', 'NUMERO_MONEDA', 'REQUISITO', 'N', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_28' , 'C', 'NUMERO_FORMULA', 'NUMERO_FORMULA', 'REQUISITO', 'N', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_29' , 'C', 'NUMERO_FUNCION', 'NUMERO_FUNCION_SQL', 'REQUISITO', 'N', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_30' , 'C', 'NUMERO_STEP', 'NUMERO_STEP', 'REQUISITO', 'N');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_31' , 'C', 'NUMERO_REDONDEO', 'NUMERO_REDONDEO', 'REQUISITO', 'N');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+	VALUES('PROP_32' , 'C', 'MULTIPLE', 'MULTIPLE', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_33' , 'C', 'CAMPO_HEREDADO', 'CAMPO_HEREDADO', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_34' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_35' , 'C', 'MOSTRAR EN POP UP', 'PROCESO_POP', 'REQUISITO', 'Z', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple)
+	VALUES('PROP_36' , 'C', 'ACCIONES CRUD', 'PROCESO_ACCIONES', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+	VALUES('PROP_37' , 'C', 'RUTA BPM GESTION', 'PROCESO_GESTIONAR_ESTADOS', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_38' , 'C', 'PROCESO_DIVISION', 'PROCESO_DIVISION', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_39' , 'C', 'PROCESO_VALOR', 'PROCESO_VALOR', 'REQUISITO', 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_40' , 'C', 'SOLICITAR FECHAS EN CONSULTA', 'SOLICITAR_FECHAS', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_41' , 'C', 'FUNCION CONSULTA DATOS', 'PROCESO_FUNCION_SQL', 'REQUISITO', 'Z', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_42' , 'L', 'TERCERO', 'TERCERO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_43' , 'L', 'ENCABEZADO', 'ENCABEZADO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_44' , 'L', 'DESCRIPCION', 'DESCRIPCION', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_45' , 'L', 'DESCRIPCION_NIVEL2', 'DESCRIPCION_NIVEL2', 'REQUISITO');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_47' , 'L', 'TOTAL', 'TOTAL', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_48' , 'L', 'CONSECUTIVO', 'CONSECUTIVO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_49' , 'L', 'FECHA', 'FECHA', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_50' , 'L', 'RESPONSABLE', 'RESPONSABLE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_51' , 'L', 'ORDEN', 'ORDEN', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_52' , 'L', 'ORDEN_DESCENDENTE', 'ORDEN_DESCENDENTE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_53' , 'L', 'AYUDA', 'AYUDA', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, bpvd_multiple) 
+	VALUES('PROP_54' , 'L', 'FUNCION_SQL_VALIDAR', 'FUNCION_SQL_VALIDAR', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_55' , 'L', 'SOLICITAR FECHAS EN CONSULTA', 'SOLICITAR_FECHAS', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_56' , 'L', 'COPY_TEXT', 'COPY_TEXT', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_57' , 'L', 'MENSAJE', 'MENSAJE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_58' , 'L', 'FUNCION DESTINATARIOS DEL MENSAJE', 'MENSAJE_DESTINATARIOS_SQL', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, bpvd_multiple) 
+	VALUES('PROP_59' , 'T', 'FUNCION_SQL_VALIDAR', 'FUNCION_SQL_VALIDAR', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_60' , 'T', 'MENSAJE', 'MENSAJE', 'REQUISITO');
+--Borradas las propiedades de sistema
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_69' , 'T', 'FUNCION DESTINATARIOS DEL MENSAJE', 'MENSAJE_DESTINATARIOS_SQL', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_70' , 'E', 'ENCABEZADO DOCUMENTO', 'REPORTE_ENCABEZADO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_71' , 'E', 'OPCION EN EXCEL', 'REPORTE_EXCEL', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_72' , 'E', 'P_SUBREPORT_', 'P_SUBREPORT_', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_73' , 'P', 'MENSAJE', 'MENSAJE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_74' , 'P', 'FUNCION DESTINATARIOS DEL MENSAJE', 'MENSAJE_DESTINATARIOS_SQL', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_75' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_76' , 'C', 'TEXTO_FORMULA', 'TEXTO_FORMULA', 'REQUISITO', 'T');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_77' , 'L', 'PERMISO CREAR', 'PERMISO_PLANTILLA_CREAR', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_78' , 'L', 'PERMISO MODIFICAR', 'PERMISO_PLANTILLA_MODIFICAR', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_79' , 'L', 'PERMISO ELIMINAR', 'PERMISO_PLANTILLA_ELIMINAR', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_81' , 'L', 'OCULTAR_TOTAL', 'PERMISO_PLANTILLA_OCULTAR_TOTAL', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_82' , 'L', 'FILTRO POR CAMPO', 'PERMISO_PLANTILLA_CAMPO_FILTRO', 'PERMISOS');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_83' , 'L', 'ESTADOS POR DEFECTO CONSULTA', 'PERMISO_PLANTILLA_FILTROS_BASE', 'PERMISOS');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_84' , 'L', 'CARGAS MASIVAS', 'PERMISO_PLANTILLA_CARGA_MASIVA', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_85' , 'L', 'CAMBIAR ESTADOS', 'PERMISO_PLANTILLA_CAMBIAR_ESTADO', 'PERMISOS', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_87' , 'L', 'BENEFICIO', 'BENEFICIO', 'BENEFICIO');	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo, bpvd_multiple) 
+	VALUES('PROP_88' , 'E', 'COLUMNA', 'COLUMNA', 'COLUMNAS DEL REPORTE', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_89', 'A', 'ROL', 'ROL', 'REQUISITO', 'E');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, cpvd_origencategoria) 
+	VALUES('PROP_90', 'A', 'FUNCION_SQL_ESTADO_ASIGNAR', 'FUNCION ASIGNACION', 'REQUISITO', true, true, 'E');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean, cpvd_origencategoria) 
+	VALUES('PROP_91', 'A', 'MODIFICABLE', 'MODIFICABLE', 'REQUISITO', true,'E');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_92', 'A', 'COLOR', 'COLOR', 'REQUISITO', 'E');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_94' , 'C', 'FILTRO', 'FILTRO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_95' , 'C', 'VALOR POR DEFECTO', 'DEFAULT', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_96' , 'C', 'CAMPOS DEPENDENCIA', 'DEPENDE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_97' , 'C', 'FECHA CON HORA', 'FECHA_CON_HORA', 'REQUISITO', 'F', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_98' , 'C', 'TIPOS SOPORTADOS', 'ARCHIVO_TIPO', 'REQUISITO', 'A', true);
+INSERT INTO propiedadvalordefinido_pvdp(cpvd_llave,  cpvd_origen,  cpvd_codigo,  cpvd_nombre,  cpvd_grupo)
+	VALUES('PROP_99',  'L',  'CUENTA_SOBREGIRO',  'CUENTA SOBREGIRO',  'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_100' , 'E', 'PIE DE PAGINA', 'REPORTE_PIE_PAGINA', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_multiple) 
+	VALUES('PROP_101' , 'L', 'IMAGEN DOCUMENTACION', 'IMAGEN', 'IMAGEN', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
+	VALUES('PROP_102' , 'E', 'REQUERIMIENTO', 'REQUERIMIENTO', 'REQUISITO', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_104' , 'C', 'VISIBLE EN EL RENDER', 'PERMISO_CAMPO_RENDER', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_105' , 'C', 'MODIFICABLE', 'PERMISO_CAMPO_MODIFICABLE', 'PERMISOS', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_107' , 'L', 'LISTABLE EN MENU', 'PERMISO_PLANTILLA_LISTAR_MENU', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_108' , 'L', 'VER TODOS', 'PERMISO_PLANTILLA_VER_TODOS', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_109' , 'L', 'FUNCION CALCULA TOTAL', 'TOTAL_FUNCION', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_110' , 'C', 'DETALLE_TARIFARIO_PRODUCTO', 'DETALLE_TARIFARIO_PRODUCTO', 'REQUISITO', 'N');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_111' , 'T', 'MENSAJE REPORTE', 'MENSAJE_REPORTE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_112' , 'P', 'MENSAJE REPORTE', 'MENSAJE_REPORTE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_113' , 'L', 'MENSAJE REPORTE', 'MENSAJE_REPORTE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_114' , 'L', 'PERMISO VER FORMULARIOS', 'PERMISO_PLANTILLA_VER', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_115' , 'T', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_116' , 'P', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_117' , 'L', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple, bpvd_textoculto) 
+	VALUES('PROP_118' , 'C', 'OPCIONES', 'OPCIONES', 'REQUISITO', 'G', true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_120' , 'L', 'FUNCION CONSULTA DATOS', 'PROCESO_FUNCION_SQL', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_121' , 'C', 'MODIFICAR CAMPO PRINCIPAL', 'MODIFICAR_CAMPO', 'REQUISITO', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_122' , 'C', 'CONSULTA PRODUCTOS FUNCION ', 'PRODUCTOS_FUNCION_SQL', 'REQUISITO', 'J', TRUE, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_123' , 'C', 'CONSULTA PRODUCTOS CAMPO', 'PRODUCTOS_FUNCION_CAMPO', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_124' , 'C', 'CONSULTA PRODUCTOS TERCERO', 'PRODUCTOS_TERCERO', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_125' , 'L', 'GENERAR DOCUMENTOS', 'GENERAR_DOCUMENTOS_SQL', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
+	VALUES('PROP_126' , 'T', 'REQUERIMIENTO_TRANSICION', 'REQUERIMIENTO_TRANSICION', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_127' , 'C', 'CATEGORIA PRODUCTO', 'DETALLE_CATEGORIA', 'REQUISITO', 'J');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
+	VALUES('PROP_128' , 'C', 'REQUERIMIENTO_CAMPO', 'REQUERIMIENTO_CAMPO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_129' , 'C', 'INCLUIR EN TRAZABILIDAD', 'INCLUIR_TRAZA_PRINCIPAL', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
+	VALUES('PROP_130' , 'P', 'REQUERIMIENTO_PROCESO', 'REQUERIMIENTO PROCESO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
+	VALUES('PROP_131' , 'L', 'REQUERIMIENTO_PLANTILLA', 'REQUERIMIENTO PLANTILLA', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_132' , 'L', 'PLANTILLA ANULAR', 'PLANTILLA_ANULAR', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_133' , 'T', 'UBICACION', 'UBICACION', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_134' , 'C', 'OPCIONAL', 'PERMISO_CAMPO_OPCIONAL', 'PERMISOS', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_135' , 'C', 'BLOQUEAR', 'PERMISO_CAMPO_BLOQUEAR', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_136', 'A', 'ESTADO_ASIGNAR', 'ASIGNACION DE USUARIO', 'REQUISITO', 'E');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_137' , 'E', 'ENCABEZADO EN EXCEL', 'REPORTE_ENCABEZADO_EXCEL', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_138' , 'E', 'JRXML', 'REPORTE_JRXML', 'REQUISITO',  true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, bpvd_multiple) 
+	VALUES('PROP_139' , 'L', 'VALIDACION ANTERIOR A GENERAR EL DOCUMENTO', 'FUNCION_SQL_VALIDAR_ANTES', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_pidefechas, bpvd_solicitamotivo, bpvd_pideusuario) 
+	VALUES('PROP_140' , 'T', 'TEMPORIZADOR', 'TEMPORIZADOR', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_141' , 'L', 'TIPO ROL', 'PLANTILLA_TIPO_ROL', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_142' , 'L', 'TIPO REPORTE', 'PLANTILLA_TIPO_REPORTE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_143' , 'L', 'TIPO CUENTA', 'PLANTILLA_TIPO_CUENTA', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_144' , 'L', 'TIPO PRODUCTO', 'PLANTILLA_TIPO_PRODUCTO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_145' , 'L', 'TIPO BODEGA', 'PLANTILLA_TIPO_BODEGA', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_textoculto, cpvd_origencategoria, bpvd_solicitamotivo) 
+	VALUES('PROP_146' , 'A', 'DECISION_SQL', 'DECISION_SQL', 'REQUISITO', true, 'D', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_147' , 'C', 'FUNCION TARIFAS', 'DETALLE_TARIFARIO_SQL', 'REQUISITO', 'J', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo) 
+	VALUES('PROP_148' , 'L', 'PRODUCTO_CAMPO_VALOR_UNITARIO', 'PRODUCTO CAMPO VALOR UNITARIO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo) 
+	VALUES('PROP_149' , 'L', 'PRODUCTO_CAMPO_VALOR_MINIMO', 'PRODUCTO CAMPO VALOR MINIMO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo) 
+	VALUES('PROP_150' , 'L', 'PRODUCTO_CAMPO_CANTIDAD', 'PRODUCTO CAMPO CANTIDAD', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_151' , 'T', 'GENERA_DOCUMENTO_CAMPO', 'CAMPO PARA GENERAR DOCUMENTO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_multiple, cpvd_origencategoria) 
+	VALUES('PROP_152' , 'C', 'RELACIONAR_DOCUMENTOS', 'RELACIONAR DOCUMENTOS', 'REQUISITO', true, 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_multiple, cpvd_origencategoria) 
+	VALUES('PROP_153' , 'C', 'RETIRAR_DOCUMENTOS', 'RETIRAR DOCUMENTOS', 'REQUISITO', true, 'Z');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_154' , 'C', 'LLENAR AL GUARDAR', 'AUTOLOAD_SAVE', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_155' , 'L', 'OCULTAR GUARDAR', 'PLANTILLA_OCULTAR_GUARDAR', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_textoculto, cpvd_origencategoria, bpvd_solicitamotivo) 
+	VALUES('PROP_156' , 'A', 'ITERACION_SQL', 'ITERACION_SQL', 'REQUISITO', true, 'R', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_157' , 'C', 'MULTIPLES ADJUNTOS', 'MULTIPLE_FILE', 'REQUISITO', 'A');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_158' , 'C', 'CAMPO UNICO', 'UNIQUE', 'REQUISITO', true);
