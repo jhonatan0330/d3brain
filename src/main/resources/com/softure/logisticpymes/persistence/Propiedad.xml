@@ -381,7 +381,20 @@ COST 100;
 	<select id="eliminarFuncionNumerica" parameterType="PropiedadDTO" >
 		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, parametros character varying[]);
 	</select>
+
+	<select id="crearFuncionCampoGenerar">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
 	
+	<select id="eliminarFuncionCampoGenerar" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying);
+	</select>
+		
 	<select id="eliminarFuncionTarifas" parameterType="PropiedadDTO" >
 		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[]);
 	</select>

@@ -8,7 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.PropiedadDTO;
@@ -27,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ProcesoTransicionAutomaticaDTO;
+import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.filter.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.logisticpymes.persistence.ProcesoTransicionAutomaticaMapper;
 
@@ -39,6 +39,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	// BEGIN region servicesProcesoTransicionAutomatica
 	@Autowired private PedidoVentaSvc documentoService;
 	@Autowired private PropiedadSvc propiedadService;
+	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	// END region servicesProcesoTransicionAutomatica
 
@@ -219,28 +220,22 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 			if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
 			String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
+			ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
+			transicion.setLlaveTabla(dto.getTransicion());
+			transicion.setPlantilla(dto.getPlantilla());
+
+			String transaccionDocumento = null;
+			
 			if(propiedadMultiple==null) {
 				dto.setMensaje("");
 				for (PedidoVentaDTO iPedido : documentos) {
-					PedidoVentaDTO nuevo = new PedidoVentaDTO();
-					nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-					PedidoVentaCaracteristicaDTO campoPlantilla = new PedidoVentaCaracteristicaDTO();
-					campoPlantilla.setCampo(campoDestino);
-					campoPlantilla.setValorOpcion(iPedido.getLlaveTabla());
-					nuevo.getCaracteristicas().add(campoPlantilla);
-					nuevo.setPlantilla(dto.getPlantilla());
-					nuevo = documentoService.guardar(nuevo, tokenSystem.getLlaveTabla());
+					
+					PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla());
+					transaccionDocumento = nuevo.getTransaccion();
 					dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 				}
 			}else {
-				PedidoVentaDTO nuevo = new PedidoVentaDTO();
-				nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-				PedidoVentaCaracteristicaDTO campoPlantilla = new PedidoVentaCaracteristicaDTO();
-				campoPlantilla.setCampo(campoDestino);
-				campoPlantilla.setExpedientes(documentos);
-				nuevo.getCaracteristicas().add(campoPlantilla);
-				nuevo.setPlantilla(dto.getPlantilla());
-				nuevo = documentoService.guardar(nuevo, tokenSystem.getLlaveTabla());
+				PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla());
 				dto.setMensaje(nuevo.getNombre());		
 			}
 		}

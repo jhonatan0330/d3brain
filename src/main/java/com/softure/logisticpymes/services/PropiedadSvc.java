@@ -151,6 +151,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.NUMERO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionNumerica(dto);
 				break;
+			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
+				propiedadMapper.eliminarFuncionCampoGenerar(dto);
+				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
 				break;
@@ -243,6 +246,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.NUMERO_FUNCION_SQL:
 					propiedadMapper.crearFuncionNumerica(dto);
+					break;
+				case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
+					propiedadMapper.crearFuncionCampoGenerar(dto);
 					break;
 				default:
 					propiedadMapper.crearFuncion(dto);

@@ -28,7 +28,7 @@ public class TipoFecha {
 			String rango = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO);
 			if(!rango.isEmpty()){
 				if(pCampo.getValorAuxiliar()==null) throw new ServerException("El valor auxiliar debe indicar el rango usado");
-				if(pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Debe colocar el numero de tiempo de la fecha final");
+				if(pCampo.getValorNumero()==null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Debe colocar el numero de tiempo de la fecha final");
 				
 				//long rangoSeleccionadoLong = pCampo.getValorFecha().getTime() - pCampo.getValorNumero().longValue();
 				PropiedadDTO rangoMaximo = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO_MAXIMO);

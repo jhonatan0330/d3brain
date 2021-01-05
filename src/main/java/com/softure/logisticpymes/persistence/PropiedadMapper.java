@@ -25,6 +25,8 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	void crearFuncionIteracion(PropiedadDTO dto);
 	void crearFuncionTarifas(PropiedadDTO dto);
 	void crearFuncionNumerica(PropiedadDTO dto);
+	void crearFuncionCampoGenerar(PropiedadDTO dto);
+	void eliminarFuncionCampoGenerar(PropiedadDTO dto);
 	void eliminarFuncionNumerica(PropiedadDTO dto);
 	void eliminarFuncionTarifas(PropiedadDTO dto);
 	void eliminarFuncionDecision(PropiedadDTO dto);

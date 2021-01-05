@@ -326,6 +326,15 @@
 		limit 1
 	</select>
 	
+	<select id="consultarSQLCampoGenerarDocumento" resultType="PedidoVentaCaracteristicaDTO">
+		select cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,mpvc_valornumero as  valorNumero
+			from propiedad_${sqlFuncionCalculo} (#{llaveTablaDocumento}, #{llaveTablaModificador})
+	</select>
+	
 <!--// END region script-->
 
 </mapper>
