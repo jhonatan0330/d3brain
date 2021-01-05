@@ -538,8 +538,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 					campoPrincipal.setPrincipal(expedienteDTO);
 				}
 				camposNuevos.add(campoPrincipal);
-				
-				
 			}else {
 				if(iPropiedadDTO.getKey().compareTo(Propiedades.GENERA_DOCUMENTO_CAMPO)==0) {
 					//Este campo debe sumarse

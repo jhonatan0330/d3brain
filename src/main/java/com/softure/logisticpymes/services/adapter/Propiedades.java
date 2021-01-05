@@ -324,6 +324,8 @@ public class Propiedades {
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case GENERA_DOCUMENTO_CAMPO : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar y en los links colocamos el campo del documento maestro que va a copiar el campo\n'nLas propiedades sin link se llena con el documento actual (y si este campo en el documento maestro es multiple se generan muchos documentos de la transicion)\n";break;}
 			case GENERA_DOCUMENTO_FUNCION_SQL : {ruleProperty =  "Crea un campo para agregar a un documento.\nDebes crear una funcion para obtener los datos del campo.\nEn las relaciones debes colocar una relacion al campo que deseas llenar\n"
+					+ "\n\nAyuda para generar el campo\n"
+					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"
 					+ "\n\nEstructura de la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";break;}
 			case FUNCION_SQL_ESTADO_ASIGNAR : {ruleProperty =  "Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.\nEl documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion\n"
