@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.softure.java.dto.exception.ApiErrorResponse;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
@@ -95,10 +95,13 @@ public class APIController {
 	}
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
-    public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file) throws ServerException {
+    public ApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-			return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename());
+        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename()); 
+        	ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+     		        .withMessage(url).build();
+			return response;
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
