@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +32,7 @@ import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/rest")
 public class APIController {
 
@@ -102,6 +104,17 @@ public class APIController {
         	ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
      		        .withMessage(url).build();
 			return response;
+		} catch (IOException e) {
+			throw new ServerException(e.getMessage());
+		}
+    }
+	
+	
+	@RequestMapping(value="/uploadResponseString", method=RequestMethod.POST)
+    public String handleFileUploadFlex(@RequestParam("file") MultipartFile file) throws ServerException {
+        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+        try {
+        	return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename()); 
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
