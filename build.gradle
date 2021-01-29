@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.softure'
-version = '2.0.2'
+version = '2.0.3'
 sourceCompatibility = '8'
 
 repositories {
@@ -27,10 +27,9 @@ dependencies {
 	implementation 'net.sf.jasperreports:jasperreports-chart-themes:6.16.0'
 	implementation 'net.sf.barcode4j:barcode4j:2.1'
 	implementation 'org.apache.xmlgraphics:batik-bridge:1.14'
+	implementation 'com.google.zxing:core:3.4.1'
 	
 	// implementation 'org.apache.xmlgraphics:batik-util:1.14'
-	
-	
 	
 	implementation 'commons-fileupload:commons-fileupload:1.4'
 	implementation 'commons-net:commons-net:3.7'
