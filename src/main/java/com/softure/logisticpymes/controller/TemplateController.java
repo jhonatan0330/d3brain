@@ -1,5 +1,7 @@
 package com.softure.logisticpymes.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.dto.DocumentoRelacionGestorDTO;
+import com.softure.logisticpymes.dto.filter.DocumentoRelacionGestorFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
+import com.softure.logisticpymes.services.DocumentoRelacionGestorSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 
 @RestController
@@ -22,6 +27,7 @@ public class TemplateController {
 
 	@Autowired private CampoAdaptador adaptador;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
+	@Autowired private DocumentoRelacionGestorSvc gestionService;
 	
 	@RequestMapping(value="/getFields", method=RequestMethod.GET)
 	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {
@@ -32,7 +38,14 @@ public class TemplateController {
 	
 	@RequestMapping(value="/getFieldData", method=RequestMethod.POST)
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
+		filterField.setSecurityToken(token);
 		return adaptador.consultarDatosBase(filterField);
+	}
+	
+	@RequestMapping(value="/getTrace", method=RequestMethod.POST)
+	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
+		filterField.setSecurityToken(token);
+		return gestionService.listarExpedientesGestionadores(filterField);
 	}
 	
 }
