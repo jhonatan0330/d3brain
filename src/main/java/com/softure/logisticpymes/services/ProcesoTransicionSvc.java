@@ -185,7 +185,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			//Genero documento en caso que toque
 			if(dto.getPlantilla()!=null) {
 				modificadorId = documentoDTO.getLlaveTabla();
-				PedidoVentaDTO automatico = generarDocumentosTransicion(dto, documentoDTO, expedienteDTO, documentoDTO.getTransaccion(), token);
+				PedidoVentaDTO automatico = generarDocumentosTransicion(dto, documentoDTO, expedienteDTO, documentoDTO.getTransaccion(), token, null);
 				if(automatico!=null && automatico.getPlantilla().compareTo(dto.getPlantilla())==0)//Por si es la transicion inicial no  le quite el poder del documento que genero  
 					modificadorId = automatico.getLlaveTabla();
 			}
@@ -395,7 +395,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			for (PedidoVentaDTO iDocumentoIterar : resultado) {
 				iDocumentoIterar.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(iDocumentoIterar.getLlaveTabla()));
 				//Aqui al parecer el expediednte principal es el modificador pero no me parece que sea asi, deberia ser el expediente??, o talvez todos
-				PedidoVentaDTO acabdoCrear = generarDocumentosTransicion(transicionIteracion, iDocumentoIterar, documentoModificador, iDocumentoIterar.getTransaccion(), token);
+				PedidoVentaDTO acabdoCrear = generarDocumentosTransicion(transicionIteracion, iDocumentoIterar, documentoModificador, iDocumentoIterar.getTransaccion(), token, null);
 				//Creo la relacion del documento Gestor
 				relacionGestorService.trazar(expediente.getLlaveTabla(), 
 						(acabdoCrear==null)?null:acabdoCrear.getLlaveTabla(),
@@ -515,58 +515,69 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			PedidoVentaDTO documento, 		// Documento modificador que realiza la accion sobre el documetnto base
 			PedidoVentaDTO expedienteDTO, 	// Documento base que se esta fafectando con el proceso
 			String transaccion,				// Como reuso esto en los temporizadores automaticos entonces no viene transaccion
-			String token)throws ServerException{
-		if(transicion.getPlantilla()==null) return null;
-		String user = getUserFlex(token);
-		List<PropiedadDTO>camposGenerar = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, transicion.getLlaveTabla(), Propiedades.GENERA_DOCUMENTO_CAMPO, user);
-		if(camposGenerar==null) camposGenerar = new ArrayList<>();
-		camposGenerar.addAll(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, transicion.getLlaveTabla(), Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, user));
-		if(camposGenerar==null || camposGenerar.isEmpty()) return null;
+			String token,
+			PedidoVentaCaracteristicaDTO vieneAutomatica)throws ServerException{ // Machetazo 
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
-		//tengo que revisar cada propiedad y ver el campo que pide
-		for (PropiedadDTO iPropiedadDTO : camposGenerar) {
-			List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
-			if(relaciones==null || relaciones.isEmpty()) {	//Este es un campo donde va principal
-				PedidoVentaCaracteristicaDTO campoPrincipal = copiar( null ,iPropiedadDTO.getValor());
-				if(documento!=null) {
-					campoPrincipal.setValorOpcion(documento.getLlaveTabla());
-					if(documento.getDinero()!=null)campoPrincipal.setValorNumero(documento.getDinero().getValorTotal());//Importante para que coja valor porque va a consultar po BD y no tiene
-					campoPrincipal.setPrincipal(documento);
+		if (vieneAutomatica !=null) {
+			camposNuevos.add(vieneAutomatica);
+		}else {
+			if(transicion.getPlantilla()==null) return null;
+			String user = getUserFlex(token);
+			List<PropiedadDTO>camposGenerar = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, transicion.getLlaveTabla(), Propiedades.GENERA_DOCUMENTO_CAMPO, user);
+			if(camposGenerar==null) camposGenerar = new ArrayList<>();
+			camposGenerar.addAll(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, transicion.getLlaveTabla(), Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, user));
+			if(camposGenerar==null || camposGenerar.isEmpty())	return null;
+			//tengo que revisar cada propiedad y ver el campo que pide
+			for (PropiedadDTO iPropiedadDTO : camposGenerar) {
+				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+				if(relaciones==null || relaciones.isEmpty()) {	//Este es un campo donde va principal
+					PedidoVentaCaracteristicaDTO campoPrincipal = copiar( null ,iPropiedadDTO.getValor());
+					if(documento!=null) {
+						campoPrincipal.setValorOpcion(documento.getLlaveTabla());
+						if(documento.getDinero()!=null)campoPrincipal.setValorNumero(documento.getDinero().getValorTotal());//Importante para que coja valor porque va a consultar po BD y no tiene
+						campoPrincipal.setPrincipal(documento);
+					}else {
+						campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
+						if(expedienteDTO.getDinero()!=null)campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());//Importante para que coja valor porque va a consultar po BD y no tiene
+						campoPrincipal.setPrincipal(expedienteDTO);
+					}
+					camposNuevos.add(campoPrincipal);
 				}else {
-					campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
-					if(expedienteDTO.getDinero()!=null)campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());//Importante para que coja valor porque va a consultar po BD y no tiene
-					campoPrincipal.setPrincipal(expedienteDTO);
-				}
-				camposNuevos.add(campoPrincipal);
-			}else {
-				if(iPropiedadDTO.getKey().compareTo(Propiedades.GENERA_DOCUMENTO_CAMPO)==0) {
-					//Este campo debe sumarse
-					for (RelacionInternaDTO iRelacion : relaciones) {
-						if(documento!=null && iRelacion.getPlantilla().compareTo(documento.getPlantilla())==0) {
-							camposNuevos.add(copiar( pedidoService.obtenerValor(documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
-						} else {
-							if(expedienteDTO!=null && expedienteDTO.getPlantilla() != null && iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla())==0) {
-								// Solo consulto el documento cuando en realidad lo necesito, en general no veien las caracteristicas
-								if(expedienteDTO.getCaracteristicas()==null) expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla()));
-								camposNuevos.add(copiar( pedidoService.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+					if(iPropiedadDTO.getKey().compareTo(Propiedades.GENERA_DOCUMENTO_CAMPO)==0) {
+						//Este campo debe sumarse
+						for (RelacionInternaDTO iRelacion : relaciones) {
+							if(documento!=null && iRelacion.getPlantilla().compareTo(documento.getPlantilla())==0) {
+								camposNuevos.add(copiar( pedidoService.obtenerValor(documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+							} else {
+								if(expedienteDTO!=null && expedienteDTO.getPlantilla() != null && iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla())==0) {
+									// Solo consulto el documento cuando en realidad lo necesito, en general no veien las caracteristicas
+									if(expedienteDTO.getCaracteristicas()==null) expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla()));
+									camposNuevos.add(copiar( pedidoService.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+								}
 							}
-						}
-					}	
-				}else {
-					PedidoVentaCaracteristicaDTO campoGenerado = pedidoVentaCaracteristicaService.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(), (expedienteDTO!=null)?expedienteDTO.getLlaveTabla():null, (documento!=null)?documento.getLlaveTabla():null);
-					camposNuevos.add(copiar(campoGenerado, relaciones.get(0).getCampo()));
+						}	
+					}else {
+						PedidoVentaCaracteristicaDTO campoGenerado = pedidoVentaCaracteristicaService.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(), (expedienteDTO!=null)?expedienteDTO.getLlaveTabla():null, (documento!=null)?documento.getLlaveTabla():null);
+						camposNuevos.add(copiar(campoGenerado, relaciones.get(0).getCampo()));
+					}
 				}
 			}
 		}
-		PedidoVentaDTO nuevo = new PedidoVentaDTO();
-		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-		nuevo.setPlantilla(transicion.getPlantilla());
-		for (PedidoVentaCaracteristicaDTO iCampoCopiar : camposNuevos) {
-			nuevo.getCaracteristicas().add(copiar(iCampoCopiar, iCampoCopiar.getCampo()));
+		
+		if(!camposNuevos.isEmpty()) {
+			PedidoVentaDTO nuevo = new PedidoVentaDTO();
+			nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+			nuevo.setPlantilla(transicion.getPlantilla());
+			for (PedidoVentaCaracteristicaDTO iCampoCopiar : camposNuevos) {
+				nuevo.getCaracteristicas().add(copiar(iCampoCopiar, iCampoCopiar.getCampo()));
+			}
+			nuevo.setLlaveTabla(null);
+			nuevo.setTransaccion(transaccion);
+			return pedidoService.guardar(nuevo, token);
+		}else {
+			return null;
 		}
-		nuevo.setLlaveTabla(null);
-		nuevo.setTransaccion(transaccion);
-		return pedidoService.guardar(nuevo, token);
+		
 	}
 	
 	
@@ -578,7 +589,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			nueva.setValorFecha(actual.getValorFecha());
 			nueva.setValorNumero(actual.getValorNumero());
 			nueva.setValorOpcion(actual.getValorOpcion());
-			nueva.setValorText(actual.getValorText());			
+			nueva.setValorText(actual.getValorText());
+			nueva.setExpedientes(actual.getExpedientes());
 		}
 		return nueva;
 	}

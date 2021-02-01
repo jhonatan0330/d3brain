@@ -8,10 +8,12 @@ import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
@@ -41,6 +43,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired private RelacionInternaSvc relacionService;
 	// END region servicesProcesoTransicionAutomatica
 
 	@Override
@@ -226,18 +229,34 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 
 			String transaccionDocumento = null;
 			
-			if(propiedadMultiple==null) {
-				dto.setMensaje("");
-				for (PedidoVentaDTO iPedido : documentos) {
-					
-					PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla());
-					transaccionDocumento = nuevo.getTransaccion();
-					dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
-				}
+			List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
+			if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
+				dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
 			}else {
-				PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla());
-				dto.setMensaje(nuevo.getNombre());		
+				PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
+				campoPrinicipal.setCampo(relaciones.get(0).getCampo());
+				
+				if(propiedadMultiple==null) {
+					dto.setMensaje("");
+					;
+					for (PedidoVentaDTO iPedido : documentos) {
+						campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
+						PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+						transaccionDocumento = nuevo.getTransaccion();
+						dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
+					}
+				}else {
+					campoPrinicipal.setExpedientes(documentos);
+					PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+					if(nuevo !=null) {
+						dto.setMensaje(nuevo.getNombre());	
+					}else {
+						dto.setMensaje("Generar documentos no genera. Revisar");
+					}
+				}
 			}
+		
+			
 		}
 		dto.setEjecucion(new Date());
 		return update(dto);
