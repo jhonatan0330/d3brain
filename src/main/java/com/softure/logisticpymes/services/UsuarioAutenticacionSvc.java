@@ -231,6 +231,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) throw new ServerException("Se encuentra inactiva la sesion");
 		usuarioSesionService.inactivar(sesion, null);
 	}
+	
 // END region aditionalMethods
 
 }

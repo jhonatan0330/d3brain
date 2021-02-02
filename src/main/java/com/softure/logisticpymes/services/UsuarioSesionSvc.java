@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
@@ -110,6 +111,16 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 			return new Date(new Date().getTime() + (tiempo *60 * 1000));
 		}
 		return null;
+	}
+	
+	public UsuarioSesionDTO checkToken(String token)throws ServerException{
+		UsuarioSesionDTO result = consultaXId(token);
+		if(result !=null && result.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0  
+				&& (result.getFechaCierre()== null || result.getFechaCierre().getTime() > new Date().getTime())) {
+			return result;
+		}
+		return null;	
+		
 	}
 // END region aditionalMethods
 

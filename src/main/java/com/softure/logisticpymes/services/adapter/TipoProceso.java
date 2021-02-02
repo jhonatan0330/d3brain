@@ -456,7 +456,7 @@ public class TipoProceso {
 							nuevaCaracteristica.setValorNumero(iDependiente.getValorNumero());
 							nuevaCaracteristica.setValorText(iDependiente.getValorText());
 							nuevaCaracteristica.setValorOpcion(iDependiente.getValorOpcion());
-							//Despues valido si se modifica o sigue igual
+							//Despues valido si se modifica o sigue igual en la funcionalidad de cada campo por el momento debe tener permisos el usuario
 							nuevaCaracteristica.setModificado(true);
 							break;
 						}

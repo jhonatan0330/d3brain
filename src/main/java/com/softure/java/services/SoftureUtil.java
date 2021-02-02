@@ -112,4 +112,12 @@ public class SoftureUtil {
 		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return currentFunction;
 	}
+	
+	public static String formatSimpleFunction(String currentFunction) throws ServerException {
+		if(currentFunction==null) throw new ServerException("La funcion no puede ser nula");
+		
+		currentFunction = Normalizer.normalize(currentFunction, Normalizer.Form.NFD);
+		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return currentFunction;
+	}
 }

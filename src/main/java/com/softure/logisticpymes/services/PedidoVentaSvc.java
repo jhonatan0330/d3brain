@@ -248,6 +248,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		if(dto==null) throw new ServerException("Tronco de error");
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().isEmpty()) dto.setFiltroParametro(null);
 		if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
+		if (dto.getNombre()!=null) dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
 		//Filtros desde un campo
 		if(dto.getCampoOrigen()!=null) {
 			DocumentoPlantillaCaracteristicaDTO campoPlantilla = documentoPlantillaCaracteristicaService.consultaXId(dto.getCampoOrigen());
@@ -632,7 +633,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				}
 			}
 			if (filtroTexto.compareTo("")!=0) {
-				dto.setTextoFiltro(SoftureUtil.formatFunction(filtroTexto).toUpperCase());
+				dto.setTextoFiltro(SoftureUtil.formatSimpleFunction(filtroTexto).toUpperCase());
 			}else {
 				dto.setTextoFiltro(null);
 			}
@@ -1011,7 +1012,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			try {
 				List<String>filtrosEstado = organizarFiltros(dto);//Todo esto se hizo porque se null el valor opcion sucede que usabamos == y tocaba choose
 				funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
-				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
+				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda , filtrosEstado, parametros);
 			}catch (Exception e) {
 				throw new ServerException(e.getCause().getMessage());
