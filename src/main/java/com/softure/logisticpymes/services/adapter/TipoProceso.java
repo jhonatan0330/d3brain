@@ -801,9 +801,13 @@ public class TipoProceso {
 		if (transiciones.size()==0) return null;//throw new ServerException("Existen documentos sin transicion para gestionar." + procesoDTO.getNombre());
 		if (transiciones.size()>1) {
 			String message = "Existen muchas transiciones que cumplen con las condiciones del expediente.\n";
-			message = message.concat("Plantilla : "  + plantilla);
-			message = message.concat((estadoPartida==null)?"Estado Partida : NULL":"Estado Partida : "+ expedienteTransicionService.consultaXId(estadoPartida).getNombre());
-			message = message.concat((estadoLlegada==null)?"Estado Llegada : NULL":"Estado Llegada : "+ expedienteTransicionService.consultaXId(estadoLlegada).getNombre());
+			message = message.concat("Plantilla : "  + transiciones.get(0).getPlantillaNombre() + "\n");
+			if (estadoPartida==null) {
+				message = message.concat("Estado Partida : NULL");
+			}else {
+				message = message.concat("Estado Partida : "+transiciones.get(0).getEstadoPartidaNombre());
+			}
+			message = message.concat((estadoLlegada==null)?"Estado Llegada : NULL":"Estado Llegada : "+ transiciones.get(0).getEstadoLlegadaNombre());
 			throw new ServerException( message);
 		}
 		return transiciones.get(0);

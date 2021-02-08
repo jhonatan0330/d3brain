@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.DocumentoRelacionGestorDTO;
+import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionGestorFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.dto.filter.RelacionInternaFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.DocumentoRelacionGestorSvc;
+import com.softure.logisticpymes.services.RelacionInternaSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 
 @RestController
@@ -28,6 +31,7 @@ public class TemplateController {
 	@Autowired private CampoAdaptador adaptador;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
 	@Autowired private DocumentoRelacionGestorSvc gestionService;
+	@Autowired private RelacionInternaSvc relacionesService;
 	
 	@RequestMapping(value="/getFields", method=RequestMethod.GET)
 	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {
@@ -48,4 +52,9 @@ public class TemplateController {
 		return gestionService.listarExpedientesGestionadores(filterField);
 	}
 	
+	@RequestMapping(value="/getPropertyRelations", method=RequestMethod.POST)
+	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter, @RequestHeader("Authorization") String token)  throws ServerException  {
+		filter.setSecurityToken(token);
+		return relacionesService.listarConsulta(filter);
+	}
 }

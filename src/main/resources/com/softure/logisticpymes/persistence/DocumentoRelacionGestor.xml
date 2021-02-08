@@ -360,7 +360,7 @@
 			inner join deduccionproducto_dprp on (cdpr_llave = ctpi_deduccionproducto )
 			where cdpr_documento = #{dto.documentoPrincipal}
 	</if>
-	order by fecha LIMIT #{dto.paginacionRegistroFinal} OFFSET #{dto.paginacionRegistroInicial}
+	order by fecha desc LIMIT #{dto.paginacionRegistroFinal} OFFSET #{dto.paginacionRegistroInicial}
 	</select>
 	
 	<select id="ultimoRegistro" resultType="DocumentoRelacionGestorDTO">
