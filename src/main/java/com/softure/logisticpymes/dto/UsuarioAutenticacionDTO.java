@@ -23,6 +23,7 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private List<OrganizacionDTO> organizaciones;
 	private String mensaje;
 	private String token;
+	private List<ModuloContratadoDTO> modulos;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -93,6 +94,13 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	
 	public String getToken() {
 		return token;
+	}
+	public void setModulos(List<ModuloContratadoDTO> modulos) {
+		this.modulos = modulos;
+	}
+	
+	public List<ModuloContratadoDTO> getModulos() {
+		return modulos;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

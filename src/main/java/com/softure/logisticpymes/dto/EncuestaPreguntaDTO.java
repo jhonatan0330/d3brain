@@ -1,5 +1,7 @@
 package com.softure.logisticpymes.dto;
 
+import java.util.List;
+
 // BEGIN region interImport
 // END region interImport
 
@@ -21,6 +23,7 @@ public class EncuestaPreguntaDTO extends BasicDTO
 	private String tipo;
 	private String descripcion;
 	private String restriccion;
+	private List<EncuestaOpcionRespuestaDTO> opciones;
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
@@ -77,6 +80,13 @@ public class EncuestaPreguntaDTO extends BasicDTO
 	
 	public String getRestriccion() {
 		return restriccion;
+	}
+	public void setOpciones (List<EncuestaOpcionRespuestaDTO> opciones) {
+		this.opciones = opciones;
+	}
+	
+	public List<EncuestaOpcionRespuestaDTO> getOpciones() {
+		return opciones;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

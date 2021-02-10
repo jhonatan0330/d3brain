@@ -39,7 +39,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.DocumentoRelacionExpedienteDTO;
 import com.softure.logisticpymes.dto.MensajeDTO;
+import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.logisticpymes.dto.filter.MensajeFilterDTO;
 import com.softure.logisticpymes.persistence.MensajeMapper;
 
@@ -60,6 +63,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	@Autowired private ServidorSvc servidorService;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired private DocumentoRelacionExpedienteSvc relacionExpedienteService;
 	// END region servicesMensaje
 
 	@Override
@@ -391,24 +395,47 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		if(relaciones==null || relaciones.isEmpty() || fields == null || fields.isEmpty()) return null; 
 		List<String> correosFijos = null;
 		List<PedidoVentaCaracteristicaDTO> fieldsInternal = null;
-		List<RelacionInternaDTO> relacionesSinRepetir = new ArrayList<RelacionInternaDTO>();
-		relacionesSinRepetir.addAll(relaciones);//SEparado al contructor creo que para que funcione el remove
+		List<RelacionInternaDTO> relacionesValidadas = new ArrayList<RelacionInternaDTO>();
+		// relacionesSinRepetir.addAll(relaciones.);//SEparado al contructor creo que para que funcione el remove
 		for (RelacionInternaDTO iRelacion : relaciones) {
 			for (PedidoVentaCaracteristicaDTO iField : fields) {
 				if(iRelacion.getCampo().compareTo(iField.getCampo())==0) {
-					relacionesSinRepetir.remove(iRelacion);
+					relacionesValidadas.add(iRelacion);
 					if(iField.getValorOpcion()!=null) {
 						if(fieldsInternal==null) fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
 						fieldsInternal.add(iField);
 					}else {
-						if(correosFijos==null) correosFijos = new ArrayList<String>();
-						correosFijos.add(iField.getValorText());
+						// En caso que sea multiple se debe evaluar todos los expedientes internos
+						if(iField.getCampoDTO()!=null && DocumentoPlantillaCaracteristicaDTO.PROCESO.compareTo(iField.getCampoDTO().getFormato())==0
+								&& Propiedades.obtenerValor(iField.getCampoDTO(), Propiedades.MULTIPLE)!=null) {
+							DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
+							relacionExpedienteFilter.setCampoMaestro(iField.getLlaveTabla());
+							relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+							List<DocumentoRelacionExpedienteDTO> expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
+							if(expedientesAnidados !=null && !expedientesAnidados.isEmpty()) {
+								if(fieldsInternal==null) fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
+								for (DocumentoRelacionExpedienteDTO iAnidado : expedientesAnidados) {
+									PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
+									newField.setValorOpcion(iAnidado.getExpedienteDetalle());
+									fieldsInternal.add(newField);	
+								}
+							}
+						}else {
+							if(correosFijos==null) correosFijos = new ArrayList<String>();
+							correosFijos.add(iField.getValorText());	
+						}
 					}
-					break;
+					// break; //Lo reitre para que valide todos los campos
 				}
 			}
 		}
 		if(fieldsInternal!=null) {
+			//Esto me toco hacerlo porque se descuadranban los array al remove la relacion
+			List<RelacionInternaDTO> relacionesSinRepetir = new ArrayList<RelacionInternaDTO>();
+			relacionesSinRepetir.addAll(relaciones);
+			for (RelacionInternaDTO iRelacion : relacionesValidadas) {
+				relacionesSinRepetir.remove(iRelacion);
+			}
 			fieldsInternal = campoService.listar2getMessageMailDestiny(fieldsInternal, relacionesSinRepetir);
 			List<String> mailInternal = searchMail(relacionesSinRepetir, fieldsInternal);
 			if(mailInternal!=null) {

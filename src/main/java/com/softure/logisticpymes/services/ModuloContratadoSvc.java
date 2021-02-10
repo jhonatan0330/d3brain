@@ -81,6 +81,7 @@ public class ModuloContratadoSvc extends BasicSvc<ModuloContratadoDTO, ModuloCon
 	
 	public List<ModuloContratadoDTO> modulosUsuario(ModuloContratadoFilterDTO dto)throws ServerException{
 		// BEGIN region modulosUsuario
+		// Aqui el security token es el usuario por el momento
 		List<ModuloContratadoDTO> modulos =  moduloContratadoMapper.modulosUsuario(dto);
 		return modulos;
 		// END region modulosUsuario

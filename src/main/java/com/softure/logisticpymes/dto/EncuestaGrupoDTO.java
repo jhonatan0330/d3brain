@@ -20,6 +20,7 @@ public class EncuestaGrupoDTO extends BasicDTO
 	private Integer numeroRespuestasUsuario;
 	private List<EncuestaRespuestaDTO> respuestas;
 	private String usuario;
+	private List<EncuestaPreguntaDTO> preguntas;
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
@@ -69,6 +70,13 @@ public class EncuestaGrupoDTO extends BasicDTO
 	
 	public String getUsuario() {
 		return usuario;
+	}
+	public void setPreguntas(List<EncuestaPreguntaDTO> preguntas) {
+		this.preguntas = preguntas;
+	}
+	
+	public List<EncuestaPreguntaDTO> getPreguntas() {
+		return preguntas;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaOpcionRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaOpcionRespuestaFilterDTO;
@@ -88,6 +89,12 @@ public class EncuestaOpcionRespuestaSvc extends BasicSvc<EncuestaOpcionRespuesta
 	}
 
 // BEGIN region aditionalMethods
+	public List<EncuestaOpcionRespuestaDTO> getOptions(String id) throws ServerException {
+		EncuestaOpcionRespuestaFilterDTO filter = new EncuestaOpcionRespuestaFilterDTO();
+		filter.setPregunta(id);
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return listarConsulta(filter);
+	}
 // END region aditionalMethods
 
 }

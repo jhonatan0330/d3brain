@@ -174,6 +174,16 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 	}
 
 // BEGIN region aditionalMethods
+	public List<EncuestaGrupoDTO> getGroups(String id) throws ServerException {
+		EncuestaGrupoFilterDTO filtroGrupo = new EncuestaGrupoFilterDTO();
+		filtroGrupo.setEncuesta(id);
+		filtroGrupo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<EncuestaGrupoDTO> grupos = listarConsulta(filtroGrupo);
+		for (EncuestaGrupoDTO encuestaGrupoDTO : grupos) {
+			encuestaGrupoDTO.setPreguntas(encuestaPreguntaSvc.getQuestions(encuestaGrupoDTO.getLlaveTabla()));
+		}
+		return grupos;
+	}
 // END region aditionalMethods
 
 }

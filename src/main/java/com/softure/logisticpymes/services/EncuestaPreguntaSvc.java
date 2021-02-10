@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaPreguntaDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaPreguntaFilterDTO;
@@ -24,6 +25,8 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	private EncuestaPreguntaMapper encuestaPreguntaMapper;
 	
 	// BEGIN region servicesEncuestaPregunta
+	@Autowired
+	private EncuestaOpcionRespuestaSvc opcionesSvc;
 	// END region servicesEncuestaPregunta
 
 	@Override
@@ -98,6 +101,16 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	}
 
 // BEGIN region aditionalMethods
+	public List<EncuestaPreguntaDTO> getQuestions(String id) throws ServerException {
+		EncuestaPreguntaFilterDTO filter = new EncuestaPreguntaFilterDTO();
+		filter.setGrupo(id);
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<EncuestaPreguntaDTO> preguntas = listarConsulta(filter);
+		for (EncuestaPreguntaDTO iPregunta : preguntas) {
+			iPregunta.setOpciones(opcionesSvc.getOptions(iPregunta.getLlaveTabla()));
+		}
+		return preguntas;
+	}
 // END region aditionalMethods
 
 }

@@ -1,6 +1,8 @@
 package com.softure.logisticpymes.dto;
 
 import java.util.Date;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
 // END region interImport
@@ -23,6 +25,7 @@ public class EncuestaDTO extends BasicDTO
 	private boolean colaborativa;
 	private String rol;
 	private String cliente;
+	private List<EncuestaGrupoDTO> grupos;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -72,6 +75,14 @@ public class EncuestaDTO extends BasicDTO
 	
 	public String getCliente() {
 		return cliente;
+	}
+	
+	public void setGrupos(List<EncuestaGrupoDTO> grupos) {
+		this.grupos = grupos;
+	}
+	
+	public List<EncuestaGrupoDTO> getGrupos() {
+		return grupos;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

@@ -11,6 +11,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.dto.filter.ModuloContratadoFilterDTO;
 import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 // END region interImport
 
@@ -33,6 +34,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 	
 	// BEGIN region servicesUsuarioAutenticacion
+	@Autowired private ModuloContratadoSvc modulosService;
 	@Autowired private OrganizacionSvc organizacionService;
 	@Autowired private UsuarioSesionSvc usuarioSesionService;
 	@Autowired private UsuarioSvc usuarioService;
@@ -158,6 +160,11 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		autenticacion.setToken(sesion.getLlaveTabla());
 		if(diasVigencia < 14) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
 		autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
+		
+		ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
+		filterMod.setSecurityToken(sesion.getLlaveTabla());
+		autenticacion.setModulos(modulosService.modulosUsuario(filterMod));
+		
 		return autenticacion;
 		// END region autenticar
 	}

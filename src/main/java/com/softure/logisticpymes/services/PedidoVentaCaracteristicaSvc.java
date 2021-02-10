@@ -165,6 +165,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.listar2DocumentoVisible(documentos);
 	}
 	
+	// En los documentos lo importante es el valor opcion  que es el id que va a buscar 
 	public List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(List<PedidoVentaCaracteristicaDTO> documentIds, List<RelacionInternaDTO> fieldId)
 			throws ServerException {
 		if(documentIds==null || documentIds.isEmpty() || fieldId==null || fieldId.isEmpty()) return null;
