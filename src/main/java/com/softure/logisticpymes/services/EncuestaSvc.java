@@ -118,7 +118,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 			List<EncuestaDTO> result =encuestaMapper.listarDisponibles(dto);
 			if(result!=null && !result.isEmpty()) {
 				for (EncuestaDTO encuestaDTO : result) {
-					encuestaDTO.setGrupos(encuestaGrupoSvc.getGroups(encuestaDTO.getLlaveTabla()));
+					encuestaDTO.setGrupos(encuestaGrupoSvc.getGroups(encuestaDTO.getLlaveTabla(), dto.getSecurityToken()));
 				}
 			}
 			return  result;

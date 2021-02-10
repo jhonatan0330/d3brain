@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaDTO;
+import com.softure.logisticpymes.dto.EncuestaGrupoDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaFilterDTO;
+import com.softure.logisticpymes.services.EncuestaGrupoSvc;
 import com.softure.logisticpymes.services.EncuestaSvc;
 
 @RestController
@@ -20,6 +23,7 @@ import com.softure.logisticpymes.services.EncuestaSvc;
 public class SurveyController {
 	
 	@Autowired private EncuestaSvc encuestaService;
+	@Autowired private EncuestaGrupoSvc groupService;
 	
 	@RequestMapping(value="/getAvailable", method=RequestMethod.GET)
 	public List<EncuestaDTO> obtenerCampos(@RequestHeader("Authorization") String token) throws ServerException {
@@ -27,4 +31,10 @@ public class SurveyController {
 		filter.setSecurityToken(token);
 		return encuestaService.listarDisponibles(filter);
 	}
+	
+	@RequestMapping(value="/responseGroupSurvey", method=RequestMethod.POST)
+	public EncuestaGrupoDTO responseSurvey(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return groupService.responderEncuesta(dto, token);
+	}
+	
 }

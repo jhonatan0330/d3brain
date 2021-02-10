@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaPreguntaDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaPreguntaFilterDTO;
@@ -101,11 +100,11 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	}
 
 // BEGIN region aditionalMethods
-	public List<EncuestaPreguntaDTO> getQuestions(String id) throws ServerException {
+	public List<EncuestaPreguntaDTO> getQuestions(String grupoId, String token) throws ServerException {
 		EncuestaPreguntaFilterDTO filter = new EncuestaPreguntaFilterDTO();
-		filter.setGrupo(id);
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		List<EncuestaPreguntaDTO> preguntas = listarConsulta(filter);
+		filter.setGrupo(grupoId);
+		filter.setSecurityToken(token);
+		List<EncuestaPreguntaDTO> preguntas = listarPermitidas(filter);
 		for (EncuestaPreguntaDTO iPregunta : preguntas) {
 			iPregunta.setOpciones(opcionesSvc.getOptions(iPregunta.getLlaveTabla()));
 		}
