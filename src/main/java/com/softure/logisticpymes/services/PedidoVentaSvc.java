@@ -70,6 +70,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoSvc;
 	@Autowired private PedidoVentaDineroSvc dineroService;
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired private ProcesoEstadoSvc estadoService;
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private ProductoSvc productoService;
 	@Autowired private PropiedadSvc propiedadService;
@@ -140,7 +141,13 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			transaccion = transaccionSvc.crear(token);
 			crearTraza = true;
 		}
-		if(dto.getEstado()==null)dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Viene de tipo proceso que lo coloca nulo
+		if(dto.getEstado()==null) {
+			if(dto.getEstadoExpediente()==null) {
+				dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Viene de tipo proceso que lo coloca nulo
+			}else {
+				dto.setEstado(estadoService.consultaXId(dto.getEstadoExpediente()).getEstadoDocumento());
+			}
+		}
 		dto.setFechaRegistro(bd.getFechaRegistro());//Siempre tiene que mantenerse la fecha de registro
 		dto.setTransaccion(bd.getTransaccion());//Siempre tiene que mantenerse la transaccion de registro
 		dto.setFuncionario(bd.getFuncionario());//Siempre tiene que mantenerse la funcionario de registro
