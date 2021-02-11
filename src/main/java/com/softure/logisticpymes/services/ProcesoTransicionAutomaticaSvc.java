@@ -214,49 +214,52 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 	
 	public ProcesoTransicionAutomaticaDTO gestionaEjecucion(ProcesoTransicionAutomaticaDTO dto)throws ServerException{
-		List<PedidoVentaDTO> documentos = null;
-		documentos = documentoService.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
-		if(documentos ==null || documentos.isEmpty()) {
-			dto.setMensaje("Sin documentos a gestionar");
-		}else {
-			String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
-			if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
-			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-			String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
-			ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
-			transicion.setLlaveTabla(dto.getTransicion());
-			transicion.setPlantilla(dto.getPlantilla());
-
-			String transaccionDocumento = null;
-			
-			List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
-			if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
-				dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
+		PropiedadDTO pTemporizador = propiedadService.consultaXId(dto.getPropiedad());
+		if(Propiedades.validarBloqueo(pTemporizador)) {
+			List<PedidoVentaDTO> documentos = null;
+			documentos = documentoService.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
+			if(documentos ==null || documentos.isEmpty()) {
+				dto.setMensaje("Sin documentos a gestionar");
 			}else {
-				PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
-				campoPrinicipal.setCampo(relaciones.get(0).getCampo());
+				String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
+				if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
+				UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
+				String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
+				ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
+				transicion.setLlaveTabla(dto.getTransicion());
+				transicion.setPlantilla(dto.getPlantilla());
+
+				String transaccionDocumento = null;
 				
-				if(propiedadMultiple==null) {
-					dto.setMensaje("");
-					;
-					for (PedidoVentaDTO iPedido : documentos) {
-						campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-						PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
-						transaccionDocumento = nuevo.getTransaccion();
-						dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
-					}
+				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
+				if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
+					dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
 				}else {
-					campoPrinicipal.setExpedientes(documentos);
-					PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
-					if(nuevo !=null) {
-						dto.setMensaje(nuevo.getNombre());	
+					PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
+					campoPrinicipal.setCampo(relaciones.get(0).getCampo());
+					
+					if(propiedadMultiple==null) {
+						dto.setMensaje("");
+						;
+						for (PedidoVentaDTO iPedido : documentos) {
+							campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
+							PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+							transaccionDocumento = nuevo.getTransaccion();
+							dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
+						}
 					}else {
-						dto.setMensaje("Generar documentos no genera. Revisar");
+						campoPrinicipal.setExpedientes(documentos);
+						PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+						if(nuevo !=null) {
+							dto.setMensaje(nuevo.getNombre());	
+						}else {
+							dto.setMensaje("Generar documentos no genera. Revisar");
+						}
 					}
 				}
 			}
-		
-			
+		}else {
+			dto.setMensaje("La propiedad temporizador esta bloqueada a esta horas");
 		}
 		dto.setEjecucion(new Date());
 		return update(dto);
