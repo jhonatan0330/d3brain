@@ -329,7 +329,7 @@ public class Propiedades {
 					+ "\n\nEstructura de la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";break;}
 			case FUNCION_SQL_ESTADO_ASIGNAR : {ruleProperty =  "Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.\nEl documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS character varying AS";break;}
+					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case ITERACION_SQL : {ruleProperty =  "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
 					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";break;}
 			case MENSAJE : {ruleProperty =  " Selecciona de las plantillas de mensaje un mensaje a enviar a el creador, usuario asignado y modificador.\n";break;}

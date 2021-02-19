@@ -978,6 +978,7 @@ public class TipoProceso {
 		if(relacionExternaAgregar==null && relacionExternaRetirar==null) return;
 		if(relacionExternaAgregar==null) relacionExternaAgregar = new ArrayList<PropiedadDTO>();
 		if(relacionExternaRetirar!=null)relacionExternaAgregar.addAll( relacionExternaRetirar);
+		if(pCampo.getDependientes()==null) throw new ServerException("relacionado o retirando documentos no esta relacionado el dependiente que contiene el campo proceso que vamos a afectar");
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 		for (PropiedadDTO propiedadDTO : relacionExternaAgregar) {
 			for (PedidoVentaCaracteristicaDTO dependiente : pCampo.getDependientes()) {

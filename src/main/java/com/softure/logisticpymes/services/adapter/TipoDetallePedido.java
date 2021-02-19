@@ -160,7 +160,7 @@ public class TipoDetallePedido {
 					filtroValidador.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 					filtroValidador.setLlaveTabla(detalle.getProducto());
 					List<ProductoDTO> producto = productoService.listarConsulta(filtroValidador);
-					if(producto ==null || producto.isEmpty()) throw new ServerException("Revise la disponibilidad de tiempo del producto " + detalle.getProductoCodigo());
+					if(producto ==null || producto.isEmpty()) throw new ServerException("Revise la disponibilidad de tiempo del producto " + detalle.getProductoCodigo() + " puede ser que este inactivo");
 					//Calculo la cantidad--//detalle.getCantidad();--//detalle.getCantidadPromocionBase();//detalle.setCantidadPromocion(0);
 					
 					if(detalle.getCantidadPromocion()!=null && detalle.getCantidadPromocion() >0){
