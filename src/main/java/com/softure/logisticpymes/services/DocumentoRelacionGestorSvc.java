@@ -81,17 +81,21 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	
 	public List<DocumentoRelacionGestorDTO> listarExpedientesGestionadores(DocumentoRelacionGestorFilterDTO dto)throws ServerException{
 		// BEGIN region listarExpedientesGestionadores
-		if(dto==null || dto.getDocumentoPrincipal()==null) throw new ServerException("REvisa porque no encontramos el documento principal");
+		if(dto==null || dto.getDocumentoPrincipal()==null) throw new ServerException("Revisa porque no encontramos el documento principal");
 		paginar(dto);
 		String verMensaje = null;
 		String verAsignacion = null;
 		String verInventarios = null;
+		String verReportes = null;
+		String usuarioAutomatico = null;
 		if(dto.getEstado()!=null) {
 			if(dto.getEstado().length() > 1 && dto.getEstado().charAt(1) == '1') verAsignacion = "1";
 			if(dto.getEstado().length() > 2 && dto.getEstado().charAt(2) == '1') verMensaje = "1";
 			if(dto.getEstado().length() > 3 && dto.getEstado().charAt(3) == '1') verInventarios = "1";
+			if(dto.getEstado().length() > 4 && dto.getEstado().charAt(4) == '1') verReportes = "1";
+			if(dto.getEstado().length() < 6 || dto.getEstado().charAt(5) != '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
 		}
-		return documentoRelacionGestorMapper.listarExpedientesGestionadores(dto, verAsignacion, verMensaje, verInventarios);
+		return documentoRelacionGestorMapper.listarExpedientesGestionadores(dto, verAsignacion, verMensaje, verInventarios, verReportes, usuarioAutomatico);
 		// END region listarExpedientesGestionadores
 	}
 

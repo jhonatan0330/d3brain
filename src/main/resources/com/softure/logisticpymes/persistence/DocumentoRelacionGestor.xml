@@ -251,6 +251,7 @@
 		  from documentorelaciongestor_drgp
 		  	left join pedidoventa_pdvp modifica on (cpdv_llave = cdrg_documentomodificador)
 		  where cdrg_documentoprincipal = #{dto.documentoPrincipal}
+		  <if test="usuarioAutomatico!=null">and cdrg_usuario != #{usuarioAutomatico}</if>
 	<if test="verAsignacion!=null">
 	union
 		  select
@@ -367,6 +368,10 @@
 		<include refid="selectDocumentoRelacionGestorFragment" />
 		where ddrg_cierre is null and cdrg_estado = 'A' and cdrg_documentoprincipal = #{documentoPrincipal}
 		order by ddrg_fecha desc limit 1
+	</select>
+	
+	<select id="getSystemUser" resultType="java.lang.String">
+		select corg_usuariosystem from organizacion_orgp where corg_principal is null and corg_estado = 'A';
 	</select>
 <!--// END region script-->
 
