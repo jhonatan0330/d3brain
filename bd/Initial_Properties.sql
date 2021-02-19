@@ -295,3 +295,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	VALUES('PROP_159' , 'T', 'GENERA_DOCUMENTO_FUNCION_SQL', 'FUNCION PARA GENERAR UN CAMPO EN DOCUMENTO', 'REQUISITO', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_160' , 'L', 'CAMPO RENDER ESPECIAL', 'PLANTILLA_RENDER_ESPECIAL_SQL', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_161' , 'L', 'TRANSFERIR', 'PERMISO_PLANTILLA_TRANSFERIR', 'REQUISITO',true, true);

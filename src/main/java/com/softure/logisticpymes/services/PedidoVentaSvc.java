@@ -283,7 +283,14 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 					if(propiedadFuncion!=null || propiedadPlantilla.isEmpty()) {
 						String campoValor = Propiedades.obtenerValor(campoPlantilla, Propiedades.PROCESO_VALOR);
 						if(campoValor.isEmpty() || campoValor.compareTo("1")==0 || campoValor.compareTo("2")==0) campoValor = null;
-						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(dto, (propiedadFuncion==null)?null:propiedadFuncion.getLlaveTabla(), null), dto.getSecurityToken(), campoValor );
+						List<PedidoVentaCaracteristicaDTO> parametros = null;
+						if(dto.getLlaveTabla()!=null) { // asumo que viene el dependiente relacionado
+							PedidoVentaCaracteristicaDTO param = new PedidoVentaCaracteristicaDTO();
+							param.setValorOpcion(dto.getLlaveTabla());
+							parametros = new ArrayList<PedidoVentaCaracteristicaDTO>();
+							parametros.add(param);
+						}
+						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(dto, (propiedadFuncion==null)?null:propiedadFuncion.getLlaveTabla(), parametros), dto.getSecurityToken(), campoValor );
 					}
 				}
 				dto.setPlantilla(propiedadPlantilla);
@@ -1050,14 +1057,14 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda , filtrosEstado, parametros);
 			}catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
+				throw new ServerException(e.getMessage());
 			}
 		}
 		if(dto.getPlantilla()==null) throw new ServerException("Revise la plantilla para consultar los expedientes diponibles. Debe traer la plantilla actual para filtrar las transiciones validas");
 		try {
 			return pedidoVentaMapper.listarExpedientesDisponiblesDocumento(dto);
 		}catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
+			throw new ServerException(e.getMessage());
 		}
 	}
 	
