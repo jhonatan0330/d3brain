@@ -154,6 +154,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionCampoGenerar(dto);
 				break;
+			case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
+				propiedadMapper.eliminarFuncionCamposEspecialesPlantilla(dto);
+				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
 				break;
@@ -249,6 +252,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
 					propiedadMapper.crearFuncionCampoGenerar(dto);
+					break;
+				case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
+					propiedadMapper.crearFuncionCamposEspecialesPlantilla(dto);
 					break;
 				default:
 					propiedadMapper.crearFuncion(dto);

@@ -396,7 +396,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente)
 						, token, null); 
 			}catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
+				throw new ServerException(e.getMessage());
 			}
 		}
 		// END region listarAvanzado
@@ -408,7 +408,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		try {
 			return listadoCompleto(pedidoVentaMapper.listarUsuario(dto), dto.getSecurityToken(), null); 
 		}catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
+			throw new ServerException(e.getMessage());
 		}
 		// END region listarUsuario
 	}
@@ -647,9 +647,11 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 	}
 	
-	public List<PedidoVentaDTO> listadoCompleto(List<PedidoVentaDTO> result, String securityToken, String campoValor) throws ServerException{
+	public List<PedidoVentaDTO> listadoCompleto(List<PedidoVentaDTO> result, String securityToken
+			, String campoValor) throws ServerException{
 		if(result !=null && !result.isEmpty()){
-			System.out.println (new Date().toString() + " : Consulta completa");
+			HashMap<String, String> hmapCamposEspeciales = new HashMap<String, String>();
+			
 			HashMap<String, String> hmap = new HashMap<String, String>();
 			HashMap<String, String> hmapCampo = new HashMap<String, String>();
 			List<PedidoVentaCaracteristicaDTO> base = pedidoVentaCaracteristicaService.listar2DocumentoVisible(result);
@@ -745,6 +747,32 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 							}
 						}
 					}
+				}
+				// Campos especiales de una lista
+				if(hmapCamposEspeciales.get(iterador.getPlantilla())==null){
+					PropiedadDTO propiedadRender = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL,  null);
+					if(propiedadRender==null) {
+						hmapCamposEspeciales.put(iterador.getPlantilla(), "");
+					}else {
+						hmapCamposEspeciales.put(iterador.getPlantilla(), propiedadRender.getLlaveTabla());
+					}
+				}
+				if(hmapCamposEspeciales.get(iterador.getPlantilla()).compareTo("")!=0) {
+					try {
+						List<PedidoVentaCaracteristicaDTO> camposEspeciales = pedidoVentaCaracteristicaService.camposEspecialesPlantilla(hmapCamposEspeciales.get(iterador.getPlantilla()), iterador.getLlaveTabla());
+						if(camposEspeciales!=null && !camposEspeciales.isEmpty()) {
+							for (PedidoVentaCaracteristicaDTO pvrDTO : camposEspeciales){
+								DocumentoPlantillaCaracteristicaDTO campo = new DocumentoPlantillaCaracteristicaDTO();
+								//campo.setNombre(pvrDTO.getCampo());
+								campo.setPropiedades(new ArrayList<PropiedadDTO>());
+								campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
+								pvrDTO.setCampoDTO(campo);
+								iterador.getCaracteristicas().add(pvrDTO);
+							}
+						}	
+					} catch (ServerException e) {
+						throw new ServerException(e.getMessage());
+					}	
 				}
 			}
 		}

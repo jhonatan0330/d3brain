@@ -335,6 +335,11 @@
 			from propiedad_${sqlFuncionCalculo} (#{llaveTablaDocumento}, #{llaveTablaModificador})
 	</select>
 	
+	<select id="camposEspecialesPlantilla" resultType="PedidoVentaCaracteristicaDTO">
+		select cpvc_valortext as  valorText
+			from propiedad_${sqlFuncion} (#{llaveTablaDocumento})
+	</select>
+	
 <!--// END region script-->
 
 </mapper>

@@ -406,10 +406,25 @@ COST 100;
 	<select id="eliminarFuncionIteracion" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
 		DROP FUNCTION IF EXISTS iteracion_${llaveTabla}(varchar, varchar);
 	</select>
+	
+		<select id="crearFuncionCamposEspecialesPlantilla">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="eliminarFuncionCamposEspecialesPlantilla" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying);
+	</select>
+	
 
     <select id="funcionAsignacion" resultType="java.lang.String">
         select propiedad_${estado} (#{documento}, #{modificador})
     </select>
+    
 
     <select id="consultarValor" parameterType="PropiedadDTO" resultType="PropiedadDTO">
         <include refid="selectPropiedadFragment" />

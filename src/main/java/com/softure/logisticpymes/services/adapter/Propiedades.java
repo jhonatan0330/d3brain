@@ -140,6 +140,7 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_CUENTA = "PLANTILLA_TIPO_CUENTA";
 	public static final String PLANTILLA_TIPO_PRODUCTO = "PLANTILLA_TIPO_PRODUCTO";
 	public static final String PLANTILLA_TIPO_BODEGA = "PLANTILLA_TIPO_BODEGA";
+	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	
 	public static final String GPS = "GPS";
 	public static final String RELACIONAR_DOCUMENTOS = "RELACIONAR_DOCUMENTOS";
@@ -356,7 +357,9 @@ public class Propiedades {
 			case PLANTILLA_TIPO_CUENTA : {ruleProperty =  " Define que esta plantilla relaciona los documentos creados con una cuenta\n";break;}
 			case PLANTILLA_TIPO_PRODUCTO : {ruleProperty =  " Define que esta plantilla va a crear un producto\nSe debe llenar con una categoria de producto";break;}
 			case PLANTILLA_TIPO_BODEGA : {ruleProperty =  "Los documentos de esta plantilla van a crear bodegas\n";break;}
-			
+			case PLANTILLA_RENDER_ESPECIAL_SQL : {ruleProperty =  "Cuando una plantilla debe tener un campo que no pertenece a ella se utiliza una funcion para traer los campos deseados\n"
+					+ "\n\nSe recibe el id del documento y a partir de el se debe generar la consulta"
+					+ "\n\nCREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";break;}
 			case PROCESO_POP : {ruleProperty =  " Para las listas autoload muestra el pop up y deja para escoger en el formulario.\n";break;}
 			case PROCESO_ACCIONES : {ruleProperty =  " Permite que se puedan realizar acciones de crear y modificar.\n Se debe definir la plantilla que tiene permisos para crear";break;}
 			case PROCESO_GESTIONAR_ESTADOS : {ruleProperty =  " Es el camino que debi seguir la transaccion para modificar estados de documentos. * -> se usa para indicar todos los documentos. Se coloca los codigos de las planatillas separads por punto y coma(;break;}). se pueden colocar varios caminos\n";break;}

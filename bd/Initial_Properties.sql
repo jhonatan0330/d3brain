@@ -291,3 +291,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_157' , 'C', 'MULTIPLES ADJUNTOS', 'MULTIPLE_FILE', 'REQUISITO', 'A');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_158' , 'C', 'CAMPO UNICO', 'UNIQUE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo) 
+	VALUES('PROP_159' , 'T', 'GENERA_DOCUMENTO_FUNCION_SQL', 'FUNCION PARA GENERAR UN CAMPO EN DOCUMENTO', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_160' , 'L', 'CAMPO RENDER ESPECIAL', 'PLANTILLA_RENDER_ESPECIAL_SQL', 'REQUISITO', true, true);

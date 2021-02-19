@@ -256,6 +256,19 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 			throw new ServerException(e.getMessage(), " : " + sqlFuncionDecision);
 		}
 	}
+	
+	/*
+	 * Creado porq un cliente desea ver en al lista unos campos que no hacen parte de la plantilla
+	 * asi que con una funcion los traemos
+	 */
+	public List<PedidoVentaCaracteristicaDTO> camposEspecialesPlantilla(String sqlFuncion, String documentoId)
+			throws ServerException {
+		try {
+			return pedidoVentaCaracteristicaMapper.camposEspecialesPlantilla(SoftureUtil.formatFunction(sqlFuncion), documentoId);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), " : " + sqlFuncion);
+		}
+	}
 // END region aditionalMethods
 
 }

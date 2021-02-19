@@ -28,5 +28,6 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	String getTemplate(String documento);
 	String getUnique(PedidoVentaCaracteristicaDTO dto);
 	PedidoVentaCaracteristicaDTO consultarSQLCampoGenerarDocumento(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
+	List<PedidoVentaCaracteristicaDTO> camposEspecialesPlantilla(@Param("sqlFuncion") String sqlFuncion, @Param("llaveTablaDocumento") String llaveTablaDocumento);
 // END region aditionalMethods
 }
