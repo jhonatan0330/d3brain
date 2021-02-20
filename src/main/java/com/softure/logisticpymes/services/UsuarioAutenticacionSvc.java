@@ -239,6 +239,10 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		usuarioSesionService.inactivar(sesion, null);
 	}
 	
+	public String getFechaActualizacion() {
+		return usuarioAutenticacionMapper.versionActual();
+	}
+	
 // END region aditionalMethods
 
 }

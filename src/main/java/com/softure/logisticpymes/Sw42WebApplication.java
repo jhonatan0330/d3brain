@@ -1,11 +1,11 @@
 package com.softure.logisticpymes;
 
-import com.softure.logisticpymes.services.MensajeSvc;
-import com.softure.logisticpymes.services.ProcesoTransicionAutomaticaSvc;
-import com.softure.logisticpymes.servlet.DownloaderServlet;
-import com.softure.logisticpymes.servlet.ReporteServlet;
-import com.softure.logisticpymes.servlet.UploaderServlet;
-import com.softure.java.dto.exception.ServerException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.servlet.http.HttpServlet;
 
@@ -18,16 +18,31 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.init.ScriptException;
+import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import com.softure.java.dto.exception.ServerException;
+import com.softure.logisticpymes.services.MensajeSvc;
+import com.softure.logisticpymes.services.ProcesoTransicionAutomaticaSvc;
+import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
+import com.softure.logisticpymes.servlet.DownloaderServlet;
+import com.softure.logisticpymes.servlet.ReporteServlet;
+import com.softure.logisticpymes.servlet.UploaderServlet;
 
 
 @SpringBootApplication
@@ -39,12 +54,98 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 	@Autowired private Environment env;
 	@Autowired private MensajeSvc mensajeService;
 	@Autowired private ProcesoTransicionAutomaticaSvc transicionservice;
+	@Autowired private UsuarioAutenticacionSvc autService;
 	
 	@Autowired private AutowireCapableBeanFactory beanFactory;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Sw42WebApplication.class, args);
+		
 	}
+
+	@EventListener(ApplicationReadyEvent.class)
+	public void doSomethingAfterStartup() {
+		System.out.println("*********************************************************");
+		System.out.println("*********************************************************");
+		// Obtengo version actual 
+		String actualString = autService.getFechaActualizacion();
+		System.out.println("Fecha actual = " + actualString);
+		if(actualString==null) {
+			System.out.println("*********************************************************");
+			System.out.println("*******                                          ********");
+			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
+			System.out.println("*******                                          ********");
+			System.out.println("*********************************************************");
+			System.out.println("*********************************************************");
+			return;
+		}
+		Date actualDate;
+		try {
+			actualDate = new SimpleDateFormat("yyyy-MM-dd").parse(actualString);
+		} catch (ParseException e1) {
+			System.out.println("*********************************************************");
+			System.out.println("*******                                          ********");
+			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
+			System.out.println("*******                                          ********");
+			System.out.println("*********************************************************");
+			System.out.println("*********************************************************");
+			System.out.println(e1.getMessage());
+			return;
+		}
+		System.out.println("Fecha actual = " + actualDate.toString());
+		Calendar iterador = Calendar.getInstance();
+		iterador.setTime(actualDate);
+		iterador.add(Calendar.DAY_OF_MONTH, 1);
+		System.out.println("Comienza con = " + iterador.getTime().toString());
+		System.out.println("*********************************************************");
+		System.out.println("*********************************************************");
+		try {
+			Connection con = dynamicDataSource().getConnection();
+			String sqlName;
+			while (iterador.getTime().getTime() < new Date().getTime()) {
+				sqlName = "static/data/" + String.valueOf(iterador.get(Calendar.YEAR)); 
+				sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1);
+				sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1) + to2String(iterador.get(Calendar.DAY_OF_MONTH)) + ".sql"; 
+				// System.out.println("Buscando Script = "  + sqlName );
+				Resource fileSql = new ClassPathResource(sqlName);
+				if(fileSql.exists()) {
+					System.out.println("**************Ejecutando Script = "  + sqlName );
+					ScriptUtils.executeSqlScript(con, new EncodedResource(fileSql, "UTF-8"));
+				}
+				iterador.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			System.out.println("*******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
+			System.out.println("*******                                          ********");
+			System.out.println("*******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
+			System.out.println("*******                                          ********");
+			System.out.println("****************:)****:)***:)***:)***:)******************");
+			System.out.println("*********************************************************");
+		} catch (ScriptException e) {
+			System.out.println("*********************************************************");
+			System.out.println("*******                                          ********");
+			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
+			System.out.println("*******                                          ********");
+			System.out.println("*********************************************************");
+			System.out.println("*********************************************************");
+			System.out.println(e.getMessage());
+		} catch (SQLException e) {
+			System.out.println("*********************************************************");
+			System.out.println("*******                                          ********");
+			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
+			System.out.println("*******                                          ********");
+			System.out.println("*********************************************************");
+			System.out.println("*********************************************************");
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public String to2String(int number) {
+		if(number < 10) {
+			return "0" + String.valueOf(number);	
+		}
+		return String.valueOf(number);
+	}
+	
 
 	@Bean(name = "dataSource")
 	public PooledDataSource dynamicDataSource() {

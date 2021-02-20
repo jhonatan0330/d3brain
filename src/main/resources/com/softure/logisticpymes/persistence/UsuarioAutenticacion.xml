@@ -140,6 +140,10 @@
 		select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'usuariosesion_ussp';
 	</select>
 	
+	<select id="versionActual" resultType="java.lang.String">
+		select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'usuario_usrp';
+	</select>
+	
 	<select id="cantidadAsignaciones" parameterType="java.lang.String" resultType="int">
 		select count(*) from actividad_actp where cact_estado = 'A' and cact_responsable = #{usuario}
 	</select>

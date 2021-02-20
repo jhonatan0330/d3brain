@@ -11,7 +11,7 @@ public interface UsuarioAutenticacionMapper extends IBasicMapper<UsuarioAutentic
 
 // BEGIN region aditionalMethods  
 	String consultarValidez();
-	
+	String versionActual();
 	String fechaMinima();
 	
 	int cantidadAsignaciones(String usuario);
