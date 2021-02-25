@@ -602,8 +602,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 					boolean iContadorModificadas = false;
 					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getCaracteristicas()) {
 						if(iCampoDocumento.getModificado()) {
-							if(Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null)
-								throw new ServerException("El campo " + iCampoDocumento.getCampoDTO().getNombre() + " se envia a modificar pero no tiene permisos de modificar ese campo");
+							if(Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null) {
+								String mensajeError = "El campo " + iCampoDocumento.getCampoDTO().getNombre();
+								mensajeError = mensajeError + " de la plantilla " + iCampoDocumento.getCampoDTO().getPlantillaNombre() + " se envia a modificar pero el usuario ";
+								mensajeError = mensajeError + usuarioService.consultaXId(getUserFlex(token)) + " no tiene permisos de modificar ese campo";
+								throw new ServerException(mensajeError);
+							}
 							iContadorModificadas= true;
 						}
 					}

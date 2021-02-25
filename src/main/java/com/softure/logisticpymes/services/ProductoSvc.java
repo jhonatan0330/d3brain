@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.filter.ProductoFilterDTO;
 import com.softure.logisticpymes.persistence.ProductoMapper;
@@ -145,6 +146,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	} 
 	
 	public List<ProductoDTO> listarProductoCampo(String campo, String filtro)throws ServerException{
+		if(filtro!=null) filtro = SoftureUtil.formatFunction(filtro).toUpperCase();
 		return productoMapper.listarProductoCampo(campo, filtro);
 	}
 	

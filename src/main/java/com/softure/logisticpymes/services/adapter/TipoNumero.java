@@ -136,6 +136,7 @@ public class TipoNumero {
 							}
 						}
 						for (Map.Entry<String,BigDecimal> entry : valoresDetallesCampo.entrySet()) {
+							if(entry.getValue()==null) entry.setValue(BigDecimal.ZERO);
 							formula = StringUtils.replace(formula, entry.getKey(), entry.getValue().toPlainString() );							
 						}
 					} 
