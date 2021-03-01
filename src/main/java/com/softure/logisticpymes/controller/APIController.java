@@ -17,6 +17,7 @@ import com.softure.java.dto.exception.ApiErrorResponse;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaAjusteDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
@@ -25,6 +26,7 @@ import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
 import com.softure.logisticpymes.services.ActividadSvc;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
+import com.softure.logisticpymes.services.PedidoVentaAjusteSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.UploadSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
@@ -40,6 +42,7 @@ public class APIController {
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
 	@Autowired private PedidoVentaSvc pedidoVentaService;
+	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	@Autowired private UsuarioSvc usuarioService;
 	@Autowired private UploadSvc uploadService;
 	@Autowired private CampoAdaptador adaptador;
@@ -135,6 +138,11 @@ public class APIController {
 	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
 	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion,@RequestHeader("Authorization") String token)  throws ServerException  {
 		return actividadService.guardar(asignacion, token);	
+	}
+	
+	@RequestMapping(value="/changeState", method=RequestMethod.POST)
+	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,@RequestHeader("Authorization") String token)  throws ServerException  {
+		return pedidoVentaAjusteService.guardar(ajuste, token);	
 	}
 	
 }
