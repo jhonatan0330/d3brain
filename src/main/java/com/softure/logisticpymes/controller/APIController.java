@@ -133,7 +133,7 @@ public class APIController {
 	}
 	
 	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
-	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion, @RequestBody String token)  throws ServerException  {
+	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion,@RequestHeader("Authorization") String token)  throws ServerException  {
 		return actividadService.guardar(asignacion, token);	
 	}
 	
