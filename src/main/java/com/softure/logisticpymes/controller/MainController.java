@@ -67,4 +67,11 @@ public class MainController {
 	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)  throws ServerException  {
 		return pedidoVentaService.listarUsuario(dto);
 	}
+	
+	@RequestMapping(value="/getAdministratorTemplates", method=RequestMethod.GET)
+	public List<DocumentoPlantillaDTO> consultaAdministrador(@RequestHeader("Authorization") String token)  throws ServerException  {
+		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
+		filter.setSecurityToken(token);
+		return plantillaService.consultaAdministrador(filter);	
+	}
 }
