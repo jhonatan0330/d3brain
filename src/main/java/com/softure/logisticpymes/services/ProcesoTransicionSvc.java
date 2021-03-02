@@ -393,7 +393,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 		if(resultado!=null && !resultado.isEmpty()) {
 			for (PedidoVentaDTO iDocumentoIterar : resultado) {
-				iDocumentoIterar.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(iDocumentoIterar.getLlaveTabla()));
+				iDocumentoIterar.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(iDocumentoIterar.getLlaveTabla(), iDocumentoIterar.getHistorico()));
 				//Aqui al parecer el expediednte principal es el modificador pero no me parece que sea asi, deberia ser el expediente??, o talvez todos
 				PedidoVentaDTO acabdoCrear = generarDocumentosTransicion(transicionIteracion, iDocumentoIterar, documentoModificador, iDocumentoIterar.getTransaccion(), token, null);
 				//Creo la relacion del documento Gestor
@@ -551,7 +551,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 							} else {
 								if(expedienteDTO!=null && expedienteDTO.getPlantilla() != null && iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla())==0) {
 									// Solo consulto el documento cuando en realidad lo necesito, en general no veien las caracteristicas
-									if(expedienteDTO.getCaracteristicas()==null) expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla()));
+									if(expedienteDTO.getCaracteristicas()==null) expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
 									camposNuevos.add(copiar( pedidoService.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
 								}
 							}

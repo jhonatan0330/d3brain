@@ -205,6 +205,23 @@
 		where cpvc_documento = #{documento} and cpvc_estado ='A'
 	</select>
 	
+	<select id="listar2DocumentoHistorico" resultType="PedidoVentaCaracteristicaDTO">
+		select
+			cpvc_llave as  llaveTabla
+			,cpvc_documento as  documento
+			,cpvc_campo as  campo
+			,cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,mpvc_valornumero as  valorNumero
+			,cpvc_transaccionregistro as  transaccionRegistro
+			,cpvc_transaccioninactivo as  transaccionInactivo
+			,cpvc_estado as estado
+		from z_pvc_pedidoventacaracteristica
+		where cpvc_documento = #{documento} and cpvc_estado ='A'
+	</select>
+	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaCaracteristicaDTO">
 		select
 			cpvc_llave as llaveTabla

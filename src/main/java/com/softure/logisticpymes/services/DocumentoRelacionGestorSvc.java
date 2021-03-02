@@ -95,7 +95,10 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			if(dto.getEstado().length() > 4 && dto.getEstado().charAt(4) == '1') verReportes = "1";
 			if(dto.getEstado().length() < 6 || dto.getEstado().charAt(5) != '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
 		}
-		return documentoRelacionGestorMapper.listarExpedientesGestionadores(dto, verAsignacion, verMensaje, verInventarios, verReportes, usuarioAutomatico);
+		return documentoRelacionGestorMapper.listarExpedientesGestionadores(
+				dto,
+				documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal()),
+				verAsignacion, verMensaje, verInventarios, verReportes, usuarioAutomatico);
 		// END region listarExpedientesGestionadores
 	}
 
@@ -103,7 +106,12 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionGestorDTO guardar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoRelacionGestor_guardar
-		return super.guardar(dto, token);
+		if(documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal())!=null) {
+			return super.guardar(dto, token);	
+		}else {
+			getUserFlex(token);
+			return documentoRelacionGestorMapper.insertHistoricTable(dto);
+		}
 		// END DocumentoRelacionGestor_guardar
 	}
 
@@ -112,6 +120,12 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		DocumentoRelacionGestorDTO actual;
 		if(anterior==null) {
 			actual = documentoRelacionGestorMapper.ultimoRegistro(principal);
+			if(actual==null) {
+				if(documentoRelacionGestorMapper.isActual(principal)==null) {
+					throw new ServerException("Revisa con el desarrollador porque este documento se encuentra en el historico");
+				}
+			}
+			
 		}else {
 			actual = anterior;
 		}

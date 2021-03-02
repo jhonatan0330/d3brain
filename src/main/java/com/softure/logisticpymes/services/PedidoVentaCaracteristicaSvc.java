@@ -120,9 +120,14 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 
 // BEGIN region aditionalMethods
-	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento)
+	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
-		return pedidoVentaCaracteristicaMapper.listar2Documento(documento);
+		if( historico ==null || historico ==0 ) {
+			return pedidoVentaCaracteristicaMapper.listar2Documento(documento);
+		}else {
+			return pedidoVentaCaracteristicaMapper.listar2DocumentoHistorico(documento);
+		}
+		
 	}
 	
 	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId, List<DocumentoPlantillaCaracteristicaDTO> templateFields)

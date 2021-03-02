@@ -13,6 +13,7 @@ public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRel
 
 // BEGIN region aditionalMethods  
 	List<DocumentoRelacionGestorDTO> listarExpedientesGestionadores(@Param("dto")DocumentoRelacionGestorFilterDTO dto
+			, @Param("actual")String historico
 			, @Param("verAsignacion")String verAsignacion
 			, @Param("verMensajes")String verMensajes
 			, @Param("verInventarios")String verInventarios
@@ -20,5 +21,7 @@ public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRel
 			, @Param("usuarioAutomatico")String usuarioAutomatico);
 	DocumentoRelacionGestorDTO ultimoRegistro(String documentoPrincipal);
 	String getSystemUser();
+	String isActual(String documento);
+	DocumentoRelacionGestorDTO insertHistoricTable(DocumentoRelacionGestorDTO dto);
 // END region aditionalMethods
 }

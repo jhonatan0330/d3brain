@@ -223,7 +223,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos(securityToken));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, securityToken);
 		if(plantilla.getCaracteristicas()!=null & plantilla.getCaracteristicas().size()!=0){
-			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService.listar2Documento(bd.getLlaveTabla());
+			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService.listar2Documento(bd.getLlaveTabla(), bd.getHistorico());
 			bd.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			PedidoVentaCaracteristicaDTO uc = null;
 			for (DocumentoPlantillaCaracteristicaDTO documentoCaracteristicaDTO : plantilla.getCaracteristicas()) {
@@ -960,7 +960,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			String campoConsecutivo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(), Propiedades.CONSECUTIVO, getUserFlex(token));
 			if(campoConsecutivo == null) throw new ServerException("Se debe configurar la propiedad consecutivo para obtener el id del usuario");
 			//Cuando se gestiona el proceso para activar el usuario pasa que no vienen las caracteristicas
-			if(dto.getCaracteristicas()==null) dto.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(dto.getLlaveTabla()));
+			if(dto.getCaracteristicas()==null) dto.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(dto.getLlaveTabla(), dto.getHistorico()));
 			if(dto.getCaracteristicas().size()==0) throw new ServerException("Se debe colocar la caracteristica nombre del documento");
 			for (PedidoVentaCaracteristicaDTO pvc : dto.getCaracteristicas()) {
 				if(pvc.getCampo().compareTo(campoConsecutivo)==0){
@@ -1080,7 +1080,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		rcDTOFilter.setPlantilla(pedido.getPlantilla());
 		List<DocumentoPlantillaCaracteristicaDTO> camposBase =  documentoPlantillaCaracteristicaService.listarConsulta(rcDTOFilter);
 		if(camposBase!=null & camposBase.size()!=0){
-			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService.listar2Documento(pedido.getLlaveTabla());
+			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService.listar2Documento(pedido.getLlaveTabla(), pedido.getHistorico());
 			pedido.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			PedidoVentaCaracteristicaDTO uc = null;
 			for (DocumentoPlantillaCaracteristicaDTO documentoCaracteristicaDTO : camposBase) {

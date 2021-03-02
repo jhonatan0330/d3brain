@@ -248,7 +248,7 @@
 			,movimiento_descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla
 			,cdrg_nombre as  nombre
-		  from documentorelaciongestor_drgp
+		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">z_drg_documentorelaciongestor</if>
 		  	left join pedidoventa_pdvp modifica on (cpdv_llave = cdrg_documentomodificador)
 		  where cdrg_documentoprincipal = #{dto.documentoPrincipal}
 		  <if test="usuarioAutomatico!=null">and cdrg_usuario != #{usuarioAutomatico}</if>
@@ -372,6 +372,84 @@
 	
 	<select id="getSystemUser" resultType="java.lang.String">
 		select corg_usuariosystem from organizacion_orgp where corg_principal is null and corg_estado = 'A';
+	</select>
+	
+	<select id="isActual" resultType="java.lang.String">
+		select '1' from pedidoventa_pdvp where cpdv_nombre = #{documento} and (npdv_historico is null or npdv_historico = 0);
+	</select>
+	
+	<select id="insertHistoricTable" parameterType="DocumentoRelacionGestorDTO" resultType="DocumentoRelacionGestorDTO">
+		insert into z_drg_documentorelaciongestor(
+			cdrg_llave
+		<if test="documentoPrincipal!=null">
+			,cdrg_documentoprincipal
+		</if>
+		<if test="documentoModificador!=null">
+			,cdrg_documentomodificador
+		</if>
+		<if test="fecha!=null">
+			,ddrg_fecha
+		</if>
+		<if test="estadoInicial!=null">
+			,cdrg_estadoinicial
+		</if>
+		<if test="estadoFinal!=null">
+			,cdrg_estadofinal
+		</if>
+		<if test="usuario!=null">
+			,cdrg_usuario
+		</if>
+		<if test="ubicacion!=null">
+			,cdrg_ubicacion
+		</if>
+		<if test="valores!=null">
+			,cdrg_valores
+		</if>
+		<if test="cierre!=null">
+			,ddrg_cierre
+		</if>
+		<if test="nombre!=null">
+			,cdrg_nombre
+		</if>
+		<if test="estado!=null">
+			,cdrg_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documentoPrincipal!=null">
+			,#{documentoPrincipal}
+		</if>
+		<if test="documentoModificador!=null">
+			,#{documentoModificador}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="estadoInicial!=null">
+			,#{estadoInicial}
+		</if>
+		<if test="estadoFinal!=null">
+			,#{estadoFinal}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="ubicacion!=null">
+			,#{ubicacion}
+		</if>
+		<if test="valores!=null">
+			,#{valores}
+		</if>
+		<if test="cierre!=null">
+			,#{cierre}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
 	</select>
 <!--// END region script-->
 
