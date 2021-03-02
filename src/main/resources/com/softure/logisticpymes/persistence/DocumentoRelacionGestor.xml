@@ -375,7 +375,7 @@
 	</select>
 	
 	<select id="isActual" resultType="java.lang.String">
-		select '1' from pedidoventa_pdvp where cpdv_nombre = #{documento} and (npdv_historico is null or npdv_historico = 0);
+		select '1' from pedidoventa_pdvp where cpdv_llave = #{documento} and (npdv_historico is null or npdv_historico = 0);
 	</select>
 	
 	<select id="insertHistoricTable" parameterType="DocumentoRelacionGestorDTO" resultType="DocumentoRelacionGestorDTO">

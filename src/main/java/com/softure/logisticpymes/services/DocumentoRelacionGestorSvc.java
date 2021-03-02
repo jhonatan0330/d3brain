@@ -120,11 +120,11 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		DocumentoRelacionGestorDTO actual;
 		if(anterior==null) {
 			actual = documentoRelacionGestorMapper.ultimoRegistro(principal);
-			if(actual==null) {
+			/*if(actual==null) {
 				if(documentoRelacionGestorMapper.isActual(principal)==null) {
 					throw new ServerException("Revisa con el desarrollador porque este documento se encuentra en el historico");
 				}
-			}
+			}*/
 			
 		}else {
 			actual = anterior;
