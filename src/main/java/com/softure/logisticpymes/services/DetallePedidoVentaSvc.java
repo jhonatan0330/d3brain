@@ -562,6 +562,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	
 	public void definirPropiedad2Caracteristicas(DetallePedidoVentaDTO detail) throws ServerException {
 		if(detail.getCaracteristicas()==null || detail.getCaracteristicas().isEmpty()) throw new ServerException("Ahora debes traer los campos basicos");
+		if(detail.getPropiedades()==null) throw new ServerException("Por favor envia las propiedades");
 		
 		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		if(cpTotal!=null) detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
