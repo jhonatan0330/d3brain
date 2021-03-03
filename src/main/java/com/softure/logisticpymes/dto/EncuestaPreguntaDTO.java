@@ -81,7 +81,7 @@ public class EncuestaPreguntaDTO extends BasicDTO
 	public String getRestriccion() {
 		return restriccion;
 	}
-	public void setOpciones (List<EncuestaOpcionRespuestaDTO> opciones) {
+	public void setOpciones(List<EncuestaOpcionRespuestaDTO> opciones) {
 		this.opciones = opciones;
 	}
 	

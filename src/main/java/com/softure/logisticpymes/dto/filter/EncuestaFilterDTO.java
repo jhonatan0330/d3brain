@@ -114,5 +114,6 @@ public class EncuestaFilterDTO extends BasicFilterDTO
 		return cliente;
 	}
 	
+					
 
 }

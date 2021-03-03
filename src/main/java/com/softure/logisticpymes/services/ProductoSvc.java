@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 import com.softure.java.cons.ConstantesGenerales;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.UsuarioRolProductoDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioRolProductoFilterDTO;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.filter.ProductoFilterDTO;
 import com.softure.logisticpymes.persistence.ProductoMapper;

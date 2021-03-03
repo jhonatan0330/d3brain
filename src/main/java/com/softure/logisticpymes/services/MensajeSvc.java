@@ -17,6 +17,8 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import com.softure.java.cons.ConstantesGenerales;
+import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.DocumentoRelacionExpedienteDTO;
 import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
@@ -27,6 +29,7 @@ import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
 import com.softure.logisticpymes.dto.ServidorDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
+import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
@@ -39,10 +42,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.DocumentoRelacionExpedienteDTO;
 import com.softure.logisticpymes.dto.MensajeDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.logisticpymes.dto.filter.MensajeFilterDTO;
 import com.softure.logisticpymes.persistence.MensajeMapper;
 

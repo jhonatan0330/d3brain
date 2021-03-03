@@ -3,6 +3,7 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
+import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaOpcionRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaOpcionRespuestaFilterDTO;

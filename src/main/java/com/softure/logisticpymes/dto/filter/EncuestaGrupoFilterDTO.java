@@ -82,5 +82,6 @@ public class EncuestaGrupoFilterDTO extends BasicFilterDTO
 		return usuario;
 	}
 	
+					
 
 }

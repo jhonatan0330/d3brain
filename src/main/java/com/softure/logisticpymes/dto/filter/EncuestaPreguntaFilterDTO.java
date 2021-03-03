@@ -69,5 +69,6 @@ public class EncuestaPreguntaFilterDTO extends BasicFilterDTO
 		return restriccion;
 	}
 	
+					
 
 }

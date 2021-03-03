@@ -15,6 +15,7 @@ import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 // END region interImport
@@ -28,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ProcesoTransicionAutomaticaDTO;
-import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.filter.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.logisticpymes.persistence.ProcesoTransicionAutomaticaMapper;
 

@@ -112,16 +112,25 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 		dto.setFechaInicioMax(new Date());
 		dto.setFechaFinMin(new Date());
 		dto.setCliente(getUserFlex(dto.getSecurityToken()));
+		if(dto.getCliente()!=null){
+			// Esto lo hagopor el generador de codigo
+			paginar(dto);
+			try {
+				List<EncuestaDTO> result =encuestaMapper.listarDisponibles(dto);
+				if(result!=null && !result.isEmpty()) {
+					for (EncuestaDTO encuestaDTO : result) {
+						encuestaDTO.setGrupos(encuestaGrupoSvc.getGroups(encuestaDTO.getLlaveTabla(), dto.getSecurityToken()));
+					}
+				}
+				return  result;
+			}catch (Exception e) {
+				throw new ServerException(e.getCause().getMessage());
+			}
+		}
 		// END region listarDisponibles
 		paginar(dto);
 		try {
-			List<EncuestaDTO> result =encuestaMapper.listarDisponibles(dto);
-			if(result!=null && !result.isEmpty()) {
-				for (EncuestaDTO encuestaDTO : result) {
-					encuestaDTO.setGrupos(encuestaGrupoSvc.getGroups(encuestaDTO.getLlaveTabla(), dto.getSecurityToken()));
-				}
-			}
-			return  result;
+			return encuestaMapper.listarDisponibles(dto); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
