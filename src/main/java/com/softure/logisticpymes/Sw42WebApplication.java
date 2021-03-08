@@ -92,12 +92,12 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 			System.out.println(e1.getMessage());
 			return;
 		}
-		System.out.println("Fecha actual = " + actualDate.toString());
+		System.out.println("Fecha actual en BD = " + actualDate.toString());
 		Calendar iterador = Calendar.getInstance();
 		iterador.setTime(actualDate);
 		iterador.add(Calendar.DAY_OF_MONTH, 1);
-		System.out.println("Comienza con = " + iterador.getTime().toString());
 		System.out.println("*********************************************************");
+		System.out.println("************COMIENZA A ACTUALIZAR    ******************");
 		System.out.println("*********************************************************");
 		try {
 			Connection con = dynamicDataSource().getConnection();

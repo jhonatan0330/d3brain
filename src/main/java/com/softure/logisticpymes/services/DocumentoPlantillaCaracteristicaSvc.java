@@ -222,27 +222,41 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	}
 	
 	public String crearCampoNombre(String plantilla, String token) throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO campoNombre =new DocumentoPlantillaCaracteristicaDTO();
-		campoNombre.setCodigo("NOMBRE");
-		campoNombre.setNombre("NOMBRE");
-		campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
-		campoNombre.setOrden(1);
-		campoNombre.setPlantilla(plantilla);
-		campoNombre.setObjetivo("Almacenar el nombre");
-		campoNombre = guardar(campoNombre, token);
-
+		//Primero filtro si existe el campo nombre, eso evita un error al copiar plantilla
+		DocumentoPlantillaCaracteristicaFilterDTO filtro =new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtro.setCodigo("NOMBRE");
+		filtro.setPlantilla(plantilla);
+		DocumentoPlantillaCaracteristicaDTO campoNombre = consultaUnica(filtro);
+		if (campoNombre == null) {
+			campoNombre = new DocumentoPlantillaCaracteristicaDTO();
+			campoNombre.setCodigo("NOMBRE");
+			campoNombre.setNombre("NOMBRE");
+			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+			campoNombre.setOrden(1);
+			campoNombre.setPlantilla(plantilla);
+			campoNombre.setObjetivo("Almacenar el nombre");
+			campoNombre = guardar(campoNombre, token);
+		}
 		return campoNombre.getLlaveTabla();
 	}
 	
 	public String crearCampoIdentificacion(String plantilla, String token) throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO campoNombre =new DocumentoPlantillaCaracteristicaDTO();
-		campoNombre.setCodigo("ID");
-		campoNombre.setNombre("ID");
-		campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
-		campoNombre.setOrden(2);
-		campoNombre.setPlantilla(plantilla);
-		campoNombre.setObjetivo("Almacenar el id");
-		campoNombre = guardar(campoNombre, token);
+		//Primero filtro si existe el campo nombre, eso evita un error al copiar plantilla
+		DocumentoPlantillaCaracteristicaFilterDTO filtro =new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtro.setCodigo("ID");
+		filtro.setPlantilla(plantilla);
+		DocumentoPlantillaCaracteristicaDTO campoNombre = consultaUnica(filtro);
+		if (campoNombre == null) {
+			campoNombre =new DocumentoPlantillaCaracteristicaDTO();
+			campoNombre.setCodigo("ID");
+			campoNombre.setNombre("ID");
+			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
+			campoNombre.setOrden(2);
+			campoNombre.setPlantilla(plantilla);
+			campoNombre.setObjetivo("Almacenar el id");
+			campoNombre = guardar(campoNombre, token);
+		}
+		
 		
 		return campoNombre.getLlaveTabla();
 	}
