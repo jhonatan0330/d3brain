@@ -9,6 +9,10 @@ group = 'com.softure'
 version = '2.0.4'
 sourceCompatibility = '8'
 
+bootJar {
+    mainClassName = 'com.softure.logisticpymes.Sw42WebApplication'
+}
+
 repositories {
 	mavenCentral()
 	maven { url "http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/" }
