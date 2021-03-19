@@ -13,17 +13,21 @@ public class ActividadDTO extends BasicDTO
 // END region interfaces
 {
 
-	private String documento;
 	private String responsable;
-	private String rolNombre;
 	private String responsableIdentificacion;
 	private String responsableNombre;
+	private String documento;
+	private String documentoNombre;
+	private String documentoDescripcion;
+	private String plantilla;
+	private String plantillaNombre;
+	private String plantillaImagen;
 	private String responsableFoto;
 	private String comentario;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaRegistro;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaArrancar;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaRegistro;
 	private String usuarioRegistro;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInactivo;
@@ -35,27 +39,15 @@ public class ActividadDTO extends BasicDTO
 	private Integer duracion;
 	private String actividadPrevia;
 	private String actividadSiguiente;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaLeido;
 
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-	
-	public String getDocumento() {
-		return documento;
-	}
 	public void setResponsable(String responsable) {
 		this.responsable = responsable;
 	}
 	
 	public String getResponsable() {
 		return responsable;
-	}
-	public void setRolNombre(String rolNombre) {
-		this.rolNombre = rolNombre;
-	}
-	
-	public String getRolNombre() {
-		return rolNombre;
 	}
 	public void setResponsableIdentificacion(String responsableIdentificacion) {
 		this.responsableIdentificacion = responsableIdentificacion;
@@ -71,6 +63,48 @@ public class ActividadDTO extends BasicDTO
 	public String getResponsableNombre() {
 		return responsableNombre;
 	}
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+	
+	public String getDocumento() {
+		return documento;
+	}
+	public void setDocumentoNombre(String documentoNombre) {
+		this.documentoNombre = documentoNombre;
+	}
+	
+	public String getDocumentoNombre() {
+		return documentoNombre;
+	}
+	public void setDocumentoDescripcion(String documentoDescripcion) {
+		this.documentoDescripcion = documentoDescripcion;
+	}
+	
+	public String getDocumentoDescripcion() {
+		return documentoDescripcion;
+	}
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
+	}
+	
+	public String getPlantilla() {
+		return plantilla;
+	}
+	public void setPlantillaNombre(String plantillaNombre) {
+		this.plantillaNombre = plantillaNombre;
+	}
+	
+	public String getPlantillaNombre() {
+		return plantillaNombre;
+	}
+	public void setPlantillaImagen(String plantillaImagen) {
+		this.plantillaImagen = plantillaImagen;
+	}
+	
+	public String getPlantillaImagen() {
+		return plantillaImagen;
+	}
 	public void setResponsableFoto(String responsableFoto) {
 		this.responsableFoto = responsableFoto;
 	}
@@ -85,19 +119,19 @@ public class ActividadDTO extends BasicDTO
 	public String getComentario() {
 		return comentario;
 	}
-	public void setFechaRegistro(Date fechaRegistro) {
-		this.fechaRegistro = fechaRegistro;
-	}
-	
-	public Date getFechaRegistro() {
-		return fechaRegistro;
-	}
 	public void setFechaArrancar(Date fechaArrancar) {
 		this.fechaArrancar = fechaArrancar;
 	}
 	
 	public Date getFechaArrancar() {
 		return fechaArrancar;
+	}
+	public void setFechaRegistro(Date fechaRegistro) {
+		this.fechaRegistro = fechaRegistro;
+	}
+	
+	public Date getFechaRegistro() {
+		return fechaRegistro;
 	}
 	public void setUsuarioRegistro(String usuarioRegistro) {
 		this.usuarioRegistro = usuarioRegistro;
@@ -154,6 +188,13 @@ public class ActividadDTO extends BasicDTO
 	
 	public String getActividadSiguiente() {
 		return actividadSiguiente;
+	}
+	public void setFechaLeido(Date fechaLeido) {
+		this.fechaLeido = fechaLeido;
+	}
+	
+	public Date getFechaLeido() {
+		return fechaLeido;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

@@ -129,8 +129,6 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
         if(dto.getResponsable()!=null) {
             dto.setFechaRegistro(new Date());
             dto.setUsuarioRegistro(getUserFlex(token));
-            dto.setFechaArrancar(new Date());
-            dto.setFechaTerminar(new Date());
             dto = super.save(dto);
             return validarUsuario(dto.getResponsable());
         }
@@ -142,6 +140,20 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
         if(usuario==null) throw new ServerException("Error al consultar el usuario responsable por llave");
         if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El responsable que desea asignar no esta activo.\n" + usuario.getNombre());
         return usuario;
+	}
+	
+	public List<ActividadDTO> listUserActivities(String token) throws ServerException {
+		ActividadFilterDTO pd = new ActividadFilterDTO();
+		pd.setResponsable(getUserFlex(token));
+		pd.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return listarConsulta(pd);
+	}
+
+	public ActividadDTO readActivity(String id, String token) throws ServerException {
+		ActividadDTO bd = consultaXId(id);
+		if(bd.getFechaLeido()!=null) return bd;
+		bd.setFechaLeido(new Date());
+		return update(bd);
 	}
 // END region aditionalMethods
 

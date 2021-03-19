@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,6 +65,16 @@ public class DocumentController {
 		PedidoVentaFilterDTO pd = new PedidoVentaFilterDTO();
 		pd.setSecurityToken(token);
 		return pedidoVentaService.listarUsuario(pd);
+	}
+	
+	@RequestMapping(value="/getUserActivities", method=RequestMethod.GET)
+	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {
+		return actividadService.listUserActivities(token);
+	}
+	
+	@RequestMapping(value="/readActivity", method=RequestMethod.POST)
+	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token) throws ServerException {
+		return actividadService.readActivity(activity.getLlaveTabla(), token);
 	}
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)

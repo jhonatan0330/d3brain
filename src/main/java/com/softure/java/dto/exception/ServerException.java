@@ -19,6 +19,16 @@ public class ServerException extends Exception {
 		this.command = command;
 	}
 	
+	private String origen;
+	
+	public String getOrigen() {
+		return origen;
+	}
+
+	public void setOrigen(String origen) {
+		this.origen = origen;
+	}
+	
 	public ServerException(String message, String command, Throwable cause, Logger logger) {
 		super(message, cause);
 		logger.log(Level.SEVERE, message,this);
@@ -41,7 +51,8 @@ public class ServerException extends Exception {
 	}
 
 	public ServerException(String message, String origen) {
-		super((message.indexOf("Where:")!=-1)?(origen + "\n" + message.substring( ((message.indexOf("ERROR:")!=-1)?message.indexOf("ERROR"):0 ), message.indexOf("Where:"))):(origen + "\n" + message));
-		logger.log(Level.SEVERE, origen + "\n" + message,this);
+		super((message.indexOf("Where:")!=-1)?message.substring( ((message.indexOf("ERROR:")!=-1)?message.indexOf("ERROR"):0 ), message.indexOf("Where:")):message);
+		logger.log(Level.SEVERE, message,this);
+		this.origen = origen;
 	}
 }

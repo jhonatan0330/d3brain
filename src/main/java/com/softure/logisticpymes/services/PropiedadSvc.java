@@ -731,11 +731,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		try {
 			respuestaValidacion = propiedadMapper.funcionAsignacion(SoftureUtil.formatFunction(dto.getLlaveTabla()), documento, modificador);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "\n\nPropiedad : " + dto.getNombre() + "\n\nMotivo: " + dto.getMotivo());
+			throw new ServerException(e.getMessage(), " Motivo: " + dto.getMotivo() + " Propiedad : " + dto.getNombre());
 		}
 		if(respuestaValidacion==null)  throw new ServerException("El resultado ha sido nulo de la validacion\nDecision : " + dto.getMotivo());
 		if(respuestaValidacion.compareTo("S")!=0)
-			throw new ServerException(respuestaValidacion + "\n\n" + dto.getNombre() + "\n\nMotivo: " + dto.getMotivo());
+			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo() +" Propiedad : " + dto.getNombre());
 	}
 	
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token) throws ServerException{

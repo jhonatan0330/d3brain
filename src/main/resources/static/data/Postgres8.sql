@@ -329,19 +329,20 @@ CREATE TABLE catalogocontable_ctgp(
  
 CREATE TABLE actividad_actp(
         cact_llave character varying(32) NOT NULL,
-        cact_documento character varying(32) NOT NULL,
         cact_responsable character varying(32) NOT NULL,
+        cact_documento character varying(32) NOT NULL,
         cact_comentario character varying(4000) NOT NULL,
+        dact_fechaarrancar timestamp with time zone,
         dact_fecharegistro timestamp with time zone NOT NULL,
-        dact_fechaarrancar timestamp with time zone NOT NULL,
         cact_usuarioregistro character varying(32) NOT NULL,
         dact_fechainactivo timestamp with time zone,
-        dact_fechaterminar timestamp with time zone NOT NULL,
+        dact_fechaterminar timestamp with time zone,
         dact_fechalimite timestamp with time zone,
         cact_usuarioinactivo character varying(32),
         nact_duracion int NOT NULL DEFAULT 0,
         cact_actividadprevia character varying(32),
         cact_actividadsiguiente character varying(32),
+        dact_fechaleido timestamp with time zone,
         cact_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_actividad_actp PRIMARY KEY (cact_llave)
     );
@@ -1004,4 +1005,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.03.03.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.03.19.00' from pg_class where relname = 'usuariosesion_ussp';

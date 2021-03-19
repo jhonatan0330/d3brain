@@ -10,20 +10,24 @@ import org.apache.ibatis.type.Alias;
 public class ActividadFilterDTO extends BasicFilterDTO
 {
 
-	private String documento;
 	private String responsable;
-	private String rolNombre;
 	private String responsableIdentificacion;
 	private String responsableNombre;
+	private String documento;
+	private String documentoNombre;
+	private String documentoDescripcion;
+	private String plantilla;
+	private String plantillaNombre;
+	private String plantillaImagen;
 	private String responsableFoto;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaRegistroMin;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaRegistroMax;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaArrancarMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaArrancarMax;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaRegistroMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaRegistroMax;
 	private String usuarioRegistro;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInactivoMin;
@@ -41,16 +45,11 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	private Integer duracion;
 	private String actividadPrevia;
 	private String actividadSiguiente;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaLeidoMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaLeidoMax;
 
-	
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-	
-	public String getDocumento() {
-		return documento;
-	}
-	
 	
 	public void setResponsable(String responsable) {
 		this.responsable = responsable;
@@ -58,15 +57,6 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	
 	public String getResponsable() {
 		return responsable;
-	}
-	
-	
-	public void setRolNombre(String rolNombre) {
-		this.rolNombre = rolNombre;
-	}
-	
-	public String getRolNombre() {
-		return rolNombre;
 	}
 	
 	
@@ -88,29 +78,66 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	}
 	
 	
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+	
+	public String getDocumento() {
+		return documento;
+	}
+	
+	
+	public void setDocumentoNombre(String documentoNombre) {
+		this.documentoNombre = documentoNombre;
+	}
+	
+	public String getDocumentoNombre() {
+		return documentoNombre;
+	}
+	
+	
+	public void setDocumentoDescripcion(String documentoDescripcion) {
+		this.documentoDescripcion = documentoDescripcion;
+	}
+	
+	public String getDocumentoDescripcion() {
+		return documentoDescripcion;
+	}
+	
+	
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
+	}
+	
+	public String getPlantilla() {
+		return plantilla;
+	}
+	
+	
+	public void setPlantillaNombre(String plantillaNombre) {
+		this.plantillaNombre = plantillaNombre;
+	}
+	
+	public String getPlantillaNombre() {
+		return plantillaNombre;
+	}
+	
+	
+	public void setPlantillaImagen(String plantillaImagen) {
+		this.plantillaImagen = plantillaImagen;
+	}
+	
+	public String getPlantillaImagen() {
+		return plantillaImagen;
+	}
+	
+	
 	public void setResponsableFoto(String responsableFoto) {
 		this.responsableFoto = responsableFoto;
 	}
 	
 	public String getResponsableFoto() {
 		return responsableFoto;
-	}
-	
-	
-	public void setFechaRegistroMin(Date fechaRegistroMin) {
-		this.fechaRegistroMin = fechaRegistroMin;
-	}
-	
-	public Date getFechaRegistroMin() {
-		return fechaRegistroMin;
-	}
-	
-	public void setFechaRegistroMax(Date fechaRegistroMax) {
-		this.fechaRegistroMax = fechaRegistroMax;
-	}
-	
-	public Date getFechaRegistroMax() {
-		return fechaRegistroMax;
 	}
 	
 	
@@ -128,6 +155,23 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	
 	public Date getFechaArrancarMax() {
 		return fechaArrancarMax;
+	}
+	
+	
+	public void setFechaRegistroMin(Date fechaRegistroMin) {
+		this.fechaRegistroMin = fechaRegistroMin;
+	}
+	
+	public Date getFechaRegistroMin() {
+		return fechaRegistroMin;
+	}
+	
+	public void setFechaRegistroMax(Date fechaRegistroMax) {
+		this.fechaRegistroMax = fechaRegistroMax;
+	}
+	
+	public Date getFechaRegistroMax() {
+		return fechaRegistroMax;
 	}
 	
 	
@@ -224,6 +268,23 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	
 	public String getActividadSiguiente() {
 		return actividadSiguiente;
+	}
+	
+	
+	public void setFechaLeidoMin(Date fechaLeidoMin) {
+		this.fechaLeidoMin = fechaLeidoMin;
+	}
+	
+	public Date getFechaLeidoMin() {
+		return fechaLeidoMin;
+	}
+	
+	public void setFechaLeidoMax(Date fechaLeidoMax) {
+		this.fechaLeidoMax = fechaLeidoMax;
+	}
+	
+	public Date getFechaLeidoMax() {
+		return fechaLeidoMax;
 	}
 	
 
