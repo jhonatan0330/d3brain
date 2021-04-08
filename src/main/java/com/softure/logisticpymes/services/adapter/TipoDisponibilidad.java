@@ -15,7 +15,6 @@ import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDineroDTO;
 import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.logisticpymes.dto.PuestoDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.PuestoFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
@@ -28,17 +27,6 @@ public class TipoDisponibilidad {
 	@Autowired private DocumentoPlantillaCaracteristicaSvc baseService;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private PuestoSvc puestoService;
-	
-	private PedidoVentaDTO convertirPuestoEnDocumento(PuestoDTO actual) {
-		PedidoVentaDTO componente = new PedidoVentaDTO();
-		componente.setLlaveTabla(actual.getLlaveTabla());
-		componente.setNombre(actual.getNombre());
-		componente.setDinero(new PedidoVentaDineroDTO());
-		componente.getDinero().setValorTotal(new BigDecimal(actual.getFila()));
-		componente.getDinero().setSaldo(new BigDecimal(actual.getColumna()));
-		componente.setImagen(actual.getImagen());
-		return componente;
-	}
 	
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
@@ -78,53 +66,45 @@ public class TipoDisponibilidad {
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
-		//if(pBase.getCodigoDepende()==null) throw new ServerException("Es necesario colocar la caracteristica dependiente que tendra el croquis. Tipo Disponibilidad");
-		//if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
-		//if(pCampo.getDependientes().size()!=1) throw new ServerException("Los tipo disponibilidad permiten solo un dependiente");
-		if(Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS).isEmpty()) throw new ServerException("Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
-		//if(CampoUtilidades.obtenerValor(pBase, CampoUtilidades.PLANTILLA_AUXILIAR).isEmpty()) throw new ServerException("Es necesario colocar la plantilla del Documento base que tiene el croquis. Tipo Disponibilidad");
-		
-		if(pCampo.getDependientes()!=null && pCampo.getDependientes().size()!=0) {
-			PedidoVentaCaracteristicaDTO vCampoViaje = pCampo.getDependientes().get(0);
-			if(vCampoViaje.getValorOpcion()==null) throw new ServerException("Esta consultando un valor vacio del dependiente. Tipo Disponibilidad");
-			DocumentoPlantillaCaracteristicaDTO vBaseViaje = baseService.consultaUnicaConComplementos(vCampoViaje.getCampo(), pCampo.getSecurityToken());
-			
-			DocumentoPlantillaCaracteristicaFilterDTO vBaseVehiculoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
-			vBaseVehiculoFilter.setPlantilla(Propiedades.obtenerValor(vBaseViaje, Propiedades.PLANTILLA_AUXILIAR));
-			vBaseVehiculoFilter.setCodigo(Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS));
-			vBaseVehiculoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			DocumentoPlantillaCaracteristicaDTO vBaseVehiculo = baseService.consultaUnica(vBaseVehiculoFilter);
-			if(vBaseVehiculo==null) throw new ServerException("No se identifica el campo " + Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS) +  " de " + vBaseViaje.getNombre());
-			vBaseVehiculo = baseService.consultaUnicaConComplementos(vBaseVehiculo.getLlaveTabla(), pCampo.getSecurityToken());
-			
-			PedidoVentaCaracteristicaFilterDTO vVehiculoFilter = new PedidoVentaCaracteristicaFilterDTO();
-			vVehiculoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			vVehiculoFilter.setDocumento(vCampoViaje.getValorOpcion());
-			vVehiculoFilter.setCampo(vBaseVehiculo.getLlaveTabla());
-			PedidoVentaCaracteristicaDTO vVehiculo = campoService.consultaUnica(vVehiculoFilter);
-			
-			if(vVehiculo==null)  throw new ServerException("No se identifica el " + vBaseVehiculo.getNombre() );
-		}
-		
-		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS));
-			
-		if(vCroquis!=null){
-			pBase.setImagen(vCroquis.getValorText());
-			PuestoFilterDTO filtro = new PuestoFilterDTO();
-			filtro.setCampo(vCroquis.getLlaveTabla());
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
-			if(componentesActuales!=null && !componentesActuales.isEmpty()){
-				pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-				for(PuestoDTO actual:componentesActuales){
-					pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
-				}
+		if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
+		String estructura = Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
+		if(estructura.isEmpty()) throw new ServerException("Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
+		PedidoVentaCaracteristicaDTO dependienteCroquis = null;
+		for (PedidoVentaCaracteristicaDTO iDependiente : pCampo.getDependientes()) {
+			if(iDependiente.getCampo().compareTo(estructura)==0) {
+				dependienteCroquis = iDependiente;
+				break;
 			}
-		}else {
-			throw new ServerException("No se identifica el campo croquis del documento con nombre" + Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS) );
 		}
+		if(dependienteCroquis==null) throw new ServerException("No se encontro en los dependientes la estructura del croquis");
+		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
+		if(vCroquis==null) throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
+
+		pBase.setImagen(vCroquis.getValorText());
+		PuestoFilterDTO filtro = new PuestoFilterDTO();
+		filtro.setCampo(vCroquis.getLlaveTabla());
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
+		if(componentesActuales!=null && !componentesActuales.isEmpty()){
+			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
+			for(PuestoDTO actual:componentesActuales){
+				pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
+			}
+		}
+		
 		pCampo.setCampoDTO(pBase);
 		return pCampo;
+	}
+	
+	private PedidoVentaDTO convertirPuestoEnDocumento(PuestoDTO actual) {
+		PedidoVentaDTO componente = new PedidoVentaDTO();
+		componente.setLlaveTabla(actual.getLlaveTabla());
+		componente.setNombre(actual.getNombre());
+		componente.setDinero(new PedidoVentaDineroDTO());
+		componente.getDinero().setValorTotal(new BigDecimal(actual.getFila()));
+		componente.getDinero().setSaldo(new BigDecimal(actual.getColumna()));
+		componente.setImagen(actual.getImagen());
+		return componente;
 	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{

@@ -154,16 +154,17 @@ public class TipoNumero {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.NUMERO_FUNCION_SQL);
 		if(funcionCalculo!=null){
-			//VAlido que la cantidad de dependientes este correcta
-			if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes del campo " + pBase.getNombre());
-			List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE);
-			if(pCampo.getDependientes().size()!=codigoDepende.size()) throw new ServerException("El numero de dependientes no concuerda. Tipo Expediente" + codigoDepende.size());
-			//Al parecer solo funciona para un dependiente
-			//entityFilter.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			//entityFilter.getCaracteristicas().add(colocarFiltroDocumentoAuxiliar(documentoAuxiliar, pCampo.getDependientes().get(0).getValorOpcion()));
-			//Creo que con esto soluciono las modificaciones de documentos de dependencia
+			campoService.validarDependientes(pBase, pCampo.getDependientes());
+			List<PedidoVentaCaracteristicaDTO> newDependientes =  campoService.ordenarAlfabeticaDepende(pCampo.getDependientes());
+			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
+				if (iDep.getValorOpcion() == null) {
+					if(iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+						iDep.setValorOpcion(iDep.getValorNumero().toString());
+					}
+				}
+			}
 			try {
-				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(), pCampo.getDocumento(), pCampo.getDependientes()));			
+				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(), pCampo.getDocumento(), newDependientes));			
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Funcion de Calculo : " + funcionCalculo.getLlaveTabla() + "\n Campo: " + pCampo.getCampoDTO().getNombre());
 			}

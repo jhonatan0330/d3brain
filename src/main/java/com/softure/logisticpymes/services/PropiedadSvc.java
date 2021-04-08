@@ -581,6 +581,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PROCESO_GESTIONAR_ESTADOS : {identificadorPlantillasGestion(dto);break;}
 			case Propiedades.BODEGA_FIJA : {identificadorBodega(dto);break;}
 			case Propiedades.DEPENDE : {return identificadorCampo(dto, token);}
+			case Propiedades.DISPONIBILIDAD_CROQUIS: {return identificadorCampo(dto, token);}
 			case Propiedades.MODIFICAR_CAMPO : {return identificadorCampo(dto, token);}
 			case Propiedades.PROCESO_VALOR: {identificadorValorProceso(dto, token);break;}
 			case Propiedades.UBICACION : {return identificadorCampo(dto, token);}

@@ -291,10 +291,8 @@
 	
 	<select id="consultarCampoCroquis" resultType="PedidoVentaCaracteristicaDTO">
 		<include refid="selectPedidoVentaCaracteristicaFragment" />
-		, documentoplantillacaracteristica_dpcp, pedidoventa_pdvp
-		where cpvc_documento = cpdv_llave and cdpc_llave = cpvc_campo and cpdv_plantilla = cdpc_plantilla
-		and cdpc_estado = 'A' and cpdv_estado = 'A' and cpvc_estado = 'A' and cdpc_formato = 'B'
-		and cpdv_nombre =#{nombreDocumento}
+			inner join documentoplantillacaracteristica_dpcp on ( cdpc_llave = cpvc_campo and cdpc_estado = 'A')
+		where cpvc_documento = #{nombreDocumento} and cpvc_estado = 'A' and cdpc_formato = 'B'
 	</select>
     
     <select id="listarParaMensaje" resultType="PedidoVentaCaracteristicaDTO">

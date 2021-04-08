@@ -194,9 +194,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
-	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String nombreDocumento)
+	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId)
 			throws ServerException {
-		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(nombreDocumento);
+		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);
 	}
 	
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{

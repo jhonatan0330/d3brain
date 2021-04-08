@@ -66,7 +66,7 @@ public class Propiedades {
 	public static final String BINARIO_VERDADERO = "BINARIO_VERDADERO";
 	public static final String BINARIO_FALSO = "BINARIO_FALSO";
 
-	public static final String DISPONIBILIDAD_CROQUIS = "BASICA";
+	public static final String DISPONIBILIDAD_CROQUIS = "DISPONIBILIDAD_CROQUIS";
 	
 	public static final String DETALLE_NUMERO_COLUMNAS = "DETALLE_NUMERO_COLUMNAS";
 	public static final String DETALLE_TECLADO = "DETALLE_TECLADO";
@@ -312,6 +312,7 @@ public class Propiedades {
 			case DETALLE_TARIFARIO_SQL : {ruleProperty =  "Se crea una funcion para traer las tarifas, los campos depende se envian como parametros. Tener cuidado en el orden de los parametros es en orden ALFABETICO del codigo.\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[])  RETURNS SETOF tarifa_tarp AS";break;}
 			case DETALLE_FORMULA : {ruleProperty =  " Este parametro indica el valor total de la suma de productos escogidos si se requiere que sea diferente a la sumatoria de los productos. Se utiliza una formula para sumar o restar.\n";break;}
+			case DISPONIBILIDAD_CROQUIS : {ruleProperty =  "Relaciona el campo del formulario que tiene la estructura";break;}
 			case ENCABEZADO : {ruleProperty =  " Colocar los parametros de encabezado (SEDE) de reportes dinamicos.\n";break;}
 			case FECHA : {ruleProperty =  "  Codigo del campo que va a colocar la fecha del documento.\n";break;}
 			case FECHA_CON_HORA : {ruleProperty =  " La fecha muestra horas.\n";break;}
