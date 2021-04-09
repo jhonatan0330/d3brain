@@ -299,3 +299,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_161' , 'L', 'TRANSFERIR', 'PERMISO_PLANTILLA_TRANSFERIR', 'REQUISITO',true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_162' , 'C', 'CROQUIS FUENTE', 'DISPONIBILIDAD_CROQUIS', 'REQUISITO', 'U');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_propiedadboolean) 
+	VALUES('PROP_163' , 'C', 'FIRMA', 'ARCHIVO_FIRMA', 'REQUISITO', 'A', true, true);
