@@ -16,6 +16,7 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	private String documento;
 	private String documentoNombre;
 	private String documentoDescripcion;
+	private String documentoEstado;
 	private String plantilla;
 	private String plantillaNombre;
 	private String plantillaImagen;
@@ -102,6 +103,15 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	
 	public String getDocumentoDescripcion() {
 		return documentoDescripcion;
+	}
+	
+	
+	public void setDocumentoEstado(String documentoEstado) {
+		this.documentoEstado = documentoEstado;
+	}
+	
+	public String getDocumentoEstado() {
+		return documentoEstado;
 	}
 	
 	

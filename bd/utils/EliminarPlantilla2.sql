@@ -23,9 +23,10 @@ delete from pedidoventaajuste_pvap where cpva_documento in (select cpdv_llave fr
 delete from cuenta_cuep where ccue_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from bodega_bodp where cbod_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I');
+
+select * from documentoplantilla_dplp where cdpl_estado = 'I' order by cdpl_nombre;
 delete from documentoplantilla_dplp where cdpl_estado = 'I';
 delete from consecutivo_conp where ccon_llave not in (select cdpl_consecutivo from documentoplantilla_dplp) and ccon_llave not in (select cpcn_consecutivo from plantillaconsecutivo_pcnp);
-select * from documentoplantilla_dplp where cdpl_estado = 'I' order by cdpl_nombre;
 
 select * from pedidoventa_pdvp where cpdv_estadoexpediente in (
 	select cpes_llave from procesoestado_pesp  where cpes_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
@@ -36,7 +37,8 @@ update pedidoventa_pdvp set cpdv_estadoexpediente = null where cpdv_estadoexpedi
 delete from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I');
 delete from documentorelaciongestor_drgp where cdrg_estadofinal in (select cpes_llave from procesoestado_pesp  where cpes_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
 delete from procesoestado_pesp  where cpes_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I');
+select * from proceso_prcp where cprc_estado = 'I';
 delete from proceso_prcp where cprc_estado = 'I';
 
-select * from proceso_prcp;
+
 

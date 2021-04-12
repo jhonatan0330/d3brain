@@ -19,6 +19,7 @@ public class ActividadDTO extends BasicDTO
 	private String documento;
 	private String documentoNombre;
 	private String documentoDescripcion;
+	private String documentoEstado;
 	private String plantilla;
 	private String plantillaNombre;
 	private String plantillaImagen;
@@ -83,6 +84,13 @@ public class ActividadDTO extends BasicDTO
 	
 	public String getDocumentoDescripcion() {
 		return documentoDescripcion;
+	}
+	public void setDocumentoEstado(String documentoEstado) {
+		this.documentoEstado = documentoEstado;
+	}
+	
+	public String getDocumentoEstado() {
+		return documentoEstado;
 	}
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
