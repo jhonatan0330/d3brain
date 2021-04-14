@@ -199,6 +199,14 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);
 	}
 	
+	public List<PedidoVentaCaracteristicaDTO> camposOcupadosCroquis(String sqlFuncionDecision, String campoId, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+		try {
+			return  pedidoVentaCaracteristicaMapper.consultarCamposOcupados(SoftureUtil.formatFunction(sqlFuncionDecision), campoId, dependientes);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), "Funcion de campos ocupados : " + sqlFuncionDecision);
+		}
+	}
+	
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, Propiedades.DEPENDE);
 		if(codigoDepende==null || codigoDepende.isEmpty()) return;

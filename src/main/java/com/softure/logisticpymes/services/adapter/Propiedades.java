@@ -67,6 +67,7 @@ public class Propiedades {
 	public static final String BINARIO_FALSO = "BINARIO_FALSO";
 
 	public static final String DISPONIBILIDAD_CROQUIS = "DISPONIBILIDAD_CROQUIS";
+	public static final String DISPONIBILIDAD_FUNCION_SQL = "DISPONIBILIDAD_FUNCION_SQL";
 	
 	public static final String DETALLE_NUMERO_COLUMNAS = "DETALLE_NUMERO_COLUMNAS";
 	public static final String DETALLE_TECLADO = "DETALLE_TECLADO";

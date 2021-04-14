@@ -301,3 +301,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_162' , 'C', 'CROQUIS FUENTE', 'DISPONIBILIDAD_CROQUIS', 'REQUISITO', 'U');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_propiedadboolean) 
 	VALUES('PROP_163' , 'C', 'FIRMA', 'ARCHIVO_FIRMA', 'REQUISITO', 'A', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_164' , 'C', 'CROQUIS DISPONIBILIDAD', 'DISPONIBILIDAD_FUNCION_SQL', 'REQUISITO', 'U',true, true);

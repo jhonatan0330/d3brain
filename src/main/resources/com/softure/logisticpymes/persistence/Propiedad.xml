@@ -378,6 +378,15 @@ LANGUAGE plpgsql VOLATILE
 COST 100;
 	</select>
 	
+	<select id="crearFuncionParametros">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[]) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
 	<select id="eliminarFuncionNumerica" parameterType="PropiedadDTO" >
 		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, parametros character varying[]);
 	</select>

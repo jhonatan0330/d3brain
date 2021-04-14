@@ -294,6 +294,15 @@
 			inner join documentoplantillacaracteristica_dpcp on ( cdpc_llave = cpvc_campo and cdpc_estado = 'A')
 		where cpvc_documento = #{nombreDocumento} and cpvc_estado = 'A' and cdpc_formato = 'B'
 	</select>
+	
+	<select id="consultarCamposOcupados" resultType="PedidoVentaCaracteristicaDTO">
+		select cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,mpvc_valornumero as  valorNumero
+		from propiedad_${sqlFuncionCalculo} (#{campoId}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
+	</select>
     
     <select id="listarParaMensaje" resultType="PedidoVentaCaracteristicaDTO">
 		select

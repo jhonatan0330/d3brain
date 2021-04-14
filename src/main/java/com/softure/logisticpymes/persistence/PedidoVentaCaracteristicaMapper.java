@@ -26,6 +26,7 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	List<PedidoVentaCaracteristicaDTO> listarParaMensaje(@Param("documento") String documento, @Param("plantilla") String plantilla, @Param("propiedad") String propiedad, @Param("modificador") String modificador);
 	BigDecimal calcularNumeroFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	PedidoVentaCaracteristicaDTO consultarCampoCroquis(String nombreDocumento);
+	List<PedidoVentaCaracteristicaDTO> consultarCamposOcupados(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("campoId")String campoId, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	String getTemplate(String documento);
 	String getUnique(PedidoVentaCaracteristicaDTO dto);
 	PedidoVentaCaracteristicaDTO consultarSQLCampoGenerarDocumento(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);

@@ -157,6 +157,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
 				propiedadMapper.eliminarFuncionCamposEspecialesPlantilla(dto);
 				break;
+			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
+				propiedadMapper.eliminarFuncionNumerica(dto);
+				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
 				break;
@@ -255,6 +258,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
 					propiedadMapper.crearFuncionCamposEspecialesPlantilla(dto);
+					break;
+				case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
+					propiedadMapper.crearFuncionParametros(dto);
 					break;
 				default:
 					propiedadMapper.crearFuncion(dto);

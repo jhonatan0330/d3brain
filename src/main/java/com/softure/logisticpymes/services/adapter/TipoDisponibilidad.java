@@ -76,6 +76,7 @@ public class TipoDisponibilidad {
 				break;
 			}
 		}
+		
 		if(dependienteCroquis==null) throw new ServerException("No se encontro en los dependientes la estructura del croquis");
 		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
 		if(vCroquis==null) throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
@@ -85,14 +86,38 @@ public class TipoDisponibilidad {
 		filtro.setCampo(vCroquis.getLlaveTabla());
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
+		
+		PropiedadDTO funcion = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_FUNCION_SQL);
+				
 		if(componentesActuales!=null && !componentesActuales.isEmpty()){
+			if(funcion != null) {
+				campoService.validarDependientes(pBase, pCampo.getDependientes());
+				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getLlaveTabla(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+				if(ocupados!=null && !ocupados.isEmpty()) {
+					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
+						String[] pOcupados = iOcupado.getValorText().split("-");
+						for (String iPuesto : pOcupados) {
+							if(!iPuesto.isEmpty()) {
+								for (PuestoDTO actual : componentesActuales){
+									if(actual.getNombre().compareTo(iPuesto)==0) {
+										componentesActuales.remove(actual);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-			for(PuestoDTO actual:componentesActuales){
+			for (PuestoDTO actual : componentesActuales){
 				pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
 			}
 		}
-		
+
 		pCampo.setCampoDTO(pBase);
+		
 		return pCampo;
 	}
 	
@@ -109,15 +134,27 @@ public class TipoDisponibilidad {
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && (pCampo.getExpedientes()==null || pCampo.getExpedientes().isEmpty())) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
-		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE);
-		if(codigoDepende!=null){
-			if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
-			if(pCampo.getDependientes().size()!=1) throw new ServerException("Los tipo disponibilidad permiten solo un dependiente");
-			if(pCampo.getDependientes().get(0).getValorOpcion()==null) throw new ServerException("El dependieente de viaje debe incluir la llave");
-			pCampo.setValorOpcion(pCampo.getDependientes().get(0).getValorOpcion());
-			pCampo.setValorAuxiliar(pCampo.getDependientes().get(0).getCampo());
-		}
 		if(pCampo.getExpedientes()!=null){
+			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.DISPONIBILIDAD_FUNCION_SQL);
+			
+			if(funcion != null) {
+				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
+				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getLlaveTabla(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+				if(ocupados!=null && !ocupados.isEmpty()) {
+					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
+						String[] pOcupados = iOcupado.getValorText().split("-");
+						for (String iPuesto : pOcupados) {
+							if(!iPuesto.isEmpty()) {
+								for (PedidoVentaDTO actual : pCampo.getExpedientes()){
+									if(actual.getNombre().compareTo(iPuesto)==0) {
+										throw new ServerException("El puesto " + iPuesto + " ya se encuentra ocupado");
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			pCampo.setValorText("");
 			for(PedidoVentaDTO componente : pCampo.getExpedientes()){
 				pCampo.setValorText( pCampo.getValorText() + "-" + componente.getNombre());
