@@ -23,6 +23,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 	void actualizarEstados(PedidoVentaDTO dto);
 	int contarEstados(PedidoVentaDTO dto);
 	List<PedidoVentaDTO> listarUsuario(PedidoVentaFilterDTO dto);
+	List<PedidoVentaDTO> listar2Ids(@Param("Ids") List<String> Ids);
 	List<PedidoVentaDTO> listarVisibleRenderNivel2(@Param("documentos")List<PedidoVentaDTO> documentos);//Lo items hijos de los principales que son visibles
 	List<PedidoVentaDTO> iteracion(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);//PAra las decisiones tipo iteracion
 // END region aditionalMethods

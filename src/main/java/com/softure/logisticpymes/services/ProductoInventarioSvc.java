@@ -123,6 +123,14 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	}
 
 // BEGIN region aditionalMethods
+	public List<ProductoInventarioDTO> getByProducto( String id)
+			throws ServerException {
+		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setProducto(id);
+		return super.listarConsulta(filter);
+	}
+	
 // END region aditionalMethods
 
 }

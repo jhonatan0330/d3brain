@@ -1196,6 +1196,10 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 		// END region listarUsuario
 	}
+	
+	public List<PedidoVentaDTO> listar2Activity(List<String> ids, String token)throws ServerException{
+		return listadoCompleto(pedidoVentaMapper.listar2Ids(ids), token, null);
+	}
 // END region aditionalMethods
 
 }

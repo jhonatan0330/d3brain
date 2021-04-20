@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.dto.ProductoInventarioDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.ActividadSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
+import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.UploadSvc;
 
 @RestController
@@ -30,6 +34,7 @@ public class DocumentController {
 	@Autowired private PedidoVentaSvc pedidoVentaService;
 	@Autowired private UploadSvc uploadService;
 	@Autowired private ActividadSvc actividadService;
+	@Autowired private ProductoInventarioSvc inventoryService;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -90,5 +95,10 @@ public class DocumentController {
 	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
 	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion, String token)  throws ServerException  {
 		return actividadService.guardar(asignacion, token);	
+	}
+	
+	@GetMapping(value="/getInventory/{id}")
+	public List<ProductoInventarioDTO> getInventory(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return inventoryService.getByProducto(id);	
 	}
 }

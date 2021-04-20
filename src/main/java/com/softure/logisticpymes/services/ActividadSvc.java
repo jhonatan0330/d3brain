@@ -1,7 +1,7 @@
 package com.softure.logisticpymes.services;
 
 import java.util.List;
-
+import java.util.ArrayList;
 // BEGIN region interImport
 import java.util.Date;
 import com.softure.java.cons.ConstantesGenerales;
@@ -146,7 +146,24 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		ActividadFilterDTO pd = new ActividadFilterDTO();
 		pd.setResponsable(getUserFlex(token));
 		pd.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		return listarConsulta(pd);
+		List<ActividadDTO> result = listarConsulta(pd);
+		if(!result.isEmpty()) {
+			List<String> ids = new ArrayList<>();
+			for (ActividadDTO iActivity : result) {
+				ids.add(iActivity.getDocumento());
+			}
+			List<PedidoVentaDTO> documentos = pedidoService.listar2Activity(ids, token);
+			for (ActividadDTO iActivity : result) {
+				for (PedidoVentaDTO pedidoVentaDTO : documentos) {
+					if(iActivity.getDocumento().compareTo(pedidoVentaDTO.getLlaveTabla())==0) {
+						iActivity.setDocumentoDTO(pedidoVentaDTO);
+						break;
+					}
+				}
+				
+			}
+		}
+		return result;
 	}
 
 	public ActividadDTO readActivity(String id, String token) throws ServerException {

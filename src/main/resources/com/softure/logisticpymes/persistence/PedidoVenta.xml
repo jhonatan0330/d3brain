@@ -368,6 +368,11 @@
 			,cpdv_estado as estado 
 		from iteracion_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
 	</select>
+	
+	<select id="listar2Ids" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+			where cpdv_llave  in (<foreach item="item" collection="Ids" separator="," >#{item}</foreach>)
+	</select>
 <!--// END region script-->
 
 </mapper>

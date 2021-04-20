@@ -11,12 +11,6 @@
 			,(select cusr_identificacion from usuario_usrp where cusr_llave=cact_responsable) as  responsableIdentificacion
 			,(select cusr_nombre from usuario_usrp where cusr_llave=cact_responsable) as  responsableNombre
 			,cact_documento as  documento
-			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cact_documento) as  documentoNombre
-			,movimiento_descripcion(cact_documento) as  documentoDescripcion
-			,(select cpdv_estadoexpediente from pedidoventa_pdvp where cpdv_llave = cact_documento) as  documentoEstado
-			,(select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cact_documento) as  plantilla
-			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave= (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cact_documento)) as  plantillaNombre
-			,(select cdpl_imagen from documentoplantilla_dplp, pedidoventa_pdvp where cpdv_plantilla = cdpl_llave and cpdv_llave=cact_documento) as  plantillaImagen
 			,(select cusr_imagen from usuario_usrp where cusr_llave=cact_responsable) as  responsableFoto
 			,cact_comentario as  comentario
 			,dact_fechaarrancar as  fechaArrancar

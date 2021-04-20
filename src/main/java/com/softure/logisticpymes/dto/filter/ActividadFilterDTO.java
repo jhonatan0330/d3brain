@@ -14,12 +14,6 @@ public class ActividadFilterDTO extends BasicFilterDTO
 	private String responsableIdentificacion;
 	private String responsableNombre;
 	private String documento;
-	private String documentoNombre;
-	private String documentoDescripcion;
-	private String documentoEstado;
-	private String plantilla;
-	private String plantillaNombre;
-	private String plantillaImagen;
 	private String responsableFoto;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaArrancarMin;
@@ -87,60 +81,7 @@ public class ActividadFilterDTO extends BasicFilterDTO
 		return documento;
 	}
 	
-	
-	public void setDocumentoNombre(String documentoNombre) {
-		this.documentoNombre = documentoNombre;
-	}
-	
-	public String getDocumentoNombre() {
-		return documentoNombre;
-	}
-	
-	
-	public void setDocumentoDescripcion(String documentoDescripcion) {
-		this.documentoDescripcion = documentoDescripcion;
-	}
-	
-	public String getDocumentoDescripcion() {
-		return documentoDescripcion;
-	}
-	
-	
-	public void setDocumentoEstado(String documentoEstado) {
-		this.documentoEstado = documentoEstado;
-	}
-	
-	public String getDocumentoEstado() {
-		return documentoEstado;
-	}
-	
-	
-	public void setPlantilla(String plantilla) {
-		this.plantilla = plantilla;
-	}
-	
-	public String getPlantilla() {
-		return plantilla;
-	}
-	
-	
-	public void setPlantillaNombre(String plantillaNombre) {
-		this.plantillaNombre = plantillaNombre;
-	}
-	
-	public String getPlantillaNombre() {
-		return plantillaNombre;
-	}
-	
-	
-	public void setPlantillaImagen(String plantillaImagen) {
-		this.plantillaImagen = plantillaImagen;
-	}
-	
-	public String getPlantillaImagen() {
-		return plantillaImagen;
-	}
-	
+					
 	
 	public void setResponsableFoto(String responsableFoto) {
 		this.responsableFoto = responsableFoto;
