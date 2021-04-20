@@ -170,7 +170,9 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		ActividadDTO bd = consultaXId(id);
 		if(bd.getFechaLeido()!=null) return bd;
 		bd.setFechaLeido(new Date());
-		return update(bd);
+		bd = update(bd);
+		bd.setDocumentoDTO(pedidoService.consultaXId(bd.getDocumento()));
+		return bd;
 	}
 // END region aditionalMethods
 
