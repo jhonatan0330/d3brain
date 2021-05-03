@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.ProductoInventarioDTO;
+import com.softure.logisticpymes.dto.TarifaDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.ActividadSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.ProductoInventarioSvc;
+import com.softure.logisticpymes.services.ProductoSvc;
+import com.softure.logisticpymes.services.TarifaSvc;
 import com.softure.logisticpymes.services.UploadSvc;
 
 @RestController
@@ -34,6 +39,8 @@ public class DocumentController {
 	@Autowired private PedidoVentaSvc pedidoVentaService;
 	@Autowired private UploadSvc uploadService;
 	@Autowired private ActividadSvc actividadService;
+	@Autowired private ProductoSvc productService;
+	@Autowired private TarifaSvc tarifaService;
 	@Autowired private ProductoInventarioSvc inventoryService;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
@@ -59,11 +66,6 @@ public class DocumentController {
 		result.setLlaveTabla(document.getLlaveTabla());
 		return result;
 	}
-	
-	/*@RequestMapping(value="/deleteDocument", method=RequestMethod.POST)
-	public PedidoVentaDTO eliminarDocumento(@RequestBody PedidoVentaDTO document)   throws ServerException  {
-		return pedidoVentaService.inactivar(document);
-	}*/
 	
 	@RequestMapping(value="/getDashboard", method=RequestMethod.POST)
 	public List<PedidoVentaDTO> listarDashboard(@RequestBody String token) throws ServerException {
@@ -99,6 +101,26 @@ public class DocumentController {
 	
 	@GetMapping(value="/getInventory/{id}")
 	public List<ProductoInventarioDTO> getInventory(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return inventoryService.getByProducto(id);	
+		return inventoryService.getByProducto(id);
+	}
+	
+	@GetMapping(value="/getProduct/{id}")
+	public ProductoDTO getProduct(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return productService.getProduct2Document(id);
+	}
+	
+	@PostMapping(value="/updateProduct")
+	public ProductoDTO updateProduct(@RequestBody ProductoDTO product, @RequestHeader("Authorization") String token) throws ServerException {
+		return productService.actualizar(product, token);
+	}
+	
+	@GetMapping(value="/getProducts/{filter}")
+	public List<ProductoDTO> getProducts(@PathVariable String filter, @RequestHeader("Authorization") String token)  throws ServerException {
+		return productService.getProducts2Filter(filter);
+	}
+	
+	@GetMapping(value="/getTarifas/{productId}")
+	public List<TarifaDTO> getTarifas2Product(@PathVariable String productId, @RequestHeader("Authorization") String token)  throws ServerException {
+		return tarifaService.getTarifas2Product(productId);
 	}
 }

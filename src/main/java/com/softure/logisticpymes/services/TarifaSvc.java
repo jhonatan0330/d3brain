@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.TarifaDTO;
 import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;
@@ -207,6 +208,12 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		}
 	}
 	
+	public List<TarifaDTO> getTarifas2Product(String productId)throws ServerException{
+		TarifaFilterDTO t = new TarifaFilterDTO();
+		t.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		t.setProducto(productId);
+		return listarConsulta(t);
+	}
 	
 // END region aditionalMethods
 

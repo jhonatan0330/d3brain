@@ -28,6 +28,7 @@ public class ProductoDTO extends BasicParamDTO
 	private DetallePedidoVentaDTO detallePlantilla;
 	private String documento;
 	private String productoBase;
+	private String baseNombre;
 	private List<ProductoCaracteristicaDTO> campos;
 
 	public void setNombre(String nombre) {
@@ -127,6 +128,13 @@ public class ProductoDTO extends BasicParamDTO
 	
 	public String getProductoBase() {
 		return productoBase;
+	}
+	public void setBaseNombre(String baseNombre) {
+		this.baseNombre = baseNombre;
+	}
+	
+	public String getBaseNombre() {
+		return baseNombre;
 	}
 	public void setCampos(List<ProductoCaracteristicaDTO> campos) {
 		this.campos = campos;

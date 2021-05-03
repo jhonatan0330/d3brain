@@ -212,15 +212,10 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		String codigo = null;
 		String textoReemplazar = null;
 		for (String iParametro : params) {
-			System.out.println(iParametro);
 			posIgual = iParametro.indexOf("=");
-			System.out.println(posIgual);
 			codigo = iParametro.substring(0,posIgual);
-			System.out.println(codigo);
 			textoReemplazar = iParametro.substring(posIgual+1, iParametro.length());
-			System.out.println(textoReemplazar);
 			plantilla = plantilla.replace("{"+codigo +"}", textoReemplazar);
-			System.out.println(plantilla);
 		}
 		plantilla = plantilla.replaceAll("\\{[A-Za-z0-9_]*\\}", "");
 		return plantilla;

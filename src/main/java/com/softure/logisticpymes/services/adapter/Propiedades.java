@@ -369,8 +369,8 @@ public class Propiedades {
 			case PROCESO_VALOR : {ruleProperty =  " Toma el valor del campo (0 - Valor de la cuenta, 1 - total , 2 - saldo) de los documentos.\n";break;}
 			case PROCESO_FUNCION_SQL : {ruleProperty =  "Coloca el SQL de los datos que quieres obtener.\n\nSi tienes un dependiente ese va ubicado en el campo documento\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])\r\n" 
-					+ "RETURNS SETOF pedidoventa_pdvp AS"
-					+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";break;}
+					+ "RETURNS SETOF pedidoventa_pdvp AS\n"
+					+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";break;}
 			case PRODUCTO_CAMPO_VALOR_MINIMO : {ruleProperty =  "referencia el campo del producto que va a mostrar el valor minimo.\n";break;}
 			case PRODUCTO_CAMPO_VALOR_UNITARIO : {ruleProperty =  "Referencia el campo que va a mostrar el valor unitario.\n";break;}
 			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "VAa  tomar este campo como la cantidad a registrar del item de venta.\n";break;}

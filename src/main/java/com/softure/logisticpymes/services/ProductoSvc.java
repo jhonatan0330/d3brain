@@ -154,6 +154,25 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 		if(productos==null || productos.isEmpty()) return new ArrayList<ProductoDTO>();
 		return productoMapper.listarProductoSimplificado(productos);
 	}
+	
+	public ProductoDTO getProduct2Document(String document)throws ServerException{
+		ProductoFilterDTO p = new ProductoFilterDTO();
+		p.setDocumento(document);
+		p.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		ProductoDTO pr = consultaUnica(p);
+		if(pr!=null && pr.getProductoBase()!=null) {
+			ProductoDTO pb = consultaXId(pr.getProductoBase());
+			pr.setBaseNombre(pb.getNombre());
+		}
+		return pr;
+	}
+	
+	public List<ProductoDTO> getProducts2Filter(String filter)throws ServerException{
+		ProductoFilterDTO p = new ProductoFilterDTO();
+		p.setFiltroParametro(filter);
+		p.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return listarConsulta(p);
+	}
 // END region aditionalMethods
 
 }

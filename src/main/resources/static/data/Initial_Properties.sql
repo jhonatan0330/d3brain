@@ -132,14 +132,14 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_75' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_76' , 'C', 'TEXTO_FORMULA', 'TEXTO_FORMULA', 'REQUISITO', 'T');
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_77' , 'L', 'PERMISO CREAR', 'PERMISO_PLANTILLA_CREAR', 'PERMISOS', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_78' , 'L', 'PERMISO MODIFICAR', 'PERMISO_PLANTILLA_MODIFICAR', 'PERMISOS', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_79' , 'L', 'PERMISO ELIMINAR', 'PERMISO_PLANTILLA_ELIMINAR', 'PERMISOS', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
-	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_77' , 'L', 'PERMISO CREAR', 'PERMISO_PLANTILLA_CREAR', 'PERMISOS', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_78' , 'L', 'PERMISO MODIFICAR', 'PERMISO_PLANTILLA_MODIFICAR', 'PERMISOS', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_79' , 'L', 'PERMISO ELIMINAR', 'PERMISO_PLANTILLA_ELIMINAR', 'PERMISOS', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol) 
+	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_81' , 'L', 'OCULTAR_TOTAL', 'PERMISO_PLANTILLA_OCULTAR_TOTAL', 'PERMISOS', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
@@ -188,10 +188,10 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_105' , 'C', 'MODIFICABLE', 'PERMISO_CAMPO_MODIFICABLE', 'PERMISOS', true);
 
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_107' , 'L', 'LISTABLE EN MENU', 'PERMISO_PLANTILLA_LISTAR_MENU', 'PERMISOS', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_108' , 'L', 'VER TODOS', 'PERMISO_PLANTILLA_VER_TODOS', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_107' , 'L', 'LISTABLE EN MENU', 'PERMISO_PLANTILLA_LISTAR_MENU', 'PERMISOS', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_108' , 'L', 'VER TODOS', 'PERMISO_PLANTILLA_VER_TODOS', 'PERMISOS', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_109' , 'L', 'FUNCION CALCULA TOTAL', 'TOTAL_FUNCION', 'REQUISITO', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
