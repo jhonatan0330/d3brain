@@ -162,9 +162,9 @@
 		where cpro_estado ='A'
 		and cpro_categoria in (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_127' and cppd_estado = 'A' and cppd_campo = #{campo})
 		<if test="filtro!=null">
-		and (select cpdv_textofiltro from pedidoventa_pdvp where cpdv_llave = cpro_documento) = #{filtro}
+		and ((select cpdv_textofiltro from pedidoventa_pdvp where cpdv_llave = cpro_documento) = #{filtro}
 			or upper(movimiento_descripcion(cpro_documento)) like ('%' || #{filtro} || '%')
-			or (select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) like ('%' || #{filtro} || '%')
+			or (select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) like ('%' || #{filtro} || '%'))
 		</if>
 		order by codigo
 	</select>

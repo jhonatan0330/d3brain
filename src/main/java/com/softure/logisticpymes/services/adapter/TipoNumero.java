@@ -44,7 +44,7 @@ public class TipoNumero {
 							|| (pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)!=null)){
 						BigDecimal valorCalculado = calcular(pCampo);
 						if(pCampo.getValorNumero().compareTo(valorCalculado)!=0) 
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " no se calculo correctamente, valor esperado : " + SoftureUtil.formatMoney(valorCalculado));
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " no se calculo correctamente, valor esperado : (" + SoftureUtil.formatMoney(valorCalculado) +  ") y se recibe (" + SoftureUtil.formatMoney(pCampo.getValorNumero()) +")");
 					}
 				}
 			}

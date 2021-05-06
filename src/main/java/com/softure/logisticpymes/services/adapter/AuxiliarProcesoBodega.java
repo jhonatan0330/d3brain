@@ -263,7 +263,7 @@ public class AuxiliarProcesoBodega {
 		if(pCampo.getDetalles()!=null && !pCampo.getDetalles().isEmpty()){
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
 				//Si principal viene nulo viene de tipo proceso
-				if(pCampo.getPrincipal()==null ||  detalle.getLlaveTabla()==null || detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){
+				if(pCampo.getPrincipal()==null ||  detalle.getLlaveTabla()==null || detalle.getEstado()==null || detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){
 					boolean deducirComposicion = false;//En transformacion se hacen las 2 operaciones
 					if(!operacion.contains("C")){
 						ProductoInventarioFilterDTO productoFilter = new ProductoInventarioFilterDTO();

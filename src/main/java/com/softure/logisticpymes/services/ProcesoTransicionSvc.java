@@ -500,7 +500,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		dineroService.inactivar(dinero, securityToken);
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-		System.out.println("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
+		System.out.format("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
 		if(nuevo.getSaldo().compareTo(BigDecimal.ZERO) < 0){
 			nuevo.setSaldo(BigDecimal.ZERO);
 			saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());

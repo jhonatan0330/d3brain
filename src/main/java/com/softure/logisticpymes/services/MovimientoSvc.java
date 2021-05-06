@@ -238,7 +238,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		
 		sobregiro = cuentaService.sobregiro(cuenta.getDocumento());
 		if(dto.getTipo().compareTo(MovimientoDTO.SALIDA_GASTO)==0){
-			if(cuenta.getSaldo().add(dto.getMonto().negate()).compareTo(sobregiro.negate())<0) throw new ServerException("La cuenta sobrepasa el limite de sobregiro. Saldo: "+ SoftureUtil.formatMoney(cuenta.getSaldo()) + ". Sobregiro:" + SoftureUtil.formatMoney(sobregiro) + ". Cuenta:" + cuenta.getNombre());
+			if(cuenta.getSaldo().add(dto.getMonto().negate()).compareTo(sobregiro.negate())<0) 
+				throw new ServerException("La cuenta sobrepasa el limite de sobregiro de ("+ SoftureUtil.formatMoney(sobregiro) + ") actualmente tiene un saldo de Saldo de ("+ SoftureUtil.formatMoney(cuenta.getSaldo()) + ") y quedaria con un valor final de "+ SoftureUtil.formatMoney(cuenta.getSaldo().add(dto.getMonto().negate()))  + ". Cuenta:" + cuenta.getNombre());
 			dto.setMontoAplicado(dto.getMonto().negate());
 		}
 		/*if(dto.getTipo().compareTo(MovimientoDTO.TRANSFERENCIA)==0){

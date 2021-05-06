@@ -246,7 +246,7 @@ public class TipoProceso {
 					cerrarCaja(pCampo, token);
 					return pCampo;
 				}else{
-					System.out.format("\n[%s (%s) - %s] Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					System.out.format("\n\n[%s (%s) - %s] Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 					administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);

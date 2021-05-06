@@ -156,11 +156,11 @@ public class TipoDetallePedido {
 			for(DetallePedidoVentaDTO detalle : pCampo.getDetalles()){
 				if(detalle.getEstado()==null || detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0){
 					//Valido que el producto se pueda guardar en el tiempo
-					ProductoFilterDTO filtroValidador = new ProductoFilterDTO();
-					filtroValidador.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-					filtroValidador.setLlaveTabla(detalle.getProducto());
-					List<ProductoDTO> producto = productoService.listarConsulta(filtroValidador);
-					if(producto ==null || producto.isEmpty()) throw new ServerException("Revise la disponibilidad de tiempo del producto " + detalle.getProductoCodigo() + " puede ser que este inactivo");
+					
+					ProductoDTO pd = productoService.consultaXId(detalle.getProducto());
+					if(pd ==null) throw new ServerException("Revise todo el producto no existe" + detalle.getProducto());
+					if(pd.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) throw new ServerException("El producto esta inactivo" + pd.getNombre());
+					
 					//Calculo la cantidad--//detalle.getCantidad();--//detalle.getCantidadPromocionBase();//detalle.setCantidadPromocion(0);
 					
 					if(detalle.getCantidadPromocion()!=null && detalle.getCantidadPromocion() >0){
@@ -238,16 +238,20 @@ public class TipoDetallePedido {
 		if(pCampo.getDetalles()!=null && ! pCampo.getDetalles().isEmpty()){
 			result = new ArrayList<DetallePedidoVentaDTO>();
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
+				detalle.setDocumento(pCampo.getDocumento());
+				detalle.setPlantilla(pCampo.getCampoDTO().getPlantilla());
+				detalle.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 				if(detalle.getLlaveTabla()==null){
-					detalle.setDocumento(pCampo.getDocumento());
-					detalle.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-					detalle.setPlantilla(pCampo.getCampoDTO().getPlantilla());
 					detalle = detallePedidoVentaService.guardar(detalle, token);
 				}else{
-					if(detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){		
+					if(detalle.getEstado()!=null && detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){		
 						detalle.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 						detallePedidoVentaService.inactivar(detalle, token);
 					}else{
+						// NO he entendido porque el estado llega null
+						if(detalle.getEstado()==null) detalle.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						//aqui seria bueno validar que el detalle si se el correcto
+						
 						detallePedidoVentaService.actualizar(detalle, token);
 						result.add(detalle);
 					}
