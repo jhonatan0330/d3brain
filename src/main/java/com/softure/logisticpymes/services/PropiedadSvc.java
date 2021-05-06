@@ -394,6 +394,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| dto.getKey().compareTo(Propiedades.MODIFICAR_CAMPO)==0 
 						|| dto.getKey().compareTo(Propiedades.PRODUCTOS_FUNCION_CAMPO)==0
 						|| dto.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS)==0
+						|| dto.getKey().compareTo(Propiedades.DISPONIBILIDAD_CROQUIS)==0
 						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS)==0) {
 					DocumentoPlantillaCaracteristicaDTO filtro = campoService.consultaXId(dto.getCampo());
 					if(filtro==null) {
