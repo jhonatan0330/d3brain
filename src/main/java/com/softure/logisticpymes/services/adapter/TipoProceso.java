@@ -70,6 +70,7 @@ public class TipoProceso {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		if(campoHeredado1.isEmpty()){//Los heredados trabajan solos
+			System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			if(!multiple.isEmpty()){
 				validarMultiple(pCampo, token);
@@ -119,6 +120,8 @@ public class TipoProceso {
 					}
 				}
 			}
+		} else {
+			System.out.format("\n[%s - %s]  Campo heredado = %s, No se valida", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre(), campoHeredado1);
 		}
 	}
 
@@ -217,7 +220,6 @@ public class TipoProceso {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		boolean modificacion = false;
 		if(campoHeredado1.isEmpty()){
-			//String documentoAuxiliar = CampoUtilidades.obtenerValor(pCampo.getCampoDTO(), CampoUtilidades.PLANTILLA_AUXILIAR);
 			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			if(multiple.isEmpty()){
@@ -232,21 +234,6 @@ public class TipoProceso {
 							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null)
 								tipoBodega.aplicarMovimientosBodega(pCampo, token);
 							return pCampo;
-							/*
-							PedidoVentaDTO documento = pCampo.getPrincipal();
-							//la comparación de fechas se hace con los campos que generan pagos de alguna forma
-							if((bd.getValorFecha()!=null && bd.getValorFecha().getTime() != documento.getFecha().getTime())){
-								bd.setCampoDTO(pCampo.getCampoDTO());
-								anularMovimiento(bd);
-							}else{
-								if(bd.getValorNumero().compareTo(documento.getDinero().getValorTotal())!=0){
-									bd.setCampoDTO(pCampo.getCampoDTO());
-									anularMovimiento(bd);
-								}else{
-									return pCampo;
-								}
-							}
-							 */
 						}else{
 							bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 							if(bd.getLlaveTabla()!=null) campoService.inactivar(bd, token);
@@ -259,6 +246,7 @@ public class TipoProceso {
 					cerrarCaja(pCampo, token);
 					return pCampo;
 				}else{
+					System.out.format("\n[%s (%s) - %s] Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 					administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
@@ -275,8 +263,11 @@ public class TipoProceso {
 					generarPagos(pCampo, token);
 					if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null)
 						tipoBodega.aplicarMovimientosBodega(pCampo, token);
+					System.out.format("\n[%s (%s) - %s] Termina.... Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					// throw new ServerException("Probando");
 				}
 			}else{
+				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), multiple);
 				if(bd==null){
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
@@ -300,6 +291,7 @@ public class TipoProceso {
 			pCampo.setCampoDTO( caracteristicaService.cargarComplementos(pCampo.getCampoDTO(), token) );
 		//if(pCampo.getLlaveTabla()!=null) campoService.inactivar(pCampo);
 		// anularMovimiento(pCampo); //OJO esto qe como estoy haciendo para anular movimeintos
+		System.out.format("\n%s Inactivando", pCampo.getCampoDTO().getNombre());
 		if (pCampo.getExpedientes()!=null && pCampo.getExpedientes().size()!=0){
 			for (PedidoVentaDTO procesoInactivar : pCampo.getExpedientes()) {
 				procesoInactivar.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
@@ -362,6 +354,7 @@ public class TipoProceso {
 			HashMap<String, String> hmap = new HashMap<String, String>();
 			String maquinaEstados;
 			for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
+				System.out.format("\n[%s (%s) - %s] INICIO Procesar expediente %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
 				if(!hmap.containsKey(procesoDTO.getPlantilla())){
 					hmap.put(procesoDTO.getPlantilla(), expedienteTransicionService.consultarProceso(procesoDTO.getPlantilla()));
 				}
@@ -371,23 +364,30 @@ public class TipoProceso {
 					if(maquinaEstados!=null){
 						modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 						if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)!=null){
+							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
 							BigDecimal saldoDoc = null;
 							if(updaterDTO.getDinero()!=null) saldoDoc = updaterDTO.getDinero().getValorTotal();
+							System.out.format("\n[%s (%s) - %s] Calculando caminos BPM", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre());
 							List<String> caminosGestionar = getCaminos(pCampo);
+							List<String> documentosGestionados = new ArrayList<String>();
+							documentosGestionados.add(pCampo.getDocumento());
 							//BigDecimal saldoZero = pendiente cuadrar lo de un documento de pago con saldo mayor en abonos 
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
-									token, saldoDoc, new ArrayList<String>(), caminosGestionar, null
+									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados
 									,!modificacion);
 							//if(saldoZero!=null && saldoZero.compareTo(BigDecimal.ZERO)!=0) throw new ServerException("No se puede generar un documento con saldo " + SoftureUtil.formatMoney(saldoZero));
 						}else{
 							//Esto algun día lo voy a unir con el modificar
 							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION)!=null) {
+								System.out.format("\n[%s (%s) - %s] Dividir documento...... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 								dividirDocumento(procesoDTO, updaterDTO,  token, pCampo.getTransaccionRegistro());
 								//Lo coloco aqui porque se relacionaba todo
 								relacionarGestor(procesoDTO, updaterDTO, token);
 							}
-							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL)!=null)
+							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL)!=null) {
+								System.out.format("\n[%s (%s) - %s] Incluir traza..... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 								relacionarGestor(procesoDTO, updaterDTO,  token);
+							}	
 						}
 					}else {
 						if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)!=null){
@@ -415,6 +415,7 @@ public class TipoProceso {
 						activos.add(procesoDTO);
 					}
 				}
+				System.out.format("\n[%s (%s) - %s] FIN Procesar expediente %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
 			}
 		}
 		return pCampo;
@@ -424,6 +425,7 @@ public class TipoProceso {
 		//Modificar campos de plantilla principal
 		List<PropiedadDTO> modificarCampo = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.MODIFICAR_CAMPO);
 		if(modificarCampo==null || modificarCampo.isEmpty()) return;
+		System.out.format("\n%s (Modificando documento principal..... %s)", pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 		PedidoVentaDTO documentoModificar = new PedidoVentaDTO();
 		documentoModificar.setLlaveTabla(procesoDTO.getLlaveTabla());
@@ -495,8 +497,10 @@ public class TipoProceso {
 			for (PropiedadDTO iCamino : caminos) {
 				if(iCamino.getValor().compareTo("*")==0) {
 					caminosGestionar.add("*");
+					System.out.format(" Camino (*)");
 				}else {
-					caminosGestionar.add(iCamino.getValor() + ";"); 	
+					caminosGestionar.add(iCamino.getValor() + ";");
+					System.out.format(", Camino (%s)", iCamino.getValor());
 				}
 			}
 		}
@@ -636,10 +640,11 @@ public class TipoProceso {
 		List<String> caminosValidados = validarCamino(caminosGestionables, procesoDTO.getPlantilla());
 		if(caminosValidados.size()==0) return;
 		PedidoVentaDTO expediente = pedidoService.consultaXId(procesoDTO.getLlaveTabla());
+		if(expediente == null) throw new ServerException("No se identifico el expediente");
 		BigDecimal saldoAnidados = saldoDocumento;//Esto posiblemente lo pueda quitar 2020-08-22
+		System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(), documento.getNombre());
 		if(procesoDTO.getEstadoExpediente()!=null) {
 			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(), procesoDTO.getEstadoExpediente(), null);
-			if(expediente == null) throw new ServerException("No se identifico el expediente");
 			if(expediente.getEstadoExpediente()==null) throw new ServerException("Revise el estado del expediente que no es NULO : " + expediente.getNombre());
 			if(expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente())!=0) 
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
@@ -655,57 +660,63 @@ public class TipoProceso {
 				}
 			}
 		}
-		
 		plantillasRevisadas.add(procesoDTO.getPlantilla());
 		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(expediente.getLlaveTabla());
-		for(PedidoVentaCaracteristicaDTO campo : gestionables){
-			System.out.println("Gestionar Dependiente" + campo.getCampo() + "(" + campo.getValorText() +  ")");
-			List<DocumentoRelacionExpedienteDTO> expedientesAnidados = null;
-			DocumentoRelacionExpedienteDTO relacionExpediente = new DocumentoRelacionExpedienteDTO();
-			if(campo.getValorOpcion()==null){//En caso que sean multiples
-				if(campo.getLlaveTabla().compareTo(Propiedades.CAMPO_HEREDADO_1)==0){
-					//Consulto los campos que se relacionan y gestiono el estado de esos procesos
-					expedientesAnidados = relacionExpedienteService.listarHeredados(campo.getValorAuxiliar(), campo.getValorText(), procesoDTO.getLlaveTabla(), documento.getPlantilla(), plantillasRevisadas);
-				}else{
-					DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
-					relacionExpedienteFilter.setCampoMaestro(campo.getLlaveTabla());
-					relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-					expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
-				}
-			}else{
-				expedientesAnidados = new ArrayList<DocumentoRelacionExpedienteDTO>();
-				relacionExpediente.setExpedienteDetalle(campo.getValorOpcion());
-				relacionExpediente.setValor(saldoDocumento);
-				expedientesAnidados.add( relacionExpediente );
-			}
-			if(expedientesAnidados!=null && !expedientesAnidados.isEmpty()){//Aqui cambie el calculo de los saldos y no se como cuadralos
-				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
-				boolean validadoPreviamente = false;
-				String expedienteId = null;
-				for(DocumentoRelacionExpedienteDTO iExpediente : expedientesAnidados){
-					expedienteId = iExpediente.getExpedienteDetalle();
-					for (String iValidado : documentosGestionados) {//Para evitar que se generen ciclos validando los mismos documentos
-						if(iValidado.compareTo(expedienteId)==0) {
-							validadoPreviamente= true;
-							break;
-						}
+		if(gestionables!=null && !gestionables.isEmpty()) {
+			System.out.format("\n[%s] Gestionando documentos que esten relacionados", expediente.getNombre(), documento.getNombre());
+			for(PedidoVentaCaracteristicaDTO campo : gestionables){
+				System.out.format("\n[] Relacion %s ( %s )", campo.getCampo(), campo.getValorText());
+				List<DocumentoRelacionExpedienteDTO> expedientesAnidados = null;
+				DocumentoRelacionExpedienteDTO relacionExpediente = new DocumentoRelacionExpedienteDTO();
+				if(campo.getValorOpcion()==null){//En caso que sean multiples
+					if(campo.getLlaveTabla().compareTo(Propiedades.CAMPO_HEREDADO_1)==0){
+						//Consulto los campos que se relacionan y gestiono el estado de esos procesos
+						expedientesAnidados = relacionExpedienteService.listarHeredados(campo.getValorAuxiliar(), campo.getValorText(), procesoDTO.getLlaveTabla(), documento.getPlantilla(), plantillasRevisadas);
+					}else{
+						//Esto creo que se podria optimizar algun día y solo ahce un llamado por todos
+						DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
+						relacionExpedienteFilter.setCampoMaestro(campo.getLlaveTabla());
+						relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
 					}
-					if(!validadoPreviamente) {
-						PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
-						documentosGestionados.add(expedienteId);
-						gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, false);
-						if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
-							saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
-							if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
-								saldoAnidados = BigDecimal.ZERO;
+				}else{
+					expedientesAnidados = new ArrayList<DocumentoRelacionExpedienteDTO>();
+					relacionExpediente.setExpedienteDetalle(campo.getValorOpcion());
+					relacionExpediente.setValor(saldoDocumento);
+					expedientesAnidados.add( relacionExpediente );
+				}
+				if(expedientesAnidados!=null && !expedientesAnidados.isEmpty()){//Aqui cambie el calculo de los saldos y no se como cuadralos
+					if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
+					boolean validadoPreviamente = false;
+					String expedienteId = null;
+					for(DocumentoRelacionExpedienteDTO iExpediente : expedientesAnidados){
+						expedienteId = iExpediente.getExpedienteDetalle();
+						for (String iValidado : documentosGestionados) {//Para evitar que se generen ciclos validando los mismos documentos
+							if(iValidado.compareTo(expedienteId)==0) {
+								validadoPreviamente= true;
+								break;
 							}
 						}
+						if(!validadoPreviamente) {
+							PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
+							System.out.format("\n[%s] INICIA Procesar documento anidado ( %s )", expediente.getNombre(), expAnidado.getNombre());
+							documentosGestionados.add(expedienteId);
+							gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, false);
+							if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
+								saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
+								if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
+									saldoAnidados = BigDecimal.ZERO;
+								}
+							}
+							System.out.format("\n[%s] FIN Procesar documento anidado ( %s )", expediente.getNombre(), expAnidado.getNombre());
+						}
 					}
+					if(saldoAnidados!=null && documento.getDinero()!=null && (saldoAnidados.compareTo(documento.getDinero().getSaldo())!=0 && saldoAnidados.compareTo(BigDecimal.ZERO)<0)) 
+						throw new ServerException("Revise el proceso porque el saldo no puede ser negativo");//. (" + expediente.getNombre() + ")" + SoftureUtil.formatMoney(dinero.getValorTotal()) + " + (" + documento.getNombre() + ") " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(nuevo.getSaldo()));
 				}
-				if(saldoAnidados!=null && documento.getDinero()!=null && (saldoAnidados.compareTo(documento.getDinero().getSaldo())!=0 && saldoAnidados.compareTo(BigDecimal.ZERO)<0)) 
-					throw new ServerException("Revise el proceso porque el saldo no puede ser negativo");//. (" + expediente.getNombre() + ")" + SoftureUtil.formatMoney(dinero.getValorTotal()) + " + (" + documento.getNombre() + ") " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(nuevo.getSaldo()));
 			}
 		}
+		
 	}
 
 	private List<String> validarCamino(List<String> caminosGestionables, String plantilla)throws ServerException {
@@ -818,6 +829,7 @@ public class TipoProceso {
 			throws ServerException {
 		anterior = pedidoService.consultaXId(anterior.getLlaveTabla());
 		DocumentoPlantillaDTO plantillaNueva = plantillaService.consultaXId(nuevo.getPlantilla());
+		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		//Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), plantillaNueva.getNombre(), anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null);
 	}

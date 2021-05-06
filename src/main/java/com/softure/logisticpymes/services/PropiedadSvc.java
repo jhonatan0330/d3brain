@@ -729,6 +729,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		if(validaciones == null || validaciones.isEmpty()) return ;
 		for (PropiedadDTO pPropiedad : validaciones) {
+			System.out.format("\nValidando funcion SQL (%s)",pPropiedad.getMotivo() );
 			validarFuncion(pPropiedad, documento, modificador);
 		}
 	}

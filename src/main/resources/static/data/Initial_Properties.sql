@@ -305,3 +305,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_164' , 'C', 'CROQUIS DISPONIBILIDAD', 'DISPONIBILIDAD_FUNCION_SQL', 'REQUISITO', 'U',true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_165' , 'C', 'AUTOLOAD', 'AUTOLOAD', 'REQUISITO', 'J', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_166' , 'C', 'CUENTA REGRESICA', 'FECHA_TIMER_BACK', 'REQUISITO', 'F', true);

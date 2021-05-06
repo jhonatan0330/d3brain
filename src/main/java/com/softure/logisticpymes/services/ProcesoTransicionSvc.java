@@ -174,13 +174,14 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		ProcesoEstadoDTO anteriorEstado = null;
 		if(dto.getEstadoPartida()!=null) anteriorEstado = estadoService.consultaXId(dto.getEstadoPartida());
 		if(filtroEstado==null)throw new ServerException("No se encuentra estado de llegada, en caso que no se modifiquen coloque el mismo estado.\n" + expedienteDTO.getNombre() +  " - " + expedienteDTO.getDescripcion());
-		
+		System.out.format("\n[%s] Procesando transicion (%s) del proceso (%s)", expedienteDTO.getNombre(), dto.getNombre(), dto.getProcesoNombre());
 		String modificadorId = null;
 		PedidoVentaDineroDTO afectado = null;
 		if(anteriorEstado!=null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)==0) {
 			 iteracion(respuesta, expedienteDTO, documentoDTO, token, relacionAnterior);
 		}else {
 			String ubicacion = obtenerUbicacion(documentoDTO, dto.getLlaveTabla(), token);
+			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(), dto.getAfectaSaldo());
 			afectado = afectarSaldos(expediente, token, dto, valorModificador, dineroProcesado);
 			//Genero documento en caso que toque
 			if(dto.getPlantilla()!=null) {
@@ -189,6 +190,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				if(automatico!=null && automatico.getPlantilla().compareTo(dto.getPlantilla())==0)//Por si es la transicion inicial no  le quite el poder del documento que genero  
 					modificadorId = automatico.getLlaveTabla();
 			}
+			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(), documentoDTO.getNombre());
 			//Creo la relacion del documento Gestor
 			relacionAnterior = relacionGestorService.trazar(expedienteDTO.getLlaveTabla(), 
 					modificadorId,
@@ -197,7 +199,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 					ubicacion, token, relacionAnterior);
 		}
 		//Se actualiza pedido
-		System.out.println(expedienteDTO.getNombre() + " : " + filtroEstado.getNombre() + "(" +expedienteDTO.getEstadoNombre() + ")");
+		// si son los mismo creo que no necesito update ???????????
+		System.out.format("\n[%s] Se actualiza estado del documento de ( %s ) a ( %s )", expedienteDTO.getNombre(), expedienteDTO.getEstadoNombre(), filtroEstado.getNombre());
 		expedienteDTO.setEstadoExpediente(filtroEstado.getLlaveTabla());
 		expedienteDTO.setEstado(filtroEstado.getEstadoDocumento());//No se porque tenia esta linea ->//anterior.setEstadoNombre(filtroEstado.getNombre());
 		pedidoService.update(expedienteDTO);
@@ -409,6 +412,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(transicion==null) return null;
 		String ubicacion = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.TRANSICION, transicion, Propiedades.UBICACION, getUserFlex(token));
 		if(ubicacion==null) return null;
+		System.out.format("\n......Buscando ubicacion del documento %", pedido.getNombre());
 		PedidoVentaCaracteristicaDTO campoValor= pedidoService.obtenerValor(pedido.getCaracteristicas(), ubicacion);
 		return campoValor.getValorOpcion();
 	}
@@ -467,16 +471,19 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		
 		if(transicion.getAfectaSaldo()==null) return dinero;
 		if(saldoDocumento==null) throw new ServerException("Revise porque el documento no tiene saldo");
-		
-		if(dinero==null) throw new ServerException("Revise el proceso porque no tiene montos de dinero");
+		if(dinero==null) {
+			PedidoVentaDTO p = pedidoService.consultaXId(expediente);
+			throw new ServerException("Revise el documento " + p.getNombre() + " porque no tiene ningun registro de valores de saldos");
+		}
 		
 		BigDecimal factor = BigDecimal.ONE;
 		if(transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO)==0) factor = factor.negate();
 		
+		System.out.format("\n[%s] Afectando saldos con factor %s", dinero.getDocumento(), factor.toString());
 		if(transicion.getEstadoPartida()==null) { //Para los documentos iniciales
 			if(transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO)!=0) throw new ServerException("No es logico que inicie in proceso restando");
 			dinero.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-			System.out.println(transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + dinero.getSaldo());
+			System.out.format("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + dinero.getSaldo());
 			if(dinero.getSaldo().compareTo(BigDecimal.ZERO) < 0){
 				dinero.setSaldo(BigDecimal.ZERO);
 				saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
@@ -493,7 +500,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		dineroService.inactivar(dinero, securityToken);
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-		System.out.println(transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
+		System.out.println("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
 		if(nuevo.getSaldo().compareTo(BigDecimal.ZERO) < 0){
 			nuevo.setSaldo(BigDecimal.ZERO);
 			saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());

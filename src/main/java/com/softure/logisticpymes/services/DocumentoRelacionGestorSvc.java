@@ -144,7 +144,9 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			if(gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
-		return save(gestor);
+		gestor = save(gestor);
+		System.out.format("\n[] TRACE por transicion %s, con estado inicial ( %s ) y estado final ( %s )", gestor.getNombre(), gestor.getEstadoInicial(), gestor.getEstadoFinal());
+		return gestor;
 	}
 // END region aditionalMethods
 

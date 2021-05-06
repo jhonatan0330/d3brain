@@ -43,6 +43,7 @@ public class Propiedades {
 	public static final String FECHA_MINIMA = "FECHA_MINIMA";
 	public static final String FECHA_RANGO = "FECHA_RANGO";
 	public static final String FECHA_RANGO_MAXIMO = "FECHA_RANGO_MAXIMO";
+	public static final String FECHA_TIMER_BACK = "FECHA_TIMER_BACK";
 
 	public static final String TEXTO_FORMULA = "TEXTO_FORMULA";
 
@@ -322,6 +323,7 @@ public class Propiedades {
 			case FECHA_MINIMA : {ruleProperty =  " Coloca un numero del tiempo minimo (actual - num), el tiempo es en milisegundos.\n";break;}
 			case FECHA_RANGO : {ruleProperty =  " La fecha tiene un rango, especialmente para reportes.  (*) =  Todos los rangos. D = Dia, M = Meses, R = Rango. Puedes combinar separado por (;break;}).\n";break;}
 			case FECHA_RANGO_MAXIMO : {ruleProperty =  " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin el tiempo es en milisegundos.\n";break;}
+			case FECHA_TIMER_BACK : {ruleProperty =  "Activando esta propiedad se va a mostrar un reloj en cuenta regresiva segun al fecha seleccionada.\n";break;}
 			case FORMATO : {ruleProperty =  " N(Solo numero), E(Correo electronico).\n";break;}
 			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
@@ -387,6 +389,7 @@ public class Propiedades {
 					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";break;}
 			case TEXTO_FORMULA : {ruleProperty =  " calcula un valor texto segun los dependientes.";break;}
 			case TOTAL : {ruleProperty =  " Codigo del campo que va a colocar el valor TOTAL del documento.\n";break;}
+			case TOTAL_FUNCION : {ruleProperty =  " Se usa en los campos de un producto para calcular el total segun una funcion.\nHoy no se exactamente como se usa o donde se usa";break;}
 			case UBICACION : {ruleProperty =  "Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado"
 					+ "\n\n No se puede asignar a una transicion que termine en una decision";break;}
 			case UNICO_PRODUCTO : {ruleProperty =  " Oculta la lista para escoger un solo producto.\n";break;}
