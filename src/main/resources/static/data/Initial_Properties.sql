@@ -58,7 +58,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_30' , 'C', 'NUMERO_STEP', 'NUMERO_STEP', 'REQUISITO', 'N');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_31' , 'C', 'NUMERO_REDONDEO', 'NUMERO_REDONDEO', 'REQUISITO', 'N');
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_32' , 'C', 'MULTIPLE', 'MULTIPLE', 'REQUISITO', 'Z', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_33' , 'C', 'CAMPO_HEREDADO', 'CAMPO_HEREDADO', 'REQUISITO', 'Z', true);
@@ -307,3 +307,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_165' , 'C', 'AUTOLOAD', 'AUTOLOAD', 'REQUISITO', 'J', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_166' , 'C', 'CUENTA REGRESICA', 'FECHA_TIMER_BACK', 'REQUISITO', 'F', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_167' , 'C', 'MULTIPLE', 'MULTIPLE', 'REQUISITO', 'U', true);
