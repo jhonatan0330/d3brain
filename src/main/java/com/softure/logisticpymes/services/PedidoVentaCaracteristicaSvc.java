@@ -199,6 +199,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);
 	}
 	
+	// Aqui traigo en el valor auxiliar traigo la plantila y en el estado el estado del documento 
+	// para dibujar los colores y la plantilla
 	public List<PedidoVentaCaracteristicaDTO> camposOcupadosCroquis(String sqlFuncionDecision, String campoId, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		try {
 			return  pedidoVentaCaracteristicaMapper.consultarCamposOcupados(SoftureUtil.formatFunction(sqlFuncionDecision), campoId, dependientes);

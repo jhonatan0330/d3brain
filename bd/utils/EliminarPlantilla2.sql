@@ -22,6 +22,10 @@ delete from rolacceso_racp where crac_plantilla in (select cdpl_llave from docum
 delete from pedidoventaajuste_pvap where cpva_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from cuenta_cuep where ccue_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from bodega_bodp where cbod_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
+delete from tarifa_tarp where ctar_producto in (select cpro_llave from producto_prop where cpro_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I')));
+delete from detallepedidoventa_dpvp where cdpv_producto in (select cpro_llave from producto_prop where cpro_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I')));
+delete from productocaracteristica_pcrp where cpcr_base in (select cpro_llave from producto_prop where cpro_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I')));
+delete from producto_prop where cpro_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I');
 
 select * from documentoplantilla_dplp where cdpl_estado = 'I' order by cdpl_nombre;

@@ -86,21 +86,26 @@ public class TipoDisponibilidad {
 		filtro.setCampo(vCroquis.getLlaveTabla());
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
-		
-		PropiedadDTO funcion = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_FUNCION_SQL);
-				
 		if(componentesActuales!=null && !componentesActuales.isEmpty()){
+			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
+			for (PuestoDTO actual : componentesActuales){
+				pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
+			}
+			PropiedadDTO funcion = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_FUNCION_SQL);
 			if(funcion != null) {
 				campoService.validarDependientes(pBase, pCampo.getDependientes());
-				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getLlaveTabla(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getDocumento(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 				if(ocupados!=null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
 						String[] pOcupados = iOcupado.getValorText().split("-");
 						for (String iPuesto : pOcupados) {
 							if(!iPuesto.isEmpty()) {
-								for (PuestoDTO actual : componentesActuales){
-									if(actual.getNombre().compareTo(iPuesto)==0) {
-										componentesActuales.remove(actual);
+								for (PedidoVentaDTO iEspacio : pBase.getDocumentos()) {
+									if(iEspacio.getNombre().compareTo(iPuesto)==0) {
+										iEspacio.setLlaveTabla(iOcupado.getDocumento());
+										iEspacio.setPlantilla(iOcupado.getValorAuxiliar());
+										iEspacio.setEstadoExpediente(iOcupado.getEstado());
+										iEspacio.setEstadoNombre(iOcupado.getTransaccionRegistro());
 										break;
 									}
 								}
@@ -108,11 +113,6 @@ public class TipoDisponibilidad {
 						}
 					}
 				}
-			}
-			
-			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-			for (PuestoDTO actual : componentesActuales){
-				pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
 			}
 		}
 
@@ -123,7 +123,7 @@ public class TipoDisponibilidad {
 	
 	private PedidoVentaDTO convertirPuestoEnDocumento(PuestoDTO actual) {
 		PedidoVentaDTO componente = new PedidoVentaDTO();
-		componente.setLlaveTabla(actual.getLlaveTabla());
+		// componente.setLlaveTabla(actual.getLlaveTabla());
 		componente.setNombre(actual.getNombre());
 		componente.setDinero(new PedidoVentaDineroDTO());
 		componente.getDinero().setValorTotal(new BigDecimal(actual.getFila()));
@@ -147,7 +147,7 @@ public class TipoDisponibilidad {
 							if(!iPuesto.isEmpty()) {
 								for (PedidoVentaDTO actual : pCampo.getExpedientes()){
 									if(actual.getNombre().compareTo(iPuesto)==0) {
-										throw new ServerException("El puesto " + iPuesto + " ya se encuentra ocupado");
+										throw new ServerException("El "+ pCampo.getCampoDTO().getNombre() +" " + iPuesto + " ya se encuentra ocupado");
 									}
 								}
 							}
