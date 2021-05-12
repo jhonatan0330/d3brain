@@ -308,4 +308,4 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_166' , 'C', 'CUENTA REGRESICA', 'FECHA_TIMER_BACK', 'REQUISITO', 'F', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
-	VALUES('PROP_167' , 'C', 'MULTIPLE', 'MULTIPLE', 'REQUISITO', 'U', true);
+	VALUES('PROP_167' , 'C', 'ESCOGER VARIOS', 'MULTIPLE_SELECCION', 'REQUISITO', 'U', true);

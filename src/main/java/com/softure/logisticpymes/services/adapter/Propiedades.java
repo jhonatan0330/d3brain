@@ -199,25 +199,81 @@ public class Propiedades {
 			iBloqueo = iBloqueo.replace("]", "");
 			if(!iBloqueo.isEmpty()) {
 				try {
-					int horaInicial = Integer.parseInt(iBloqueo.substring(1, 3));
-					if(ahora.get(Calendar.HOUR_OF_DAY)>=horaInicial) {
-						int minutoInicial = Integer.parseInt(iBloqueo.substring(4, 6));
-						if(ahora.get(Calendar.MINUTE)>=minutoInicial) {
-							int horaFinal = Integer.parseInt(iBloqueo.substring(7, 9));
-							if(ahora.get(Calendar.HOUR_OF_DAY)<=horaFinal) {
-								int minutoFinal = Integer.parseInt(iBloqueo.substring(10, 12));
-								if(ahora.get(Calendar.MINUTE)<minutoFinal) {
-									return false;
+					if( isDayBloqueo(iBloqueo) ) {
+						int horaInicial = Integer.parseInt(iBloqueo.substring(1, 3));
+						if(ahora.get(Calendar.HOUR_OF_DAY)>=horaInicial) {
+							int minutoInicial = Integer.parseInt(iBloqueo.substring(4, 6));
+							if(ahora.get(Calendar.MINUTE)>=minutoInicial) {
+								int horaFinal = Integer.parseInt(iBloqueo.substring(7, 9));
+								if(ahora.get(Calendar.HOUR_OF_DAY)<=horaFinal) {
+									int minutoFinal = Integer.parseInt(iBloqueo.substring(10, 12));
+									if(ahora.get(Calendar.MINUTE)<minutoFinal) {
+										return false;
+									}
 								}
 							}
 						}
 					}
+					
 				} catch (NumberFormatException e) {
 					return false;
 				}
 			}
 		}
 		return true;
+	}
+	
+	private static boolean isDayBloqueo(String iBloqueo) {
+		if(iBloqueo.length()>13) {
+			Calendar ahora = new GregorianCalendar();
+			//valido que no sea el numero del día
+			String bloqNDays = iBloqueo.substring(14, iBloqueo.length()-1);
+			String[] gNDays = bloqNDays.split(",");
+			for (String iNDay : gNDays) {
+				if(!iNDay.isEmpty()) {
+					try {
+						int cNDay = Integer.parseInt(iNDay);
+						if (ahora.get(Calendar.DAY_OF_MONTH) == cNDay) {
+							return true;
+						}
+					} catch (NumberFormatException e) {
+						int cDay = -1;
+						switch (iNDay) {
+						case "D":
+							cDay = 1;
+							break;
+						case "L":
+							cDay = 2;
+							break;
+						case "M":
+							cDay = 3;
+							break;
+						case "X":
+							cDay = 4;
+							break;
+						case "J":
+							cDay = 5;
+							break;
+						case "V":
+							cDay = 6;
+							break;
+						case "S":
+							cDay = 7;
+							break;
+						default:
+							break;
+						}
+						if (ahora.get(Calendar.DAY_OF_WEEK) == cDay) {
+							return true;
+						}
+					}
+					
+				}
+			}
+		} else {
+			return true;
+		}
+		return false;
 	}
 
 	public static String obtenerValor(BasicParamDTO pCampo, String key) {

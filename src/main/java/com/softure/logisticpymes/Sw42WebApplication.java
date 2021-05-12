@@ -34,6 +34,7 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.softure.java.dto.exception.ServerException;
@@ -99,43 +100,63 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 		System.out.println("*********************************************************");
 		System.out.println("************COMIENZA A ACTUALIZAR    ******************");
 		System.out.println("*********************************************************");
-		try {
-			Connection con = dynamicDataSource().getConnection();
-			String sqlName;
-			while (iterador.getTime().getTime() < new Date().getTime()) {
-				sqlName = "static/data/" + String.valueOf(iterador.get(Calendar.YEAR)); 
-				sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1);
-				sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1) + to2String(iterador.get(Calendar.DAY_OF_MONTH)) + ".sql"; 
-				// System.out.println("Buscando Script = "  + sqlName );
-				Resource fileSql = new ClassPathResource(sqlName);
-				if(fileSql.exists()) {
-					System.out.println("**************Ejecutando Script = "  + sqlName );
-					ScriptUtils.executeSqlScript(con, new EncodedResource(fileSql, "UTF-8"));
-				}
-				iterador.add(Calendar.DAY_OF_MONTH, 1);
+		PooledDataSource ds = dynamicDataSource();
+		String sqlName;
+		boolean error = false;
+		while (iterador.getTime().getTime() < new Date().getTime() && !error) {
+			sqlName = "static/data/" + String.valueOf(iterador.get(Calendar.YEAR)); 
+			sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1);
+			sqlName = sqlName + "/" + String.valueOf(iterador.get(Calendar.YEAR)) + to2String(iterador.get(Calendar.MONTH)+1) + to2String(iterador.get(Calendar.DAY_OF_MONTH)) + ".sql"; 
+			// System.out.println("Buscando Script = "  + sqlName );
+			Resource fileSql = new ClassPathResource(sqlName);
+			if(fileSql.exists()) {
+				System.out.println("**************Ejecutando Script = "  + sqlName );
+				error = new TransactionTemplate(transactionManager(ds)).execute((ts) -> {
+					Connection conn = null;
+					boolean fallaScript = true;
+		            try {
+		            	conn = ds.getConnection();
+		            	conn.setAutoCommit(false);
+		            	ScriptUtils.executeSqlScript(conn, new EncodedResource(fileSql, "UTF-8"));
+		                conn.commit();
+		                fallaScript = false;
+		            } catch (ScriptException | SQLException  e) {
+		    			
+		    			System.out.println(e.getMessage());
+		    			try {
+							conn.rollback();
+						} catch (SQLException e1) {
+							System.out.println(e1.getMessage());
+						}
+		    		}  finally {
+		    			if(conn!=null) { 
+		            		try {
+								conn.close();
+							} catch (SQLException e1) {
+				    			System.out.println(e1.getMessage());
+							}
+		            	} ;
+					}
+		            return fallaScript;
+		        });
 			}
+			iterador.add(Calendar.DAY_OF_MONTH, 1);
+		}
+		
+		if(!error) {
 			System.out.println("*******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
 			System.out.println("*******                                          ********");
 			System.out.println("*******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("****************:)****:)***:)***:)***:)******************");
+			System.out.println("*********************************************************");			
+		} else {
 			System.out.println("*********************************************************");
-		} catch (ScriptException e) {
-			System.out.println("*********************************************************");
-			System.out.println("*******                                          ********");
+			System.out.println("*******     ERROR       ERROR       ERROR        ********");
 			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
 			System.out.println("*******                                          ********");
-			System.out.println("*********************************************************");
-			System.out.println("*********************************************************");
-			System.out.println(e.getMessage());
-		} catch (SQLException e) {
-			System.out.println("*********************************************************");
-			System.out.println("*******                                          ********");
-			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
-			System.out.println("*******                                          ********");
-			System.out.println("*********************************************************");
-			System.out.println("*********************************************************");
-			System.out.println(e.getMessage());
+			System.out.println("********!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********");
+			System.out.println("********XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*********");
 		}
 	}
 	

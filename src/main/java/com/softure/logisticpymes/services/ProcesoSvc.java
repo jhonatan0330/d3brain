@@ -304,7 +304,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
 		for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
-			iEstado.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, iEstado.getLlaveTabla(), null, getUserFlex(token)));
+			iEstado.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, iEstado.getLlaveTabla(), null, null));
 		}
 		
 		ProcesoTransicionFilterDTO filtroTransicionDTO = new ProcesoTransicionFilterDTO();
@@ -312,9 +312,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		filtroTransicionDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
 		for (ProcesoTransicionDTO iTransicion : proceso.getTransiciones()) {
-			iTransicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, iTransicion.getLlaveTabla(), null, getUserFlex(token)));
+			iTransicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, iTransicion.getLlaveTabla(), null, null));
 			if(iTransicion.getPlantilla()!=null) {
-				iTransicion.getPropiedades().addAll(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, iTransicion.getPlantilla(), null, getUserFlex(token)));
+				iTransicion.getPropiedades().addAll(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, iTransicion.getPlantilla(), null, null));
 			}
 		}
 		

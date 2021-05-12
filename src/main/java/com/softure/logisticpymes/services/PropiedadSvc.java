@@ -687,10 +687,14 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		List<PropiedadDTO> consultadas = propiedadMapper.consultarRol(filtroOrden, usuario, new Date());
 		List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
-		if(!consultadas.isEmpty()) {
-			for (PropiedadDTO iPropiedadDTO : consultadas) {
-				if(Propiedades.validarBloqueo(iPropiedadDTO))validadas.add(iPropiedadDTO);
+		if(usuario !=null) {
+			if(!consultadas.isEmpty()) {
+				for (PropiedadDTO iPropiedadDTO : consultadas) {
+					if(Propiedades.validarBloqueo(iPropiedadDTO))validadas.add(iPropiedadDTO);
+				}
 			}
+		}else {
+			return consultadas;
 		}
 		return validadas;
 	}
