@@ -36,6 +36,7 @@ public class Propiedades {
 	public static final String ARCHIVO_TAMANO_MAXIMO = "ARCHIVO_TAMANO_MAXIMO";
 	public static final String ARCHIVO_TIPO = "BASICA";
 	public static final String MULTIPLE_FILE = "MULTIPLE_FILE";
+	public static final String VALIDATE_ORIENTATION = "VALIDATE_ORIENTATION";
 
 	public static final String FECHA_CON_HORA = "FECHA_CON_HORA";
 	public static final String FECHA_SIN_CALENDAR = "FECHA_SIN_CALENDAR";
@@ -449,6 +450,7 @@ public class Propiedades {
 			case UBICACION : {ruleProperty =  "Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado"
 					+ "\n\n No se puede asignar a una transicion que termine en una decision";break;}
 			case UNICO_PRODUCTO : {ruleProperty =  " Oculta la lista para escoger un solo producto.\n";break;}
+			case VALIDATE_ORIENTATION : {ruleProperty =  "Valida que sea una imagen y su orientacion\n 1 = Valida ancho sea mayor que alto (Horizontal)\n 2 = Valida alto sea mayor que ancho (Vertical)";break;}
 			default : {ruleProperty =  "Por favor solicita un cambio para agregar informacion de este key";break;}
 		}
 		return ruleProperty;
