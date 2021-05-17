@@ -10,6 +10,7 @@ import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.ProductoFilterDTO;
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
 
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.TarifaDTO;
 import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;

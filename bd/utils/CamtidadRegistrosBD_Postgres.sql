@@ -25,3 +25,12 @@ SELECT pg_size_pretty( pg_database_size( current_database() ) )
 --Tamaño de una tabla
 
 SELECT pg_size_pretty(pg_total_relation_size('pedidoventacaracteristica_pvcp'));
+
+--Funciones
+select p.proname as function_name, prosrc  as definicion,*
+from pg_proc p
+left join pg_namespace n on p.pronamespace = n.oid
+where n.nspname not in ('pg_catalog', 'information_schema')
+and prosrc like '%prefijo_opcion_3%'
+--and proargnames IN ('{documento,cant,pagina,fechaminima,fechamaxima,filtro,codigo_exacto,token}')
+and p.proname like 'propiedad_%'

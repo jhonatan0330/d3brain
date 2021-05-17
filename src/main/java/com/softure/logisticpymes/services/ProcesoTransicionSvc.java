@@ -412,7 +412,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(transicion==null) return null;
 		String ubicacion = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.TRANSICION, transicion, Propiedades.UBICACION, getUserFlex(token));
 		if(ubicacion==null) return null;
-		System.out.format("\n......Buscando ubicacion del documento %", pedido.getNombre());
+		System.out.format("\n......Buscando ubicacion del documento %s", pedido.getNombre());
 		PedidoVentaCaracteristicaDTO campoValor= pedidoService.obtenerValor(pedido.getCaracteristicas(), ubicacion);
 		return campoValor.getValorOpcion();
 	}
