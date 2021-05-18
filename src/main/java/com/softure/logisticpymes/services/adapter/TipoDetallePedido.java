@@ -286,7 +286,7 @@ public class TipoDetallePedido {
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException {
 		System.out.println("Consulta DB Detalle Start:" + new Date());
 		if(pCampo==null || pCampo.getCampo()==null) throw new ServerException("Revise la parametro del metodo");
-		if(pCampo.getFiltroParametro()!=null && pCampo.getFiltroParametro().isBlank()) pCampo.setFiltroParametro(null);
+		if(pCampo.getFiltroParametro()!=null && pCampo.getFiltroParametro().length()==0) pCampo.setFiltroParametro(null);
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
 		if(pBase==null) throw new ServerException("Error en el identificador de la caracteristica");
 		String tercero = null;
