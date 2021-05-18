@@ -52,6 +52,10 @@ public class MainController {
 		return usuarioAutenticacionService.autenticar(filter);
 	}
 	
+	@RequestMapping(value="/cambiarClave", method=RequestMethod.POST)
+	public UsuarioAutenticacionDTO cambiarClave(@RequestHeader("Authorization") String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+		return usuarioAutenticacionService.cambiarClave(filter, token);
+	}
 	
 	@RequestMapping(value="/checkToken", method=RequestMethod.GET)
 	public UsuarioSesionDTO checkToken(@RequestHeader("Authorization") String token) throws ServerException {

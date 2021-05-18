@@ -171,14 +171,22 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO cambiarClave(UsuarioAutenticacionDTO dto, String token)throws ServerException{
 		// BEGIN region cambiarClave
+		
 		UsuarioAutenticacionDTO user = null;
-		if(dto.getLlaveTabla()!=null){
-			user = consultaXId(dto.getLlaveTabla());
-			if(dto.getClaveAnterior().compareTo("ADMIN$123")!=0){
+		// Se envia por el administrador
+		if(dto.getClaveAnterior().compareTo("ADMIN$123")==0){
+			if(dto.getLlaveTabla()!=null){
+				user = consultaXId(dto.getLlaveTabla());
 				if(user== null) throw new ServerException("El usuario no tiene una autenticacion");
 				if(user.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
 				if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
 			}
+		} else {
+			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
+			filtro.setUsuario(getUserFlex(token));
+			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			user = consultaUnica(filtro);
+			if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
 		}
 		
 		if(user== null){
@@ -188,7 +196,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			user.setSesion(dto.getSesion());
 			user = guardar(user, token);
 		}else{
-			user.setSesion(dto.getSesion());
+			if(dto.getSesion()!=null) user.setSesion(dto.getSesion());
 			user.setClave(dto.getClave());
 			user = actualizar(user, token);
 		}

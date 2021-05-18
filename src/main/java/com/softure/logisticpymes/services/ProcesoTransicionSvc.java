@@ -174,7 +174,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		ProcesoEstadoDTO anteriorEstado = null;
 		if(dto.getEstadoPartida()!=null) anteriorEstado = estadoService.consultaXId(dto.getEstadoPartida());
 		if(filtroEstado==null)throw new ServerException("No se encuentra estado de llegada, en caso que no se modifiquen coloque el mismo estado.\n" + expedienteDTO.getNombre() +  " - " + expedienteDTO.getDescripcion());
-		System.out.format("\n[%s] Procesando transicion (%s) del proceso (%s)", expedienteDTO.getNombre(), dto.getNombre(), dto.getProcesoNombre());
+		System.out.format("\n\n[%s] Procesando transicion (%s) del proceso (%s)", expedienteDTO.getNombre(), dto.getNombre(), dto.getProcesoNombre());
 		String modificadorId = null;
 		PedidoVentaDineroDTO afectado = null;
 		if(anteriorEstado!=null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)==0) {
