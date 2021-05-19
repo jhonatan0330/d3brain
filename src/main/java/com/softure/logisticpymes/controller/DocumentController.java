@@ -49,7 +49,8 @@ public class DocumentController {
 	}
 	
 	@RequestMapping(value="/getDocuments", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
+	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter, @RequestHeader("Authorization") String token) throws ServerException {
+		filter.setSecurityToken(token);
 		return pedidoVentaService.listarAvanzado(filter);
 	}
 
