@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.DocumentoRelacionGestorDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionGestorFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.RelacionInternaFilterDTO;
@@ -36,6 +38,14 @@ public class TemplateController {
 	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
 	@Autowired private DocumentoRelacionGestorSvc gestionService;
 	@Autowired private RelacionInternaSvc relacionesService;
+	
+	
+	@GetMapping(value="/getTemplates")
+	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token)  throws ServerException  {
+		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
+		filter.setSecurityToken(token);
+		return documentoplantillaService.consultaUsuario(filter);	
+	}
 	
 	@RequestMapping(value="/getFields", method=RequestMethod.GET)
 	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {

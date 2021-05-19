@@ -224,7 +224,7 @@ where corg_principal is null and borg_sincronizacion = false and corg_estado = '
 			,corg_nombre as  nombre
 			,corg_principal as  principal
 			,corg_servidor as  servidor
-			,cuor_tokenserver as  invitado
+			,cuor_tokenserver as  usuarioSystem
 			,corg_imagen as  imagen
 			,corg_slogan as  slogan
 			,borg_sincronizacion as  sincronizacion
