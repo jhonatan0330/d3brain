@@ -115,6 +115,7 @@ public class TipoNumero {
 		if(codigoDepende!=null){
 			if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes del campo " +  pCampo.getCampoDTO().getNombre());
 			for (PedidoVentaCaracteristicaDTO iterable : pCampo.getDependientes()){
+				if(iterable.getValorNumero()==null) iterable.setValorNumero(BigDecimal.ZERO);
 				if(iterable.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO)==0) {
 					//Esta aprte fue para fenix para calcular valores internos de los productos
 					if(iterable.getDetalles()!=null && !iterable.getDetalles().isEmpty()) {
