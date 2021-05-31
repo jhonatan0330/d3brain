@@ -150,10 +150,10 @@ CREATE TABLE pedidoventaajuste_pvap(
 CREATE TABLE documentoplantilla_dplp(
         cdpl_llave character varying(32) NOT NULL,
         cdpl_objetivo character varying(4000),
-        cdpl_codigo character varying(16) NOT NULL UNIQUE,
         cdpl_nombre character varying(100) NOT NULL,
         cdpl_consecutivo character varying(32),
         cdpl_imagen character varying(2000),
+        cdpl_codigo character varying(16) NOT NULL UNIQUE,
         cdpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentoplantilla_dplp PRIMARY KEY (cdpl_llave)
     );
@@ -379,6 +379,7 @@ CREATE TABLE relacioninterna_ritp(
         crit_propiedad character varying(32) NOT NULL,
         crit_plantilla character varying(32) NOT NULL,
         crit_campo character varying(32) NOT NULL,
+        crit_auxiliar character varying(4000),
         crit_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_relacioninterna_ritp PRIMARY KEY (crit_llave)
     );
@@ -512,6 +513,15 @@ CREATE TABLE usuario_usrp(
         CONSTRAINT PK_usuario_usrp PRIMARY KEY (cusr_llave)
     );
  
+CREATE TABLE webservice_wbsp(
+        cwbs_llave character varying(32) NOT NULL,
+        cwbs_nombre character varying(50) NOT NULL,
+        cwbs_template character varying(120000) NOT NULL,
+        cwbs_servidor character varying(32) NOT NULL,
+        cwbs_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_webservice_wbsp PRIMARY KEY (cwbs_llave)
+    );
+ 
 CREATE TABLE postrespuesta_prsp(
         cprs_llave character varying(32) NOT NULL,
         dprs_fecha timestamp with time zone NOT NULL,
@@ -557,6 +567,18 @@ CREATE TABLE postcalificacion_pclp(
         bpcl_positiva boolean NOT NULL DEFAULT false,
         cpcl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_postcalificacion_pclp PRIMARY KEY (cpcl_llave)
+    );
+ 
+CREATE TABLE webserviceejecucion_wsep(
+        cwse_llave character varying(32) NOT NULL,
+        cwse_servicio character varying(32) NOT NULL,
+        dwse_fecha timestamp with time zone NOT NULL,
+        cwse_documento character varying(32) NOT NULL,
+        cwse_entrada character varying(120000) NOT NULL,
+        cwse_salida character varying(120000) NOT NULL,
+        cwse_error character varying(4000),
+        cwse_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_webserviceejecucion_wsep PRIMARY KEY (cwse_llave)
     );
  
 CREATE TABLE postpregunta_pprp(
@@ -908,6 +930,7 @@ ALTER TABLE Turno_turp ADD CONSTRAINT FK_Turnodocumento FOREIGN KEY (ctur_docume
 ALTER TABLE Bodega_bodp ADD CONSTRAINT FK_Bodegadocumento FOREIGN KEY (cbod_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE DetallePedidoVenta_dpvp ADD CONSTRAINT FK_DetallePedidoVentadocumento FOREIGN KEY (cdpv_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE Tarifa_tarp ADD CONSTRAINT FK_Tarifarecurso FOREIGN KEY (ctar_recurso) REFERENCES PedidoVenta_pdvp(cpdv_llave);
+ALTER TABLE WebServiceEjecucion_wsep ADD CONSTRAINT FK_WebServiceEjecuciondocumento FOREIGN KEY (cwse_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE DetalleCaracteristicaProducto_dcpp ADD CONSTRAINT FK_DetalleCaracteristicaProductovalorOpcion FOREIGN KEY (cdcp_valorOpcion) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE PedidoVentaCaracteristica_pvcp ADD CONSTRAINT FK_PedidoVentaCaracteristicadocumento FOREIGN KEY (cpvc_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecuciondocumento FOREIGN KEY (crej_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
@@ -976,6 +999,7 @@ ALTER TABLE PostRespuesta_prsp ADD CONSTRAINT FK_PostRespuestaautor FOREIGN KEY 
 ALTER TABLE Mensaje_msjp ADD CONSTRAINT FK_Mensajeusuario FOREIGN KEY (cmsj_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE DeduccionProducto_dprp ADD CONSTRAINT FK_DeduccionProductoresponsable FOREIGN KEY (cdpr_responsable) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE GPSDispositivo_gpsp ADD CONSTRAINT FK_GPSDispositivousuario FOREIGN KEY (cgps_usuario) REFERENCES Usuario_usrp(cusr_llave);
+ALTER TABLE WebServiceEjecucion_wsep ADD CONSTRAINT FK_WebServiceEjecucionservicio FOREIGN KEY (cwse_servicio) REFERENCES WebService_wbsp(cwbs_llave);
 ALTER TABLE PostCalificacion_pclp ADD CONSTRAINT FK_PostCalificacionrespuesta FOREIGN KEY (cpcl_respuesta) REFERENCES PostRespuesta_prsp(cprs_llave);
 ALTER TABLE PostRespuesta_prsp ADD CONSTRAINT FK_PostRespuestapregunta FOREIGN KEY (cprs_pregunta) REFERENCES PostPregunta_pprp(cppr_llave);
 ALTER TABLE GPSLocalizacion_gplp ADD CONSTRAINT FK_GPSLocalizaciondispositivo FOREIGN KEY (cgpl_dispositivo) REFERENCES GPSDispositivo_gpsp(cgps_llave);
@@ -1005,4 +1029,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.05.16.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.05.28.00' from pg_class where relname = 'usuariosesion_ussp';

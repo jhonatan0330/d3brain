@@ -17,6 +17,7 @@ import com.softure.logisticpymes.dto.ProductoCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.TarifarioDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
+import com.softure.logisticpymes.dto.WebServiceDTO;
 import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
@@ -32,6 +33,7 @@ import com.softure.logisticpymes.dto.filter.PropiedadValorDefinidoFilterDTO;
 import com.softure.logisticpymes.dto.filter.RolAccesoFilterDTO;
 import com.softure.logisticpymes.dto.filter.TarifarioFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
+import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 // END region interImport
 
@@ -70,6 +72,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired private RolAccesoSvc rolService;
 	@Autowired private RelacionInternaSvc relacionService;
 	@Autowired private UsuarioSvc usuarioService;
+	@Autowired private WebServiceSvc apiService;
 	// END region servicesPropiedad
 
 	@Override
@@ -584,6 +587,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		switch (dto.getKey()){
 			case Propiedades.PROCESO_ACCIONES : {identificadorPlantilla(dto, token);break;}
 			case Propiedades.PLANTILLA_AUXILIAR : {identificadorPlantilla(dto, token);break;}
+			case Propiedades.API_NEW_DOCUMENT : {identificadorPlantilla(dto, token);break;}
+			case Propiedades.API_SECONDARY_DOCUMENT : {identificadorPlantilla(dto, token);break;}
 			case Propiedades.PLANTILLA_ANULAR : {identificadorPlantilla(dto, token);break;}
 			case Propiedades.PROCESO_GESTIONAR_ESTADOS : {identificadorPlantillasGestion(dto);break;}
 			case Propiedades.BODEGA_FIJA : {identificadorBodega(dto);break;}
@@ -626,6 +631,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.REPORTE_JRXML : {identificadorJRXML(dto);break;}
 			
 			case Propiedades.MENSAJE : {identificadorMensaje(dto);break;}
+			case Propiedades.API : {identificadorApi(dto);break;}
 			case Propiedades.MENSAJE_DESTINATARIO : {identificadorUsuario(dto);break;}
 			case Propiedades.MENSAJE_REPORTE : {identificadorReporte(dto);break;}
 			case Propiedades.ESTADO_ASIGNAR : {identificadorUsuario(dto);break;}
@@ -720,6 +726,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			bd  = mensajeService.consultaUnica(bdFilter);
 			if(bd==null) throw new ServerException("El mensaje no fue reconocido");
+		}
+		dto.setValor(bd.getLlaveTabla());
+		dto.setTexto(bd.getNombre());
+	}
+	
+	private void identificadorApi(PropiedadDTO dto) throws ServerException{
+		WebServiceDTO bd = apiService.consultaXId(dto.getValor());
+		//Si es actualizar valido por el id
+		if(bd== null) {
+			//VAlido por el nombre
+			WebServiceFilterDTO bdFilter = new WebServiceFilterDTO();
+			bdFilter.setNombre(dto.getValor().toUpperCase());
+			bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			bd = apiService.consultaUnica(bdFilter);
+			if(bd==null) throw new ServerException("El api no fue reconocido");
 		}
 		dto.setValor(bd.getLlaveTabla());
 		dto.setTexto(bd.getNombre());

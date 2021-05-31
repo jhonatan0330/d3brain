@@ -140,6 +140,9 @@ import com.softure.logisticpymes.services.RolAccesoSvc;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
 import com.softure.logisticpymes.services.UsuarioSvc;
+import com.softure.logisticpymes.dto.WebServiceDTO;
+import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
+import com.softure.logisticpymes.services.WebServiceSvc;
 import com.softure.logisticpymes.dto.PostRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.PostRespuestaFilterDTO;
 import com.softure.logisticpymes.services.PostRespuestaSvc;
@@ -152,6 +155,9 @@ import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.dto.PostCalificacionDTO;
 import com.softure.logisticpymes.dto.filter.PostCalificacionFilterDTO;
 import com.softure.logisticpymes.services.PostCalificacionSvc;
+import com.softure.logisticpymes.dto.WebServiceEjecucionDTO;
+import com.softure.logisticpymes.dto.filter.WebServiceEjecucionFilterDTO;
+import com.softure.logisticpymes.services.WebServiceEjecucionSvc;
 import com.softure.logisticpymes.dto.PostPreguntaDTO;
 import com.softure.logisticpymes.dto.filter.PostPreguntaFilterDTO;
 import com.softure.logisticpymes.services.PostPreguntaSvc;
@@ -3704,6 +3710,81 @@ public class FullControllerDTO {
 		}
 	}
 	
+	@Autowired private WebServiceSvc webServiceService;
+	
+	@RequestMapping(value="/consultaXIdWebService", method=RequestMethod.POST)
+	public WebServiceDTO consultaXIdWebService(@RequestBody String llave) throws FlexException {
+		try {
+			return webServiceService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosWebService", method=RequestMethod.POST)
+	public int contarResultadosWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaWebService", method=RequestMethod.POST)
+	public WebServiceDTO consultaUnicaWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaWebService", method=RequestMethod.POST)
+	public List<WebServiceDTO> listarConsultaWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarWebService", method=RequestMethod.POST)
+	public WebServiceDTO activarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarWebService", method=RequestMethod.POST)
+	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarWebService", method=RequestMethod.POST)
+	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarWebService", method=RequestMethod.POST)
+	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
 	@Autowired private PostRespuestaSvc postRespuestaService;
 	
 	@RequestMapping(value="/consultaXIdPostRespuesta", method=RequestMethod.POST)
@@ -4025,6 +4106,81 @@ public class FullControllerDTO {
 	public PostCalificacionDTO guardarPostCalificacion(@RequestBody PostCalificacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postCalificacionService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	@Autowired private WebServiceEjecucionSvc webServiceEjecucionService;
+	
+	@RequestMapping(value="/consultaXIdWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO consultaXIdWebServiceEjecucion(@RequestBody String llave) throws FlexException {
+		try {
+			return webServiceEjecucionService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosWebServiceEjecucion", method=RequestMethod.POST)
+	public int contarResultadosWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceEjecucionService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO consultaUnicaWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceEjecucionService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaWebServiceEjecucion", method=RequestMethod.POST)
+	public List<WebServiceEjecucionDTO> listarConsultaWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
+		try {
+			return webServiceEjecucionService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO activarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceEjecucionService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO inactivarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceEjecucionService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO actualizarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceEjecucionService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO guardarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return webServiceEjecucionService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

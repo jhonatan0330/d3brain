@@ -15,6 +15,7 @@ delete from pedidoventadinero_pvdp where cpvd_documento in (select cpdv_llave fr
 delete from plantillaconsecutivo_pcnp where cpcn_valoropcion in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from pedidoventacaracteristica_pvcp where cpvc_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from actividad_actp where cact_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
+delete from reporteejecucion_rejp where crej_reporte in (select crpb_llave from  reportebase_rpbp where crpb_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from reportebase_rpbp where crpb_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I');
 delete from usuariorol_erlp where cerl_rolacceso in (select crac_llave from rolacceso_racp where crac_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from propiedad_ppdp where cppd_rol in (select crac_llave from rolacceso_racp where crac_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));

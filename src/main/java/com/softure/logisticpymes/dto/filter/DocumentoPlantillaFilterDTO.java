@@ -8,21 +8,13 @@ import org.apache.ibatis.type.Alias;
 public class DocumentoPlantillaFilterDTO extends BasicFilterDTO
 {
 
-	private String codigo;
 	private String nombre;
 	private String consecutivo;
 	private String imagen;
 	private String color;
+	private String codigo;
+	private String server;
 
-	
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	
-	public String getCodigo() {
-		return codigo;
-	}
-	
 	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -63,5 +55,23 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO
 	
 					
 					
+	
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	
+	
+	public void setServer(String server) {
+		this.server = server;
+	}
+	
+	public String getServer() {
+		return server;
+	}
+	
 
 }

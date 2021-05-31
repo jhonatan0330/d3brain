@@ -24,6 +24,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private OrganizacionMapper organizacionMapper;
 	
 	// BEGIN region servicesOrganizacion
+	// @Autowired private ProcesoSvc procesoService;
 	// END region servicesOrganizacion
 
 	@Override
@@ -106,6 +107,26 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+	
+	/*
+	public OrganizacionDTO copiar(String org, String token) throws ServerException{
+		OrganizacionDTO bd = consultaXId(org);
+		// ASumo que la bd ya esta creada
+		ProcesoFilterDTO filtroP = new ProcesoFilterDTO();
+		filtroP.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<ProcesoDTO> proceso = procesoService.listarConsulta(filtroP);
+		DbContextHolder.setDataSourceType(DbType.SLAVE);
+		try {
+			for (ProcesoDTO procesoDTO : proceso) {
+				procesoService.guardar(procesoDTO, token);
+			}
+			//necesito 
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		DbContextHolder.resetDataSourceType();		
+		return bd;
+	}*/
 // END region aditionalMethods
 
 }

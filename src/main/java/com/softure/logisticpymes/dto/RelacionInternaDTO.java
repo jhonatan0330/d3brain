@@ -17,6 +17,7 @@ public class RelacionInternaDTO extends BasicDTO
 	private String plantillaNombre;
 	private String campo;
 	private String campoNombre;
+	private String auxiliar;
 
 	public void setPropiedad(String propiedad) {
 		this.propiedad = propiedad;
@@ -59,6 +60,13 @@ public class RelacionInternaDTO extends BasicDTO
 	
 	public String getCampoNombre() {
 		return campoNombre;
+	}
+	public void setAuxiliar(String auxiliar) {
+		this.auxiliar = auxiliar;
+	}
+	
+	public String getAuxiliar() {
+		return auxiliar;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

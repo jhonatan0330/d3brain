@@ -16,6 +16,11 @@ public class Propiedades {
 	public static final String MENSAJE_REPORTE = "MENSAJE_REPORTE";
 	public static final String MENSAJE_DESTINATARIOS_SQL = "MENSAJE_DESTINATARIOS_SQL";
 	public static final String MENSAJE_DESTINATARIO = "MENSAJE_DESTINATARIO";
+	public static final String API = "API";
+	public static final String API_HEADER = "API_HEADER";
+	public static final String API_NEW_DOCUMENT = "API_NEW_DOCUMENT";
+	public static final String API_SECONDARY_DOCUMENT = "API_SECONDARY_DOCUMENT";
+	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
 	public static final String UNIQUE = "UNIQUE";
@@ -329,6 +334,8 @@ public class Propiedades {
 		if(formato == null ) return "Sin instrucciones por formato no enviado";
 		String ruleProperty = null;
 		switch(formato) {
+			case API : {ruleProperty =  "Identifica el APi que se va a ejecutar al guardar el documento.\n";break;}
+			case API_HEADER : {ruleProperty =  "Variables del Header de la peticion del API VA.\n";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}
 			case ARCHIVO_TIPO: {ruleProperty =   "Filtra el tipo de archivo, para usar varias extensiones separalas por coma(,).\n";break;}

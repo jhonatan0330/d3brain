@@ -311,3 +311,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_167' , 'C', 'ESCOGER VARIOS', 'MULTIPLE_SELECCION', 'REQUISITO', 'U', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_168' , 'C', 'ORIENTACION', 'VALIDATE_ORIENTATION', 'REQUISITO', 'U');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_169' , 'L', 'API', 'API', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo, bpvd_textoculto) 
+	VALUES('PROP_170' , 'W', 'API_HEADER', 'API_HEADER', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo, bpvd_textoculto) 
+	VALUES('PROP_171' , 'W', 'API_NEW_DOCUMENT', 'API_NEW_DOCUMENT', 'REQUISITO', true, true, true);

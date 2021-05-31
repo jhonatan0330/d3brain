@@ -14,7 +14,6 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 {
 
 	private String objetivo;
-	private String codigo;
 	private String nombre;
 	private String consecutivo;
 	private String imagen;
@@ -23,6 +22,8 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 	private String color;
 	private List<PedidoVentaDTO> documentos;
 	private List<ReporteBaseDTO> reportes;
+	private String codigo;
+	private String server;
 
 	public void setObjetivo(String objetivo) {
 		this.objetivo = objetivo;
@@ -30,13 +31,6 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 	
 	public String getObjetivo() {
 		return objetivo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	
-	public String getCodigo() {
-		return codigo;
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -93,6 +87,20 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 	
 	public List<ReporteBaseDTO> getReportes() {
 		return reportes;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setServer(String server) {
+		this.server = server;
+	}
+	
+	public String getServer() {
+		return server;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

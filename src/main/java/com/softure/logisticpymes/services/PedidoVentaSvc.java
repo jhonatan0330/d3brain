@@ -77,6 +77,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Autowired private UsuarioSvc usuarioService;
 	@Autowired private UsuarioRolSvc usuarioRolService;
 	@Autowired private RolAccesoSvc rolService;
+	@Autowired private WebServiceEjecucionSvc apiService;
 	// END region servicesPedidoVenta
 
 	@Override
@@ -461,6 +462,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		gestionarEstado(pedido, plantilla.getNombre(), token);
 		gestionarTipos(dto, plantilla, token);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
+		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
+		if(!api.isEmpty()) apiService.ejecutar(api, dto, token);
 		dto.setCaracteristicas(null);//Por error al serializar
 		return pedido;
 		// END PedidoVenta_guardar

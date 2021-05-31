@@ -13,6 +13,7 @@
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
 			,crit_campo as  campo
 			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
+			,crit_auxiliar as  auxiliar
 			,crit_estado as estado
 		from relacioninterna_ritp a
 	</sql>
@@ -80,6 +81,9 @@
 		<if test="campo!=null">
 			,crit_campo
 		</if>
+		<if test="auxiliar!=null">
+			,crit_auxiliar
+		</if>
 		<if test="estado!=null">
 			,crit_estado
 		</if>
@@ -94,6 +98,9 @@
 		<if test="campo!=null">
 			,#{campo}
 		</if>
+		<if test="auxiliar!=null">
+			,#{auxiliar}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -106,6 +113,7 @@
 				crit_propiedad = #{propiedad},
 				crit_plantilla = #{plantilla},
 				crit_campo = #{campo},
+				crit_auxiliar = #{auxiliar},
 				crit_estado =#{estado}
 		<include refid="whereRelacionInternaPrimaryKeyFragment" />
 	</select>
@@ -116,6 +124,7 @@
 			,crit_propiedad as  propiedad
 			,crit_plantilla as  plantilla
 			,crit_campo as  campo
+			,crit_auxiliar as  auxiliar
 			,crit_estado as estado
 		from relacioninterna_ritp a
 	</sql>

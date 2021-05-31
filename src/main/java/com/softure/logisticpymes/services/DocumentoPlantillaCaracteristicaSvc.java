@@ -178,13 +178,17 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		return campo;
 	}
 	
-	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantillaConComplementos(String plantilla, String token) throws ServerException {
+	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantilla(String plantilla, String token) throws ServerException {
 		if(plantilla ==null) throw new ServerException("Para consultar los datos de una plantilla debes enviar el id de la plantilla");
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCampo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filtroCampo.setSecurityToken(token);
 		filtroCampo.setPlantilla(plantilla);
-		List<DocumentoPlantillaCaracteristicaDTO> campos = listarConsulta(filtroCampo);
+		return listarConsulta(filtroCampo);
+	}
+	
+	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantillaConComplementos(String plantilla, String token) throws ServerException {
+		List<DocumentoPlantillaCaracteristicaDTO> campos = listarCamposPlantilla(plantilla, token);
 		for (DocumentoPlantillaCaracteristicaDTO  iCampo: campos){
 			iCampo = cargarComplementos(iCampo, token);
 		}

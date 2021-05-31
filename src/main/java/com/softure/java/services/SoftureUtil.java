@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.Normalizer;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -69,6 +70,16 @@ public class SoftureUtil {
 		NumberFormat format = NumberFormat.getNumberInstance();
 		if(money ==null)money = BigDecimal.ZERO;
 		return format.format(money); 
+	}
+	
+	public static Date toDate(String text) throws ServerException{
+		Date date1;
+		try {
+			date1 = new SimpleDateFormat("yyyy-MM-dd").parse(text);
+		} catch (ParseException e) {
+			throw new ServerException(e.getMessage());
+		}
+		return date1;
 	}
 	
 	public static String getURL(String url, String serverPath) throws IOException {

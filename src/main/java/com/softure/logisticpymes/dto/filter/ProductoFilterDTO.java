@@ -19,6 +19,7 @@ public class ProductoFilterDTO extends BasicFilterDTO
 	private Integer cantidadPromocionBase;
 	private String documento;
 	private String productoBase;
+	private String baseNombre;
 
 	
 	public void setNombre(String nombre) {
@@ -118,6 +119,15 @@ public class ProductoFilterDTO extends BasicFilterDTO
 	
 	public String getProductoBase() {
 		return productoBase;
+	}
+	
+	
+	public void setBaseNombre(String baseNombre) {
+		this.baseNombre = baseNombre;
+	}
+	
+	public String getBaseNombre() {
+		return baseNombre;
 	}
 	
 					

@@ -6,7 +6,7 @@ package com.softure.logisticpymes.dto;
 import org.apache.ibatis.type.Alias;
 
 @Alias("OrganizacionDTO")
-public class OrganizacionDTO extends BasicDTO
+public class OrganizacionDTO extends BasicParamDTO
 // BEGIN region interfaces  
 // END region interfaces
 {

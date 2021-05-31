@@ -10,10 +10,10 @@ SET FOLDER_BD_UTILS=D:\Softure\Space2021\SW42_JAVA\bd\utils
 "%POSTGRES_FOLDER%\dropdb" -U postgres --if-exists -h %SERVER% comparativa_logisticpymes
 "%POSTGRES_FOLDER%\createdb" -U postgres -h %SERVER% comparativa_logisticpymes
 "%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Postgres8.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
-"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Initial_Properties.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
-"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Initial_Data.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
-"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Initial_Function.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
-"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Initial_Structure.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
+"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\1. Initial_Structure.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
+"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\2. Initial_Function.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
+"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\3. Initial_Properties.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
+"%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\4. Initial_Data.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
 "%POSTGRES_FOLDER%\psql" -U postgres -f "%FOLDER_BD%\Initial_Report.sql" -h %SERVER% comparativa_logisticpymes >> resultDEV.txt
 
 "%POSTGRES_FOLDER%\pg_dump" -U postgres -s -f new.sql -h %SERVER% comparativa_logisticpymes >> resultComparativa.txt
