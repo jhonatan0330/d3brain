@@ -384,10 +384,6 @@ public class TipoProceso {
 								//Lo coloco aqui porque se relacionaba todo
 								relacionarGestor(procesoDTO, updaterDTO, token);
 							}
-							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL)!=null) {
-								System.out.format("\n[%s (%s) - %s] Incluir traza..... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
-								relacionarGestor(procesoDTO, updaterDTO,  token);
-							}	
 						}
 					}else {
 						if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)!=null){
@@ -401,6 +397,13 @@ public class TipoProceso {
 							}
 						}
 					}
+					if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)==null){
+						if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL)!=null) {
+							System.out.format("\n[%s (%s) - %s] Incluir traza..... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
+							relacionarGestor(procesoDTO, updaterDTO,  token);
+						}
+					}
+					
 					activos.add(procesoDTO);
 				}else{
 					if(procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){

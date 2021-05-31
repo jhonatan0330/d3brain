@@ -440,6 +440,7 @@ public class Propiedades {
 			case PRODUCTO_CAMPO_VALOR_MINIMO : {ruleProperty =  "referencia el campo del producto que va a mostrar el valor minimo.\n";break;}
 			case PRODUCTO_CAMPO_VALOR_UNITARIO : {ruleProperty =  "Referencia el campo que va a mostrar el valor unitario.\n";break;}
 			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "VAa  tomar este campo como la cantidad a registrar del item de venta.\n";break;}
+			case PROCESO_INCLUIR_TRAZA_PRINCIPAL : {ruleProperty =  "Cuando colocas esta propiedad en el proceso que se selecciona en el campo aparecera este documento como parte de la trazabilidad.\n No es necesario usar BPM.\n";break;}
 			case P_SUBREPORT_ : {ruleProperty =  " Coloque los diferentes subreportes que se necesitan.\n";break;}
 			case RELACIONAR_DOCUMENTOS : {ruleProperty =  "Permite AGREGAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
 			case RETIRAR_DOCUMENTOS : {ruleProperty =  "Permite QUITAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
