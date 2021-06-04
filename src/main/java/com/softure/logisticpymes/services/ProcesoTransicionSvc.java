@@ -207,7 +207,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		expedienteDTO.setEstado(filtroEstado.getEstadoDocumento());//No se porque tenia esta linea ->//anterior.setEstadoNombre(filtroEstado.getNombre());
 		pedidoService.update(expedienteDTO);
 		String api = Propiedades.obtenerValor(dto, Propiedades.API_TRANSACCION);
-		if(!api.isEmpty()) apiService.ejecutar(api, expedienteDTO, token);
+		if(!api.isEmpty()) apiService.ejecutar(api, expedienteDTO, documentoDTO, token);
 		if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)==0) {
 			respuesta= decision(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token);

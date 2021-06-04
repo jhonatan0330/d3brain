@@ -24,6 +24,7 @@ public class Propiedades {
 	public static final String API_CODE_DIRECT = "API_CODE_DIRECT";
 	public static final String API_CODE_REFERENCE = "API_CODE_REFERENCE";
 	public static final String API_CODE_ESPECIAL = "API_CODE_ESPECIAL";
+	public static final String API_CODE_MODIFICADOR = "API_CODE_MODIFICADOR";
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -344,6 +345,7 @@ public class Propiedades {
 			case API_CODE_DIRECT : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nEn el template debes tener la estructura => {{D_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
 			case API_CODE_REFERENCE : {ruleProperty = "Se encarga de reemplazar un valor en el template, buscando en OTRA PLANTILLA.\n\nEn el template debes tener la estructura => {{R_XXXXXXX}} , donde XXXXXX es el codigo del campo.\n\nLo mas importante en los links relacionar la cadena de pasos en los campos que se debe seguir hasta llegar al campo deseado.\n EJ el nombre de un vendedor en una guia, entregada => (Propiedad se coloca el campo Guia), en los links se coloca el campoo guia vendedor y se agrega vendedor nombre";break;}
 			case API_CODE_ESPECIAL : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nColoca en el campo TEXTO de la propiedad el codigo que va a reeemplazar y en el VALOR coloca el texto que quieres que se modifique.\n\nSE crea un TRUCO para la fecha actual: el codigo debe empezar por E_FECHA_XXXXXX y en el VALOR de la propiedad colocas el formato tipo fecha";break;}
+			case API_CODE_MODIFICADOR : {ruleProperty = "Se encarga de reemplazar un valor en el template, tomando como base el documento que genero la accion (Solo en transiciones).\n\nEn el template debes tener la estructura => {{M_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}
 			case ARCHIVO_TIPO: {ruleProperty =   "Filtra el tipo de archivo, para usar varias extensiones separalas por coma(,).\n";break;}

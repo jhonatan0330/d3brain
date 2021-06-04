@@ -41,10 +41,10 @@ import com.softure.logisticpymes.persistence.WebServiceEjecucionMapper;
 
 @Service("webServiceEjecucionService")
 public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO> {
-
+	
 	@Autowired
 	private WebServiceEjecucionMapper webServiceEjecucionMapper;
-
+	
 	// BEGIN region servicesWebServiceEjecucion
 	@Autowired private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired private WebServiceSvc webServiceSvc;
@@ -57,8 +57,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 
 	@Override
 	public WebServiceEjecucionDTO consultaXId(String llave) throws ServerException {
-		if (llave == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. WebServiceEjecucion");
+		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. WebServiceEjecucion");
 		WebServiceEjecucionFilterDTO dto = new WebServiceEjecucionFilterDTO();
 		dto.setLlaveTabla(llave);
 		return webServiceEjecucionMapper.consultar(dto);
@@ -66,49 +65,51 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 
 	@PostConstruct
 	public void initIt() throws Exception {
-		this.mapper = webServiceEjecucionMapper;
+	  this.mapper = webServiceEjecucionMapper;
 	}
-
+	
 	@Override
 	public WebServiceEjecucionDTO activar(WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_activar
 		return super.activar(dto, token);
 		// END WebServiceEjecucion_activar
 	}
-
+	
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public WebServiceEjecucionDTO actualizar(WebServiceEjecucionDTO dto, String token) throws ServerException {
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public WebServiceEjecucionDTO actualizar( WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_actualizar
 		return super.actualizar(dto, token);
 		// END WebServiceEjecucion_actualizar
 	}
-
+	
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceEjecucionDTO inactivar(WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_inactivar
 		return super.inactivar(dto, token);
 		// END WebServiceEjecucion_inactivar
 	}
-
+	
 	@Override
 	public WebServiceEjecucionDTO consultaUnica(WebServiceEjecucionFilterDTO dto) throws ServerException {
 		return super.consultaUnica(dto);
 	}
-
+	
 	@Override
 	public int contarResultados(WebServiceEjecucionFilterDTO dto) throws ServerException {
 		return super.contarResultados(dto);
 	}
-
+	
 	@Override
-	public List<WebServiceEjecucionDTO> listarConsulta(WebServiceEjecucionFilterDTO dto) throws ServerException {
+	public List<WebServiceEjecucionDTO> listarConsulta(WebServiceEjecucionFilterDTO dto)
+			throws ServerException {
 		return super.listarConsulta(dto);
 	}
+	
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceEjecucionDTO guardar(WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_guardar
 		return super.guardar(dto, token);
@@ -116,7 +117,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 
 // BEGIN region aditionalMethods
-	public WebServiceEjecucionDTO ejecutar(String serviceId, PedidoVentaDTO document, String token)
+	public WebServiceEjecucionDTO ejecutar(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
 			throws ServerException {
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
@@ -126,7 +127,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
-		String template = crearSalida(service, document);
+		String template = crearSalida(service, document, modificador);
 		callWS.setEntrada(uploadService.uploadFile(template.getBytes(), "Entrada.txt"));
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setUsuario(getUserFlex(token));
@@ -145,7 +146,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		return callWS;
 	}
 
-	private String crearSalida(WebServiceDTO service, PedidoVentaDTO document) throws ServerException {
+	private String crearSalida(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador) throws ServerException {
 		String template = service.getTemplate();
 		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
 			// Directas
@@ -210,6 +211,38 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 						for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 							if (iCampo.getCampoDTO()==null) iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
 							template = template.replaceAll("\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",iCampo.getValorText());
+						}
+					}
+				}
+			}
+			if(modificador !=null) {
+				// modificador
+				List<PropiedadDTO> modificadoras = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_MODIFICADOR);
+				if (modificadoras != null && !modificadoras.isEmpty()) {
+					for (PropiedadDTO iProp : modificadoras) {
+						List<RelacionInternaDTO> rModificadoras = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
+						if (rModificadoras != null && !rModificadoras.isEmpty()) {
+							List<PedidoVentaCaracteristicaDTO> camposOpcionales = null;
+							if(modificador.getCaracteristicas()==null) {
+								PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
+								aux.setValorOpcion(modificador.getLlaveTabla());
+								List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
+								listAux.add(aux);
+								camposOpcionales = campoService.listar2getApiCode(listAux, rModificadoras);
+							} else {
+								camposOpcionales = modificador.getCaracteristicas();
+							}
+							for (RelacionInternaDTO iRelacion : rModificadoras) {
+								if (iRelacion.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
+									PedidoVentaCaracteristicaDTO campo = pedidoService
+											.obtenerValor(camposOpcionales, iRelacion.getCampo());	
+									if (campo != null)
+										if (campo.getCampoDTO()==null) campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
+										template = template.replaceAll(
+												"\\{\\{M_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
+												campo.getValorText());
+								}
+							}
 						}
 					}
 				}

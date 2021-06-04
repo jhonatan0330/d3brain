@@ -463,7 +463,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		gestionarTipos(dto, plantilla, token);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
 		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
-		if(!api.isEmpty()) apiService.ejecutar(api, dto, token);
+		if(!api.isEmpty()) apiService.ejecutar(api, dto, null, token);
 		dto.setCaracteristicas(null);//Por error al serializar
 		return pedido;
 		// END PedidoVenta_guardar

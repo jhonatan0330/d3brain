@@ -36,7 +36,6 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	private Date cierreMax;
 	private String nombre;
 	private String adjunto;
-	private String evidencia;
 
 	
 	public void setDocumentoPrincipal(String documentoPrincipal) {
@@ -232,15 +231,6 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	
 	public String getAdjunto() {
 		return adjunto;
-	}
-	
-	
-	public void setEvidencia(String evidencia) {
-		this.evidencia = evidencia;
-	}
-	
-	public String getEvidencia() {
-		return evidencia;
 	}
 	
 
