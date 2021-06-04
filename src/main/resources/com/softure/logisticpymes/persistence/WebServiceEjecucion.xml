@@ -13,6 +13,7 @@
 			,cwse_entrada as  entrada
 			,cwse_salida as  salida
 			,cwse_error as  error
+			,cwse_usuario as  usuario
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>
@@ -36,6 +37,9 @@
 			</if>
 			<if test="documento!=null">
 				and cwse_documento = #{documento}
+			</if>
+			<if test="usuario!=null">
+				and cwse_usuario = #{usuario}
 			</if>
 	</sql>
 
@@ -93,6 +97,9 @@
 		<if test="error!=null">
 			,cwse_error
 		</if>
+		<if test="usuario!=null">
+			,cwse_usuario
+		</if>
 		<if test="estado!=null">
 			,cwse_estado
 		</if>
@@ -116,6 +123,9 @@
 		<if test="error!=null">
 			,#{error}
 		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -131,6 +141,7 @@
 				cwse_entrada = #{entrada},
 				cwse_salida = #{salida},
 				cwse_error = #{error},
+				cwse_usuario = #{usuario},
 				cwse_estado =#{estado}
 		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
 	</select>
@@ -144,6 +155,7 @@
 			,cwse_entrada as  entrada
 			,cwse_salida as  salida
 			,cwse_error as  error
+			,cwse_usuario as  usuario
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>

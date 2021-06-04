@@ -317,3 +317,11 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_170' , 'W', 'API_HEADER', 'API_HEADER', 'REQUISITO', true, true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo, bpvd_textoculto) 
 	VALUES('PROP_171' , 'W', 'API_NEW_DOCUMENT', 'API_NEW_DOCUMENT', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean ) 
+	VALUES('PROP_173' , 'W', 'REEMPLAZAR DEL TEMPLATE CODIGO FORMULARIO', 'API_CODE_DIRECT', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_174' , 'W', 'REEMPLAZAR DEL TEMPLATE CODIGO REFERENCIADO', 'API_CODE_REFERENCE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_175' , 'W', 'REEMPLAZAR DEL TEMPLATE CODIGO ESPECIAL', 'API_CODE_REFERENCE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_176' , 'T', 'API', 'API_TRANSACCION', 'REQUISITO');

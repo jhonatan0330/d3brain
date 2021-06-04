@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -48,6 +49,12 @@ public class SoftureUtil {
 		return format.format(fecha);
 	}
 	
+	public static String formatDatePattern(Date fecha, String patternFormat){
+		DateFormat format = new SimpleDateFormat(patternFormat);
+		if(fecha ==null)return "";
+		return format.format(fecha);
+	}
+	
 	public static String formatDateMonth(Date fecha){
 		DateFormat format = new SimpleDateFormat( "MMMM yyyy");
 		if(fecha ==null)return "";
@@ -71,6 +78,13 @@ public class SoftureUtil {
 		if(money ==null)money = BigDecimal.ZERO;
 		return format.format(money); 
 	}
+	
+	public static String formatNumberPattern(BigDecimal value, String formatPattern) {
+		NumberFormat format = new DecimalFormat(formatPattern);
+		if(value ==null)value = BigDecimal.ZERO;
+		return format.format(value); 
+	}
+	
 	
 	public static Date toDate(String text) throws ServerException{
 		Date date1;

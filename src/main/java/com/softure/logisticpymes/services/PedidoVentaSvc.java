@@ -566,7 +566,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	
 	
-	public PedidoVentaCaracteristicaDTO obtenerValor(List<PedidoVentaCaracteristicaDTO> caracteristicas, String campoValor) throws ServerException {
+	public PedidoVentaCaracteristicaDTO obtenerValor(List<PedidoVentaCaracteristicaDTO> caracteristicas, String campoValor) {
 		if(caracteristicas==null || caracteristicas.size()==0) return null;
 		for (PedidoVentaCaracteristicaDTO pvc : caracteristicas) {
 			if(pvc.getCampo().compareTo(campoValor)==0){

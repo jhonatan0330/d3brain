@@ -37,6 +37,8 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date cierre;
 	private String nombre;
+	private String adjunto;
+	private String evidencia;
 
 	public void setDocumentoPrincipal(String documentoPrincipal) {
 		this.documentoPrincipal = documentoPrincipal;
@@ -184,6 +186,20 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	
 	public String getNombre() {
 		return nombre;
+	}
+	public void setAdjunto(String adjunto) {
+		this.adjunto = adjunto;
+	}
+	
+	public String getAdjunto() {
+		return adjunto;
+	}
+	public void setEvidencia(String evidencia) {
+		this.evidencia = evidencia;
+	}
+	
+	public String getEvidencia() {
+		return evidencia;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

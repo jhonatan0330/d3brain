@@ -52,6 +52,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	@Autowired private RelacionInternaSvc relacionService;
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
+	@Autowired private WebServiceEjecucionSvc apiService;
 	// END region servicesProcesoTransicion
 
 	@Override
@@ -167,6 +168,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			DocumentoRelacionGestorDTO relacionAnterior,
 			String token) throws ServerException {
 
+		// Aqui lleno las propiedades del dto asi no falla api
 		propiedadService.validarFuncionConsultandoPropiedad(dto, PropiedadValorDefinidoDTO.TRANSICION, expediente, documentoDTO.getLlaveTabla(), getUserFlex(token));
 		ProcesoTransicionDTO respuesta = dto;
 		PedidoVentaDTO expedienteDTO = pedidoService.consultaXId(expediente);
@@ -204,6 +206,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		expedienteDTO.setEstadoExpediente(filtroEstado.getLlaveTabla());
 		expedienteDTO.setEstado(filtroEstado.getEstadoDocumento());//No se porque tenia esta linea ->//anterior.setEstadoNombre(filtroEstado.getNombre());
 		pedidoService.update(expedienteDTO);
+		String api = Propiedades.obtenerValor(dto, Propiedades.API_TRANSACCION);
+		if(!api.isEmpty()) apiService.ejecutar(api, expedienteDTO, token);
 		if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)==0) {
 			respuesta= decision(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token);
@@ -222,6 +226,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				mensajeSvc.gestionarMensajes(expedienteDTO, dto, responsable, documentoDTO, token);
 			}
 		}
+		
 		return respuesta;
 	}
 	
@@ -410,10 +415,11 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	
 	public String obtenerUbicacion(PedidoVentaDTO pedido, String transicion, String token) throws ServerException {
 		if(transicion==null) return null;
-		String ubicacion = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.TRANSICION, transicion, Propiedades.UBICACION, getUserFlex(token));
+		PropiedadDTO ubicacion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION, transicion, Propiedades.UBICACION, getUserFlex(token));
 		if(ubicacion==null) return null;
 		System.out.format("\n......Buscando ubicacion del documento %s", pedido.getNombre());
-		PedidoVentaCaracteristicaDTO campoValor= pedidoService.obtenerValor(pedido.getCaracteristicas(), ubicacion);
+		PedidoVentaCaracteristicaDTO campoValor= pedidoService.obtenerValor(pedido.getCaracteristicas(), ubicacion.getValor());
+		if(campoValor ==null) throw new ServerException("Revisa la configuracion de ubicacion, el campo ya no esta disponible. " + ubicacion.getTexto());
 		return campoValor.getValorOpcion();
 	}
 	

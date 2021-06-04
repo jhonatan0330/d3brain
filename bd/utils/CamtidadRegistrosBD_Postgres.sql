@@ -34,3 +34,7 @@ where n.nspname not in ('pg_catalog', 'information_schema')
 and prosrc like '%prefijo_opcion_3%'
 --and proargnames IN ('{documento,cant,pagina,fechaminima,fechamaxima,filtro,codigo_exacto,token}')
 and p.proname like 'propiedad_%'
+
+
+--
+SELECT replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-','')

@@ -603,43 +603,48 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			
 			case Propiedades.TERCERO : {return identificadorCampo(dto, token);}
 			case Propiedades.PERMISO_PLANTILLA_INICIO_RAPIDO : {return identificadorCampo(dto, token);}
-			case Propiedades.ENCABEZADO : {break;}
 			case Propiedades.DESCRIPCION : {return identificadorCampo(dto, token);}
 			case Propiedades.DESCRIPCION_NIVEL2 : {return identificadorCampo(dto, token);}
 			case Propiedades.TOTAL : {return identificadorCampo(dto, token);}
 			case Propiedades.CONSECUTIVO : {return identificadorCampo(dto, token);}
 			case Propiedades.FECHA : {return identificadorCampo(dto, token);}
 			case Propiedades.RESPONSABLE : {return identificadorCampo(dto, token);}
+			case Propiedades.ENCABEZADO : {break;}
 			case Propiedades.ORDEN : {break;}
 			case Propiedades.CUENTA_SOBREGIRO : {return identificadorCampo(dto, token);}
 			
-			case Propiedades.DETALLE_TARIFARIO : {identificadorTarifario(dto);break;}
-			case Propiedades.DETALLE_CATEGORIA : {identificadorCategoriaProducto(dto, token);break;}
 			case Propiedades.PRODUCTOS_FUNCION_CAMPO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTOS_TERCERO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_CANTIDAD: {return identificadorCampo(dto, token);}
+			case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO : {return identificadorCampo(dto, token);}
 			
+			case Propiedades.DETALLE_CATEGORIA : {identificadorCategoriaProducto(dto, token);break;}
 			case Propiedades.PLANTILLA_TIPO_PRODUCTO : {identificadorCategoriaProducto(dto, token);break;}
 			
-			case Propiedades.REPORTE_ENCABEZADO : {identificadorReporte(dto);break;}
-			case Propiedades.REPORTE_PIE_PAGINA : {identificadorReporte(dto);break;}
-			case Propiedades.REPORTE_EXCEL : {identificadorReporte(dto);break;}
-			case Propiedades.P_SUBREPORT_ : {identificadorReporte(dto);break;}
+			case Propiedades.REPORTE_ENCABEZADO : 
+			case Propiedades.REPORTE_PIE_PAGINA : 
+			case Propiedades.REPORTE_EXCEL : 
+			case Propiedades.P_SUBREPORT_ : 
+			case Propiedades.MENSAJE_REPORTE :
 			case Propiedades.REPORTE_ENCABEZADO_EXCEL : {identificadorReporte(dto);break;}
+			
 			case Propiedades.REPORTE_JRXML : {identificadorJRXML(dto);break;}
 			
 			case Propiedades.MENSAJE : {identificadorMensaje(dto);break;}
+			
+			case Propiedades.API_TRANSACCION :
 			case Propiedades.API : {identificadorApi(dto);break;}
-			case Propiedades.MENSAJE_DESTINATARIO : {identificadorUsuario(dto);break;}
-			case Propiedades.MENSAJE_REPORTE : {identificadorReporte(dto);break;}
+			
+			case Propiedades.MENSAJE_DESTINATARIO : 
 			case Propiedades.ESTADO_ASIGNAR : {identificadorUsuario(dto);break;}
 			
 			case Propiedades.ROL : {identificadorRol(dto, token);break;}
-			case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO : {return identificadorCampo(dto, token);}
 			
 			case Propiedades.COLOR : {identificarColor(dto);break;}
+			
+			case Propiedades.DETALLE_TARIFARIO : {identificadorTarifario(dto);break;}
 		}
 		return false;
 	}
@@ -749,10 +754,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String tipo, String documento, String modificador, String usuario) throws ServerException {
 		List<PropiedadDTO> validaciones = null;
 		if(dto.getPropiedades()==null) {
-			validaciones = obtenerPropiedades(tipo, dto.getLlaveTabla(), Propiedades.FUNCION_SQL_VALIDAR, usuario);
-		}else {
-			 validaciones = Propiedades.obtenerVariosParametro(dto, Propiedades.FUNCION_SQL_VALIDAR);
+			dto.setPropiedades(obtenerPropiedades(tipo, dto.getLlaveTabla(), null, usuario));
 		}
+		validaciones = Propiedades.obtenerVariosParametro(dto, Propiedades.FUNCION_SQL_VALIDAR);
 		if(validaciones == null || validaciones.isEmpty()) return ;
 		for (PropiedadDTO pPropiedad : validaciones) {
 			System.out.format("\nValidando funcion SQL (%s)",pPropiedad.getMotivo() );

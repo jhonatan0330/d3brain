@@ -20,6 +20,7 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	private String entrada;
 	private String salida;
 	private String error;
+	private String usuario;
 
 	public void setServicio(String servicio) {
 		this.servicio = servicio;
@@ -62,6 +63,13 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	
 	public String getError() {
 		return error;
+	}
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+	
+	public String getUsuario() {
+		return usuario;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

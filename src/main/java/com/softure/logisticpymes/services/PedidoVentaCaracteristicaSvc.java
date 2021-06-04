@@ -177,6 +177,14 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.listar2getMessageMailDestiny(documentIds, fieldId);
 	}
 	
+	// En los documentos lo importante es el valor opcion que es el id que va a
+	public List<PedidoVentaCaracteristicaDTO> listar2getApiCode(List<PedidoVentaCaracteristicaDTO> documentIds,
+			List<RelacionInternaDTO> fieldId) throws ServerException {
+		if (documentIds == null || documentIds.isEmpty() || fieldId == null || fieldId.isEmpty())
+			return null;
+		return pedidoVentaCaracteristicaMapper.listar2getApiCode(documentIds, fieldId);
+	}
+
 	public PedidoVentaCaracteristicaDTO buscarActivo(PedidoVentaCaracteristicaDTO dto) throws ServerException {
 		if(dto==null || dto.getDocumento()==null) throw new ServerException("Error al consultar el campo previo por falta de datos");
 		PedidoVentaCaracteristicaFilterDTO bd = new PedidoVentaCaracteristicaFilterDTO();

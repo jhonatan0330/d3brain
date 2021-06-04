@@ -68,10 +68,16 @@ public class TipoNumero {
 		if(!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MONEDA).isEmpty()){
 			pCampo.setValorText(SoftureUtil.formatMoney(pCampo.getValorNumero()));	
 		}else{
-			pCampo.setValorText(pCampo.getValorNumero().toPlainString());
-			if(pCampo.getValorText().endsWith(".0")){
-				pCampo.setValorText(pCampo.getValorText().substring(0, pCampo.getValorText().length()-2));
+			String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
+			if (formato.isEmpty()) {
+				pCampo.setValorText(pCampo.getValorNumero().toPlainString());
+				if(pCampo.getValorText().endsWith(".0")){
+					pCampo.setValorText(pCampo.getValorText().substring(0, pCampo.getValorText().length()-2));
+				}
+			} else {
+				pCampo.setValorText(SoftureUtil.formatNumberPattern(pCampo.getValorNumero(), formato));
 			}
+			
 		}
 	}
 	

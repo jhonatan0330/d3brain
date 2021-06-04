@@ -344,6 +344,27 @@
 			and cpvc_campo in (<foreach item="itemB" collection="campoIds" separator="," >#{itemB.campo}</foreach>)
 	</select>
 	
+	<select id="listar2getApiCode" resultType="PedidoVentaCaracteristicaDTO">
+		<foreach item="itemA" collection="documentos" separator=" union " >
+			<if test="itemA.valorOpcion!=null">
+				select
+					cpvc_llave as  llaveTabla
+					,cpvc_documento as  documento
+					,cpvc_campo as  campo
+					,cpvc_valortext as  valorText
+					,dpvc_valorfecha as  valorFecha
+					,cpvc_valoropcion as  valorOpcion
+					,cpvc_valorauxiliar as  valorAuxiliar
+					,mpvc_valornumero as  valorNumero
+					,cpvc_estado as estado
+				from pedidoventacaracteristica_pvcp a
+				where cpvc_documento = #{itemA.valorOpcion}
+					and cpvc_estado ='A'
+					and cpvc_campo in (<foreach item="itemB" collection="campoIds" separator="," >#{itemB.campo}</foreach>)
+			</if>
+		</foreach>
+	</select>
+	
 	<select id="getTemplate" resultType="java.lang.String">
 		select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = #{documento}
 	</select>

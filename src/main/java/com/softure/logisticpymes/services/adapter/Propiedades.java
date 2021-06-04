@@ -17,9 +17,13 @@ public class Propiedades {
 	public static final String MENSAJE_DESTINATARIOS_SQL = "MENSAJE_DESTINATARIOS_SQL";
 	public static final String MENSAJE_DESTINATARIO = "MENSAJE_DESTINATARIO";
 	public static final String API = "API";
+	public static final String API_TRANSACCION = "API_TRANSACCION";
 	public static final String API_HEADER = "API_HEADER";
 	public static final String API_NEW_DOCUMENT = "API_NEW_DOCUMENT";
 	public static final String API_SECONDARY_DOCUMENT = "API_SECONDARY_DOCUMENT";
+	public static final String API_CODE_DIRECT = "API_CODE_DIRECT";
+	public static final String API_CODE_REFERENCE = "API_CODE_REFERENCE";
+	public static final String API_CODE_ESPECIAL = "API_CODE_ESPECIAL";
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -334,8 +338,12 @@ public class Propiedades {
 		if(formato == null ) return "Sin instrucciones por formato no enviado";
 		String ruleProperty = null;
 		switch(formato) {
-			case API : {ruleProperty =  "Identifica el APi que se va a ejecutar al guardar el documento.\n";break;}
-			case API_HEADER : {ruleProperty =  "Variables del Header de la peticion del API VA.\n";break;}
+			case API_TRANSACCION: 
+			case API : {ruleProperty = "Identifica el APi que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
+			case API_HEADER : {ruleProperty = "Variables del Header de la peticion del API VA.\n";break;}
+			case API_CODE_DIRECT : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nEn el template debes tener la estructura => {{D_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
+			case API_CODE_REFERENCE : {ruleProperty = "Se encarga de reemplazar un valor en el template, buscando en OTRA PLANTILLA.\n\nEn el template debes tener la estructura => {{R_XXXXXXX}} , donde XXXXXX es el codigo del campo.\n\nLo mas importante en los links relacionar la cadena de pasos en los campos que se debe seguir hasta llegar al campo deseado.\n EJ el nombre de un vendedor en una guia, entregada => (Propiedad se coloca el campo Guia), en los links se coloca el campoo guia vendedor y se agrega vendedor nombre";break;}
+			case API_CODE_ESPECIAL : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nColoca en el campo TEXTO de la propiedad el codigo que va a reeemplazar y en el VALOR coloca el texto que quieres que se modifique.\n\nSE crea un TRUCO para la fecha actual: el codigo debe empezar por E_FECHA_XXXXXX y en el VALOR de la propiedad colocas el formato tipo fecha";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}
 			case ARCHIVO_TIPO: {ruleProperty =   "Filtra el tipo de archivo, para usar varias extensiones separalas por coma(,).\n";break;}
@@ -388,7 +396,7 @@ public class Propiedades {
 			case FECHA_RANGO : {ruleProperty =  " La fecha tiene un rango, especialmente para reportes.  (*) =  Todos los rangos. D = Dia, M = Meses, R = Rango. Puedes combinar separado por (;break;}).\n";break;}
 			case FECHA_RANGO_MAXIMO : {ruleProperty =  " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin el tiempo es en milisegundos.\n";break;}
 			case FECHA_TIMER_BACK : {ruleProperty =  "Activando esta propiedad se va a mostrar un reloj en cuenta regresiva segun al fecha seleccionada.\n";break;}
-			case FORMATO : {ruleProperty =  " N(Solo numero), E(Correo electronico).\n";break;}
+			case FORMATO : {ruleProperty =  " Para campos texto N(Solo numero), E(Correo electronico).\n\n Para campos numero se utiliza un DecimalFormat";break;}
 			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case GENERA_DOCUMENTO_CAMPO : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar y en los links colocamos el campo del documento maestro que va a copiar el campo\n'nLas propiedades sin link se llena con el documento actual (y si este campo en el documento maestro es multiple se generan muchos documentos de la transicion)\n";break;}

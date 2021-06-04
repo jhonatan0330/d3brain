@@ -22,6 +22,7 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	List<PedidoVentaCaracteristicaDTO> listarGestionables(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos);
 	List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
+	List<PedidoVentaCaracteristicaDTO> listar2getApiCode(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
 	List<PedidoVentaCaracteristicaDTO> listarParaReporte(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listarParaMensaje(@Param("documento") String documento, @Param("plantilla") String plantilla, @Param("propiedad") String propiedad, @Param("modificador") String modificador);
 	BigDecimal calcularNumeroFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
