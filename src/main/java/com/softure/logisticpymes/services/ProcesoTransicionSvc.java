@@ -296,12 +296,27 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			if(dto.getPlantilla()==null && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)==0) throw new ServerException("Transicion sin formulario");
 		}else {
 			if(dto.getPlantilla()==null) throw new ServerException("Transicion sin formulario");
+			// Validar que la transicion de inicio no se use en 2 procesos como inicial
+			ProcesoTransicionFilterDTO filtroValidacion = new ProcesoTransicionFilterDTO();
+			filtroValidacion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroValidacion.setPlantilla(dto.getPlantilla());
+			List<ProcesoTransicionDTO> filtradas = listarConsulta(filtroValidacion);
+			if(filtradas!=null &&!filtradas.isEmpty()) {
+				for (ProcesoTransicionDTO iTransicion : filtradas) {
+					if(iTransicion.getEstadoPartida()==null) {
+						if(dto.getLlaveTabla()==null || dto.getLlaveTabla().compareTo(iTransicion.getLlaveTabla())!=0 )
+						 throw new ServerException("Esta plantilla esta siendo usada como inicio de un proceso diferente. " + iTransicion.getProcesoNombre() + "\n Nombre : " + iTransicion.getNombre());
+					}
+				}
+			}
+			//
 			if(dto.getLlaveTabla()==null) {
 				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_ACTIVO, dto.getEstadoLLegada());
 				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_INACTIVO, null);
 				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_FINALIZADO, null);
 			}
 			dto.setDocumentador(true);
+			
 		}
 	}
 	

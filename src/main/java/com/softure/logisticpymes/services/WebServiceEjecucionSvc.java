@@ -120,10 +120,9 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	public WebServiceEjecucionDTO ejecutar(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
 			throws ServerException {
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
-		if (service == null)
-			throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
-		service.setPropiedades(
-				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, null));
+		if (service == null)throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
+		System.out.format("\n\n[%s] Procesando API (%s)", document.getNombre(), service.getNombre());
+		service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, null));
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
@@ -143,6 +142,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		if (callWS.getError() == null) {
 			generateDocuments(service, responseApi, document, token);
 		}
+		System.out.format("\n\n[%s] Finalizando API (%s)", document.getNombre(), service.getNombre());
 		return callWS;
 	}
 
@@ -312,7 +312,8 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 					}
 				}
 			}
-
+			con.setConnectTimeout(5000);
+			con.setReadTimeout(5000);
 			con.connect();
 
 			// Send request
@@ -321,9 +322,8 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 			wr.flush();
 			wr.close();
 
-			System.out.println("status :" + con.getResponseCode());
-			System.out.println("getErrorStream() :" + con.getResponseMessage());
-
+			System.out.format("\n[] Procesando API status (%s), getErrorStream (%s)", con.getResponseCode());
+			
 			BufferedReader in = null;
 			if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
 				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
