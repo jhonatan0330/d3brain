@@ -282,6 +282,9 @@
 	        </foreach>
 		</if>
 		<if test="filtroEstados!=null">	and cpdv_estadoexpediente in <foreach item="item" collection="filtroEstados" separator="," open="(" close=")">#{item}</foreach></if>
+		<if test="filtroTexto!=null">and (cpdv_textofiltro like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>)
+				or cpdv_nombre like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>))
+		</if>
 		order by <if test="ordenNombre==null">dpdv_fecha <if test="ordenDescendente!=null">desc</if>,</if>cpdv_nombre <if test="ordenDescendente!=null">desc</if>
 		<if test="dto.paginacionRegistroFinal!=null">LIMIT #{dto.paginacionRegistroFinal}</if>
 		<if test="dto.paginacionRegistroInicial!=null">OFFSET #{dto.paginacionRegistroInicial}</if>

@@ -268,11 +268,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				String tokenHeredable = dto.getSecurityToken();
 				dto.setSecurityToken(null);//Se quito que solo viera los que tiene permiso
 				List<String> estadosFiltro = organizarFiltros(dto);
+				List<String> textoFiltroComas = organizarFiltroComas(dto);
 				try {
 					return listadoCompleto(
 							pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, 
 									propiedadService.camposRelacionados(propiedadHeredable1),//Consulto las realaciones del campo para saber cuales campos heredan con la funcion de  
-									dto.getTextoFiltro(), null, null), tokenHeredable, null); 
+									dto.getTextoFiltro(), null, null, textoFiltroComas), tokenHeredable, null); 
 				}catch (Exception e) {
 					throw new ServerException(e.getMessage());
 				}
@@ -368,7 +369,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			filtro.setCaracteristicas(dto.getCaracteristicas());
 			//filtro.setDocumentoFiltro(dto.getDocumentoFiltro());
 			try {
-				return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null), token, null); 
+				return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
 			}catch (Exception e) {
 				throw new ServerException(e.getCause().getMessage());
 			}
@@ -397,11 +398,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				dto.setFiltroParametro(null);
 			}
 			List<String> estadosFiltro = organizarFiltros(dto);
+			List<String> textoFiltroComas = organizarFiltroComas(dto);
 			dto.setSecurityToken(secToken);
 			try {
 				System.out.println (new Date().toString() + " : Query avnazado");
 				return listadoCompleto(
-						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente)
+						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
 						, token, null); 
 			}catch (Exception e) {
 				throw new ServerException(e.getMessage());
@@ -1130,6 +1132,16 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			if(dto.getEstadoExpediente().startsWith(";"))dto.setEstadoExpediente(dto.getEstadoExpediente().substring(1));
 			estadosFiltro = Arrays.asList(dto.getEstadoExpediente().split(";"));
 			dto.setEstadoExpediente(null);
+		}
+		return estadosFiltro;
+	}
+	
+	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {
+		List<String> estadosFiltro = null;
+		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().contains(",")) {
+			if(dto.getFiltroParametro().startsWith(","))dto.setFiltroParametro(dto.getFiltroParametro().substring(1));
+			estadosFiltro = Arrays.asList(dto.getFiltroParametro().split(","));
+			dto.setFiltroParametro(null);
 		}
 		return estadosFiltro;
 	}

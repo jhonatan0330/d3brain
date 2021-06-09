@@ -14,11 +14,20 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 	
 
 // BEGIN region aditionalMethods  
-	List<PedidoVentaDTO> listarPermitidos(@Param("dto")PedidoVentaFilterDTO dto, @Param("filtroEstados") List<String> filtroEstados,
-			@Param("campoFiltro") List<String> campoFiltro, @Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
-			@Param("ordenDescendente") String ordenDescendente);
+	List<PedidoVentaDTO> listarPermitidos(
+			@Param("dto")PedidoVentaFilterDTO dto, 
+			@Param("filtroEstados") List<String> filtroEstados,
+			@Param("campoFiltro") List<String> campoFiltro, 
+			@Param("valorFiltro") String valorFiltro, 
+			@Param("ordenNombre") String ordenNombre,
+			@Param("ordenDescendente") String ordenDescendente,
+			@Param("filtroTexto") List<String> filtroTexto);
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
-	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(@Param("dto")PedidoVentaFilterDTO dto, @Param("funcionBusqueda") String funcionBusqueda, @Param("filtroEstados") List<String> filtroEstados, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(
+			@Param("dto")PedidoVentaFilterDTO dto, 
+			@Param("funcionBusqueda") String funcionBusqueda, 
+			@Param("filtroEstados") List<String> filtroEstados, 
+			@Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	List<PedidoVentaDTO> listarExpedientesPertenecenCampo(String campo);
 	void actualizarEstados(PedidoVentaDTO dto);
 	int contarEstados(PedidoVentaDTO dto);
