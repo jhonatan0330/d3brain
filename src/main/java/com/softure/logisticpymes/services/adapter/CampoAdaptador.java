@@ -19,6 +19,7 @@ public class CampoAdaptador {
 	@Autowired private TipoDetallePedido tipoDetallePedido;
 	@Autowired private TipoDisponibilidad tipoDisponibilidad;
 	@Autowired private TipoFecha tipoFecha;
+	@Autowired private TipoGPS tipoGPS;
 	@Autowired private TipoNumero tipoNumero;
 	@Autowired private TipoProceso tipoProceso;
 	@Autowired private TipoProductoLista tipoProductoLista;
@@ -81,6 +82,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{vResultado = tipoDetallePedido.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.guardarCampo(pCampo, token);break;}
+			case DocumentoPlantillaCaracteristicaDTO.GPS:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.guardarCampo(pCampo, token);break;}
