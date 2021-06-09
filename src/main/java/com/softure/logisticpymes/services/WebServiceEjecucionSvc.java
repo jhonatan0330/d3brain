@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -136,6 +137,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		} catch (Exception e) {
 			responseApi = e.getMessage();
 			callWS.setError(e.getMessage());
+			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
 		}
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt"));
 		callWS = save(callWS);
@@ -169,7 +171,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 							if (iRelacion.getPlantilla().compareTo(document.getPlantilla()) == 0) {
 								PedidoVentaCaracteristicaDTO campo = pedidoService
 										.obtenerValor(camposOpcionales, iRelacion.getCampo());	
-								if (campo != null)
+								if (campo != null && campo.getValorText()!=null)
 									if (campo.getCampoDTO()==null) campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 									template = template.replaceAll(
 											"\\{\\{D_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
@@ -209,8 +211,10 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 						}
 						List<PedidoVentaCaracteristicaDTO> camposReferidos = consultarCamposReferidos(relaciones, camposOpcionales);
 						for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
-							if (iCampo.getCampoDTO()==null) iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-							template = template.replaceAll("\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",iCampo.getValorText());
+							if (iCampo.getValorText()!=null) {
+								if (iCampo.getCampoDTO()==null) iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+								template = template.replaceAll("\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",iCampo.getValorText());								
+							}
 						}
 					}
 				}
@@ -236,7 +240,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 								if (iRelacion.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
 									PedidoVentaCaracteristicaDTO campo = pedidoService
 											.obtenerValor(camposOpcionales, iRelacion.getCampo());	
-									if (campo != null)
+									if (campo != null && campo.getValorText()!=null)
 										if (campo.getCampoDTO()==null) campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 										template = template.replaceAll(
 												"\\{\\{M_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
@@ -249,7 +253,8 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 			}
 		}
 		template = template.replaceAll("\\{\\{[A-Za-z0-9_]*\\}\\}", "");
-		return template;
+		byte[] bytes = template.getBytes(StandardCharsets.UTF_8);
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 	
 	private List<PedidoVentaCaracteristicaDTO> consultarCamposReferidos(List<RelacionInternaDTO> relaciones, List<PedidoVentaCaracteristicaDTO> fields) throws ServerException {
@@ -318,11 +323,10 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.writeBytes(template);
-			wr.flush();
+			wr.write(template.getBytes(StandardCharsets.UTF_8));
 			wr.close();
 
-			System.out.format("\n[] Procesando API status (%s), getErrorStream (%s)", con.getResponseCode());
+			System.out.format("\n[] Procesando API status (%s)", con.getResponseCode());
 			
 			BufferedReader in = null;
 			if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
