@@ -46,8 +46,8 @@ select * from pedidoventa_pdvp where cpdv_estadoexpediente in (
 update pedidoventa_pdvp set cpdv_estadoexpediente = null where cpdv_estadoexpediente in (
 	select cpes_llave from procesoestado_pesp  where cpes_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
 
-delete from relacioninterna_ritp where crit_propiedad in (select cppd_llave from propiedad_ppdp where cppd_tipo = 'T' and cppd_campo in (select cprc_llave from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I')));
-delete from propiedad_ppdp where cppd_tipo = 'T' and cppd_campo in (select cprc_llave from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
+delete from relacioninterna_ritp where crit_propiedad in (select cppd_llave from propiedad_ppdp where cppd_tipo = 'T' and cppd_campo in (select cptr_llave from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I')));
+delete from propiedad_ppdp where cppd_tipo = 'T' and cppd_campo in (select cptr_llave from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
 delete from procesotransicion_ptrp where cptr_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I');
 delete from documentorelaciongestor_drgp where cdrg_estadofinal in (select cpes_llave from procesoestado_pesp  where cpes_proceso in (select cprc_llave from proceso_prcp where cprc_estado = 'I'));
 

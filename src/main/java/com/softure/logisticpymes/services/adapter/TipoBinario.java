@@ -15,8 +15,7 @@ public class TipoBinario {
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		if(pCampo.getValorNumero()==null) throw new ServerException("El valor de numero es nulo. Campo : " +pCampo.getCampoDTO().getNombre());
-		if(pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0){
+		if(pCampo.getValorNumero()==null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0){
 			String parametro = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BINARIO_FALSO);
 			if( parametro.isEmpty()){
 				pCampo.setValorText("NO");
