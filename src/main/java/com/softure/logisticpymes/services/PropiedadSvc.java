@@ -298,15 +298,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
 					break;
 				case Propiedades.PLANTILLA_TIPO_ROL:
-					RolAccesoDTO nuevo = new RolAccesoDTO();
-					nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
-					nuevo = rolService.guardar(nuevo, token);
-					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+					RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
+					rolFiltroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					rolFiltroFilter.setPlantilla(plantillaPrincipal.getLlaveTabla());
+					RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
+					if(rolFiltro==null) {// Si la propiedad ya se genero no hay que duplicar
+						RolAccesoDTO nuevo = new RolAccesoDTO();
+						nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
+						nuevo = rolService.guardar(nuevo, token);
+						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.ORDEN, "N", token), token);
-					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.DESCRIPCION, "*", token), token);
-					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
-								Propiedades.CONSECUTIVO, "*", token), token);
+						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+								Propiedades.CONSECUTIVO, "*", token), token);						
+					}
 					break;
 			}
 		}

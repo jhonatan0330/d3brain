@@ -169,6 +169,20 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newCampo = caracteristicaService.guardar(newCampo, token);
 			newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
 		}
+		// Primero las propiedades de rol para evitar duplicar
+		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
+		rolFiltroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		rolFiltroFilter.setPlantilla(bd.getLlaveTabla());
+		RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
+		if(rolFiltro!=null) {
+			RolAccesoDTO newRol = new RolAccesoDTO();
+			newRol.setMinutosSesion(rolFiltro.getMinutosSesion());
+			newRol.setPermisosCompletos(rolFiltro.getPermisosCompletos());
+			newRol.setPlantilla(copy.getLlaveTabla());
+			newRol = rolService.guardar(newRol, token);
+			rolFiltro.setPropiedades( configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL, rolFiltro.getLlaveTabla(),null, null));
+			configuracionSvc.copiarPropiedades(rolFiltro.getPropiedades(), newRol.getLlaveTabla(), token);
+		}
 		// Copio propiedades plantilla
 		bd.setPropiedades(obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null));
 		copy.setPropiedades(configuracionSvc.copiarPropiedades(bd.getPropiedades(), copy.getLlaveTabla(), token));
@@ -186,19 +200,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newReporte = reporteService.guardar(newReporte, token);
 			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla(), token);
 		}
-		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
-		rolFiltroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		rolFiltroFilter.setPlantilla(bd.getLlaveTabla());
-		RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
-		if(rolFiltro!=null) {
-			RolAccesoDTO newRol = new RolAccesoDTO();
-			newRol.setMinutosSesion(rolFiltro.getMinutosSesion());
-			newRol.setPermisosCompletos(rolFiltro.getPermisosCompletos());
-			newRol.setPlantilla(copy.getLlaveTabla());
-			newRol = rolService.guardar(newRol, token);
-			rolFiltro.setPropiedades( configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL, rolFiltro.getLlaveTabla(),null, null));
-			configuracionSvc.copiarPropiedades(rolFiltro.getPropiedades(), newRol.getLlaveTabla(), token);
-		}
+		
 		return copy;
 		// END region duplicar
 	}
