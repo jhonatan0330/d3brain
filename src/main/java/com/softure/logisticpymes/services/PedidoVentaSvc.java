@@ -293,6 +293,14 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 							parametros.add(param);
 						}
 						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(dto, (propiedadFuncion==null)?null:propiedadFuncion.getLlaveTabla(), parametros), dto.getSecurityToken(), campoValor );
+					} else {// hay casos que quiero que filtre solo por la fuente de datos
+						if(dto.getLlaveTabla()!=null) { //el filtro viene en la llave tabla
+							dto.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+							PedidoVentaCaracteristicaDTO pvc = new PedidoVentaCaracteristicaDTO();
+							pvc.setValorOpcion(dto.getLlaveTabla());
+							dto.getCaracteristicas().add(pvc);
+							dto.setLlaveTabla(null);
+						}
 					}
 				}
 				dto.setPlantilla(propiedadPlantilla);
