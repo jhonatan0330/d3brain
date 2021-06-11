@@ -3,8 +3,6 @@ package com.softure.java.services;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -98,7 +96,7 @@ public class CompressionUtils {
 		try {
 			final Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data));
     	    final ExifIFD0Directory exifDirectory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-    	    orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+    	    if(exifDirectory!=null)orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		} catch (ImageProcessingException |MetadataException | IOException e) {
 			e.printStackTrace();
 		} 
