@@ -1,6 +1,10 @@
 package com.softure.java.services;
 
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,6 +18,12 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifIFD0Directory;
 
 public class CompressionUtils {
 
@@ -46,8 +56,81 @@ public class CompressionUtils {
 		return output;  
 	}
 	
+	private static BufferedImage rotateImage(BufferedImage buffImage, double angle) {
+		if (angle ==0) return buffImage;
+		double radian = Math.toRadians(angle);
+
+	    double sin = Math.abs(Math.sin(radian));
+	    double cos = Math.abs(Math.cos(radian));
+
+	    int width = buffImage.getWidth();
+	    int height = buffImage.getHeight();
+
+	    int nWidth = (int) Math.floor((double) width * cos + (double) height * sin);
+	    int nHeight = (int) Math.floor((double) height * cos + (double) width * sin);
+
+	    BufferedImage rotatedImage = new BufferedImage(
+	            nWidth, nHeight, buffImage.getType());
+
+	    Graphics2D graphics = rotatedImage.createGraphics();
+
+	    graphics.setRenderingHint(
+	            RenderingHints.KEY_INTERPOLATION,
+	            RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+
+	    graphics.translate((nWidth - width) / 2, (nHeight - height) / 2);
+	    // rotation around the center point
+	    graphics.rotate(radian, (double) (width / 2), (double) (height / 2));
+	    graphics.drawImage(buffImage, 0, 0, null);
+	    graphics.dispose();
+	    
+	    return rotatedImage;
+/*
+	    AffineTransform transform = new AffineTransform();
+	    transform.rotate(radian, buffImage.getWidth() / 2, buffImage.getHeight() / 2);
+	    AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
+	    return op.filter(buffImage, null);
+	*/    
+	}
+	
+	private static double getRotation(byte[] data) {
+		int orientation = 0;
+		try {
+			final Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data));
+    	    final ExifIFD0Directory exifDirectory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+    	    orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+		} catch (ImageProcessingException |MetadataException | IOException e) {
+			e.printStackTrace();
+		} 
+		System.out.println("Orientation" +orientation);
+		if ( orientation == 2 ) {
+			//return rotateBitmap(img.getBitmap(), ImageUtil.FLIP_H);
+			return 0;
+		} else if ( orientation == 3 ) {
+			return 180;
+		} else if ( orientation == 4 ) {
+			// return rotateBitmap(img.getBitmap(), ImageUtil.FLIP_V);
+			return 0;
+		} else if ( orientation == 5 ) {
+			// Bitmap tmp = rotateBitmap(img.getBitmap(), ImageUtil.FLIP_H);
+			// tmp = rotateBitmap(tmp, ImageUtil.FLIP_90CCW);
+			// return tmp;
+			return 0;
+		} else if ( orientation == 6 ) {
+			return 90;
+		} else if ( orientation == 7 ) {
+			//Bitmap tmp = rotateBitmap(img.getBitmap(), ImageUtil.FLIP_H);
+			//tmp = rotateBitmap(tmp, ImageUtil.FLIP_90CW);
+			//return tmp;
+			return 0;
+		} else if ( orientation == 8 ) {
+			return 270;
+		} else {
+			return 0;
+		}
+	}
+	
 	public static byte[] compress(byte[] data) throws IOException {
-		
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		BufferedImage bufferedImage = ImageIO.read(bais);
 	    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -63,7 +146,7 @@ public class CompressionUtils {
             param.setCompressionQuality(0.5f);
         }
 
-        writer.write(null, new IIOImage(bufferedImage, null, null), param);
+        writer.write(null, new IIOImage(rotateImage(bufferedImage,getRotation(data)), null, null), param);
         writer.dispose();
         return outputStream.toByteArray();
 
@@ -91,6 +174,9 @@ public class CompressionUtils {
 	    ios.close();
 	    writer.dispose();
 	    */
+
 	}
+	
+	
 }
 
