@@ -263,7 +263,9 @@ public class TipoDetallePedido {
 				if(pCampo.getValorText()==null){
 					return pCampo;
 				}else{
-					if(pCampo.getValorText().compareTo(bd.getValorText())==0 && pCampo.getValorNumero().compareTo(bd.getValorNumero())==0){
+					if(pCampo.getValorText().compareTo(bd.getValorText())==0 
+							&& ((bd.getValorNumero()==null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0) 
+									|| (bd.getValorNumero()!=null && pCampo.getValorNumero().compareTo(bd.getValorNumero())==0))){
 						return bd;
 					}else{
 						bd.setValorText(pCampo.getValorText());
