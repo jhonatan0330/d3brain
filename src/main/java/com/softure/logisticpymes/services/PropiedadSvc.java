@@ -610,6 +610,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.TERCERO : {return identificadorCampo(dto, token);}
 			case Propiedades.PERMISO_PLANTILLA_INICIO_RAPIDO : {return identificadorCampo(dto, token);}
 			case Propiedades.DESCRIPCION : {return identificadorCampo(dto, token);}
+			case Propiedades.CAMPO_EVIDENCIA : {return identificadorCampo(dto, token);}
 			case Propiedades.DESCRIPCION_NIVEL2 : {return identificadorCampo(dto, token);}
 			case Propiedades.TOTAL : {return identificadorCampo(dto, token);}
 			case Propiedades.CONSECUTIVO : {return identificadorCampo(dto, token);}

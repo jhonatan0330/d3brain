@@ -248,7 +248,9 @@
 			,movimiento_descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla
 			,cdrg_nombre as  nombre
-			,null as evidencia 
+			,(select cpvc_valortext from campo_documento where cdrc_documento = cdrg_documentomodificador 
+				and cpvc_campo = (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_178' and cppd_estado = 'A' and cppd_tipo = 'L'
+					and cppd_campo = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador))) as adjunto 
 		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">z_drg_documentorelaciongestor</if>
 		  	left join pedidoventa_pdvp modifica on (cpdv_llave = cdrg_documentomodificador)
 		  where cdrg_documentoprincipal = #{dto.documentoPrincipal}
@@ -276,7 +278,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,(select 'Asignado a ' || cusr_nombre from usuario_usrp where cusr_llave = cact_responsable) as nombre
-			,null as evidencia 
+			,null as adjunto 
 		  from actividad_actp
 		  where cact_documento = #{dto.documentoPrincipal}
 	union
@@ -301,7 +303,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,null as nombre
-			,null as evidencia 
+			,null as adjunto 
 		  from pedidoventaajuste_pvap
 		  where cpva_documento = #{dto.documentoPrincipal}
 	</if>
@@ -334,7 +336,7 @@
 	            	ELSE to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS') || cmsj_correoerror
 	            END
 	    	END as nombre
-	    	,null as evidencia 
+	    	,null as adjunto 
 		  from mensaje_msjp
 		  where cmsj_documento = #{dto.documentoPrincipal}
 	</if>
@@ -361,7 +363,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = ctpi_producto) as nombre
-			,null as evidencia 
+			,null as adjunto 
 		  from trazabilidadproductoinventario_tpip 
 			inner join deduccionproducto_dprp on (cdpr_llave = ctpi_deduccionproducto )
 			where cdpr_documento = #{dto.documentoPrincipal}
@@ -389,7 +391,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,null as nombre
-			,cwse_entrada || ';;' || cwse_salida as evidencia 
+			,cwse_entrada || ';;' || cwse_salida as adjunto 
 		  from webserviceejecucion_wsep
 		  where cwse_documento = #{dto.documentoPrincipal}
 	</if>

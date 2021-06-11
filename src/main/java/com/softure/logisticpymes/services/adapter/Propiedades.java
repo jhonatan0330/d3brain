@@ -113,6 +113,7 @@ public class Propiedades {
 	public static final String TERCERO = "TERCERO";
 	public static final String ENCABEZADO = "ENCABEZADO";
 	public static final String DESCRIPCION = "DESCRIPCION";
+	public static final String CAMPO_EVIDENCIA = "CAMPO_EVIDENCIA";
 	public static final String DESCRIPCION_NIVEL2 = "DESCRIPCION_NIVEL2";
 	public static final String TOTAL = "TOTAL";
 	public static final String CONSECUTIVO = "CONSECUTIVO";
@@ -380,6 +381,7 @@ public class Propiedades {
 					+ "CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case DEFAULT : {ruleProperty =  "Coloca un valor en el campo (Tipo numero y texto), para los tipo proceso solo funciona para autoload y busca el valor con el id seleccionado.\n";break;}
 			case DESCRIPCION : {ruleProperty =  " Coloca una descripcion al documento segun los campos del mismo.\n";break;}
+			case CAMPO_EVIDENCIA : {ruleProperty =  "Selecciona un campo de la plantilla para mostrarlo en la trazabilidad como link para ver las evidencias del documento.\n";break;}
 			case DESCRIPCION_NIVEL2 : {ruleProperty =  " Toma la descripcion de un campo proceso para el.\n";break;}			
 			case DETALLE_NUMERO_COLUMNAS : {ruleProperty =  " EN la interfaz web coloca el numero de columnas deseado, por defecto 1.\n";break;}
 			case DETALLE_TECLADO : {ruleProperty =  " Carga un teclado debajo del espacio del campo texto que filtra.\n";break;}
