@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.EncuestaDTO;
 import com.softure.logisticpymes.dto.EncuestaGrupoDTO;
+import com.softure.logisticpymes.dto.PostPreguntaDTO;
+import com.softure.logisticpymes.dto.PostRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.EncuestaFilterDTO;
+import com.softure.logisticpymes.dto.filter.PostPreguntaFilterDTO;
+import com.softure.logisticpymes.dto.filter.PostRespuestaFilterDTO;
 import com.softure.logisticpymes.services.EncuestaGrupoSvc;
 import com.softure.logisticpymes.services.EncuestaSvc;
+import com.softure.logisticpymes.services.PostPreguntaSvc;
+import com.softure.logisticpymes.services.PostRespuestaSvc;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -24,6 +31,8 @@ public class SurveyController {
 	
 	@Autowired private EncuestaSvc encuestaService;
 	@Autowired private EncuestaGrupoSvc groupService;
+	@Autowired private PostPreguntaSvc preguntaService;
+	@Autowired private PostRespuestaSvc respuestaService;
 	
 	@RequestMapping(value="/getAvailable", method=RequestMethod.GET)
 	public List<EncuestaDTO> obtenerCampos(@RequestHeader("Authorization") String token) throws ServerException {
@@ -37,4 +46,15 @@ public class SurveyController {
 		return groupService.responderEncuesta(dto, token);
 	}
 	
+	@RequestMapping(value="/getFAQ", method=RequestMethod.GET)
+	public List<PostPreguntaDTO> obtenerPreguntas(@RequestHeader("Authorization") String token) throws ServerException {
+		return preguntaService.listarEnOrden(new PostPreguntaFilterDTO());
+	}
+	
+	@RequestMapping(value="/getFAQResponse/{id}", method=RequestMethod.GET)
+	public List<PostRespuestaDTO> obtenerREspuestas(@RequestHeader("Authorization") String token, @PathVariable String id) throws ServerException {
+		PostRespuestaFilterDTO filter  = new PostRespuestaFilterDTO();
+		filter.setPregunta(id);
+		return respuestaService.listarEnOrden(filter);
+	}
 }
