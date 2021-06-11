@@ -94,7 +94,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			if(dto.getEstado().length() > 2 && dto.getEstado().charAt(2) == '1') verMensaje = "1";
 			if(dto.getEstado().length() > 3 && dto.getEstado().charAt(3) == '1') verInventarios = "1";
 			if(dto.getEstado().length() > 4 && dto.getEstado().charAt(4) == '1') verReportes = "1";
-			if(dto.getEstado().length() > 5 && dto.getEstado().charAt(5) == '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
+			if(dto.getEstado().length() > 5 && dto.getEstado().charAt(5) != '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
 			if(dto.getEstado().length() > 6 && dto.getEstado().charAt(6) == '1') verApi = "1";
 		}
 		return documentoRelacionGestorMapper.listarExpedientesGestionadores(
