@@ -148,6 +148,11 @@
 		select count(*) from actividad_actp where cact_estado = 'A' and cact_responsable = #{usuario}
 	</select>
 	
+	<select id="ocultarLicencia" parameterType="java.lang.String" resultType="int">
+		select count(*) from usuariorol_erlp inner join propiedad_ppdp on (cppd_estado = 'A' and cppd_campo = cerl_rolacceso and cppd_propiedadvalor = 'PROP_179')
+		where cerl_estado = 'A' and cerl_usuario = #{usuario}
+	</select>
+	
 <!--// END region script-->
 
 </mapper>

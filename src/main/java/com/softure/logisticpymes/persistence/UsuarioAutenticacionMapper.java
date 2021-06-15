@@ -15,6 +15,7 @@ public interface UsuarioAutenticacionMapper extends IBasicMapper<UsuarioAutentic
 	String fechaMinima();
 	
 	int cantidadAsignaciones(String usuario);
+	int ocultarLicencia(String usuario);
 
 // END region aditionalMethods
 }
