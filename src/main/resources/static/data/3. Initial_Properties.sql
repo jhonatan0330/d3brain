@@ -330,4 +330,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_178' , 'L', 'CAMPO EVIDENCIA', 'CAMPO_EVIDENCIA', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_179' , 'R', 'OCULTAR MENSAJE LICENCIA', 'OCULTAR MENSAJE LICENCIA', 'REQUISITO', true);
+	VALUES('PROP_179' , 'R', 'OCULTAR MENSAJE LICENCIA', 'OCULTAR_MENSAJE_LICENCIA', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_180' , 'O', 'FORZAR LECTURA DE NOTIFICACIONES', 'FORCE_NOTIFICATION', 'REQUISITO', true);

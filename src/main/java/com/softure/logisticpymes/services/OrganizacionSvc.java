@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
+import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 import com.softure.logisticpymes.persistence.OrganizacionMapper;
 
@@ -24,7 +25,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private OrganizacionMapper organizacionMapper;
 	
 	// BEGIN region servicesOrganizacion
-	// @Autowired private ProcesoSvc procesoService;
+	@Autowired private PropiedadSvc configuracionSvc;
 	// END region servicesOrganizacion
 
 	@Override
@@ -106,6 +107,14 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
+	}
+	
+	public OrganizacionDTO obtenerPrincipalPropiedades(OrganizacionFilterDTO dto)throws ServerException{
+		OrganizacionDTO result = obtenerPrincipal(dto);
+		if(result !=null) {
+			result.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION, result.getLlaveTabla(), null, null));
+		}
+		return result;
 	}
 	
 	/*

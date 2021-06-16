@@ -184,6 +184,10 @@ public class Propiedades {
 	
 	//TRANSICION
 	public static final String TEMPORIZADOR = "TEMPORIZADOR";
+	
+	public static final String OCULTAR_MENSAJE_LICENCIA = "OCULTAR_MENSAJE_LICENCIA";
+	public static final String FORCE_NOTIFICATION = "FORCE_NOTIFICACTION";
+	
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
 		PropiedadDTO parametroTipo =  new PropiedadDTO();
@@ -409,6 +413,7 @@ public class Propiedades {
 					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"
 					+ "\n\nEstructura de la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";break;}
+			case FORCE_NOTIFICATION : {ruleProperty =  "Indica que al abrir el sistema en caso que tenga notificaciones sin leer se van a mostrar al usuario inmediatamente";break;}
 			case FUNCION_SQL_ESTADO_ASIGNAR : {ruleProperty =  "Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.\nEl documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case ITERACION_SQL : {ruleProperty =  "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
@@ -428,6 +433,7 @@ public class Propiedades {
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS";break;}
 			case NUMERO_STEP : {ruleProperty =  " El numero avanza segun el valor de este parametro con las flechas.\n";break;}
 			case NUMERO_REDONDEO : {ruleProperty =  " Numero de digitos decimales que tendra el campo(Por defect 0 numero, 2 si es moneda).Maximo 6\n";break;}
+			case OCULTAR_MENSAJE_LICENCIA : {ruleProperty =  "El rol que tenga esta propieadd no vera nunca los mensajes de vencimiento de sistema\n";break;}
 			case ORDEN : {ruleProperty =  " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";break;}
 			case ORDEN_DESCENDENTE : {ruleProperty =  " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";break;}
 			case PLANTILLA_AUXILIAR : {ruleProperty =  " Tiene el id de la plantilla que se usa en este proceso. (Puede colocar nombre o codigo, el lo convierte)\n";break;}

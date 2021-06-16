@@ -44,7 +44,7 @@ public class MainController {
 	
 	@RequestMapping(value="/obtenerPrincipalOrganizacion", method=RequestMethod.POST)
 	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO filter) throws ServerException {
-		return organizacionService.obtenerPrincipal(filter);
+		return organizacionService.obtenerPrincipalPropiedades(filter);
 	}
 	
 	@RequestMapping(value="/autenticarUsuarioAutenticacion", method=RequestMethod.POST)
