@@ -240,11 +240,12 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 								if (iRelacion.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
 									PedidoVentaCaracteristicaDTO campo = pedidoService
 											.obtenerValor(camposOpcionales, iRelacion.getCampo());	
-									if (campo != null && campo.getValorText()!=null)
+									if (campo != null && campo.getValorText()!=null) {
 										if (campo.getCampoDTO()==null) campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 										template = template.replaceAll(
 												"\\{\\{M_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
 												campo.getValorText());
+									}
 								}
 							}
 						}
