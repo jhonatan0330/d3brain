@@ -372,6 +372,7 @@
 	<select id="getUnique" resultType="java.lang.String">
 		select cpvc_documento from pedidoventacaracteristica_pvcp a
 		where cpvc_campo = #{campo} and cpvc_estado = 'A' and cpvc_valortext = #{valorText}
+		<if test="llaveTabla!=null">and cpvc_llave != #{llaveTabla}</if>
 		limit 1
 	</select>
 	
