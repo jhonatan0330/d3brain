@@ -80,4 +80,14 @@ select * from propiedad_ppdp where cppd_tipo = 'E' and cppd_campo in (select crp
 select * from propiedad_ppdp where cppd_tipo = 'E'
 
 */
-
+/*
+delete from auditoria_audp;
+update documentotransaccion_trap set ctra_usuario = 'PROCESS' where ctra_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from usuarioautenticacion_uaup where cuau_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from documentorelaciongestor_drgp where cdrg_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from usuariosesion_ussp where cuss_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+update pedidoventa_pdvp set cpdv_funcionario = 'PROCESS' where cpdv_funcionario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from usuariorol_erlp where  cerl_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from mensaje_msjp where cmsj_usuario in (select cusr_llave from usuario_usrp where cusr_estado = 'I');
+delete from usuario_usrp where cusr_estado = 'I';
+*/

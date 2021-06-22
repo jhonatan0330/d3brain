@@ -42,6 +42,7 @@ public class Propiedades {
 	public static final String TEXTO_LARGO = "BASICA";
 	public static final String OK = "TRUE";
 	public static final String TRUE = "1";
+	public static final String READ_QR = "READ_QR";
 
 	public static final String ARCHIVO_TAMANO_MAXIMO = "ARCHIVO_TAMANO_MAXIMO";
 	public static final String ARCHIVO_TIPO = "BASICA";
@@ -460,6 +461,7 @@ public class Propiedades {
 			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "VAa  tomar este campo como la cantidad a registrar del item de venta.\n";break;}
 			case PROCESO_INCLUIR_TRAZA_PRINCIPAL : {ruleProperty =  "Cuando colocas esta propiedad en el proceso que se selecciona en el campo aparecera este documento como parte de la trazabilidad.\n No es necesario usar BPM.\n";break;}
 			case P_SUBREPORT_ : {ruleProperty =  " Coloque los diferentes subreportes que se necesitan.\n";break;}
+			case READ_QR : {ruleProperty =  "En los campos proceso muestra el boton para activar la camara de lectura de codigos QR";break;}
 			case RELACIONAR_DOCUMENTOS : {ruleProperty =  "Permite AGREGAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
 			case RETIRAR_DOCUMENTOS : {ruleProperty =  "Permite QUITAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
 			case RESPONSABLE : {ruleProperty =  " Codigo del campo que relaciona el responsable de la actividad.\n";break;}
