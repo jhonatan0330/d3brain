@@ -86,6 +86,17 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantilla_inactivar
+		ProcesoTransicionFilterDTO validar = new ProcesoTransicionFilterDTO();
+		validar.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		validar.setPlantilla(dto.getLlaveTabla());
+		List<ProcesoTransicionDTO> pUsados = transicionService.listarConsulta(validar);
+		if(pUsados == null || !pUsados.isEmpty()) {
+			String mensaje = "La plantilla se esta usando en las siguientes transiciones : \n";
+			for (ProcesoTransicionDTO iUsado : pUsados) {
+				mensaje = mensaje + "Proceso: " + iUsado.getProcesoNombre() + "  -> Transicion: " + iUsado.getNombre() + "\n";
+			}
+			throw new ServerException(mensaje);
+		}
 		RolAccesoFilterDTO rolFilter = new RolAccesoFilterDTO();
 		rolFilter.setPlantilla(dto.getLlaveTabla());
 		rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
