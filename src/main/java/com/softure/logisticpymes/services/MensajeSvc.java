@@ -266,8 +266,10 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 				if(usuarioGenerador==null || iFijo.getLlaveTabla().compareTo(usuarioGenerador)!=0) destinatarios.put(iFijo.getLlaveTabla(), iFijo.getCorreo());
 			}
 		}
-		
-		if(destinatarios.isEmpty() && destinatariosExternos==null) return;
+		if(destinatarios.isEmpty() && destinatariosExternos==null) {
+			System.out.format("\n[%s] Mensaje ( %s ) no tiene destinatario", documento.getNombre(), formatosPlantilla.getNombre());
+			return;
+		}
 		String parametros = generarParametros(documento, "D_");
 		if(responsable!=null) parametros = parametros + SEPARADOR + "D_RESPONSABLE=" + responsable.getNombre();
 		if(modificador!=null) parametros = parametros + SEPARADOR + generarParametros(modificador, "M_");
@@ -296,6 +298,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			if(mensajeReporte!=null)mensaje.setReporte(mensajeReporte.getValor());
 			mensaje.setParametros(parametros);
 			save(mensaje);
+			System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) con correo (%s)", documento.getNombre(), formatosPlantilla.getNombre(), entry.getKey(), entry.getValue());
 		}
 		
 		if(destinatariosExternos!=null) {
@@ -313,6 +316,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 				if(mensajeReporte!=null)mensaje.setReporte(mensajeReporte.getValor());
 				mensaje.setParametros(parametros);
 				save(mensaje);
+				System.out.format("\n[%s] Mensaje ( %s ) asignado a correo externo (%s)", documento.getNombre(), formatosPlantilla.getNombre(), iDestinatario);
 			}
 		}
 	}
@@ -368,6 +372,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		}
 		//Si encontro mensaje 
 		if(mensaje!=null) {
+			System.out.format("\n[%s] Mensaje ( %s )", pedido.getNombre(), mensaje.getTexto());
 			List<PropiedadDTO> destinatariosFijos = propiedadService.obtenerPropiedades(tipo, campo, Propiedades.MENSAJE_DESTINATARIO, usuarioToken);
 			List<UsuarioDTO> fijos = null;
 			List<String> correosFijos = null;
