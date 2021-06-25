@@ -654,6 +654,8 @@ public class TipoProceso {
 			//Manejo de los saldos de los procesos
 			if(transicion!=null) {
 				expedienteTransicionService.gestionarTransicion(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken);
+				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
+				documentosGestionados.add(expediente.getLlaveTabla());
 				pedidoService.gestionarRol(expediente, securityToken);
 			}else {
 				if(primerLlamado) {
