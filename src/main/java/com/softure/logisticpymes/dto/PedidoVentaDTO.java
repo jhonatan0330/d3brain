@@ -38,6 +38,7 @@ public class PedidoVentaDTO extends BasicDTO
 	private PedidoVentaDineroDTO dinero;
 	private List<PedidoVentaCaracteristicaDTO> caracteristicas;
 	private String campoOrigen;
+	private String campoPropiedad;
 
 	public void setFechaRegistro(Date fechaRegistro) {
 		this.fechaRegistro = fechaRegistro;
@@ -157,6 +158,13 @@ public class PedidoVentaDTO extends BasicDTO
 	
 	public String getCampoOrigen() {
 		return campoOrigen;
+	}
+	public void setCampoPropiedad(String campoPropiedad) {
+		this.campoPropiedad = campoPropiedad;
+	}
+	
+	public String getCampoPropiedad() {
+		return campoPropiedad;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

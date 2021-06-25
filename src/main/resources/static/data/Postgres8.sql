@@ -12,6 +12,7 @@ CREATE TABLE proceso_prcp(
         cprc_llave character varying(32) NOT NULL,
         cprc_tipo character varying(1) NOT NULL,
         cprc_objetivo character varying(4000) NOT NULL,
+        cprc_imagen character varying(2000) NOT NULL,
         nprc_prioridad int NOT NULL DEFAULT 0,
         cprc_macroproceso character varying(32),
         cprc_nombre character varying(100) NOT NULL,
@@ -152,8 +153,9 @@ CREATE TABLE documentoplantilla_dplp(
         cdpl_objetivo character varying(4000),
         cdpl_nombre character varying(100) NOT NULL,
         cdpl_consecutivo character varying(32),
-        cdpl_imagen character varying(2000),
+        cdpl_imagen character varying(2000) NOT NULL,
         cdpl_codigo character varying(16) NOT NULL UNIQUE,
+        cdpl_proceso character varying(32) NOT NULL,
         cdpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentoplantilla_dplp PRIMARY KEY (cdpl_llave)
     );
@@ -1030,4 +1032,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.06.11.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.06.25.00' from pg_class where relname = 'usuariosesion_ussp';

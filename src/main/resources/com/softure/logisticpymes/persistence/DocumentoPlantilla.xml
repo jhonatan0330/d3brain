@@ -12,6 +12,7 @@
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
 			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
 			,cdpl_estado as estado
 		from documentoplantilla_dplp a
 	</sql>
@@ -32,6 +33,9 @@
 			</if>
 			<if test="codigo!=null">
 				and cdpl_codigo = #{codigo}
+			</if>
+			<if test="proceso!=null">
+				and cdpl_proceso = #{proceso}
 			</if>
 			<if test="filtroParametro!=null">
 				and (upper(cdpl_nombre) like upper('%' || #{filtroParametro} || '%'))
@@ -89,6 +93,9 @@
 		<if test="codigo!=null">
 			,cdpl_codigo
 		</if>
+		<if test="proceso!=null">
+			,cdpl_proceso
+		</if>
 		<if test="estado!=null">
 			,cdpl_estado
 		</if>
@@ -109,6 +116,9 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
+		<if test="proceso!=null">
+			,#{proceso}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -123,6 +133,7 @@
 				cdpl_consecutivo = #{consecutivo},
 				cdpl_imagen = #{imagen},
 				cdpl_codigo = #{codigo},
+				cdpl_proceso = #{proceso},
 				cdpl_estado =#{estado}
 		<include refid="whereDocumentoPlantillaPrimaryKeyFragment" />
 	</select>
@@ -135,6 +146,7 @@
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
 			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
 			,cdpl_estado as estado
 		from documentoplantilla_dplp a
 	</sql>

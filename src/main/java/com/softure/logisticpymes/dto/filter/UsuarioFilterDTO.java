@@ -14,7 +14,6 @@ public class UsuarioFilterDTO extends BasicFilterDTO
 	private String rol;
 	private String documento;
 	private String usuarioFiltroDependiente;
-	private String correo;
 	private String usuarioRol;
 
 	
@@ -70,15 +69,6 @@ public class UsuarioFilterDTO extends BasicFilterDTO
 	
 	public String getUsuarioFiltroDependiente() {
 		return usuarioFiltroDependiente;
-	}
-	
-	
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
-	
-	public String getCorreo() {
-		return correo;
 	}
 	
 	

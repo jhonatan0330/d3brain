@@ -17,6 +17,7 @@ public class ProcesoDTO extends BasicParamDTO
 
 	private String tipo;
 	private String objetivo;
+	private String imagen;
 	private Integer prioridad;
 	private String macroproceso;
 	private String nombre;
@@ -40,6 +41,13 @@ public class ProcesoDTO extends BasicParamDTO
 	
 	public String getObjetivo() {
 		return objetivo;
+	}
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+	
+	public String getImagen() {
+		return imagen;
 	}
 	public void setPrioridad(Integer prioridad) {
 		this.prioridad = prioridad;

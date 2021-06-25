@@ -188,6 +188,7 @@ public class Propiedades {
 	
 	public static final String OCULTAR_MENSAJE_LICENCIA = "OCULTAR_MENSAJE_LICENCIA";
 	public static final String FORCE_NOTIFICATION = "FORCE_NOTIFICACTION";
+	public static final String TABLERO_CONTROL_SQL = "TABLERO_CONTROL_SQL";
 	
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
@@ -406,7 +407,8 @@ public class Propiedades {
 			case FECHA_RANGO_MAXIMO : {ruleProperty =  " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin el tiempo es en milisegundos.\n";break;}
 			case FECHA_TIMER_BACK : {ruleProperty =  "Activando esta propiedad se va a mostrar un reloj en cuenta regresiva segun al fecha seleccionada.\n";break;}
 			case FORMATO : {ruleProperty =  " Para campos texto N(Solo numero), E(Correo electronico).\n\n Para campos numero se utiliza un DecimalFormat";break;}
-			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n"
+			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
+					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case GENERA_DOCUMENTO_CAMPO : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar y en los links colocamos el campo del documento maestro que va a copiar el campo\n'nLas propiedades sin link se llena con el documento actual (y si este campo en el documento maestro es multiple se generan muchos documentos de la transicion)\n";break;}
 			case GENERA_DOCUMENTO_FUNCION_SQL : {ruleProperty =  "Crea un campo para agregar a un documento.\nDebes crear una funcion para obtener los datos del campo.\nEn las relaciones debes colocar una relacion al campo que deseas llenar\n"
@@ -468,6 +470,14 @@ public class Propiedades {
 			case REPORTE_ENCABEZADO : {ruleProperty =  " Toma como base este reporte para dibujar el encabezado de cada pagina.\nEl reporte debe tener la linea <parameter name=\\\"P_KEY\\\" class=\\\"java.lang.String\\\"/> para reemplazar y va a agregar otro parametro NOMBRE para que no se duplique";break;}
 			case REPORTE_EXCEL : {ruleProperty =  "Nombre del reporte que se va a ejecutar cuando sea en excel, puede estar inactivo.\n";break;}
 			case SOLICITAR_FECHAS : {ruleProperty =  " Obliga al usuario colocar fechas al momento de realizar la consulta.\n";break;}
+			
+			case TABLERO_CONTROL_SQL : {ruleProperty =  "Muestra un item en el menu que traera una serie de objetos que se definen en un query.\n"
+				+ "En el campo texto va el nombre del tablero\n"
+				+ "En el campo motivo va la url de la imagen del tablero\n"
+				+ "\nEsta consulta no tiene dependientes ya que viene solo del menu, el unico dato considerable es el TOKEN y los filtros de fecha y cantidad\n\n"
+				+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])\r\n" 
+				+ "RETURNS SETOF pedidoventa_pdvp AS\n\n"
+				+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";break;}
 			case TEMPORIZADOR : {ruleProperty =  " VALOR: funcion sql que consulta datos\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying)\n" 
 					+ "RETURNS SETOF pedidoventa_pdvp AS"

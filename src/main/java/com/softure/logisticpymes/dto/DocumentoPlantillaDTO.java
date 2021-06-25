@@ -24,6 +24,7 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 	private List<ReporteBaseDTO> reportes;
 	private String codigo;
 	private String server;
+	private String proceso;
 
 	public void setObjetivo(String objetivo) {
 		this.objetivo = objetivo;
@@ -101,6 +102,13 @@ public class DocumentoPlantillaDTO extends BasicParamDTO
 	
 	public String getServer() {
 		return server;
+	}
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
+	}
+	
+	public String getProceso() {
+		return proceso;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

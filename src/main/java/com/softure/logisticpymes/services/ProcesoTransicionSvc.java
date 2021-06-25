@@ -346,6 +346,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	private String crearPlantilla(ProcesoTransicionDTO dto, String codigoFormulario, String token) throws ServerException {
 		DocumentoPlantillaDTO plantilla = new DocumentoPlantillaDTO();
 
+		plantilla.setProceso(dto.getProceso());
 		plantilla.setCodigo(codigoFormulario);
 		plantilla.setNombre(dto.getNombre());
 		plantilla.setObjetivo(dto.getNombre());

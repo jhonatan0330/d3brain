@@ -33,6 +33,7 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO
 	private String transaccion;
 	private List<PedidoVentaCaracteristicaDTO> caracteristicas;
 	private String campoOrigen;
+	private String campoPropiedad;
 
 	
 	public void setFechaRegistroMin(Date fechaRegistroMin) {
@@ -185,6 +186,15 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO
 	
 	public String getCampoOrigen() {
 		return campoOrigen;
+	}
+	
+	
+	public void setCampoPropiedad(String campoPropiedad) {
+		this.campoPropiedad = campoPropiedad;
+	}
+	
+	public String getCampoPropiedad() {
+		return campoPropiedad;
 	}
 	
 

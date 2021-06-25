@@ -3,6 +3,7 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
+import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 import com.softure.logisticpymes.persistence.OrganizacionMapper;
 
@@ -103,7 +103,13 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 // BEGIN region aditionalMethods
 	public List<OrganizacionDTO> obtenerUsuario(String usuario)throws ServerException{
 		try {
-			return organizacionMapper.obtenerUsuario(usuario); 
+			List<OrganizacionDTO> organizaciones = organizacionMapper.obtenerUsuario(usuario);
+			if (organizaciones !=null && !organizaciones.isEmpty()) {
+				for (OrganizacionDTO organizacionDTO : organizaciones) {
+					organizacionDTO.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION, organizacionDTO.getLlaveTabla(), null, null));
+				}
+			}
+			return organizaciones;
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}

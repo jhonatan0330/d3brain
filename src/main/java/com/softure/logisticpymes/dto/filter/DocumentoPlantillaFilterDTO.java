@@ -14,6 +14,7 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO
 	private String color;
 	private String codigo;
 	private String server;
+	private String proceso;
 
 	
 	public void setNombre(String nombre) {
@@ -71,6 +72,15 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO
 	
 	public String getServer() {
 		return server;
+	}
+	
+	
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
+	}
+	
+	public String getProceso() {
+		return proceso;
 	}
 	
 

@@ -9,6 +9,7 @@
 			cprc_llave as  llaveTabla
 			,cprc_tipo as  tipo
 			,cprc_objetivo as  objetivo
+			,cprc_imagen as  imagen
 			,nprc_prioridad as  prioridad
 			,cprc_macroproceso as  macroproceso
 			,cprc_nombre as  nombre
@@ -86,6 +87,9 @@
 		<if test="objetivo!=null">
 			,cprc_objetivo
 		</if>
+		<if test="imagen!=null">
+			,cprc_imagen
+		</if>
 		<if test="prioridad!=null">
 			,nprc_prioridad
 		</if>
@@ -108,6 +112,9 @@
 		</if>
 		<if test="objetivo!=null">
 			,#{objetivo}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
 		</if>
 		<if test="prioridad!=null">
 			,#{prioridad}
@@ -132,6 +139,7 @@
 			set
 				cprc_tipo = #{tipo},
 				cprc_objetivo = #{objetivo},
+				cprc_imagen = #{imagen},
 				nprc_prioridad = #{prioridad},
 				cprc_macroproceso = #{macroproceso},
 				cprc_nombre = #{nombre},
@@ -145,6 +153,7 @@
 			cprc_llave as  llaveTabla
 			,cprc_tipo as  tipo
 			,cprc_objetivo as  objetivo
+			,cprc_imagen as  imagen
 			,nprc_prioridad as  prioridad
 			,cprc_macroproceso as  macroproceso
 			,cprc_nombre as  nombre

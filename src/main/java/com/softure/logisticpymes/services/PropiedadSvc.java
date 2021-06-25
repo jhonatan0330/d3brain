@@ -136,6 +136,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if(bd.getKey().contains("SQL")) {
 			bd.setLlaveTabla(SoftureUtil.formatFunction(bd.getLlaveTabla()));
 			switch (bd.getKey()) {
+			case Propiedades.TABLERO_CONTROL_SQL:
 			case Propiedades.PROCESO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionFiltros(bd);
 				break;
@@ -235,39 +236,40 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if(dto.getKey().contains("SQL")) {
 				dto.setLlaveTabla(SoftureUtil.formatFunction(dto.getLlaveTabla()));
 				switch (dto.getKey()) {
-				case Propiedades.PROCESO_FUNCION_SQL:
-					propiedadMapper.crearFuncionFiltros(dto);
-					break;
-				case Propiedades.MENSAJE_DESTINATARIOS_SQL:
-					propiedadMapper.crearFuncionMail(dto);
-					break;
-				case Propiedades.PRODUCTOS_FUNCION_SQL:
-					propiedadMapper.crearFuncionProductos(dto);
-					break;
-				case Propiedades.DECISION_SQL:
-					propiedadMapper.crearFuncionDecision(dto);
-					break;
-				case Propiedades.ITERACION_SQL:
-					propiedadMapper.crearFuncionIteracion(dto);
-					break;
-				case Propiedades.DETALLE_TARIFARIO_SQL:
-					propiedadMapper.crearFuncionTarifas(dto);
-					break;
-				case Propiedades.NUMERO_FUNCION_SQL:
-					propiedadMapper.crearFuncionNumerica(dto);
-					break;
-				case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
-					propiedadMapper.crearFuncionCampoGenerar(dto);
-					break;
-				case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
-					propiedadMapper.crearFuncionCamposEspecialesPlantilla(dto);
-					break;
-				case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
-					propiedadMapper.crearFuncionParametros(dto);
-					break;
-				default:
-					propiedadMapper.crearFuncion(dto);
-					break;
+					case Propiedades.TABLERO_CONTROL_SQL:
+					case Propiedades.PROCESO_FUNCION_SQL:
+						propiedadMapper.crearFuncionFiltros(dto);
+						break;
+					case Propiedades.MENSAJE_DESTINATARIOS_SQL:
+						propiedadMapper.crearFuncionMail(dto);
+						break;
+					case Propiedades.PRODUCTOS_FUNCION_SQL:
+						propiedadMapper.crearFuncionProductos(dto);
+						break;
+					case Propiedades.DECISION_SQL:
+						propiedadMapper.crearFuncionDecision(dto);
+						break;
+					case Propiedades.ITERACION_SQL:
+						propiedadMapper.crearFuncionIteracion(dto);
+						break;
+					case Propiedades.DETALLE_TARIFARIO_SQL:
+						propiedadMapper.crearFuncionTarifas(dto);
+						break;
+					case Propiedades.NUMERO_FUNCION_SQL:
+						propiedadMapper.crearFuncionNumerica(dto);
+						break;
+					case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
+						propiedadMapper.crearFuncionCampoGenerar(dto);
+						break;
+					case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
+						propiedadMapper.crearFuncionCamposEspecialesPlantilla(dto);
+						break;
+					case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
+						propiedadMapper.crearFuncionParametros(dto);
+						break;
+					default:
+						propiedadMapper.crearFuncion(dto);
+						break;
 				}
 			}
 			if(dto.getKey().compareTo(Propiedades.TEMPORIZADOR)==0)propiedadMapper.crearFuncionFiltros(dto);

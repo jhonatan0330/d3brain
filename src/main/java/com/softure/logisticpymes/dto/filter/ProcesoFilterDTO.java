@@ -9,6 +9,7 @@ public class ProcesoFilterDTO extends BasicFilterDTO
 {
 
 	private String tipo;
+	private String imagen;
 	private Integer prioridad;
 	private String macroproceso;
 	private String nombre;
@@ -22,6 +23,15 @@ public class ProcesoFilterDTO extends BasicFilterDTO
 	
 	public String getTipo() {
 		return tipo;
+	}
+	
+	
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+	
+	public String getImagen() {
+		return imagen;
 	}
 	
 	

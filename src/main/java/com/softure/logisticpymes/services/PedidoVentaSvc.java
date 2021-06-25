@@ -257,6 +257,10 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().isEmpty()) dto.setFiltroParametro(null);
 		if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 		if (dto.getNombre()!=null) dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
+		if (dto.getCampoPropiedad()!=null) {
+			PropiedadDTO propiedadFuncion = propiedadService.consultaXId(dto.getCampoPropiedad());
+			return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(dto, propiedadFuncion.getLlaveTabla(), null), dto.getSecurityToken(), null );
+		}
 		//Filtros desde un campo
 		if(dto.getCampoOrigen()!=null) {
 			DocumentoPlantillaCaracteristicaDTO campoPlantilla = documentoPlantillaCaracteristicaService.consultaXId(dto.getCampoOrigen());
@@ -385,27 +389,31 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			String orden = null;
 			String ordenAscendente = null;
 			//Esto filtra los resultados por estado, pero si va a consultar un solo registro mejor lo dejo solo para que sea consulta por id
+			List<String> estadosFiltro = organizarFiltros(dto);
 			if(dto.getLlaveTabla()==null){
-				if(dto.getPlantilla()==null) throw new ServerException("Por favor revise porque el campo no tiene plantilla");
-				//DocumentoPlantillaDTO plantillaFiltro = documentoPlantillaService.consultaXId(dto.getPlantilla());
-				//if(plantillaFiltro==null) throw new ServerException("Por favor revise el id de la plantilla porque no se encuentra");
-				if(plantilla ==null) {
-					plantilla = new DocumentoPlantillaDTO();
-					plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(), null, getUserFlex(dto.getSecurityToken())));
+				if(dto.getPlantilla()==null) { // Esto es para los procesos deben traer los estados
+					if (estadosFiltro == null) throw new ServerException("Por favor revise porque el campo no tiene plantilla");
+				} else {
+					//DocumentoPlantillaDTO plantillaFiltro = documentoPlantillaService.consultaXId(dto.getPlantilla());
+					//if(plantillaFiltro==null) throw new ServerException("Por favor revise el id de la plantilla porque no se encuentra");
+					if(plantilla ==null) {
+						plantilla = new DocumentoPlantillaDTO();
+						plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(), null, getUserFlex(dto.getSecurityToken())));
+					}
+					PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla,  Propiedades.SOLICITAR_FECHAS);
+					if(filtroFechas!=null) {
+						if(dto.getFechaMin()==null) throw new ServerException("Por favor seleccione fecha de inicio para la consulta");
+						if(dto.getFechaMax()==null) throw new ServerException("Por favor seleccione fecha de fin para la consulta");	
+					}
+					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
+					if(orden.isEmpty())orden = null;
+					ordenAscendente = Propiedades.obtenerValor(plantilla,  Propiedades.ORDEN_DESCENDENTE);
+					if(ordenAscendente.isEmpty())ordenAscendente = null;
 				}
-				PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla,  Propiedades.SOLICITAR_FECHAS);
-				if(filtroFechas!=null) {
-					if(dto.getFechaMin()==null) throw new ServerException("Por favor seleccione fecha de inicio para la consulta");
-					if(dto.getFechaMax()==null) throw new ServerException("Por favor seleccione fecha de fin para la consulta");	
-				}
-				orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
-				if(orden.isEmpty())orden = null;
-				ordenAscendente = Propiedades.obtenerValor(plantilla,  Propiedades.ORDEN_DESCENDENTE);
-				if(ordenAscendente.isEmpty())ordenAscendente = null;
+				
 			}else {
 				dto.setFiltroParametro(null);
 			}
-			List<String> estadosFiltro = organizarFiltros(dto);
 			List<String> textoFiltroComas = organizarFiltroComas(dto);
 			dto.setSecurityToken(secToken);
 			try {

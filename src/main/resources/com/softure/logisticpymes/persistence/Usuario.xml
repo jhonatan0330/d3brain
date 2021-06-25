@@ -29,9 +29,6 @@
 			<if test="nombre!=null">
 				and cusr_nombre = #{nombre}
 			</if>
-			<if test="correo!=null">
-				and cusr_correo = #{correo}
-			</if>
 			<if test="filtroParametro!=null">
 				and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
 			</if>
