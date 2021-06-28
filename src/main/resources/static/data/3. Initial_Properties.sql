@@ -246,7 +246,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_135' , 'C', 'BLOQUEAR', 'PERMISO_CAMPO_BLOQUEAR', 'PERMISOS', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, cpvd_origencategoria) 
-	VALUES('PROP_136', 'A', 'ESTADO_ASIGNAR', 'ASIGNACION DE USUARIO', 'REQUISITO', 'E');
+	VALUES('PROP_136' , 'A', 'ESTADO_ASIGNAR', 'ASIGNACION DE USUARIO', 'REQUISITO', 'E');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_137' , 'E', 'ENCABEZADO EN EXCEL', 'REPORTE_ENCABEZADO_EXCEL', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo,  bpvd_textoculto) 
@@ -337,3 +337,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_181' , 'C', 'LEER CODIGO QR', 'READ_QR', 'REQUISITO', 'Z', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_solicitamotivo) 
 	VALUES('PROP_182' , 'O', 'TABLERO DE CONTROL', 'TABLERO_CONTROL_SQL', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_183' , 'P', 'LISTABLE EN MENU', 'PERMISO_PLANTILLA_LISTAR_MENU_PROCESO', 'PERMISOS', true, true);

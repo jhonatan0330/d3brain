@@ -143,7 +143,7 @@ public class Propiedades {
 	public static final String PERMISO_PLANTILLA_VER = "PERMISO_PLANTILLA_VER";
 	public static final String PERMISO_PLANTILLA_VER_TODOS = "PERMISO_PLANTILLA_VER_TODOS";
 	public static final String PERMISO_PLANTILLA_LISTAR_MENU = "PERMISO_PLANTILLA_LISTAR_MENU";
-	
+	public static final String PERMISO_PLANTILLA_LISTAR_MENU_PROCESO = "PERMISO_PLANTILLA_LISTAR_MENU_PROCESO";
 	
 	public static final String PERMISO_CAMPO_BLOQUEAR = "PERMISO_CAMPO_BLOQUEAR";
 	public static final String PERMISO_CAMPO_MODIFICABLE = "PERMISO_CAMPO_MODIFICABLE";
@@ -439,6 +439,8 @@ public class Propiedades {
 			case OCULTAR_MENSAJE_LICENCIA : {ruleProperty =  "El rol que tenga esta propieadd no vera nunca los mensajes de vencimiento de sistema\n";break;}
 			case ORDEN : {ruleProperty =  " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";break;}
 			case ORDEN_DESCENDENTE : {ruleProperty =  " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";break;}
+			case PERMISO_PLANTILLA_LISTAR_MENU :
+			case PERMISO_PLANTILLA_LISTAR_MENU_PROCESO : {ruleProperty =  "Muestra en el menu principal este proceso o plantilla para el usuario y que se pase al listado de esos documentos.\n";break;}
 			case PLANTILLA_AUXILIAR : {ruleProperty =  " Tiene el id de la plantilla que se usa en este proceso. (Puede colocar nombre o codigo, el lo convierte)\n";break;}
 			case PLANTILLA_OCULTAR_GUARDAR : {ruleProperty =  "En la pantalla el formulario no muestra el boton guardar, asi los usuarios se obligan a ejecutar las siguientes transiciones\n";break;}
 			case PLANTILLA_TIPO_ROL : {ruleProperty =  " Asocia esta plantilla con un rol del sistema, creandolo\n";break;}

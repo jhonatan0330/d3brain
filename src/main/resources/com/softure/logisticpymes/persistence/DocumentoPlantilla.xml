@@ -174,9 +174,30 @@
 			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
 				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
 			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
-			and (dppd_fechainicial is null or dppd_fechainicial <![CDATA[ < ]]> now())
-			and (dppd_fechafinal is null or dppd_fechafinal > now()))
-		order by cdpl_nombre
+			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
+			and (dppd_fechafinal is null or dppd_fechafinal > now())
+			)
+		union
+		select
+			null as  llaveTabla
+			,null as  objetivo
+			,cprc_nombre as  nombre
+			,null as  consecutivo
+			,cprc_imagen as  imagen
+			,cprc_codigo as  codigo
+			,cprc_llave as  proceso
+			,cprc_estado as estado
+		from proceso_prcp 
+		where cprc_estado = 'A'
+			and cprc_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
+			and cppd_propiedadvalor = 'PROP_183'
+			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
+			and (dppd_fechafinal is null or dppd_fechafinal > now())
+			)
+		order by nombre;
 	</select>
 <!--// END region script-->
 

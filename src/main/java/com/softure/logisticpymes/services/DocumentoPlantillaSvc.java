@@ -311,7 +311,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			filtroFullFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			plantillasPermitidas =listarConsulta(filtroFullFilter);
 		}else {
-			plantillasPermitidas =listarPlantillaRol(dto);
+			plantillasPermitidas = listarPlantillaRol(dto);
 		}
 		List<DocumentoPlantillaDTO> result = new ArrayList<DocumentoPlantillaDTO>();
 		boolean nuevaPlantilla = true;
@@ -349,7 +349,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
 				nuevaPlantilla = true;
 				for(DocumentoPlantillaDTO iBD : result){
-					if(iplantillaPermitida.getLlaveTabla().compareTo(iBD.getLlaveTabla())==0) {
+					if(iplantillaPermitida.getLlaveTabla()==null || iplantillaPermitida.getLlaveTabla().compareTo(iBD.getLlaveTabla())==0) {
 						nuevaPlantilla = false;
 						break;
 					}
@@ -375,28 +375,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						}
 					}
 					if(procesoInicial!=null) {
-						for (ProcesoEstadoDTO procesoEstadoDTO : estados) {
-							if(procesoEstadoDTO.getProceso().compareTo(procesoInicial)==0) {
-								if(iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(new ArrayList<ProcesoEstadoDTO>());
-								if(procesoEstadoDTO.getPropiedades()==null) {
-									procesoEstadoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
-									for (PropiedadDTO propiedadDTO : todasPropiedadesEstados) {
-										if(propiedadDTO.getCampo().compareTo(procesoEstadoDTO.getLlaveTabla())==0) 
-											procesoEstadoDTO.getPropiedades().add(propiedadDTO);
-									}
-								}
-								if(procesoEstadoDTO.getTransiciones()==null) {
-									procesoEstadoDTO.setTransiciones(new ArrayList<ProcesoTransicionDTO>());
-									for (ProcesoTransicionDTO procesoTransicionDTO : transiciones) {
-										if(procesoTransicionDTO.getEstadoPartida()!=null && procesoTransicionDTO.getEstadoPartida().compareTo(procesoEstadoDTO.getLlaveTabla())==0) {
-											procesoEstadoDTO.getTransiciones().add(procesoTransicionDTO);
-										}
-									}
-								}
-								//Valida que quede empty no null, despues de validar borra
-								iplantillaPermitida.getEstados().add(procesoEstadoDTO);
-							}
-						}
+						statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
+								procesoInicial);
 					}
 					if (iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(crearEstadosBasicos());
 
@@ -413,10 +393,44 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					result.add(iplantillaPermitida);
 				}
 			}
+			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
+				if(iplantillaPermitida.getLlaveTabla()==null) {
+					statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
+							iplantillaPermitida.getProceso());
+					result.add(0, iplantillaPermitida);
+				}
+			}
 		}
 		return result;
-		// END region consultaUsuario
 	}
+
+	private void statesFromProcess(List<ProcesoEstadoDTO> estados, List<ProcesoTransicionDTO> transiciones,
+			List<PropiedadDTO> todasPropiedadesEstados, DocumentoPlantillaDTO iplantillaPermitida,
+			String procesoInicial) {
+		for (ProcesoEstadoDTO procesoEstadoDTO : estados) {
+			if(procesoEstadoDTO.getProceso().compareTo(procesoInicial)==0) {
+				if(iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(new ArrayList<ProcesoEstadoDTO>());
+				if(procesoEstadoDTO.getPropiedades()==null) {
+					procesoEstadoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
+					for (PropiedadDTO propiedadDTO : todasPropiedadesEstados) {
+						if(propiedadDTO.getCampo().compareTo(procesoEstadoDTO.getLlaveTabla())==0) 
+							procesoEstadoDTO.getPropiedades().add(propiedadDTO);
+					}
+				}
+				if(procesoEstadoDTO.getTransiciones()==null) {
+					procesoEstadoDTO.setTransiciones(new ArrayList<ProcesoTransicionDTO>());
+					for (ProcesoTransicionDTO procesoTransicionDTO : transiciones) {
+						if(procesoTransicionDTO.getEstadoPartida()!=null && procesoTransicionDTO.getEstadoPartida().compareTo(procesoEstadoDTO.getLlaveTabla())==0) {
+							procesoEstadoDTO.getTransiciones().add(procesoTransicionDTO);
+						}
+					}
+				}
+				//Valida que quede empty no null, despues de validar borra
+				iplantillaPermitida.getEstados().add(procesoEstadoDTO);
+			}
+		}
+	}
+	
 // END region aditionalMethods
 
 }
