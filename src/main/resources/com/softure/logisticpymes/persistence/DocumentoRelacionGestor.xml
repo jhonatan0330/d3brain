@@ -395,6 +395,33 @@
 		  from webserviceejecucion_wsep
 		  where cwse_documento = #{dto.documentoPrincipal}
 	</if>
+	<if test="verReportes!=null">
+	union 
+		select
+			crej_llave as  llaveTabla
+			,crej_documento as  documentoPrincipal
+			,null as  documentoModificador
+			,drej_fechainicio as fecha
+			,'Impresion de reporte' as estadoInicial
+			,(drej_fechafin - drej_fechainicio)::text as estadoFinal
+			,null as estado
+			,crej_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = crej_usuario) as  responsable
+			,null as  responsableImagen
+			,null as  modificadorNombre
+			,crej_error as  comentario
+			,null as plantilla
+			,null as plantillaNombre
+			,null as saldo
+			,null as total
+			,null as ubicacion
+			,null as ubicacionNombre
+			,null as ubicacionPlantilla
+			,(select crpb_nombre from reportebase_rpbp where crpb_llave = crej_reporte) as nombre
+			,null as adjunto 
+		  from reporteejecucion_rejp
+		  where crej_documento = #{dto.documentoPrincipal}
+	</if>
 	order by fecha desc LIMIT #{dto.paginacionRegistroFinal} OFFSET #{dto.paginacionRegistroInicial}
 	</select>
 	
