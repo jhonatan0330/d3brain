@@ -339,3 +339,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_182' , 'O', 'TABLERO DE CONTROL', 'TABLERO_CONTROL_SQL', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
 	VALUES('PROP_183' , 'P', 'LISTABLE EN MENU', 'PERMISO_PLANTILLA_LISTAR_MENU_PROCESO', 'PERMISOS', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo) 
+	VALUES('PROP_184' , 'L', 'PRODUCTO_CAMPO_TOTAL', 'PRODUCTO CAMPO TOTAL', 'REQUISITO');

@@ -91,6 +91,7 @@ public class Propiedades {
 	public static final String PRODUCTO_CAMPO_VALOR_UNITARIO = "PRODUCTO_CAMPO_VALOR_UNITARIO";
 	public static final String PRODUCTO_CAMPO_VALOR_MINIMO = "PRODUCTO_CAMPO_VALOR_MINIMO";
 	public static final String PRODUCTO_CAMPO_CANTIDAD = "PRODUCTO_CAMPO_CANTIDAD";
+	public static final String PRODUCTO_CAMPO_TOTAL = "PRODUCTO_CAMPO_TOTAL";
 	public static final String UNICO_PRODUCTO = "UNICO_PRODUCTO";
 	public static final String DETALLE_TARIFA_PRODUCTO = "DETALLE_TARIFA_PRODUCTO";
 	public static final String DETALLE_TARIFARIO_SQL = "DETALLE_TARIFARIO_SQL";
@@ -462,7 +463,8 @@ public class Propiedades {
 					+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";break;}
 			case PRODUCTO_CAMPO_VALOR_MINIMO : {ruleProperty =  "referencia el campo del producto que va a mostrar el valor minimo.\n";break;}
 			case PRODUCTO_CAMPO_VALOR_UNITARIO : {ruleProperty =  "Referencia el campo que va a mostrar el valor unitario.\n";break;}
-			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "VAa  tomar este campo como la cantidad a registrar del item de venta.\n";break;}
+			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "EL softwate toma este campo como la cantidad a registrar del item de venta.\n";break;}
+			case PRODUCTO_CAMPO_TOTAL : {ruleProperty =  "Este campo sera el valor total del producto.\n";break;}
 			case PROCESO_INCLUIR_TRAZA_PRINCIPAL : {ruleProperty =  "Cuando colocas esta propiedad en el proceso que se selecciona en el campo aparecera este documento como parte de la trazabilidad.\n No es necesario usar BPM.\n";break;}
 			case P_SUBREPORT_ : {ruleProperty =  " Coloque los diferentes subreportes que se necesitan.\n";break;}
 			case READ_QR : {ruleProperty =  "En los campos proceso muestra el boton para activar la camara de lectura de codigos QR";break;}

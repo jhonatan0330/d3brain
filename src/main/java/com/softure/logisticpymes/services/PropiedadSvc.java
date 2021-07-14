@@ -627,6 +627,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_CANTIDAD: {return identificadorCampo(dto, token);}
+			case Propiedades.PRODUCTO_CAMPO_TOTAL: {return identificadorCampo(dto, token);}
 			case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO : {return identificadorCampo(dto, token);}
 			
 			case Propiedades.DETALLE_CATEGORIA : {identificadorCategoriaProducto(dto, token);break;}

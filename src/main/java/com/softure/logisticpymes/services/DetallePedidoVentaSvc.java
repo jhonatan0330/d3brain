@@ -51,7 +51,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	@Autowired private TarifaSvc tarifaService;
 	@Autowired private PropiedadSvc configuracionSvc;
 	
-	private static final String keyCampoTotal = "***TOTAL";
 	// END region servicesDetallePedidoVenta
 
 	@Override
@@ -504,26 +503,40 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		
 		if(field.getTarifas()!=null && !field.getTarifas().isEmpty()) {
 			//Creo un campo con el valor subtotal
-			DocumentoPlantillaCaracteristicaDTO baseTotal = new DocumentoPlantillaCaracteristicaDTO();
-			baseTotal.setCodigo("TOTAL");
-			baseTotal.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
-			baseTotal.setNombre("TOTAL");
-			baseTotal.setOrden(4);
-			baseTotal.setLlaveTabla(keyCampoTotal);
-			baseTotal.setPropiedades(new ArrayList<PropiedadDTO>());
-			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.NUMERO_MONEDA, Propiedades.TRUE, null));
-			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE, null));
-			//baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.MODIFICABLE, Propiedades.TRUE, null));
-			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.NUMERO_FORMULA, baseCantidad.getCodigo() + "*"+ baseValorUnitario.getCodigo(), null));
-			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
-			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseCantidad.getLlaveTabla(), null));
-			PedidoVentaCaracteristicaDTO cpTotal = new PedidoVentaCaracteristicaDTO();
-			cpTotal.setDocumento(field.getLlaveTabla());	
-			cpTotal.setValorNumero(field.getValorTotal());
-			cpTotal.setValorText(cpTotal.getValorNumero().toString());
-			cpTotal.setCampoDTO(baseTotal);
-			cpTotal.setCampo(keyCampoTotal);
-			field.getCaracteristicas().add(cpTotal);
+			PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(field, Propiedades.PRODUCTO_CAMPO_TOTAL);
+			DocumentoPlantillaCaracteristicaDTO baseTotal = null;
+			if(pCampoTotal==null|| pCampoTotal.getValor()==null || pCampoTotal.getValor().compareTo("***TOTAL")==0) {//Sucede que como se copian las propiedades entonces de crean aveces esta propiedad pero el campo no
+				baseTotal = new DocumentoPlantillaCaracteristicaDTO();
+				baseTotal.setCodigo("TOTAL");
+				baseTotal.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
+				baseTotal.setNombre("TOTAL");
+				baseTotal.setOrden(4);
+				baseTotal.setLlaveTabla("***TOTAL");
+				baseTotal.setPropiedades(new ArrayList<PropiedadDTO>());
+				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.NUMERO_MONEDA, Propiedades.TRUE, null));
+				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE, null));
+				//baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.MODIFICABLE, Propiedades.TRUE, null));
+				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.NUMERO_FORMULA, baseCantidad.getCodigo() + "*"+ baseValorUnitario.getCodigo(), null));
+				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
+				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseCantidad.getLlaveTabla(), null));
+				PedidoVentaCaracteristicaDTO cpTotal = new PedidoVentaCaracteristicaDTO();
+				cpTotal.setDocumento(field.getLlaveTabla());	
+				cpTotal.setValorNumero(field.getValorTotal());
+				cpTotal.setValorText(cpTotal.getValorNumero().toString());
+				cpTotal.setCampoDTO(baseTotal);
+				cpTotal.setCampo("***TOTAL");
+				field.getCaracteristicas().add(cpTotal);
+				field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PRODUCTO_CAMPO_TOTAL, baseCantidad.getLlaveTabla(), null));
+				//	
+			}else {
+				for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getCaracteristicas()) {
+					if(iFieldTotal.getCampo().compareTo(pCampoTotal.getValor())==0) {
+						baseTotal= iFieldTotal.getCampoDTO();
+						break;
+					}
+				}
+			}
+			if(baseTotal==null) throw new ServerException("Se ha presentado un problema consultando el campo de valor total" + field.getNombre());
 		}
 		
 	}
@@ -564,9 +577,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(detail.getCaracteristicas()==null || detail.getCaracteristicas().isEmpty()) throw new ServerException("Ahora debes traer los campos basicos");
 		if(detail.getPropiedades()==null) throw new ServerException("Por favor envia las propiedades");
 		
-		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
-		if(cpTotal!=null) detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
-		
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
@@ -578,12 +588,16 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
 		PedidoVentaCaracteristicaDTO cpUnitario = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null) detail.setValorUnitario(cpUnitario.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+	
+		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
+		String keyCampoTotal = "***TOTAL";
+		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
+		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		if(cpTotal!=null) detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+		
 	}
 	
 	public void actualizarCamposNovedadParcial(DetallePedidoVentaDTO detail) throws ServerException {
-		
-		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
-		if(cpTotal!=null) cpTotal.setValorNumero(detail.getValorTotal());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
@@ -596,6 +610,13 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
 		PedidoVentaCaracteristicaDTO cpUnitario = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null) cpUnitario.setValorNumero(detail.getValorUnitario());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+		
+		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
+		String keyCampoTotal = "***TOTAL";
+		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
+		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		if(cpTotal!=null) cpTotal.setValorNumero(detail.getValorTotal());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+		
 	}
 
 	// END region aditionalMethods

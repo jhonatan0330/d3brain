@@ -241,7 +241,7 @@ begin
 		select cpdv_llave from pedidoventa_pdvp 
 			where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
 			and npdv_historico is null 
-			limit 50) 
+			limit 500) 
 		into documentos;
 	select array (
 		select cpvc_llave from pedidoventacaracteristica_pvcp 
