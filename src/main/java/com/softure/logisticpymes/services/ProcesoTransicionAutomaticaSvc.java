@@ -178,7 +178,9 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				}
 			}
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
-			programar.setTransicion(propiedadDTO.getCampo());
+			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
+				programar.setTransicion(propiedadDTO.getCampo());	
+			}
 			programar.setFecha(fechaProgramada);
 			if(propiedadDTO.getMotivo()==null) {
 				programar.setMensaje(propiedadDTO.getNombre());
@@ -190,21 +192,25 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		}
 	}
 
-	private Date calcularFecha(Date ultimaEjecucion, String valor) {
+	private Date calcularFecha(Date ultimaEjecucion, String valor) throws ServerException {
 		String[]temporizador = valor.split(":");
-		int years = Integer.parseInt( temporizador[0]);
-		int month = Integer.parseInt( temporizador[1]);
-		int days = Integer.parseInt( temporizador[2]);
-		int hours = Integer.parseInt( temporizador[3]);
-		int minutes = Integer.parseInt( temporizador[4]);
 		Calendar fechaCalculada = new GregorianCalendar();
 		fechaCalculada.setTime(ultimaEjecucion);
-		while (fechaCalculada.getTime().compareTo(new Date())<0) {
-			if(years!=0)fechaCalculada.add(Calendar.YEAR, years);
-			if(month!=0)fechaCalculada.add(Calendar.MONTH, month);
-			if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, days);
-			if(hours!=0)fechaCalculada.add(Calendar.HOUR_OF_DAY, hours);
-			if(minutes!=0)fechaCalculada.add(Calendar.MINUTE, minutes);			
+		try {
+			int years = Integer.parseInt( temporizador[0]);
+			int month = Integer.parseInt( temporizador[1]);
+			int days = Integer.parseInt( temporizador[2]);
+			int hours = Integer.parseInt( temporizador[3]);
+			int minutes = Integer.parseInt( temporizador[4]);
+			while (fechaCalculada.getTime().compareTo(new Date())<0) {
+				if(years!=0)fechaCalculada.add(Calendar.YEAR, years);
+				if(month!=0)fechaCalculada.add(Calendar.MONTH, month);
+				if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, days);
+				if(hours!=0)fechaCalculada.add(Calendar.HOUR_OF_DAY, hours);
+				if(minutes!=0)fechaCalculada.add(Calendar.MINUTE, minutes);			
+			}
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
 		}
 		return fechaCalculada.getTime();
 	}
@@ -216,45 +222,58 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	public ProcesoTransicionAutomaticaDTO gestionaEjecucion(ProcesoTransicionAutomaticaDTO dto)throws ServerException{
 		PropiedadDTO pTemporizador = propiedadService.consultaXId(dto.getPropiedad());
 		if(Propiedades.validarBloqueo(pTemporizador)) {
-			List<PedidoVentaDTO> documentos = null;
-			documentos = documentoService.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
-			if(documentos ==null || documentos.isEmpty()) {
-				dto.setMensaje("Sin documentos a gestionar");
-			}else {
-				String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
-				if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
-				UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-				String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
-				ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
-				transicion.setLlaveTabla(dto.getTransicion());
-				transicion.setPlantilla(dto.getPlantilla());
-
-				String transaccionDocumento = null;
-				
-				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
-				if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
-					dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
+			if(pTemporizador.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
+				List<PedidoVentaDTO> documentos = null;
+				documentos = documentoService.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
+				if(documentos ==null || documentos.isEmpty()) {
+					dto.setMensaje("Sin documentos a gestionar");
 				}else {
-					PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
-					campoPrinicipal.setCampo(relaciones.get(0).getCampo());
+					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
+					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
+					UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
+					String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
+					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
+					transicion.setLlaveTabla(dto.getTransicion());
+					transicion.setPlantilla(dto.getPlantilla());
+
+					String transaccionDocumento = null;
 					
-					if(propiedadMultiple==null) {
-						dto.setMensaje("");
-						;
-						for (PedidoVentaDTO iPedido : documentos) {
-							campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-							PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
-							transaccionDocumento = nuevo.getTransaccion();
-							dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
-						}
+					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
+					if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
+						dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
 					}else {
-						campoPrinicipal.setExpedientes(documentos);
-						PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
-						if(nuevo !=null) {
-							dto.setMensaje(nuevo.getNombre());	
+						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
+						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
+						
+						if(propiedadMultiple==null) {
+							dto.setMensaje("");
+							;
+							for (PedidoVentaDTO iPedido : documentos) {
+								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
+								PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+								transaccionDocumento = nuevo.getTransaccion();
+								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
+							}
 						}else {
-							dto.setMensaje("Generar documentos no genera. Revisar");
+							campoPrinicipal.setExpedientes(documentos);
+							PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+							if(nuevo !=null) {
+								dto.setMensaje(nuevo.getNombre());	
+							}else {
+								dto.setMensaje("Generar documentos no genera. Revisar");
+							}
 						}
+					}
+				}
+			} else {
+				if(pTemporizador.getKey().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO)==0) {
+					try {
+						int days = Integer.parseInt(pTemporizador.getValor());
+						Calendar fechaCalculada = new GregorianCalendar();
+						if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, -days);
+						procesoTransicionAutomaticaMapper.funcionPasarTablaHistoricos(pTemporizador.getCampo(), fechaCalculada.getTime());
+					} catch (NumberFormatException e) {
+						dto.setMensaje("ERROR : " + e.getMessage());
 					}
 				}
 			}

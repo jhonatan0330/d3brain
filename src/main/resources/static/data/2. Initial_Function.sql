@@ -229,7 +229,7 @@ AS SELECT pedidoventadinero_pvdp.cpvd_documento AS vi_vlr_documento,
    FROM pedidoventadinero_pvdp
   WHERE pedidoventadinero_pvdp.cpvd_estado::text = 'A'::text;
 
-  CREATE OR REPLACE FUNCTION migrarcampos(_plantilla character varying, _fecha_maxima timestamp with time zone)
+CREATE OR REPLACE FUNCTION public.migrarcampos(_plantilla character varying, _fecha_maxima timestamp with time zone)
  RETURNS void
  LANGUAGE plpgsql
 AS $function$
@@ -237,12 +237,23 @@ declare
 	documentos character varying[];
 	campos character varying[];
 begin
-	select array (
-		select cpdv_llave from pedidoventa_pdvp 
-			where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
-			and npdv_historico is null 
-			limit 500) 
-		into documentos;
+	if
+		(select count(*) from procesotransicion_ptrp where cptr_estado = 'A' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
+	then
+		select array (
+			select cpdv_llave from pedidoventa_pdvp 
+				where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
+				and npdv_historico is null 
+				limit 500) 
+			into documentos;
+	else
+		select array (
+			select cpdv_llave from pedidoventa_pdvp 
+				where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
+				and npdv_historico is null and cpdv_estado != 'A'
+				limit 500) 
+			into documentos;
+	end if;	
 	select array (
 		select cpvc_llave from pedidoventacaracteristica_pvcp 
 			where cpvc_documento = any(documentos)) 

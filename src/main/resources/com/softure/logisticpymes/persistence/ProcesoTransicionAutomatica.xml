@@ -181,6 +181,10 @@
 	<select id="inactivarPropiedad" parameterType="java.lang.String" >
 		delete from procesotransicionautomatica_ptap where cpta_propiedad = #{propiedad} and dpta_ejecucion is null
 	</select>
+	
+	<select id="funcionPasarTablaHistoricos" resultType="int">
+		select 1 from migrarcampos(#{plantilla}, #{fechaCorte})
+	</select>
 <!--// END region script-->
 
 </mapper>

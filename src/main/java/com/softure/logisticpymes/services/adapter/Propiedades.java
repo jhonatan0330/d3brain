@@ -162,6 +162,8 @@ public class Propiedades {
 	public static final String RELACIONAR_DOCUMENTOS = "RELACIONAR_DOCUMENTOS";
 	public static final String RETIRAR_DOCUMENTOS = "RETIRAR_DOCUMENTOS";
 	public static final String PLANTILLA_OCULTAR_GUARDAR = "PLANTILLA_OCULTAR_GUARDAR";
+	public static final String PERIODO_LIMPIEZA_HISTORICO = "PERIODO_LIMPIEZA_HISTORICO";
+	
 	
 	//REPORTE
 	public static final String REPORTE_ENCABEZADO = "REPORTE_ENCABEZADO";
@@ -444,6 +446,11 @@ public class Propiedades {
 			case PERMISO_PLANTILLA_LISTAR_MENU_PROCESO : {ruleProperty =  "Muestra en el menu principal este proceso o plantilla para el usuario y que se pase al listado de esos documentos.\n";break;}
 			case PLANTILLA_AUXILIAR : {ruleProperty =  " Tiene el id de la plantilla que se usa en este proceso. (Puede colocar nombre o codigo, el lo convierte)\n";break;}
 			case PLANTILLA_OCULTAR_GUARDAR : {ruleProperty =  "En la pantalla el formulario no muestra el boton guardar, asi los usuarios se obligan a ejecutar las siguientes transiciones\n";break;}
+			case PERIODO_LIMPIEZA_HISTORICO : {ruleProperty =  "Registras en la plantilla si la cantidad de dias que van a tenerse en cuenta para dejar los documentos activos"
+					+ "\n\n Si la plantilla hace parte del inicio de un proceso solo se va a migrar a la tabla historico los documentos inactivos o finalizados"
+					+ "\n\n Si la plantilla NO hace parte del inicio de un proceso se van a pasar todos los documentos esto es muy util para los reportes"
+					+ "\n\n VALOR: Coloca el numero de dias que se van mantener en la tabla principal el registro de ese tipo de plantilla"
+					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";break;}
 			case PLANTILLA_TIPO_ROL : {ruleProperty =  " Asocia esta plantilla con un rol del sistema, creandolo\n";break;}
 			case PLANTILLA_TIPO_REPORTE : {ruleProperty =  " Crear la configuracion de un reporte\n";break;}
 			case PLANTILLA_TIPO_CUENTA : {ruleProperty =  " Define que esta plantilla relaciona los documentos creados con una cuenta\n";break;}
@@ -474,10 +481,9 @@ public class Propiedades {
 			case REPORTE_ENCABEZADO : {ruleProperty =  " Toma como base este reporte para dibujar el encabezado de cada pagina.\nEl reporte debe tener la linea <parameter name=\\\"P_KEY\\\" class=\\\"java.lang.String\\\"/> para reemplazar y va a agregar otro parametro NOMBRE para que no se duplique";break;}
 			case REPORTE_EXCEL : {ruleProperty =  "Nombre del reporte que se va a ejecutar cuando sea en excel, puede estar inactivo.\n";break;}
 			case SOLICITAR_FECHAS : {ruleProperty =  " Obliga al usuario colocar fechas al momento de realizar la consulta.\n";break;}
-			
 			case TABLERO_CONTROL_SQL : {ruleProperty =  "Muestra un item en el menu que traera una serie de objetos que se definen en un query.\n"
-				+ "En el campo texto va el nombre del tablero\n"
-				+ "En el campo motivo va la url de la imagen del tablero\n"
+				+ "En el campo TEXTO va el nombre del tablero\n"
+				+ "En el campo MOTIVO va la url de la imagen del tablero\n"
 				+ "\nEsta consulta no tiene dependientes ya que viene solo del menu, el unico dato considerable es el TOKEN y los filtros de fecha y cantidad\n\n"
 				+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])\r\n" 
 				+ "RETURNS SETOF pedidoventa_pdvp AS\n\n"

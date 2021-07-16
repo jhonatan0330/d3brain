@@ -298,6 +298,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						reporteService.guardar(reporte, token);
 					}
 					campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
+					PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+							Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
+					historico.setFechaInicial(new Date());
+					historico.setMotivo("Pasar a tabla historico");
+					historico.setTexto("00:00:07:00:00");
+					guardar(historico , token);
 					break;
 				case Propiedades.PLANTILLA_TIPO_ROL:
 					RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();

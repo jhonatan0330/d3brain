@@ -497,6 +497,12 @@ COST 100;
 		where cppd_propiedadvalor = 'PROP_140' and cppd_estado = 'A'
 			and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
 		        		where cpta_estado = 'A' and dpta_ejecucion is null)
+		 union
+		<include refid="selectPropiedadFragment" />
+			inner join documentoplantilla_dplp on (cdpl_llave = cppd_campo)
+		where cppd_propiedadvalor = 'PROP_185' and cppd_estado = 'A'
+			and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
+			     		where cpta_estado = 'A' and dpta_ejecucion is null)
      </select>
      
      <select id="listarProductoSimplificado" resultType="PropiedadDTO">
