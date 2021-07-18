@@ -44,6 +44,7 @@ public class MainController {
 	
 	@RequestMapping(value="/obtenerPrincipalOrganizacion", method=RequestMethod.POST)
 	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO filter) throws ServerException {
+		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
 		return organizacionService.obtenerPrincipalPropiedades(filter);
 	}
 	
