@@ -92,5 +92,6 @@ public class PostPreguntaFilterDTO extends BasicFilterDTO
 		return autorNombre;
 	}
 	
+					
 
 }

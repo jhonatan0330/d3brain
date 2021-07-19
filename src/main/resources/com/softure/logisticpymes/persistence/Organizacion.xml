@@ -210,12 +210,6 @@
 	</select>
 	
 
-	<select id="obtenerPrincipal" parameterType="OrganizacionDTO" resultType="OrganizacionDTO">
-		<include refid="selectOrganizacionFragment" />
-where corg_principal is null and borg_sincronizacion = false and corg_estado = 'A'
-		<include refid="paginationOrganizacionFragment" />
-	</select>
-	
 
 <!--// BEGIN region script-->
 	<select id="obtenerUsuario" resultType="OrganizacionDTO">
@@ -234,6 +228,12 @@ where corg_principal is null and borg_sincronizacion = false and corg_estado = '
 			,corg_estado as estado
 		from organizacion_orgp , usuarioorganizacion_uorp
 		where corg_estado = 'A' and cuor_organizacion = corg_llave and cuor_estado = 'A' and cuor_usuario = #{usuario}
+	</select>
+	
+	<select id="obtenerPrincipal" resultType="OrganizacionDTO">
+		<include refid="selectOrganizacionFragment" />
+		where corg_principal is null and borg_sincronizacion = false and corg_estado = 'A'
+		<include refid="paginationOrganizacionFragment" />
 	</select>
 <!--// END region script-->
 

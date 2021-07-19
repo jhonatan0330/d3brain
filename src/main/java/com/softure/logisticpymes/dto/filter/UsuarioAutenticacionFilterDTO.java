@@ -73,6 +73,7 @@ public class UsuarioAutenticacionFilterDTO extends BasicFilterDTO
 	
 					
 					
+					
 	
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;

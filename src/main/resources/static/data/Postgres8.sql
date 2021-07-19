@@ -12,7 +12,7 @@ CREATE TABLE proceso_prcp(
         cprc_llave character varying(32) NOT NULL,
         cprc_tipo character varying(1) NOT NULL,
         cprc_objetivo character varying(4000) NOT NULL,
-        cprc_imagen character varying(2000) NOT NULL,
+        cprc_imagen character varying(2000),
         nprc_prioridad int NOT NULL DEFAULT 0,
         cprc_macroproceso character varying(32),
         cprc_nombre character varying(100) NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE documentoplantilla_dplp(
         cdpl_objetivo character varying(4000),
         cdpl_nombre character varying(100) NOT NULL,
         cdpl_consecutivo character varying(32),
-        cdpl_imagen character varying(2000) NOT NULL,
+        cdpl_imagen character varying(2000),
         cdpl_codigo character varying(16) NOT NULL UNIQUE,
         cdpl_proceso character varying(32) NOT NULL,
         cdpl_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -833,6 +833,19 @@ CREATE TABLE usuariosesion_ussp(
         CONSTRAINT PK_usuariosesion_ussp PRIMARY KEY (cuss_llave)
     );
  
+CREATE TABLE cargaarchivo_carp(
+        ccar_llave character varying(32) NOT NULL,
+        ccar_servidor character varying(32) NOT NULL,
+        ncar_size int NOT NULL DEFAULT 0,
+        ccar_url character varying(4000) NOT NULL,
+        dcar_fechainicio timestamp with time zone NOT NULL,
+        dcar_fechafin timestamp with time zone NOT NULL,
+        ccar_error character varying(4000),
+        ccar_usuario character varying(32),
+        ccar_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_cargaarchivo_carp PRIMARY KEY (ccar_llave)
+    );
+ 
 CREATE TABLE reporteejecucion_rejp(
         crej_llave character varying(32) NOT NULL,
         crej_reporte character varying(32) NOT NULL,
@@ -992,6 +1005,7 @@ ALTER TABLE UsuarioRol_erlp ADD CONSTRAINT FK_UsuarioRolrolAcceso FOREIGN KEY (c
 ALTER TABLE UsuarioRol_erlp ADD CONSTRAINT FK_UsuarioRolusuario FOREIGN KEY (cerl_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE Permiso_perp ADD CONSTRAINT FK_PermisorolAcceso FOREIGN KEY (cper_rolAcceso) REFERENCES RolAcceso_racp(crac_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionusuario FOREIGN KEY (cuor_usuario) REFERENCES Usuario_usrp(cusr_llave);
+ALTER TABLE CargaArchivo_carp ADD CONSTRAINT FK_CargaArchivousuario FOREIGN KEY (ccar_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionusuario FOREIGN KEY (cuau_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE PostPregunta_pprp ADD CONSTRAINT FK_PostPreguntaautor FOREIGN KEY (cppr_autor) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE Auditoria_audp ADD CONSTRAINT FK_Auditoriausuario FOREIGN KEY (caud_usuario) REFERENCES Usuario_usrp(cusr_llave);
@@ -1007,6 +1021,7 @@ ALTER TABLE PostCalificacion_pclp ADD CONSTRAINT FK_PostCalificacionrespuesta FO
 ALTER TABLE PostRespuesta_prsp ADD CONSTRAINT FK_PostRespuestapregunta FOREIGN KEY (cprs_pregunta) REFERENCES PostPregunta_pprp(cppr_llave);
 ALTER TABLE GPSLocalizacion_gplp ADD CONSTRAINT FK_GPSLocalizaciondispositivo FOREIGN KEY (cgpl_dispositivo) REFERENCES GPSDispositivo_gpsp(cgps_llave);
 ALTER TABLE Mensaje_msjp ADD CONSTRAINT FK_Mensajetemplate FOREIGN KEY (cmsj_template) REFERENCES MensajePlantillaCorreo_mplp(cmpl_llave);
+ALTER TABLE CargaArchivo_carp ADD CONSTRAINT FK_CargaArchivoservidor FOREIGN KEY (ccar_servidor) REFERENCES Servidor_serp(cser_llave);
 ALTER TABLE MensajePlantillaCorreo_mplp ADD CONSTRAINT FK_MensajePlantillaCorreoservidor FOREIGN KEY (cmpl_servidor) REFERENCES Servidor_serp(cser_llave);
 ALTER TABLE ReporteBase_rpbp ADD CONSTRAINT FK_ReporteBaseservidor FOREIGN KEY (crpb_servidor) REFERENCES Servidor_serp(cser_llave);
 ALTER TABLE Organizacion_orgp ADD CONSTRAINT FK_Organizacionservidor FOREIGN KEY (corg_servidor) REFERENCES Servidor_serp(cser_llave);
@@ -1032,4 +1047,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.06.25.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.07.19.00' from pg_class where relname = 'usuariosesion_ussp';

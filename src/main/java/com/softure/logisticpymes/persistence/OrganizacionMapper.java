@@ -10,9 +10,8 @@ import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 public interface OrganizacionMapper extends IBasicMapper<OrganizacionDTO, OrganizacionFilterDTO>{
 	
 
-	OrganizacionDTO obtenerPrincipal(OrganizacionFilterDTO dto);
-
 // BEGIN region aditionalMethods  
 	List<OrganizacionDTO> obtenerUsuario(String usuario);
+	OrganizacionDTO obtenerPrincipal();
 // END region aditionalMethods
 }

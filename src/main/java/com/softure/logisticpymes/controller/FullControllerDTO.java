@@ -221,6 +221,9 @@ import com.softure.logisticpymes.services.PermisoSvc;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
+import com.softure.logisticpymes.dto.CargaArchivoDTO;
+import com.softure.logisticpymes.dto.filter.CargaArchivoFilterDTO;
+import com.softure.logisticpymes.services.CargaArchivoSvc;
 import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
 import com.softure.logisticpymes.dto.filter.ReporteEjecucionFilterDTO;
 import com.softure.logisticpymes.services.ReporteEjecucionSvc;
@@ -5792,6 +5795,81 @@ public class FullControllerDTO {
 	public UsuarioSesionDTO guardarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	@Autowired private CargaArchivoSvc cargaArchivoService;
+	
+	@RequestMapping(value="/consultaXIdCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO consultaXIdCargaArchivo(@RequestBody String llave) throws FlexException {
+		try {
+			return cargaArchivoService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosCargaArchivo", method=RequestMethod.POST)
+	public int contarResultadosCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
+		try {
+			return cargaArchivoService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO consultaUnicaCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
+		try {
+			return cargaArchivoService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaCargaArchivo", method=RequestMethod.POST)
+	public List<CargaArchivoDTO> listarConsultaCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
+		try {
+			return cargaArchivoService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO activarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return cargaArchivoService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO inactivarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return cargaArchivoService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO actualizarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return cargaArchivoService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarCargaArchivo", method=RequestMethod.POST)
+	public CargaArchivoDTO guardarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return cargaArchivoService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

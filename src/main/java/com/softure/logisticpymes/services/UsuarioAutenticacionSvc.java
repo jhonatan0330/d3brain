@@ -12,7 +12,6 @@ import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.ModuloContratadoFilterDTO;
-import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -148,6 +147,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)throw new ServerException("El usuario no se encuentra activo");
 		autenticacion.setUsuarioDTO(usuario);
 		
+		autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
 		autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));
 		
 		if(sesion==null) {
@@ -227,7 +227,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 	
 	public UsuarioSesionDTO generateAdministratorToken() throws ServerException{
-		OrganizacionDTO principal = organizacionService.obtenerPrincipal(new OrganizacionFilterDTO());
+		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
 		if(principal==null ) throw new ServerException("No se tiene organizacion principal");
 		if(principal.getUsuarioSystem()==null) throw new ServerException("No se tiene configurado el usuario sistem en la organizacion principal");
 		UsuarioDTO usuarioSystem = usuarioService.consultaXId(principal.getUsuarioSystem());

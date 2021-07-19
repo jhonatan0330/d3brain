@@ -1,5 +1,7 @@
 package com.softure.logisticpymes.dto;
 
+import java.util.List;
+
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
@@ -26,6 +28,7 @@ public class PostPreguntaDTO extends BasicDTO
 	private String autorImagen;
 	private String autorNombre;
 	private String pregunta;
+	private List<PostRespuestaDTO> respuestas;
 
 	public void setCampo(String campo) {
 		this.campo = campo;
@@ -82,6 +85,13 @@ public class PostPreguntaDTO extends BasicDTO
 	
 	public String getPregunta() {
 		return pregunta;
+	}
+	public void setRespuestas(List<PostRespuestaDTO> respuestas) {
+		this.respuestas = respuestas;
+	}
+	
+	public List<PostRespuestaDTO> getRespuestas() {
+		return respuestas;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

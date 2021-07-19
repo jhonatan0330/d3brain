@@ -82,14 +82,12 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	
 	public OrganizacionDTO obtenerPrincipal(OrganizacionFilterDTO dto)throws ServerException{
 		// BEGIN region obtenerPrincipal
-		// @generated
-		// END region obtenerPrincipal
-		paginar(dto);
 		try {
-			return organizacionMapper.obtenerPrincipal(dto); 
+			return organizacionMapper.obtenerPrincipal(); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
+		// END region obtenerPrincipal
 	}
 
 	@Override
@@ -115,11 +113,9 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		}
 	}
 	
-	public OrganizacionDTO obtenerPrincipalPropiedades(OrganizacionFilterDTO dto)throws ServerException{
-		OrganizacionDTO result = obtenerPrincipal(dto);
-		String user = null;
-		if (dto.getSecurityToken() !=null) user = getUserFlex(dto.getSecurityToken());
-		if(result !=null) {
+	public OrganizacionDTO obtenerPrincipalPropiedades(String user)throws ServerException{
+		OrganizacionDTO result = obtenerPrincipal(null);
+		if (result !=null) {
 			result.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION, result.getLlaveTabla(), null, user));
 		}
 		return result;

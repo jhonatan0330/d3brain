@@ -20,6 +20,7 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private String claveAnterior;
 	private Integer tableroControl;
 	private UsuarioDTO usuarioDTO;
+	private OrganizacionDTO organizacion;
 	private List<OrganizacionDTO> organizaciones;
 	private String mensaje;
 	private String token;
@@ -73,6 +74,13 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	
 	public UsuarioDTO getUsuarioDTO() {
 		return usuarioDTO;
+	}
+	public void setOrganizacion(OrganizacionDTO organizacion) {
+		this.organizacion = organizacion;
+	}
+	
+	public OrganizacionDTO getOrganizacion() {
+		return organizacion;
 	}
 	public void setOrganizaciones(List<OrganizacionDTO> organizaciones) {
 		this.organizaciones = organizaciones;

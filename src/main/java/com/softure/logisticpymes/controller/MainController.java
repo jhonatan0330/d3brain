@@ -17,7 +17,6 @@ import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
-import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
@@ -42,10 +41,10 @@ public class MainController {
 		return "OK";
 	}
 	
-	@RequestMapping(value="/obtenerPrincipalOrganizacion", method=RequestMethod.POST)
-	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO filter) throws ServerException {
+	@RequestMapping(value="/obtenerPrincipalOrganizacion", method=RequestMethod.GET)
+	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
 		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
-		return organizacionService.obtenerPrincipalPropiedades(filter);
+		return organizacionService.obtenerPrincipal(null);
 	}
 	
 	@RequestMapping(value="/autenticarUsuarioAutenticacion", method=RequestMethod.POST)
