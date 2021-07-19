@@ -226,6 +226,7 @@
 		select
 			cpvc_llave as llaveTabla
 			,cdpc_nombre as  campo
+			,cdpc_llave as  transaccionRegistro
 			,cpvc_documento as  documento
 			,cpvc_valortext as  valorText
 			,dpvc_valorfecha as  valorFecha

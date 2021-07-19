@@ -343,3 +343,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	VALUES('PROP_184' , 'L', 'PRODUCTO_CAMPO_TOTAL', 'PRODUCTO CAMPO TOTAL', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_pidefechas, bpvd_solicitamotivo, bpvd_pideusuario)
 	VALUES('PROP_185' , 'L', 'PERIODO LIMPIEZA A HISTORICO', 'PERIODO_LIMPIEZA_HISTORICO', 'REQUISITO', true, true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_186' , 'C', 'ALERTAR AL SELECCIONAR', 'ALERTAR_CAMPO_PROCESO', 'REQUISITO', 'Z', true);

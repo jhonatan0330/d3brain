@@ -106,6 +106,7 @@ public class Propiedades {
 	public static final String PROCESO_VALOR = "PROCESO_VALOR";
 	public static final String PROCESO_FUNCION_SQL = "PROCESO_FUNCION_SQL";
 	public static final String PROCESO_INCLUIR_TRAZA_PRINCIPAL = "INCLUIR_TRAZA_PRINCIPAL";
+	public static final String ALERTAR_CAMPO_PROCESO = "ALERTAR_CAMPO_PROCESO";
 
 	public static final String BODEGA_FIJA = "BODEGA_FIJA";
 	public static final String BODEGA_MOVIMIENTO = "BODEGA_MOVIMIENTO";
@@ -349,6 +350,9 @@ public class Propiedades {
 		if(formato == null ) return "Sin instrucciones por formato no enviado";
 		String ruleProperty = null;
 		switch(formato) {
+			case ALERTAR_CAMPO_PROCESO : {ruleProperty = "Muestra un mensaje en la creacion del documento en el momento que se seleccion un objeto de un campo proceso.\n"
+					+ "En la propiedad se debe relacionar el campo que se va a mostrar del objeto seleccionado"
+					+ "Si el documento no viene con ese campo no se muestra ningun mensaje";break;}
 			case API_TRANSACCION: 
 			case API : {ruleProperty = "Identifica el APi que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
 			case API_HEADER : {ruleProperty = "Variables del Header de la peticion del API VA.\n";break;}

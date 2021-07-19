@@ -532,6 +532,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				campo.setNombre(pvrDTO.getCampo());
 				campo.setPropiedades(new ArrayList<PropiedadDTO>());
 				campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
+				campo.setLlaveTabla(pvrDTO.getTransaccionRegistro());
+				pvrDTO.setTransaccionRegistro(null);
 				pvrDTO.setCampoDTO(campo);
 				dto.getCaracteristicas().add(pvrDTO);
 				if(pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0
