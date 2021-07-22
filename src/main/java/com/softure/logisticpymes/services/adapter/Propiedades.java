@@ -450,7 +450,7 @@ public class Propiedades {
 			case PERMISO_PLANTILLA_LISTAR_MENU_PROCESO : {ruleProperty =  "Muestra en el menu principal este proceso o plantilla para el usuario y que se pase al listado de esos documentos.\n";break;}
 			case PLANTILLA_AUXILIAR : {ruleProperty =  " Tiene el id de la plantilla que se usa en este proceso. (Puede colocar nombre o codigo, el lo convierte)\n";break;}
 			case PLANTILLA_OCULTAR_GUARDAR : {ruleProperty =  "En la pantalla el formulario no muestra el boton guardar, asi los usuarios se obligan a ejecutar las siguientes transiciones\n";break;}
-			case PERIODO_LIMPIEZA_HISTORICO : {ruleProperty =  "Registras en la plantilla si la cantidad de dias que van a tenerse en cuenta para dejar los documentos activos"
+			case PERIODO_LIMPIEZA_HISTORICO : {ruleProperty =  "Cantidad de dias que van a tenerse en cuenta para pasar los registros a las tablas de historicos (los documentos que pasen la fecha de creacion mayor se van a migrar)"
 					+ "\n\n Si la plantilla hace parte del inicio de un proceso solo se va a migrar a la tabla historico los documentos inactivos o finalizados"
 					+ "\n\n Si la plantilla NO hace parte del inicio de un proceso se van a pasar todos los documentos esto es muy util para los reportes"
 					+ "\n\n VALOR: Coloca el numero de dias que se van mantener en la tabla principal el registro de ese tipo de plantilla"

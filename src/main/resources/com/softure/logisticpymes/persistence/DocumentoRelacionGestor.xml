@@ -314,8 +314,8 @@
 			,cmsj_documento as  documentoPrincipal
 			,null as  documentoModificador
 			,dmsj_fecha as fecha
-			,cmsj_correo as  estadoInicial
-			,null as  estadoFinal
+			,null as  estadoInicial
+			,cmsj_correo as  estadoFinal
 			,null as estado
 			,cmsj_usuario as  usuario
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cmsj_usuario) as  responsable
