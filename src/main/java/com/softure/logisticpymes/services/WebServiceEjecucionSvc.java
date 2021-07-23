@@ -128,7 +128,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
 		String template = crearSalida(service, document, modificador);
-		callWS.setEntrada(uploadService.uploadFile(template.getBytes(), "Entrada.txt"));
+		callWS.setEntrada(uploadService.uploadFile(template.getBytes(), "Entrada.txt", token));
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setUsuario(getUserFlex(token));
 		String responseApi = null;
@@ -139,7 +139,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 			callWS.setError(e.getMessage());
 			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
 		}
-		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt"));
+		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS = save(callWS);
 		if (callWS.getError() == null) {
 			generateDocuments(service, responseApi, document, token);

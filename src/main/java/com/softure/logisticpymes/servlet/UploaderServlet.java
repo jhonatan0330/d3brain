@@ -50,12 +50,13 @@ public class UploaderServlet extends HttpServlet {
 			ServletFileUpload upload = new ServletFileUpload(factory);
 			upload.setFileSizeMax(MAX_FILE_SIZE);
 			upload.setSizeMax(MAX_REQUEST_SIZE);
+			String auth = request.getHeader("Authorization");
 			try {
 				List<FileItem> formItems = upload.parseRequest(request);
 				if (formItems != null && formItems.size() > 0) {
 					for (FileItem item : formItems) {
 						if (!item.isFormField()) {
-							result = uploadService.uploadFile(item.get(), item.getName());
+							result = uploadService.uploadFile(item.get(), item.getName(), auth);
 							out.println("<result><operation state='true'>" + result + "</operation></result>");
 						}
 					}

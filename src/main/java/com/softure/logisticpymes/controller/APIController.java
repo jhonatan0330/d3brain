@@ -103,10 +103,10 @@ public class APIController {
 	}
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
-    public ApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file) throws ServerException {
+    public ApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename()); 
+        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token); 
         	ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
      		        .withMessage(url).build();
 			return response;
@@ -120,7 +120,8 @@ public class APIController {
     public String handleFileUploadFlex(@RequestParam("file") MultipartFile file) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename()); 
+        	//En flex no es posible pasar los datos del header ver flash.net.FileReference.upload
+        	return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), null); 
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}

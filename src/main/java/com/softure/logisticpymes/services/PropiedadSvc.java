@@ -230,7 +230,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			//Falta validar que venga el mismo tipo para que no nos hagan gol
 		}
 		if(validar(dto, token))return null;
-		if(dto.getFechaDefinicion()==null)dto.setFechaDefinicion(new Date());
+		dto.setFechaDefinicion(new Date());
 		dto = super.guardar(dto, token);
 		try {
 			if(dto.getKey().contains("SQL")) {

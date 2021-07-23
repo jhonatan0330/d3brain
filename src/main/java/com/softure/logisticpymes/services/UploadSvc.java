@@ -18,29 +18,50 @@ import org.springframework.stereotype.Service;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.CompressionUtils;
+import com.softure.logisticpymes.dto.CargaArchivoDTO;
 import com.softure.logisticpymes.dto.ServidorDTO;
 
 @Service("uploadService")
 public class UploadSvc {
 
+	@Autowired private CargaArchivoSvc cargaService;
 	@Autowired private ServidorSvc servidorService;
 	
-	public String uploadFile(byte[] bytes, String name) throws ServerException {
+	public String uploadFile(byte[] bytes, String name, String token) throws ServerException {
+		CargaArchivoDTO registro = new CargaArchivoDTO();
+		registro.setFechaInicio(new Date());
+		registro.setSize(bytes.length);
+		if (token !=null) registro.setUsuario(cargaService.getUserFlex(token));
 		ServidorDTO uploadPath =  servidorService.obtenerServidorPrincipal(ServidorDTO.LOCAL_FTP);
 		if(uploadPath!= null){
 			try {
-				return uploadLocal(bytes, uploadPath, name);
+				registro.setUrl(uploadLocal(bytes, uploadPath, name));
+				cargaService.guardar(registro, null);
+				return registro.getUrl();
 			} catch (IOException e) {
+				registro.setError(e.getMessage());
+				cargaService.guardar(registro, null);
 				throw new ServerException(e.getMessage());
 			}
 		}else{
-			return uploadFTP(bytes, name);
+			try {
+				registro.setUrl(uploadFTP(bytes, name, registro));
+				cargaService.guardar(registro, null);
+				return registro.getUrl();
+			}catch (Exception e) {
+				registro.setError(e.getMessage());
+				cargaService.guardar(registro, null);
+				throw new ServerException(e.getMessage());
+			}
 		}
 	}
 	
-	private String uploadFTP(byte[] bytes, String name) throws ServerException{
+	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro) throws ServerException{
 		ServidorDTO servidor =  servidorService.obtenerServidorPrincipal(ServidorDTO.FTP);
 		if(servidor==null) throw new ServerException("Configure el servidor FTP");
+		
+		registro.setServidor(servidor.getLlaveTabla());
+		
 		FTPClient ftpClient = new FTPClient();
 		String server = servidor.getUrl();
 		int port = 21;

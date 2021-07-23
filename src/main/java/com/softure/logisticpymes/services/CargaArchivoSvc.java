@@ -3,6 +3,7 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
+import java.util.Date;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -83,7 +84,8 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CargaArchivoDTO guardar(CargaArchivoDTO dto, String token) throws ServerException {
 		// BEGIN CargaArchivo_guardar
-		return super.guardar(dto, token);
+		dto.setFechaFin(new Date());
+		return super.save(dto);
 		// END CargaArchivo_guardar
 	}
 
