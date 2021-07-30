@@ -8,10 +8,10 @@
 		select
 			cpin_llave as  llaveTabla
 			,cpin_producto as  producto
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = cpin_producto) as  nombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cpin_producto) as  nombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = (select cpro_documento from producto_prop where cpro_llave = cpin_producto)) as  codigo
 			,cpin_bodega as  bodega
-			,(select movimiento_descripcion(cbod_documento) from bodega_bodp where cbod_llave = cpin_bodega) as  nombreBodega
+			,(select descripcion(cbod_documento) from bodega_bodp where cbod_llave = cpin_bodega) as  nombreBodega
 			,mpin_cantidadactual as  cantidadActual
 			,mpin_cantidadminima as  cantidadMinima
 			,mpin_cantidadmaxima as  cantidadMaxima
@@ -41,7 +41,7 @@
 				and dpin_fechainicial <![CDATA[ < ]]>  #{fechaInicialMax}
 			</if>
 			<if test="filtroParametro!=null">
-				and ((select upper(movimiento_descripcion(cpro_documento)) from producto_prop where cpro_llave = cpin_producto) like upper('%'||#{filtroParametro}||'%'))
+				and ((select upper(descripcion(cpro_documento)) from producto_prop where cpro_llave = cpin_producto) like upper('%'||#{filtroParametro}||'%'))
 			</if>
 	</sql>
 

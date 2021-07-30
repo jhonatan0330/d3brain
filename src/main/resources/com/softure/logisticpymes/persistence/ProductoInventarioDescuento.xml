@@ -9,7 +9,7 @@
 			cpid_llave as  llaveTabla
 			,cpid_producto as  producto
 			,cpid_productodescontar as  productoDescontar
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = cpid_productodescontar) as  productoDescontarNombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cpid_productodescontar) as  productoDescontarNombre
 			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
 			,cpid_caracteristica as  caracteristica
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpid_caracteristica) as  caracteristicaNombre

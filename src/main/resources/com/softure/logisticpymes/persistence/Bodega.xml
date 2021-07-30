@@ -7,7 +7,7 @@
 	<sql id="selectBodegaFragment">
 		select
 			cbod_llave as  llaveTabla
-			,movimiento_descripcion(cbod_documento) as  nombre
+			,descripcion(cbod_documento) as  nombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave =cbod_documento) as  codigo
 			,cbod_documento as  documento
 			,cbod_estado as estado

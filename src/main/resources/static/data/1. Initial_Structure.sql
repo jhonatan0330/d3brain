@@ -135,3 +135,19 @@ CREATE TABLE Z_drg_documentorelaciongestor (
 	CONSTRAINT fk_z_drg_documentorelaciongestorvalores FOREIGN KEY (cdrg_valores) REFERENCES z_pvd_pedidoventadinero(cpvd_llave)
 );
 CREATE INDEX ix_z_drg_documentorelaciongestor_documentoprincipal ON Z_drg_documentorelaciongestor USING btree (cdrg_documentoprincipal);
+
+CREATE TABLE z_rej_reporteejecucion (
+	crej_llave varchar(32) NOT NULL,
+	crej_reporte varchar(32) NOT NULL,
+	crej_documento varchar(32) NULL,
+	drej_fechainicio timestamptz NOT NULL,
+	drej_fechafin timestamptz NOT NULL,
+	crej_error varchar(4000) NULL,
+	crej_usuario varchar(32) NULL,
+	crej_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	CONSTRAINT pk_z_rej_reporteejecucion_rejp PRIMARY KEY (crej_llave),
+	CONSTRAINT fk_z_rej_reporteejecuciondocumento FOREIGN KEY (crej_documento) REFERENCES pedidoventa_pdvp(cpdv_llave),
+	CONSTRAINT fk_z_rej_reporteejecucionreporte FOREIGN KEY (crej_reporte) REFERENCES reportebase_rpbp(crpb_llave)
+);
+
+

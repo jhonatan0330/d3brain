@@ -98,7 +98,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		return super.listarConsulta(dto);
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	//@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
 		// BEGIN region ejecutar
 		ProcesoTransicionAutomaticaDTO bd = consultaXId(dto.getLlaveTabla());
@@ -271,8 +271,9 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 						int days = Integer.parseInt(pTemporizador.getValor());
 						Calendar fechaCalculada = new GregorianCalendar();
 						if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, -days);
-						procesoTransicionAutomaticaMapper.funcionPasarTablaHistoricos(pTemporizador.getCampo(), fechaCalculada.getTime());
-					} catch (NumberFormatException e) {
+						int migrados =procesoTransicionAutomaticaMapper.funcionPasarTablaHistoricos(pTemporizador.getCampo(), fechaCalculada.getTime());
+						dto.setMensaje(String.valueOf(migrados));
+					} catch (Exception e) {
 						dto.setMensaje("ERROR : " + e.getMessage());
 					}
 				}

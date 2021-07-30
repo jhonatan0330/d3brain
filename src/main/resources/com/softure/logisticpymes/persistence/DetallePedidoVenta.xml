@@ -13,7 +13,7 @@
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = (select cpro_documento from producto_prop where cpro_llave = cdpv_producto)) as  productoCodigo
 			,(select cpro_imagen from producto_prop where cpro_llave = cdpv_producto) as  productoImagen
 			,(select cpro_documento from producto_prop where cpro_llave = cdpv_producto) as  productoDocumento
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = cdpv_producto) as  nombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cdpv_producto) as  nombre
 			,mdpv_cantidad as  cantidad
 			,ndpv_cantidadpromocion as  cantidadPromocion
 			,ndpv_cantidadpromocionbase as  cantidadPromocionBase
@@ -57,7 +57,7 @@
 				and cdpv_transaccioninactivo = #{transaccionInactivo}
 			</if>
 			<if test="filtroParametro!=null">
-				and ((select upper(movimiento_descripcion(cpro_documento)) from producto_prop where cpro_llave=cdpv_producto) like upper('%'||#{filtroParametro}||'%'))
+				and ((select upper(descripcion(cpro_documento)) from producto_prop where cpro_llave=cdpv_producto) like upper('%'||#{filtroParametro}||'%'))
 			</if>
 	</sql>
 

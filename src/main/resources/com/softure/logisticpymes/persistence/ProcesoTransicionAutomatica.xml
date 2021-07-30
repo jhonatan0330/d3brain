@@ -183,7 +183,7 @@
 	</select>
 	
 	<select id="funcionPasarTablaHistoricos" resultType="int">
-		select 1 from migrarcampos(#{plantilla}, #{fechaCorte})
+		select * from migrar_campos(#{plantilla}, #{fechaCorte})
 	</select>
 <!--// END region script-->
 

@@ -9,7 +9,7 @@
 			cpcr_llave as  llaveTabla
 			,cpcr_objetivo as  objetivo
 			,cpcr_base as  base
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = cpcr_base) as  baseNombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cpcr_base) as  baseNombre
 			,cpcr_formato as  formato
 			,cpcr_nombre as  nombre
 			,cpcr_codigo as  codigo

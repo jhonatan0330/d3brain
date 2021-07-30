@@ -172,10 +172,9 @@
 			cuenta_cuep 
 			inner join pedidoventa_pdvp on (cpdv_llave = ccue_documento)
 			inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_estado = 'A')
-			inner join campo_documento on (cdrc_documento = cpdv_llave)
+			inner join campo4id(cpdv_llave, cppd_valor, npdv_historico) on 1=1
 		where ccue_documento = #{documento}
 			and cppd_propiedadvalor = 'PROP_99'
-			and cpvc_campo = cppd_valor
 	</select>
 <!--// END region script-->
 

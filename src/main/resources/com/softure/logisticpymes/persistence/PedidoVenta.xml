@@ -15,7 +15,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
-			,movimiento_descripcion(cpdv_llave) as  descripcion
+			,descripcion(cpdv_llave) as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,cpdv_textofiltro as  textoFiltro
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
@@ -263,7 +263,7 @@
 		<if test="dto.caracteristicas!=null">
 			<foreach item="item"  index="index" collection="dto.caracteristicas" >
 				and ((
-						<choose><when test="item.campo!=null">select cpvc_valoropcion from campo_documento where cdrc_documento = cpdv_llave and cpvc_campo = #{item.campo}</when><otherwise>cpdv_llave</otherwise></choose>
+						<choose><when test="item.campo!=null">select cpvc_valoropcion from campo4id (cpdv_llave, #{item.campo}, npdv_historico)</when><otherwise>cpdv_llave</otherwise></choose>
 					)in(
 					<if test="dto.securityToken!=null">
 					select cpvc_valoropcion from campo_documento where cpvc_valoropcion is not null and cdrc_documento 
@@ -310,7 +310,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
-			,movimiento_descripcion(cpdv_llave) as  descripcion
+			,descripcion(cpdv_llave) as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
 			,cpdv_estado as estado
@@ -333,7 +333,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
-			,movimiento_descripcion(cpdv_llave) as  descripcion
+			,descripcion(cpdv_llave) as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
 			,cpdv_estado as estado

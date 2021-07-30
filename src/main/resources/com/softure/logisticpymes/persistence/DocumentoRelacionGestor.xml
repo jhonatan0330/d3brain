@@ -239,18 +239,17 @@
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cdrg_usuario) as  responsable
 			,(select cusr_imagen from usuario_usrp where cusr_llave = cdrg_usuario) as  responsableImagen
 			,modifica.cpdv_nombre as  modificadorNombre
-			,movimiento_descripcion(modifica.cpdv_llave) as comentario
+			,descripcion(modifica.cpdv_llave) as comentario
 			,modifica.cpdv_plantilla as plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = modifica.cpdv_plantilla) as plantillaNombre
 			,(select mpvd_saldo from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  saldo
 			,(select mpvd_valortotal from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  total
 			,cdrg_ubicacion as ubicacion
-			,movimiento_descripcion(cdrg_ubicacion) as ubicacionNombre
+			,descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla
 			,cdrg_nombre as  nombre
-			,(select cpvc_valortext from campo_documento where cdrc_documento = cdrg_documentomodificador 
-				and cpvc_campo = (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_178' and cppd_estado = 'A' and cppd_tipo = 'L'
-					and cppd_campo = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador))) as adjunto 
+			,(select cpvc_valortext from campo4id ( cdrg_documentomodificador , (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_178' and cppd_estado = 'A' and cppd_tipo = 'L'
+					and cppd_campo = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador)), modifica.npdv_historico)) as adjunto 
 		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">z_drg_documentorelaciongestor</if>
 		  	left join pedidoventa_pdvp modifica on (cpdv_llave = cdrg_documentomodificador)
 		  where cdrg_documentoprincipal = #{dto.documentoPrincipal}
@@ -347,7 +346,7 @@
 			,cdpr_documento as  documentoPrincipal
 			,null as  documentoModificador
 			,dtpi_fecha as fecha
-			,(select movimiento_descripcion(cbod_documento) from bodega_bodp where cbod_llave = ctpi_bodega) as  estadoInicial
+			,(select descripcion(cbod_documento) from bodega_bodp where cbod_llave = ctpi_bodega) as  estadoInicial
 			,null as  estadoFinal
 			,null as estado
 			,ctpi_responsable as  usuario
@@ -362,7 +361,7 @@
 			,null as ubicacion
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = ctpi_producto) as nombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctpi_producto) as nombre
 			,null as adjunto 
 		  from trazabilidadproductoinventario_tpip 
 			inner join deduccionproducto_dprp on (cdpr_llave = ctpi_deduccionproducto )

@@ -10,9 +10,9 @@
 			,ctar_tarifario as  tarifario
 			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
 			,ctar_producto as  producto
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
 			,ctar_recurso as  recurso
-			,movimiento_descripcion(ctar_recurso) as  recursoNombre
+			,descripcion(ctar_recurso) as  recursoNombre
 			,btar_rangoprecios as  rangoPrecios
 			,mtar_valorminimo as  valorMinimo
 			,mtar_valor as  valor
@@ -223,9 +223,9 @@
 			,ctar_tarifario as  tarifario
 			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
 			,ctar_producto as  producto
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
 			,ctar_recurso as  recurso
-			,movimiento_descripcion(ctar_recurso) as  recursoNombre
+			,descripcion(ctar_recurso) as  recursoNombre
 			,btar_rangoprecios as  rangoPrecios
 			,mtar_valorminimo as  valorMinimo
 			,mtar_valor as  valor

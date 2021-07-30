@@ -9,7 +9,7 @@
 			cdpr_llave as  llaveTabla
 			,cdpr_documento as  documento
 			,cdpr_producto as  producto
-			,(select movimiento_descripcion(cpro_documento) from producto_prop where cpro_llave = cdpr_producto) as  productoNombre
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cdpr_producto) as  productoNombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = (select cpro_documento from producto_prop where cpro_llave = cdpr_producto)) as  productoCodigo
 			,ddpr_fecha as  fecha
 			,mdpr_cantidad as  cantidad

@@ -130,97 +130,65 @@ CREATE OR REPLACE FUNCTION movimiento_descripcion(id_documento character varying
  RETURNS character varying
  LANGUAGE plpgsql
 AS $function$
-DECLARE plantilla character varying; 
-DECLARE plantilla_campo_descripcion character varying;
-DECLARE plantilla_campo_descripcion_nivel2 character varying;
-DECLARE id_documento_principal character varying;
-DECLARE descripcion_anidada character varying;
 BEGIN 
-    IF id_documento IS NULL THEN 
-        RETURN NULL;
-    END IF;
-    SELECT cpdv_plantilla INTO plantilla FROM pedidoventa_pdvp where cpdv_llave = id_documento;
-    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp 
-    	where cppd_campo = plantilla and cppd_estado = 'A' and cppd_propiedadvalor = (select cpvd_llave from propiedadvalordefinido_pvdp where cpvd_codigo = 'DESCRIPCION' and cpvd_origen = 'L');
-    IF plantilla_campo_descripcion IS NOT NULL THEN 
-	RETURN (select cpvc_valortext from campo_documento where cdrc_documento = id_documento and cpvc_campo = plantilla_campo_descripcion);
-    ELSE
-	SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp 
-		where cppd_campo = plantilla and cppd_estado = 'A' and cppd_propiedadvalor = (select cpvd_llave from propiedadvalordefinido_pvdp where cpvd_codigo = 'DESCRIPCION_NIVEL2' and cpvd_origen = 'L');
-	IF plantilla_campo_descripcion_nivel2 IS NOT NULL THEN
-		SELECT cpvc_valoropcion INTO id_documento_principal FROM campo_documento WHERE cdrc_documento = id_documento and cpvc_campo = plantilla_campo_descripcion_nivel2;
-		CASE WHEN id_documento_principal IS  NULL THEN 
-		    RETURN NULL;
-		ELSE
-		    SELECT movimiento_descripcion(id_documento_principal) INTO descripcion_anidada;
-		    IF descripcion_anidada IS NULL THEN
-			RETURN (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal);
-		    ELSE
-			RETURN '(' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||') '|| descripcion_anidada;
-		    END IF;
-		END CASE;
-	ELSE
-		RETURN NULL;
-	END IF;
-        
-    END IF;
+    return descripcion(id_documento);
 END; 
 $function$
 ;
-  
 
-CREATE OR REPLACE FUNCTION public.upsert_reporte(
-    llave character,
-    nombre character,
-    codigo character,
-    formato character,
-    variables character,
-    texto character)
-  RETURNS void AS
-$BODY$ 
-DECLARE 
-BEGIN 
-    UPDATE reportebase_rpbp SET crpb_jaspertext = texto WHERE crpb_codigo = llave; 
-    /*IF NOT FOUND THEN 
-    INSERT INTO consecutivo_conp(ccon_llave, ccon_nombre, ccon_prefijo, mcon_numeroinicial, mcon_numerofinal, mcon_numeroactual)
-    	VALUES (llave, llave, llave || '-', 100, 99999999, 100);
-	INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_codigo, cdpl_tipo, cdpl_proceso)
-    	VALUES (llave, nombre,  llave, 'http://colombiansofture.com/imagenes/modulo.png', llave, 'R', 'SIMPLE');
-	INSERT INTO reportebase_rpbp (crpb_llave, crpb_nombre, crpb_jaspertext, crpb_plantilla) values (llave, nombre, texto, llave);
-	INSERT INTO documentoplantillarol_dprp(cdpr_llave, cdpr_plantilla, cdpr_rol, bdpr_iniciorapido, bdpr_rangofiltro, bdpr_crear)
-    	select substring(llave ||crac_llave,1,32), llave, crac_llave, true, true, true from rolacceso_racp where brac_permisoscompletos = true; 
-    END IF;*/
-END; 
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-ALTER FUNCTION public.upsert_reporte(character, character, character, character, character, character)
-  OWNER TO postgres;
-
-
-CREATE OR REPLACE FUNCTION public.dcs_saldo_cero(character varying)
+CREATE OR REPLACE FUNCTION dcs_saldo_cero(character varying)
   RETURNS character varying AS
 $BODY$
 BEGIN
-
 	IF EXISTS (SELECT mpvd_saldo FROM pedidoventadinero_pvdp WHERE cpvd_documento  = $1 AND cpvd_estado = 'A' AND mpvd_saldo !=0) THEN
 		RETURN 'N';
 	ELSE
 		RETURN 'S';
 	END IF;
-
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION public.dcs_saldo_cero(character varying)
-  OWNER TO postgres;
-COMMENT ON FUNCTION public.dcs_saldo_cero(character varying) IS '1. PROPOSITO:
-Compara el valor final del documento despues de aplicar el valor del documento de la transición.
-2. RESPUESTAS:
--N:El saldo del documento es cero
--S:El saldo del documento es diferente cero';
-  
+
+CREATE OR REPLACE FUNCTION descripcion(id_documento character varying)
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
+	DECLARE _documento_actual pedidoventa_pdvp; 
+	DECLARE plantilla_campo_descripcion character varying;
+	DECLARE plantilla_campo_descripcion_nivel2 character varying;
+	DECLARE id_documento_principal character varying;
+	DECLARE descripcion_anidada character varying;
+BEGIN 
+    if id_documento IS NULL THEN 
+        RETURN NULL;
+    END IF;
+    SELECT * INTO _documento_actual FROM pedidoventa_pdvp where cpdv_llave = id_documento;
+    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_44';
+    IF plantilla_campo_descripcion IS NOT NULL THEN 
+		RETURN (select cpvc_valortext from campo4id ( id_documento , plantilla_campo_descripcion, _documento_actual.npdv_historico));
+    ELSE
+		SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_45';
+		IF plantilla_campo_descripcion_nivel2 IS NOT NULL THEN
+			SELECT cpvc_valoropcion INTO id_documento_principal FROM campo4id (id_documento, plantilla_campo_descripcion_nivel2, _documento_actual.npdv_historico);
+			CASE WHEN id_documento_principal IS  NULL THEN 
+			    RETURN NULL;
+			ELSE
+			    SELECT descripcion(id_documento_principal) INTO descripcion_anidada;
+			    IF descripcion_anidada IS NULL THEN
+					RETURN (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal);
+			    ELSE
+					RETURN '(' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||') '|| descripcion_anidada;
+			    END IF;
+			END CASE;
+		ELSE
+			RETURN NULL;
+		END IF;
+    END IF;
+END; 
+$function$
+;
+
 CREATE OR REPLACE VIEW vi_valores
 AS SELECT pedidoventadinero_pvdp.cpvd_documento AS vi_vlr_documento,
     pedidoventadinero_pvdp.mpvd_valortotal AS vi_vlr_total,
@@ -229,13 +197,15 @@ AS SELECT pedidoventadinero_pvdp.cpvd_documento AS vi_vlr_documento,
    FROM pedidoventadinero_pvdp
   WHERE pedidoventadinero_pvdp.cpvd_estado::text = 'A'::text;
 
-CREATE OR REPLACE FUNCTION public.migrarcampos(_plantilla character varying, _fecha_maxima timestamp with time zone)
- RETURNS void
+
+CREATE OR REPLACE FUNCTION migrar_campos(_plantilla character varying, _fecha_maxima timestamp with time zone)
+ RETURNS numeric
  LANGUAGE plpgsql
 AS $function$
 declare 
 	documentos character varying[];
 	campos character varying[];
+	v_cnt numeric;
 begin
 	if
 		(select count(*) from procesotransicion_ptrp where cptr_estado = 'A' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
@@ -267,14 +237,201 @@ begin
 	INSERT INTO z_pvd_pedidoventadinero(cpvd_llave, cpvd_documento, mpvd_valortotal, mpvd_saldo, cpvd_estado, dpvd_fecha)
 		SELECT cpvd_llave, cpvd_documento, mpvd_valortotal, mpvd_saldo, cpvd_estado, dpvd_fecha
 			FROM pedidoventadinero_pvdp where cpvd_documento = any(documentos);
-	INSERT INTO Z_drg_documentorelaciongestor (cdrg_llave, cdrg_documentoprincipal, cdrg_documentomodificador, cdrg_estado, ddrg_fecha, cdrg_estadoinicial, cdrg_estadofinal, cdrg_ubicacion, cdrg_valores, cdrg_usuario, ddrg_cierre, cdrg_nombre)
+	INSERT INTO z_drg_documentorelaciongestor (cdrg_llave, cdrg_documentoprincipal, cdrg_documentomodificador, cdrg_estado, ddrg_fecha, cdrg_estadoinicial, cdrg_estadofinal, cdrg_ubicacion, cdrg_valores, cdrg_usuario, ddrg_cierre, cdrg_nombre)
 		SELECT cdrg_llave, cdrg_documentoprincipal, cdrg_documentomodificador, cdrg_estado, ddrg_fecha, cdrg_estadoinicial, cdrg_estadofinal, cdrg_ubicacion, cdrg_valores, cdrg_usuario, ddrg_cierre, cdrg_nombre 
 			FROM documentorelaciongestor_drgp where cdrg_documentoprincipal = any(documentos);
+	INSERT INTO z_rej_reporteejecucion (crej_llave, crej_reporte, crej_documento, drej_fechainicio, drej_fechafin, crej_error, crej_usuario, crej_estado)
+		SELECT crej_llave, crej_reporte, crej_documento, drej_fechainicio, drej_fechafin, crej_error, crej_usuario, crej_estado 
+			FROM reporteejecucion_rejp where crej_documento = any(documentos);
+	delete from reporteejecucion_rejp where crej_documento = any(documentos);
 	delete from documentorelaciongestor_drgp where cdrg_documentoprincipal = any(documentos);
 	delete from pedidoventadinero_pvdp where cpvd_documento = any(documentos);
 	delete from documentorelacionexpediente_dexp where cdex_campomaestro = any(campos);
 	delete from pedidoventacaracteristica_pvcp where cpvc_llave = any(campos);
-	update pedidoventa_pdvp set npdv_historico = 1 where cpdv_llave = any(documentos);
+	update pedidoventa_pdvp set npdv_historico = 3 where cpdv_llave = any(documentos);
+	GET DIAGNOSTICS v_cnt = ROW_COUNT;
+	return v_cnt;
 END;
 $function$
+;
+
+CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying)
+ returns table (
+	cpvc_llave varchar(32),
+	cpvc_documento varchar(32),
+	dpvc_valorfecha timestamptz,
+	mpvc_valornumero numeric(24, 6),
+	cpvc_valortext varchar(4000),
+	cpvc_valoropcion varchar(32),
+	cpvc_estado varchar(1),
+	cpvc_campo varchar(32),
+	cpvc_valorauxiliar varchar(32),
+	cpvc_transaccionregistro varchar(32),
+	cpvc_transaccioninactivo varchar(32)
+	) 
+ LANGUAGE plpgsql
+AS $function$
+declare 
+	_documento_actual pedidoventa_pdvp;
+begin
+	select * into _documento_actual from pedidoventa_pdvp where cpdv_llave = _documento;
+	if found then
+		return query select
+			t.cpvc_llave,
+			t.cpvc_documento,
+			t.dpvc_valorfecha,
+			t.mpvc_valornumero,
+			t.cpvc_valortext,
+			t.cpvc_valoropcion,
+			t.cpvc_estado,
+			t.cpvc_campo,
+			t.cpvc_valorauxiliar,
+			t.cpvc_transaccionregistro,
+			t.cpvc_transaccioninactivo
+		from campo4code(_documento, _code, _documento_actual.cpdv_plantilla, _documento_actual.npdv_historico) t;
+	end if;
+	
+END;$function$
+;
+
+CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying, _plantilla character varying, _historico int)
+ returns table (
+	cpvc_llave varchar(32),
+	cpvc_documento varchar(32),
+	dpvc_valorfecha timestamptz,
+	mpvc_valornumero numeric(24, 6),
+	cpvc_valortext varchar(4000),
+	cpvc_valoropcion varchar(32),
+	cpvc_estado varchar(1),
+	cpvc_campo varchar(32),
+	cpvc_valorauxiliar varchar(32),
+	cpvc_transaccionregistro varchar(32),
+	cpvc_transaccioninactivo varchar(32)
+	) 
+ LANGUAGE plpgsql
+AS $function$
+declare 
+	_campo documentoplantillacaracteristica_dpcp;
+begin
+	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = 'A' and cdpc_codigo = _code;
+	if found then
+		return query select
+				cpvc_llave,
+				cpvc_documento,
+				dpvc_valorfecha,
+				mpvc_valornumero,
+				cpvc_valortext,
+				cpvc_valoropcion,
+				cpvc_estado,
+				cpvc_campo,
+				cpvc_valorauxiliar,
+				cpvc_transaccionregistro,
+				cpvc_transaccioninactivo
+			from campo4id(_documento, _campo.cdpc_llave, _historico);
+	end if;
+END;$function$
+;
+
+CREATE OR REPLACE FUNCTION campo4id(_documento character varying, _id_campo character varying, _historico int)
+ returns table (
+	cpvc_llave varchar(32),
+	cpvc_documento varchar(32),
+	dpvc_valorfecha timestamptz,
+	mpvc_valornumero numeric(24, 6),
+	cpvc_valortext varchar(4000),
+	cpvc_valoropcion varchar(32),
+	cpvc_estado varchar(1),
+	cpvc_campo varchar(32),
+	cpvc_valorauxiliar varchar(32),
+	cpvc_transaccionregistro varchar(32),
+	cpvc_transaccioninactivo varchar(32)
+	) 
+ LANGUAGE plpgsql
+AS $function$
+begin
+	if _historico = 0 then
+		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
+	end if;
+	if _historico is null then
+		return query select
+				t.cpvc_llave,
+				t.cpvc_documento,
+				t.dpvc_valorfecha,
+				t.mpvc_valornumero,
+				t.cpvc_valortext,
+				t.cpvc_valoropcion,
+				t.cpvc_estado,
+				t.cpvc_campo,
+				t.cpvc_valorauxiliar,
+				t.cpvc_transaccionregistro,
+				t.cpvc_transaccioninactivo
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_campo = _id_campo and t.cpvc_estado = 'A';
+	else
+		return query select
+			z.cpvc_llave,
+			z.cpvc_documento,
+			z.dpvc_valorfecha,
+			z.mpvc_valornumero,
+			z.cpvc_valortext,
+			z.cpvc_valoropcion,
+			z.cpvc_estado,
+			z.cpvc_campo,
+			z.cpvc_valorauxiliar,
+			z.cpvc_transaccionregistro,
+			z.cpvc_transaccioninactivo
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_campo = _id_campo and z.cpvc_estado = 'A';
+	end if;	
+END;$function$
+;
+
+CREATE OR REPLACE FUNCTION campo4documento(_documento character varying, _historico int) 
+ returns table (
+	cpvc_llave varchar(32),
+	cpvc_documento varchar(32),
+	dpvc_valorfecha timestamptz,
+	mpvc_valornumero numeric(24, 6),
+	cpvc_valortext varchar(4000),
+	cpvc_valoropcion varchar(32),
+	cpvc_estado varchar(1),
+	cpvc_campo varchar(32),
+	cpvc_valorauxiliar varchar(32),
+	cpvc_transaccionregistro varchar(32),
+	cpvc_transaccioninactivo varchar(32)
+	) 
+ LANGUAGE plpgsql
+AS $function$
+begin
+	if _historico = 0 then
+		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
+	end if;
+	if _historico is null then
+		return query select
+				t.cpvc_llave,
+				t.cpvc_documento,
+				t.dpvc_valorfecha,
+				t.mpvc_valornumero,
+				t.cpvc_valortext,
+				t.cpvc_valoropcion,
+				t.cpvc_estado,
+				t.cpvc_campo,
+				t.cpvc_valorauxiliar,
+				t.cpvc_transaccionregistro,
+				t.cpvc_transaccioninactivo
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_estado = 'A';
+	else
+		return query select
+			z.cpvc_llave,
+			z.cpvc_documento,
+			z.dpvc_valorfecha,
+			z.mpvc_valornumero,
+			z.cpvc_valortext,
+			z.cpvc_valoropcion,
+			z.cpvc_estado,
+			z.cpvc_campo,
+			z.cpvc_valorauxiliar,
+			z.cpvc_transaccionregistro,
+			z.cpvc_transaccioninactivo
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_estado = 'A';
+	end if;
+END;$function$
 ;

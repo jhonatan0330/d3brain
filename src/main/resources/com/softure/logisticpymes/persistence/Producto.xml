@@ -7,7 +7,7 @@
 	<sql id="selectProductoFragment">
 		select
 			cpro_llave as  llaveTabla
-			,movimiento_descripcion(cpro_documento) as  nombre
+			,descripcion(cpro_documento) as  nombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
 			,(select cpdv_textofiltro from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  filtros
 			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
@@ -38,7 +38,7 @@
 				and cpro_productobase = #{productoBase}
 			</if>
 			<if test="filtroParametro!=null">
-				and ((select upper(cpdv_nombre) from pedidoventa_pdvp where cpdv_llave = cpro_documento)= upper(#{filtroParametro}) or upper(movimiento_descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))
+				and ((select upper(cpdv_nombre) from pedidoventa_pdvp where cpdv_llave = cpro_documento)= upper(#{filtroParametro}) or upper(descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))
 			</if>
 	</sql>
 
@@ -165,7 +165,7 @@
 		and cpro_categoria in (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_127' and cppd_estado = 'A' and cppd_campo = #{campo})
 		<if test="filtro!=null">
 		and (cpdv_textofiltro = #{filtro}
-			or upper(movimiento_descripcion(cpro_documento)) like ('%' || #{filtro} || '%')
+			or upper(descripcion(cpro_documento)) like ('%' || #{filtro} || '%')
 			or cpdv_nombre like ('%' || #{filtro} || '%')
 		)
 		</if>
@@ -175,7 +175,7 @@
 	<select id="listarProductoPlantillaResponsable" parameterType="ProductoDTO" resultType="ProductoDTO">
 		select 
 			cpro_llave as  llaveTabla
-			,CASE WHEN curp_nombre IS NULL THEN movimiento_descripcion(cpro_documento) ELSE curp_nombre END as  nombre
+			,CASE WHEN curp_nombre IS NULL THEN descripcion(cpro_documento) ELSE curp_nombre END as  nombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
 			,cpro_descripcion as  descripcion
 			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
@@ -186,7 +186,7 @@
 			,curp_llave as documento
 		from usuariorolproducto_urpp, producto_prop 
 		where cpro_llave = curp_producto and cpro_estado ='A' and curp_estado = 'A' and curp_documento = #{usuarioRol}
-		<if test="filtroParametro!=null"> and ((select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) = upper(#{filtroParametro}) or upper(movimiento_descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))</if>
+		<if test="filtroParametro!=null"> and ((select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) = upper(#{filtroParametro}) or upper(descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))</if>
 			order by codigo
 		<include refid="paginationProductoFragment" />
 	</select>
@@ -194,7 +194,7 @@
 	<select id="listarProductoFuncion" resultType="ProductoDTO">
 		select
 			cpro_llave as  llaveTabla
-			,movimiento_descripcion(cpro_documento) as  nombre
+			,descripcion(cpro_documento) as  nombre
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
 			,cpro_descripcion as  descripcion
 			,coalesce(cpro_imagen,(select ccpr_imagen from categoriaproducto_cprp where ccpr_llave = cpro_categoria)) as  imagen
