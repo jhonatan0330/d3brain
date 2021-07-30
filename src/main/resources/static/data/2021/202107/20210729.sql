@@ -17,7 +17,7 @@ CREATE TABLE z_rej_reporteejecucion (
 
 CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying) RETURNS TABLE(cpvc_llave character varying, cpvc_documento character varying, dpvc_valorfecha timestamp with time zone, mpvc_valornumero numeric, cpvc_valortext character varying, cpvc_valoropcion character varying, cpvc_estado character varying, cpvc_campo character varying, cpvc_valorauxiliar character varying, cpvc_transaccionregistro character varying, cpvc_transaccioninactivo character varying)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 declare 
 	_documento_actual pedidoventa_pdvp;
 begin
@@ -38,15 +38,15 @@ begin
 		from campo4code(_documento, _code, _documento_actual.cpdv_plantilla, _documento_actual.npdv_historico) t;
 	end if;
 	
-END;$$;
+END;';
 
 CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying, _plantilla character varying, _historico integer) RETURNS TABLE(cpvc_llave character varying, cpvc_documento character varying, dpvc_valorfecha timestamp with time zone, mpvc_valornumero numeric, cpvc_valortext character varying, cpvc_valoropcion character varying, cpvc_estado character varying, cpvc_campo character varying, cpvc_valorauxiliar character varying, cpvc_transaccionregistro character varying, cpvc_transaccioninactivo character varying)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 declare 
 	_campo documentoplantillacaracteristica_dpcp;
 begin
-	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = 'A' and cdpc_codigo = _code;
+	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = ''A'' and cdpc_codigo = _code;
 	if found then
 		return query select
 				cpvc_llave,
@@ -62,11 +62,11 @@ begin
 				cpvc_transaccioninactivo
 			from campo4id(_documento, _campo.cdpc_llave, _historico);
 	end if;
-END;$$;
+END;';
 
 CREATE OR REPLACE FUNCTION campo4documento(_documento character varying, _historico integer) RETURNS TABLE(cpvc_llave character varying, cpvc_documento character varying, dpvc_valorfecha timestamp with time zone, mpvc_valornumero numeric, cpvc_valortext character varying, cpvc_valoropcion character varying, cpvc_estado character varying, cpvc_campo character varying, cpvc_valorauxiliar character varying, cpvc_transaccionregistro character varying, cpvc_transaccioninactivo character varying)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -84,7 +84,7 @@ begin
 				t.cpvc_valorauxiliar,
 				t.cpvc_transaccionregistro,
 				t.cpvc_transaccioninactivo
-			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_estado = 'A';
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_estado = ''A'';
 	else
 		return query select
 			z.cpvc_llave,
@@ -98,13 +98,13 @@ begin
 			z.cpvc_valorauxiliar,
 			z.cpvc_transaccionregistro,
 			z.cpvc_transaccioninactivo
-		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_estado = 'A';
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_estado = ''A'';
 	end if;
-END;$$;
+END;';
 
 CREATE OR REPLACE FUNCTION campo4id(_documento character varying, _id_campo character varying, _historico integer) RETURNS TABLE(cpvc_llave character varying, cpvc_documento character varying, dpvc_valorfecha timestamp with time zone, mpvc_valornumero numeric, cpvc_valortext character varying, cpvc_valoropcion character varying, cpvc_estado character varying, cpvc_campo character varying, cpvc_valorauxiliar character varying, cpvc_transaccionregistro character varying, cpvc_transaccioninactivo character varying)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -122,7 +122,7 @@ begin
 				t.cpvc_valorauxiliar,
 				t.cpvc_transaccionregistro,
 				t.cpvc_transaccioninactivo
-			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_campo = _id_campo and t.cpvc_estado = 'A';
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_campo = _id_campo and t.cpvc_estado = ''A'';
 	else
 		return query select
 			z.cpvc_llave,
@@ -136,25 +136,24 @@ begin
 			z.cpvc_valorauxiliar,
 			z.cpvc_transaccionregistro,
 			z.cpvc_transaccioninactivo
-		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_campo = _id_campo and z.cpvc_estado = 'A';
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_campo = _id_campo and z.cpvc_estado = ''A'';
 	end if;	
-END;$$;
+END;';
 
 CREATE OR REPLACE FUNCTION dcs_saldo_cero(character varying) RETURNS character varying
     LANGUAGE plpgsql
-    AS $_$
+    AS '
 BEGIN
-	IF EXISTS (SELECT mpvd_saldo FROM pedidoventadinero_pvdp WHERE cpvd_documento  = $1 AND cpvd_estado = 'A' AND mpvd_saldo !=0) THEN
-		RETURN 'N';
+	IF EXISTS (SELECT mpvd_saldo FROM pedidoventadinero_pvdp WHERE cpvd_documento  = $1 AND cpvd_estado = ''A'' AND mpvd_saldo != 0) THEN
+		RETURN ''N'';
 	ELSE
-		RETURN 'S';
+		RETURN ''S'';
 	END IF;
-END;
-$_$;
+END;';
 
 CREATE OR REPLACE FUNCTION descripcion(id_documento character varying) RETURNS character varying
     LANGUAGE plpgsql
-    AS $$
+    AS '
 DECLARE 
 	_documento_actual pedidoventa_pdvp; 
 	plantilla_campo_descripcion character varying;
@@ -166,11 +165,11 @@ BEGIN
         RETURN NULL;
     END IF;
     SELECT * INTO _documento_actual FROM pedidoventa_pdvp where cpdv_llave = id_documento;
-    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_44';
+    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = ''A'' and cppd_propiedadvalor = ''PROP_44'';
     IF plantilla_campo_descripcion IS NOT NULL THEN 
 		RETURN (select cpvc_valortext from campo4id ( id_documento , plantilla_campo_descripcion, _documento_actual.npdv_historico));
     ELSE
-		SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp where cppd_campo = plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_45';
+		SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = ''A'' and cppd_propiedadvalor = ''PROP_45'';
 		IF plantilla_campo_descripcion_nivel2 IS NOT NULL THEN
 			SELECT cpvc_valoropcion INTO id_documento_principal FROM campo4id (id_documento, plantilla_campo_descripcion_nivel2, _documento_actual.npdv_historico);
 			CASE WHEN id_documento_principal IS  NULL THEN 
@@ -180,26 +179,25 @@ BEGIN
 			    IF descripcion_anidada IS NULL THEN
 					RETURN (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal);
 			    ELSE
-					RETURN '(' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||') '|| descripcion_anidada;
+					RETURN ''('' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||'') ''|| descripcion_anidada;
 			    END IF;
 			END CASE;
 		ELSE
 			RETURN NULL;
 		END IF;
     END IF;
-END; 
-$$;
+END;';
 
 CREATE OR REPLACE FUNCTION migrar_campos(_plantilla character varying, _fecha_maxima timestamp with time zone) RETURNS numeric
     LANGUAGE plpgsql
-    AS $$
+    AS '
 declare 
 	documentos character varying[];
 	campos character varying[];
 	v_cnt numeric;
 begin
 	if
-		(select count(*) from procesotransicion_ptrp where cptr_estado = 'A' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
+		(select count(*) from procesotransicion_ptrp where cptr_estado = ''A'' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
 	then
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
@@ -211,7 +209,7 @@ begin
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
 				where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
-				and npdv_historico is null and cpdv_estado != 'A'
+				and npdv_historico is null and cpdv_estado != ''A''
 				limit 500) 
 			into documentos;
 	end if;	
@@ -242,16 +240,14 @@ begin
 	update pedidoventa_pdvp set npdv_historico = 3 where cpdv_llave = any(documentos);
 	GET DIAGNOSTICS v_cnt = ROW_COUNT;
 	return v_cnt;
-END;
-$$;
+END;';
 
 CREATE OR REPLACE FUNCTION movimiento_descripcion(id_documento character varying) RETURNS character varying
     LANGUAGE plpgsql
-    AS $$
+    AS '
 BEGIN 
     return descripcion(id_documento);
-END; 
-$$;
+END;';
 
 ALTER TABLE z_rej_reporteejecucion
 	ADD CONSTRAINT pk_z_rej_reporteejecucion_rejp PRIMARY KEY (crej_llave);
