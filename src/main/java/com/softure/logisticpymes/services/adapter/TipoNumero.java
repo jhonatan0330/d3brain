@@ -52,7 +52,7 @@ public class TipoNumero {
 		
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
 		if(pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null && pCampo.getModificado()){
-			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
+			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 			if(bd==null){
 				if(pCampo.getValorNumero().compareTo(BigDecimal.ZERO)!=0)
 					throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : " + SoftureUtil.formatMoney(BigDecimal.ZERO));
@@ -92,10 +92,11 @@ public class TipoNumero {
 			if(pCampo.getValorNumero()==null) pCampo.setValorNumero(BigDecimal.ZERO);
 			formatText(pCampo);
 		}
-		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
+		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if(bd!=null){
 			if(pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0){
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
 				return pCampo;
 			}else{
@@ -103,6 +104,7 @@ public class TipoNumero {
 					return pCampo;
 				}else{
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
 				}
 			}

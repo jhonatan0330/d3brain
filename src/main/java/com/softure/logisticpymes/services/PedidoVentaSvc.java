@@ -113,10 +113,10 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
 		if(Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty()) throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
-		PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
-		if(pdv.getEstadoExpediente()!=null) {
+		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
+		if(bd.getEstadoExpediente()!=null) {
 			if(dto.getEstadoExpediente()==null) throw new ServerException("El documento a actualizar debe traer el estado del expediente");
-			if(pdv.getEstadoExpediente().compareTo(dto.getEstadoExpediente())!=0) throw new ServerException("Revise porque el documento tiene un estado diferente.\nDocumento: " + pdv.getNombre() + "\nEstado actual: " +pdv.getEstadoNombre());
+			if(bd.getEstadoExpediente().compareTo(dto.getEstadoExpediente())!=0) throw new ServerException("Revise porque el documento tiene un estado diferente.\nDocumento: " + bd.getNombre() + "\nEstado actual: " +bd.getEstadoNombre());
 		}
 		validarCaracteristicas(dto, plantilla, token);
 		if(dto.getNombre()==null) {
@@ -133,12 +133,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			}	
 		}
 		validarConsecutivo(dto, plantilla, token);
-		dto.setFecha(pdv.getFecha()); //Copio la fecha para que no me la modifiquen desde el cliente sin un campo
+		dto.setFecha(bd.getFecha()); //Copio la fecha para que no me la modifiquen desde el cliente sin un campo
 		validarFecha(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validarCosto(dto, plantilla);
 		String transaccion = dto.getTransaccion();
 		boolean crearTraza = false;//Cuando un formulario modifica otro no debo crear traza ya que esta la del proceso
-		if(transaccion ==null ||  pdv.getTransaccion().compareTo(transaccion)==0) {//Si son diferetnes vienen de otro proceso
+		if(transaccion ==null ||  bd.getTransaccion().compareTo(transaccion)==0) {//Si son diferetnes vienen de otro proceso
 			transaccion = transaccionSvc.crear(token);
 			crearTraza = true;
 		}
@@ -153,11 +153,11 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		dto.setTransaccion(bd.getTransaccion());//Siempre tiene que mantenerse la transaccion de registro
 		dto.setFuncionario(bd.getFuncionario());//Siempre tiene que mantenerse la funcionario de registro
 		dto.setHistorico(bd.getHistorico());
-		pdv = update(dto);
+		bd = update(dto);
 		gestionarDinero(dto, token);
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 			iterador.setTransaccionRegistro(transaccion);//Le quite el igual a null asumo que va a modificar los nuevos
-			iterador.setPrincipal(pdv);
+			iterador.setPrincipal(bd);
 		}
 		dto.setCaracteristicas(gestionarCaracteristicas(dto, token));
 		gestionarTipos(dto, plantilla, token);

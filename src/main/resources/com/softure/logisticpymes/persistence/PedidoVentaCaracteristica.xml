@@ -203,6 +203,7 @@
 	<select id="listar2Documento" resultType="PedidoVentaCaracteristicaDTO">
 		<include refid="selectPedidoVentaCaracteristicaFragment" />
 		where cpvc_documento = #{documento} and cpvc_estado ='A'
+		<if test="campo!=null">and cpvc_campo = #{campo}</if>
 	</select>
 	
 	<select id="listar2DocumentoHistorico" resultType="PedidoVentaCaracteristicaDTO">
@@ -220,6 +221,7 @@
 			,cpvc_estado as estado
 		from z_pvc_pedidoventacaracteristica
 		where cpvc_documento = #{documento} and cpvc_estado ='A'
+		<if test="campo!=null">and cpvc_campo = #{campo}</if>
 	</select>
 	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaCaracteristicaDTO">
@@ -391,6 +393,80 @@
 			from propiedad_${sqlFuncion} (#{llaveTablaDocumento})
 	</select>
 	
+	<select id="inactivarCampoHistorico" resultType="PedidoVentaCaracteristicaDTO">
+		update <if test="historico!=null">z_pvc_pedidoventacaracteristica</if><if test="historico==null">pedidoventacaracteristica_pvcp</if>
+			set	cpvc_transaccioninactivo = #{transaccion},
+				cpvc_estado = 'I'
+		where cpvc_llave = #{idCampo}
+	</select>
+	
+	<select id="insertarHistorico" parameterType="PedidoVentaCaracteristicaDTO" resultType="PedidoVentaCaracteristicaDTO">
+		insert into z_pvc_pedidoventacaracteristica(
+			cpvc_llave
+		<if test="documento!=null">
+			,cpvc_documento
+		</if>
+		<if test="campo!=null">
+			,cpvc_campo
+		</if>
+		<if test="valorText!=null">
+			,cpvc_valortext
+		</if>
+		<if test="valorFecha!=null">
+			,dpvc_valorfecha
+		</if>
+		<if test="valorOpcion!=null">
+			,cpvc_valoropcion
+		</if>
+		<if test="valorAuxiliar!=null">
+			,cpvc_valorauxiliar
+		</if>
+		<if test="valorNumero!=null">
+			,mpvc_valornumero
+		</if>
+		<if test="transaccionRegistro!=null">
+			,cpvc_transaccionregistro
+		</if>
+		<if test="transaccionInactivo!=null">
+			,cpvc_transaccioninactivo
+		</if>
+		<if test="estado!=null">
+			,cpvc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="campo!=null">
+			,#{campo}
+		</if>
+		<if test="valorText!=null">
+			,#{valorText}
+		</if>
+		<if test="valorFecha!=null">
+			,#{valorFecha}
+		</if>
+		<if test="valorOpcion!=null">
+			,#{valorOpcion}
+		</if>
+		<if test="valorAuxiliar!=null">
+			,#{valorAuxiliar}
+		</if>
+		<if test="valorNumero!=null">
+			,#{valorNumero}
+		</if>
+		<if test="transaccionRegistro!=null">
+			,#{transaccionRegistro}
+		</if>
+		<if test="transaccionInactivo!=null">
+			,#{transaccionInactivo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
 <!--// END region script-->
 
 </mapper>

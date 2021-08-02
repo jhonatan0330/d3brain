@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.math.BigDecimal;
 
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.logisticpymes.dto.DetallePedidoVentaDTO;
@@ -76,10 +75,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaCaracteristica_inactivar
 		if(dto.getTransaccionInactivo()== null) throw new ServerException("Se encesita la transaccion de inactivar");
-		PedidoVentaCaracteristicaDTO bd = consultaXId(dto.getLlaveTabla());
-		bd.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
-		bd.setTransaccionInactivo(dto.getTransaccionInactivo());
-		return update(bd);
+		if(dto.getPrincipal()==null) throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");
+		return pedidoVentaCaracteristicaMapper.inactivarCampoHistorico(dto.getLlaveTabla(), dto.getTransaccionInactivo(), (dto.getPrincipal().getHistorico()==null)?null:"Historico");
 		// END PedidoVentaCaracteristica_inactivar
 	}
 	
@@ -109,11 +106,17 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO guardar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaCaracteristica_guardar
-		DocumentoPlantillaCaracteristicaDTO base = dto.getCampoDTO();
+		if(dto.getPrincipal()==null) throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");
 		if(dto.getValorText()!=null && dto.getValorText().length()>4000) throw new ServerException("Se excedio la cantidad de caracteres del texto. (4000)");
 		if(dto.getValorNumero()!=null && dto.getValorNumero().compareTo(BigDecimal.ZERO)==0) dto.setValorNumero(null);
 		if(dto.getValorNumero()!=null && dto.getValorNumero().compareTo(new BigDecimal(9999999999999999.0))>0) throw new ServerException("Se excedio del numero maximo");
-		dto = save(dto);
+		if(dto.getPrincipal().getHistorico() == null) {
+			save(dto);
+		} else {
+			dto.setLlaveTabla(generarLlave());
+			pedidoVentaCaracteristicaMapper.insertarHistorico(dto);
+		}
+		DocumentoPlantillaCaracteristicaDTO base = dto.getCampoDTO();
 		dto.setCampoDTO(base);
 		return dto;
 		// END PedidoVentaCaracteristica_guardar
@@ -122,17 +125,21 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 // BEGIN region aditionalMethods
 	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
-		if( historico ==null || historico ==0 ) {
-			return pedidoVentaCaracteristicaMapper.listar2Documento(documento);
-		}else {
-			return pedidoVentaCaracteristicaMapper.listar2DocumentoHistorico(documento);
-		}
-		
+		return listar2Documento(documento, historico, null);
 	}
 	
-	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId, List<DocumentoPlantillaCaracteristicaDTO> templateFields)
+	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico, String campo)
+			throws ServerException {//La plantilla es para optimizar la consultas de la particion
+		if( historico == null || historico == 0 ) {
+			return pedidoVentaCaracteristicaMapper.listar2Documento(documento, campo);
+		}else {
+			return pedidoVentaCaracteristicaMapper.listar2DocumentoHistorico(documento, campo);
+		}
+	}
+	
+	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId, List<DocumentoPlantillaCaracteristicaDTO> templateFields, Integer historico)
 			throws ServerException {
-		List<PedidoVentaCaracteristicaDTO> result = pedidoVentaCaracteristicaMapper.listar2Documento(documentId);
+		List<PedidoVentaCaracteristicaDTO> result = listar2Documento(documentId, historico, null);
 		if(result==null || result.isEmpty()) return result;
 		for (DocumentoPlantillaCaracteristicaDTO iFieldTemplateDTO : templateFields) {
 			for (PedidoVentaCaracteristicaDTO iCurrentField : result) {
@@ -185,13 +192,13 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.listar2getApiCode(documentIds, fieldId);
 	}
 
-	public PedidoVentaCaracteristicaDTO buscarActivo(PedidoVentaCaracteristicaDTO dto) throws ServerException {
-		if(dto==null || dto.getDocumento()==null) throw new ServerException("Error al consultar el campo previo por falta de datos");
-		PedidoVentaCaracteristicaFilterDTO bd = new PedidoVentaCaracteristicaFilterDTO();
-		bd.setDocumento(dto.getDocumento());
-		bd.setCampo(dto.getCampo());
-		bd.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		return consultaUnica(bd);
+	public PedidoVentaCaracteristicaDTO buscarActivo(PedidoVentaCaracteristicaDTO dto, Integer historico) throws ServerException {
+		if(dto==null || dto.getDocumento()==null || dto.getCampo()==null) throw new ServerException("Error al consultar el campo previo por falta de datos");
+		List<PedidoVentaCaracteristicaDTO> filter = listar2Documento(dto.getDocumento(), historico, dto.getCampo());
+		if (filter != null && filter.size()==1) {
+			return filter.get(0);
+		}
+		return null;
 	}
 	
 	public BigDecimal calcularNumeroFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
@@ -292,6 +299,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 			throw new ServerException(e.getMessage(), " : " + sqlFuncion);
 		}
 	}
+	
 // END region aditionalMethods
 
 }

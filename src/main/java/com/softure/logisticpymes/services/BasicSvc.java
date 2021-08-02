@@ -123,7 +123,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		if(dto.getPaginacionRegistroFinal()==null || dto.getPaginacionRegistroFinal()==0) dto.setPaginacionRegistroFinal(200);
 	}
 	
-	private String generarLlave(){
+	public String generarLlave(){
 		UUID uuid = UUID.randomUUID();
 		String gen = uuid.toString();
 		gen = gen.replaceAll("-", "");

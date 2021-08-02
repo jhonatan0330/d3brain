@@ -258,7 +258,7 @@ public class TipoDetallePedido {
 				}
 			}
 			pCampo.setDetalles(result);
-			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
+			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 			if(bd!=null){
 				if(pCampo.getValorText()==null){
 					return pCampo;

@@ -220,14 +220,17 @@ public class TipoProceso {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		boolean modificacion = false;
 		if(campoHeredado1.isEmpty()){
-			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
+			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			if(multiple.isEmpty()){
 				if(bd!=null){
 					bd.setCampoDTO(pCampo.getCampoDTO());
 					if(pCampo.getValorOpcion()==null){
 						bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-						if(bd.getLlaveTabla()!=null) campoService.inactivar(bd, token);
+						if(bd.getLlaveTabla()!=null) {
+							bd.setPrincipal(pCampo.getPrincipal());
+							campoService.inactivar(bd, token);
+						}
 						return inactivar(bd, null, token);//Se inactiva el anterior, toca revisar el inactivar
 					}else{
 						if(pCampo.getValorOpcion().compareTo(bd.getValorOpcion())==0){
@@ -236,7 +239,10 @@ public class TipoProceso {
 							return pCampo;
 						}else{
 							bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-							if(bd.getLlaveTabla()!=null) campoService.inactivar(bd, token);
+							if(bd.getLlaveTabla()!=null) {
+								bd.setPrincipal(pCampo.getPrincipal());
+								campoService.inactivar(bd, token);
+							}
 							inactivar(bd, null, token);//comentario anterior
 							modificacion = true;
 						}
@@ -434,7 +440,7 @@ public class TipoProceso {
 		documentoModificar.setLlaveTabla(procesoDTO.getLlaveTabla());
 		documentoModificar.setEstadoExpediente(procesoDTO.getEstadoExpediente());
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = caracteristicaService.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token);
-		List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = campoService.readCompleteFields(procesoDTO.getLlaveTabla(), camposPlantilla);
+		List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = campoService.readCompleteFields(procesoDTO.getLlaveTabla(), camposPlantilla, procesoDTO.getHistorico());
 		List<PedidoVentaCaracteristicaDTO> caracteristicasModificadas = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (DocumentoPlantillaCaracteristicaDTO camposActualesDTO : camposPlantilla) {
 			PedidoVentaCaracteristicaDTO nuevaCaracteristica = null;

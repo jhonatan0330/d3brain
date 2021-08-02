@@ -71,10 +71,11 @@ public class TipoCroquis {
 	}
 	
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo);
+		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if(bd!=null){
 			if(pCampo.getValorText()==null){
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
 				return pCampo;
 			}else{
@@ -83,6 +84,7 @@ public class TipoCroquis {
 					return pCampo;
 				}else{
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
 				}
 			}

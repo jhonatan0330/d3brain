@@ -17,8 +17,8 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	
 
 // BEGIN region aditionalMethods  
-	List<PedidoVentaCaracteristicaDTO> listar2Documento(@Param("documento")String documento);
-	List<PedidoVentaCaracteristicaDTO> listar2DocumentoHistorico(@Param("documento")String documento);
+	List<PedidoVentaCaracteristicaDTO> listar2Documento(@Param("documento")String documento, @Param("campo")String campo);
+	List<PedidoVentaCaracteristicaDTO> listar2DocumentoHistorico(@Param("documento")String documento, @Param("campo")String campo);
 	List<PedidoVentaCaracteristicaDTO> listarGestionables(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos);
 	List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
@@ -32,5 +32,8 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	String getUnique(PedidoVentaCaracteristicaDTO dto);
 	PedidoVentaCaracteristicaDTO consultarSQLCampoGenerarDocumento(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
 	List<PedidoVentaCaracteristicaDTO> camposEspecialesPlantilla(@Param("sqlFuncion") String sqlFuncion, @Param("llaveTablaDocumento") String llaveTablaDocumento);
+	
+	PedidoVentaCaracteristicaDTO inactivarCampoHistorico(@Param("idCampo") String idCampo, @Param("transaccion") String transaccion, @Param("historico") String historico);
+	PedidoVentaCaracteristicaDTO insertarHistorico(PedidoVentaCaracteristicaDTO dto);
 // END region aditionalMethods
 }
