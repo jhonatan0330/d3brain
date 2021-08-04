@@ -163,7 +163,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		gestionarTipos(dto, plantilla, token);
 		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
-				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null);
+				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico());
 		//gestionarResponsable(dto, plantilla);
 		dto.setCaracteristicas(null);//Por error al serializar
 		return dto;
@@ -477,6 +477,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			}
 		}
 		pedido.setCaracteristicas(gestionarCaracteristicas(dto, token));
+		if(dto.getDinero()!=null && pedido.getDinero() ==null ) pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
 		gestionarEstado(pedido, plantilla.getNombre(), token);
 		gestionarTipos(dto, plantilla, token);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
@@ -503,7 +504,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			//Pase aqui la traza ya que debo integrar
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null, pedido.getEstadoExpediente(), 
 					(pedido.getDinero()==null)?null:pedido.getDinero().getLlaveTabla(), 
-					null, token,null);
+					null, token,null, pedido.getHistorico());
 		}
 		//return inicial;
 	}

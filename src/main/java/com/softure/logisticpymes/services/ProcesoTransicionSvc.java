@@ -198,7 +198,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 					modificadorId,
 					dto.getNombre(), dto.getEstadoPartida(), dto.getEstadoLLegada(), 
 					(afectado==null)?null:afectado.getLlaveTabla(), 
-					ubicacion, token, relacionAnterior);
+					ubicacion, token, relacionAnterior, expedienteDTO.getHistorico());
 		}
 		//Se actualiza pedido
 		// si son los mismo creo que no necesito update ???????????
@@ -256,7 +256,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		PedidoVentaDineroDTO nuevoValor = afectarSaldos(expediente, token, dto, valorModificador, null);//aqui es nulo porque ya existe
 		//Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), documento.getLlaveTabla(), dto.getNombre(), dto.getEstadoLLegada(), 
-				dto.getEstadoPartida(), (nuevoValor==null)?null:nuevoValor.getLlaveTabla(), ubicacion, token, null);
+				dto.getEstadoPartida(), (nuevoValor==null)?null:nuevoValor.getLlaveTabla(), ubicacion, token, null, anterior.getHistorico());
 		//Se actualiza pedido
 		System.out.println(anterior.getNombre() + " : " + filtroEstado.getNombre() + "(" +anterior.getEstadoNombre() + ")");
 		anterior.setEstadoExpediente(filtroEstado.getLlaveTabla());
@@ -424,7 +424,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				relacionGestorService.trazar(expediente.getLlaveTabla(), 
 						(acabdoCrear==null)?null:acabdoCrear.getLlaveTabla(),
 						transicionIteracion.getNombre(), expediente.getEstadoExpediente(), expediente.getEstadoExpediente(), 
-						null, null, token, relacionAnterior);
+						null, null, token, relacionAnterior, expediente.getHistorico());
 			}
 		}
 	}

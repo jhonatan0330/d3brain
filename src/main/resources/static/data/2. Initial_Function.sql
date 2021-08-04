@@ -316,18 +316,18 @@ begin
 	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = 'A' and cdpc_codigo = _code;
 	if found then
 		return query select
-				cpvc_llave,
-				cpvc_documento,
-				dpvc_valorfecha,
-				mpvc_valornumero,
-				cpvc_valortext,
-				cpvc_valoropcion,
-				cpvc_estado,
-				cpvc_campo,
-				cpvc_valorauxiliar,
-				cpvc_transaccionregistro,
-				cpvc_transaccioninactivo
-			from campo4id(_documento, _campo.cdpc_llave, _historico);
+				tb.cpvc_llave,
+				tb.cpvc_documento,
+				tb.dpvc_valorfecha,
+				tb.mpvc_valornumero,
+				tb.cpvc_valortext,
+				tb.cpvc_valoropcion,
+				tb.cpvc_estado,
+				tb.cpvc_campo,
+				tb.cpvc_valorauxiliar,
+				tb.cpvc_transaccionregistro,
+				tb.cpvc_transaccioninactivo
+			from campo4id(_documento, _campo.cdpc_llave, _historico) tb;
 	end if;
 END;$function$
 ;

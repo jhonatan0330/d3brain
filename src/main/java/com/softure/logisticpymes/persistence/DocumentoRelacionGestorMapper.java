@@ -20,9 +20,10 @@ public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRel
 			, @Param("verReportes")String verReportes
 			, @Param("usuarioAutomatico")String usuarioAutomatico
 			, @Param("verApi")String verApi);
-	DocumentoRelacionGestorDTO ultimoRegistro(String documentoPrincipal);
+	DocumentoRelacionGestorDTO ultimoRegistro(@Param("documentoPrincipal")String documentoPrincipal, @Param("historico")String historico);
 	String getSystemUser();
 	String isActual(String documento);
 	DocumentoRelacionGestorDTO insertHistoricTable(DocumentoRelacionGestorDTO dto);
+	DocumentoRelacionGestorDTO actualizarHistoricTable(DocumentoRelacionGestorDTO dto);
 // END region aditionalMethods
 }

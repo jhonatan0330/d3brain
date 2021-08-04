@@ -842,7 +842,8 @@ public class TipoProceso {
 		DocumentoPlantillaDTO plantillaNueva = plantillaService.consultaXId(nuevo.getPlantilla());
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		//Creo la relacion del documento Gestor
-		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), plantillaNueva.getNombre(), anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null);
+		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), plantillaNueva.getNombre(), 
+				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null, anterior.getHistorico());
 	}
 	
 

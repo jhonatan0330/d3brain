@@ -425,7 +425,20 @@
 	</select>
 	
 	<select id="ultimoRegistro" resultType="DocumentoRelacionGestorDTO">
-		<include refid="selectDocumentoRelacionGestorFragment" />
+		select
+			cdrg_llave as  llaveTabla
+			,cdrg_documentoprincipal as  documentoPrincipal
+			,cdrg_documentomodificador as  documentoModificador
+			,ddrg_fecha as  fecha
+			,cdrg_estadoinicial as  estadoInicial
+			,cdrg_estadofinal as  estadoFinal
+			,cdrg_usuario as  usuario
+			,cdrg_ubicacion as  ubicacion
+			,cdrg_valores as  valores
+			,ddrg_cierre as  cierre
+			,cdrg_nombre as  nombre
+			,cdrg_estado as estado
+		<if test="historico==null">from documentorelaciongestor_drgp</if><if test="historico!=null">from z_drg_documentorelaciongestor</if>
 		where ddrg_cierre is null and cdrg_estado = 'A' and cdrg_documentoprincipal = #{documentoPrincipal}
 		order by ddrg_fecha desc limit 1
 	</select>
@@ -510,6 +523,23 @@
 			,#{estado}
 		</if>
 		)
+	</select>
+	
+	<select id="actualizarHistoricTable" parameterType="DocumentoRelacionGestorDTO" resultType="DocumentoRelacionGestorDTO">
+		update documentorelaciongestor_drgp
+			set
+				cdrg_documentoprincipal = #{documentoPrincipal},
+				cdrg_documentomodificador = #{documentoModificador},
+				ddrg_fecha = #{fecha},
+				cdrg_estadoinicial = #{estadoInicial},
+				cdrg_estadofinal = #{estadoFinal},
+				cdrg_usuario = #{usuario},
+				cdrg_ubicacion = #{ubicacion},
+				cdrg_valores = #{valores},
+				ddrg_cierre = #{cierre},
+				cdrg_nombre = #{nombre},
+				cdrg_estado =#{estado}
+		<include refid="whereDocumentoRelacionGestorPrimaryKeyFragment" />
 	</select>
 <!--// END region script-->
 

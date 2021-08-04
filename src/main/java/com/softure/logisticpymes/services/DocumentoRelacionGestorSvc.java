@@ -118,10 +118,20 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	}
 
 // BEGIN region aditionalMethods
-	public DocumentoRelacionGestorDTO trazar(String principal, String modificador, String nombre, String estadoInicial, String estadoFinal, String valores, String ubicacion, String token, DocumentoRelacionGestorDTO anterior) throws ServerException {
+	public DocumentoRelacionGestorDTO trazar(
+			String principal, 
+			String modificador, 
+			String nombre, 
+			String estadoInicial, 
+			String estadoFinal, 
+			String valores, 
+			String ubicacion, 
+			String token, 
+			DocumentoRelacionGestorDTO anterior,
+			Integer historico) throws ServerException {
 		DocumentoRelacionGestorDTO actual;
 		if(anterior==null) {
-			actual = documentoRelacionGestorMapper.ultimoRegistro(principal);
+			actual = documentoRelacionGestorMapper.ultimoRegistro(principal, (historico==null)?null:"historico");
 			/*if(actual==null) {
 				if(documentoRelacionGestorMapper.isActual(principal)==null) {
 					throw new ServerException("Revisa con el desarrollador porque este documento se encuentra en el historico");
@@ -142,11 +152,21 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		gestor.setNombre(nombre);
 		if(actual!=null) {
 			actual.setCierre(new Date());
-			update(actual);
+			if ( historico ==null) {
+				update(actual);
+			}else {
+				documentoRelacionGestorMapper.actualizarHistoricTable(actual);
+			}
 			if(gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
-		gestor = save(gestor);
+		if(historico ==null) {
+			gestor = save(gestor);
+		}else {
+			gestor.setLlaveTabla(generarLlave());
+			documentoRelacionGestorMapper.insertHistoricTable(gestor);
+		}
+		
 		System.out.format("\n[] TRACE por transicion %s, con estado inicial ( %s ) y estado final ( %s )", gestor.getNombre(), gestor.getEstadoInicial(), gestor.getEstadoFinal());
 		return gestor;
 	}
