@@ -566,7 +566,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			dineroCalculado.setValorTotal(campoValor.getValorNumero());
 			dineroCalculado.setSaldo(BigDecimal.ZERO);
 			if(pedido.getLlaveTabla()!=null && pedido.getEstadoExpediente()!=null) {//Si es modificar debo actualizar el saldo//solo tienen saldo los que son de proceso
-				PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla());
+				PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(), pedido.getHistorico());
 				if(anterior!=null) dineroCalculado.setSaldo(anterior.getSaldo());
 				if(campoValor.getModificado()){
 					ProcesoTransicionDTO inicial = transicionService.consultarTransaccionInicial(pedido.getPlantilla());
@@ -765,7 +765,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 					}
 					if(!campoValorIterador.isEmpty()){
 						if(campoValor.compareTo("1")==0 || campoValor.compareTo("2")==0) {
-							iterador.setDinero(dineroService.consultaPorDocumento(iterador.getLlaveTabla()));
+							iterador.setDinero(dineroService.consultaPorDocumento(iterador.getLlaveTabla(), iterador.getHistorico()));
 						}else {
 							PedidoVentaCaracteristicaFilterDTO valorCampoFilter = new PedidoVentaCaracteristicaFilterDTO();
 							valorCampoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
@@ -939,7 +939,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	
 	private PedidoVentaDineroDTO gestionarDinero(PedidoVentaDTO documento, String token) throws ServerException {
 		if(documento!=null && documento.getDinero()!=null){
-			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla());
+			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla(), documento.getHistorico());
 			if(anterior!=null){
 				//Si todo es igual lo dejo quieto
 				if(documento.getDinero().getValorTotal().compareTo(anterior.getValorTotal())==0 &&
@@ -1062,7 +1062,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	public PedidoVentaDTO consultaXIdConDinero(String llave) throws ServerException {
 		PedidoVentaDTO result = consultaXId(llave);
 		if(result!=null){
-			result.setDinero(dineroService.consultaPorDocumento(llave));
+			result.setDinero(dineroService.consultaPorDocumento(llave,  result.getHistorico()));
 		}
 		return result;
 	}

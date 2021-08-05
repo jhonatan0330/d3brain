@@ -489,13 +489,15 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	private PedidoVentaDineroDTO afectarSaldos(String expediente, String securityToken, ProcesoTransicionDTO transicion, 
 			BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial) throws ServerException{
 		PedidoVentaDineroDTO dinero = dineroDocumentoInicial;
-		if(dinero==null)dinero = dineroService.consultaPorDocumento(expediente);
+		PedidoVentaDTO pExpediente = pedidoService.consultaXId(expediente);
+		if(dinero==null) {
+			dinero = dineroService.consultaPorDocumento(expediente, pExpediente.getHistorico());
+		}
 		
 		if(transicion.getAfectaSaldo()==null) return dinero;
 		if(saldoDocumento==null) throw new ServerException("Revise porque el documento no tiene saldo");
 		if(dinero==null) {
-			PedidoVentaDTO p = pedidoService.consultaXId(expediente);
-			throw new ServerException("Revise el documento " + p.getNombre() + " porque no tiene ningun registro de valores de saldos");
+			throw new ServerException("Revise el documento " + pExpediente.getNombre() + " porque no tiene ningun registro de valores de saldos");
 		}
 		
 		BigDecimal factor = BigDecimal.ONE;
@@ -505,7 +507,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(transicion.getEstadoPartida()==null) { //Para los documentos iniciales
 			if(transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO)!=0) throw new ServerException("No es logico que inicie in proceso restando");
 			dinero.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-			System.out.format("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + dinero.getSaldo());
+			System.out.format("\n" + transicion.getNombre() + " (" + pExpediente.getNombre()  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + dinero.getSaldo());
 			if(dinero.getSaldo().compareTo(BigDecimal.ZERO) < 0){
 				dinero.setSaldo(BigDecimal.ZERO);
 				saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
@@ -513,16 +515,15 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				saldoDocumento = BigDecimal.ZERO;
 			}
 			if(dinero.getSaldo().compareTo(dinero.getValorTotal())>0) {
-				PedidoVentaDTO documentoFallido = pedidoService.consultaXId(expediente);
-				throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: " +documentoFallido.getNombre()+ "\nSaldo: " + SoftureUtil.formatMoney(dinero.getSaldo()) + "\nTotal: " + SoftureUtil.formatMoney(dinero.getValorTotal()));
+				throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: " + pExpediente.getNombre()+ "\nSaldo: " + SoftureUtil.formatMoney(dinero.getSaldo()) + "\nTotal: " + SoftureUtil.formatMoney(dinero.getValorTotal()));
 			}
-			dineroService.update(dinero);
+			dineroService.update(dinero);// Se acaba de crear siempre va a ser tabla productiva
 			return dinero;
 		}
 		dineroService.inactivar(dinero, securityToken);
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-		System.out.format("\n" + transicion.getNombre() + " (" + expediente  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
+		System.out.format("\n" + transicion.getNombre() + " (" + pExpediente.getNombre()  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
 		if(nuevo.getSaldo().compareTo(BigDecimal.ZERO) < 0){
 			nuevo.setSaldo(BigDecimal.ZERO);
 			saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
@@ -533,8 +534,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 
 		nuevo.setValorTotal(dinero.getValorTotal());
 		if(nuevo.getSaldo().compareTo(nuevo.getValorTotal())>0) {
-			PedidoVentaDTO documentoFallido = pedidoService.consultaXId(expediente);
-			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: " +documentoFallido.getNombre()+ "\nSaldo: " + SoftureUtil.formatMoney(nuevo.getSaldo()) + "\nTotal: " + SoftureUtil.formatMoney(nuevo.getValorTotal()));
+			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: " + pExpediente.getNombre()+ "\nSaldo: " + SoftureUtil.formatMoney(nuevo.getSaldo()) + "\nTotal: " + SoftureUtil.formatMoney(nuevo.getValorTotal()));
 		}
 		return dineroService.guardar(nuevo, securityToken);
 	}

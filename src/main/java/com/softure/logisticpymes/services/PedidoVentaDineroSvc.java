@@ -94,7 +94,7 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	}
 
 // BEGIN region aditionalMethods
-	public PedidoVentaDineroDTO consultaPorDocumento(String documento) throws ServerException {
+	public PedidoVentaDineroDTO consultaPorDocumento(String documento, Integer historico) throws ServerException {
 		PedidoVentaDineroFilterDTO filtro = new PedidoVentaDineroFilterDTO();
 		filtro.setDocumento(documento);
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);

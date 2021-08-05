@@ -160,6 +160,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		DocumentoPlantillaDTO bd = consultaXId(dto.getLlaveTabla());
 		// Copio plantilla
 		DocumentoPlantillaDTO copy = new DocumentoPlantillaDTO();
+		copy.setProceso(bd.getProceso());
 		copy.setNombre("COPY_" + bd.getNombre());
 		copy.setImagen(bd.getImagen());
 		copy.setObjetivo(bd.getObjetivo());
@@ -201,10 +202,12 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		bd.setReportes(reporteService.listarDisponiblesDocumento(bd.getLlaveTabla()));
 		for (ReporteBaseDTO iReporte : bd.getReportes()) {
 			ReporteBaseDTO newReporte = new ReporteBaseDTO();
-			newReporte.setCodigo(iReporte.getCodigo());
+			String newCode = copy.getCodigo() + "-" + iReporte.getCodigo();
+			newReporte.setCodigo(newCode.substring(0, Math.min(newCode.length(), 16)));
 			newReporte.setDescripcion(iReporte.getDescripcion());
 			//newReporte.setJasperText(iReporte.getJasperText());
-			newReporte.setNombre(iReporte.getNombre());
+			String newName = copy.getCodigo() + "-" + iReporte.getNombre();
+			newReporte.setNombre(newName);
 			newReporte.setPlantilla(copy.getLlaveTabla());
 			newReporte.setSoloExistente(iReporte.getSoloExistente());
 			newReporte.setVariables(iReporte.getVariables());

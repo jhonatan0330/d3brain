@@ -242,8 +242,8 @@
 			,descripcion(modifica.cpdv_llave) as comentario
 			,modifica.cpdv_plantilla as plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = modifica.cpdv_plantilla) as plantillaNombre
-			,(select mpvd_saldo from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  saldo
-			,(select mpvd_valortotal from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  total
+			,(select mpvd_saldo from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  saldo
+			,(select mpvd_valortotal from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  total
 			,cdrg_ubicacion as ubicacion
 			,descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla

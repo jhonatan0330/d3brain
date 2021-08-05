@@ -200,7 +200,7 @@ public class TipoProceso {
 			//Alguien cambia un valor de un expediente de un multiple y el valor no va a ser el mimsmo en los reportes
 			for (PedidoVentaDTO expediente : pCampo.getExpedientes()) {
 				if(expediente.getEstado()==null || expediente.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)!=0){
-					PedidoVentaDineroDTO valorActual = dineroService.consultaPorDocumento(expediente.getLlaveTabla());
+					PedidoVentaDineroDTO valorActual = dineroService.consultaPorDocumento(expediente.getLlaveTabla(), expediente.getHistorico());
 					if(valorActual==null) {
 						if(expediente.getDinero()!=null) throw new ServerException("Revise porque el expediente tiene valor y en la base de datos no tiene. \nExpediente: " + expediente.getNombre());
 					}else {
