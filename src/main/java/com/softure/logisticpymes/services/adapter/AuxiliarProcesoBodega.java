@@ -220,16 +220,24 @@ public class AuxiliarProcesoBodega {
 			List<DeduccionProductoDTO> acumulado = null;
 			
 			for(PedidoVentaDTO expediente: pCampo.getExpedientes()){
-				//expediente.setRol(pCampo.getCampoDTO().getRol());
 				//El tipo proceso cuando gestiona me lo envia vacio
 				expediente = pedidoService.obtenerCamposCompletos(expediente, token);
-				//expediente.setCaracteristicas( campoService.listar2Documento(expediente.getLlaveTabla()));
 				for(PedidoVentaCaracteristicaDTO campo : expediente.getCaracteristicas()){
-					campo.setCampoDTO(caracteristicaService.consultaXId(campo.getCampo()));
-					if(campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0){
-						campo.setExpedientes( pedidoService.listarExpedientesPertenecenCampo(campo.getLlaveTabla(), token, null));
+					// La siguiente linea es redundante ya que lo consulte el campo completo //campo.setCampoDTO(caracteristicaService.consultaXId(campo.getCampo()));
+					System.out.format("\n[%s (%s) - %s] Inventario anidado de documento (%s) iniciando en campo interno ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), expediente.getNombre(), pCampo.getCampoDTO().getNombre(), operacion, campo.getCampoDTO().getNombre());
+					if(campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0 
+							&& campo.getLlaveTabla()!=null){
+						campo.setCampoDTO(caracteristicaService.cargarComplementos(campo.getCampoDTO(), token));
+						String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
+						if(multiple.isEmpty()){
+							campo.setExpedientes( new ArrayList<PedidoVentaDTO>() );
+							//campo.getExpedientes().add(pedidoService.consultaXId(campo.getValorOpcion()));
+							//Aqui tengo un problema de inventarios y creo que la solucion es manejar las relaciones de la propiedad pero en bbx eso me va a generar un caos
+							//Por eso esta pendiente
+						}else {
+							campo.setExpedientes( pedidoService.listarExpedientesPertenecenCampo(campo.getLlaveTabla(), token, null));														
+						}
 					}
-					//campo.getCampoDTO().setRol(expediente.getRol());
 					acumulado = inventarioDirecto(campo, operacion, recursoInventario, documentoInicial, token);
 					if(acumulado!=null){
 						for(DeduccionProductoDTO iAcumulado : acumulado){
@@ -259,12 +267,14 @@ public class AuxiliarProcesoBodega {
 		if(factor ==null) throw new ServerException("Revise la operacion de la bodega, no se identifica el factor");
 		
 		List<DeduccionProductoDTO> result = null;
+		System.out.format("\n[%s - %s] Gestionando inventario operacion", pCampo.getCampoDTO().getPlantillaNombre(),  pCampo.getCampoDTO().getNombre());
 		
 		if(pCampo.getDetalles()!=null && !pCampo.getDetalles().isEmpty()){
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
 				//Si principal viene nulo viene de tipo proceso
 				if(pCampo.getPrincipal()==null ||  detalle.getLlaveTabla()==null || detalle.getEstado()==null || detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){
 					boolean deducirComposicion = false;//En transformacion se hacen las 2 operaciones
+					System.out.format("\n[%s - %s] Revisando producto %s", pCampo.getCampoDTO().getPlantillaNombre(),  pCampo.getCampoDTO().getNombre(), detalle.getNombre());
 					if(!operacion.contains("C")){
 						ProductoInventarioFilterDTO productoFilter = new ProductoInventarioFilterDTO();
 						productoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);

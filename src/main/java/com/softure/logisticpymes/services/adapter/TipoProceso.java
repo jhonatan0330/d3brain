@@ -252,7 +252,7 @@ public class TipoProceso {
 					cerrarCaja(pCampo, token);
 					return pCampo;
 				}else{
-					System.out.format("\n\n[%s (%s) - %s] Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 					administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
@@ -269,7 +269,7 @@ public class TipoProceso {
 					generarPagos(pCampo, token);
 					if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null)
 						tipoBodega.aplicarMovimientosBodega(pCampo, token);
-					System.out.format("\n[%s (%s) - %s] Termina.... Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					// throw new ServerException("Probando");
 				}
 			}else{
@@ -424,7 +424,7 @@ public class TipoProceso {
 						activos.add(procesoDTO);
 					}
 				}
-				System.out.format("\n[%s (%s) - %s] FIN Procesar expediente %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
+				System.out.format("\n[%s (%s) - %s] FIN... Procesar expediente %s ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
 			}
 		}
 		return pCampo;
