@@ -238,7 +238,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			ProcesoTransicionDTO dto, 
 			String expediente, 
 			PedidoVentaDTO documento, 
-			BigDecimal valorModificador,
 			String token) throws ServerException {
 		ProcesoTransicionDTO respuesta = dto;
 		PedidoVentaDTO anterior = pedidoService.consultaXId(expediente);
@@ -246,12 +245,14 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(filtroEstado==null)throw new ServerException("No se encuentra estado de partida, en caso que no se modifiquen coloque el mismo estado.\n" + anterior.getNombre() +  " - " + anterior.getDescripcion());
 		if(filtroEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)!=0) throw new ServerException("No se puede devolver a una decision");
 		String ubicacion = obtenerUbicacion(documento, dto.getLlaveTabla(), token);
+		BigDecimal valorModificador = null;
 		if(dto.getAfectaSaldo()!=null) {
 			if(dto.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO)==0) {
 				dto.setAfectaSaldo(ProcesoTransicionDTO.SUMANDO);
 			}else {
 				dto.setAfectaSaldo(ProcesoTransicionDTO.RESTANDO);
 			}
+			valorModificador = procesoTransicionMapper.valorEntransicionParaRevertir(documento.getLlaveTabla(), expediente);
 		}
 		PedidoVentaDineroDTO nuevoValor = afectarSaldos(expediente, token, dto, valorModificador, null);//aqui es nulo porque ya existe
 		//Creo la relacion del documento Gestor
@@ -495,10 +496,10 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 		
 		if(transicion.getAfectaSaldo()==null) return dinero;
-		if(saldoDocumento==null) throw new ServerException("Revise porque el documento no tiene saldo");
 		if(dinero==null) {
 			throw new ServerException("Revise el documento " + pExpediente.getNombre() + " porque no tiene ningun registro de valores de saldos");
 		}
+		if(saldoDocumento==null) throw new ServerException("Revise porque el documento no tiene saldo");
 		
 		BigDecimal factor = BigDecimal.ONE;
 		if(transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO)==0) factor = factor.negate();

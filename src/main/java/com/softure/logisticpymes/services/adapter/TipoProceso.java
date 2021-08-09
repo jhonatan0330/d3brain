@@ -415,10 +415,10 @@ public class TipoProceso {
 					if(procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){
 						//Si tenia permisos, inactivo esos permisos
 						if(maquinaEstados!=null){
-							BigDecimal saldoDoc = null;
-							if(updaterDTO.getDinero()!=null) saldoDoc = updaterDTO.getDinero().getSaldo();
+							//BigDecimal saldoDoc = null;
+							//if(updaterDTO.getDinero()!=null) saldoDoc = updaterDTO.getDinero().getSaldo();
 							List<String> caminosGestionar = getCaminos(pCampo);
-							revertirExpedienteDependiente(procesoDTO, updaterDTO, token, saldoDoc, caminosGestionar, true);
+							revertirExpedienteDependiente(procesoDTO, updaterDTO, token,  caminosGestionar, true);
 						}
 					}else{
 						activos.add(procesoDTO);
@@ -745,22 +745,23 @@ public class TipoProceso {
 		return caminosValidados;
 	}
 	
-	private BigDecimal revertirExpedienteDependiente(
+	private void revertirExpedienteDependiente(
 			PedidoVentaDTO procesoDTO, 
 			PedidoVentaDTO documento, 
 			String securityToken, 
-			BigDecimal saldoDocumento, 
 			List<String> caminosGestionables, 
 			boolean primerLlamado) throws ServerException{
 		//Consulto la relacion que genero el cambio de estado
-		if(procesoDTO==null || procesoDTO.getEstadoExpediente()==null) return saldoDocumento;
+		if(procesoDTO==null || procesoDTO.getEstadoExpediente()==null) return;
 		List<String> caminosValidados = validarCamino(caminosGestionables, procesoDTO.getPlantilla());
-		if(caminosValidados.size()==0) return saldoDocumento;
+		if(caminosValidados.size()==0) return;
 		DocumentoRelacionGestorFilterDTO filtroGestor = new DocumentoRelacionGestorFilterDTO();
 		filtroGestor.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filtroGestor.setEstadoFinal(procesoDTO.getEstadoExpediente());
+		filtroGestor.setDocumentoModificador(documento.getLlaveTabla());
 		filtroGestor.setDocumentoPrincipal(procesoDTO.getLlaveTabla());
 		List<DocumentoRelacionGestorDTO> gestores = relacionGestorService.listarConsulta(filtroGestor);
+		
 		if(gestores==null || gestores.isEmpty()) {
 			if(primerLlamado) {
 				StringBuilder error = new StringBuilder("El documento ");
@@ -771,8 +772,9 @@ public class TipoProceso {
 				throw new ServerException(error.toString());
 			}
 		}else {
-			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(), gestores.get(0).getEstadoInicial(), procesoDTO.getEstadoExpediente()); 
-			if(transicion==null) return saldoDocumento;//throw new ServerException("Existen documentos sin transicion para gestionar." + procesoDTO.getNombre());
+			DocumentoRelacionGestorDTO ultimoGestor = gestores.get(0); //El query trae desc, escojo el primero para que es el ultimo
+			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(), ultimoGestor.getEstadoInicial(), procesoDTO.getEstadoExpediente()); 
+			if(transicion==null) return;//throw new ServerException("Existen documentos sin transicion para gestionar." + procesoDTO.getNombre());
 			//Realizo validaciones de documento con estado
 			PedidoVentaDTO expediente = pedidoService.consultaXId(procesoDTO.getLlaveTabla());
 			if(expediente == null) throw new ServerException("No se identifico el expediente");
@@ -780,7 +782,7 @@ public class TipoProceso {
 			if(transicion.getEstadoLLegada().compareTo(procesoDTO.getEstadoExpediente())!=0) throw new ServerException("Revise e estado del proceso que no es acorde a la transcision");
 			if(expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente())!=0) 
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
-			expedienteTransicionService.gestionarTransicionReversa(transicion, expediente.getLlaveTabla(), documento, saldoDocumento, securityToken);
+			expedienteTransicionService.gestionarTransicionReversa(transicion, expediente.getLlaveTabla(), documento, securityToken);
 			pedidoService.gestionarRol(expediente, securityToken);
 			List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(expediente.getLlaveTabla());
 			for(PedidoVentaCaracteristicaDTO campo : gestionables){
@@ -797,18 +799,18 @@ public class TipoProceso {
 					expedientesAnidados.add( relacionExpediente );
 				}
 				if(expedientesAnidados!=null && !expedientesAnidados.isEmpty()){
-					BigDecimal saldoDoc = saldoDocumento;
+					//BigDecimal saldoDoc = saldoDocumento;
 					for(DocumentoRelacionExpedienteDTO iExpediente : expedientesAnidados){
 						PedidoVentaDTO expAnidado = pedidoService.consultaXId(iExpediente.getExpedienteDetalle());
-						saldoDoc = revertirExpedienteDependiente(expAnidado, documento, securityToken, saldoDoc, caminosValidados, false);
+						revertirExpedienteDependiente(expAnidado, documento, securityToken, caminosValidados, false);
 					}
-					if(saldoDoc!=null && (saldoDoc.compareTo(documento.getDinero().getSaldo())!=0 && saldoDoc.compareTo(BigDecimal.ZERO)<0)) 
-						throw new ServerException("Revise el proceso porque el saldo no puede ser negativo");//. (" + expediente.getNombre() + ")" + SoftureUtil.formatMoney(dinero.getValorTotal()) + " + (" + documento.getNombre() + ") " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(nuevo.getSaldo()));
+					//if(saldoDoc!=null && (saldoDoc.compareTo(documento.getDinero().getSaldo())!=0 && saldoDoc.compareTo(BigDecimal.ZERO)<0)) 
+					//	throw new ServerException("Revise el proceso porque el saldo no puede ser negativo");//. (" + expediente.getNombre() + ")" + SoftureUtil.formatMoney(dinero.getValorTotal()) + " + (" + documento.getNombre() + ") " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(nuevo.getSaldo()));
 				}
 			}		
 		}
 		
-		return saldoDocumento;
+		return;
 	}
 	
 	

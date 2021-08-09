@@ -14,6 +14,6 @@ public interface DocumentoRelacionExpedienteMapper extends IBasicMapper<Document
 	
 
 // BEGIN region aditionalMethods  
-	public List<DocumentoRelacionExpedienteDTO> listarHeredados(@Param("plantilla") String plantilla, @Param("campoMaestro") String campoMaestro, @Param("llaveOpcion") String llaveOpcion, @Param("plantillaTransicion") String plantillaTransicion);
+	List<DocumentoRelacionExpedienteDTO> listarHeredados(@Param("plantilla") String plantilla, @Param("campoMaestro") String campoMaestro, @Param("llaveOpcion") String llaveOpcion, @Param("plantillaTransicion") String plantillaTransicion);
 // END region aditionalMethods
 }

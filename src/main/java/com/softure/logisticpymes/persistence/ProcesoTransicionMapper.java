@@ -2,6 +2,7 @@ package com.softure.logisticpymes.persistence;
 
 
 // BEGIN region interImport  
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -17,5 +18,6 @@ public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionD
 	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
 	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
+	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento, @Param("expediente") String expediente);
 // END region aditionalMethods
 }

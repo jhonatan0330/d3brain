@@ -247,6 +247,16 @@
 	<select id="decision" resultType="java.lang.String">
 		select decision_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
 	</select>
+	
+	<select id="valorEntransicionParaRevertir" resultType="java.math.BigDecimal">
+		select mdex_valor from pedidoventa_pdvp 
+			inner join pedidoventacaracteristica_pvcp on (cpvc_documento = cpdv_llave)
+			inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cpvc_llave)
+			inner join documentotransaccion_trap on (ctra_llave = cdex_transaccionregistro)
+		where cpdv_llave = #{documento}
+			and cdex_expedientedetalle = #{expediente}
+			order by dtra_fecha  desc limit 1
+	</select>
 <!--// END region script-->
 
 </mapper>
