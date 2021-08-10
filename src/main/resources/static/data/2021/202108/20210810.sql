@@ -53,3 +53,5 @@ begin
 	end if;
 END;
 ';
+
+ALTER TABLE mensajeplantillacorreo_mplp ALTER COLUMN cmpl_texto TYPE varchar(120000) USING cmpl_texto::varchar;
