@@ -16,7 +16,7 @@ public interface PedidoVentaDineroMapper extends IBasicMapper<PedidoVentaDineroD
 
 // BEGIN region aditionalMethods  
 	PedidoVentaDineroDTO consultaPorDocumento(@Param("idCampo") String idCampo, @Param("historico") String historico);
-	List<PedidoVentaDineroDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos);
+	List<PedidoVentaDineroDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos, @Param("historicos") List<PedidoVentaDTO> historicos);
 	PedidoVentaDineroDTO insertarHistorico(PedidoVentaDineroDTO dto);
 	PedidoVentaDineroDTO inactivarHistorico(@Param("idCampo") String idCampo, @Param("historico") String historico);
 // END region aditionalMethods

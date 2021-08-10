@@ -2,11 +2,11 @@ COMMENT ON TABLE usuario_usrp IS '2021-08-10';
 
 CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying, _plantilla character varying, _historico integer) RETURNS TABLE(cpvc_llave character varying, cpvc_documento character varying, dpvc_valorfecha timestamp with time zone, mpvc_valornumero numeric, cpvc_valortext character varying, cpvc_valoropcion character varying, cpvc_estado character varying, cpvc_campo character varying, cpvc_valorauxiliar character varying, cpvc_transaccionregistro character varying, cpvc_transaccioninactivo character varying)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 declare 
 	_campo documentoplantillacaracteristica_dpcp;
 begin
-	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = 'A' and cdpc_codigo = _code;
+	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = ''A'' and cdpc_codigo = _code;
 	if found then
 		return query select
 				tb.cpvc_llave,
@@ -22,11 +22,12 @@ begin
 				tb.cpvc_transaccioninactivo
 			from campo4id(_documento, _campo.cdpc_llave, _historico) tb;
 	end if;
-END;$$;
+END;
+';
 
 CREATE OR REPLACE FUNCTION saldo4documento(_documento character varying, _historico integer) RETURNS TABLE(cpvd_llave character varying, cpvd_documento character varying, mpvd_valortotal numeric, mpvd_saldo numeric, cpvd_estado character varying, dpvd_fecha timestamp with time zone)
     LANGUAGE plpgsql
-    AS $$
+    AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -39,7 +40,7 @@ begin
 				t.mpvd_saldo, 
 				t.cpvd_estado, 
 				t.dpvd_fecha 
-			from pedidoventadinero_pvdp t where t.cpvd_documento = _documento and t.cpvd_estado = 'A';
+			from pedidoventadinero_pvdp t where t.cpvd_documento = _documento and t.cpvd_estado = ''A'';
 	else
 		return query select
 				z.cpvd_llave, 
@@ -48,6 +49,7 @@ begin
 				z.mpvd_saldo, 
 				z.cpvd_estado, 
 				z.dpvd_fecha 
-			from pedidoventadinero_pvdp z where z.cpvd_documento = _documento and z.cpvd_estado = 'A';
+			from pedidoventadinero_pvdp z where z.cpvd_documento = _documento and z.cpvd_estado = ''A'';
 	end if;
-END;$$;
+END;
+';

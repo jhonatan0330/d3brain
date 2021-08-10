@@ -225,6 +225,7 @@
 	</select>
 	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaCaracteristicaDTO">
+		<if test="documentos!=null">
 		select
 			cpvc_llave as llaveTabla
 			,cdpc_nombre as  campo
@@ -242,6 +243,27 @@
 		where cpvc_estado ='A' 
 			and cpvc_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>) 
 		order by ndpc_orden
+		</if>
+		<if test="historicos!=null">
+		<if test="documentos!=null">union</if>
+		select
+			cpvc_llave as llaveTabla
+			,cdpc_nombre as  campo
+			,cdpc_llave as  transaccionRegistro
+			,cpvc_documento as  documento
+			,cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,mpvc_valornumero as  valorNumero
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,cdpc_formato as estado
+		from z_pvc_pedidoventacaracteristica
+			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave and cdpc_estado = 'A') 
+			inner join propiedad_ppdp on (cppd_campo = cdpc_llave and cppd_propiedadvalor = 'PROP_104' and cppd_estado = 'A')
+		where cpvc_estado ='A' 
+			and cpvc_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>) 
+		order by ndpc_orden
+		</if>
 	</select>
 	
 	<select id="listarParaReporte" resultType="PedidoVentaCaracteristicaDTO">

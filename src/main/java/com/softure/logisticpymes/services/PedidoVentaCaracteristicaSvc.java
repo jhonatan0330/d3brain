@@ -174,7 +174,18 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	public List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
 		if(documentos==null || documentos.isEmpty()) return null;
-		return pedidoVentaCaracteristicaMapper.listar2DocumentoVisible(documentos);
+		List<PedidoVentaDTO> produccion = null;
+		List<PedidoVentaDTO> historicos = null;
+		for (PedidoVentaDTO iDocumento : documentos) {
+			if(iDocumento.getHistorico()==null) {
+				if(produccion==null) produccion = new ArrayList<PedidoVentaDTO>();
+				produccion.add(iDocumento);
+			}else {
+				if(historicos==null) historicos = new ArrayList<PedidoVentaDTO>();
+				historicos.add(iDocumento);
+			}
+		}
+		return pedidoVentaCaracteristicaMapper.listar2DocumentoVisible(produccion, historicos);
 	}
 	
 	// En los documentos lo importante es el valor opcion  que es el id que va a buscar 

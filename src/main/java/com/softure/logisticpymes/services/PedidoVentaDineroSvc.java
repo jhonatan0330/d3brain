@@ -1,7 +1,7 @@
 package com.softure.logisticpymes.services;
 
 import java.util.List;
-
+import java.util.ArrayList;
 // BEGIN region interImport
 import java.util.Date;
 
@@ -98,7 +98,18 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
 		if(documentos==null || documentos.isEmpty()) return null;
-		return pedidoVentaDineroMapper.listar2DocumentoVisible(documentos);
+		List<PedidoVentaDTO> produccion = null;
+		List<PedidoVentaDTO> historicos = null;
+		for (PedidoVentaDTO iDocumento : documentos) {
+			if(iDocumento.getHistorico()==null) {
+				if(produccion==null) produccion = new ArrayList<PedidoVentaDTO>();
+				produccion.add(iDocumento);
+			}else {
+				if(historicos==null) historicos = new ArrayList<PedidoVentaDTO>();
+				historicos.add(iDocumento);
+			}
+		}
+		return pedidoVentaDineroMapper.listar2DocumentoVisible(produccion, historicos);
 	}
 	
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)

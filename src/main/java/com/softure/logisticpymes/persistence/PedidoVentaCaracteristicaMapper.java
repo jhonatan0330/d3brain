@@ -20,7 +20,7 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	List<PedidoVentaCaracteristicaDTO> listar2Documento(@Param("documento")String documento, @Param("campo")String campo);
 	List<PedidoVentaCaracteristicaDTO> listar2DocumentoHistorico(@Param("documento")String documento, @Param("campo")String campo);
 	List<PedidoVentaCaracteristicaDTO> listarGestionables(@Param("documento")String documento);
-	List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos);
+	List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos, @Param("historicos") List<PedidoVentaDTO> historicos);
 	List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
 	List<PedidoVentaCaracteristicaDTO> listar2getApiCode(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
 	List<PedidoVentaCaracteristicaDTO> listarParaReporte(@Param("documento")String documento);

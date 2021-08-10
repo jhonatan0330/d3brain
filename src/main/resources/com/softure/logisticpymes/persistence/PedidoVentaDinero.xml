@@ -154,8 +154,29 @@
 	</select>
 	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaDineroDTO">
-		<include refid="selectPedidoVentaDineroFragment" />
+		<if test="documentos!=null">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from pedidoventadinero_pvdp
 		where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
+		</if>
+		<if test="historicos!=null">
+		<if test="documentos!=null">union</if>
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from z_pvd_pedidoventadinero
+			where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>)
+		</if>
 	</select>
 	
 	<select id="insertarHistorico" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
