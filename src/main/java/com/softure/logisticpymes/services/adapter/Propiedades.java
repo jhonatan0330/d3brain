@@ -428,7 +428,7 @@ public class Propiedades {
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
 			case ITERACION_SQL : {ruleProperty =  "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
 					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";break;}
-			case MENSAJE : {ruleProperty =  " Selecciona de las plantillas de mensaje un mensaje a enviar a el creador, usuario asignado y modificador.\n";break;}
+			case MENSAJE : {ruleProperty =  "Coloca el nombre de un template de mensaje de correo, este template va a ser enviado por correo.\n";break;}
 			case MENSAJE_DESTINATARIO : {ruleProperty =  "Coloca el usuario de la plataforma que va a recibir una copia del reporte.\n\n Adicionalmente en las relaciones de este campo puedes colocar una cadena de relaciones para identificar el campo de text que quieres que reciba el correo ej: Entrega de Guia (Tiene un campo guia -Relacion 1-(Dentro de la guia hay un campo cliente -Relacion 2-(Dentro del cliente hay un campo correo -Relacion 3-)))";break;}
 			case MENSAJE_DESTINATARIOS_SQL : {ruleProperty =  "Funcion de BD que trae usuarios o solo correos a los que se les debe enviar el mensaje"
 					+ "\n(documento): la funcion tiene una variable que el es id del documento."

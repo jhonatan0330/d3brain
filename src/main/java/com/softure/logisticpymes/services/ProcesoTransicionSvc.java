@@ -17,6 +17,7 @@ import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
+import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.services.adapter.Propiedades;
@@ -53,6 +54,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired private WebServiceEjecucionSvc apiService;
+	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	// END region servicesProcesoTransicion
 
 	@Override
@@ -210,7 +212,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(!api.isEmpty()) apiService.ejecutar(api, expedienteDTO, documentoDTO, token);
 		if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)==0) {
 			respuesta= decision(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
-			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token);
+			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
+			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, tokenSystem.getLlaveTabla());
 		}else {
 			if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)==0) {
 				ProcesoTransicionFilterDTO solucion = new ProcesoTransicionFilterDTO();
@@ -218,7 +221,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				solucion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				respuesta = super.consultaUnica(solucion);
 				if(respuesta==null) throw new ServerException(dto.getEstadoLlegadaNombre() + "\nNo se encuentra una transicion ligada a la iteracion ");
-								
 				respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token);//Por si siguen decisiones
 				mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);//Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato tiene ponerlo antes o despues  
 			}else {//Solo gestiono responsable y mensajes al finalizar la transicion

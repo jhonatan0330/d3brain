@@ -164,7 +164,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
 				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico());
-		//gestionarResponsable(dto, plantilla);
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
 		dto.setCaracteristicas(null);//Por error al serializar
 		return dto;
 		// END PedidoVenta_actualizar
