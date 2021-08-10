@@ -201,12 +201,16 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 		return resolver;
 	}
 
-	@Scheduled(fixedDelay = 180000)
+	@Scheduled(fixedDelayString = "${fixedDelayMail.in.milliseconds}")
 	public void sendMail() throws ServerException {
 		if(env.getProperty("cron.enabled").compareTo("true")==0) {
 			System.out.println("*******CORREOS****" + new Date().toString());
 			mensajeService.tareaCorreoElectronico();
 		}
+	}
+	
+	@Scheduled(fixedDelayString = "${fixedDelayTask.in.milliseconds}")
+	public void sendTemporizer() throws ServerException {
 		if(env.getProperty("cron.task").compareTo("true")==0) {
 			System.out.println("*******TAREAS****" + new Date().toString());
 			transicionservice.lanzarTransaccionesTemporizadas();

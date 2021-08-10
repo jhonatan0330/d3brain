@@ -140,9 +140,66 @@
 
 
 <!--// BEGIN region script-->
+
+	<select id="consultaPorDocumento" resultType="PedidoVentaDineroDTO">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+		where cpvd_estado ='A' and cpvd_documento = #{idCampo}
+	</select>
+	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaDineroDTO">
 		<include refid="selectPedidoVentaDineroFragment" />
 		where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
+	</select>
+	
+	<select id="insertarHistorico" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		insert into z_pvd_pedidoventadinero(
+			cpvd_llave
+		<if test="documento!=null">
+			,cpvd_documento
+		</if>
+		<if test="fecha!=null">
+			,dpvd_fecha
+		</if>
+		<if test="valorTotal!=null">
+			,mpvd_valortotal
+		</if>
+		<if test="saldo!=null">
+			,mpvd_saldo
+		</if>
+		<if test="estado!=null">
+			,cpvd_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="valorTotal!=null">
+			,#{valorTotal}
+		</if>
+		<if test="saldo!=null">
+			,#{saldo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+	
+	<select id="inactivarHistorico" resultType="PedidoVentaCaracteristicaDTO">
+		update <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+			set	cpvd_estado = 'I'
+		where cpvd_llave = #{idCampo}
 	</select>
 <!--// END region script-->
 

@@ -944,10 +944,10 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				//Si todo es igual lo dejo quieto
 				if(documento.getDinero().getValorTotal().compareTo(anterior.getValorTotal())==0 &&
 						documento.getDinero().getSaldo().compareTo(anterior.getSaldo())==0 ) return null;
-				anterior= dineroService.inactivar(anterior, token);
+				anterior= dineroService.inactivarConHistorial(anterior, documento.getHistorico());
 			}
 			documento.getDinero().setDocumento(documento.getLlaveTabla());
-			documento.setDinero( dineroService.guardar(documento.getDinero(), token) );
+			documento.setDinero( dineroService.guardarConHistorial(documento.getDinero(), documento.getHistorico()) );
 			return documento.getDinero();
 		}
 		return null;

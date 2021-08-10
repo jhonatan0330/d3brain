@@ -435,3 +435,40 @@ begin
 	end if;
 END;$function$
 ;
+
+CREATE OR REPLACE FUNCTION saldo4documento(_documento character varying, _historico int) 
+ returns table (
+	cpvd_llave varchar(32), 
+	cpvd_documento varchar(32), 
+	mpvd_valortotal numeric(24, 6), 
+	mpvd_saldo numeric(24, 6), 
+	cpvd_estado varchar(1), 
+	dpvd_fecha timestamptz
+	) 
+ LANGUAGE plpgsql
+AS $function$
+begin
+	if _historico = 0 then
+		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
+	end if;
+	if _historico is null then
+		return query select
+				t.cpvd_llave, 
+				t.cpvd_documento, 
+				t.mpvd_valortotal, 
+				t.mpvd_saldo, 
+				t.cpvd_estado, 
+				t.dpvd_fecha 
+			from pedidoventadinero_pvdp t where t.cpvd_documento = _documento and t.cpvd_estado = 'A';
+	else
+		return query select
+				z.cpvd_llave, 
+				z.cpvd_documento, 
+				z.mpvd_valortotal, 
+				z.mpvd_saldo, 
+				z.cpvd_estado, 
+				z.dpvd_fecha 
+			from pedidoventadinero_pvdp z where z.cpvd_documento = _documento and z.cpvd_estado = 'A';
+	end if;
+END;$function$
+;

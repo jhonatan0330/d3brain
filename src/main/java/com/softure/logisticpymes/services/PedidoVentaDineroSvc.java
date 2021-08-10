@@ -5,8 +5,6 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
-import com.softure.java.cons.ConstantesGenerales;
-
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 // END region interImport
 
@@ -63,7 +61,7 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDineroDTO inactivar(PedidoVentaDineroDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaDinero_inactivar
-		return super.inactivar(dto, token);
+		throw new ServerException("Metodo inactivo usar inactivar ConHistorial");
 		// END PedidoVentaDinero_inactivar
 	}
 	
@@ -88,23 +86,40 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDineroDTO guardar(PedidoVentaDineroDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaDinero_guardar
-		dto.setFecha(new Date());
-		return super.guardar(dto, token);
+		throw new ServerException("Metodo inactivo usar guardar con historial");
 		// END PedidoVentaDinero_guardar
 	}
 
 // BEGIN region aditionalMethods
 	public PedidoVentaDineroDTO consultaPorDocumento(String documento, Integer historico) throws ServerException {
-		PedidoVentaDineroFilterDTO filtro = new PedidoVentaDineroFilterDTO();
-		filtro.setDocumento(documento);
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		return super.consultaUnica(filtro);
+		return pedidoVentaDineroMapper.consultaPorDocumento(documento, (historico==null)?null:"Historico");
 	}
 	
 	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
 		if(documentos==null || documentos.isEmpty()) return null;
 		return pedidoVentaDineroMapper.listar2DocumentoVisible(documentos);
+	}
+	
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public PedidoVentaDineroDTO guardarConHistorial(PedidoVentaDineroDTO dto, Integer historico) throws ServerException {
+		dto.setFecha(new Date());
+		if (historico ==null ) {
+			return save(dto);
+		} else {
+			dto.setLlaveTabla(generarLlave());
+			try {
+				pedidoVentaDineroMapper.insertarHistorico(dto);
+			}catch (Exception e) {
+				throw new ServerException(e.getCause().getMessage());
+			}
+			return dto;
+		}
+	}
+	
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public PedidoVentaDineroDTO inactivarConHistorial(PedidoVentaDineroDTO dto, Integer historico) throws ServerException {
+		return pedidoVentaDineroMapper.inactivarHistorico(dto.getLlaveTabla(), (historico==null)?null:"Historico");
 	}
 // END region aditionalMethods
 

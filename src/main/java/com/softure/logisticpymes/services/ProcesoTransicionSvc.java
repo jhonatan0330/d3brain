@@ -521,7 +521,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			dineroService.update(dinero);// Se acaba de crear siempre va a ser tabla productiva
 			return dinero;
 		}
-		dineroService.inactivar(dinero, securityToken);
+		dineroService.inactivarConHistorial(dinero, pExpediente.getHistorico());
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
 		System.out.format("\n" + transicion.getNombre() + " (" + pExpediente.getNombre()  + " : " +dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
@@ -537,7 +537,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(nuevo.getSaldo().compareTo(nuevo.getValorTotal())>0) {
 			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: " + pExpediente.getNombre()+ "\nSaldo: " + SoftureUtil.formatMoney(nuevo.getSaldo()) + "\nTotal: " + SoftureUtil.formatMoney(nuevo.getValorTotal()));
 		}
-		return dineroService.guardar(nuevo, securityToken);
+		return dineroService.guardarConHistorial(nuevo, pExpediente.getHistorico());
 	}
 	
 	public PedidoVentaDTO generarDocumentosTransicion(
