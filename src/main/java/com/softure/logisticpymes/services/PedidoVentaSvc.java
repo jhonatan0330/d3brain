@@ -377,6 +377,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			filtro.setNombre(dto.getNombre().toUpperCase());
 			filtro.setPlantilla(dto.getPlantilla());
 			filtro.setFuncionarioNombre(dto.getFuncionarioNombre());
+			filtro.setFuncionario(dto.getFuncionario()); //No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
 			filtro.setCaracteristicas(dto.getCaracteristicas());
 			//filtro.setDocumentoFiltro(dto.getDocumentoFiltro());
