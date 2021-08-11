@@ -344,7 +344,7 @@
 		select
 			ctpi_llave as  llaveTabla
 			,cdpr_documento as  documentoPrincipal
-			,null as  documentoModificador
+			,cpro_documento as  documentoModificador
 			,dtpi_fecha as fecha
 			,(select descripcion(cbod_documento) from bodega_bodp where cbod_llave = ctpi_bodega) as  estadoInicial
 			,null as  estadoFinal
@@ -354,17 +354,19 @@
 			,null as responsableImagen
 			,null as  modificadorNombre
 			,('[ Inician : ' || mtpi_cantidadinicial || '] Se mueve inventario de:  ' || mtpi_cantidad || '  => Terminan : ' || mtpi_cantidadfinal)  as  comentario
-			,null as plantilla
+			,cpdv_plantilla as plantilla
 			,null as plantillaNombre
 			,null as saldo
 			,null as total
 			,null as ubicacion
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
-			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctpi_producto) as nombre
+			,descripcion(cpro_documento) as nombre
 			,null as adjunto 
 		  from trazabilidadproductoinventario_tpip 
 			inner join deduccionproducto_dprp on (cdpr_llave = ctpi_deduccionproducto )
+			inner join producto_prop on (cpro_llave = ctpi_producto)
+			inner join pedidoventa_pdvp on (cpdv_llave = cpro_documento)
 			where cdpr_documento = #{dto.documentoPrincipal}
 	</if>
 	<if test="verApi!=null">

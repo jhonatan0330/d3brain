@@ -526,7 +526,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				cpTotal.setCampoDTO(baseTotal);
 				cpTotal.setCampo("***TOTAL");
 				field.getCaracteristicas().add(cpTotal);
-				field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PRODUCTO_CAMPO_TOTAL, baseCantidad.getLlaveTabla(), null));
+				field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PRODUCTO_CAMPO_TOTAL, baseTotal.getLlaveTabla(), null));
 				//	
 			}else {
 				for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getCaracteristicas()) {
