@@ -237,12 +237,12 @@
 			,mpvc_valornumero as  valorNumero
 			,cpvc_valorauxiliar as  valorAuxiliar
 			,cdpc_formato as estado
+			,ndpc_orden as orden
 		from pedidoventacaracteristica_pvcp a
 			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave and cdpc_estado = 'A') 
 			inner join propiedad_ppdp on (cppd_campo = cdpc_llave and cppd_propiedadvalor = 'PROP_104' and cppd_estado = 'A')
 		where cpvc_estado ='A' 
 			and cpvc_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>) 
-		order by ndpc_orden
 		</if>
 		<if test="historicos!=null">
 		<if test="documentos!=null">union</if>
@@ -257,13 +257,14 @@
 			,mpvc_valornumero as  valorNumero
 			,cpvc_valorauxiliar as  valorAuxiliar
 			,cdpc_formato as estado
+			,ndpc_orden as orden
 		from z_pvc_pedidoventacaracteristica
 			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave and cdpc_estado = 'A') 
 			inner join propiedad_ppdp on (cppd_campo = cdpc_llave and cppd_propiedadvalor = 'PROP_104' and cppd_estado = 'A')
 		where cpvc_estado ='A' 
-			and cpvc_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>) 
-		order by ndpc_orden
+			and cpvc_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>)
 		</if>
+		order by orden
 	</select>
 	
 	<select id="listarParaReporte" resultType="PedidoVentaCaracteristicaDTO">
