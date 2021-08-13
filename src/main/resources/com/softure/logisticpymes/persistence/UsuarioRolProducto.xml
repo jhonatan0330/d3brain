@@ -12,6 +12,7 @@
 			,curp_producto as  producto
 			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = curp_producto) as  productoNombre
 			,curp_nombre as  nombre
+			,curp_modificador as  modificador
 			,nurp_cantidadpromocion as  cantidadPromocion
 			,nurp_cantidadpromocionbase as  cantidadPromocionBase
 			,curp_estado as estado
@@ -34,6 +35,9 @@
 			</if>
 			<if test="nombre!=null">
 				and curp_nombre = #{nombre}
+			</if>
+			<if test="modificador!=null">
+				and curp_modificador = #{modificador}
 			</if>
 	</sql>
 
@@ -82,6 +86,9 @@
 		<if test="nombre!=null">
 			,curp_nombre
 		</if>
+		<if test="modificador!=null">
+			,curp_modificador
+		</if>
 		<if test="cantidadPromocion!=null">
 			,nurp_cantidadpromocion
 		</if>
@@ -102,6 +109,9 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
+		<if test="modificador!=null">
+			,#{modificador}
+		</if>
 		<if test="cantidadPromocion!=null">
 			,#{cantidadPromocion}
 		</if>
@@ -120,6 +130,7 @@
 				curp_documento = #{documento},
 				curp_producto = #{producto},
 				curp_nombre = #{nombre},
+				curp_modificador = #{modificador},
 				nurp_cantidadpromocion = #{cantidadPromocion},
 				nurp_cantidadpromocionbase = #{cantidadPromocionBase},
 				curp_estado =#{estado}
@@ -132,6 +143,7 @@
 			,curp_documento as  documento
 			,curp_producto as  producto
 			,curp_nombre as  nombre
+			,curp_modificador as  modificador
 			,nurp_cantidadpromocion as  cantidadPromocion
 			,nurp_cantidadpromocionbase as  cantidadPromocionBase
 			,curp_estado as estado

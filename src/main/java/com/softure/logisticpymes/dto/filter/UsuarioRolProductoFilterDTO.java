@@ -13,6 +13,7 @@ public class UsuarioRolProductoFilterDTO extends BasicFilterDTO
 	private String producto;
 	private String productoNombre;
 	private String nombre;
+	private String modificador;
 	private Integer cantidadPromocion;
 	private Integer cantidadPromocionBase;
 
@@ -59,6 +60,15 @@ public class UsuarioRolProductoFilterDTO extends BasicFilterDTO
 	
 	public String getNombre() {
 		return nombre;
+	}
+	
+	
+	public void setModificador(String modificador) {
+		this.modificador = modificador;
+	}
+	
+	public String getModificador() {
+		return modificador;
 	}
 	
 	

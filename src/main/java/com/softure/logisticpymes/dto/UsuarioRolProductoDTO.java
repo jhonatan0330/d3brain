@@ -16,6 +16,7 @@ public class UsuarioRolProductoDTO extends BasicDTO
 	private String producto;
 	private String productoNombre;
 	private String nombre;
+	private String modificador;
 	private Integer cantidadPromocion;
 	private Integer cantidadPromocionBase;
 
@@ -53,6 +54,13 @@ public class UsuarioRolProductoDTO extends BasicDTO
 	
 	public String getNombre() {
 		return nombre;
+	}
+	public void setModificador(String modificador) {
+		this.modificador = modificador;
+	}
+	
+	public String getModificador() {
+		return modificador;
 	}
 	public void setCantidadPromocion(Integer cantidadPromocion) {
 		this.cantidadPromocion = cantidadPromocion;

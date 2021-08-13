@@ -43,7 +43,7 @@ CREATE TABLE procesoestado_pesp(
 CREATE TABLE procesotransicionautomatica_ptap(
         cpta_llave character varying(32) NOT NULL,
         dpta_fecha timestamp with time zone NOT NULL,
-        cpta_transicion character varying(32) NOT NULL,
+        cpta_transicion character varying(32),
         cpta_propiedad character varying(32) NOT NULL,
         dpta_ejecucion timestamp with time zone,
         cpta_mensaje character varying(4000) NOT NULL,
@@ -615,7 +615,7 @@ CREATE TABLE mensajeplantillacorreo_mplp(
         cmpl_llave character varying(32) NOT NULL,
         cmpl_nombre character varying(100) NOT NULL,
         cmpl_titulo character varying(100) NOT NULL,
-        cmpl_texto character varying(4000) NOT NULL,
+        cmpl_texto character varying(120000) NOT NULL,
         cmpl_servidor character varying(32) NOT NULL,
         cmpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_mensajeplantillacorreo_mplp PRIMARY KEY (cmpl_llave)
@@ -712,6 +712,7 @@ CREATE TABLE usuariorolproducto_urpp(
         curp_documento character varying(32) NOT NULL,
         curp_producto character varying(32) NOT NULL,
         curp_nombre character varying(50),
+        curp_modificador character varying(32),
         nurp_cantidadpromocion int NOT NULL DEFAULT 0,
         nurp_cantidadpromocionbase int NOT NULL DEFAULT 0,
         curp_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -835,9 +836,9 @@ CREATE TABLE usuariosesion_ussp(
  
 CREATE TABLE cargaarchivo_carp(
         ccar_llave character varying(32) NOT NULL,
-        ccar_servidor character varying(32) NOT NULL,
+        ccar_servidor character varying(32),
         ncar_size int NOT NULL DEFAULT 0,
-        ccar_url character varying(4000) NOT NULL,
+        ccar_url character varying(4000),
         dcar_fechainicio timestamp with time zone NOT NULL,
         dcar_fechafin timestamp with time zone NOT NULL,
         ccar_error character varying(4000),
@@ -1047,4 +1048,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.07.19.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.08.12.00' from pg_class where relname = 'usuariosesion_ussp';
