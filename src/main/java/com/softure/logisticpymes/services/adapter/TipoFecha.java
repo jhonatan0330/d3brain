@@ -144,7 +144,7 @@ public class TipoFecha {
 				campoService.inactivar(bd, token);
 				return pCampo;
 			}else{
-				if(pCampo.getValorFecha().compareTo(bd.getValorFecha())==0 && pCampo.getValorNumero().compareTo(bd.getValorNumero())==0){
+				if(pCampo.getValorFecha().compareTo(bd.getValorFecha())==0 && (pCampo.getValorNumero()==null || pCampo.getValorNumero().compareTo(bd.getValorNumero())==0)){
 					return pCampo;
 				}else{
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
