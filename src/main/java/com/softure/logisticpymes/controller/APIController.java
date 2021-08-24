@@ -76,24 +76,22 @@ public class APIController {
 		return result;
 	}
 	
-	/*@RequestMapping(value="/eliminarDocumento", method=RequestMethod.POST)
-	public PedidoVentaDTO eliminarDocumento(@RequestBody PedidoVentaDTO documento)   throws ServerException  {
-		return pedidoVentaService.inactivar(documento);
-	}*/
-	
 	@RequestMapping(value="/consultarUsuario", method=RequestMethod.POST)
-	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto)  throws ServerException  {
+	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
+		dto.setSecurityToken(token);
 		return usuarioService.consultaUnica(dto);	
 	}
 		
 	@RequestMapping(value="/consultarDatosBase", method=RequestMethod.POST)
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto)  throws ServerException  {
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
+		dto.setSecurityToken(token);
 		return adaptador.consultarDatosBase(dto);
 	}
 	
 	
 	@RequestMapping(value="/listarDocumentos", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro) throws ServerException {
+	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException {
+		documentoFiltro.setSecurityToken(token);
 		return pedidoVentaService.listarAvanzado(documentoFiltro);
 	}
 	
@@ -128,17 +126,17 @@ public class APIController {
     }
 	
 	@RequestMapping(value="/usuariosXRol", method=RequestMethod.POST)
-	public List<UsuarioDTO> usuariosXRol(@RequestBody PedidoVentaFilterDTO document)  throws ServerException  {
+	public List<UsuarioDTO> usuariosXRol(@RequestBody PedidoVentaFilterDTO document, @RequestHeader("Authorization") String token)  throws ServerException  {
 		if(document==null) throw new ServerException("Porfavor envie el objeto documento");
 		if(document.getLlaveTabla()==null) throw new ServerException("Porfavor envie la llave del documento");
 		PedidoVentaDTO documento = pedidoVentaService.consultaXId(document.getLlaveTabla());
 		if(documento==null) throw new ServerException("No se encuentra documento con esa llave");
 		if(documento.getEstadoExpediente()==null) throw new ServerException("El documento no tiene estado");
-		return usuarioService.getUsersState(documento.getEstadoExpediente(), document.getSecurityToken());
+		return usuarioService.getUsersState(documento.getEstadoExpediente(), token);
 	}
 	
 	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
-	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion,@RequestHeader("Authorization") String token)  throws ServerException  {
+	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return actividadService.guardar(asignacion, token);	
 	}
 	

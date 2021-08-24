@@ -36,6 +36,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.services.MensajeSvc;
@@ -50,7 +52,7 @@ import com.softure.logisticpymes.servlet.UploaderServlet;
 @EnableTransactionManagement
 @EnableScheduling
 @MapperScan(basePackages = "com.softure.logisticpymes.persistence")
-public class Sw42WebApplication  extends SpringBootServletInitializer {
+public class Sw42WebApplication  extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	@Autowired private Environment env;
 	@Autowired private MensajeSvc mensajeService;
@@ -250,4 +252,10 @@ public class Sw42WebApplication  extends SpringBootServletInitializer {
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}
+	
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+        System.out.println("*******CORS****" + new Date().toString());
+    }
 }
