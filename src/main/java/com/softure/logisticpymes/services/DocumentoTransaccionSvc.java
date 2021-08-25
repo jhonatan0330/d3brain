@@ -90,11 +90,11 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	}
 
 // BEGIN region aditionalMethods
-	public String crear(String token) throws ServerException {
+	public DocumentoTransaccionDTO crear(String token) throws ServerException {
 		DocumentoTransaccionDTO nuevo = new DocumentoTransaccionDTO();
 		nuevo.setUsuario(sesionSvc.actualizarSesion(token));
 		nuevo.setFecha(new Date());
-		return save(nuevo).getLlaveTabla();
+		return save(nuevo);
 	}
 // END region aditionalMethods
 

@@ -14,6 +14,7 @@ public class UsuarioOrganizacionDTO extends BasicDTO
 	private String usuario;
 	private String organizacion;
 	private String tokenServer;
+	private String usuarioNombre;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -35,6 +36,13 @@ public class UsuarioOrganizacionDTO extends BasicDTO
 	
 	public String getTokenServer() {
 		return tokenServer;
+	}
+	public void setUsuarioNombre(String usuarioNombre) {
+		this.usuarioNombre = usuarioNombre;
+	}
+	
+	public String getUsuarioNombre() {
+		return usuarioNombre;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

@@ -15,6 +15,10 @@ public class DocumentoTransaccionFilterDTO extends BasicFilterDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaMax;
 	private String usuario;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaFinMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaFinMax;
 
 	
 	public void setFechaMin(Date fechaMin) {
@@ -40,6 +44,23 @@ public class DocumentoTransaccionFilterDTO extends BasicFilterDTO
 	
 	public String getUsuario() {
 		return usuario;
+	}
+	
+	
+	public void setFechaFinMin(Date fechaFinMin) {
+		this.fechaFinMin = fechaFinMin;
+	}
+	
+	public Date getFechaFinMin() {
+		return fechaFinMin;
+	}
+	
+	public void setFechaFinMax(Date fechaFinMax) {
+		this.fechaFinMax = fechaFinMax;
+	}
+	
+	public Date getFechaFinMax() {
+		return fechaFinMax;
 	}
 	
 

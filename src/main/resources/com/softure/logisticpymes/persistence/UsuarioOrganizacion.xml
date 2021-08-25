@@ -10,6 +10,7 @@
 			,cuor_usuario as  usuario
 			,cuor_organizacion as  organizacion
 			,cuor_tokenserver as  tokenServer
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cuor_usuario) as  usuarioNombre
 			,cuor_estado as estado
 		from usuarioorganizacion_uorp a
 	</sql>

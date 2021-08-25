@@ -9,6 +9,7 @@
 			ctra_llave as  llaveTabla
 			,dtra_fecha as  fecha
 			,ctra_usuario as  usuario
+			,dtra_fechafin as  fechaFin
 			,ctra_estado as estado
 		from documentotransaccion_trap a
 	</sql>
@@ -29,6 +30,12 @@
 			</if>
 			<if test="usuario!=null">
 				and ctra_usuario = #{usuario}
+			</if>
+			<if test="fechaFinMin!=null">
+				and dtra_fechafin >= #{fechaFinMin}
+			</if>
+			<if test="fechaFinMax!=null">
+				and dtra_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
 			</if>
 	</sql>
 
@@ -73,6 +80,9 @@
 		<if test="usuario!=null">
 			,ctra_usuario
 		</if>
+		<if test="fechaFin!=null">
+			,dtra_fechafin
+		</if>
 		<if test="estado!=null">
 			,ctra_estado
 		</if>
@@ -83,6 +93,9 @@
 		</if>
 		<if test="usuario!=null">
 			,#{usuario}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -95,6 +108,7 @@
 			set
 				dtra_fecha = #{fecha},
 				ctra_usuario = #{usuario},
+				dtra_fechafin = #{fechaFin},
 				ctra_estado =#{estado}
 		<include refid="whereDocumentoTransaccionPrimaryKeyFragment" />
 	</select>
@@ -104,6 +118,7 @@
 			ctra_llave as  llaveTabla
 			,dtra_fecha as  fecha
 			,ctra_usuario as  usuario
+			,dtra_fechafin as  fechaFin
 			,ctra_estado as estado
 		from documentotransaccion_trap a
 	</sql>

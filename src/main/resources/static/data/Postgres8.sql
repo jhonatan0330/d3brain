@@ -25,6 +25,7 @@ CREATE TABLE documentotransaccion_trap(
         ctra_llave character varying(32) NOT NULL,
         dtra_fecha timestamp with time zone NOT NULL,
         ctra_usuario character varying(32) NOT NULL,
+        dtra_fechafin timestamp with time zone,
         ctra_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentotransaccion_trap PRIMARY KEY (ctra_llave)
     );
@@ -72,6 +73,7 @@ CREATE TABLE documentorelaciongestor_drgp(
         cdrg_usuario character varying(32) NOT NULL,
         cdrg_ubicacion character varying(32),
         cdrg_valores character varying(32),
+        cdrg_transaccion character varying(1),
         ddrg_cierre timestamp with time zone,
         cdrg_nombre character varying(100) NOT NULL,
         cdrg_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -577,7 +579,7 @@ CREATE TABLE webserviceejecucion_wsep(
         dwse_fecha timestamp with time zone NOT NULL,
         cwse_documento character varying(32) NOT NULL,
         cwse_entrada character varying(4000) NOT NULL,
-        cwse_salida character varying(4000) NOT NULL,
+        cwse_salida character varying(4000),
         cwse_error character varying(4000),
         cwse_usuario character varying(32) NOT NULL,
         cwse_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -1048,4 +1050,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.08.12.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.08.25.00' from pg_class where relname = 'usuariosesion_ussp';

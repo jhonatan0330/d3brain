@@ -64,7 +64,7 @@ public class APIController {
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(documento.getLlaveTabla()==null){
-			documento = pedidoVentaService.guardar(documento, token);
+			documento = pedidoVentaService.guardarAPI(documento, token);
 		}else{
 			documento = pedidoVentaService.actualizar(documento, token);
 		}

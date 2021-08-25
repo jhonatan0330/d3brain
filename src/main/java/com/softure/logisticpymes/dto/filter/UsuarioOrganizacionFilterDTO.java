@@ -11,6 +11,7 @@ public class UsuarioOrganizacionFilterDTO extends BasicFilterDTO
 	private String usuario;
 	private String organizacion;
 	private String tokenServer;
+	private String usuarioNombre;
 
 	
 	public void setUsuario(String usuario) {
@@ -37,6 +38,15 @@ public class UsuarioOrganizacionFilterDTO extends BasicFilterDTO
 	
 	public String getTokenServer() {
 		return tokenServer;
+	}
+	
+	
+	public void setUsuarioNombre(String usuarioNombre) {
+		this.usuarioNombre = usuarioNombre;
+	}
+	
+	public String getUsuarioNombre() {
+		return usuarioNombre;
 	}
 	
 

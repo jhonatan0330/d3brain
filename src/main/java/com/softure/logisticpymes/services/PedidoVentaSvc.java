@@ -15,6 +15,7 @@ import com.softure.logisticpymes.dto.ConsecutivoDTO;
 import com.softure.logisticpymes.dto.CuentaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.dto.DocumentoTransaccionDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDineroDTO;
 import com.softure.logisticpymes.dto.PlantillaConsecutivoDTO;
@@ -139,7 +140,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		String transaccion = dto.getTransaccion();
 		boolean crearTraza = false;//Cuando un formulario modifica otro no debo crear traza ya que esta la del proceso
 		if(transaccion ==null ||  bd.getTransaccion().compareTo(transaccion)==0) {//Si son diferetnes vienen de otro proceso
-			transaccion = transaccionSvc.crear(token);
+			transaccion = transaccionSvc.crear(token).getLlaveTabla();
 			crearTraza = true;
 		}
 		if(dto.getEstado()==null) {
@@ -458,7 +459,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		validarConsecutivo(dto, plantilla, token);
 		validarFecha(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validarCosto(dto, plantilla);
-		if(dto.getTransaccion()==null) dto.setTransaccion( transaccionSvc.crear(token) );
+		if(dto.getTransaccion()==null) dto.setTransaccion( transaccionSvc.crear(token).getLlaveTabla() );
 		dto.setFechaRegistro(new Date());
 		dto.setHistorico(null);
 		PedidoVentaDTO pedido = save(dto);
@@ -1202,7 +1203,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			throw new ServerException("Para inactivar el expediente se debe usar un documento de transicion de estado");
 		documentDTO = obtenerCamposCompletos(documentDTO, token);
 		String transaccion = documentDTO.getTransaccion();
-		if(transaccion == null) transaccion = transaccionSvc.crear(token);
+		if(transaccion == null) transaccion = transaccionSvc.crear(token).getLlaveTabla();
 		for(PedidoVentaCaracteristicaDTO iterador: documentDTO.getCaracteristicas()){
 			if(iterador.getCampoDTO()==null)iterador.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(iterador.getCampo()));
 			iterador.setTransaccionInactivo(transaccion);
@@ -1234,6 +1235,16 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	
 	public List<PedidoVentaDTO> listar2Activity(List<String> ids, String token)throws ServerException{
 		return listadoCompleto(pedidoVentaMapper.listar2Ids(ids), token, null);
+	}
+	
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public PedidoVentaDTO guardarAPI(PedidoVentaDTO dto, String token) throws ServerException {
+		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
+		dto.setTransaccion( tran.getLlaveTabla() );
+		PedidoVentaDTO result = guardar(dto, token);
+		tran.setFechaFin(new Date());
+		transaccionSvc.update(tran);
+		return result;
 	}
 // END region aditionalMethods
 

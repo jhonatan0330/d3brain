@@ -17,7 +17,7 @@
 			,cdrg_valores as  valores
 			,(select mpvd_saldo from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  saldo
 			,(select mpvd_valortotal from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  total
-			,(select cpdv_transaccion from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador) as  transaccion
+			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
 			,cdrg_estado as estado
@@ -58,6 +58,9 @@
 			</if>
 			<if test="valores!=null">
 				and cdrg_valores = #{valores}
+			</if>
+			<if test="transaccion!=null">
+				and cdrg_transaccion = #{transaccion}
 			</if>
 			<if test="cierreMin!=null">
 				and ddrg_cierre >= #{cierreMin}
@@ -130,6 +133,9 @@
 		<if test="valores!=null">
 			,cdrg_valores
 		</if>
+		<if test="transaccion!=null">
+			,cdrg_transaccion
+		</if>
 		<if test="cierre!=null">
 			,ddrg_cierre
 		</if>
@@ -165,6 +171,9 @@
 		<if test="valores!=null">
 			,#{valores}
 		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
 		<if test="cierre!=null">
 			,#{cierre}
 		</if>
@@ -188,6 +197,7 @@
 				cdrg_usuario = #{usuario},
 				cdrg_ubicacion = #{ubicacion},
 				cdrg_valores = #{valores},
+				cdrg_transaccion = #{transaccion},
 				ddrg_cierre = #{cierre},
 				cdrg_nombre = #{nombre},
 				cdrg_estado =#{estado}
@@ -205,6 +215,7 @@
 			,cdrg_usuario as  usuario
 			,cdrg_ubicacion as  ubicacion
 			,cdrg_valores as  valores
+			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
 			,cdrg_estado as estado

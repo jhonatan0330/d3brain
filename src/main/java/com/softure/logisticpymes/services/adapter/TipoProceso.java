@@ -388,7 +388,7 @@ public class TipoProceso {
 								System.out.format("\n[%s (%s) - %s] Dividir documento...... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 								dividirDocumento(procesoDTO, updaterDTO,  token, pCampo.getTransaccionRegistro());
 								//Lo coloco aqui porque se relacionaba todo
-								relacionarGestor(procesoDTO, updaterDTO, token);
+								relacionarGestor(procesoDTO, updaterDTO, "Dividir documento", token);
 							}
 						}
 					}else {
@@ -399,14 +399,14 @@ public class TipoProceso {
 							if(prop!=null && updaterDTO.getPlantilla().compareTo(prop.getValor())==0) {
 								procesoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 								pedidoService.inactivateDocumentWithProcess(procesoDTO, updaterDTO, token);
-								relacionarGestor(procesoDTO, updaterDTO, token);
+								relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
 							}
 						}
 					}
 					if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)==null){
 						if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL)!=null) {
 							System.out.format("\n[%s (%s) - %s] Incluir traza..... %s", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
-							relacionarGestor(procesoDTO, updaterDTO,  token);
+							relacionarGestor(procesoDTO, updaterDTO, null, token);
 						}
 					}
 					
@@ -495,7 +495,7 @@ public class TipoProceso {
 		documentoModificar.setCaracteristicas(caracteristicasModificadas);
 		PedidoVentaDTO pedidoActualizado = pedidoService.actualizar(documentoModificar, token);
 		procesoDTO.setNombre(pedidoActualizado.getNombre());
-		relacionarGestor(procesoDTO, pCampo.getPrincipal(), token);	
+		relacionarGestor(procesoDTO, pCampo.getPrincipal(), "Modificar Campos", token);	
 		
 	}
 
@@ -838,13 +838,16 @@ public class TipoProceso {
 	}
 
 	
-	private void relacionarGestor( PedidoVentaDTO anterior, PedidoVentaDTO nuevo, String securityToken)
+	private void relacionarGestor( PedidoVentaDTO anterior, PedidoVentaDTO nuevo, String motivo, String securityToken)
 			throws ServerException {
 		anterior = pedidoService.consultaXId(anterior.getLlaveTabla());
-		DocumentoPlantillaDTO plantillaNueva = plantillaService.consultaXId(nuevo.getPlantilla());
+		if(motivo == null) {
+			DocumentoPlantillaDTO plantillaNueva = plantillaService.consultaXId(nuevo.getPlantilla());
+			motivo = plantillaNueva.getNombre();
+		}
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		//Creo la relacion del documento Gestor
-		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), plantillaNueva.getNombre(), 
+		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo, 
 				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null, anterior.getHistorico());
 	}
 	
