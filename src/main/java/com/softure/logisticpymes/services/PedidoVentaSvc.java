@@ -164,7 +164,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		gestionarTipos(dto, plantilla, token);
 		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
-				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico());
+				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico(), transaccion);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
 		dto.setCaracteristicas(null);//Por error al serializar
 		return dto;
@@ -480,7 +480,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 		pedido.setCaracteristicas(gestionarCaracteristicas(dto, token));
 		if(dto.getDinero()!=null && pedido.getDinero() ==null ) pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
-		gestionarEstado(pedido, plantilla.getNombre(), token);
+		gestionarEstado(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		gestionarTipos(dto, plantilla, token);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
 		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
@@ -496,17 +496,19 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		return update(dto);
 	}
 	
-	private void gestionarEstado(PedidoVentaDTO pedido, String plantillaNombre, String token) throws ServerException{
+	private void gestionarEstado(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion) throws ServerException{
 		ProcesoTransicionDTO inicial = transicionService.consultarTransaccionInicial(pedido.getPlantilla());
 		if(inicial!=null) {
-			transicionService.gestionarTransicion(inicial, pedido.getLlaveTabla(), pedido, (pedido.getDinero()==null)?null:pedido.getDinero().getValorTotal(), pedido.getDinero(), null, token);
+			transicionService.gestionarTransicion(inicial, pedido.getLlaveTabla(), pedido, 
+					(pedido.getDinero()==null)?null:pedido.getDinero().getValorTotal(), 
+					pedido.getDinero(), null, token, transaccion);
 		}else {//Cuando son transacciones que no inician un proceso (aqui traza del documento en tipo proceso traza al proceso)
 			// cundo son solo documetnos sin transciones se envian mensajes
 			mensajeSvc.gestionarMensajes(pedido, null, usuarioService.consultaXId(pedido.getFuncionario()), pedido, token);
 			//Pase aqui la traza ya que debo integrar
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null, pedido.getEstadoExpediente(), 
 					(pedido.getDinero()==null)?null:pedido.getDinero().getLlaveTabla(), 
-					null, token,null, pedido.getHistorico());
+					null, token,null, pedido.getHistorico(), transaccion);
 		}
 		//return inicial;
 	}

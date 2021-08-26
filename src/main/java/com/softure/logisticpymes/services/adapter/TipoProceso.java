@@ -379,8 +379,8 @@ public class TipoProceso {
 							documentosGestionados.add(pCampo.getDocumento());
 							//BigDecimal saldoZero = pendiente cuadrar lo de un documento de pago con saldo mayor en abonos 
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
-									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados
-									,!modificacion);
+									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados,
+									pCampo.getTransaccionRegistro() ,!modificacion);
 							//if(saldoZero!=null && saldoZero.compareTo(BigDecimal.ZERO)!=0) throw new ServerException("No se puede generar un documento con saldo " + SoftureUtil.formatMoney(saldoZero));
 						}else{
 							//Esto algun día lo voy a unir con el modificar
@@ -491,12 +491,101 @@ public class TipoProceso {
 			}
 			caracteristicasModificadas.add(nuevaCaracteristica);
 		}
-		documentoModificar.setTransaccion(pCampo.getTransaccionRegistro());
-		documentoModificar.setCaracteristicas(caracteristicasModificadas);
-		PedidoVentaDTO pedidoActualizado = pedidoService.actualizar(documentoModificar, token);
-		procesoDTO.setNombre(pedidoActualizado.getNombre());
-		relacionarGestor(procesoDTO, pCampo.getPrincipal(), "Modificar Campos", token);	
-		
+		// VAlido que se realice alguna modificacion, para enviar a modificar
+		boolean conCambios= false;
+		for (PedidoVentaCaracteristicaDTO iCampoModificado : caracteristicasModificadas) {
+			if(iCampoModificado.getModificado()) {
+				PedidoVentaCaracteristicaDTO campoComparar = null;
+				for (PedidoVentaCaracteristicaDTO iCampoActual : caracteristicasActuales) {
+					if(iCampoActual.getCampo().compareTo(iCampoModificado.getCampo())==0) {
+						campoComparar = iCampoActual;
+						break;
+					}
+				}
+				if(campoComparar==null) {
+					conCambios = true;
+					break;
+				}
+				if(iCampoModificado.getValorText().compareTo(campoComparar.getValorText())!=0) {
+					conCambios = true;
+					break;
+				}
+				// se que una funcion reusaria el codigo peor no se como hacerlo apra 3 tipos de datos diferentes
+				if(iCampoModificado.getValorOpcion() == null) {
+					if(campoComparar.getValorOpcion()!=null) {
+						conCambios = true;
+						break;						
+					}
+				}else {
+					if ( campoComparar.getValorOpcion() == null) {
+						conCambios = true;
+						break;
+					}else {
+						if (iCampoModificado.getValorOpcion().compareTo(campoComparar.getValorOpcion())!=0) {
+							conCambios = true;
+							break;
+						}
+					}
+				}
+				if(iCampoModificado.getValorNumero() == null) {
+					if(campoComparar.getValorNumero()!=null) {
+						conCambios = true;
+						break;						
+					}
+				}else {
+					if ( campoComparar.getValorNumero() == null) {
+						conCambios = true;
+						break;
+					}else {
+						if (iCampoModificado.getValorNumero().compareTo(campoComparar.getValorNumero())!=0) {
+							conCambios = true;
+							break;
+						}
+					}
+				}
+				if(iCampoModificado.getValorFecha() == null) {
+					if(campoComparar.getValorFecha()!=null) {
+						conCambios = true;
+						break;						
+					}
+				}else {
+					if ( campoComparar.getValorFecha() == null) {
+						conCambios = true;
+						break;
+					}else {
+						if (iCampoModificado.getValorFecha().compareTo(campoComparar.getValorFecha())!=0) {
+							conCambios = true;
+							break;
+						}
+					}
+				}
+				if(iCampoModificado.getValorAuxiliar() == null) {
+					if(campoComparar.getValorAuxiliar()!=null) {
+						conCambios = true;
+						break;						
+					}
+				}else {
+					if ( campoComparar.getValorAuxiliar() == null) {
+						conCambios = true;
+						break;
+					}else {
+						if (iCampoModificado.getValorAuxiliar().compareTo(campoComparar.getValorAuxiliar())!=0) {
+							conCambios = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if(conCambios) {
+			documentoModificar.setTransaccion(pCampo.getTransaccionRegistro());
+			documentoModificar.setCaracteristicas(caracteristicasModificadas);
+			
+			PedidoVentaDTO pedidoActualizado = pedidoService.actualizar(documentoModificar, token);
+			procesoDTO.setNombre(pedidoActualizado.getNombre());
+			// Se genera doble traza, no encuentro un escenario que se necesite
+			relacionarGestor(procesoDTO, pCampo.getPrincipal(), "Modificar Campos", token);	
+		}
 	}
 
 	private List<String> getCaminos(PedidoVentaCaracteristicaDTO pCampo) {
@@ -641,7 +730,8 @@ public class TipoProceso {
 			BigDecimal saldoDocumento, 
 			List<String> plantillasRevisadas, 
 			List<String> caminosGestionables, 
-			List<String> documentosGestionados, 
+			List<String> documentosGestionados,
+			String transaccion,
 			boolean primerLlamado) throws ServerException{
 		if(caminosGestionables==null || caminosGestionables.isEmpty()) return;
 		if(caminosGestionables.size()==1 && caminosGestionables.get(0).isEmpty()) return;
@@ -659,7 +749,7 @@ public class TipoProceso {
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
 			//Manejo de los saldos de los procesos
 			if(transicion!=null) {
-				expedienteTransicionService.gestionarTransicion(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken);
+				expedienteTransicionService.gestionarTransicion(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken, transaccion);
 				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
 				documentosGestionados.add(expediente.getLlaveTabla());
 				pedidoService.gestionarRol(expediente, securityToken);
@@ -712,7 +802,7 @@ public class TipoProceso {
 							PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
 							System.out.format("\n[%s] INICIA Procesar documento anidado ( %s )", expediente.getNombre(), expAnidado.getNombre());
 							documentosGestionados.add(expedienteId);
-							gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, false);
+							gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, transaccion, false);
 							if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
 								saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
 								if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
@@ -847,8 +937,11 @@ public class TipoProceso {
 		}
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		//Creo la relacion del documento Gestor
-		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo, 
-				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null, anterior.getHistorico());
+		relacionGestorService.trazar(
+				anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo, 
+				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), 
+				null, null, securityToken, null, anterior.getHistorico(),
+				nuevo.getTransaccion());
 	}
 	
 

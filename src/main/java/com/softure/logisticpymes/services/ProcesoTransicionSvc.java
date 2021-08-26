@@ -168,7 +168,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			BigDecimal valorModificador, 
 			PedidoVentaDineroDTO dineroProcesado, 
 			DocumentoRelacionGestorDTO relacionAnterior,
-			String token) throws ServerException {
+			String token,
+			String transaccion) throws ServerException {
 
 		// Aqui lleno las propiedades del dto asi no falla api
 		propiedadService.validarFuncionConsultandoPropiedad(dto, PropiedadValorDefinidoDTO.TRANSICION, expediente, documentoDTO.getLlaveTabla(), getUserFlex(token));
@@ -200,7 +201,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 					modificadorId,
 					dto.getNombre(), dto.getEstadoPartida(), dto.getEstadoLLegada(), 
 					(afectado==null)?null:afectado.getLlaveTabla(), 
-					ubicacion, token, relacionAnterior, expedienteDTO.getHistorico());
+					ubicacion, token, relacionAnterior, expedienteDTO.getHistorico(),
+					transaccion);
 		}
 		//Se actualiza pedido
 		// si son los mismo creo que no necesito update ???????????
@@ -213,7 +215,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)==0) {
 			respuesta= decision(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, tokenSystem.getLlaveTabla());
+			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, tokenSystem.getLlaveTabla(), transaccion);
 		}else {
 			if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)==0) {
 				ProcesoTransicionFilterDTO solucion = new ProcesoTransicionFilterDTO();
@@ -221,7 +223,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				solucion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				respuesta = super.consultaUnica(solucion);
 				if(respuesta==null) throw new ServerException(dto.getEstadoLlegadaNombre() + "\nNo se encuentra una transicion ligada a la iteracion ");
-				respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token);//Por si siguen decisiones
+				respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token, transaccion);//Por si siguen decisiones
 				mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);//Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato tiene ponerlo antes o despues  
 			}else {//Solo gestiono responsable y mensajes al finalizar la transicion
 				UsuarioDTO responsable = gestionarResponsable(expediente,filtroEstado.getLlaveTabla(), filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
@@ -258,8 +260,11 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 		PedidoVentaDineroDTO nuevoValor = afectarSaldos(expediente, token, dto, valorModificador, null);//aqui es nulo porque ya existe
 		//Creo la relacion del documento Gestor
-		relacionGestorService.trazar(anterior.getLlaveTabla(), documento.getLlaveTabla(), dto.getNombre(), dto.getEstadoLLegada(), 
-				dto.getEstadoPartida(), (nuevoValor==null)?null:nuevoValor.getLlaveTabla(), ubicacion, token, null, anterior.getHistorico());
+		relacionGestorService.trazar(
+				anterior.getLlaveTabla(), documento.getLlaveTabla(), 
+				dto.getNombre(), dto.getEstadoLLegada(), dto.getEstadoPartida(), 
+				(nuevoValor==null)?null:nuevoValor.getLlaveTabla(), ubicacion, 
+				token, null, anterior.getHistorico(), documento.getTransaccion());
 		//Se actualiza pedido
 		System.out.println(anterior.getNombre() + " : " + filtroEstado.getNombre() + "(" +anterior.getEstadoNombre() + ")");
 		anterior.setEstadoExpediente(filtroEstado.getLlaveTabla());
@@ -427,7 +432,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				relacionGestorService.trazar(expediente.getLlaveTabla(), 
 						(acabdoCrear==null)?null:acabdoCrear.getLlaveTabla(),
 						transicionIteracion.getNombre(), expediente.getEstadoExpediente(), expediente.getEstadoExpediente(), 
-						null, null, token, relacionAnterior, expediente.getHistorico());
+						null, null, token, relacionAnterior, expediente.getHistorico(), null);
 			}
 		}
 	}

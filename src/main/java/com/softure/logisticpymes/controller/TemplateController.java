@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.DocumentoRelacionGestorDTO;
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
@@ -25,6 +27,7 @@ import com.softure.logisticpymes.dto.filter.RelacionInternaFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.DocumentoRelacionGestorSvc;
+import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 
@@ -38,6 +41,7 @@ public class TemplateController {
 	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
 	@Autowired private DocumentoRelacionGestorSvc gestionService;
 	@Autowired private RelacionInternaSvc relacionesService;
+	@Autowired private PedidoVentaCaracteristicaSvc fieldsService;
 	
 	
 	@GetMapping(value="/getTemplates")
@@ -64,6 +68,11 @@ public class TemplateController {
 	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
 		filterField.setSecurityToken(token);
 		return gestionService.listarExpedientesGestionadores(filterField);
+	}
+	
+	@RequestMapping(value="/getTraceFields/{documentId}/{transaction}", method=RequestMethod.GET)
+	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable String documentId, @PathVariable String transaction, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return fieldsService.listar2Gestor(documentId, transaction);
 	}
 	
 	@RequestMapping(value="/getPropertyRelations", method=RequestMethod.POST)

@@ -171,6 +171,10 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return pedidoVentaCaracteristicaMapper.listarParaMensaje(documento, plantilla, propiedad, modificador);
 	}
 	
+	public List<PedidoVentaCaracteristicaDTO> listar2Gestor(String documento, String transaccion)throws ServerException {
+		return pedidoVentaCaracteristicaMapper.listarParaGestor(documento, transaccion);
+	}
+	
 	public List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
 		if(documentos==null || documentos.isEmpty()) return null;

@@ -280,6 +280,15 @@
 		where cpvc_campo = cdpc_llave and cpvc_documento = #{documento} and cpvc_estado ='A'
 		order by ndpc_orden
 	</select>
+	<select id="listarParaGestor" resultType="PedidoVentaCaracteristicaDTO">
+		select
+			cdpc_nombre as  campo
+			,cpvc_valortext as  valorText
+		from pedidoventacaracteristica_pvcp
+			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave)
+		where cpvc_documento = #{documento} and cpvc_transaccionregistro = #{transaccion}
+		order by ndpc_orden
+	</select>
 	<select id="listarGestionables" resultType="PedidoVentaCaracteristicaDTO">
 		select
 			cpvc_llave as  llaveTabla

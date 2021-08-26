@@ -259,6 +259,7 @@
 			,descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla
 			,cdrg_nombre as  nombre
+			,cdrg_transaccion as  transaccion
 			,(select cpvc_valortext from campo4id ( cdrg_documentomodificador , (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_178' and cppd_estado = 'A' and cppd_tipo = 'L'
 					and cppd_campo = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador)), modifica.npdv_historico)) as adjunto 
 		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">z_drg_documentorelaciongestor</if>
@@ -288,6 +289,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,(select 'Asignado a ' || cusr_nombre from usuario_usrp where cusr_llave = cact_responsable) as nombre
+			,null as  transaccion
 			,null as adjunto 
 		  from actividad_actp
 		  where cact_documento = #{dto.documentoPrincipal}
@@ -313,6 +315,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,null as nombre
+			,null as  transaccion
 			,null as adjunto 
 		  from pedidoventaajuste_pvap
 		  where cpva_documento = #{dto.documentoPrincipal}
@@ -346,6 +349,7 @@
 	            	ELSE to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS') || cmsj_correoerror
 	            END
 	    	END as nombre
+	    	,null as  transaccion
 	    	,null as adjunto 
 		  from mensaje_msjp
 		  where cmsj_documento = #{dto.documentoPrincipal}
@@ -373,6 +377,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,descripcion(cpro_documento) as nombre
+			,null as  transaccion
 			,null as adjunto 
 		  from trazabilidadproductoinventario_tpip 
 			inner join deduccionproducto_dprp on (cdpr_llave = ctpi_deduccionproducto )
@@ -448,6 +453,7 @@
 			,cdrg_usuario as  usuario
 			,cdrg_ubicacion as  ubicacion
 			,cdrg_valores as  valores
+			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
 			,cdrg_estado as estado
@@ -491,6 +497,9 @@
 		<if test="valores!=null">
 			,cdrg_valores
 		</if>
+		<if test="transaccion!=null">
+			,cdrg_transaccion
+		</if>
 		<if test="cierre!=null">
 			,ddrg_cierre
 		</if>
@@ -526,6 +535,9 @@
 		<if test="valores!=null">
 			,#{valores}
 		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
 		<if test="cierre!=null">
 			,#{cierre}
 		</if>
@@ -549,6 +561,7 @@
 				cdrg_usuario = #{usuario},
 				cdrg_ubicacion = #{ubicacion},
 				cdrg_valores = #{valores},
+				cdrg_transaccion = #{transaccion},
 				ddrg_cierre = #{cierre},
 				cdrg_nombre = #{nombre},
 				cdrg_estado =#{estado}

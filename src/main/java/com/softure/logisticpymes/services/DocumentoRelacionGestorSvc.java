@@ -128,7 +128,8 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			String ubicacion, 
 			String token, 
 			DocumentoRelacionGestorDTO anterior,
-			Integer historico) throws ServerException {
+			Integer historico,
+			String transaccion) throws ServerException {
 		DocumentoRelacionGestorDTO actual;
 		if(anterior==null) {
 			actual = documentoRelacionGestorMapper.ultimoRegistro(principal, (historico==null)?null:"historico");
@@ -150,6 +151,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		gestor.setValores(valores);
 		gestor.setUbicacion(ubicacion);
 		gestor.setNombre(nombre);
+		gestor.setTransaccion(transaccion);
 		if(actual!=null) {
 			actual.setCierre(new Date());
 			if ( historico ==null) {
