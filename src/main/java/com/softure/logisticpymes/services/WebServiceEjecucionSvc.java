@@ -189,7 +189,18 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 					if(iProp.getTexto().startsWith("E_FECHA_")) {
 						template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}", SoftureUtil.formatDatePattern(new Date(),iProp.getValor()));
 					}else {
-						template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}", iProp.getValor());
+						switch (iProp.getTexto()) {
+						case "E_ID":
+							template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}", document.getLlaveTabla());
+							break;
+						case "E_CODE":
+							template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}", document.getNombre());
+							break;
+						default:
+							template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}", iProp.getValor());
+							break;
+						}
+						
 					}
 				}
 			}
