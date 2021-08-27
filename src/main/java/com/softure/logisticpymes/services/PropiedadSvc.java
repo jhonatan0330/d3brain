@@ -766,24 +766,26 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setValor(bd.getLlaveTabla());
 		dto.setTexto(bd.getNombre());
 	}
+	
+	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String tipo, String documento, String modificador, String usuario, String token) throws ServerException {
+		dto.setPropiedades(obtenerPropiedades(tipo, dto.getLlaveTabla(), null, usuario));
+		if(dto.getPropiedades()==null ) throw new ServerException("NO se logro consultar las propiedades del documento"); 
+		validarFuncionConsultandoPropiedad(dto, documento, modificador, usuario, token);
+	}
 
-	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String tipo, String documento, String modificador, String usuario) throws ServerException {
-		List<PropiedadDTO> validaciones = null;
-		if(dto.getPropiedades()==null) {
-			dto.setPropiedades(obtenerPropiedades(tipo, dto.getLlaveTabla(), null, usuario));
-		}
-		validaciones = Propiedades.obtenerVariosParametro(dto, Propiedades.FUNCION_SQL_VALIDAR);
+	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String documento, String modificador, String usuario, String token) throws ServerException {
+		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto, Propiedades.FUNCION_SQL_VALIDAR);
 		if(validaciones == null || validaciones.isEmpty()) return ;
 		for (PropiedadDTO pPropiedad : validaciones) {
 			System.out.format("\nValidando funcion SQL (%s)",pPropiedad.getMotivo() );
-			validarFuncion(pPropiedad, documento, modificador);
+			validarFuncion(pPropiedad, documento, modificador, token);
 		}
 	}
 	
-	public void validarFuncion(PropiedadDTO dto, String documento, String modificador) throws ServerException {
+	public void validarFuncion(PropiedadDTO dto, String documento, String modificador, String token) throws ServerException {
 		String respuestaValidacion = null;
 		try {
-			respuestaValidacion = propiedadMapper.funcionAsignacion(SoftureUtil.formatFunction(dto.getLlaveTabla()), documento, modificador);
+			respuestaValidacion = propiedadMapper.funcionAsignacion(SoftureUtil.formatFunction(dto.getLlaveTabla()), documento, modificador, token);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), " Motivo: " + dto.getMotivo() + " Propiedad : " + dto.getNombre());
 		}

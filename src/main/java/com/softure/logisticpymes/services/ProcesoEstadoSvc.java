@@ -113,10 +113,10 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		}
 	}
 	
-	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador) throws ServerException {
+	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador, String token) throws ServerException {
 		String responsable = null;
 		try {
-			responsable = procesoEstadoMapper.funcionAsignacion(SoftureUtil.formatFunction(propiedad.getLlaveTabla()), documento, modificador);
+			responsable = procesoEstadoMapper.funcionAsignacion(SoftureUtil.formatFunction(propiedad.getLlaveTabla()), documento, modificador, token);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Obtener Responsable : " + propiedad.getNombre());
 		}

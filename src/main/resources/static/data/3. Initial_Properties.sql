@@ -346,3 +346,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_186' , 'C', 'ALERTAR AL SELECCIONAR', 'ALERTAR_CAMPO_PROCESO', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, bpvd_multiple) 
+	VALUES('PROP_187' , 'E', 'FUNCION_SQL_VALIDAR', 'FUNCION_SQL_VALIDAR', 'REQUISITO', true, true, true);

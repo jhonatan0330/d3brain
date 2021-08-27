@@ -85,6 +85,8 @@ public class ReporteServlet extends HttpServlet{
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {		
 		try {
+			String nombreReporte = request.getParameter("nombre");
+			ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombreReporte, request.getParameter("P_TOKEN"));
 			//Esto debo cambiarlo despues con una validacion de permisos del usuario, por el momento deje asi
 			Map<String, Object> parametrosJasper = new HashMap<String, Object>(); 
 			//seccion de parametros
@@ -102,16 +104,14 @@ public class ReporteServlet extends HttpServlet{
 					parametrosJasper.put(parametro.toUpperCase(), date);
 				}
 			}
-			
-			String nombreReporte = request.getParameter("nombre");
 			String key = request.getParameter(ReporteBaseSvc.P_KEY);
-			byte[] resultado = reporteBaseService.generarReporte(nombreReporte, key, parametrosJasper, null);
+			byte[] resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper, request.getParameter("P_TOKEN"));
 			if(resultado!=null){
 				InputStream input = new ByteArrayInputStream(resultado);
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
-				ReporteBaseDTO base = reporteBaseService.consultaXId(nombreReporte);
-				downloadFile(response, input, base.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte);
+				//ReporteBaseDTO base = reporteBaseService.consultaXId(nombreReporte);
+				downloadFile(response, input, reportBD.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte);
 			}
 		} catch (Exception e) {
 			PrintWriter out=response.getWriter();

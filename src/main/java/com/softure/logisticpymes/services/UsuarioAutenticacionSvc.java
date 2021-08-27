@@ -226,12 +226,17 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		}
 	}
 	
-	public UsuarioSesionDTO generateAdministratorToken() throws ServerException{
+	public UsuarioDTO getUserSystem() throws ServerException{
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
 		if(principal==null ) throw new ServerException("No se tiene organizacion principal");
 		if(principal.getUsuarioSystem()==null) throw new ServerException("No se tiene configurado el usuario sistem en la organizacion principal");
 		UsuarioDTO usuarioSystem = usuarioService.consultaXId(principal.getUsuarioSystem());
 		if(usuarioSystem==null || usuarioSystem.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El usuario sistema no exisste o esta inactivo");
+		return usuarioSystem;
+	}
+	
+	public UsuarioSesionDTO generateAdministratorToken() throws ServerException{
+		UsuarioDTO usuarioSystem = getUserSystem();
 		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
 		sesion.setFecha(new Date());
 		//sesion.setFechaCierre(usuarioSesionService.getFechaCierre(usuarioSystem.getLlaveTabla()));

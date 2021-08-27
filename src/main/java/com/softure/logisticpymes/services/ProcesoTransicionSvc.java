@@ -453,7 +453,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		ActividadDTO responsable = new ActividadDTO();
 		PropiedadDTO propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, estado, Propiedades.FUNCION_SQL_ESTADO_ASIGNAR, getUserFlex(token)); 
 		if(propiedadFuncion !=null){
-			responsable.setResponsable(estadoService.obtenerResponsable(propiedadFuncion, pedido, modificador));
+			responsable.setResponsable(estadoService.obtenerResponsable(propiedadFuncion, pedido, modificador, token));
 		}else{
 			propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, estado, Propiedades.ESTADO_ASIGNAR, getUserFlex(token));
 			if(propiedadFuncion !=null){

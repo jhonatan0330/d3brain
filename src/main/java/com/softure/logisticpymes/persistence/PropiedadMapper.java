@@ -16,7 +16,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	
 
 // BEGIN region aditionalMethods  
-	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento, @Param("modificador") String modificador);
+	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
 	void crearFuncion(PropiedadDTO dto);
 	void crearFuncionMail(PropiedadDTO dto);
 	void crearFuncionFiltros(PropiedadDTO dto);

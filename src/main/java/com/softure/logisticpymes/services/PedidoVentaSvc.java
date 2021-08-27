@@ -165,7 +165,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
 				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico(), transaccion);
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(), token);
 		dto.setCaracteristicas(null);//Por error al serializar
 		return dto;
 		// END PedidoVenta_actualizar
@@ -482,7 +482,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		if(dto.getDinero()!=null && pedido.getDinero() ==null ) pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
 		gestionarEstado(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		gestionarTipos(dto, plantilla, token);
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, Propiedades.FUNCION_SQL_VALIDAR, dto.getLlaveTabla(), null, dto.getFuncionario());
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(), token);
 		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
 		if(!api.isEmpty()) apiService.ejecutar(api, dto, null, token);
 		dto.setCaracteristicas(null);//Por error al serializar

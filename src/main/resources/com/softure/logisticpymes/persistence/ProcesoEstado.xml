@@ -186,7 +186,7 @@
 	</select>
 	
 	<select id="funcionAsignacion" resultType="java.lang.String">
-		select propiedad_${estado} (#{documento}, #{modificador})
+		select propiedad_${estado} (#{documento}, #{modificador}, #{token})
 	</select>
 	
 <!--// END region script-->

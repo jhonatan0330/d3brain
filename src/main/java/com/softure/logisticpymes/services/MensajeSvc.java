@@ -190,7 +190,9 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			mailMsg.setSubject(dto.getTitulo());
 			mailMsg.setText(crearMensaje(plantilla.getTexto(), dto.getParametros()),true);
 			if(conReporte) {
-				byte[] reporte = reporteBaseService.generarReporte(dto.getReporte(), dto.getDocumento(), null, usuario);
+				byte[] reporte = reporteBaseService.generarReporte(
+						reporteBaseService.validateReport(dto.getReporte(), usuario), 
+						dto.getDocumento(), null, usuario);
 				if(reporte!=null) {
 					ReporteBaseDTO base = reporteBaseService.consultaXId(dto.getReporte());
 					mailMsg.addAttachment(base.getNombre(), new ByteArrayDataSource(reporte, "application/pdf"));

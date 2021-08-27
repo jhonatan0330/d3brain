@@ -151,9 +151,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return parametrosJasper;
 	}
 	
-	public Map<String, Object> parametrosPropiedades(String reporte, String usuario)throws ServerException {
+	public Map<String, Object> parametrosPropiedades(ReporteBaseDTO reporte, String usuario)throws ServerException {
 		Map<String, Object> parametrosJasper = new HashMap<String, Object>();
-		List<PropiedadDTO> propiedades = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, reporte, null, usuario);//getUserFlex(token)
+		List<PropiedadDTO> propiedades = reporte.getPropiedades();
 		if(propiedades != null  && !propiedades.isEmpty()) {
 			for (PropiedadDTO propiedadDTO : propiedades) {
 				if(propiedadDTO.getKey().compareTo(Propiedades.P_SUBREPORT_)==0
@@ -178,31 +178,38 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return parametrosJasper;
 	}
 	
+	public ReporteBaseDTO validateReport(String reportId, String token) throws ServerException {
+		ReporteBaseDTO base = consultaXId(reportId);
+		if(base == null) throw new ServerException("Reporte base no encontrado");
+		base.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, reportId, null, getUserFromParameters(token)) );//getUserFlex(token)
+		return base;
+	}
 	
-	public byte[] generarReporte(String nombreReporte, String key,Map<String, Object> parametrosJasper, String usuario) throws Exception {
+	public String getUserFromParameters (String token) throws ServerException {
+		if(token == null) return null;
+		return getUserFlex(token);
+	}
+	
+	public byte[] generarReporte(ReporteBaseDTO reporte, String key, Map<String, Object> parametrosJasper, String token) throws Exception {
 		ReporteEjecucionDTO ejecucion = new ReporteEjecucionDTO();
 		ejecucion.setFechaInicio(new Date());
+		ejecucion.setReporte(reporte.getLlaveTabla());
+		String usuario = getUserFromParameters(token);
+		ejecucion.setDocumento(key);
+		ejecucion.setUsuario(usuario);
 		try {
-			ReporteBaseDTO base = consultaXId(nombreReporte);
-			if(base == null) throw new ServerException("Reporte base no encontrado");
-			ejecucion.setReporte(nombreReporte);
-			ejecucion.setDocumento(key);
-			if(parametrosJasper == null)parametrosJasper = new HashMap<String, Object>();
-			String token = (String) parametrosJasper.get("P_TOKEN");
-			if(usuario ==null) {
-				if(token==null) {
-					if(base.getPublico()) {
-						token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-					}else {
-						throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
-					}
+			if(usuario == null ) {
+				if(reporte.getPublico()) {
+					usuario = autenticacionService.getUserSystem().getLlaveTabla();
 				}else {
-					usuario = getUserFlex(token);
+					throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
 				}
 			}
+			propiedadService.validarFuncionConsultandoPropiedad(reporte, key, null, usuario, token);
+			if(parametrosJasper == null)parametrosJasper = new HashMap<String, Object>();
 			ejecucion.setUsuario(usuario);
 			if(key!=null)parametrosJasper.putAll(llenarParametros(key));
-			parametrosJasper.putAll(parametrosPropiedades(base.getLlaveTabla(), usuario));
+			parametrosJasper.putAll(parametrosPropiedades(reporte, usuario));
 			String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 			String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
 			if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
@@ -222,14 +229,14 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			}
 			ejecucion.setFechaFin(new Date());
 			try {
-				if(ejecucion.getReporte()!=null)ejecucionService.save(ejecucion);
+				ejecucionService.save(ejecucion);
 			}catch (Exception e) {	}
 			return resultado;	
 		}catch (Exception e) {
 			ejecucion.setError(e.getMessage());
 			ejecucion.setFechaFin(new Date());
 			try {
-				if(ejecucion.getReporte()!=null)ejecucionService.save(ejecucion);
+				ejecucionService.save(ejecucion);
 			}catch (Exception ex) {	}
 			throw new Exception(e.getMessage());
 		}

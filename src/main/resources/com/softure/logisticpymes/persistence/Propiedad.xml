@@ -293,7 +293,7 @@
 
 <!--// BEGIN region script-->
     <select id="crearFuncion" parameterType="PropiedadDTO" >
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS
 $BODY$
 ${valor}
 $BODY$
@@ -302,7 +302,7 @@ COST 100;
     </select>
 
     <select id="eliminarFuncion" parameterType="PropiedadDTO" >
-        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar);
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, varchar);
     </select>
 
     <select id="crearFuncionFiltros" parameterType="PropiedadDTO" >
@@ -334,7 +334,7 @@ COST 100;
     </select>
 
     <select id="crearFuncionMail" parameterType="PropiedadDTO" >
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS TABLE (usuario character varying, correo character varying) AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS TABLE (usuario character varying, correo character varying) AS
 $BODY$
 ${valor}
 $BODY$
@@ -392,7 +392,7 @@ COST 100;
 	</select>
 
 	<select id="crearFuncionCampoGenerar">
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
 $BODY$
 ${valor}
 $BODY$ 
@@ -401,7 +401,7 @@ COST 100;
 	</select>
 	
 	<select id="eliminarFuncionCampoGenerar" parameterType="PropiedadDTO" >
-		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying);
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying);
 	</select>
 		
 	<select id="eliminarFuncionTarifas" parameterType="PropiedadDTO" >
@@ -431,7 +431,7 @@ COST 100;
 	
 
     <select id="funcionAsignacion" resultType="java.lang.String">
-        select propiedad_${estado} (#{documento}, #{modificador})
+        select propiedad_${estado} (#{documento}, #{modificador}, #{token})
     </select>
     
 
