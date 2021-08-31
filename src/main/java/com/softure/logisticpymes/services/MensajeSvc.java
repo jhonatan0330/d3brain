@@ -29,6 +29,7 @@ import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
 import com.softure.logisticpymes.dto.ServidorDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
+import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.services.SoftureUtil;
@@ -130,7 +131,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		MensajeDTO bd = consultaXId(dto.getLlaveTabla());
 		if(bd.getCorreoEnviado()!=null) throw new ServerException("Este mensaje ya fue enviado");
 		String usuario = getUserFlex(dto.getSecurityToken());
-		return enviarCorreo(bd, usuario);
+		return enviarCorreo(bd, usuario, dto.getSecurityToken());
 		// END region enviarMensaje
 	}
 
@@ -147,17 +148,17 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	public void tareaCorreoElectronico()throws ServerException{
 	 	List<MensajeDTO> tareasPendientes = mensajeMapper.mensajesDisponibles();
 	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
-	 		String usuario = autenticacionService.generateAdministratorToken().getUsuario();
+	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
 	 		for (MensajeDTO tareaProgramadaDTO : tareasPendientes) {
 	 			if(tareaProgramadaDTO.getCorreo()!=null) {
-	 				tareaProgramadaDTO = enviarCorreo(tareaProgramadaDTO, usuario);
+	 				tareaProgramadaDTO = enviarCorreo(tareaProgramadaDTO, sessionAdmin.getUsuario(), sessionAdmin.getLlaveTabla());
 	 			}
 			}
 	 	}
 	}
 	
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public MensajeDTO enviarCorreo(MensajeDTO dto, String usuario) throws ServerException {
+	public MensajeDTO enviarCorreo(MensajeDTO dto, String usuario, String token) throws ServerException {
 		try {
 			MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
 			ServidorDTO servidor = servidorService.consultaXId(plantilla.getServidor());
@@ -191,8 +192,8 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			mailMsg.setText(crearMensaje(plantilla.getTexto(), dto.getParametros()),true);
 			if(conReporte) {
 				byte[] reporte = reporteBaseService.generarReporte(
-						reporteBaseService.validateReport(dto.getReporte(), usuario), 
-						dto.getDocumento(), null, usuario);
+						reporteBaseService.validateReport(dto.getReporte(), token), 
+						dto.getDocumento(), null, token);
 				if(reporte!=null) {
 					ReporteBaseDTO base = reporteBaseService.consultaXId(dto.getReporte());
 					mailMsg.addAttachment(base.getNombre(), new ByteArrayDataSource(reporte, "application/pdf"));
