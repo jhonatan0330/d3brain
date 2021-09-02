@@ -256,7 +256,7 @@
 			,null as  correoError
 			,correo as  correo
 			,null as estado
-		from propiedad_${llavePropiedad} (#{documento}, #{modificador} ,#{token})
+		from propiedad_${llavePropiedad} (#{documento})
 	</select>
 	
 <!--// END region script-->
