@@ -31,6 +31,7 @@ public class Propiedades {
 	public static final String UNIQUE = "UNIQUE";
 	public static final String DEFAULT = "DEFAULT";
 	public static final String DEPENDE = "DEPENDE";
+	public static final String INVISIBLE = "INVISIBLE";
 	public static final String MODIFICAR_CAMPO = "MODIFICAR_CAMPO";
 		
 	public static final String AUTOLOAD = "AUTOLOAD";
@@ -427,6 +428,7 @@ public class Propiedades {
 			case FORCE_NOTIFICATION : {ruleProperty =  "Indica que al abrir el sistema en caso que tenga notificaciones sin leer se van a mostrar al usuario inmediatamente";break;}
 			case FUNCION_SQL_ESTADO_ASIGNAR : {ruleProperty =  "Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.\nEl documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";break;}
+			case INVISIBLE : {ruleProperty =  "Oculta el campo a la vista, aunque solamente esta oculto.\n";break;}
 			case ITERACION_SQL : {ruleProperty =  "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
 					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";break;}
 			case MENSAJE : {ruleProperty =  "Coloca el nombre de un template de mensaje de correo, este template va a ser enviado por correo.\n";break;}
