@@ -147,6 +147,12 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	public List<UsuarioDTO> getUsersState(String state, String token)throws ServerException{
 		return usuarioMapper.getUsersState(state, token);
 	}
+	
+	public UsuarioDTO changePicture(String url, String token) throws ServerException {
+		UsuarioDTO bd = consultaXId(getUserFlex(token));
+		bd.setImagen(url);
+		return update(bd);
+	}
 // END region aditionalMethods
 
 }

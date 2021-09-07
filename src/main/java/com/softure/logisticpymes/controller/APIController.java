@@ -125,6 +125,17 @@ public class APIController {
 		}
     }
 	
+	@RequestMapping(value="/changePicture", method=RequestMethod.POST)
+    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
+        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+        try {
+        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token);
+			return usuarioService.changePicture(url, token);
+		} catch (IOException e) {
+			throw new ServerException(e.getMessage());
+		}
+    }
+	
 	@RequestMapping(value="/usuariosXRol", method=RequestMethod.POST)
 	public List<UsuarioDTO> usuariosXRol(@RequestBody PedidoVentaFilterDTO document, @RequestHeader("Authorization") String token)  throws ServerException  {
 		if(document==null) throw new ServerException("Porfavor envie el objeto documento");
