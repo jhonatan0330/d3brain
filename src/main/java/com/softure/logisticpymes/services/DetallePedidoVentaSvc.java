@@ -532,6 +532,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getCaracteristicas()) {
 					if(iFieldTotal.getCampo().compareTo(pCampoTotal.getValor())==0) {
 						baseTotal= iFieldTotal.getCampoDTO();
+						baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
+						baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, baseCantidad.getLlaveTabla(), null));
 						break;
 					}
 				}

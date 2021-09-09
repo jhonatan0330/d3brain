@@ -179,7 +179,18 @@ public class TipoDetallePedido {
 						throw new ServerException("El valor unitario es mayor al maximo.");*/
 					//Coloco el valor subtotal
 					if(detalle.getValorUnitario()==null)detalle.setValorUnitario(BigDecimal.ZERO);
-					if(Propiedades.obtenerParametro(detalle, Propiedades.TOTAL_FUNCION)==null)detalle.setValorSubtotal( detalle.getValorUnitario().multiply(detalle.getCantidad()));
+					PropiedadDTO campoTotal = Propiedades.obtenerParametro(detalle, Propiedades.PRODUCTO_CAMPO_TOTAL);
+					if(campoTotal==null) {
+						detalle.setValorSubtotal( detalle.getValorUnitario().multiply(detalle.getCantidad()));
+					}else {
+						for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getCaracteristicas()) {
+							if(iFieldCantidad.getCampo().compareTo(campoTotal.getValor())==0) {
+								detalle.setValorSubtotal( iFieldCantidad.getValorNumero());
+								break;
+							}
+						}
+						
+					}
 					detalle.setValorTotal(detalle.getValorSubtotal().setScale(0, RoundingMode.CEILING));
 					pCampo.setValorNumero(pCampo.getValorNumero().add(detalle.getValorTotal()));
 				}
