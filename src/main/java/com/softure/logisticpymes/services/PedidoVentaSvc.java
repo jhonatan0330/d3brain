@@ -119,6 +119,10 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			if(dto.getEstadoExpediente()==null) throw new ServerException("El documento a actualizar debe traer el estado del expediente");
 			if(bd.getEstadoExpediente().compareTo(dto.getEstadoExpediente())!=0) throw new ServerException("Revise porque el documento tiene un estado diferente.\nDocumento: " + bd.getNombre() + "\nEstado actual: " +bd.getEstadoNombre());
 		}
+		// Me aparecio un hz desde el historico, porque no tienen principal y nose como pasarlo pero tengo mis dudas con el guardar
+		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
+			iterador.setPrincipal(bd);
+		}
 		validarCaracteristicas(dto, plantilla, token);
 		if(dto.getNombre()==null) {
 			dto.setNombre(bd.getNombre());//Cuando envio modificar lo envio vacio
@@ -131,7 +135,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 					dto.setDescripcion(iterador.getValorText());
 					break;
 				}
-			}	
+			}
 		}
 		validarConsecutivo(dto, plantilla, token);
 		dto.setFecha(bd.getFecha()); //Copio la fecha para que no me la modifiquen desde el cliente sin un campo
