@@ -408,6 +408,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,null as nombre
+			,null as  transaccion
 			,cwse_entrada || ';;' || cwse_salida as adjunto 
 		  from webserviceejecucion_wsep
 		  where cwse_documento = #{dto.documentoPrincipal}
@@ -435,6 +436,7 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,(select crpb_nombre from reportebase_rpbp where crpb_llave = crej_reporte) as nombre
+			,null as  transaccion
 			,null as adjunto 
 		  from reporteejecucion_rejp
 		  where crej_documento = #{dto.documentoPrincipal}
