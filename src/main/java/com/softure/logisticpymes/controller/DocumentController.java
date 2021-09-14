@@ -25,6 +25,7 @@ import com.softure.logisticpymes.dto.ProductoInventarioDTO;
 import com.softure.logisticpymes.dto.TarifaDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.ActividadSvc;
+import com.softure.logisticpymes.services.DeduccionProductoSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
@@ -42,6 +43,7 @@ public class DocumentController {
 	@Autowired private ProductoSvc productService;
 	@Autowired private TarifaSvc tarifaService;
 	@Autowired private ProductoInventarioSvc inventoryService;
+	@Autowired private DeduccionProductoSvc deduccionService;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -123,5 +125,10 @@ public class DocumentController {
 	@GetMapping(value="/getTarifas/{productId}")
 	public List<TarifaDTO> getTarifas2Product(@PathVariable String productId, @RequestHeader("Authorization") String token)  throws ServerException {
 		return tarifaService.getTarifas2Product(productId);
+	}
+	
+	@PostMapping(value="/recalculateInventory")
+	public void recalculateInventory(@RequestBody String documentId, @RequestHeader("Authorization") String token) throws ServerException {
+		deduccionService.recalcularInventarioDocumento(documentId, token);
 	}
 }

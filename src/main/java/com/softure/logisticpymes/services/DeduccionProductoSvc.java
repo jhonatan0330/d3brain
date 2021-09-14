@@ -1,7 +1,7 @@
 package com.softure.logisticpymes.services;
 
 import java.util.List;
-
+import java.util.ArrayList;
 // BEGIN region interImport
 import java.util.Date;
 import java.math.BigDecimal;
@@ -17,10 +17,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.DeduccionProductoDTO;
+import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.dto.PropiedadDTO;
+import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.filter.DeduccionProductoFilterDTO;
 import com.softure.logisticpymes.persistence.DeduccionProductoMapper;
+import com.softure.logisticpymes.services.adapter.AuxiliarProcesoBodega;
+import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {
@@ -29,8 +37,10 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	private DeduccionProductoMapper deduccionProductoMapper;
 	
 	// BEGIN region servicesDeduccionProducto
-	@Autowired
-	private  TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
+	@Autowired private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
+	@Autowired private PedidoVentaSvc pedidoService;
+	@Autowired private AuxiliarProcesoBodega tipoBodega;
+	@Autowired private PropiedadSvc propiedadService;
 	// END region servicesDeduccionProducto
 
 	@Override
@@ -119,6 +129,66 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	}
 
 // BEGIN region aditionalMethods
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public void recalcularInventarioDocumento(String documento, String token) throws ServerException {
+		PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(pedidoService.consultaXId(documento), token);
+		//2. Coloco los dependientes//Actualizar dependencias despues de los camps para que queden completas asi el campo este despues en orden
+		for (PedidoVentaCaracteristicaDTO campoDocumento : expediente.getCaracteristicas()) {
+			campoDocumento.getCampoDTO().setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campoDocumento.getCampo(), null,null));
+			List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(), Propiedades.DEPENDE);
+			if(codigoDepende!=null ){
+				for (PropiedadDTO codigo: codigoDepende){
+					for (PedidoVentaCaracteristicaDTO fieldExpediente: expediente.getCaracteristicas()) {
+						if(codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0){
+							if(fieldExpediente.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0
+									&& fieldExpediente.getValorOpcion()!=null && fieldExpediente.getExpedientes()==null) {
+								fieldExpediente.setExpedientes(new ArrayList<PedidoVentaDTO>());
+								fieldExpediente.getExpedientes().add(pedidoService.consultaXId(fieldExpediente.getValorOpcion()));
+							}
+							if(campoDocumento.getDependientes()==null)campoDocumento.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
+							campoDocumento.getDependientes().add(fieldExpediente);
+							
+							break;
+						}
+					}
+				}
+			}
+		}
+		DeduccionProductoFilterDTO filter = new DeduccionProductoFilterDTO();
+		filter.setDocumento(documento);
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<DeduccionProductoDTO> deduccionesActuales = listarConsulta(filter);
+		if(deduccionesActuales==null) deduccionesActuales = new ArrayList<DeduccionProductoDTO>();
+		for(DeduccionProductoDTO iDeduccion : deduccionesActuales) {
+			iDeduccion.setCantidad(iDeduccion.getCantidad().negate());
+		}
+		List<DeduccionProductoDTO> deduccionesFinales = new ArrayList<>();
+		for (PedidoVentaCaracteristicaDTO iCampo : expediente.getCaracteristicas()) {
+			// Identificar los campos bodega
+			if(Propiedades.obtenerParametro(iCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null) {
+				// Validar
+				String bodega = Propiedades.obtenerValor(iCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
+				if(bodega.isEmpty()) {
+					tipoBodega.consultarBodegaDesdeDocumento(iCampo);
+					bodega = iCampo.getValorAuxiliar();
+				}
+				tipoBodega.validarPrepararCampo(iCampo, bodega);
+				// Guardar
+				deduccionesFinales = tipoBodega.validarInventario(iCampo, token) ;
+				for(DeduccionProductoDTO iDeduccion : deduccionesFinales){
+					deduccionesActuales = tipoBodega.adicionarDeduccion(deduccionesActuales, iDeduccion);
+				}
+			}
+		}
+		
+		if(deduccionesActuales!=null && !deduccionesActuales.isEmpty()) {
+			for(DeduccionProductoDTO iDeduccion : deduccionesActuales) {
+				if(iDeduccion.getCantidad().compareTo(BigDecimal.ZERO)!=0){
+					iDeduccion = guardar(iDeduccion, token);
+				}
+			}
+		}
+	}
 // END region aditionalMethods
 
 }

@@ -372,7 +372,8 @@ public class Propiedades {
 			case BODEGA_FIJA : {ruleProperty =  " Coloca el nombre o codigo de la bodega fija de ese inventario, No se guarda en BD ese registro.\n" ;break;}
 			case BODEGA_MOVIMIENTO : {ruleProperty =  " (E,S,T,ED,SD,EC,SC).\nEntrada(E) Salida(S) Transformacion(T) D=Directo(solo toma el producto), C=Composicion(Solo toma la composicion del producto)"
 						+ "En caso de ser varios dependientes se crean varios parametros\n\n"
-						+ "Tener en cuenta que este campo debe ir primero que los dependientes de los productos";break;}
+						+ "Tener en cuenta que este campo debe ir primero que los dependientes de los productos"
+						+ "Debes colocar en las relaciones el camino para profundizar los documentos que van a mover inventario\n\n";break;}
 			case CAMPO_HEREDADO_1 : {ruleProperty =  "Esta propiedad indica que los(el) documentos(s) que se visualizan o crean tienen un campo que referencian el documento actual.\n\n"
 					+ "En los links de la propiedad se debe referenciar el campo de la plantilla que contiene la referencia al documento actual\n\n"
 					+ "Ejemplo un documento CLIENTE con un campo CONTACTOS, este campo se le coloca la propiedad HEREDADO, para que puedas crear los contactos de ese cliente. El contacto debe tener un campo proceso que va a guardar el dato del cliente";break;}
