@@ -281,6 +281,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			DocumentoPlantillaFilterDTO filtroCantidad = new DocumentoPlantillaFilterDTO();
 			int cantidadCampos = contarResultados(filtroCantidad) +1;
 			dto.setCodigo("F"+ cantidadCampos);
+			filtroCantidad = new DocumentoPlantillaFilterDTO();
+			filtroCantidad.setCodigo(dto.getCodigo());
+			if(consultaUnica(filtroCantidad)!=null) {
+				dto.setCodigo("D"+ cantidadCampos);
+			}
 		}
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 	}
