@@ -793,7 +793,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				}
 				// Campos especiales de una lista
 				if(hmapCamposEspeciales.get(iterador.getPlantilla())==null){
-					PropiedadDTO propiedadRender = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL,  null);
+					PropiedadDTO propiedadRender = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL,  getUserFlex(securityToken));
 					if(propiedadRender==null) {
 						hmapCamposEspeciales.put(iterador.getPlantilla(), "");
 					}else {
