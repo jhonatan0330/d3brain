@@ -258,8 +258,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto)throws ServerException{
 		// BEGIN region listarAvanzado
-		System.out.println (new Date().toString() + " : ListarAvanzado");
 		if(dto==null) throw new ServerException("Tronco de error");
+		System.out.println (new Date().toString() + " : ListarAvanzado (" + dto.getPlantilla() +"), llave (" + dto.getLlaveTabla() + "), filtro ( " + dto.getFiltroParametro() + ")");
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().isEmpty()) dto.setFiltroParametro(null);
 		if(dto.getFiltroParametro()!=null) dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());//Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 		if (dto.getNombre()!=null) dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
