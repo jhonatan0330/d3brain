@@ -107,6 +107,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		// BEGIN PedidoVenta_actualizar
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		PedidoVentaDTO bd = consultaXId(dto.getLlaveTabla());
+		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
 		dto.setPlantilla(bd.getPlantilla());
 		//if(dto.getTransaccion()!=null && dto.getTransaccion().compareTo(bd.getTransaccion())==0) dto.setTransaccion(null);
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
