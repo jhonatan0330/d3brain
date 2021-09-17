@@ -41,7 +41,8 @@ public class TipoNumero {
 				if(pCampo.getModificado()) {
 					//Valido que del cliente este ien calculado
 					if((pCampo.getLlaveTabla()==null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)!=null)
-							|| (pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)!=null)){
+							|| (pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null)){
+						// En tcm se tienen permisos de modificar el seguro
 						BigDecimal valorCalculado = calcular(pCampo);
 						if(pCampo.getValorNumero().compareTo(valorCalculado)!=0) 
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " no se calculo correctamente, valor esperado : (" + SoftureUtil.formatMoney(valorCalculado) +  ") y se recibe (" + SoftureUtil.formatMoney(pCampo.getValorNumero()) +")");
