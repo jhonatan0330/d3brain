@@ -153,11 +153,20 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		}
 	}
 	
+	// Con el objetivo que no se duplique la ejecucion de una transicion se mira que ese tipo no se ejecutara antes
+	// Como coloque unas sin transicion eas si no se validan
 	private ProcesoTransicionAutomaticaDTO containsTransicion(List<ProcesoTransicionAutomaticaDTO> review, ProcesoTransicionAutomaticaDTO view) {
 		if(review == null || review.isEmpty()) return null;
 		for (ProcesoTransicionAutomaticaDTO procesoTransicionAutomaticaDTO : review) {
-			if(procesoTransicionAutomaticaDTO.getTransicion().compareTo(view.getTransicion())==0)
-				return procesoTransicionAutomaticaDTO;
+			if(view.getTransicion()!=null) {
+				if(procesoTransicionAutomaticaDTO.getTransicion()!= null && 
+						procesoTransicionAutomaticaDTO.getTransicion().compareTo(view.getTransicion())==0)
+					return procesoTransicionAutomaticaDTO;
+			} else {
+				if(procesoTransicionAutomaticaDTO.getPropiedad()!= null && 
+						procesoTransicionAutomaticaDTO.getPropiedad().compareTo(view.getPropiedad())==0)
+					return procesoTransicionAutomaticaDTO;
+			}
 		}
 		return null;
 	}
