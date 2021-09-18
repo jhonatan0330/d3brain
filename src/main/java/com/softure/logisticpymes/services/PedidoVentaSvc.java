@@ -105,74 +105,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO actualizar( PedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVenta_actualizar
-		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
-		PedidoVentaDTO bd = consultaXId(dto.getLlaveTabla());
-		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
-		dto.setPlantilla(bd.getPlantilla());
-		//if(dto.getTransaccion()!=null && dto.getTransaccion().compareTo(bd.getTransaccion())==0) dto.setTransaccion(null);
-		plantillaFilter.setLlaveTabla(dto.getPlantilla());
-		plantillaFilter.setSecurityToken(token);
-		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
-		if(Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty()) throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
-		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
-		if(bd.getEstadoExpediente()!=null) {
-			if(dto.getEstadoExpediente()==null) throw new ServerException("El documento a actualizar debe traer el estado del expediente");
-			if(bd.getEstadoExpediente().compareTo(dto.getEstadoExpediente())!=0) throw new ServerException("Revise porque el documento tiene un estado diferente.\nDocumento: " + bd.getNombre() + "\nEstado actual: " +bd.getEstadoNombre());
-		}
-		// Me aparecio un hz desde el historico, porque no tienen principal y nose como pasarlo pero tengo mis dudas con el guardar
-		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
-			iterador.setPrincipal(bd);
-		}
-		validarCaracteristicas(dto, plantilla, token);
-		if(dto.getNombre()==null) {
-			dto.setNombre(bd.getNombre());//Cuando envio modificar lo envio vacio
-			dto.setConsecutivo(bd.getConsecutivo());
-		}
-		String campoDescripcion = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);//Descripcion para los roles
-		if(!campoDescripcion.isEmpty()) {
-			for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
-				if(campoDescripcion.compareTo(iterador.getCampo())==0) {
-					dto.setDescripcion(iterador.getValorText());
-					break;
-				}
-			}
-		}
-		validarConsecutivo(dto, plantilla, token);
-		dto.setFecha(bd.getFecha()); //Copio la fecha para que no me la modifiquen desde el cliente sin un campo
-		validarFecha(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
-		validarCosto(dto, plantilla);
-		String transaccion = dto.getTransaccion();
-		boolean crearTraza = false;//Cuando un formulario modifica otro no debo crear traza ya que esta la del proceso
-		if(transaccion ==null ||  bd.getTransaccion().compareTo(transaccion)==0) {//Si son diferetnes vienen de otro proceso
-			transaccion = transaccionSvc.crear(token).getLlaveTabla();
-			crearTraza = true;
-		}
-		if(dto.getEstado()==null) {
-			if(dto.getEstadoExpediente()==null) {
-				dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Viene de tipo proceso que lo coloca nulo
-			}else {
-				dto.setEstado(estadoService.consultaXId(dto.getEstadoExpediente()).getEstadoDocumento());
-			}
-		}
-		dto.setFechaRegistro(bd.getFechaRegistro());//Siempre tiene que mantenerse la fecha de registro
-		dto.setTransaccion(bd.getTransaccion());//Siempre tiene que mantenerse la transaccion de registro
-		dto.setFuncionario(bd.getFuncionario());//Siempre tiene que mantenerse la funcionario de registro
-		dto.setHistorico(bd.getHistorico());
-		bd = update(dto);
-		gestionarDinero(dto, token);
-		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
-			iterador.setTransaccionRegistro(transaccion);//Le quite el igual a null asumo que va a modificar los nuevos
-			iterador.setPrincipal(bd);
-		}
-		dto.setCaracteristicas(gestionarCaracteristicas(dto, token));
-		gestionarTipos(dto, plantilla, token);
-		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
-		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
-				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico(), transaccion);
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(), token);
-		dto.setCaracteristicas(null);//Por error al serializar
-		return dto;
+		throw new ServerException("Utiliza el metodo modificarAPI.");
 		// END PedidoVenta_actualizar
 	}
 	
@@ -1252,6 +1185,78 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		tran.setFechaFin(new Date());
 		transaccionSvc.update(tran);
 		return result;
+	}
+	
+	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public PedidoVentaDTO modificarAPI( PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
+		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
+		PedidoVentaDTO bd = consultaXId(dto.getLlaveTabla());
+		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
+		dto.setPlantilla(bd.getPlantilla());
+		//if(dto.getTransaccion()!=null && dto.getTransaccion().compareTo(bd.getTransaccion())==0) dto.setTransaccion(null);
+		plantillaFilter.setLlaveTabla(dto.getPlantilla());
+		plantillaFilter.setSecurityToken(token);
+		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos(token));
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
+		if(Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty()) throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
+		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
+		if(bd.getEstadoExpediente()!=null) {
+			if(dto.getEstadoExpediente()==null) throw new ServerException("El documento a actualizar debe traer el estado del expediente");
+			if(bd.getEstadoExpediente().compareTo(dto.getEstadoExpediente())!=0) throw new ServerException("Revise porque el documento tiene un estado diferente.\nDocumento: " + bd.getNombre() + "\nEstado actual: " +bd.getEstadoNombre());
+		}
+		// Me aparecio un hz desde el historico, porque no tienen principal y nose como pasarlo pero tengo mis dudas con el guardar
+		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
+			iterador.setPrincipal(bd);
+		}
+		validarCaracteristicas(dto, plantilla, token);
+		if(dto.getNombre()==null) {
+			dto.setNombre(bd.getNombre());//Cuando envio modificar lo envio vacio
+			dto.setConsecutivo(bd.getConsecutivo());
+		}
+		String campoDescripcion = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);//Descripcion para los roles
+		if(!campoDescripcion.isEmpty()) {
+			for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
+				if(campoDescripcion.compareTo(iterador.getCampo())==0) {
+					dto.setDescripcion(iterador.getValorText());
+					break;
+				}
+			}
+		}
+		validarConsecutivo(dto, plantilla, token);
+		dto.setFecha(bd.getFecha()); //Copio la fecha para que no me la modifiquen desde el cliente sin un campo
+		validarFecha(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
+		validarCosto(dto, plantilla);
+		String transaccion = dto.getTransaccion();
+		boolean crearTraza = false;//Cuando un formulario modifica otro no debo crear traza ya que esta la del proceso
+		if(transaccion ==null ||  bd.getTransaccion().compareTo(transaccion)==0) {//Si son diferetnes vienen de otro proceso
+			transaccion = transaccionSvc.crear(token).getLlaveTabla();
+			crearTraza = true;
+		}
+		if(dto.getEstado()==null) {
+			if(dto.getEstadoExpediente()==null) {
+				dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Viene de tipo proceso que lo coloca nulo
+			}else {
+				dto.setEstado(estadoService.consultaXId(dto.getEstadoExpediente()).getEstadoDocumento());
+			}
+		}
+		dto.setFechaRegistro(bd.getFechaRegistro());//Siempre tiene que mantenerse la fecha de registro
+		dto.setTransaccion(bd.getTransaccion());//Siempre tiene que mantenerse la transaccion de registro
+		dto.setFuncionario(bd.getFuncionario());//Siempre tiene que mantenerse la funcionario de registro
+		dto.setHistorico(bd.getHistorico());
+		bd = update(dto);
+		gestionarDinero(dto, token);
+		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
+			iterador.setTransaccionRegistro(transaccion);//Le quite el igual a null asumo que va a modificar los nuevos
+			iterador.setPrincipal(bd);
+		}
+		dto.setCaracteristicas(gestionarCaracteristicas(dto, token));
+		gestionarTipos(dto, plantilla, token);
+		//Para los tipo cuenta al actualizar no estoy mirando los sobregiros
+		if(crearTraza) relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(), dto.getEstadoExpediente(), 
+				(dto.getDinero()==null)?null:dto.getDinero().getLlaveTabla(), null, token, null, dto.getHistorico(), transaccion);
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId, dto.getFuncionario(), token);
+		dto.setCaracteristicas(null);//Por error al serializar
+		return dto;
 	}
 // END region aditionalMethods
 

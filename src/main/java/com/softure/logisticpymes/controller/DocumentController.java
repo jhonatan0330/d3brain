@@ -62,7 +62,7 @@ public class DocumentController {
 		if(document.getLlaveTabla()==null){
 			document = pedidoVentaService.guardar(document, token);
 		}else{
-			document = pedidoVentaService.actualizar(document, token);
+			document = pedidoVentaService.modificarAPI(document, null, token);
 		}
 		result.setNombre(document.getNombre());
 		result.setPlantilla(document.getPlantilla());

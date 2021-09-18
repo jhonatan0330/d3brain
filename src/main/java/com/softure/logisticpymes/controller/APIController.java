@@ -66,7 +66,7 @@ public class APIController {
 		if(documento.getLlaveTabla()==null){
 			documento = pedidoVentaService.guardarAPI(documento, token);
 		}else{
-			documento = pedidoVentaService.actualizar(documento, token);
+			documento = pedidoVentaService.modificarAPI(documento, null, token);
 		}
 		result.setNombre(documento.getNombre());
 		result.setPlantilla(documento.getPlantilla());

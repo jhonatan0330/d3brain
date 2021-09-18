@@ -581,7 +581,7 @@ public class TipoProceso {
 			documentoModificar.setTransaccion(pCampo.getTransaccionRegistro());
 			documentoModificar.setCaracteristicas(caracteristicasModificadas);
 			
-			PedidoVentaDTO pedidoActualizado = pedidoService.actualizar(documentoModificar, token);
+			PedidoVentaDTO pedidoActualizado = pedidoService.modificarAPI(documentoModificar, pCampo.getDocumento(), token);
 			procesoDTO.setNombre(pedidoActualizado.getNombre());
 			// Se genera doble traza, no encuentro un escenario que se necesite
 			relacionarGestor(procesoDTO, pCampo.getPrincipal(), "Modificar Campos", token);	

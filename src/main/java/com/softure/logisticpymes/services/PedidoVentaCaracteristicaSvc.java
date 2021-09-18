@@ -247,8 +247,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		if(dependientes.size()!=codigoDepende.size()) throw new ServerException("El numero de dependientes no concuerda. Tipo Expediente" + codigoDepende.size());
 	}
 	
-	public List<PedidoVentaCaracteristicaDTO> ordenarAlfabeticaDepende(List<PedidoVentaCaracteristicaDTO> dependientes) {
+	public List<PedidoVentaCaracteristicaDTO> ordenarAlfabeticaDepende(List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
 		List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario = new ArrayList<PedidoVentaCaracteristicaDTO>();
+		if(dependientes==null) throw new ServerException("Por favor cierra y vuelve a cargar la pagina"); 
 		for (int i = 0; i <dependientes.size(); i++) {
 			PedidoVentaCaracteristicaDTO iDepende = dependientes.get(i);
 			if(i == 0) {

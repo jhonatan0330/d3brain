@@ -542,7 +542,7 @@ public class TipoDetallePedido {
 			}
 			if (expediente.getEstado()==null) expediente.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Sucede que aqui llega nulo porque previamente se a validado una carcateristica
 			//Cuando revise lo del documento modificador veo como arreglo esto
-			pedidoService.actualizar(expediente, token);
+			pedidoService.modificarAPI(expediente, pCampo.getDocumento(), token);
 			//Necesito que el expediente quede en estado null para que se tramite
 			expediente.setEstado(null);//Esto es crazy pero me toca hacerlo por el momento
 		}
