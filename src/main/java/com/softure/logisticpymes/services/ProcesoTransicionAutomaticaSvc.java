@@ -171,31 +171,43 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		return null;
 	}
 	
-	public void programateAll() throws ServerException{
+	public void programateAll() throws ServerException {
 		List<PropiedadDTO> faltantes = propiedadService.consultarTemporizadoresPendientes();
 		if(faltantes==null || faltantes.isEmpty()) return;
-		Date fechaProgramada;
 		for (PropiedadDTO propiedadDTO : faltantes) {
+			Date fechaProgramada = null;
+			String error = null;
 			if(propiedadDTO.getFechaInicial().compareTo(new Date())>0) {
 				fechaProgramada = propiedadDTO.getFechaInicial();
 			}else {
 				Date ultimaEjecucion = procesoTransicionAutomaticaMapper.obtenerFechaUltimaEjecucion(propiedadDTO.getCampo());
-				if(ultimaEjecucion==null) {
-					fechaProgramada = calcularFecha(propiedadDTO.getFechaInicial(), propiedadDTO.getTexto()); 
-				}else {
-					fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
-				}
+				try {
+					if(ultimaEjecucion==null) {
+						fechaProgramada = calcularFecha(propiedadDTO.getFechaInicial(), propiedadDTO.getTexto());
+					}else {
+						fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
+					}
+				} catch (ServerException e) {
+					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadDTO.getTexto() + " ) " + e.getMessage();
+				} 
 			}
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
 			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
 				programar.setTransicion(propiedadDTO.getCampo());	
 			}
 			programar.setFecha(fechaProgramada);
-			if(propiedadDTO.getMotivo()==null) {
-				programar.setMensaje(propiedadDTO.getNombre());
-			}else {
-				programar.setMensaje(propiedadDTO.getMotivo());
+			if(error == null) {
+				if(propiedadDTO.getMotivo()==null) {
+					programar.setMensaje(propiedadDTO.getNombre());
+				}else {
+					programar.setMensaje(propiedadDTO.getMotivo());
+				}
+			} else {
+				programar.setFecha(new Date());
+				programar.setEjecucion(new Date());
+				programar.setMensaje(error);
 			}
+			
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
 			save(programar);
 		}
