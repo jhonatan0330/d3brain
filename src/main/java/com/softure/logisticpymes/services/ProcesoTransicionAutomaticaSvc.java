@@ -40,6 +40,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	
 	// BEGIN region servicesProcesoTransicionAutomatica
 	@Autowired private PedidoVentaSvc documentoService;
+	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
@@ -206,8 +207,8 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
 				programar.setMensaje(error);
+				mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error);
 			}
-			
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
 			save(programar);
 		}
@@ -268,7 +269,6 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 						
 						if(propiedadMultiple==null) {
 							dto.setMensaje("");
-							;
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
 								PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
@@ -296,6 +296,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 						dto.setMensaje(String.valueOf(migrados));
 					} catch (Exception e) {
 						dto.setMensaje("ERROR : " + e.getMessage());
+						try {
+							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + dto.getPlantillaNombre(), e.getMessage());
+						} catch (ServerException e1) {
+						}
 					}
 				}
 			}

@@ -13,6 +13,7 @@ import java.util.Properties;
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -45,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.MensajeDTO;
 import com.softure.logisticpymes.dto.filter.MensajeFilterDTO;
+import com.softure.logisticpymes.dto.filter.ServidorFilterDTO;
 import com.softure.logisticpymes.persistence.MensajeMapper;
 
 @Service("mensajeService")
@@ -162,19 +164,9 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		try {
 			MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
 			ServidorDTO servidor = servidorService.consultaXId(plantilla.getServidor());
-			if(servidor ==null) throw new ServerException("No se encuentra el servidor de correo configurado");
+			if(servidor == null) throw new ServerException("No se encuentra el servidor de correo configurado");
 			if(servidor.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
-			JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-			mailSender.setHost(servidor.getUrl());
-			mailSender.setPort((servidor.getPuerto()==null)?587:Integer.parseInt(servidor.getPuerto()));
-			mailSender.setUsername(servidor.getUsuario());
-			mailSender.setPassword(servidor.getClave());
-			Properties prop = mailSender.getJavaMailProperties();
-			prop.put("mail.transport.protocol", "smtp");
-			prop.put("mail.smtp.auth", "true");
-			prop.put("mail.smtp.starttls.enable", "true");
-			prop.put("mail.debug", "true");
-			prop.put("mail.smtp.ssl.trust", servidor.getUrl());
+			JavaMailSenderImpl mailSender = getMailSender(servidor);
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			boolean conReporte = (dto.getReporte()!=null);
 			MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage, conReporte);
@@ -202,10 +194,26 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			mailSender.send(mimeMessage);
 		} catch (Exception e) {
 			dto.setCorreoError(e.getMessage());
+			mensaje2Administrator("Error enviando correos electronicos " + dto.getTitulo(), e.getMessage());
 		}
 		dto.setCorreoEnviado(new Date());
 		update(dto);
 		return dto;
+	}
+	
+	private JavaMailSenderImpl getMailSender(ServidorDTO servidor) {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost(servidor.getUrl());
+		mailSender.setPort((servidor.getPuerto()==null)?587:Integer.parseInt(servidor.getPuerto()));
+		mailSender.setUsername(servidor.getUsuario());
+		mailSender.setPassword(servidor.getClave());
+		Properties prop = mailSender.getJavaMailProperties();
+		prop.put("mail.transport.protocol", "smtp");
+		prop.put("mail.smtp.auth", "true");
+		prop.put("mail.smtp.starttls.enable", "true");
+		prop.put("mail.debug", "true");
+		prop.put("mail.smtp.ssl.trust", servidor.getUrl());
+		return mailSender;
 	}
 	
 	private String crearMensaje(String plantilla , String parametros){
@@ -447,6 +455,23 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			}
 		}
 		return correosFijos;
+	}
+	
+	public void mensaje2Administrator(String messageTitle, String messageText) throws ServerException {
+		UsuarioDTO userAdmin =autenticacionService.getUserSystem();
+		if(userAdmin==null || userAdmin.getCorreo()==null ) return;
+		ServidorFilterDTO filter = new ServidorFilterDTO();
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setTipo(ServidorDTO.MAIL);
+		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
+		if(servidores == null || !servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado");
+		JavaMailSenderImpl mailSender = getMailSender(servidores.get(0));
+		SimpleMailMessage message = new SimpleMailMessage();  
+        message.setFrom(servidores.get(0).getUsuario());
+	    message.setTo(userAdmin.getCorreo());
+	    message.setSubject(messageTitle);  
+	    message.setText(messageText);  
+	    mailSender.send(message);
 	}
 
 	
