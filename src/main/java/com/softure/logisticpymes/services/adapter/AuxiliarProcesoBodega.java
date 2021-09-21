@@ -183,7 +183,9 @@ public class AuxiliarProcesoBodega {
 			return inventariarDetalle(pCampo, operacion, recursoInventario, documentoInicial, token);
 		}else{
 			if(pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0){
-				if(relaciones==null || relaciones.isEmpty()) throw new ServerException("Coloca el camino de profundidad de consulta de inventario en las relaciones de la propiedad");
+				if(relaciones==null || relaciones.isEmpty()) throw new ServerException("Coloca el camino de profundidad de consulta de inventario en las relaciones de la propiedad"
+						+ "\nPlantilla: " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ "\nCampo: " + pCampo.getCampoDTO().getNombre());
 				return inventariarProceso(pCampo, operacion, recursoInventario, documentoInicial, relaciones, token);
 			}else{
 				if(pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0){
