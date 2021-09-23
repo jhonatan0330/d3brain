@@ -494,6 +494,8 @@ public class TipoDetallePedido {
 							detalleDocumento.setValorUnitario(detalleExpediente.getValorUnitario());
 							detalleDocumento.setValorMaximo(detalleExpediente.getValorMaximo());
 							detalleDocumento.setValorMinimo(detalleExpediente.getValorMinimo());
+							detalleDocumento.setValorSubtotal(detalleDocumento.getValorUnitario().multiply(detalleDocumento.getCantidad()));
+							detalleDocumento.setValorTotal(detalleDocumento.getValorSubtotal());
 							detallePedidoVentaService.actualizarCamposNovedadParcial(detalleDocumento);// Con el tema de campos basicos toca es actualizar los campos basicos
 							detallesFinalNuevo.add(detalleDocumento);
 							detalleExpediente.setCantidad(detalleExpediente.getCantidad().add(nuevoTotal.negate()));

@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.DetallePedidoVentaDTO;
 import com.softure.logisticpymes.dto.filter.DetallePedidoVentaFilterDTO;
 import com.softure.logisticpymes.persistence.DetallePedidoVentaMapper;
@@ -132,6 +133,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_guardar
 		List<PedidoVentaCaracteristicaDTO> caracteristicas = dto.getCaracteristicas();
+		if(dto.getCantidad().multiply(dto.getValorUnitario()).compareTo(dto.getValorTotal())!=0) 
+			throw new ServerException("El valor total (" + SoftureUtil.formatMoney(dto.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(dto.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(dto.getValorUnitario()) +") =" + SoftureUtil.formatMoney(dto.getCantidad().multiply(dto.getValorUnitario())));
 		dto = save(dto);
 		dto.setCaracteristicas(caracteristicas);
 		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {

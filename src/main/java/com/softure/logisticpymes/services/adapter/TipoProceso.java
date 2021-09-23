@@ -108,7 +108,8 @@ public class TipoProceso {
 							PedidoVentaDTO cuentaDocumento = pedidoService.consultaXId(pCampo.getValorOpcion());
 							PropiedadDTO propiedadCuenta = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, cuentaDocumento.getPlantilla(), Propiedades.PLANTILLA_TIPO_CUENTA,  null);
 							if(propiedadCuenta==null) {
-								throw new ServerException("El documento " + cuentaDocumento.getNombre() + " No tiene propiedad para crear cuenta");
+								DocumentoPlantillaDTO plantillaError = plantillaService.consultaXId(cuentaDocumento.getPlantilla());
+								throw new ServerException("El documento " + cuentaDocumento.getNombre() + " es de la plantilla "+ plantillaError.getNombre() + " y esta plantilla no tiene propiedad configurada la propiedad cuenta que le permite manejar un seguimiento a los movimientos");
 							}else {
 								caja = cuentaService.crearCuenta(cuentaDocumento, token);
 								pCampo.setValorAuxiliar(caja.getLlaveTabla());
