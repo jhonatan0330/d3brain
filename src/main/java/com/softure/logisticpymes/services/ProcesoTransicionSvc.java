@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.softure.logisticpymes.dto.ActividadDTO;
+import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.DocumentoRelacionGestorDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
@@ -605,9 +606,22 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			PedidoVentaDTO nuevo = new PedidoVentaDTO();
 			nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			nuevo.setPlantilla(transicion.getPlantilla());
-			for (PedidoVentaCaracteristicaDTO iCampoCopiar : camposNuevos) {
-				nuevo.getCaracteristicas().add(copiar(iCampoCopiar, iCampoCopiar.getCampo()));
+			DocumentoPlantillaDTO pPlantilla =  new DocumentoPlantillaDTO();
+			pPlantilla.setLlaveTabla(transicion.getPlantilla());
+			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token);
+			if(documento!=null)nuevo.setTransaccion(documento.getTransaccion());
+			for (DocumentoPlantillaCaracteristicaDTO iCampo : pPlantilla.getCaracteristicas()) {
+				boolean relacionExistente = false;
+				for (PedidoVentaCaracteristicaDTO iCampoCopiar : camposNuevos) {
+					if(iCampo.getLlaveTabla().compareTo(iCampoCopiar.getCampo())==0) {
+						nuevo.getCaracteristicas().add(copiar(iCampoCopiar, iCampoCopiar.getCampo()));
+						relacionExistente = true;
+						break;
+					}
+				}
+				if(!relacionExistente)nuevo.getCaracteristicas().add(copiar(null, iCampo.getLlaveTabla()));
 			}
+			
 			nuevo.setLlaveTabla(null);
 			nuevo.setTransaccion(transaccion);
 			return pedidoService.guardar(nuevo, token);

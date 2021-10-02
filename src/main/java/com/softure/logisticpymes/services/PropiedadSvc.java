@@ -448,6 +448,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				}else {
 					ProductoCaracteristicaFilterDTO campoProductoFilter = new ProductoCaracteristicaFilterDTO();
 					campoProductoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					campoProductoFilter.setBase(producto.getLlaveTabla());
 					campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
 					ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService.consultaUnica(campoProductoFilter);
 					if(campoProducto==null) throw new ServerException("El campo " + dto.getTexto() + " no fue reconocido en el producto " + producto.getNombre() +"\nKey : "+ dto.getKey() +"\nValue Code : "+ dto.getValor());
@@ -518,6 +519,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 	
 	private void identificadorUsuario(PropiedadDTO dto) throws ServerException {
+		if(dto.getValor().compareTo("*")==0) return;
 		UsuarioDTO usuario = usuarioService.consultaXId(dto.getValor());
 		if(usuario==null){
 			UsuarioFilterDTO usuarioFilter = new UsuarioFilterDTO();

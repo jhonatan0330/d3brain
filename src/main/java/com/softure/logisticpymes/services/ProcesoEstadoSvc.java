@@ -118,7 +118,8 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		try {
 			responsable = procesoEstadoMapper.funcionAsignacion(SoftureUtil.formatFunction(propiedad.getLlaveTabla()), documento, modificador, token);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "Obtener Responsable : " + propiedad.getNombre());
+			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
+			throw new ServerException(e.getMessage(), "Proceso : " + pes.getProcesoNombre() + "  Estado :"+ pes.getNombre());
 		}
 		if(responsable==null) throw new ServerException("Revise porque la funcion de asignacion no trae ningun responsable");
 		return responsable;

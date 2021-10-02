@@ -390,9 +390,11 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			if(destinatariosFijos!=null && !destinatariosFijos.isEmpty()) {
 				fijos = new ArrayList<UsuarioDTO>();
 				for (PropiedadDTO iPropiedad : destinatariosFijos) {
-					UsuarioDTO pUser = usuarioService.consultaXId(iPropiedad.getValor());
-					if(pUser!=null && pUser.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) {
-						fijos.add(pUser);
+					if(iPropiedad.getValor().compareTo("*")!=0) {
+						UsuarioDTO pUser = usuarioService.consultaXId(iPropiedad.getValor());
+						if(pUser!=null && pUser.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) {
+							fijos.add(pUser);
+						}	
 					}
 					//Si tiene relaciones la propiedad entonces el busca los correos que se encuentren en esas relaciones
 					correosFijos = searchMail(relacionService.relacionesPropiedad(iPropiedad.getLlaveTabla()), modificador.getCaracteristicas());					

@@ -103,6 +103,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
 		// BEGIN region ejecutar
 		ProcesoTransicionAutomaticaDTO bd = consultaXId(dto.getLlaveTabla());
+		if(bd==null) throw new ServerException("Esta tarea autoamtica ya no se encuentra activo o valida en la bd");
 		return gestionaEjecucion(bd);
 		// END region ejecutar
 	}
@@ -193,7 +194,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				} 
 			}
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
-			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
+			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0 && propiedadDTO.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION)==0) {
 				programar.setTransicion(propiedadDTO.getCampo());	
 			}
 			programar.setFecha(fechaProgramada);
@@ -256,7 +257,6 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
 					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
 					transicion.setLlaveTabla(dto.getTransicion());
-					transicion.setPlantilla(dto.getPlantilla());
 
 					String transaccionDocumento = null;
 					
@@ -266,7 +266,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					}else {
 						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
 						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
-						
+						transicion.setPlantilla(relaciones.get(0).getPlantilla());
 						if(propiedadMultiple==null) {
 							dto.setMensaje("");
 							for (PedidoVentaDTO iPedido : documentos) {
