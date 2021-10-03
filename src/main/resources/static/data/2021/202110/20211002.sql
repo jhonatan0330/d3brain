@@ -9,7 +9,7 @@ INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, 
 
 
 insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
-values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://colombiansofture.com/imagenes/modulo.png','D228','.','SOPORTE');
+values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://colombiansofture.com/imagenes/modulo.png','D08','.','SOPORTE');
 
 -- -------------------
 -- INSERTS for public.documentoplantillacaracteristica_dpcp

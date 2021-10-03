@@ -793,7 +793,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		if(respuestaValidacion==null)  throw new ServerException("El resultado ha sido nulo de la validacion\nDecision : " + dto.getMotivo());
 		if(respuestaValidacion.compareTo("S")!=0)
-			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo() +" Propiedad : " + dto.getNombre());
+			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo());
 	}
 	
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token) throws ServerException{

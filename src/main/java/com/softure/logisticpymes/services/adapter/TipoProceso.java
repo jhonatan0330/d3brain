@@ -72,6 +72,7 @@ public class TipoProceso {
 		if(campoHeredado1.isEmpty()){//Los heredados trabajan solos
 			System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
+			autosave(multiple, pCampo, token);
 			if(!multiple.isEmpty()){
 				validarMultiple(pCampo, token);
 			}else{
@@ -83,17 +84,7 @@ public class TipoProceso {
 				
 				String bodega = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
 				if(!bodega.isEmpty()) tipoBodega.validarPrepararCampo(pCampo, bodega);
-				//Solo para los auload save
-				if(pCampo.getValorOpcion()==null) {
-					if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE)!=null) {
-						PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo, token);
-						PedidoVentaCaracteristicaFilterDTO documentosFuncion = consultarDatosBase(filter);
-						if(documentosFuncion.getCampoDTO().getDocumentos()!=null 
-								&& !documentosFuncion.getCampoDTO().getDocumentos().isEmpty()) {
-							pCampo.setValorOpcion(documentosFuncion.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
-						}
-					}
-				}
+				
 				//Valido que el documento este activo y actualizo algunos valores
 				if(pCampo.getValorOpcion()!=null){
 					if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null)
@@ -123,6 +114,38 @@ public class TipoProceso {
 			}
 		} else {
 			System.out.format("\n[%s - %s]  Campo heredado = %s, No se valida", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre(), campoHeredado1);
+		}
+	}
+	
+	private void autosave(String multiple, PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+		//Solo para los auload save
+		if(pCampo.getValorOpcion()==null) {
+			if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE)!=null) {
+
+				if(!multiple.isEmpty()){
+					PropiedadDTO funcionConsulta = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_FUNCION_SQL);
+					if(funcionConsulta ==null) throw new ServerException("Se debe definir la funcion para obtener los datos del autosave");
+					pCampo.setExpedientes(
+							consultarFuncionDocumentos(pCampo.getCampoDTO(), pCampo.getCampoDTO(), pCampo.getDependientes(), null, funcionConsulta, null, token)
+							);
+					if(pCampo.getModificado() 
+							&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null
+							&& (pCampo.getExpedientes()==null || pCampo.getExpedientes().isEmpty()))
+						throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+				}else {
+					PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo, token);
+					PedidoVentaCaracteristicaFilterDTO documentosFuncion = consultarDatosBase(filter);
+					if(documentosFuncion.getCampoDTO().getDocumentos()!=null 
+							&& !documentosFuncion.getCampoDTO().getDocumentos().isEmpty()) {
+						pCampo.setValorOpcion(documentosFuncion.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+					} else {
+						if(pCampo.getModificado() 
+								&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null)
+							throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+					}
+				}
+
+			}
 		}
 	}
 
@@ -164,7 +187,11 @@ public class TipoProceso {
 	private void validarMultiple(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		if(pCampo.getExpedientes()==null) pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
 		//Valido obligatoriedad
-		if(pCampo.getModificado() && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null  && pCampo.getExpedientes().isEmpty()) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+		if(pCampo.getModificado() 
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null 
+				&& pCampo.getExpedientes().isEmpty() 
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE)==null) 
+			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
 		
 		List<PedidoVentaDTO> procesosActuales = null;
 		//Consulto los procesos que estan en BD
@@ -679,6 +706,7 @@ public class TipoProceso {
 			return pCampo;
 		}else{ 
 			if(pCampo.getDocumento()==null) {//Si es multiple y es nuevo no consulte nada
+				
 				pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
 			}else {//Aqui solo van los documentos actuales
 				if(campoValor.isEmpty() || campoValor=="1" || campoValor == "2") campoValor = null;
@@ -712,6 +740,7 @@ public class TipoProceso {
 			String token) throws ServerException{
 		//En caso que sea funcion y tenga una dependencia va a aenviar ese valor como llave tabla
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, Propiedades.DEPENDE);
+		if(entityFilter==null) entityFilter = new PedidoVentaFilterDTO(); // en tipo proceos autoload no sabia que filtrar
 		if(codigoDepende!=null){//Coloco las dependencias
 			campoService.validarDependientes(campo, dependientes);
 			dependientes = campoService.ordenarAlfabeticaDepende(dependientes);
