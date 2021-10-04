@@ -317,6 +317,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if(todosPermisos) {
 			DocumentoPlantillaFilterDTO filtroFullFilter = new DocumentoPlantillaFilterDTO();
 			filtroFullFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroFullFilter.setPaginacionRegistroFinal(1000);
 			plantillasPermitidas =listarConsulta(filtroFullFilter);
 		}else {
 			plantillasPermitidas = listarPlantillaRol(dto);
