@@ -11,27 +11,22 @@ INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, 
 insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
 values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://colombiansofture.com/imagenes/modulo.png','D08','.','SOPORTE');
 
--- -------------------
--- INSERTS for public.documentoplantillacaracteristica_dpcp
--- -------------------
-insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) values ('147cac472c604deaa943c7a6cb5d3893','57c7788e671b4bc192fe2700ad71378d',1,'FECHA','FECHA','F','Contiene las fechas del reporte');
-insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) values ('d1c9f83727ea43f2ad97d90b0f4eb0f8','57c7788e671b4bc192fe2700ad71378d',2,'INTERESADOS','INTERESADOS','Z','.');
+insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) 
+	values ('147cac472c604deaa943c7a6cb5d3893','57c7788e671b4bc192fe2700ad71378d',1,'FECHA','FECHA','F','Contiene las fechas del reporte');
+insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) 
+	values ('d1c9f83727ea43f2ad97d90b0f4eb0f8','57c7788e671b4bc192fe2700ad71378d',2,'INTERESADOS','INTERESADOS','Z','.');
 
--- -------------------
--- INSERTS for public.mensajeplantillacorreo_mplp
--- -------------------
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
 	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', 'conde123',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
 
-insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) values ('ea45ec023c754313a0714687efb633fb','seguimiento de sistema','A','SEGUIMIENTO DE SISTEMA','seguimiento de sistema','smtp.gmail.com');
+insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) 
+	values ('ea45ec023c754313a0714687efb633fb','seguimiento de sistema','A','SEGUIMIENTO DE SISTEMA','seguimiento de sistema','smtp.gmail.com');
 
-insert into reportebase_rpbp (crpb_llave,crpb_nombre,crpb_estado,crpb_variables,crpb_plantilla,brpb_soloexistente,crpb_codigo,nrpb_version,crpb_descripcion,crpb_servidor,brpb_publico) values ('80ad573d0df04b358732e18834b532fb','COMPORTAMIENTO GENERAL DEL SISTEMA','A',NULL,'57c7788e671b4bc192fe2700ad71378d',false,'D228',0,'PENDIENTE',NULL,false);
+insert into reportebase_rpbp (crpb_llave,crpb_nombre,crpb_estado,crpb_variables,crpb_plantilla,brpb_soloexistente,crpb_codigo,nrpb_version,crpb_descripcion,crpb_servidor,brpb_publico)
+	values ('80ad573d0df04b358732e18834b532fb','COMPORTAMIENTO GENERAL DEL SISTEMA','A',NULL,'57c7788e671b4bc192fe2700ad71378d',false,'D228',0,'PENDIENTE',NULL,false);
 
-
--- -------------------
--- INSERTS for public.propiedad_ppdp
 -- -------------------
 insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('f25e50668a944633ab3476ffff6ec291','57c7788e671b4bc192fe2700ad71378d','1',NULL,'A','PROP_142',TIMESTAMP '2021-10-02 07:11:35.573000 -0500',TIMESTAMP '2021-10-02 07:11:35.570000 -0500',NULL,'80b94072128c4720a2c68363555314e4',NULL,'L',NULL,NULL,NULL,NULL,NULL);
 insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('e185c5a0fa144aff8ae8fe9d59310c16','147cac472c604deaa943c7a6cb5d3893','*',NULL,'A','PROP_25',TIMESTAMP '2021-10-02 07:11:35.699000 -0500',TIMESTAMP '2021-10-02 07:11:35.696000 -0500',NULL,'80b94072128c4720a2c68363555314e4',NULL,'C',NULL,NULL,NULL,NULL,NULL);
@@ -385,6 +380,7 @@ order by 1]]>
 ',NULL,'A','PROP_138',TIMESTAMP '2021-10-02 08:47:11.903000 -0500',TIMESTAMP '2021-10-02 08:47:11.903000 -0500',NULL,'80b94072128c4720a2c68363555314e4',NULL,'E',NULL,NULL,NULL,NULL,NULL);
 insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('ca3c8d97bba8468a846057f5af6922f9','57c7788e671b4bc192fe2700ad71378d','ea45ec023c754313a0714687efb633fb','SEGUIMIENTO DE SISTEMA','A','PROP_57',TIMESTAMP '2021-10-02 08:51:04.226000 -0500',TIMESTAMP '2021-10-02 08:51:04.221000 -0500',NULL,'80b94072128c4720a2c68363555314e4',NULL,'L',NULL,NULL,NULL,NULL,NULL);
 insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('ef5ebb5f3c784a9dab34c03e8142e6d6','57c7788e671b4bc192fe2700ad71378d','*',NULL,'A','PROP_117',TIMESTAMP '2021-10-02 08:58:29.489000 -0500',TIMESTAMP '2021-10-02 08:58:29.489000 -0500',NULL,'80b94072128c4720a2c68363555314e4',NULL,'L',NULL,NULL,NULL,NULL,NULL);
+
 INSERT INTO propiedad_ppdp (cppd_llave, cppd_campo, cppd_valor, cppd_texto, cppd_estado, cppd_propiedadvalor, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo) 
 	VALUES('80553c75b0f44b2ca8179347e3ff031d', '57c7788e671b4bc192fe2700ad71378d', '80ad573d0df04b358732e18834b532fb', 'COMPORTAMIENTO GENERAL DEL SISTEMA', 'A', 'PROP_113', '2021-10-02 16:52:41.261', '2021-10-02 16:52:41.152', '80b94072128c4720a2c68363555314e4', 'L');
 
@@ -444,7 +440,7 @@ INSERT INTO rolacceso_racp(crac_llave, brac_permisoscompletos, crac_plantilla)
 
 INSERT INTO modulocontratado_mdcp(cmdc_llave, cmdc_modulo, cmdc_nombre, cmdc_imagen)
     select 'ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'http://colombiansofture.com/imagenes/modulo.png'
-    WHERE NOT EXISTS (SELECT 1 FROM modulocontratado_mdcp WHERE cmdc_llave ='ADMINISTRADOR');
+    WHERE NOT EXISTS (SELECT 1 FROM modulocontratado_mdcp WHERE cmdc_llave ='ADMINISTRACION');
     
 INSERT INTO permiso_perp(cper_llave, cper_rolacceso, cper_modulo)
     select 'ADMINISTRADOR', 'ADMINISTRADOR', 'ADMINISTRACION'
@@ -459,3 +455,6 @@ insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_pla
 	values ('43a64e5a45da420d8d421a9a5c35c421','A','ef5ebb5f3c784a9dab34c03e8142e6d6','ADMINISTRADOR','4e3014ec945e4c718dc50481220fcf80',NULL);
 INSERT INTO relacioninterna_ritp (crit_llave, crit_estado, crit_propiedad, crit_plantilla, crit_campo, crit_auxiliar) 
 	VALUES('04c7354220e045a997b06baead97cf96', 'A', 'ef5ebb5f3c784a9dab34c03e8142e6d6', '57c7788e671b4bc192fe2700ad71378d', 'd1c9f83727ea43f2ad97d90b0f4eb0f8', NULL);
+
+INSERT INTO propiedad_ppdp (cppd_llave, cppd_motivo, cppd_propiedadvalor, cppd_tipo, cppd_campo, cppd_valor, cppd_texto, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_cambioeliminacion, cppd_estado, cppd_rol, dppd_fechainicial, dppd_fechafinal, cppd_usuario, cppd_bloqueo)
+	VALUES('c58ad3f3c076486eae27bd1d810ffdfd', NULL, 'PROP_105', 'C', '4e3014ec945e4c718dc50481220fcf80', '1', NULL, '2021-10-04 05:46:17.712', '2021-10-04 05:46:17.709', '346af7017a784f86ad5fbe32ac82f1eb', NULL, 'A', NULL, NULL, NULL, NULL, NULL);

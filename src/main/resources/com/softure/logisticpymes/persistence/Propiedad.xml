@@ -483,7 +483,7 @@ COST 100;
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
-        and cpvd_llave in ('PROP_85', 'PROP_84', 'PROP_107', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114')
+        and cpvd_llave in ('PROP_85', 'PROP_84', 'PROP_107', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114', 'PROP_161')
         order by nombre, key
     </select>
     <select id="actualizarValorPropiedad" parameterType="PropiedadDTO" resultType="PropiedadDTO">
