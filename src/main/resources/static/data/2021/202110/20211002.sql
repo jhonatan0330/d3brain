@@ -457,4 +457,4 @@ INSERT INTO relacioninterna_ritp (crit_llave, crit_estado, crit_propiedad, crit_
 	VALUES('04c7354220e045a997b06baead97cf96', 'A', 'ef5ebb5f3c784a9dab34c03e8142e6d6', '57c7788e671b4bc192fe2700ad71378d', 'd1c9f83727ea43f2ad97d90b0f4eb0f8', NULL);
 
 INSERT INTO propiedad_ppdp (cppd_llave, cppd_motivo, cppd_propiedadvalor, cppd_tipo, cppd_campo, cppd_valor, cppd_texto, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_cambioeliminacion, cppd_estado, cppd_rol, dppd_fechainicial, dppd_fechafinal, cppd_usuario, cppd_bloqueo)
-	VALUES('c58ad3f3c076486eae27bd1d810ffdfd', NULL, 'PROP_105', 'C', '4e3014ec945e4c718dc50481220fcf80', '1', NULL, '2021-10-04 05:46:17.712', '2021-10-04 05:46:17.709', '346af7017a784f86ad5fbe32ac82f1eb', NULL, 'A', NULL, NULL, NULL, NULL, NULL);
+	VALUES('c58ad3f3c076486eae27bd1d810ffdfd', NULL, 'PROP_105', 'C', '4e3014ec945e4c718dc50481220fcf80', '1', NULL, '2021-10-04 05:46:17.712', '2021-10-04 05:46:17.709', '80b94072128c4720a2c68363555314e4', NULL, 'A', NULL, NULL, NULL, NULL, NULL);
