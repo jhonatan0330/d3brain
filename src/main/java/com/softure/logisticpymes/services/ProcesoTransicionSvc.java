@@ -324,8 +324,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_INACTIVO, null);
 				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_FINALIZADO, null);
 			}
-			dto.setDocumentador(true);
-			
+			//dto.setDocumentador(true);
 		}
 	}
 	

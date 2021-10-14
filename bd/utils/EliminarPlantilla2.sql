@@ -36,6 +36,7 @@ delete from pedidoventa_pdvp where cpdv_plantilla in (select cdpl_llave from doc
 
 select * from documentoplantilla_dplp where cdpl_estado = 'I' order by cdpl_nombre;
 delete from relacioninterna_ritp where crit_propiedad in (select cppd_llave from propiedad_ppdp where cppd_tipo = 'L' and cppd_campo in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
+delete from procesotransicionautomatica_ptap where cpta_propiedad in (select cppd_llave from propiedad_ppdp where cppd_tipo = 'L' and cppd_campo in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I'));
 delete from propiedad_ppdp where cppd_tipo = 'L' and cppd_campo in (select cdpl_llave from documentoplantilla_dplp where cdpl_estado = 'I');
 delete from documentoplantilla_dplp where cdpl_estado = 'I';
 delete from consecutivo_conp where ccon_llave not in (select cdpl_consecutivo from documentoplantilla_dplp) and ccon_llave not in (select cpcn_consecutivo from plantillaconsecutivo_pcnp);

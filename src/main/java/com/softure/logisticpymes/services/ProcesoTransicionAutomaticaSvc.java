@@ -143,6 +143,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				} catch (ServerException e) {
 					procesoTransicionAutomaticaDTO.setMensaje("ERROR : " + e.getMessage());
 					try {
+						try {
+							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage());
+						} catch (ServerException e1) {
+						}
 						procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);
 					} catch (ServerException e1) {
 					}

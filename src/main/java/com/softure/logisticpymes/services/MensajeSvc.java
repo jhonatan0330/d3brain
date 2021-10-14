@@ -254,7 +254,12 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			destinatarios.put(responsable.getLlaveTabla(), responsable.getCorreo());//Evitar enviar correo al mismo que lo creo
 		}
 		try {
-			if(mensajeFuncion!=null)destinatariosXFuncion = mensajeMapper.correosMensaje(SoftureUtil.formatFunction(mensajeFuncion.getLlaveTabla()), modificador.getLlaveTabla());
+			if(mensajeFuncion!=null) {
+				String keyF= SoftureUtil.formatFunction(mensajeFuncion.getLlaveTabla());
+				String documentF = documento.getLlaveTabla();
+				String modificadorF = modificador.getLlaveTabla();
+				destinatariosXFuncion = mensajeMapper.correosMensaje( keyF, documentF, modificadorF, token);
+			}
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Documento : " + documento.getNombre() + " - " +documento.getDescripcion() + "\nModificador : " + modificador.getNombre() + " - " +modificador.getDescripcion() + "\n" + mensajeFuncion.getKey() + " : " + mensajeFuncion.getMotivo());
 		}
