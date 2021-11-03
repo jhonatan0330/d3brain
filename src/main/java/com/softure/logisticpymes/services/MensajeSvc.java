@@ -21,6 +21,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoRelacionExpedienteDTO;
 import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
+import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
@@ -64,6 +65,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	@Autowired private RelacionInternaSvc relacionService;
 	@Autowired private UsuarioSvc usuarioService;
 	@Autowired private ServidorSvc servidorService;
+	@Autowired private OrganizacionSvc organizacionService;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private DocumentoRelacionExpedienteSvc relacionExpedienteService;
@@ -467,7 +469,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	}
 	
 	public void mensaje2Administrator(String messageTitle, String messageText) throws ServerException {
-		UsuarioDTO userAdmin =autenticacionService.getUserSystem();
+		UsuarioDTO userAdmin = autenticacionService.getUserSystem();
 		if(userAdmin==null || userAdmin.getCorreo()==null ) return;
 		ServidorFilterDTO filter = new ServidorFilterDTO();
 		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
@@ -475,11 +477,12 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
 		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado");
 		JavaMailSenderImpl mailSender = getMailSender(servidores.get(0));
+		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
 		SimpleMailMessage message = new SimpleMailMessage();  
         message.setFrom(servidores.get(0).getUsuario());
 	    message.setTo(userAdmin.getCorreo());
 	    message.setSubject(messageTitle);  
-	    message.setText(messageText);  
+	    message.setText(principal.getNombre() + " " + messageText);  
 	    mailSender.send(message);
 	}
 

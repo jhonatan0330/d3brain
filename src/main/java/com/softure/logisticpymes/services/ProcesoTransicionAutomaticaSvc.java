@@ -194,7 +194,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 						fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
 					}
 				} catch (ServerException e) {
-					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadDTO.getTexto() + " ) " + e.getMessage();
+					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " +  propiedadDTO.getTexto() + " ) " + e.getMessage();
 				} 
 			}
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
@@ -212,7 +212,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
 				programar.setMensaje(error);
-				mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error);
+				mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");
 			}
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
 			save(programar);
