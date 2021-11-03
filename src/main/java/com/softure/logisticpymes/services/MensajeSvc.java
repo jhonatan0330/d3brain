@@ -253,15 +253,17 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		if(responsable!=null && (usuarioGenerador==null || responsable.getLlaveTabla().compareTo(usuarioGenerador)!=0)) {
 			destinatarios.put(responsable.getLlaveTabla(), responsable.getCorreo());//Evitar enviar correo al mismo que lo creo
 		}
-		try {
-			if(mensajeFuncion!=null) {
+		
+		if(mensajeFuncion!=null) {
+			String propiedadUbicacion = propiedadService.ubicarPropiedad(mensajeFuncion);// Debo dejarla fuera de la exception porque me la bloquea la transaccionalidad 
+			try {
 				String keyF= SoftureUtil.formatFunction(mensajeFuncion.getLlaveTabla());
 				String documentF = documento.getLlaveTabla();
 				String modificadorF = modificador.getLlaveTabla();
 				destinatariosXFuncion = mensajeMapper.correosMensaje( keyF, documentF, modificadorF, token);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), propiedadUbicacion + "\nDOCUMENTO : " + documento.getNombre() + " - " +documento.getDescripcion().toLowerCase() + "\nMODIFICADOR : " + modificador.getNombre() + " - " +modificador.getDescripcion().toLowerCase() + "\n PROPIEDAD: " + mensajeFuncion.getKey().toLowerCase());
 			}
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "Documento : " + documento.getNombre() + " - " +documento.getDescripcion() + "\nModificador : " + modificador.getNombre() + " - " +modificador.getDescripcion() + "\n" + mensajeFuncion.getKey() + " : " + mensajeFuncion.getMotivo());
 		}
 		
 		if(destinatariosXFuncion!=null && !destinatariosXFuncion.isEmpty()) {

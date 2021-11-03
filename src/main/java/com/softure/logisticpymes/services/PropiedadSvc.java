@@ -13,6 +13,7 @@ import com.softure.logisticpymes.dto.CategoriaProductoDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
+import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.ProductoCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
 import com.softure.logisticpymes.dto.TarifarioDTO;
@@ -867,6 +868,35 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	
 	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario) throws ServerException{
 		return propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
+	}
+	
+	public String ubicarPropiedad(PropiedadDTO propiedad) throws ServerException {
+		if(propiedad==null || propiedad.getTipo()==null) throw new ServerException("Los datos de la propiedad estan nulos");
+		switch (propiedad.getTipo()) {
+		case PropiedadValorDefinidoDTO.API_SERVICE:
+			return "SERVICIO API";
+		case PropiedadValorDefinidoDTO.CAMPO:
+			return"CAMPO";
+		case PropiedadValorDefinidoDTO.ESTADO:
+			return"ESTADO";
+		case PropiedadValorDefinidoDTO.ORGANIZACION:
+			return"ORGANIZACION";
+		case PropiedadValorDefinidoDTO.PLANTILLA:
+			return"PLANTILLA";
+		case PropiedadValorDefinidoDTO.PROCESO:
+			return"PROCESO";
+		case PropiedadValorDefinidoDTO.REPORTE:
+			return"REPORTE";
+		case PropiedadValorDefinidoDTO.ROL:
+			return"ROL";
+		case PropiedadValorDefinidoDTO.SERVIDOR:
+			return"SERVIDOR";
+		case PropiedadValorDefinidoDTO.TRANSICION:
+			ProcesoTransicionDTO bdTR = transicionService.consultaXId(propiedad.getCampo());
+			return "TRANSICION : " + bdTR.getNombre().toLowerCase()+ " \n PROCESO: "+ bdTR.getProcesoNombre().toLowerCase()
+				+" \nPLANTILLA : "+ bdTR.getPlantillaNombre().toLowerCase()+ "\n\n";
+		}
+		return "";
 	}
 // END region aditionalMethods
 
