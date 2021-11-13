@@ -44,7 +44,8 @@ public class TipoNumero {
 							|| (pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null)){
 						// En tcm se tienen permisos de modificar el seguro
 						BigDecimal valorCalculado = calcular(pCampo);
-						if(pCampo.getValorNumero().compareTo(valorCalculado)!=0) 
+						BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate()); 
+						if(diferencia.abs().longValue()>1) 
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " no se calculo correctamente, valor esperado : (" + SoftureUtil.formatMoney(valorCalculado) +  ") y se recibe (" + SoftureUtil.formatMoney(pCampo.getValorNumero()) +")");
 					}
 				}

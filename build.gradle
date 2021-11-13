@@ -15,7 +15,7 @@ bootJar {
 repositories {
 	mavenCentral()
 	maven { 
-		url = uri("http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/")
+		url = uri("https://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/")
 		allowInsecureProtocol = true
 	}
 }
