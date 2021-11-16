@@ -173,6 +173,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			String transaccion) throws ServerException {
 
 		// Aqui lleno las propiedades del dto asi no falla api
+		if(dto.getPropiedades()==null) dto.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, dto.getLlaveTabla(), null, getUserFlex(token)));
 		propiedadService.validarFuncionConsultandoPropiedad(dto, PropiedadValorDefinidoDTO.TRANSICION, expediente, documentoDTO.getLlaveTabla(), getUserFlex(token));
 		ProcesoTransicionDTO respuesta = dto;
 		PedidoVentaDTO expedienteDTO = pedidoService.consultaXId(expediente);
