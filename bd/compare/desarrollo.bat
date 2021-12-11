@@ -1,6 +1,6 @@
 SET PGPASSWORD=buho123
 SET /p BD=Coloque el nombre de la bd completo
-SET SERVER=190.147.99.2
+SET SERVER=190.27.41.78
 SET POSTGRES_FOLDER=C:\Program Files\PostgreSQL\12\bin
 SET FOLDER_BD=D:\Softure\Space2021\SW42_JAVA\src\main\resources\static\data
 SET FOLDER_BD_UTILS=D:\Softure\Space2021\SW42_JAVA\bd\utils
