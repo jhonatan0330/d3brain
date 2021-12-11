@@ -12,6 +12,7 @@ public class ConsecutivoFilterDTO extends BasicFilterDTO
 	private String prefijo;
 	private String sufijo;
  	private Boolean manualFilter = null;
+	private String padding;
 	private String consecutivoActual;
 
 	
@@ -48,6 +49,15 @@ public class ConsecutivoFilterDTO extends BasicFilterDTO
 	
 	public Boolean getManualFilter() {
 		return manualFilter;
+	}
+	
+	
+	public void setPadding(String padding) {
+		this.padding = padding;
+	}
+	
+	public String getPadding() {
+		return padding;
 	}
 	
 	

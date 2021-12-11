@@ -102,7 +102,14 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			if(consecutivoBD.getNumeroActual().compareTo(consecutivoBD.getNumeroFinal())>0)throw new ServerException("El numero no puede ser mayor a " +SoftureUtil.formatNumber(consecutivoBD.getNumeroFinal()) + "\n" + consecutivoBD.getNombre());
 		}
 		//Armo el numero acual
-		String cons = ((consecutivoBD.getPrefijo()==null)?"":consecutivoBD.getPrefijo()) + consecutivoBD.getNumeroActual().toBigInteger().toString()  + ((consecutivoBD.getSufijo()==null)?"":consecutivoBD.getSufijo());
+		String cons = "";
+		if(consecutivoBD.getPrefijo()!=null) cons = cons + consecutivoBD.getPrefijo();
+		if(consecutivoBD.getPadding()==null) {
+			cons = cons + consecutivoBD.getNumeroActual().toBigInteger().toString();	
+		}else {
+			cons = cons + String.format(consecutivoBD.getPadding(), consecutivoBD.getNumeroActual().toBigInteger());
+		}
+		if(consecutivoBD.getSufijo()!=null) cons = cons + consecutivoBD.getSufijo();
 		consecutivoBD.setConsecutivoActual(cons);
 		return consecutivoBD;
 		// END region asignarConsecutivo

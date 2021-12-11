@@ -33,6 +33,7 @@ import com.softure.logisticpymes.dto.ServidorDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
+import com.softure.logisticpymes.dto.filter.ServidorFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
@@ -47,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.MensajeDTO;
 import com.softure.logisticpymes.dto.filter.MensajeFilterDTO;
-import com.softure.logisticpymes.dto.filter.ServidorFilterDTO;
 import com.softure.logisticpymes.persistence.MensajeMapper;
 
 @Service("mensajeService")

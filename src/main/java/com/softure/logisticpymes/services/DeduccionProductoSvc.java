@@ -1,13 +1,25 @@
 package com.softure.logisticpymes.services;
 
 import java.util.List;
-import java.util.ArrayList;
+
 // BEGIN region interImport
+import java.util.ArrayList;
 import java.util.Date;
 import java.math.BigDecimal;
 
+import com.softure.java.cons.ConstantesGenerales;
+
+import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.dto.PropiedadDTO;
+import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.TrazabilidadProductoInventarioDTO;
 import com.softure.logisticpymes.dto.filter.TrazabilidadProductoInventarioFilterDTO;
+
+import com.softure.logisticpymes.services.adapter.AuxiliarProcesoBodega;
+import com.softure.logisticpymes.services.adapter.Propiedades;
+
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -17,18 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.DeduccionProductoDTO;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.filter.DeduccionProductoFilterDTO;
 import com.softure.logisticpymes.persistence.DeduccionProductoMapper;
-import com.softure.logisticpymes.services.adapter.AuxiliarProcesoBodega;
-import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {

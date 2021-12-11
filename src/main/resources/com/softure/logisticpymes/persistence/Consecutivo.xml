@@ -14,6 +14,7 @@
 			,mcon_numerofinal as  numeroFinal
 			,mcon_numeroactual as  numeroActual
 			,bcon_manual as  manual
+			,ccon_padding as  padding
 			,ccon_estado as estado
 		from consecutivo_conp a
 	</sql>
@@ -37,6 +38,9 @@
 			</if>
 			<if test="manualFilter!=null">
 				and bcon_manual = #{manualFilter}
+			</if>
+			<if test="padding!=null">
+				and ccon_padding = #{padding}
 			</if>
 			<if test="filtroParametro!=null">
 				and (upper(ccon_nombre) like upper('%' || #{filtroParametro} || '%') or upper(ccon_prefijo) like upper('%' || #{filtroParametro} || '%'))
@@ -100,6 +104,9 @@
 		<if test="manual!=null">
 			,bcon_manual
 		</if>
+		<if test="padding!=null">
+			,ccon_padding
+		</if>
 		<if test="estado!=null">
 			,ccon_estado
 		</if>
@@ -126,6 +133,9 @@
 		<if test="manual!=null">
 			,#{manual}
 		</if>
+		<if test="padding!=null">
+			,#{padding}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -142,6 +152,7 @@
 				mcon_numerofinal = #{numeroFinal},
 				mcon_numeroactual = #{numeroActual},
 				bcon_manual = #{manual},
+				ccon_padding = #{padding},
 				ccon_estado =#{estado}
 		<include refid="whereConsecutivoPrimaryKeyFragment" />
 	</select>
@@ -156,6 +167,7 @@
 			,mcon_numerofinal as  numeroFinal
 			,mcon_numeroactual as  numeroActual
 			,bcon_manual as  manual
+			,ccon_padding as  padding
 			,ccon_estado as estado
 		from consecutivo_conp a
 	</sql>

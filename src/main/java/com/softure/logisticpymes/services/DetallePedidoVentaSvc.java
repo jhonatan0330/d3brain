@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 
 import com.softure.java.cons.ConstantesGenerales;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.DetalleCaracteristicaProductoDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
@@ -32,7 +33,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.DetallePedidoVentaDTO;
 import com.softure.logisticpymes.dto.filter.DetallePedidoVentaFilterDTO;
 import com.softure.logisticpymes.persistence.DetallePedidoVentaMapper;

@@ -19,6 +19,7 @@ public class ConsecutivoDTO extends BasicDTO
 	private BigDecimal numeroFinal;
 	private BigDecimal numeroActual;
 	private boolean manual;
+	private String padding;
 	private String consecutivoActual;
 
 	public void setNombre(String nombre) {
@@ -69,6 +70,13 @@ public class ConsecutivoDTO extends BasicDTO
 	
 	public boolean getManual() {
 		return manual;
+	}
+	public void setPadding(String padding) {
+		this.padding = padding;
+	}
+	
+	public String getPadding() {
+		return padding;
 	}
 	public void setConsecutivoActual(String consecutivoActual) {
 		this.consecutivoActual = consecutivoActual;
