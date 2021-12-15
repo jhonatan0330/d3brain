@@ -105,36 +105,11 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	public RolAccesoDTO guardar(RolAccesoDTO dto, String token) throws ServerException {
 		// BEGIN RolAcceso_guardar
 		dto = super.guardar(dto, token);
-		/*if(dto.getPermisosCompletos()){
-			//Creo los permisos
-			DocumentoPlantillaDTO filtro = new DocumentoPlantillaDTO();
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			List<DocumentoPlantillaDTO> plantillas = plantillaService.listarConsulta(filtro);
-			if(plantillas!=null & !plantillas.isEmpty()){
-				for(DocumentoPlantillaDTO formulario : plantillas){
-					guardarPermisosCompletos(dto.getLlaveTabla(), formulario.getLlaveTabla(), dto.getSecurityToken());
-				}
-			}
-		}*/
 		return dto;
 		// END RolAcceso_guardar
 	}
 
 // BEGIN region aditionalMethods
-	/*public void guardarPermisosCompletos(String rol, String plantilla, String token) throws ServerException {
-		PropiedadDTO acceso =Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantilla, Propiedades.PERMISO_PLANTILLA_CREAR, Propiedades.TRUE, token);
-		acceso.setRol(rol);
-		propiedadSvc.guardar(acceso);
-		
-		acceso =Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR, Propiedades.TRUE, token);
-		acceso.setRol(rol);
-		propiedadSvc.guardar(acceso);
-		
-		acceso =Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantilla, Propiedades.PERMISO_PLANTILLA_VER_TODOS, Propiedades.TRUE, token);
-		acceso.setRol(rol);
-		propiedadSvc.guardar(acceso);
-		
-	}*/
 	
 	public boolean usuarioPermisosCompletos(String token) throws ServerException{
 		String user = getUserFlex(token);

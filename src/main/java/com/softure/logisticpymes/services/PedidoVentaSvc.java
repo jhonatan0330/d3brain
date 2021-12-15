@@ -807,10 +807,11 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				}
 			}
 		}else {
-			//Creo el consecutivo y se lo asigno a la plantilla, si es rol no cuadro consecutivo
+			//Creo el consecutivo y se lo asigno a la plantilla, si es rol no cuadro consecutivo (Ahora si)
 			if(plantilla.getConsecutivo()==null) {
-				PropiedadDTO consecProperty = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL, getUserFlex(token));
-				if(consecProperty ==null)consecutivoService.crear(plantilla, token);
+				//PropiedadDTO consecProperty = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL, getUserFlex(token));
+				//if(consecProperty ==null)
+				consecutivoService.crear(plantilla, token);
 			}
 				
 		}
