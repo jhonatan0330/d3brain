@@ -223,7 +223,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setPropiedadValor(dto.getPropiedadValor());
 			existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			existeFilter.setRol(dto.getRol());
+			existeFilter.setRolExcluyente(dto.getRolExcluyente());
 			existeFilter.setUsuario(dto.getUsuario());
+			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
 			PropiedadDTO existe = consultaUnica(existeFilter);
 			if(existe!=null) throw new ServerException("Esta propiedad ya fue definida");
 		}else {
@@ -716,17 +718,35 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			filtroOrden.setPropiedadValor(valorDefinido.getLlaveTabla());	
 		}
 		List<PropiedadDTO> consultadas = propiedadMapper.consultarRol(filtroOrden, usuario, new Date());
-		List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
 		if(usuario !=null) {
-			if(!consultadas.isEmpty()) {
-				for (PropiedadDTO iPropiedadDTO : consultadas) {
-					if(Propiedades.validarBloqueo(iPropiedadDTO))validadas.add(iPropiedadDTO);
-				}
-			}
-		}else {
-			return consultadas;
+			return cleanPropertiesFromTimeAndExclusion(consultadas);
 		}
+		return consultadas;
+	}
+
+	private List<PropiedadDTO> cleanPropertiesFromTimeAndExclusion(List<PropiedadDTO> consultadas) {
+		
+		List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
+		List<PropiedadDTO> excluidas = new ArrayList<PropiedadDTO>();
+		
+		if(!consultadas.isEmpty()) {
+			//Valido bloqueo por exclusion
+			for (PropiedadDTO iPropiedadDTO : consultadas) {
+				if(iPropiedadDTO.getUsuarioExcluyente()!=null || iPropiedadDTO.getRolExcluyente()!=null)excluidas.add(iPropiedadDTO);
+			}
+			if(!excluidas.isEmpty()) {
+				for (PropiedadDTO iPropiedadDTO : excluidas) {
+					consultadas.removeIf(x -> (x.getTipo().compareTo(iPropiedadDTO.getTipo()) ==0 && x.getCampo().compareTo(iPropiedadDTO.getCampo())==0));
+				}	
+			}
+			//Valido bloqueo por tiempo
+			for (PropiedadDTO iPropiedadDTO : consultadas) {
+				if(Propiedades.validarBloqueo(iPropiedadDTO))validadas.add(iPropiedadDTO);
+			}
+		}
+		
 		return validadas;
+		
 	}
 	
 	public List<PropiedadDTO> obtenerEspecialFullPermisos(String plantilla) throws ServerException{
@@ -867,7 +887,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 	
 	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario) throws ServerException{
-		return propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
+		 
+		List<PropiedadDTO> consultadas = propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
+		return cleanPropertiesFromTimeAndExclusion(consultadas);
 	}
 	
 	public String ubicarPropiedad(PropiedadDTO propiedad) throws ServerException {

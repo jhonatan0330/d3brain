@@ -369,9 +369,11 @@ CREATE TABLE propiedad_ppdp(
         cppd_cambiocreacion character varying(32) NOT NULL,
         cppd_cambioeliminacion character varying(32),
         cppd_rol character varying(32),
+        cppd_rolexcluyente character varying(32),
         dppd_fechainicial timestamp with time zone,
         dppd_fechafinal timestamp with time zone,
         cppd_usuario character varying(32),
+        cppd_usuarioexcluyente character varying(32),
         cppd_motivo character varying(4000),
         cppd_bloqueo character varying(200),
         cppd_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -1051,4 +1053,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.12.10.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2021.12.20.00' from pg_class where relname = 'usuariosesion_ussp';

@@ -20,10 +20,14 @@
 			,cppd_cambioeliminacion as  cambioEliminacion
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
 			,dppd_fechainicial as  fechaInicial
 			,dppd_fechafinal as  fechaFinal
-			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
 			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
 			,cppd_estado as estado
@@ -71,6 +75,9 @@
 			<if test="rol!=null">
 				and cppd_rol = #{rol}
 			</if>
+			<if test="rolExcluyente!=null">
+				and cppd_rolexcluyente = #{rolExcluyente}
+			</if>
 			<if test="fechaInicialMin!=null">
 				and dppd_fechainicial >= #{fechaInicialMin}
 			</if>
@@ -85,6 +92,9 @@
 			</if>
 			<if test="usuario!=null">
 				and cppd_usuario = #{usuario}
+			</if>
+			<if test="usuarioExcluyente!=null">
+				and cppd_usuarioexcluyente = #{usuarioExcluyente}
 			</if>
 			<if test="bloqueo!=null">
 				and cppd_bloqueo = #{bloqueo}
@@ -161,6 +171,9 @@
 		<if test="rol!=null">
 			,cppd_rol
 		</if>
+		<if test="rolExcluyente!=null">
+			,cppd_rolexcluyente
+		</if>
 		<if test="fechaInicial!=null">
 			,dppd_fechainicial
 		</if>
@@ -169,6 +182,9 @@
 		</if>
 		<if test="usuario!=null">
 			,cppd_usuario
+		</if>
+		<if test="usuarioExcluyente!=null">
+			,cppd_usuarioexcluyente
 		</if>
 		<if test="motivo!=null">
 			,cppd_motivo
@@ -211,6 +227,9 @@
 		<if test="rol!=null">
 			,#{rol}
 		</if>
+		<if test="rolExcluyente!=null">
+			,#{rolExcluyente}
+		</if>
 		<if test="fechaInicial!=null">
 			,#{fechaInicial}
 		</if>
@@ -219,6 +238,9 @@
 		</if>
 		<if test="usuario!=null">
 			,#{usuario}
+		</if>
+		<if test="usuarioExcluyente!=null">
+			,#{usuarioExcluyente}
 		</if>
 		<if test="motivo!=null">
 			,#{motivo}
@@ -245,9 +267,11 @@
 				cppd_cambiocreacion = #{cambioCreacion},
 				cppd_cambioeliminacion = #{cambioEliminacion},
 				cppd_rol = #{rol},
+				cppd_rolexcluyente = #{rolExcluyente},
 				dppd_fechainicial = #{fechaInicial},
 				dppd_fechafinal = #{fechaFinal},
 				cppd_usuario = #{usuario},
+				cppd_usuarioexcluyente = #{usuarioExcluyente},
 				cppd_motivo = #{motivo},
 				cppd_bloqueo = #{bloqueo},
 				cppd_estado =#{estado}
@@ -267,9 +291,11 @@
 			,cppd_cambiocreacion as  cambioCreacion
 			,cppd_cambioeliminacion as  cambioEliminacion
 			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
 			,dppd_fechainicial as  fechaInicial
 			,dppd_fechafinal as  fechaFinal
 			,cppd_usuario as  usuario
+			,cppd_usuarioexcluyente as  usuarioExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
 			,cppd_estado as estado
@@ -447,7 +473,9 @@ COST 100;
         <if test="dto.propiedadValor!=null">and cppd_propiedadvalor = #{dto.propiedadValor}</if>
         <if test="usuario!=null">
             and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
+            and (cppd_rolExcluyente is null or cppd_rolExcluyente in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
             and (cppd_usuario is null or cppd_usuario = #{usuario})
+            and (cppd_usuarioExcluyente is null or cppd_usuarioExcluyente = #{usuario})
             and (dppd_fechainicial is null or dppd_fechainicial <![CDATA[ < ]]> #{fecha})
             and (dppd_fechafinal is null or dppd_fechafinal > #{fecha})
         </if>
@@ -474,11 +502,15 @@ COST 100;
             ,null as  cambioEliminacion
             ,null as  rol
             ,null as  rolNombre
+            ,null as  rolExcluyente
+			,null as  rolExcluyenteNombre
             ,null as  fechaInicial
             ,null as  fechaFinal
-            ,null as  usuarioNombre
             ,null as  usuario
-      		,null as  motivo
+            ,null as  usuarioNombre
+      		,null as  usuarioExcluyente
+			,null as  usuarioExcluyenteNombre
+			,null as  motivo
       		,null as  bloqueo
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp
@@ -532,8 +564,8 @@ COST 100;
             ,null as  rolNombre
             ,null as  fechaInicial
             ,null as  fechaFinal
-            ,null as  usuarioNombre
             ,null as  usuario
+            ,null as  usuarioNombre
       		,null as  motivo
       		,null as  bloqueo
             ,cpvd_estado as estado
@@ -550,7 +582,9 @@ COST 100;
         and cppd_campo in (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
         <if test="usuario!=null">
             and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
+            and (cppd_rolExcluyente is null or cppd_rolExcluyente in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
             and (cppd_usuario is null or cppd_usuario = #{usuario})
+            and (cppd_usuarioExcluyente is null or cppd_usuarioExcluyente = #{usuario})
             and (dppd_fechainicial is null or dppd_fechainicial <![CDATA[ < ]]> #{fecha})
             and (dppd_fechafinal is null or dppd_fechafinal > #{fecha})
         </if>

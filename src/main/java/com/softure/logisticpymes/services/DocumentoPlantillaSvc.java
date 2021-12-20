@@ -345,14 +345,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			if(todosPermisos) {
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas);
 			}else {
-				List<PropiedadDTO> consultadas = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
-				List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
-				if(!consultadas.isEmpty()) {
-					for (PropiedadDTO iPropiedadDTO : consultadas) {
-						if(Propiedades.validarBloqueo(iPropiedadDTO))validadas.add(iPropiedadDTO);
-					}
-				}
-				todasPropiedadesEvitandoConsultaBD =  validadas;
+				todasPropiedadesEvitandoConsultaBD = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
 			}
 			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
@@ -373,33 +366,35 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						if(propiedadDTO.getCampo().compareTo(iplantillaPermitida.getLlaveTabla())==0) 
 							iplantillaPermitida.getPropiedades().add(propiedadDTO);
 					}
-					if(iplantillaPermitida.getPropiedades().isEmpty()) throw new ServerException("El usuario no tiene permiso sobre el documento " + iplantillaPermitida.getNombre());
-					String procesoInicial = null;
-					if(transicionesIniciales!=null && !transicionesIniciales.isEmpty()){
-						for (ProcesoTransicionDTO procesoTransicionDTO : transicionesIniciales) {
-							if(procesoTransicionDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
-								procesoInicial = procesoTransicionDTO.getProceso();
-								break;
+					if(!iplantillaPermitida.getPropiedades().isEmpty()) {
+						//throw new ServerException("El usuario no tiene permiso sobre el documento " + iplantillaPermitida.getNombre());
+						String procesoInicial = null;
+						if(transicionesIniciales!=null && !transicionesIniciales.isEmpty()){
+							for (ProcesoTransicionDTO procesoTransicionDTO : transicionesIniciales) {
+								if(procesoTransicionDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
+									procesoInicial = procesoTransicionDTO.getProceso();
+									break;
+								}
 							}
 						}
-					}
-					if(procesoInicial!=null) {
-						statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
-								procesoInicial);
-					}
-					if (iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(crearEstadosBasicos());
+						if(procesoInicial!=null) {
+							statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
+									procesoInicial);
+						}
+						if (iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(crearEstadosBasicos());
 
-					//iplantillaPermitida.setReportes(reporteService.listarDisponiblesDocumento(iplantillaPermitida.getLlaveTabla(), false));
-					if(reportes!=null && !reportes.isEmpty()) {
-						for (ReporteBaseDTO reporteBaseDTO : reportes) {
-							if(reporteBaseDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
-								if(iplantillaPermitida.getReportes()==null) iplantillaPermitida.setReportes(new ArrayList<ReporteBaseDTO>());
-								iplantillaPermitida.getReportes().add(reporteBaseDTO);
+						//iplantillaPermitida.setReportes(reporteService.listarDisponiblesDocumento(iplantillaPermitida.getLlaveTabla(), false));
+						if(reportes!=null && !reportes.isEmpty()) {
+							for (ReporteBaseDTO reporteBaseDTO : reportes) {
+								if(reporteBaseDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
+									if(iplantillaPermitida.getReportes()==null) iplantillaPermitida.setReportes(new ArrayList<ReporteBaseDTO>());
+									iplantillaPermitida.getReportes().add(reporteBaseDTO);
+								}
 							}
 						}
+						
+						result.add(iplantillaPermitida);	
 					}
-					
-					result.add(iplantillaPermitida);
 				}
 			}
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){

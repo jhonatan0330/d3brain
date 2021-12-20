@@ -28,6 +28,8 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private String cambioEliminacion;
 	private String rol;
 	private String rolNombre;
+	private String rolExcluyente;
+	private String rolExcluyenteNombre;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicialMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -36,8 +38,10 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private Date fechaFinalMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFinalMax;
-	private String usuarioNombre;
 	private String usuario;
+	private String usuarioNombre;
+	private String usuarioExcluyente;
+	private String usuarioExcluyenteNombre;
 	private String bloqueo;
 
 	
@@ -165,6 +169,24 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	}
 	
 	
+	public void setRolExcluyente(String rolExcluyente) {
+		this.rolExcluyente = rolExcluyente;
+	}
+	
+	public String getRolExcluyente() {
+		return rolExcluyente;
+	}
+	
+	
+	public void setRolExcluyenteNombre(String rolExcluyenteNombre) {
+		this.rolExcluyenteNombre = rolExcluyenteNombre;
+	}
+	
+	public String getRolExcluyenteNombre() {
+		return rolExcluyenteNombre;
+	}
+	
+	
 	public void setFechaInicialMin(Date fechaInicialMin) {
 		this.fechaInicialMin = fechaInicialMin;
 	}
@@ -199,6 +221,15 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	}
 	
 	
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+	
+	public String getUsuario() {
+		return usuario;
+	}
+	
+	
 	public void setUsuarioNombre(String usuarioNombre) {
 		this.usuarioNombre = usuarioNombre;
 	}
@@ -208,12 +239,21 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	}
 	
 	
-	public void setUsuario(String usuario) {
-		this.usuario = usuario;
+	public void setUsuarioExcluyente(String usuarioExcluyente) {
+		this.usuarioExcluyente = usuarioExcluyente;
 	}
 	
-	public String getUsuario() {
-		return usuario;
+	public String getUsuarioExcluyente() {
+		return usuarioExcluyente;
+	}
+	
+	
+	public void setUsuarioExcluyenteNombre(String usuarioExcluyenteNombre) {
+		this.usuarioExcluyenteNombre = usuarioExcluyenteNombre;
+	}
+	
+	public String getUsuarioExcluyenteNombre() {
+		return usuarioExcluyenteNombre;
 	}
 	
 	
