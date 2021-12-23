@@ -562,10 +562,14 @@ COST 100;
             ,null as  cambioEliminacion
             ,null as  rol
             ,null as  rolNombre
+            ,null as  rolExcluyente
+			,null as  rolExcluyenteNombre
             ,null as  fechaInicial
             ,null as  fechaFinal
             ,null as  usuario
             ,null as  usuarioNombre
+      		,null as  usuarioExcluyente
+			,null as  usuarioExcluyenteNombre
       		,null as  motivo
       		,null as  bloqueo
             ,cpvd_estado as estado

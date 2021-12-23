@@ -207,6 +207,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadDTO guardar(PropiedadDTO dto, String token) throws ServerException {
 		// BEGIN Propiedad_guardar
+		if(dto.getUsuarioExcluyente()!=null && (dto.getUsuario()!=null || dto.getRol()!=null)) throw new ServerException("Cuando colocas USUARIO Excluyente no puedes colocar usuario o rol");
+		if(dto.getRolExcluyente()!=null && (dto.getUsuario()!=null || dto.getRol()!=null)) throw new ServerException("Cuando colocas ROL Excluyente no puedes colocar usuario o rol");
 		if(dto.getPropiedadValor()==null)
 			dto.setPropiedadValor(consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
 		PropiedadValorDefinidoDTO valorDefinido = valorDefinidoService.consultaXId(dto.getPropiedadValor());
