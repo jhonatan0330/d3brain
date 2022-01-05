@@ -354,3 +354,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_189' , 'L', 'TEMPORIZADOR', 'TEMPORIZADOR', 'REQUISITO', true, true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_190' , 'L', 'PLANTILLA_INSTRUCCION_CREAR', 'PLANTILLA_INSTRUCCION_CREAR', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo, bpvd_textoculto) 
+	VALUES('PROP_191' , 'W', 'API_VALIDATION', 'API_VALIDATION', 'REQUISITO', true, true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, bpvd_solicitamotivo, bpvd_textoculto) 
+	VALUES('PROP_192' , 'W', 'API_EXTRACTION', 'API_EXTRACTION', 'REQUISITO', true, true, true);

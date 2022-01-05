@@ -211,8 +211,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 			} else {
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
+				try {
+					mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");					
+				} catch (Exception e) {
+					error = "*****ERROR SERVIDOR DE CORREO PARA MENSAJE***** revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " +  propiedadDTO.getTexto() + " ) " + e.getMessage() + " ERROR =" + error;
+				}
 				programar.setMensaje(error);
-				mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");
 			}
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
 			save(programar);
@@ -220,6 +224,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 
 	private Date calcularFecha(Date ultimaEjecucion, String valor) throws ServerException {
+		if (valor==null) throw new ServerException("La propiedad no tiene el valor de temporizador");
 		String[]temporizador = valor.split(":");
 		Calendar fechaCalculada = new GregorianCalendar();
 		fechaCalculada.setTime(ultimaEjecucion);

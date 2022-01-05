@@ -668,10 +668,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.COLOR : {identificarColor(dto);break;}
 			
 			case Propiedades.DETALLE_TARIFARIO : {identificadorTarifario(dto);break;}
+			
+			case Propiedades.PERIODO_LIMPIEZA_HISTORICO : 
+			case Propiedades.TEMPORIZADOR: {validarTemporizador(dto);break;}
 		}
 		return false;
 	}
 	
+
+	private void validarTemporizador(PropiedadDTO dto) throws ServerException {
+		if(dto.getTexto()==null)
+			throw new ServerException("Cuando registras una propiedad de temporizador debes colocar en el texto lla clave de tiempo de repeticion. OBserva la ayuda");
+	}
 
 	private void relacionarCampo(PropiedadDTO dto, String token)throws ServerException {
 		switch (dto.getKey()){
@@ -822,24 +830,29 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token) throws ServerException{
 		List<PropiedadDTO> result = new ArrayList<PropiedadDTO>();//Existe otroparecido en helperjosn
 		for (PropiedadDTO propiedadDTO : propiedadedBase) {
-			PropiedadDTO newPropiedad = new PropiedadDTO();
-			newPropiedad.setCampo(entidad);
-			//newPropiedad.setCodigo(propiedadDTO.getCodigo());
-			newPropiedad.setKey(propiedadDTO.getKey());
-			newPropiedad.setMotivo(propiedadDTO.getMotivo());
-			//newPropiedad.setNecesario(propiedadDTO.getNecesario());
-			newPropiedad.setNombre(propiedadDTO.getNombre());
-			newPropiedad.setPropiedadValor(propiedadDTO.getPropiedadValor());
-			newPropiedad.setTipo(propiedadDTO.getTipo());
-			newPropiedad.setRol(propiedadDTO.getRol());
-			newPropiedad.setUsuario(propiedadDTO.getUsuario());
-			newPropiedad.setFechaInicial(propiedadDTO.getFechaInicial());
-			newPropiedad.setFechaFinal(propiedadDTO.getFechaFinal());
-			newPropiedad.setValor(propiedadDTO.getTexto());//Sucede que los campos de una plantilla los copiaba mal referenciados
-			if(newPropiedad.getValor()==null) {
-				newPropiedad.setValor(propiedadDTO.getValor());
+			boolean agregar = true;
+			if(propiedadDTO.getPropiedadValor().compareTo(Propiedades.TEMPORIZADOR)==0) agregar = false; //Cuando copio esta propiedad queda mal y duplicada
+			if(propiedadDTO.getPropiedadValor().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO)==0) agregar = false; //Cuando copio esta propiedad queda mal y duplicada
+			if(agregar) {
+				PropiedadDTO newPropiedad = new PropiedadDTO();
+				newPropiedad.setCampo(entidad);
+				//newPropiedad.setCodigo(propiedadDTO.getCodigo());
+				newPropiedad.setKey(propiedadDTO.getKey());
+				newPropiedad.setMotivo(propiedadDTO.getMotivo());
+				//newPropiedad.setNecesario(propiedadDTO.getNecesario());
+				newPropiedad.setNombre(propiedadDTO.getNombre());
+				newPropiedad.setPropiedadValor(propiedadDTO.getPropiedadValor());
+				newPropiedad.setTipo(propiedadDTO.getTipo());
+				newPropiedad.setRol(propiedadDTO.getRol());
+				newPropiedad.setUsuario(propiedadDTO.getUsuario());
+				newPropiedad.setFechaInicial(propiedadDTO.getFechaInicial());
+				newPropiedad.setFechaFinal(propiedadDTO.getFechaFinal());
+				newPropiedad.setValor(propiedadDTO.getTexto());//Sucede que los campos de una plantilla los copiaba mal referenciados
+				if(newPropiedad.getValor()==null) {
+					newPropiedad.setValor(propiedadDTO.getValor());
+				}
+				result.add( guardar(newPropiedad, token) );	
 			}
-			result.add( guardar(newPropiedad, token) );
 		}
 		return result;
 	}
