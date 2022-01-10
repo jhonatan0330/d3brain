@@ -919,7 +919,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case PropiedadValorDefinidoDTO.ORGANIZACION:
 			return"ORGANIZACION";
 		case PropiedadValorDefinidoDTO.PLANTILLA:
-			return"PLANTILLA";
+			DocumentoPlantillaDTO plantillaBD = plantillaService.consultaXId(propiedad.getCampo());
+			return "PLANTILLA : "+ plantillaBD.getNombre().toLowerCase();
 		case PropiedadValorDefinidoDTO.PROCESO:
 			return"PROCESO";
 		case PropiedadValorDefinidoDTO.REPORTE:

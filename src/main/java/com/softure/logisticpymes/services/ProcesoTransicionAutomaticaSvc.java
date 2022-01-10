@@ -194,7 +194,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 						fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
 					}
 				} catch (ServerException e) {
-					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " +  propiedadDTO.getTexto() + " ) " + e.getMessage();
+					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) " + e.getMessage();
 				} 
 			}
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
