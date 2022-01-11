@@ -15,6 +15,7 @@ public class ProcesoEstadoDTO extends BasicParamDTO
 	public static final String TIPO_ESTADO = "E";
 	public static final String TIPO_DECISION = "D";
 	public static final String TIPO_ITERADOR = "R";
+	public static final String TIPO_API = "P";
 	public static final String ACTIVO = "A";
 	public static final String FINALIZADO = "C";
 	public static final String INACTIVO = "I";

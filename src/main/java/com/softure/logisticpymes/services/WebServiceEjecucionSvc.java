@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.WebServiceEjecucionDTO;
 import com.softure.logisticpymes.dto.filter.WebServiceEjecucionFilterDTO;
@@ -118,36 +119,107 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 
 // BEGIN region aditionalMethods
-	public WebServiceEjecucionDTO ejecutar(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
+	public String ejecutar(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
 			throws ServerException {
+		String result = ConstantesGenerales.OK;
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
 		System.out.format("\n\n[%s] Procesando API (%s)", document.getNombre(), service.getNombre());
-		service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, null));
+		String userId = getUserFlex(token);
+		service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
+		WebServiceEjecucionDTO authenticationWS = executeAuthenticationWebService(service, document, modificador, token, userId);
+		if(authenticationWS!=null && authenticationWS.getError()!=null) {
+			System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", document.getNombre(), service.getNombre());
+			return ConstantesGenerales.ERROR;
+		}
+		WebServiceEjecucionDTO callWS = launchWebService(service, document, modificador, token, userId);
+		//Primero intento de nuevo ejecutarlo
+		if (callWS.getError() != null) callWS = tryAgain(service, callWS, document, modificador, token, userId, 1);
+		// Si despues de todos los intentos no funciona ya se responde error
+		if (callWS.getError() != null) result = ConstantesGenerales.ERROR;
+		System.out.format("\n\n[%s] Finalizando API (%s)", document.getNombre(), service.getNombre());
+		return result;
+	}
+	
+	private WebServiceEjecucionDTO executeAuthenticationWebService(
+			WebServiceDTO service, 
+			PedidoVentaDTO document, 
+			PedidoVentaDTO modificador, 
+			String token,
+			String userId) throws ServerException {
+		PropiedadDTO authenticationProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
+		if(authenticationProp==null) return null;
+		WebServiceDTO authenticationEndPoint = webServiceSvc.consultaXId(authenticationProp.getValor());
+		if (authenticationEndPoint == null)throw new ServerException("El id del servicio no se encuentra en la BD." + authenticationProp.getValor());
+		authenticationEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, authenticationProp.getValor(), null, userId));
+		WebServiceEjecucionDTO authenticationWS = launchWebService(authenticationEndPoint, document, modificador, token, userId);
+		return authenticationWS;
+	}
+	
+	private WebServiceEjecucionDTO launchWebService(
+			WebServiceDTO service, 
+			PedidoVentaDTO document, 
+			PedidoVentaDTO modificador, 
+			String token,
+			String userId) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
 		String template = crearSalida(service, document, modificador);
 		callWS.setEntrada(uploadService.uploadFile(template.getBytes(), "Entrada.txt", token));
 		callWS.setDocumento(document.getLlaveTabla());
-		callWS.setUsuario(getUserFlex(token));
+		callWS.setUsuario(userId);
 		String responseApi = null;
 		try {
 			responseApi = callApi(service, callWS, template);
+			validateResultAPI(responseApi, service, callWS);
+			if (callWS.getError()==null) generateDocuments(service, responseApi, document, token);
 		} catch (Exception e) {
-			responseApi = e.getMessage();
+			if(responseApi==null) responseApi = "";
+			responseApi = e.getMessage() + "\n\n" + responseApi ;
 			callWS.setError(e.getMessage());
 			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
 		}
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS = save(callWS);
-		if (callWS.getError() == null) {
-			generateDocuments(service, responseApi, document, token);
-		}
-		System.out.format("\n\n[%s] Finalizando API (%s)", document.getNombre(), service.getNombre());
+		return callWS;
+	}
+	
+	private WebServiceEjecucionDTO tryAgain(
+			WebServiceDTO service,
+			WebServiceEjecucionDTO callWS,
+			PedidoVentaDTO document, 
+			PedidoVentaDTO modificador, 
+			String token,
+			String userId,
+			int countIteration
+			) throws ServerException {
+		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
+		if(tryProp==null) return callWS;
+		try {
+			int maxTry = Integer.parseInt(tryProp.getValor());
+			if(countIteration < maxTry && countIteration < 3) {
+				callWS =  launchWebService(service, document, modificador, token, userId);
+				if (callWS.getError() != null) callWS = tryAgain(service, callWS, document, modificador, token, userId, countIteration+1);
+			}
+		} catch (NumberFormatException e) {}		
 		return callWS;
 	}
 
+	private void validateResultAPI(String responseApi, WebServiceDTO service, WebServiceEjecucionDTO callWS) {
+		List<PropiedadDTO> validationProperties = Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION);
+		if(validationProperties==null || validationProperties.isEmpty()) return;
+		for (PropiedadDTO propiedadDTO : validationProperties) {
+			if(!responseApi.matches(propiedadDTO.getValor())) {
+				String errorMatch = "Error validando el siguiente regular pattern (mira la funcion matches de Java String): " + propiedadDTO.getValor(); 
+				callWS.setError(errorMatch);
+				responseApi = errorMatch + "\n\n" + responseApi;
+				return;
+			}
+		}
+	}
+
+	//falta incluir los headers
 	private String crearSalida(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador) throws ServerException {
 		String template = service.getTemplate();
 		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
@@ -221,11 +293,13 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 							camposOpcionales = document.getCaracteristicas();
 						}
 						List<PedidoVentaCaracteristicaDTO> camposReferidos = consultarCamposReferidos(relaciones, camposOpcionales);
-						for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
-							if (iCampo.getValorText()!=null) {
-								if (iCampo.getCampoDTO()==null) iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-								template = template.replaceAll("\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",iCampo.getValorText());								
-							}
+						if(camposReferidos!=null) {
+							for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
+								if (iCampo.getValorText()!=null) {
+									if (iCampo.getCampoDTO()==null) iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+									template = template.replaceAll("\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",iCampo.getValorText());								
+								}
+							}	
 						}
 					}
 				}

@@ -212,25 +212,25 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		expedienteDTO.setEstadoExpediente(filtroEstado.getLlaveTabla());
 		expedienteDTO.setEstado(filtroEstado.getEstadoDocumento());//No se porque tenia esta linea ->//anterior.setEstadoNombre(filtroEstado.getNombre());
 		pedidoService.update(expedienteDTO);
-		String api = Propiedades.obtenerValor(dto, Propiedades.API_TRANSACCION);
-		if(!api.isEmpty()) apiService.ejecutar(api, expedienteDTO, documentoDTO, token);
-		if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)==0) {
+		switch (dto.getEstadoLlegadaTipo()) {
+		case ProcesoEstadoDTO.TIPO_DECISION:
 			respuesta= decision(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, tokenSystem.getLlaveTabla(), transaccion);
-		}else {
-			if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)==0) {
-				ProcesoTransicionFilterDTO solucion = new ProcesoTransicionFilterDTO();
-				solucion.setEstadoPartida(dto.getEstadoLLegada());
-				solucion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-				respuesta = super.consultaUnica(solucion);
-				if(respuesta==null) throw new ServerException(dto.getEstadoLlegadaNombre() + "\nNo se encuentra una transicion ligada a la iteracion ");
-				respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token, transaccion);//Por si siguen decisiones
-				mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);//Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato tiene ponerlo antes o despues  
-			}else {//Solo gestiono responsable y mensajes al finalizar la transicion
-				UsuarioDTO responsable = gestionarResponsable(expediente,filtroEstado.getLlaveTabla(), filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
-				mensajeSvc.gestionarMensajes(expedienteDTO, dto, responsable, documentoDTO, token);
-			}
+			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, tokenSystem.getLlaveTabla(), transaccion);			
+			break;
+		case ProcesoEstadoDTO.TIPO_ITERADOR:
+			respuesta = getNextTransition(dto.getEstadoLLegada(), null);
+			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token, transaccion);//Por si siguen decisiones
+			mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);//Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato tiene ponerlo antes o despues
+			break;
+		case ProcesoEstadoDTO.TIPO_API:
+			respuesta = executeAPI(dto.getEstadoLLegada(), expedienteDTO, documentoDTO, token);
+			respuesta = gestionarTransicion(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior, token, transaccion);//Por si siguen decisiones
+			break;
+		default:
+			UsuarioDTO responsable = gestionarResponsable(expediente,filtroEstado.getLlaveTabla(), filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
+			mensajeSvc.gestionarMensajes(expedienteDTO, dto, responsable, documentoDTO, token);
+			break;
 		}
 		
 		return respuesta;
@@ -376,7 +376,19 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return super.guardar(dto, token);
 	}
 	
-	public ProcesoTransicionDTO decision(String decision, String llaveTablaDocumento, String llaveModificador, String token) throws ServerException {
+	private ProcesoTransicionDTO executeAPI(String estadoLlegada, PedidoVentaDTO expedienteDTO, PedidoVentaDTO documentoDTO, String token) throws ServerException {
+		ProcesoEstadoDTO apiDTO = estadoService.consultaXId(estadoLlegada);
+		if(apiDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El punto del api "+ apiDTO.getNombre()+" esta inactivo");
+		apiDTO.setPropiedades( propiedadService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, estadoLlegada, null , getUserFlex(token)) );
+
+		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
+		if (propAPI==null) throw new ServerException(String.format("El estado \s no tiene definido el API", apiDTO.getNombre()));
+
+		String resultAPI = apiService.ejecutar(propAPI.getValor(), expedienteDTO, documentoDTO, token);
+		return getNextTransition(estadoLlegada, resultAPI);
+	}
+	
+	private ProcesoTransicionDTO decision(String decision, String llaveTablaDocumento, String llaveModificador, String token) throws ServerException {
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(decision);
 		if(decisionDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) 
 			throw new ServerException("La decision "+decisionDTO.getNombre()+" esta inactiva");
@@ -389,16 +401,25 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			throw new ServerException(e.getMessage(), "Decision : " + decisionDTO.getNombre());
 		}
 		if(resultado==null)  throw new ServerException("El resultado ha sido nulo\nDecision : " + decisionDTO.getNombre());
+		ProcesoTransicionDTO solucion = getNextTransition(decisionDTO.getLlaveTabla(), resultado);
+		return solucion;
+	}
+
+	private ProcesoTransicionDTO getNextTransition(String estadoActual, String nombreTransicion)
+			throws ServerException {
 		ProcesoTransicionFilterDTO solucionFilter = new ProcesoTransicionFilterDTO();
-		solucionFilter.setEstadoPartida(decisionDTO.getLlaveTabla());
-		solucionFilter.setNombre(resultado);
+		solucionFilter.setEstadoPartida(estadoActual);
+		solucionFilter.setNombre(nombreTransicion);
 		solucionFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		ProcesoTransicionDTO solucion = super.consultaUnica(solucionFilter);
-		if(solucion==null) throw new ServerException(decisionDTO.getNombre()+"\nNo se encuentra una transicion con el nombre para  esta respuesta: " + resultado);
+		if(solucion==null) {
+			ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
+			throw new ServerException(decisionDTO.getNombre() +"\nNo se encuentra una transicion con el nombre para  esta respuesta: " + nombreTransicion);
+		}
 		return solucion;
 	}
 	
-	public void iteracion(
+	private void iteracion(
 			ProcesoTransicionDTO transicionIteracion, // Estado que contine la iteracion y donde vamos a buscar al funcion
 			PedidoVentaDTO expediente, // Documento Proceso que estamos afectando 
 			PedidoVentaDTO documentoModificador, // Documento que realizo la acción y disparo la transicion
@@ -480,21 +501,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return actividadService.crearActividad(responsable, token);
 	}
 
-
-	/*
-	private String obtenerUsuarioDocumento( String documento)throws ServerException {
-		UsuarioRolDTO erl = new UsuarioRolDTO();
-		erl.setDocumento(documento);
-		erl.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		erl = usuarioRolService.consultaUnica(erl);
-		if(erl ==null) throw new ServerException("Revise porque el responsable no esta registrado como usuario en el sistema");
-		return erl.getUsuario();
-	}
-	*/
-	
-	/*
-	 * 
-	 */
 	private PedidoVentaDineroDTO afectarSaldos(String expediente, String securityToken, ProcesoTransicionDTO transicion, 
 			BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial) throws ServerException{
 		PedidoVentaDineroDTO dinero = dineroDocumentoInicial;
@@ -628,7 +634,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}else {
 			return null;
 		}
-		
 	}
 	
 	

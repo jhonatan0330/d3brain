@@ -25,6 +25,13 @@ public class Propiedades {
 	public static final String API_CODE_REFERENCE = "API_CODE_REFERENCE";
 	public static final String API_CODE_ESPECIAL = "API_CODE_ESPECIAL";
 	public static final String API_CODE_MODIFICADOR = "API_CODE_MODIFICADOR";
+	public static final String API_VALIDATION = "API_VALIDATION";
+	public static final String API_MAX_TRY = "API_MAX_TRY";
+	//Pendientes
+	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
+	
+	public static final String API_EXTRACTION = "API_EXTRACTION";
+	
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -355,13 +362,15 @@ public class Propiedades {
 					+ "En la propiedad se debe relacionar el campo que se va a mostrar del objeto seleccionado"
 					+ "Si el documento no viene con ese campo no se muestra ningun mensaje";break;}
 			case API_TRANSACCION: 
-			case API : {ruleProperty = "Identifica el APi que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
+			case API : {ruleProperty = "Identifica el API que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
 			case API_HEADER : {ruleProperty = "Variables del Header de la peticion del API Valor contiene el KEY y Motivo contiene el texto.\n";break;}
 			case API_CODE_DIRECT : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nEn el template debes tener la estructura => {{D_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
 			case API_CODE_REFERENCE : {ruleProperty = "Se encarga de reemplazar un valor en el template, buscando en OTRA PLANTILLA.\n\nEn el template debes tener la estructura => {{R_XXXXXXX}} , donde XXXXXX es el codigo del campo.\n\nLo mas importante en los links relacionar la cadena de pasos en los campos que se debe seguir hasta llegar al campo deseado.\n EJ el nombre de un vendedor en una guia, entregada => (Propiedad se coloca el campo Guia), en los links se coloca el campoo guia vendedor y se agrega vendedor nombre";break;}
 			case API_CODE_ESPECIAL : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nColoca en el campo TEXTO de la propiedad el codigo que va a reeemplazar y en el VALOR coloca el texto que quieres que se modifique.\n\nSE crea un TRUCO para la fecha actual: el codigo debe empezar por E_FECHA_XXXXXX y en el VALOR de la propiedad colocas el formato tipo fecha\nE_ID = llave id del documento\nE_CODE = codigo del documento";break;}
 			case API_CODE_MODIFICADOR : {ruleProperty = "Se encarga de reemplazar un valor en el template, tomando como base el documento que genero la accion (Solo en transiciones).\n\nEn el template debes tener la estructura => {{M_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
+			case API_MAX_TRY : {ruleProperty = "Coloca un numero entre 2 y 3 para que se repita el llamado al WS";break;}
 			case API_NEW_DOCUMENT : {ruleProperty = "Al recibir la respuesta del api puedes crear documento(s), tienes que seleccionar el nombre de la plantilla.\n\nEn el motivo es MUY IMPORTANTE que crees una expresion regular que extraiga la informacion que quieres para crear tu documento.\nCada match de la expresion regular sera un documento";break;}
+			case API_VALIDATION : {ruleProperty = "Coloca una expresion regular para que se valide que esa expresion regular haga match, si tienes dudas busca por internet Java String match y busca simuladores online de la expresion regular";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}
 			case ARCHIVO_TIPO: {ruleProperty =   "Filtra el tipo de archivo, para usar varias extensiones separalas por coma(,).\n";break;}
