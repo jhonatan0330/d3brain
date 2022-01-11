@@ -382,7 +382,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		apiDTO.setPropiedades( propiedadService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, estadoLlegada, null , getUserFlex(token)) );
 
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
-		if (propAPI==null) throw new ServerException(String.format("El estado \s no tiene definido el API", apiDTO.getNombre()));
+		if (propAPI==null) throw new ServerException(String.format("El estado %s no tiene definido el API", apiDTO.getNombre()));
 
 		String resultAPI = apiService.ejecutar(propAPI.getValor(), expedienteDTO, documentoDTO, token);
 		return getNextTransition(estadoLlegada, resultAPI);
