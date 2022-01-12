@@ -145,4 +145,9 @@ public class SoftureUtil {
 		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return currentFunction;
 	}
+	
+	public static String cleanStartEndSpaces(String str) throws ServerException {
+		if(str==null) return null;
+		return str.replaceAll("^\\s*","").replaceAll("\\s*$","");
+	}
 }

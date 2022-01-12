@@ -109,7 +109,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		if(dtoCarga.getDocumentos()==null || dtoCarga.getDocumentos().isEmpty()) throw new ServerException("En el campo documentos debes incluir los documentos a validar, en este caso estan vacios");
 		for (PedidoVentaDTO iDoc : dtoCarga.getDocumentos()) {
 			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
-			filtro.setNombre(iDoc.getNombre());
+			filtro.setNombre(SoftureUtil.cleanStartEndSpaces(iDoc.getNombre()));
 			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			filtro.setPlantilla(plantilla);
 			PedidoVentaDTO document = documentoService.consultaUnica(filtro);
