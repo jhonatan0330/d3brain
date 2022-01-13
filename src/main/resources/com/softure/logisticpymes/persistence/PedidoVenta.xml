@@ -229,12 +229,9 @@
 			 where cpdv_estadoexpediente  in (
 			 	select cptr_estadopartida from procesotransicion_ptrp where cptr_plantilla = #{plantilla} and cptr_estado ='A' and bptr_documentador = false and cptr_estadopartida is not null) 
 			 and cpdv_estado !='I'
-		 	<if test="fechaMin!=null">
-		     and dpdv_fecha >= #{fechaMin}
-		    </if>
-		    <if test="fechaMax!=null">
-		     and dpdv_fecha <![CDATA[ < ]]>  #{fechaMax}
-		    </if>
+		 	<if test="fechaMin!=null">and dpdv_fecha >= #{fechaMin}</if>
+		    <if test="fechaMax!=null">and dpdv_fecha <![CDATA[ < ]]>  #{fechaMax}</if>
+		    <if test="nombre!=null">and cpdv_nombre = #{nombre}</if>
 			<if test="filtroParametro!=null">
 				and (cpdv_nombre like upper('%' || #{filtroParametro} || '%') or upper(cpdv_textofiltro) like upper('%' || #{filtroParametro} || '%'))
 			</if>
