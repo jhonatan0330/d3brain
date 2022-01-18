@@ -1,5 +1,6 @@
 package com.softure.logisticpymes;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -37,7 +38,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.services.MensajeSvc;
@@ -253,9 +256,26 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 		return servRegBean;
 	}
 	
+	//Soporta CORS
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**");
         System.out.println("*******CORS****" + new Date().toString());
+    }
+	
+	//Soporta que la SPA de angular funcione con solo el jar
+	@Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver() {
+                    @Override
+                    protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                        Resource requestedResource = location.createRelative(resourcePath);
+                         return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
+                                : new ClassPathResource("/static/index.html");
+                    }
+                });
     }
 }
