@@ -24,6 +24,7 @@ import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioRolProductoFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 // END region interImport
+import com.softure.logisticpymes.services.refactor.DocumentCommonsFunction;
 
 import javax.annotation.PostConstruct;
 
@@ -585,19 +586,19 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
+		PedidoVentaCaracteristicaDTO cpCantidad = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
 		detail.setCantidad(cpCantidad.getValorNumero());
 		
 		PropiedadDTO pCampoUnitario = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO);
 		String keyCampoUnitario = "***UNIDAD";
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
+		PedidoVentaCaracteristicaDTO cpUnitario = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null) detail.setValorUnitario(cpUnitario.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 	
 		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		if(cpTotal!=null) detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 	}
@@ -607,19 +608,19 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
+		PedidoVentaCaracteristicaDTO cpCantidad = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
 		cpCantidad.setValorNumero(detail.getCantidad());
 		
 		PropiedadDTO pCampoUnitario = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO);
 		String keyCampoUnitario = "***UNIDAD";
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
+		PedidoVentaCaracteristicaDTO cpUnitario = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null) cpUnitario.setValorNumero(detail.getValorUnitario());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = documentoService.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		if(cpTotal!=null) cpTotal.setValorNumero(detail.getValorTotal());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 	}

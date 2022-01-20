@@ -21,9 +21,9 @@ import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.OrganizacionSvc;
-import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -33,7 +33,7 @@ public class MainController {
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private UsuarioSesionSvc usuarioSessionService;
-	@Autowired private PedidoVentaSvc pedidoVentaService;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	@Autowired private OrganizacionSvc organizacionService;
 	
 	@RequestMapping(value="/test", method=RequestMethod.GET)
@@ -69,7 +69,7 @@ public class MainController {
 	
 	@RequestMapping(value="/listarUsuarioPedidoVenta", method=RequestMethod.POST)
 	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)  throws ServerException  {
-		return pedidoVentaService.listarUsuario(dto);
+		return listDocumentWithFiltersFunction.listarUsuario(dto);
 	}
 	
 	@RequestMapping(value="/getAdministratorTemplates", method=RequestMethod.GET)

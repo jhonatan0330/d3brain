@@ -41,6 +41,10 @@ import com.softure.logisticpymes.services.ProcesoTransicionSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 import com.softure.logisticpymes.services.TurnoSvc;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
+import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
+import com.softure.logisticpymes.services.refactor.DocumentAutomaticUpdateFunction;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 
@@ -49,6 +53,8 @@ public class TipoProceso {
 	
 	@Autowired private CuentaSvc cuentaService;
 	@Autowired private PedidoVentaSvc pedidoService;
+	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
@@ -56,6 +62,8 @@ public class TipoProceso {
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired private MovimientoSvc movimientoService;
 	@Autowired private ProcesoTransicionSvc expedienteTransicionService;
+	@Autowired private ManageTransitionFunction manageTransitionFunction;
+	@Autowired private DocumentAutomaticUpdateFunction updateDocumentFunction;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private PedidoVentaDineroSvc dineroService;
 	@Autowired private RelacionInternaSvc relacionService;
@@ -195,7 +203,7 @@ public class TipoProceso {
 		
 		List<PedidoVentaDTO> procesosActuales = null;
 		//Consulto los procesos que estan en BD
-		if(pCampo.getDocumento()!= null) procesosActuales = pedidoService.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), token, null);
+		if(pCampo.getDocumento()!= null) procesosActuales = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), token, null);
 		if(procesosActuales==null) procesosActuales = new ArrayList<PedidoVentaDTO>();
 		//En caso que sea modificacion comparo que proceso estan retirandose, cambiando
 		if(pCampo.getModificado()){
@@ -426,7 +434,7 @@ public class TipoProceso {
 									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
 							if(prop!=null && updaterDTO.getPlantilla().compareTo(prop.getValor())==0) {
 								procesoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-								pedidoService.inactivateDocumentWithProcess(procesoDTO, updaterDTO, token);
+								saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO, updaterDTO, token);
 								relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
 							}
 						}
@@ -464,156 +472,7 @@ public class TipoProceso {
 		if(modificarCampo==null || modificarCampo.isEmpty()) return;
 		System.out.format("\n%s (Modificando documento principal..... %s)", pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
-		PedidoVentaDTO documentoModificar = new PedidoVentaDTO();
-		documentoModificar.setLlaveTabla(procesoDTO.getLlaveTabla());
-		documentoModificar.setEstadoExpediente(procesoDTO.getEstadoExpediente());
-		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = caracteristicaService.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token);
-		List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = campoService.readCompleteFields(procesoDTO.getLlaveTabla(), camposPlantilla, procesoDTO.getHistorico());
-		List<PedidoVentaCaracteristicaDTO> caracteristicasModificadas = new ArrayList<PedidoVentaCaracteristicaDTO>();
-		for (DocumentoPlantillaCaracteristicaDTO camposActualesDTO : camposPlantilla) {
-			PedidoVentaCaracteristicaDTO nuevaCaracteristica = null;
-			for (PropiedadDTO codigo: modificarCampo){
-				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(codigo.getLlaveTabla());
-				DocumentoPlantillaCaracteristicaDTO campoCoincide = null;
-				for (RelacionInternaDTO iRelacion : relaciones) {
-					if(iRelacion.getCampo().compareTo(camposActualesDTO.getLlaveTabla())==0) {
-						campoCoincide =  camposActualesDTO;
-						modificarCampo.remove(codigo);
-						break;
-					}
-				}
-				if(campoCoincide!=null) {
-					if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty()) throw new ServerException("Tiene que registrar dependientes del campo " + pCampo.getCampoDTO().getNombre());
-					for (PedidoVentaCaracteristicaDTO iDependiente : pCampo.getDependientes()) {
-						if(iDependiente.getCampo().compareTo(codigo.getValor())==0) {
-							nuevaCaracteristica = new PedidoVentaCaracteristicaDTO();
-							nuevaCaracteristica.setCampo(camposActualesDTO.getLlaveTabla());
-							nuevaCaracteristica.setCampoDTO(camposActualesDTO);
-							nuevaCaracteristica.setDocumento(procesoDTO.getLlaveTabla());
-							nuevaCaracteristica.setValorAuxiliar(iDependiente.getValorAuxiliar());
-							nuevaCaracteristica.setValorFecha(iDependiente.getValorFecha());
-							nuevaCaracteristica.setValorNumero(iDependiente.getValorNumero());
-							nuevaCaracteristica.setValorText(iDependiente.getValorText());
-							nuevaCaracteristica.setValorOpcion(iDependiente.getValorOpcion());
-							//Despues valido si se modifica o sigue igual en la funcionalidad de cada campo por el momento debe tener permisos el usuario
-							nuevaCaracteristica.setModificado(true);
-							break;
-						}
-					}
-					break;
-				}
-			}
-			if(nuevaCaracteristica==null) {//Copio caracteristicas que existen
-				for (PedidoVentaCaracteristicaDTO iActual : caracteristicasActuales) {
-					if(iActual.getCampo().compareTo(camposActualesDTO.getLlaveTabla())==0) {
-						nuevaCaracteristica = iActual;
-						break;
-					}
-				}
-			}
-			if(nuevaCaracteristica==null) {//En caso que no exista anteriormente la creo
-				nuevaCaracteristica = new PedidoVentaCaracteristicaDTO();
-				nuevaCaracteristica.setCampo(camposActualesDTO.getLlaveTabla());
-				nuevaCaracteristica.setCampoDTO(camposActualesDTO);
-				nuevaCaracteristica.setDocumento(procesoDTO.getLlaveTabla());
-			}
-			caracteristicasModificadas.add(nuevaCaracteristica);
-		}
-		// VAlido que se realice alguna modificacion, para enviar a modificar
-		boolean conCambios= false;
-		for (PedidoVentaCaracteristicaDTO iCampoModificado : caracteristicasModificadas) {
-			if(iCampoModificado.getModificado()) {
-				PedidoVentaCaracteristicaDTO campoComparar = null;
-				for (PedidoVentaCaracteristicaDTO iCampoActual : caracteristicasActuales) {
-					if(iCampoActual.getCampo().compareTo(iCampoModificado.getCampo())==0) {
-						campoComparar = iCampoActual;
-						break;
-					}
-				}
-				if(campoComparar==null) {
-					conCambios = true;
-					break;
-				}
-				if(iCampoModificado.getValorText().compareTo(campoComparar.getValorText())!=0) {
-					conCambios = true;
-					break;
-				}
-				// se que una funcion reusaria el codigo peor no se como hacerlo apra 3 tipos de datos diferentes
-				if(iCampoModificado.getValorOpcion() == null) {
-					if(campoComparar.getValorOpcion()!=null) {
-						conCambios = true;
-						break;						
-					}
-				}else {
-					if ( campoComparar.getValorOpcion() == null) {
-						conCambios = true;
-						break;
-					}else {
-						if (iCampoModificado.getValorOpcion().compareTo(campoComparar.getValorOpcion())!=0) {
-							conCambios = true;
-							break;
-						}
-					}
-				}
-				if(iCampoModificado.getValorNumero() == null) {
-					if(campoComparar.getValorNumero()!=null) {
-						conCambios = true;
-						break;						
-					}
-				}else {
-					if ( campoComparar.getValorNumero() == null) {
-						conCambios = true;
-						break;
-					}else {
-						if (iCampoModificado.getValorNumero().compareTo(campoComparar.getValorNumero())!=0) {
-							conCambios = true;
-							break;
-						}
-					}
-				}
-				if(iCampoModificado.getValorFecha() == null) {
-					if(campoComparar.getValorFecha()!=null) {
-						conCambios = true;
-						break;						
-					}
-				}else {
-					if ( campoComparar.getValorFecha() == null) {
-						conCambios = true;
-						break;
-					}else {
-						if (iCampoModificado.getValorFecha().compareTo(campoComparar.getValorFecha())!=0) {
-							conCambios = true;
-							break;
-						}
-					}
-				}
-				if(iCampoModificado.getValorAuxiliar() == null) {
-					if(campoComparar.getValorAuxiliar()!=null) {
-						conCambios = true;
-						break;						
-					}
-				}else {
-					if ( campoComparar.getValorAuxiliar() == null) {
-						conCambios = true;
-						break;
-					}else {
-						if (iCampoModificado.getValorAuxiliar().compareTo(campoComparar.getValorAuxiliar())!=0) {
-							conCambios = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		if(conCambios) {
-			documentoModificar.setTransaccion(pCampo.getTransaccionRegistro());
-			documentoModificar.setCaracteristicas(caracteristicasModificadas);
-			
-			PedidoVentaDTO pedidoActualizado = pedidoService.modificarAPI(documentoModificar, pCampo.getDocumento(), token);
-			procesoDTO.setNombre(pedidoActualizado.getNombre());
-			// Se genera doble traza, no encuentro un escenario que se necesite
-			relacionarGestor(procesoDTO, pCampo.getPrincipal(), "Modificar Campos", token);	
-		}
+		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, token, modificarCampo);
 	}
 
 	private List<String> getCaminos(PedidoVentaCaracteristicaDTO pCampo) {
@@ -653,7 +512,7 @@ public class TipoProceso {
 				resultados.add(documentoActual);
 				if(!campoValor.isEmpty()) {
 					//Coloco valores
-					pedidoService.listadoCompleto(resultados, pCampo.getSecurityToken(), (campoValor.isEmpty())?null:campoValor);
+					listDocumentWithFiltersFunction.listadoCompleto(resultados, pCampo.getSecurityToken(), (campoValor.isEmpty())?null:campoValor);
 					//Para las cuentas les lleno el valor aqui
 					if(campoValor.compareTo("0")==0 && resultados.get(0)!=null &&resultados.get(0).getDinero()!=null)
 						pCampo.setValorNumeroMax(resultados.get(0).getDinero().getValorTotal());
@@ -691,7 +550,7 @@ public class TipoProceso {
 						}
 						entityFilter.setPlantilla(documentoAuxiliar);
 					}
-					resultados = pedidoService.listarAvanzado(entityFilter);
+					resultados = listDocumentWithFiltersFunction.listarAvanzado(entityFilter);
 				}else {
 					resultados = consultarFuncionDocumentos(pBase, pCampo.getCampoDTO(), pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor, pCampo.getSecurityToken());
 				}
@@ -710,7 +569,7 @@ public class TipoProceso {
 				pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
 			}else {//Aqui solo van los documentos actuales
 				if(campoValor.isEmpty() || campoValor=="1" || campoValor == "2") campoValor = null;
-				resultados = pedidoService.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), pCampo.getSecurityToken(), campoValor);
+				resultados = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), pCampo.getSecurityToken(), campoValor);
 				/* Esto no puede ir aqui porque no
 				if(funcionConsulta == null) {
 					resultados = pedidoService.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), pCampo.getSecurityToken(), campoValor);
@@ -748,9 +607,9 @@ public class TipoProceso {
 				entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
 		}
 		//entityFilter.setDescripcion(funcionConsulta.getLlaveTabla());
-		List<PedidoVentaDTO> result = pedidoService.listarExpedientesDisponiblesDocumentoFuncion(entityFilter, 
+		List<PedidoVentaDTO> result = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(entityFilter, 
 				funcionConsulta.getLlaveTabla(), dependientes);
-		return pedidoService.listadoCompleto( result, token, campoValor);
+		return listDocumentWithFiltersFunction.listadoCompleto( result, token, campoValor);
 	}
 	
 	private void gestionarExpedienteDependientes(
@@ -779,10 +638,10 @@ public class TipoProceso {
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
 			//Manejo de los saldos de los procesos
 			if(transicion!=null) {
-				expedienteTransicionService.gestionarTransicion(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken, transaccion);
+				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken, transaccion);
 				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
 				documentosGestionados.add(expediente.getLlaveTabla());
-				pedidoService.gestionarRol(expediente, securityToken);
+				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			}else {
 				if(primerLlamado) {
 					String mensajeFault = "Revisa porque este documento no genera ninguna transicion, el campo lo solicita. ( " + procesoDTO.getNombre() + " ) ";
@@ -902,8 +761,8 @@ public class TipoProceso {
 			if(transicion.getEstadoLLegada().compareTo(procesoDTO.getEstadoExpediente())!=0) throw new ServerException("Revise e estado del proceso que no es acorde a la transcision");
 			if(expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente())!=0) 
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
-			expedienteTransicionService.gestionarTransicionReversa(transicion, expediente.getLlaveTabla(), documento, securityToken);
-			pedidoService.gestionarRol(expediente, securityToken);
+			manageTransitionFunction.gestionarTransicionReversa(transicion, expediente.getLlaveTabla(), documento, securityToken);
+			saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(expediente.getLlaveTabla());
 			for(PedidoVentaCaracteristicaDTO campo : gestionables){
 				List<DocumentoRelacionExpedienteDTO> expedientesAnidados;

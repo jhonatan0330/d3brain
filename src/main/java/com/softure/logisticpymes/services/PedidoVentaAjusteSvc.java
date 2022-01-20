@@ -19,6 +19,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.PedidoVentaAjusteDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaAjusteFilterDTO;
 import com.softure.logisticpymes.persistence.PedidoVentaAjusteMapper;
+import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
 
 @Service("pedidoVentaAjusteService")
 public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO> {
@@ -29,7 +30,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	// BEGIN region servicesPedidoVentaAjuste
 	@Autowired private PedidoVentaSvc documentoService;
 	@Autowired private ProcesoEstadoSvc procesoEstadoService;
-	@Autowired private ProcesoTransicionSvc transicionService;
+	@Autowired private ManageTransitionFunction manageTransitionFunction;
 	// END region servicesPedidoVentaAjuste
 
 	@Override
@@ -100,7 +101,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 		documento.setEstadoExpediente(estadoFinal.getLlaveTabla());
 		documento.setEstado(estadoFinal.getEstadoDocumento());
 		documentoService.update(documento);
-		transicionService.gestionarResponsable(documento.getLlaveTabla(), estadoFinal.getLlaveTabla(), estadoFinal.getNombre(), null, token);
+		manageTransitionFunction.assignResponsibleToActivity(documento.getLlaveTabla(), estadoFinal.getLlaveTabla(), estadoFinal.getNombre(), null, token);
 		//Queda pendiente lo del responsable
 		return dto;
 		// END PedidoVentaAjuste_guardar

@@ -22,6 +22,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.filter.ActividadFilterDTO;
 import com.softure.logisticpymes.persistence.ActividadMapper;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 
 @Service("actividadService")
 public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
@@ -33,6 +34,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PedidoVentaSvc pedidoService;
 	@Autowired private UsuarioSvc usuarioService;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	// END region servicesActividad
 
 	@Override
@@ -153,7 +155,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 			for (ActividadDTO iActivity : result) {
 				ids.add(iActivity.getDocumento());
 			}
-			List<PedidoVentaDTO> documentos = pedidoService.listar2Activity(ids, token);
+			List<PedidoVentaDTO> documentos = listDocumentWithFiltersFunction.listar2Activity(ids, token);
 			for (ActividadDTO iActivity : result) {
 				for (PedidoVentaDTO pedidoVentaDTO : documentos) {
 					if(iActivity.getDocumento().compareTo(pedidoVentaDTO.getLlaveTabla())==0) {

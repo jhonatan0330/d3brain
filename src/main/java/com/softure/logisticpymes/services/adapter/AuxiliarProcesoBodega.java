@@ -31,6 +31,7 @@ import com.softure.logisticpymes.services.ProductoInventarioDescuentoSvc;
 import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 
 @Component
 public class AuxiliarProcesoBodega {
@@ -39,6 +40,7 @@ public class AuxiliarProcesoBodega {
 	@Autowired private DeduccionProductoSvc deduccionProductoService;
 	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 	@Autowired private PedidoVentaSvc pedidoService;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	@Autowired private ProductoSvc productoService;
 	@Autowired private ProductoInventarioSvc productoInventarioService;
 	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
@@ -243,7 +245,7 @@ public class AuxiliarProcesoBodega {
 									campoExpediente.setExpedientes( new ArrayList<PedidoVentaDTO>() );
 									campoExpediente.getExpedientes().add(pedidoService.consultaXId(campoExpediente.getValorOpcion()));
 								}else {
-									campoExpediente.setExpedientes( pedidoService.listarExpedientesPertenecenCampo(campoExpediente.getLlaveTabla(), token, null));														
+									campoExpediente.setExpedientes( listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(campoExpediente.getLlaveTabla(), token, null));														
 								}
 							}
 							acumulado = inventarioDirecto(campoExpediente, operacion, recursoInventario, documentoInicial, relaciones, token);

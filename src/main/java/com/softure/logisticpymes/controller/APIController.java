@@ -32,6 +32,8 @@ import com.softure.logisticpymes.services.UploadSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -42,6 +44,8 @@ public class APIController {
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
 	@Autowired private PedidoVentaSvc pedidoVentaService;
+	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateDocumentFunction;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	@Autowired private UsuarioSvc usuarioService;
 	@Autowired private UploadSvc uploadService;
@@ -64,9 +68,9 @@ public class APIController {
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(documento.getLlaveTabla()==null){
-			documento = pedidoVentaService.guardarAPI(documento, token);
+			documento = saveUpdateDocumentFunction.save(documento, token);
 		}else{
-			documento = pedidoVentaService.modificarAPI(documento, null, token);
+			documento = saveUpdateDocumentFunction.update(documento, null, token);
 		}
 		result.setNombre(documento.getNombre());
 		result.setPlantilla(documento.getPlantilla());
@@ -92,7 +96,7 @@ public class APIController {
 	@RequestMapping(value="/listarDocumentos", method=RequestMethod.POST)
 	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException {
 		documentoFiltro.setSecurityToken(token);
-		return pedidoVentaService.listarAvanzado(documentoFiltro);
+		return listDocumentWithFiltersFunction.listarAvanzado(documentoFiltro);
 	}
 	
 	@RequestMapping(value="/obtenerCampos", method=RequestMethod.POST)

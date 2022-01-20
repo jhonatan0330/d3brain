@@ -30,6 +30,7 @@ import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
+import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
 
 @Component
 public class TipoDetallePedido {
@@ -40,6 +41,7 @@ public class TipoDetallePedido {
 	
 	@Autowired private ProductoSvc productoService;
 	@Autowired private PedidoVentaSvc pedidoService;
+	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private PropiedadSvc configuracionSvc;
 	
@@ -544,7 +546,7 @@ public class TipoDetallePedido {
 			}
 			if (expediente.getEstado()==null) expediente.setEstado(ConstantesGenerales.ESTADO_ACTIVO);//Sucede que aqui llega nulo porque previamente se a validado una carcateristica
 			//Cuando revise lo del documento modificador veo como arreglo esto
-			pedidoService.modificarAPI(expediente, pCampo.getDocumento(), token);
+			saveUpdateInactivateDocumentFunction.update(expediente, pCampo.getDocumento(), token);
 			//Necesito que el expediente quede en estado null para que se tramite
 			expediente.setEstado(null);//Esto es crazy pero me toca hacerlo por el momento
 		}

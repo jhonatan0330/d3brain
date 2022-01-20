@@ -18,6 +18,8 @@ import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
+import com.softure.logisticpymes.services.refactor.DocumentAutomaticNewFunction;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -39,12 +41,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	private ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
 	
 	// BEGIN region servicesProcesoTransicionAutomatica
-	@Autowired private PedidoVentaSvc documentoService;
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private ProcesoTransicionSvc transicionService;
+	@Autowired private DocumentAutomaticNewFunction createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private RelacionInternaSvc relacionService;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	// END region servicesProcesoTransicionAutomatica
 
 	@Override
@@ -256,7 +258,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		if(Propiedades.validarBloqueo(pTemporizador)) {
 			if(pTemporizador.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
 				List<PedidoVentaDTO> documentos = null;
-				documentos = documentoService.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
+				documentos = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
 				if(documentos ==null || documentos.isEmpty()) {
 					dto.setMensaje("Sin documentos a gestionar");
 				}else {
@@ -280,13 +282,13 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 							dto.setMensaje("");
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-								PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocuments(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
 						}else {
 							campoPrinicipal.setExpedientes(documentos);
-							PedidoVentaDTO nuevo = transicionService.generarDocumentosTransicion(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocuments(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 							if(nuevo !=null) {
 								dto.setMensaje(nuevo.getNombre());	
 							}else {

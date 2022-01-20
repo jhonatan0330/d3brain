@@ -1000,24 +1000,6 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-
-	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
-		try {
-			return pedidoVentaService.listarAvanzado(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@RequestMapping(value="/listarUsuarioPedidoVenta", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
-		try {
-			return pedidoVentaService.listarUsuario(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	

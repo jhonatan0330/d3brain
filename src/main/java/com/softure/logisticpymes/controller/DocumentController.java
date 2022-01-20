@@ -31,6 +31,8 @@ import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.TarifaSvc;
 import com.softure.logisticpymes.services.UploadSvc;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,6 +46,8 @@ public class DocumentController {
 	@Autowired private TarifaSvc tarifaService;
 	@Autowired private ProductoInventarioSvc inventoryService;
 	@Autowired private DeduccionProductoSvc deduccionService;
+	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateDocumentFunction;
+	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -53,16 +57,16 @@ public class DocumentController {
 	@RequestMapping(value="/getDocuments", method=RequestMethod.POST)
 	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter, @RequestHeader("Authorization") String token) throws ServerException {
 		filter.setSecurityToken(token);
-		return pedidoVentaService.listarAvanzado(filter);
+		return listDocumentWithFiltersFunction.listarAvanzado(filter);
 	}
 
 	@RequestMapping(value="/saveDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document, @RequestBody String token)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(document.getLlaveTabla()==null){
-			document = pedidoVentaService.guardar(document, token);
+			document = saveUpdateDocumentFunction.save(document, token);
 		}else{
-			document = pedidoVentaService.modificarAPI(document, null, token);
+			document = saveUpdateDocumentFunction.update(document, null, token);
 		}
 		result.setNombre(document.getNombre());
 		result.setPlantilla(document.getPlantilla());
@@ -74,7 +78,7 @@ public class DocumentController {
 	public List<PedidoVentaDTO> listarDashboard(@RequestBody String token) throws ServerException {
 		PedidoVentaFilterDTO pd = new PedidoVentaFilterDTO();
 		pd.setSecurityToken(token);
-		return pedidoVentaService.listarUsuario(pd);
+		return listDocumentWithFiltersFunction.listarUsuario(pd);
 	}
 	
 	@RequestMapping(value="/getUserActivities", method=RequestMethod.GET)
