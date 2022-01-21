@@ -9,6 +9,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -22,7 +23,6 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ActividadDTO;
 import com.softure.logisticpymes.dto.filter.ActividadFilterDTO;
 import com.softure.logisticpymes.persistence.ActividadMapper;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 
 @Service("actividadService")
 public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {

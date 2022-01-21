@@ -152,7 +152,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		return bd;
 		// END region consultaCompleta
 	}
-	
+
 	@Override
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO guardar(PedidoVentaDTO dto, String token) throws ServerException {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Date;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
+import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -19,7 +20,6 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.PedidoVentaAjusteDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaAjusteFilterDTO;
 import com.softure.logisticpymes.persistence.PedidoVentaAjusteMapper;
-import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
 
 @Service("pedidoVentaAjusteService")
 public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO> {

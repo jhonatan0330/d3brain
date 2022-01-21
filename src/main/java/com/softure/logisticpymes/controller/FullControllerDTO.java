@@ -143,6 +143,7 @@ import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.dto.WebServiceDTO;
 import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
 import com.softure.logisticpymes.services.WebServiceSvc;
+import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
 import com.softure.logisticpymes.dto.PostRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.PostRespuestaFilterDTO;
 import com.softure.logisticpymes.services.PostRespuestaSvc;
@@ -243,7 +244,6 @@ import com.softure.logisticpymes.services.OrganizacionSvc;
 @RestController
 @RequestMapping("/flex")
 public class FullControllerDTO {
-	
 	
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
 	
@@ -1000,6 +1000,19 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
+	
+	@Autowired private DocumentListWithFiltersFunction documentListWithFiltersFunction;
+	
+	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
+	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
+		try {
+			return documentListWithFiltersFunction.listarAvanzado(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
 	
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	

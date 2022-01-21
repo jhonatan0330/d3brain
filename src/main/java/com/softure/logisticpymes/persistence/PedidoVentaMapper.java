@@ -1,10 +1,9 @@
 package com.softure.logisticpymes.persistence;
 
-import java.util.List;
 
 // BEGIN region interImport  
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
-
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 // END region interImport
 import com.softure.logisticpymes.dto.PedidoVentaDTO;

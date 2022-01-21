@@ -87,7 +87,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		// END WebServiceEjecucion_guardar
 	}
 
-// BEGIN region aditionalMethods	
+// BEGIN region aditionalMethods
 // END region aditionalMethods
 
 }

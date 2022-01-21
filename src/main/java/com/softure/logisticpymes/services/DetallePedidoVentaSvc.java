@@ -23,8 +23,8 @@ import com.softure.logisticpymes.dto.filter.DetalleCaracteristicaProductoFilterD
 import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioRolProductoFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
-// END region interImport
 import com.softure.logisticpymes.services.refactor.DocumentCommonsFunction;
+// END region interImport
 
 import javax.annotation.PostConstruct;
 
