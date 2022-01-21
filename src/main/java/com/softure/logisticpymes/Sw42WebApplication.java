@@ -1,6 +1,5 @@
 package com.softure.logisticpymes;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -38,9 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.services.MensajeSvc;
@@ -263,7 +260,9 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
         System.out.println("*******CORS****" + new Date().toString());
     }
 	
+	
 	//Soporta que la SPA de angular funcione con solo el jar
+	/*
 	@Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
@@ -277,5 +276,5 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
                                 : new ClassPathResource("/static/index.html");
                     }
                 });
-    }
+    }*/
 }
