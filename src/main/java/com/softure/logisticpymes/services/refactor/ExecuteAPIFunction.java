@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,20 +72,30 @@ public class ExecuteAPIFunction {
 		String userId = webServiceSvc.getUserFlex(token);
 		service.setPropiedades(
 				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
+		//authentication
 		WebServiceEjecucionDTO authenticationWS = executeAuthenticationWebService(service, document, modificador, token,
 				userId);
-		if (authenticationWS != null && authenticationWS.getError() != null) {
-			System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", document.getNombre(),
-					service.getNombre());
-			return ConstantesGenerales.ERROR;
+		String tokenAuthentication=null;
+		if (authenticationWS != null) {
+			if (authenticationWS.getError() != null) {
+				System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", document.getNombre(),
+						service.getNombre());
+				return ConstantesGenerales.ERROR;		
+			}
+			tokenAuthentication = authenticationWS.getSalida();
 		}
-		WebServiceEjecucionDTO callWS = launchWebService(service, document, modificador, token, userId);
+		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
+		//Execution
+		WebServiceEjecucionDTO callWS = launchWebService(service, document, modificador, token, userId, headers);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, document, modificador, token, userId, 1);
+			callWS = tryAgain(service, callWS, document, modificador, token, userId, 1, headers);
 		// Si despues de todos los intentos no funciona ya se responde error
-		if (callWS.getError() != null)
+		if (callWS.getError() != null) {
 			result = ConstantesGenerales.ERROR;
+		} else {
+			generateDocuments(service, callWS.getEntrada(), document, token);
+		}
 		System.out.format("\n\n[%s] Finalizando API (%s)", document.getNombre(), service.getNombre());
 		return result;
 	}
@@ -97,29 +109,46 @@ public class ExecuteAPIFunction {
 		if (authenticationEndPoint == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + authenticationProp.getValor());
 		authenticationEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
-				authenticationProp.getValor(), null, userId));
+				authenticationEndPoint.getLlaveTabla(), null, userId));
+		Map<String, String> headers = getHeaderProperties(authenticationEndPoint, null);
+		//*****Execute
 		WebServiceEjecucionDTO authenticationWS = launchWebService(authenticationEndPoint, document, modificador, token,
-				userId);
+				userId, headers);
+		//Esto esta quemado para mensajes de texto toca pensar la mejor estrategia
+		for (PropiedadDTO propiedadDTO : authenticationEndPoint.getPropiedades()) {
+			if(propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION)==0) {
+				authenticationWS.setSalida("Bearer " + propiedadDTO.getTexto() );
+				break;				
+			}
+		}
+		
 		return authenticationWS;
 	}
-
-	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, PedidoVentaDTO document,
-			PedidoVentaDTO modificador, String token, String userId) throws ServerException {
+	
+	private WebServiceEjecucionDTO launchWebService(
+			WebServiceDTO service,
+			PedidoVentaDTO document,
+			PedidoVentaDTO modificador,
+			String token,
+			String userId,
+			Map<String, String> headerProperties) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
 		String template = generateRequestBody(service, document, modificador);
-		callWS.setEntrada(uploadService.uploadFile(template.getBytes(), "Entrada.txt", token));
+		String fullOutput = writeHeaders(headerProperties) + template;
+		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setUsuario(userId);
 		String responseApi = null;
 		try {
-			responseApi = callApi(service, callWS, template);
+			responseApi = callApi(service, callWS, template, headerProperties);
 			validateResultAPI(responseApi, service, callWS);
-			if(callWS.getError() ==null) extractionResultAPI(responseApi, service, callWS, document.getLlaveTabla(), modificador.getLlaveTabla(),
-					token, modificador.getTransaccion());
-			if (callWS.getError() == null)
-				generateDocuments(service, responseApi, document, token);
+			if(callWS.getError() ==null) {
+				List<PropiedadDTO> extractionProperties = extractionResultAPI(responseApi, service, callWS);
+				documentAutomaticUpdateFunction.executeFromAPIExtraction(document.getLlaveTabla(), modificador.getLlaveTabla(),
+						extractionProperties, token, modificador.getTransaccion());
+			}
 		} catch (Exception e) {
 			if (responseApi == null)
 				responseApi = "";
@@ -129,21 +158,28 @@ public class ExecuteAPIFunction {
 		}
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS = webServiceEjecucionSvc.save(callWS);
+		callWS.setEntrada(responseApi);
 		return callWS;
 	}
 
-	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS,
-			PedidoVentaDTO document, PedidoVentaDTO modificador, String token, String userId, int countIteration)
-			throws ServerException {
+	private WebServiceEjecucionDTO tryAgain(
+			WebServiceDTO service, 
+			WebServiceEjecucionDTO callWS,
+			PedidoVentaDTO document, 
+			PedidoVentaDTO modificador, 
+			String token, 
+			String userId, 
+			int countIteration,
+			Map<String, String> headers) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
 			return callWS;
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
-				callWS = launchWebService(service, document, modificador, token, userId);
+				callWS = launchWebService(service, document, modificador, token, userId, headers);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, document, modificador, token, userId, countIteration + 1);
+					callWS = tryAgain(service, callWS, document, modificador, token, userId, countIteration + 1, headers);
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -166,12 +202,11 @@ public class ExecuteAPIFunction {
 		}
 	}
 
-	private void extractionResultAPI(String responseApi, WebServiceDTO service, WebServiceEjecucionDTO callWS,
-			String documentToUpdateFieldId, String updaterId, String token, String transaction) throws ServerException {
+	private List<PropiedadDTO> extractionResultAPI(String responseApi, WebServiceDTO service, WebServiceEjecucionDTO callWS) throws ServerException {
 		List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_EXTRACTION);
 		if (extractionProperties == null || extractionProperties.isEmpty())
-			return;
+			return null;
 		for (PropiedadDTO propiedadDTO : extractionProperties) {
 			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
 			if (!matcher.matches()) {
@@ -179,12 +214,11 @@ public class ExecuteAPIFunction {
 						+ propiedadDTO.getValor();
 				callWS.setError(errorMatch);
 				responseApi = errorMatch + "\n\n" + responseApi;
-				return;
+				return null;
 			}
 			propiedadDTO.setTexto(matcher.group(1));
 		}
-		documentAutomaticUpdateFunction.executeFromAPIExtraction(documentToUpdateFieldId, updaterId,
-				extractionProperties, token, transaction);
+		return extractionProperties;
 	}
 
 	private String generateRequestBody(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador)
@@ -380,7 +414,7 @@ public class ExecuteAPIFunction {
 		return camposEscogidos;
 	}
 
-	private String callApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String template)
+	private String callApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String template, Map<String, String> headerProperties)
 			throws ServerException {
 		URL url;
 		try {
@@ -388,12 +422,12 @@ public class ExecuteAPIFunction {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
-
-			if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
-				for (PropiedadDTO iProp : service.getPropiedades()) {
-					if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
-						con.setRequestProperty(iProp.getValor(), iProp.getMotivo());
-					}
+			
+			if(headerProperties!=null && headerProperties.size()!=0) {
+				for (Entry<String, String> jugador : headerProperties.entrySet()){
+					String clave = jugador.getKey();
+					String valor = jugador.getValue();
+					con.setRequestProperty(clave, valor);
 				}
 			}
 			con.setConnectTimeout(5000);
@@ -527,6 +561,34 @@ public class ExecuteAPIFunction {
 		text = text.replaceAll("$", "");// Existia un full error con los signso pesos en el pattern
 		text = text.replace(".000000", ""); // Para logimax los numero no debian ir con decimales
 		return text;
+	}
+	
+	private Map<String, String> getHeaderProperties (WebServiceDTO service, String tokenAuthentication){
+		Map<String, String> result = null;
+		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
+			result = new HashMap<>();
+			for (PropiedadDTO iProp : service.getPropiedades()) {
+				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
+					result.put(iProp.getValor(), iProp.getMotivo());
+				}
+			}	
+		}
+		if (tokenAuthentication!=null) {
+			if (result == null ) result = new HashMap<>();
+			result.put("Authorization", tokenAuthentication);
+		}
+		return result;
+	}
+	
+	private String writeHeaders(Map<String, String> headers) {
+		String result = "Headers\n\n";
+		if(headers!=null && headers.size()!=0) {
+			for (Entry<String, String> item : headers.entrySet()){
+				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
+			}
+		}
+		
+		return result +"\n\nBODY\n\n";
 	}
 
 }
