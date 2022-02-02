@@ -263,7 +263,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					dto.setMensaje("Sin documentos a gestionar");
 				}else {
 					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
-					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos");
+					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
 					String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
 					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
@@ -273,7 +273,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					
 					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
 					if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
-						dto.setMensaje("La transicion debe tener una relacion. Revisar. " + transicion.getNombre());
+						throw new ServerException("La transicion debe tener una relacion. Revisar.  ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					}else {
 						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
 						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
