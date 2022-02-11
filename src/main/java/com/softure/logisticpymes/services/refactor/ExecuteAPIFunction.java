@@ -431,7 +431,7 @@ public class ExecuteAPIFunction {
 				}
 			}
 			con.setConnectTimeout(5000);
-			con.setReadTimeout(5000);
+			con.setReadTimeout(60000);
 			con.connect();
 
 			// Send request
