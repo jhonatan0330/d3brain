@@ -370,52 +370,61 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	
 	private void validateConsecutiveNumber(PedidoVentaDTO pedido, DocumentoPlantillaDTO plantilla, String token) throws ServerException {
 		String codigoNuevo = null;
-		String campoConsecutivo = Propiedades.obtenerValor(plantilla, Propiedades.CONSECUTIVO);
-		if(!campoConsecutivo.isEmpty()){
+		List<PropiedadDTO> fieldsConsecutive = Propiedades.obtenerVariosParametro(plantilla, Propiedades.CONSECUTIVO);
+		
+		//String campoConsecutivo = Propiedades.obtenerValor(plantilla, Propiedades.CONSECUTIVO);
+		if(fieldsConsecutive!=null && !fieldsConsecutive.isEmpty()){
 			if(pedido.getCaracteristicas()==null || pedido.getCaracteristicas().size()==0) throw new ServerException("Se debe colocar la caracteristica nombre del documento");
-			for (PedidoVentaCaracteristicaDTO pvc : pedido.getCaracteristicas()) {
-				if(pvc.getCampo().compareTo(campoConsecutivo)==0){
-					switch (pvc.getCampoDTO().getFormato()){
-						case DocumentoPlantillaCaracteristicaDTO.NUMERO:
-							pedido.setConsecutivo(pvc.getValorNumero());
-							if(pedido.getConsecutivo().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Se debe colocar el numero del documento");
-							if(plantilla.getConsecutivo()==null) {
-								pedido.setNombre(String.valueOf( pedido.getConsecutivo().longValue()));
-								codigoNuevo = pedido.getNombre();
-							}
-							break;
-						case DocumentoPlantillaCaracteristicaDTO.TEXTO:
-							codigoNuevo = pvc.getValorText();
-							break;
-						case DocumentoPlantillaCaracteristicaDTO.PROCESO:
-							if(pvc.getValorOpcion()==null) throw new ServerException("El valor no puede ser nulo, para asignar un consecutivo." + pvc.getCampoDTO().getNombre());
-							PlantillaConsecutivoFilterDTO relacionConsecutivoFilter = new PlantillaConsecutivoFilterDTO();
-							relacionConsecutivoFilter.setCaracteristica(pvc.getCampo());
-							relacionConsecutivoFilter.setValorOpcion(pvc.getValorOpcion());
-							relacionConsecutivoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-							PlantillaConsecutivoDTO relacionConsecutivo = plantillaConsecutivoSvc.consultaUnica(relacionConsecutivoFilter);
-							if(relacionConsecutivo==null){
-								if(plantilla.getConsecutivo()==null) {
-									throw new ServerException("No es posible crear el consecutivo, dado que no tenemos un consecutivo base para generar en el formulario, coloca el consecutivo base. "+ plantilla.getNombre());									
-								}else{
-									ConsecutivoDTO nuevo = consecutivoService.crear2Opcion(plantilla.getConsecutivo(), pvc.getCampo(), pvc.getValorOpcion(), token);
-									relacionConsecutivo = new PlantillaConsecutivoDTO();
-									relacionConsecutivo.setCaracteristica(pvc.getCampo());
-									relacionConsecutivo.setValorOpcion(pvc.getValorOpcion());
-									relacionConsecutivo.setConsecutivo(nuevo.getLlaveTabla());
-									plantillaConsecutivoSvc.guardar(relacionConsecutivo, token);
-									
-									plantilla.setConsecutivo(nuevo.getLlaveTabla());
-								}
-							}else{
-								plantilla.setConsecutivo(relacionConsecutivo.getConsecutivo());
-							}
-							break;
-						default:
-							throw new ServerException("El componente no es tipo texto o numero");
+			PedidoVentaCaracteristicaDTO pvc = null; // aqui obtengo el valor porque tengo varios campos propiedad
+			for (PedidoVentaCaracteristicaDTO iField : pedido.getCaracteristicas()) {
+				if(pvc!=null) break;
+				for (PropiedadDTO iPropertyConsecutive : fieldsConsecutive) {
+					if(iField.getCampo().compareTo(iPropertyConsecutive.getValor())==0 && iField.getValorText()!=null){
+						pvc = iField;
+						break;
+					}	
+				}
+			}
+			if(pvc !=null) {
+				switch (pvc.getCampoDTO().getFormato()){
+				case DocumentoPlantillaCaracteristicaDTO.NUMERO:
+					pedido.setConsecutivo(pvc.getValorNumero());
+					if(pedido.getConsecutivo().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Se debe colocar el numero del documento");
+					if(plantilla.getConsecutivo()==null) {
+						pedido.setNombre(String.valueOf( pedido.getConsecutivo().longValue()));
+						codigoNuevo = pedido.getNombre();
 					}
 					break;
-				}
+				case DocumentoPlantillaCaracteristicaDTO.TEXTO:
+					codigoNuevo = pvc.getValorText();
+					break;
+				case DocumentoPlantillaCaracteristicaDTO.PROCESO:
+					if(pvc.getValorOpcion()==null) throw new ServerException("El valor no puede ser nulo, para asignar un consecutivo." + pvc.getCampoDTO().getNombre());
+					PlantillaConsecutivoFilterDTO relacionConsecutivoFilter = new PlantillaConsecutivoFilterDTO();
+					relacionConsecutivoFilter.setCaracteristica(pvc.getCampo());
+					relacionConsecutivoFilter.setValorOpcion(pvc.getValorOpcion());
+					relacionConsecutivoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					PlantillaConsecutivoDTO relacionConsecutivo = plantillaConsecutivoSvc.consultaUnica(relacionConsecutivoFilter);
+					if(relacionConsecutivo==null){
+						if(plantilla.getConsecutivo()==null) {
+							throw new ServerException("No es posible crear el consecutivo, dado que no tenemos un consecutivo base para generar en el formulario, coloca el consecutivo base. "+ plantilla.getNombre());									
+						}else{
+							ConsecutivoDTO nuevo = consecutivoService.crear2Opcion(plantilla.getConsecutivo(), pvc.getCampo(), pvc.getValorOpcion(), token);
+							relacionConsecutivo = new PlantillaConsecutivoDTO();
+							relacionConsecutivo.setCaracteristica(pvc.getCampo());
+							relacionConsecutivo.setValorOpcion(pvc.getValorOpcion());
+							relacionConsecutivo.setConsecutivo(nuevo.getLlaveTabla());
+							plantillaConsecutivoSvc.guardar(relacionConsecutivo, token);
+							
+							plantilla.setConsecutivo(nuevo.getLlaveTabla());
+						}
+					}else{
+						plantilla.setConsecutivo(relacionConsecutivo.getConsecutivo());
+					}
+					break;
+				default:
+					throw new ServerException("El componente no es tipo texto o numero");
+			}
 			}
 		}else {
 			//Creo el consecutivo y se lo asigno a la plantilla, si es rol no cuadro consecutivo (Ahora si)
