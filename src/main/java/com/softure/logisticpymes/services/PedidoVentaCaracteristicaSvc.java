@@ -37,6 +37,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	// BEGIN region servicesPedidoVentaCaracteristica
 	@Autowired private CampoAdaptador adaptador;
 	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired private DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
 	// END region servicesPedidoVentaCaracteristica
 
 	@Override
@@ -196,7 +197,17 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	public List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(List<PedidoVentaCaracteristicaDTO> documentIds, List<RelacionInternaDTO> fieldId)
 			throws ServerException {
 		if(documentIds==null || documentIds.isEmpty() || fieldId==null || fieldId.isEmpty()) return null;
-		return pedidoVentaCaracteristicaMapper.listar2getMessageMailDestiny(documentIds, fieldId);
+		List<PedidoVentaCaracteristicaDTO> fieldsInternal = pedidoVentaCaracteristicaMapper.listar2getMessageMailDestiny(documentIds, fieldId);
+		//Existia un error al consultar una lista larga de relaciones para un mensaje
+		//Esa lista en el segundo nivel de un campo multiple se bloqueaba porque validaba que el campoDTO no fuera nulo
+		//asiq ue toco empezar a colocarles a todos el campoDTO
+		if(fieldsInternal==null) return null;
+		for (PedidoVentaCaracteristicaDTO iField : fieldsInternal) {
+			if(iField.getCampoDTO()==null) {
+				iField.setCampoDTO(campoDocumentoService.consultaXId(iField.getCampo()));
+			}
+		}
+		return fieldsInternal;
 	}
 	
 	// En los documentos lo importante es el valor opcion que es el id que va a
