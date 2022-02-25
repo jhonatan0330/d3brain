@@ -365,6 +365,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if(dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR)==0) {
 				DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
 				DocumentoPlantillaDTO plantilla = new DocumentoPlantillaDTO();
+				plantilla.setProceso(plantillaPrincipal.getProceso());
 				plantilla.setImagen(plantillaPrincipal.getImagen());
 				plantilla.setNombre(plantillaPrincipal.getNombre() + " - ANULAR ");
 				plantilla.setObjetivo(dto.getMotivo());
