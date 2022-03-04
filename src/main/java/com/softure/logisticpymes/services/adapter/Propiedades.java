@@ -39,6 +39,7 @@ public class Propiedades {
 	public static final String DEFAULT = "DEFAULT";
 	public static final String DEPENDE = "DEPENDE";
 	public static final String INVISIBLE = "INVISIBLE";
+	public static final String VISIBLE_VALOR_DEPENDIENTE = "VISIBLE_VALOR_DEPENDIENTE";
 	public static final String MODIFICAR_CAMPO = "MODIFICAR_CAMPO";
 		
 	public static final String AUTOLOAD = "AUTOLOAD";
@@ -516,6 +517,7 @@ public class Propiedades {
 					+ "\n\n No se puede asignar a una transicion que termine en una decision";break;}
 			case UNICO_PRODUCTO : {ruleProperty =  " Oculta la lista para escoger un solo producto.\n";break;}
 			case VALIDATE_ORIENTATION : {ruleProperty =  "Valida que sea una imagen y su orientacion\n 1 = Valida ancho sea mayor que alto (Horizontal)\n 2 = Valida alto sea mayor que ancho (Vertical)";break;}
+			case VISIBLE_VALOR_DEPENDIENTE : {ruleProperty =  "Muestra un campo si el dependiente cumple con un valor(texto), prima la propiedad invisible.\n";break;}
 			default : {ruleProperty =  "Por favor solicita un cambio para agregar informacion de este key";break;}
 		}
 		return ruleProperty;
