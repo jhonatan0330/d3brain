@@ -14,6 +14,7 @@ public class RelacionInternaFilterDTO extends BasicFilterDTO
 	private String plantillaNombre;
 	private String campo;
 	private String campoNombre;
+	private String auxiliar;
 
 	
 	public void setPropiedad(String propiedad) {
@@ -67,6 +68,15 @@ public class RelacionInternaFilterDTO extends BasicFilterDTO
 	
 	public String getCampoNombre() {
 		return campoNombre;
+	}
+	
+	
+	public void setAuxiliar(String auxiliar) {
+		this.auxiliar = auxiliar;
+	}
+	
+	public String getAuxiliar() {
+		return auxiliar;
 	}
 	
 

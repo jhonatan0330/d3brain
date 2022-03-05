@@ -72,20 +72,20 @@ public class ExecuteAPIFunction {
 		String userId = webServiceSvc.getUserFlex(token);
 		service.setPropiedades(
 				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
-		//authentication
+		// authentication
 		WebServiceEjecucionDTO authenticationWS = executeAuthenticationWebService(service, document, modificador, token,
 				userId);
-		String tokenAuthentication=null;
+		String tokenAuthentication = null;
 		if (authenticationWS != null) {
 			if (authenticationWS.getError() != null) {
 				System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", document.getNombre(),
 						service.getNombre());
-				return ConstantesGenerales.ERROR;		
+				return ConstantesGenerales.ERROR;
 			}
 			tokenAuthentication = authenticationWS.getSalida();
 		}
 		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
-		//Execution
+		// Execution
 		WebServiceEjecucionDTO callWS = launchWebService(service, document, modificador, token, userId, headers);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
@@ -111,27 +111,23 @@ public class ExecuteAPIFunction {
 		authenticationEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
 				authenticationEndPoint.getLlaveTabla(), null, userId));
 		Map<String, String> headers = getHeaderProperties(authenticationEndPoint, null);
-		//*****Execute
+		// *****Execute
 		WebServiceEjecucionDTO authenticationWS = launchWebService(authenticationEndPoint, document, modificador, token,
 				userId, headers);
-		//Esto esta quemado para mensajes de texto toca pensar la mejor estrategia
+		// Esto esta quemado para mensajes de texto toca pensar la mejor estrategia
 		for (PropiedadDTO propiedadDTO : authenticationEndPoint.getPropiedades()) {
-			if(propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION)==0) {
-				authenticationWS.setSalida("Bearer " + propiedadDTO.getTexto() );
-				break;				
+			if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION) == 0) {
+				authenticationWS.setSalida("Bearer " + propiedadDTO.getTexto());
+				break;
 			}
 		}
-		
+
 		return authenticationWS;
 	}
-	
-	private WebServiceEjecucionDTO launchWebService(
-			WebServiceDTO service,
-			PedidoVentaDTO document,
-			PedidoVentaDTO modificador,
-			String token,
-			String userId,
-			Map<String, String> headerProperties) throws ServerException {
+
+	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, PedidoVentaDTO document,
+			PedidoVentaDTO modificador, String token, String userId, Map<String, String> headerProperties)
+			throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
@@ -144,10 +140,10 @@ public class ExecuteAPIFunction {
 		try {
 			responseApi = callApi(service, callWS, template, headerProperties);
 			validateResultAPI(responseApi, service, callWS);
-			if(callWS.getError() ==null) {
+			if (callWS.getError() == null) {
 				List<PropiedadDTO> extractionProperties = extractionResultAPI(responseApi, service, callWS);
-				documentAutomaticUpdateFunction.executeFromAPIExtraction(document.getLlaveTabla(), modificador.getLlaveTabla(),
-						extractionProperties, token, modificador.getTransaccion());
+				documentAutomaticUpdateFunction.executeFromAPIExtraction(document.getLlaveTabla(),
+						modificador.getLlaveTabla(), extractionProperties, token, modificador.getTransaccion());
 			}
 		} catch (Exception e) {
 			if (responseApi == null)
@@ -162,14 +158,8 @@ public class ExecuteAPIFunction {
 		return callWS;
 	}
 
-	private WebServiceEjecucionDTO tryAgain(
-			WebServiceDTO service, 
-			WebServiceEjecucionDTO callWS,
-			PedidoVentaDTO document, 
-			PedidoVentaDTO modificador, 
-			String token, 
-			String userId, 
-			int countIteration,
+	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS,
+			PedidoVentaDTO document, PedidoVentaDTO modificador, String token, String userId, int countIteration,
 			Map<String, String> headers) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
@@ -179,7 +169,8 @@ public class ExecuteAPIFunction {
 			if (countIteration < maxTry && countIteration < 3) {
 				callWS = launchWebService(service, document, modificador, token, userId, headers);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, document, modificador, token, userId, countIteration + 1, headers);
+					callWS = tryAgain(service, callWS, document, modificador, token, userId, countIteration + 1,
+							headers);
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -202,7 +193,8 @@ public class ExecuteAPIFunction {
 		}
 	}
 
-	private List<PropiedadDTO> extractionResultAPI(String responseApi, WebServiceDTO service, WebServiceEjecucionDTO callWS) throws ServerException {
+	private List<PropiedadDTO> extractionResultAPI(String responseApi, WebServiceDTO service,
+			WebServiceEjecucionDTO callWS) throws ServerException {
 		List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_EXTRACTION);
 		if (extractionProperties == null || extractionProperties.isEmpty())
@@ -248,15 +240,12 @@ public class ExecuteAPIFunction {
 								if (campo != null && campo.getValorText() != null) {
 									if (campo.getCampoDTO() == null)
 										campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
-									String replaceText = campo.getValorText();
-									if (campo.getValorNumero() != null
-											&& campo.getValorNumero().compareTo(BigDecimal.ZERO) != 0)
-										replaceText = campo.getValorNumero().toString();
-									template = template.replaceAll(
-											"\\{\\{D_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
-											formatToReplaceAll(replaceText));
+									String codeReplace = (campo.getTransaccionRegistro() == null)
+											? campo.getCampoDTO().getCodigo()
+											: campo.getTransaccionRegistro();
+									template = template.replaceAll("\\{\\{D_" + codeReplace + "\\}\\}",
+											formatToReplaceAll(campo));
 								}
-
 							}
 						}
 					}
@@ -313,9 +302,11 @@ public class ExecuteAPIFunction {
 								if (iCampo.getValorText() != null) {
 									if (iCampo.getCampoDTO() == null)
 										iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-									template = template.replaceAll(
-											"\\{\\{R_" + iCampo.getCampoDTO().getCodigo() + "\\}\\}",
-											iCampo.getValorText());
+									String codeReplace = (iCampo.getTransaccionRegistro() == null)
+											? iCampo.getCampoDTO().getCodigo()
+											: iCampo.getTransaccionRegistro();
+									template = template.replaceAll("\\{\\{R_" + codeReplace + "\\}\\}",
+											formatToReplaceAll(iCampo));
 								}
 							}
 						}
@@ -372,27 +363,39 @@ public class ExecuteAPIFunction {
 		List<PedidoVentaCaracteristicaDTO> fieldsInternal = null; // Campos que van cumpliendo con lo que queremos
 		List<RelacionInternaDTO> relacionesValidadas = new ArrayList<RelacionInternaDTO>();
 
+		// Filtro los campos que recibo y tienen que ver con una relacion
+		// de paso les coloco el codigo en setTransaccionRegistro
+		// No puedo borrarlos de una vez toca agregarlos a validadas para borrar despues
 		for (RelacionInternaDTO iRelacion : relaciones) {
 			for (PedidoVentaCaracteristicaDTO iField : fields) {
+				//Si son el mismo campos
 				if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
-					relacionesValidadas.add(iRelacion); // Esta relacion despues se vaa borrar por eso la adiciono
 					if (fieldsInternal == null)
 						fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
-					fieldsInternal.add(iField);
+					/// Para logimax debo colcoarles codigos en el auxiliar y el el registro transaccion llevo esos codigos
+					if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
+						relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
+						iField.setTransaccionRegistro(iRelacion.getAuxiliar());
+						fieldsInternal.add(iField);
+						break;// Antes no estaba este break no se porque
+					}
 				}
 			}
 		}
+		// fieldsInternal Tiene los campos que cumplen con las relaciones
 		if (fieldsInternal != null) {
+			// Dejo solo las realciones que no se han validado
 			// Esto me toco hacerlo porque se descuadranban los array al remove la relacion
 			List<RelacionInternaDTO> relacionesSinRepetir = new ArrayList<RelacionInternaDTO>();
 			relacionesSinRepetir.addAll(relaciones);
 			for (RelacionInternaDTO iRelacion : relacionesValidadas) {
 				relacionesSinRepetir.remove(iRelacion);
 			}
+			// Consulto lso campos que me sirven para consultar
 			List<PedidoVentaCaracteristicaDTO> fieldsRelation = campoService.listar2getApiCode(fieldsInternal,
 					relacionesSinRepetir);
 			if (fieldsRelation != null) {
-				// Retiro los campos
+				// Retiro los campos que no son proceso y los dejo como respuesta
 				for (PedidoVentaCaracteristicaDTO iFRelation : fieldsRelation) {
 					for (PedidoVentaCaracteristicaDTO iInternal : fieldsInternal) {
 						if (iInternal.getValorOpcion() != null
@@ -414,17 +417,17 @@ public class ExecuteAPIFunction {
 		return camposEscogidos;
 	}
 
-	private String callApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String template, Map<String, String> headerProperties)
-			throws ServerException {
+	private String callApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String template,
+			Map<String, String> headerProperties) throws ServerException {
 		URL url;
 		try {
 			url = new URL(service.getServidorNombre());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
-			
-			if(headerProperties!=null && headerProperties.size()!=0) {
-				for (Entry<String, String> jugador : headerProperties.entrySet()){
+
+			if (headerProperties != null && headerProperties.size() != 0) {
+				for (Entry<String, String> jugador : headerProperties.entrySet()) {
 					String clave = jugador.getKey();
 					String valor = jugador.getValue();
 					con.setRequestProperty(clave, valor);
@@ -555,15 +558,29 @@ public class ExecuteAPIFunction {
 		return nueva;
 	}
 
-	private String formatToReplaceAll(String text) {
-		if (text == null)
+	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo) {
+		if (iCampo == null || iCampo.getCampoDTO() == null || iCampo.getValorText() == null)
 			return "";
-		text = text.replaceAll("$", "");// Existia un full error con los signso pesos en el pattern
-		text = text.replace(".000000", ""); // Para logimax los numero no debian ir con decimales
-		return text;
+		switch (iCampo.getCampoDTO().getFormato()) {
+		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
+			/*
+			 * text = text.replaceAll(Matcher.quoteReplacement("$"), "");// Existia un full
+			 * error con los signso pesos en el pattern text = text.replace(".000000", "");
+			 * // Para logimax los numero no debian ir con decimales text =
+			 * text.replace(".00", ""); // Para logimax los numero no debian ir con
+			 * decimales text = text.replace(",", ""); // Para logimax los numero no debian
+			 * ir con decimales
+			 */
+			return String.valueOf(iCampo.getValorNumero().intValue());
+		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
+		case DocumentoPlantillaCaracteristicaDTO.TEXTO:
+			return iCampo.getValorText();
+		default:
+			return iCampo.getValorText();
+		}
 	}
-	
-	private Map<String, String> getHeaderProperties (WebServiceDTO service, String tokenAuthentication){
+
+	private Map<String, String> getHeaderProperties(WebServiceDTO service, String tokenAuthentication) {
 		Map<String, String> result = null;
 		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
 			result = new HashMap<>();
@@ -571,24 +588,25 @@ public class ExecuteAPIFunction {
 				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
 					result.put(iProp.getValor(), iProp.getMotivo());
 				}
-			}	
+			}
 		}
-		if (tokenAuthentication!=null) {
-			if (result == null ) result = new HashMap<>();
+		if (tokenAuthentication != null) {
+			if (result == null)
+				result = new HashMap<>();
 			result.put("Authorization", tokenAuthentication);
 		}
 		return result;
 	}
-	
+
 	private String writeHeaders(Map<String, String> headers) {
 		String result = "Headers\n\n";
-		if(headers!=null && headers.size()!=0) {
-			for (Entry<String, String> item : headers.entrySet()){
+		if (headers != null && headers.size() != 0) {
+			for (Entry<String, String> item : headers.entrySet()) {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
 			}
 		}
-		
-		return result +"\n\nBODY\n\n";
+
+		return result + "\n\nBODY\n\n";
 	}
 
 }

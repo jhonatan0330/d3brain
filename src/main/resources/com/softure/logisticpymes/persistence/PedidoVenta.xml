@@ -57,6 +57,9 @@
 			<if test="estadoExpediente!=null">
 				and cpdv_estadoexpediente = #{estadoExpediente}
 			</if>
+			<if test="textoFiltro!=null">
+				and cpdv_textofiltro = #{textoFiltro}
+			</if>
 			<if test="transaccion!=null">
 				and cpdv_transaccion = #{transaccion}
 			</if>

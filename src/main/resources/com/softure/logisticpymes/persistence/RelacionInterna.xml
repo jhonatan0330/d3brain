@@ -35,6 +35,9 @@
 			<if test="campo!=null">
 				and crit_campo = #{campo}
 			</if>
+			<if test="auxiliar!=null">
+				and crit_auxiliar = #{auxiliar}
+			</if>
 	</sql>
 
 	<sql id="paginationRelacionInternaFragment">
@@ -59,6 +62,9 @@
 	<select id="listar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
 		<include refid="selectRelacionInternaFragment" />
 		<include refid="whereRelacionInternaFragment" />
+		order by plantillaNombre
+		, campoNombre
+		, crit_auxiliar
 		<include refid="paginationRelacionInternaFragment" />
 	</select>
 

@@ -34,6 +34,9 @@
 			<if test="campo!=null">
 				and cpvc_campo = #{campo}
 			</if>
+			<if test="valorText!=null">
+				and cpvc_valortext = #{valorText}
+			</if>
 			<if test="valorFechaMin!=null">
 				and dpvc_valorfecha >= #{valorFechaMin}
 			</if>

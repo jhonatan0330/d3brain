@@ -101,6 +101,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		existeFilter.setCampo(dto.getCampo());
 		existeFilter.setPlantilla(dto.getPlantilla());
 		existeFilter.setPropiedad(dto.getPropiedad());
+		existeFilter.setAuxiliar(dto.getAuxiliar());
 		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		RelacionInternaDTO existe = consultaUnica(existeFilter);
 		if(existe!=null) return existe;
@@ -111,7 +112,6 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		}else {
 			if(dto.getPlantilla().compareTo(campo.getPlantilla())!=0) throw new ServerException("La plantilla no corresponde al campo escogido");
 		}
-		
 		return super.guardar(dto, token);
 		// END RelacionInterna_guardar
 	}

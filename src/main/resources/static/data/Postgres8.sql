@@ -1053,4 +1053,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.01.21.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.03.05.00' from pg_class where relname = 'usuariosesion_ussp';
