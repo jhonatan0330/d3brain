@@ -32,6 +32,7 @@ import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.WebServiceDTO;
 import com.softure.logisticpymes.dto.WebServiceEjecucionDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
+import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
@@ -61,6 +62,8 @@ public class ExecuteAPIFunction {
 	private WebServiceSvc webServiceSvc;
 	@Autowired
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
+	@Autowired
+	private MensajeSvc mensajeSvc;
 
 	public String execute(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
 			throws ServerException {
@@ -93,6 +96,9 @@ public class ExecuteAPIFunction {
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = ConstantesGenerales.ERROR;
+			mensajeSvc.mensaje2Administrator(
+					"Error en ejecucion de api " + service.getNombre(),
+					callWS.getError());
 		} else {
 			generateDocuments(service, callWS.getEntrada(), document, token);
 		}
@@ -132,7 +138,7 @@ public class ExecuteAPIFunction {
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setFecha(new Date());
 		String template = generateRequestBody(service, document, modificador);
-		String fullOutput = writeHeaders(headerProperties) + template;
+		String fullOutput = writeHeadersAndUrl(headerProperties, service) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setUsuario(userId);
@@ -368,11 +374,12 @@ public class ExecuteAPIFunction {
 		// No puedo borrarlos de una vez toca agregarlos a validadas para borrar despues
 		for (RelacionInternaDTO iRelacion : relaciones) {
 			for (PedidoVentaCaracteristicaDTO iField : fields) {
-				//Si son el mismo campos
+				// Si son el mismo campos
 				if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
 					if (fieldsInternal == null)
 						fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
-					/// Para logimax debo colcoarles codigos en el auxiliar y el el registro transaccion llevo esos codigos
+					/// Para logimax debo colcoarles codigos en el auxiliar y el el registro
+					/// transaccion llevo esos codigos
 					if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
 						relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
 						iField.setTransaccionRegistro(iRelacion.getAuxiliar());
@@ -598,8 +605,8 @@ public class ExecuteAPIFunction {
 		return result;
 	}
 
-	private String writeHeaders(Map<String, String> headers) {
-		String result = "Headers\n\n";
+	private String writeHeadersAndUrl(Map<String, String> headers, WebServiceDTO service) {
+		String result = "URL\n\n " + service.getServidorNombre() + "\n\nHeaders\n\n";
 		if (headers != null && headers.size() != 0) {
 			for (Entry<String, String> item : headers.entrySet()) {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
