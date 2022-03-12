@@ -75,4 +75,4 @@ END;
 '
 ;
 
-DROP FUNCTION str_normalize(text);
+DROP FUNCTION IF EXISTS str_normalize(text);
