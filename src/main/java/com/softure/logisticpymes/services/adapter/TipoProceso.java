@@ -269,7 +269,7 @@ public class TipoProceso {
 						}
 						return inactivar(bd, null, token);//Se inactiva el anterior, toca revisar el inactivar
 					}else{
-						if(pCampo.getValorOpcion().compareTo(bd.getValorOpcion())==0){
+						if(bd.getValorOpcion()!=null && pCampo.getValorOpcion().compareTo(bd.getValorOpcion())==0){
 							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null)
 								tipoBodega.aplicarMovimientosBodega(pCampo, token);
 							return pCampo;

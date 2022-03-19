@@ -158,7 +158,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());
-		if(diasVigencia < 14 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
+		if(diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
 		autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
 		
 		ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();

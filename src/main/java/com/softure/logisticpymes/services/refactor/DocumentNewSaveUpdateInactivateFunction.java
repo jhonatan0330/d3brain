@@ -377,7 +377,8 @@ public class DocumentNewSaveUpdateInactivateFunction {
 					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getCaracteristicas()) {
 						if (iCampoDocumento.getModificado()) {
 							if (Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(),
-									Propiedades.PERMISO_CAMPO_MODIFICABLE) == null) {
+									Propiedades.PERMISO_CAMPO_MODIFICABLE) == null && Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(),
+											Propiedades.PERMISO_CAMPO_BLOQUEAR) == null) {
 								String mensajeError = "El campo " + iCampoDocumento.getCampoDTO().getNombre();
 								mensajeError = mensajeError + " de la plantilla "
 										+ iCampoDocumento.getCampoDTO().getPlantillaNombre()

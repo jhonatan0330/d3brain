@@ -53,7 +53,7 @@ public class TipoNumero {
 		}
 		
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0) throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
-		if(pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null && pCampo.getModificado()){
+		if(pCampo.getLlaveTabla()!=null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE)==null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)==null && pCampo.getModificado()){
 			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 			if(bd==null){
 				if(pCampo.getValorNumero().compareTo(BigDecimal.ZERO)!=0)

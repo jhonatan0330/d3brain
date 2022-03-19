@@ -46,18 +46,29 @@ import com.softure.logisticpymes.services.TarifarioSvc;
 @Component
 public class TipoConfiguracion {
 
-	@Autowired private BodegaSvc bodegaService;
-	@Autowired private CambioSvc cambioService;
-	@Autowired private CategoriaProductoSvc categoriaProductoService;
-	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired private DocumentoPlantillaSvc plantillaService;
-	@Autowired private EncuestaSvc encuestaService;
-	@Autowired private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired private ProcesoSvc procesoService;
-	@Autowired private ProductoSvc productoService;
-	@Autowired private RolAccesoSvc rolService;
-	@Autowired private TarifarioSvc tarifarioService;
-	
+	@Autowired
+	private BodegaSvc bodegaService;
+	@Autowired
+	private CambioSvc cambioService;
+	@Autowired
+	private CategoriaProductoSvc categoriaProductoService;
+	@Autowired
+	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	@Autowired
+	private DocumentoPlantillaSvc plantillaService;
+	@Autowired
+	private EncuestaSvc encuestaService;
+	@Autowired
+	private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired
+	private ProcesoSvc procesoService;
+	@Autowired
+	private ProductoSvc productoService;
+	@Autowired
+	private RolAccesoSvc rolService;
+	@Autowired
+	private TarifarioSvc tarifarioService;
+
 	public static final String CATEGORIA_PRODUCTOS = "CATEGORIA_PRODUCTOS";
 	public static final String PROCESO = "PROCESO";
 	public static final String PRODUCTOS = "PRODUCTOS";
@@ -69,22 +80,23 @@ public class TipoConfiguracion {
 	public static final String FORMATO_EXPORTAR = "FORMATO_EXPORTAR";
 	public static final String CAMBIO = "CAMBIO";
 	public static final String REQUERIMIENTO = "REQUERIMIENTO";
-	
-	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException{
-		if(pCampo.getValorOpcion()!=null){
-			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CONFIGURACION_ENTIDAD);
-			if(valorConfiguracion.isEmpty()) {
+
+	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
+		if (pCampo.getValorOpcion() != null) {
+			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(),
+					Propiedades.CONFIGURACION_ENTIDAD);
+			if (valorConfiguracion.isEmpty()) {
 				PedidoVentaDTO adaptado = new PedidoVentaDTO();
 				adaptado.setLlaveTabla(pCampo.getValorOpcion());
 				adaptado.setNombre(pCampo.getValorText());
-				pCampo.setPrincipal(adaptado);	
-			}else {
+				pCampo.setPrincipal(adaptado);
+			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:
 					CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(pCampo.getValorOpcion());
-					if(categoria==null){
+					if (categoria == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(categoria.getLlaveTabla());
 						adaptado.setImagen(categoria.getImagen());
@@ -95,9 +107,9 @@ public class TipoConfiguracion {
 					break;
 				case PROCESO:
 					ProcesoDTO proceso = procesoService.consultaXId(pCampo.getValorOpcion());
-					if(proceso==null){
+					if (proceso == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(proceso.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
@@ -107,10 +119,10 @@ public class TipoConfiguracion {
 					}
 					break;
 				case PRODUCTOS:
-					ProductoDTO producto =  productoService.consultaXId(pCampo.getValorOpcion());
-					if(producto==null){
+					ProductoDTO producto = productoService.consultaXId(pCampo.getValorOpcion());
+					if (producto == null) {
 						throw new ServerException("No se identifica el producto");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(producto.getLlaveTabla());
 						adaptado.setImagen(producto.getImagen());
@@ -121,9 +133,9 @@ public class TipoConfiguracion {
 					break;
 				case PLANTILLAS:
 					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(pCampo.getValorOpcion());
-					if(plantilla==null){
+					if (plantilla == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(plantilla.getLlaveTabla());
 						adaptado.setImagen(plantilla.getImagen());
@@ -131,12 +143,12 @@ public class TipoConfiguracion {
 						adaptado.setDescripcion(plantilla.getNombre());
 						pCampo.setPrincipal(adaptado);
 					}
-						break;
+					break;
 				case ROLES:
 					RolAccesoDTO rolAcceso = rolService.consultaXId(pCampo.getValorOpcion());
-					if(rolAcceso==null){
+					if (rolAcceso == null) {
 						throw new ServerException("No se identifica el rol");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(rolAcceso.getLlaveTabla());
 						adaptado.setImagen(rolAcceso.getImagen());
@@ -147,9 +159,9 @@ public class TipoConfiguracion {
 					break;
 				case CAMBIO:
 					CambioDTO cambio = cambioService.consultaXId(pCampo.getValorOpcion());
-					if(cambio==null){
+					if (cambio == null) {
 						throw new ServerException("No se identifica el cambio");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(cambio.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
@@ -160,22 +172,22 @@ public class TipoConfiguracion {
 					break;
 				case ENCUESTAS:
 					EncuestaDTO encuesta = encuestaService.consultaXId(pCampo.getValorOpcion());
-					if(encuesta==null){
+					if (encuesta == null) {
 						throw new ServerException("No se identifica la encuesta");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(encuesta.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
 						adaptado.setNombre(encuesta.getNombre());
-						//adaptado.setDescripcion(encuesta.getNombre());
+						// adaptado.setDescripcion(encuesta.getNombre());
 						pCampo.setPrincipal(adaptado);
 					}
 					break;
 				case BODEGAS:
-					BodegaDTO bodega  = bodegaService.consultaXId(pCampo.getValorOpcion());
-					if(bodega==null){
+					BodegaDTO bodega = bodegaService.consultaXId(pCampo.getValorOpcion());
+					if (bodega == null) {
 						throw new ServerException("No se identifica bodega");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(bodega.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
@@ -187,108 +199,126 @@ public class TipoConfiguracion {
 				case FORMATO_EXPORTAR:
 					PedidoVentaDTO adaptadoPDF = new PedidoVentaDTO();
 					adaptadoPDF.setLlaveTabla("PDF");
-					//adaptadoPDF.setImagen(plantilla.getImagen());
+					// adaptadoPDF.setImagen(plantilla.getImagen());
 					adaptadoPDF.setNombre("PDF");
-					//adaptadoPDF.setDescripcion(plantilla.getNombre());
+					// adaptadoPDF.setDescripcion(plantilla.getNombre());
 					pCampo.setPrincipal(adaptadoPDF);
-					
+
 					PedidoVentaDTO adaptadoXLS = new PedidoVentaDTO();
 					adaptadoXLS.setLlaveTabla("XLS");
-					//adaptadoXLS.setImagen(plantilla.getImagen());
+					// adaptadoXLS.setImagen(plantilla.getImagen());
 					adaptadoXLS.setNombre("XLS");
-					//adaptadoXLS.setDescripcion(plantilla.getNombre());
+					// adaptadoXLS.setDescripcion(plantilla.getNombre());
 					pCampo.setPrincipal(adaptadoXLS);
 					break;
 				case TARIFARIO:
 					TarifarioDTO tarifario = tarifarioService.consultaXId(pCampo.getValorOpcion());
-					if(tarifario==null){
+					if (tarifario == null) {
 						throw new ServerException("No se identifica tarifario");
-					}else{
+					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(tarifario.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
 						adaptado.setNombre(tarifario.getNombre());
-						//adaptado.setDescripcion(encuesta.getNombre());
+						// adaptado.setDescripcion(encuesta.getNombre());
 						pCampo.setPrincipal(adaptado);
 					}
 					break;
 				default:
 					break;
-				}	
+				}
 			}
-		}		
+		}
 	}
-	
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && (pCampo.getValorOpcion()==null || pCampo.getValorOpcion().isEmpty()))
-			throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
-		if(pCampo.getValorOpcion()!=null){
-			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CONFIGURACION_ENTIDAD);
-			if(valorConfiguracion.isEmpty()) {
-				pCampo.setValorText(pCampo.getValorOpcion());
+
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
+				&& (pCampo.getValorOpcion() == null || pCampo.getValorOpcion().isEmpty())) {
+			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.VISIBLE_VALOR_DEPENDIENTE); 
+			if( visibleValueOK == null || pCampo.getDependientes()==null) {
+				throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());				
 			}else {
+				String optionsToSelect = null;
+				for (PropiedadDTO propiedadDTO : visibleValueOK) {
+					if(optionsToSelect !=null) break;
+					for (PedidoVentaCaracteristicaDTO iFieldDependent : pCampo.getDependientes()) {
+						if(propiedadDTO.getValor().compareTo(iFieldDependent.getValorText())==0) {
+							optionsToSelect = propiedadDTO.getValor();
+							break;
+						}
+					}
+				}
+				if(optionsToSelect!=null)throw new ServerException("Es obligatorio seleccionar un valor en el campo " + pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
+			}
+		}
+		if (pCampo.getValorOpcion() != null) {
+			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(),
+					Propiedades.CONFIGURACION_ENTIDAD);
+			if (valorConfiguracion.isEmpty()) {
+				pCampo.setValorText(pCampo.getValorOpcion());
+			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:
 					CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(pCampo.getValorOpcion());
-					if(categoria==null){
+					if (categoria == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						pCampo.setValorText(categoria.getNombre());
 					}
 					break;
 				case PROCESO:
-						ProcesoDTO proceso = procesoService.consultaXId(pCampo.getValorOpcion());
-						if(proceso==null){
-							throw new ServerException("No se identifica el procep");
-						}else{
-							pCampo.setValorText(proceso.getNombre());
-						}
-						break;
+					ProcesoDTO proceso = procesoService.consultaXId(pCampo.getValorOpcion());
+					if (proceso == null) {
+						throw new ServerException("No se identifica el procep");
+					} else {
+						pCampo.setValorText(proceso.getNombre());
+					}
+					break;
 				case PRODUCTOS:
-					ProductoDTO producto =  productoService.consultaXId(pCampo.getValorOpcion());
-					if(producto==null){
+					ProductoDTO producto = productoService.consultaXId(pCampo.getValorOpcion());
+					if (producto == null) {
 						throw new ServerException("No se identifica el producto");
-					}else{
+					} else {
 						pCampo.setValorText(producto.getNombre());
 					}
 					break;
 				case PLANTILLAS:
 					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(pCampo.getValorOpcion());
-					if(plantilla==null){
+					if (plantilla == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						pCampo.setValorText(plantilla.getNombre());
 					}
 					break;
 				case ROLES:
 					RolAccesoDTO rol = rolService.consultaXId(pCampo.getValorOpcion());
-					if(rol==null){
+					if (rol == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						pCampo.setValorText(rol.getNombre());
 					}
 					break;
 				case CAMBIO:
 					CambioDTO cambio = cambioService.consultaXId(pCampo.getValorOpcion());
-					if(cambio==null){
+					if (cambio == null) {
 						throw new ServerException("No se identifica el categoria");
-					}else{
+					} else {
 						pCampo.setValorText(cambio.getNombre());
 					}
 					break;
 				case ENCUESTAS:
 					EncuestaDTO encuesta = encuestaService.consultaXId(pCampo.getValorOpcion());
-					if(encuesta==null){
+					if (encuesta == null) {
 						throw new ServerException("No se identifica la encuesta");
-					}else{
+					} else {
 						pCampo.setValorText(encuesta.getNombre());
 					}
 					break;
 				case BODEGAS:
 					BodegaDTO bodega = bodegaService.consultaXId(pCampo.getValorOpcion());
-					if(bodega==null){
+					if (bodega == null) {
 						throw new ServerException("No se identifica el bodega");
-					}else{
+					} else {
 						pCampo.setValorText(bodega.getNombre());
 					}
 					break;
@@ -297,71 +327,74 @@ public class TipoConfiguracion {
 					break;
 				case TARIFARIO:
 					TarifarioDTO tarifario = tarifarioService.consultaXId(pCampo.getValorOpcion());
-					if(tarifario==null){
+					if (tarifario == null) {
 						throw new ServerException("No se identifica el tarifario");
-					}else{
+					} else {
 						pCampo.setValorText(tarifario.getNombre());
 					}
 					break;
-				
+
 				default:
 					break;
 				}
 			}
 		}
 	}
-	
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+			throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
-		if(bd!=null){
-			if(pCampo.getValorOpcion()==null){
+		if (bd != null) {
+			if (pCampo.getValorOpcion() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
 				return pCampo;
-			}else{
-				if(pCampo.getValorOpcion().compareTo(bd.getValorOpcion())==0){
+			} else {
+				if (pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
 					return pCampo;
-				}else{
+				} else {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
 				}
 			}
 		}
-		if(pCampo.getValorOpcion()==null){
+		if (pCampo.getValorOpcion() == null) {
 			return pCampo;
-		}else{
+		} else {
 			return campoService.guardar(pCampo, token);
 		}
 	}
 
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
-		List<PropiedadDTO> campos =  Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES); 
-		if(campos!=null && !campos.isEmpty()){
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
+			throws ServerException {
+		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
+				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+		List<PropiedadDTO> campos = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
+		if (campos != null && !campos.isEmpty()) {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-			for(PropiedadDTO iPropiedades : campos){
+			for (PropiedadDTO iPropiedades : campos) {
 				PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 				adaptadoT.setLlaveTabla(iPropiedades.getValor());
 				adaptadoT.setNombre(iPropiedades.getValor());
 				pBase.getDocumentos().add(adaptadoT);
 			}
-		}else {
+		} else {
 			switch (Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CONFIGURACION_ENTIDAD)) {
 			case CATEGORIA_PRODUCTOS:
 				CategoriaProductoFilterDTO categoria = new CategoriaProductoFilterDTO();
 				categoria.setFiltroParametro(pCampo.getFiltroParametro());
 				categoria.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<CategoriaProductoDTO> categorias = categoriaProductoService.listarConsulta(categoria);
-				if(categorias!=null && !categorias.isEmpty()){
+				if (categorias != null && !categorias.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(CategoriaProductoDTO iCategoria : categorias){
+					for (CategoriaProductoDTO iCategoria : categorias) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iCategoria.getLlaveTabla());
 						adaptado.setImagen(iCategoria.getImagen());
 						adaptado.setNombre(iCategoria.getNombre());
-						//adaptado.setDescripcion(iCategoria.getNombre());
+						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}
 				}
@@ -371,9 +404,9 @@ public class TipoConfiguracion {
 				proceso.setFiltroParametro(pCampo.getFiltroParametro());
 				proceso.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<ProcesoDTO> procesos = procesoService.listarConsulta(proceso);
-				if(procesos!=null && !procesos.isEmpty()){
+				if (procesos != null && !procesos.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(ProcesoDTO iProducto : procesos){
+					for (ProcesoDTO iProducto : procesos) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iProducto.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
@@ -388,9 +421,9 @@ public class TipoConfiguracion {
 				producto.setFiltroParametro(pCampo.getFiltroParametro());
 				producto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<ProductoDTO> productos = productoService.listarConsulta(producto);
-				if(productos!=null && !productos.isEmpty()){
+				if (productos != null && !productos.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(ProductoDTO iProducto : productos){
+					for (ProductoDTO iProducto : productos) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iProducto.getLlaveTabla());
 						adaptado.setImagen(iProducto.getImagen());
@@ -401,19 +434,25 @@ public class TipoConfiguracion {
 				}
 				break;
 			case PLANTILLAS:
-				if(pCampo.getCampoDTO()==null) throw new ServerException("valide el rol para consultar las plantillas");
+				if (pCampo.getCampoDTO() == null)
+					throw new ServerException("valide el rol para consultar las plantillas");
 				DocumentoPlantillaFilterDTO plantilla = new DocumentoPlantillaFilterDTO();
 				plantilla.setFiltroParametro(pCampo.getFiltroParametro());
 				plantilla.setSecurityToken(pCampo.getSecurityToken());
-				//Pienso que se puede colocar una funcion para traer las plantillas del tipo y mejorarlas
-				//Tambien pienso que deberia tener un parametro de plantilla y agregar las plantillas que queremos
-				/*if( Propiedades.obtenerParametro(pBase, Propiedades.CONFIGURACION_PLANTILLA_TIPO)!=null){
-					plantilla.setTipo(Propiedades.obtenerValor(pBase, Propiedades.CONFIGURACION_PLANTILLA_TIPO));
-				}*/
+				// Pienso que se puede colocar una funcion para traer las plantillas del tipo y
+				// mejorarlas
+				// Tambien pienso que deberia tener un parametro de plantilla y agregar las
+				// plantillas que queremos
+				/*
+				 * if( Propiedades.obtenerParametro(pBase,
+				 * Propiedades.CONFIGURACION_PLANTILLA_TIPO)!=null){
+				 * plantilla.setTipo(Propiedades.obtenerValor(pBase,
+				 * Propiedades.CONFIGURACION_PLANTILLA_TIPO)); }
+				 */
 				List<DocumentoPlantillaDTO> plantillas = plantillaService.listarPlantillaRol(plantilla);
-				if(plantillas!=null && !plantillas.isEmpty()){
+				if (plantillas != null && !plantillas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(DocumentoPlantillaDTO iPlantilla : plantillas){
+					for (DocumentoPlantillaDTO iPlantilla : plantillas) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iPlantilla.getLlaveTabla());
 						adaptado.setImagen(iPlantilla.getImagen());
@@ -428,9 +467,9 @@ public class TipoConfiguracion {
 				rolFiltro.setNombre(pCampo.getFiltroParametro());
 				rolFiltro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<RolAccesoDTO> roles = rolService.listarConsulta(rolFiltro);
-				if(roles!=null && !roles.isEmpty()){
+				if (roles != null && !roles.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(RolAccesoDTO iCambio : roles){
+					for (RolAccesoDTO iCambio : roles) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iCambio.getLlaveTabla());
 						adaptado.setImagen(iCambio.getImagen());
@@ -445,14 +484,14 @@ public class TipoConfiguracion {
 				cambio.setNombre(pCampo.getFiltroParametro());
 				cambio.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<CambioDTO> cambios = cambioService.listarConsulta(cambio);
-				if(cambios!=null && !cambios.isEmpty()){
+				if (cambios != null && !cambios.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(CambioDTO iCambio : cambios){
+					for (CambioDTO iCambio : cambios) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iCambio.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
 						adaptado.setNombre(iCambio.getNombre());
-						//adaptado.setDescripcion(iCategoria.getNombre());
+						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}
 				}
@@ -462,14 +501,14 @@ public class TipoConfiguracion {
 				encuesta.setFiltroParametro(pCampo.getFiltroParametro());
 				encuesta.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<EncuestaDTO> encuestas = encuestaService.listarConsulta(encuesta);
-				if(encuestas!=null && !encuestas.isEmpty()){
+				if (encuestas != null && !encuestas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(EncuestaDTO iEncuesta : encuestas){
+					for (EncuestaDTO iEncuesta : encuestas) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iEncuesta.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
 						adaptado.setNombre(iEncuesta.getNombre());
-						//adaptado.setDescripcion(iCategoria.getNombre());
+						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}
 				}
@@ -479,9 +518,9 @@ public class TipoConfiguracion {
 				bodega.setFiltroParametro(pCampo.getFiltroParametro());
 				bodega.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<BodegaDTO> bodegas = bodegaService.listarConsulta(bodega);
-				if(bodegas!=null && !bodegas.isEmpty()){
+				if (bodegas != null && !bodegas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(BodegaDTO iBodega : bodegas){
+					for (BodegaDTO iBodega : bodegas) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iBodega.getLlaveTabla());
 						adaptado.setImagen(ConstantesGenerales.LOGO);
@@ -495,16 +534,16 @@ public class TipoConfiguracion {
 				pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 				PedidoVentaDTO adaptadoPDF = new PedidoVentaDTO();
 				adaptadoPDF.setLlaveTabla("PDF");
-				//adaptadoPDF.setImagen(plantilla.getImagen());
+				// adaptadoPDF.setImagen(plantilla.getImagen());
 				adaptadoPDF.setNombre("PDF");
-				//adaptadoPDF.setDescripcion(plantilla.getNombre());
+				// adaptadoPDF.setDescripcion(plantilla.getNombre());
 				pBase.getDocumentos().add(adaptadoPDF);
-				
+
 				PedidoVentaDTO adaptadoXLS = new PedidoVentaDTO();
 				adaptadoXLS.setLlaveTabla("XLS");
-				//adaptadoXLS.setImagen(plantilla.getImagen());
+				// adaptadoXLS.setImagen(plantilla.getImagen());
 				adaptadoXLS.setNombre("XLS");
-				//adaptadoXLS.setDescripcion(plantilla.getNombre());
+				// adaptadoXLS.setDescripcion(plantilla.getNombre());
 				pBase.getDocumentos().add(adaptadoXLS);
 				break;
 			case TARIFARIO:
@@ -512,23 +551,24 @@ public class TipoConfiguracion {
 				tarifario.setFiltroParametro(pCampo.getFiltroParametro());
 				tarifario.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<TarifarioDTO> tarifarios = tarifarioService.listarConsulta(tarifario);
-				if(tarifarios!=null && !tarifarios.isEmpty()){
+				if (tarifarios != null && !tarifarios.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for(TarifarioDTO itarifario : tarifarios){
+					for (TarifarioDTO itarifario : tarifarios) {
 						PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 						adaptadoT.setLlaveTabla(itarifario.getLlaveTabla());
 						adaptadoT.setImagen(ConstantesGenerales.LOGO);
 						adaptadoT.setNombre(itarifario.getNombre());
-						//adaptado.setDescripcion(iCategoria.getNombre());
+						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptadoT);
 					}
 				}
 				break;
 			default:
 				break;
-			}	
+			}
 		}
-		if(pBase.getDocumentos()==null) pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());// Esto evita un ciclo infinito en el cliente
+		if (pBase.getDocumentos() == null)
+			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());// Esto evita un ciclo infinito en el cliente
 		pCampo.setCampoDTO(pBase);
 		return pCampo;
 	}
