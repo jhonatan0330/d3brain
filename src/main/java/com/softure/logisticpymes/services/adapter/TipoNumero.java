@@ -177,7 +177,7 @@ public class TipoNumero {
 			try {
 				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(), pCampo.getDocumento(), newDependientes));			
 			} catch (ServerException e) {
-				throw new ServerException(e.getMessage(), "Funcion de Calculo : " + funcionCalculo.getLlaveTabla() + "\n Campo: " + pCampo.getCampoDTO().getNombre());
+				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}
 			
 		}

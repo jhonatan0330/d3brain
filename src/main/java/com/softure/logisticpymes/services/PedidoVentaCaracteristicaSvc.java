@@ -229,9 +229,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	
 	public BigDecimal calcularNumeroFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		try {
-			return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, dependientes);
+			return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, ordenarAlfabeticaDepende(dependientes));
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "Funcion de Calculo : " + sqlFuncionDecision);
+			throw new ServerException(e.getMessage(), "");
 		}
 	}
 	
