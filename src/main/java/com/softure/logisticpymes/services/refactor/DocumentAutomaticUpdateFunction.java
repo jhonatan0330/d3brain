@@ -51,7 +51,7 @@ public class DocumentAutomaticUpdateFunction {
 			for( RelacionInternaDTO iRelation: relations ) {
 				if ( iRelation.getPlantilla().compareTo(processDTO.getPlantilla())==0) {
 					newField.setCampo(iRelation.getCampo());
-					propiedadDTO.setValor(iRelation.getCampo());		
+					propiedadDTO.setValor(iRelation.getCampo());	// Para que hago esto??	
 				}
 			}	
 			generateFieldsFromProperty.add(newField);
