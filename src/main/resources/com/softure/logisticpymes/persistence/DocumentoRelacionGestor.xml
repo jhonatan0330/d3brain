@@ -409,7 +409,9 @@
 			,null as ubicacionPlantilla
 			,null as nombre
 			,null as  transaccion
-			,cwse_entrada || ';;' || cwse_salida as adjunto 
+			,case when cwse_masivo is not null then (cwse_entrada || ';;' || cwse_salida || ';;' || cwse_masivo)
+			 	else (cwse_entrada || ';;' || cwse_salida)
+			end as adjunto 
 		  from webserviceejecucion_wsep
 		  where cwse_documento = #{dto.documentoPrincipal}
 	</if>

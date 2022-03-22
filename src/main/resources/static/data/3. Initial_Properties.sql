@@ -365,3 +365,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	VALUES('PROP_195' , 'W', 'API_AUTHENTICATION', 'API EJECUTAR PARA AUTENTICAR', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_196' , 'C', 'VISIBLE CAMPO SEGUN VALOR DEPENDIENTE', 'VISIBLE_VALOR_DEPENDIENTE', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_197' , 'L', 'PLANTILLA CARGA MASIVA MULTIPLE', 'PLANTILLA_CARGA_MASIVA_MULTIPLE', 'PERMISOS');

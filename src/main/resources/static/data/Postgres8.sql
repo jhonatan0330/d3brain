@@ -580,10 +580,11 @@ CREATE TABLE webserviceejecucion_wsep(
         cwse_servicio character varying(32) NOT NULL,
         dwse_fecha timestamp with time zone NOT NULL,
         cwse_documento character varying(32) NOT NULL,
-        cwse_entrada character varying(4000) NOT NULL,
-        cwse_salida character varying(4000),
+        cwse_entrada character varying(2000) NOT NULL,
+        cwse_salida character varying(2000),
         cwse_error character varying(4000),
         cwse_usuario character varying(32) NOT NULL,
+        cwse_masivo character varying(2000),
         cwse_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_webserviceejecucion_wsep PRIMARY KEY (cwse_llave)
     );
@@ -1053,4 +1054,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.03.05.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.03.21.00' from pg_class where relname = 'usuariosesion_ussp';

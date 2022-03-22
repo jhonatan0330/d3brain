@@ -1,5 +1,6 @@
 package com.softure.logisticpymes.controller;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -33,16 +34,26 @@ public class APIControllerErrorAdvice {
 
     		        return new ResponseEntity<ApiErrorResponse>(response, response.getStatus());
 	}
-    /*
-	@ExceptionHandler(ServerException.class)
-	protected ResponseEntity<Object> handleCustomAPIException(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-	  
+    
+	@ExceptionHandler(PSQLException.class)
+	protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(PSQLException e) {
 	   ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
-	         .withStatus(status)
-	         .withError_code(HttpStatus.NOT_FOUND.name())
-	         .withMessage(ex.getLocalizedMessage())
-	         .withDetail(ex.getMessage())
+	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+	         .withMessage("PSQLException")
+	         .withDetail(e.getMessage())
 	         .build();
 	        return new ResponseEntity<>(response, response.getStatus());
-	 }*/
+	 }
+	
+	@ExceptionHandler(NullPointerException.class)
+	protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(NullPointerException e) {
+	   ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+	         .withMessage("NullPointerException")
+	         .withDetail(e.getStackTrace()[0].toString())
+	         .build();
+	        return new ResponseEntity<>(response, response.getStatus());
+	 }
 }

@@ -150,6 +150,7 @@ public class Propiedades {
 	public static final String PERMISO_PLANTILLA_CAMPO_FILTRO = "PERMISO_PLANTILLA_CAMPO_FILTRO";
 	public static final String PERMISO_PLANTILLA_FILTROS_BASE = "PERMISO_PLANTILLA_FILTROS_BASE";
 	public static final String PERMISO_PLANTILLA_CARGA_MASIVA = "PERMISO_PLANTILLA_CARGA_MASIVA";
+	public static final String PLANTILLA_CARGA_MASIVA_MULTIPLE = "PLANTILLA_CARGA_MASIVA_MULTIPLE";
 	public static final String PERMISO_PLANTILLA_CAMBIAR_ESTADO = "PERMISO_PLANTILLA_CAMBIAR_ESTADO";
 	public static final String PERMISO_PLANTILLA_VER = "PERMISO_PLANTILLA_VER";
 	public static final String PERMISO_PLANTILLA_VER_TODOS = "PERMISO_PLANTILLA_VER_TODOS";
@@ -470,6 +471,7 @@ public class Propiedades {
 					+ "\n\n Si la plantilla NO hace parte del inicio de un proceso se van a pasar todos los documentos esto es muy util para los reportes"
 					+ "\n\n VALOR: Coloca el numero de dias que se van mantener en la tabla principal el registro de ese tipo de plantilla"
 					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";break;}
+			case PLANTILLA_CARGA_MASIVA_MULTIPLE : {ruleProperty =  "Relaciona un campo para que se realice una carga masiva multiple, busca el codigo del campo que va a subir los mnultiples\n";break;}
 			case PLANTILLA_TIPO_ROL : {ruleProperty =  " Asocia esta plantilla con un rol del sistema, creandolo\n";break;}
 			case PLANTILLA_TIPO_REPORTE : {ruleProperty =  " Crear la configuracion de un reporte\n";break;}
 			case PLANTILLA_TIPO_CUENTA : {ruleProperty =  " Define que esta plantilla relaciona los documentos creados con una cuenta\n";break;}

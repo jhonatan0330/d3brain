@@ -73,6 +73,13 @@ public class SoftureUtil {
 		return format.format(fecha);
 	}
 	
+	// Debo hacer que las cargas masivas soporten varios formatos de fecha
+	public static String formatDateMassiveFile(Date fecha){
+		DateFormat format = new SimpleDateFormat( "dd/MM/yyyy HH:mm");
+		if(fecha ==null)return "";
+		return format.format(fecha);
+	}
+	
 	public static String formatNumber(BigDecimal money){
 		NumberFormat format = NumberFormat.getNumberInstance();
 		if(money ==null)money = BigDecimal.ZERO;

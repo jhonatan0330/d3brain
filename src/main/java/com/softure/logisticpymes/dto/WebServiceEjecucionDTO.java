@@ -21,6 +21,7 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	private String salida;
 	private String error;
 	private String usuario;
+	private String masivo;
 
 	public void setServicio(String servicio) {
 		this.servicio = servicio;
@@ -70,6 +71,13 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	
 	public String getUsuario() {
 		return usuario;
+	}
+	public void setMasivo(String masivo) {
+		this.masivo = masivo;
+	}
+	
+	public String getMasivo() {
+		return masivo;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

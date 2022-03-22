@@ -24,6 +24,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.PropiedadDTO;
@@ -32,6 +33,7 @@ import com.softure.logisticpymes.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.dto.WebServiceDTO;
 import com.softure.logisticpymes.dto.WebServiceEjecucionDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
+import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
@@ -47,7 +49,7 @@ public class ExecuteAPIFunction {
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired
-	private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
+	private DocumentoPlantillaSvc templateService;
 	@Autowired
 	private DocumentAutomaticUpdateFunction documentAutomaticUpdateFunction;
 	@Autowired
@@ -96,11 +98,16 @@ public class ExecuteAPIFunction {
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = ConstantesGenerales.ERROR;
-			mensajeSvc.mensaje2Administrator(
-					"Error en ejecucion de api " + service.getNombre(),
-					callWS.getError());
+			mensajeSvc.mensaje2Administrator("Error en ejecucion de api " + service.getNombre(), callWS.getError());
 		} else {
-			generateDocuments(service, callWS.getEntrada(), document, token);
+			callWS.setMasivo(generateDocuments(service, callWS.getEntrada(), token));
+			if (callWS.getMasivo() != null && !callWS.getMasivo().isBlank()) {
+				// Como deje el campo entrada para que enviara los datos de resultado, entonces
+				// me imagne esta forma de volver a colocar correctamente lso valores
+				callWS.setEntrada(callWS.getEstado());
+				callWS.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				webServiceEjecucionSvc.update(callWS);
+			}
 		}
 		System.out.format("\n\n[%s] Finalizando API (%s)", document.getNombre(), service.getNombre());
 		return result;
@@ -160,6 +167,7 @@ public class ExecuteAPIFunction {
 		}
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS = webServiceEjecucionSvc.save(callWS);
+		callWS.setEstado(callWS.getEntrada());
 		callWS.setEntrada(responseApi);
 		return callWS;
 	}
@@ -471,38 +479,90 @@ public class ExecuteAPIFunction {
 		}
 	}
 
-	private void generateDocuments(WebServiceDTO service, String responseWS, PedidoVentaDTO document, String token)
-			throws ServerException {
+	private String generateDocuments(WebServiceDTO service, String responseWS, String token) throws ServerException {
 		List<PropiedadDTO> newTemplates = Propiedades.obtenerVariosParametro(service, Propiedades.API_NEW_DOCUMENT);
 		List<PropiedadDTO> secondaryTemplates = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_SECONDARY_DOCUMENT);
-		if (newTemplates != null && !newTemplates.isEmpty()) {
-			HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>> hmapTemplate = new HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>>();
-			HashMap<String, List<RelacionInternaDTO>> hmapRelaciones = new HashMap<String, List<RelacionInternaDTO>>();
-			for (PropiedadDTO iProp : newTemplates) {
-				final Matcher matcher = Pattern.compile(iProp.getMotivo()).matcher(responseWS);
-				while (matcher.find()) {
-					PedidoVentaDTO nuevo = createNewDocument(hmapTemplate, hmapRelaciones, iProp.getValor(),
-							iProp.getLlaveTabla(), matcher.group(1), document, token);
-					// Envio a guardar los documentos secundarios
-					if (secondaryTemplates != null && !secondaryTemplates.isEmpty()) {
-						for (PropiedadDTO iProp2 : secondaryTemplates) {
-							final Matcher matcherSecond = Pattern.compile(iProp2.getMotivo()).matcher(matcher.group(1));
-							while (matcherSecond.find()) {
-								createNewDocument(hmapTemplate, hmapRelaciones, iProp2.getValor(),
-										iProp2.getLlaveTabla(), matcherSecond.group(1), nuevo, token);
-							}
-
+		if (newTemplates == null || newTemplates.isEmpty())
+			return null;
+		HashMap<String, List<PedidoVentaDTO>> mapWithDocuments = new HashMap<String, List<PedidoVentaDTO>>();
+		// List<PedidoVentaDTO> documents = new ArrayList<>();
+		HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>> hmapTemplate = new HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>>();
+		HashMap<String, List<RelacionInternaDTO>> hmapRelaciones = new HashMap<String, List<RelacionInternaDTO>>();
+		for (PropiedadDTO iProp : newTemplates) {
+			final Matcher matcher = Pattern.compile(iProp.getMotivo()).matcher(responseWS);
+			int iteratorPrimary = 0;
+			while (matcher.find()) {
+				iteratorPrimary++;
+				addDocumentoToMap(mapWithDocuments, createNewDocument(hmapTemplate, hmapRelaciones, iProp.getValor(),
+						iProp.getLlaveTabla(), matcher.group(1), token, null));
+				// Envio a guardar los documentos secundarios
+				if (secondaryTemplates != null && !secondaryTemplates.isEmpty()) {
+					for (PropiedadDTO iProp2 : secondaryTemplates) {
+						final Matcher matcherSecond = Pattern.compile(iProp2.getMotivo()).matcher(matcher.group(1));
+						while (matcherSecond.find()) {
+							addDocumentoToMap(mapWithDocuments,
+									createNewDocument(hmapTemplate, hmapRelaciones, iProp2.getValor(),
+											iProp2.getLlaveTabla(), matcherSecond.group(1), token,
+											String.valueOf(iteratorPrimary)));
 						}
 					}
 				}
 			}
 		}
+		if (mapWithDocuments.isEmpty())
+			return null;
+		String result = "";
+		for (Map.Entry<String, List<PedidoVentaDTO>> entry : mapWithDocuments.entrySet()) {
+			List<PedidoVentaDTO> documentFromMap = entry.getValue();
+			DocumentoPlantillaDTO templateDTO = templateService.consultaXId(entry.getKey());
+			if (documentFromMap != null && !documentFromMap.isEmpty()) {
+				String storageMassiveString = "<root>";
+				int iteratorXml = 0;
+				for (PedidoVentaDTO iDocument : documentFromMap) {
+					iteratorXml++;
+					storageMassiveString = storageMassiveString + "<" + formatStringXML(templateDTO.getCodigo()) + ">";
+					storageMassiveString = storageMassiveString + "<" + formatStringXML(templateDTO.getCodigo()) + "_NUMID>" + String.valueOf(iteratorXml) + "</" + formatStringXML(templateDTO.getCodigo()) + "_NUMID>";
+					for (PedidoVentaCaracteristicaDTO iFieldDocument : iDocument.getCaracteristicas()) {
+						if (iFieldDocument.getValorText() != null) {
+							storageMassiveString = storageMassiveString + "<"
+									+ formatStringXML(iFieldDocument.getCampoDTO().getNombre()) + ">";
+							storageMassiveString = storageMassiveString + iFieldDocument.getValorText();
+							storageMassiveString = storageMassiveString + "</"
+									+ formatStringXML(iFieldDocument.getCampoDTO().getNombre()) + ">";
+						}
+					}
+					storageMassiveString = storageMassiveString + "</" + formatStringXML(templateDTO.getCodigo()) + ">";
+				}
+				storageMassiveString = storageMassiveString + "</root>";
+				System.out.format("\n[%s] Escribiendo documento de carga masiva (%s)", templateDTO.getCodigo(),
+						documentFromMap.size());
+				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token) + ";;";
+			}
+		}
+		if (result.endsWith(";;"))
+			result = result.substring(0, result.length() - 2);
+		return result;
+	}
+
+	private String formatStringXML(String text) {
+		if (text == null || text.isBlank())
+			return "EMPTY";
+		return text.replaceAll(" ", "_");
+
+	}
+
+	private void addDocumentoToMap(HashMap<String, List<PedidoVentaDTO>> mapWithDocuments, PedidoVentaDTO documentNew) {
+		List<PedidoVentaDTO> documentFromMap = mapWithDocuments.get(documentNew.getPlantilla());
+		if (documentFromMap == null)
+			documentFromMap = new ArrayList<PedidoVentaDTO>();
+		documentFromMap.add(documentNew);
+		mapWithDocuments.put(documentNew.getPlantilla(), documentFromMap);
 	}
 
 	private PedidoVentaDTO createNewDocument(HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>> hmapTemplate,
 			HashMap<String, List<RelacionInternaDTO>> hmapRelaciones, String templateId, String propId, String textoApi,
-			PedidoVentaDTO documentoPadre, String token) throws ServerException {
+			String token, String parentId) throws ServerException {
 		// optimizando la consulta de campos de una plantilla
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = hmapTemplate.get(templateId);
 		if (camposPlantilla == null) {
@@ -519,7 +579,6 @@ public class ExecuteAPIFunction {
 		PedidoVentaDTO nuevo = new PedidoVentaDTO();
 		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		nuevo.setPlantilla(templateId);
-		nuevo.setTransaccion(documentoPadre.getTransaccion());
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : camposPlantilla) {
 			RelacionInternaDTO relacionApi = null;
 			for (RelacionInternaDTO iRelacion : relaciones) {
@@ -528,35 +587,41 @@ public class ExecuteAPIFunction {
 					break;
 				}
 			}
-			nuevo.getCaracteristicas().add(createField(iCampo, relacionApi, textoApi, documentoPadre.getLlaveTabla()));
+			nuevo.getCaracteristicas().add(createField(iCampo, relacionApi, textoApi, parentId));
 		}
 		// Envio a guardar el documento para finalizar
-		return saveUpdateInactivateDocumentFunction.save(nuevo, token);
+		// return saveUpdateInactivateDocumentFunction.save(nuevo, token);
+		// cambie de estratiegia para cargar archivo de carga masiva
+		return nuevo;
 	}
 
 	// La relacion puede ser nula porque no se a definido
 	private PedidoVentaCaracteristicaDTO createField(DocumentoPlantillaCaracteristicaDTO campo,
-			RelacionInternaDTO relacion, String texto, String documento) throws ServerException {
+			RelacionInternaDTO relacion, String texto, String parentId) throws ServerException {
 		PedidoVentaCaracteristicaDTO nueva = new PedidoVentaCaracteristicaDTO();
 		nueva.setCampo(campo.getLlaveTabla());
+		nueva.setCampoDTO(campo);
 		if (relacion != null) {
 			if (relacion.getAuxiliar() == null) {
-				nueva.setValorOpcion(documento);
+				nueva.setValorText(parentId);
 			} else {
 				final Matcher matcher = Pattern.compile(relacion.getAuxiliar()).matcher(texto);
 				if (matcher.find()) {
 					switch (campo.getFormato()) {
 					case DocumentoPlantillaCaracteristicaDTO.FECHA:
 						nueva.setValorFecha(SoftureUtil.toDate(matcher.group(1)));
+						nueva.setValorText(SoftureUtil.formatDateMassiveFile(nueva.getValorFecha()));
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 						nueva.setValorNumero(new BigDecimal(matcher.group(1)));
+						nueva.setValorText(nueva.getValorNumero().toPlainString());
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 						nueva.setValorText(matcher.group(1));
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.PROCESO:
-						// Todavia no se que hacer
+						nueva.setValorText(matcher.group(1));
+						// Le coloque el valor en el texto pero no se si va a funcionar
 						break;
 					}
 				}

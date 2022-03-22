@@ -14,6 +14,7 @@
 			,cwse_salida as  salida
 			,cwse_error as  error
 			,cwse_usuario as  usuario
+			,cwse_masivo as  masivo
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>
@@ -100,6 +101,9 @@
 		<if test="usuario!=null">
 			,cwse_usuario
 		</if>
+		<if test="masivo!=null">
+			,cwse_masivo
+		</if>
 		<if test="estado!=null">
 			,cwse_estado
 		</if>
@@ -126,6 +130,9 @@
 		<if test="usuario!=null">
 			,#{usuario}
 		</if>
+		<if test="masivo!=null">
+			,#{masivo}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -142,6 +149,7 @@
 				cwse_salida = #{salida},
 				cwse_error = #{error},
 				cwse_usuario = #{usuario},
+				cwse_masivo = #{masivo},
 				cwse_estado =#{estado}
 		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
 	</select>
@@ -156,6 +164,7 @@
 			,cwse_salida as  salida
 			,cwse_error as  error
 			,cwse_usuario as  usuario
+			,cwse_masivo as  masivo
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>
