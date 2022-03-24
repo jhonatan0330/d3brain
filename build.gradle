@@ -42,7 +42,7 @@ dependencies {
 	
 	implementation 'com.drewnoakes:metadata-extractor:2.16.0'
 	
-	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
