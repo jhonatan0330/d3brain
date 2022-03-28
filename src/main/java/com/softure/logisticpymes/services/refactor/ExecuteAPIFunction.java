@@ -546,10 +546,9 @@ public class ExecuteAPIFunction {
 	}
 
 	private String formatStringXML(String text) {
-		if (text == null || text.isBlank())
+		if (text == null || text.compareTo("")==0)
 			return "EMPTY";
 		return text.replaceAll(" ", "_");
-
 	}
 
 	private void addDocumentoToMap(HashMap<String, List<PedidoVentaDTO>> mapWithDocuments, PedidoVentaDTO documentNew) {
