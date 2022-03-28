@@ -229,7 +229,11 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	
 	public BigDecimal calcularNumeroFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		try {
-			return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, ordenarAlfabeticaDepende(dependientes));
+			// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
+			// al final se carga pero en ibatis falla por el arrray vacio
+			List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+			if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
+			return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, dependientesOrdenados);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "");
 		}
