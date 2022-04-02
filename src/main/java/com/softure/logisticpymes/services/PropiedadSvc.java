@@ -229,7 +229,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setUsuario(dto.getUsuario());
 			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
 			PropiedadDTO existe = consultaUnica(existeFilter);
-			if(existe!=null) throw new ServerException("Esta propiedad ya fue definida");
+			if(existe!=null) throw new ServerException("Esta propiedad ya fue definida " + existe.getNombre());
 		}else {
 			dto.setLlaveTabla(null);
 			//Falta validar que venga el mismo tipo para que no nos hagan gol
@@ -319,11 +319,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						RolAccesoDTO nuevo = new RolAccesoDTO();
 						nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
 						nuevo = rolService.guardar(nuevo, token);
-						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.ORDEN, "N", token), token);
-						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.DESCRIPCION, "*", token), token);
-						guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.CONSECUTIVO, "*", token), token);						
 					}
 					break;
@@ -335,6 +335,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 // BEGIN region aditionalMethods
+	private void guardarEnCasoQueNoExista(PropiedadDTO dto, String token) throws ServerException {
+		// Lo copie de guardar depronto lo puedo refacorizar
+		PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
+		existeFilter.setCampo(dto.getCampo());
+		if(dto.getPropiedadValor()==null)
+			existeFilter.setPropiedadValor(consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
+		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		existeFilter.setKey(dto.getKey());
+		existeFilter.setTipo(dto.getTipo());
+		PropiedadDTO existe = consultaUnica(existeFilter);
+		if (existe ==null) guardar(dto, token);
+	}
 	
 	private PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
 		PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
