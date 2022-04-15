@@ -18,6 +18,7 @@
 			,cmsj_correoerror as  correoError
 			,cmsj_correo as  correo
 			,cmsj_reporte as  reporte
+			,cmsj_transaccion as  transaccion
 			,cmsj_estado as estado
 		from mensaje_msjp a
 	</sql>
@@ -62,6 +63,9 @@
 			</if>
 			<if test="reporte!=null">
 				and cmsj_reporte = #{reporte}
+			</if>
+			<if test="transaccion!=null">
+				and cmsj_transaccion = #{transaccion}
 			</if>
 	</sql>
 
@@ -134,6 +138,9 @@
 		<if test="reporte!=null">
 			,cmsj_reporte
 		</if>
+		<if test="transaccion!=null">
+			,cmsj_transaccion
+		</if>
 		<if test="estado!=null">
 			,cmsj_estado
 		</if>
@@ -172,6 +179,9 @@
 		<if test="reporte!=null">
 			,#{reporte}
 		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -192,6 +202,7 @@
 				cmsj_correoerror = #{correoError},
 				cmsj_correo = #{correo},
 				cmsj_reporte = #{reporte},
+				cmsj_transaccion = #{transaccion},
 				cmsj_estado =#{estado}
 		<include refid="whereMensajePrimaryKeyFragment" />
 	</select>
@@ -210,6 +221,7 @@
 			,cmsj_correoerror as  correoError
 			,cmsj_correo as  correo
 			,cmsj_reporte as  reporte
+			,cmsj_transaccion as  transaccion
 			,cmsj_estado as estado
 		from mensaje_msjp a
 	</sql>
@@ -256,8 +268,14 @@
 			,null as  correoError
 			,correo as  correo
 			,null as  reporte
+			,null as transaccion
 			,null as estado
 		from propiedad_${llavePropiedad} ( #{documento}, #{modificador}, #{token})
+	</select>
+	
+	<select id="mensajesTransaccion" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		where cmsj_estado = 'A' and dmsj_fecha >= NOW() - INTERVAL '30 minutes' and dmsj_correoenviado is null and cmsj_transaccion = #{transaccion}
 	</select>
 	
 <!--// END region script-->

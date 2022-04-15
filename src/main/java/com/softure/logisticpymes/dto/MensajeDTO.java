@@ -27,6 +27,7 @@ public class MensajeDTO extends BasicDTO
 	private String correoError;
 	private String correo;
 	private String reporte;
+	private String transaccion;
 
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
@@ -104,6 +105,13 @@ public class MensajeDTO extends BasicDTO
 	
 	public String getReporte() {
 		return reporte;
+	}
+	public void setTransaccion(String transaccion) {
+		this.transaccion = transaccion;
+	}
+	
+	public String getTransaccion() {
+		return transaccion;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

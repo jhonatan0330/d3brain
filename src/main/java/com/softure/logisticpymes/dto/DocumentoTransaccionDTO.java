@@ -18,6 +18,8 @@ public class DocumentoTransaccionDTO extends BasicDTO
 	private String usuario;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFin;
+	private String error;
+	private String sincronize;
 
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
@@ -39,6 +41,20 @@ public class DocumentoTransaccionDTO extends BasicDTO
 	
 	public Date getFechaFin() {
 		return fechaFin;
+	}
+	public void setError(String error) {
+		this.error = error;
+	}
+	
+	public String getError() {
+		return error;
+	}
+	public void setSincronize(String sincronize) {
+		this.sincronize = sincronize;
+	}
+	
+	public String getSincronize() {
+		return sincronize;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

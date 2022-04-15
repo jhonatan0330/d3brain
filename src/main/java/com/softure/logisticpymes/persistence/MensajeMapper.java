@@ -17,5 +17,7 @@ public interface MensajeMapper extends IBasicMapper<MensajeDTO, MensajeFilterDTO
 	List<MensajeDTO> mensajesDisponibles();
 	
 	List<MensajeDTO> correosMensaje(@Param("llavePropiedad") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
+	
+	List<MensajeDTO> mensajesTransaccion(@Param("transaccion") String transaccion);
 // END region aditionalMethods
 }

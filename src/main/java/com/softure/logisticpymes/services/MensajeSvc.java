@@ -485,6 +485,15 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	    message.setText(principal.getNombre() + " " + messageText);  
 	    mailSender.send(message);
 	}
+	
+	public void sendMailToTransaction(String transactionId, String userId, String token) throws ServerException {
+		List<MensajeDTO> mensajes = mensajeMapper.mensajesTransaccion(transactionId);
+		if(mensajes!=null) {
+			for (MensajeDTO iMessage : mensajes) {
+				enviarCorreo(iMessage, userId, token);
+			}
+		}
+	}
 
 	
 // END region aditionalMethods

@@ -245,6 +245,7 @@ import com.softure.logisticpymes.services.OrganizacionSvc;
 @RequestMapping("/flex")
 public class FullControllerDTO {
 	
+	
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
 	
 	@RequestMapping(value="/consultaXIdPlantillaConsecutivo", method=RequestMethod.POST)
@@ -4184,6 +4185,15 @@ public class FullControllerDTO {
 		}
 	}
 	
+
+	@RequestMapping(value="/ejecutarAPIWebServiceEjecucion", method=RequestMethod.POST)
+	public WebServiceEjecucionDTO ejecutarAPIWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto)throws FlexException {
+		try {
+			return webServiceEjecucionService.ejecutarAPI(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
 	
 	@Autowired private PostPreguntaSvc postPreguntaService;
 	

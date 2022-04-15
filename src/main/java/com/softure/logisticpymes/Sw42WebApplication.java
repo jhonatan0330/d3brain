@@ -42,10 +42,12 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.ProcesoTransicionAutomaticaSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
+import com.softure.logisticpymes.services.WebServiceEjecucionSvc;
 import com.softure.logisticpymes.servlet.DownloaderServlet;
 import com.softure.logisticpymes.servlet.ReporteServlet;
 import com.softure.logisticpymes.servlet.UploaderServlet;
@@ -61,12 +63,12 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	@Autowired private MensajeSvc mensajeService;
 	@Autowired private ProcesoTransicionAutomaticaSvc transicionservice;
 	@Autowired private UsuarioAutenticacionSvc autService;
+	@Autowired private WebServiceEjecucionSvc apiService;
 	
 	@Autowired private AutowireCapableBeanFactory beanFactory;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Sw42WebApplication.class, args);
-		
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
@@ -220,6 +222,23 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 			System.out.println("*******TAREAS****" + new Date().toString());
 			transicionservice.lanzarTransaccionesTemporizadas();
 			transicionservice.programateAll();
+		}
+	}
+	
+	String executeAPITask;
+	
+	@Scheduled(fixedDelayString = "${fixedDelayApi.in.milliseconds}")
+	public void sendAPI() throws ServerException {
+		if(executeAPITask==null) {
+			if(apiService.hasPropertiesAsync()) {
+				executeAPITask = ConstantesGenerales.OK;
+			}else {
+				executeAPITask = ConstantesGenerales.NO_STRING;
+			}
+		}
+		if(executeAPITask.compareTo(ConstantesGenerales.OK)==0) {
+			System.out.println("*******APIS ASYNC****" + new Date().toString());
+			apiService.apiToTransaction();
 		}
 	}
 	

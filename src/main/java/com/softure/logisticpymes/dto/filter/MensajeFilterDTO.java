@@ -27,6 +27,7 @@ public class MensajeFilterDTO extends BasicFilterDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date correoEnviadoMax;
 	private String reporte;
+	private String transaccion;
 
 	
 	public void setFechaMin(Date fechaMin) {
@@ -122,6 +123,15 @@ public class MensajeFilterDTO extends BasicFilterDTO
 	
 	public String getReporte() {
 		return reporte;
+	}
+	
+	
+	public void setTransaccion(String transaccion) {
+		this.transaccion = transaccion;
+	}
+	
+	public String getTransaccion() {
+		return transaccion;
 	}
 	
 

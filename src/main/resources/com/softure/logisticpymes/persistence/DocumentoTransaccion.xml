@@ -10,6 +10,8 @@
 			,dtra_fecha as  fecha
 			,ctra_usuario as  usuario
 			,dtra_fechafin as  fechaFin
+			,ctra_error as  error
+			,ctra_sincronize as  sincronize
 			,ctra_estado as estado
 		from documentotransaccion_trap a
 	</sql>
@@ -36,6 +38,9 @@
 			</if>
 			<if test="fechaFinMax!=null">
 				and dtra_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="sincronize!=null">
+				and ctra_sincronize = #{sincronize}
 			</if>
 	</sql>
 
@@ -83,6 +88,12 @@
 		<if test="fechaFin!=null">
 			,dtra_fechafin
 		</if>
+		<if test="error!=null">
+			,ctra_error
+		</if>
+		<if test="sincronize!=null">
+			,ctra_sincronize
+		</if>
 		<if test="estado!=null">
 			,ctra_estado
 		</if>
@@ -97,6 +108,12 @@
 		<if test="fechaFin!=null">
 			,#{fechaFin}
 		</if>
+		<if test="error!=null">
+			,#{error}
+		</if>
+		<if test="sincronize!=null">
+			,#{sincronize}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -109,6 +126,8 @@
 				dtra_fecha = #{fecha},
 				ctra_usuario = #{usuario},
 				dtra_fechafin = #{fechaFin},
+				ctra_error = #{error},
+				ctra_sincronize = #{sincronize},
 				ctra_estado =#{estado}
 		<include refid="whereDocumentoTransaccionPrimaryKeyFragment" />
 	</select>
@@ -119,6 +138,8 @@
 			,dtra_fecha as  fecha
 			,ctra_usuario as  usuario
 			,dtra_fechafin as  fechaFin
+			,ctra_error as  error
+			,ctra_sincronize as  sincronize
 			,ctra_estado as estado
 		from documentotransaccion_trap a
 	</sql>

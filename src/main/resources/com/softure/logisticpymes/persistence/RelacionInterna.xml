@@ -62,9 +62,9 @@
 	<select id="listar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
 		<include refid="selectRelacionInternaFragment" />
 		<include refid="whereRelacionInternaFragment" />
-		order by plantillaNombre
-		, campoNombre
-		, crit_auxiliar
+		order by plantillanombre 
+		, camponombre 
+		, crit_auxiliar 
 		<include refid="paginationRelacionInternaFragment" />
 	</select>
 
@@ -143,6 +143,9 @@
 	<select id="listarSimple" resultType="RelacionInternaDTO">
 		<include refid="selectSimpleRelacionInternaFragment" />
 		<include refid="whereRelacionInternaFragment" />
+		order by plantillanombre 
+		, camponombre 
+		, crit_auxiliar 
 		<include refid="paginationRelacionInternaFragment" />
 	</select>
 	

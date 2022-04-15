@@ -8,13 +8,19 @@
 		select
 			cwse_llave as  llaveTabla
 			,cwse_servicio as  servicio
+			,cwse_usuario as  usuario
 			,dwse_fecha as  fecha
 			,cwse_documento as  documento
+			,cwse_modificador as  modificador
+			,cwse_transaccion as  transaccion
+			,cwse_parametros as  parametros
+			,dwse_fechaejecucion as  fechaEjecucion
 			,cwse_entrada as  entrada
 			,cwse_salida as  salida
 			,cwse_error as  error
-			,cwse_usuario as  usuario
 			,cwse_masivo as  masivo
+			,cwse_extracciones as  extracciones
+			,cwse_sincrona as  sincrona
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>
@@ -30,6 +36,9 @@
 			<if test="servicio!=null">
 				and cwse_servicio = #{servicio}
 			</if>
+			<if test="usuario!=null">
+				and cwse_usuario = #{usuario}
+			</if>
 			<if test="fechaMin!=null">
 				and dwse_fecha >= #{fechaMin}
 			</if>
@@ -39,8 +48,20 @@
 			<if test="documento!=null">
 				and cwse_documento = #{documento}
 			</if>
-			<if test="usuario!=null">
-				and cwse_usuario = #{usuario}
+			<if test="modificador!=null">
+				and cwse_modificador = #{modificador}
+			</if>
+			<if test="transaccion!=null">
+				and cwse_transaccion = #{transaccion}
+			</if>
+			<if test="fechaEjecucionMin!=null">
+				and dwse_fechaejecucion >= #{fechaEjecucionMin}
+			</if>
+			<if test="fechaEjecucionMax!=null">
+				and dwse_fechaejecucion <![CDATA[ < ]]>  #{fechaEjecucionMax}
+			</if>
+			<if test="sincrona!=null">
+				and cwse_sincrona = #{sincrona}
 			</if>
 	</sql>
 
@@ -67,6 +88,7 @@
 		<include refid="selectWebServiceEjecucionFragment" />
 		<include refid="whereWebServiceEjecucionFragment" />
 		order by dwse_fecha desc
+		, dwse_fechaejecucion desc
 		<include refid="paginationWebServiceEjecucionFragment" />
 	</select>
 
@@ -83,11 +105,26 @@
 		<if test="servicio!=null">
 			,cwse_servicio
 		</if>
+		<if test="usuario!=null">
+			,cwse_usuario
+		</if>
 		<if test="fecha!=null">
 			,dwse_fecha
 		</if>
 		<if test="documento!=null">
 			,cwse_documento
+		</if>
+		<if test="modificador!=null">
+			,cwse_modificador
+		</if>
+		<if test="transaccion!=null">
+			,cwse_transaccion
+		</if>
+		<if test="parametros!=null">
+			,cwse_parametros
+		</if>
+		<if test="fechaEjecucion!=null">
+			,dwse_fechaejecucion
 		</if>
 		<if test="entrada!=null">
 			,cwse_entrada
@@ -98,11 +135,14 @@
 		<if test="error!=null">
 			,cwse_error
 		</if>
-		<if test="usuario!=null">
-			,cwse_usuario
-		</if>
 		<if test="masivo!=null">
 			,cwse_masivo
+		</if>
+		<if test="extracciones!=null">
+			,cwse_extracciones
+		</if>
+		<if test="sincrona!=null">
+			,cwse_sincrona
 		</if>
 		<if test="estado!=null">
 			,cwse_estado
@@ -112,11 +152,26 @@
 		<if test="servicio!=null">
 			,#{servicio}
 		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
 		<if test="fecha!=null">
 			,#{fecha}
 		</if>
 		<if test="documento!=null">
 			,#{documento}
+		</if>
+		<if test="modificador!=null">
+			,#{modificador}
+		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
+		<if test="parametros!=null">
+			,#{parametros}
+		</if>
+		<if test="fechaEjecucion!=null">
+			,#{fechaEjecucion}
 		</if>
 		<if test="entrada!=null">
 			,#{entrada}
@@ -127,11 +182,14 @@
 		<if test="error!=null">
 			,#{error}
 		</if>
-		<if test="usuario!=null">
-			,#{usuario}
-		</if>
 		<if test="masivo!=null">
 			,#{masivo}
+		</if>
+		<if test="extracciones!=null">
+			,#{extracciones}
+		</if>
+		<if test="sincrona!=null">
+			,#{sincrona}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -143,13 +201,19 @@
 		update webserviceejecucion_wsep
 			set
 				cwse_servicio = #{servicio},
+				cwse_usuario = #{usuario},
 				dwse_fecha = #{fecha},
 				cwse_documento = #{documento},
+				cwse_modificador = #{modificador},
+				cwse_transaccion = #{transaccion},
+				cwse_parametros = #{parametros},
+				dwse_fechaejecucion = #{fechaEjecucion},
 				cwse_entrada = #{entrada},
 				cwse_salida = #{salida},
 				cwse_error = #{error},
-				cwse_usuario = #{usuario},
 				cwse_masivo = #{masivo},
+				cwse_extracciones = #{extracciones},
+				cwse_sincrona = #{sincrona},
 				cwse_estado =#{estado}
 		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
 	</select>
@@ -158,13 +222,19 @@
 		select
 			cwse_llave as  llaveTabla
 			,cwse_servicio as  servicio
+			,cwse_usuario as  usuario
 			,dwse_fecha as  fecha
 			,cwse_documento as  documento
+			,cwse_modificador as  modificador
+			,cwse_transaccion as  transaccion
+			,cwse_parametros as  parametros
+			,dwse_fechaejecucion as  fechaEjecucion
 			,cwse_entrada as  entrada
 			,cwse_salida as  salida
 			,cwse_error as  error
-			,cwse_usuario as  usuario
 			,cwse_masivo as  masivo
+			,cwse_extracciones as  extracciones
+			,cwse_sincrona as  sincrona
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
 	</sql>
@@ -178,12 +248,23 @@
 		<include refid="selectSimpleWebServiceEjecucionFragment" />
 		<include refid="whereWebServiceEjecucionFragment" />
 		order by dwse_fecha desc
+		, dwse_fechaejecucion desc
 		<include refid="paginationWebServiceEjecucionFragment" />
 	</select>
 	
 
 
 <!--// BEGIN region script-->
+
+	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
+		<include refid="selectSimpleWebServiceEjecucionFragment" />
+		where cwse_estado = 'A' and dwse_fecha >= NOW() - INTERVAL '30 minutes' and dwse_fechaejecucion is null and cwse_sincrona is not null
+	</select>
+	
+	<select id="hasPropertiesAsync" resultType="int">
+		select count(*) from propiedad_ppdp
+		where cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_198'
+	</select>
 <!--// END region script-->
 
 </mapper>

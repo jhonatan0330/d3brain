@@ -10,7 +10,10 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 
 public class SoftureUtil {
@@ -157,4 +160,31 @@ public class SoftureUtil {
 		if(str==null) return null;
 		return str.replaceAll("^\\s*","").replaceAll("\\s*$","");
 	}
+	
+	
+	/**
+	 * De una cadena de texto con la siguiente estructura (codigo = valor;;codigo=valor)crea un map
+	 * Tener en cuenta que el separador es @see {@link ConstantesGenerales#PUNTO_COMA_DOBLE}
+	 * @param str
+	 * @return regreso el mapa vacio si no hay resultados que concuerden
+	 * @throws ServerException
+	 */
+	public static Map<String, String> createMaptoString(String str) {
+		Map<String, String> result = new HashMap<String, String>();
+		if (str ==null || str.isEmpty()) return result;
+		String[] params = str.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
+		int posIgual = -1;
+		String codigo = null;
+		String textoReemplazar = null;
+		for (String iParametro : params) {
+			posIgual = iParametro.indexOf("=");
+			if (posIgual > 0) {
+				codigo = iParametro.substring(0, posIgual);
+				textoReemplazar = iParametro.substring(posIgual + 1, iParametro.length());
+				result.put(codigo, textoReemplazar);
+			}
+		}
+		return result;
+	}
+	
 }

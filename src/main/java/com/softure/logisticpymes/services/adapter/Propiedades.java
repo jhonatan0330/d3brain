@@ -27,6 +27,7 @@ public class Propiedades {
 	public static final String API_CODE_MODIFICADOR = "API_CODE_MODIFICADOR";
 	public static final String API_VALIDATION = "API_VALIDATION";
 	public static final String API_MAX_TRY = "API_MAX_TRY";
+	public static final String API_ASYNCHRONOUS = "API_ASYNCHRONOUS";
 	//Pendientes
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
 	
@@ -365,6 +366,7 @@ public class Propiedades {
 					+ "Si el documento no viene con ese campo no se muestra ningun mensaje";break;}
 			case API_TRANSACCION: 
 			case API : {ruleProperty = "Identifica el API que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
+			case API_ASYNCHRONOUS : {ruleProperty = "Esta propiedad hace que el API se ejecute al terminar todo el proceso de la transaccion de forma asincrona, ejemplo los mensajes de texto que se vana  enviar cuando todo termine ok";break;}
 			case API_HEADER : {ruleProperty = "Variables del Header de la peticion del API Valor contiene el KEY y Motivo contiene el texto.\n";break;}
 			case API_CODE_DIRECT : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nEn el template debes tener la estructura => {{D_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
 			case API_CODE_REFERENCE : {ruleProperty = "Se encarga de reemplazar un valor en el template, buscando en OTRA PLANTILLA.\n\nEn el template debes tener la estructura => {{R_XXXXXXX}} , donde XXXXXX es el codigo del campo.\n\nLo mas importante en los links relacionar la cadena de pasos en los campos que se debe seguir hasta llegar al campo deseado.\n EJ el nombre de un vendedor en una guia, entregada => (Propiedad se coloca el campo Guia), en los links se coloca el campoo guia vendedor y se agrega vendedor nombre";break;}

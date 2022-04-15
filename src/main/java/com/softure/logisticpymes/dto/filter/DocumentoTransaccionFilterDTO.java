@@ -19,6 +19,7 @@ public class DocumentoTransaccionFilterDTO extends BasicFilterDTO
 	private Date fechaFinMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFinMax;
+	private String sincronize;
 
 	
 	public void setFechaMin(Date fechaMin) {
@@ -61,6 +62,15 @@ public class DocumentoTransaccionFilterDTO extends BasicFilterDTO
 	
 	public Date getFechaFinMax() {
 		return fechaFinMax;
+	}
+	
+	
+	public void setSincronize(String sincronize) {
+		this.sincronize = sincronize;
+	}
+	
+	public String getSincronize() {
+		return sincronize;
 	}
 	
 

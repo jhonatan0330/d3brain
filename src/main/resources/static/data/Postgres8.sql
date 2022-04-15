@@ -26,6 +26,8 @@ CREATE TABLE documentotransaccion_trap(
         dtra_fecha timestamp with time zone NOT NULL,
         ctra_usuario character varying(32) NOT NULL,
         dtra_fechafin timestamp with time zone,
+        ctra_error character varying(4000),
+        ctra_sincronize character varying(20),
         ctra_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentotransaccion_trap PRIMARY KEY (ctra_llave)
     );
@@ -561,6 +563,7 @@ CREATE TABLE mensaje_msjp(
         cmsj_correoerror character varying(4000),
         cmsj_correo character varying(2000),
         cmsj_reporte character varying(32),
+        cmsj_transaccion character varying(32),
         cmsj_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_mensaje_msjp PRIMARY KEY (cmsj_llave)
     );
@@ -578,13 +581,19 @@ CREATE TABLE postcalificacion_pclp(
 CREATE TABLE webserviceejecucion_wsep(
         cwse_llave character varying(32) NOT NULL,
         cwse_servicio character varying(32) NOT NULL,
+        cwse_usuario character varying(32) NOT NULL,
         dwse_fecha timestamp with time zone NOT NULL,
         cwse_documento character varying(32) NOT NULL,
-        cwse_entrada character varying(2000) NOT NULL,
+        cwse_modificador character varying(32),
+        cwse_transaccion character varying(32),
+        cwse_parametros character varying(4000),
+        dwse_fechaejecucion timestamp with time zone,
+        cwse_entrada character varying(2000),
         cwse_salida character varying(2000),
         cwse_error character varying(4000),
-        cwse_usuario character varying(32) NOT NULL,
         cwse_masivo character varying(2000),
+        cwse_extracciones character varying(4000),
+        cwse_sincrona character varying(1),
         cwse_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_webserviceejecucion_wsep PRIMARY KEY (cwse_llave)
     );
@@ -1054,4 +1063,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.03.21.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.04.14.00' from pg_class where relname = 'usuariosesion_ussp';

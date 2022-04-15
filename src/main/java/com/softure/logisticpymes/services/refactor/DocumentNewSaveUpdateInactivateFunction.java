@@ -105,10 +105,14 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
-		PedidoVentaDTO result = saveAfterIdentifyTransaction(dto, token);
-		tran.setFechaFin(new Date());
-		transaccionSvc.update(tran);
-		return result;
+		try {
+			PedidoVentaDTO result = saveAfterIdentifyTransaction(dto, token);
+			transaccionSvc.finalizar(tran.getLlaveTabla(), null, token);
+			return result;
+		} catch (Exception e) {
+			transaccionSvc.finalizar(tran.getLlaveTabla(), e.getMessage(), token);
+			throw new ServerException(e.getMessage());
+		} 
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -227,7 +231,6 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	}
 
 	private PedidoVentaDTO saveAfterIdentifyTransaction(PedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVenta_guardar
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
 		dto.setFuncionario(getUserID(token));
@@ -247,6 +250,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		validateBalance(dto, plantilla);
 		if (dto.getTransaccion() == null)
 			dto.setTransaccion(transaccionSvc.crear(token).getLlaveTabla());
+		
 		dto.setFechaRegistro(new Date());
 		dto.setHistorico(null);
 		PedidoVentaDTO pedido = pedidoService.save(dto);
@@ -274,10 +278,9 @@ public class DocumentNewSaveUpdateInactivateFunction {
 				token);
 		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
 		if (!api.isEmpty())
-			apiService.execute(api, dto, null, token);
+			apiService.prepareApiToExecution(api, dto, null, token);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
-		// END PedidoVenta_guardar
 	}
 
 	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion)

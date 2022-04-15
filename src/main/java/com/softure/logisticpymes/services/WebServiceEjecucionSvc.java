@@ -3,6 +3,9 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
+import com.softure.logisticpymes.services.refactor.ExecuteAPIFunction;
+import com.softure.logisticpymes.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.dto.WebServiceDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -24,6 +27,9 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	private WebServiceEjecucionMapper webServiceEjecucionMapper;
 	
 	// BEGIN region servicesWebServiceEjecucion
+	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired private ExecuteAPIFunction executeAPIFunction;
+	@Autowired private WebServiceSvc webServiceSvc;
 	// END region servicesWebServiceEjecucion
 
 	@Override
@@ -78,6 +84,16 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		return super.listarConsulta(dto);
 	}
 	
+	public WebServiceEjecucionDTO ejecutarAPI(WebServiceEjecucionFilterDTO dto)throws ServerException{
+		// BEGIN region ejecutarAPI
+		WebServiceEjecucionDTO bd = consultaXId(dto.getLlaveTabla());
+		if(bd.getFechaEjecucion()!=null) throw new ServerException("Este API ya fue ejecutado");
+		if(bd.getSincrona()==null) throw new ServerException("Este API no es asincrono");
+		WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
+		executeAPIFunction.executeApi(service, bd, dto.getSecurityToken());
+		return consultaXId(dto.getLlaveTabla());
+		// END region ejecutarAPI
+	}
 
 	@Override
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
@@ -88,6 +104,22 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 
 // BEGIN region aditionalMethods
+	public void apiToTransaction() throws ServerException {
+		List<WebServiceEjecucionDTO> tareasPendientes = webServiceEjecucionMapper.apisTransaccion();
+	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
+	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
+	 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
+	 			WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
+	 			if (service == null)
+	 				throw new ServerException("El id del servicio no se encuentra en la BD.");
+	 			executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla());
+			}
+	 	}
+	}
+	
+	public boolean hasPropertiesAsync() {
+		return webServiceEjecucionMapper.hasPropertiesAsync()!=0;
+	}
 // END region aditionalMethods
 
 }

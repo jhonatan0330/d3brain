@@ -2,11 +2,13 @@ package com.softure.logisticpymes.services.refactor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
@@ -34,33 +36,50 @@ public class DocumentAutomaticUpdateFunction {
 	@Autowired
 	private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
 
-	/* aqui tengo mil cosas mal, deberia priero armar lso campos y despues mandarlos con als relaciones
-	 * la propiedad le modifico el valor porque esta pegado la implementacion del proceso
-	 * Por el momento solo saca una extraccion , creo?
+	/*
+	 * aqui tengo mil cosas mal, deberia priero armar lso campos y despues mandarlos
+	 * con als relaciones la propiedad le modifico el valor porque esta pegado la
+	 * implementacion del proceso Por el momento solo saca una extraccion , creo?
 	 * Logimax guia Blue
 	 */
-	public void executeFromAPIExtraction(String documentId, String updaterDocumentId, List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String transaction) throws ServerException {
+
+	/**
+	 * Mientras que idenrfico para que hago lo de las relaciones me toco este coso raro
+	 * @param documentId
+	 * @param updaterDocumentId
+	 * @param propertiesToSearchFieldDestiny
+	 * @param token
+	 * @param transaction
+	 * @param extractionText 
+	 * @throws ServerException
+	 */
+	public void executeFromAPIExtraction(String documentId, String updaterDocumentId,
+			List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String transaction, String extractionText)
+			throws ServerException {
 		PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
+		Map<String, String> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
-		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>(); 
+		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
 			PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
-			newField.setValorText(propiedadDTO.getTexto());
-			//campo
+			newField.setValorText(extractionMap.get(propiedadDTO.getLlaveTabla()));
+			// campo
 			List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
-			for( RelacionInternaDTO iRelation: relations ) {
-				if ( iRelation.getPlantilla().compareTo(processDTO.getPlantilla())==0) {
+			for (RelacionInternaDTO iRelation : relations) {
+				if (iRelation.getPlantilla().compareTo(processDTO.getPlantilla()) == 0) {
 					newField.setCampo(iRelation.getCampo());
-					propiedadDTO.setValor(iRelation.getCampo());	// Para que hago esto??	
+					propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
 				}
-			}	
+			}
 			generateFieldsFromProperty.add(newField);
-		}		
-		execute(generateFieldsFromProperty, updaterDocumentId, transaction, processDTO, token, propertiesToSearchFieldDestiny);
+		}
+		execute(generateFieldsFromProperty, updaterDocumentId, transaction, processDTO, token,
+				propertiesToSearchFieldDestiny);
 	}
 
 	/*
-	 * TEngo que buscar de donde viene esta funcion, creo que de generar reuniones o tambien de las facturas al aprobarlas en Sw42
+	 * TEngo que buscar de donde viene esta funcion, creo que de generar reuniones o
+	 * tambien de las facturas al aprobarlas en Sw42
 	 */
 	public void executeFromBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token,
 			List<PropiedadDTO> modificarCampo) throws ServerException {
@@ -68,9 +87,24 @@ public class DocumentAutomaticUpdateFunction {
 				modificarCampo);
 	}
 
+	/**
+	 * Se encarga de crear el documento de modificacion para que se aplique los
+	 * cambios al documento principal
+	 * 
+	 * @param fieldsNewToInclude
+	 * @param updaterDocumentId
+	 * @param transaction
+	 * @param procesoDTO
+	 * @param token
+	 * @param propertiesToSearchFieldDestiny Contiene las propiedades que generaron
+	 *                                       la actualizacion deben tener llave,
+	 *                                       valor donde llave es @see
+	 *                                       {@link #getNewValues(List, String, List, List, List)}
+	 * @throws ServerException
+	 */
 	private void execute(List<PedidoVentaCaracteristicaDTO> fieldsNewToInclude, String updaterDocumentId,
-			String transaction, PedidoVentaDTO procesoDTO, String token, List<PropiedadDTO> propertiesToSearchFieldDestiny)
-			throws ServerException {
+			String transaction, PedidoVentaDTO procesoDTO, String token,
+			List<PropiedadDTO> propertiesToSearchFieldDestiny) throws ServerException {
 
 		PedidoVentaDTO updateDocument = new PedidoVentaDTO();
 		updateDocument.setLlaveTabla(procesoDTO.getLlaveTabla());
@@ -98,6 +132,18 @@ public class DocumentAutomaticUpdateFunction {
 		}
 	}
 
+	/**
+	 * 
+	 * @param dependientes
+	 * @param processId
+	 * @param generatorProperties Tiene las propiedades que generaron la
+	 *                            modificacion, cada propiedad debe tener llave y
+	 *                            valor donde el valor es el key del campo,
+	 * @param templateFields      trae los campos actuales del documento
+	 * @param currentFields
+	 * @return
+	 * @throws ServerException
+	 */
 	private List<PedidoVentaCaracteristicaDTO> getNewValues(List<PedidoVentaCaracteristicaDTO> dependientes,
 			String processId, List<PropiedadDTO> generatorProperties,
 			List<DocumentoPlantillaCaracteristicaDTO> templateFields, List<PedidoVentaCaracteristicaDTO> currentFields)
@@ -105,7 +151,6 @@ public class DocumentAutomaticUpdateFunction {
 
 		List<PedidoVentaCaracteristicaDTO> result = new ArrayList<PedidoVentaCaracteristicaDTO>();
 
-		
 		for (DocumentoPlantillaCaracteristicaDTO camposActualesDTO : templateFields) {
 			PedidoVentaCaracteristicaDTO newField = null;
 			for (PropiedadDTO codigo : generatorProperties) {
@@ -122,9 +167,10 @@ public class DocumentAutomaticUpdateFunction {
 					if (dependientes == null || dependientes.isEmpty())
 						throw new ServerException("Tiene que registrar dependientes del campo "); // +
 																									// pCampo.getCampoDTO().getNombre());
-					//Aqui tengo un problema deberia antes mucho antes procesar lso campos que quiero como
+					// Aqui tengo un problema deberia antes mucho antes procesar lso campos que
+					// quiero como
 					// la otra funcion execute y despues enviarlo para homologar los metodos
-					
+
 					for (PedidoVentaCaracteristicaDTO iDependiente : dependientes) {
 						if (iDependiente.getCampo().compareTo(codigo.getValor()) == 0) {
 							newField = new PedidoVentaCaracteristicaDTO();

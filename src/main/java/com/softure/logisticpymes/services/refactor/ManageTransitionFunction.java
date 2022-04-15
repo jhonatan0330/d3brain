@@ -175,7 +175,7 @@ public class ManageTransitionFunction {
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
 		if (propAPI==null) throw new ServerException(String.format("El estado %s no tiene definido el API", apiDTO.getNombre()));
 
-		String resultAPI = apiService.execute(propAPI.getValor(), expedienteDTO, documentoDTO, token);
+		String resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, token);
 		return getNextTransition(estadoLlegada, resultAPI);
 	}
 	
