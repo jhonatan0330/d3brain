@@ -77,6 +77,7 @@ public class APIController {
 		result.setLlaveTabla(documento.getLlaveTabla());
 		result.setEstadoExpediente(documento.getEstadoExpediente());
 		result.setEstadoNombre(documento.getEstadoNombre());
+		result.setDescripcion(documento.getDescripcion());
 		return result;
 	}
 	

@@ -71,6 +71,9 @@ public class DocumentController {
 		result.setNombre(document.getNombre());
 		result.setPlantilla(document.getPlantilla());
 		result.setLlaveTabla(document.getLlaveTabla());
+		result.setDescripcion(document.getDescripcion());
+		result.setEstadoExpediente(document.getEstadoExpediente());
+		result.setEstadoNombre(document.getEstadoNombre());
 		return result;
 	}
 	
