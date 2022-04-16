@@ -68,8 +68,6 @@ public class ExecuteAPIFunction {
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
 	@Autowired
 	private MensajeSvc mensajeSvc;
-	@Autowired
-	private DocumentoTransaccionSvc transaccionSvc;
 
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la
@@ -103,7 +101,7 @@ public class ExecuteAPIFunction {
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			webServiceEjecucionSvc.update(apiBasic);
-			transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(), DocumentoTransaccionSvc.API_ASYNC);
+			//transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(), DocumentoTransaccionSvc.API_ASYNC);
 		}
 		return result;
 	}

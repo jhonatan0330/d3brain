@@ -4,7 +4,6 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -95,29 +94,23 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	}
 
 // BEGIN region aditionalMethods
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	//@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public DocumentoTransaccionDTO crear(String token) throws ServerException {
 		DocumentoTransaccionDTO nuevo = new DocumentoTransaccionDTO();
 		nuevo.setUsuario(sesionSvc.actualizarSesion(token));
 		nuevo.setFecha(new Date());
 		return save(nuevo);
 	}
-	
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	/*
+	//@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public DocumentoTransaccionDTO finalizar(String transactionId, String error, String token) throws ServerException {
 		DocumentoTransaccionDTO tran = consultaXId(transactionId);
 		tran.setFechaFin(new Date());
 		tran.setError(error);
-		/*if(error==null) {
-			if(tran.getSincronize()!=null) {
-				if(tran.getSincronize().contains(API_ASYNC)) apiSvc.sendApiToTransaction(transactionId, tran.getUsuario(), token);
-				if(tran.getSincronize().contains(MAIL_ASYNC)) mensajeSvc.sendMailToTransaction(tran.getLlaveTabla(), tran.getUsuario(), token);
-			}
-		}*/
 		return update(tran);
-	}
+	}*/
 	
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public DocumentoTransaccionDTO registrarSincronizacion(String transactionId, String sincronizar) throws ServerException {
 		DocumentoTransaccionDTO tran = consultaXId(transactionId);
 		if(tran.getSincronize()==null) {
@@ -126,7 +119,7 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 			tran.setSincronize(tran.getSincronize() + ConstantesGenerales.PUNTO_COMA_DOBLE + sincronizar);
 		}
 		return update(tran);
-	}
+	}*/
 // END region aditionalMethods
 
 }

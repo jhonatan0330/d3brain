@@ -25,6 +25,7 @@ import com.softure.logisticpymes.dto.TurnoDTO;
 import com.softure.logisticpymes.dto.filter.CuentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoRelacionGestorFilterDTO;
+import com.softure.logisticpymes.dto.filter.MovimientoFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.dto.filter.ProcesoTransicionFilterDTO;
@@ -980,6 +981,18 @@ public class TipoProceso {
 				pCampo.setValorNumero( movimiento.getMonto() );
 			}
 		}
+		String anularMovimiento = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CUENTA_ANULAR_MOVIMIENTO);
+		if(anularMovimiento.isEmpty()) return;
+		MovimientoFilterDTO movimiento = new MovimientoFilterDTO();
+		movimiento.setDocumento(pCampo.getValorOpcion());
+		movimiento.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		List<MovimientoDTO> movimientos = movimientoService.listarConsulta(movimiento);
+		if(movimientos==null || movimientos.isEmpty()) throw new ServerException("Estas anulando un movimiento y no se encuentra en la tabla de movimientos");
+		if(movimientos.size()!=1) throw new ServerException("Estas anulando un movimiento de un documento y este documento tiene muchos movimientos");
+		MovimientoDTO result = movimientoService.inactivar(movimientos.get(0), token);
+		pCampo.setValorAuxiliar( result.getLlaveTabla() );
+		pCampo.setValorFecha( result.getFechaEvento() );
+		pCampo.setValorNumero( result.getMonto() );
 	}
 	
 	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {

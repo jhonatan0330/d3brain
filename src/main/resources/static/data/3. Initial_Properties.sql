@@ -369,3 +369,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_197' , 'L', 'PLANTILLA CARGA MASIVA MULTIPLE', 'PLANTILLA_CARGA_MASIVA_MULTIPLE', 'PERMISOS');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_textoculto) 
 	VALUES('PROP_198' , 'W', 'API ASYNCRONO AL FINALIZAR', 'API_ASYNCHRONOUS', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_199' , 'C', 'ANULAR MOVIMIENTO', 'CUENTA_ANULAR_MOVIMIENTO', 'REQUISITO', 'Z', true);

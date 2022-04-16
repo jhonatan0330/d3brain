@@ -80,6 +80,7 @@ public class Propiedades {
 	public static final String CUENTA_MOVIMIENTO = "CUENTA_MOVIMIENTO";
 	public static final String CUENTA_ABRIR_CAJA = "CUENTA_ABRIR_CAJA";
 	public static final String CUENTA_CERRAR_CAJA = "CUENTA_CERRAR_CAJA";
+	public static final String CUENTA_ANULAR_MOVIMIENTO = "CUENTA_ANULAR_MOVIMIENTO";
 
 	public static final String CONFIGURACION_ENTIDAD = "CONFIGURACION_ENTIDAD";
 	public static final String CONFIGURACION_PLANTILLA_TIPO = "CONFIGURACION_PLANTILLA_TIPO";
@@ -405,6 +406,7 @@ public class Propiedades {
 			case CONSECUTIVO : {ruleProperty =  " Codigo del campo que va a colocar consecutivo del documento, se usa con un consecutivo manual.\n";break;}
 			case COPY_TEXT : {ruleProperty =  " Al momento de guardar el documento se va a copiar este texto en el portapapeles, [CODE]=(codigo del documento).\n";break;}
 			case CUENTA_MOVIMIENTO : {ruleProperty =  " Si desea generar un movimiento de caja coloca I (Ingresos) G (Gastos).\n";break;}
+			case CUENTA_ANULAR_MOVIMIENTO : {ruleProperty =  " Este campo anula un movimiento que este vinculado con el proceso seleccionado, lo elimina del movimiento de cuentas\n";break;}
 			case CUENTA_ABRIR_CAJA : {ruleProperty =  " Si desea iniciar turn en una caja.\n";break;}
 			case CUENTA_CERRAR_CAJA : {ruleProperty =  " Si desea cerrar el turno en una caja.\n";break;}
 			case DECISION_SQL : {ruleProperty =  "Genera una funcion que devuelve una cadena de texto, para que las transacciones siguientes lo tomen por el nombre.\n"

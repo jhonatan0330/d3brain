@@ -105,6 +105,8 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
+		return saveAfterIdentifyTransaction(dto, token); 
+		/*
 		try {
 			PedidoVentaDTO result = saveAfterIdentifyTransaction(dto, token);
 			transaccionSvc.finalizar(tran.getLlaveTabla(), null, token);
@@ -112,7 +114,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		} catch (Exception e) {
 			transaccionSvc.finalizar(tran.getLlaveTabla(), e.getMessage(), token);
 			throw new ServerException(e.getMessage());
-		} 
+		} */
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
