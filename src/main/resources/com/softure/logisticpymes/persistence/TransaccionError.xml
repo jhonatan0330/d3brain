@@ -10,6 +10,7 @@
 			,dter_fechainicio as  fechaInicio
 			,dter_fechafin as  fechaFin
 			,cter_error as  error
+			,cter_usuario as  usuario
 			,cter_estado as estado
 		from transaccionerror_terp a
 	</sql>
@@ -33,6 +34,9 @@
 			</if>
 			<if test="fechaFinMax!=null">
 				and dter_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="usuario!=null">
+				and cter_usuario = #{usuario}
 			</if>
 	</sql>
 
@@ -80,6 +84,9 @@
 		<if test="error!=null">
 			,cter_error
 		</if>
+		<if test="usuario!=null">
+			,cter_usuario
+		</if>
 		<if test="estado!=null">
 			,cter_estado
 		</if>
@@ -94,6 +101,9 @@
 		<if test="error!=null">
 			,#{error}
 		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -106,6 +116,7 @@
 				dter_fechainicio = #{fechaInicio},
 				dter_fechafin = #{fechaFin},
 				cter_error = #{error},
+				cter_usuario = #{usuario},
 				cter_estado =#{estado}
 		<include refid="whereTransaccionErrorPrimaryKeyFragment" />
 	</select>
@@ -116,6 +127,7 @@
 			,dter_fechainicio as  fechaInicio
 			,dter_fechafin as  fechaFin
 			,cter_error as  error
+			,cter_usuario as  usuario
 			,cter_estado as estado
 		from transaccionerror_terp a
 	</sql>

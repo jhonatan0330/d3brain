@@ -18,6 +18,7 @@ public class TransaccionErrorFilterDTO extends BasicFilterDTO
 	private Date fechaFinMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFinMax;
+	private String usuario;
 
 	
 	public void setFechaInicioMin(Date fechaInicioMin) {
@@ -51,6 +52,15 @@ public class TransaccionErrorFilterDTO extends BasicFilterDTO
 	
 	public Date getFechaFinMax() {
 		return fechaFinMax;
+	}
+	
+	
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+	
+	public String getUsuario() {
+		return usuario;
 	}
 	
 

@@ -231,12 +231,18 @@ import com.softure.logisticpymes.services.ReporteEjecucionSvc;
 import com.softure.logisticpymes.dto.ConsecutivoDTO;
 import com.softure.logisticpymes.dto.filter.ConsecutivoFilterDTO;
 import com.softure.logisticpymes.services.ConsecutivoSvc;
+import com.softure.logisticpymes.dto.TransaccionLogDTO;
+import com.softure.logisticpymes.dto.filter.TransaccionLogFilterDTO;
+import com.softure.logisticpymes.services.TransaccionLogSvc;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.dto.AuditoriaDTO;
 import com.softure.logisticpymes.dto.filter.AuditoriaFilterDTO;
 import com.softure.logisticpymes.services.AuditoriaSvc;
+import com.softure.logisticpymes.dto.TransaccionErrorDTO;
+import com.softure.logisticpymes.dto.filter.TransaccionErrorFilterDTO;
+import com.softure.logisticpymes.services.TransaccionErrorSvc;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
 import com.softure.logisticpymes.services.OrganizacionSvc;
@@ -6040,6 +6046,81 @@ public class FullControllerDTO {
 		}
 	}
 	
+	@Autowired private TransaccionLogSvc transaccionLogService;
+	
+	@RequestMapping(value="/consultaXIdTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO consultaXIdTransaccionLog(@RequestBody String llave) throws FlexException {
+		try {
+			return transaccionLogService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosTransaccionLog", method=RequestMethod.POST)
+	public int contarResultadosTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionLogService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO consultaUnicaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionLogService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaTransaccionLog", method=RequestMethod.POST)
+	public List<TransaccionLogDTO> listarConsultaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionLogService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO activarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionLogService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO inactivarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionLogService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO actualizarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionLogService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarTransaccionLog", method=RequestMethod.POST)
+	public TransaccionLogDTO guardarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionLogService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	
 	@RequestMapping(value="/consultaXIdUsuarioAutenticacion", method=RequestMethod.POST)
@@ -6202,6 +6283,81 @@ public class FullControllerDTO {
 	public AuditoriaDTO guardarAuditoria(@RequestBody AuditoriaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return auditoriaService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	@Autowired private TransaccionErrorSvc transaccionErrorService;
+	
+	@RequestMapping(value="/consultaXIdTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO consultaXIdTransaccionError(@RequestBody String llave) throws FlexException {
+		try {
+			return transaccionErrorService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosTransaccionError", method=RequestMethod.POST)
+	public int contarResultadosTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionErrorService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO consultaUnicaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionErrorService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaTransaccionError", method=RequestMethod.POST)
+	public List<TransaccionErrorDTO> listarConsultaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return transaccionErrorService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO activarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionErrorService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO inactivarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionErrorService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO actualizarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionErrorService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarTransaccionError", method=RequestMethod.POST)
+	public TransaccionErrorDTO guardarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return transaccionErrorService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
