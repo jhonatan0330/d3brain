@@ -94,32 +94,12 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	}
 
 // BEGIN region aditionalMethods
-	//@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public DocumentoTransaccionDTO crear(String token) throws ServerException {
 		DocumentoTransaccionDTO nuevo = new DocumentoTransaccionDTO();
 		nuevo.setUsuario(sesionSvc.actualizarSesion(token));
 		nuevo.setFecha(new Date());
 		return save(nuevo);
 	}
-	/*
-	//@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public DocumentoTransaccionDTO finalizar(String transactionId, String error, String token) throws ServerException {
-		DocumentoTransaccionDTO tran = consultaXId(transactionId);
-		tran.setFechaFin(new Date());
-		tran.setError(error);
-		return update(tran);
-	}*/
-	
-	/*@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public DocumentoTransaccionDTO registrarSincronizacion(String transactionId, String sincronizar) throws ServerException {
-		DocumentoTransaccionDTO tran = consultaXId(transactionId);
-		if(tran.getSincronize()==null) {
-			tran.setSincronize(sincronizar);
-		} else {
-			tran.setSincronize(tran.getSincronize() + ConstantesGenerales.PUNTO_COMA_DOBLE + sincronizar);
-		}
-		return update(tran);
-	}*/
 // END region aditionalMethods
 
 }

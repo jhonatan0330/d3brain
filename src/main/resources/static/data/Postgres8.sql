@@ -25,9 +25,6 @@ CREATE TABLE documentotransaccion_trap(
         ctra_llave character varying(32) NOT NULL,
         dtra_fecha timestamp with time zone NOT NULL,
         ctra_usuario character varying(32) NOT NULL,
-        dtra_fechafin timestamp with time zone,
-        ctra_error character varying(4000),
-        ctra_sincronize character varying(20),
         ctra_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentotransaccion_trap PRIMARY KEY (ctra_llave)
     );
@@ -887,6 +884,15 @@ CREATE TABLE consecutivo_conp(
         CONSTRAINT PK_consecutivo_conp PRIMARY KEY (ccon_llave)
     );
  
+CREATE TABLE transaccionlog_tlgp(
+        ctlg_llave character varying(32) NOT NULL,
+        dtlg_fechainicio timestamp with time zone NOT NULL,
+        dtlg_fechafin timestamp with time zone NOT NULL,
+        ctlg_transaccion character varying(32),
+        ctlg_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_transaccionlog_tlgp PRIMARY KEY (ctlg_llave)
+    );
+ 
 CREATE TABLE usuarioautenticacion_uaup(
         cuau_llave character varying(32) NOT NULL,
         cuau_usuario character varying(32) NOT NULL,
@@ -905,6 +911,15 @@ CREATE TABLE auditoria_audp(
         daud_fecha timestamp with time zone NOT NULL,
         caud_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_auditoria_audp PRIMARY KEY (caud_llave)
+    );
+ 
+CREATE TABLE transaccionerror_terp(
+        cter_llave character varying(32) NOT NULL,
+        dter_fechainicio timestamp with time zone NOT NULL,
+        dter_fechafin timestamp with time zone NOT NULL,
+        cter_error character varying(4000),
+        cter_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_transaccionerror_terp PRIMARY KEY (cter_llave)
     );
  
 CREATE TABLE organizacion_orgp(
@@ -1063,4 +1078,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.04.14.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.04.17.00' from pg_class where relname = 'usuariosesion_ussp';

@@ -49,6 +49,8 @@ import com.softure.logisticpymes.services.ProcesoTransicionSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RolAccesoSvc;
+import com.softure.logisticpymes.services.TransaccionErrorSvc;
+import com.softure.logisticpymes.services.TransaccionLogSvc;
 import com.softure.logisticpymes.services.UsuarioRolSvc;
 import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
@@ -66,6 +68,10 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	private ProcesoEstadoSvc estadoService;
 	@Autowired
 	private DocumentoTransaccionSvc transaccionSvc;
+	@Autowired
+	private TransaccionLogSvc logSvc;
+	@Autowired
+	private TransaccionErrorSvc errorSvc;
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired
@@ -105,16 +111,14 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
-		return saveAfterIdentifyTransaction(dto, token); 
-		/*
 		try {
 			PedidoVentaDTO result = saveAfterIdentifyTransaction(dto, token);
-			transaccionSvc.finalizar(tran.getLlaveTabla(), null, token);
+			logSvc.finalizar(tran.getFecha(), dto.getTransaccion());
 			return result;
 		} catch (Exception e) {
-			transaccionSvc.finalizar(tran.getLlaveTabla(), e.getMessage(), token);
+			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario());
 			throw new ServerException(e.getMessage());
-		} */
+		} 
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
