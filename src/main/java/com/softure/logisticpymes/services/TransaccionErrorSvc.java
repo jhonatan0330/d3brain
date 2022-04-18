@@ -95,7 +95,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 		newLog.setFechaInicio(startDate);
 		newLog.setFechaFin(new Date());
 		newLog.setError(error);
-		newLog.setError(userId);
+		//newLog.setu(userId);
 		return save(newLog);
 	}
 // END region aditionalMethods

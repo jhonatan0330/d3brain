@@ -599,7 +599,17 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
 		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
-		if(cpTotal!=null) detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+		//Sucede que en Universal el total no es igual al producto normal se hace pro otra formula
+		if(cpTotal!=null) {
+			detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+			if(detail.getCantidad().multiply(detail.getValorUnitario()).compareTo(detail.getValorTotal())!=0) {
+				if(Propiedades.obtenerParametro(cpTotal.getCampoDTO(), Propiedades.NUMERO_FORMULA)==null) {
+					throw new ServerException("El valor total (" + SoftureUtil.formatMoney(detail.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(detail.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(detail.getValorUnitario()) +") =" + SoftureUtil.formatMoney(detail.getCantidad().multiply(detail.getValorUnitario())));	
+				}else {
+					detail.setValorUnitario(detail.getValorTotal().divide(detail.getCantidad()));
+				}
+			}
+		}
 		
 	}
 	
