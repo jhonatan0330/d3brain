@@ -89,7 +89,6 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	}
 
 // BEGIN region aditionalMethods
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
 	public TransaccionLogDTO finalizar(Date startDate, String transactionId) throws ServerException {
 		TransaccionLogDTO newLog = new TransaccionLogDTO();
 		newLog.setFechaInicio(startDate);

@@ -352,12 +352,8 @@ public class DocumentNewSaveUpdateInactivateFunction {
 			String filtroTexto = "";
 			if (dto.getCaracteristicas() == null)
 				throw new ServerException("Es necesesario registrar informacion adicional.");
-			List<PedidoVentaCaracteristicaDTO> ordenadas = new ArrayList<PedidoVentaCaracteristicaDTO>();// En casos
-																											// como
-																											// generacion
-																											// automatica
-																											// vienen en
-																											// desorden
+			//En casos como generacion automatica vienen en desorden
+			List<PedidoVentaCaracteristicaDTO> ordenadas = new ArrayList<PedidoVentaCaracteristicaDTO>(); 
 			for (DocumentoPlantillaCaracteristicaDTO campoPlantilla : plantilla.getCaracteristicas()) {
 				boolean campoEncontrado = false;
 				// 1 Coloco los campos DTO

@@ -6,6 +6,7 @@ import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
@@ -134,7 +135,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_guardar
 		List<PedidoVentaCaracteristicaDTO> caracteristicas = dto.getCaracteristicas();
-		if(dto.getCantidad().multiply(dto.getValorUnitario()).compareTo(dto.getValorTotal())!=0) 
+		if(dto.getCantidad().multiply(dto.getValorUnitario()).add(dto.getValorTotal().negate()).abs().longValue() > 1) 
 			throw new ServerException("El valor total (" + SoftureUtil.formatMoney(dto.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(dto.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(dto.getValorUnitario()) +") =" + SoftureUtil.formatMoney(dto.getCantidad().multiply(dto.getValorUnitario())));
 		dto = save(dto);
 		dto.setCaracteristicas(caracteristicas);
@@ -587,30 +588,29 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
 		PedidoVentaCaracteristicaDTO cpCantidad = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
-		detail.setCantidad(cpCantidad.getValorNumero());
+		if(cpCantidad!=null && cpCantidad.getValorNumero()!=null)detail.setCantidad(cpCantidad.getValorNumero());// Al modificar no se actualizan estos campos
 		
 		PropiedadDTO pCampoUnitario = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO);
 		String keyCampoUnitario = "***UNIDAD";
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
 		PedidoVentaCaracteristicaDTO cpUnitario = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
-		if(cpUnitario!=null) detail.setValorUnitario(cpUnitario.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+		if(cpUnitario!=null && cpUnitario.getValorNumero()!=null) detail.setValorUnitario(cpUnitario.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 	
 		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
 		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		//Sucede que en Universal el total no es igual al producto normal se hace pro otra formula
-		if(cpTotal!=null) {
+		if(cpTotal!=null && cpUnitario.getValorNumero()!=null) {
 			detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
-			if(detail.getCantidad().multiply(detail.getValorUnitario()).compareTo(detail.getValorTotal())!=0) {
+			if(detail.getCantidad()!=null && detail.getCantidad().multiply(detail.getValorUnitario()).compareTo(detail.getValorTotal())!=0) {
 				if(Propiedades.obtenerParametro(cpTotal.getCampoDTO(), Propiedades.NUMERO_FORMULA)==null) {
 					throw new ServerException("El valor total (" + SoftureUtil.formatMoney(detail.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(detail.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(detail.getValorUnitario()) +") =" + SoftureUtil.formatMoney(detail.getCantidad().multiply(detail.getValorUnitario())));	
 				}else {
-					detail.setValorUnitario(detail.getValorTotal().divide(detail.getCantidad()));
+					detail.setValorUnitario(detail.getValorTotal().divide(detail.getCantidad(), 6, RoundingMode.CEILING));
 				}
 			}
 		}
-		
 	}
 	
 	public void actualizarCamposNovedadParcial(DetallePedidoVentaDTO detail) throws ServerException {
