@@ -206,7 +206,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				}
 				break;
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:
-				dto.setValorText(dto.getValorNumero().toPlainString());	
+				if(dto.getValorNumero()!=null)dto.setValorText(dto.getValorNumero().toPlainString());// Se presentaba un error al modificar una guia en universal
 				break;
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:
 				if(dto.getValorOpcion()!=null){
