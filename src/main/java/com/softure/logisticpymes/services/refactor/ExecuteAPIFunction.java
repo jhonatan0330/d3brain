@@ -150,7 +150,7 @@ public class ExecuteAPIFunction {
 			}
 		} else {
 			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
-			if (callWS.getMasivo() != null && !callWS.getMasivo().isBlank()) {
+			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("")!=0) {
 				webServiceEjecucionSvc.update(callWS);
 			}
 		}
