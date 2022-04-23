@@ -106,6 +106,7 @@ public class Propiedades {
 	public static final String UNICO_PRODUCTO = "UNICO_PRODUCTO";
 	public static final String DETALLE_TARIFA_PRODUCTO = "DETALLE_TARIFA_PRODUCTO";
 	public static final String DETALLE_TARIFARIO_SQL = "DETALLE_TARIFARIO_SQL";
+	public static final String DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD = "DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD";
 	public static final String PRODUCTOS_FUNCION_SQL = "PRODUCTOS_FUNCION_SQL";
 	public static final String PRODUCTOS_FUNCION_CAMPO = "PRODUCTOS_FUNCION_CAMPO";
 	public static final String PRODUCTOS_TERCERO = "PRODUCTOS_TERCERO";
@@ -422,6 +423,7 @@ public class Propiedades {
 			case DETALLE_TARIFARIO_SQL : {ruleProperty =  "Se crea una funcion para traer las tarifas, los campos depende se envian como parametros. Tener cuidado en el orden de los parametros es en orden ALFABETICO del codigo.\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[])  RETURNS SETOF tarifa_tarp AS";break;}
 			case DETALLE_FORMULA : {ruleProperty =  " Este parametro indica el valor total de la suma de productos escogidos si se requiere que sea diferente a la sumatoria de los productos. Se utiliza una formula para sumar o restar.\n";break;}
+			case DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD : {ruleProperty =  " Este parametro indica el valor total de la suma de productos escogidos si se requiere que sea diferente a la sumatoria de los productos. Se utiliza una formula para sumar o restar.\n";break;}
 			case DISPONIBILIDAD_CROQUIS : {ruleProperty =  "Relaciona el campo del formulario que tiene la estructura";break;}
 			case ENCABEZADO : {ruleProperty =  " Colocar los parametros de encabezado (SEDE) de reportes dinamicos.\n";break;}
 			case FECHA : {ruleProperty =  "  Codigo del campo que va a colocar la fecha del documento.\n";break;}

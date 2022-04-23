@@ -371,3 +371,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_198' , 'W', 'API ASYNCRONO AL FINALIZAR', 'API_ASYNCHRONOUS', 'REQUISITO', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_199' , 'C', 'ANULAR MOVIMIENTO', 'CUENTA_ANULAR_MOVIMIENTO', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_200' , 'C', 'DETALLE OCULTAR UNIDADES NOMBRE CANTIDAD', 'DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD', 'REQUISITO', 'J', true);
