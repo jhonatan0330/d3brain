@@ -373,3 +373,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_199' , 'C', 'ANULAR MOVIMIENTO', 'CUENTA_ANULAR_MOVIMIENTO', 'REQUISITO', 'Z', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
 	VALUES('PROP_200' , 'C', 'DETALLE OCULTAR UNIDADES NOMBRE CANTIDAD', 'DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD', 'REQUISITO', 'J', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_201' , 'C', 'NUMERO MAXIMO', 'NUMERO_MAXIMO', 'REQUISITO', 'N', true);
