@@ -9,25 +9,37 @@ public class CalculatorUtil {
 
     public static BigDecimal calcular(String formula) throws ServerException{
         BigDecimal result;
-        int signo = formula.lastIndexOf("?");
-        if(signo!=-1){
-            int dospunto = formula.lastIndexOf(":");
-            result  = calcular(formula.substring(0,signo));
-            if(formula.contains(">")) result= result.negate();
-            if(BigDecimal.ZERO.compareTo(result)>0){
-                result = calcular(formula.substring(dospunto+1, formula.length()));
-            }else{
-                result = calcular(formula.substring(signo+1,dospunto));
-            }
+        int parentesisCierra =  formula.indexOf(")");
+        if(parentesisCierra!=-1){
+            int parentesisAbre = formula.substring(0,parentesisCierra).lastIndexOf("(");
+            String formulaInterna = formula.substring(parentesisAbre +1, parentesisCierra);
+            formula = formula.replace("(" + formulaInterna + ")", calcular(formulaInterna).toPlainString());
+            //System.out.println("Parentesis Formula = " + formula );
+            result = calcular(formula);
+            //System.out.println("Parentesis = " + formula + " = " + result);
         }else{
-            int parentesisCierra =  formula.indexOf(")");
-            if(parentesisCierra!=-1){
-                int parentesisAbre = formula.substring(0,parentesisCierra).lastIndexOf("(");
-                String formulaInterna = formula.substring(parentesisAbre +1, parentesisCierra);
-                formula = formula.replace("(" + formulaInterna + ")", calcular(formulaInterna).toPlainString());
-                result = calcular(formula);
+            int signo = formula.indexOf("?");
+            if(signo!=-1){
+                int dospunto = formula.indexOf(":");
+                String carac = formula.substring(signo + 1, dospunto);
+                int newPregunta = carac.indexOf("?");
+                while (dospunto > 0 && newPregunta!=-1) {
+                    dospunto = formula.indexOf(":", dospunto+1);
+                    carac = formula.substring(signo + newPregunta + 2, dospunto);
+                    newPregunta = carac.indexOf("?");
+                }
+                result  = calcular(formula.substring(0,signo));
+                //System.out.println("Pregunta Formula = " + formula  +  " = " + result);
+                if(result.compareTo(BigDecimal.ZERO)>0){
+                    result = calcular(formula.substring(signo+1,dospunto));
+                    //System.out.println("Mayor = " + formula.substring(signo+1,dospunto) + " = " + result);
+                }else{
+                    result = calcular(formula.substring(dospunto+1, formula.length()));
+                    //System.out.println("Menor = " + formula.substring(dospunto+1, formula.length()) + " = " + result);
+                }
             }else{
                 result = calculateText(formula);
+                //System.out.println("Simple = " + formula + " = " + result);
             }
         }
         return result;
@@ -81,7 +93,7 @@ public class CalculatorUtil {
         						if(posOperator!=-1){
         							leftOperator = crearBigDecimalMensaje(text.substring(0,posOperator));
         							righOperator = crearBigDecimalMensaje(text.substring(posOperator+1, text.length()));
-        							result = new BigDecimal(righOperator.compareTo(leftOperator));
+        							result = new BigDecimal(leftOperator.compareTo(righOperator));
         						}else{
         							result = crearBigDecimalMensaje(text);
         						}
