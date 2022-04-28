@@ -179,7 +179,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				user = consultaXId(dto.getLlaveTabla());
 				if(user== null) throw new ServerException("El usuario no tiene una autenticacion");
 				if(user.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
-				if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
+				// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
 			}
 		} else {
 			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
