@@ -255,7 +255,11 @@ public class TipoConfiguracion {
 			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(),
 					Propiedades.CONFIGURACION_ENTIDAD);
 			if (valorConfiguracion.isEmpty()) {
-				pCampo.setValorText(pCampo.getValorOpcion());
+				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos opcion asi que lo restringui
+				// en futuras mejoras deberia que la propiedad tuviera un id y asi le puedo colocar este Id y usarlo
+				if(pCampo.getValorOpcion().length()>32) 
+					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0,32));
+				if(pCampo.getValorOpcion().length()!=32) pCampo.setValorText(pCampo.getValorOpcion());
 			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:
@@ -377,6 +381,7 @@ public class TipoConfiguracion {
 			for (PropiedadDTO iPropiedades : campos) {
 				PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 				adaptadoT.setLlaveTabla(iPropiedades.getValor());
+				if(adaptadoT.getLlaveTabla().length()>32) adaptadoT.setLlaveTabla(adaptadoT.getLlaveTabla().substring(0,32));
 				adaptadoT.setNombre(iPropiedades.getValor());
 				pBase.getDocumentos().add(adaptadoT);
 			}
