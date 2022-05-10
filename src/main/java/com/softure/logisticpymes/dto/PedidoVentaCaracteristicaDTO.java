@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
 // END region interImport
 
+
 import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaCaracteristicaDTO")
@@ -147,6 +148,26 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 		return transaccionInactivo;
 	}
 // BEGIN region metodoInterfaces
+	public PedidoVentaCaracteristicaDTO clone() {
+		PedidoVentaCaracteristicaDTO cloneNew =  new PedidoVentaCaracteristicaDTO();
+		cloneNew.setDocumento(this.documento);
+		cloneNew.setCampo(this.campo);
+		cloneNew.setCampoDTO(this.campoDTO);
+		cloneNew.setValorText(this.valorText);
+		cloneNew.setValorFecha(this.valorFecha);
+		cloneNew.setValorOpcion(this.valorOpcion);
+		cloneNew.setValorAuxiliar(this.valorAuxiliar);
+		cloneNew.setValorNumero(this.valorNumero);
+		cloneNew.setPrincipal(this.principal);
+		cloneNew.setDetalles(this.detalles);
+		cloneNew.setProductosExclusivos(this.productosExclusivos);
+		cloneNew.setDependientes(this.dependientes);
+		cloneNew.setExpedientes(this.expedientes);
+		cloneNew.setModificado(this.modificado);
+		cloneNew.setTransaccionRegistro(this.transaccionRegistro);
+		cloneNew.setTransaccionInactivo(this.transaccionInactivo);
+		return cloneNew;
+	}
 // END region metodoInterfaces
 
 }

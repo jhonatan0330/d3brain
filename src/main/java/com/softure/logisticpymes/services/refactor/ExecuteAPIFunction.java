@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -101,7 +102,8 @@ public class ExecuteAPIFunction {
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			webServiceEjecucionSvc.update(apiBasic);
-			//transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(), DocumentoTransaccionSvc.API_ASYNC);
+			// transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(),
+			// DocumentoTransaccionSvc.API_ASYNC);
 		}
 		return result;
 	}
@@ -116,9 +118,9 @@ public class ExecuteAPIFunction {
 	 */
 	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token)
 			throws ServerException {
-		if(service.getPropiedades()==null) {
-			service.setPropiedades(
- 					propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, service.getLlaveTabla(), null, null));
+		if (service.getPropiedades() == null) {
+			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
+					service.getLlaveTabla(), null, null));
 		}
 		// Realizo la autenticacion
 		String result = ConstantesGenerales.OK;
@@ -130,8 +132,10 @@ public class ExecuteAPIFunction {
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
 			}
-			if(authenticationWS.getExtracciones()!=null && authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL)>0) {
-				tokenAuthentication = authenticationWS.getExtracciones().substring(authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL)+1);	
+			if (authenticationWS.getExtracciones() != null
+					&& authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL) > 0) {
+				tokenAuthentication = authenticationWS.getExtracciones()
+						.substring(authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL) + 1);
 			}
 		}
 		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
@@ -150,7 +154,7 @@ public class ExecuteAPIFunction {
 			}
 		} else {
 			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
-			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("")!=0) {
+			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("") != 0) {
 				webServiceEjecucionSvc.update(callWS);
 			}
 		}
@@ -204,7 +208,7 @@ public class ExecuteAPIFunction {
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
-		callWS.setParametros(generateRequestBody(service, document, modificador));
+		callWS.setParametros(getParameters(service, document, modificador));
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());
 		if (modificador != null) {
@@ -228,7 +232,8 @@ public class ExecuteAPIFunction {
 			Map<String, String> headerProperties) throws ServerException {
 
 		String template = generateOutputFile(service.getTemplate(), callWS.getParametros());
-		String fullOutput = writeHeadersAndUrl(headerProperties, service.getServidorNombre()) + template;
+		String fullOutput = writeHeadersAndUrl(headerProperties, service.getServidorNombre(), callWS.getParametros(),
+				callWS.getExtracciones()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		String responseApi = null;
 		try {
@@ -246,7 +251,8 @@ public class ExecuteAPIFunction {
 					} else {
 						callWS.setExtracciones(resultExtraction);
 						documentAutomaticUpdateFunction.executeFromAPIExtraction(callWS.getDocumento(),
-								callWS.getModificador(), extractionProperties, token, callWS.getTransaccion(), resultExtraction);
+								callWS.getModificador(), extractionProperties, token, callWS.getTransaccion(),
+								resultExtraction);
 					}
 				}
 			} else {
@@ -354,7 +360,7 @@ public class ExecuteAPIFunction {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String generateRequestBody(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador)
+	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador)
 			throws ServerException {
 		String parameters = "";
 		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
@@ -385,8 +391,12 @@ public class ExecuteAPIFunction {
 											? campo.getCampoDTO().getCodigo()
 											: campo.getTransaccionRegistro();
 									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{D_"
-											+ codeReplace + "\\}\\}" + ConstantesGenerales.IGUAL
-											+ formatToReplaceAll(campo);
+											+ codeReplace
+											+ ((iRelacion.getAuxiliar() != null)
+													? "\\(" + iRelacion.getAuxiliar() + "\\)"
+													: "")
+											+ "\\}\\}" + ConstantesGenerales.IGUAL
+											+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
 									// template = template.replaceAll("\\{\\{D_" + codeReplace + "\\}\\}",
 									// formatToReplaceAll(campo));
 								}
@@ -426,6 +436,14 @@ public class ExecuteAPIFunction {
 							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 							// document.getNombre());
 							break;
+						case "E_CODE_MODIFICATOR":
+							if (modificador != null)
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"
+										+ iProp.getTexto() + "\\}\\}" + ConstantesGenerales.IGUAL
+										+ modificador.getNombre();
+							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
+							// document.getNombre());
+							break;
 						default:
 							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + iProp.getTexto()
 									+ "\\}\\}" + ConstantesGenerales.IGUAL + iProp.getValor();
@@ -451,7 +469,14 @@ public class ExecuteAPIFunction {
 							listAux.add(aux);
 							camposOpcionales = campoService.listar2getApiCode(listAux, relaciones);
 						} else {
-							camposOpcionales = document.getCaracteristicas();
+							camposOpcionales = document.getCaracteristicas().stream()
+									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList());
+						}
+						if (modificador != null && modificador.getCaracteristicas() != null) {
+							if (camposOpcionales == null)
+								camposOpcionales = new ArrayList<PedidoVentaCaracteristicaDTO>();
+							camposOpcionales.addAll(modificador.getCaracteristicas().stream()
+									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
 						}
 						List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(relaciones,
 								camposOpcionales);
@@ -460,12 +485,11 @@ public class ExecuteAPIFunction {
 								if (iCampo.getValorText() != null) {
 									if (iCampo.getCampoDTO() == null)
 										iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-									String codeReplace = (iCampo.getTransaccionRegistro() == null)
-											? iCampo.getCampoDTO().getCodigo()
-											: iCampo.getTransaccionRegistro();
+									String codeReplace = iCampo.getCampoDTO().getCodigo();
+									if(iCampo.getTransaccionRegistro() != null) codeReplace = codeReplace + "\\(" + iCampo.getTransaccionRegistro() + "\\)";
 									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{R_"
 											+ codeReplace + "\\}\\}" + ConstantesGenerales.IGUAL
-											+ formatToReplaceAll(iCampo);
+											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
 									// template = template.replaceAll("\\{\\{R_" + codeReplace + "\\}\\}",
 									// formatToReplaceAll(iCampo));
 								}
@@ -501,8 +525,12 @@ public class ExecuteAPIFunction {
 										if (campo.getCampoDTO() == null)
 											campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 										parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{M_"
-												+ campo.getCampoDTO().getCodigo() + "\\}\\}" + ConstantesGenerales.IGUAL
-												+ campo.getValorText();
+												+ campo.getCampoDTO().getCodigo()
+												+ ((iRelacion.getAuxiliar() != null)
+														? "\\(" + iRelacion.getAuxiliar() + "\\)"
+														: "")
+												+ "\\}\\}" + ConstantesGenerales.IGUAL
+												+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
 										// template = template.replaceAll(
 										// "\\{\\{M_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
 										// campo.getValorText());
@@ -528,15 +556,20 @@ public class ExecuteAPIFunction {
 	private String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
 			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {
-				plantilla = plantilla.replaceAll(entry.getKey(), entry.getValue());	
+				plantilla = plantilla.replaceAll(entry.getKey(), entry.getValue());
 			}
 		}
-		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_]*\\}\\}", "");
+		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():]*\\}\\}", "");
 		byte[] bytes = plantilla.getBytes(StandardCharsets.UTF_8);
 		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
 	/**
+	 * Recibo unos campos y una relaciones, valido que campos cumplen con las
+	 * relaciones (con el atributo campo), selecciono los campos que cumplen con
+	 * alguna relacion y consulto las caracteristicas de esos campos que se usan en el api 
+	 * 
+	 * Despues tomo los tipo proceso para volver a ejecutar este proceso, los que no son proceso los dejo como respuesta
 	 * 
 	 * @param relaciones
 	 * @param fields
@@ -857,10 +890,14 @@ public class ExecuteAPIFunction {
 	 * @param iCampo
 	 * @return
 	 */
-	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo) {
+	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo, String auxiliarFormat) {
 		if (iCampo == null || iCampo.getCampoDTO() == null || iCampo.getValorText() == null)
 			return "";
 		switch (iCampo.getCampoDTO().getFormato()) {
+		case DocumentoPlantillaCaracteristicaDTO.FECHA:
+			if (auxiliarFormat == null)
+				return iCampo.getValorText();
+			return SoftureUtil.formatWithParameter(iCampo.getValorFecha(), auxiliarFormat);
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 			/*
 			 * text = text.replaceAll(Matcher.quoteReplacement("$"), "");// Existia un full
@@ -870,7 +907,7 @@ public class ExecuteAPIFunction {
 			 * decimales text = text.replace(",", ""); // Para logimax los numero no debian
 			 * ir con decimales
 			 */
-			return String.valueOf(iCampo.getValorNumero().intValue());
+			return String.valueOf(iCampo.getValorNumero().longValue());
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
 		case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 			return iCampo.getValorText();
@@ -911,13 +948,14 @@ public class ExecuteAPIFunction {
 	 * @param url     URL a la que se conecta el API
 	 * @return
 	 */
-	private String writeHeadersAndUrl(Map<String, String> headers, String url) {
+	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions) {
 		String result = "URL\n\n " + url + "\n\nHeaders\n\n";
 		if (headers != null && headers.size() != 0) {
 			for (Entry<String, String> item : headers.entrySet()) {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
 			}
 		}
+		result = result + "\n\nParameters\n\n" + parameters + "\n\nExtractions\n\n" + extractions;
 		return result + "\n\nBODY\n\n";
 	}
 

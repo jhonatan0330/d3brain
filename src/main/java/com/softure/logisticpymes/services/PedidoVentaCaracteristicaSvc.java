@@ -210,7 +210,13 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return fieldsInternal;
 	}
 	
-	// En los documentos lo importante es el valor opcion que es el id que va a
+	/**
+	 * Usa el campo estado para permitir que varias relaciones se encuentren (ejemplo ruta que va de bta a bta se necesita el codigo de la ciudad)
+	 * @param documentIds Contiene los ids de los valoropcion que queremos buscar
+	 * @param fieldId Contiene las relaciones que son la base para buscar campos de los documentos internos
+	 * @return
+	 * @throws ServerException
+	 */
 	public List<PedidoVentaCaracteristicaDTO> listar2getApiCode(List<PedidoVentaCaracteristicaDTO> documentIds,
 			List<RelacionInternaDTO> fieldId) throws ServerException {
 		if (documentIds == null || documentIds.isEmpty() || fieldId == null || fieldId.isEmpty())

@@ -76,6 +76,12 @@ public class SoftureUtil {
 		return format.format(fecha);
 	}
 	
+	public static String formatWithParameter(Date fecha, String formatString){
+		DateFormat format = new SimpleDateFormat(formatString);
+		if(fecha == null)return "";
+		return format.format(fecha);
+	}
+	
 	// Debo hacer que las cargas masivas soporten varios formatos de fecha
 	public static String formatDateMassiveFile(Date fecha){
 		DateFormat format = new SimpleDateFormat( "dd/MM/yyyy HH:mm");
