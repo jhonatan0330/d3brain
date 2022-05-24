@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Date;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
-import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
+import com.softure.logisticpymes.services.refactor.CallManageTransition;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -30,7 +30,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	// BEGIN region servicesPedidoVentaAjuste
 	@Autowired private PedidoVentaSvc documentoService;
 	@Autowired private ProcesoEstadoSvc procesoEstadoService;
-	@Autowired private ManageTransitionFunction manageTransitionFunction;
+	@Autowired private CallManageTransition manageTransitionFunction;
 	// END region servicesPedidoVentaAjuste
 
 	@Override

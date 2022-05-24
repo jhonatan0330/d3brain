@@ -35,7 +35,7 @@ import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class ManageTransitionFunction {
+public class CallManageTransition {
 
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired private MensajeSvc mensajeSvc;
@@ -43,9 +43,9 @@ public class ManageTransitionFunction {
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private DocumentAutomaticNewFunction createDocumentSinceProperties;
+	@Autowired private CallNewDocumentAutomatic createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired private ExecuteAPIFunction apiService;
+	@Autowired private CallExecuteAPI apiService;
 	@Autowired private ActividadSvc actividadService;
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired private PedidoVentaDineroSvc dineroService;
@@ -83,7 +83,8 @@ public class ManageTransitionFunction {
 			//Genero documento en caso que toque
 			if(dto.getPlantilla()!=null) {
 				modificadorId = documentoDTO.getLlaveTabla();
-				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO, expedienteDTO, documentoDTO.getTransaccion(), token, null);
+				// Tengo que optimizar esto siempre va a preguntar si tiene documentos para generar
+				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO, expedienteDTO, documentoDTO.getTransaccion(), token, 0);
 				if(automatico!=null && automatico.getPlantilla().compareTo(dto.getPlantilla())==0)//Por si es la transicion inicial no  le quite el poder del documento que genero  
 					modificadorId = automatico.getLlaveTabla();
 			}
@@ -153,16 +154,19 @@ public class ManageTransitionFunction {
 			throw new ServerException(e.getMessage(), "Iteracion : " + pEstadoDTO.getNombre());
 		}
 		if(resultado!=null && !resultado.isEmpty()) {
-			for (PedidoVentaDTO iDocumentoIterar : resultado) {
+			for (int i = 0; i < resultado.size(); i++) {
+				PedidoVentaDTO iDocumentoIterar = resultado.get(i);
 				iDocumentoIterar.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(iDocumentoIterar.getLlaveTabla(), iDocumentoIterar.getHistorico()));
 				//Aqui al parecer el expediednte principal es el modificador pero no me parece que sea asi, deberia ser el expediente??, o talvez todos
-				PedidoVentaDTO acabdoCrear = createDocumentSinceProperties.generateDocuments(transicionIteracion, iDocumentoIterar, documentoModificador, iDocumentoIterar.getTransaccion(), token, null);
+				PedidoVentaDTO acabdoCrear = createDocumentSinceProperties.generateDocuments(transicionIteracion, iDocumentoIterar, documentoModificador, iDocumentoIterar.getTransaccion(), token, i+1);
 				//Creo la relacion del documento Gestor
 				relacionGestorService.trazar(expediente.getLlaveTabla(), 
 						(acabdoCrear==null)?null:acabdoCrear.getLlaveTabla(),
 						transicionIteracion.getNombre(), expediente.getEstadoExpediente(), expediente.getEstadoExpediente(), 
-						null, null, token, relacionAnterior, expediente.getHistorico(), null);
+						null, null, token, relacionAnterior, expediente.getHistorico(), null);	
 			}
+			
+			
 		}
 	}
 	
@@ -307,7 +311,7 @@ public class ManageTransitionFunction {
 		PropiedadDTO ubicacion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION, transicion, Propiedades.UBICACION, getUserId(token));
 		if(ubicacion==null) return null;
 		System.out.format("\n......Buscando ubicacion del documento %s", pedido.getNombre());
-		PedidoVentaCaracteristicaDTO campoValor= DocumentCommonsFunction.obtenerValor(pedido.getCaracteristicas(), ubicacion.getValor());
+		PedidoVentaCaracteristicaDTO campoValor= CallDocumentCommons.obtenerValor(pedido.getCaracteristicas(), ubicacion.getValor());
 		if(campoValor ==null) throw new ServerException("Revisa la configuracion de ubicacion, el campo ya no esta disponible. " + ubicacion.getTexto());
 		return campoValor.getValorOpcion();
 	}

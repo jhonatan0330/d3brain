@@ -72,6 +72,8 @@ public class Propiedades {
 	public static final String NUMERO_REDONDEO = "NUMERO_REDONDEO";
 	public static final String NUMERO_MONEDA = "NUMERO_MONEDA";
 	public static final String NUMERO_FORMULA = "NUMERO_FORMULA";
+	public static final String NUMERO_MAXIMO = "NUMERO_MAXIMO";
+	public static final String NUMERO_MINIMO = "NUMERO_MINIMO";
 	public static final String NUMERO_FUNCION_SQL = "NUMERO_FUNCION_SQL";
 	public static final String NUMERO_STEP = "NUMERO_STEP";
 	public static final String TOTAL_FUNCION = "TOTAL_FUNCION";
@@ -196,6 +198,7 @@ public class Propiedades {
 	
 	public static final String GENERA_DOCUMENTO_CAMPO = "GENERA_DOCUMENTO_CAMPO";
 	public static final String GENERA_DOCUMENTO_FUNCION_SQL = "GENERA_DOCUMENTO_FUNCION_SQL";
+	public static final String GENERA_DOCUMENTO_TEXTO = "GENERA_DOCUMENTO_TEXTO";
 	public static final String DECISION_SQL = "DECISION_SQL";
 	public static final String ITERACION_SQL = "ITERACION_SQL";
 	
@@ -345,6 +348,21 @@ public class Propiedades {
 		return parametros;
 	}
 	
+	public static List<PropiedadDTO> obtenerVariosParametro(BasicParamDTO pCampo, String[] keys) {
+		if(pCampo==null || pCampo.getPropiedades()==null || pCampo.getPropiedades().isEmpty()) return null;
+		List<PropiedadDTO> parametros = new ArrayList<PropiedadDTO>();
+		for (PropiedadDTO param : pCampo.getPropiedades()){
+			for (String key : keys) {
+				if(param.getKey().compareTo(key)==0 && validarBloqueo(param)) {
+					parametros.add(param);
+					break;
+				}
+			}
+		}
+		if(parametros.isEmpty()) return null;
+		return parametros;
+	}
+	
 	public static List<PropiedadDTO> retirarPropiedad(BasicParamDTO pCampo, String key) {
 		if(pCampo==null || pCampo.getPropiedades()==null ) return new ArrayList<PropiedadDTO>();
 		List<PropiedadDTO> retirables =new ArrayList<PropiedadDTO>();
@@ -377,7 +395,7 @@ public class Propiedades {
 			case API_EXTRACTION : {ruleProperty = "Extrae un valor con expresion regular, si tienes dudas busca por internet Java String match, esa extracción se debe colocar en un campo\n\nEn las realñciones se coloca el campo que deseamos que actualice con el valor a extraer";break;}
 			case API_MAX_TRY : {ruleProperty = "Coloca un numero entre 2 y 3 para que se repita el llamado al WS";break;}
 			case API_NEW_DOCUMENT : {ruleProperty = "Al recibir la respuesta del api puedes crear documento(s), tienes que seleccionar el nombre de la plantilla.\n\nEn el motivo es MUY IMPORTANTE que crees una expresion regular que extraiga la informacion que quieres para crear tu documento.\nCada match de la expresion regular sera un documento";break;}
-			case API_VALIDATION : {ruleProperty = "Coloca una expresion regular para que se valide que esa expresion regular haga match, si tienes dudas busca por internet Java String match y busca simuladores online de la expresion regular";break;}
+			case API_VALIDATION : {ruleProperty = "Coloca una expresion regular para que se valide que esa expresion regular haga match, si tienes dudas busca por internet Java String match y busca simuladores online de la expresion regular.\n\nTen cuidado de no dejar enter al final";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}
 			case ARCHIVO_TIPO: {ruleProperty =   "Filtra el tipo de archivo, para usar varias extensiones separalas por coma(,).\n";break;}
@@ -435,6 +453,9 @@ public class Propiedades {
 			case FECHA_RANGO_MAXIMO : {ruleProperty =  " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin el tiempo es en milisegundos.\n";break;}
 			case FECHA_TIMER_BACK : {ruleProperty =  "Activando esta propiedad se va a mostrar un reloj en cuenta regresiva segun al fecha seleccionada.\n";break;}
 			case FORMATO : {ruleProperty =  " Para campos texto N(Solo numero), E(Correo electronico).\n\n Para campos numero se utiliza un DecimalFormat";break;}
+			case FUNCION_SQL_VALIDAR_ANTES : {ruleProperty =  " Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
+					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
+					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";break;}
 			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
 					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";break;}
@@ -461,6 +482,8 @@ public class Propiedades {
 			case MULTIPLE_FILE : {ruleProperty =  "Permite que el campo cargue varias imagenes o archivos de adjuntos\n";break;}			
 			case NUMERO_MONEDA : {ruleProperty =  " Identifica el campo como tipo moneda\n";break;}
 			case NUMERO_FORMULA : {ruleProperty =  " Formula para calcular el valor del campo.\n";break;}
+			case NUMERO_MINIMO : {ruleProperty =  " Formula para calcular el valor MINimo de un campo.\n";break;}
+			case NUMERO_MAXIMO : {ruleProperty =  " Formula para calcular el valor MAXimo de un campo.\n";break;}
 			case NUMERO_FUNCION_SQL : {ruleProperty =  " Funcion que calcula un numero \n Se envia el id del documento actual y los depende el valoropcion\nCuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS";break;}
 			case NUMERO_STEP : {ruleProperty =  " El numero avanza segun el valor de este parametro con las flechas.\n";break;}
@@ -501,7 +524,7 @@ public class Propiedades {
 			case PRODUCTO_CAMPO_TOTAL : {ruleProperty =  "Este campo sera el valor total del producto.\n";break;}
 			case PROCESO_INCLUIR_TRAZA_PRINCIPAL : {ruleProperty =  "Cuando colocas esta propiedad en el proceso que se selecciona en el campo aparecera este documento como parte de la trazabilidad.\n No es necesario usar BPM.\n";break;}
 			case P_SUBREPORT_ : {ruleProperty =  " Coloque los diferentes subreportes que se necesitan.\n";break;}
-			case READ_QR : {ruleProperty =  "En los campos proceso muestra el boton para activar la camara de lectura de codigos QR";break;}
+			case READ_QR : {ruleProperty =  "En los campos proceso muestra el boton para activar la camara de lectura de codigos QR, selecciona el formato del codigo de barras, entre menos mejor\n\nFormatos = 'AZTEC','CODABAR','CODE_39','CODE_93','CODE_128','DATA_MATRIX','EAN_8','EAN_13','ITF','MAXICODE','PDF_417','QR_CODE','RSS_14','RSS_EXPANDED','UPC_A','UPC_E','UPC_EAN_EXTENSION'";break;}
 			case RELACIONAR_DOCUMENTOS : {ruleProperty =  "Permite AGREGAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
 			case RETIRAR_DOCUMENTOS : {ruleProperty =  "Permite QUITAR documentos a un campo proceso multiple de otro documento.\n\nRelaciona el campo actual de la plantilla y en los links relaciona el campo de la plantilla destino";break;}
 			case RESPONSABLE : {ruleProperty =  " Codigo del campo que relaciona el responsable de la actividad.\n";break;}

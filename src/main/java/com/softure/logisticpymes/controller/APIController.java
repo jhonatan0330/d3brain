@@ -32,8 +32,8 @@ import com.softure.logisticpymes.services.UploadSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
-import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
+import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,8 +44,8 @@ public class APIController {
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
 	@Autowired private PedidoVentaSvc pedidoVentaService;
-	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateDocumentFunction;
-	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
+	@Autowired private CallCRUDDocument saveUpdateDocumentFunction;
+	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	@Autowired private UsuarioSvc usuarioService;
 	@Autowired private UploadSvc uploadService;

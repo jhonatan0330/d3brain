@@ -18,8 +18,8 @@ import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
-import com.softure.logisticpymes.services.refactor.DocumentAutomaticNewFunction;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.CallNewDocumentAutomatic;
+import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -43,10 +43,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	// BEGIN region servicesProcesoTransicionAutomatica
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private DocumentAutomaticNewFunction createDocumentSinceProperties;
+	@Autowired private CallNewDocumentAutomatic createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private RelacionInternaSvc relacionService;
-	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
+	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	// END region servicesProcesoTransicionAutomatica
 
 	@Override
@@ -282,13 +282,13 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 							dto.setMensaje("");
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocuments(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
 						}else {
 							campoPrinicipal.setExpedientes(documentos);
-							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocuments(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 							if(nuevo !=null) {
 								dto.setMensaje(nuevo.getNombre());	
 							}else {

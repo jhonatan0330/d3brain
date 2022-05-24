@@ -35,7 +35,7 @@ import com.softure.logisticpymes.services.RolAccesoSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class DocumentListWithFiltersFunction {
+public class CallListDocumentWithFilters {
 
 	@Autowired private PedidoVentaMapper pedidoVentaMapper;
 	@Autowired private PropiedadSvc propiedadService;
@@ -144,7 +144,8 @@ public class DocumentListWithFiltersFunction {
 					secToken = null;
 				}else{
 					if(campoFiltro!=null){
-						secToken = token;
+						secToken = null;
+						// secToken = token; // revisando en universal el filtro por campo me toco colocarlo null
 						//Lo anterior al parecer servia para muchos, pero por el momento voy mirando solo uno
 						PedidoVentaCaracteristicaDTO pvc = new PedidoVentaCaracteristicaDTO();
 						pvc.setCampo(campoFiltro);

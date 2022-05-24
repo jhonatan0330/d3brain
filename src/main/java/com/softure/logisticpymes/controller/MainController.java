@@ -23,7 +23,7 @@ import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.OrganizacionSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -33,7 +33,7 @@ public class MainController {
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private UsuarioSesionSvc usuarioSessionService;
-	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
+	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	@Autowired private OrganizacionSvc organizacionService;
 	
 	@RequestMapping(value="/test", method=RequestMethod.GET)

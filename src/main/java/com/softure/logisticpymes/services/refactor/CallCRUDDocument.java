@@ -57,7 +57,7 @@ import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class DocumentNewSaveUpdateInactivateFunction {
+public class CallCRUDDocument {
 
 	@Autowired
 	private CampoAdaptador adaptador;
@@ -77,9 +77,9 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	@Autowired
 	private MensajeSvc mensajeSvc;
 	@Autowired
-	private ManageTransitionFunction manageTransitionFunction;
+	private CallManageTransition manageTransitionFunction;
 	@Autowired
-	private ExecuteAPIFunction apiService;
+	private CallExecuteAPI apiService;
 	@Autowired
 	private ConsecutivoSvc consecutivoService;
 	@Autowired
@@ -152,6 +152,10 @@ public class DocumentNewSaveUpdateInactivateFunction {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
+		return updateWithoutTransaction(dto, modificadorId, token, false);
+	}
+	
+	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, String token, boolean isUpdateAutomatic) throws ServerException {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		PedidoVentaDTO bd = pedidoService.consultaXId(dto.getLlaveTabla());
 		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
@@ -164,7 +168,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
-		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
+		if (!isUpdateAutomatic && Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
 		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null) {
@@ -179,7 +183,10 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 			iterador.setPrincipal(bd);
 		}
-		validateFields(dto, plantilla, token);
+		validateFields(dto, plantilla, token, isUpdateAutomatic);
+		
+		if(!isUpdateAutomatic) propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
+		
 		if (dto.getNombre() == null) {
 			dto.setNombre(bd.getNombre());// Cuando envio modificar lo envio vacio
 			dto.setConsecutivo(bd.getConsecutivo());
@@ -249,8 +256,11 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
+		
+		validateFields(dto, plantilla, token, false);
 
-		validateFields(dto, plantilla, token);
+		propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
+		
 		validateConsecutiveNumber(dto, plantilla, token);
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validateBalance(dto, plantilla);
@@ -288,6 +298,8 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
+	
+	
 
 	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion)
 			throws ServerException {
@@ -313,7 +325,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 	private void validateBalance(PedidoVentaDTO pedido, DocumentoPlantillaDTO plantilla) throws ServerException {
 		String total = Propiedades.obtenerValor(plantilla, Propiedades.TOTAL);
 		if (!total.isEmpty()) {
-			PedidoVentaCaracteristicaDTO campoValor = DocumentCommonsFunction.obtenerValor(pedido.getCaracteristicas(),
+			PedidoVentaCaracteristicaDTO campoValor = CallDocumentCommons.obtenerValor(pedido.getCaracteristicas(),
 					total);
 			if (campoValor == null)
 				throw new ServerException("Se debe colocar la caracteristica de valor TOTAL");
@@ -346,7 +358,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 		}
 	}
 
-	private void validateFields(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token)
+	private void validateFields(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token, boolean isUpdateAutomatic)
 			throws ServerException {
 		if (plantilla != null && plantilla.getCaracteristicas() != null && !plantilla.getCaracteristicas().isEmpty()) {
 			String filtroTexto = "";
@@ -376,7 +388,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 							+ " no viene registrado en el documento " + plantilla.getNombre());
 			}
 			dto.setCaracteristicas(ordenadas);
-			if (dto.getLlaveTabla() != null) {// Valido para actualizar que el campo si se pueda modiifcar
+			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {// Valido para actualizar que el campo si se pueda modiifcar
 				if (!plantilla.getCaracteristicas().isEmpty()) {
 					boolean iContadorModificadas = false;
 					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getCaracteristicas()) {
@@ -638,7 +650,7 @@ public class DocumentNewSaveUpdateInactivateFunction {
 				pedido.setFecha(new Date());
 			}
 		} else {
-			PedidoVentaCaracteristicaDTO campoFecha = DocumentCommonsFunction.obtenerValor(pedido.getCaracteristicas(),
+			PedidoVentaCaracteristicaDTO campoFecha = CallDocumentCommons.obtenerValor(pedido.getCaracteristicas(),
 					caracteristicaFecha);
 			if (campoFecha == null)
 				throw new ServerException("Se debe colocar la caracteristica de fecha fecha");

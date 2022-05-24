@@ -9,7 +9,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
+import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PedidoVentaSvc pedidoService;
 	@Autowired private UsuarioSvc usuarioService;
-	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
+	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	// END region servicesActividad
 
 	@Override

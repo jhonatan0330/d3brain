@@ -42,10 +42,10 @@ import com.softure.logisticpymes.services.ProcesoTransicionSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 import com.softure.logisticpymes.services.TurnoSvc;
-import com.softure.logisticpymes.services.refactor.DocumentListWithFiltersFunction;
-import com.softure.logisticpymes.services.refactor.ManageTransitionFunction;
-import com.softure.logisticpymes.services.refactor.DocumentNewSaveUpdateInactivateFunction;
-import com.softure.logisticpymes.services.refactor.DocumentAutomaticUpdateFunction;
+import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallManageTransition;
+import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
+import com.softure.logisticpymes.services.refactor.CallUpdateDocumentAutomatic;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 
@@ -54,8 +54,8 @@ public class TipoProceso {
 	
 	@Autowired private CuentaSvc cuentaService;
 	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
-	@Autowired private DocumentListWithFiltersFunction listDocumentWithFiltersFunction;
+	@Autowired private CallCRUDDocument saveUpdateInactivateDocumentFunction;
+	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
@@ -63,8 +63,8 @@ public class TipoProceso {
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired private MovimientoSvc movimientoService;
 	@Autowired private ProcesoTransicionSvc expedienteTransicionService;
-	@Autowired private ManageTransitionFunction manageTransitionFunction;
-	@Autowired private DocumentAutomaticUpdateFunction updateDocumentFunction;
+	@Autowired private CallManageTransition manageTransitionFunction;
+	@Autowired private CallUpdateDocumentAutomatic updateDocumentFunction;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private PedidoVentaDineroSvc dineroService;
 	@Autowired private RelacionInternaSvc relacionService;

@@ -46,7 +46,7 @@ import com.softure.logisticpymes.services.WebServiceSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class ExecuteAPIFunction {
+public class CallExecuteAPI {
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 	@Autowired
@@ -54,7 +54,7 @@ public class ExecuteAPIFunction {
 	@Autowired
 	private DocumentoPlantillaSvc templateService;
 	@Autowired
-	private DocumentAutomaticUpdateFunction documentAutomaticUpdateFunction;
+	private CallUpdateDocumentAutomatic documentAutomaticUpdateFunction;
 	@Autowired
 	private PropiedadSvc propiedadesSvc;
 	@Autowired
@@ -250,7 +250,7 @@ public class ExecuteAPIFunction {
 						responseApi = resultExtraction + "\n\n" + responseApi;
 					} else {
 						callWS.setExtracciones(resultExtraction);
-						documentAutomaticUpdateFunction.executeFromAPIExtraction(callWS.getDocumento(),
+						documentAutomaticUpdateFunction.executeFromAPIExtraction(callWS.getModificador(),
 								callWS.getModificador(), extractionProperties, token, callWS.getTransaccion(),
 								resultExtraction);
 					}
@@ -265,6 +265,8 @@ public class ExecuteAPIFunction {
 			callWS.setError(e.getMessage());
 			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
 		}
+		
+		if(callWS.getExtracciones()!=null) responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS.setFechaEjecucion(new Date());
 		callWS = webServiceEjecucionSvc.update(callWS);
@@ -382,7 +384,7 @@ public class ExecuteAPIFunction {
 						}
 						for (RelacionInternaDTO iRelacion : relaciones) {
 							if (iRelacion.getPlantilla().compareTo(document.getPlantilla()) == 0) {
-								PedidoVentaCaracteristicaDTO campo = DocumentCommonsFunction
+								PedidoVentaCaracteristicaDTO campo = CallDocumentCommons
 										.obtenerValor(camposOpcionales, iRelacion.getCampo());
 								if (campo != null && campo.getValorText() != null) {
 									if (campo.getCampoDTO() == null)
@@ -519,7 +521,7 @@ public class ExecuteAPIFunction {
 							}
 							for (RelacionInternaDTO iRelacion : rModificadoras) {
 								if (iRelacion.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
-									PedidoVentaCaracteristicaDTO campo = DocumentCommonsFunction
+									PedidoVentaCaracteristicaDTO campo = CallDocumentCommons
 											.obtenerValor(camposOpcionales, iRelacion.getCampo());
 									if (campo != null && campo.getValorText() != null) {
 										if (campo.getCampoDTO() == null)

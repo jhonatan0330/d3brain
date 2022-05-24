@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
 // END region interImport
 import com.softure.logisticpymes.dto.PropiedadDTO;
@@ -17,6 +18,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 
 // BEGIN region aditionalMethods  
 	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
+	void funcionPrevalidacionPlantilla(@Param("funcion") String funcion,@Param("campos") List<PedidoVentaCaracteristicaDTO> campos);
 	void crearFuncion(PropiedadDTO dto);
 	void crearFuncionMail(PropiedadDTO dto);
 	void crearFuncionFiltros(PropiedadDTO dto);
@@ -28,6 +30,8 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	void crearFuncionParametros(PropiedadDTO dto);
 	void crearFuncionCampoGenerar(PropiedadDTO dto);
 	void crearFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
+	void crearFuncionPrevalidacion(PropiedadDTO dto);
+	void eliminarFuncionPrevalidacion(PropiedadDTO dto);
 	void eliminarFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
 	void eliminarFuncionCampoGenerar(PropiedadDTO dto);
 	void eliminarFuncionNumerica(PropiedadDTO dto);

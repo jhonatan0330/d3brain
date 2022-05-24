@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 
-public class DocumentCommonsFunction {
+public class CallDocumentCommons {
 
 	public static PedidoVentaCaracteristicaDTO obtenerValor(List<PedidoVentaCaracteristicaDTO> caracteristicas, String campoValor) {
 		if(caracteristicas==null || caracteristicas.size()==0) return null;

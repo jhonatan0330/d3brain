@@ -21,7 +21,7 @@ import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 
 @Component
-public class DocumentAutomaticUpdateFunction {
+public class CallUpdateDocumentAutomatic {
 
 	@Autowired
 	private PedidoVentaSvc pedidoService;
@@ -34,7 +34,7 @@ public class DocumentAutomaticUpdateFunction {
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired
-	private DocumentNewSaveUpdateInactivateFunction saveUpdateInactivateDocumentFunction;
+	private CallCRUDDocument saveUpdateInactivateDocumentFunction;
 
 	/*
 	 * aqui tengo mil cosas mal, deberia priero armar lso campos y despues mandarlos
@@ -123,8 +123,8 @@ public class DocumentAutomaticUpdateFunction {
 			updateDocument.setTransaccion(transaction);
 			updateDocument.setCaracteristicas(newFields);
 
-			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction.update(updateDocument,
-					updaterDocumentId, token);
+			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction.updateWithoutTransaction(updateDocument,
+					updaterDocumentId, token, true);
 			procesoDTO.setNombre(pedidoActualizado.getNombre());
 			// Cambie pCampo.getPrincipal().getLlaveTabla() x el que esta modificadndo creo
 			// que eso funciona

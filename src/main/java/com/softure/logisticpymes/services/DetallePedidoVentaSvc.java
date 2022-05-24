@@ -24,7 +24,7 @@ import com.softure.logisticpymes.dto.filter.DetalleCaracteristicaProductoFilterD
 import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioRolProductoFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
-import com.softure.logisticpymes.services.refactor.DocumentCommonsFunction;
+import com.softure.logisticpymes.services.refactor.CallDocumentCommons;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -587,19 +587,19 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
+		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
 		if(cpCantidad!=null && cpCantidad.getValorNumero()!=null)detail.setCantidad(cpCantidad.getValorNumero());// Al modificar no se actualizan estos campos
 		
 		PropiedadDTO pCampoUnitario = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO);
 		String keyCampoUnitario = "***UNIDAD";
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
+		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null && cpUnitario.getValorNumero()!=null) detail.setValorUnitario(cpUnitario.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 	
 		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		//Sucede que en Universal el total no es igual al producto normal se hace pro otra formula
 		if(cpTotal!=null && cpUnitario.getValorNumero()!=null) {
 			detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
@@ -618,19 +618,19 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
 		if(pCampoCantidad!=null) keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
+		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoCantidad);
 		cpCantidad.setValorNumero(detail.getCantidad());
 		
 		PropiedadDTO pCampoUnitario = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO);
 		String keyCampoUnitario = "***UNIDAD";
 		if(pCampoUnitario!=null) keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
+		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoUnitario);
 		if(cpUnitario!=null) cpUnitario.setValorNumero(detail.getValorUnitario());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 		PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_TOTAL);
 		String keyCampoTotal = "***TOTAL";
 		if(pCampoTotal!=null) keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = DocumentCommonsFunction.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
+		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(), keyCampoTotal);
 		if(cpTotal!=null) cpTotal.setValorNumero(detail.getValorTotal());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 	}

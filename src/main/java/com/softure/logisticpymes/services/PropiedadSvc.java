@@ -13,6 +13,7 @@ import com.softure.logisticpymes.dto.CategoriaProductoDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
+import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.ProductoCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
@@ -165,6 +166,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionNumerica(dto);
 				break;
+			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
+				propiedadMapper.eliminarFuncionPrevalidacion(dto);
+				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
 				break;
@@ -271,6 +275,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						break;
 					case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
 						propiedadMapper.crearFuncionParametros(dto);
+						break;
+					case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
+						propiedadMapper.crearFuncionPrevalidacion(dto);
 						break;
 					default:
 						propiedadMapper.crearFuncion(dto);
@@ -827,6 +834,19 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		for (PropiedadDTO pPropiedad : validaciones) {
 			System.out.format("\nValidando funcion SQL (%s)",pPropiedad.getMotivo() );
 			validarFuncion(pPropiedad, documento, modificador, token);
+		}
+	}
+	
+	public void prevalidate(BasicParamDTO dto, List<PedidoVentaCaracteristicaDTO> campos) throws ServerException {
+		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto, Propiedades.FUNCION_SQL_VALIDAR_ANTES);
+		if(validaciones == null || validaciones.isEmpty()) return ;
+		for (PropiedadDTO pPropiedad : validaciones) {
+			System.out.format("\nPre validando funcion SQL (%s)", pPropiedad.getMotivo() );
+			try {
+				propiedadMapper.funcionPrevalidacionPlantilla(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()), campos);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), " Motivo: " + pPropiedad.getMotivo() + " Propiedad : " + pPropiedad.getNombre());
+			}
 		}
 	}
 	

@@ -3,7 +3,7 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
-import com.softure.logisticpymes.services.refactor.ExecuteAPIFunction;
+import com.softure.logisticpymes.services.refactor.CallExecuteAPI;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.WebServiceDTO;
 // END region interImport
@@ -28,7 +28,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	
 	// BEGIN region servicesWebServiceEjecucion
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired private ExecuteAPIFunction executeAPIFunction;
+	@Autowired private CallExecuteAPI executeAPIFunction;
 	@Autowired private WebServiceSvc webServiceSvc;
 	// END region servicesWebServiceEjecucion
 

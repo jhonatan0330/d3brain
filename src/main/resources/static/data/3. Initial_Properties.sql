@@ -375,3 +375,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_200' , 'C', 'DETALLE OCULTAR UNIDADES NOMBRE CANTIDAD', 'DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD', 'REQUISITO', 'J', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
 	VALUES('PROP_201' , 'C', 'NUMERO MAXIMO', 'NUMERO_MAXIMO', 'REQUISITO', 'N', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_multiple, bpvd_textoculto) 
+	VALUES('PROP_202' , 'T', 'GENERA_DOCUMENTO_TEXTO', 'GENERAR UN CAMPO CON UN TEXTO', 'REQUISITO', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_203' , 'C', 'NUMERO MINIMO', 'NUMERO_MINIMO', 'REQUISITO', 'N', true);
