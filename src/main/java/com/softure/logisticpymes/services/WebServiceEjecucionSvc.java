@@ -90,7 +90,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		if(bd.getFechaEjecucion()!=null) throw new ServerException("Este API ya fue ejecutado");
 		if(bd.getSincrona()==null) throw new ServerException("Este API no es asincrono");
 		WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
-		executeAPIFunction.executeApi(service, bd, dto.getSecurityToken());
+		executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null);
 		return consultaXId(dto.getLlaveTabla());
 		// END region ejecutarAPI
 	}
@@ -112,7 +112,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	 			WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
 	 			if (service == null)
 	 				throw new ServerException("El id del servicio no se encuentra en la BD.");
-	 			executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla());
+	 			executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null);
 			}
 	 	}
 	}

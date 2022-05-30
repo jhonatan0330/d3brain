@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -55,6 +56,12 @@ public class UploadSvc {
 			}
 		}
 	}
+	
+
+	public byte[] transformBase64ToPDF(String b64) {
+	    return Base64.getDecoder().decode(b64);
+	}
+	
 	
 	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro) throws ServerException{
 		ServidorDTO servidor =  servidorService.obtenerServidorPrincipal(ServidorDTO.FTP);

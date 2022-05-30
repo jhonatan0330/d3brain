@@ -32,6 +32,7 @@ public class Propiedades {
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
 	
 	public static final String API_EXTRACTION = "API_EXTRACTION";
+	public static final String API_EXTRACTION_TO_BASE_64 = "API_EXTRACTION_TO_BASE_64";
 	
 	
 	//CAMPOS
@@ -478,6 +479,7 @@ public class Propiedades {
 					+ "\n para la funcion puedes usar : return query (select null::character varying, 'correo@cambiame.com') "
 					+ "\n\nEstructura de la funcion\n"
 					+ " CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS TABLE (usuario character varying, correo character varying)";break;}
+			case MODIFICAR_CAMPO : {ruleProperty =  " Sirve para colocar el valor de un campo de la plantilla actual en otra plantilla (la que se referecie como propiedad), primero selecciona el nombre del campo que tiene el valor (origen) y despues en las relaciones escoge el campo que va a recibir el nuevo valor (destino)\n";break;}
 			case MULTIPLE : {ruleProperty =  " En cada tipo de campo es diferente pero su objetivo es permitir escoger varios items o agregar varios items\n";break;}
 			case MULTIPLE_FILE : {ruleProperty =  "Permite que el campo cargue varias imagenes o archivos de adjuntos\n";break;}			
 			case NUMERO_MONEDA : {ruleProperty =  " Identifica el campo como tipo moneda\n";break;}

@@ -292,9 +292,13 @@ public class CallCRUDDocument {
 		manageTemplateTypes(dto, plantilla, token);
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
-		String api = Propiedades.obtenerValor(plantilla, Propiedades.API);
-		if (!api.isEmpty())
-			apiService.prepareApiToExecution(api, dto, null, token);
+		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
+		if (apis!=null &&!apis.isEmpty()) {
+			for (PropiedadDTO api : apis) {
+				apiService.prepareApiToExecution(api.getValor(), dto, dto, token);	
+			}
+		}
+			
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}

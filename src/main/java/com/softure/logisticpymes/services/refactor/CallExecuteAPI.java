@@ -98,7 +98,7 @@ public class CallExecuteAPI {
 		String result = ConstantesGenerales.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
-			result = executeApi(service, apiBasic, token);
+			result = executeApi(service, apiBasic, token, modificador);
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			webServiceEjecucionSvc.update(apiBasic);
@@ -113,10 +113,11 @@ public class CallExecuteAPI {
 	 * @param service
 	 * @param callWS
 	 * @param token
+	 * @param modificador Incluyo al modificador para agregarle los campos nuevos
 	 * @return
 	 * @throws ServerException
 	 */
-	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token)
+	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token, PedidoVentaDTO modificador)
 			throws ServerException {
 		if (service.getPropiedades() == null) {
 			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
@@ -140,10 +141,10 @@ public class CallExecuteAPI {
 		}
 		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
 		// Execution
-		callWS = launchWebService(service, callWS, token, headers);
+		callWS = launchWebService(service, callWS, token, headers, modificador);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, token, 1, headers);
+			callWS = tryAgain(service, callWS, token, 1, headers, modificador);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = ConstantesGenerales.ERROR;
@@ -186,7 +187,7 @@ public class CallExecuteAPI {
 		documentMain.setLlaveTabla(callWS.getDocumento());
 		WebServiceEjecucionDTO authenticationWS = generateAsyncWebService(authenticationEndPoint, documentMain, null,
 				token, callWS.getUsuario(), headers);
-		authenticationWS = launchWebService(authenticationEndPoint, authenticationWS, token, headers);
+		authenticationWS = launchWebService(authenticationEndPoint, authenticationWS, token, headers, null);
 		return authenticationWS;
 	}
 
@@ -225,11 +226,12 @@ public class CallExecuteAPI {
 	 * @param callWS           Api a ejecutar
 	 * @param test
 	 * @param headerProperties
+	 * @param modificador Incluyo al modificador para agregarle los campos nuevos
 	 * @return
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			Map<String, String> headerProperties) throws ServerException {
+			Map<String, String> headerProperties, PedidoVentaDTO modificador) throws ServerException {
 
 		String template = generateOutputFile(service.getTemplate(), callWS.getParametros());
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getServidorNombre(), callWS.getParametros(),
@@ -241,18 +243,17 @@ public class CallExecuteAPI {
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			if (callWS.getError() == null) {
-				List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service,
-						Propiedades.API_EXTRACTION);
-				String resultExtraction = extractionResultAPI(responseApi, extractionProperties);
+				String[] props = {Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_TO_BASE_64};
+				List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service, props);
+				String resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
 				if (resultExtraction != null) {
 					if (resultExtraction.startsWith(ERROR_EXTRAYENDO)) {
 						callWS.setError(resultExtraction);
 						responseApi = resultExtraction + "\n\n" + responseApi;
 					} else {
 						callWS.setExtracciones(resultExtraction);
-						documentAutomaticUpdateFunction.executeFromAPIExtraction(callWS.getModificador(),
-								callWS.getModificador(), extractionProperties, token, callWS.getTransaccion(),
-								resultExtraction);
+						documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador,
+								extractionProperties, token,resultExtraction);
 					}
 				}
 			} else {
@@ -285,16 +286,16 @@ public class CallExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			int countIteration, Map<String, String> headers) throws ServerException {
+			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
 			return callWS;
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
-				callWS = launchWebService(service, callWS, token, headers);
+				callWS = launchWebService(service, callWS, token, headers, modificador);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, token, countIteration + 1, headers);
+					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador);
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -331,7 +332,7 @@ public class CallExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList) throws ServerException {
+	private String extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token) throws ServerException {
 		if (extractionList == null || extractionList.isEmpty())
 			return null;
 		String result = "";
@@ -340,8 +341,12 @@ public class CallExecuteAPI {
 			if (!matcher.matches()) {
 				return ERROR_EXTRAYENDO + propiedadDTO.getValor();
 			}
+			String newValue = matcher.group(1); 
+			if(propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64)==0) {
+				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue), Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token);
+			} 
 			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
-					+ ConstantesGenerales.IGUAL + matcher.group(1);
+					+ ConstantesGenerales.IGUAL + newValue;
 		}
 		if (result == "")
 			result = null;

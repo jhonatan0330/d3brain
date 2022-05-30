@@ -215,8 +215,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_120' , 'L', 'FUNCION CONSULTA DATOS', 'PROCESO_FUNCION_SQL', 'REQUISITO', true, true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
-	VALUES('PROP_121' , 'C', 'MODIFICAR CAMPO PRINCIPAL', 'MODIFICAR_CAMPO', 'REQUISITO', TRUE);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+	VALUES('PROP_121' , 'C', 'MODIFICAR CAMPO PRINCIPAL', 'MODIFICAR_CAMPO', 'REQUISITO', 'J', TRUE);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_122' , 'C', 'CONSULTA PRODUCTOS FUNCION ', 'PRODUCTOS_FUNCION_SQL', 'REQUISITO', 'J', TRUE, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
@@ -379,3 +379,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	VALUES('PROP_202' , 'T', 'GENERA_DOCUMENTO_TEXTO', 'GENERAR UN CAMPO CON UN TEXTO', 'REQUISITO', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
 	VALUES('PROP_203' , 'C', 'NUMERO MINIMO', 'NUMERO_MINIMO', 'REQUISITO', 'N', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_204' , 'W', 'API_EXTRACTION_TO_BASE_64', 'API_EXTRACTION_TO_BASE_64', 'REQUISITO', true);

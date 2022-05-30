@@ -53,10 +53,10 @@ public class CallUpdateDocumentAutomatic {
 	 * @param extractionText 
 	 * @throws ServerException
 	 */
-	public void executeFromAPIExtraction(String documentId, String updaterDocumentId,
-			List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String transaction, String extractionText)
+	public void executeFromAPIExtraction(PedidoVentaDTO modificador,
+			List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String extractionText)
 			throws ServerException {
-		PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
+		//PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
 		Map<String, String> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
@@ -66,14 +66,14 @@ public class CallUpdateDocumentAutomatic {
 			// campo
 			List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
 			for (RelacionInternaDTO iRelation : relations) {
-				if (iRelation.getPlantilla().compareTo(processDTO.getPlantilla()) == 0) {
+				if (iRelation.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
 					newField.setCampo(iRelation.getCampo());
 					propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
 				}
 			}
 			generateFieldsFromProperty.add(newField);
 		}
-		execute(generateFieldsFromProperty, updaterDocumentId, transaction, processDTO, token,
+		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador, token,
 				propertiesToSearchFieldDestiny);
 	}
 
@@ -116,7 +116,7 @@ public class CallUpdateDocumentAutomatic {
 		List<PedidoVentaCaracteristicaDTO> currentFields = campoService.readCompleteFields(procesoDTO.getLlaveTabla(),
 				camposPlantilla, procesoDTO.getHistorico());
 
-		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToInclude, procesoDTO.getLlaveTabla(),
+		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToInclude, procesoDTO,
 				propertiesToSearchFieldDestiny, camposPlantilla, currentFields);
 
 		if (hasChanges(currentFields, newFields)) {
@@ -145,7 +145,7 @@ public class CallUpdateDocumentAutomatic {
 	 * @throws ServerException
 	 */
 	private List<PedidoVentaCaracteristicaDTO> getNewValues(List<PedidoVentaCaracteristicaDTO> dependientes,
-			String processId, List<PropiedadDTO> generatorProperties,
+			PedidoVentaDTO process, List<PropiedadDTO> generatorProperties,
 			List<DocumentoPlantillaCaracteristicaDTO> templateFields, List<PedidoVentaCaracteristicaDTO> currentFields)
 			throws ServerException {
 
@@ -176,7 +176,7 @@ public class CallUpdateDocumentAutomatic {
 							newField = new PedidoVentaCaracteristicaDTO();
 							newField.setCampo(camposActualesDTO.getLlaveTabla());
 							newField.setCampoDTO(camposActualesDTO);
-							newField.setDocumento(processId);
+							newField.setDocumento(process.getLlaveTabla());
 							newField.setValorAuxiliar(iDependiente.getValorAuxiliar());
 							newField.setValorFecha(iDependiente.getValorFecha());
 							newField.setValorNumero(iDependiente.getValorNumero());
@@ -185,6 +185,17 @@ public class CallUpdateDocumentAutomatic {
 							// Despues valido si se modifica o sigue igual en la funcionalidad de cada campo
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);
+							
+							// Tengo que actualizar el modificador por un tema en el api que no guarda los cambios de los campos
+							if(process.getCaracteristicas()!=null && !process.getCaracteristicas().isEmpty()) {
+								for (PedidoVentaCaracteristicaDTO iCampoModificador : process.getCaracteristicas()) {
+									if(iCampoModificador.getCampo().compareTo(camposActualesDTO.getLlaveTabla())==0) {
+										//Por el momento solo texto
+										iCampoModificador.setValorText(iDependiente.getValorText());
+										break;
+									}
+								}
+							}
 							break;
 						}
 					}
@@ -203,7 +214,7 @@ public class CallUpdateDocumentAutomatic {
 				newField = new PedidoVentaCaracteristicaDTO();
 				newField.setCampo(camposActualesDTO.getLlaveTabla());
 				newField.setCampoDTO(camposActualesDTO);
-				newField.setDocumento(processId);
+				newField.setDocumento(process.getLlaveTabla());
 			}
 			result.add(newField);
 		}
@@ -235,7 +246,7 @@ public class CallUpdateDocumentAutomatic {
 				if (campoComparar == null) {
 					return true;
 				}
-				if (iCampoModificado.getValorText().compareTo(campoComparar.getValorText()) != 0) {
+				if ((iCampoModificado.getValorText()==null && campoComparar.getValorText()!=null)|| iCampoModificado.getValorText().compareTo(campoComparar.getValorText()) != 0) {
 					return true;
 				}
 				// se que una funcion reusaria el codigo peor no se como hacerlo apra 3 tipos de

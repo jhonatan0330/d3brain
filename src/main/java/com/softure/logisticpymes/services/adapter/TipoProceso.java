@@ -645,8 +645,9 @@ public class TipoProceso {
 				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			}else {
 				if(primerLlamado) {
-					String mensajeFault = "Revisa porque este documento no genera ninguna transicion, el campo lo solicita. ( " + procesoDTO.getNombre() + " ) ";
+					String mensajeFault = "Revisa porque este documento no genera ninguna transicion, el campo lo solicita. ( " + procesoDTO.getNombre() + " )" ;
 					if(procesoDTO.getDescripcion()!=null)mensajeFault = mensajeFault + procesoDTO.getDescripcion();
+					mensajeFault = mensajeFault + " ( desde el estado : " + procesoDTO.getEstadoExpediente() + ")"; 
 					throw new ServerException( mensajeFault) ;
 				}
 			}
