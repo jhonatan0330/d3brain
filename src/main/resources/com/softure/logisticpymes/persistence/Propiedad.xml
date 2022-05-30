@@ -332,7 +332,7 @@ COST 100;
     </select>
     
     <select id="crearFuncionPrevalidacion" parameterType="PropiedadDTO" >
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( parametros character varying[]) RETURNS character varying AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( parametros character varying[]) RETURNS void AS
 $BODY$
 ${valor}
 $BODY$

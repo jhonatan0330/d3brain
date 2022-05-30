@@ -34,23 +34,24 @@ public class TipoNumero {
 
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
-
+		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
 		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico
-			if (!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA).isEmpty()) {
-				BigDecimal valorCalculado = calcular(pCampo);
+			
+			if (!formula.isEmpty()) {
+				BigDecimal valorCalculado = calcular(pCampo, formula);
 				pCampo.setValorNumero(valorCalculado);
 			} else {
 				pCampo.setValorNumero(BigDecimal.ZERO);
 			}
 		} else {
-			if (!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA).isEmpty()) {
+			if (!formula.isEmpty()) {
 				if (pCampo.getModificado()) {
 					// Valido que del cliente este ien calculado
 					if ((pCampo.getLlaveTabla() == null && bloqProperty != null)
 							|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 									Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
 						// En tcm se tienen permisos de modificar el seguro
-						BigDecimal valorCalculado = calcular(pCampo);
+						BigDecimal valorCalculado = calcular(pCampo, formula);
 						BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 						if (diferencia.abs().longValue() > 1)
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
@@ -100,6 +101,20 @@ public class TipoNumero {
 							"El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : "
 									+ SoftureUtil.formatMoney(bd.getValorNumero()));
 			}
+		}
+		
+		// Validar minimo y maximo
+		String minimum = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MINIMO);
+		if(!minimum.isEmpty()) {
+			BigDecimal valueMinimum = calcular(pCampo, minimum);
+			if(valueMinimum.compareTo(pCampo.getValorNumero())>0)
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " tiene valor minimo permitido es " + valueMinimum.toString());
+		}
+		String maximum = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MAXIMO);
+		if(!maximum.isEmpty()) {
+			BigDecimal valueMaximum = calcular(pCampo, maximum);
+			if(valueMaximum.compareTo(pCampo.getValorNumero())<0)
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " tiene valor maximo permitido es " + valueMaximum.toString());
 		}
 		formatText(pCampo);
 	}
@@ -162,8 +177,7 @@ public class TipoNumero {
 		}
 	}
 
-	private BigDecimal calcular(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
-		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
+	private BigDecimal calcular(PedidoVentaCaracteristicaDTO pCampo, String formula) throws ServerException {
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 				Propiedades.DEPENDE);
 		if (codigoDepende != null) {
