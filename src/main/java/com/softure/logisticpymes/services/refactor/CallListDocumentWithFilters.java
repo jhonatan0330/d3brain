@@ -108,15 +108,14 @@ public class CallListDocumentWithFilters {
 		
 		//Filtros desde una lista
 		String secToken =null;
+		String campoFiltro = null;
 		dto.setFuncionarioNombre(null);
 		String token = dto.getSecurityToken();
 		pedidoVentaService.paginar(dto);
 		DocumentoPlantillaDTO plantilla = null;//Es para almacenar las propiedades soloque tengo que pasar un BasicaPAram porque iba a pasar solo las propiedades
 		//Consulto que la plantilla solicitada tenga permisos
 		if(dto.getPlantilla()!=null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
-			String campoFiltro = null;
 			boolean verTodos = false;
-			
 			if(rolService.usuarioPermisosCompletos(dto.getSecurityToken())) {
 				verTodos = true;
 			}else {
@@ -143,15 +142,7 @@ public class CallListDocumentWithFilters {
 				if(verTodos ){
 					secToken = null;
 				}else{
-					if(campoFiltro!=null){
-						secToken = null;
-						// secToken = token; // revisando en universal el filtro por campo me toco colocarlo null
-						//Lo anterior al parecer servia para muchos, pero por el momento voy mirando solo uno
-						PedidoVentaCaracteristicaDTO pvc = new PedidoVentaCaracteristicaDTO();
-						pvc.setCampo(campoFiltro);
-						dto.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-						dto.getCaracteristicas().add(pvc);
-					}else{
+					if(campoFiltro==null){
 						dto.setFuncionario(pedidoVentaService.getUserFlex(dto.getSecurityToken()));
 						//Coloco el filtro por el mismo
 						dto.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
@@ -215,6 +206,12 @@ public class CallListDocumentWithFilters {
 			dto.setSecurityToken(secToken);
 			try {
 				System.out.println (new Date().toString() + " : Query avnazado");
+				if(campoFiltro !=null ) {
+					
+					return listadoCompleto(
+							pedidoVentaMapper.listarPermitidosPorCampoFiltro(dto, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
+							, token, null);	
+				}
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
 						, token, null); 
