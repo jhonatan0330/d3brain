@@ -768,7 +768,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 			if(!excluidas.isEmpty()) {
 				for (PropiedadDTO iPropiedadDTO : excluidas) {
-					consultadas.removeIf(x -> (x.getTipo().compareTo(iPropiedadDTO.getTipo()) ==0 && x.getCampo().compareTo(iPropiedadDTO.getCampo())==0));
+					consultadas.removeIf(x -> (x.getPropiedadValor().compareTo(iPropiedadDTO.getPropiedadValor()) ==0 && x.getCampo().compareTo(iPropiedadDTO.getCampo())==0));
 				}	
 			}
 			//Valido bloqueo por tiempo
