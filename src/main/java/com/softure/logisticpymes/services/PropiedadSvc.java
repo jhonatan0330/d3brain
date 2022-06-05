@@ -768,6 +768,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 			if(!excluidas.isEmpty()) {
 				for (PropiedadDTO iPropiedadDTO : excluidas) {
+					// Aqui me di cuenta que estaba borrando todas las propiedades de la plantilla
 					consultadas.removeIf(x -> (x.getPropiedadValor().compareTo(iPropiedadDTO.getPropiedadValor()) ==0 && x.getCampo().compareTo(iPropiedadDTO.getCampo())==0));
 				}	
 			}
