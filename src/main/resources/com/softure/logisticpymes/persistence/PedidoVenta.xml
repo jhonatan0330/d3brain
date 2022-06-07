@@ -323,7 +323,14 @@
 	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
 	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
 		where aux.cpdv_estado = 'A'
+	 	<include refid="filterMainFragment" />
 	 	and cp_full.cpvc_valoropcion in (select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{usuario})
+	union
+		<include refid="selectMainFragment" />
+	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
+		where cp_campo.cpvc_valoropcion in (select cp_doc_rol.cpvc_valoropcion from usuariorol_erlp
+	 			inner join campo_documento cp_doc_rol on (cp_doc_rol.cpvc_valoropcion is not null and cp_doc_rol.cdrc_documento = cerl_documento)
+	 		where cerl_estado = 'A' and cerl_usuario = #{usuario})
 	 	<include refid="filterMainFragment" />
 	union
 		<include refid="selectMainFragment" /> 
@@ -332,8 +339,8 @@
 	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
 	 	inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cp_full.cpvc_llave and cdex_estado = 'A')
 		where aux.cpdv_estado = 'A'
-		and cdex_expedientedetalle in ( select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{usuario})
 		<include refid="filterMainFragment" />
+		and cdex_expedientedetalle in ( select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{usuario})
 		<include refid="orderMainFragment" />
 	</select>
 	
