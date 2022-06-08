@@ -606,6 +606,18 @@ public class TipoProceso {
 			dependientes = campoService.ordenarAlfabeticaDepende(dependientes);
 			if(dependientes.get(0).getValorOpcion()!=null)//Se me perdia la referencia y no se porque
 				entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
+			List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
+			for (PedidoVentaCaracteristicaDTO iDependiente : dependientes) {
+				if(iDependiente.getValorOpcion()==null && iDependiente.getExpedientes()!=null) {
+					//Esto aplica para los campos multiples
+					for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
+						PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
+						pd.setValorOpcion(iExpediente.getLlaveTabla());
+						expedientesMultiples.add(pd);
+					}
+				}
+			}
+			if(expedientesMultiples.size()!=0) dependientes.addAll(expedientesMultiples);
 		}
 		//entityFilter.setDescripcion(funcionConsulta.getLlaveTabla());
 		List<PedidoVentaDTO> result = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(entityFilter, 
