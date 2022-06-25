@@ -111,8 +111,9 @@ public class CallCRUDDocument {
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
+		dto.setFuncionario(getUserID(token));
 		try {
-			PedidoVentaDTO result = saveAfterIdentifyTransaction(dto, token);
+			PedidoVentaDTO result = saveWithoutTransaction(dto, token);
 			logSvc.finalizar(tran.getFecha(), dto.getTransaccion());
 			return result;
 		} catch (Exception e) {
@@ -243,11 +244,11 @@ public class CallCRUDDocument {
 		return dto;
 	}
 
-	private PedidoVentaDTO saveAfterIdentifyTransaction(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token) throws ServerException {
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
-		dto.setFuncionario(getUserID(token));
-
+		if(dto.getFuncionario()==null)
+			throw new ServerException("Para crear el documento debes enviar el funcionario");
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		plantillaFilter.setSecurityToken(token);

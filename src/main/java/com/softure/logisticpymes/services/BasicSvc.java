@@ -158,7 +158,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	// @Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T save(T dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
 		try {
@@ -170,7 +170,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	// @Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T update(T dto) throws ServerException {
 		try {
 			mapper.actualizar(dto); 

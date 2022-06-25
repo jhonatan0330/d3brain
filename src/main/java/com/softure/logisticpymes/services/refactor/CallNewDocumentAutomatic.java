@@ -16,10 +16,12 @@ import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.dto.RelacionInternaDTO;
+import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
+import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
@@ -35,6 +37,8 @@ public class CallNewDocumentAutomatic {
 	private CallCRUDDocument saveUpdateInactivateDocumentFunction;
 	@Autowired
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired
+	private UsuarioAutenticacionSvc autenticacionService;
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token,
@@ -58,7 +62,8 @@ public class CallNewDocumentAutomatic {
 	 * @throws ServerException
 	 */
 	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
-			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber) throws ServerException {
+			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber)
+			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		// Por aqui voy cuando viene en una iteracion pero no se que otros caso pueda
 		// intente refactor pero salio un aviso asi que deje quieto mientras
@@ -67,7 +72,8 @@ public class CallNewDocumentAutomatic {
 		String user = getUserId(token);
 		transicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
-		String[] cars = {Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO, Propiedades.GENERA_DOCUMENTO_TEXTO};
+		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
+				Propiedades.GENERA_DOCUMENTO_TEXTO };
 		List<PropiedadDTO> camposGenerar = Propiedades.obtenerVariosParametro(transicion, cars);
 		if (camposGenerar == null || camposGenerar.isEmpty())
 			return null;
@@ -121,14 +127,14 @@ public class CallNewDocumentAutomatic {
 					break;
 				case Propiedades.GENERA_DOCUMENTO_TEXTO:
 					String textValueToNewField = iPropiedadDTO.getValor();
-					PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, relaciones.get(0).getCampo()); 
-					if(textValueToNewField.compareTo("#NUMBER")==0) {
+					PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, relaciones.get(0).getCampo());
+					if (textValueToNewField.compareTo("#NUMBER") == 0) {
 						fieldNew.setValorNumero(new BigDecimal(iterationNumber));
-						fieldNew.setValorText(String.valueOf(iterationNumber) );
-					}else {
+						fieldNew.setValorText(String.valueOf(iterationNumber));
+					} else {
 						fieldNew.setValorText(textValueToNewField);
 					}
-					camposNuevos.add(fieldNew);	
+					camposNuevos.add(fieldNew);
 					break;
 				default:
 					break;
@@ -142,6 +148,8 @@ public class CallNewDocumentAutomatic {
 	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
 			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
+			UsuarioDTO userAdmin = autenticacionService.getUserSystem();
+			if(userAdmin==null ) throw new ServerException("Es indispensable configurar el usuario administrador");
 			PedidoVentaDTO nuevo = new PedidoVentaDTO();
 			nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			nuevo.setPlantilla(transicion.getPlantilla());
@@ -165,7 +173,8 @@ public class CallNewDocumentAutomatic {
 
 			nuevo.setLlaveTabla(null);
 			nuevo.setTransaccion(transaccion);
-			return saveUpdateInactivateDocumentFunction.save(nuevo, token);
+			nuevo.setFuncionario(userAdmin.getLlaveTabla());
+			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token);
 		} else {
 			return null;
 		}
