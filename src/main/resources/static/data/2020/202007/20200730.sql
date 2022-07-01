@@ -54,7 +54,7 @@ begin
 		INSERT INTO consecutivo_conp(ccon_llave,  ccon_nombre,  ccon_prefijo, mcon_numeroinicial, mcon_numeroactual) 
 			VALUES(''CON_BODEGAS'',''BODEGAS'',''BDG-'',100.00, 100.00);
 		INSERT INTO documentoplantilla_dplp(cdpl_llave,  cdpl_nombre,  cdpl_consecutivo, cdpl_imagen,  cdpl_codigo, cdpl_objetivo)
-			VALUES(''DPL_BODEGAS'',  ''BODEGAS'',  ''CON_BODEGAS'', ''http://colombiansofture.com/imagenes/modulo.png'', ''BDG'', ''Registrar las bodegas de inventarios'');
+			VALUES(''DPL_BODEGAS'',  ''BODEGAS'',  ''CON_BODEGAS'', ''http://golyat.cloud/imagenes/modulo.png'', ''BDG'', ''Registrar las bodegas de inventarios'');
 		INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave,  cdpc_plantilla,  ndpc_orden,  cdpc_nombre,  cdpc_codigo,  cdpc_formato,  cdpc_objetivo)
 			VALUES(''DPL_BDG_1'',  ''DPL_BODEGAS'', 1, ''NOMBRE'',  ''NOMBRE'',  ''T'',  ''Almacenar el nombre'');
 		INSERT INTO propiedad_ppdp(cppd_llave,  cppd_campo,  cppd_valor,  cppd_texto, cppd_propiedadvalor,  dppd_fechadefinicion,  cppd_cambiocreacion, cppd_tipo)
@@ -104,7 +104,7 @@ begin
 		   	INSERT INTO consecutivo_conp(ccon_llave,  ccon_nombre, mcon_numeroinicial, mcon_numeroactual) 
 		   		VALUES(substring(''T-'' || _categorias.ccpr_llave, 0 , 32), ''CATEGORIA '' || _categorias.ccpr_nombre ,100.00, 100.00);
 			INSERT INTO documentoplantilla_dplp(cdpl_llave,  cdpl_nombre,  cdpl_consecutivo, cdpl_imagen,  cdpl_codigo, cdpl_objetivo)
-				VALUES(substring(''T-'' || _categorias.ccpr_llave, 0 , 32),  _categorias.ccpr_nombre ,  substring(''T-'' || _categorias.ccpr_llave, 0 , 32), ''http://colombiansofture.com/imagenes/modulo.png'', substring(_categorias.ccpr_nombre, 0, 16) , _categorias.ccpr_nombre);
+				VALUES(substring(''T-'' || _categorias.ccpr_llave, 0 , 32),  _categorias.ccpr_nombre ,  substring(''T-'' || _categorias.ccpr_llave, 0 , 32), ''http://golyat.cloud/imagenes/modulo.png'', substring(_categorias.ccpr_nombre, 0, 16) , _categorias.ccpr_nombre);
 			INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave,  cdpc_plantilla,  ndpc_orden,  cdpc_nombre,  cdpc_codigo,  cdpc_formato,  cdpc_objetivo)
 				VALUES(substring(''T-'' || _categorias.ccpr_llave, 0 , 32),  substring(''T-'' || _categorias.ccpr_llave, 0 , 32), 1, ''NOMBRE'',  ''NOMBRE'',  ''T'',  ''Almacenar el nombre'');
 			INSERT INTO propiedad_ppdp(cppd_llave,  cppd_campo,  cppd_valor,  cppd_texto, cppd_propiedadvalor,  dppd_fechadefinicion,  cppd_cambiocreacion, cppd_tipo)

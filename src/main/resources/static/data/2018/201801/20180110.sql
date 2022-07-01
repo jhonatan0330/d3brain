@@ -45,7 +45,7 @@ ALTER TABLE documentoplantilla_dplp
 
 update documentoplantilla_dplp  set cdpl_tipo = 'R' where cdpl_imagen is null;
 
-update documentoplantilla_dplp  set cdpl_imagen = 'http://colombiansofture.com/imagenes/modulo.png' where cdpl_imagen is null;
+update documentoplantilla_dplp  set cdpl_imagen = 'http://golyat.cloud/imagenes/modulo.png' where cdpl_imagen is null;
 
 update documentoplantilla_dplp  set cdpl_tipo = 'F' where cdpl_tipo is null;
 

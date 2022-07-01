@@ -160,7 +160,7 @@ BEGIN
     INSERT INTO consecutivo_conp(ccon_llave, ccon_nombre, ccon_prefijo, mcon_numeroinicial, mcon_numerofinal, mcon_numeroactual)
     	VALUES (llave, llave, llave || '-', 100, 99999999, 100);
 	INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_codigo, cdpl_tipo)
-    	VALUES (llave, nombre,  llave, 'http://colombiansofture.com/imagenes/modulo.png', llave, 'R');
+    	VALUES (llave, nombre,  llave, 'http://golyat.cloud/imagenes/modulo.png', llave, 'R');
 	INSERT INTO reportebase_rpbp (crpb_llave, crpb_nombre, crpb_jaspertext, crpb_plantilla) values (llave, nombre, texto, llave);
 	INSERT INTO documentoplantillarol_dprp(cdpr_llave, cdpr_plantilla, cdpr_rol, bdpr_iniciorapido, bdpr_rangofiltro, bdpr_crear)
     	select substring(llave ||crac_llave,1,32), llave, crac_llave, true, true, true from rolacceso_racp where brac_permisoscompletos = true; 

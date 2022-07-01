@@ -3,7 +3,7 @@ COMMENT ON TABLE usuario_usrp IS '2020-02-14';
 delete from propiedad_ppdp where cppd_propiedadvalor = 'PROP_21';
 delete from propiedadvalordefinido_pvdp where cpvd_llave = 'PROP_21';
 
-update usuario_usrp set cusr_imagen = 'http://colombiansofture.com/imagenes/avatar.png' where cusr_imagen is null;
+update usuario_usrp set cusr_imagen = 'http://golyat.cloud/imagenes/avatar.png' where cusr_imagen is null;
 
 ALTER TABLE mensaje_msjp
 	ALTER COLUMN cmsj_titulo TYPE character varying(200);

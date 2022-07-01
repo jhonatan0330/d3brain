@@ -4,12 +4,12 @@ insert into cambio_cmbp (ccmb_llave,ccmb_nombre,ccmb_motivo,dcmb_fecha)
 	values ('80b94072128c4720a2c68363555314e4','SC_594','.',now());
 
 INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, nprc_prioridad, cprc_tipo, cprc_imagen)
-	select 'SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'http://colombiansofture.com/imagenes/modulo.png'
+	select 'SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'http://golyat.cloud/imagenes/modulo.png'
 	WHERE NOT EXISTS (SELECT 1 FROM proceso_prcp WHERE cprc_llave='SOPORTE');
 
 
 insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
-values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://colombiansofture.com/imagenes/modulo.png','D08','.','SOPORTE');
+values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://golyat.cloud/imagenes/modulo.png','D08','.','SOPORTE');
 
 insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) 
 	values ('147cac472c604deaa943c7a6cb5d3893','57c7788e671b4bc192fe2700ad71378d',1,'FECHA','FECHA','F','Contiene las fechas del reporte');
@@ -18,7 +18,7 @@ insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndp
 
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
-	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', 'conde123',  'E', 1, 'A'
+	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@golyat.cloud', 'conde123',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
 
 insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) 
@@ -399,7 +399,7 @@ end;';
 
 
 INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_imagen, cdpl_objetivo, cdpl_proceso)
-    select 'ADMINISTRADOR', 'ADM', 'BPM ADMINISTRADOR', 'http://colombiansofture.com/imagenes/modulo.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE'
+    select 'ADMINISTRADOR', 'ADM', 'BPM ADMINISTRADOR', 'http://golyat.cloud/imagenes/modulo.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE'
     WHERE NOT EXISTS (SELECT 1 FROM documentoplantilla_dplp WHERE cdpl_llave ='ADMINISTRADOR');
 
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave, cdpc_plantilla, ndpc_orden, cdpc_nombre, cdpc_codigo, cdpc_formato, cdpc_objetivo)
@@ -439,7 +439,7 @@ INSERT INTO rolacceso_racp(crac_llave, brac_permisoscompletos, crac_plantilla)
     WHERE NOT EXISTS (SELECT 1 FROM rolacceso_racp WHERE crac_llave ='ADMINISTRADOR');
 
 INSERT INTO modulocontratado_mdcp(cmdc_llave, cmdc_modulo, cmdc_nombre, cmdc_imagen)
-    select 'ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'http://colombiansofture.com/imagenes/modulo.png'
+    select 'ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'http://golyat.cloud/imagenes/modulo.png'
     WHERE NOT EXISTS (SELECT 1 FROM modulocontratado_mdcp WHERE cmdc_llave ='ADMINISTRACION');
     
 INSERT INTO permiso_perp(cper_llave, cper_rolacceso, cper_modulo)

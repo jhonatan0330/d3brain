@@ -4,7 +4,7 @@ COMMENT ON TABLE usuariosesion_ussp IS '2018.08.06.00';
 
 DROP FUNCTION copiar_plantilla(nombre_plantilla_actual character, nombre_plantilla_nueva character);
 
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'http://colombiansofture.com/imagenes/avatar.png');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'http://golyat.cloud/imagenes/avatar.png');
 
 ALTER TABLE pedidoventacaracteristica_pvcp
 	ADD CONSTRAINT fk_pedidoventacaracteristicausuarioinactivo FOREIGN KEY (cpvc_usuarioinactivo) REFERENCES usuario_usrp(cusr_llave);

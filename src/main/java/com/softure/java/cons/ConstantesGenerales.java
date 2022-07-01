@@ -105,6 +105,6 @@ public class ConstantesGenerales {
 
 	public static final String USUARIO = "USR";
 	
-	public static final String LOGO = "http://colombiansofture.com/imagenes/modulo.png";
-	public static final String AVATAR = "http://colombiansofture.com/imagenes/avatar.png";
+	public static final String LOGO = "http://golyat.cloud/imagenes/modulo.png";
+	public static final String AVATAR = "http://golyat.cloud/imagenes/avatar.png";
 }

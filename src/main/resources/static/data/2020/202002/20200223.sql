@@ -510,7 +510,7 @@ order by proceso_orden, plantilla_orden, plantilla_nombre, tipo_plantilla, propi
 </jasperReport>',crpb_codigo = 'CHECK SW42'
 WHERE crpb_nombre = 'REQUERIMIENTOS DEL SISTEMA';
 
-update documentoplantilla_dplp set cdpl_imagen = 'http://colombiansofture.com/imagenes/check.png' where cdpl_llave = 'DPL_REP';
+update documentoplantilla_dplp set cdpl_imagen = 'http://golyat.cloud/imagenes/check.png' where cdpl_llave = 'DPL_REP';
 
 INSERT INTO cambio_cmbp( ccmb_llave,  ccmb_nombre,  ccmb_motivo,  dcmb_fecha)
 VALUES('SC_20200223',  'SC_20200223',  'Colocar el footer al reporte de requerimientos',  now());

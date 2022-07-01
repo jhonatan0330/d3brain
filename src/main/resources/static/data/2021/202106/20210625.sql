@@ -22,5 +22,5 @@ update proceso_prcp set cprc_imagen =
 	inner join procesotransicion_ptrp on (cdpl_llave = cptr_plantilla and cptr_estado = 'A' and cptr_estadopartida is null)
 	where cptr_proceso = cprc_llave and cdpl_estado = 'A' limit 1);
 
-update proceso_prcp set cprc_imagen = 'http://colombiansofture.com/imagenes/modulo.png'
+update proceso_prcp set cprc_imagen = 'http://golyat.cloud/imagenes/modulo.png'
 where cprc_imagen is null;

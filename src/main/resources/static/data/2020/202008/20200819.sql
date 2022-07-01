@@ -45,5 +45,5 @@ BEGIN
 END; 
 ';
 
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'http://colombiansofture.com/imagenes/avatar.png');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'http://golyat.cloud/imagenes/avatar.png');
 update organizacion_orgp set corg_usuariosystem = 'PROCESS';

@@ -34,7 +34,7 @@ ALTER TABLE organizacion_orgp
 update organizacion_orgp set corg_nombre = 'SOFTWARE PARA TI';
 update organizacion_orgp set corg_slogan = 'Unificar, Simplificar y optimizar';
 update organizacion_orgp set corg_conexion = 'jdbc:postgresql://192.168.0.10:5432/desarrollo_cs';
-update organizacion_orgp set corg_imagen = 'http://colombiansofture.com/imagenes/fondo.png';
+update organizacion_orgp set corg_imagen = 'http://golyat.cloud/imagenes/fondo.png';
 
 ALTER TABLE organizacion_orgp
 	ALTER COLUMN corg_slogan SET NOT NULL,

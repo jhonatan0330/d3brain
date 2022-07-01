@@ -18,7 +18,7 @@ INSERT INTO cambio_cmbp(ccmb_llave,  ccmb_nombre,  ccmb_motivo,  dcmb_fecha)VALU
 
 INSERT INTO consecutivo_conp(ccon_llave,  ccon_nombre,  ccon_prefijo, mcon_numeroinicial, mcon_numeroactual)VALUES('CON_CUENTA','CUENTAS','CTA-',100.00,   1000.00);
 
-INSERT INTO documentoplantilla_dplp(cdpl_llave,  cdpl_nombre,  cdpl_consecutivo, cdpl_imagen,  cdpl_codigo,  cdpl_tipo,  cdpl_proceso,  cdpl_objetivo)VALUES('DPL_CUENTA',  'CUENTAS',  'CON_CUENTA', 'http://colombiansofture.com/imagenes/modulo.png', 'CTA',  'C',  'RRHH',  'Registrar las Cuentas de control de dinero');
+INSERT INTO documentoplantilla_dplp(cdpl_llave,  cdpl_nombre,  cdpl_consecutivo, cdpl_imagen,  cdpl_codigo,  cdpl_tipo,  cdpl_proceso,  cdpl_objetivo)VALUES('DPL_CUENTA',  'CUENTAS',  'CON_CUENTA', 'http://golyat.cloud/imagenes/modulo.png', 'CTA',  'C',  'RRHH',  'Registrar las Cuentas de control de dinero');
 
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave,  cdpc_plantilla,  bdpc_obligatorio, ndpc_orden,  bdpc_editable, bdpc_modificable,  cdpc_nombre,  cdpc_codigo,  cdpc_formato,  cdpc_objetivo)VALUES('DPL_CP_1',  'DPL_CUENTA',  TRUE, 1, TRUE, TRUE,  'NOMBRE',  'NOMBRE',  'T',  'Almacenar el nombre');
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave,  cdpc_plantilla,  bdpc_obligatorio,  ndpc_orden,  bdpc_editable,  bdpc_modificable,  cdpc_nombre,  cdpc_codigo,  cdpc_formato,  cdpc_objetivo)VALUES('DPL_CP_2',  'DPL_CUENTA',  FALSE,  2,  TRUE,  TRUE,  'SOBREGIRO',  'SOBREGIRO',  'N',  'Registrar el valor de sobregiro de la cuenta permitido');

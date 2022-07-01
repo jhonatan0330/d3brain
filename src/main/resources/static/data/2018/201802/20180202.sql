@@ -9,14 +9,14 @@ COMMENT ON TABLE usuariosesion_ussp IS '2018.02.03.08';
 
 --Crear una plantilla Abrir caja
 INSERT INTO consecutivo_conp (ccon_llave, ccon_nombre, ccon_prefijo, mcon_numeroactual) VALUES('CAJA', 'APERTURA CAJA', 'AC', 100);
-INSERT INTO documentoplantilla_dplp (cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_tipo) VALUES ('CAJA', 'CAJA', 'CAJAS', 'CAJA', 'http://colombiansofture.com/imagenes/modulo.png', 'F');
+INSERT INTO documentoplantilla_dplp (cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_tipo) VALUES ('CAJA', 'CAJA', 'CAJAS', 'CAJA', 'http://golyat.cloud/imagenes/modulo.png', 'F');
 INSERT INTO documentoplantillacaracteristica_dpcp (cdpc_llave, cdpc_plantilla, cdpc_nombre, cdpc_codigo, ndpc_orden, cdpc_formato, bdpc_obligatorio, bdpc_editable, bdpc_visiblerender)
 	VALUES('CAJA', 'CAJA', 'CAJA', 'CAJA', 1, 'C', true, true, true);
 --select * from plantillacampoparametro_pcpp  
 INSERT INTO plantillacampoparametro_pcpp (cpcp_llave, cpcp_campo, cpcp_key, cpcp_valor) VALUES('CUENTA_ABRIR_CAJA','CAJA','CUENTA_ABRIR_CAJA', 'TRUE');
 --Crear una plantilla Cerrar caja
 INSERT INTO consecutivo_conp (ccon_llave, ccon_nombre, ccon_prefijo, mcon_numeroactual) VALUES('CAJA_CIERRE', 'CIERRE CAJA', 'CC', 100);
-INSERT INTO documentoplantilla_dplp (cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_tipo) VALUES ('CAJA_CIERRE', 'CIERRE', 'CIERRE DE CAJAS', 'CAJA_CIERRE', 'http://colombiansofture.com/imagenes/modulo.png', 'F');
+INSERT INTO documentoplantilla_dplp (cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_tipo) VALUES ('CAJA_CIERRE', 'CIERRE', 'CIERRE DE CAJAS', 'CAJA_CIERRE', 'http://golyat.cloud/imagenes/modulo.png', 'F');
 INSERT INTO documentoplantillacaracteristica_dpcp (cdpc_llave, cdpc_plantilla, cdpc_nombre, cdpc_codigo, ndpc_orden, cdpc_formato, bdpc_obligatorio, bdpc_visiblerender)
 	VALUES('CAJA_CIERRE', 'CAJA_CIERRE', 'TURNO', 'CAJA', 1, 'Z', true, true);
 INSERT INTO documentoplantillacaracteristica_dpcp (cdpc_llave, cdpc_plantilla, cdpc_nombre, cdpc_codigo, ndpc_orden, cdpc_formato, bdpc_editable, bdpc_visiblerender)
@@ -52,7 +52,7 @@ delete from reportebase_rpbp where crpb_llave = 'POS008-TRANFER';
 INSERT INTO consecutivo_conp(ccon_llave, ccon_nombre, ccon_prefijo, mcon_numeroinicial,  mcon_numeroactual)
     	select crpb_llave, crpb_nombre, crpb_llave || '-', 100, 100 from reportebase_rpbp where crpb_plantilla is null and (select ccon_llave from consecutivo_conp where ccon_llave  = crpb_llave) is null;
 INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_nombre, cdpl_consecutivo, cdpl_imagen, cdpl_codigo, cdpl_tipo)
-    	select crpb_llave, crpb_nombre, crpb_llave, 'http://colombiansofture.com/imagenes/modulo.png', crpb_llave, 'R' from reportebase_rpbp where crpb_plantilla is null;
+    	select crpb_llave, crpb_nombre, crpb_llave, 'http://golyat.cloud/imagenes/modulo.png', crpb_llave, 'R' from reportebase_rpbp where crpb_plantilla is null;
 INSERT INTO documentoplantillarol_dprp(cdpr_llave, cdpr_plantilla, cdpr_rol, bdpr_listable, bdpr_rangofiltro, bdpr_vertodos)
     	select substring(crpb_llave ||crac_llave,1,32), crpb_llave, crac_llave, true, true, true from rolacceso_racp, reportebase_rpbp where crpb_plantilla is null; 
 

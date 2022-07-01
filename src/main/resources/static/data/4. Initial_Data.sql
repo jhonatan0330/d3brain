@@ -1,6 +1,6 @@
 
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'http://colombiansofture.com/imagenes/avatar.png');
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'http://colombiansofture.com/imagenes/avatar.png');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'http://golyat.cloud/imagenes/avatar.png');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'http://golyat.cloud/imagenes/avatar.png');
 INSERT INTO usuarioautenticacion_uaup(cuau_llave, cuau_usuario, cuau_sesion, cuau_clave)VALUES ('SYSTEM', 'SYSTEM', '1', '1');
 --Modulos
 INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
@@ -26,10 +26,10 @@ INSERT INTO cambio_cmbp (ccmb_llave, ccmb_nombre, ccmb_motivo, dcmb_fecha, dcmb_
 	VALUES('SC-1', 'SC-1', 'CONFIGURACION INICIAL DEL SISTEMA', now(), now());
 
 INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, nprc_prioridad, cprc_tipo, cprc_imagen)
-	VALUES ('SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'http://colombiansofture.com/imagenes/modulo.png');
+	VALUES ('SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'http://golyat.cloud/imagenes/modulo.png');
 
 INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_imagen, cdpl_objetivo, cdpl_proceso)
-    VALUES ('ADMINISTRADOR', 'ADM', 'BPM ADMINISTRADOR', 'http://colombiansofture.com/imagenes/modulo.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
+    VALUES ('ADMINISTRADOR', 'ADM', 'BPM ADMINISTRADOR', 'http://golyat.cloud/imagenes/modulo.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
 
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave, cdpc_plantilla, ndpc_orden, cdpc_nombre, cdpc_codigo, cdpc_formato, cdpc_objetivo)
     VALUES ('ADMINISTRADOR-ID', 'ADMINISTRADOR',  1, 'ID', 'ID', 'T', 'Contiene el numero de cedula del administrador');
@@ -59,7 +59,7 @@ INSERT INTO rolacceso_racp(crac_llave, brac_permisoscompletos, crac_plantilla)
     VALUES ('ADMINISTRADOR',  true, 'ADMINISTRADOR');
 
 INSERT INTO modulocontratado_mdcp(cmdc_llave, cmdc_modulo, cmdc_nombre, cmdc_imagen)
-    VALUES ('ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'http://colombiansofture.com/imagenes/modulo.png');
+    VALUES ('ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'http://golyat.cloud/imagenes/modulo.png');
     
 INSERT INTO permiso_perp(cper_llave, cper_rolacceso, cper_modulo)
     VALUES ('ADMINISTRADOR', 'ADMINISTRADOR', 'ADMINISTRACION');
@@ -80,12 +80,12 @@ INSERT INTO usuariorol_erlp(cerl_llave, cerl_usuario, cerl_rolacceso, cerl_docum
     VALUES ('ADMINISTRADOR', 'SYSTEM', 'ADMINISTRADOR', 'SYSTEM', current_timestamp);
     
 INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_imagen, corg_slogan,  corg_mensajeingreso, corg_codigo, corg_usuariosystem) 
-VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'http://colombiansofture.com/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
+VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'http://golyat.cloud/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
 
 
 
 insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
-values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://colombiansofture.com/imagenes/modulo.png','D228','.','SOPORTE');
+values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','http://golyat.cloud/imagenes/modulo.png','D228','.','SOPORTE');
 
 -- -------------------
 -- INSERTS for public.documentoplantillacaracteristica_dpcp
@@ -98,7 +98,7 @@ insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndp
 -- -------------------
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
-	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', 'conde123',  'E', 1, 'A'
+	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@golyat.cloud', 'conde123',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
 
 insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) values ('ea45ec023c754313a0714687efb633fb','seguimiento de sistema','A','SEGUIMIENTO DE SISTEMA','seguimiento de sistema','smtp.gmail.com');
