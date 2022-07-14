@@ -473,7 +473,7 @@ COST 100;
         select propiedad_${estado} (#{documento}, #{modificador}, #{token})
     </select>
     
-    <select id="funcionPrevalidacionPlantilla">
+    <select id="funcionPrevalidacionPlantilla" resultType="java.lang.String">
         select propiedad_${funcion} ( <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
     </select>
     
