@@ -143,6 +143,7 @@ import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.dto.WebServiceDTO;
 import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
 import com.softure.logisticpymes.services.WebServiceSvc;
+import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
 import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 import com.softure.logisticpymes.dto.PostRespuestaDTO;
 import com.softure.logisticpymes.dto.filter.PostRespuestaFilterDTO;
@@ -253,6 +254,7 @@ public class FullControllerDTO {
 	
 	
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
+	@Autowired private CallCRUDDocument crudService;
 	
 	@RequestMapping(value="/consultaXIdPlantillaConsecutivo", method=RequestMethod.POST)
 	public PlantillaConsecutivoDTO consultaXIdPlantillaConsecutivo(@RequestBody String llave) throws FlexException {
@@ -992,7 +994,7 @@ public class FullControllerDTO {
 	@RequestMapping(value="/guardarPedidoVenta", method=RequestMethod.POST)
 	public PedidoVentaDTO guardarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
-			return pedidoVentaService.guardar(dto, token);		
+			return crudService.save(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
