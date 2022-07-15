@@ -204,20 +204,16 @@ public class CallListDocumentWithFilters {
 			}
 			List<String> textoFiltroComas = organizarFiltroComas(dto);
 			dto.setSecurityToken(secToken);
-			try {
-				System.out.println (new Date().toString() + " : Query avnazado");
-				if(campoFiltro !=null ) {
-					
-					return listadoCompleto(
-							pedidoVentaMapper.listarPermitidosPorCampoFiltro(dto, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
-							, token, null);	
-				}
+			System.out.println (new Date().toString() + " : Query avnazado");
+			if(campoFiltro !=null ) {
+				
 				return listadoCompleto(
-						pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
-						, token, null); 
-			}catch (Exception e) {
-				throw new ServerException(e.getMessage());
+						pedidoVentaMapper.listarPermitidosPorCampoFiltro(dto, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
+						, token, null);	
 			}
+			return listadoCompleto(
+					pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
+					, token, null); 
 		}
 	}
 	

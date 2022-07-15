@@ -319,12 +319,13 @@
 	
 	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
 		<include refid="selectMainFragment" />
+		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
 	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
 	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
 	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
 		where aux.cpdv_estado = 'A'
 	 	<include refid="filterMainFragment" />
-	 	and cp_full.cpvc_valoropcion in (select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{usuario})
+	 	and (cp_campo.cpvc_valoropcion = cerl_documento or cp_full.cpvc_valoropcion = cerl_documento)
 	union
 		<include refid="selectMainFragment" />
 	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
@@ -333,14 +334,15 @@
 	 		where cerl_estado = 'A' and cerl_usuario = #{usuario})
 	 	<include refid="filterMainFragment" />
 	union
-		<include refid="selectMainFragment" /> 
+		<include refid="selectMainFragment" />
+		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
 	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
 	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
 	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
 	 	inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cp_full.cpvc_llave and cdex_estado = 'A')
 		where aux.cpdv_estado = 'A'
 		<include refid="filterMainFragment" />
-		and cdex_expedientedetalle in ( select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{usuario})
+		and cdex_expedientedetalle = cerl_documento
 		<include refid="orderMainFragment" />
 	</select>
 	

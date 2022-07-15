@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
 // END region interImport
 
-
 import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaCaracteristicaDTO")

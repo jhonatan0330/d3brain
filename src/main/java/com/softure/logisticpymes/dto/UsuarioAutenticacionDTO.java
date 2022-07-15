@@ -2,6 +2,8 @@ package com.softure.logisticpymes.dto;
 
 import java.util.List;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
 // END region interImport
 
@@ -25,6 +27,8 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private String mensaje;
 	private String token;
 	private List<ModuloContratadoDTO> modulos;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacion;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -109,6 +113,13 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	
 	public List<ModuloContratadoDTO> getModulos() {
 		return modulos;
+	}
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+	
+	public Date getFechaCreacion() {
+		return fechaCreacion;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

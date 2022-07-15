@@ -3,6 +3,7 @@ package com.softure.logisticpymes.controller;
 import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -42,6 +43,17 @@ public class APIControllerErrorAdvice {
 	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
 	         .withMessage("PSQLException")
 	         .withDetail(e.getMessage())
+	         .build();
+	        return new ResponseEntity<>(response, response.getStatus());
+	 }
+	
+	@ExceptionHandler(BadSqlGrammarException.class)
+	protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(BadSqlGrammarException e) {
+	   ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+	         .withMessage("BadSqlGrammarException")
+	         .withDetail(e.getCause().getMessage())
 	         .build();
 	        return new ResponseEntity<>(response, response.getStatus());
 	 }

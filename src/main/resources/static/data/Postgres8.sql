@@ -514,6 +514,7 @@ CREATE TABLE usuario_usrp(
         cusr_nombre character varying(200) NOT NULL,
         cusr_imagen character varying(2000) NOT NULL,
         cusr_correo character varying(50),
+        cusr_telefono character varying(1),
         cusr_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuario_usrp PRIMARY KEY (cusr_llave)
     );
@@ -898,6 +899,7 @@ CREATE TABLE usuarioautenticacion_uaup(
         cuau_usuario character varying(32) NOT NULL,
         cuau_sesion character varying(50) NOT NULL UNIQUE,
         cuau_clave character varying(50) NOT NULL,
+        duau_fechacreacion timestamp with time zone NOT NULL,
         cuau_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuarioautenticacion_uaup PRIMARY KEY (cuau_llave)
     );
@@ -1079,4 +1081,4 @@ ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREI
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.04.18.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.07.15.00' from pg_class where relname = 'usuariosesion_ussp';

@@ -11,6 +11,7 @@
 			,cuau_sesion as  sesion
 			,cuau_clave as  clave
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cuau_usuario) as  usuarioNombre
+			,duau_fechacreacion as  fechaCreacion
 			,cuau_estado as estado
 		from usuarioautenticacion_uaup a
 	</sql>
@@ -31,6 +32,12 @@
 			</if>
 			<if test="clave!=null">
 				and cuau_clave = #{clave}
+			</if>
+			<if test="fechaCreacionMin!=null">
+				and duau_fechacreacion >= #{fechaCreacionMin}
+			</if>
+			<if test="fechaCreacionMax!=null">
+				and duau_fechacreacion <![CDATA[ < ]]>  #{fechaCreacionMax}
 			</if>
 	</sql>
 
@@ -78,6 +85,9 @@
 		<if test="clave!=null">
 			,cuau_clave
 		</if>
+		<if test="fechaCreacion!=null">
+			,duau_fechacreacion
+		</if>
 		<if test="estado!=null">
 			,cuau_estado
 		</if>
@@ -92,6 +102,9 @@
 		<if test="clave!=null">
 			,#{clave}
 		</if>
+		<if test="fechaCreacion!=null">
+			,#{fechaCreacion}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -104,6 +117,7 @@
 				cuau_usuario = #{usuario},
 				cuau_sesion = #{sesion},
 				cuau_clave = #{clave},
+				duau_fechacreacion = #{fechaCreacion},
 				cuau_estado =#{estado}
 		<include refid="whereUsuarioAutenticacionPrimaryKeyFragment" />
 	</select>
@@ -114,6 +128,7 @@
 			,cuau_usuario as  usuario
 			,cuau_sesion as  sesion
 			,cuau_clave as  clave
+			,duau_fechacreacion as  fechaCreacion
 			,cuau_estado as estado
 		from usuarioautenticacion_uaup a
 	</sql>

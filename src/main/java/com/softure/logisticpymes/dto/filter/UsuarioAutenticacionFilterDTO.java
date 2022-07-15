@@ -1,5 +1,7 @@
 package com.softure.logisticpymes.dto.filter;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 // BEGIN region interImport
 // END region interImport
 
@@ -16,6 +18,10 @@ public class UsuarioAutenticacionFilterDTO extends BasicFilterDTO
 	private Integer tableroControl;
 	private String mensaje;
 	private String token;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacionMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacionMax;
 
 	
 	public void setUsuario(String usuario) {
@@ -93,5 +99,22 @@ public class UsuarioAutenticacionFilterDTO extends BasicFilterDTO
 	}
 	
 					
+	
+	public void setFechaCreacionMin(Date fechaCreacionMin) {
+		this.fechaCreacionMin = fechaCreacionMin;
+	}
+	
+	public Date getFechaCreacionMin() {
+		return fechaCreacionMin;
+	}
+	
+	public void setFechaCreacionMax(Date fechaCreacionMax) {
+		this.fechaCreacionMax = fechaCreacionMax;
+	}
+	
+	public Date getFechaCreacionMax() {
+		return fechaCreacionMax;
+	}
+	
 
 }

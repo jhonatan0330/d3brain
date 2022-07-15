@@ -15,6 +15,7 @@ public class UsuarioFilterDTO extends BasicFilterDTO
 	private String documento;
 	private String usuarioFiltroDependiente;
 	private String usuarioRol;
+	private String telefono;
 
 	
 	public void setIdentificacion(String identificacion) {
@@ -78,6 +79,15 @@ public class UsuarioFilterDTO extends BasicFilterDTO
 	
 	public String getUsuarioRol() {
 		return usuarioRol;
+	}
+	
+	
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	
+	public String getTelefono() {
+		return telefono;
 	}
 	
 

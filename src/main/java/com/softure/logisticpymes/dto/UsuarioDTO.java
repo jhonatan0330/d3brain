@@ -22,6 +22,7 @@ public class UsuarioDTO extends BasicDTO
 	private String usuarioFiltroDependiente;
 	private String correo;
 	private String usuarioRol;
+	private String telefono;
 
 	public void setIdentificacion(String identificacion) {
 		this.identificacion = identificacion;
@@ -85,6 +86,13 @@ public class UsuarioDTO extends BasicDTO
 	
 	public String getUsuarioRol() {
 		return usuarioRol;
+	}
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	
+	public String getTelefono() {
+		return telefono;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
