@@ -681,6 +681,7 @@ public class TipoProceso {
 						DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
 						relacionExpedienteFilter.setCampoMaestro(campo.getLlaveTabla());
 						relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						relacionExpedienteFilter.setPaginacionRegistroFinal(5000);//Esto es para poder listar todos los relacionados
 						expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
 					}
 				}else{
@@ -1027,6 +1028,7 @@ public class TipoProceso {
 						campoDestinoFilter.setDocumento(dependiente.getValorOpcion());
 						campoDestinoFilter.setCampo(iRelacion.getCampo());
 						PedidoVentaCaracteristicaDTO campoDestino = campoService.consultaUnica(campoDestinoFilter);
+						// Aqui sucedio en colegios, la plantilla curso se creo sin campo estudiantes y se creo un curso, este no se asociaba porque no existia el campo destino. toca dejarlo asi porque hay casos donde se salta esta validacion.
 						if(campoDestino!=null) {
 							campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 							for (PedidoVentaDTO iDocumentoRelacionar : pCampo.getExpedientes()) {
