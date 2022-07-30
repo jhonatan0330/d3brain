@@ -14,6 +14,8 @@ import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
 import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.dto.ProcesoDTO;
+import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
 import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.dto.ProductoCaracteristicaDTO;
 import com.softure.logisticpymes.dto.ProductoDTO;
@@ -29,6 +31,7 @@ import com.softure.logisticpymes.dto.filter.CategoriaProductoFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.MensajePlantillaCorreoFilterDTO;
+import com.softure.logisticpymes.dto.filter.ProcesoEstadoFilterDTO;
 import com.softure.logisticpymes.dto.filter.ReporteBaseFilterDTO;
 import com.softure.logisticpymes.dto.filter.ProductoCaracteristicaFilterDTO;
 import com.softure.logisticpymes.dto.filter.PropiedadValorDefinidoFilterDTO;
@@ -64,6 +67,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
 	@Autowired private DocumentoPlantillaSvc plantillaService;
 	@Autowired private MensajePlantillaCorreoSvc mensajeService;
+	@Autowired private ProcesoSvc procesoService;
+	@Autowired private ProcesoEstadoSvc estadoService;
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private ProcesoTransicionAutomaticaSvc automatizadorService;
 	@Autowired private ProductoSvc productoService;
@@ -595,6 +600,27 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(reporte.getNombre() );
 	}
 	
+	private void identificadorEstadoReporte(PropiedadDTO dto) throws ServerException {
+		ProcesoEstadoDTO estado = estadoService.consultaXId(dto.getValor());
+		if(estado ==null) {
+			ReporteBaseDTO reporte = reporteService.consultaXId(dto.getCampo());
+			if(reporte==null) throw new ServerException("Revisa porque esta propiedad no pertenece a un reporte");
+			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(reporte.getPlantilla());
+			if(plantilla==null) throw new ServerException("Revisa porque el reporte " +reporte.getNombre()+" no esta asociado a una plantilla");
+			ProcesoEstadoFilterDTO estadoFiltro = new ProcesoEstadoFilterDTO();
+			estadoFiltro.setProceso(plantilla.getProceso());
+			estadoFiltro.setNombre(dto.getValor().toUpperCase());
+			estadoFiltro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			estado = estadoService.consultaUnica(estadoFiltro);
+			if(estado==null) {
+				ProcesoDTO proceso = procesoService.consultaXId(plantilla.getProceso());
+				throw new ServerException("No se encontro estado con el nombre " + dto.getValor() + " en el proceso "+ proceso.getNombre());
+			}
+		}
+		dto.setValor(estado.getLlaveTabla() );
+		dto.setTexto(estado.getNombre() );
+	}
+	
 	private boolean identificadorPlantillasGestion(PropiedadDTO dto) throws ServerException{
 		if(dto.getValor().compareTo("TODOS")==0)dto.setValor("*");//Esto es para evitar error al copiar
 		if(dto.getValor().compareTo("*")==0) {
@@ -673,6 +699,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.P_SUBREPORT_ : 
 			case Propiedades.MENSAJE_REPORTE :
 			case Propiedades.REPORTE_ENCABEZADO_EXCEL : {identificadorReporte(dto);break;}
+			case Propiedades.REP_VISIBLE_STATE : {identificadorEstadoReporte(dto);break;}
 			
 			case Propiedades.REPORTE_JRXML : {identificadorJRXML(dto);break;}
 			

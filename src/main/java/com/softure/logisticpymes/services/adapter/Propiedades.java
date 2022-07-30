@@ -189,6 +189,8 @@ public class Propiedades {
 	public static final String REPORTE_EXCEL = "REPORTE_EXCEL";
 	public static final String REPORTE_JRXML = "REPORTE_JRXML";
 	public static final String P_SUBREPORT_ = "P_SUBREPORT_";
+	public static final String REP_VISIBLE_STATE = "REP_VISIBLE_STATE";
+	public static final String REP_PRINT_ONE = "REP_PRINT_ONE";
 	
 	//ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -532,6 +534,9 @@ public class Propiedades {
 			case RESPONSABLE : {ruleProperty =  " Codigo del campo que relaciona el responsable de la actividad.\n";break;}
 			case REPORTE_ENCABEZADO : {ruleProperty =  " Toma como base este reporte para dibujar el encabezado de cada pagina.\nEl reporte debe tener la linea <parameter name=\\\"P_KEY\\\" class=\\\"java.lang.String\\\"/> para reemplazar y va a agregar otro parametro NOMBRE para que no se duplique";break;}
 			case REPORTE_EXCEL : {ruleProperty =  "Nombre del reporte que se va a ejecutar cuando sea en excel, puede estar inactivo.\n";break;}
+			case REP_VISIBLE_STATE : {ruleProperty =  "El reporte solo se visualiza si el documento se encuentra en un estado especifico.\n";break;}
+			case REP_PRINT_ONE : {ruleProperty =  "El reporte solo se puede imprimir una sola vez.\n";break;}
+			
 			case SOLICITAR_FECHAS : {ruleProperty =  " Obliga al usuario colocar fechas al momento de realizar la consulta.\n";break;}
 			case TABLERO_CONTROL_SQL : {ruleProperty =  "Muestra un item en el menu que traera una serie de objetos que se definen en un query.\n"
 				+ "En el campo TEXTO va el nombre del tablero\n"

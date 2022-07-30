@@ -348,6 +348,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
 			}
 			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
+			List<PropiedadDTO> todasPropiedadesReportes = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
 				nuevaPlantilla = true;
 				for(DocumentoPlantillaDTO iBD : result){
@@ -387,6 +388,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						if(reportes!=null && !reportes.isEmpty()) {
 							for (ReporteBaseDTO reporteBaseDTO : reportes) {
 								if(reporteBaseDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
+									reporteBaseDTO.setPropiedades(new ArrayList<>());
+									for (PropiedadDTO propiedadDTO : todasPropiedadesReportes) {
+										if(propiedadDTO.getCampo().compareTo(reporteBaseDTO.getLlaveTabla())==0) 
+											reporteBaseDTO.getPropiedades().add(propiedadDTO);
+									}
 									if(iplantillaPermitida.getReportes()==null) iplantillaPermitida.setReportes(new ArrayList<ReporteBaseDTO>());
 									iplantillaPermitida.getReportes().add(reporteBaseDTO);
 								}

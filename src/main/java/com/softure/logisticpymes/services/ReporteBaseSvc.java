@@ -19,6 +19,7 @@ import javax.sql.DataSource;
 import com.softure.java.services.GeneradorReportes;
 import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
 // END region interImport
+import com.softure.logisticpymes.dto.UsuarioDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.ReporteBaseDTO;
 import com.softure.logisticpymes.dto.filter.ReporteBaseFilterDTO;
+import com.softure.logisticpymes.dto.filter.ReporteEjecucionFilterDTO;
 import com.softure.logisticpymes.persistence.ReporteBaseMapper;
 
 @Service("reporteBaseService")
@@ -43,6 +45,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired private UsuarioSvc usuarioService;
 	public static final String P_KEY = "P_KEY";
 	@Autowired private ReporteEjecucionSvc ejecucionService;
 	// END region servicesReporteBase
@@ -194,6 +197,17 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		ReporteEjecucionDTO ejecucion = new ReporteEjecucionDTO();
 		ejecucion.setFechaInicio(new Date());
 		ejecucion.setReporte(reporte.getLlaveTabla());
+		if(Propiedades.obtenerParametro(reporte, Propiedades.REP_PRINT_ONE)!=null) {
+			//Valido que solo tenga una ejecucion
+			ReporteEjecucionFilterDTO uniqueFilter = new ReporteEjecucionFilterDTO();
+			uniqueFilter.setDocumento(key);
+			uniqueFilter.setReporte(reporte.getLlaveTabla());
+			List<ReporteEjecucionDTO> ejecuciones = ejecucionService.listarConsulta(uniqueFilter);
+			if(ejecuciones!=null & ejecuciones.size()!=0) {
+				UsuarioDTO usuarioImpresion = usuarioService.consultaXId(ejecuciones.get(0).getUsuario());
+				throw new ServerException("Este reportes esta configurado para ejecutarse una unica vez, fue impreso el " + ejecuciones.get(0).getFechaInicio().toString() + "por el usuario "+ usuarioImpresion.getNombre() );
+			}
+		}
 		String usuario = getUserFromParameters(token);
 		ejecucion.setDocumento(key);
 		ejecucion.setUsuario(usuario);
