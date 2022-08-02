@@ -307,7 +307,8 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 			MensajeDTO mensaje = new MensajeDTO();
 			mensaje.setFecha(new Date());
 			mensaje.setTemplate(plantillaCorreo.getValor());
-			if(modificador==null) {
+			// Sucedio que al asignar sin transaccion salia un error porque no hay modificador
+			if(modificador==null || modificador.getLlaveTabla()==null) {
 				mensaje.setDocumento(documento.getLlaveTabla());				
 			}else {
 				mensaje.setDocumento(modificador.getLlaveTabla());
