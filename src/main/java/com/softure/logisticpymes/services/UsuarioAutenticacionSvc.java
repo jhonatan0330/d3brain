@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
+import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
 import com.softure.logisticpymes.persistence.UsuarioAutenticacionMapper;
 
 @Service("usuarioAutenticacionService")
@@ -199,6 +200,16 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			if(dto.getSesion()!=null) user.setSesion(dto.getSesion());
 			user.setClave(dto.getClave());
 			user = actualizar(user, token);
+		}
+		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
+		filterSesion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filterSesion.setUsuario(dto.getUsuario());
+		List<UsuarioSesionDTO> sesiones = usuarioSesionService.listarConsulta(filterSesion);
+		if(sesiones!=null && !sesiones.isEmpty()) {
+			for (UsuarioSesionDTO usuarioSesionDTO : sesiones) {
+				if(usuarioSesionDTO.getLlaveTabla().compareTo(token)!=0)
+					usuarioSesionService.inactivar(usuarioSesionDTO, token);
+			}
 		}
 		return user;
 		// END region cambiarClave

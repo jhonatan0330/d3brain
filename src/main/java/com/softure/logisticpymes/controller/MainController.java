@@ -15,6 +15,7 @@ import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
+import com.softure.logisticpymes.dto.UsuarioOrganizacionDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
 import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
@@ -22,6 +23,7 @@ import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.OrganizacionSvc;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
+import com.softure.logisticpymes.services.UsuarioOrganizacionSvc;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
 import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 
@@ -35,6 +37,7 @@ public class MainController {
 	@Autowired private UsuarioSesionSvc usuarioSessionService;
 	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
 	@Autowired private OrganizacionSvc organizacionService;
+	@Autowired private UsuarioOrganizacionSvc organizacionUsuarioService;
 	
 	@RequestMapping(value="/test", method=RequestMethod.GET)
 	public String test() {
@@ -55,6 +58,11 @@ public class MainController {
 	@RequestMapping(value="/cambiarClave", method=RequestMethod.POST)
 	public UsuarioAutenticacionDTO cambiarClave(@RequestHeader("Authorization") String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		return usuarioAutenticacionService.cambiarClave(filter, token);
+	}
+	
+	@RequestMapping(value="/cambiarClaveOtherSystem", method=RequestMethod.POST)
+	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestHeader("Authorization") String token, @RequestBody UsuarioOrganizacionDTO dto) throws ServerException {
+		return organizacionUsuarioService.reloadPassword(dto, token);
 	}
 	
 	@RequestMapping(value="/checkToken", method=RequestMethod.GET)
