@@ -2,6 +2,8 @@ package com.softure.logisticpymes.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
 import com.softure.logisticpymes.dto.PedidoVentaDTO;
@@ -51,13 +54,21 @@ public class MainController {
 	}
 	
 	@RequestMapping(value="/autenticarUsuarioAutenticacion", method=RequestMethod.POST)
-	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
+	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request, @RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
+		filter.setIp(HttpUtils.getRequestIP(request));
 		return usuarioAutenticacionService.autenticar(filter);
 	}
 	
 	@RequestMapping(value="/cambiarClave", method=RequestMethod.POST)
-	public UsuarioAutenticacionDTO cambiarClave(@RequestHeader("Authorization") String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+	public UsuarioAutenticacionDTO cambiarClave(HttpServletRequest request, @RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+		filter.setIp(HttpUtils.getRequestIP(request));
 		return usuarioAutenticacionService.cambiarClave(filter, token);
+	}
+	
+	@RequestMapping(value="/solicitarNuevaClave", method=RequestMethod.POST)
+	public void solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+		filter.setIp(HttpUtils.getRequestIP(request));
+		usuarioAutenticacionService.solicitarNuevaClave(filter);
 	}
 	
 	@RequestMapping(value="/cambiarClaveOtherSystem", method=RequestMethod.POST)

@@ -220,6 +220,9 @@ import com.softure.logisticpymes.services.UsuarioOrganizacionSvc;
 import com.softure.logisticpymes.dto.PermisoDTO;
 import com.softure.logisticpymes.dto.filter.PermisoFilterDTO;
 import com.softure.logisticpymes.services.PermisoSvc;
+import com.softure.logisticpymes.dto.UsuarioAutenticacionAutorizacionDTO;
+import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionAutorizacionFilterDTO;
+import com.softure.logisticpymes.services.UsuarioAutenticacionAutorizacionSvc;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
 import com.softure.logisticpymes.services.UsuarioSesionSvc;
@@ -235,6 +238,9 @@ import com.softure.logisticpymes.services.ConsecutivoSvc;
 import com.softure.logisticpymes.dto.TransaccionLogDTO;
 import com.softure.logisticpymes.dto.filter.TransaccionLogFilterDTO;
 import com.softure.logisticpymes.services.TransaccionLogSvc;
+import com.softure.logisticpymes.dto.UsuarioSesionErrorDTO;
+import com.softure.logisticpymes.dto.filter.UsuarioSesionErrorFilterDTO;
+import com.softure.logisticpymes.services.UsuarioSesionErrorSvc;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
 import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
@@ -1009,19 +1015,6 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@Autowired private CallListDocumentWithFilters documentListWithFiltersFunction;
-	
-	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
-		try {
-			return documentListWithFiltersFunction.listarAvanzado(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
 	
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
@@ -5739,6 +5732,81 @@ public class FullControllerDTO {
 	}
 	
 	
+	@Autowired private UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService;
+	
+	@RequestMapping(value="/consultaXIdUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO consultaXIdUsuarioAutenticacionAutorizacion(@RequestBody String llave) throws FlexException {
+		try {
+			return usuarioAutenticacionAutorizacionService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public int contarResultadosUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO consultaUnicaUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public List<UsuarioAutenticacionAutorizacionDTO> listarConsultaUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO activarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO inactivarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO actualizarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	public UsuarioAutenticacionAutorizacionDTO guardarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioAutenticacionAutorizacionService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
 	@Autowired private UsuarioSesionSvc usuarioSesionService;
 	
 	@RequestMapping(value="/consultaXIdUsuarioSesion", method=RequestMethod.POST)
@@ -6117,6 +6185,81 @@ public class FullControllerDTO {
 	public TransaccionLogDTO guardarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionLogService.guardar(dto, token);		
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	@Autowired private UsuarioSesionErrorSvc usuarioSesionErrorService;
+	
+	@RequestMapping(value="/consultaXIdUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO consultaXIdUsuarioSesionError(@RequestBody String llave) throws FlexException {
+		try {
+			return usuarioSesionErrorService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/contarResultadosUsuarioSesionError", method=RequestMethod.POST)
+	public int contarResultadosUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.contarResultados(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/consultaUnicaUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO consultaUnicaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.consultaUnica(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/listarConsultaUsuarioSesionError", method=RequestMethod.POST)
+	public List<UsuarioSesionErrorDTO> listarConsultaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.listarConsulta(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/activarUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO activarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.activar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/inactivarUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO inactivarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.inactivar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/actualizarUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO actualizarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.actualizar(dto, token);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	@RequestMapping(value="/guardarUsuarioSesionError", method=RequestMethod.POST)
+	public UsuarioSesionErrorDTO guardarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
+		try {
+			return usuarioSesionErrorService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

@@ -837,11 +837,27 @@ CREATE TABLE permiso_perp(
         CONSTRAINT PK_permiso_perp PRIMARY KEY (cper_llave)
     );
  
+CREATE TABLE usuarioautenticacionautorizacion_uaap(
+        cuaa_llave character varying(32) NOT NULL,
+        cuaa_usuario character varying(32) NOT NULL,
+        duaa_fechamaxima timestamp with time zone NOT NULL,
+        duaa_fechasolicitud timestamp with time zone NOT NULL,
+        cuaa_correo character varying(100),
+        cuaa_ipsolicitud character varying(100) NOT NULL,
+        cuaa_codigo character varying(100),
+        duaa_fecharedencion timestamp with time zone,
+        cuaa_key character varying(100),
+        cuaa_ipredencion character varying(100) NOT NULL,
+        cuaa_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_usuarioautenticacionautorizacion_uaap PRIMARY KEY (cuaa_llave)
+    );
+ 
 CREATE TABLE usuariosesion_ussp(
         cuss_llave character varying(32) NOT NULL,
         cuss_usuario character varying(32) NOT NULL,
         duss_fecha timestamp with time zone NOT NULL,
         duss_fechacierre timestamp with time zone,
+        cuss_ip character varying(100),
         cuss_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuariosesion_ussp PRIMARY KEY (cuss_llave)
     );
@@ -894,12 +910,25 @@ CREATE TABLE transaccionlog_tlgp(
         CONSTRAINT PK_transaccionlog_tlgp PRIMARY KEY (ctlg_llave)
     );
  
+CREATE TABLE usuariosesionerror_usep(
+        cuse_llave character varying(32) NOT NULL,
+        cuse_sesion character varying(100),
+        cuse_clave character varying(100),
+        cuse_ip character varying(100),
+        duse_fecha timestamp with time zone NOT NULL,
+        cuse_error character varying(4000) NOT NULL,
+        cuse_estado character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_usuariosesionerror_usep PRIMARY KEY (cuse_llave)
+    );
+ 
 CREATE TABLE usuarioautenticacion_uaup(
         cuau_llave character varying(32) NOT NULL,
         cuau_usuario character varying(32) NOT NULL,
-        cuau_sesion character varying(50) NOT NULL UNIQUE,
+        cuau_sesion character varying(50) NOT NULL,
         cuau_clave character varying(50) NOT NULL,
-        duau_fechacreacion timestamp with time zone NOT NULL,
+        duau_fechamaxima timestamp with time zone,
+        cuau_autorizacioncrea character varying(32),
+        cuau_autorizacionelimina character varying(32),
         cuau_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuarioautenticacion_uaup PRIMARY KEY (cuau_llave)
     );
@@ -1041,6 +1070,7 @@ ALTER TABLE Permiso_perp ADD CONSTRAINT FK_PermisorolAcceso FOREIGN KEY (cper_ro
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionusuario FOREIGN KEY (cuor_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE CargaArchivo_carp ADD CONSTRAINT FK_CargaArchivousuario FOREIGN KEY (ccar_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionusuario FOREIGN KEY (cuau_usuario) REFERENCES Usuario_usrp(cusr_llave);
+ALTER TABLE UsuarioAutenticacionAutorizacion_uaap ADD CONSTRAINT FK_UsuarioAutenticacionAutorizacionusuario FOREIGN KEY (cuaa_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE PostPregunta_pprp ADD CONSTRAINT FK_PostPreguntaautor FOREIGN KEY (cppr_autor) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE Auditoria_audp ADD CONSTRAINT FK_Auditoriausuario FOREIGN KEY (caud_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE PostCalificacion_pclp ADD CONSTRAINT FK_PostCalificacionusuario FOREIGN KEY (cpcl_usuario) REFERENCES Usuario_usrp(cusr_llave);
@@ -1080,5 +1110,6 @@ ALTER TABLE Permiso_perp ADD CONSTRAINT FK_Permisomodulo FOREIGN KEY (cper_modul
 ALTER TABLE ModuloContratado_mdcp ADD CONSTRAINT FK_ModuloContratadomodulo FOREIGN KEY (cmdc_modulo) REFERENCES Modulo_modp(cmod_llave);
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FOREIGN KEY (crej_reporte) REFERENCES ReporteBase_rpbp(crpb_llave);
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
+ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionautorizacionCrea FOREIGN KEY (cuau_autorizacionCrea) REFERENCES UsuarioAutenticacionAutorizacion_uaap(cuaa_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.07.15.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.08.08.00' from pg_class where relname = 'usuariosesion_ussp';

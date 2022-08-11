@@ -9,9 +9,13 @@ import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.dto.OrganizacionDTO;
+import com.softure.logisticpymes.dto.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.logisticpymes.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.dto.UsuarioSesionErrorDTO;
 import com.softure.logisticpymes.dto.filter.ModuloContratadoFilterDTO;
+import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
+import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -24,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
 import com.softure.logisticpymes.persistence.UsuarioAutenticacionMapper;
 
 @Service("usuarioAutenticacionService")
@@ -34,10 +37,14 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 	
 	// BEGIN region servicesUsuarioAutenticacion
+	private static final int TIME_VIGENCIA_ESTANDAR = 60*24*60*60*1000;
+	
+	@Autowired private UsuarioAutenticacionAutorizacionSvc authService;
 	@Autowired private ModuloContratadoSvc modulosService;
 	@Autowired private OrganizacionSvc organizacionService;
 	@Autowired private UsuarioSesionSvc usuarioSesionService;
 	@Autowired private UsuarioSvc usuarioService;
+	@Autowired private UsuarioSesionErrorSvc errorService;
 	// END region servicesUsuarioAutenticacion
 
 	@Override
@@ -94,20 +101,20 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	
 	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
 		// BEGIN region autenticar
-		if(dto.getClaveAnterior()==null) throw new ServerException("Por favor actualice su version de software");
+		if(dto.getClaveAnterior()==null) reportarError(dto, "Por favor actualice su version de software");
 		String fechaMinima = null;
 		try {
 			fechaMinima = usuarioAutenticacionMapper.fechaMinima();
 		}catch (Exception e) {
-			throw new ServerException(e.getMessage());
+			reportarError(dto, e.getMessage());
 		}
 		if(fechaMinima!=null){
 			int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
 			int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
-			if(cliente < servidor) throw new ServerException("Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
+			if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
 		}
 		String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
-		if(fechaTrial==null) throw new ServerException("El sistema no tiene configurada la fecha de la licencia");
+		if(fechaTrial==null) reportarError(dto,  "El sistema no tiene configurada la fecha de la licencia");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
 		long diasVigencia = 0;
@@ -115,17 +122,17 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			Date date = formatter.parse(fechaTrial);
 			diasVigencia =(date.getTime() - new Date().getTime())/ (24 * 3600000);
 			if(diasVigencia < 0)
-				throw new ServerException("Se ha vencido la licencia del sistema. " + fechaTrial);
+				reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 		} catch (ParseException e) {
-			throw new  ServerException("El formato de la fecha de licencia esta incorrecto");
+			reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
 		}
 		UsuarioAutenticacionDTO autenticacion =null;
 		UsuarioSesionDTO sesion  = null;
 		if(dto.getSecurityToken()!=null && dto.getClave()==null){
 			sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
-			if(sesion == null) throw new ServerException("Autenticacion incorrecta");
+			if(sesion == null) reportarError(dto, "Autenticacion incorrecta");
 			if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)
-				throw new ServerException("Se encuentra inactiva la sesion");
+				reportarError(dto, "Se encuentra inactiva la sesion");
 			autenticacion = new UsuarioAutenticacionDTO();
 			autenticacion.setUsuario(sesion.getUsuario());
 		}else{
@@ -134,18 +141,21 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			}
 			if(autenticacion== null) {
 				UsuarioAutenticacionFilterDTO autenticacionF = new UsuarioAutenticacionFilterDTO();
-				if(dto.getSesion()==null) throw new ServerException("La sesion no puede estar vacia");
+				if(dto.getSesion()==null) reportarError(dto, "La sesion no puede estar vacia");
 				autenticacionF.setSesion(dto.getSesion());
-				if(dto.getClave()==null) throw new ServerException("La clave no puede estar vacia");
+				if(dto.getClave()==null) reportarError(dto, "La clave no puede estar vacia");
 				autenticacionF.setClave(dto.getClave());
+				autenticacionF.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				autenticacion = consultaUnica(autenticacionF);
 			}
-			if(autenticacion == null) throw new ServerException("Autenticacion incorrecta");
-			if(autenticacion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("Autenticacion no se enecuentra activa");			
+			if(autenticacion == null) reportarError(dto, "Autenticacion incorrecta");
+			if(autenticacion.getFechaMaxima()!=null && autenticacion.getFechaMaxima().compareTo(new Date())<0)
+				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");
+			//if(autenticacion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) reportarError(dto, "Autenticacion no se enecuentra activa");			
 		}
 		
 		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
-		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)throw new ServerException("El usuario no se encuentra activo");
+		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)reportarError(dto, "El usuario no se encuentra activo");
 		autenticacion.setUsuarioDTO(usuario);
 		
 		autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
@@ -156,6 +166,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion.setFecha(new Date());
 			sesion.setFechaCierre(usuarioSesionService.getFechaCierre(autenticacion.getUsuario()));
 			sesion.setUsuario(autenticacion.getUsuario());
+			sesion.setIp(dto.getIp());
 			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());
@@ -172,6 +183,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO cambiarClave(UsuarioAutenticacionDTO dto, String token)throws ServerException{
 		// BEGIN region cambiarClave
+		UsuarioAutenticacionAutorizacionDTO autho = null;
+		if(dto.getLlaveTabla()!=null)
+			autho = authService.validar(dto.getLlaveTabla(), dto.getClaveAnterior(), dto.getClave(),dto.getIp());
 		
 		UsuarioAutenticacionDTO user = null;
 		// Se envia por el administrador
@@ -184,31 +198,46 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			}
 		} else {
 			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
-			filtro.setUsuario(getUserFlex(token));
+			if(autho!=null) {
+				filtro.setUsuario(autho.getUsuario());
+			} else {
+				filtro.setUsuario(getUserFlex(token));
+			}
 			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			user = consultaUnica(filtro);
-			if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
+			if(autho==null && user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
 		}
 		
-		if(user== null){
-			user = new UsuarioAutenticacionDTO();
-			user.setUsuario(dto.getUsuario());
-			user.setClave(dto.getClave());
-			user.setSesion(dto.getSesion());
-			user = guardar(user, token);
-		}else{
-			if(dto.getSesion()!=null) user.setSesion(dto.getSesion());
-			user.setClave(dto.getClave());
-			user = actualizar(user, token);
-		}
+		
+		
+		if(autho!=null) user.setAutorizacionElimina(autho.getLlaveTabla());
+		user.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		user = update(user);
+		
+		
+		UsuarioAutenticacionDTO newAuth = new UsuarioAutenticacionDTO();
+		newAuth.setUsuario(user.getUsuario());
+		newAuth.setClave(dto.getClave());
+		newAuth.setSesion(user.getSesion());
+		if(autho!=null) newAuth.setAutorizacionCrea(autho.getLlaveTabla());
+		newAuth.setIp(dto.getIp());
+		newAuth.setFechaMaxima(new Date(new Date().getTime() + TIME_VIGENCIA_ESTANDAR));
+		newAuth = save(newAuth);
+		
 		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
 		filterSesion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filterSesion.setUsuario(dto.getUsuario());
 		List<UsuarioSesionDTO> sesiones = usuarioSesionService.listarConsulta(filterSesion);
 		if(sesiones!=null && !sesiones.isEmpty()) {
 			for (UsuarioSesionDTO usuarioSesionDTO : sesiones) {
-				if(usuarioSesionDTO.getLlaveTabla().compareTo(token)!=0)
-					usuarioSesionService.inactivar(usuarioSesionDTO, token);
+				if(token == null) {
+					usuarioSesionDTO.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+					usuarioSesionDTO.setFechaCierre(new Date());
+					usuarioSesionService.update(usuarioSesionDTO);
+				}else {
+					if(usuarioSesionDTO.getLlaveTabla().compareTo(token)!=0)
+						usuarioSesionService.inactivar(usuarioSesionDTO, token);					
+				}
 			}
 		}
 		return user;
@@ -219,6 +248,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_guardar
+		dto.setFechaMaxima(new Date(new Date().getTime() + TIME_VIGENCIA_ESTANDAR));
 		return super.guardar(dto, token);
 		// END UsuarioAutenticacion_guardar
 	}
@@ -267,6 +297,43 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return usuarioAutenticacionMapper.versionActual();
 	}
 	
+	private void reportarError(UsuarioAutenticacionFilterDTO dto, String error) throws ServerException {
+		UsuarioSesionErrorDTO use = new UsuarioSesionErrorDTO();
+		use.setClave(dto.getClave());
+		use.setIp(dto.getIp());
+		use.setFecha(new Date());
+		use.setSesion(dto.getSesion());
+		use.setError(error);
+		errorService.save(use);
+		throw new ServerException(error);
+	}
+	
+	private void errorDesdeNuevaClave(UsuarioDTO dto, String ip,  String error) throws ServerException {
+		UsuarioAutenticacionFilterDTO uaf = new UsuarioAutenticacionFilterDTO();
+		uaf.setClave(dto.getCorreo());
+		uaf.setIp(ip);
+		uaf.setSesion(dto.getIdentificacion());
+		reportarError(uaf, error);
+	}
+	
+	public void solicitarNuevaClave(UsuarioAutenticacionDTO dto) throws ServerException {
+		if(dto == null || dto.getUsuarioDTO()==null ) throw new ServerException("Faltan los datos de recuperacion");
+		if(dto.getUsuarioDTO().getCorreo() == null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No se envio el correo de recuperacion");
+		if(dto.getUsuarioDTO().getIdentificacion() == null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No se envio la identificacion del usuario");
+		UsuarioFilterDTO filter = new UsuarioFilterDTO();
+		filter.setIdentificacion(dto.getUsuarioDTO().getIdentificacion());
+		UsuarioDTO usuario = usuarioService.consultaUnica(filter) ;
+		if(usuario==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 001");
+		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 002");
+		if(usuario.getCorreo()==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No tienes correo registrado para enviarte la nueva clave");
+		if(usuario.getCorreo().compareTo(dto.getUsuarioDTO().getCorreo())!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 003");
+		try {
+			authService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp());	
+		} catch (Exception e) {
+			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
+		}
+		
+	}
 // END region aditionalMethods
 
 }

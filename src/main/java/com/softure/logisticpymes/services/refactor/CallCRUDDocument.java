@@ -718,6 +718,14 @@ public class CallCRUDDocument {
 			if (usrNombre == null)
 				throw new ServerException("revise la configuracion del nombre del recurso");
 			String usrId = null;
+			String usrMail = null;
+			String usrPhone = null;
+			
+			String campoCorreo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
+					dto.getPlantilla(), Propiedades.CORREO_ROL, getUserID(token));
+			String campoCelular = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
+					dto.getPlantilla(), Propiedades.CELULAR_ROL, getUserID(token));
+			
 			// En casos que el mismo usuario se coloque varias veces en un mismo formulario
 			// x ejemplo contactos de varios proyectos
 			String campoConsecutivo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
@@ -732,7 +740,7 @@ public class CallCRUDDocument {
 			if (dto.getCaracteristicas().size() == 0)
 				throw new ServerException("Se debe colocar la caracteristica nombre del documento");
 			for (PedidoVentaCaracteristicaDTO pvc : dto.getCaracteristicas()) {
-				if (pvc.getCampo().compareTo(campoConsecutivo) == 0) {
+				if (usrId ==null && pvc.getCampo().compareTo(campoConsecutivo) == 0) {
 					if (pvc.getCampoDTO() == null)
 						pvc.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(pvc.getCampo()));
 					switch (pvc.getCampoDTO().getFormato()) {
@@ -745,7 +753,12 @@ public class CallCRUDDocument {
 					default:
 						throw new ServerException("El componente no es tipo texto o numero");
 					}
-					break;
+				}
+				if (usrMail ==null && campoCorreo != null && pvc.getCampo().compareTo(campoCorreo) == 0) {
+					usrMail = pvc.getValorText();
+				}
+				if (usrPhone ==null && campoCelular != null && pvc.getCampo().compareTo(campoCelular) == 0) {
+					usrPhone = pvc.getValorText();
 				}
 			}
 			if (usrId == null)
@@ -765,10 +778,14 @@ public class CallCRUDDocument {
 					usr = new UsuarioDTO();
 					usr.setIdentificacion(usrId);
 					usr.setNombre(usrNombre);
+					usr.setCorreo(usrMail);
+					usr.setTelefono(usrPhone);
 					usr.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 					usr = usuarioService.guardar(usr, token);
 				} else {
 					if (usr.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0) {
+						usr.setCorreo(usrMail);
+						usr.setTelefono(usrPhone);
 						usr.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 						usr = usuarioService.actualizar(usr, token);
 					}
@@ -784,11 +801,15 @@ public class CallCRUDDocument {
 			}
 
 			// 3. actualizo nombre y el id
-			if (usr.getNombre().compareTo(usrNombre) != 0 || usr.getIdentificacion().compareTo(usrId) != 0) {
+			if (usr.getNombre().compareTo(usrNombre) != 0 || usr.getIdentificacion().compareTo(usrId) != 0 
+					|| (usrMail!=null && (usr.getCorreo()==null || usr.getCorreo().compareTo(usrMail) != 0))
+					|| (usrPhone!=null && (usr.getTelefono()==null || usr.getTelefono().compareTo(usrPhone) != 0))) {
 				UsuarioDTO usrActualizar = new UsuarioDTO();
 				usrActualizar.setEstado(usr.getEstado());
 				usrActualizar.setIdentificacion(usrId);
 				usrActualizar.setNombre(usrNombre);
+				usrActualizar.setCorreo(usrMail);
+				usrActualizar.setTelefono(usrPhone);
 				usrActualizar.setLlaveTabla(usr.getLlaveTabla());
 				usrActualizar.setImagen(usr.getImagen());
 				usuarioService.actualizar(usrActualizar, token);

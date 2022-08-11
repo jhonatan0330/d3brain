@@ -135,6 +135,10 @@ public class Propiedades {
 	public static final String DESCRIPCION_NIVEL2 = "DESCRIPCION_NIVEL2";
 	public static final String TOTAL = "TOTAL";
 	public static final String CONSECUTIVO = "CONSECUTIVO";
+	
+	public static final String CORREO_ROL = "CORREO_ROL";
+	public static final String CELULAR_ROL = "CELULAR_ROL";
+	
 	public static final String FECHA = "FECHA";
 	public static final String RESPONSABLE = "RESPONSABLE";
 	public static final String ORDEN = "ORDEN";
@@ -414,6 +418,7 @@ public class Propiedades {
 			case CAMPO_HEREDADO_1 : {ruleProperty =  "Esta propiedad indica que los(el) documentos(s) que se visualizan o crean tienen un campo que referencian el documento actual.\n\n"
 					+ "En los links de la propiedad se debe referenciar el campo de la plantilla que contiene la referencia al documento actual\n\n"
 					+ "Ejemplo un documento CLIENTE con un campo CONTACTOS, este campo se le coloca la propiedad HEREDADO, para que puedas crear los contactos de ese cliente. El contacto debe tener un campo proceso que va a guardar el dato del cliente";break;}
+			case CELULAR_ROL : {ruleProperty =  " Codigo del campo que va a colocar almacenar el telefono del usuario.\n";break;}
 			case CONFIGURACION_PLANTILLA_TIPO : {ruleProperty =  " (Comunicale al desarrollador que esta función se necesita) Si es tipo plantilla sirve para filtrar los tipo.\n";break;}
 			case CONFIGURACION_ENTIDAD : {ruleProperty =  " Carga diferentes parametros de configuracion.\n" 
 						+ "CATEGORIA_PRODUCTOS\n" 
@@ -427,6 +432,7 @@ public class Propiedades {
 						+ "FORMATO_EXPORTAR\n";break;}
 			case CONSECUTIVO : {ruleProperty =  " Codigo del campo que va a colocar consecutivo del documento, se usa con un consecutivo manual.\n";break;}
 			case COPY_TEXT : {ruleProperty =  " Al momento de guardar el documento se va a copiar este texto en el portapapeles, [CODE]=(codigo del documento).\n";break;}
+			case CORREO_ROL : {ruleProperty =  " Codigo del campo que va a colocar almacenar el correo del usuario.\n";break;}
 			case CUENTA_MOVIMIENTO : {ruleProperty =  " Si desea generar un movimiento de caja coloca I (Ingresos) G (Gastos).\n";break;}
 			case CUENTA_ANULAR_MOVIMIENTO : {ruleProperty =  " Este campo anula un movimiento que este vinculado con el proceso seleccionado, lo elimina del movimiento de cuentas\n";break;}
 			case CUENTA_ABRIR_CAJA : {ruleProperty =  " Si desea iniciar turn en una caja.\n";break;}

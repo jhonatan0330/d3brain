@@ -28,7 +28,10 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private String token;
 	private List<ModuloContratadoDTO> modulos;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaCreacion;
+	private Date fechaMaxima;
+	private String ip;
+	private String autorizacionCrea;
+	private String autorizacionElimina;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -114,12 +117,33 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	public List<ModuloContratadoDTO> getModulos() {
 		return modulos;
 	}
-	public void setFechaCreacion(Date fechaCreacion) {
-		this.fechaCreacion = fechaCreacion;
+	public void setFechaMaxima(Date fechaMaxima) {
+		this.fechaMaxima = fechaMaxima;
 	}
 	
-	public Date getFechaCreacion() {
-		return fechaCreacion;
+	public Date getFechaMaxima() {
+		return fechaMaxima;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	
+	public String getIp() {
+		return ip;
+	}
+	public void setAutorizacionCrea(String autorizacionCrea) {
+		this.autorizacionCrea = autorizacionCrea;
+	}
+	
+	public String getAutorizacionCrea() {
+		return autorizacionCrea;
+	}
+	public void setAutorizacionElimina(String autorizacionElimina) {
+		this.autorizacionElimina = autorizacionElimina;
+	}
+	
+	public String getAutorizacionElimina() {
+		return autorizacionElimina;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

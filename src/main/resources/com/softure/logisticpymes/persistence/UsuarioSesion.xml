@@ -10,6 +10,7 @@
 			,cuss_usuario as  usuario
 			,duss_fecha as  fecha
 			,duss_fechacierre as  fechaCierre
+			,cuss_ip as  ip
 			,cuss_estado as estado
 		from usuariosesion_ussp a
 	</sql>
@@ -36,6 +37,9 @@
 			</if>
 			<if test="fechaCierreMax!=null">
 				and duss_fechacierre <![CDATA[ < ]]>  #{fechaCierreMax}
+			</if>
+			<if test="ip!=null">
+				and cuss_ip = #{ip}
 			</if>
 	</sql>
 
@@ -83,6 +87,9 @@
 		<if test="fechaCierre!=null">
 			,duss_fechacierre
 		</if>
+		<if test="ip!=null">
+			,cuss_ip
+		</if>
 		<if test="estado!=null">
 			,cuss_estado
 		</if>
@@ -97,6 +104,9 @@
 		<if test="fechaCierre!=null">
 			,#{fechaCierre}
 		</if>
+		<if test="ip!=null">
+			,#{ip}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -109,6 +119,7 @@
 				cuss_usuario = #{usuario},
 				duss_fecha = #{fecha},
 				duss_fechacierre = #{fechaCierre},
+				cuss_ip = #{ip},
 				cuss_estado =#{estado}
 		<include refid="whereUsuarioSesionPrimaryKeyFragment" />
 	</select>
@@ -119,6 +130,7 @@
 			,cuss_usuario as  usuario
 			,duss_fecha as  fecha
 			,duss_fechacierre as  fechaCierre
+			,cuss_ip as  ip
 			,cuss_estado as estado
 		from usuariosesion_ussp a
 	</sql>

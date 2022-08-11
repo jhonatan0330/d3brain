@@ -713,6 +713,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.ESTADO_ASIGNAR : {identificadorUsuario(dto);break;}
 			
 			case Propiedades.ROL : {identificadorRol(dto, token);break;}
+			case Propiedades.CORREO_ROL : {return identificadorCampo(dto, token);}
+			case Propiedades.CELULAR_ROL : {return identificadorCampo(dto, token);}
 			
 			case Propiedades.COLOR : {identificarColor(dto);break;}
 			

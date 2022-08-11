@@ -1,7 +1,7 @@
 
 INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'http://golyat.cloud/imagenes/avatar.png');
 INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'http://golyat.cloud/imagenes/avatar.png');
-INSERT INTO usuarioautenticacion_uaup(cuau_llave, cuau_usuario, cuau_sesion, cuau_clave)VALUES ('SYSTEM', 'SYSTEM', '1', '1');
+INSERT INTO usuarioautenticacion_uaup(cuau_llave, cuau_usuario, cuau_sesion, cuau_clave, duau_fechamaxima)VALUES ('SYSTEM', 'SYSTEM', '1', '1', now());
 --Modulos
 INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
     VALUES ('AdministracionLogisticpymes', 'Administracion', 'com.softure.logisticpymes.view.ui.UIAdministracion', 'A');

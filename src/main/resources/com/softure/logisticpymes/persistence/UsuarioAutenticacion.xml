@@ -11,7 +11,9 @@
 			,cuau_sesion as  sesion
 			,cuau_clave as  clave
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cuau_usuario) as  usuarioNombre
-			,duau_fechacreacion as  fechaCreacion
+			,duau_fechamaxima as  fechaMaxima
+			,cuau_autorizacioncrea as  autorizacionCrea
+			,cuau_autorizacionelimina as  autorizacionElimina
 			,cuau_estado as estado
 		from usuarioautenticacion_uaup a
 	</sql>
@@ -33,11 +35,17 @@
 			<if test="clave!=null">
 				and cuau_clave = #{clave}
 			</if>
-			<if test="fechaCreacionMin!=null">
-				and duau_fechacreacion >= #{fechaCreacionMin}
+			<if test="fechaMaximaMin!=null">
+				and duau_fechamaxima >= #{fechaMaximaMin}
 			</if>
-			<if test="fechaCreacionMax!=null">
-				and duau_fechacreacion <![CDATA[ < ]]>  #{fechaCreacionMax}
+			<if test="fechaMaximaMax!=null">
+				and duau_fechamaxima <![CDATA[ < ]]>  #{fechaMaximaMax}
+			</if>
+			<if test="autorizacionCrea!=null">
+				and cuau_autorizacioncrea = #{autorizacionCrea}
+			</if>
+			<if test="autorizacionElimina!=null">
+				and cuau_autorizacionelimina = #{autorizacionElimina}
 			</if>
 	</sql>
 
@@ -85,8 +93,14 @@
 		<if test="clave!=null">
 			,cuau_clave
 		</if>
-		<if test="fechaCreacion!=null">
-			,duau_fechacreacion
+		<if test="fechaMaxima!=null">
+			,duau_fechamaxima
+		</if>
+		<if test="autorizacionCrea!=null">
+			,cuau_autorizacioncrea
+		</if>
+		<if test="autorizacionElimina!=null">
+			,cuau_autorizacionelimina
 		</if>
 		<if test="estado!=null">
 			,cuau_estado
@@ -102,8 +116,14 @@
 		<if test="clave!=null">
 			,#{clave}
 		</if>
-		<if test="fechaCreacion!=null">
-			,#{fechaCreacion}
+		<if test="fechaMaxima!=null">
+			,#{fechaMaxima}
+		</if>
+		<if test="autorizacionCrea!=null">
+			,#{autorizacionCrea}
+		</if>
+		<if test="autorizacionElimina!=null">
+			,#{autorizacionElimina}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -117,7 +137,9 @@
 				cuau_usuario = #{usuario},
 				cuau_sesion = #{sesion},
 				cuau_clave = #{clave},
-				duau_fechacreacion = #{fechaCreacion},
+				duau_fechamaxima = #{fechaMaxima},
+				cuau_autorizacioncrea = #{autorizacionCrea},
+				cuau_autorizacionelimina = #{autorizacionElimina},
 				cuau_estado =#{estado}
 		<include refid="whereUsuarioAutenticacionPrimaryKeyFragment" />
 	</select>
@@ -128,7 +150,9 @@
 			,cuau_usuario as  usuario
 			,cuau_sesion as  sesion
 			,cuau_clave as  clave
-			,duau_fechacreacion as  fechaCreacion
+			,duau_fechamaxima as  fechaMaxima
+			,cuau_autorizacioncrea as  autorizacionCrea
+			,cuau_autorizacionelimina as  autorizacionElimina
 			,cuau_estado as estado
 		from usuarioautenticacion_uaup a
 	</sql>
