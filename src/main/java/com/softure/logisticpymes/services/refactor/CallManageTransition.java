@@ -96,9 +96,9 @@ public class CallManageTransition {
 			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
 					dto.getAfectaSaldo());
 			afectado = moveBalanceDocument(expediente, token, dto, valorModificador, dineroProcesado);
+			modificadorId = documentoDTO.getLlaveTabla();
 			// Genero documento en caso que toque
 			if (dto.getPlantilla() != null) {
-				modificadorId = documentoDTO.getLlaveTabla();
 				// Tengo que optimizar esto siempre va a preguntar si tiene documentos para
 				// generar
 				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,

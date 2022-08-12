@@ -75,7 +75,8 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 		int cont = contarResultados(filtro);
 		if(cont==0) {
 			UsuarioDTO usuario = usuarioService.consultaXId(dto.getUsuario());
-			usuarioService.inactivar(usuario, token);
+			if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)!=0)
+				usuarioService.inactivar(usuario, token);
 		}
 		return dto;
 		// END UsuarioRol_inactivar
