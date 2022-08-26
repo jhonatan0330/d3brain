@@ -1016,6 +1016,19 @@ public class FullControllerDTO {
 		}
 	}
 	
+	@Autowired private CallListDocumentWithFilters documentListWithFiltersFunction;
+	
+	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
+	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
+		try {
+			return documentListWithFiltersFunction.listarAvanzado(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
+	
+	
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
 	@RequestMapping(value="/consultaXIdPedidoVentaCaracteristica", method=RequestMethod.POST)

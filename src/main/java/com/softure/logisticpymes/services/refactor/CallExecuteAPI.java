@@ -408,13 +408,7 @@ public class CallExecuteAPI {
 									String codeReplace = (campo.getTransaccionRegistro() == null)
 											? campo.getCampoDTO().getCodigo()
 											: campo.getTransaccionRegistro();
-									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{D_"
-											+ codeReplace
-											+ ((iRelacion.getAuxiliar() != null)
-													? "\\(" + iRelacion.getAuxiliar() + "\\)"
-													: "")
-											+ "\\}\\}" + ConstantesGenerales.IGUAL
-											+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
+									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D");
 									// template = template.replaceAll("\\{\\{D_" + codeReplace + "\\}\\}",
 									// formatToReplaceAll(campo));
 								}
@@ -431,9 +425,10 @@ public class CallExecuteAPI {
 						throw new ServerException(
 								"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
 					if (iProp.getTexto().startsWith("E_FECHA_")) {
+						Date fieldDate = getDateWithTransformations(iProp.getTexto());
 						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + iProp.getTexto()
 								+ "\\}\\}" + ConstantesGenerales.IGUAL
-								+ SoftureUtil.formatDatePattern(new Date(), iProp.getValor());
+								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 						// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 						// SoftureUtil.formatDatePattern(new Date(), iProp.getValor()));
 					} else {
@@ -508,8 +503,6 @@ public class CallExecuteAPI {
 									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{R_"
 											+ codeReplace + "\\}\\}" + ConstantesGenerales.IGUAL
 											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
-									// template = template.replaceAll("\\{\\{R_" + codeReplace + "\\}\\}",
-									// formatToReplaceAll(iCampo));
 								}
 							}
 						}
@@ -542,16 +535,7 @@ public class CallExecuteAPI {
 									if (campo != null && campo.getValorText() != null) {
 										if (campo.getCampoDTO() == null)
 											campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
-										parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{M_"
-												+ campo.getCampoDTO().getCodigo()
-												+ ((iRelacion.getAuxiliar() != null)
-														? "\\(" + iRelacion.getAuxiliar() + "\\)"
-														: "")
-												+ "\\}\\}" + ConstantesGenerales.IGUAL
-												+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
-										// template = template.replaceAll(
-										// "\\{\\{M_" + campo.getCampoDTO().getCodigo() + "\\}\\}",
-										// campo.getValorText());
+										parameters = addParameterString(parameters, iRelacion, campo, campo.getCampoDTO().getCodigo(), "M");
 									}
 								}
 							}
@@ -565,6 +549,44 @@ public class CallExecuteAPI {
 		return parameters;
 	}
 
+	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
+			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
+		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"+tipo+"_"
+				+ codeReplace
+				+ ((iRelacion.getAuxiliar() != null)
+						? "\\(" + iRelacion.getAuxiliar() + "\\)"
+						: "")
+				+ "\\}\\}" + ConstantesGenerales.IGUAL
+				+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
+		if(campo.getValorOpcion()!=null) {
+			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"+tipo+"_"
+					+ codeReplace
+					+ ((iRelacion.getAuxiliar() != null)
+							? "\\(" + iRelacion.getAuxiliar() + "\\)"
+							: "")
+					+ "_KEY\\}\\}"  + ConstantesGenerales.IGUAL
+					+ campo.getValorOpcion();
+		}
+		return parameters;
+	}
+
+	private Date getDateWithTransformations(String texto) {
+		Date result = new Date();
+		if(texto.contains("(")) {
+			// Ejemplo E_FECHA_XXX[-15D]
+			String formulaTime = texto.substring(texto.indexOf("(")+1,texto.length()-2);
+			long timeToAdd = 0;
+			try {
+				timeToAdd = Long.parseLong(formulaTime.substring(1));
+			} catch (Exception e) {
+				timeToAdd = 365*10*24*60*60*1000; //Si hay error le sumo 10 years
+			}
+			if(formulaTime.contains("-")) timeToAdd = timeToAdd * -1; //Si es negativo
+			result = new Date(result.getTime() + timeToAdd*24*60*60*1000);
+		}
+		return result;
+	}
+
 	/**
 	 * 
 	 * @param plantilla
@@ -573,11 +595,14 @@ public class CallExecuteAPI {
 	 */
 	private String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
-			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {
-				plantilla = plantilla.replaceAll(entry.getKey(), entry.getValue());
+			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {		
+				String replaceCode = entry.getKey().replaceAll("\\(", "\\\\(");
+				replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
+				replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
+				plantilla = plantilla.replaceAll(replaceCode, entry.getValue());
 			}
 		}
-		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():]*\\}\\}", "");
+		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
 		byte[] bytes = plantilla.getBytes(StandardCharsets.UTF_8);
 		return new String(bytes, StandardCharsets.UTF_8);
 	}

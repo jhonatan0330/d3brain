@@ -22,7 +22,8 @@ public class TipoFecha {
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorFecha()==null) throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre() + "del formulario " +pCampo.getCampoDTO().getPlantillaNombre());
+		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorFecha()==null) 
+			throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre() + " del formulario " +pCampo.getCampoDTO().getPlantillaNombre());
 		if(pCampo.getValorFecha()!=null){
 
 			String rango = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO);
@@ -76,6 +77,8 @@ public class TipoFecha {
 						hora.set(Calendar.YEAR, 0);
 						hora.set(Calendar.MONTH, 0);
 						hora.set(Calendar.DAY_OF_MONTH, 0);
+						hora.set(Calendar.HOUR, 0);
+						hora.set(Calendar.MINUTE, 0);
 						hora.set(Calendar.SECOND, 0);
 						hora.set(Calendar.MILLISECOND, 0);
 						if(pCampo.getValorNumero()!=null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO)!=0) {
@@ -100,6 +103,15 @@ public class TipoFecha {
 							}
 							pCampo.setValorNumero(pCampo.getValorNumero().add(new BigDecimal(hora.get(Calendar.MINUTE)*60*1000)));
 						}
+						//Esto indica que el campo de horas vienen 00:00, validamos si es obligatorio o sino le borramos fecha para que no lo guarde
+						if(pCampo.getValorText()==null) {
+							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null ) {
+								throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre() + " del formulario " +pCampo.getCampoDTO().getPlantillaNombre());
+							}else {
+								pCampo.setValorFecha(null);
+							}
+						}
+						
 					}
 				}
 				if(pCampo.getModificado()){// en algunos casos se modifican datos de documentos viejos en donde se deja la misma fecha
