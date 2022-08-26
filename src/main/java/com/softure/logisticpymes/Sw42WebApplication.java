@@ -243,7 +243,7 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	}
 	
 	@Bean	
-	public ServletRegistrationBean<HttpServlet> reporteServlet() {
+	ServletRegistrationBean<HttpServlet> reporteServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
 		final ReporteServlet servlet = new ReporteServlet();
 		beanFactory.autowireBean(servlet);
@@ -254,7 +254,7 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	}
 
 	@Bean	
-	public ServletRegistrationBean<HttpServlet> uploadServlet() {
+	ServletRegistrationBean<HttpServlet> uploadServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
 		final UploaderServlet servlet = new UploaderServlet();
 		beanFactory.autowireBean(servlet);
@@ -265,7 +265,7 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	}
 	
 	@Bean	
-	public ServletRegistrationBean<HttpServlet> downloadServlet() {
+	ServletRegistrationBean<HttpServlet> downloadServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
 		final DownloaderServlet servlet = new DownloaderServlet();
 		beanFactory.autowireBean(servlet);

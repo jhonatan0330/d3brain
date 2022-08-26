@@ -129,6 +129,17 @@ public class CallExecuteAPI {
 		String tokenAuthentication = null;
 		if (authenticationWS != null) {
 			if (authenticationWS.getError() != null) {
+				if(callWS.getSincrona()!=null) {
+					callWS.setSincrona(null);
+					callWS.setFechaEjecucion(new Date());
+					callWS.setError("Error asincrono " + authenticationWS.getError());
+					webServiceEjecucionSvc.update(callWS);
+				}
+				try {
+					mensajeSvc.mensaje2Administrator("Error en ejecucion de api por autehenticacion" + service.getNombre(), callWS.getError());
+				} catch (Exception e) {
+					callWS.setError(callWS.getError() + "  " + e.getMessage());
+				}
 				System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", callWS.getDocumento(),
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
@@ -252,7 +263,7 @@ public class CallExecuteAPI {
 						responseApi = resultExtraction + "\n\n" + responseApi;
 					} else {
 						callWS.setExtracciones(resultExtraction);
-						documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador,
+						if(modificador!=null) documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador,
 								extractionProperties, token,resultExtraction);
 					}
 				}

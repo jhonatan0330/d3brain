@@ -56,6 +56,8 @@ public class CallUpdateDocumentAutomatic {
 	public void executeFromAPIExtraction(PedidoVentaDTO modificador,
 			List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String extractionText)
 			throws ServerException {
+		//Cuando son servicios asincronos no hay un documento modificador?? de pronto afecte las extracciones
+		if(modificador==null) return;
 		//PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
 		Map<String, String> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
