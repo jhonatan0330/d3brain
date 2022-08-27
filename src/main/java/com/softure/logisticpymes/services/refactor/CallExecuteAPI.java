@@ -144,11 +144,7 @@ public class CallExecuteAPI {
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
 			}
-			if (authenticationWS.getExtracciones() != null
-					&& authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL) > 0) {
-				tokenAuthentication = authenticationWS.getExtracciones()
-						.substring(authenticationWS.getExtracciones().lastIndexOf(ConstantesGenerales.IGUAL) + 1);
-			}
+			if (authenticationWS.getExtracciones() != null)	tokenAuthentication = authenticationWS.getExtracciones();
 		}
 		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
 		// Execution
@@ -198,8 +194,7 @@ public class CallExecuteAPI {
 		documentMain.setLlaveTabla(callWS.getDocumento());
 		WebServiceEjecucionDTO authenticationWS = generateAsyncWebService(authenticationEndPoint, documentMain, null,
 				token, callWS.getUsuario(), headers);
-		authenticationWS = launchWebService(authenticationEndPoint, authenticationWS, token, headers, null);
-		return authenticationWS;
+		return launchWebService(authenticationEndPoint, authenticationWS, token, headers, null);
 	}
 
 	/**
@@ -355,9 +350,14 @@ public class CallExecuteAPI {
 			String newValue = matcher.group(1); 
 			if(propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64)==0) {
 				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue), Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token);
-			} 
-			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
-					+ ConstantesGenerales.IGUAL + newValue;
+			}
+			
+			String codeAndEqual = ((propiedadDTO.getTexto()==null)?propiedadDTO.getLlaveTabla():propiedadDTO.getTexto());
+			if (!codeAndEqual.contains(ConstantesGenerales.IGUAL)) codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
+			// en la extraccion de autenticacion debo colocar el header
+			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE 
+					+ codeAndEqual
+					+ newValue;
 		}
 		if (result == "")
 			result = null;
@@ -976,9 +976,14 @@ public class CallExecuteAPI {
 			}
 		}
 		if (tokenAuthentication != null) {
-			if (result == null)
-				result = new HashMap<>();
-			result.put("Authorization", "Bearer " + tokenAuthentication);
+			if (result == null)	result = new HashMap<>();
+			String[] extractionToHeader = tokenAuthentication.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
+			for (String iExtraction : extractionToHeader) {
+				int indexEqual = iExtraction.lastIndexOf(ConstantesGenerales.IGUAL);
+				if(indexEqual>0) {
+					result.put(iExtraction.substring(0,indexEqual), iExtraction.substring(indexEqual+1));	
+				}
+			}
 		}
 		return result;
 	}
