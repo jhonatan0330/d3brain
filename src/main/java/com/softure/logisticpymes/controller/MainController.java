@@ -56,7 +56,7 @@ public class MainController {
 	@RequestMapping(value="/autenticarUsuarioAutenticacion", method=RequestMethod.POST)
 	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request, @RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.autenticar(filter);
+		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior()==null));
 	}
 	
 	@RequestMapping(value="/cambiarClave", method=RequestMethod.POST)

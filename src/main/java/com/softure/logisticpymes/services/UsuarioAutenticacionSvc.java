@@ -99,20 +99,23 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return super.listarConsulta(dto);
 	}
 	
-	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
+	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto, boolean fromApi)throws ServerException{
 		// BEGIN region autenticar
-		if(dto.getClaveAnterior()==null) reportarError(dto, "Por favor actualice su version de software");
-		String fechaMinima = null;
-		try {
-			fechaMinima = usuarioAutenticacionMapper.fechaMinima();
-		}catch (Exception e) {
-			reportarError(dto, e.getMessage());
+		if (!fromApi) {
+			if(dto.getClaveAnterior()==null) reportarError(dto, "Por favor actualice su version de software");
+			String fechaMinima = null;
+			try {
+				fechaMinima = usuarioAutenticacionMapper.fechaMinima();
+			}catch (Exception e) {
+				reportarError(dto, e.getMessage());
+			}
+			if(fechaMinima!=null){
+				int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
+				int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
+				if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
+			}	
 		}
-		if(fechaMinima!=null){
-			int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
-			int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
-			if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
-		}
+		
 		String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
 		if(fechaTrial==null) reportarError(dto,  "El sistema no tiene configurada la fecha de la licencia");
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -150,16 +153,17 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			}
 			if(autenticacion == null) reportarError(dto, "Autenticacion incorrecta");
 			if(autenticacion.getFechaMaxima()!=null && autenticacion.getFechaMaxima().compareTo(new Date())<0)
-				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");
-			//if(autenticacion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) reportarError(dto, "Autenticacion no se enecuentra activa");			
+				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");	
 		}
 		
 		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
 		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)reportarError(dto, "El usuario no se encuentra activo");
 		autenticacion.setUsuarioDTO(usuario);
 		
-		autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
-		autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));
+		if (!fromApi) {
+			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
+			autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));	
+		}
 		
 		if(sesion==null) {
 			sesion = new UsuarioSesionDTO();
@@ -170,13 +174,15 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());
-		if(diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
-		autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
 		
-		ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
-		filterMod.setSecurityToken(sesion.getLlaveTabla());
-		autenticacion.setModulos(modulosService.modulosUsuario(filterMod));
-		
+		if (!fromApi) {
+			if(diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
+			autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
+			
+			ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
+			filterMod.setSecurityToken(sesion.getLlaveTabla());
+			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));		
+		}
 		return autenticacion;
 		// END region autenticar
 	}
@@ -333,6 +339,11 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
 		}
 		
+	}
+	
+	// PAra el api de flex despues lo puedo quitar
+	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
+		return autenticar(dto, false);
 	}
 // END region aditionalMethods
 
