@@ -381,14 +381,13 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_203' , 'C', 'NUMERO MINIMO', 'NUMERO_MINIMO', 'REQUISITO', 'N', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_204' , 'W', 'API_EXTRACTION_TO_BASE_64', 'API_EXTRACTION_TO_BASE_64', 'REQUISITO', true);
-	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_205' , 'E', 'REPORTE VISIBLE EN EL ESTADO', 'REP_VISIBLE_STATE', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_206' , 'E', 'IMPRESION UNICA DEL REPORTE', 'REP_PRINT_ONE', 'REQUISITO', true);
-
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_207' , 'L', 'CORREO ROL', 'CORREO_ROL', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_208' , 'L', 'CELULAR ROL', 'CELULAR_ROL', 'REQUISITO');
-
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_209' , 'C', 'PERMITIR LINKS DIRECTAMENTE', 'ARCHIVO_URL_USUARIO', 'REQUISITO', 'A', true);
