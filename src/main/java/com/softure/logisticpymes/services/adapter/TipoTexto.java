@@ -27,18 +27,18 @@ public class TipoTexto {
 		if(pCampo.getValorText()==null) return;
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if(!formato.isEmpty()) {
-			if(formato.compareTo("E")==0) {
-				String[] correos = pCampo.getValorText().split(";");
-				String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-				Pattern pat = Pattern.compile(emailRegex);
-				for (String iCorreo : correos) {
-					if(iCorreo!=null && !iCorreo.isEmpty()) {
-						if(!pat.matcher(iCorreo).matches())
-							throw new ServerException("Revisa el correo electronico ya que no tiene un formato valido, " + iCorreo);	
-					}
+			String[] registros = pCampo.getValorText().split(";");
+			String emailRegex = "^[0-9]*$";
+			if(formato.compareTo("E")==0) emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+			if(formato.compareTo("T")==0) emailRegex = "^3[0-9]{9}$";
+			Pattern pat = Pattern.compile(emailRegex);
+			for (String iRegistro : registros) {
+				if(iRegistro!=null && !iRegistro.isEmpty()) {
+					if(!pat.matcher(iRegistro).matches())
+						throw new ServerException("Revisa el campo ya que no tiene un formato valido, " + iRegistro);	
 				}
-			    pCampo.setValorText(pCampo.getValorText().toLowerCase());
 			}
+		    pCampo.setValorText(pCampo.getValorText().toLowerCase());
 		}else {
 			String parametro = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LARGO);
 			if(parametro.isEmpty())	pCampo.setValorText(pCampo.getValorText().toUpperCase());

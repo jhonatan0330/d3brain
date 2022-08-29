@@ -336,7 +336,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
 								Propiedades.DESCRIPCION, "*", token), token);
 						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
-								Propiedades.CONSECUTIVO, "*", token), token);						
+								Propiedades.CONSECUTIVO, "*", token), token);
+						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+								Propiedades.CORREO_ROL, "*", token), token);
+						guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+								Propiedades.CELULAR_ROL, "*", token), token);
 					}
 					break;
 			}
@@ -364,6 +368,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
 		valorDefinidoFilter.setCodigo(key);
 		valorDefinidoFilter.setOrigen(tipo);
+		valorDefinidoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		PropiedadValorDefinidoDTO valorDefinido = valorDefinidoService.consultaUnica(valorDefinidoFilter);
 		if(valorDefinido==null) throw new ServerException("No se encontro la propiedad " + key + " del tipo " + tipo);
 		return valorDefinido;
@@ -428,6 +433,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				case Propiedades.DESCRIPCION : {dto.setValor( campoService.crearCampoNombre(dto.getCampo(), token) );break;}
 				case Propiedades.TOTAL : {dto.setValor( campoService.crearCampoValor(dto.getCampo(), token) );break;}
 				case Propiedades.CONSECUTIVO : {dto.setValor( campoService.crearCampoIdentificacion(dto.getCampo(), token) );break;}
+				case Propiedades.CORREO_ROL : {dto.setValor( campoService.crearCampoCorreo(dto.getCampo(), token) );break;}
+				case Propiedades.CELULAR_ROL : {dto.setValor( campoService.crearCampoTelefono(dto.getCampo(), token) );break;}
 				case Propiedades.FECHA : {dto.setValor( campoService.crearCampoTiempoReporte(dto.getCampo(), token, false) );break;}
 				default : {throw new ServerException("Este campo no tiene opcion de crear el campo");}
 			}

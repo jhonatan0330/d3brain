@@ -260,9 +260,55 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 			campoNombre.setObjetivo("Almacenar el id");
 			campoNombre = guardar(campoNombre, token);
 		}
-		
-		
 		return campoNombre.getLlaveTabla();
+	}
+	
+	public String crearCampoTelefono(String plantilla, String token) throws ServerException {
+		//Primero filtro si existe el campo nombre, eso evita un error al copiar plantilla
+		DocumentoPlantillaCaracteristicaFilterDTO filtro =new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtro.setCodigo("TELEFONO");
+		filtro.setPlantilla(plantilla);
+		DocumentoPlantillaCaracteristicaDTO campoTelefono = consultaUnica(filtro);
+		if (campoTelefono == null) {
+			campoTelefono =new DocumentoPlantillaCaracteristicaDTO();
+			campoTelefono.setCodigo("TELEFONO");
+			campoTelefono.setNombre("TELEFONO");
+			campoTelefono.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+			campoTelefono.setOrden(4);
+			campoTelefono.setPlantilla(plantilla);
+			campoTelefono.setObjetivo(".");
+			campoTelefono = guardar(campoTelefono, token);
+			// Como no se tuvo en cuenta la categoria entonces toca colocar este 
+			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoTelefono.getLlaveTabla(), 
+					Propiedades.FORMATO, "T", token);
+			prop.setPropiedadValor("PROP_75");
+			parametroService.guardar(prop, token);
+		}
+		return campoTelefono.getLlaveTabla();
+	}
+	
+	public String crearCampoCorreo(String plantilla, String token) throws ServerException {
+		//Primero filtro si existe el campo nombre, eso evita un error al copiar plantilla
+		DocumentoPlantillaCaracteristicaFilterDTO filtro =new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtro.setCodigo("EMAIL");
+		filtro.setPlantilla(plantilla);
+		DocumentoPlantillaCaracteristicaDTO campoCorreo = consultaUnica(filtro);
+		if (campoCorreo == null) {
+			campoCorreo =new DocumentoPlantillaCaracteristicaDTO();
+			campoCorreo.setCodigo("EMAIL");
+			campoCorreo.setNombre("EMAIL");
+			campoCorreo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+			campoCorreo.setOrden(3);
+			campoCorreo.setPlantilla(plantilla);
+			campoCorreo.setObjetivo(".");
+			campoCorreo = guardar(campoCorreo, token);
+			// Como no se tuvo en cuenta la categoria entonces toca colocar este 
+			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoCorreo.getLlaveTabla(), 
+					Propiedades.FORMATO, "E", token);
+			prop.setPropiedadValor("PROP_75");
+			parametroService.guardar(prop, token);
+		}
+		return campoCorreo.getLlaveTabla();
 	}
 	
 	public String crearCampoTiempoReporte(String plantilla, String token, boolean rango) throws ServerException {
