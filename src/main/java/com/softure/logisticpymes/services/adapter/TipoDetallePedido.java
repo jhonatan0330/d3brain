@@ -77,9 +77,23 @@ public class TipoDetallePedido {
 				if(pCampo.getDependientes().size()!=1) throw new ServerException("Los tipo bodega permiten solo 1 dependientes para sumar o restar");
 				novedadParcial(pCampo, token);
 			}
+			//Consulto las propiedades de los productos
+			List<ProductoDTO> productos = new ArrayList<>();
+			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
+				ProductoDTO prod = new ProductoDTO();
+				prod.setLlaveTabla(detalle.getProducto());
+				productos.add(prod);
+			}
+			productos =  detallePedidoVentaService.simplificarConsultaBDProductos(productos);
 			//Agrupo los detalles por producto
 			String texto = "";
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
+				for(ProductoDTO iProducto : productos) {
+					if(iProducto.getLlaveTabla().compareTo(detalle.getProducto())==0) {
+						detalle.setPropiedades(iProducto.getPropiedades());
+						break;
+					}
+				}
 				detallePedidoVentaService.definirPropiedad2Caracteristicas(detalle);
 				if(detalle.getCantidad()==null || detalle.getCantidad().compareTo(BigDecimal.ZERO)==0) throw new ServerException("No se puede registrar un producto con cantidad CERO");
 				boolean agregar = true;
