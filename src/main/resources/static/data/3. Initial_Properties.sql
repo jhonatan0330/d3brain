@@ -391,3 +391,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_208' , 'L', 'CELULAR ROL', 'CELULAR_ROL', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_209' , 'C', 'PERMITIR LINKS DIRECTAMENTE', 'ARCHIVO_URL_USUARIO', 'REQUISITO', 'A', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_210' , 'C', 'LINKS EXTERNO', 'LINK_EXTERNO', 'REQUISITO', 'Z');
