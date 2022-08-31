@@ -242,7 +242,8 @@ public class TipoProceso {
 						if(expediente.getDinero()!=null) throw new ServerException("Revise porque el expediente tiene valor y en la base de datos no tiene. \nExpediente: " + expediente.getNombre());
 					}else {
 						if(expediente.getDinero()==null) throw new ServerException("Revise porque el expediente NO tiene valor y en la base de datos SI tiene. \nExpediente: " + expediente.getNombre() + "\nValor actual:" + valorActual.getValorTotal());
-						if(valorActual.getValorTotal().compareTo(expediente.getDinero().getValorTotal())!=0) throw new ServerException("Revise porque los valores son diferentes. \nExpediente: " + expediente.getNombre() + "\nValor actual:" + valorActual.getValorTotal() + "\nValor enviado:" + expediente.getDinero().getValorTotal());
+						if(valorActual.getValorTotal().compareTo(expediente.getDinero().getValorTotal())!=0) throw new ServerException("Revise porque los valores son diferentes. \nExpediente: " + expediente.getNombre() + "\nValor actual:" + valorActual.getValorTotal() + "\nValor enviado:" + expediente.getDinero().getValorTotal()+ ".\nRecomendacion actualice el documento posiblemente fue modificado.");
+						if(valorActual.getSaldo().compareTo(expediente.getDinero().getSaldo())!=0) throw new ServerException("Revise porque los valores de los SALDOS son diferentes. \nExpediente: " + expediente.getNombre() + "\nSaldo actual:" + valorActual.getSaldo() + "\nValor enviado:" + expediente.getDinero().getSaldo() + ".\nRecomendacion actualice el documento posiblemente fue modificado.");
 					}
 				}
 			}

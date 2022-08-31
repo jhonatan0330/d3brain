@@ -991,7 +991,7 @@ public class FullControllerDTO {
 	@RequestMapping(value="/actualizarPedidoVenta", method=RequestMethod.POST)
 	public PedidoVentaDTO actualizarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
-			return pedidoVentaService.actualizar(dto, token);
+			return crudService.update(dto,dto.getLlaveTabla(), token);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
