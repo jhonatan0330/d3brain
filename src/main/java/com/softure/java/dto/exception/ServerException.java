@@ -6,9 +6,8 @@ import java.util.logging.Logger;
 public class ServerException extends Exception {
 
 	private static final long serialVersionUID = 1L;
-
 	private final static Logger logger = Logger.getLogger(ServerException.class.getName());
-	
+	private String origen;
 	private String command;
 	
 	public String getCommand() {
@@ -19,15 +18,10 @@ public class ServerException extends Exception {
 		this.command = command;
 	}
 	
-	private String origen;
-	
 	public String getOrigen() {
 		return origen;
 	}
 
-	public void setOrigen(String origen) {
-		this.origen = origen;
-	}
 	
 	public ServerException(String message, String command, Throwable cause, Logger logger) {
 		super(message, cause);
@@ -52,7 +46,7 @@ public class ServerException extends Exception {
 
 	public ServerException(String message, String origen) {
 		super((message.indexOf("Where:")!=-1)?message.substring( ((message.indexOf("ERROR:")!=-1)?message.indexOf("ERROR"):0 ), message.indexOf("Where:")):message);
-		logger.log(Level.SEVERE, message,this);
 		this.origen = origen;
+		logger.log(Level.SEVERE, message,this);
 	}
 }

@@ -23,6 +23,7 @@ import com.softure.logisticpymes.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.dto.filter.ProcesoTransicionFilterDTO;
 import com.softure.logisticpymes.persistence.ProcesoTransicionMapper;
 import com.softure.logisticpymes.services.ActividadSvc;
+import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.DocumentoRelacionGestorSvc;
 import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
@@ -37,6 +38,8 @@ import com.softure.logisticpymes.services.adapter.Propiedades;
 @Component
 public class CallManageTransition {
 
+	@Autowired
+	private DocumentoPlantillaSvc documentoService;
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired
@@ -326,43 +329,41 @@ public class CallManageTransition {
 			if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
 				throw new ServerException("No es logico que inicie in proceso restando");
 			dinero.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-			System.out.format(
-					"\n" + transicion.getNombre() + " (" + pExpediente.getNombre() + " : " + dinero.getValorTotal()
-							+ ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + dinero.getSaldo());
-			if (dinero.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
-				dinero.setSaldo(BigDecimal.ZERO);
-				saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
-			} else {
-				saldoDocumento = BigDecimal.ZERO;
-			}
-			if (dinero.getSaldo().compareTo(dinero.getValorTotal()) > 0) {
-				throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: "
-						+ pExpediente.getNombre() + "\nSaldo: " + SoftureUtil.formatMoney(dinero.getSaldo())
-						+ "\nTotal: " + SoftureUtil.formatMoney(dinero.getValorTotal()));
-			}
+			validateSaldo(transicion, saldoDocumento, dinero, pExpediente);
 			dineroService.update(dinero);// Se acaba de crear siempre va a ser tabla productiva
 			return dinero;
 		}
 		dineroService.inactivarConHistorial(dinero, pExpediente.getHistorico());
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
-		System.out.format("\n" + transicion.getNombre() + " (" + pExpediente.getNombre() + " : "
-				+ dinero.getValorTotal() + ")" + dinero.getSaldo() + " - " + saldoDocumento + " = " + nuevo.getSaldo());
-		if (nuevo.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
-			nuevo.setSaldo(BigDecimal.ZERO);
+		nuevo.setDocumento(dinero.getDocumento());
+		nuevo.setValorTotal(dinero.getValorTotal());
+		validateSaldo(transicion, saldoDocumento, nuevo, pExpediente);
+		return dineroService.guardarConHistorial(nuevo, pExpediente.getHistorico());
+	}
+
+	private void validateSaldo(ProcesoTransicionDTO transicion, BigDecimal saldoDocumento, PedidoVentaDineroDTO saldosCalculados,
+			PedidoVentaDTO pExpediente) throws ServerException {
+		//System.out.format(
+		//		"\n" + transicion.getNombre() + " (" + pExpediente.getNombre() + " : " + saldosCalculados.getValorTotal()
+		//				+ ")" + saldosCalculados.getSaldo() + " - " + saldoDocumento + " = " + saldosCalculados.getSaldo());
+		if (saldosCalculados.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
+			throw new ServerException(transicion.getNombre() + " (" + documentoService.consultaXId(pExpediente.getPlantilla()).getNombre() + " " + pExpediente.getNombre() + " : Por un total de " + SoftureUtil.formatMoney(saldosCalculados.getValorTotal())
+				+ ")\n\n Saldos "+ SoftureUtil.formatMoney(saldosCalculados.getSaldo().add(saldoDocumento)) + " - " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(saldosCalculados.getSaldo()));
+		}
+			
+		//ESte codigo o comento para empezar a validar que no se coloquen saldos negativos
+		/*if (dinero.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
+			dinero.setSaldo(BigDecimal.ZERO);
 			saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
 		} else {
 			saldoDocumento = BigDecimal.ZERO;
-		}
-		nuevo.setDocumento(dinero.getDocumento());
-
-		nuevo.setValorTotal(dinero.getValorTotal());
-		if (nuevo.getSaldo().compareTo(nuevo.getValorTotal()) > 0) {
+		}*/
+		if (saldosCalculados.getSaldo().compareTo(saldosCalculados.getValorTotal()) > 0) {
 			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: "
-					+ pExpediente.getNombre() + "\nSaldo: " + SoftureUtil.formatMoney(nuevo.getSaldo()) + "\nTotal: "
-					+ SoftureUtil.formatMoney(nuevo.getValorTotal()));
+					+ pExpediente.getNombre() + "\nSaldo: " + SoftureUtil.formatMoney(saldosCalculados.getSaldo())
+					+ "\nTotal: " + SoftureUtil.formatMoney(saldosCalculados.getValorTotal()));
 		}
-		return dineroService.guardarConHistorial(nuevo, pExpediente.getHistorico());
 	}
 
 	public String obtenerUbicacion(PedidoVentaDTO pedido, String transicion, String token) throws ServerException {

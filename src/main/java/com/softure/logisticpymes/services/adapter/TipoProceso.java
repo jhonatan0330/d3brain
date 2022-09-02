@@ -419,7 +419,6 @@ public class TipoProceso {
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
 									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados,
 									pCampo.getTransaccionRegistro() ,!modificacion);
-							//if(saldoZero!=null && saldoZero.compareTo(BigDecimal.ZERO)!=0) throw new ServerException("No se puede generar un documento con saldo " + SoftureUtil.formatMoney(saldoZero));
 						}else{
 							//Esto algun día lo voy a unir con el modificar
 							if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION)!=null) {
@@ -643,7 +642,7 @@ public class TipoProceso {
 		if(caminosValidados.size()==0) return;
 		PedidoVentaDTO expediente = pedidoService.consultaXId(procesoDTO.getLlaveTabla());
 		if(expediente == null) throw new ServerException("No se identifico el expediente");
-		BigDecimal saldoAnidados = saldoDocumento;//Esto posiblemente lo pueda quitar 2020-08-22
+		
 		System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(), documento.getNombre());
 		if(procesoDTO.getEstadoExpediente()!=null) {
 			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(), procesoDTO.getEstadoExpediente(), null);
@@ -652,7 +651,7 @@ public class TipoProceso {
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
 			//Manejo de los saldos de los procesos
 			if(transicion!=null) {
-				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoAnidados, null, null, securityToken, transaccion);
+				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento, null, null, securityToken, transaccion);
 				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
 				documentosGestionados.add(expediente.getLlaveTabla());
 				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
@@ -708,17 +707,9 @@ public class TipoProceso {
 							System.out.format("\n[%s] INICIA Procesar documento anidado ( %s )", expediente.getNombre(), expAnidado.getNombre());
 							documentosGestionados.add(expedienteId);
 							gestionarExpedienteDependientes(expAnidado, documento, securityToken, iExpediente.getValor(), plantillasRevisadas, caminosValidados, documentosGestionados, transaccion, false);
-							if(iExpediente.getValor()!=null && saldoAnidados!=null ) {
-								saldoAnidados = saldoAnidados.add(iExpediente.getValor().negate());
-								if(saldoAnidados.compareTo(BigDecimal.ZERO) < 0){
-									saldoAnidados = BigDecimal.ZERO;
-								}
-							}
 							System.out.format("\n[%s] FIN Procesar documento anidado ( %s )", expediente.getNombre(), expAnidado.getNombre());
 						}
 					}
-					if(saldoAnidados!=null && documento.getDinero()!=null && (saldoAnidados.compareTo(documento.getDinero().getSaldo())!=0 && saldoAnidados.compareTo(BigDecimal.ZERO)<0)) 
-						throw new ServerException("Revise el proceso porque el saldo no puede ser negativo");//. (" + expediente.getNombre() + ")" + SoftureUtil.formatMoney(dinero.getValorTotal()) + " + (" + documento.getNombre() + ") " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(nuevo.getSaldo()));
 				}
 			}
 		}
