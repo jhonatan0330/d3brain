@@ -38,6 +38,7 @@ import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
 import com.softure.logisticpymes.services.DocumentoTransaccionSvc;
 import com.softure.logisticpymes.services.MensajeSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
+import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 import com.softure.logisticpymes.services.UploadSvc;
@@ -57,6 +58,8 @@ public class CallExecuteAPI {
 	private CallUpdateDocumentAutomatic documentAutomaticUpdateFunction;
 	@Autowired
 	private PropiedadSvc propiedadesSvc;
+	@Autowired
+	private PedidoVentaSvc documentSvc;
 	@Autowired
 	private RelacionInternaSvc relacionService;
 	@Autowired
@@ -131,15 +134,11 @@ public class CallExecuteAPI {
 			if (authenticationWS.getError() != null) {
 				if(callWS.getSincrona()!=null) {
 					callWS.setSincrona(null);
-					callWS.setFechaEjecucion(new Date());
-					callWS.setError("Error asincrono " + authenticationWS.getError());
-					webServiceEjecucionSvc.update(callWS);
 				}
-				try {
-					mensajeSvc.mensaje2Administrator("Error en ejecucion de api por autehenticacion" + service.getNombre(), callWS.getError());
-				} catch (Exception e) {
-					callWS.setError(callWS.getError() + "  " + e.getMessage());
-				}
+				callWS.setFechaEjecucion(new Date());
+				callWS.setError(authenticationWS.getError());
+				webServiceEjecucionSvc.update(callWS);
+				publishErrorMessage(service, authenticationWS);
 				System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", callWS.getDocumento(),
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
@@ -155,11 +154,7 @@ public class CallExecuteAPI {
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = ConstantesGenerales.ERROR;
-			try {
-				mensajeSvc.mensaje2Administrator("Error en ejecucion de api " + service.getNombre(), callWS.getError());
-			} catch (Exception e) {
-				callWS.setError(callWS.getError() + "  " + e.getMessage());
-			}
+			publishErrorMessage(service, callWS);
 		} else {
 			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
 			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("") != 0) {
@@ -168,6 +163,19 @@ public class CallExecuteAPI {
 		}
 		System.out.format("\n\n[%s] Finalizando API (%s)", callWS.getDocumento(), service.getNombre());
 		return result;
+	}
+
+	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS) {
+		try {
+			String infoError = callWS.getError();
+			infoError =  infoError +"\nDocumento Principal: "+ documentSvc.consultaXId(callWS.getDocumento()).getNombre();
+			if(callWS.getModificador()!=null)infoError =  infoError +"\nDocumento generador: "+ documentSvc.consultaXId(callWS.getModificador()).getNombre();
+			infoError =  infoError +"\nEntrada "+ callWS.getEntrada();
+			infoError =  infoError +"\nRespuesta "+ callWS.getSalida();
+			mensajeSvc.mensaje2Administrator("Error en ejecucion " + service.getNombre(), infoError);
+		} catch (Exception e) {
+			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
+		}
 	}
 
 	/**
