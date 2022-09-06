@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
@@ -37,7 +38,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 	
 	// BEGIN region servicesUsuarioAutenticacion
-	private static final int TIME_VIGENCIA_ESTANDAR = 60*24*60*60*1000;
 	
 	@Autowired private UsuarioAutenticacionAutorizacionSvc authService;
 	@Autowired private ModuloContratadoSvc modulosService;
@@ -227,7 +227,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		newAuth.setSesion(user.getSesion());
 		if(autho!=null) newAuth.setAutorizacionCrea(autho.getLlaveTabla());
 		newAuth.setIp(dto.getIp());
-		newAuth.setFechaMaxima(new Date(new Date().getTime() + TIME_VIGENCIA_ESTANDAR));
+		newAuth.setFechaMaxima(getNewMaximunDate());
 		newAuth = save(newAuth);
 		
 		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
@@ -254,7 +254,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_guardar
-		dto.setFechaMaxima(new Date(new Date().getTime() + TIME_VIGENCIA_ESTANDAR));
+		dto.setFechaMaxima(getNewMaximunDate());
 		return super.guardar(dto, token);
 		// END UsuarioAutenticacion_guardar
 	}
@@ -329,10 +329,10 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioFilterDTO filter = new UsuarioFilterDTO();
 		filter.setIdentificacion(dto.getUsuarioDTO().getIdentificacion());
 		UsuarioDTO usuario = usuarioService.consultaUnica(filter) ;
-		if(usuario==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 001");
-		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 002");
+		if(usuario==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. El numero de id no esta en la base de datos");
+		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. El usuario se encuentra inactivo");
 		if(usuario.getCorreo()==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No tienes correo registrado para enviarte la nueva clave");
-		if(usuario.getCorreo().compareTo(dto.getUsuarioDTO().getCorreo())!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. 003");
+		if(usuario.getCorreo().compareTo(dto.getUsuarioDTO().getCorreo())!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {
 			authService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp());	
 		} catch (Exception e) {
@@ -344,6 +344,12 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	// PAra el api de flex despues lo puedo quitar
 	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
 		return autenticar(dto, false);
+	}
+	
+	private Date getNewMaximunDate() {
+		Calendar newDate = Calendar.getInstance();
+		newDate.add(Calendar.MONTH, 2);
+		return newDate.getTime();
 	}
 // END region aditionalMethods
 
