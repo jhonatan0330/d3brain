@@ -604,9 +604,10 @@ public class CallExecuteAPI {
 	private String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
 			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {		
-				String replaceCode = entry.getKey().replaceAll("\\(", "\\\\(");
-				replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
-				replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
+				String replaceCode = entry.getKey();
+				//.replaceAll("\\(", "\\\\(");
+				//replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
+				//replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
 				plantilla = plantilla.replaceAll(replaceCode, entry.getValue());
 			}
 		}

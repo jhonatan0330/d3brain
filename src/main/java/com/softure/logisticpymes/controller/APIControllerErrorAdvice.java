@@ -20,7 +20,7 @@ public class APIControllerErrorAdvice {
     	 ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
     		        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     		        .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-    		        .withMessage(e.getLocalizedMessage())
+    		        .withMessage(e.getTextMessage())
     		        .withDetail(e.getOrigen())
     		        .build();
     		        return new ResponseEntity<ApiErrorResponse>(response, response.getStatus());
