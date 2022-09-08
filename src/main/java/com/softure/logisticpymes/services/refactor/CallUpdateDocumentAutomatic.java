@@ -73,6 +73,7 @@ public class CallUpdateDocumentAutomatic {
 					propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
 				}
 			}
+			newField.setModificado(true);
 			generateFieldsFromProperty.add(newField);
 		}
 		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador, token,
@@ -108,6 +109,14 @@ public class CallUpdateDocumentAutomatic {
 			String transaction, PedidoVentaDTO procesoDTO, String token,
 			List<PropiedadDTO> propertiesToSearchFieldDestiny) throws ServerException {
 
+		// hay un escenario en el que se modifica un campo del mismo formulario, ver logimax con guias blu
+		// Lo que hago es borra los que tienen modificado false asi solo hago estas funciones cuando es necesario
+		List<PedidoVentaCaracteristicaDTO> fieldsNewToIncludeActiveModify = new ArrayList<>();
+		for (PedidoVentaCaracteristicaDTO pedidoVentaCaracteristicaDTO : fieldsNewToInclude) {
+			if(pedidoVentaCaracteristicaDTO.getModificado())fieldsNewToIncludeActiveModify.add(pedidoVentaCaracteristicaDTO);
+		}
+		if(fieldsNewToIncludeActiveModify.isEmpty())return;
+		
 		PedidoVentaDTO updateDocument = new PedidoVentaDTO();
 		updateDocument.setLlaveTabla(procesoDTO.getLlaveTabla());
 		updateDocument.setEstadoExpediente(procesoDTO.getEstadoExpediente());
@@ -118,7 +127,7 @@ public class CallUpdateDocumentAutomatic {
 		List<PedidoVentaCaracteristicaDTO> currentFields = campoService.readCompleteFields(procesoDTO.getLlaveTabla(),
 				camposPlantilla, procesoDTO.getHistorico());
 
-		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToInclude, procesoDTO,
+		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToIncludeActiveModify, procesoDTO,
 				propertiesToSearchFieldDestiny, camposPlantilla, currentFields);
 
 		if (hasChanges(currentFields, newFields)) {

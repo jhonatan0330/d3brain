@@ -434,7 +434,10 @@ public class CallExecuteAPI {
 								"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
 					if (iProp.getTexto().startsWith("E_FECHA_")) {
 						Date fieldDate = getDateWithTransformations(iProp.getTexto());
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + iProp.getTexto()
+						String replaceCode = iProp.getTexto().replaceAll("\\(", "\\\\(");
+						replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
+						replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
+						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + replaceCode 
 								+ "\\}\\}" + ConstantesGenerales.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 						// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
@@ -603,12 +606,9 @@ public class CallExecuteAPI {
 	 */
 	private String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
-			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {		
-				String replaceCode = entry.getKey();
-				//.replaceAll("\\(", "\\\\(");
-				//replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
-				//replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
-				plantilla = plantilla.replaceAll(replaceCode, entry.getValue());
+			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {
+				//TEngo que revisar el tema de las fechas especiales
+				plantilla = plantilla.replaceAll(entry.getKey(), entry.getValue());
 			}
 		}
 		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");

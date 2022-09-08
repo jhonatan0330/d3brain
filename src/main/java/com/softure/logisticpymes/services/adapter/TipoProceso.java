@@ -48,6 +48,7 @@ import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
 import com.softure.logisticpymes.services.refactor.CallUpdateDocumentAutomatic;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
+import com.softure.logisticpymes.services.ProcesoEstadoSvc;
 
 @Component
 public class TipoProceso {
@@ -62,6 +63,7 @@ public class TipoProceso {
 	@Autowired private DocumentoRelacionExpedienteSvc relacionExpedienteService;
 	@Autowired private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired private MovimientoSvc movimientoService;
+	@Autowired private ProcesoEstadoSvc estadoService;
 	@Autowired private ProcesoTransicionSvc expedienteTransicionService;
 	@Autowired private CallManageTransition manageTransitionFunction;
 	@Autowired private CallUpdateDocumentAutomatic updateDocumentFunction;
@@ -406,7 +408,8 @@ public class TipoProceso {
 				if(procesoDTO.getEstado()== null){
 					//Creo una relacion entre el campo y los pedidos detalles, primero reviso si existe
 					if(maquinaEstados!=null){
-						modificarDocumentoPrincipal(pCampo, procesoDTO, token);
+						//Esto lo tuve que hacer en logimax para un cilo que se generaba de 
+						modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 						if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)!=null){
 							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
 							BigDecimal saldoDoc = null;
@@ -467,13 +470,14 @@ public class TipoProceso {
 		return pCampo;
 	}
 
-	private void modificarDocumentoPrincipal(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token)throws ServerException {
+	private boolean modificarDocumentoPrincipal(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token)throws ServerException {
 		//Modificar campos de plantilla principal
 		List<PropiedadDTO> modificarCampo = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.MODIFICAR_CAMPO);
-		if(modificarCampo==null || modificarCampo.isEmpty()) return;
+		if(modificarCampo==null || modificarCampo.isEmpty()) return false;
 		System.out.format("\n%s (Modificando documento principal..... %s)", pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, token, modificarCampo);
+		return true;
 	}
 
 	private List<String> getCaminos(PedidoVentaCaracteristicaDTO pCampo) {
@@ -659,7 +663,7 @@ public class TipoProceso {
 				if(primerLlamado) {
 					String mensajeFault = "Revisa porque este documento no genera ninguna transicion, el campo lo solicita. ( " + procesoDTO.getNombre() + " )" ;
 					if(procesoDTO.getDescripcion()!=null)mensajeFault = mensajeFault + procesoDTO.getDescripcion();
-					mensajeFault = mensajeFault + " ( desde el estado : " + procesoDTO.getEstadoExpediente() + ")"; 
+					mensajeFault = mensajeFault + " ( desde el estado : " + estadoService.consultaXId(procesoDTO.getEstadoExpediente()).getNombre() + ")"; 
 					throw new ServerException( mensajeFault) ;
 				}
 			}
