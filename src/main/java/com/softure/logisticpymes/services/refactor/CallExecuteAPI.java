@@ -122,6 +122,7 @@ public class CallExecuteAPI {
 	 */
 	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token, PedidoVentaDTO modificador)
 			throws ServerException {
+		if(callWS.getFechaEjecucion()!=null) return ConstantesGenerales.OK;
 		if (service.getPropiedades() == null) {
 			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
 					service.getLlaveTabla(), null, null));
