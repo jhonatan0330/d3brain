@@ -259,7 +259,7 @@
 	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
 		<include refid="selectSimpleWebServiceEjecucionFragment" />
 		where cwse_estado = 'A' and dwse_fecha >= NOW() - INTERVAL '1200 minutes' and dwse_fechaejecucion is null and cwse_sincrona is not null
-		limit 50
+		limit 100
 	</select>
 	
 	<select id="hasPropertiesAsync" resultType="int">

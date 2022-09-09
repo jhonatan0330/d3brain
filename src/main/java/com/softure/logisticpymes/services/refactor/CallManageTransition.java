@@ -69,7 +69,7 @@ public class CallManageTransition {
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
 			BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
-			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion) throws ServerException {
+			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep) throws ServerException {
 
 		String userID = getUserId(token);
 		// Aqui lleno las propiedades del dto asi no falla api
@@ -92,6 +92,7 @@ public class CallManageTransition {
 				dto.getNombre(), dto.getProcesoNombre());
 		String modificadorId = null;
 		PedidoVentaDineroDTO afectado = null;
+		String nameTrace = (previousStep==null)?dto.getNombre(): previousStep + "->" +dto.getNombre();
 		if (anteriorEstado != null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) == 0) {
 			iterateInState(respuesta, expedienteDTO, documentoDTO, token, relacionAnterior);
 		} else {
@@ -106,20 +107,15 @@ public class CallManageTransition {
 				// generar
 				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,
 						expedienteDTO, documentoDTO.getTransaccion(), token, 0);
-				if (automatico != null && automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)// Por si es la
-																										// transicion
-																										// inicial no le
-																										// quite el
-																										// poder del
-																										// documento que
-																										// genero
+				// Por si es la transicion inicial no le quite el poder del documento que genero
+				if (automatico != null && automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
 					modificadorId = automatico.getLlaveTabla();
 			}
 			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(),
 					documentoDTO.getNombre());
 			// Creo la relacion del documento Gestor
 			relacionAnterior = relacionGestorService.trazar(expedienteDTO.getLlaveTabla(), modificadorId,
-					dto.getNombre(), dto.getEstadoPartida(), dto.getEstadoLLegada(),
+					nameTrace, dto.getEstadoPartida(), dto.getEstadoLLegada(),
 					(afectado == null) ? null : afectado.getLlaveTabla(), ubicacion, token, relacionAnterior,
 					expedienteDTO.getHistorico(), transaccion);
 		}
@@ -136,13 +132,13 @@ public class CallManageTransition {
 			respuesta = resolveStateDesition(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
 			respuesta = execute(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior,
-					tokenSystem.getLlaveTabla(), transaccion);
+					tokenSystem.getLlaveTabla(), transaccion, nameTrace);
 			break;
 		case ProcesoEstadoDTO.TIPO_ITERADOR:
 			respuesta = getNextTransition(dto.getEstadoLLegada(), null);
 			// Por si siguen decisiones
 			respuesta = execute(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior,
-					token, transaccion);
+					token, transaccion, nameTrace);
 			// Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato
 			// tiene ponerlo antes o despues
 			mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);
@@ -151,7 +147,7 @@ public class CallManageTransition {
 			respuesta = executeAPI(dto.getEstadoLLegada(), expedienteDTO, documentoDTO, token);
 			// Por si siguen decisiones
 			respuesta = execute(respuesta, expediente, documentoDTO, valorModificador, afectado, relacionAnterior,
-					token, transaccion);
+					token, transaccion,(previousStep==null)?dto.getEstadoLlegadaNombre() : previousStep + "->" +dto.getEstadoLlegadaNombre() );
 			break;
 		default:
 			// No entiendo el motivo pero este update se tiene que dejar aqui

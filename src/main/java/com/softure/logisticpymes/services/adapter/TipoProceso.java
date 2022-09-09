@@ -655,7 +655,7 @@ public class TipoProceso {
 				throw new ServerException("Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
 			//Manejo de los saldos de los procesos
 			if(transicion!=null) {
-				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento, null, null, securityToken, transaccion);
+				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento, null, null, securityToken, transaccion, null);
 				if(documentosGestionados==null) documentosGestionados = new ArrayList<String>();//Para evitar que se generen ciclos validando los mismos documentos
 				documentosGestionados.add(expediente.getLlaveTabla());
 				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);

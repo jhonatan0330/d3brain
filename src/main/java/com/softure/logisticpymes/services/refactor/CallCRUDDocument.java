@@ -312,7 +312,7 @@ public class CallCRUDDocument {
 		if (inicial != null) {
 			manageTransitionFunction.execute(inicial, pedido.getLlaveTabla(), pedido,
 					(pedido.getDinero() == null) ? null : pedido.getDinero().getValorTotal(), pedido.getDinero(), null,
-					token, transaccion);
+					token, transaccion, null);
 		} else {// Cuando son transacciones que no inician un proceso (aqui traza del documento
 				// en tipo proceso traza al proceso)
 				// cundo son solo documetnos sin transciones se envian mensajes
