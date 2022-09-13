@@ -575,18 +575,6 @@ public class TipoProceso {
 			}else {//Aqui solo van los documentos actuales
 				if(campoValor.isEmpty() || campoValor=="1" || campoValor == "2") campoValor = null;
 				resultados = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), pCampo.getSecurityToken(), campoValor);
-				/* Esto no puede ir aqui porque no
-				if(funcionConsulta == null) {
-					resultados = pedidoService.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(), pCampo.getSecurityToken(), campoValor);
-				}else {
-					PedidoVentaDTO entityFilter = new PedidoVentaDTO();
-					entityFilter.setSecurityToken(pCampo.getSecurityToken());
-					entityFilter.setFiltroParametro(pCampo.getFiltroParametro());//Coloco los filtros necesarios
-					if(entityFilter.getFiltroParametro()!=null && entityFilter.getFiltroParametro().compareTo("*")==0)entityFilter.setFiltroParametro(null);
-					entityFilter.setLlaveTabla(pCampo.getDocumento());
-					if(entityFilter.getLlaveTabla()==null)entityFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-					resultados = consultarFuncionDocumentos(pBase, pCampo, entityFilter, funcionConsulta, campoValor);
-				}*/
 				pCampo.setExpedientes(resultados);
 				calcularValoresTotalesCampo(pCampo, campoValor);
 			}
@@ -910,6 +898,22 @@ public class TipoProceso {
 				relacionCargueNuevo.setCampoMaestro(relacion.getCampoMaestro());
 				relacionCargueNuevo.setExpedienteDetalle(nuevo.getLlaveTabla());
 				relacionCargueNuevo.setTransaccionRegistro(transaccion);
+				String  valorTomar = campoService.valueFieldProcessMultipleToPartialDivideDocument(relacion.getCampoMaestro());
+				if(valorTomar!=null) {
+					if(valorTomar.compareTo("2")==0) {
+						if(nuevo.getDinero()!=null) relacionCargueNuevo.setValor(nuevo.getDinero().getSaldo());
+						if(nuevo.getDinero()!=null) {
+							relacion.setValor(anterior.getDinero().getSaldo());
+							relacionExpedienteService.update(relacion);
+						}
+					}else {//Aqui falta que lo tome de la caracteristica
+						if(nuevo.getDinero()!=null) relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
+						if(nuevo.getDinero()!=null) {
+							relacion.setValor(anterior.getDinero().getValorTotal());
+							relacionExpedienteService.update(relacion);
+						}
+					}
+				}
 				relacionExpedienteService.guardar(relacionCargueNuevo, securityToken);
 			}
 		}

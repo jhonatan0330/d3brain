@@ -407,6 +407,14 @@
 		select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = #{documento}
 	</select>
 	
+	<select id="valueFieldProcessMultipleToPartialDivideDocument" resultType="java.lang.String">
+		select cppd_valor from pedidoventacaracteristica_pvcp pp 
+			inner join propiedad_ppdp pp2 on(pp.cpvc_campo = pp2.cppd_campo and pp2.cppd_estado ='A')
+		where cpvc_llave = #{field}
+			and pp2.cppd_propiedadvalor = 'PROP_39'
+		limit 1
+	</select>
+	
 	<select id="getUnique" resultType="java.lang.String">
 		select cpvc_documento from pedidoventacaracteristica_pvcp a
 		where cpvc_campo = #{campo} and cpvc_estado = 'A' and cpvc_valortext = #{valorText}

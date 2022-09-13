@@ -150,6 +150,8 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		gestor.setEstadoFinal(estadoFinal);
 		gestor.setValores(valores);
 		gestor.setUbicacion(ubicacion);
+		if(nombre!=null && nombre.length()>100)
+			nombre = nombre.substring(nombre.length()-100, nombre.length());
 		gestor.setNombre(nombre);
 		gestor.setTransaccion(transaccion);
 		if(actual!=null) {
