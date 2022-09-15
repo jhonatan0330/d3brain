@@ -176,7 +176,7 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	
 
 	@Bean(name = "dataSource")
-	public PooledDataSource dynamicDataSource() {
+	PooledDataSource dynamicDataSource() {
 		PooledDataSource dataSource = new PooledDataSource();
 		dataSource.setDriver(env.getProperty("db.driver"));
 		dataSource.setUrl(env.getProperty("db.url"));
@@ -186,12 +186,12 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	}
 
 	@Bean(name = "transactionManager")
-	public DataSourceTransactionManager transactionManager(PooledDataSource dataSource) {
+	DataSourceTransactionManager transactionManager(PooledDataSource dataSource) {
 		return new DataSourceTransactionManager(dataSource);
 	}
 
 	@Bean(name = "sqlSessionFactory")
-	public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") PooledDataSource dataSource) throws Exception {
+	SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") PooledDataSource dataSource) throws Exception {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 		factoryBean.setDataSource(dataSource);// Specify the data source (this must exist, otherwise an error will occur)
 		// The next two sentences are for *.xml files only, if the XML file is not needed for the entire persistence layer operation (only annotations will do), they are not added
@@ -200,13 +200,13 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 		return factoryBean.getObject();
 	}
 
-	@Bean(name = "multipartResolver")
-	public CommonsMultipartResolver createMultipartResolver() {
-		CommonsMultipartResolver resolver=new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(268435456);
-		resolver.setDefaultEncoding("utf-8");
-		return resolver;
-	}
+    @Bean(name = "multipartResolver")
+    CommonsMultipartResolver createMultipartResolver() {
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setMaxUploadSize(268435456);
+        resolver.setDefaultEncoding("utf-8");
+        return resolver;
+    }
 
 	@Scheduled(fixedDelayString = "${fixedDelayMail.in.milliseconds}")
 	public void sendMail() throws ServerException {

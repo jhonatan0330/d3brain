@@ -324,6 +324,15 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		}
 		
 		if(destinatariosExternos!=null) {
+			//Para evitar duplicados quito los destinatarios externos que ya se les envia correo
+			for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
+				for (String iDestinatario : destinatariosExternos) {
+					if(entry.getValue().compareTo(iDestinatario)==0) {
+						destinatariosExternos.remove(iDestinatario);
+						break;
+					}
+				}
+			}
 			for (String iDestinatario : destinatariosExternos) {
 				MensajeDTO mensaje = new MensajeDTO();
 				mensaje.setFecha(new Date());
