@@ -603,7 +603,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		//Sucede que en Universal el total no es igual al producto normal se hace pro otra formula
 		if(cpTotal!=null && cpUnitario.getValorNumero()!=null) {
 			detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
-			if(detail.getCantidad()!=null && detail.getCantidad().multiply(detail.getValorUnitario()).compareTo(detail.getValorTotal())!=0) {
+			if(detail.getCantidad()!=null && detail.getCantidad().multiply(detail.getValorUnitario()).add(detail.getValorTotal().negate()).abs().longValue() > 1) {
 				if(Propiedades.obtenerParametro(cpTotal.getCampoDTO(), Propiedades.NUMERO_FORMULA)==null) {
 					throw new ServerException("El valor total (" + SoftureUtil.formatMoney(detail.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(detail.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(detail.getValorUnitario()) +") =" + SoftureUtil.formatMoney(detail.getCantidad().multiply(detail.getValorUnitario())));	
 				}else {
