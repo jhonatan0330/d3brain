@@ -463,8 +463,7 @@ public class Propiedades {
 			case FECHA_TIMER_BACK : {ruleProperty =  "Activando esta propiedad se va a mostrar un reloj en cuenta regresiva segun al fecha seleccionada.\n";break;}
 			case FORMATO : {ruleProperty =  " Para campos texto N(Solo numero), E(Correo electronico), T(Telefono).\n\n Para campos numero se utiliza un DecimalFormat";break;}
 			case FUNCION_SQL_VALIDAR_ANTES : {ruleProperty =  " Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
-					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";break;}
+					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( parametros character varying[]) RETURNS void AS";break;}
 			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
 					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";break;}

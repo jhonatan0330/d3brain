@@ -91,6 +91,7 @@ public class ConstantesGenerales {
 	public static final String OK = "OK";
 	public static final String FILTROINFORMACION = "FILTRO";
 	public static final String ERROR = "ERROR";
+	public static final String INCOMPLETE = "INCOMPLETE";
 
 	public static final String A_TILDE_MIN = "\u00E1";
 	public static final String E_TILDE_MIN = "\u00E9";
