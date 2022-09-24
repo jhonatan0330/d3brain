@@ -135,8 +135,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_guardar
 		List<PedidoVentaCaracteristicaDTO> caracteristicas = dto.getCaracteristicas();
-		if(dto.getCantidad().multiply(dto.getValorUnitario()).add(dto.getValorTotal().negate()).abs().longValue() > 1) 
-			throw new ServerException("El valor total (" + SoftureUtil.formatMoney(dto.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(dto.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(dto.getValorUnitario()) +") =" + SoftureUtil.formatMoney(dto.getCantidad().multiply(dto.getValorUnitario())));
+		//if(dto.getCantidad().multiply(dto.getValorUnitario()).add(dto.getValorTotal().negate()).abs().longValue() > 1) 
+			// throw new ServerException("El valor total (" + SoftureUtil.formatMoney(dto.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(dto.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(dto.getValorUnitario()) +") =" + SoftureUtil.formatMoney(dto.getCantidad().multiply(dto.getValorUnitario())));
 		dto = save(dto);
 		dto.setCaracteristicas(caracteristicas);
 		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {
@@ -605,7 +605,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			detail.setValorTotal(cpTotal.getValorNumero());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 			if(detail.getCantidad()!=null && detail.getCantidad().multiply(detail.getValorUnitario()).add(detail.getValorTotal().negate()).abs().longValue() > 1) {
 				if(Propiedades.obtenerParametro(cpTotal.getCampoDTO(), Propiedades.NUMERO_FORMULA)==null) {
-					throw new ServerException("El valor total (" + SoftureUtil.formatMoney(detail.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(detail.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(detail.getValorUnitario()) +") =" + SoftureUtil.formatMoney(detail.getCantidad().multiply(detail.getValorUnitario())));	
+					// throw new ServerException("El valor total (" + SoftureUtil.formatMoney(detail.getValorTotal()) +") no concuerda con la cantidad (" + SoftureUtil.formatNumber(detail.getCantidad()) +") x valor unitario (" + SoftureUtil.formatMoney(detail.getValorUnitario()) +") =" + SoftureUtil.formatMoney(detail.getCantidad().multiply(detail.getValorUnitario())));	
 				}else {
 					detail.setValorUnitario(detail.getValorTotal().divide(detail.getCantidad(), 6, RoundingMode.CEILING));
 				}
