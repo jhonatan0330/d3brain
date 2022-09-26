@@ -3,7 +3,6 @@ package com.softure.logisticpymes.services;
 import java.util.List;
 
 // BEGIN region interImport
-import java.util.Date;
 import java.util.ArrayList;
 
 import com.softure.java.cons.ConstantesGenerales;
@@ -295,7 +294,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	private List<ProcesoEstadoDTO> crearEstadosBasicos() throws ServerException {
-		System.out.println ("Cargando estados basicos");
 		List<ProcesoEstadoDTO> estados;
 		ProcesoEstadoDTO activo = new ProcesoEstadoDTO();
 		activo.setEstadoDocumento(ConstantesGenerales.ESTADO_ACTIVO);
@@ -358,7 +356,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					}
 				}
 				if(nuevaPlantilla) {
-					System.out.println (new Date().toString() + " : " + iplantillaPermitida.getNombre());
 					//iplantillaPermitida.setSecurityToken(dto.getSecurityToken());
 					if(iplantillaPermitida.getLlaveTabla()==null) throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
 					if(iplantillaPermitida.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La plantilla se encuentra inactiva");
@@ -411,6 +408,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 			}
 		}
+		System.out.format("\n[%s] Listando (%s) plantillas ", usuario, result.size());
 		return result;
 	}
 

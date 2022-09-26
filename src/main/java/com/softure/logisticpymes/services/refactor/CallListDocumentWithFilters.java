@@ -204,9 +204,7 @@ public class CallListDocumentWithFilters {
 			}
 			List<String> textoFiltroComas = organizarFiltroComas(dto);
 			dto.setSecurityToken(secToken);
-			System.out.println (new Date().toString() + " : Query avnazado");
 			if(campoFiltro !=null ) {
-				
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidosPorCampoFiltro(dto, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
 						, token, null);	

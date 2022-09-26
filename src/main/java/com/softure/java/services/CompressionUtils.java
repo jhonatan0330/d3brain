@@ -96,7 +96,7 @@ public class CompressionUtils {
 		try {
 			final Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(data));
     	    final ExifIFD0Directory exifDirectory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-    	    if(exifDirectory!=null)orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+    	    if(exifDirectory!=null && exifDirectory.containsTag(ExifIFD0Directory.TAG_ORIENTATION) )orientation = exifDirectory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		} catch (ImageProcessingException |MetadataException | IOException e) {
 			e.printStackTrace();
 		} 
