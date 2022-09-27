@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -46,6 +47,9 @@ import com.softure.logisticpymes.services.WebServiceEjecucionSvc;
 import com.softure.logisticpymes.services.WebServiceSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 @Component
 public class CallExecuteAPI {
 
@@ -86,7 +90,7 @@ public class CallExecuteAPI {
 	 * @throws ServerException
 	 */
 	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			String token) throws ServerException {
+			String token, String previousParameter) throws ServerException {
 		// Valido existencia del servicio
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
@@ -97,7 +101,7 @@ public class CallExecuteAPI {
 				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
 		// Inicia ejecucion
 		System.out.format("\n\n[%s] Procesando API (%s)", document.getNombre(), service.getNombre());
-		WebServiceEjecucionDTO apiBasic = generateAsyncWebService(service, document, modificador, token, userId, null);
+		WebServiceEjecucionDTO apiBasic = generateAsyncWebService(service, document, modificador, token, userId, previousParameter);
 		String result = ConstantesGenerales.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
@@ -120,9 +124,10 @@ public class CallExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token, PedidoVentaDTO modificador)
-			throws ServerException {
-		if(callWS.getFechaEjecucion()!=null) return ConstantesGenerales.OK;
+	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
+			PedidoVentaDTO modificador) throws ServerException {
+		if (callWS.getFechaEjecucion() != null)
+			return ConstantesGenerales.OK;
 		if (service.getPropiedades() == null) {
 			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
 					service.getLlaveTabla(), null, null));
@@ -133,7 +138,7 @@ public class CallExecuteAPI {
 		String tokenAuthentication = null;
 		if (authenticationWS != null) {
 			if (authenticationWS.getError() != null) {
-				if(callWS.getSincrona()!=null) {
+				if (callWS.getSincrona() != null) {
 					callWS.setSincrona(null);
 				}
 				callWS.setFechaEjecucion(new Date());
@@ -144,7 +149,8 @@ public class CallExecuteAPI {
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
 			}
-			if (authenticationWS.getExtracciones() != null)	tokenAuthentication = authenticationWS.getExtracciones();
+			if (authenticationWS.getExtracciones() != null)
+				tokenAuthentication = authenticationWS.getExtracciones();
 		}
 		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
 		// Execution
@@ -169,10 +175,13 @@ public class CallExecuteAPI {
 	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS) {
 		try {
 			String infoError = callWS.getError();
-			infoError =  infoError +"\nDocumento Principal: "+ documentSvc.consultaXId(callWS.getDocumento()).getNombre();
-			if(callWS.getModificador()!=null)infoError =  infoError +"\nDocumento generador: "+ documentSvc.consultaXId(callWS.getModificador()).getNombre();
-			infoError =  infoError +"\nEntrada "+ callWS.getEntrada();
-			infoError =  infoError +"\nRespuesta "+ callWS.getSalida();
+			infoError = infoError + "\nDocumento Principal: "
+					+ documentSvc.consultaXId(callWS.getDocumento()).getNombre();
+			if (callWS.getModificador() != null)
+				infoError = infoError + "\nDocumento generador: "
+						+ documentSvc.consultaXId(callWS.getModificador()).getNombre();
+			infoError = infoError + "\nEntrada " + callWS.getEntrada();
+			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			mensajeSvc.mensaje2Administrator("Error en ejecucion " + service.getNombre(), infoError);
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
@@ -202,7 +211,7 @@ public class CallExecuteAPI {
 		PedidoVentaDTO documentMain = new PedidoVentaDTO();
 		documentMain.setLlaveTabla(callWS.getDocumento());
 		WebServiceEjecucionDTO authenticationWS = generateAsyncWebService(authenticationEndPoint, documentMain, null,
-				token, callWS.getUsuario(), headers);
+				token, callWS.getUsuario(), null);
 		return launchWebService(authenticationEndPoint, authenticationWS, token, headers, null);
 	}
 
@@ -213,18 +222,19 @@ public class CallExecuteAPI {
 	 * @param modificador
 	 * @param token
 	 * @param userId
-	 * @param headerProperties
 	 * @return
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO generateAsyncWebService(WebServiceDTO service, PedidoVentaDTO document,
-			PedidoVentaDTO modificador, String token, String userId, Map<String, String> headerProperties)
+			PedidoVentaDTO modificador, String token, String userId, String initialPameters)
 			throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
-		callWS.setParametros(getParameters(service, document, modificador));
+		String parameters = getParameters(service, document, modificador);
+		if (initialPameters!=null) { parameters = parameters + initialPameters; }
+		callWS.setParametros(parameters);
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());
 		if (modificador != null) {
@@ -241,7 +251,8 @@ public class CallExecuteAPI {
 	 * @param callWS           Api a ejecutar
 	 * @param test
 	 * @param headerProperties
-	 * @param modificador Incluyo al modificador para agregarle los campos nuevos
+	 * @param modificador      Incluyo al modificador para agregarle los campos
+	 *                         nuevos
 	 * @return
 	 * @throws ServerException
 	 */
@@ -258,7 +269,7 @@ public class CallExecuteAPI {
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			if (callWS.getError() == null) {
-				String[] props = {Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_TO_BASE_64};
+				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_TO_BASE_64 };
 				List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 				String resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
 				if (resultExtraction != null) {
@@ -267,8 +278,9 @@ public class CallExecuteAPI {
 						responseApi = resultExtraction + "\n\n" + responseApi;
 					} else {
 						callWS.setExtracciones(resultExtraction);
-						if(modificador!=null) documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador,
-								extractionProperties, token,resultExtraction);
+						if (modificador != null)
+							documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
+									token, resultExtraction);
 					}
 				}
 			} else {
@@ -281,8 +293,9 @@ public class CallExecuteAPI {
 			callWS.setError(e.getMessage());
 			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
 		}
-		
-		if(callWS.getExtracciones()!=null) responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
+
+		if (callWS.getExtracciones() != null)
+			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
 		callWS.setFechaEjecucion(new Date());
 		callWS = webServiceEjecucionSvc.update(callWS);
@@ -347,7 +360,8 @@ public class CallExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token) throws ServerException {
+	private String extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token)
+			throws ServerException {
 		if (extractionList == null || extractionList.isEmpty())
 			return null;
 		String result = "";
@@ -356,17 +370,18 @@ public class CallExecuteAPI {
 			if (!matcher.matches()) {
 				return ERROR_EXTRAYENDO + propiedadDTO.getValor();
 			}
-			String newValue = matcher.group(1); 
-			if(propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64)==0) {
-				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue), Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token);
+			String newValue = matcher.group(1);
+			if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
+				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
+						Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token);
 			}
-			
-			String codeAndEqual = ((propiedadDTO.getTexto()==null)?propiedadDTO.getLlaveTabla():propiedadDTO.getTexto());
-			if (!codeAndEqual.contains(ConstantesGenerales.IGUAL)) codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
+
+			String codeAndEqual = ((propiedadDTO.getTexto() == null) ? propiedadDTO.getLlaveTabla()
+					: propiedadDTO.getTexto());
+			if (!codeAndEqual.contains(ConstantesGenerales.IGUAL))
+				codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
 			// en la extraccion de autenticacion debo colocar el header
-			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE 
-					+ codeAndEqual
-					+ newValue;
+			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + codeAndEqual + newValue;
 		}
 		if (result == "")
 			result = null;
@@ -409,8 +424,8 @@ public class CallExecuteAPI {
 						}
 						for (RelacionInternaDTO iRelacion : relaciones) {
 							if (iRelacion.getPlantilla().compareTo(document.getPlantilla()) == 0) {
-								PedidoVentaCaracteristicaDTO campo = CallDocumentCommons
-										.obtenerValor(camposOpcionales, iRelacion.getCampo());
+								PedidoVentaCaracteristicaDTO campo = CallDocumentCommons.obtenerValor(camposOpcionales,
+										iRelacion.getCampo());
 								if (campo != null && campo.getValorText() != null) {
 									if (campo.getCampoDTO() == null)
 										campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
@@ -438,7 +453,7 @@ public class CallExecuteAPI {
 						String replaceCode = iProp.getTexto().replaceAll("\\(", "\\\\(");
 						replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
 						replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + replaceCode 
+						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + replaceCode
 								+ "\\}\\}" + ConstantesGenerales.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 						// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
@@ -511,7 +526,8 @@ public class CallExecuteAPI {
 									if (iCampo.getCampoDTO() == null)
 										iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
 									String codeReplace = iCampo.getCampoDTO().getCodigo();
-									if(iCampo.getTransaccionRegistro() != null) codeReplace = codeReplace + "\\(" + iCampo.getTransaccionRegistro() + "\\)";
+									if (iCampo.getTransaccionRegistro() != null)
+										codeReplace = codeReplace + "\\(" + iCampo.getTransaccionRegistro() + "\\)";
 									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{R_"
 											+ codeReplace + "\\}\\}" + ConstantesGenerales.IGUAL
 											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
@@ -547,7 +563,8 @@ public class CallExecuteAPI {
 									if (campo != null && campo.getValorText() != null) {
 										if (campo.getCampoDTO() == null)
 											campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
-										parameters = addParameterString(parameters, iRelacion, campo, campo.getCampoDTO().getCodigo(), "M");
+										parameters = addParameterString(parameters, iRelacion, campo,
+												campo.getCampoDTO().getCodigo(), "M");
 									}
 								}
 							}
@@ -563,38 +580,31 @@ public class CallExecuteAPI {
 
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
 			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
-		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"+tipo+"_"
-				+ codeReplace
-				+ ((iRelacion.getAuxiliar() != null)
-						? "\\(" + iRelacion.getAuxiliar() + "\\)"
-						: "")
-				+ "\\}\\}" + ConstantesGenerales.IGUAL
-				+ formatToReplaceAll(campo, iRelacion.getAuxiliar());
-		if(campo.getValorOpcion()!=null) {
-			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"+tipo+"_"
-					+ codeReplace
-					+ ((iRelacion.getAuxiliar() != null)
-							? "\\(" + iRelacion.getAuxiliar() + "\\)"
-							: "")
-					+ "_KEY\\}\\}"  + ConstantesGenerales.IGUAL
-					+ campo.getValorOpcion();
+		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + tipo + "_" + codeReplace
+				+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "\\}\\}"
+				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, iRelacion.getAuxiliar());
+		if (campo.getValorOpcion() != null) {
+			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + tipo + "_" + codeReplace
+					+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "_KEY\\}\\}"
+					+ ConstantesGenerales.IGUAL + campo.getValorOpcion();
 		}
 		return parameters;
 	}
 
 	private Date getDateWithTransformations(String texto) {
 		Date result = new Date();
-		if(texto.contains("(")) {
+		if (texto.contains("(")) {
 			// Ejemplo E_FECHA_XXX[-15D]
-			String formulaTime = texto.substring(texto.indexOf("(")+1,texto.length()-2);
+			String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - 2);
 			long timeToAdd = 0;
 			try {
 				timeToAdd = Long.parseLong(formulaTime.substring(1));
 			} catch (Exception e) {
-				timeToAdd = 365*10*24*60*60*1000; //Si hay error le sumo 10 years
+				timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
 			}
-			if(formulaTime.contains("-")) timeToAdd = timeToAdd * -1; //Si es negativo
-			result = new Date(result.getTime() + timeToAdd*24*60*60*1000);
+			if (formulaTime.contains("-"))
+				timeToAdd = timeToAdd * -1; // Si es negativo
+			result = new Date(result.getTime() + timeToAdd * 24 * 60 * 60 * 1000);
 		}
 		return result;
 	}
@@ -607,22 +617,37 @@ public class CallExecuteAPI {
 	 */
 	private String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
-			for (Map.Entry<String, String> entry : SoftureUtil.createMaptoString(parametros).entrySet()) {
-				//TEngo que revisar el tema de las fechas especiales
-				plantilla = plantilla.replaceAll(entry.getKey(), entry.getValue());
+			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
+			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
+				if(entry.getValue().getClass().getName().compareTo("java.lang.String")==0) {
+					// TEngo que revisar el tema de las fechas especiales
+					plantilla = plantilla.replaceAll(entry.getKey(), (String) entry.getValue());					
+				}
+			}
+			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
+			if(plantilla.contains("$")) {
+				StringWriter out = new StringWriter();
+				try {
+					Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+					Template t = new Template("templateName", plantilla, cfg);
+					t.process(mapParams, out);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return out.toString();	
 			}
 		}
-		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
-		byte[] bytes = plantilla.getBytes(StandardCharsets.UTF_8);
-		return new String(bytes, StandardCharsets.UTF_8);
+		return plantilla;
 	}
 
 	/**
 	 * Recibo unos campos y una relaciones, valido que campos cumplen con las
 	 * relaciones (con el atributo campo), selecciono los campos que cumplen con
-	 * alguna relacion y consulto las caracteristicas de esos campos que se usan en el api 
+	 * alguna relacion y consulto las caracteristicas de esos campos que se usan en
+	 * el api
 	 * 
-	 * Despues tomo los tipo proceso para volver a ejecutar este proceso, los que no son proceso los dejo como respuesta
+	 * Despues tomo los tipo proceso para volver a ejecutar este proceso, los que no
+	 * son proceso los dejo como respuesta
 	 * 
 	 * @param relaciones
 	 * @param fields
@@ -986,12 +1011,13 @@ public class CallExecuteAPI {
 			}
 		}
 		if (tokenAuthentication != null) {
-			if (result == null)	result = new HashMap<>();
+			if (result == null)
+				result = new HashMap<>();
 			String[] extractionToHeader = tokenAuthentication.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
 			for (String iExtraction : extractionToHeader) {
 				int indexEqual = iExtraction.lastIndexOf(ConstantesGenerales.IGUAL);
-				if(indexEqual>0) {
-					result.put(iExtraction.substring(0,indexEqual), iExtraction.substring(indexEqual+1));	
+				if (indexEqual > 0) {
+					result.put(iExtraction.substring(0, indexEqual), iExtraction.substring(indexEqual + 1));
 				}
 			}
 		}

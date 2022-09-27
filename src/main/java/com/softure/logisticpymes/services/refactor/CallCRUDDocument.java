@@ -296,7 +296,7 @@ public class CallCRUDDocument {
 		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
 		if (apis!=null &&!apis.isEmpty()) {
 			for (PropiedadDTO api : apis) {
-				apiService.prepareApiToExecution(api.getValor(), dto, dto, token);	
+				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);	
 			}
 		}
 			

@@ -59,12 +59,14 @@ public class CallUpdateDocumentAutomatic {
 		//Cuando son servicios asincronos no hay un documento modificador?? de pronto afecte las extracciones
 		if(modificador==null) return;
 		//PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
-		Map<String, String> extractionMap = SoftureUtil.createMaptoString(extractionText);
+		Map<String, Object> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
 			PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
-			newField.setValorText(extractionMap.get(propiedadDTO.getLlaveTabla()));
+			if(extractionMap.get(propiedadDTO.getLlaveTabla()).getClass().getName().compareTo("java.lang.String")==0) {				
+				newField.setValorText((String) extractionMap.get(propiedadDTO.getLlaveTabla()));
+			}
 			// campo
 			List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
 			for (RelacionInternaDTO iRelation : relations) {

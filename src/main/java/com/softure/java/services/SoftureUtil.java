@@ -9,6 +9,7 @@ import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -175,8 +176,8 @@ public class SoftureUtil {
 	 * @return regreso el mapa vacio si no hay resultados que concuerden
 	 * @throws ServerException
 	 */
-	public static Map<String, String> createMaptoString(String str) {
-		Map<String, String> result = new HashMap<String, String>();
+	public static Map<String, Object> createMaptoString(String str) {
+		Map<String, Object> result = new HashMap<String, Object>();
 		if (str ==null || str.isEmpty()) return result;
 		String[] params = str.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
 		int posIgual = -1;
@@ -187,7 +188,18 @@ public class SoftureUtil {
 			if (posIgual > 0) {
 				codigo = iParametro.substring(0, posIgual);
 				textoReemplazar = iParametro.substring(posIgual + 1, iParametro.length());
-				result.put(codigo, textoReemplazar);
+				if(codigo.contains("[")) {
+					String newCode = codigo.substring(0,codigo.indexOf("["));
+					@SuppressWarnings("unchecked")
+					ArrayList<String> arrayObjectsString = (ArrayList<String>) result.get(newCode);
+					if (arrayObjectsString==null) {
+						arrayObjectsString = new ArrayList<>();
+					}
+					arrayObjectsString.add(textoReemplazar);
+					result.put(newCode, arrayObjectsString);
+				}else {					
+					result.put(codigo, textoReemplazar);
+				}
 			}
 		}
 		return result;
