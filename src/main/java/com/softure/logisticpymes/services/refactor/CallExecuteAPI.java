@@ -453,8 +453,8 @@ public class CallExecuteAPI {
 						String replaceCode = iProp.getTexto().replaceAll("\\(", "\\\\(");
 						replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
 						replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + replaceCode
-								+ "\\}\\}" + ConstantesGenerales.IGUAL
+						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  replaceCode
+								+ ConstantesGenerales.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 						// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 						// SoftureUtil.formatDatePattern(new Date(), iProp.getValor()));
@@ -462,31 +462,31 @@ public class CallExecuteAPI {
 						switch (iProp.getTexto()) {
 						case "E_ID":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"
-										+ iProp.getTexto() + "\\}\\}" + ConstantesGenerales.IGUAL
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
+										+ iProp.getTexto() + ConstantesGenerales.IGUAL
 										+ document.getLlaveTabla();
 							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 							// document.getLlaveTabla());
 							break;
 						case "E_CODE":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"
-										+ iProp.getTexto() + "\\}\\}" + ConstantesGenerales.IGUAL
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
+										+ iProp.getTexto() + ConstantesGenerales.IGUAL
 										+ document.getNombre();
 							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 							// document.getNombre());
 							break;
 						case "E_CODE_MODIFICATOR":
 							if (modificador != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{"
-										+ iProp.getTexto() + "\\}\\}" + ConstantesGenerales.IGUAL
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
+										+ iProp.getTexto()  + ConstantesGenerales.IGUAL
 										+ modificador.getNombre();
 							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 							// document.getNombre());
 							break;
 						default:
-							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + iProp.getTexto()
-									+ "\\}\\}" + ConstantesGenerales.IGUAL + iProp.getValor();
+							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
+									+ ConstantesGenerales.IGUAL + iProp.getValor();
 							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
 							// iProp.getValor());
 							break;
@@ -580,12 +580,12 @@ public class CallExecuteAPI {
 
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
 			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
-		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + tipo + "_" + codeReplace
-				+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "\\}\\}"
+		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
+				+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") 
 				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, iRelacion.getAuxiliar());
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{" + tipo + "_" + codeReplace
-					+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "_KEY\\}\\}"
+			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
+					+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "_KEY"
 					+ ConstantesGenerales.IGUAL + campo.getValorOpcion();
 		}
 		return parameters;
@@ -621,7 +621,7 @@ public class CallExecuteAPI {
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 				if(entry.getValue().getClass().getName().compareTo("java.lang.String")==0) {
 					// TEngo que revisar el tema de las fechas especiales
-					plantilla = plantilla.replaceAll(entry.getKey(), (String) entry.getValue());					
+					plantilla = plantilla.replaceAll("\\{\\{" + entry.getKey() +"\\}\\}", (String) entry.getValue());					
 				}
 			}
 			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
@@ -634,7 +634,7 @@ public class CallExecuteAPI {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				return out.toString();	
+				return out.toString();
 			}
 		}
 		return plantilla;
