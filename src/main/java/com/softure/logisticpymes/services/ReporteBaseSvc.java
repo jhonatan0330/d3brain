@@ -159,12 +159,12 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		List<PropiedadDTO> propiedades = reporte.getPropiedades();
 		if(propiedades != null  && !propiedades.isEmpty()) {
 			for (PropiedadDTO propiedadDTO : propiedades) {
-				if(propiedadDTO.getKey().compareTo(Propiedades.P_SUBREPORT_)==0
-						|| propiedadDTO.getKey().compareTo(Propiedades.REPORTE_EXCEL)==0
-						|| propiedadDTO.getKey().compareTo(Propiedades.REPORTE_ENCABEZADO)==0
-						|| propiedadDTO.getKey().compareTo(Propiedades.REPORTE_PIE_PAGINA)==0
-						|| propiedadDTO.getKey().compareTo(Propiedades.REPORTE_ENCABEZADO_EXCEL)==0) {
-					
+				switch (propiedadDTO.getKey()) {
+				case Propiedades.P_SUBREPORT_: 
+				case Propiedades.REPORTE_EXCEL:
+				case Propiedades.REPORTE_ENCABEZADO:
+				case Propiedades.REPORTE_PIE_PAGINA:
+				{
 					PropiedadDTO subreporteJRXML = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.REPORTE, propiedadDTO.getValor(), Propiedades.REPORTE_JRXML, usuario);//getUserFlex(token)
 					if(subreporteJRXML==null) throw new ServerException("El reporte "+ reporte + "no encuentra el subreporte " + propiedadDTO.getValor());
 					if(propiedadDTO.getKey().compareTo(Propiedades.P_SUBREPORT_)==0) {//Esto es porque son multiples parametros
@@ -173,7 +173,14 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 					}else {
 						parametrosJasper.put(propiedadDTO.getKey(), subreporteJRXML.getValor());	
 					}
-				}else {
+					break;
+				}
+				case Propiedades.REPORTE_IMAGEN:
+				{
+					parametrosJasper.put(propiedadDTO.getTexto(), propiedadDTO.getValor().substring(propiedadDTO.getValor().indexOf(",")+1));
+					break;
+				}
+				default:
 					parametrosJasper.put(propiedadDTO.getKey(), propiedadDTO.getValor());
 				}
 			}

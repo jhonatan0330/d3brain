@@ -44,6 +44,7 @@ import com.softure.logisticpymes.services.adapter.Propiedades;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -709,6 +710,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.REP_VISIBLE_STATE : {identificadorEstadoReporte(dto);break;}
 			
 			case Propiedades.REPORTE_JRXML : {identificadorJRXML(dto);break;}
+			case Propiedades.REPORTE_IMAGEN : {vaildarBase64(dto);break;}
 			
 			case Propiedades.MENSAJE : {identificadorMensaje(dto);break;}
 			
@@ -938,6 +940,19 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	
 	private void identificadorJRXML(PropiedadDTO dto) throws ServerException{
 		if(dto.getValor().contains("language=\"groovy\"")) throw new ServerException("El lenguaje del reporte debe ser java.");
+		int imageCount = StringUtils.countMatches(dto.getValor(), "<image ");
+		if(imageCount!=0) {
+			if(StringUtils.countMatches(dto.getValor(), "onErrorType=\"Blank\"")<imageCount)
+				throw new ServerException("Todas las imagenes del reporte deben tener la propiedad On Error Type con valor = Blank.");
+			if(StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream")<imageCount)
+				throw new ServerException("Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN");
+		}
+	}
+	
+	private void vaildarBase64(PropiedadDTO dto) throws ServerException{
+		int imageCount = StringUtils.countMatches(dto.getValor(), ",");
+		if(imageCount!=1) 
+				throw new ServerException("Incluya la parte inicial del codigo base 64");
 	}
 	
 	public void actualizarValorPropiedad(PropiedadDTO dto) throws ServerException{

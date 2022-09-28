@@ -395,3 +395,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_210' , 'C', 'LINKS EXTERNO', 'LINK_EXTERNO', 'REQUISITO', 'Z');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, cpvd_origencategoria) 
 	VALUES('PROP_211' , 'A', 'API_ITERATION_ONE_EXECUTION', 'API_ITERATION_ONE_EXECUTION', 'REQUISITO', true, 'P');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_212' , 'E', 'IMAGEN EN REPORTE', 'REPORTE_IMAGEN', 'REQUISITO', true);
