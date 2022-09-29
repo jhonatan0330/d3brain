@@ -164,6 +164,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				case Propiedades.REPORTE_EXCEL:
 				case Propiedades.REPORTE_ENCABEZADO:
 				case Propiedades.REPORTE_PIE_PAGINA:
+				case Propiedades.REPORTE_ENCABEZADO_EXCEL:
 				{
 					PropiedadDTO subreporteJRXML = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.REPORTE, propiedadDTO.getValor(), Propiedades.REPORTE_JRXML, usuario);//getUserFlex(token)
 					if(subreporteJRXML==null) throw new ServerException("El reporte "+ reporte + "no encuentra el subreporte " + propiedadDTO.getValor());
