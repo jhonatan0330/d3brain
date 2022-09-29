@@ -544,6 +544,7 @@ public class Propiedades {
 			case REP_VISIBLE_STATE : {ruleProperty =  "El reporte solo se visualiza si el documento se encuentra en un estado especifico.\n";break;}
 			case REP_PRINT_ONE : {ruleProperty =  "El reporte solo se puede imprimir una sola vez.\n";break;}
 			case REPORTE_IMAGEN : {ruleProperty =  "Carga la imagen en base 64 de un reporte, esta imagen se pasara como un parametro al reporte, se guarda con el formato para que sea visible en un explorador (ej: data:image/png;base64,iVBORw0KGg...)\n\n<import value=\"org.apache.commons.codec.binary.Base64\"/>\n\n new ByteArrayInputStream(Base64.decodeBase64($P{P_IMAGEN_LOGO}.getBytes()))\n\n Usa esta url para modificar la imagen https://www.base64-image.de/";break;}
+			case REPORTE_JRXML : {ruleProperty =  "Se coloca el texto del jrxml.\n\nLas imagenes deben estar como parametros o como campos de la consulta el valida el texto del source de la imagen sea un parametro para base64 o un campo($)\nimageExpression><![CDATA[$ \nimageExpression><![CDATA[new ByteArrayInputStream";break;}
 			case SOLICITAR_FECHAS : {ruleProperty =  " Obliga al usuario colocar fechas al momento de realizar la consulta.\n";break;}
 			case TABLERO_CONTROL_SQL : {ruleProperty =  "Muestra un item en el menu que traera una serie de objetos que se definen en un query.\n"
 				+ "En el campo TEXTO va el nombre del tablero\n"

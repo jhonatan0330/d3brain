@@ -944,7 +944,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if(imageCount!=0) {
 			if(StringUtils.countMatches(dto.getValor(), "onErrorType=\"Blank\"")<imageCount)
 				throw new ServerException("Todas las imagenes del reporte deben tener la propiedad On Error Type con valor = Blank.");
-			if(StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream")<imageCount)
+			if(StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[$") + StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream")<imageCount)
 				throw new ServerException("Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN");
 		}
 	}
@@ -953,6 +953,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		int imageCount = StringUtils.countMatches(dto.getValor(), ",");
 		if(imageCount!=1) 
 				throw new ServerException("Incluya la parte inicial del codigo base 64");
+		if(dto.getTexto()==null || dto.getTexto().isEmpty()) throw new ServerException("No olvides colocar el nombre del parametro");
 	}
 	
 	public void actualizarValorPropiedad(PropiedadDTO dto) throws ServerException{
