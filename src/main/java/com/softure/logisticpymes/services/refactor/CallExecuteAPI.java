@@ -528,8 +528,8 @@ public class CallExecuteAPI {
 									String codeReplace = iCampo.getCampoDTO().getCodigo();
 									if (iCampo.getTransaccionRegistro() != null)
 										codeReplace = codeReplace + "\\(" + iCampo.getTransaccionRegistro() + "\\)";
-									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "\\{\\{R_"
-											+ codeReplace + "\\}\\}" + ConstantesGenerales.IGUAL
+									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_"
+											+ codeReplace + ConstantesGenerales.IGUAL
 											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
 								}
 							}
