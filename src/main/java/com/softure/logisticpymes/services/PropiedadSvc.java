@@ -322,6 +322,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					historico.setMotivo("Pasar a tabla historico");
 					historico.setTexto("00:00:07:00:00");
 					guardar(historico , token);
+					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, plantillaPrincipal.getLlaveTabla(), 
+							Propiedades.SOLICITAR_FECHAS, "1", token) , token);
 					break;
 				case Propiedades.PLANTILLA_TIPO_ROL:
 					RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
