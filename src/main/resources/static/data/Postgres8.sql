@@ -205,6 +205,9 @@ CREATE TABLE tarifa_tarp(
         ntar_cantidadminima int NOT NULL DEFAULT 0,
         ntar_cantidadmaxima int NOT NULL DEFAULT 0,
         mtar_totalminimo NUMERIC(18,6) NOT NULL DEFAULT 0,
+        ctar_dimension2 character varying(32),
+        ctar_dimension3 character varying(32),
+        ctar_dimension4 character varying(32),
         ctar_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_tarifa_tarp PRIMARY KEY (ctar_llave)
     );
@@ -234,6 +237,9 @@ CREATE TABLE tarifario_trfp(
         ctrf_llave character varying(32) NOT NULL,
         ctrf_nombre character varying(100) NOT NULL UNIQUE,
         ctrf_tiporecurso character varying(32),
+        ctrf_tipodimension2 character varying(32),
+        ctrf_tipodimension3 character varying(32),
+        ctrf_tipodimension4 character varying(32),
         btrf_productoopcional boolean NOT NULL DEFAULT false,
         btrf_rangovalores boolean NOT NULL DEFAULT false,
         btrf_rangocantidad boolean NOT NULL DEFAULT false,
@@ -514,7 +520,7 @@ CREATE TABLE usuario_usrp(
         cusr_nombre character varying(200) NOT NULL,
         cusr_imagen character varying(2000) NOT NULL,
         cusr_correo character varying(50),
-        cusr_telefono character varying(1),
+        cusr_telefono character varying(50),
         cusr_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuario_usrp PRIMARY KEY (cusr_llave)
     );
@@ -847,7 +853,7 @@ CREATE TABLE usuarioautenticacionautorizacion_uaap(
         cuaa_codigo character varying(100),
         duaa_fecharedencion timestamp with time zone,
         cuaa_key character varying(100),
-        cuaa_ipredencion character varying(100) NOT NULL,
+        cuaa_ipredencion character varying(100),
         cuaa_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_usuarioautenticacionautorizacion_uaap PRIMARY KEY (cuaa_llave)
     );
@@ -1112,4 +1118,4 @@ ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FORE
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionautorizacionCrea FOREIGN KEY (cuau_autorizacionCrea) REFERENCES UsuarioAutenticacionAutorizacion_uaap(cuaa_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.08.08.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.10.07.00' from pg_class where relname = 'usuariosesion_ussp';

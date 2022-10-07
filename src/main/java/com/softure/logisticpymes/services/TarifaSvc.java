@@ -193,6 +193,9 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			}
 		}
 		existe.setRecurso(dto.getRecurso());
+		existe.setDimension2(dto.getDimension2());
+		existe.setDimension3(dto.getDimension3());
+		existe.setDimension4(dto.getDimension4());
 		List<TarifaDTO> tarifa = tarifaMapper.obtenerTarifa(existe);
 		if(tarifa==null || tarifa.isEmpty()) return null;
 		if(tarifa.size()>1) throw new ServerException("Revisa porque al consultar la tarifa, se consultan varias respuestas");

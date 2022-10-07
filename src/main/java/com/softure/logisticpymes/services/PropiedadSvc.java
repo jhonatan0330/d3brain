@@ -40,11 +40,11 @@ import com.softure.logisticpymes.dto.filter.TarifarioFilterDTO;
 import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
 import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
+import org.apache.commons.lang3.StringUtils;
 // END region interImport
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

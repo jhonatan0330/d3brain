@@ -99,91 +99,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return super.listarConsulta(dto);
 	}
 	
-	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto, boolean fromApi)throws ServerException{
+	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
 		// BEGIN region autenticar
-		if (!fromApi) {
-			if(dto.getClaveAnterior()==null) reportarError(dto, "Por favor actualice su version de software");
-			String fechaMinima = null;
-			try {
-				fechaMinima = usuarioAutenticacionMapper.fechaMinima();
-			}catch (Exception e) {
-				reportarError(dto, e.getMessage());
-			}
-			if(fechaMinima!=null){
-				int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
-				int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
-				if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
-			}	
-		}
-		
-		String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
-		if(fechaTrial==null) reportarError(dto,  "El sistema no tiene configurada la fecha de la licencia");
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-		long diasVigencia = 0;
-		try {
-			Date date = formatter.parse(fechaTrial);
-			diasVigencia =(date.getTime() - new Date().getTime())/ (24 * 3600000);
-			if(diasVigencia < 0)
-				reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
-		} catch (ParseException e) {
-			reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
-		}
-		UsuarioAutenticacionDTO autenticacion =null;
-		UsuarioSesionDTO sesion  = null;
-		if(dto.getSecurityToken()!=null && dto.getClave()==null){
-			sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
-			if(sesion == null) reportarError(dto, "Autenticacion incorrecta");
-			if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)
-				reportarError(dto, "Se encuentra inactiva la sesion");
-			autenticacion = new UsuarioAutenticacionDTO();
-			autenticacion.setUsuario(sesion.getUsuario());
-		}else{
-			if(dto.getClave()!=null && dto.getSesion()==null && dto.getSecurityToken()!=null) {
-				autenticacion = consultaXId(dto.getClave());
-			}
-			if(autenticacion== null) {
-				UsuarioAutenticacionFilterDTO autenticacionF = new UsuarioAutenticacionFilterDTO();
-				if(dto.getSesion()==null) reportarError(dto, "La sesion no puede estar vacia");
-				autenticacionF.setSesion(dto.getSesion());
-				if(dto.getClave()==null) reportarError(dto, "La clave no puede estar vacia");
-				autenticacionF.setClave(dto.getClave());
-				autenticacionF.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-				autenticacion = consultaUnica(autenticacionF);
-			}
-			if(autenticacion == null) reportarError(dto, "Autenticacion incorrecta");
-			if(autenticacion.getFechaMaxima()!=null && autenticacion.getFechaMaxima().compareTo(new Date())<0)
-				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");	
-		}
-		
-		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
-		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)reportarError(dto, "El usuario no se encuentra activo");
-		autenticacion.setUsuarioDTO(usuario);
-		
-		if (!fromApi) {
-			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
-			autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));	
-		}
-		
-		if(sesion==null) {
-			sesion = new UsuarioSesionDTO();
-			sesion.setFecha(new Date());
-			sesion.setFechaCierre(usuarioSesionService.getFechaCierre(autenticacion.getUsuario()));
-			sesion.setUsuario(autenticacion.getUsuario());
-			sesion.setIp(dto.getIp());
-			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
-		}
-		autenticacion.setToken(sesion.getLlaveTabla());
-		
-		if (!fromApi) {
-			if(diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
-			autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
-			
-			ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
-			filterMod.setSecurityToken(sesion.getLlaveTabla());
-			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));		
-		}
-		return autenticacion;
+		return autenticar(dto, false);
 		// END region autenticar
 	}
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
@@ -342,8 +260,90 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 	
 	// PAra el api de flex despues lo puedo quitar
-	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto)throws ServerException{
-		return autenticar(dto, false);
+	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto, boolean fromApi)throws ServerException{
+		if (!fromApi) {
+			if(dto.getClaveAnterior()==null) reportarError(dto, "Por favor actualice su version de software");
+			String fechaMinima = null;
+			try {
+				fechaMinima = usuarioAutenticacionMapper.fechaMinima();
+			}catch (Exception e) {
+				reportarError(dto, e.getMessage());
+			}
+			if(fechaMinima!=null){
+				int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
+				int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
+				if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
+			}	
+		}
+		
+		String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
+		if(fechaTrial==null) reportarError(dto,  "El sistema no tiene configurada la fecha de la licencia");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+		long diasVigencia = 0;
+		try {
+			Date date = formatter.parse(fechaTrial);
+			diasVigencia =(date.getTime() - new Date().getTime())/ (24 * 3600000);
+			if(diasVigencia < 0)
+				reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
+		} catch (ParseException e) {
+			reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
+		}
+		UsuarioAutenticacionDTO autenticacion =null;
+		UsuarioSesionDTO sesion  = null;
+		if(dto.getSecurityToken()!=null && dto.getClave()==null){
+			sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
+			if(sesion == null) reportarError(dto, "Autenticacion incorrecta");
+			if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)
+				reportarError(dto, "Se encuentra inactiva la sesion");
+			autenticacion = new UsuarioAutenticacionDTO();
+			autenticacion.setUsuario(sesion.getUsuario());
+		}else{
+			if(dto.getClave()!=null && dto.getSesion()==null && dto.getSecurityToken()!=null) {
+				autenticacion = consultaXId(dto.getClave());
+			}
+			if(autenticacion== null) {
+				UsuarioAutenticacionFilterDTO autenticacionF = new UsuarioAutenticacionFilterDTO();
+				if(dto.getSesion()==null) reportarError(dto, "La sesion no puede estar vacia");
+				autenticacionF.setSesion(dto.getSesion());
+				if(dto.getClave()==null) reportarError(dto, "La clave no puede estar vacia");
+				autenticacionF.setClave(dto.getClave());
+				autenticacionF.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				autenticacion = consultaUnica(autenticacionF);
+			}
+			if(autenticacion == null) reportarError(dto, "Autenticacion incorrecta");
+			if(autenticacion.getFechaMaxima()!=null && autenticacion.getFechaMaxima().compareTo(new Date())<0)
+				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");	
+		}
+		
+		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
+		if(usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)reportarError(dto, "El usuario no se encuentra activo");
+		autenticacion.setUsuarioDTO(usuario);
+		
+		if (!fromApi) {
+			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
+			autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));	
+		}
+		
+		if(sesion==null) {
+			sesion = new UsuarioSesionDTO();
+			sesion.setFecha(new Date());
+			sesion.setFechaCierre(usuarioSesionService.getFechaCierre(autenticacion.getUsuario()));
+			sesion.setUsuario(autenticacion.getUsuario());
+			sesion.setIp(dto.getIp());
+			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
+		}
+		autenticacion.setToken(sesion.getLlaveTabla());
+		
+		if (!fromApi) {
+			if(diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario())==0) autenticacion.setMensaje("Quedan "+ (diasVigencia +1) +" dias para que se cumpla el periodo de su licencia");
+			autenticacion.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
+			
+			ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
+			filterMod.setSecurityToken(sesion.getLlaveTabla());
+			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));		
+		}
+		return autenticacion;
 	}
 	
 	private Date getNewMaximunDate() {

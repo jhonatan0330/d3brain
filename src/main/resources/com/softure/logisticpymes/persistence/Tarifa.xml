@@ -20,6 +20,12 @@
 			,ntar_cantidadminima as  cantidadMinima
 			,ntar_cantidadmaxima as  cantidadMaxima
 			,mtar_totalminimo as  totalMinimo
+			,ctar_dimension2 as  dimension2
+			,descripcion(ctar_dimension2) as  dimension2Nombre
+			,ctar_dimension3 as  dimension3
+			,descripcion(ctar_dimension2) as  dimension3Nombre
+			,ctar_dimension4 as  dimension4
+			,descripcion(ctar_dimension2) as  dimension4Nombre
 			,ctar_estado as estado
 		from tarifa_tarp a
 	</sql>
@@ -43,6 +49,15 @@
 			</if>
 			<if test="rangoPreciosFilter!=null">
 				and btar_rangoprecios = #{rangoPreciosFilter}
+			</if>
+			<if test="dimension2!=null">
+				and ctar_dimension2 = #{dimension2}
+			</if>
+			<if test="dimension3!=null">
+				and ctar_dimension3 = #{dimension3}
+			</if>
+			<if test="dimension4!=null">
+				and ctar_dimension4 = #{dimension4}
 			</if>
 	</sql>
 
@@ -72,6 +87,9 @@
 		, productonombre 
 		, recursonombre 
 		, ntar_cantidadminima 
+		, dimension2nombre 
+		, dimension3nombre 
+		, dimension4nombre 
 		<include refid="paginationTarifaFragment" />
 	</select>
 
@@ -115,6 +133,15 @@
 		<if test="totalMinimo!=null">
 			,mtar_totalminimo
 		</if>
+		<if test="dimension2!=null">
+			,ctar_dimension2
+		</if>
+		<if test="dimension3!=null">
+			,ctar_dimension3
+		</if>
+		<if test="dimension4!=null">
+			,ctar_dimension4
+		</if>
 		<if test="estado!=null">
 			,ctar_estado
 		</if>
@@ -150,6 +177,15 @@
 		<if test="totalMinimo!=null">
 			,#{totalMinimo}
 		</if>
+		<if test="dimension2!=null">
+			,#{dimension2}
+		</if>
+		<if test="dimension3!=null">
+			,#{dimension3}
+		</if>
+		<if test="dimension4!=null">
+			,#{dimension4}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -169,6 +205,9 @@
 				ntar_cantidadminima = #{cantidadMinima},
 				ntar_cantidadmaxima = #{cantidadMaxima},
 				mtar_totalminimo = #{totalMinimo},
+				ctar_dimension2 = #{dimension2},
+				ctar_dimension3 = #{dimension3},
+				ctar_dimension4 = #{dimension4},
 				ctar_estado =#{estado}
 		<include refid="whereTarifaPrimaryKeyFragment" />
 	</select>
@@ -186,6 +225,9 @@
 			,ntar_cantidadminima as  cantidadMinima
 			,ntar_cantidadmaxima as  cantidadMaxima
 			,mtar_totalminimo as  totalMinimo
+			,ctar_dimension2 as  dimension2
+			,ctar_dimension3 as  dimension3
+			,ctar_dimension4 as  dimension4
 			,ctar_estado as estado
 		from tarifa_tarp a
 	</sql>
@@ -202,20 +244,26 @@
 		, productonombre 
 		, recursonombre 
 		, ntar_cantidadminima 
+		, dimension2nombre 
+		, dimension3nombre 
+		, dimension4nombre 
 		<include refid="paginationTarifaFragment" />
 	</select>
 	
 
 
 <!--// BEGIN region script-->
-<select id="obtenerTarifa" parameterType="TarifaDTO" resultType="TarifaDTO">
-	<include refid="selectTarifaFragment" />
-  <include refid="whereTarifaFragment" />
-  <choose><when test="recurso!=null"></when><otherwise>and ctar_recurso is null</otherwise></choose>
-  <if test="cantidadMinima!=null">and ((#{cantidadMinima} between ntar_cantidadminima and ntar_cantidadmaxima) or (#{cantidadMaxima} between ntar_cantidadminima and ntar_cantidadmaxima))</if>
-  and ctar_estado = 'A'
-  order by tarifarioNombre, productoNombre, recursoNombre, ntar_cantidadminima
-</select>
+	<select id="obtenerTarifa" parameterType="TarifaDTO" resultType="TarifaDTO">
+	  <include refid="selectTarifaFragment" />
+	  <include refid="whereTarifaFragment" />
+	  <choose><when test="recurso!=null"></when><otherwise>and ctar_recurso is null</otherwise></choose>
+	  <choose><when test="dimension2!=null"></when><otherwise>and ctar_dimension2 is null</otherwise></choose>
+	  <choose><when test="dimension3!=null"></when><otherwise>and ctar_dimension3 is null</otherwise></choose>
+	  <choose><when test="dimension4!=null"></when><otherwise>and ctar_dimension4 is null</otherwise></choose>
+	  <if test="cantidadMinima!=null">and ((#{cantidadMinima} between ntar_cantidadminima and ntar_cantidadmaxima) or (#{cantidadMaxima} between ntar_cantidadminima and ntar_cantidadmaxima))</if>
+	  and ctar_estado = 'A'
+	  order by tarifarioNombre, productoNombre, recursoNombre, ntar_cantidadminima
+	</select>
 
 	<select id="obtenerTarifaFuncion" resultType="TarifaDTO">
 		select
@@ -226,6 +274,12 @@
 			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
 			,ctar_recurso as  recurso
 			,descripcion(ctar_recurso) as  recursoNombre
+			,ctar_dimension2 as  dimension2
+			,descripcion(ctar_dimension2) as  dimension2Nombre
+			,ctar_dimension3 as  dimension3
+			,descripcion(ctar_dimension2) as  dimension3Nombre
+			,ctar_dimension4 as  dimension4
+			,descripcion(ctar_dimension2) as  dimension4Nombre
 			,btar_rangoprecios as  rangoPrecios
 			,mtar_valorminimo as  valorMinimo
 			,mtar_valor as  valor

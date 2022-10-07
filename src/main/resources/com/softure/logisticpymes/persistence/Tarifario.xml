@@ -9,9 +9,15 @@
 			ctrf_llave as  llaveTabla
 			,ctrf_nombre as  nombre
 			,ctrf_tiporecurso as  tipoRecurso
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tiporecurso) as  tipoRecursoNombre
+			,ctrf_tipodimension2 as  tipoDimension2
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tipodimension2) as  tipoDimension2Nombre
+			,ctrf_tipodimension3 as  tipoDimension3
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tipodimension3) as  tipoDimension3Nombre
+			,ctrf_tipodimension4 as  tipoDimension4
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tipodimension4) as  tipoDimension4Nombre
 			,btrf_productoopcional as  productoOpcional
 			,btrf_rangovalores as  rangoValores
-			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = ctrf_tiporecurso) as  tipoRecursoNombre
 			,btrf_rangocantidad as  rangoCantidad
 			,ctrf_estado as estado
 		from tarifario_trfp a
@@ -30,6 +36,15 @@
 			</if>
 			<if test="tipoRecurso!=null">
 				and ctrf_tiporecurso = #{tipoRecurso}
+			</if>
+			<if test="tipoDimension2!=null">
+				and ctrf_tipodimension2 = #{tipoDimension2}
+			</if>
+			<if test="tipoDimension3!=null">
+				and ctrf_tipodimension3 = #{tipoDimension3}
+			</if>
+			<if test="tipoDimension4!=null">
+				and ctrf_tipodimension4 = #{tipoDimension4}
 			</if>
 			<if test="productoOpcionalFilter!=null">
 				and btrf_productoopcional = #{productoOpcionalFilter}
@@ -87,6 +102,15 @@
 		<if test="tipoRecurso!=null">
 			,ctrf_tiporecurso
 		</if>
+		<if test="tipoDimension2!=null">
+			,ctrf_tipodimension2
+		</if>
+		<if test="tipoDimension3!=null">
+			,ctrf_tipodimension3
+		</if>
+		<if test="tipoDimension4!=null">
+			,ctrf_tipodimension4
+		</if>
 		<if test="productoOpcional!=null">
 			,btrf_productoopcional
 		</if>
@@ -106,6 +130,15 @@
 		</if>
 		<if test="tipoRecurso!=null">
 			,#{tipoRecurso}
+		</if>
+		<if test="tipoDimension2!=null">
+			,#{tipoDimension2}
+		</if>
+		<if test="tipoDimension3!=null">
+			,#{tipoDimension3}
+		</if>
+		<if test="tipoDimension4!=null">
+			,#{tipoDimension4}
 		</if>
 		<if test="productoOpcional!=null">
 			,#{productoOpcional}
@@ -127,6 +160,9 @@
 			set
 				ctrf_nombre = #{nombre},
 				ctrf_tiporecurso = #{tipoRecurso},
+				ctrf_tipodimension2 = #{tipoDimension2},
+				ctrf_tipodimension3 = #{tipoDimension3},
+				ctrf_tipodimension4 = #{tipoDimension4},
 				btrf_productoopcional = #{productoOpcional},
 				btrf_rangovalores = #{rangoValores},
 				btrf_rangocantidad = #{rangoCantidad},
@@ -139,6 +175,9 @@
 			ctrf_llave as  llaveTabla
 			,ctrf_nombre as  nombre
 			,ctrf_tiporecurso as  tipoRecurso
+			,ctrf_tipodimension2 as  tipoDimension2
+			,ctrf_tipodimension3 as  tipoDimension3
+			,ctrf_tipodimension4 as  tipoDimension4
 			,btrf_productoopcional as  productoOpcional
 			,btrf_rangovalores as  rangoValores
 			,btrf_rangocantidad as  rangoCantidad
