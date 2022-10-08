@@ -73,75 +73,77 @@ public class CallNewDocumentAutomatic {
 		transicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
-				Propiedades.GENERA_DOCUMENTO_TEXTO };
+				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR };
 		List<PropiedadDTO> camposGenerar = Propiedades.obtenerVariosParametro(transicion, cars);
 		if (camposGenerar == null || camposGenerar.isEmpty())
 			return null;
 		for (PropiedadDTO iPropiedadDTO : camposGenerar) {
-			List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
-			if (relaciones == null || relaciones.isEmpty()) { // Este es un campo donde va principal
-				PedidoVentaCaracteristicaDTO campoPrincipal = copyFieldDocument(null, iPropiedadDTO.getValor());
+			switch (iPropiedadDTO.getKey()) {
+			case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR:
 				if (documento != null) {
+					PedidoVentaCaracteristicaDTO campoPrincipal = copyFieldDocument(null, iPropiedadDTO.getValor());
 					campoPrincipal.setValorOpcion(documento.getLlaveTabla());
 					if (documento.getDinero() != null)
 						// Importante para que coja valor porque va a consultar po BD y no tiene
 						campoPrincipal.setValorNumero(documento.getDinero().getValorTotal());
 					campoPrincipal.setPrincipal(documento);
-				} else {
+					camposNuevos.add(campoPrincipal);
+				}
+				break;
+			case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE:
+				if (expedienteDTO != null) {
+					PedidoVentaCaracteristicaDTO campoPrincipal = copyFieldDocument(null, iPropiedadDTO.getValor());
 					campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
 					if (expedienteDTO.getDinero() != null)
 						campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());
 					campoPrincipal.setPrincipal(expedienteDTO);
+					camposNuevos.add(campoPrincipal);
+					break;	
 				}
-				camposNuevos.add(campoPrincipal);
-			} else {
-				switch (iPropiedadDTO.getKey()) {
-				case Propiedades.GENERA_DOCUMENTO_CAMPO:
-					// Este campo debe sumarse
-					for (RelacionInternaDTO iRelacion : relaciones) {
-						if (documento != null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
-							camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(
-									documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
-						} else {
-							if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
-									&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
-								// Solo consulto el documento cuando en realidad lo necesito, en general no
-								// veien las caracteristicas
-								if (expedienteDTO.getCaracteristicas() == null)
-									expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
-											expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
-								camposNuevos.add(copyFieldDocument(CallDocumentCommons
-										.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),
-										iPropiedadDTO.getValor()));
-							}
+			case Propiedades.GENERA_DOCUMENTO_CAMPO:
+				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+				if (relaciones == null || relaciones.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
+				for (RelacionInternaDTO iRelacion : relaciones) {
+					if (documento != null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
+						camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(
+								documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+					} else {
+						if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
+								&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
+							// Solo consulto el documento cuando en realidad lo necesito, en general no
+							// veien las caracteristicas
+							if (expedienteDTO.getCaracteristicas() == null)
+								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
+										expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
+							camposNuevos.add(copyFieldDocument(CallDocumentCommons
+									.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),
+									iPropiedadDTO.getValor()));
 						}
 					}
-					break;
-				case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
-					// Este campo debe sumarse
-					PedidoVentaCaracteristicaDTO campoGenerado = pedidoVentaCaracteristicaService
-							.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
-									(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
-									(documento != null) ? documento.getLlaveTabla() : null);
-					camposNuevos.add(copyFieldDocument(campoGenerado, relaciones.get(0).getCampo()));
-					break;
-				case Propiedades.GENERA_DOCUMENTO_TEXTO:
-					String textValueToNewField = iPropiedadDTO.getValor();
-					PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, relaciones.get(0).getCampo());
-					if (textValueToNewField.compareTo("#NUMBER") == 0) {
-						fieldNew.setValorNumero(new BigDecimal(iterationNumber));
-						fieldNew.setValorText(String.valueOf(iterationNumber));
-					} else {
-						fieldNew.setValorText(textValueToNewField);
-					}
-					camposNuevos.add(fieldNew);
-					break;
-				default:
-					break;
 				}
+				break;
+			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
+				PedidoVentaCaracteristicaDTO campoGenerado = pedidoVentaCaracteristicaService
+						.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
+								(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
+								(documento != null) ? documento.getLlaveTabla() : null);
+				camposNuevos.add(copyFieldDocument(campoGenerado, iPropiedadDTO.getValor()));
+				break;
+			case Propiedades.GENERA_DOCUMENTO_TEXTO:
+				String textValueToNewField = iPropiedadDTO.getValor();
+				PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, iPropiedadDTO.getValor());
+				if (textValueToNewField.compareTo("#NUMBER") == 0) {
+					fieldNew.setValorNumero(new BigDecimal(iterationNumber));
+					fieldNew.setValorText(String.valueOf(iterationNumber));
+				} else {
+					fieldNew.setValorText(textValueToNewField);
+				}
+				camposNuevos.add(fieldNew);
+				break;
+			default:
+				break;
 			}
 		}
-
 		return processNewFields(transicion, documento, transaccion, token, camposNuevos);
 	}
 

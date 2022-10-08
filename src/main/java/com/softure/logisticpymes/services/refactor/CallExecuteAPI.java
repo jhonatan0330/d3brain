@@ -433,8 +433,6 @@ public class CallExecuteAPI {
 											? campo.getCampoDTO().getCodigo()
 											: campo.getTransaccionRegistro();
 									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D");
-									// template = template.replaceAll("\\{\\{D_" + codeReplace + "\\}\\}",
-									// formatToReplaceAll(campo));
 								}
 							}
 						}
@@ -450,14 +448,9 @@ public class CallExecuteAPI {
 								"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
 					if (iProp.getTexto().startsWith("E_FECHA_")) {
 						Date fieldDate = getDateWithTransformations(iProp.getTexto());
-						String replaceCode = iProp.getTexto().replaceAll("\\(", "\\\\(");
-						replaceCode = replaceCode.replaceAll("\\)", "\\\\)");
-						replaceCode = replaceCode.replaceAll("\\+", "\\\\+");
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  replaceCode
+						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  iProp.getTexto()
 								+ ConstantesGenerales.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
-						// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
-						// SoftureUtil.formatDatePattern(new Date(), iProp.getValor()));
 					} else {
 						switch (iProp.getTexto()) {
 						case "E_ID":
@@ -465,30 +458,22 @@ public class CallExecuteAPI {
 								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
 										+ iProp.getTexto() + ConstantesGenerales.IGUAL
 										+ document.getLlaveTabla();
-							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
-							// document.getLlaveTabla());
 							break;
 						case "E_CODE":
 							if (document != null)
 								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
 										+ iProp.getTexto() + ConstantesGenerales.IGUAL
 										+ document.getNombre();
-							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
-							// document.getNombre());
 							break;
 						case "E_CODE_MODIFICATOR":
 							if (modificador != null)
 								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
 										+ iProp.getTexto()  + ConstantesGenerales.IGUAL
 										+ modificador.getNombre();
-							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
-							// document.getNombre());
 							break;
 						default:
 							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
 									+ ConstantesGenerales.IGUAL + iProp.getValor();
-							// template = template.replaceAll("\\{\\{" + iProp.getTexto() + "\\}\\}",
-							// iProp.getValor());
 							break;
 						}
 
@@ -527,7 +512,7 @@ public class CallExecuteAPI {
 										iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
 									String codeReplace = iCampo.getCampoDTO().getCodigo();
 									if (iCampo.getTransaccionRegistro() != null)
-										codeReplace = codeReplace + "\\(" + iCampo.getTransaccionRegistro() + "\\)";
+										codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
 									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_"
 											+ codeReplace + ConstantesGenerales.IGUAL
 											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
@@ -581,11 +566,11 @@ public class CallExecuteAPI {
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
 			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
 		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
-				+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") 
+				+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") 
 				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, iRelacion.getAuxiliar());
 		if (campo.getValorOpcion() != null) {
 			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
-					+ ((iRelacion.getAuxiliar() != null) ? "\\(" + iRelacion.getAuxiliar() + "\\)" : "") + "_KEY"
+					+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") + "_KEY"
 					+ ConstantesGenerales.IGUAL + campo.getValorOpcion();
 		}
 		return parameters;
@@ -620,8 +605,11 @@ public class CallExecuteAPI {
 			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 				if(entry.getValue().getClass().getName().compareTo("java.lang.String")==0) {
-					// TEngo que revisar el tema de las fechas especiales
-					plantilla = plantilla.replaceAll("\\{\\{" + entry.getKey() +"\\}\\}", (String) entry.getValue());					
+					// Esto lo hago porque el replace all no me funciona con parentesis
+					String codeToEvaluate = "{{" + entry.getKey() +"}}";
+					while (plantilla.contains(codeToEvaluate)) {
+						plantilla = plantilla.replace(codeToEvaluate, (String) entry.getValue());											
+					}
 				}
 			}
 			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
@@ -673,12 +661,13 @@ public class CallExecuteAPI {
 						fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
 					/// Para logimax debo colcoarles codigos en el auxiliar y el el registro
 					/// transaccion llevo esos codigos
-					if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
-						relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
-						iField.setTransaccionRegistro(iRelacion.getAuxiliar());
-						fieldsInternal.add(iField);
-						break;// Antes no estaba este break no se porque
-					}
+					// if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
+					// Quite el filtro por los auxiliares cuando son 2 de un mismo campo
+					relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
+					iField.setTransaccionRegistro(iRelacion.getAuxiliar());
+					fieldsInternal.add(iField.clone());
+					break;// Antes no estaba este break no se porque
+					// }
 				}
 			}
 		}

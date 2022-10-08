@@ -205,6 +205,8 @@ public class Propiedades {
 	public static final String COLOR = "COLOR";
 	
 	public static final String GENERA_DOCUMENTO_CAMPO = "GENERA_DOCUMENTO_CAMPO";
+	public static final String GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR = "GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR";
+	public static final String GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE = "GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE";
 	public static final String GENERA_DOCUMENTO_FUNCION_SQL = "GENERA_DOCUMENTO_FUNCION_SQL";
 	public static final String GENERA_DOCUMENTO_TEXTO = "GENERA_DOCUMENTO_TEXTO";
 	public static final String DECISION_SQL = "DECISION_SQL";
@@ -469,7 +471,9 @@ public class Propiedades {
 			case FUNCION_SQL_VALIDAR : {ruleProperty =  " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
 					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";break;}
-			case GENERA_DOCUMENTO_CAMPO : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar y en los links colocamos el campo del documento maestro que va a copiar el campo\n'nLas propiedades sin link se llena con el documento actual (y si este campo en el documento maestro es multiple se generan muchos documentos de la transicion)\n";break;}
+			case GENERA_DOCUMENTO_CAMPO : {ruleProperty =  "La transicion debe tener plantilla.\n\nDe esta plantilla referenciamos el campo a llenar y en los links colocamos el campo del documento maestro que va a copiar el campo";break;}
+			case GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar con el id del documento que GENERA LA ACCION\n";break;}
+			case GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE : {ruleProperty =  "La transicion debe tener plantilla.\nDe esta plantilla referenciamos el campo a llenar con el id del documento del proceso que estamos trabajando\n";break;}
 			case GENERA_DOCUMENTO_FUNCION_SQL : {ruleProperty =  "Crea un campo para agregar a un documento.\nDebes crear una funcion para obtener los datos del campo.\nEn las relaciones debes colocar una relacion al campo que deseas llenar\n"
 					+ "\n\nAyuda para generar el campo\n"
 					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"

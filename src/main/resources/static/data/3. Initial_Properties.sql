@@ -397,3 +397,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_211' , 'A', 'API_ITERATION_ONE_EXECUTION', 'API_ITERATION_ONE_EXECUTION', 'REQUISITO', true, 'P');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_212' , 'E', 'IMAGEN EN REPORTE', 'REPORTE_IMAGEN', 'REQUISITO', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo)
+	VALUES('PROP_213' , 'T', 'GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR', 'CAMPO PARA GENERAR DOCUMENTO DEL FORM GENERADOR', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo)
+	VALUES('PROP_214' , 'T', 'GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE', 'CAMPO PARA GENERAR DOCUMENTO DEL FORM EXPEDIENTE', 'REQUISITO');
+	

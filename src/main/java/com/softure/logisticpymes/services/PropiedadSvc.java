@@ -675,6 +675,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PROCESO_VALOR: {identificadorValorProceso(dto, token);break;}
 			case Propiedades.UBICACION : {return identificadorCampo(dto, token);}
 			case Propiedades.GENERA_DOCUMENTO_CAMPO : {return identificadorCampo(dto, token);}
+			case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE : {return identificadorCampo(dto, token);}
+			case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR : {return identificadorCampo(dto, token);}
 			case Propiedades.RELACIONAR_DOCUMENTOS : {return identificadorCampo(dto, token);}
 			case Propiedades.RETIRAR_DOCUMENTOS : {return identificadorCampo(dto, token);}
 			case Propiedades.PLANTILLA_CARGA_MASIVA_MULTIPLE : {return identificadorCampo(dto, token);}

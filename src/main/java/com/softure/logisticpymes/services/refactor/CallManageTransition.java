@@ -232,9 +232,9 @@ public class CallManageTransition {
 						(acabdoCrear == null) ? null : acabdoCrear.getLlaveTabla(), transicionIteracion.getNombre(),
 						transicionIteracion.getEstadoPartida(), transicionIteracion.getEstadoLLegada(), null, null,
 						token, relacionAnterior, expediente.getHistorico(), null);
-				result.add(acabdoCrear);
+				if(acabdoCrear!=null) result.add(acabdoCrear);
 			}
-
+			if(result.size()==0) throw new ServerException("No se gneraron documentos en la iteracion revisa las propiedades de la transcion para crear los campos");
 		}
 		return result;
 	}
