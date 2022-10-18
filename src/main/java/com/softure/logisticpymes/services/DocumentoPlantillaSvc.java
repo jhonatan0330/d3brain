@@ -250,7 +250,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if(dto.getLlaveTabla()==null) throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
 		DocumentoPlantillaDTO plantilla = consultaUnica(dto);
 		if(plantilla==null) throw new ServerException("Consulta de la plantilla incorrecta");
-		if(plantilla.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La plantilla se encuentra inactiva");
+		if(plantilla.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) 
+			throw new ServerException("La plantilla " + plantilla.getNombre() + "se encuentra inactiva");
 		//plantilla.setSecurityToken(dto.getSecurityToken());
 		if(fullPermisos) {
 			plantilla.setPropiedades(configuracionSvc.obtenerEspecialFullPermisos(dto.getLlaveTabla()));
@@ -358,7 +359,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				if(nuevaPlantilla) {
 					//iplantillaPermitida.setSecurityToken(dto.getSecurityToken());
 					if(iplantillaPermitida.getLlaveTabla()==null) throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
-					if(iplantillaPermitida.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La plantilla se encuentra inactiva");
+					if(iplantillaPermitida.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) 
+						throw new ServerException("La plantilla " + iplantillaPermitida.getNombre() + "se encuentra inactiva");
 					iplantillaPermitida.setPropiedades(new ArrayList<PropiedadDTO>());
 					for (PropiedadDTO propiedadDTO : todasPropiedadesEvitandoConsultaBD) {
 						if(propiedadDTO.getCampo().compareTo(iplantillaPermitida.getLlaveTabla())==0) 

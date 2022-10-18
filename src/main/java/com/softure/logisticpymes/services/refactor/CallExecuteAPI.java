@@ -604,7 +604,7 @@ public class CallExecuteAPI {
 		if (parametros != null && !parametros.isEmpty()) {
 			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-				if(entry.getValue().getClass().getName().compareTo("java.lang.String")==0) {
+				if(entry.getValue()!=null && entry.getValue().getClass().getName().compareTo("java.lang.String")==0) {
 					// Esto lo hago porque el replace all no me funciona con parentesis
 					String codeToEvaluate = "{{" + entry.getKey() +"}}";
 					while (plantilla.contains(codeToEvaluate)) {
