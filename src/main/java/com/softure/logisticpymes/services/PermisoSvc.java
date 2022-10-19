@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PermisoDTO;
-import com.softure.logisticpymes.dto.filter.PermisoFilterDTO;
-import com.softure.logisticpymes.persistence.PermisoMapper;
+import com.softure.logisticpymes.domain.dto.PermisoDTO;
+import com.softure.logisticpymes.domain.filter.PermisoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PermisoMapper;
 
 @Service("permisoService")
 public class PermisoSvc extends BasicSvc<PermisoDTO, PermisoFilterDTO> {

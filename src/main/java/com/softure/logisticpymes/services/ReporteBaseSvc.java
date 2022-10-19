@@ -9,18 +9,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.cons.ConstantesGenerales;
 import javax.sql.DataSource;
 import com.softure.java.services.GeneradorReportes;
-import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.filter.ReporteEjecucionFilterDTO;
 // END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ReporteBaseMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -30,9 +24,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ReporteBaseDTO;
-import com.softure.logisticpymes.dto.filter.ReporteBaseFilterDTO;
-import com.softure.logisticpymes.persistence.ReporteBaseMapper;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.ReporteBaseDTO;
+import com.softure.logisticpymes.domain.dto.ReporteEjecucionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.filter.ReporteBaseFilterDTO;
+import com.softure.logisticpymes.domain.filter.ReporteEjecucionFilterDTO;
 
 @Service("reporteBaseService")
 public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDTO> {

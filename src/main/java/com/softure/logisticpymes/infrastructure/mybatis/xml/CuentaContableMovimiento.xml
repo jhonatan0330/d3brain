@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.CuentaContableMovimientoMapper">
+
+	<sql id="selectCuentaContableMovimientoFragment">
+		select
+			cccm_llave as  llaveTabla
+			,mccm_montoaplicado as  montoAplicado
+			,mccm_saldoinicial as  saldoInicial
+			,mccm_saldofinal as  saldoFinal
+			,cccm_anterior as  anterior
+			,cccm_siguiente as  siguiente
+			,cccm_comprobante as  comprobante
+			,cccm_cuenta as  cuenta
+			,dccm_fechaevento as  fechaEvento
+			,dccm_fecharegistro as  fechaRegistro
+			,cccm_estado as estado
+		from cuentacontablemovimiento_ccmp a
+	</sql>
+
+	<sql id="whereCuentaContableMovimientoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cccm_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cccm_estado = #{estado}
+			</if>
+			<if test="anterior!=null">
+				and cccm_anterior = #{anterior}
+			</if>
+			<if test="siguiente!=null">
+				and cccm_siguiente = #{siguiente}
+			</if>
+			<if test="comprobante!=null">
+				and cccm_comprobante = #{comprobante}
+			</if>
+			<if test="cuenta!=null">
+				and cccm_cuenta = #{cuenta}
+			</if>
+			<if test="fechaEventoMin!=null">
+				and dccm_fechaevento >= #{fechaEventoMin}
+			</if>
+			<if test="fechaEventoMax!=null">
+				and dccm_fechaevento <![CDATA[ < ]]>  #{fechaEventoMax}
+			</if>
+			<if test="fechaRegistroMin!=null">
+				and dccm_fecharegistro >= #{fechaRegistroMin}
+			</if>
+			<if test="fechaRegistroMax!=null">
+				and dccm_fecharegistro <![CDATA[ < ]]>  #{fechaRegistroMax}
+			</if>
+	</sql>
+
+	<sql id="paginationCuentaContableMovimientoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCuentaContableMovimientoPrimaryKeyFragment">
+		where
+			cccm_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CuentaContableMovimientoDTO" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CuentaContableMovimientoDTO" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+		<include refid="paginationCuentaContableMovimientoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CuentaContableMovimientoDTO" resultType="int">
+		select count(*)
+		from cuentacontablemovimiento_ccmp
+		<include refid="whereCuentaContableMovimientoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CuentaContableMovimientoDTO" resultType="CuentaContableMovimientoDTO">
+		insert into cuentacontablemovimiento_ccmp(
+			cccm_llave
+		<if test="montoAplicado!=null">
+			,mccm_montoaplicado
+		</if>
+		<if test="saldoInicial!=null">
+			,mccm_saldoinicial
+		</if>
+		<if test="saldoFinal!=null">
+			,mccm_saldofinal
+		</if>
+		<if test="anterior!=null">
+			,cccm_anterior
+		</if>
+		<if test="siguiente!=null">
+			,cccm_siguiente
+		</if>
+		<if test="comprobante!=null">
+			,cccm_comprobante
+		</if>
+		<if test="cuenta!=null">
+			,cccm_cuenta
+		</if>
+		<if test="fechaEvento!=null">
+			,dccm_fechaevento
+		</if>
+		<if test="fechaRegistro!=null">
+			,dccm_fecharegistro
+		</if>
+		<if test="estado!=null">
+			,cccm_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="montoAplicado!=null">
+			,#{montoAplicado}
+		</if>
+		<if test="saldoInicial!=null">
+			,#{saldoInicial}
+		</if>
+		<if test="saldoFinal!=null">
+			,#{saldoFinal}
+		</if>
+		<if test="anterior!=null">
+			,#{anterior}
+		</if>
+		<if test="siguiente!=null">
+			,#{siguiente}
+		</if>
+		<if test="comprobante!=null">
+			,#{comprobante}
+		</if>
+		<if test="cuenta!=null">
+			,#{cuenta}
+		</if>
+		<if test="fechaEvento!=null">
+			,#{fechaEvento}
+		</if>
+		<if test="fechaRegistro!=null">
+			,#{fechaRegistro}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CuentaContableMovimientoDTO" resultType="CuentaContableMovimientoDTO">
+		update cuentacontablemovimiento_ccmp
+			set
+				mccm_montoaplicado = #{montoAplicado},
+				mccm_saldoinicial = #{saldoInicial},
+				mccm_saldofinal = #{saldoFinal},
+				cccm_anterior = #{anterior},
+				cccm_siguiente = #{siguiente},
+				cccm_comprobante = #{comprobante},
+				cccm_cuenta = #{cuenta},
+				dccm_fechaevento = #{fechaEvento},
+				dccm_fecharegistro = #{fechaRegistro},
+				cccm_estado =#{estado}
+		<include refid="whereCuentaContableMovimientoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleCuentaContableMovimientoFragment">
+		select
+			cccm_llave as  llaveTabla
+			,mccm_montoaplicado as  montoAplicado
+			,mccm_saldoinicial as  saldoInicial
+			,mccm_saldofinal as  saldoFinal
+			,cccm_anterior as  anterior
+			,cccm_siguiente as  siguiente
+			,cccm_comprobante as  comprobante
+			,cccm_cuenta as  cuenta
+			,dccm_fechaevento as  fechaEvento
+			,dccm_fecharegistro as  fechaRegistro
+			,cccm_estado as estado
+		from cuentacontablemovimiento_ccmp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectSimpleCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaContableMovimientoDTO">
+		<include refid="selectSimpleCuentaContableMovimientoFragment" />
+		<include refid="whereCuentaContableMovimientoFragment" />
+		<include refid="paginationCuentaContableMovimientoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

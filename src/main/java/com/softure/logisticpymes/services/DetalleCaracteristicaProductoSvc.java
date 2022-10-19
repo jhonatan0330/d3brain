@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DetalleCaracteristicaProductoDTO;
-import com.softure.logisticpymes.dto.filter.DetalleCaracteristicaProductoFilterDTO;
-import com.softure.logisticpymes.persistence.DetalleCaracteristicaProductoMapper;
+import com.softure.logisticpymes.domain.dto.DetalleCaracteristicaProductoDTO;
+import com.softure.logisticpymes.domain.filter.DetalleCaracteristicaProductoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.DetalleCaracteristicaProductoMapper;
 
 @Service("detalleCaracteristicaProductoService")
 public class DetalleCaracteristicaProductoSvc extends BasicSvc<DetalleCaracteristicaProductoDTO, DetalleCaracteristicaProductoFilterDTO> {

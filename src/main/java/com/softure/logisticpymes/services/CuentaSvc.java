@@ -5,8 +5,6 @@ import java.util.List;
 // BEGIN region interImport
 import java.math.BigDecimal;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -16,9 +14,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CuentaDTO;
-import com.softure.logisticpymes.dto.filter.CuentaFilterDTO;
-import com.softure.logisticpymes.persistence.CuentaMapper;
+import com.softure.logisticpymes.domain.dto.CuentaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.filter.CuentaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CuentaMapper;
 
 @Service("cuentaService")
 public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {

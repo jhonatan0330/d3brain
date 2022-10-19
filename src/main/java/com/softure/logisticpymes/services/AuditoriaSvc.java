@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.AuditoriaDTO;
-import com.softure.logisticpymes.dto.filter.AuditoriaFilterDTO;
-import com.softure.logisticpymes.persistence.AuditoriaMapper;
+import com.softure.logisticpymes.domain.dto.AuditoriaDTO;
+import com.softure.logisticpymes.domain.filter.AuditoriaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.AuditoriaMapper;
 
 @Service("auditoriaService")
 public class AuditoriaSvc extends BasicSvc<AuditoriaDTO, AuditoriaFilterDTO> {

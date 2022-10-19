@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaCaracteristicaFilterDTO;
 
 @Component
 public class CampoAdaptador {

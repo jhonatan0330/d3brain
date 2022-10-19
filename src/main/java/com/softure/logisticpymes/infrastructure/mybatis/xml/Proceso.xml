@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.ProcesoMapper">
+
+	<sql id="selectProcesoFragment">
+		select
+			cprc_llave as  llaveTabla
+			,cprc_tipo as  tipo
+			,cprc_objetivo as  objetivo
+			,cprc_imagen as  imagen
+			,nprc_prioridad as  prioridad
+			,cprc_macroproceso as  macroproceso
+			,cprc_nombre as  nombre
+			,cprc_codigo as  codigo
+			,(select cprc_nombre from proceso_prcp where cprc_llave = a.cprc_macroproceso) as  macroNombre
+			,cprc_estado as estado
+		from proceso_prcp a
+	</sql>
+
+	<sql id="whereProcesoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cprc_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cprc_estado = #{estado}
+			</if>
+			<if test="tipo!=null">
+				and cprc_tipo = #{tipo}
+			</if>
+			<if test="macroproceso!=null">
+				and cprc_macroproceso = #{macroproceso}
+			</if>
+			<if test="nombre!=null">
+				and cprc_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cprc_codigo = #{codigo}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cprc_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationProcesoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProcesoPrimaryKeyFragment">
+		where
+			cprc_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProcesoDTO" resultType="ProcesoDTO">
+		<include refid="selectProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProcesoDTO" resultType="ProcesoDTO">
+		<include refid="selectProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+		order by nprc_prioridad 
+		, cprc_nombre 
+		<include refid="paginationProcesoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProcesoDTO" resultType="int">
+		select count(*)
+		from proceso_prcp
+		<include refid="whereProcesoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProcesoDTO" resultType="ProcesoDTO">
+		insert into proceso_prcp(
+			cprc_llave
+		<if test="tipo!=null">
+			,cprc_tipo
+		</if>
+		<if test="objetivo!=null">
+			,cprc_objetivo
+		</if>
+		<if test="imagen!=null">
+			,cprc_imagen
+		</if>
+		<if test="prioridad!=null">
+			,nprc_prioridad
+		</if>
+		<if test="macroproceso!=null">
+			,cprc_macroproceso
+		</if>
+		<if test="nombre!=null">
+			,cprc_nombre
+		</if>
+		<if test="codigo!=null">
+			,cprc_codigo
+		</if>
+		<if test="estado!=null">
+			,cprc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="objetivo!=null">
+			,#{objetivo}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="prioridad!=null">
+			,#{prioridad}
+		</if>
+		<if test="macroproceso!=null">
+			,#{macroproceso}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProcesoDTO" resultType="ProcesoDTO">
+		update proceso_prcp
+			set
+				cprc_tipo = #{tipo},
+				cprc_objetivo = #{objetivo},
+				cprc_imagen = #{imagen},
+				nprc_prioridad = #{prioridad},
+				cprc_macroproceso = #{macroproceso},
+				cprc_nombre = #{nombre},
+				cprc_codigo = #{codigo},
+				cprc_estado =#{estado}
+		<include refid="whereProcesoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleProcesoFragment">
+		select
+			cprc_llave as  llaveTabla
+			,cprc_tipo as  tipo
+			,cprc_objetivo as  objetivo
+			,cprc_imagen as  imagen
+			,nprc_prioridad as  prioridad
+			,cprc_macroproceso as  macroproceso
+			,cprc_nombre as  nombre
+			,cprc_codigo as  codigo
+			,cprc_estado as estado
+		from proceso_prcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoDTO">
+		<include refid="selectSimpleProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoDTO">
+		<include refid="selectSimpleProcesoFragment" />
+		<include refid="whereProcesoFragment" />
+		order by nprc_prioridad 
+		, cprc_nombre 
+		<include refid="paginationProcesoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

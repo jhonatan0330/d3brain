@@ -2,7 +2,7 @@ package com.softure.logisticpymes.services.refactor;
 
 import java.util.List;
 
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
 
 public class CallDocumentCommons {
 

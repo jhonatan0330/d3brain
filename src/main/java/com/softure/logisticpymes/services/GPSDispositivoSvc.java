@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.GPSDispositivoDTO;
-import com.softure.logisticpymes.dto.filter.GPSDispositivoFilterDTO;
-import com.softure.logisticpymes.persistence.GPSDispositivoMapper;
+import com.softure.logisticpymes.domain.dto.GPSDispositivoDTO;
+import com.softure.logisticpymes.domain.filter.GPSDispositivoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.GPSDispositivoMapper;
 
 @Service("gPSDispositivoService")
 public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositivoFilterDTO> {

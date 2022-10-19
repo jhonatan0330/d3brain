@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioAutenticacionAutorizacionDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionAutorizacionFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioAutenticacionAutorizacionMapper;
+import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionAutorizacionDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioAutenticacionAutorizacionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioAutenticacionAutorizacionMapper;
 
 @Service("usuarioAutenticacionAutorizacionService")
 public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenticacionAutorizacionDTO, UsuarioAutenticacionAutorizacionFilterDTO> {

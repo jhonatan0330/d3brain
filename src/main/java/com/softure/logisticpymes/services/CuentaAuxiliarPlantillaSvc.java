@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
-
-import com.softure.logisticpymes.dto.CuentaContableDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
 // END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CuentaAuxiliarPlantillaMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -18,9 +15,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CuentaAuxiliarPlantillaDTO;
-import com.softure.logisticpymes.dto.filter.CuentaAuxiliarPlantillaFilterDTO;
-import com.softure.logisticpymes.persistence.CuentaAuxiliarPlantillaMapper;
+import com.softure.logisticpymes.domain.dto.CuentaAuxiliarPlantillaDTO;
+import com.softure.logisticpymes.domain.dto.CuentaContableDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.filter.CuentaAuxiliarPlantillaFilterDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 
 @Service("cuentaAuxiliarPlantillaService")
 public class CuentaAuxiliarPlantillaSvc extends BasicSvc<CuentaAuxiliarPlantillaDTO, CuentaAuxiliarPlantillaFilterDTO> {

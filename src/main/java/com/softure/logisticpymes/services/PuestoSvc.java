@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PuestoDTO;
-import com.softure.logisticpymes.dto.filter.PuestoFilterDTO;
-import com.softure.logisticpymes.persistence.PuestoMapper;
+import com.softure.logisticpymes.domain.dto.PuestoDTO;
+import com.softure.logisticpymes.domain.filter.PuestoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PuestoMapper;
 
 @Service("puestoService")
 public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {

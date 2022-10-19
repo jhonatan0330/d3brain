@@ -5,8 +5,6 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
-import com.softure.logisticpymes.dto.RolAccesoDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
 import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 
@@ -18,9 +16,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioRolDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioRolFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioRolMapper;
+import com.softure.logisticpymes.domain.dto.RolAccesoDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioRolDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioRolFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioRolMapper;
 
 @Service("usuarioRolService")
 public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> {

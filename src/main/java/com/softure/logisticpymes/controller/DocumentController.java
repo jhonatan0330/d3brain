@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ActividadDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.ProductoDTO;
-import com.softure.logisticpymes.dto.ProductoInventarioDTO;
-import com.softure.logisticpymes.dto.TarifaDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.domain.dto.ActividadDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProductoDTO;
+import com.softure.logisticpymes.domain.dto.ProductoInventarioDTO;
+import com.softure.logisticpymes.domain.dto.TarifaDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.ActividadSvc;
 import com.softure.logisticpymes.services.DeduccionProductoSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;

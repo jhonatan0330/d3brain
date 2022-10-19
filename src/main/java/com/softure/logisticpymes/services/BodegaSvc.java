@@ -4,8 +4,6 @@ import java.util.List;
 
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -15,9 +13,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.BodegaDTO;
-import com.softure.logisticpymes.dto.filter.BodegaFilterDTO;
-import com.softure.logisticpymes.persistence.BodegaMapper;
+import com.softure.logisticpymes.domain.dto.BodegaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.filter.BodegaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.BodegaMapper;
 
 @Service("bodegaService")
 public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {

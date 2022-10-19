@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ServidorDTO;
-import com.softure.logisticpymes.dto.filter.ServidorFilterDTO;
-import com.softure.logisticpymes.persistence.ServidorMapper;
+import com.softure.logisticpymes.domain.dto.ServidorDTO;
+import com.softure.logisticpymes.domain.filter.ServidorFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ServidorMapper;
 
 @Service("servidorService")
 public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {

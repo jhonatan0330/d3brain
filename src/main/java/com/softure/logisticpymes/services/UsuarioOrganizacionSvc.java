@@ -6,11 +6,12 @@ import java.util.List;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.OrganizacionDTO;
-import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.OrganizacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioOrganizacionDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioAutenticacionFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioOrganizacionFilterDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -20,9 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioOrganizacionDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioOrganizacionFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioOrganizacionMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioOrganizacionMapper;
 
 @Service("usuarioOrganizacionService")
 public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, UsuarioOrganizacionFilterDTO> {

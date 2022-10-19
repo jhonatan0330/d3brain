@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TransaccionLogDTO;
-import com.softure.logisticpymes.dto.filter.TransaccionLogFilterDTO;
-import com.softure.logisticpymes.persistence.TransaccionLogMapper;
+import com.softure.logisticpymes.domain.dto.TransaccionLogDTO;
+import com.softure.logisticpymes.domain.filter.TransaccionLogFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TransaccionLogMapper;
 
 @Service("transaccionLogService")
 public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLogFilterDTO> {

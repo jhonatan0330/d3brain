@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
-import com.softure.logisticpymes.dto.filter.MensajePlantillaCorreoFilterDTO;
-import com.softure.logisticpymes.persistence.MensajePlantillaCorreoMapper;
+import com.softure.logisticpymes.domain.dto.MensajePlantillaCorreoDTO;
+import com.softure.logisticpymes.domain.filter.MensajePlantillaCorreoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.MensajePlantillaCorreoMapper;
 
 @Service("mensajePlantillaCorreoService")
 public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDTO, MensajePlantillaCorreoFilterDTO> {

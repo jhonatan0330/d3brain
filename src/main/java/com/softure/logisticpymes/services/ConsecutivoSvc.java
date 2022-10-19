@@ -6,8 +6,6 @@ import java.util.List;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import java.math.BigDecimal;
-import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -17,9 +15,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ConsecutivoDTO;
-import com.softure.logisticpymes.dto.filter.ConsecutivoFilterDTO;
-import com.softure.logisticpymes.persistence.ConsecutivoMapper;
+import com.softure.logisticpymes.domain.dto.ConsecutivoDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.domain.filter.ConsecutivoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ConsecutivoMapper;
 
 @Service("consecutivoService")
 public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDTO> {

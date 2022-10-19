@@ -8,15 +8,17 @@ import java.util.GregorianCalendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.RelacionInternaDTO;
-import com.softure.logisticpymes.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoTransicionAutomaticaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoTransicionDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.RelacionInternaDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.logisticpymes.services.refactor.CallNewDocumentAutomatic;
 import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
@@ -30,9 +32,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProcesoTransicionAutomaticaDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoTransicionAutomaticaFilterDTO;
-import com.softure.logisticpymes.persistence.ProcesoTransicionAutomaticaMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProcesoTransicionAutomaticaMapper;
 
 @Service("procesoTransicionAutomaticaService")
 public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {

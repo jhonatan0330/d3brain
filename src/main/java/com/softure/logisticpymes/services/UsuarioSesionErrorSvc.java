@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioSesionErrorDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioSesionErrorFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioSesionErrorMapper;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionErrorDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioSesionErrorFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioSesionErrorMapper;
 
 @Service("usuarioSesionErrorService")
 public class UsuarioSesionErrorSvc extends BasicSvc<UsuarioSesionErrorDTO, UsuarioSesionErrorFilterDTO> {

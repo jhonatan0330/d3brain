@@ -5,9 +5,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import com.softure.logisticpymes.dto.BasicParamDTO;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.BasicParamDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
 
 public class Propiedades {
 	//GENERALES

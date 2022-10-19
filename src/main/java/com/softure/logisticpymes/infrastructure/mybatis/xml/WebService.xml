@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.WebServiceMapper">
+
+	<sql id="selectWebServiceFragment">
+		select
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_template as  template
+			,cwbs_servidor as  servidor
+			,(select cser_url from servidor_serp where cser_llave = cwbs_servidor) as  servidorNombre
+			,cwbs_estado as estado
+		from webservice_wbsp a
+	</sql>
+
+	<sql id="whereWebServiceFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cwbs_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cwbs_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and cwbs_nombre = #{nombre}
+			</if>
+			<if test="servidor!=null">
+				and cwbs_servidor = #{servidor}
+			</if>
+	</sql>
+
+	<sql id="paginationWebServiceFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereWebServicePrimaryKeyFragment">
+		where
+			cwbs_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="WebServiceDTO" resultType="WebServiceDTO">
+		<include refid="selectWebServiceFragment" />
+		<include refid="whereWebServiceFragment" />
+	</select>
+	
+	<select id="listar" parameterType="WebServiceDTO" resultType="WebServiceDTO">
+		<include refid="selectWebServiceFragment" />
+		<include refid="whereWebServiceFragment" />
+		order by cwbs_nombre 
+		<include refid="paginationWebServiceFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="WebServiceDTO" resultType="int">
+		select count(*)
+		from webservice_wbsp
+		<include refid="whereWebServiceFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="WebServiceDTO" resultType="WebServiceDTO">
+		insert into webservice_wbsp(
+			cwbs_llave
+		<if test="nombre!=null">
+			,cwbs_nombre
+		</if>
+		<if test="template!=null">
+			,cwbs_template
+		</if>
+		<if test="servidor!=null">
+			,cwbs_servidor
+		</if>
+		<if test="estado!=null">
+			,cwbs_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="template!=null">
+			,#{template}
+		</if>
+		<if test="servidor!=null">
+			,#{servidor}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="WebServiceDTO" resultType="WebServiceDTO">
+		update webservice_wbsp
+			set
+				cwbs_nombre = #{nombre},
+				cwbs_template = #{template},
+				cwbs_servidor = #{servidor},
+				cwbs_estado =#{estado}
+		<include refid="whereWebServicePrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleWebServiceFragment">
+		select
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_template as  template
+			,cwbs_servidor as  servidor
+			,cwbs_estado as estado
+		from webservice_wbsp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="WebServiceDTO">
+		<include refid="selectSimpleWebServiceFragment" />
+		<include refid="whereWebServiceFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="WebServiceDTO">
+		<include refid="selectSimpleWebServiceFragment" />
+		<include refid="whereWebServiceFragment" />
+		order by cwbs_nombre 
+		<include refid="paginationWebServiceFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

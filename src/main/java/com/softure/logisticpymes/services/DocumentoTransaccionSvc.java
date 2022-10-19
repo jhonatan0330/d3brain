@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DocumentoTransaccionDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoTransaccionFilterDTO;
-import com.softure.logisticpymes.persistence.DocumentoTransaccionMapper;
+import com.softure.logisticpymes.domain.dto.DocumentoTransaccionDTO;
+import com.softure.logisticpymes.domain.filter.DocumentoTransaccionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.DocumentoTransaccionMapper;
 
 @Service("documentoTransaccionService")
 public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, DocumentoTransaccionFilterDTO> {

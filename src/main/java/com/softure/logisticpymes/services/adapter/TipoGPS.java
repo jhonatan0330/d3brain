@@ -3,7 +3,7 @@ package com.softure.logisticpymes.services.adapter;
 import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
 
 @Component
 public class TipoGPS {

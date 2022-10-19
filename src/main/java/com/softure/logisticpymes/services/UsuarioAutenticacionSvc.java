@@ -9,15 +9,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.OrganizacionDTO;
-import com.softure.logisticpymes.dto.UsuarioAutenticacionAutorizacionDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.dto.UsuarioSesionErrorDTO;
-import com.softure.logisticpymes.dto.filter.ModuloContratadoFilterDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.OrganizacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionAutorizacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionErrorDTO;
+import com.softure.logisticpymes.domain.filter.ModuloContratadoFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioAutenticacionFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioSesionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioAutenticacionMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -27,9 +29,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioAutenticacionMapper;
 
 @Service("usuarioAutenticacionService")
 public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO> {

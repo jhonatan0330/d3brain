@@ -5,9 +5,10 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
-import com.softure.logisticpymes.dto.CuentaDTO;
-import com.softure.logisticpymes.dto.filter.CuentaFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.CuentaDTO;
+import com.softure.logisticpymes.domain.dto.TurnoDTO;
+import com.softure.logisticpymes.domain.filter.CuentaFilterDTO;
+import com.softure.logisticpymes.domain.filter.TurnoFilterDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -17,9 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TurnoDTO;
-import com.softure.logisticpymes.dto.filter.TurnoFilterDTO;
-import com.softure.logisticpymes.persistence.TurnoMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TurnoMapper;
 
 @Service("turnoService")
 public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {

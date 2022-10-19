@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PlantillaConsecutivoDTO;
-import com.softure.logisticpymes.dto.filter.PlantillaConsecutivoFilterDTO;
-import com.softure.logisticpymes.persistence.PlantillaConsecutivoMapper;
+import com.softure.logisticpymes.domain.dto.PlantillaConsecutivoDTO;
+import com.softure.logisticpymes.domain.filter.PlantillaConsecutivoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PlantillaConsecutivoMapper;
 
 @Service("plantillaConsecutivoService")
 public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, PlantillaConsecutivoFilterDTO> {

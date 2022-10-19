@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CatalogoContableDTO;
-import com.softure.logisticpymes.dto.filter.CatalogoContableFilterDTO;
-import com.softure.logisticpymes.persistence.CatalogoContableMapper;
+import com.softure.logisticpymes.domain.dto.CatalogoContableDTO;
+import com.softure.logisticpymes.domain.filter.CatalogoContableFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CatalogoContableMapper;
 
 @Service("catalogoContableService")
 public class CatalogoContableSvc extends BasicSvc<CatalogoContableDTO, CatalogoContableFilterDTO> {

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.softure.java.services.ReportesUtil;
-import com.softure.logisticpymes.dto.ReporteBaseDTO;
+import com.softure.logisticpymes.domain.dto.ReporteBaseDTO;
 import com.softure.logisticpymes.services.ReporteBaseSvc;
 
 public class ReporteServlet extends HttpServlet{

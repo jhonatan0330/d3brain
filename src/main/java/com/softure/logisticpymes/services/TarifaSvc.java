@@ -4,12 +4,15 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.math.BigDecimal;
-import com.softure.logisticpymes.dto.TarifarioDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.ProductoDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.dto.filter.ProductoFilterDTO;
+
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProductoDTO;
+import com.softure.logisticpymes.domain.dto.TarifaDTO;
+import com.softure.logisticpymes.domain.dto.TarifarioDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProductoFilterDTO;
+import com.softure.logisticpymes.domain.filter.TarifaFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
@@ -22,9 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TarifaDTO;
-import com.softure.logisticpymes.dto.filter.TarifaFilterDTO;
-import com.softure.logisticpymes.persistence.TarifaMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TarifaMapper;
 
 @Service("tarifaService")
 public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {

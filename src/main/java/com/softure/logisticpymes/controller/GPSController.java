@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.GPSDispositivoDTO;
-import com.softure.logisticpymes.dto.GPSLocalizacionDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.filter.GPSDispositivoFilterDTO;
-import com.softure.logisticpymes.dto.filter.GPSLocalizacionFilterDTO;
+import com.softure.logisticpymes.domain.dto.GPSDispositivoDTO;
+import com.softure.logisticpymes.domain.dto.GPSLocalizacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.filter.GPSDispositivoFilterDTO;
+import com.softure.logisticpymes.domain.filter.GPSLocalizacionFilterDTO;
 import com.softure.logisticpymes.services.GPSDispositivoSvc;
 import com.softure.logisticpymes.services.GPSLocalizacionSvc;
 

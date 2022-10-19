@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.RelacionInternaDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.RelacionInternaDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.logisticpymes.services.DocumentoRelacionGestorSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;

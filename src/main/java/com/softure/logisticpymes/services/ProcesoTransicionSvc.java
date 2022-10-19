@@ -5,13 +5,14 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
-import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.filter.ProcesoEstadoFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoEstadoDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoTransicionDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoEstadoFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoTransicionFilterDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -21,9 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoTransicionFilterDTO;
-import com.softure.logisticpymes.persistence.ProcesoTransicionMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProcesoTransicionMapper;
 
 @Service("procesoTransicionService")
 public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, ProcesoTransicionFilterDTO> {

@@ -6,13 +6,7 @@ import java.util.List;
 import java.util.Date;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.EncuestaDTO;
-import com.softure.logisticpymes.dto.EncuestaOpcionRespuestaDTO;
-import com.softure.logisticpymes.dto.EncuestaPreguntaDTO;
-import com.softure.logisticpymes.dto.EncuestaRespuestaDTO;
-import com.softure.logisticpymes.dto.filter.EncuestaPreguntaFilterDTO;
-import com.softure.logisticpymes.dto.filter.EncuestaOpcionRespuestaFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.EncuestaGrupoMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -22,9 +16,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.EncuestaGrupoDTO;
-import com.softure.logisticpymes.dto.filter.EncuestaGrupoFilterDTO;
-import com.softure.logisticpymes.persistence.EncuestaGrupoMapper;
+import com.softure.logisticpymes.domain.dto.EncuestaDTO;
+import com.softure.logisticpymes.domain.dto.EncuestaGrupoDTO;
+import com.softure.logisticpymes.domain.dto.EncuestaOpcionRespuestaDTO;
+import com.softure.logisticpymes.domain.dto.EncuestaPreguntaDTO;
+import com.softure.logisticpymes.domain.dto.EncuestaRespuestaDTO;
+import com.softure.logisticpymes.domain.filter.EncuestaGrupoFilterDTO;
+import com.softure.logisticpymes.domain.filter.EncuestaOpcionRespuestaFilterDTO;
+import com.softure.logisticpymes.domain.filter.EncuestaPreguntaFilterDTO;
 
 @Service("encuestaGrupoService")
 public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFilterDTO> {

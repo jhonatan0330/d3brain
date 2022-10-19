@@ -6,16 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
-import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.ReporteBaseDTO;
-import com.softure.logisticpymes.dto.RolAccesoDTO;
-import com.softure.logisticpymes.dto.filter.RolAccesoFilterDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoEstadoFilterDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoTransicionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.DocumentoPlantillaMapper;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
@@ -28,9 +19,18 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
-import com.softure.logisticpymes.persistence.DocumentoPlantillaMapper;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoEstadoDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoTransicionDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.ReporteBaseDTO;
+import com.softure.logisticpymes.domain.dto.RolAccesoDTO;
+import com.softure.logisticpymes.domain.filter.DocumentoPlantillaFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoEstadoFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoTransicionFilterDTO;
+import com.softure.logisticpymes.domain.filter.RolAccesoFilterDTO;
 
 @Service("documentoPlantillaService")
 public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO> {

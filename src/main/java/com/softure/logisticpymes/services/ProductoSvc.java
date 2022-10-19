@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.ArrayList;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.UsuarioRolProductoDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioRolProductoFilterDTO;
 // END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProductoMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -19,9 +17,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProductoDTO;
-import com.softure.logisticpymes.dto.filter.ProductoFilterDTO;
-import com.softure.logisticpymes.persistence.ProductoMapper;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProductoDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioRolProductoDTO;
+import com.softure.logisticpymes.domain.filter.ProductoFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioRolProductoFilterDTO;
 
 @Service("productoService")
 public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {

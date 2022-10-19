@@ -2,10 +2,6 @@ package com.softure.logisticpymes.services;
 
 import java.util.List;
 
-// BEGIN region interImport
-import com.softure.logisticpymes.dto.ProductoDTO;
-// END region interImport
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +10,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProductoCaracteristicaDTO;
-import com.softure.logisticpymes.dto.filter.ProductoCaracteristicaFilterDTO;
-import com.softure.logisticpymes.persistence.ProductoCaracteristicaMapper;
+import com.softure.logisticpymes.domain.dto.ProductoCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.ProductoDTO;
+import com.softure.logisticpymes.domain.filter.ProductoCaracteristicaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProductoCaracteristicaMapper;
 
 @Service("productoCaracteristicaService")
 public class ProductoCaracteristicaSvc extends BasicSvc<ProductoCaracteristicaDTO, ProductoCaracteristicaFilterDTO> {

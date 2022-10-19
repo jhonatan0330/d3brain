@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaTiempoDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaTiempoFilterDTO;
-import com.softure.logisticpymes.persistence.PedidoVentaTiempoMapper;
+import com.softure.logisticpymes.domain.dto.PedidoVentaTiempoDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaTiempoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PedidoVentaTiempoMapper;
 
 @Service("pedidoVentaTiempoService")
 public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoVentaTiempoFilterDTO> {

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.ProductoCaracteristicaMapper">
+
+	<sql id="selectProductoCaracteristicaFragment">
+		select
+			cpcr_llave as  llaveTabla
+			,cpcr_objetivo as  objetivo
+			,cpcr_base as  base
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cpcr_base) as  baseNombre
+			,cpcr_formato as  formato
+			,cpcr_nombre as  nombre
+			,cpcr_codigo as  codigo
+			,npcr_orden as  orden
+			,cpcr_imagen as  imagen
+			,cpcr_estado as estado
+		from productocaracteristica_pcrp a
+	</sql>
+
+	<sql id="whereProductoCaracteristicaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpcr_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpcr_estado = #{estado}
+			</if>
+			<if test="base!=null">
+				and cpcr_base = #{base}
+			</if>
+			<if test="formato!=null">
+				and cpcr_formato = #{formato}
+			</if>
+			<if test="nombre!=null">
+				and cpcr_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cpcr_codigo = #{codigo}
+			</if>
+	</sql>
+
+	<sql id="paginationProductoCaracteristicaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProductoCaracteristicaPrimaryKeyFragment">
+		where
+			cpcr_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProductoCaracteristicaDTO" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProductoCaracteristicaDTO" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+		order by npcr_orden 
+		<include refid="paginationProductoCaracteristicaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProductoCaracteristicaDTO" resultType="int">
+		select count(*)
+		from productocaracteristica_pcrp
+		<include refid="whereProductoCaracteristicaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProductoCaracteristicaDTO" resultType="ProductoCaracteristicaDTO">
+		insert into productocaracteristica_pcrp(
+			cpcr_llave
+		<if test="objetivo!=null">
+			,cpcr_objetivo
+		</if>
+		<if test="base!=null">
+			,cpcr_base
+		</if>
+		<if test="formato!=null">
+			,cpcr_formato
+		</if>
+		<if test="nombre!=null">
+			,cpcr_nombre
+		</if>
+		<if test="codigo!=null">
+			,cpcr_codigo
+		</if>
+		<if test="orden!=null">
+			,npcr_orden
+		</if>
+		<if test="imagen!=null">
+			,cpcr_imagen
+		</if>
+		<if test="estado!=null">
+			,cpcr_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="objetivo!=null">
+			,#{objetivo}
+		</if>
+		<if test="base!=null">
+			,#{base}
+		</if>
+		<if test="formato!=null">
+			,#{formato}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="orden!=null">
+			,#{orden}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProductoCaracteristicaDTO" resultType="ProductoCaracteristicaDTO">
+		update productocaracteristica_pcrp
+			set
+				cpcr_objetivo = #{objetivo},
+				cpcr_base = #{base},
+				cpcr_formato = #{formato},
+				cpcr_nombre = #{nombre},
+				cpcr_codigo = #{codigo},
+				npcr_orden = #{orden},
+				cpcr_imagen = #{imagen},
+				cpcr_estado =#{estado}
+		<include refid="whereProductoCaracteristicaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleProductoCaracteristicaFragment">
+		select
+			cpcr_llave as  llaveTabla
+			,cpcr_objetivo as  objetivo
+			,cpcr_base as  base
+			,cpcr_formato as  formato
+			,cpcr_nombre as  nombre
+			,cpcr_codigo as  codigo
+			,npcr_orden as  orden
+			,cpcr_imagen as  imagen
+			,cpcr_estado as estado
+		from productocaracteristica_pcrp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectSimpleProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectSimpleProductoCaracteristicaFragment" />
+		<include refid="whereProductoCaracteristicaFragment" />
+		order by npcr_orden 
+		<include refid="paginationProductoCaracteristicaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+ 	<select id="listarProductoSimplificado" resultType="ProductoCaracteristicaDTO">
+		<include refid="selectProductoCaracteristicaFragment" /> 
+		where cpcr_estado = 'A' and  cpcr_base in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
+		order by npcr_orden
+	</select>
+<!--// END region script-->
+
+</mapper>

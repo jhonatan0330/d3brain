@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TarifarioDTO;
-import com.softure.logisticpymes.dto.filter.TarifarioFilterDTO;
-import com.softure.logisticpymes.persistence.TarifarioMapper;
+import com.softure.logisticpymes.domain.dto.TarifarioDTO;
+import com.softure.logisticpymes.domain.filter.TarifarioFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TarifarioMapper;
 
 @Service("tarifarioService")
 public class TarifarioSvc extends BasicSvc<TarifarioDTO, TarifarioFilterDTO> {

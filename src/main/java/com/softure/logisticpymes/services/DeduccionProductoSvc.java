@@ -8,15 +8,7 @@ import java.util.Date;
 import java.math.BigDecimal;
 
 import com.softure.java.cons.ConstantesGenerales;
-
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.TrazabilidadProductoInventarioDTO;
-import com.softure.logisticpymes.dto.filter.TrazabilidadProductoInventarioFilterDTO;
-
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.DeduccionProductoMapper;
 import com.softure.logisticpymes.services.adapter.AuxiliarProcesoBodega;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
@@ -30,9 +22,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.DeduccionProductoDTO;
-import com.softure.logisticpymes.dto.filter.DeduccionProductoFilterDTO;
-import com.softure.logisticpymes.persistence.DeduccionProductoMapper;
+import com.softure.logisticpymes.domain.dto.DeduccionProductoDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.TrazabilidadProductoInventarioDTO;
+import com.softure.logisticpymes.domain.filter.DeduccionProductoFilterDTO;
+import com.softure.logisticpymes.domain.filter.TrazabilidadProductoInventarioFilterDTO;
 
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {

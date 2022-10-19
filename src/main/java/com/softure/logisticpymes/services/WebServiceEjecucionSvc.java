@@ -4,9 +4,6 @@ import java.util.List;
 
 // BEGIN region interImport
 import com.softure.logisticpymes.services.refactor.CallExecuteAPI;
-import com.softure.logisticpymes.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.dto.WebServiceDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -16,9 +13,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.WebServiceEjecucionDTO;
-import com.softure.logisticpymes.dto.filter.WebServiceEjecucionFilterDTO;
-import com.softure.logisticpymes.persistence.WebServiceEjecucionMapper;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.domain.dto.WebServiceDTO;
+import com.softure.logisticpymes.domain.dto.WebServiceEjecucionDTO;
+import com.softure.logisticpymes.domain.filter.WebServiceEjecucionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.WebServiceEjecucionMapper;
 
 @Service("webServiceEjecucionService")
 public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO> {

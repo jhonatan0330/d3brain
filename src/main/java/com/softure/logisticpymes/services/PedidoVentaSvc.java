@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoPlantillaFilterDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoPlantillaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.filter.DocumentoPlantillaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.domain.filter.DocumentoPlantillaFilterDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 // END region interImport
@@ -24,9 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.persistence.PedidoVentaMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PedidoVentaMapper;
 
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {

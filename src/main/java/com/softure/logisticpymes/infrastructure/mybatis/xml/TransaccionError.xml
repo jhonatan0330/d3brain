@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.TransaccionErrorMapper">
+
+	<sql id="selectTransaccionErrorFragment">
+		select
+			cter_llave as  llaveTabla
+			,dter_fechainicio as  fechaInicio
+			,dter_fechafin as  fechaFin
+			,cter_error as  error
+			,cter_usuario as  usuario
+			,cter_estado as estado
+		from transaccionerror_terp a
+	</sql>
+
+	<sql id="whereTransaccionErrorFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cter_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cter_estado = #{estado}
+			</if>
+			<if test="fechaInicioMin!=null">
+				and dter_fechainicio >= #{fechaInicioMin}
+			</if>
+			<if test="fechaInicioMax!=null">
+				and dter_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+			</if>
+			<if test="fechaFinMin!=null">
+				and dter_fechafin >= #{fechaFinMin}
+			</if>
+			<if test="fechaFinMax!=null">
+				and dter_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="usuario!=null">
+				and cter_usuario = #{usuario}
+			</if>
+	</sql>
+
+	<sql id="paginationTransaccionErrorFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTransaccionErrorPrimaryKeyFragment">
+		where
+			cter_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TransaccionErrorDTO" resultType="TransaccionErrorDTO">
+		<include refid="selectTransaccionErrorFragment" />
+		<include refid="whereTransaccionErrorFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TransaccionErrorDTO" resultType="TransaccionErrorDTO">
+		<include refid="selectTransaccionErrorFragment" />
+		<include refid="whereTransaccionErrorFragment" />
+		<include refid="paginationTransaccionErrorFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TransaccionErrorDTO" resultType="int">
+		select count(*)
+		from transaccionerror_terp
+		<include refid="whereTransaccionErrorFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TransaccionErrorDTO" resultType="TransaccionErrorDTO">
+		insert into transaccionerror_terp(
+			cter_llave
+		<if test="fechaInicio!=null">
+			,dter_fechainicio
+		</if>
+		<if test="fechaFin!=null">
+			,dter_fechafin
+		</if>
+		<if test="error!=null">
+			,cter_error
+		</if>
+		<if test="usuario!=null">
+			,cter_usuario
+		</if>
+		<if test="estado!=null">
+			,cter_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
+		</if>
+		<if test="error!=null">
+			,#{error}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TransaccionErrorDTO" resultType="TransaccionErrorDTO">
+		update transaccionerror_terp
+			set
+				dter_fechainicio = #{fechaInicio},
+				dter_fechafin = #{fechaFin},
+				cter_error = #{error},
+				cter_usuario = #{usuario},
+				cter_estado =#{estado}
+		<include refid="whereTransaccionErrorPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleTransaccionErrorFragment">
+		select
+			cter_llave as  llaveTabla
+			,dter_fechainicio as  fechaInicio
+			,dter_fechafin as  fechaFin
+			,cter_error as  error
+			,cter_usuario as  usuario
+			,cter_estado as estado
+		from transaccionerror_terp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TransaccionErrorDTO">
+		<include refid="selectSimpleTransaccionErrorFragment" />
+		<include refid="whereTransaccionErrorFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TransaccionErrorDTO">
+		<include refid="selectSimpleTransaccionErrorFragment" />
+		<include refid="whereTransaccionErrorFragment" />
+		<include refid="paginationTransaccionErrorFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

@@ -2,10 +2,6 @@ package com.softure.logisticpymes.services;
 
 import java.util.List;
 
-// BEGIN region interImport
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-// END region interImport
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +10,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.OrganizacionDTO;
-import com.softure.logisticpymes.dto.filter.OrganizacionFilterDTO;
-import com.softure.logisticpymes.persistence.OrganizacionMapper;
+import com.softure.logisticpymes.domain.dto.OrganizacionDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.filter.OrganizacionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.OrganizacionMapper;
 
 @Service("organizacionService")
 public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilterDTO> {

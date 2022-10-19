@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.CompressionUtils;
-import com.softure.logisticpymes.dto.CargaArchivoDTO;
-import com.softure.logisticpymes.dto.ServidorDTO;
+import com.softure.logisticpymes.domain.dto.CargaArchivoDTO;
+import com.softure.logisticpymes.domain.dto.ServidorDTO;
 
 @Service("uploadService")
 public class UploadSvc {

@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 
 @Component
@@ -68,19 +68,19 @@ public class TipoFecha {
 					pCampo.setValorFecha(fecha.getTime());
 					pCampo.setValorText(SoftureUtil.formatDate(pCampo.getValorFecha()));
 				}else{
+					Calendar hora = Calendar.getInstance();
+					hora.setTime(pCampo.getValorFecha());
+					hora.set(Calendar.SECOND, 0);
+					hora.set(Calendar.MILLISECOND, 0);
 					if(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR).isEmpty()){
+						pCampo.setValorFecha(hora.getTime());
 						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));						
 					}else {
-						Calendar hora = Calendar.getInstance();
-						hora.setTime(pCampo.getValorFecha());
-						
 						hora.set(Calendar.YEAR, 0);
 						hora.set(Calendar.MONTH, 0);
 						hora.set(Calendar.DAY_OF_MONTH, 0);
 						hora.set(Calendar.HOUR, 0);
 						hora.set(Calendar.MINUTE, 0);
-						hora.set(Calendar.SECOND, 0);
-						hora.set(Calendar.MILLISECOND, 0);
 						if(pCampo.getValorNumero()!=null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO)!=0) {
 							int totalSecs = pCampo.getValorNumero().intValue();
 							totalSecs = totalSecs/1000;

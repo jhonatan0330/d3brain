@@ -5,13 +5,16 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.GPSDispositivoDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.UsuarioRolDTO;
-import com.softure.logisticpymes.dto.filter.GPSDispositivoFilterDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioRolFilterDTO;
+import com.softure.logisticpymes.domain.dto.GPSDispositivoDTO;
+import com.softure.logisticpymes.domain.dto.GPSLocalizacionDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioRolDTO;
+import com.softure.logisticpymes.domain.filter.GPSDispositivoFilterDTO;
+import com.softure.logisticpymes.domain.filter.GPSLocalizacionFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioRolFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.GPSLocalizacionMapper;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 // END region interImport
 
@@ -23,9 +26,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.GPSLocalizacionDTO;
-import com.softure.logisticpymes.dto.filter.GPSLocalizacionFilterDTO;
-import com.softure.logisticpymes.persistence.GPSLocalizacionMapper;
 
 @Service("gPSLocalizacionService")
 public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocalizacionFilterDTO> {

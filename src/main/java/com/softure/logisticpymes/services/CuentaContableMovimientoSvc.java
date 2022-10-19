@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CuentaContableMovimientoDTO;
-import com.softure.logisticpymes.dto.filter.CuentaContableMovimientoFilterDTO;
-import com.softure.logisticpymes.persistence.CuentaContableMovimientoMapper;
+import com.softure.logisticpymes.domain.dto.CuentaContableMovimientoDTO;
+import com.softure.logisticpymes.domain.filter.CuentaContableMovimientoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CuentaContableMovimientoMapper;
 
 @Service("cuentaContableMovimientoService")
 public class CuentaContableMovimientoSvc extends BasicSvc<CuentaContableMovimientoDTO, CuentaContableMovimientoFilterDTO> {

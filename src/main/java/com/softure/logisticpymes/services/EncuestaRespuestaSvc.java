@@ -5,8 +5,6 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.EncuestaOpcionRespuestaDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -16,9 +14,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.EncuestaRespuestaDTO;
-import com.softure.logisticpymes.dto.filter.EncuestaRespuestaFilterDTO;
-import com.softure.logisticpymes.persistence.EncuestaRespuestaMapper;
+import com.softure.logisticpymes.domain.dto.EncuestaOpcionRespuestaDTO;
+import com.softure.logisticpymes.domain.dto.EncuestaRespuestaDTO;
+import com.softure.logisticpymes.domain.filter.EncuestaRespuestaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.EncuestaRespuestaMapper;
 
 @Service("encuestaRespuestaService")
 public class EncuestaRespuestaSvc extends BasicSvc<EncuestaRespuestaDTO, EncuestaRespuestaFilterDTO> {

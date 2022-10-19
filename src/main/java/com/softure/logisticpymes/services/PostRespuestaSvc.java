@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PostRespuestaDTO;
-import com.softure.logisticpymes.dto.filter.PostRespuestaFilterDTO;
-import com.softure.logisticpymes.persistence.PostRespuestaMapper;
+import com.softure.logisticpymes.domain.dto.PostRespuestaDTO;
+import com.softure.logisticpymes.domain.filter.PostRespuestaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PostRespuestaMapper;
 
 @Service("postRespuestaService")
 public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFilterDTO> {

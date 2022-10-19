@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.ComprobanteCuentaDetalleMapper">
+
+	<sql id="selectComprobanteCuentaDetalleFragment">
+		select
+			cccd_llave as  llaveTabla
+			,cccd_cuenta as  cuenta
+			,mccd_debe as  debe
+			,mccd_haber as  haber
+			,cccd_comprobante as  comprobante
+			,cccd_estado as estado
+		from comprobantecuentadetalle_ccdp a
+	</sql>
+
+	<sql id="whereComprobanteCuentaDetalleFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cccd_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cccd_estado = #{estado}
+			</if>
+			<if test="cuenta!=null">
+				and cccd_cuenta = #{cuenta}
+			</if>
+			<if test="comprobante!=null">
+				and cccd_comprobante = #{comprobante}
+			</if>
+	</sql>
+
+	<sql id="paginationComprobanteCuentaDetalleFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereComprobanteCuentaDetallePrimaryKeyFragment">
+		where
+			cccd_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ComprobanteCuentaDetalleDTO" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ComprobanteCuentaDetalleDTO" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+		<include refid="paginationComprobanteCuentaDetalleFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ComprobanteCuentaDetalleDTO" resultType="int">
+		select count(*)
+		from comprobantecuentadetalle_ccdp
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ComprobanteCuentaDetalleDTO" resultType="ComprobanteCuentaDetalleDTO">
+		insert into comprobantecuentadetalle_ccdp(
+			cccd_llave
+		<if test="cuenta!=null">
+			,cccd_cuenta
+		</if>
+		<if test="debe!=null">
+			,mccd_debe
+		</if>
+		<if test="haber!=null">
+			,mccd_haber
+		</if>
+		<if test="comprobante!=null">
+			,cccd_comprobante
+		</if>
+		<if test="estado!=null">
+			,cccd_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="cuenta!=null">
+			,#{cuenta}
+		</if>
+		<if test="debe!=null">
+			,#{debe}
+		</if>
+		<if test="haber!=null">
+			,#{haber}
+		</if>
+		<if test="comprobante!=null">
+			,#{comprobante}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ComprobanteCuentaDetalleDTO" resultType="ComprobanteCuentaDetalleDTO">
+		update comprobantecuentadetalle_ccdp
+			set
+				cccd_cuenta = #{cuenta},
+				mccd_debe = #{debe},
+				mccd_haber = #{haber},
+				cccd_comprobante = #{comprobante},
+				cccd_estado =#{estado}
+		<include refid="whereComprobanteCuentaDetallePrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleComprobanteCuentaDetalleFragment">
+		select
+			cccd_llave as  llaveTabla
+			,cccd_cuenta as  cuenta
+			,mccd_debe as  debe
+			,mccd_haber as  haber
+			,cccd_comprobante as  comprobante
+			,cccd_estado as estado
+		from comprobantecuentadetalle_ccdp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectSimpleComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ComprobanteCuentaDetalleDTO">
+		<include refid="selectSimpleComprobanteCuentaDetalleFragment" />
+		<include refid="whereComprobanteCuentaDetalleFragment" />
+		<include refid="paginationComprobanteCuentaDetalleFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

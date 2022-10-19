@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.massiveload.infrastructure.mybatis.mapper.ICargaMasivaMapper">
+
+	<sql id="selectCargaMasivaFragment">
+		select
+			ccmv_llave as  llaveTabla
+			,dcmv_fecha as  fecha
+			,ccmv_usuario as  usuario
+			,ccmv_archivo as  archivo
+			,ccmv_estado as estado
+		from cargamasiva_cmvp a
+	</sql>
+
+	<sql id="whereCargaMasivaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccmv_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccmv_estado = #{estado}
+			</if>
+			<if test="fechaMin!=null">
+				and dcmv_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dcmv_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="usuario!=null">
+				and ccmv_usuario = #{usuario}
+			</if>
+	</sql>
+
+	<sql id="paginationCargaMasivaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCargaMasivaPrimaryKeyFragment">
+		where
+			ccmv_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CargaMasivaDTO" resultType="CargaMasivaDTO">
+		<include refid="selectCargaMasivaFragment" />
+		<include refid="whereCargaMasivaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CargaMasivaDTO" resultType="CargaMasivaDTO">
+		<include refid="selectCargaMasivaFragment" />
+		<include refid="whereCargaMasivaFragment" />
+		<include refid="paginationCargaMasivaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CargaMasivaDTO" resultType="int">
+		select count(*)
+		from cargamasiva_cmvp
+		<include refid="whereCargaMasivaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CargaMasivaDTO" resultType="CargaMasivaDTO">
+		insert into cargamasiva_cmvp(
+			ccmv_llave
+		<if test="fecha!=null">
+			,dcmv_fecha
+		</if>
+		<if test="usuario!=null">
+			,ccmv_usuario
+		</if>
+		<if test="archivo!=null">
+			,ccmv_archivo
+		</if>
+		<if test="estado!=null">
+			,ccmv_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="archivo!=null">
+			,#{archivo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CargaMasivaDTO" resultType="CargaMasivaDTO">
+		update cargamasiva_cmvp
+			set
+				dcmv_fecha = #{fecha},
+				ccmv_usuario = #{usuario},
+				ccmv_archivo = #{archivo},
+				ccmv_estado =#{estado}
+		<include refid="whereCargaMasivaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleCargaMasivaFragment">
+		select
+			ccmv_llave as  llaveTabla
+			,dcmv_fecha as  fecha
+			,ccmv_usuario as  usuario
+			,ccmv_archivo as  archivo
+			,ccmv_estado as estado
+		from cargamasiva_cmvp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CargaMasivaDTO">
+		<include refid="selectSimpleCargaMasivaFragment" />
+		<include refid="whereCargaMasivaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CargaMasivaDTO">
+		<include refid="selectSimpleCargaMasivaFragment" />
+		<include refid="whereCargaMasivaFragment" />
+		<include refid="paginationCargaMasivaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

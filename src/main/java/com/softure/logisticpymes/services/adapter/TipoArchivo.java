@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 
 @Component

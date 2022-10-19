@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CambioDTO;
-import com.softure.logisticpymes.dto.filter.CambioFilterDTO;
-import com.softure.logisticpymes.persistence.CambioMapper;
+import com.softure.logisticpymes.domain.dto.CambioDTO;
+import com.softure.logisticpymes.domain.filter.CambioFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CambioMapper;
 
 @Service("cambioService")
 public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {

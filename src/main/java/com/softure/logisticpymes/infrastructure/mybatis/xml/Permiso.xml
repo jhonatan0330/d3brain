@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.PermisoMapper">
+
+	<sql id="selectPermisoFragment">
+		select
+			cper_llave as  llaveTabla
+			,cper_rolacceso as  rolAcceso
+			,(select cdpl_nombre from rolacceso_racp, documentoplantilla_dplp where cdpl_llave = crac_plantilla and crac_llave = cper_rolacceso) as  rolAccesoNombre
+			,cper_modulo as  modulo
+			,(select cmdc_nombre from modulocontratado_mdcp where cmdc_llave =  cper_modulo) as  moduloNombre
+			,cper_estado as estado
+		from permiso_perp a
+	</sql>
+
+	<sql id="wherePermisoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cper_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cper_estado = #{estado}
+			</if>
+			<if test="rolAcceso!=null">
+				and cper_rolacceso = #{rolAcceso}
+			</if>
+			<if test="modulo!=null">
+				and cper_modulo = #{modulo}
+			</if>
+	</sql>
+
+	<sql id="paginationPermisoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePermisoPrimaryKeyFragment">
+		where
+			cper_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PermisoDTO" resultType="PermisoDTO">
+		<include refid="selectPermisoFragment" />
+		<include refid="wherePermisoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PermisoDTO" resultType="PermisoDTO">
+		<include refid="selectPermisoFragment" />
+		<include refid="wherePermisoFragment" />
+		order by rolaccesonombre 
+		, modulonombre 
+		<include refid="paginationPermisoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PermisoDTO" resultType="int">
+		select count(*)
+		from permiso_perp
+		<include refid="wherePermisoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PermisoDTO" resultType="PermisoDTO">
+		insert into permiso_perp(
+			cper_llave
+		<if test="rolAcceso!=null">
+			,cper_rolacceso
+		</if>
+		<if test="modulo!=null">
+			,cper_modulo
+		</if>
+		<if test="estado!=null">
+			,cper_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="rolAcceso!=null">
+			,#{rolAcceso}
+		</if>
+		<if test="modulo!=null">
+			,#{modulo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PermisoDTO" resultType="PermisoDTO">
+		update permiso_perp
+			set
+				cper_rolacceso = #{rolAcceso},
+				cper_modulo = #{modulo},
+				cper_estado =#{estado}
+		<include refid="wherePermisoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePermisoFragment">
+		select
+			cper_llave as  llaveTabla
+			,cper_rolacceso as  rolAcceso
+			,cper_modulo as  modulo
+			,cper_estado as estado
+		from permiso_perp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PermisoDTO">
+		<include refid="selectSimplePermisoFragment" />
+		<include refid="wherePermisoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PermisoDTO">
+		<include refid="selectSimplePermisoFragment" />
+		<include refid="wherePermisoFragment" />
+		order by rolaccesonombre 
+		, modulonombre 
+		<include refid="paginationPermisoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.PostCalificacionMapper">
+
+	<sql id="selectPostCalificacionFragment">
+		select
+			cpcl_llave as  llaveTabla
+			,cpcl_usuario as  usuario
+			,dpcl_fecha as  fecha
+			,cpcl_respuesta as  respuesta
+			,bpcl_positiva as  positiva
+			,cpcl_estado as estado
+		from postcalificacion_pclp a
+	</sql>
+
+	<sql id="wherePostCalificacionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpcl_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpcl_estado = #{estado}
+			</if>
+			<if test="usuario!=null">
+				and cpcl_usuario = #{usuario}
+			</if>
+			<if test="fechaMin!=null">
+				and dpcl_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dpcl_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="respuesta!=null">
+				and cpcl_respuesta = #{respuesta}
+			</if>
+			<if test="positivaFilter!=null">
+				and bpcl_positiva = #{positivaFilter}
+			</if>
+	</sql>
+
+	<sql id="paginationPostCalificacionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePostCalificacionPrimaryKeyFragment">
+		where
+			cpcl_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PostCalificacionDTO" resultType="PostCalificacionDTO">
+		<include refid="selectPostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PostCalificacionDTO" resultType="PostCalificacionDTO">
+		<include refid="selectPostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+		<include refid="paginationPostCalificacionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PostCalificacionDTO" resultType="int">
+		select count(*)
+		from postcalificacion_pclp
+		<include refid="wherePostCalificacionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PostCalificacionDTO" resultType="PostCalificacionDTO">
+		insert into postcalificacion_pclp(
+			cpcl_llave
+		<if test="usuario!=null">
+			,cpcl_usuario
+		</if>
+		<if test="fecha!=null">
+			,dpcl_fecha
+		</if>
+		<if test="respuesta!=null">
+			,cpcl_respuesta
+		</if>
+		<if test="positiva!=null">
+			,bpcl_positiva
+		</if>
+		<if test="estado!=null">
+			,cpcl_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="respuesta!=null">
+			,#{respuesta}
+		</if>
+		<if test="positiva!=null">
+			,#{positiva}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PostCalificacionDTO" resultType="PostCalificacionDTO">
+		update postcalificacion_pclp
+			set
+				cpcl_usuario = #{usuario},
+				dpcl_fecha = #{fecha},
+				cpcl_respuesta = #{respuesta},
+				bpcl_positiva = #{positiva},
+				cpcl_estado =#{estado}
+		<include refid="wherePostCalificacionPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePostCalificacionFragment">
+		select
+			cpcl_llave as  llaveTabla
+			,cpcl_usuario as  usuario
+			,dpcl_fecha as  fecha
+			,cpcl_respuesta as  respuesta
+			,bpcl_positiva as  positiva
+			,cpcl_estado as estado
+		from postcalificacion_pclp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PostCalificacionDTO">
+		<include refid="selectSimplePostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PostCalificacionDTO">
+		<include refid="selectSimplePostCalificacionFragment" />
+		<include refid="wherePostCalificacionFragment" />
+		<include refid="paginationPostCalificacionFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

@@ -4,8 +4,7 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
+
 import com.softure.logisticpymes.services.refactor.CallManageTransition;
 // END region interImport
 
@@ -17,9 +16,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaAjusteDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaAjusteFilterDTO;
-import com.softure.logisticpymes.persistence.PedidoVentaAjusteMapper;
+import com.softure.logisticpymes.domain.dto.PedidoVentaAjusteDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoEstadoDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaAjusteFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PedidoVentaAjusteMapper;
 
 @Service("pedidoVentaAjusteService")
 public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO> {

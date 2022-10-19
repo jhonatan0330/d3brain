@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProductoInventarioDTO;
-import com.softure.logisticpymes.dto.filter.ProductoInventarioFilterDTO;
-import com.softure.logisticpymes.persistence.ProductoInventarioMapper;
+import com.softure.logisticpymes.domain.dto.ProductoInventarioDTO;
+import com.softure.logisticpymes.domain.filter.ProductoInventarioFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProductoInventarioMapper;
 
 @Service("productoInventarioService")
 public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, ProductoInventarioFilterDTO> {

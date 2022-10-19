@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CargaArchivoDTO;
-import com.softure.logisticpymes.dto.filter.CargaArchivoFilterDTO;
-import com.softure.logisticpymes.persistence.CargaArchivoMapper;
+import com.softure.logisticpymes.domain.dto.CargaArchivoDTO;
+import com.softure.logisticpymes.domain.filter.CargaArchivoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CargaArchivoMapper;
 
 @Service("cargaArchivoService")
 public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilterDTO> {

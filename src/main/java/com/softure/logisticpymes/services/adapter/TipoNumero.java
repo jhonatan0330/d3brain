@@ -14,11 +14,11 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.CalculatorUtil;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.DetallePedidoVentaDTO;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.logisticpymes.domain.dto.DetallePedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.logisticpymes.services.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 

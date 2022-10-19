@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioOrganizacionMapper">
+
+	<sql id="selectUsuarioOrganizacionFragment">
+		select
+			cuor_llave as  llaveTabla
+			,cuor_usuario as  usuario
+			,cuor_organizacion as  organizacion
+			,cuor_tokenserver as  tokenServer
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cuor_usuario) as  usuarioNombre
+			,cuor_estado as estado
+		from usuarioorganizacion_uorp a
+	</sql>
+
+	<sql id="whereUsuarioOrganizacionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cuor_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cuor_estado = #{estado}
+			</if>
+			<if test="usuario!=null">
+				and cuor_usuario = #{usuario}
+			</if>
+			<if test="organizacion!=null">
+				and cuor_organizacion = #{organizacion}
+			</if>
+			<if test="tokenServer!=null">
+				and cuor_tokenserver = #{tokenServer}
+			</if>
+	</sql>
+
+	<sql id="paginationUsuarioOrganizacionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereUsuarioOrganizacionPrimaryKeyFragment">
+		where
+			cuor_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="UsuarioOrganizacionDTO" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="UsuarioOrganizacionDTO" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+		<include refid="paginationUsuarioOrganizacionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="UsuarioOrganizacionDTO" resultType="int">
+		select count(*)
+		from usuarioorganizacion_uorp
+		<include refid="whereUsuarioOrganizacionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="UsuarioOrganizacionDTO" resultType="UsuarioOrganizacionDTO">
+		insert into usuarioorganizacion_uorp(
+			cuor_llave
+		<if test="usuario!=null">
+			,cuor_usuario
+		</if>
+		<if test="organizacion!=null">
+			,cuor_organizacion
+		</if>
+		<if test="tokenServer!=null">
+			,cuor_tokenserver
+		</if>
+		<if test="estado!=null">
+			,cuor_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="organizacion!=null">
+			,#{organizacion}
+		</if>
+		<if test="tokenServer!=null">
+			,#{tokenServer}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="UsuarioOrganizacionDTO" resultType="UsuarioOrganizacionDTO">
+		update usuarioorganizacion_uorp
+			set
+				cuor_usuario = #{usuario},
+				cuor_organizacion = #{organizacion},
+				cuor_tokenserver = #{tokenServer},
+				cuor_estado =#{estado}
+		<include refid="whereUsuarioOrganizacionPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleUsuarioOrganizacionFragment">
+		select
+			cuor_llave as  llaveTabla
+			,cuor_usuario as  usuario
+			,cuor_organizacion as  organizacion
+			,cuor_tokenserver as  tokenServer
+			,cuor_estado as estado
+		from usuarioorganizacion_uorp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectSimpleUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioOrganizacionDTO">
+		<include refid="selectSimpleUsuarioOrganizacionFragment" />
+		<include refid="whereUsuarioOrganizacionFragment" />
+		<include refid="paginationUsuarioOrganizacionFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+
+	<select id="sincronizarUsuarios" resultType="UsuarioOrganizacionDTO">
+		select
+			cuau_llave as  llaveTabla
+			,cusr_nombre as  usuario
+			,cusr_identificacion as  organizacion
+			,cuau_sesion as  tokenServer
+		from 
+			usuarioautenticacion_uaup, usuario_usrp
+		where
+			cusr_llave = cuau_usuario and cusr_estado = 'A' and cuau_estado = 'A'
+	</select>
+<!--// END region script-->
+
+</mapper>

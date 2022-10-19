@@ -4,8 +4,6 @@ import java.util.List;
 
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -15,9 +13,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.RelacionInternaDTO;
-import com.softure.logisticpymes.dto.filter.RelacionInternaFilterDTO;
-import com.softure.logisticpymes.persistence.RelacionInternaMapper;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.RelacionInternaDTO;
+import com.softure.logisticpymes.domain.filter.RelacionInternaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.RelacionInternaMapper;
 
 @Service("relacionInternaService")
 public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInternaFilterDTO> {

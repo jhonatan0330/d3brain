@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.mybatis.mapper.PedidoVentaMapper">
+
+	<sql id="selectPedidoVentaFragment">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cpdv_funcionario) as  funcionarioNombre
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
+			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_estadoexpediente as  estadoExpediente
+			,cpdv_textofiltro as  textoFiltro
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
+			,npdv_historico as  historico
+			,cpdv_transaccion as  transaccion
+			,cpdv_estado as estado
+		from pedidoventa_pdvp a
+	</sql>
+
+	<sql id="wherePedidoVentaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpdv_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpdv_estado = #{estado}
+			</if>
+			<if test="fechaRegistroMin!=null">
+				and dpdv_fecharegistro >= #{fechaRegistroMin}
+			</if>
+			<if test="fechaRegistroMax!=null">
+				and dpdv_fecharegistro <![CDATA[ < ]]>  #{fechaRegistroMax}
+			</if>
+			<if test="fechaMin!=null">
+				and dpdv_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dpdv_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="funcionario!=null">
+				and cpdv_funcionario = #{funcionario}
+			</if>
+			<if test="plantilla!=null">
+				and cpdv_plantilla = #{plantilla}
+			</if>
+			<if test="nombre!=null">
+				and cpdv_nombre = #{nombre}
+			</if>
+			<if test="estadoExpediente!=null">
+				and cpdv_estadoexpediente = #{estadoExpediente}
+			</if>
+			<if test="textoFiltro!=null">
+				and cpdv_textofiltro = #{textoFiltro}
+			</if>
+			<if test="transaccion!=null">
+				and cpdv_transaccion = #{transaccion}
+			</if>
+			<if test="filtroParametro!=null">
+				and (cpdv_nombre like upper('%' || #{filtroParametro} || '%') or cpdv_textofiltro like '%' || #{filtroParametro} || '%')
+			</if>
+	</sql>
+
+	<sql id="paginationPedidoVentaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePedidoVentaPrimaryKeyFragment">
+		where
+			cpdv_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+		order by dpdv_fecha desc
+		, cpdv_nombre 
+		<include refid="paginationPedidoVentaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PedidoVentaDTO" resultType="int">
+		select count(*)
+		from pedidoventa_pdvp
+		<include refid="wherePedidoVentaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		insert into pedidoventa_pdvp(
+			cpdv_llave
+		<if test="fechaRegistro!=null">
+			,dpdv_fecharegistro
+		</if>
+		<if test="fecha!=null">
+			,dpdv_fecha
+		</if>
+		<if test="funcionario!=null">
+			,cpdv_funcionario
+		</if>
+		<if test="plantilla!=null">
+			,cpdv_plantilla
+		</if>
+		<if test="consecutivo!=null">
+			,mpdv_consecutivo
+		</if>
+		<if test="nombre!=null">
+			,cpdv_nombre
+		</if>
+		<if test="estadoExpediente!=null">
+			,cpdv_estadoexpediente
+		</if>
+		<if test="textoFiltro!=null">
+			,cpdv_textofiltro
+		</if>
+		<if test="historico!=null">
+			,npdv_historico
+		</if>
+		<if test="transaccion!=null">
+			,cpdv_transaccion
+		</if>
+		<if test="estado!=null">
+			,cpdv_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fechaRegistro!=null">
+			,#{fechaRegistro}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="funcionario!=null">
+			,#{funcionario}
+		</if>
+		<if test="plantilla!=null">
+			,#{plantilla}
+		</if>
+		<if test="consecutivo!=null">
+			,#{consecutivo}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="estadoExpediente!=null">
+			,#{estadoExpediente}
+		</if>
+		<if test="textoFiltro!=null">
+			,#{textoFiltro}
+		</if>
+		<if test="historico!=null">
+			,#{historico}
+		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		update pedidoventa_pdvp
+			set
+				dpdv_fecharegistro = #{fechaRegistro},
+				dpdv_fecha = #{fecha},
+				cpdv_funcionario = #{funcionario},
+				cpdv_plantilla = #{plantilla},
+				mpdv_consecutivo = #{consecutivo},
+				cpdv_nombre = #{nombre},
+				cpdv_estadoexpediente = #{estadoExpediente},
+				cpdv_textofiltro = #{textoFiltro},
+				npdv_historico = #{historico},
+				cpdv_transaccion = #{transaccion},
+				cpdv_estado =#{estado}
+		<include refid="wherePedidoVentaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePedidoVentaFragment">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,cpdv_estadoexpediente as  estadoExpediente
+			,cpdv_textofiltro as  textoFiltro
+			,npdv_historico as  historico
+			,cpdv_transaccion as  transaccion
+			,cpdv_estado as estado
+		from pedidoventa_pdvp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaDTO">
+		<include refid="selectSimplePedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaDTO">
+		<include refid="selectSimplePedidoVentaFragment" />
+		<include refid="wherePedidoVentaFragment" />
+		order by dpdv_fecha desc
+		, cpdv_nombre 
+		<include refid="paginationPedidoVentaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	
+	<select id="listarExpedientesDisponiblesDocumento" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+			 where cpdv_estadoexpediente  in (
+			 	select cptr_estadopartida from procesotransicion_ptrp where cptr_plantilla = #{plantilla} and cptr_estado ='A' and bptr_documentador = false and cptr_estadopartida is not null) 
+			 and cpdv_estado !='I'
+		 	<if test="fechaMin!=null">and dpdv_fecha >= #{fechaMin}</if>
+		    <if test="fechaMax!=null">and dpdv_fecha <![CDATA[ < ]]>  #{fechaMax}</if>
+		    <if test="nombre!=null">and cpdv_nombre = #{nombre}</if>
+			<if test="filtroParametro!=null">
+				and (cpdv_nombre like upper('%' || #{filtroParametro} || '%') or upper(cpdv_textofiltro) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+		    order by dpdv_fecha desc, cpdv_nombre desc
+		<include refid="paginationPedidoVentaFragment" />
+	</select>
+	
+	<select id="listarExpedientesPertenecenCampo" parameterType="java.lang.String" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+			where cpdv_llave  in (select cdex_expedientedetalle from documentorelacionexpediente_dexp  where cdex_campomaestro = #{campo} and cdex_estado ='A') 
+			order by dpdv_fecha desc, cpdv_nombre desc
+	</select>
+	
+	<select id="listarPermitidos" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+		where 1=1
+		<include refid="filterMainFragment" />
+		<if test="campoFiltro!=null">and cpdv_llave in (select cdrc_documento from campo_documento where cpvc_valoropcion = #{valorFiltro} and cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach>)</if>
+		<if test="dto.caracteristicas!=null">
+			<foreach item="item"  index="index" collection="dto.caracteristicas" >
+				and ((
+						<choose><when test="item.campo!=null">select cpvc_valoropcion from campo4id (cpdv_llave, #{item.campo}, npdv_historico)</when><otherwise>cpdv_llave</otherwise></choose>
+					)in(
+					<if test="dto.securityToken!=null">
+					select cpvc_valoropcion from campo_documento where cpvc_valoropcion is not null and cdrc_documento 
+							in (select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+								select cuss_usuario from usuariosesion_ussp where cuss_llave = #{dto.securityToken}))
+					union
+					select cerl_documento from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{dto.securityToken})
+					</if>
+					<if test="dto.funcionarioNombre!=null">
+					select cdrc_documento from campo_documento where cpvc_valoropcion = #{dto.funcionarioNombre}
+						and cpvc_campo in (select cdpc_llave from documentoplantillacaracteristica_dpcp where cdpc_plantilla = #{dto.plantilla})
+					union
+					select cpvc_valoropcion from campo_documento where cdrc_documento = #{dto.funcionarioNombre} and cpvc_valoropcion is not null
+					</if>
+					)<if test="dto.funcionario!=null">or cpdv_funcionario = #{dto.funcionario}</if>)
+	        </foreach>
+		</if>
+		<include refid="orderMainFragment" />
+	</select>
+	
+	<sql id="orderMainFragment">
+		order by <if test="ordenNombre==null">fecha <if test="ordenDescendente!=null">desc</if>,</if>nombre <if test="ordenDescendente!=null">desc</if>
+		<if test="dto.paginacionRegistroFinal!=null">LIMIT #{dto.paginacionRegistroFinal}</if>
+		<if test="dto.paginacionRegistroInicial!=null">OFFSET #{dto.paginacionRegistroInicial}</if>
+	</sql>
+	<sql id="filterMainFragment">
+		<if test="dto.llaveTabla!=null">and a.cpdv_llave = #{dto.llaveTabla}</if>
+		<if test="dto.estado!=null">and a.cpdv_estado = #{dto.estado}</if>
+		<if test="dto.fechaMin!=null">and a.dpdv_fecha >= #{dto.fechaMin}</if>
+		<if test="dto.fechaMax!=null">and a.dpdv_fecha <![CDATA[ < ]]>  #{dto.fechaMax}</if>
+		<if test="dto.plantilla!=null">and a.cpdv_plantilla = #{dto.plantilla}</if>
+		<if test="dto.nombre!=null">and a.cpdv_nombre = #{dto.nombre}</if>
+		<if test="dto.estadoExpediente!=null">and a.cpdv_estadoexpediente = #{dto.estadoExpediente}</if>
+		<if test="dto.filtroParametro!=null">and (a.cpdv_nombre like upper('%' || #{dto.filtroParametro} || '%') or a.cpdv_textofiltro like '%' || #{dto.filtroParametro} || '%')</if>
+		<if test="filtroEstados!=null">	and a.cpdv_estadoexpediente in <foreach item="item" collection="filtroEstados" separator="," open="(" close=")">#{item}</foreach></if>
+		<if test="filtroTexto!=null">and (a.cpdv_textofiltro like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>)
+				or a.cpdv_nombre like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>))
+		</if>
+	</sql>
+	<sql id="selectMainFragment">
+		select
+			a.cpdv_llave as  llaveTabla
+			,a.dpdv_fecharegistro as  fechaRegistro
+			,a.dpdv_fecha as  fecha
+			,a.cpdv_funcionario as  funcionario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = a.cpdv_funcionario) as  funcionarioNombre
+			,a.cpdv_plantilla as  plantilla
+			,a.mpdv_consecutivo as  consecutivo
+			,a.cpdv_nombre as  nombre
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = a.cpdv_plantilla) as  imagen
+			,descripcion(a.cpdv_llave) as  descripcion
+			,a.cpdv_estadoexpediente as  estadoExpediente
+			,a.cpdv_textofiltro as  textoFiltro
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = a.cpdv_estadoexpediente) as  estadoNombre
+			,a.npdv_historico as  historico
+			,a.cpdv_transaccion as  transaccion
+			,a.cpdv_estado as estado
+		from pedidoventa_pdvp a
+	</sql>
+	
+	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
+		<include refid="selectMainFragment" />
+		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
+	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
+	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
+	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
+		where aux.cpdv_estado = 'A'
+	 	<include refid="filterMainFragment" />
+	 	and (cp_campo.cpvc_valoropcion = cerl_documento or cp_full.cpvc_valoropcion = cerl_documento)
+	union
+		<include refid="selectMainFragment" />
+	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
+		where cp_campo.cpvc_valoropcion in (select cp_doc_rol.cpvc_valoropcion from usuariorol_erlp
+	 			inner join campo_documento cp_doc_rol on (cp_doc_rol.cpvc_valoropcion is not null and cp_doc_rol.cdrc_documento = cerl_documento)
+	 		where cerl_estado = 'A' and cerl_usuario = #{usuario})
+	 	<include refid="filterMainFragment" />
+	union
+		<include refid="selectMainFragment" />
+		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
+	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
+	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
+	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
+	 	inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cp_full.cpvc_llave and cdex_estado = 'A')
+		where aux.cpdv_estado = 'A'
+		<include refid="filterMainFragment" />
+		and cdex_expedientedetalle = cerl_documento
+		<include refid="orderMainFragment" />
+	</select>
+	
+	<update id="actualizarEstados" parameterType="PedidoVentaDTO" >
+		update pedidoventa_pdvp set cpdv_estadoexpediente = #{estadoExpediente} where cpdv_plantilla = #{plantilla} and cpdv_estado = #{estado} and cpdv_estadoexpediente is null
+	</update >
+	
+	<select id="contarEstados" parameterType="PedidoVentaDTO" resultType="int">
+		select count(*)
+		from pedidoventa_pdvp where cpdv_plantilla = #{plantilla} and cpdv_estado = #{estado} and cpdv_estadoexpediente is null
+	</select>
+	
+	<select id="listarUsuario" parameterType="PedidoVentaDTO" resultType="PedidoVentaDTO">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cpdv_funcionario) as  funcionarioNombre
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
+			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_estadoexpediente as  estadoExpediente
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
+			,cpdv_estado as estado
+		from actividad_actp
+			inner join pedidoventa_pdvp a on (cact_documento = cpdv_llave)
+		where cact_estado = 'A' and cact_responsable = #{funcionario}
+		order by dact_fechaarrancar
+		<include refid="paginationPedidoVentaFragment" />
+	</select>
+	
+
+	<select id="listarExpedientesDisponiblesDocumentoFuncion" resultType="PedidoVentaDTO">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cpdv_funcionario) as  funcionarioNombre
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
+			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_estadoexpediente as  estadoExpediente
+			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
+			,cpdv_estado as estado
+		from propiedad_${funcionBusqueda} (#{dto.llaveTabla}, #{dto.paginacionRegistroFinal}, #{dto.paginacionRegistroInicial}
+			, #{dto.fechaMin}, #{dto.fechaMax}, #{dto.filtroParametro}, #{dto.nombre}, #{dto.securityToken}
+			,<choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+		where 1=1
+		<if test="filtroEstados!=null">
+			and cpdv_estadoexpediente in <foreach item="item" collection="filtroEstados" separator="," open="(" close=")">#{item}</foreach>
+		</if>
+	</select>
+	
+	<select id="listarVisibleRenderNivel2" resultType="PedidoVentaDTO">
+		select 
+			distinct(cpvc_valoropcion) as  llaveTabla 
+		from 
+			pedidoventacaracteristica_pvcp
+			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave and cdpc_estado = 'A') 
+			inner join propiedad_ppdp on (cppd_campo = cdpc_llave and cppd_propiedadvalor = 'PROP_104' and cppd_estado = 'A')
+		where cpvc_estado ='A' 
+			and cpvc_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
+			and cpvc_valoropcion is not null
+	</select>
+	
+	<select id="iteracion" resultType="PedidoVentaDTO">
+		select
+			cpdv_llave as  llaveTabla
+			,dpdv_fecharegistro as  fechaRegistro
+			,dpdv_fecha as  fecha
+			,cpdv_funcionario as  funcionario
+			,cpdv_plantilla as  plantilla
+			,mpdv_consecutivo as  consecutivo
+			,cpdv_nombre as  nombre
+			,cpdv_estadoexpediente as  estadoExpediente
+			,cpdv_estado as estado 
+		from iteracion_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
+	</select>
+	
+	<select id="listar2Ids" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+			where cpdv_llave  in (<foreach item="item" collection="Ids" separator="," >#{item}</foreach>)
+	</select>
+<!--// END region script-->
+
+</mapper>

@@ -1,7 +1,7 @@
 SET PGPASSWORD=buho123
 SET /p BD=Coloque el nombre de la bd completo
-SET SERVER=190.27.41.78
-SET PORT=15432
+SET SERVER=192.168.2.109
+SET PORT=5432
 SET POSTGRES_FOLDER=C:\Users\USER\AppData\Roaming\DBeaverData\drivers\clients\postgresql\win\14
 SET FOLDER_BD=C:\Softure\WS\Golyat\SW42_JAVA\src\main\resources\static\data
 SET FOLDER_BD_UTILS=C:\Softure\WS\Golyat\SW42_JAVA\bd\utils

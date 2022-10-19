@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ReporteEjecucionDTO;
-import com.softure.logisticpymes.dto.filter.ReporteEjecucionFilterDTO;
-import com.softure.logisticpymes.persistence.ReporteEjecucionMapper;
+import com.softure.logisticpymes.domain.dto.ReporteEjecucionDTO;
+import com.softure.logisticpymes.domain.filter.ReporteEjecucionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ReporteEjecucionMapper;
 
 @Service("reporteEjecucionService")
 public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEjecucionFilterDTO> {

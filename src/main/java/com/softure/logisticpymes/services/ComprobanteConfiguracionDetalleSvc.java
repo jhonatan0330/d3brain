@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ComprobanteConfiguracionDetalleDTO;
-import com.softure.logisticpymes.dto.filter.ComprobanteConfiguracionDetalleFilterDTO;
-import com.softure.logisticpymes.persistence.ComprobanteConfiguracionDetalleMapper;
+import com.softure.logisticpymes.domain.dto.ComprobanteConfiguracionDetalleDTO;
+import com.softure.logisticpymes.domain.filter.ComprobanteConfiguracionDetalleFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ComprobanteConfiguracionDetalleMapper;
 
 @Service("comprobanteConfiguracionDetalleService")
 public class ComprobanteConfiguracionDetalleSvc extends BasicSvc<ComprobanteConfiguracionDetalleDTO, ComprobanteConfiguracionDetalleFilterDTO> {

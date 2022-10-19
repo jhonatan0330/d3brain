@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.filter.PropiedadValorDefinidoFilterDTO;
-import com.softure.logisticpymes.persistence.PropiedadValorDefinidoMapper;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.filter.PropiedadValorDefinidoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PropiedadValorDefinidoMapper;
 
 @Service("propiedadValorDefinidoService")
 public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO> {

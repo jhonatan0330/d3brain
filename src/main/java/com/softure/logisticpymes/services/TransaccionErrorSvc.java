@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TransaccionErrorDTO;
-import com.softure.logisticpymes.dto.filter.TransaccionErrorFilterDTO;
-import com.softure.logisticpymes.persistence.TransaccionErrorMapper;
+import com.softure.logisticpymes.domain.dto.TransaccionErrorDTO;
+import com.softure.logisticpymes.domain.filter.TransaccionErrorFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TransaccionErrorMapper;
 
 @Service("transaccionErrorService")
 public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, TransaccionErrorFilterDTO> {

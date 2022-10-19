@@ -5,9 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoTransicionFilterDTO;
 // END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ProcesoEstadoMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -17,9 +16,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ProcesoEstadoDTO;
-import com.softure.logisticpymes.dto.filter.ProcesoEstadoFilterDTO;
-import com.softure.logisticpymes.persistence.ProcesoEstadoMapper;
+import com.softure.logisticpymes.domain.dto.ProcesoEstadoDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoEstadoFilterDTO;
+import com.softure.logisticpymes.domain.filter.ProcesoTransicionFilterDTO;
 
 @Service("procesoEstadoService")
 public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFilterDTO> {

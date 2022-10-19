@@ -19,22 +19,25 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.DocumentoRelacionExpedienteDTO;
-import com.softure.logisticpymes.dto.MensajePlantillaCorreoDTO;
-import com.softure.logisticpymes.dto.OrganizacionDTO;
-import com.softure.logisticpymes.dto.ProcesoTransicionDTO;
-import com.softure.logisticpymes.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.PropiedadDTO;
-import com.softure.logisticpymes.dto.PropiedadValorDefinidoDTO;
-import com.softure.logisticpymes.dto.RelacionInternaDTO;
-import com.softure.logisticpymes.dto.ReporteBaseDTO;
-import com.softure.logisticpymes.dto.ServidorDTO;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.dto.filter.DocumentoRelacionExpedienteFilterDTO;
-import com.softure.logisticpymes.dto.filter.ServidorFilterDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.DocumentoRelacionExpedienteDTO;
+import com.softure.logisticpymes.domain.dto.MensajeDTO;
+import com.softure.logisticpymes.domain.dto.MensajePlantillaCorreoDTO;
+import com.softure.logisticpymes.domain.dto.OrganizacionDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.ProcesoTransicionDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
+import com.softure.logisticpymes.domain.dto.RelacionInternaDTO;
+import com.softure.logisticpymes.domain.dto.ReporteBaseDTO;
+import com.softure.logisticpymes.domain.dto.ServidorDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.domain.filter.DocumentoRelacionExpedienteFilterDTO;
+import com.softure.logisticpymes.domain.filter.MensajeFilterDTO;
+import com.softure.logisticpymes.domain.filter.ServidorFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.MensajeMapper;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
@@ -47,9 +50,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.MensajeDTO;
-import com.softure.logisticpymes.dto.filter.MensajeFilterDTO;
-import com.softure.logisticpymes.persistence.MensajeMapper;
 
 @Service("mensajeService")
 public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {

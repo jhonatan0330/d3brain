@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ServidorDTO;
+import com.softure.logisticpymes.domain.dto.ServidorDTO;
 import com.softure.logisticpymes.services.ServidorSvc;
 
 public class DownloaderServlet extends HttpServlet {

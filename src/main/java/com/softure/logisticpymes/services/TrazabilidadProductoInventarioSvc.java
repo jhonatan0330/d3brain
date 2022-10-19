@@ -7,10 +7,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.ProductoDTO;
-import com.softure.logisticpymes.dto.ProductoInventarioDTO;
-import com.softure.logisticpymes.dto.filter.ProductoInventarioFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.ProductoDTO;
+import com.softure.logisticpymes.domain.dto.ProductoInventarioDTO;
+import com.softure.logisticpymes.domain.dto.TrazabilidadProductoInventarioDTO;
+import com.softure.logisticpymes.domain.filter.ProductoInventarioFilterDTO;
+import com.softure.logisticpymes.domain.filter.TrazabilidadProductoInventarioFilterDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -20,9 +21,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.TrazabilidadProductoInventarioDTO;
-import com.softure.logisticpymes.dto.filter.TrazabilidadProductoInventarioFilterDTO;
-import com.softure.logisticpymes.persistence.TrazabilidadProductoInventarioMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.TrazabilidadProductoInventarioMapper;
 
 @Service("trazabilidadProductoInventarioService")
 public class TrazabilidadProductoInventarioSvc extends BasicSvc<TrazabilidadProductoInventarioDTO, TrazabilidadProductoInventarioFilterDTO> {

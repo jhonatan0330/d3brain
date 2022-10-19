@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.cons.ConstantesGenerales;
+import com.softure.java.domain.BasicDTO;
+import com.softure.java.domain.BasicFilterDTO;
+import com.softure.java.domain.IBasicMapper;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.BasicDTO;
-import com.softure.logisticpymes.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.dto.filter.BasicFilterDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioSesionFilterDTO;
-import com.softure.logisticpymes.persistence.IBasicMapper;
-import com.softure.logisticpymes.persistence.UsuarioSesionMapper;
+import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioSesionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioSesionMapper;
 
 public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	

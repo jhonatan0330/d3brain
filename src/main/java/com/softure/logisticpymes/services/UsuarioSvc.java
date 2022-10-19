@@ -4,11 +4,12 @@ import java.util.List;
 
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.filter.ActividadFilterDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.UsuarioAutenticacionDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioAutenticacionFilterDTO;
-// END region interImport
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.filter.ActividadFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioAutenticacionFilterDTO;
+import com.softure.logisticpymes.domain.filter.UsuarioFilterDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -18,9 +19,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.filter.UsuarioFilterDTO;
-import com.softure.logisticpymes.persistence.UsuarioMapper;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioMapper;
 
 @Service("usuarioService")
 public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {

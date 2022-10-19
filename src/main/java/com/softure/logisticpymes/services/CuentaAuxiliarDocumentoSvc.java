@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.CuentaAuxiliarDocumentoDTO;
-import com.softure.logisticpymes.dto.filter.CuentaAuxiliarDocumentoFilterDTO;
-import com.softure.logisticpymes.persistence.CuentaAuxiliarDocumentoMapper;
+import com.softure.logisticpymes.domain.dto.CuentaAuxiliarDocumentoDTO;
+import com.softure.logisticpymes.domain.filter.CuentaAuxiliarDocumentoFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.CuentaAuxiliarDocumentoMapper;
 
 @Service("cuentaAuxiliarDocumentoService")
 public class CuentaAuxiliarDocumentoSvc extends BasicSvc<CuentaAuxiliarDocumentoDTO, CuentaAuxiliarDocumentoFilterDTO> {

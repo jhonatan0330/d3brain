@@ -8,10 +8,8 @@ import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.dto.CuentaDTO;
-import com.softure.logisticpymes.dto.TurnoDTO;
-import com.softure.logisticpymes.dto.filter.TurnoFilterDTO;
 // END region interImport
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.MovimientoMapper;
 
 import javax.annotation.PostConstruct;
 
@@ -21,9 +19,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.MovimientoDTO;
-import com.softure.logisticpymes.dto.filter.MovimientoFilterDTO;
-import com.softure.logisticpymes.persistence.MovimientoMapper;
+import com.softure.logisticpymes.domain.dto.CuentaDTO;
+import com.softure.logisticpymes.domain.dto.MovimientoDTO;
+import com.softure.logisticpymes.domain.dto.TurnoDTO;
+import com.softure.logisticpymes.domain.filter.MovimientoFilterDTO;
+import com.softure.logisticpymes.domain.filter.TurnoFilterDTO;
 
 @Service("movimientoService")
 public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> {

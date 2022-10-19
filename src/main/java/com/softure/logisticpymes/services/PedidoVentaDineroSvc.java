@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-// END region interImport
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +14,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PedidoVentaDineroDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaDineroFilterDTO;
-import com.softure.logisticpymes.persistence.PedidoVentaDineroMapper;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDineroDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaDineroFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PedidoVentaDineroMapper;
 
 @Service("pedidoVentaDineroService")
 public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoVentaDineroFilterDTO> {

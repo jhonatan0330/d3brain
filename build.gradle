@@ -9,7 +9,7 @@ version = '2.0.3'
 sourceCompatibility = '17'
 
 bootJar {
-    mainClass = 'com.softure.logisticpymes.Sw42WebApplication'
+    mainClass = 'com.softure.Sw42WebApplication'
 }
 
 repositories {
@@ -43,6 +43,8 @@ dependencies {
 	
 	implementation 'com.drewnoakes:metadata-extractor:2.18.0'
 	implementation 'org.freemarker:freemarker:2.3.31'
+	implementation 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
 	
 	implementation 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

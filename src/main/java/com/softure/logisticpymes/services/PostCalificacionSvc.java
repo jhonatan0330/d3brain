@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.PostCalificacionDTO;
-import com.softure.logisticpymes.dto.filter.PostCalificacionFilterDTO;
-import com.softure.logisticpymes.persistence.PostCalificacionMapper;
+import com.softure.logisticpymes.domain.dto.PostCalificacionDTO;
+import com.softure.logisticpymes.domain.filter.PostCalificacionFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.PostCalificacionMapper;
 
 @Service("postCalificacionService")
 public class PostCalificacionSvc extends BasicSvc<PostCalificacionDTO, PostCalificacionFilterDTO> {

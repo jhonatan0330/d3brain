@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ModuloDTO;
-import com.softure.logisticpymes.dto.filter.ModuloFilterDTO;
-import com.softure.logisticpymes.persistence.ModuloMapper;
+import com.softure.logisticpymes.domain.dto.ModuloDTO;
+import com.softure.logisticpymes.domain.filter.ModuloFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ModuloMapper;
 
 @Service("moduloService")
 public class ModuloSvc extends BasicSvc<ModuloDTO, ModuloFilterDTO> {

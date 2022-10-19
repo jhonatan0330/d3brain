@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.WebServiceDTO;
-import com.softure.logisticpymes.dto.filter.WebServiceFilterDTO;
-import com.softure.logisticpymes.persistence.WebServiceMapper;
+import com.softure.logisticpymes.domain.dto.WebServiceDTO;
+import com.softure.logisticpymes.domain.filter.WebServiceFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.WebServiceMapper;
 
 @Service("webServiceService")
 public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> {

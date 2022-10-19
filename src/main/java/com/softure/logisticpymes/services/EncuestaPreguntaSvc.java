@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.EncuestaPreguntaDTO;
-import com.softure.logisticpymes.dto.filter.EncuestaPreguntaFilterDTO;
-import com.softure.logisticpymes.persistence.EncuestaPreguntaMapper;
+import com.softure.logisticpymes.domain.dto.EncuestaPreguntaDTO;
+import com.softure.logisticpymes.domain.filter.EncuestaPreguntaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.EncuestaPreguntaMapper;
 
 @Service("encuestaPreguntaService")
 public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaPreguntaFilterDTO> {

@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.logisticpymes.dto.UsuarioDTO;
-import com.softure.logisticpymes.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.dto.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.infrastructure.mybatis.mapper.ActividadMapper;
 import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
 // END region interImport
 
@@ -20,9 +18,11 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.dto.ActividadDTO;
-import com.softure.logisticpymes.dto.filter.ActividadFilterDTO;
-import com.softure.logisticpymes.persistence.ActividadMapper;
+import com.softure.logisticpymes.domain.dto.ActividadDTO;
+import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.UsuarioDTO;
+import com.softure.logisticpymes.domain.filter.ActividadFilterDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 
 @Service("actividadService")
 public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
