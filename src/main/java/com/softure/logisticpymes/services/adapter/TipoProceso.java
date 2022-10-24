@@ -417,7 +417,13 @@ public class TipoProceso {
 							List<String> documentosGestionados = new ArrayList<String>();
 							documentosGestionados.add(pCampo.getDocumento());
 							BigDecimal saldoDoc = null;
-							if(procesoDTO.getDinero()!=null) saldoDoc = procesoDTO.getDinero().getSaldo();
+							//Me sucedio el probelma de validar lso saldos de un documento cuando son multiples
+							if(pCampo.getExpedientes().size()>1) {
+								if(procesoDTO.getDinero()!=null) saldoDoc = procesoDTO.getDinero().getSaldo();	
+							}else {
+								if(updaterDTO.getDinero()!=null) saldoDoc = updaterDTO.getDinero().getValorTotal();
+							}
+							
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
 									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados,
 									pCampo.getTransaccionRegistro() ,!modificacion);
