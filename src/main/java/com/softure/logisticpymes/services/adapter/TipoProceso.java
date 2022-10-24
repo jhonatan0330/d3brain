@@ -412,13 +412,12 @@ public class TipoProceso {
 						modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 						if( Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS)!=null){
 							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
-							BigDecimal saldoDoc = null;
-							if(updaterDTO.getDinero()!=null) saldoDoc = updaterDTO.getDinero().getValorTotal();
 							System.out.format("\n[%s (%s) - %s] Calculando caminos BPM", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre());
 							List<String> caminosGestionar = getCaminos(pCampo);
 							List<String> documentosGestionados = new ArrayList<String>();
 							documentosGestionados.add(pCampo.getDocumento());
-							//BigDecimal saldoZero = pendiente cuadrar lo de un documento de pago con saldo mayor en abonos 
+							BigDecimal saldoDoc = null;
+							if(procesoDTO.getDinero()!=null) saldoDoc = procesoDTO.getDinero().getSaldo();
 							gestionarExpedienteDependientes(procesoDTO, updaterDTO,
 									token, saldoDoc, new ArrayList<String>(), caminosGestionar, documentosGestionados,
 									pCampo.getTransaccionRegistro() ,!modificacion);

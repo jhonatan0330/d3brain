@@ -412,14 +412,6 @@ public class CallManageTransition {
 			throw new ServerException(transicion.getNombre() + " (" + documentoService.consultaXId(pExpediente.getPlantilla()).getNombre() + " " + pExpediente.getNombre() + " : Por un total de " + SoftureUtil.formatMoney(saldosCalculados.getValorTotal())
 				+ ")\n\n Saldos "+ SoftureUtil.formatMoney(saldosCalculados.getSaldo().add(saldoDocumento)) + " - " + SoftureUtil.formatMoney(saldoDocumento) + " = " + SoftureUtil.formatMoney(saldosCalculados.getSaldo()));
 		}
-			
-		//ESte codigo o comento para empezar a validar que no se coloquen saldos negativos
-		/*if (dinero.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
-			dinero.setSaldo(BigDecimal.ZERO);
-			saldoDocumento = saldoDocumento.add(dinero.getSaldo().negate());
-		} else {
-			saldoDocumento = BigDecimal.ZERO;
-		}*/
 		if (saldosCalculados.getSaldo().compareTo(saldosCalculados.getValorTotal()) > 0) {
 			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: "
 					+ pExpediente.getNombre() + "\nSaldo: " + SoftureUtil.formatMoney(saldosCalculados.getSaldo())
