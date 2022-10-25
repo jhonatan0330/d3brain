@@ -25,7 +25,6 @@ public class TipoFecha {
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorFecha()==null) 
 			throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre() + " del formulario " +pCampo.getCampoDTO().getPlantillaNombre());
 		if(pCampo.getValorFecha()!=null){
-
 			String rango = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO);
 			if(!rango.isEmpty()){
 				if(pCampo.getValorAuxiliar()==null) throw new ServerException("El valor auxiliar debe indicar el rango usado");
@@ -67,6 +66,15 @@ public class TipoFecha {
 					fecha.set(Calendar.MILLISECOND, 0);
 					pCampo.setValorFecha(fecha.getTime());
 					pCampo.setValorText(SoftureUtil.formatDate(pCampo.getValorFecha()));
+					if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)!=null) {
+						fecha.setTime(new Date());
+						fecha.set(Calendar.HOUR_OF_DAY, 0);
+						fecha.set(Calendar.MINUTE, 0);
+						fecha.set(Calendar.SECOND, 0);
+						fecha.set(Calendar.MILLISECOND, 0);
+						if(pCampo.getValorFecha().getTime() != fecha.getTime().getTime()) 
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " permite la fecha " + SoftureUtil.formatDate(fecha.getTime()) + ". Y la fecha recibida es " + SoftureUtil.formatDate(pCampo.getValorFecha()));
+					}
 				}else{
 					Calendar hora = Calendar.getInstance();
 					hora.setTime(pCampo.getValorFecha());
@@ -74,7 +82,12 @@ public class TipoFecha {
 					hora.set(Calendar.MILLISECOND, 0);
 					if(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR).isEmpty()){
 						pCampo.setValorFecha(hora.getTime());
-						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));						
+						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));
+						if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)!=null) {
+							hora.setTime(new Date());
+							if(Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime() )>300000) 
+								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " permite la fecha " + SoftureUtil.formatDateTime(hora.getTime()) + ". Y la fecha recibida es " + SoftureUtil.formatDateTime(pCampo.getValorFecha()));
+						}
 					}else {
 						hora.set(Calendar.YEAR, 0);
 						hora.set(Calendar.MONTH, 0);
@@ -87,7 +100,7 @@ public class TipoFecha {
 							hora.set(Calendar.HOUR_OF_DAY, totalSecs / 3600);
 							hora.set(Calendar.MINUTE, (totalSecs % 3600) / 60);
 						}
-						if(hora.get(Calendar.HOUR_OF_DAY)==0 && hora.get(Calendar.MINUTE)==0) throw new ServerException("Por fvaor escoja la cantidad de tiempo");
+						if(hora.get(Calendar.HOUR_OF_DAY)==0 && hora.get(Calendar.MINUTE)==0) throw new ServerException("Por favor escoja la cantidad de tiempo");
 						pCampo.setValorNumero(BigDecimal.ZERO);
 						pCampo.setValorFecha(hora.getTime());
 						pCampo.setValorText(null);
