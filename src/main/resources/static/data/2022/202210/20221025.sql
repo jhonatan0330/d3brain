@@ -1,0 +1,1 @@
+COMMENT ON TABLE usuario_usrp IS '2022-10-25';

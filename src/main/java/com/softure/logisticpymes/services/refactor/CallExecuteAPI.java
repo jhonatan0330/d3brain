@@ -486,25 +486,24 @@ public class CallExecuteAPI {
 				for (PropiedadDTO iProp : referidas) {
 					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 					if (relaciones != null && !relaciones.isEmpty()) {
-						List<PedidoVentaCaracteristicaDTO> camposOpcionales = null;
+						List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
 						if (document.getCaracteristicas() == null) {
+							// Por algun motivo raro toca iniciar con new Array y addall los resultados
 							PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
 							aux.setValorOpcion(document.getLlaveTabla());
 							List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
 							listAux.add(aux);
-							camposOpcionales = campoService.listar2getApiCode(listAux, relaciones);
+							camposOpcionReferidos.addAll(campoService.listar2getApiCode(listAux, relaciones));
 						} else {
-							camposOpcionales = document.getCaracteristicas().stream()
-									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList());
+							camposOpcionReferidos.addAll( document.getCaracteristicas().stream()
+									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
 						}
 						if (modificador != null && modificador.getCaracteristicas() != null) {
-							if (camposOpcionales == null)
-								camposOpcionales = new ArrayList<PedidoVentaCaracteristicaDTO>();
-							camposOpcionales.addAll(modificador.getCaracteristicas().stream()
+							camposOpcionReferidos.addAll(modificador.getCaracteristicas().stream()
 									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
 						}
 						List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(relaciones,
-								camposOpcionales);
+								camposOpcionReferidos);
 						if (camposReferidos != null) {
 							for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 								if (iCampo.getValorText() != null) {

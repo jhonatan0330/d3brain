@@ -85,7 +85,7 @@ public class TipoFecha {
 						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));
 						if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)!=null) {
 							hora.setTime(new Date());
-							if(Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime() )>300000) 
+							if(Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime() )>900000) 
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " permite la fecha " + SoftureUtil.formatDateTime(hora.getTime()) + ". Y la fecha recibida es " + SoftureUtil.formatDateTime(pCampo.getValorFecha()));
 						}
 					}else {
