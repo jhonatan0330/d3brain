@@ -233,7 +233,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	
 	//
 	public List<PedidoVentaDTO> listarTareasOtroUsuario(String usuario)throws ServerException{
-		// BEGIN region listarUsuario
 		PedidoVentaFilterDTO filter = new PedidoVentaFilterDTO();
 		filter.setFuncionario(usuario);
 		paginar(filter);
@@ -242,10 +241,15 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-		// END region listarUsuario
 	}
 	
-	
+	public PedidoVentaDTO consultarEnVariasPlantillas(PedidoVentaFilterDTO filter, List<String> plantillas)throws ServerException{
+		try {
+			return pedidoVentaMapper.consultarEnVariasPlantillas(filter, plantillas); 
+		}catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
 	
 	
 // END region aditionalMethods

@@ -1,5 +1,6 @@
 package com.softure.logisticpymes.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // BEGIN region interImport
@@ -103,16 +104,18 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		if(dto == null || dto.getLlaveTabla()==null) throw new ServerException("Desarrollador el DTO viene nulo");
 		if(dto.getDocumentos()==null || dto.getDocumentos().isEmpty()) throw new ServerException("Desarrollador los documentos vienen vacios");
 		DocumentoPlantillaCaracteristicaDTO dtoCarga = cargarComplementos( consultaXId(dto.getLlaveTabla()), dto.getSecurityToken());
-		String plantilla = Propiedades.obtenerValor(dtoCarga, Propiedades.PLANTILLA_AUXILIAR);
-		if(plantilla==null) throw new ServerException("Por el momento no se tiene desarrollado los campos sin plantilla");
+		List<PropiedadDTO> plantilla = Propiedades.obtenerVariosParametro(dtoCarga, Propiedades.PLANTILLA_AUXILIAR);
+		if(plantilla==null || plantilla.isEmpty()) throw new ServerException("Por el momento no se tiene desarrollado los campos sin plantilla");
+		List<String> plantillasBuscar = new ArrayList<>();
+		for (PropiedadDTO iProp : plantilla) {
+			plantillasBuscar.add(iProp.getValor());
+		}
 		dtoCarga.setDocumentos(dto.getDocumentos());
 		if(dtoCarga.getDocumentos()==null || dtoCarga.getDocumentos().isEmpty()) throw new ServerException("En el campo documentos debes incluir los documentos a validar, en este caso estan vacios");
 		for (PedidoVentaDTO iDoc : dtoCarga.getDocumentos()) {
 			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
 			filtro.setNombre(SoftureUtil.cleanStartEndSpaces(iDoc.getNombre()));
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			filtro.setPlantilla(plantilla);
-			PedidoVentaDTO document = documentoService.consultaUnica(filtro);
+			PedidoVentaDTO document = documentoService.consultarEnVariasPlantillas(filtro, plantillasBuscar);
 			if(document == null) throw new ServerException("No se encuentra activo el documento con codigo : " + iDoc.getNombre());
 			iDoc.setLlaveTabla(document.getLlaveTabla());
 		}

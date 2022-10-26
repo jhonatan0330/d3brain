@@ -4,6 +4,7 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.infrastructure.mybatis.mapper.DocumentoPlantillaMapper;
@@ -410,7 +411,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 			}
 		}
-		System.out.format("\n[%s] Listando (%s) plantillas ", usuario, result.size());
+		System.out.format("%s \n[%s] Listando (%s) plantillas ", new Date(), usuario, result.size());
 		return result;
 	}
 

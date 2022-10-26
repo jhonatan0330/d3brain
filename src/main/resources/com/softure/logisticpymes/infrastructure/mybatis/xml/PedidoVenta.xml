@@ -432,6 +432,13 @@
 		<include refid="selectPedidoVentaFragment" />
 			where cpdv_llave  in (<foreach item="item" collection="Ids" separator="," >#{item}</foreach>)
 	</select>
+	
+	<select id="consultarEnVariasPlantillas" resultType="PedidoVentaDTO">
+		<include refid="selectPedidoVentaFragment" />
+			where cpdv_nombre = #{dto.nombre}
+			and cpdv_plantilla in (<foreach item="item" collection="filtroPlantillas" separator="," >#{item}</foreach>)
+			LIMIT 1
+	</select>
 <!--// END region script-->
 
 </mapper>
