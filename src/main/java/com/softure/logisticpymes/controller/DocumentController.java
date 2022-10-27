@@ -31,8 +31,8 @@ import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.TarifaSvc;
 import com.softure.logisticpymes.services.UploadSvc;
-import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
-import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
+import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
+import com.softure.logisticpymes.services.refactor.CallDocumentCRUD;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -46,8 +46,8 @@ public class DocumentController {
 	@Autowired private TarifaSvc tarifaService;
 	@Autowired private ProductoInventarioSvc inventoryService;
 	@Autowired private DeduccionProductoSvc deduccionService;
-	@Autowired private CallCRUDDocument saveUpdateDocumentFunction;
-	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
+	@Autowired private CallDocumentCRUD saveUpdateDocumentFunction;
+	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {

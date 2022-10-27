@@ -57,7 +57,7 @@ import com.softure.logisticpymes.services.adapter.CampoAdaptador;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class CallCRUDDocument {
+public class CallDocumentCRUD {
 
 	@Autowired
 	private CampoAdaptador adaptador;

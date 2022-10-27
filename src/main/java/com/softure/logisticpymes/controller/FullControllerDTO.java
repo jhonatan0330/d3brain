@@ -215,8 +215,8 @@ import com.softure.logisticpymes.services.PuestoSvc;
 import com.softure.logisticpymes.services.RolAccesoSvc;
 import com.softure.logisticpymes.services.UsuarioSvc;
 import com.softure.logisticpymes.services.WebServiceSvc;
-import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
-import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallDocumentCRUD;
+import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
 import com.softure.logisticpymes.services.PostRespuestaSvc;
 import com.softure.logisticpymes.services.GPSLocalizacionSvc;
 import com.softure.logisticpymes.services.MensajeSvc;
@@ -260,7 +260,7 @@ public class FullControllerDTO {
 	
 	
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
-	@Autowired private CallCRUDDocument crudService;
+	@Autowired private CallDocumentCRUD crudService;
 	
 	@RequestMapping(value="/consultaXIdPlantillaConsecutivo", method=RequestMethod.POST)
 	public PlantillaConsecutivoDTO consultaXIdPlantillaConsecutivo(@RequestBody String llave) throws FlexException {
@@ -1016,7 +1016,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private CallListDocumentWithFilters documentListWithFiltersFunction;
+	@Autowired private CallDocumentListWithFilters documentListWithFiltersFunction;
 	
 	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
 	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {

@@ -59,7 +59,7 @@ public class CallExecuteAPI {
 	@Autowired
 	private DocumentoPlantillaSvc templateService;
 	@Autowired
-	private CallUpdateDocumentAutomatic documentAutomaticUpdateFunction;
+	private CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
 	@Autowired
 	private PropiedadSvc propiedadesSvc;
 	@Autowired

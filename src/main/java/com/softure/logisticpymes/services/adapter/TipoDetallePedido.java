@@ -30,7 +30,7 @@ import com.softure.logisticpymes.services.PedidoVentaCaracteristicaSvc;
 import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.PropiedadSvc;
-import com.softure.logisticpymes.services.refactor.CallCRUDDocument;
+import com.softure.logisticpymes.services.refactor.CallDocumentCRUD;
 
 @Component
 public class TipoDetallePedido {
@@ -41,7 +41,7 @@ public class TipoDetallePedido {
 	
 	@Autowired private ProductoSvc productoService;
 	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private CallCRUDDocument saveUpdateInactivateDocumentFunction;
+	@Autowired private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired private PropiedadSvc configuracionSvc;
 	

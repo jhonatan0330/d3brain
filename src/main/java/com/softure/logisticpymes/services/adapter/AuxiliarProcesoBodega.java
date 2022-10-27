@@ -31,7 +31,7 @@ import com.softure.logisticpymes.services.ProductoInventarioDescuentoSvc;
 import com.softure.logisticpymes.services.ProductoInventarioSvc;
 import com.softure.logisticpymes.services.ProductoSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
-import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
 
 @Component
 public class AuxiliarProcesoBodega {
@@ -40,7 +40,7 @@ public class AuxiliarProcesoBodega {
 	@Autowired private DeduccionProductoSvc deduccionProductoService;
 	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
+	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired private ProductoSvc productoService;
 	@Autowired private ProductoInventarioSvc productoInventarioService;
 	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;

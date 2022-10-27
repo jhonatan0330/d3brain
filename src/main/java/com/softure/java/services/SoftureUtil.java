@@ -145,6 +145,7 @@ public class SoftureUtil {
 	
 	public static String formatFunction(String currentFunction) throws ServerException {
 		if(currentFunction==null) throw new ServerException("La funcion no puede ser nula");
+		currentFunction = cleanStartEndSpaces(currentFunction);
 		currentFunction = currentFunction.replace(" ", "_");
 		currentFunction = currentFunction.replace("-", "_");
 		currentFunction = currentFunction.replaceAll("\\r|\\n", "__");

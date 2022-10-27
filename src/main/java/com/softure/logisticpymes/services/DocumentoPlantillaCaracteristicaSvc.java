@@ -1,12 +1,12 @@
 package com.softure.logisticpymes.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.infrastructure.mybatis.mapper.DocumentoPlantillaCaracteristicaMapper;
 import com.softure.logisticpymes.services.adapter.Propiedades;
+import com.softure.logisticpymes.services.refactor.CallDocumentListFromFieldProcess;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
 
@@ -24,7 +24,7 @@ import com.softure.logisticpymes.domain.dto.ProductoCaracteristicaDTO;
 import com.softure.logisticpymes.domain.dto.PropiedadDTO;
 import com.softure.logisticpymes.domain.dto.PropiedadValorDefinidoDTO;
 import com.softure.logisticpymes.domain.filter.DocumentoPlantillaCaracteristicaFilterDTO;
-import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaCaracteristicaFilterDTO;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO> {
@@ -34,7 +34,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	
 	// BEGIN region servicesDocumentoPlantillaCaracteristica
 	@Autowired private PropiedadSvc parametroService;
-	@Autowired private PedidoVentaSvc documentoService;
+	@Autowired private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
 	@Autowired private ProductoCaracteristicaSvc campoProductoService;
 	// END region servicesDocumentoPlantillaCaracteristica
 
@@ -103,22 +103,22 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		// BEGIN region listarCarga
 		if(dto == null || dto.getLlaveTabla()==null) throw new ServerException("Desarrollador el DTO viene nulo");
 		if(dto.getDocumentos()==null || dto.getDocumentos().isEmpty()) throw new ServerException("Desarrollador los documentos vienen vacios");
+		//if(dtoCarga.getDocumentos()==null || dtoCarga.getDocumentos().isEmpty()) throw new ServerException("En el campo documentos debes incluir los documentos a validar, en este caso estan vacios");
 		DocumentoPlantillaCaracteristicaDTO dtoCarga = cargarComplementos( consultaXId(dto.getLlaveTabla()), dto.getSecurityToken());
-		List<PropiedadDTO> plantilla = Propiedades.obtenerVariosParametro(dtoCarga, Propiedades.PLANTILLA_AUXILIAR);
-		if(plantilla==null || plantilla.isEmpty()) throw new ServerException("Por el momento no se tiene desarrollado los campos sin plantilla");
-		List<String> plantillasBuscar = new ArrayList<>();
-		for (PropiedadDTO iProp : plantilla) {
-			plantillasBuscar.add(iProp.getValor());
+		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
+		filter.setCampo(dto.getLlaveTabla());
+		filter.setCampoDTO(dtoCarga);
+		filter.setSecurityToken(dto.getSecurityToken());
+		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
+			filter.setFiltroParametro(iDoc.getNombre());
+			PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction.execute(filter, dtoCarga);
+			if(result == null || result.getCampoDTO()==null || result.getCampoDTO().getDocumentos() ==null || result.getCampoDTO().getDocumentos().isEmpty()) 
+				throw new ServerException("Revisando el campo " + dtoCarga.getNombre() +" No se encuentra el documento con codigo : " + iDoc.getNombre());
+			if(result.getCampoDTO().getDocumentos().size()>1)
+				throw new ServerException("El campo " + dtoCarga.getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + iDoc.getNombre());
+			iDoc = result.getCampoDTO().getDocumentos().get(0);
 		}
 		dtoCarga.setDocumentos(dto.getDocumentos());
-		if(dtoCarga.getDocumentos()==null || dtoCarga.getDocumentos().isEmpty()) throw new ServerException("En el campo documentos debes incluir los documentos a validar, en este caso estan vacios");
-		for (PedidoVentaDTO iDoc : dtoCarga.getDocumentos()) {
-			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
-			filtro.setNombre(SoftureUtil.cleanStartEndSpaces(iDoc.getNombre()));
-			PedidoVentaDTO document = documentoService.consultarEnVariasPlantillas(filtro, plantillasBuscar);
-			if(document == null) throw new ServerException("No se encuentra activo el documento con codigo : " + iDoc.getNombre());
-			iDoc.setLlaveTabla(document.getLlaveTabla());
-		}
 		return dtoCarga;
 		// END region listarCarga
 	}

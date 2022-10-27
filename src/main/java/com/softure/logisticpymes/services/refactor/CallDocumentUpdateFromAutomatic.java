@@ -21,7 +21,7 @@ import com.softure.logisticpymes.services.PedidoVentaSvc;
 import com.softure.logisticpymes.services.RelacionInternaSvc;
 
 @Component
-public class CallUpdateDocumentAutomatic {
+public class CallDocumentUpdateFromAutomatic {
 
 	@Autowired
 	private PedidoVentaSvc pedidoService;
@@ -34,7 +34,7 @@ public class CallUpdateDocumentAutomatic {
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired
-	private CallCRUDDocument saveUpdateInactivateDocumentFunction;
+	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 
 	/*
 	 * aqui tengo mil cosas mal, deberia priero armar lso campos y despues mandarlos

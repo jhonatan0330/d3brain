@@ -54,7 +54,7 @@ public class CallManageTransition {
 	@Autowired
 	private PedidoVentaSvc pedidoService;
 	@Autowired
-	private CallNewDocumentAutomatic createDocumentSinceProperties;
+	private CallDocumentNewFromAutomatic createDocumentSinceProperties;
 	@Autowired
 	private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired

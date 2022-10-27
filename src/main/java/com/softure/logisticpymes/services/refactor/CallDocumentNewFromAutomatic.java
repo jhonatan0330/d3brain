@@ -25,7 +25,7 @@ import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class CallNewDocumentAutomatic {
+public class CallDocumentNewFromAutomatic {
 
 	@Autowired
 	private RelacionInternaSvc relacionService;
@@ -34,7 +34,7 @@ public class CallNewDocumentAutomatic {
 	@Autowired
 	private PropiedadSvc propiedadService;
 	@Autowired
-	private CallCRUDDocument saveUpdateInactivateDocumentFunction;
+	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 	@Autowired
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired

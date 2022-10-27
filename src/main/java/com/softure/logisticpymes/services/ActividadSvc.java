@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.ArrayList;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.infrastructure.mybatis.mapper.ActividadMapper;
-import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PedidoVentaSvc pedidoService;
 	@Autowired private UsuarioSvc usuarioService;
-	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
+	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	// END region servicesActividad
 
 	@Override

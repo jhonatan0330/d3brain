@@ -35,7 +35,7 @@ import com.softure.logisticpymes.services.RolAccesoSvc;
 import com.softure.logisticpymes.services.adapter.Propiedades;
 
 @Component
-public class CallListDocumentWithFilters {
+public class CallDocumentListWithFilters {
 
 	@Autowired private PedidoVentaMapper pedidoVentaMapper;
 	@Autowired private PropiedadSvc propiedadService;
@@ -77,11 +77,11 @@ public class CallListDocumentWithFilters {
 					throw new ServerException(e.getMessage());
 				}
 			}else {
-				String propiedadPlantilla = Propiedades.obtenerValor(campoPlantilla, Propiedades.PLANTILLA_AUXILIAR);
+				List<PropiedadDTO> auxiliaresPlantilla = Propiedades.obtenerVariosParametro(campoPlantilla, Propiedades.PLANTILLA_AUXILIAR);
 				String propiedadMultiple = Propiedades.obtenerValor(campoPlantilla, Propiedades.MULTIPLE);
 				if(!propiedadMultiple.isEmpty()) {
 					PropiedadDTO propiedadFuncion = Propiedades.obtenerParametro(campoPlantilla, Propiedades.PROCESO_FUNCION_SQL);
-					if(propiedadFuncion!=null || propiedadPlantilla.isEmpty()) {
+					if(propiedadFuncion!=null || (auxiliaresPlantilla==null || auxiliaresPlantilla.isEmpty())) {
 						String campoValor = Propiedades.obtenerValor(campoPlantilla, Propiedades.PROCESO_VALOR);
 						if(campoValor.isEmpty() || campoValor.compareTo("1")==0 || campoValor.compareTo("2")==0) campoValor = null;
 						List<PedidoVentaCaracteristicaDTO> parametros = null;
@@ -102,25 +102,35 @@ public class CallListDocumentWithFilters {
 						}
 					}
 				}
-				dto.setPlantilla(propiedadPlantilla);
+				if(auxiliaresPlantilla!=null && !auxiliaresPlantilla.isEmpty()){
+					List<PedidoVentaDTO> resultManyTemplates = new ArrayList<>(); 
+					for (PropiedadDTO iProp : auxiliaresPlantilla) {
+						resultManyTemplates.addAll( readResultByTemplate(dto, iProp.getValor()) );
+					}
+					return resultManyTemplates;
+				}
 			}
 		}
-		
+		return readResultByTemplate(dto, dto.getPlantilla());
+	}
+
+	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dto, String templateFilter) throws ServerException {
 		//Filtros desde una lista
 		String secToken =null;
 		String campoFiltro = null;
+		dto.setPlantilla(templateFilter);
 		dto.setFuncionarioNombre(null);
 		String token = dto.getSecurityToken();
 		pedidoVentaService.paginar(dto);
 		DocumentoPlantillaDTO plantilla = null;//Es para almacenar las propiedades soloque tengo que pasar un BasicaPAram porque iba a pasar solo las propiedades
 		//Consulto que la plantilla solicitada tenga permisos
-		if(dto.getPlantilla()!=null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
+		if(templateFilter!=null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
 			boolean verTodos = false;
 			if(rolService.usuarioPermisosCompletos(dto.getSecurityToken())) {
 				verTodos = true;
 			}else {
 				plantilla = new DocumentoPlantillaDTO();
-				plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(), null, pedidoVentaService.getUserFlex(token)) );		
+				plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateFilter, null, pedidoVentaService.getUserFlex(token)) );		
 				List<PropiedadDTO> propiedadesVerTodos = Propiedades.obtenerVariosParametro(plantilla, Propiedades.PERMISO_PLANTILLA_VER_TODOS);
 				if(propiedadesVerTodos!=null && !propiedadesVerTodos.isEmpty()){
 					verTodos = true;
@@ -162,12 +172,11 @@ public class CallListDocumentWithFilters {
 		if(dto.getNombre()!=null){
 			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
 			filtro.setNombre(dto.getNombre().toUpperCase());
-			filtro.setPlantilla(dto.getPlantilla());
+			filtro.setPlantilla(templateFilter);
 			filtro.setFuncionarioNombre(dto.getFuncionarioNombre());
 			filtro.setFuncionario(dto.getFuncionario()); //No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
 			filtro.setCaracteristicas(dto.getCaracteristicas());
-			//filtro.setDocumentoFiltro(dto.getDocumentoFiltro());
 			try {
 				return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
 			}catch (Exception e) {
@@ -179,14 +188,14 @@ public class CallListDocumentWithFilters {
 			//Esto filtra los resultados por estado, pero si va a consultar un solo registro mejor lo dejo solo para que sea consulta por id
 			List<String> estadosFiltro = organizarFiltros(dto);
 			if(dto.getLlaveTabla()==null){
-				if(dto.getPlantilla()==null) { // Esto es para los procesos deben traer los estados
+				if(templateFilter==null) { // Esto es para los procesos deben traer los estados
 					if (estadosFiltro == null) throw new ServerException("Por favor revise porque el campo no tiene plantilla");
 				} else {
-					//DocumentoPlantillaDTO plantillaFiltro = documentoPlantillaService.consultaXId(dto.getPlantilla());
+					//DocumentoPlantillaDTO plantillaFiltro = documentoPlantillaService.consultaXId(templateFilter);
 					//if(plantillaFiltro==null) throw new ServerException("Por favor revise el id de la plantilla porque no se encuentra");
 					if(plantilla ==null) {
 						plantilla = new DocumentoPlantillaDTO();
-						plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(), null, pedidoVentaService.getUserFlex(dto.getSecurityToken())));
+						plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateFilter, null, pedidoVentaService.getUserFlex(dto.getSecurityToken())));
 					}
 					PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla,  Propiedades.SOLICITAR_FECHAS);
 					if(filtroFechas!=null) {

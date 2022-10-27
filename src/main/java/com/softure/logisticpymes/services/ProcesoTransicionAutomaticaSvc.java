@@ -20,8 +20,8 @@ import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
 import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.domain.filter.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.logisticpymes.services.adapter.Propiedades;
-import com.softure.logisticpymes.services.refactor.CallNewDocumentAutomatic;
-import com.softure.logisticpymes.services.refactor.CallListDocumentWithFilters;
+import com.softure.logisticpymes.services.refactor.CallDocumentNewFromAutomatic;
+import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
 // END region interImport
 
 import javax.annotation.PostConstruct;
@@ -43,10 +43,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	// BEGIN region servicesProcesoTransicionAutomatica
 	@Autowired private MensajeSvc mensajeSvc;
 	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private CallNewDocumentAutomatic createDocumentSinceProperties;
+	@Autowired private CallDocumentNewFromAutomatic createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private RelacionInternaSvc relacionService;
-	@Autowired private CallListDocumentWithFilters listDocumentWithFiltersFunction;
+	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	// END region servicesProcesoTransicionAutomatica
 
 	@Override
