@@ -1,5 +1,6 @@
 package com.softure.logisticpymes.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // BEGIN region interImport
@@ -109,6 +110,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		filter.setCampo(dto.getLlaveTabla());
 		filter.setCampoDTO(dtoCarga);
 		filter.setSecurityToken(dto.getSecurityToken());
+		List<PedidoVentaDTO> documentAproval = new ArrayList<>();
 		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
 			filter.setFiltroParametro(iDoc.getNombre());
 			PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction.execute(filter, dtoCarga);
@@ -116,9 +118,12 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 				throw new ServerException("Revisando el campo " + dtoCarga.getNombre() +" No se encuentra el documento con codigo : " + iDoc.getNombre());
 			if(result.getCampoDTO().getDocumentos().size()>1)
 				throw new ServerException("El campo " + dtoCarga.getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + iDoc.getNombre());
-			iDoc = result.getCampoDTO().getDocumentos().get(0);
+			PedidoVentaDTO addItem = new PedidoVentaDTO();
+			addItem.setLlaveTabla(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+			addItem.setNombre(iDoc.getNombre());
+			documentAproval.add( addItem );
 		}
-		dtoCarga.setDocumentos(dto.getDocumentos());
+		dtoCarga.setDocumentos(documentAproval);
 		return dtoCarga;
 		// END region listarCarga
 	}

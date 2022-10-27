@@ -91,7 +91,29 @@ public class TipoProceso {
 				validarMultiple(pCampo, token);
 			}else{
 				//DEsde las automaticas vienen un listado pero si es unico entonces debo agregarlo
-				if(pCampo.getValorOpcion()==null && pCampo.getExpedientes()!=null && pCampo.getExpedientes().size()==1) pCampo.setValorOpcion( pCampo.getExpedientes().get(0).getLlaveTabla() );
+				if(pCampo.getValorOpcion()==null) {
+					if(pCampo.getExpedientes()!=null && pCampo.getExpedientes().size()==1) {
+						pCampo.setValorOpcion( pCampo.getExpedientes().get(0).getLlaveTabla() );
+					} else {
+						//Esto se hizo para las cargas masivas en caso que llegue un valor texto intentamos consultarlo
+						// especialmente se hizo para los dependientes
+						if(pCampo.getValorText()!=null) {
+							PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
+							filter.setCampo(pCampo.getCampo());
+							filter.setCampoDTO(pCampo.getCampoDTO());
+							filter.setSecurityToken(token);
+							filter.setDependientes(pCampo.getDependientes());
+							filter.setFiltroParametro(pCampo.getValorText());
+							PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction.execute(filter, pCampo.getCampoDTO());
+							if(result == null || result.getCampoDTO()==null || result.getCampoDTO().getDocumentos() ==null || result.getCampoDTO().getDocumentos().isEmpty()) 
+								throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre() +" No se encuentra el documento con codigo : " + pCampo.getValorText());
+							if(result.getCampoDTO().getDocumentos().size()>1)
+								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + pCampo.getValorText());
+							pCampo.setValorOpcion(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+						}
+					}
+					
+				}
 				//Valido obligatoriedad
 				if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorOpcion()==null) 
 					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
