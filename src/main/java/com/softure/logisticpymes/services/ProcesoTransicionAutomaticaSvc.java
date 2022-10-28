@@ -146,7 +146,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					procesoTransicionAutomaticaDTO.setMensaje("ERROR : " + e.getMessage());
 					try {
 						try {
-							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage());
+							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage()+ "\n\n(" +procesoTransicionAutomaticaDTO.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 						procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);
@@ -308,7 +308,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					} catch (Exception e) {
 						dto.setMensaje("ERROR : " + e.getMessage());
 						try {
-							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + dto.getPlantillaNombre(), e.getMessage());
+							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion de limpieza de datos" + dto.getPlantillaNombre(), e.getMessage() + "\n\n(" +dto.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 					}
