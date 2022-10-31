@@ -182,7 +182,8 @@ public class CallExecuteAPI {
 						+ documentSvc.consultaXId(callWS.getModificador()).getNombre();
 			infoError = infoError + "\nEntrada " + callWS.getEntrada();
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
-			mensajeSvc.mensaje2Administrator("Error en ejecucion " + service.getNombre(), infoError);
+			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date()) + "]";
+			mensajeSvc.mensaje2Administrator("Error en ejecucion de un API " + service.getNombre(), infoError);
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
 		}

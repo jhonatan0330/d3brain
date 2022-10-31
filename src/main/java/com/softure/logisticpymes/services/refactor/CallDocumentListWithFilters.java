@@ -114,19 +114,25 @@ public class CallDocumentListWithFilters {
 		return readResultByTemplate(dto, dto.getPlantilla());
 	}
 
-	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dto, String templateFilter) throws ServerException {
-		//Filtros desde una lista
+	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter) throws ServerException {
+		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
+		filterDTO.setFiltroParametro(dtoFilter.getFiltroParametro());
+		filterDTO.setEstado(dtoFilter.getEstado());
+		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
 		String secToken =null;
 		String campoFiltro = null;
-		dto.setPlantilla(templateFilter);
-		dto.setFuncionarioNombre(null);
-		String token = dto.getSecurityToken();
-		pedidoVentaService.paginar(dto);
+		filterDTO.setPlantilla(templateFilter);
+		filterDTO.setFuncionarioNombre(null);
+		String token = dtoFilter.getSecurityToken();
+		
+		filterDTO.setPaginacionRegistroInicial(dtoFilter.getPaginacionRegistroInicial());
+		filterDTO.setPaginacionRegistroFinal(dtoFilter.getPaginacionRegistroFinal());
+		pedidoVentaService.paginar(filterDTO);
 		DocumentoPlantillaDTO plantilla = null;//Es para almacenar las propiedades soloque tengo que pasar un BasicaPAram porque iba a pasar solo las propiedades
 		//Consulto que la plantilla solicitada tenga permisos
 		if(templateFilter!=null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
 			boolean verTodos = false;
-			if(rolService.usuarioPermisosCompletos(dto.getSecurityToken())) {
+			if(rolService.usuarioPermisosCompletos(token)) {
 				verTodos = true;
 			}else {
 				plantilla = new DocumentoPlantillaDTO();
@@ -138,7 +144,7 @@ public class CallDocumentListWithFilters {
 					//Si tiene funcion entonces se omite el resto de la parametrizacion
 					PropiedadDTO propiedadFuncion = Propiedades.obtenerParametro(plantilla, Propiedades.PROCESO_FUNCION_SQL);
 					if(propiedadFuncion!=null) {
-						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(dto, propiedadFuncion.getLlaveTabla(), null), dto.getSecurityToken(), null );
+						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(filterDTO, propiedadFuncion.getLlaveTabla(), null), token, null );
 					}
 					
 					List<PropiedadDTO> propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla, Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
@@ -148,35 +154,35 @@ public class CallDocumentListWithFilters {
 				}			
 			}
 			
-			if(dto.getCaracteristicas()==null){
+			if(dtoFilter.getCaracteristicas()==null){
 				if(verTodos ){
 					secToken = null;
 				}else{
 					if(campoFiltro==null){
-						dto.setFuncionario(pedidoVentaService.getUserFlex(dto.getSecurityToken()));
+						filterDTO.setFuncionario(pedidoVentaService.getUserFlex(token));
 						//Coloco el filtro por el mismo
-						dto.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+						filterDTO.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 						PedidoVentaCaracteristicaDTO pvc = new PedidoVentaCaracteristicaDTO();
-						dto.getCaracteristicas().add(pvc);
+						filterDTO.getCaracteristicas().add(pvc);
 						//SE coloca esta linea debidoa que se debe filtrar por los permitidos por usuario cuando no tiene el check de vere todos
 						secToken = token;
 					}
 				}
 			}else{
-				dto.setFuncionarioNombre(dto.getCaracteristicas().get(0).getValorOpcion());
+				filterDTO.setFuncionarioNombre(dtoFilter.getCaracteristicas().get(0).getValorOpcion());
 				//Se coloca porque en un form pedido que lista por vendedor trae todos los vendedores
-				if(dto.getFuncionarioNombre()==null && !verTodos) secToken = token;
+				if(dtoFilter.getFuncionarioNombre()==null && !verTodos) secToken = token;
 			}
 		}
 		
-		if(dto.getNombre()!=null){
+		if(dtoFilter.getNombre()!=null){
 			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
-			filtro.setNombre(dto.getNombre().toUpperCase());
+			filtro.setNombre(dtoFilter.getNombre().toUpperCase());
 			filtro.setPlantilla(templateFilter);
-			filtro.setFuncionarioNombre(dto.getFuncionarioNombre());
-			filtro.setFuncionario(dto.getFuncionario()); //No me encontraba una guia con el usuario
+			filtro.setFuncionarioNombre(dtoFilter.getFuncionarioNombre());
+			filtro.setFuncionario(filterDTO.getFuncionario()); //No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
-			filtro.setCaracteristicas(dto.getCaracteristicas());
+			filtro.setCaracteristicas(filterDTO.getCaracteristicas());
 			try {
 				return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
 			}catch (Exception e) {
@@ -186,8 +192,8 @@ public class CallDocumentListWithFilters {
 			String orden = null;
 			String ordenAscendente = null;
 			//Esto filtra los resultados por estado, pero si va a consultar un solo registro mejor lo dejo solo para que sea consulta por id
-			List<String> estadosFiltro = organizarFiltros(dto);
-			if(dto.getLlaveTabla()==null){
+			List<String> estadosFiltro = organizarFiltros(dtoFilter);
+			if(dtoFilter.getLlaveTabla()==null){
 				if(templateFilter==null) { // Esto es para los procesos deben traer los estados
 					if (estadosFiltro == null) throw new ServerException("Por favor revise porque el campo no tiene plantilla");
 				} else {
@@ -195,12 +201,14 @@ public class CallDocumentListWithFilters {
 					//if(plantillaFiltro==null) throw new ServerException("Por favor revise el id de la plantilla porque no se encuentra");
 					if(plantilla ==null) {
 						plantilla = new DocumentoPlantillaDTO();
-						plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateFilter, null, pedidoVentaService.getUserFlex(dto.getSecurityToken())));
+						plantilla.setPropiedades( propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateFilter, null, pedidoVentaService.getUserFlex(token)));
 					}
 					PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla,  Propiedades.SOLICITAR_FECHAS);
+					filterDTO.setFechaMax(dtoFilter.getFechaMax());
+					filterDTO.setFechaMin(dtoFilter.getFechaMin());
 					if(filtroFechas!=null) {
-						if(dto.getFechaMin()==null) throw new ServerException("Por favor seleccione fecha de inicio para la consulta");
-						if(dto.getFechaMax()==null) throw new ServerException("Por favor seleccione fecha de fin para la consulta");	
+						if(filterDTO.getFechaMin()==null) throw new ServerException("Por favor seleccione fecha de inicio para la consulta");
+						if(filterDTO.getFechaMax()==null) throw new ServerException("Por favor seleccione fecha de fin para la consulta");	
 					}
 					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
 					if(orden.isEmpty())orden = null;
@@ -209,17 +217,19 @@ public class CallDocumentListWithFilters {
 				}
 				
 			}else {
-				dto.setFiltroParametro(null);
+				filterDTO.setLlaveTabla(dtoFilter.getLlaveTabla());
+				filterDTO.setFiltroParametro(null);
 			}
-			List<String> textoFiltroComas = organizarFiltroComas(dto);
-			dto.setSecurityToken(secToken);
+			filterDTO.setEstadoExpediente(dtoFilter.getEstadoExpediente());
+			List<String> textoFiltroComas = organizarFiltroComas(dtoFilter);
+			filterDTO.setSecurityToken(secToken);
 			if(campoFiltro !=null ) {
 				return listadoCompleto(
-						pedidoVentaMapper.listarPermitidosPorCampoFiltro(dto, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
+						pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
 						, token, null);	
 			}
 			return listadoCompleto(
-					pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
+					pedidoVentaMapper.listarPermitidos(filterDTO, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
 					, token, null); 
 		}
 	}
