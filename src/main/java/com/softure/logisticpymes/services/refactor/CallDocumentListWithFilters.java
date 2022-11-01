@@ -123,6 +123,9 @@ public class CallDocumentListWithFilters {
 		String campoFiltro = null;
 		filterDTO.setPlantilla(templateFilter);
 		filterDTO.setFuncionarioNombre(null);
+		// Aqui cometi un error en los campos dependientes asi que toca copiar las caracteristicas como vienen
+		// Algun dia mejorare esos dependientes
+		filterDTO.setCaracteristicas(dtoFilter.getCaracteristicas());
 		String token = dtoFilter.getSecurityToken();
 		
 		filterDTO.setPaginacionRegistroInicial(dtoFilter.getPaginacionRegistroInicial());
