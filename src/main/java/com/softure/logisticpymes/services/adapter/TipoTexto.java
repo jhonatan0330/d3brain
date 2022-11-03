@@ -25,6 +25,15 @@ public class TipoTexto {
 				&& pCampo.getValorText()==null)
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
 		if(pCampo.getValorText()==null) return;
+		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD)!=null) {
+			try {
+				int maxSize = Integer.valueOf(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD));
+				if(pCampo.getValorText().length()> maxSize)
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo " + pCampo.getCampoDTO().getNombre() + " supera la cantidad limite de caracteres que son (" + maxSize +") el texto que sobra es el siguiente: " + pCampo.getValorText().substring(maxSize));	
+			} catch (NumberFormatException e) {
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo " + pCampo.getCampoDTO().getNombre() + " tiene mal configurado el valor debe ser un numero");
+			}
+		}
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if(!formato.isEmpty()) {
 			String[] registros = pCampo.getValorText().split(";");

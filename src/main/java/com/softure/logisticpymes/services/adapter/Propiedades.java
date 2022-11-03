@@ -69,6 +69,7 @@ public class Propiedades {
 	public static final String FECHA_TIMER_BACK = "FECHA_TIMER_BACK";
 
 	public static final String TEXTO_FORMULA = "TEXTO_FORMULA";
+	public static final String TEXTO_LONGITUD = "TEXTO_LONGITUD";
 
 	public static final String NUMERO_REDONDEO = "NUMERO_REDONDEO";
 	public static final String NUMERO_MONEDA = "NUMERO_MONEDA";
@@ -562,6 +563,7 @@ public class Propiedades {
 					+ "RETURNS SETOF pedidoventa_pdvp AS"
 					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";break;}
 			case TEXTO_FORMULA : {ruleProperty =  " calcula un valor texto segun los dependientes.";break;}
+			case TEXTO_LONGITUD : {ruleProperty =  "Coloca un numero que va a limitar la cantidad de caracteres que puedes escribir.";break;}
 			case TOTAL : {ruleProperty =  " Codigo del campo que va a colocar el valor TOTAL del documento.\n";break;}
 			case TOTAL_FUNCION : {ruleProperty =  " Se usa en los campos de un producto para calcular el total segun una funcion.\nHoy no se exactamente como se usa o donde se usa";break;}
 			case UBICACION : {ruleProperty =  "Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado"
