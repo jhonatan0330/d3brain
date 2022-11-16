@@ -211,6 +211,19 @@
 		where cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
 		order by codigo
 	</select>
+	
+	<select id="" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" /> 
+		where cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
+		order by codigo
+	</select>
+	
+	<select id="filtrarPorCodigo" resultType="ProductoDTO">
+		<include refid="selectProductoFragment" />
+		inner join pedidoventa_pdvp pp2 on (cpro_documento = cpdv_llave)
+		where cpdv_textofiltro = #{codigo}
+		order by nombre 
+	</select>
 <!--// END region script-->
 
 </mapper>

@@ -173,6 +173,10 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 		p.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		return listarConsulta(p);
 	}
+	
+	public ProductoDTO filtrarPorCodigo(String codigo)throws ServerException{
+		return productoMapper.filtrarPorCodigo(codigo);
+	}
 // END region aditionalMethods
 
 }

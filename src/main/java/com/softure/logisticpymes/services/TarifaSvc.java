@@ -11,7 +11,6 @@ import com.softure.logisticpymes.domain.dto.ProductoDTO;
 import com.softure.logisticpymes.domain.dto.TarifaDTO;
 import com.softure.logisticpymes.domain.dto.TarifarioDTO;
 import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.domain.filter.ProductoFilterDTO;
 import com.softure.logisticpymes.domain.filter.TarifaFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
@@ -117,9 +116,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		TarifarioDTO tarifario = tarifarioService.consultaXId(dto.getTarifario());
 		//Para las cargas valido los codigos y el recurso
 		if(dto.getProducto()==null &&dto.getProductoNombre()!=null) {
-			ProductoFilterDTO filtroProductoFilter = new ProductoFilterDTO();
-			filtroProductoFilter.setCodigo(dto.getProductoNombre());
-			ProductoDTO filtroProducto = productoService.consultaUnica(filtroProductoFilter);
+			ProductoDTO filtroProducto = productoService.filtrarPorCodigo(dto.getProductoNombre());
 			if(filtroProducto==null) throw new ServerException("No se identifica producto con el codigo : " + dto.getProductoNombre());
 			dto.setProducto(filtroProducto.getLlaveTabla());
 		}

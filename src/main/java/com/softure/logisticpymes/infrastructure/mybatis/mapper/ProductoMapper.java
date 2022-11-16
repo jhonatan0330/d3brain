@@ -18,5 +18,6 @@ public interface ProductoMapper extends IBasicMapper<ProductoDTO, ProductoFilter
 	List<ProductoDTO> listarProductoDisponible(ProductoFilterDTO dto);
 	List<ProductoDTO> listarProductoFuncion(@Param("funcion")String funcion, @Param("documento")String documento, @Param("filtro") String filtro,@Param("token") String token);
 	List<ProductoDTO> listarProductoSimplificado(@Param("productos") List<ProductoDTO> productos);
+	ProductoDTO filtrarPorCodigo(@Param("codigo") String codigo); 
 // END region aditionalMethods
 }
