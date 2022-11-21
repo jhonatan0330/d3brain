@@ -51,6 +51,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	@Override
 	public UsuarioOrganizacionDTO activar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_activar
+		validateNotMainOrganization(dto.getOrganizacion());
 		return super.activar(dto, token);
 		// END UsuarioOrganizacion_activar
 	}
@@ -59,6 +60,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioOrganizacionDTO actualizar( UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_actualizar
+		validateNotMainOrganization(dto.getOrganizacion());
 		return super.actualizar(dto, token);
 		// END UsuarioOrganizacion_actualizar
 	}
@@ -138,6 +140,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioOrganizacionDTO guardar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_guardar
+		validateNotMainOrganization(dto.getOrganizacion());
 		return super.guardar(dto, token);
 		// END UsuarioOrganizacion_guardar
 	}
@@ -163,6 +166,12 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		}
 		dto.setLlaveTabla(null);
 		return guardar(dto, token);
+	}
+	
+	private void validateNotMainOrganization(String organizationId) throws ServerException {
+		var org = organizacionService.consultaXId(organizationId);
+		if(org==null) throw new ServerException("No se identifico la organizacion");
+		if(org.getPrincipal()==null) throw new ServerException("No se pude ingresar usuario a la organizacion principal solo a las que dependen de ella");
 	}
 // END region aditionalMethods
 
