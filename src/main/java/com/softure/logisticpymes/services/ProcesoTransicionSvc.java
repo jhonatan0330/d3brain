@@ -11,6 +11,7 @@ import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
 import com.softure.logisticpymes.domain.dto.ProcesoEstadoDTO;
 import com.softure.logisticpymes.domain.dto.ProcesoTransicionDTO;
 import com.softure.logisticpymes.domain.dto.PropiedadDTO;
+import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 import com.softure.logisticpymes.domain.filter.ProcesoEstadoFilterDTO;
 import com.softure.logisticpymes.domain.filter.ProcesoTransicionFilterDTO;
 
@@ -69,6 +70,17 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO inactivar(ProcesoTransicionDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicion_inactivar
+		ProcesoTransicionDTO bd = consultaXId(dto.getLlaveTabla());
+		if(bd.getEstadoPartida()==null) {
+			PedidoVentaFilterDTO contar = new PedidoVentaFilterDTO();
+			contar.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			contar.setPlantilla(bd.getPlantilla());
+			int cantidad = pedidoService.contarResultados(contar);
+			if(cantidad != 0) {
+				PedidoVentaDTO plantilla = pedidoService.consultaXId(bd.getPlantilla());
+				throw new ServerException("Al intentar anular la transicion " + bd.getNombre() + " encontramos que existen " + cantidad + " registros de la plantilla " + plantilla.getNombre() + " todavia activos. Eliminar esta transicion puede generar una inconsistencia en la informacion, lo mejor es que finalices el ciclo de estos documentos. Recuerda estos estados del proceso siempre van a estar con tu documento si te equivocaste de plantilla lo mejor es iniciar una nueva plantilla");
+			}
+		}
 		return super.inactivar(dto, token);
 		// END ProcesoTransicion_inactivar
 	}

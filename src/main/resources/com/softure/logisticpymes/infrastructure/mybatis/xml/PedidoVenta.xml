@@ -266,6 +266,7 @@
 					select cerl_documento from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{dto.securityToken})
 					</if>
 					<if test="dto.funcionarioNombre!=null">
+					<if test="dto.securityToken!=null">union</if>
 					select cdrc_documento from campo_documento where cpvc_valoropcion = #{dto.funcionarioNombre}
 						and cpvc_campo in (select cdpc_llave from documentoplantillacaracteristica_dpcp where cdpc_plantilla = #{dto.plantilla})
 					union
