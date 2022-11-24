@@ -225,7 +225,7 @@ public class CallDocumentListWithFilters {
 			}
 			filterDTO.setEstadoExpediente(dtoFilter.getEstadoExpediente());
 			List<String> textoFiltroComas = organizarFiltroComas(dtoFilter);
-			filterDTO.setSecurityToken(secToken);
+			if(filterDTO.getFuncionarioNombre()==null)filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
 			if(campoFiltro !=null ) {
 				return listadoCompleto(
 						pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
