@@ -252,11 +252,13 @@ public class Propiedades {
 						int horaInicial = Integer.parseInt(iBloqueo.substring(1, 3));
 						if(ahora.get(Calendar.HOUR_OF_DAY)>=horaInicial) {
 							int minutoInicial = Integer.parseInt(iBloqueo.substring(4, 6));
-							if(ahora.get(Calendar.MINUTE)>=minutoInicial) {
+							if(ahora.get(Calendar.HOUR_OF_DAY)!=horaInicial || (ahora.get(Calendar.HOUR_OF_DAY)==horaInicial && ahora.get(Calendar.MINUTE)>=minutoInicial)) {
 								int horaFinal = Integer.parseInt(iBloqueo.substring(7, 9));
-								if(ahora.get(Calendar.HOUR_OF_DAY)<=horaFinal) {
+								if(ahora.get(Calendar.HOUR_OF_DAY)<horaFinal) {
+									return false;
+								}else {
 									int minutoFinal = Integer.parseInt(iBloqueo.substring(10, 12));
-									if(ahora.get(Calendar.MINUTE)<minutoFinal) {
+									if(ahora.get(Calendar.HOUR_OF_DAY)==horaFinal && ahora.get(Calendar.MINUTE)<minutoFinal) {
 										return false;
 									}
 								}
