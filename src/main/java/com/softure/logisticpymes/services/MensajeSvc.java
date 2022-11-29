@@ -166,7 +166,12 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	public MensajeDTO enviarCorreo(MensajeDTO dto, String usuario, String token) throws ServerException {
 		try {
 			MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
-			ServidorDTO servidor = servidorService.consultaXId(plantilla.getServidor());
+			ServidorDTO servidor = null;
+			if(plantilla.getServidor()==null){
+				servidor = servidorService.consultaXId(plantilla.getServidor());
+			} else {
+				servidor = servidorService.obtenerServidorPrincipal(ServidorDTO.MAIL);
+			}
 			if(servidor == null) throw new ServerException("No se encuentra el servidor de correo configurado");
 			if(servidor.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
 			JavaMailSenderImpl mailSender = getMailSender(servidor);

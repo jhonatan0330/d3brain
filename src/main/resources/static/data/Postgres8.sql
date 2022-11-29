@@ -247,95 +247,6 @@ CREATE TABLE tarifario_trfp(
         CONSTRAINT PK_tarifario_trfp PRIMARY KEY (ctrf_llave)
     );
  
-CREATE TABLE cuentaauxiliardocumento_cadp(
-        ccad_llave character varying(32) NOT NULL,
-        ccad_documento character varying(32) NOT NULL,
-        ccad_cuentaauxiliar character varying(32) NOT NULL,
-        ccad_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_cuentaauxiliardocumento_cadp PRIMARY KEY (ccad_llave)
-    );
- 
-CREATE TABLE comprobanteconfiguraciondetalle_ccdp(
-        cccd_llave character varying(32) NOT NULL,
-        cccd_configuracion character varying(32) NOT NULL,
-        cccd_cuenta character varying(32) NOT NULL,
-        cccd_valordebe character varying(20),
-        cccd_valorhaber character varying(20),
-        cccd_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_comprobanteconfiguraciondetalle_ccdp PRIMARY KEY (cccd_llave)
-    );
- 
-CREATE TABLE cuentacontablemovimiento_ccmp(
-        cccm_llave character varying(32) NOT NULL,
-        mccm_montoaplicado NUMERIC(18,6) NOT NULL DEFAULT 0,
-        mccm_saldoinicial NUMERIC(18,6) NOT NULL DEFAULT 0,
-        mccm_saldofinal NUMERIC(18,6) NOT NULL DEFAULT 0,
-        cccm_anterior character varying(32),
-        cccm_siguiente character varying(32),
-        cccm_comprobante character varying(32) NOT NULL,
-        cccm_cuenta character varying(32) NOT NULL,
-        dccm_fechaevento timestamp with time zone NOT NULL,
-        dccm_fecharegistro timestamp with time zone NOT NULL,
-        cccm_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_cuentacontablemovimiento_ccmp PRIMARY KEY (cccm_llave)
-    );
- 
-CREATE TABLE cuentaauxiliarplantilla_capp(
-        ccap_llave character varying(32) NOT NULL,
-        ccap_cuentaprincipal character varying(32) NOT NULL,
-        ccap_plantilla character varying(32) NOT NULL,
-        ccap_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_cuentaauxiliarplantilla_capp PRIMARY KEY (ccap_llave)
-    );
- 
-CREATE TABLE comprobanteconfiguracion_cnfp(
-        ccnf_llave character varying(32) NOT NULL,
-        ccnf_plantilla character varying(32) NOT NULL,
-        ccnf_catalogo character varying(32) NOT NULL,
-        ccnf_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_comprobanteconfiguracion_cnfp PRIMARY KEY (ccnf_llave)
-    );
- 
-CREATE TABLE comprobantecuentadetalle_ccdp(
-        cccd_llave character varying(32) NOT NULL,
-        cccd_cuenta character varying(32) NOT NULL,
-        mccd_debe NUMERIC(18,6) NOT NULL DEFAULT 0,
-        mccd_haber NUMERIC(18,6) NOT NULL DEFAULT 0,
-        cccd_comprobante character varying(32) NOT NULL,
-        cccd_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_comprobantecuentadetalle_ccdp PRIMARY KEY (cccd_llave)
-    );
- 
-CREATE TABLE comprobantecontable_comp(
-        ccom_llave character varying(32) NOT NULL,
-        dcom_fecha timestamp with time zone NOT NULL,
-        ccom_codigo character varying(20) NOT NULL,
-        ccom_documento character varying(32) NOT NULL,
-        ccom_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_comprobantecontable_comp PRIMARY KEY (ccom_llave)
-    );
- 
-CREATE TABLE cuentacontable_ctap(
-        ccta_llave character varying(32) NOT NULL,
-        ccta_codigo character varying(20) NOT NULL,
-        ccta_nombre character varying(50) NOT NULL,
-        mcta_sobregiro NUMERIC(18,6) NOT NULL DEFAULT 0,
-        ccta_catalogo character varying(32) NOT NULL,
-        ccta_cuentapadre character varying(32),
-        ccta_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_cuentacontable_ctap PRIMARY KEY (ccta_llave)
-    );
- 
-CREATE TABLE catalogocontable_ctgp(
-        cctg_llave character varying(32) NOT NULL,
-        cctg_nombre character varying(100) NOT NULL,
-        dctg_fechainicial timestamp with time zone NOT NULL,
-        dctg_fechafinal timestamp with time zone NOT NULL,
-        cctg_codigo character varying(20) NOT NULL,
-        cctg_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_catalogocontable_ctgp PRIMARY KEY (cctg_llave)
-    );
- 
 CREATE TABLE actividad_actp(
         cact_llave character varying(32) NOT NULL,
         cact_responsable character varying(32) NOT NULL,
@@ -634,7 +545,7 @@ CREATE TABLE mensajeplantillacorreo_mplp(
         cmpl_nombre character varying(100) NOT NULL,
         cmpl_titulo character varying(100) NOT NULL,
         cmpl_texto character varying(120000) NOT NULL,
-        cmpl_servidor character varying(32) NOT NULL,
+        cmpl_servidor character varying(32),
         cmpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_mensajeplantillacorreo_mplp PRIMARY KEY (cmpl_llave)
     );
@@ -1019,9 +930,7 @@ ALTER TABLE WebServiceEjecucion_wsep ADD CONSTRAINT FK_WebServiceEjecuciondocume
 ALTER TABLE DetalleCaracteristicaProducto_dcpp ADD CONSTRAINT FK_DetalleCaracteristicaProductovalorOpcion FOREIGN KEY (cdcp_valorOpcion) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE PedidoVentaCaracteristica_pvcp ADD CONSTRAINT FK_PedidoVentaCaracteristicadocumento FOREIGN KEY (cpvc_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecuciondocumento FOREIGN KEY (crej_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
-ALTER TABLE CuentaAuxiliarDocumento_cadp ADD CONSTRAINT FK_CuentaAuxiliarDocumentodocumento FOREIGN KEY (ccad_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE ProductoInventarioDescuento_pidp ADD CONSTRAINT FK_ProductoInventarioDescuentocaracteristica FOREIGN KEY (cpid_caracteristica) REFERENCES PedidoVenta_pdvp(cpdv_llave);
-ALTER TABLE ComprobanteContable_comp ADD CONSTRAINT FK_ComprobanteContabledocumento FOREIGN KEY (ccom_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE UsuarioRolProducto_urpp ADD CONSTRAINT FK_UsuarioRolProductodocumento FOREIGN KEY (curp_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE PedidoVentaAjuste_pvap ADD CONSTRAINT FK_PedidoVentaAjustedocumento FOREIGN KEY (cpva_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE Cuenta_cuep ADD CONSTRAINT FK_Cuentadocumento FOREIGN KEY (ccue_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
@@ -1031,11 +940,9 @@ ALTER TABLE Movimiento_movp ADD CONSTRAINT FK_Movimientodocumento FOREIGN KEY (c
 ALTER TABLE ProcesoTransicion_ptrp ADD CONSTRAINT FK_ProcesoTransicionplantilla FOREIGN KEY (cptr_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
 ALTER TABLE PedidoVentaAjuste_pvap ADD CONSTRAINT FK_PedidoVentaAjusteresponsable FOREIGN KEY (cpva_responsable) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE DocumentoPlantilla_dplp ADD CONSTRAINT FK_DocumentoPlantillaconsecutivo FOREIGN KEY (cdpl_consecutivo) REFERENCES Consecutivo_conp(ccon_llave);
-ALTER TABLE CuentaAuxiliarPlantilla_capp ADD CONSTRAINT FK_CuentaAuxiliarPlantillaplantilla FOREIGN KEY (ccap_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
 ALTER TABLE RelacionInterna_ritp ADD CONSTRAINT FK_RelacionInternaplantilla FOREIGN KEY (crit_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
 ALTER TABLE ReporteBase_rpbp ADD CONSTRAINT FK_ReporteBaseplantilla FOREIGN KEY (crpb_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
 ALTER TABLE RolAcceso_racp ADD CONSTRAINT FK_RolAccesoplantilla FOREIGN KEY (crac_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
-ALTER TABLE ComprobanteConfiguracion_cnfp ADD CONSTRAINT FK_ComprobanteConfiguracionplantilla FOREIGN KEY (ccnf_plantilla) REFERENCES DocumentoPlantilla_dplp(cdpl_llave);
 ALTER TABLE Movimiento_movp ADD CONSTRAINT FK_Movimientoturno FOREIGN KEY (cmov_turno) REFERENCES Turno_turp(ctur_llave);
 ALTER TABLE Movimiento_movp ADD CONSTRAINT FK_Movimientorelacionado FOREIGN KEY (cmov_relacionado) REFERENCES Movimiento_movp(cmov_llave);
 ALTER TABLE Movimiento_movp ADD CONSTRAINT FK_Movimientocuenta FOREIGN KEY (cmov_cuenta) REFERENCES Cuenta_cuep(ccue_llave);
@@ -1044,17 +951,6 @@ ALTER TABLE Movimiento_movp ADD CONSTRAINT FK_Movimientosiguiente FOREIGN KEY (c
 ALTER TABLE Turno_turp ADD CONSTRAINT FK_Turnocuenta FOREIGN KEY (ctur_cuenta) REFERENCES Cuenta_cuep(ccue_llave);
 ALTER TABLE Tarifa_tarp ADD CONSTRAINT FK_Tarifaproducto FOREIGN KEY (ctar_producto) REFERENCES Producto_prop(cpro_llave);
 ALTER TABLE Tarifa_tarp ADD CONSTRAINT FK_Tarifatarifario FOREIGN KEY (ctar_tarifario) REFERENCES Tarifario_trfp(ctrf_llave);
-ALTER TABLE CuentaAuxiliarDocumento_cadp ADD CONSTRAINT FK_CuentaAuxiliarDocumentocuentaAuxiliar FOREIGN KEY (ccad_cuentaAuxiliar) REFERENCES CuentaContable_ctap(ccta_llave);
-ALTER TABLE ComprobanteConfiguracionDetalle_ccdp ADD CONSTRAINT FK_ComprobanteConfiguracionDetalleconfiguracion FOREIGN KEY (cccd_configuracion) REFERENCES ComprobanteConfiguracion_cnfp(ccnf_llave);
-ALTER TABLE ComprobanteConfiguracionDetalle_ccdp ADD CONSTRAINT FK_ComprobanteConfiguracionDetallecuenta FOREIGN KEY (cccd_cuenta) REFERENCES CuentaContable_ctap(ccta_llave);
-ALTER TABLE CuentaContableMovimiento_ccmp ADD CONSTRAINT FK_CuentaContableMovimientocuenta FOREIGN KEY (cccm_cuenta) REFERENCES CuentaContable_ctap(ccta_llave);
-ALTER TABLE CuentaContableMovimiento_ccmp ADD CONSTRAINT FK_CuentaContableMovimientocomprobante FOREIGN KEY (cccm_comprobante) REFERENCES ComprobanteCuentaDetalle_ccdp(cccd_llave);
-ALTER TABLE CuentaAuxiliarPlantilla_capp ADD CONSTRAINT FK_CuentaAuxiliarPlantillacuentaPrincipal FOREIGN KEY (ccap_cuentaPrincipal) REFERENCES CuentaContable_ctap(ccta_llave);
-ALTER TABLE ComprobanteConfiguracion_cnfp ADD CONSTRAINT FK_ComprobanteConfiguracioncatalogo FOREIGN KEY (ccnf_catalogo) REFERENCES CatalogoContable_ctgp(cctg_llave);
-ALTER TABLE ComprobanteCuentaDetalle_ccdp ADD CONSTRAINT FK_ComprobanteCuentaDetallecuenta FOREIGN KEY (cccd_cuenta) REFERENCES CuentaContable_ctap(ccta_llave);
-ALTER TABLE ComprobanteCuentaDetalle_ccdp ADD CONSTRAINT FK_ComprobanteCuentaDetallecomprobante FOREIGN KEY (cccd_comprobante) REFERENCES ComprobanteContable_comp(ccom_llave);
-ALTER TABLE CuentaContable_ctap ADD CONSTRAINT FK_CuentaContablecatalogo FOREIGN KEY (ccta_catalogo) REFERENCES CatalogoContable_ctgp(cctg_llave);
-ALTER TABLE CuentaContable_ctap ADD CONSTRAINT FK_CuentaContablecuentaPadre FOREIGN KEY (ccta_cuentaPadre) REFERENCES CuentaContable_ctap(ccta_llave);
 ALTER TABLE Actividad_actp ADD CONSTRAINT FK_ActividadusuarioRegistro FOREIGN KEY (cact_usuarioRegistro) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE Actividad_actp ADD CONSTRAINT FK_ActividadusuarioInactivo FOREIGN KEY (cact_usuarioInactivo) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE Actividad_actp ADD CONSTRAINT FK_Actividadresponsable FOREIGN KEY (cact_responsable) REFERENCES Usuario_usrp(cusr_llave);
@@ -1118,4 +1014,4 @@ ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FORE
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionautorizacionCrea FOREIGN KEY (cuau_autorizacionCrea) REFERENCES UsuarioAutenticacionAutorizacion_uaap(cuaa_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.10.07.00' from pg_class where relname = 'usuariosesion_ussp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.11.29.00' from pg_class where relname = 'usuariosesion_ussp';
