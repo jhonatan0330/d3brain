@@ -460,10 +460,10 @@ insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_est
 INSERT INTO propiedad_ppdp (cppd_llave, cppd_campo, cppd_valor, cppd_texto, cppd_estado, cppd_propiedadvalor, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo) 
 	VALUES('80553c75b0f44b2ca8179347e3ff031d', '57c7788e671b4bc192fe2700ad71378d', '80ad573d0df04b358732e18834b532fb', 'COMPORTAMIENTO GENERAL DEL SISTEMA', 'A', 'PROP_113', '2021-10-02 16:52:41.261', '2021-10-02 16:52:41.152', 'SC-1', 'L');
 
-insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar) values ('e151cf6ad9d84088a7faf265bdfe6a0e','A','27bceb25b46e4de7bd10aae3454e3457','57c7788e671b4bc192fe2700ad71378d','d1c9f83727ea43f2ad97d90b0f4eb0f8',NULL);
-insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar) 
-	values ('43a64e5a45da420d8d421a9a5c35c421','A','ef5ebb5f3c784a9dab34c03e8142e6d6','ADMINISTRADOR','4e3014ec945e4c718dc50481220fcf80',NULL);
-INSERT INTO relacioninterna_ritp (crit_llave, crit_estado, crit_propiedad, crit_plantilla, crit_campo, crit_auxiliar) VALUES('04c7354220e045a997b06baead97cf96', 'A', 'ef5ebb5f3c784a9dab34c03e8142e6d6', '57c7788e671b4bc192fe2700ad71378d', 'd1c9f83727ea43f2ad97d90b0f4eb0f8', NULL);
+insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar, drit_fechainicio, crit_cambiocreacion) values ('e151cf6ad9d84088a7faf265bdfe6a0e','A','27bceb25b46e4de7bd10aae3454e3457','57c7788e671b4bc192fe2700ad71378d','d1c9f83727ea43f2ad97d90b0f4eb0f8',NULL, now(), 'SC-1');
+insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar, drit_fechainicio, crit_cambiocreacion) 
+	values ('43a64e5a45da420d8d421a9a5c35c421','A','ef5ebb5f3c784a9dab34c03e8142e6d6','ADMINISTRADOR','4e3014ec945e4c718dc50481220fcf80',NULL, now(), 'SC-1');
+INSERT INTO relacioninterna_ritp (crit_llave, crit_estado, crit_propiedad, crit_plantilla, crit_campo, crit_auxiliar, drit_fechainicio, crit_cambiocreacion) VALUES('04c7354220e045a997b06baead97cf96', 'A', 'ef5ebb5f3c784a9dab34c03e8142e6d6', '57c7788e671b4bc192fe2700ad71378d', 'd1c9f83727ea43f2ad97d90b0f4eb0f8', NULL, now(), 'SC-1');
 
 CREATE OR REPLACE FUNCTION propiedad_27bceb25b46e4de7bd10aae3454e3457(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])
   RETURNS SETOF pedidoventa_pdvp

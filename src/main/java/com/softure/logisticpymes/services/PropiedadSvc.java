@@ -117,6 +117,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					nueva.setPropiedad(dto.getLlaveTabla());
 					nueva.setPlantilla(relacionInternaDTO.getPlantilla());
 					nueva.setCampo(relacionInternaDTO.getCampo());
+					nueva.setFechaInicio(relacionInternaDTO.getFechaInicio());
+					nueva.setCambioCreacion(relacionInternaDTO.getCambioCreacion());
 					relacionService.guardar(nueva, token);
 				}
 			}

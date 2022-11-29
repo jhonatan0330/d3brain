@@ -302,6 +302,9 @@ CREATE TABLE relacioninterna_ritp(
         crit_plantilla character varying(32) NOT NULL,
         crit_campo character varying(32) NOT NULL,
         crit_auxiliar character varying(4000),
+        drit_fechainicio timestamp with time zone,
+        crit_cambiocreacion character varying(32) NOT NULL,
+        crit_cambioeliminacion character varying(32),
         crit_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_relacioninterna_ritp PRIMARY KEY (crit_llave)
     );
@@ -959,6 +962,8 @@ ALTER TABLE Propiedad_ppdp ADD CONSTRAINT FK_PropiedadcambioCreacion FOREIGN KEY
 ALTER TABLE Propiedad_ppdp ADD CONSTRAINT FK_PropiedadcambioEliminacion FOREIGN KEY (cppd_cambioEliminacion) REFERENCES Cambio_cmbp(ccmb_llave);
 ALTER TABLE RelacionInterna_ritp ADD CONSTRAINT FK_RelacionInternapropiedad FOREIGN KEY (crit_propiedad) REFERENCES Propiedad_ppdp(cppd_llave);
 ALTER TABLE Propiedad_ppdp ADD CONSTRAINT FK_Propiedadrol FOREIGN KEY (cppd_rol) REFERENCES RolAcceso_racp(crac_llave);
+ALTER TABLE RelacionInterna_ritp ADD CONSTRAINT FK_RelacionInternacambioEliminacion FOREIGN KEY (crit_cambioEliminacion) REFERENCES Cambio_cmbp(ccmb_llave);
+ALTER TABLE RelacionInterna_ritp ADD CONSTRAINT FK_RelacionInternacambioCreacion FOREIGN KEY (crit_cambioCreacion) REFERENCES Cambio_cmbp(ccmb_llave);
 ALTER TABLE EncuestaRespuesta_ersp ADD CONSTRAINT FK_EncuestaRespuestausuario FOREIGN KEY (cers_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE EncuestaRespuesta_ersp ADD CONSTRAINT FK_EncuestaRespuestapregunta FOREIGN KEY (cers_pregunta) REFERENCES EncuestaPregunta_eprp(cepr_llave);
 ALTER TABLE EncuestaRespuesta_ersp ADD CONSTRAINT FK_EncuestaRespuestarespuestaOpcion FOREIGN KEY (cers_respuestaOpcion) REFERENCES EncuestaOpcionRespuesta_eorp(ceor_llave);

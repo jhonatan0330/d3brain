@@ -1,5 +1,6 @@
 package com.softure.logisticpymes.services;
 
+import java.util.Date;
 import java.util.List;
 
 // BEGIN region interImport
@@ -26,6 +27,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	
 	// BEGIN region servicesRelacionInterna
 	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
+	@Autowired private CambioSvc cambioService;
 	// END region servicesRelacionInterna
 
 	@Override
@@ -52,7 +54,12 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO actualizar( RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_actualizar
-		return super.actualizar(dto, token);
+		String llaveTabla = dto.getLlaveTabla();
+		dto = guardar(dto, token);
+		RelacionInternaDTO inactivo = new RelacionInternaDTO();
+		inactivo.setLlaveTabla(llaveTabla);
+		inactivar(inactivo, token);
+		return dto;
 		// END RelacionInterna_actualizar
 	}
 	
@@ -60,7 +67,11 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO inactivar(RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_inactivar
-		return super.inactivar(dto, token);
+		RelacionInternaDTO bd = consultaXId(dto.getLlaveTabla());
+		bd.setCambioEliminacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
+		bd.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		bd = super.update(bd);
+		return bd;
 		// END RelacionInterna_inactivar
 	}
 	
@@ -104,6 +115,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		RelacionInternaDTO existe = consultaUnica(existeFilter);
 		if(existe!=null) return existe;
+		if (dto.getCambioCreacion()==null)dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(dto.getCampo());
 		if(campo==null) return null;//En caso que sea un producto
 		if(dto.getPlantilla()==null) {
@@ -111,6 +123,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		}else {
 			if(dto.getPlantilla().compareTo(campo.getPlantilla())!=0) throw new ServerException("La plantilla no corresponde al campo escogido");
 		}
+		if(dto.getFechaInicio()==null)dto.setFechaInicio(new Date());
 		return super.guardar(dto, token);
 		// END RelacionInterna_guardar
 	}

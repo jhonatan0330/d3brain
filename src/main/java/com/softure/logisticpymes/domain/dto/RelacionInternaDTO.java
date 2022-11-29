@@ -1,10 +1,13 @@
 package com.softure.logisticpymes.domain.dto;
 
+import java.util.Date;
+
 // BEGIN region interImport
 // END region interImport
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softure.java.domain.BasicDTO;
 
 @Alias("RelacionInternaDTO")
@@ -20,6 +23,10 @@ public class RelacionInternaDTO extends BasicDTO
 	private String campo;
 	private String campoNombre;
 	private String auxiliar;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaInicio;
+	private String cambioCreacion;
+	private String cambioEliminacion;
 
 	public void setPropiedad(String propiedad) {
 		this.propiedad = propiedad;
@@ -69,6 +76,27 @@ public class RelacionInternaDTO extends BasicDTO
 	
 	public String getAuxiliar() {
 		return auxiliar;
+	}
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+	
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+	public void setCambioCreacion(String cambioCreacion) {
+		this.cambioCreacion = cambioCreacion;
+	}
+	
+	public String getCambioCreacion() {
+		return cambioCreacion;
+	}
+	public void setCambioEliminacion(String cambioEliminacion) {
+		this.cambioEliminacion = cambioEliminacion;
+	}
+	
+	public String getCambioEliminacion() {
+		return cambioEliminacion;
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces

@@ -14,6 +14,9 @@
 			,crit_campo as  campo
 			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
 			,crit_auxiliar as  auxiliar
+			,drit_fechainicio as  fechaInicio
+			,crit_cambiocreacion as  cambioCreacion
+			,crit_cambioeliminacion as  cambioEliminacion
 			,crit_estado as estado
 		from relacioninterna_ritp a
 	</sql>
@@ -37,6 +40,18 @@
 			</if>
 			<if test="auxiliar!=null">
 				and crit_auxiliar = #{auxiliar}
+			</if>
+			<if test="fechaInicioMin!=null">
+				and drit_fechainicio >= #{fechaInicioMin}
+			</if>
+			<if test="fechaInicioMax!=null">
+				and drit_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+			</if>
+			<if test="cambioCreacion!=null">
+				and crit_cambiocreacion = #{cambioCreacion}
+			</if>
+			<if test="cambioEliminacion!=null">
+				and crit_cambioeliminacion = #{cambioEliminacion}
 			</if>
 	</sql>
 
@@ -90,6 +105,15 @@
 		<if test="auxiliar!=null">
 			,crit_auxiliar
 		</if>
+		<if test="fechaInicio!=null">
+			,drit_fechainicio
+		</if>
+		<if test="cambioCreacion!=null">
+			,crit_cambiocreacion
+		</if>
+		<if test="cambioEliminacion!=null">
+			,crit_cambioeliminacion
+		</if>
 		<if test="estado!=null">
 			,crit_estado
 		</if>
@@ -107,6 +131,15 @@
 		<if test="auxiliar!=null">
 			,#{auxiliar}
 		</if>
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="cambioCreacion!=null">
+			,#{cambioCreacion}
+		</if>
+		<if test="cambioEliminacion!=null">
+			,#{cambioEliminacion}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -120,6 +153,9 @@
 				crit_plantilla = #{plantilla},
 				crit_campo = #{campo},
 				crit_auxiliar = #{auxiliar},
+				drit_fechainicio = #{fechaInicio},
+				crit_cambiocreacion = #{cambioCreacion},
+				crit_cambioeliminacion = #{cambioEliminacion},
 				crit_estado =#{estado}
 		<include refid="whereRelacionInternaPrimaryKeyFragment" />
 	</select>
