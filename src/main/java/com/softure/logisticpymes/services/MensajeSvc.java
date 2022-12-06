@@ -167,7 +167,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		try {
 			MensajePlantillaCorreoDTO plantilla = mensajeTransicionService.consultaXId(dto.getTemplate());
 			ServidorDTO servidor = null;
-			if(plantilla.getServidor()==null){
+			if(plantilla.getServidor()!=null){
 				servidor = servidorService.consultaXId(plantilla.getServidor());
 			} else {
 				servidor = servidorService.obtenerServidorPrincipal(ServidorDTO.MAIL);
