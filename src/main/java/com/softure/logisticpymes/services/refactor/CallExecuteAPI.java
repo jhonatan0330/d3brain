@@ -266,7 +266,7 @@ public class CallExecuteAPI {
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		String responseApi = null;
 		try {
-			responseApi = callApi(service.getServidorNombre(), template, headerProperties);
+			responseApi = callApi(service, template, headerProperties);
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			if (callWS.getError() == null) {
@@ -714,11 +714,11 @@ public class CallExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String callApi(String serverName, String body, Map<String, String> headerProperties)
+	private String callApi(WebServiceDTO serverName, String body, Map<String, String> headerProperties)
 			throws ServerException {
 		URL url;
 		try {
-			url = new URL(serverName);
+			url = new URL(serverName.getNombre());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
@@ -730,8 +730,28 @@ public class CallExecuteAPI {
 					con.setRequestProperty(clave, valor);
 				}
 			}
-			con.setConnectTimeout(5000);
-			con.setReadTimeout(60000);
+			
+			int connectTimeOut = 5000;
+			PropiedadDTO connectTimeOutValue =  Propiedades.obtenerParametro(serverName, Propiedades.API_CONNECT_TIMEOUT);
+			if(connectTimeOutValue!=null) {
+				try {
+					connectTimeOut = Integer.valueOf(connectTimeOutValue.getValor());	
+				} catch (NumberFormatException e) {
+					System.out.println(e);
+				}
+			}
+			
+			int readTimeOut = 60000;
+			PropiedadDTO readTimeOutValue =  Propiedades.obtenerParametro(serverName, Propiedades.API_CONNECT_TIMEOUT);
+			if(readTimeOutValue!=null) {
+				try {
+					readTimeOut = Integer.valueOf(readTimeOutValue.getValor());	
+				} catch (NumberFormatException e) {
+					System.out.println(e);
+				}
+			}
+			con.setConnectTimeout(connectTimeOut);
+			con.setReadTimeout(readTimeOut);
 			con.connect();
 
 			// Send request

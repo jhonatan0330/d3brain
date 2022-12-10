@@ -34,6 +34,9 @@ public class Propiedades {
 	public static final String API_EXTRACTION = "API_EXTRACTION";
 	public static final String API_EXTRACTION_TO_BASE_64 = "API_EXTRACTION_TO_BASE_64";
 	public static final String API_ITERATION_ONE_EXECUTION = "API_ITERATION_ONE_EXECUTION";
+	public static final String API_READ_TIMEOUT = "API_READ_TIMEOUT";
+	public static final String API_CONNECT_TIMEOUT = "API_CONNECT_TIMEOUT";
+	
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -410,6 +413,8 @@ public class Propiedades {
 			case API_EXTRACTION : {ruleProperty = "Extrae un valor con expresion regular, si tienes dudas busca por internet Java String match, esa extracción se debe colocar en un campo\n\nEn las relaciones se coloca el campo que deseamos que actualice con el valor a extraer.\n\n";break;}
 			case API_MAX_TRY : {ruleProperty = "Coloca un numero entre 2 y 3 para que se repita el llamado al WS";break;}
 			case API_NEW_DOCUMENT : {ruleProperty = "Al recibir la respuesta del api puedes crear documento(s), tienes que seleccionar el nombre de la plantilla.\n\nEn el motivo es MUY IMPORTANTE que crees una expresion regular que extraiga la informacion que quieres para crear tu documento.\nCada match de la expresion regular sera un documento";break;}
+			case API_READ_TIMEOUT : {ruleProperty = "Cuando se ejecuta un API se tiene un tiempo en el cual puede MANTENERSE CONETADO el sistema sin generar este error, tienes que colocar el numero de milisegundos que soportara el api sin generar el error read timeout";break;}
+			case API_CONNECT_TIMEOUT : {ruleProperty = "Cuando se ejecuta un API se tiene un tiempo PARA CONECTARNOS sin generar este error, tienes que colocar el numero de milisegundos que soportara el api sin generar el error connect timeout";break;}
 			case API_VALIDATION : {ruleProperty = "Coloca una expresion regular para que se valide que esa expresion regular haga match, si tienes dudas busca por internet Java String match y busca simuladores online de la expresion regular.\n\nTen cuidado de no dejar enter al final";break;}
 			case AUTOLOAD : {ruleProperty =  "Define si carga la información desde el ingreso al modulo o por peticion del usuario.\n";break;}
 			case AUTOLOAD_SAVE : {ruleProperty =  "El campo si al guardar esta vacio va a consultar la funcion de BD o la fuente de datos y va a tomar la primera respuesta colocandola en este campo .\n";break;}

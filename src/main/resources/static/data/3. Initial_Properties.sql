@@ -406,4 +406,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_215' , 'C', 'TEXTO_LONGITUD', 'TEXTO_LONGITUD', 'REQUISITO', 'T', true);
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
-	VALUES('PROP_216' , 'L', 'PLANTILLA_HISTORIAL_ACTIVO', 'PLANTILLA_HISTORIAL_ACTIVO', 'REQUISITO', true)
+	VALUES('PROP_216' , 'L', 'PLANTILLA_HISTORIAL_ACTIVO', 'PLANTILLA_HISTORIAL_ACTIVO', 'REQUISITO', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_217' , 'W', 'CONNECT TIMEOUT', 'API_CONNECT_TIMEOUT', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_218' , 'W', 'READ TIMEOUT', 'API_READ_TIMEOUT', 'REQUISITO');
