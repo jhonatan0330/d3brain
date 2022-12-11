@@ -560,6 +560,7 @@ public class CallExecuteAPI {
 		}
 		if (parameters == "")
 			parameters = null;
+		System.out.format("\n[] Parameters (%s)", parameters);
 		return parameters;
 	}
 
@@ -756,11 +757,11 @@ public class CallExecuteAPI {
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+			System.out.format("\n[%s] Body API\n%s", con.getURL().toString(),  body);
 			wr.write(body.getBytes(StandardCharsets.UTF_8));
 			wr.close();
 
-			System.out.format("\n[] Procesando API status (%s)", con.getResponseCode());
-
+			System.out.format("\n[%s] Procesando API status (%s)", con.getURL().toString(), con.getResponseCode());
 			BufferedReader in = null;
 			if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
 				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
