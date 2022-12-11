@@ -49,7 +49,9 @@ import com.softure.logisticpymes.services.adapter.Propiedades;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class CallExecuteAPI {
 
@@ -100,7 +102,7 @@ public class CallExecuteAPI {
 		service.setPropiedades(
 				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
 		// Inicia ejecucion
-		System.out.format("\n\n[%s] Procesando API (%s)", document.getNombre(), service.getNombre());
+		log.info("[%s] Procesando API (%s)", document.getNombre(), service.getNombre());
 		WebServiceEjecucionDTO apiBasic = generateAsyncWebService(service, document, modificador, token, userId, previousParameter);
 		String result = ConstantesGenerales.OK;
 		// En caso que la ejecucion sea asincrona omito call api
@@ -145,7 +147,7 @@ public class CallExecuteAPI {
 				callWS.setError(authenticationWS.getError());
 				webServiceEjecucionSvc.update(callWS);
 				publishErrorMessage(service, authenticationWS);
-				System.out.format("\n\n[%s] Finalizando API (%s) por error de autenticacion", callWS.getDocumento(),
+				log.info("[%s] Finalizando API (%s) por error de autenticacion", callWS.getDocumento(),
 						service.getNombre());
 				return ConstantesGenerales.ERROR;
 			}
@@ -168,7 +170,7 @@ public class CallExecuteAPI {
 				webServiceEjecucionSvc.update(callWS);
 			}
 		}
-		System.out.format("\n\n[%s] Finalizando API (%s)", callWS.getDocumento(), service.getNombre());
+		log.info("[%s] Finalizando API (%s)", callWS.getDocumento(), service.getNombre());
 		return result;
 	}
 
@@ -292,7 +294,7 @@ public class CallExecuteAPI {
 				responseApi = "";
 			responseApi = e.getMessage() + "\n\n" + responseApi;
 			callWS.setError(e.getMessage());
-			System.out.format("\n[] Procesando API error (%s)", e.getMessage());
+			log.info("[] Procesando API error (%s)", e.getMessage());
 		}
 
 		if (callWS.getExtracciones() != null)
@@ -560,7 +562,7 @@ public class CallExecuteAPI {
 		}
 		if (parameters == "")
 			parameters = null;
-		System.out.format("\n[] Parameters (%s)", parameters);
+		log.info("[] Parameters (%s)", parameters);
 		return parameters;
 	}
 
@@ -738,7 +740,7 @@ public class CallExecuteAPI {
 				try {
 					connectTimeOut = Integer.valueOf(connectTimeOutValue.getValor());	
 				} catch (NumberFormatException e) {
-					System.out.println(e);
+					log.info(e.toString());
 				}
 			}
 			
@@ -748,7 +750,7 @@ public class CallExecuteAPI {
 				try {
 					readTimeOut = Integer.valueOf(readTimeOutValue.getValor());	
 				} catch (NumberFormatException e) {
-					System.out.println(e);
+					log.info(e.toString());
 				}
 			}
 			con.setConnectTimeout(connectTimeOut);
@@ -757,11 +759,11 @@ public class CallExecuteAPI {
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			System.out.format("\n[%s] Body API\n%s", con.getURL().toString(),  body);
+			log.info("[%s] Body API\n%s", con.getURL().toString(),  body);
 			wr.write(body.getBytes(StandardCharsets.UTF_8));
 			wr.close();
 
-			System.out.format("\n[%s] Procesando API status (%s)", con.getURL().toString(), con.getResponseCode());
+			log.info("[%s] Procesando API status (%s)", con.getURL().toString(), con.getResponseCode());
 			BufferedReader in = null;
 			if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
 				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -848,7 +850,7 @@ public class CallExecuteAPI {
 					storageMassiveString = storageMassiveString + "</" + formatStringXML(templateDTO.getCodigo()) + ">";
 				}
 				storageMassiveString = storageMassiveString + "</root>";
-				System.out.format("\n[%s] Escribiendo documento de carga masiva (%s)", templateDTO.getCodigo(),
+				log.info("[%s] Escribiendo documento de carga masiva (%s)", templateDTO.getCodigo(),
 						documentFromMap.size());
 				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token) + ";;";
 			}

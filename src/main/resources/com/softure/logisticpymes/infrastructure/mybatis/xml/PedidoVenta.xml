@@ -319,31 +319,27 @@
 	</sql>
 	
 	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
-		<include refid="selectMainFragment" />
-		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
-	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
-	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
-	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
-		where aux.cpdv_estado = 'A'
-	 	<include refid="filterMainFragment" />
-	 	and (cp_campo.cpvc_valoropcion = cerl_documento or cp_full.cpvc_valoropcion = cerl_documento)
-	union
-		<include refid="selectMainFragment" />
-	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
-		where cp_campo.cpvc_valoropcion in (select cp_doc_rol.cpvc_valoropcion from usuariorol_erlp
-	 			inner join campo_documento cp_doc_rol on (cp_doc_rol.cpvc_valoropcion is not null and cp_doc_rol.cdrc_documento = cerl_documento)
-	 		where cerl_estado = 'A' and cerl_usuario = #{usuario})
-	 	<include refid="filterMainFragment" />
-	union
-		<include refid="selectMainFragment" />
-		inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
-	 	cross join campo4id(a.cpdv_llave, #{campoFiltro}, a.npdv_historico) cp_campo
-	 	inner join pedidoventa_pdvp aux on (aux.cpdv_llave = cp_campo.cpvc_valoropcion)
-	 	cross join campo4documento(aux.cpdv_llave, aux.npdv_historico) cp_full
-	 	inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cp_full.cpvc_llave and cdex_estado = 'A')
-		where aux.cpdv_estado = 'A'
-		<include refid="filterMainFragment" />
-		and cdex_expedientedetalle = cerl_documento
+		<foreach item="item" collection="camposFiltro" separator=" union " >
+			<include refid="selectMainFragment" />
+			inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
+		 	cross join campo4id(a.cpdv_llave, #{item.valor}, a.npdv_historico) cp_campo
+		 	<if test="relaciones!=null">
+		 	inner join pedidoventacaracteristica_pvcp cp_rol on (cp_rol.cpvc_documento = cerl_documento and cp_rol.cpvc_estado = 'A')
+		 	left join documentorelacionexpediente_dexp dex_rol on (dex_rol.cdex_campomaestro = cp_rol.cpvc_llave and dex_rol.cdex_estado = 'A')
+		 	inner join pedidoventacaracteristica_pvcp cp_aux on (cp_aux.cpvc_documento = cp_campo.cpvc_valoropcion and cp_aux.cpvc_estado = 'A')
+	 		left join documentorelacionexpediente_dexp dex_aux on (dex_aux.cdex_campomaestro = cp_aux.cpvc_llave and dex_aux.cdex_estado = 'A')
+		 	</if>
+			where <if test="relaciones==null">cp_campo.cpvc_valoropcion = cerl_documento</if>
+				<if test="relaciones!=null">
+				(cp_rol.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
+					or cp_aux.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>)
+				and (cp_campo.cpvc_valoropcion = cp_rol.cpvc_valoropcion 
+					or cp_aux.cpvc_valoropcion = cerl_documento 
+					or dex_rol.cdex_expedientedetalle = cerl_documento
+					or dex_aux.cdex_expedientedetalle = cerl_documento)
+				</if>
+		 	<include refid="filterMainFragment" />
+		</foreach>
 		<include refid="orderMainFragment" />
 	</select>
 	

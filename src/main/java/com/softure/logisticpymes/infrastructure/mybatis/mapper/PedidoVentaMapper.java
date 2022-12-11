@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
 import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
+import com.softure.logisticpymes.domain.dto.PropiedadDTO;
 import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
 
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO>{
@@ -29,7 +30,8 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("ordenDescendente") String ordenDescendente,
 			@Param("filtroTexto") List<String> filtroTexto,
 			@Param("usuario") String usuario,
-			@Param("campoFiltro") String campoFiltro);
+			@Param("camposFiltro") List<PropiedadDTO> camposFiltro,
+			@Param("relaciones") List<String> relaciones);
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(
 			@Param("dto")PedidoVentaFilterDTO dto, 

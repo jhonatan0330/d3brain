@@ -69,9 +69,11 @@ public class CallDocumentListWithFilters {
 				List<String> estadosFiltro = organizarFiltros(dto);
 				List<String> textoFiltroComas = organizarFiltroComas(dto);
 				try {
+					List<String> relacionesPropiedadHeredable = propiedadService.camposRelacionados(propiedadHeredable1);
+					if(relacionesPropiedadHeredable==null || relacionesPropiedadHeredable.isEmpty()) throw new ServerException("Este campo de heredable no tiene relaciones de campos");
 					return listadoCompleto(
 							pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, 
-									propiedadService.camposRelacionados(propiedadHeredable1),//Consulto las realaciones del campo para saber cuales campos heredan con la funcion de  
+									relacionesPropiedadHeredable,//Consulto las realaciones del campo para saber cuales campos heredan con la funcion de  
 									dto.getTextoFiltro(), null, null, textoFiltroComas), tokenHeredable, null); 
 				}catch (Exception e) {
 					throw new ServerException(e.getMessage());
@@ -120,7 +122,7 @@ public class CallDocumentListWithFilters {
 		filterDTO.setEstado(dtoFilter.getEstado());
 		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
 		String secToken =null;
-		String campoFiltro = null;
+		List<PropiedadDTO> propiedadesFiltro = null;
 		filterDTO.setPlantilla(templateFilter);
 		filterDTO.setFuncionarioNombre(null);
 		// Aqui cometi un error en los campos dependientes asi que toca copiar las caracteristicas como vienen
@@ -149,11 +151,7 @@ public class CallDocumentListWithFilters {
 					if(propiedadFuncion!=null) {
 						return listadoCompleto( listarExpedientesDisponiblesDocumentoFuncion(filterDTO, propiedadFuncion.getLlaveTabla(), null), token, null );
 					}
-					
-					List<PropiedadDTO> propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla, Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
-					if(propiedadesFiltro!=null && !propiedadesFiltro.isEmpty()){
-						campoFiltro = propiedadesFiltro.get(0).getValor();
-					}
+					propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla, Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
 				}			
 			}
 			
@@ -161,7 +159,7 @@ public class CallDocumentListWithFilters {
 				if(verTodos ){
 					secToken = null;
 				}else{
-					if(campoFiltro==null){
+					if(propiedadesFiltro==null){
 						filterDTO.setFuncionario(pedidoVentaService.getUserFlex(token));
 						//Coloco el filtro por el mismo
 						filterDTO.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
@@ -178,7 +176,9 @@ public class CallDocumentListWithFilters {
 			}
 		}
 		
+		
 		if(dtoFilter.getNombre()!=null){
+			//Coloco el campo filtroporque cuando se filtra por el codigo exacto se puede ver pedisos y sin permiso y de estos se puede modificar
 			PedidoVentaFilterDTO filtro = new PedidoVentaFilterDTO();
 			filtro.setNombre(dtoFilter.getNombre().toUpperCase());
 			filtro.setPlantilla(templateFilter);
@@ -186,11 +186,15 @@ public class CallDocumentListWithFilters {
 			filtro.setFuncionario(filterDTO.getFuncionario()); //No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
 			filtro.setCaracteristicas(filterDTO.getCaracteristicas());
-			try {
-				return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
-			}catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
+			if(propiedadesFiltro==null ) {
+				try {
+					return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
+				}catch (Exception e) {
+					throw new ServerException(e.getCause().getMessage());
+				}	
+			}else {
+				return filtrarConRestriccionEnCampo(filtro, propiedadesFiltro, token, null,null,null,null);
+			}			
 		}else{
 			String orden = null;
 			String ordenAscendente = null;
@@ -225,16 +229,30 @@ public class CallDocumentListWithFilters {
 			}
 			filterDTO.setEstadoExpediente(dtoFilter.getEstadoExpediente());
 			List<String> textoFiltroComas = organizarFiltroComas(dtoFilter);
-			if(filterDTO.getFuncionarioNombre()==null)filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
-			if(campoFiltro !=null ) {
-				return listadoCompleto(
-						pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), campoFiltro)
-						, token, null);	
-			}
+			if(filterDTO.getFuncionarioNombre()==null)
+				filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
+			if(propiedadesFiltro !=null)
+				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,estadosFiltro, textoFiltroComas);	
 			return listadoCompleto(
 					pedidoVentaMapper.listarPermitidos(filterDTO, estadosFiltro, null, null , orden, ordenAscendente, textoFiltroComas)
 					, token, null); 
 		}
+	}
+
+	private List<PedidoVentaDTO> filtrarConRestriccionEnCampo(PedidoVentaFilterDTO filterDTO, List<PropiedadDTO> camposFiltro,
+			String token, String orden, String ordenAscendente, List<String> estadosFiltro,
+			List<String> textoFiltroComas) throws ServerException {
+		// Estoy revisando el tema coloco las relaciones de todos los campos, hasta ahora estoy colocando multiple, pero la idea
+		// es mejorar el codigo con arq hexagonal y creando uan calse de dominio que pase la info del campo con su relacion
+		List<String> relaciones = new ArrayList<>();
+		for (PropiedadDTO iPropiedadCampo : camposFiltro) {
+			List<String> validarNull = propiedadService.camposRelacionados(iPropiedadCampo);
+			if(validarNull !=null) relaciones.addAll(validarNull);
+		}
+		if(relaciones.isEmpty()) relaciones = null;
+		return listadoCompleto(
+				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente, textoFiltroComas, pedidoVentaService.getUserFlex(token), camposFiltro, relaciones)
+				, token, null);
 	}
 	
 	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {

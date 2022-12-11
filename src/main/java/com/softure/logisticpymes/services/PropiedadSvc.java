@@ -968,17 +968,15 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	
 	/*
 	 * La uso en pedidoventa para listar los campos que se realacionan en un heredable de muchas plantillas
+	 * lo empeza a usar en campo filtro para simplificar el paso de las propiedades
 	 */
 	public List<String> camposRelacionados(PropiedadDTO propiedad) throws ServerException{
 		List<String> result = null;
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(propiedad.getLlaveTabla());
-		if(relaciones!=null && !relaciones.isEmpty()) {
-			result = new ArrayList<String>();
-			for (RelacionInternaDTO relacionInternaDTO : relaciones) {
-				result.add( relacionInternaDTO.getCampo());
-			}
-		}else {
-			throw new ServerException("Este campo de heredable no tiene relaciones de campos");
+		if(relaciones==null || relaciones.isEmpty()) return null;
+		result = new ArrayList<String>();
+		for (RelacionInternaDTO relacionInternaDTO : relaciones) {
+			result.add( relacionInternaDTO.getCampo());
 		}
 		return result;
 	}
