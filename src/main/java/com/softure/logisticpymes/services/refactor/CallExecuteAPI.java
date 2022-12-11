@@ -719,7 +719,7 @@ public class CallExecuteAPI {
 			throws ServerException {
 		URL url;
 		try {
-			url = new URL(serverName.getNombre());
+			url = new URL(serverName.getServidorNombre());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
