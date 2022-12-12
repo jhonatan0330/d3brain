@@ -238,6 +238,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 
 // BEGIN region aditionalMethods
 	
+	public DocumentoPlantillaDTO consultarPorCodigo(String codigo) throws ServerException{
+		DocumentoPlantillaFilterDTO filtro = new DocumentoPlantillaFilterDTO();
+		filtro.setCodigo(codigo);
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return consultaUnica(filtro);
+	}
+	
 	public List<DocumentoPlantillaDTO> listarPlantillaRol(DocumentoPlantillaFilterDTO dto)throws ServerException{
 		if(dto==null || dto.getSecurityToken()==null) throw new ServerException("Revise la configuracion del dto filtro");
 		try {
