@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.process_form.infrastructure.DocumentoPlantillaMapper">
+
+	<sql id="selectDocumentoPlantillaFragment">
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_objetivo as  objetivo
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
+	</sql>
+
+	<sql id="whereDocumentoPlantillaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cdpl_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cdpl_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and cdpl_nombre = #{nombre}
+			</if>
+			<if test="consecutivo!=null">
+				and cdpl_consecutivo = #{consecutivo}
+			</if>
+			<if test="codigo!=null">
+				and cdpl_codigo = #{codigo}
+			</if>
+			<if test="proceso!=null">
+				and cdpl_proceso = #{proceso}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cdpl_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationDocumentoPlantillaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereDocumentoPlantillaPrimaryKeyFragment">
+		where
+			cdpl_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+		<include refid="selectDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+		<include refid="selectDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+		order by cdpl_nombre 
+		<include refid="paginationDocumentoPlantillaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="DocumentoPlantillaDTO" resultType="int">
+		select count(*)
+		from documentoplantilla_dplp
+		<include refid="whereDocumentoPlantillaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+		insert into documentoplantilla_dplp(
+			cdpl_llave
+		<if test="objetivo!=null">
+			,cdpl_objetivo
+		</if>
+		<if test="nombre!=null">
+			,cdpl_nombre
+		</if>
+		<if test="consecutivo!=null">
+			,cdpl_consecutivo
+		</if>
+		<if test="imagen!=null">
+			,cdpl_imagen
+		</if>
+		<if test="codigo!=null">
+			,cdpl_codigo
+		</if>
+		<if test="proceso!=null">
+			,cdpl_proceso
+		</if>
+		<if test="estado!=null">
+			,cdpl_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="objetivo!=null">
+			,#{objetivo}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="consecutivo!=null">
+			,#{consecutivo}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="proceso!=null">
+			,#{proceso}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+		update documentoplantilla_dplp
+			set
+				cdpl_objetivo = #{objetivo},
+				cdpl_nombre = #{nombre},
+				cdpl_consecutivo = #{consecutivo},
+				cdpl_imagen = #{imagen},
+				cdpl_codigo = #{codigo},
+				cdpl_proceso = #{proceso},
+				cdpl_estado =#{estado}
+		<include refid="whereDocumentoPlantillaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleDocumentoPlantillaFragment">
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_objetivo as  objetivo
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoPlantillaDTO">
+		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoPlantillaDTO">
+		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		<include refid="whereDocumentoPlantillaFragment" />
+		order by cdpl_nombre 
+		<include refid="paginationDocumentoPlantillaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="listarMenu" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+		<include refid="selectDocumentoPlantillaFragment" />
+		where cdpl_estado = 'A'
+		and cdpl_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
+			and cppd_propiedadvalor in ('PROP_77', 'PROP_78', 'PROP_107', 'PROP_108', 'PROP_114') 
+			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
+			and (dppd_fechafinal is null or dppd_fechafinal > now())
+			)
+		union
+		select
+			null as  llaveTabla
+			,null as  objetivo
+			,cprc_nombre as  nombre
+			,null as  consecutivo
+			,cprc_imagen as  imagen
+			,cprc_codigo as  codigo
+			,cprc_llave as  proceso
+			,cprc_estado as estado
+		from proceso_prcp 
+		where cprc_estado = 'A'
+			and cprc_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
+			and cppd_propiedadvalor = 'PROP_183'
+			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
+			and (dppd_fechafinal is null or dppd_fechafinal > now())
+			)
+		order by nombre;
+	</select>
+<!--// END region script-->
+
+</mapper>

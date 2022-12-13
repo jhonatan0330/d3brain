@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.inventory.infrastructure.ProductoInventarioDescuentoMapper">
+
+	<sql id="selectProductoInventarioDescuentoFragment">
+		select
+			cpid_llave as  llaveTabla
+			,cpid_producto as  producto
+			,cpid_productodescontar as  productoDescontar
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = cpid_productodescontar) as  productoDescontarNombre
+			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
+			,cpid_caracteristica as  caracteristica
+			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpid_caracteristica) as  caracteristicaNombre
+			,cpid_estado as estado
+		from productoinventariodescuento_pidp a
+	</sql>
+
+	<sql id="whereProductoInventarioDescuentoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpid_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpid_estado = #{estado}
+			</if>
+			<if test="producto!=null">
+				and cpid_producto = #{producto}
+			</if>
+			<if test="productoDescontar!=null">
+				and cpid_productodescontar = #{productoDescontar}
+			</if>
+			<if test="caracteristica!=null">
+				and cpid_caracteristica = #{caracteristica}
+			</if>
+	</sql>
+
+	<sql id="paginationProductoInventarioDescuentoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProductoInventarioDescuentoPrimaryKeyFragment">
+		where
+			cpid_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProductoInventarioDescuentoDTO" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProductoInventarioDescuentoDTO" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+		order by cpid_producto 
+		, productodescontarnombre 
+		<include refid="paginationProductoInventarioDescuentoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProductoInventarioDescuentoDTO" resultType="int">
+		select count(*)
+		from productoinventariodescuento_pidp
+		<include refid="whereProductoInventarioDescuentoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProductoInventarioDescuentoDTO" resultType="ProductoInventarioDescuentoDTO">
+		insert into productoinventariodescuento_pidp(
+			cpid_llave
+		<if test="producto!=null">
+			,cpid_producto
+		</if>
+		<if test="productoDescontar!=null">
+			,cpid_productodescontar
+		</if>
+		<if test="cantidadProductoDescontar!=null">
+			,mpid_cantidadproductodescontar
+		</if>
+		<if test="caracteristica!=null">
+			,cpid_caracteristica
+		</if>
+		<if test="estado!=null">
+			,cpid_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="producto!=null">
+			,#{producto}
+		</if>
+		<if test="productoDescontar!=null">
+			,#{productoDescontar}
+		</if>
+		<if test="cantidadProductoDescontar!=null">
+			,#{cantidadProductoDescontar}
+		</if>
+		<if test="caracteristica!=null">
+			,#{caracteristica}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProductoInventarioDescuentoDTO" resultType="ProductoInventarioDescuentoDTO">
+		update productoinventariodescuento_pidp
+			set
+				cpid_producto = #{producto},
+				cpid_productodescontar = #{productoDescontar},
+				mpid_cantidadproductodescontar = #{cantidadProductoDescontar},
+				cpid_caracteristica = #{caracteristica},
+				cpid_estado =#{estado}
+		<include refid="whereProductoInventarioDescuentoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleProductoInventarioDescuentoFragment">
+		select
+			cpid_llave as  llaveTabla
+			,cpid_producto as  producto
+			,cpid_productodescontar as  productoDescontar
+			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
+			,cpid_caracteristica as  caracteristica
+			,cpid_estado as estado
+		from productoinventariodescuento_pidp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProductoInventarioDescuentoDTO">
+		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
+		<include refid="whereProductoInventarioDescuentoFragment" />
+		order by cpid_producto 
+		, productodescontarnombre 
+		<include refid="paginationProductoInventarioDescuentoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

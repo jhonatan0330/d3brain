@@ -58,6 +58,16 @@ public class APIControllerErrorAdvice {
 	        return new ResponseEntity<>(response, response.getStatus());
 	 }
 	
+	@ExceptionHandler(NullPointerException.class)
+	protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(NullPointerException e) {
+	   ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+	         .withMessage("NullPointerException")
+	         .build();
+	        return new ResponseEntity<>(response, response.getStatus());
+	 }
+	
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(Exception e) {
 	   ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()

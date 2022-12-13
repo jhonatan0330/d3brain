@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.authentication.infrastructure.UsuarioAutenticacionAutorizacionMapper">
+
+	<sql id="selectUsuarioAutenticacionAutorizacionFragment">
+		select
+			cuaa_llave as  llaveTabla
+			,cuaa_usuario as  usuario
+			,duaa_fechamaxima as  fechaMaxima
+			,duaa_fechasolicitud as  fechaSolicitud
+			,cuaa_correo as  correo
+			,cuaa_ipsolicitud as  ipSolicitud
+			,cuaa_codigo as  codigo
+			,duaa_fecharedencion as  fechaRedencion
+			,cuaa_key as  key
+			,cuaa_ipredencion as  ipRedencion
+			,cuaa_estado as estado
+		from usuarioautenticacionautorizacion_uaap a
+	</sql>
+
+	<sql id="whereUsuarioAutenticacionAutorizacionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cuaa_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cuaa_estado = #{estado}
+			</if>
+			<if test="usuario!=null">
+				and cuaa_usuario = #{usuario}
+			</if>
+			<if test="fechaMaximaMin!=null">
+				and duaa_fechamaxima >= #{fechaMaximaMin}
+			</if>
+			<if test="fechaMaximaMax!=null">
+				and duaa_fechamaxima <![CDATA[ < ]]>  #{fechaMaximaMax}
+			</if>
+			<if test="fechaSolicitudMin!=null">
+				and duaa_fechasolicitud >= #{fechaSolicitudMin}
+			</if>
+			<if test="fechaSolicitudMax!=null">
+				and duaa_fechasolicitud <![CDATA[ < ]]>  #{fechaSolicitudMax}
+			</if>
+			<if test="correo!=null">
+				and cuaa_correo = #{correo}
+			</if>
+			<if test="ipSolicitud!=null">
+				and cuaa_ipsolicitud = #{ipSolicitud}
+			</if>
+			<if test="codigo!=null">
+				and cuaa_codigo = #{codigo}
+			</if>
+			<if test="fechaRedencionMin!=null">
+				and duaa_fecharedencion >= #{fechaRedencionMin}
+			</if>
+			<if test="fechaRedencionMax!=null">
+				and duaa_fecharedencion <![CDATA[ < ]]>  #{fechaRedencionMax}
+			</if>
+			<if test="key!=null">
+				and cuaa_key = #{key}
+			</if>
+			<if test="ipRedencion!=null">
+				and cuaa_ipredencion = #{ipRedencion}
+			</if>
+	</sql>
+
+	<sql id="paginationUsuarioAutenticacionAutorizacionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereUsuarioAutenticacionAutorizacionPrimaryKeyFragment">
+		where
+			cuaa_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="UsuarioAutenticacionAutorizacionDTO" resultType="UsuarioAutenticacionAutorizacionDTO">
+		<include refid="selectUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="whereUsuarioAutenticacionAutorizacionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="UsuarioAutenticacionAutorizacionDTO" resultType="UsuarioAutenticacionAutorizacionDTO">
+		<include refid="selectUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="whereUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="paginationUsuarioAutenticacionAutorizacionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="UsuarioAutenticacionAutorizacionDTO" resultType="int">
+		select count(*)
+		from usuarioautenticacionautorizacion_uaap
+		<include refid="whereUsuarioAutenticacionAutorizacionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="UsuarioAutenticacionAutorizacionDTO" resultType="UsuarioAutenticacionAutorizacionDTO">
+		insert into usuarioautenticacionautorizacion_uaap(
+			cuaa_llave
+		<if test="usuario!=null">
+			,cuaa_usuario
+		</if>
+		<if test="fechaMaxima!=null">
+			,duaa_fechamaxima
+		</if>
+		<if test="fechaSolicitud!=null">
+			,duaa_fechasolicitud
+		</if>
+		<if test="correo!=null">
+			,cuaa_correo
+		</if>
+		<if test="ipSolicitud!=null">
+			,cuaa_ipsolicitud
+		</if>
+		<if test="codigo!=null">
+			,cuaa_codigo
+		</if>
+		<if test="fechaRedencion!=null">
+			,duaa_fecharedencion
+		</if>
+		<if test="key!=null">
+			,cuaa_key
+		</if>
+		<if test="ipRedencion!=null">
+			,cuaa_ipredencion
+		</if>
+		<if test="estado!=null">
+			,cuaa_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="fechaMaxima!=null">
+			,#{fechaMaxima}
+		</if>
+		<if test="fechaSolicitud!=null">
+			,#{fechaSolicitud}
+		</if>
+		<if test="correo!=null">
+			,#{correo}
+		</if>
+		<if test="ipSolicitud!=null">
+			,#{ipSolicitud}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="fechaRedencion!=null">
+			,#{fechaRedencion}
+		</if>
+		<if test="key!=null">
+			,#{key}
+		</if>
+		<if test="ipRedencion!=null">
+			,#{ipRedencion}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="UsuarioAutenticacionAutorizacionDTO" resultType="UsuarioAutenticacionAutorizacionDTO">
+		update usuarioautenticacionautorizacion_uaap
+			set
+				cuaa_usuario = #{usuario},
+				duaa_fechamaxima = #{fechaMaxima},
+				duaa_fechasolicitud = #{fechaSolicitud},
+				cuaa_correo = #{correo},
+				cuaa_ipsolicitud = #{ipSolicitud},
+				cuaa_codigo = #{codigo},
+				duaa_fecharedencion = #{fechaRedencion},
+				cuaa_key = #{key},
+				cuaa_ipredencion = #{ipRedencion},
+				cuaa_estado =#{estado}
+		<include refid="whereUsuarioAutenticacionAutorizacionPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleUsuarioAutenticacionAutorizacionFragment">
+		select
+			cuaa_llave as  llaveTabla
+			,cuaa_usuario as  usuario
+			,duaa_fechamaxima as  fechaMaxima
+			,duaa_fechasolicitud as  fechaSolicitud
+			,cuaa_correo as  correo
+			,cuaa_ipsolicitud as  ipSolicitud
+			,cuaa_codigo as  codigo
+			,duaa_fecharedencion as  fechaRedencion
+			,cuaa_key as  key
+			,cuaa_ipredencion as  ipRedencion
+			,cuaa_estado as estado
+		from usuarioautenticacionautorizacion_uaap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="UsuarioAutenticacionAutorizacionDTO">
+		<include refid="selectSimpleUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="whereUsuarioAutenticacionAutorizacionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="UsuarioAutenticacionAutorizacionDTO">
+		<include refid="selectSimpleUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="whereUsuarioAutenticacionAutorizacionFragment" />
+		<include refid="paginationUsuarioAutenticacionAutorizacionFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

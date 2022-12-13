@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.CuentaContableMapper">
+
+	<sql id="selectCuentaContableFragment">
+		select
+			ccta_llave as  llaveTabla
+			,ccta_codigo as  codigo
+			,ccta_nombre as  nombre
+			,mcta_sobregiro as  sobregiro
+			,ccta_catalogo as  catalogo
+			,ccta_cuentapadre as  cuentaPadre
+			,ccta_estado as estado
+		from cuentacontable_ctap a
+	</sql>
+
+	<sql id="whereCuentaContableFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccta_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccta_estado = #{estado}
+			</if>
+			<if test="codigo!=null">
+				and ccta_codigo = #{codigo}
+			</if>
+			<if test="nombre!=null">
+				and ccta_nombre = #{nombre}
+			</if>
+			<if test="catalogo!=null">
+				and ccta_catalogo = #{catalogo}
+			</if>
+			<if test="cuentaPadre!=null">
+				and ccta_cuentapadre = #{cuentaPadre}
+			</if>
+	</sql>
+
+	<sql id="paginationCuentaContableFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCuentaContablePrimaryKeyFragment">
+		where
+			ccta_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
+		<include refid="selectCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
+		<include refid="selectCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+		<include refid="paginationCuentaContableFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CuentaContableDTO" resultType="int">
+		select count(*)
+		from cuentacontable_ctap
+		<include refid="whereCuentaContableFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
+		insert into cuentacontable_ctap(
+			ccta_llave
+		<if test="codigo!=null">
+			,ccta_codigo
+		</if>
+		<if test="nombre!=null">
+			,ccta_nombre
+		</if>
+		<if test="sobregiro!=null">
+			,mcta_sobregiro
+		</if>
+		<if test="catalogo!=null">
+			,ccta_catalogo
+		</if>
+		<if test="cuentaPadre!=null">
+			,ccta_cuentapadre
+		</if>
+		<if test="estado!=null">
+			,ccta_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="sobregiro!=null">
+			,#{sobregiro}
+		</if>
+		<if test="catalogo!=null">
+			,#{catalogo}
+		</if>
+		<if test="cuentaPadre!=null">
+			,#{cuentaPadre}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
+		update cuentacontable_ctap
+			set
+				ccta_codigo = #{codigo},
+				ccta_nombre = #{nombre},
+				mcta_sobregiro = #{sobregiro},
+				ccta_catalogo = #{catalogo},
+				ccta_cuentapadre = #{cuentaPadre},
+				ccta_estado =#{estado}
+		<include refid="whereCuentaContablePrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleCuentaContableFragment">
+		select
+			ccta_llave as  llaveTabla
+			,ccta_codigo as  codigo
+			,ccta_nombre as  nombre
+			,mcta_sobregiro as  sobregiro
+			,ccta_catalogo as  catalogo
+			,ccta_cuentapadre as  cuentaPadre
+			,ccta_estado as estado
+		from cuentacontable_ctap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CuentaContableDTO">
+		<include refid="selectSimpleCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CuentaContableDTO">
+		<include refid="selectSimpleCuentaContableFragment" />
+		<include refid="whereCuentaContableFragment" />
+		<include refid="paginationCuentaContableFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

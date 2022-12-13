@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.logisticpymes.infrastructure.AuditoriaMapper">
+
+	<sql id="selectAuditoriaFragment">
+		select
+			caud_llave as  llaveTabla
+			,caud_usuario as  usuario
+			,caud_clase as  clase
+			,caud_llaveclase as  llaveClase
+			,caud_operacion as  operacion
+			,daud_fecha as  fecha
+			,caud_estado as estado
+		from auditoria_audp a
+	</sql>
+
+	<sql id="whereAuditoriaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and caud_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and caud_estado = #{estado}
+			</if>
+			<if test="usuario!=null">
+				and caud_usuario = #{usuario}
+			</if>
+			<if test="clase!=null">
+				and caud_clase = #{clase}
+			</if>
+			<if test="llaveClase!=null">
+				and caud_llaveclase = #{llaveClase}
+			</if>
+			<if test="fechaMin!=null">
+				and daud_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and daud_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+	</sql>
+
+	<sql id="paginationAuditoriaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereAuditoriaPrimaryKeyFragment">
+		where
+			caud_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="AuditoriaDTO" resultType="AuditoriaDTO">
+		<include refid="selectAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="AuditoriaDTO" resultType="AuditoriaDTO">
+		<include refid="selectAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+		<include refid="paginationAuditoriaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="AuditoriaDTO" resultType="int">
+		select count(*)
+		from auditoria_audp
+		<include refid="whereAuditoriaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="AuditoriaDTO" resultType="AuditoriaDTO">
+		insert into auditoria_audp(
+			caud_llave
+		<if test="usuario!=null">
+			,caud_usuario
+		</if>
+		<if test="clase!=null">
+			,caud_clase
+		</if>
+		<if test="llaveClase!=null">
+			,caud_llaveclase
+		</if>
+		<if test="operacion!=null">
+			,caud_operacion
+		</if>
+		<if test="fecha!=null">
+			,daud_fecha
+		</if>
+		<if test="estado!=null">
+			,caud_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="clase!=null">
+			,#{clase}
+		</if>
+		<if test="llaveClase!=null">
+			,#{llaveClase}
+		</if>
+		<if test="operacion!=null">
+			,#{operacion}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="AuditoriaDTO" resultType="AuditoriaDTO">
+		update auditoria_audp
+			set
+				caud_usuario = #{usuario},
+				caud_clase = #{clase},
+				caud_llaveclase = #{llaveClase},
+				caud_operacion = #{operacion},
+				daud_fecha = #{fecha},
+				caud_estado =#{estado}
+		<include refid="whereAuditoriaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleAuditoriaFragment">
+		select
+			caud_llave as  llaveTabla
+			,caud_usuario as  usuario
+			,caud_clase as  clase
+			,caud_llaveclase as  llaveClase
+			,caud_operacion as  operacion
+			,daud_fecha as  fecha
+			,caud_estado as estado
+		from auditoria_audp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="AuditoriaDTO">
+		<include refid="selectSimpleAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="AuditoriaDTO">
+		<include refid="selectSimpleAuditoriaFragment" />
+		<include refid="whereAuditoriaFragment" />
+		<include refid="paginationAuditoriaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

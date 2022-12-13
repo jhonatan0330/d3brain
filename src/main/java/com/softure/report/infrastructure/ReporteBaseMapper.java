@@ -1,0 +1,17 @@
+package com.softure.report.infrastructure;
+
+
+// BEGIN region interImport  
+import java.util.List;
+
+import com.softure.java.domain.IBasicMapper;
+import com.softure.report.domain.ReporteBaseDTO;
+import com.softure.report.domain.ReporteBaseFilterDTO;
+
+public interface ReporteBaseMapper extends IBasicMapper<ReporteBaseDTO, ReporteBaseFilterDTO>{
+	
+
+// BEGIN region aditionalMethods  
+	List<ReporteBaseDTO> listarMenu();
+// END region aditionalMethods
+}

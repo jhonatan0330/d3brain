@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.survey.infrastructure.EncuestaMapper">
+
+	<sql id="selectEncuestaFragment">
+		select
+			cenc_llave as  llaveTabla
+			,cenc_nombre as  nombre
+			,denc_fechainicio as  fechaInicio
+			,denc_fechafin as  fechaFin
+			,denc_fechaejecucion as  fechaEjecucion
+			,benc_colaborativa as  colaborativa
+			,cenc_rol as  rol
+			,cenc_cliente as  cliente
+			,cenc_estado as estado
+		from encuesta_encp a
+	</sql>
+
+	<sql id="whereEncuestaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cenc_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cenc_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and cenc_nombre = #{nombre}
+			</if>
+			<if test="fechaInicioMin!=null">
+				and denc_fechainicio >= #{fechaInicioMin}
+			</if>
+			<if test="fechaInicioMax!=null">
+				and denc_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+			</if>
+			<if test="fechaFinMin!=null">
+				and denc_fechafin >= #{fechaFinMin}
+			</if>
+			<if test="fechaFinMax!=null">
+				and denc_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="fechaEjecucionMin!=null">
+				and denc_fechaejecucion >= #{fechaEjecucionMin}
+			</if>
+			<if test="fechaEjecucionMax!=null">
+				and denc_fechaejecucion <![CDATA[ < ]]>  #{fechaEjecucionMax}
+			</if>
+			<if test="colaborativaFilter!=null">
+				and benc_colaborativa = #{colaborativaFilter}
+			</if>
+			<if test="rol!=null">
+				and cenc_rol = #{rol}
+			</if>
+			<if test="cliente!=null">
+				and cenc_cliente = #{cliente}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cenc_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationEncuestaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereEncuestaPrimaryKeyFragment">
+		where
+			cenc_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="EncuestaDTO" resultType="EncuestaDTO">
+		<include refid="selectEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="EncuestaDTO" resultType="EncuestaDTO">
+		<include refid="selectEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+		<include refid="paginationEncuestaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="EncuestaDTO" resultType="int">
+		select count(*)
+		from encuesta_encp
+		<include refid="whereEncuestaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="EncuestaDTO" resultType="EncuestaDTO">
+		insert into encuesta_encp(
+			cenc_llave
+		<if test="nombre!=null">
+			,cenc_nombre
+		</if>
+		<if test="fechaInicio!=null">
+			,denc_fechainicio
+		</if>
+		<if test="fechaFin!=null">
+			,denc_fechafin
+		</if>
+		<if test="fechaEjecucion!=null">
+			,denc_fechaejecucion
+		</if>
+		<if test="colaborativa!=null">
+			,benc_colaborativa
+		</if>
+		<if test="rol!=null">
+			,cenc_rol
+		</if>
+		<if test="cliente!=null">
+			,cenc_cliente
+		</if>
+		<if test="estado!=null">
+			,cenc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
+		</if>
+		<if test="fechaEjecucion!=null">
+			,#{fechaEjecucion}
+		</if>
+		<if test="colaborativa!=null">
+			,#{colaborativa}
+		</if>
+		<if test="rol!=null">
+			,#{rol}
+		</if>
+		<if test="cliente!=null">
+			,#{cliente}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="EncuestaDTO" resultType="EncuestaDTO">
+		update encuesta_encp
+			set
+				cenc_nombre = #{nombre},
+				denc_fechainicio = #{fechaInicio},
+				denc_fechafin = #{fechaFin},
+				denc_fechaejecucion = #{fechaEjecucion},
+				benc_colaborativa = #{colaborativa},
+				cenc_rol = #{rol},
+				cenc_cliente = #{cliente},
+				cenc_estado =#{estado}
+		<include refid="whereEncuestaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleEncuestaFragment">
+		select
+			cenc_llave as  llaveTabla
+			,cenc_nombre as  nombre
+			,denc_fechainicio as  fechaInicio
+			,denc_fechafin as  fechaFin
+			,denc_fechaejecucion as  fechaEjecucion
+			,benc_colaborativa as  colaborativa
+			,cenc_rol as  rol
+			,cenc_cliente as  cliente
+			,cenc_estado as estado
+		from encuesta_encp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="EncuestaDTO">
+		<include refid="selectSimpleEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="EncuestaDTO">
+		<include refid="selectSimpleEncuestaFragment" />
+		<include refid="whereEncuestaFragment" />
+		<include refid="paginationEncuestaFragment" />
+	</select>
+	
+
+	<select id="listarDisponibles" parameterType="EncuestaDTO" resultType="EncuestaDTO">
+		<include refid="selectEncuestaFragment" />
+where cenc_estado = 'A' and denc_fechainicio <![CDATA[ <= ]]> now() and denc_fechafin >= now()
+and (
+select count(*) from encuestarespuesta_ersp where cers_usuario = #{cliente} and cers_estado ='A' and cers_pregunta in 
+ (select cepr_llave from encuestapregunta_eprp  where cepr_estado ='A' and cepr_grupo  in 
+   ( select cegr_llave from encuestagrupo_egrp  where cegr_estado ='A' and cegr_encuesta  = cenc_llave))
+)=0
+  and (cenc_rol is null or #{cliente} in (select cerl_usuario from usuariorol_erlp where cerl_rolacceso  = cenc_rol and cerl_estado = 'A'))
+
+		<include refid="paginationEncuestaFragment" />
+	</select>
+	
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

@@ -1,0 +1,20 @@
+package com.softure.authentication.infrastructure;
+
+
+import com.softure.authentication.domain.UsuarioAutenticacionDTO;
+import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
+import com.softure.java.domain.IBasicMapper;
+
+public interface UsuarioAutenticacionMapper extends IBasicMapper<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>{
+	
+
+// BEGIN region aditionalMethods  
+	String consultarValidez();
+	String versionActual();
+	String fechaMinima();
+	
+	int cantidadAsignaciones(String usuario);
+	int ocultarLicencia(String usuario);
+
+// END region aditionalMethods
+}

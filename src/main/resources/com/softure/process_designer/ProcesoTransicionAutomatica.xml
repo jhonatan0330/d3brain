@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.process_designer.infrastructure.ProcesoTransicionAutomaticaMapper">
+
+	<sql id="selectProcesoTransicionAutomaticaFragment">
+		select
+			cpta_llave as  llaveTabla
+			,dpta_fecha as  fecha
+			,cpta_transicion as  transicion
+			,(select cptr_plantilla from procesotransicion_ptrp where cptr_llave = cpta_transicion) as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cptr_plantilla from procesotransicion_ptrp where cptr_llave = cpta_transicion)) as  plantillaNombre
+			,cpta_propiedad as  propiedad
+			,dpta_ejecucion as  ejecucion
+			,cpta_mensaje as  mensaje
+			,cpta_estado as estado
+		from procesotransicionautomatica_ptap a
+	</sql>
+
+	<sql id="whereProcesoTransicionAutomaticaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpta_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpta_estado = #{estado}
+			</if>
+			<if test="fechaMin!=null">
+				and dpta_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dpta_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="transicion!=null">
+				and cpta_transicion = #{transicion}
+			</if>
+			<if test="propiedad!=null">
+				and cpta_propiedad = #{propiedad}
+			</if>
+			<if test="ejecucionMin!=null">
+				and dpta_ejecucion >= #{ejecucionMin}
+			</if>
+			<if test="ejecucionMax!=null">
+				and dpta_ejecucion <![CDATA[ < ]]>  #{ejecucionMax}
+			</if>
+	</sql>
+
+	<sql id="paginationProcesoTransicionAutomaticaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProcesoTransicionAutomaticaPrimaryKeyFragment">
+		where
+			cpta_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProcesoTransicionAutomaticaDTO" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProcesoTransicionAutomaticaDTO" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+		order by dpta_fecha desc
+		<include refid="paginationProcesoTransicionAutomaticaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProcesoTransicionAutomaticaDTO" resultType="int">
+		select count(*)
+		from procesotransicionautomatica_ptap
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProcesoTransicionAutomaticaDTO" resultType="ProcesoTransicionAutomaticaDTO">
+		insert into procesotransicionautomatica_ptap(
+			cpta_llave
+		<if test="fecha!=null">
+			,dpta_fecha
+		</if>
+		<if test="transicion!=null">
+			,cpta_transicion
+		</if>
+		<if test="propiedad!=null">
+			,cpta_propiedad
+		</if>
+		<if test="ejecucion!=null">
+			,dpta_ejecucion
+		</if>
+		<if test="mensaje!=null">
+			,cpta_mensaje
+		</if>
+		<if test="estado!=null">
+			,cpta_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="transicion!=null">
+			,#{transicion}
+		</if>
+		<if test="propiedad!=null">
+			,#{propiedad}
+		</if>
+		<if test="ejecucion!=null">
+			,#{ejecucion}
+		</if>
+		<if test="mensaje!=null">
+			,#{mensaje}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProcesoTransicionAutomaticaDTO" resultType="ProcesoTransicionAutomaticaDTO">
+		update procesotransicionautomatica_ptap
+			set
+				dpta_fecha = #{fecha},
+				cpta_transicion = #{transicion},
+				cpta_propiedad = #{propiedad},
+				dpta_ejecucion = #{ejecucion},
+				cpta_mensaje = #{mensaje},
+				cpta_estado =#{estado}
+		<include refid="whereProcesoTransicionAutomaticaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleProcesoTransicionAutomaticaFragment">
+		select
+			cpta_llave as  llaveTabla
+			,dpta_fecha as  fecha
+			,cpta_transicion as  transicion
+			,cpta_propiedad as  propiedad
+			,dpta_ejecucion as  ejecucion
+			,cpta_mensaje as  mensaje
+			,cpta_estado as estado
+		from procesotransicionautomatica_ptap a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectSimpleProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectSimpleProcesoTransicionAutomaticaFragment" />
+		<include refid="whereProcesoTransicionAutomaticaFragment" />
+		order by dpta_fecha desc
+		<include refid="paginationProcesoTransicionAutomaticaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="consultarPendientes" resultType="ProcesoTransicionAutomaticaDTO">
+		<include refid="selectProcesoTransicionAutomaticaFragment" />
+		where dpta_ejecucion is null and dpta_fecha <![CDATA[ < ]]> now()
+		order by dpta_fecha desc;
+	</select>
+		
+	<select id="getFieldPlantilla" resultType="java.lang.String">
+		select crit_campo from relacioninterna_ritp 
+		where crit_propiedad = #{propiedad} and crit_estado  ='A' limit 1
+	</select>
+	
+	<select id="obtenerFechaUltimaEjecucion" parameterType="java.lang.String" resultType="java.util.Date">
+		select dpta_fecha from procesotransicionautomatica_ptap 
+		where cpta_transicion = #{transicion} and dpta_ejecucion is not null and cpta_estado = 'A' order by dpta_ejecucion desc limit 1 
+	</select>
+	
+	<select id="inactivarPropiedad" parameterType="java.lang.String" >
+		delete from procesotransicionautomatica_ptap where cpta_propiedad = #{propiedad} and dpta_ejecucion is null
+	</select>
+	
+	<select id="funcionPasarTablaHistoricos" resultType="int">
+		select * from migrar_campos(#{plantilla}, #{fechaCorte})
+	</select>
+<!--// END region script-->
+
+</mapper>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.mail.infrastructure.MensajeMapper">
+
+	<sql id="selectMensajeFragment">
+		select
+			cmsj_llave as  llaveTabla
+			,dmsj_fecha as  fecha
+			,cmsj_titulo as  titulo
+			,cmsj_usuario as  usuario
+			,cmsj_documento as  documento
+			,cmsj_template as  template
+			,cmsj_parametros as  parametros
+			,dmsj_leido as  leido
+			,dmsj_correoenviado as  correoEnviado
+			,cmsj_correoerror as  correoError
+			,cmsj_correo as  correo
+			,cmsj_reporte as  reporte
+			,cmsj_transaccion as  transaccion
+			,cmsj_estado as estado
+		from mensaje_msjp a
+	</sql>
+
+	<sql id="whereMensajeFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cmsj_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cmsj_estado = #{estado}
+			</if>
+			<if test="fechaMin!=null">
+				and dmsj_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dmsj_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="titulo!=null">
+				and cmsj_titulo = #{titulo}
+			</if>
+			<if test="usuario!=null">
+				and cmsj_usuario = #{usuario}
+			</if>
+			<if test="documento!=null">
+				and cmsj_documento = #{documento}
+			</if>
+			<if test="template!=null">
+				and cmsj_template = #{template}
+			</if>
+			<if test="leidoMin!=null">
+				and dmsj_leido >= #{leidoMin}
+			</if>
+			<if test="leidoMax!=null">
+				and dmsj_leido <![CDATA[ < ]]>  #{leidoMax}
+			</if>
+			<if test="correoEnviadoMin!=null">
+				and dmsj_correoenviado >= #{correoEnviadoMin}
+			</if>
+			<if test="correoEnviadoMax!=null">
+				and dmsj_correoenviado <![CDATA[ < ]]>  #{correoEnviadoMax}
+			</if>
+			<if test="reporte!=null">
+				and cmsj_reporte = #{reporte}
+			</if>
+			<if test="transaccion!=null">
+				and cmsj_transaccion = #{transaccion}
+			</if>
+	</sql>
+
+	<sql id="paginationMensajeFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereMensajePrimaryKeyFragment">
+		where
+			cmsj_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="MensajeDTO" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+	</select>
+	
+	<select id="listar" parameterType="MensajeDTO" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+		order by dmsj_fecha desc
+		<include refid="paginationMensajeFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="MensajeDTO" resultType="int">
+		select count(*)
+		from mensaje_msjp
+		<include refid="whereMensajeFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="MensajeDTO" resultType="MensajeDTO">
+		insert into mensaje_msjp(
+			cmsj_llave
+		<if test="fecha!=null">
+			,dmsj_fecha
+		</if>
+		<if test="titulo!=null">
+			,cmsj_titulo
+		</if>
+		<if test="usuario!=null">
+			,cmsj_usuario
+		</if>
+		<if test="documento!=null">
+			,cmsj_documento
+		</if>
+		<if test="template!=null">
+			,cmsj_template
+		</if>
+		<if test="parametros!=null">
+			,cmsj_parametros
+		</if>
+		<if test="leido!=null">
+			,dmsj_leido
+		</if>
+		<if test="correoEnviado!=null">
+			,dmsj_correoenviado
+		</if>
+		<if test="correoError!=null">
+			,cmsj_correoerror
+		</if>
+		<if test="correo!=null">
+			,cmsj_correo
+		</if>
+		<if test="reporte!=null">
+			,cmsj_reporte
+		</if>
+		<if test="transaccion!=null">
+			,cmsj_transaccion
+		</if>
+		<if test="estado!=null">
+			,cmsj_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="titulo!=null">
+			,#{titulo}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="template!=null">
+			,#{template}
+		</if>
+		<if test="parametros!=null">
+			,#{parametros}
+		</if>
+		<if test="leido!=null">
+			,#{leido}
+		</if>
+		<if test="correoEnviado!=null">
+			,#{correoEnviado}
+		</if>
+		<if test="correoError!=null">
+			,#{correoError}
+		</if>
+		<if test="correo!=null">
+			,#{correo}
+		</if>
+		<if test="reporte!=null">
+			,#{reporte}
+		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="MensajeDTO" resultType="MensajeDTO">
+		update mensaje_msjp
+			set
+				dmsj_fecha = #{fecha},
+				cmsj_titulo = #{titulo},
+				cmsj_usuario = #{usuario},
+				cmsj_documento = #{documento},
+				cmsj_template = #{template},
+				cmsj_parametros = #{parametros},
+				dmsj_leido = #{leido},
+				dmsj_correoenviado = #{correoEnviado},
+				cmsj_correoerror = #{correoError},
+				cmsj_correo = #{correo},
+				cmsj_reporte = #{reporte},
+				cmsj_transaccion = #{transaccion},
+				cmsj_estado =#{estado}
+		<include refid="whereMensajePrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleMensajeFragment">
+		select
+			cmsj_llave as  llaveTabla
+			,dmsj_fecha as  fecha
+			,cmsj_titulo as  titulo
+			,cmsj_usuario as  usuario
+			,cmsj_documento as  documento
+			,cmsj_template as  template
+			,cmsj_parametros as  parametros
+			,dmsj_leido as  leido
+			,dmsj_correoenviado as  correoEnviado
+			,cmsj_correoerror as  correoError
+			,cmsj_correo as  correo
+			,cmsj_reporte as  reporte
+			,cmsj_transaccion as  transaccion
+			,cmsj_estado as estado
+		from mensaje_msjp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="MensajeDTO">
+		<include refid="selectSimpleMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="MensajeDTO">
+		<include refid="selectSimpleMensajeFragment" />
+		<include refid="whereMensajeFragment" />
+		order by dmsj_fecha desc
+		<include refid="paginationMensajeFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="mensajesDisponibles" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		where cmsj_estado = 'A' and dmsj_fecha >= NOW() - INTERVAL '30 minutes' and dmsj_correoenviado is null
+		LIMIT 30
+	</select>
+	
+	<select id="mensajesUsuario" parameterType="MensajeDTO" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		where cmsj_estado = 'A' and cmsj_usuario = #{usuario}
+		order by dmsj_fecha desc
+		<include refid="paginationMensajeFragment" />
+	</select>
+	
+	<select id="correosMensaje" resultType="MensajeDTO">
+		select
+			null as  llaveTabla
+			,null as  fecha
+			,null as  titulo
+			,usuario as  usuario
+			,null as  documento
+			,null as  template
+			,null as  parametros
+			,null as  leido
+			,null as  correoEnviado
+			,null as  correoError
+			,correo as  correo
+			,null as  reporte
+			,null as transaccion
+			,null as estado
+		from propiedad_${llavePropiedad} ( #{documento}, #{modificador}, #{token})
+	</select>
+	
+	<select id="mensajesTransaccion" resultType="MensajeDTO">
+		<include refid="selectMensajeFragment" />
+		where cmsj_estado = 'A' and dmsj_fecha >= NOW() - INTERVAL '30 minutes' and dmsj_correoenviado is null and cmsj_transaccion = #{transaccion}
+	</select>
+	
+<!--// END region script-->
+
+</mapper>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.document_execution.infrastructure.PedidoVentaDineroMapper">
+
+	<sql id="selectPedidoVentaDineroFragment">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from pedidoventadinero_pvdp a
+	</sql>
+
+	<sql id="wherePedidoVentaDineroFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpvd_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpvd_estado = #{estado}
+			</if>
+			<if test="documento!=null">
+				and cpvd_documento = #{documento}
+			</if>
+			<if test="fechaMin!=null">
+				and dpvd_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dpvd_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+	</sql>
+
+	<sql id="paginationPedidoVentaDineroFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePedidoVentaDineroPrimaryKeyFragment">
+		where
+			cpvd_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		<include refid="selectPedidoVentaDineroFragment" />
+		<include refid="wherePedidoVentaDineroFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		<include refid="selectPedidoVentaDineroFragment" />
+		<include refid="wherePedidoVentaDineroFragment" />
+		<include refid="paginationPedidoVentaDineroFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PedidoVentaDineroDTO" resultType="int">
+		select count(*)
+		from pedidoventadinero_pvdp
+		<include refid="wherePedidoVentaDineroFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		insert into pedidoventadinero_pvdp(
+			cpvd_llave
+		<if test="documento!=null">
+			,cpvd_documento
+		</if>
+		<if test="fecha!=null">
+			,dpvd_fecha
+		</if>
+		<if test="valorTotal!=null">
+			,mpvd_valortotal
+		</if>
+		<if test="saldo!=null">
+			,mpvd_saldo
+		</if>
+		<if test="estado!=null">
+			,cpvd_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="valorTotal!=null">
+			,#{valorTotal}
+		</if>
+		<if test="saldo!=null">
+			,#{saldo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		update pedidoventadinero_pvdp
+			set
+				cpvd_documento = #{documento},
+				dpvd_fecha = #{fecha},
+				mpvd_valortotal = #{valorTotal},
+				mpvd_saldo = #{saldo},
+				cpvd_estado =#{estado}
+		<include refid="wherePedidoVentaDineroPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePedidoVentaDineroFragment">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from pedidoventadinero_pvdp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaDineroDTO">
+		<include refid="selectSimplePedidoVentaDineroFragment" />
+		<include refid="wherePedidoVentaDineroFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaDineroDTO">
+		<include refid="selectSimplePedidoVentaDineroFragment" />
+		<include refid="wherePedidoVentaDineroFragment" />
+		<include refid="paginationPedidoVentaDineroFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+
+	<select id="consultaPorDocumento" resultType="PedidoVentaDineroDTO">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+		where cpvd_estado ='A' and cpvd_documento = #{idCampo}
+	</select>
+	
+	<select id="listar2DocumentoVisible" resultType="PedidoVentaDineroDTO">
+		<if test="documentos!=null">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from pedidoventadinero_pvdp
+		where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
+		</if>
+		<if test="historicos!=null">
+		<if test="documentos!=null">union</if>
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_documento as  documento
+			,dpvd_fecha as  fecha
+			,mpvd_valortotal as  valorTotal
+			,mpvd_saldo as  saldo
+			,cpvd_estado as estado
+		from z_pvd_pedidoventadinero
+			where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>)
+		</if>
+	</select>
+	
+	<select id="insertarHistorico" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
+		insert into z_pvd_pedidoventadinero(
+			cpvd_llave
+		<if test="documento!=null">
+			,cpvd_documento
+		</if>
+		<if test="fecha!=null">
+			,dpvd_fecha
+		</if>
+		<if test="valorTotal!=null">
+			,mpvd_valortotal
+		</if>
+		<if test="saldo!=null">
+			,mpvd_saldo
+		</if>
+		<if test="estado!=null">
+			,cpvd_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="valorTotal!=null">
+			,#{valorTotal}
+		</if>
+		<if test="saldo!=null">
+			,#{saldo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+	
+	<select id="inactivarHistorico" resultType="PedidoVentaCaracteristicaDTO">
+		update <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+			set	cpvd_estado = 'I'
+		where cpvd_llave = #{idCampo}
+	</select>
+<!--// END region script-->
+
+</mapper>

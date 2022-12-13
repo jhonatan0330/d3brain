@@ -12,23 +12,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.softure.authentication.application.OrganizacionSvc;
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioOrganizacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
+import com.softure.authentication.domain.OrganizacionDTO;
+import com.softure.authentication.domain.UsuarioAutenticacionDTO;
+import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
+import com.softure.authentication.domain.UsuarioOrganizacionDTO;
+import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.document_execution.application.CallDocumentListWithFilters;
+import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.HttpUtils;
-import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.domain.dto.OrganizacionDTO;
-import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionDTO;
-import com.softure.logisticpymes.domain.dto.UsuarioOrganizacionDTO;
-import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.domain.filter.DocumentoPlantillaFilterDTO;
-import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.domain.filter.UsuarioAutenticacionFilterDTO;
-import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
-import com.softure.logisticpymes.services.OrganizacionSvc;
-import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
-import com.softure.logisticpymes.services.UsuarioOrganizacionSvc;
-import com.softure.logisticpymes.services.UsuarioSesionSvc;
-import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
+import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

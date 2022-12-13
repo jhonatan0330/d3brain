@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.inventory.infrastructure.CategoriaProductoMapper">
+
+	<sql id="selectCategoriaProductoFragment">
+		select
+			ccpr_llave as  llaveTabla
+			,ccpr_nombre as  nombre
+			,ccpr_imagen as  imagen
+			,mcpr_cantidadmaxima as  cantidadMaxima
+			,ccpr_nodosuperior as  nodoSuperior
+			,bcpr_inventarios as  inventarios
+			,bcpr_camposadicionales as  camposAdicionales
+			,bcpr_composicion as  composicion
+			,ncpr_promocionbase as  promocionBase
+			,ccpr_estado as estado
+		from categoriaproducto_cprp a
+	</sql>
+
+	<sql id="whereCategoriaProductoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccpr_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccpr_estado = #{estado}
+			</if>
+			<if test="nombre!=null">
+				and ccpr_nombre = #{nombre}
+			</if>
+			<if test="nodoSuperior!=null">
+				and ccpr_nodosuperior = #{nodoSuperior}
+			</if>
+			<if test="inventariosFilter!=null">
+				and bcpr_inventarios = #{inventariosFilter}
+			</if>
+			<if test="camposAdicionalesFilter!=null">
+				and bcpr_camposadicionales = #{camposAdicionalesFilter}
+			</if>
+			<if test="composicionFilter!=null">
+				and bcpr_composicion = #{composicionFilter}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(ccpr_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationCategoriaProductoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCategoriaProductoPrimaryKeyFragment">
+		where
+			ccpr_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CategoriaProductoDTO" resultType="CategoriaProductoDTO">
+		<include refid="selectCategoriaProductoFragment" />
+		<include refid="whereCategoriaProductoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CategoriaProductoDTO" resultType="CategoriaProductoDTO">
+		<include refid="selectCategoriaProductoFragment" />
+		<include refid="whereCategoriaProductoFragment" />
+		order by ccpr_nombre 
+		<include refid="paginationCategoriaProductoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CategoriaProductoDTO" resultType="int">
+		select count(*)
+		from categoriaproducto_cprp
+		<include refid="whereCategoriaProductoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CategoriaProductoDTO" resultType="CategoriaProductoDTO">
+		insert into categoriaproducto_cprp(
+			ccpr_llave
+		<if test="nombre!=null">
+			,ccpr_nombre
+		</if>
+		<if test="imagen!=null">
+			,ccpr_imagen
+		</if>
+		<if test="cantidadMaxima!=null">
+			,mcpr_cantidadmaxima
+		</if>
+		<if test="nodoSuperior!=null">
+			,ccpr_nodosuperior
+		</if>
+		<if test="inventarios!=null">
+			,bcpr_inventarios
+		</if>
+		<if test="camposAdicionales!=null">
+			,bcpr_camposadicionales
+		</if>
+		<if test="composicion!=null">
+			,bcpr_composicion
+		</if>
+		<if test="promocionBase!=null">
+			,ncpr_promocionbase
+		</if>
+		<if test="estado!=null">
+			,ccpr_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="cantidadMaxima!=null">
+			,#{cantidadMaxima}
+		</if>
+		<if test="nodoSuperior!=null">
+			,#{nodoSuperior}
+		</if>
+		<if test="inventarios!=null">
+			,#{inventarios}
+		</if>
+		<if test="camposAdicionales!=null">
+			,#{camposAdicionales}
+		</if>
+		<if test="composicion!=null">
+			,#{composicion}
+		</if>
+		<if test="promocionBase!=null">
+			,#{promocionBase}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CategoriaProductoDTO" resultType="CategoriaProductoDTO">
+		update categoriaproducto_cprp
+			set
+				ccpr_nombre = #{nombre},
+				ccpr_imagen = #{imagen},
+				mcpr_cantidadmaxima = #{cantidadMaxima},
+				ccpr_nodosuperior = #{nodoSuperior},
+				bcpr_inventarios = #{inventarios},
+				bcpr_camposadicionales = #{camposAdicionales},
+				bcpr_composicion = #{composicion},
+				ncpr_promocionbase = #{promocionBase},
+				ccpr_estado =#{estado}
+		<include refid="whereCategoriaProductoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleCategoriaProductoFragment">
+		select
+			ccpr_llave as  llaveTabla
+			,ccpr_nombre as  nombre
+			,ccpr_imagen as  imagen
+			,mcpr_cantidadmaxima as  cantidadMaxima
+			,ccpr_nodosuperior as  nodoSuperior
+			,bcpr_inventarios as  inventarios
+			,bcpr_camposadicionales as  camposAdicionales
+			,bcpr_composicion as  composicion
+			,ncpr_promocionbase as  promocionBase
+			,ccpr_estado as estado
+		from categoriaproducto_cprp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="CategoriaProductoDTO">
+		<include refid="selectSimpleCategoriaProductoFragment" />
+		<include refid="whereCategoriaProductoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="CategoriaProductoDTO">
+		<include refid="selectSimpleCategoriaProductoFragment" />
+		<include refid="whereCategoriaProductoFragment" />
+		order by ccpr_nombre 
+		<include refid="paginationCategoriaProductoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="ingresarInventarioFaltanteBodega" >
+		INSERT INTO productoinventario_pinp(cpin_llave, cpin_producto, cpin_bodega, mpin_cantidadactual,  mpin_cantidadminima, mpin_cantidadmaxima, dpin_fechainicial)
+		select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''), cpro_llave, cbod_llave, 0, 0, mcpr_cantidadmaxima, now()
+			from categoriaproducto_cprp, producto_prop, bodega_bodp 
+		where 
+			cpro_categoria = ccpr_llave 
+			and mcpr_cantidadmaxima != 0
+			and ccpr_estado = 'A' 
+			and cbod_estado = 'A'
+			and (select cpin_llave from productoinventario_pinp where cpin_bodega  = cbod_llave and cpin_producto = cpro_llave) is null;
+	</select >
+<!--// END region script-->
+
+</mapper>

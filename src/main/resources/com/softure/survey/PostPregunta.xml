@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.survey.infrastructure.PostPreguntaMapper">
+
+	<sql id="selectPostPreguntaFragment">
+		select
+			cppr_llave as  llaveTabla
+			,cppr_campo as  campo
+			,cppr_tipo as  tipo
+			,(select count(*) from postrespuesta_prsp, postcalificacion_pclp where cpcl_respuesta = cprs_llave and cprs_pregunta = cppr_llave) as  calificaciones
+			,dppr_fecha as  fecha
+			,cppr_autor as  autor
+			,(select cusr_imagen from usuario_usrp where cusr_llave = cppr_autor) as  autorImagen
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppr_autor) as  autorNombre
+			,cppr_pregunta as  pregunta
+			,cppr_estado as estado
+		from postpregunta_pprp a
+	</sql>
+
+	<sql id="wherePostPreguntaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cppr_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cppr_estado = #{estado}
+			</if>
+			<if test="campo!=null">
+				and cppr_campo = #{campo}
+			</if>
+			<if test="tipo!=null">
+				and cppr_tipo = #{tipo}
+			</if>
+			<if test="fechaMin!=null">
+				and dppr_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dppr_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="autor!=null">
+				and cppr_autor = #{autor}
+			</if>
+	</sql>
+
+	<sql id="paginationPostPreguntaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePostPreguntaPrimaryKeyFragment">
+		where
+			cppr_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
+		<include refid="selectPostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
+		<include refid="selectPostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+		order by calificaciones 
+		<include refid="paginationPostPreguntaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PostPreguntaDTO" resultType="int">
+		select count(*)
+		from postpregunta_pprp
+		<include refid="wherePostPreguntaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
+		insert into postpregunta_pprp(
+			cppr_llave
+		<if test="campo!=null">
+			,cppr_campo
+		</if>
+		<if test="tipo!=null">
+			,cppr_tipo
+		</if>
+		<if test="fecha!=null">
+			,dppr_fecha
+		</if>
+		<if test="autor!=null">
+			,cppr_autor
+		</if>
+		<if test="pregunta!=null">
+			,cppr_pregunta
+		</if>
+		<if test="estado!=null">
+			,cppr_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="campo!=null">
+			,#{campo}
+		</if>
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="autor!=null">
+			,#{autor}
+		</if>
+		<if test="pregunta!=null">
+			,#{pregunta}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
+		update postpregunta_pprp
+			set
+				cppr_campo = #{campo},
+				cppr_tipo = #{tipo},
+				dppr_fecha = #{fecha},
+				cppr_autor = #{autor},
+				cppr_pregunta = #{pregunta},
+				cppr_estado =#{estado}
+		<include refid="wherePostPreguntaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePostPreguntaFragment">
+		select
+			cppr_llave as  llaveTabla
+			,cppr_campo as  campo
+			,cppr_tipo as  tipo
+			,dppr_fecha as  fecha
+			,cppr_autor as  autor
+			,cppr_pregunta as  pregunta
+			,cppr_estado as estado
+		from postpregunta_pprp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PostPreguntaDTO">
+		<include refid="selectSimplePostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PostPreguntaDTO">
+		<include refid="selectSimplePostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+		order by calificaciones 
+		<include refid="paginationPostPreguntaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="listarEnOrden" resultType="PostPreguntaDTO">
+		<include refid="selectPostPreguntaFragment" />
+		<include refid="wherePostPreguntaFragment" />
+		order by calificaciones desc 
+		<include refid="paginationPostPreguntaFragment" />
+	</select>
+	
+	<select id="listarPreguntasSinRespuesta" parameterType="PostPreguntaDTO" resultType="PostPreguntaDTO">
+		<include refid="selectPostPreguntaFragment" />
+		where cppr_llave not in (select cprs_pregunta from postrespuesta_prsp where cprs_estado = 'A')
+		order by dppr_fecha desc
+		<include refid="paginationPostPreguntaFragment" />
+	</select>
+<!--// END region script-->
+
+</mapper>

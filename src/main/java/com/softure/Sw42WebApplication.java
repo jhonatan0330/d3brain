@@ -43,21 +43,21 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.services.MensajeSvc;
-import com.softure.logisticpymes.services.ProcesoTransicionAutomaticaSvc;
-import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
-import com.softure.logisticpymes.services.WebServiceEjecucionSvc;
-import com.softure.logisticpymes.servlet.DownloaderServlet;
-import com.softure.logisticpymes.servlet.ReporteServlet;
-import com.softure.logisticpymes.servlet.UploaderServlet;
+import com.softure.mail.application.MensajeSvc;
+import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
+import com.softure.report.infrastructure.ReporteServlet;
+import com.softure.upload.infrastructure.DownloaderServlet;
+import com.softure.upload.infrastructure.UploaderServlet;
+import com.softure.webservice.application.WebServiceEjecucionSvc;
 
 
 @SpringBootApplication
 @EnableTransactionManagement
 @EnableScheduling
-@MapperScan(basePackages = "com.softure.*.infrastructure.mybatis.mapper")
+@MapperScan(basePackages = "com.softure.*.infrastructure")
 public class Sw42WebApplication  extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	@Autowired private Environment env;
@@ -196,8 +196,8 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 		factoryBean.setDataSource(dataSource);// Specify the data source (this must exist, otherwise an error will occur)
 		// The next two sentences are for *.xml files only, if the XML file is not needed for the entire persistence layer operation (only annotations will do), they are not added
-		factoryBean.setTypeAliasesPackage("com.softure.*.domain.dto");//Specify base package
-		factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/com/softure/*/infrastructure/mybatis/xml/*.xml"));//
+		factoryBean.setTypeAliasesPackage("com.softure.*.domain");//Specify base package
+		factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/com/softure/*/*.xml"));//
 		return factoryBean.getObject();
 	}
 

@@ -13,27 +13,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.domain.UsuarioAutenticacionDTO;
+import com.softure.document_execution.application.CallDocumentCRUD;
+import com.softure.document_execution.application.CallDocumentListWithFilters;
+import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.application.field.CampoAdaptador;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.document_transition.application.PedidoVentaAjusteSvc;
+import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
 import com.softure.java.dto.exception.ApiErrorResponse;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.domain.dto.ActividadDTO;
-import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.domain.dto.PedidoVentaAjusteDTO;
-import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.domain.dto.UsuarioAutenticacionDTO;
-import com.softure.logisticpymes.domain.dto.UsuarioDTO;
-import com.softure.logisticpymes.domain.filter.PedidoVentaCaracteristicaFilterDTO;
-import com.softure.logisticpymes.domain.filter.PedidoVentaFilterDTO;
-import com.softure.logisticpymes.domain.filter.UsuarioFilterDTO;
-import com.softure.logisticpymes.services.ActividadSvc;
-import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
-import com.softure.logisticpymes.services.PedidoVentaAjusteSvc;
-import com.softure.logisticpymes.services.PedidoVentaSvc;
-import com.softure.logisticpymes.services.UploadSvc;
-import com.softure.logisticpymes.services.UsuarioAutenticacionSvc;
-import com.softure.logisticpymes.services.UsuarioSvc;
-import com.softure.logisticpymes.services.adapter.CampoAdaptador;
-import com.softure.logisticpymes.services.refactor.CallDocumentListWithFilters;
-import com.softure.logisticpymes.services.refactor.CallDocumentCRUD;
+import com.softure.logisticpymes.application.UsuarioSvc;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+import com.softure.logisticpymes.domain.UsuarioFilterDTO;
+import com.softure.notification.application.ActividadSvc;
+import com.softure.notification.domain.ActividadDTO;
+import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.upload.application.UploadSvc;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

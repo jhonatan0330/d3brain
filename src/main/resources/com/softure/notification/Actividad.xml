@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.notification.infrastructure.ActividadMapper">
+
+	<sql id="selectActividadFragment">
+		select
+			cact_llave as  llaveTabla
+			,cact_responsable as  responsable
+			,(select cusr_identificacion from usuario_usrp where cusr_llave=cact_responsable) as  responsableIdentificacion
+			,(select cusr_nombre from usuario_usrp where cusr_llave=cact_responsable) as  responsableNombre
+			,cact_documento as  documento
+			,(select cusr_imagen from usuario_usrp where cusr_llave=cact_responsable) as  responsableFoto
+			,cact_comentario as  comentario
+			,dact_fechaarrancar as  fechaArrancar
+			,dact_fecharegistro as  fechaRegistro
+			,cact_usuarioregistro as  usuarioRegistro
+			,dact_fechainactivo as  fechaInactivo
+			,dact_fechaterminar as  fechaTerminar
+			,dact_fechalimite as  fechaLimite
+			,cact_usuarioinactivo as  usuarioInactivo
+			,nact_duracion as  duracion
+			,cact_actividadprevia as  actividadPrevia
+			,cact_actividadsiguiente as  actividadSiguiente
+			,dact_fechaleido as  fechaLeido
+			,cact_estado as estado
+		from actividad_actp a
+	</sql>
+
+	<sql id="whereActividadFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cact_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cact_estado = #{estado}
+			</if>
+			<if test="responsable!=null">
+				and cact_responsable = #{responsable}
+			</if>
+			<if test="documento!=null">
+				and cact_documento = #{documento}
+			</if>
+			<if test="fechaArrancarMin!=null">
+				and dact_fechaarrancar >= #{fechaArrancarMin}
+			</if>
+			<if test="fechaArrancarMax!=null">
+				and dact_fechaarrancar <![CDATA[ < ]]>  #{fechaArrancarMax}
+			</if>
+			<if test="fechaRegistroMin!=null">
+				and dact_fecharegistro >= #{fechaRegistroMin}
+			</if>
+			<if test="fechaRegistroMax!=null">
+				and dact_fecharegistro <![CDATA[ < ]]>  #{fechaRegistroMax}
+			</if>
+			<if test="usuarioRegistro!=null">
+				and cact_usuarioregistro = #{usuarioRegistro}
+			</if>
+			<if test="fechaInactivoMin!=null">
+				and dact_fechainactivo >= #{fechaInactivoMin}
+			</if>
+			<if test="fechaInactivoMax!=null">
+				and dact_fechainactivo <![CDATA[ < ]]>  #{fechaInactivoMax}
+			</if>
+			<if test="fechaTerminarMin!=null">
+				and dact_fechaterminar >= #{fechaTerminarMin}
+			</if>
+			<if test="fechaTerminarMax!=null">
+				and dact_fechaterminar <![CDATA[ < ]]>  #{fechaTerminarMax}
+			</if>
+			<if test="fechaLimiteMin!=null">
+				and dact_fechalimite >= #{fechaLimiteMin}
+			</if>
+			<if test="fechaLimiteMax!=null">
+				and dact_fechalimite <![CDATA[ < ]]>  #{fechaLimiteMax}
+			</if>
+			<if test="usuarioInactivo!=null">
+				and cact_usuarioinactivo = #{usuarioInactivo}
+			</if>
+			<if test="actividadPrevia!=null">
+				and cact_actividadprevia = #{actividadPrevia}
+			</if>
+			<if test="actividadSiguiente!=null">
+				and cact_actividadsiguiente = #{actividadSiguiente}
+			</if>
+			<if test="fechaLeidoMin!=null">
+				and dact_fechaleido >= #{fechaLeidoMin}
+			</if>
+			<if test="fechaLeidoMax!=null">
+				and dact_fechaleido <![CDATA[ < ]]>  #{fechaLeidoMax}
+			</if>
+	</sql>
+
+	<sql id="paginationActividadFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereActividadPrimaryKeyFragment">
+		where
+			cact_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ActividadDTO" resultType="ActividadDTO">
+		<include refid="selectActividadFragment" />
+		<include refid="whereActividadFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ActividadDTO" resultType="ActividadDTO">
+		<include refid="selectActividadFragment" />
+		<include refid="whereActividadFragment" />
+		order by cact_responsable 
+		, dact_fechaarrancar 
+		, dact_fecharegistro 
+		<include refid="paginationActividadFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ActividadDTO" resultType="int">
+		select count(*)
+		from actividad_actp
+		<include refid="whereActividadFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ActividadDTO" resultType="ActividadDTO">
+		insert into actividad_actp(
+			cact_llave
+		<if test="responsable!=null">
+			,cact_responsable
+		</if>
+		<if test="documento!=null">
+			,cact_documento
+		</if>
+		<if test="comentario!=null">
+			,cact_comentario
+		</if>
+		<if test="fechaArrancar!=null">
+			,dact_fechaarrancar
+		</if>
+		<if test="fechaRegistro!=null">
+			,dact_fecharegistro
+		</if>
+		<if test="usuarioRegistro!=null">
+			,cact_usuarioregistro
+		</if>
+		<if test="fechaInactivo!=null">
+			,dact_fechainactivo
+		</if>
+		<if test="fechaTerminar!=null">
+			,dact_fechaterminar
+		</if>
+		<if test="fechaLimite!=null">
+			,dact_fechalimite
+		</if>
+		<if test="usuarioInactivo!=null">
+			,cact_usuarioinactivo
+		</if>
+		<if test="duracion!=null">
+			,nact_duracion
+		</if>
+		<if test="actividadPrevia!=null">
+			,cact_actividadprevia
+		</if>
+		<if test="actividadSiguiente!=null">
+			,cact_actividadsiguiente
+		</if>
+		<if test="fechaLeido!=null">
+			,dact_fechaleido
+		</if>
+		<if test="estado!=null">
+			,cact_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="responsable!=null">
+			,#{responsable}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="comentario!=null">
+			,#{comentario}
+		</if>
+		<if test="fechaArrancar!=null">
+			,#{fechaArrancar}
+		</if>
+		<if test="fechaRegistro!=null">
+			,#{fechaRegistro}
+		</if>
+		<if test="usuarioRegistro!=null">
+			,#{usuarioRegistro}
+		</if>
+		<if test="fechaInactivo!=null">
+			,#{fechaInactivo}
+		</if>
+		<if test="fechaTerminar!=null">
+			,#{fechaTerminar}
+		</if>
+		<if test="fechaLimite!=null">
+			,#{fechaLimite}
+		</if>
+		<if test="usuarioInactivo!=null">
+			,#{usuarioInactivo}
+		</if>
+		<if test="duracion!=null">
+			,#{duracion}
+		</if>
+		<if test="actividadPrevia!=null">
+			,#{actividadPrevia}
+		</if>
+		<if test="actividadSiguiente!=null">
+			,#{actividadSiguiente}
+		</if>
+		<if test="fechaLeido!=null">
+			,#{fechaLeido}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ActividadDTO" resultType="ActividadDTO">
+		update actividad_actp
+			set
+				cact_responsable = #{responsable},
+				cact_documento = #{documento},
+				cact_comentario = #{comentario},
+				dact_fechaarrancar = #{fechaArrancar},
+				dact_fecharegistro = #{fechaRegistro},
+				cact_usuarioregistro = #{usuarioRegistro},
+				dact_fechainactivo = #{fechaInactivo},
+				dact_fechaterminar = #{fechaTerminar},
+				dact_fechalimite = #{fechaLimite},
+				cact_usuarioinactivo = #{usuarioInactivo},
+				nact_duracion = #{duracion},
+				cact_actividadprevia = #{actividadPrevia},
+				cact_actividadsiguiente = #{actividadSiguiente},
+				dact_fechaleido = #{fechaLeido},
+				cact_estado =#{estado}
+		<include refid="whereActividadPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleActividadFragment">
+		select
+			cact_llave as  llaveTabla
+			,cact_responsable as  responsable
+			,cact_documento as  documento
+			,cact_comentario as  comentario
+			,dact_fechaarrancar as  fechaArrancar
+			,dact_fecharegistro as  fechaRegistro
+			,cact_usuarioregistro as  usuarioRegistro
+			,dact_fechainactivo as  fechaInactivo
+			,dact_fechaterminar as  fechaTerminar
+			,dact_fechalimite as  fechaLimite
+			,cact_usuarioinactivo as  usuarioInactivo
+			,nact_duracion as  duracion
+			,cact_actividadprevia as  actividadPrevia
+			,cact_actividadsiguiente as  actividadSiguiente
+			,dact_fechaleido as  fechaLeido
+			,cact_estado as estado
+		from actividad_actp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ActividadDTO">
+		<include refid="selectSimpleActividadFragment" />
+		<include refid="whereActividadFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ActividadDTO">
+		<include refid="selectSimpleActividadFragment" />
+		<include refid="whereActividadFragment" />
+		order by cact_responsable 
+		, dact_fechaarrancar 
+		, dact_fecharegistro 
+		<include refid="paginationActividadFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service;
 
 import com.softure.api.domain.ApiVO;
 import com.softure.api.domain.FieldVO;
+import com.softure.document_execution.application.CallDocumentCRUD;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.domain.dto.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.logisticpymes.domain.dto.DocumentoPlantillaDTO;
-import com.softure.logisticpymes.domain.dto.PedidoVentaCaracteristicaDTO;
-import com.softure.logisticpymes.domain.dto.PedidoVentaDTO;
-import com.softure.logisticpymes.services.DocumentoPlantillaSvc;
-import com.softure.logisticpymes.services.refactor.CallDocumentCRUD;
+import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 
 @Service
 public class ApiSendService implements IApiSendService {

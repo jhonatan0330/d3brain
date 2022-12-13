@@ -6,14 +6,14 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.authentication.domain.UsuarioSesionFilterDTO;
+import com.softure.authentication.infrastructure.UsuarioSesionMapper;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.domain.IDataMapper;
 import com.softure.java.domain.IDataObject;
 import com.softure.java.domain.IDataObjectFilter;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.domain.dto.UsuarioSesionDTO;
-import com.softure.logisticpymes.domain.filter.UsuarioSesionFilterDTO;
-import com.softure.logisticpymes.infrastructure.mybatis.mapper.UsuarioSesionMapper;
 
 public class ServiceGeneric<T extends IDataObject, TFilter extends IDataObjectFilter> {
 	

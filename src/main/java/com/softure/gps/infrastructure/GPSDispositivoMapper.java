@@ -1,0 +1,13 @@
+package com.softure.gps.infrastructure;
+
+
+import com.softure.gps.domain.GPSDispositivoDTO;
+import com.softure.gps.domain.GPSDispositivoFilterDTO;
+import com.softure.java.domain.IBasicMapper;
+
+public interface GPSDispositivoMapper extends IBasicMapper<GPSDispositivoDTO, GPSDispositivoFilterDTO>{
+	
+
+// BEGIN region aditionalMethods  
+// END region aditionalMethods
+}

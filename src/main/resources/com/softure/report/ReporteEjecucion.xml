@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.report.infrastructure.ReporteEjecucionMapper">
+
+	<sql id="selectReporteEjecucionFragment">
+		select
+			crej_llave as  llaveTabla
+			,crej_reporte as  reporte
+			,crej_documento as  documento
+			,drej_fechainicio as  fechaInicio
+			,drej_fechafin as  fechaFin
+			,crej_error as  error
+			,crej_usuario as  usuario
+			,crej_estado as estado
+		from reporteejecucion_rejp a
+	</sql>
+
+	<sql id="whereReporteEjecucionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and crej_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and crej_estado = #{estado}
+			</if>
+			<if test="reporte!=null">
+				and crej_reporte = #{reporte}
+			</if>
+			<if test="documento!=null">
+				and crej_documento = #{documento}
+			</if>
+			<if test="fechaInicioMin!=null">
+				and drej_fechainicio >= #{fechaInicioMin}
+			</if>
+			<if test="fechaInicioMax!=null">
+				and drej_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+			</if>
+			<if test="fechaFinMin!=null">
+				and drej_fechafin >= #{fechaFinMin}
+			</if>
+			<if test="fechaFinMax!=null">
+				and drej_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="usuario!=null">
+				and crej_usuario = #{usuario}
+			</if>
+	</sql>
+
+	<sql id="paginationReporteEjecucionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereReporteEjecucionPrimaryKeyFragment">
+		where
+			crej_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
+		<include refid="selectReporteEjecucionFragment" />
+		<include refid="whereReporteEjecucionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
+		<include refid="selectReporteEjecucionFragment" />
+		<include refid="whereReporteEjecucionFragment" />
+		<include refid="paginationReporteEjecucionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ReporteEjecucionDTO" resultType="int">
+		select count(*)
+		from reporteejecucion_rejp
+		<include refid="whereReporteEjecucionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
+		insert into reporteejecucion_rejp(
+			crej_llave
+		<if test="reporte!=null">
+			,crej_reporte
+		</if>
+		<if test="documento!=null">
+			,crej_documento
+		</if>
+		<if test="fechaInicio!=null">
+			,drej_fechainicio
+		</if>
+		<if test="fechaFin!=null">
+			,drej_fechafin
+		</if>
+		<if test="error!=null">
+			,crej_error
+		</if>
+		<if test="usuario!=null">
+			,crej_usuario
+		</if>
+		<if test="estado!=null">
+			,crej_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="reporte!=null">
+			,#{reporte}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
+		</if>
+		<if test="error!=null">
+			,#{error}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
+		update reporteejecucion_rejp
+			set
+				crej_reporte = #{reporte},
+				crej_documento = #{documento},
+				drej_fechainicio = #{fechaInicio},
+				drej_fechafin = #{fechaFin},
+				crej_error = #{error},
+				crej_usuario = #{usuario},
+				crej_estado =#{estado}
+		<include refid="whereReporteEjecucionPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleReporteEjecucionFragment">
+		select
+			crej_llave as  llaveTabla
+			,crej_reporte as  reporte
+			,crej_documento as  documento
+			,drej_fechainicio as  fechaInicio
+			,drej_fechafin as  fechaFin
+			,crej_error as  error
+			,crej_usuario as  usuario
+			,crej_estado as estado
+		from reporteejecucion_rejp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ReporteEjecucionDTO">
+		<include refid="selectSimpleReporteEjecucionFragment" />
+		<include refid="whereReporteEjecucionFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ReporteEjecucionDTO">
+		<include refid="selectSimpleReporteEjecucionFragment" />
+		<include refid="whereReporteEjecucionFragment" />
+		<include refid="paginationReporteEjecucionFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

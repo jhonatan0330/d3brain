@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.process_form.infrastructure.DocumentoPlantillaCaracteristicaMapper">
+
+	<sql id="selectDocumentoPlantillaCaracteristicaFragment">
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_objetivo as  objetivo
+			,cdpc_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cdpc_plantilla) as  plantillaNombre
+			,cdpc_formato as  formato
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  orden
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
+	</sql>
+
+	<sql id="whereDocumentoPlantillaCaracteristicaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cdpc_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cdpc_estado = #{estado}
+			</if>
+			<if test="plantilla!=null">
+				and cdpc_plantilla = #{plantilla}
+			</if>
+			<if test="formato!=null">
+				and cdpc_formato = #{formato}
+			</if>
+			<if test="nombre!=null">
+				and cdpc_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cdpc_codigo = #{codigo}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cdpc_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationDocumentoPlantillaCaracteristicaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment">
+		where
+			cdpc_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+		order by ndpc_orden 
+		<include refid="paginationDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
+		select count(*)
+		from documentoplantillacaracteristica_dpcp
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		insert into documentoplantillacaracteristica_dpcp(
+			cdpc_llave
+		<if test="objetivo!=null">
+			,cdpc_objetivo
+		</if>
+		<if test="plantilla!=null">
+			,cdpc_plantilla
+		</if>
+		<if test="formato!=null">
+			,cdpc_formato
+		</if>
+		<if test="nombre!=null">
+			,cdpc_nombre
+		</if>
+		<if test="codigo!=null">
+			,cdpc_codigo
+		</if>
+		<if test="orden!=null">
+			,ndpc_orden
+		</if>
+		<if test="imagen!=null">
+			,cdpc_imagen
+		</if>
+		<if test="estado!=null">
+			,cdpc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="objetivo!=null">
+			,#{objetivo}
+		</if>
+		<if test="plantilla!=null">
+			,#{plantilla}
+		</if>
+		<if test="formato!=null">
+			,#{formato}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="orden!=null">
+			,#{orden}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		update documentoplantillacaracteristica_dpcp
+			set
+				cdpc_objetivo = #{objetivo},
+				cdpc_plantilla = #{plantilla},
+				cdpc_formato = #{formato},
+				cdpc_nombre = #{nombre},
+				cdpc_codigo = #{codigo},
+				ndpc_orden = #{orden},
+				cdpc_imagen = #{imagen},
+				cdpc_estado =#{estado}
+		<include refid="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleDocumentoPlantillaCaracteristicaFragment">
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_objetivo as  objetivo
+			,cdpc_plantilla as  plantilla
+			,cdpc_formato as  formato
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  orden
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+		order by ndpc_orden 
+		<include refid="paginationDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<update id="actualizarFiltros" parameterType="java.lang.String" >
+	update pedidoventa_pdvp set cpdv_textofiltro = (SELECT array_to_string(ARRAY( SELECT upper(pvc.cpvc_valortext::text)
+		FROM pedidoventacaracteristica_pvcp pvc, documentoplantillacaracteristica_dpcp dpc_a, propiedad_ppdp ppd
+		WHERE pvc.cpvc_campo = dpc_a.cdpc_llave AND pvc.cpvc_documento = cpdv_llave AND pvc.cpvc_estado = 'A' 
+		and dpc_a.cdpc_estado = 'A' and dpc_a.cdpc_llave = ppd.cppd_campo and ppd.cppd_propiedadvalor = 'PROP_94' and ppd.cppd_estado = 'A'), ',', ''))
+	where cpdv_plantilla = (select cdpc_plantilla from documentoplantillacaracteristica_dpcp  where cdpc_llave = #{llaveTabla})
+	</update >
+<!--// END region script-->
+
+</mapper>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.authorization.infrastructure.ModuloContratadoMapper">
+
+	<sql id="selectModuloContratadoFragment">
+		select
+			cmdc_llave as  llaveTabla
+			,cmdc_modulo as  modulo
+			,cmdc_nombre as  nombre
+			,cmdc_identificador as  identificador
+			,cmdc_imagen as  imagen
+			,(select cmod_url from modulo_modp where cmod_llave = cmdc_modulo) as  moduloUrl
+			,(select cmod_llave from modulo_modp where cmod_llave = cmdc_modulo) as  moduloLlave
+			,cmdc_estado as estado
+		from modulocontratado_mdcp a
+	</sql>
+
+	<sql id="whereModuloContratadoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cmdc_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cmdc_estado = #{estado}
+			</if>
+			<if test="modulo!=null">
+				and cmdc_modulo = #{modulo}
+			</if>
+			<if test="nombre!=null">
+				and cmdc_nombre = #{nombre}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cmdc_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationModuloContratadoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereModuloContratadoPrimaryKeyFragment">
+		where
+			cmdc_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ModuloContratadoDTO" resultType="ModuloContratadoDTO">
+		<include refid="selectModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ModuloContratadoDTO" resultType="ModuloContratadoDTO">
+		<include refid="selectModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+		order by cmdc_nombre 
+		<include refid="paginationModuloContratadoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ModuloContratadoDTO" resultType="int">
+		select count(*)
+		from modulocontratado_mdcp
+		<include refid="whereModuloContratadoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ModuloContratadoDTO" resultType="ModuloContratadoDTO">
+		insert into modulocontratado_mdcp(
+			cmdc_llave
+		<if test="modulo!=null">
+			,cmdc_modulo
+		</if>
+		<if test="nombre!=null">
+			,cmdc_nombre
+		</if>
+		<if test="identificador!=null">
+			,cmdc_identificador
+		</if>
+		<if test="imagen!=null">
+			,cmdc_imagen
+		</if>
+		<if test="estado!=null">
+			,cmdc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="modulo!=null">
+			,#{modulo}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="identificador!=null">
+			,#{identificador}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ModuloContratadoDTO" resultType="ModuloContratadoDTO">
+		update modulocontratado_mdcp
+			set
+				cmdc_modulo = #{modulo},
+				cmdc_nombre = #{nombre},
+				cmdc_identificador = #{identificador},
+				cmdc_imagen = #{imagen},
+				cmdc_estado =#{estado}
+		<include refid="whereModuloContratadoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleModuloContratadoFragment">
+		select
+			cmdc_llave as  llaveTabla
+			,cmdc_modulo as  modulo
+			,cmdc_nombre as  nombre
+			,cmdc_identificador as  identificador
+			,cmdc_imagen as  imagen
+			,cmdc_estado as estado
+		from modulocontratado_mdcp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ModuloContratadoDTO">
+		<include refid="selectSimpleModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ModuloContratadoDTO">
+		<include refid="selectSimpleModuloContratadoFragment" />
+		<include refid="whereModuloContratadoFragment" />
+		order by cmdc_nombre 
+		<include refid="paginationModuloContratadoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<select id="modulosUsuario" parameterType="ModuloContratadoDTO" resultType="ModuloContratadoDTO">
+		<include refid="selectModuloContratadoFragment" />
+		where cmdc_estado = 'A' and cmdc_llave in (
+			select cper_modulo from permiso_perp where cper_estado = 'A' and cper_rolacceso in (
+				select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+					select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
+		order by cmdc_nombre
+	</select>
+<!--// END region script-->
+
+</mapper>

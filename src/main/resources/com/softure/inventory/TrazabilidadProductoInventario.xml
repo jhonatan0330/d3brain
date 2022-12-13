@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.inventory.infrastructure.TrazabilidadProductoInventarioMapper">
+
+	<sql id="selectTrazabilidadProductoInventarioFragment">
+		select
+			ctpi_llave as  llaveTabla
+			,dtpi_fecha as  fecha
+			,ctpi_bodega as  bodega
+			,ctpi_producto as  producto
+			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctpi_producto) as  productoNombre
+			,mtpi_cantidadinicial as  cantidadInicial
+			,mtpi_cantidadfinal as  cantidadFinal
+			,mtpi_cantidad as  cantidad
+			,ctpi_deduccionproducto as  deduccionProducto
+			,ctpi_responsable as  responsable
+			,ctpi_estado as estado
+		from trazabilidadproductoinventario_tpip a
+	</sql>
+
+	<sql id="whereTrazabilidadProductoInventarioFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ctpi_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ctpi_estado = #{estado}
+			</if>
+			<if test="fechaMin!=null">
+				and dtpi_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dtpi_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="bodega!=null">
+				and ctpi_bodega = #{bodega}
+			</if>
+			<if test="producto!=null">
+				and ctpi_producto = #{producto}
+			</if>
+			<if test="deduccionProducto!=null">
+				and ctpi_deduccionproducto = #{deduccionProducto}
+			</if>
+			<if test="responsable!=null">
+				and ctpi_responsable = #{responsable}
+			</if>
+	</sql>
+
+	<sql id="paginationTrazabilidadProductoInventarioFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTrazabilidadProductoInventarioPrimaryKeyFragment">
+		where
+			ctpi_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TrazabilidadProductoInventarioDTO" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TrazabilidadProductoInventarioDTO" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+		order by dtpi_fecha desc
+		<include refid="paginationTrazabilidadProductoInventarioFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TrazabilidadProductoInventarioDTO" resultType="int">
+		select count(*)
+		from trazabilidadproductoinventario_tpip
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TrazabilidadProductoInventarioDTO" resultType="TrazabilidadProductoInventarioDTO">
+		insert into trazabilidadproductoinventario_tpip(
+			ctpi_llave
+		<if test="fecha!=null">
+			,dtpi_fecha
+		</if>
+		<if test="bodega!=null">
+			,ctpi_bodega
+		</if>
+		<if test="producto!=null">
+			,ctpi_producto
+		</if>
+		<if test="cantidadInicial!=null">
+			,mtpi_cantidadinicial
+		</if>
+		<if test="cantidadFinal!=null">
+			,mtpi_cantidadfinal
+		</if>
+		<if test="cantidad!=null">
+			,mtpi_cantidad
+		</if>
+		<if test="deduccionProducto!=null">
+			,ctpi_deduccionproducto
+		</if>
+		<if test="responsable!=null">
+			,ctpi_responsable
+		</if>
+		<if test="estado!=null">
+			,ctpi_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="bodega!=null">
+			,#{bodega}
+		</if>
+		<if test="producto!=null">
+			,#{producto}
+		</if>
+		<if test="cantidadInicial!=null">
+			,#{cantidadInicial}
+		</if>
+		<if test="cantidadFinal!=null">
+			,#{cantidadFinal}
+		</if>
+		<if test="cantidad!=null">
+			,#{cantidad}
+		</if>
+		<if test="deduccionProducto!=null">
+			,#{deduccionProducto}
+		</if>
+		<if test="responsable!=null">
+			,#{responsable}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TrazabilidadProductoInventarioDTO" resultType="TrazabilidadProductoInventarioDTO">
+		update trazabilidadproductoinventario_tpip
+			set
+				dtpi_fecha = #{fecha},
+				ctpi_bodega = #{bodega},
+				ctpi_producto = #{producto},
+				mtpi_cantidadinicial = #{cantidadInicial},
+				mtpi_cantidadfinal = #{cantidadFinal},
+				mtpi_cantidad = #{cantidad},
+				ctpi_deduccionproducto = #{deduccionProducto},
+				ctpi_responsable = #{responsable},
+				ctpi_estado =#{estado}
+		<include refid="whereTrazabilidadProductoInventarioPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleTrazabilidadProductoInventarioFragment">
+		select
+			ctpi_llave as  llaveTabla
+			,dtpi_fecha as  fecha
+			,ctpi_bodega as  bodega
+			,ctpi_producto as  producto
+			,mtpi_cantidadinicial as  cantidadInicial
+			,mtpi_cantidadfinal as  cantidadFinal
+			,mtpi_cantidad as  cantidad
+			,ctpi_deduccionproducto as  deduccionProducto
+			,ctpi_responsable as  responsable
+			,ctpi_estado as estado
+		from trazabilidadproductoinventario_tpip a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectSimpleTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TrazabilidadProductoInventarioDTO">
+		<include refid="selectSimpleTrazabilidadProductoInventarioFragment" />
+		<include refid="whereTrazabilidadProductoInventarioFragment" />
+		order by dtpi_fecha desc
+		<include refid="paginationTrazabilidadProductoInventarioFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>
