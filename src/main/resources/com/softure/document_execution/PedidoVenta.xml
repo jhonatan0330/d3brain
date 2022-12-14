@@ -297,8 +297,10 @@
 				or a.cpdv_nombre like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>))
 		</if>
 	</sql>
-	<sql id="selectMainFragment">
-		select
+	
+	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
+		<foreach item="item" collection="camposFiltro" separator=" union " >
+		select distinct
 			a.cpdv_llave as  llaveTabla
 			,a.dpdv_fecharegistro as  fechaRegistro
 			,a.dpdv_fecha as  fecha
@@ -316,11 +318,6 @@
 			,a.cpdv_transaccion as  transaccion
 			,a.cpdv_estado as estado
 		from pedidoventa_pdvp a
-	</sql>
-	
-	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
-		<foreach item="item" collection="camposFiltro" separator=" union " >
-			<include refid="selectMainFragment" />
 			inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
 		 	cross join campo4id(a.cpdv_llave, #{item.valor}, a.npdv_historico) cp_campo
 		 	<if test="relaciones!=null">
