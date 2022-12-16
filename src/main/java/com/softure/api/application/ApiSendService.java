@@ -10,7 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.api.domain.ApiVO;
+import com.softure.api.domain.DocumentVO;
 import com.softure.api.domain.FieldVO;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -22,13 +22,12 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 
 @Service
-public class ApiSendService implements IApiSendService {
+public class ApiSendService {
 
 	@Autowired DocumentoPlantillaSvc plantillaService;
 	@Autowired CallDocumentCRUD saveDocumentService;
 	
-	@Override
-	public IdResponse call(String token, ApiVO item) throws ServerException {
+	public IdResponse call(String token, DocumentVO item) throws ServerException {
 		validateItem(item);
 		// Con el codigo de la plantilla consultar la plantilla completa
 		DocumentoPlantillaDTO template = findTemplate(item.getTemplate(), token); 
@@ -41,7 +40,7 @@ public class ApiSendService implements IApiSendService {
 		return new IdResponse( document.getLlaveTabla());
 	}
 
-	private void validateItem(ApiVO item) throws ServerException {
+	private void validateItem(DocumentVO item) throws ServerException {
 		if(item.getTemplate() == null) throw new ServerException("El codigo de la plantilla es null, recuerda usar el campo template");
 		if(item.getFields() == null) throw new ServerException("El documento no tiene campos, recuerda usar el tag fields");
 		for (FieldVO fieldVO : item.getFields()) {

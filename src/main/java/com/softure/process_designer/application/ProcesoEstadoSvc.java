@@ -121,7 +121,10 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
 			throw new ServerException(e.getMessage(), "Proceso : " + pes.getProcesoNombre() + "  Estado :"+ pes.getNombre());
 		}
-		if(responsable==null) throw new ServerException("Revise porque la funcion de asignacion no trae ningun responsable");
+		if(responsable==null) {
+			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
+			throw new ServerException("Revise porque la funcion de asignacion no trae ningun responsable", "Proceso : " + pes.getProcesoNombre() + "  Estado :"+ pes.getNombre());
+		}
 		return responsable;
 	}
 // END region aditionalMethods

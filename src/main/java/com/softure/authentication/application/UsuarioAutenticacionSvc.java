@@ -41,7 +41,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	
 	// BEGIN region servicesUsuarioAutenticacion
 	
-	@Autowired private UsuarioAutenticacionAutorizacionSvc authService;
+	@Autowired private UsuarioAutenticacionAutorizacionSvc authorizationService;
 	@Autowired private ModuloContratadoSvc modulosService;
 	@Autowired private OrganizacionSvc organizacionService;
 	@Autowired private UsuarioSesionSvc usuarioSesionService;
@@ -110,11 +110,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	public UsuarioAutenticacionDTO cambiarClave(UsuarioAutenticacionDTO dto, String token)throws ServerException{
 		// BEGIN region cambiarClave
 		UsuarioAutenticacionAutorizacionDTO autho = null;
-		if(dto.getLlaveTabla()!=null)
-			autho = authService.validar(dto.getLlaveTabla(), dto.getClaveAnterior(), dto.getClave(),dto.getIp());
-		
 		UsuarioAutenticacionDTO user = null;
-		// Se envia por el administrador
+		// Se envia por el administrador por el momento solo flex
 		if(dto.getClaveAnterior().compareTo("ADMIN$123")==0){
 			if(dto.getLlaveTabla()!=null){
 				user = consultaXId(dto.getLlaveTabla());
@@ -123,6 +120,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new ServerException("No concuerda la clave anterior");
 			}
 		} else {
+			// La validacion de la autorizacion la retiro para que funcione flex
+			if(dto.getLlaveTabla()!=null)
+				autho = authorizationService.validar(dto.getLlaveTabla(), dto.getClaveAnterior(), dto.getClave(),dto.getIp());
 			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
 			if(autho!=null) {
 				filtro.setUsuario(autho.getUsuario());
@@ -254,7 +254,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if(usuario.getCorreo()==null) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No tienes correo registrado para enviarte la nueva clave");
 		if(usuario.getCorreo().compareTo(dto.getUsuarioDTO().getCorreo())!=0) errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {
-			authService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp());	
+			authorizationService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp());	
 		} catch (Exception e) {
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
 		}
