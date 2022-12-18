@@ -3,9 +3,9 @@ package com.softure.api.domain;
 import lombok.Data;
 
 @Data
-public class DocumentWithLoginVO {
-	
-	private DocumentVO document;
+public class FilterWithLoginVO {
+
 	private LoginVO login;
+	private FilterDocumentVO document;
 	
 }

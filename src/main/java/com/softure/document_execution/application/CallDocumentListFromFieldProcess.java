@@ -85,7 +85,12 @@ public class CallDocumentListFromFieldProcess {
 						//entityFilter.setPlantilla(documentoAuxiliar);
 						entityFilter.setCampoOrigen(pBase.getLlaveTabla());
 					}
-					resultados = listDocumentWithFiltersFunction.listarAvanzado(entityFilter);
+					try {
+						resultados = listDocumentWithFiltersFunction.listarAvanzado(entityFilter);	
+					} catch (ServerException e) {
+						throw new ServerException(e.getMessage() + " Campo :" + pBase.getNombre(), e.getOrigen());
+					}
+					
 				}else {
 					resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getCampoDTO(), pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor, pCampo.getSecurityToken());
 				}

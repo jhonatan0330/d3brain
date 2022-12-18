@@ -8,6 +8,8 @@ import com.softure.java.dto.exception.ServerException;
 public class ApiAuthorizeService {
 
 	public void call(String apiKey) throws ServerException {
+		if(apiKey==null || apiKey.isEmpty()) throw new ServerException("Ingresa el codigo de la app asignado");
+		if(apiKey.compareTo("123")!=0) throw new ServerException("Codigo incorrecto");
 		return;
 	}
 	

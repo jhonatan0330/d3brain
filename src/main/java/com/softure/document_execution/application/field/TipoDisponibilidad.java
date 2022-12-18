@@ -135,10 +135,12 @@ public class TipoDisponibilidad {
 	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && (pCampo.getExpedientes()==null || pCampo.getExpedientes().isEmpty())) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
-		if(pCampo.getExpedientes()!=null){
+		String[] locations = null;
+		if(pCampo.getValorText()!=null) locations = pCampo.getValorText().split("-");
+		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null 
+				&& (locations==null || locations.length==0)) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+		if(locations!=null){
 			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.DISPONIBILIDAD_FUNCION_SQL);
-			
 			if(funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getLlaveTabla(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
@@ -147,8 +149,8 @@ public class TipoDisponibilidad {
 						String[] pOcupados = iOcupado.getValorText().split("-");
 						for (String iPuesto : pOcupados) {
 							if(!iPuesto.isEmpty()) {
-								for (PedidoVentaDTO actual : pCampo.getExpedientes()){
-									if(actual.getNombre().compareTo(iPuesto)==0) {
+								for (String actual : locations){
+									if(actual.compareTo(iPuesto)==0) {
 										throw new ServerException("El "+ pCampo.getCampoDTO().getNombre() +" " + iPuesto + " ya se encuentra ocupado");
 									}
 								}
@@ -158,8 +160,8 @@ public class TipoDisponibilidad {
 				}
 			}
 			pCampo.setValorText("");
-			for(PedidoVentaDTO componente : pCampo.getExpedientes()){
-				pCampo.setValorText( pCampo.getValorText() + "-" + componente.getNombre());
+			for(String componente : locations){
+				 if(!componente.isEmpty()) pCampo.setValorText( pCampo.getValorText() + "-" + componente);
 			}
 		}else{
 			pCampo.setValorText(null);

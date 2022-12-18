@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.api.application.ApiAuthorizeService;
 import com.softure.api.application.ApiGetService;
+import com.softure.api.application.ApiGetWithLoginService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
 import com.softure.api.application.ApiSendWithLoginService;
 import com.softure.api.domain.DocumentVO;
 import com.softure.api.domain.DocumentWithLoginVO;
 import com.softure.api.domain.FilterDocumentVO;
+import com.softure.api.domain.FilterWithLoginVO;
 import com.softure.api.domain.LoginVO;
 import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
@@ -27,6 +29,7 @@ public class ApiRest {
 
 	@Autowired ApiAuthorizeService apiAuthorizeService;
 	@Autowired ApiGetService apiGetService;
+	@Autowired ApiGetWithLoginService apiGetWithLoginService;
 	@Autowired ApiLoginService apiLoginService;
 	@Autowired ApiSendService apiSendService;
 	@Autowired ApiSendWithLoginService apiSendWithLoginService;
@@ -39,6 +42,14 @@ public class ApiRest {
 		return apiGetService.call(token, filter);
 	}
 	
+	@PostMapping("/getWithLogin")
+	public List<DocumentVO> getFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody FilterWithLoginVO filter
+		) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return apiGetWithLoginService.call(filter);
+	}
+	
 	@PostMapping("/login")
 	public IdResponse login(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody LoginVO login
@@ -48,7 +59,7 @@ public class ApiRest {
 	}
 	
 	@PostMapping("/send")
-	public IdResponse sendApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
+	public IdResponse send(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentVO item
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey,token);
@@ -56,7 +67,7 @@ public class ApiRest {
 	}
 	
 	@PostMapping("/sendWithLogin")
-	public IdResponse sendWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+	public IdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentWithLoginVO item
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey);

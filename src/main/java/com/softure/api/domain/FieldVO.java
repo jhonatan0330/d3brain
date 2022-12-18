@@ -7,5 +7,6 @@ public class FieldVO {
 	
 	private String field;
 	private String value;
+	private String id;
 	
 }

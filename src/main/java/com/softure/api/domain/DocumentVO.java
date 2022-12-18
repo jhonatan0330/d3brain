@@ -8,5 +8,9 @@ import lombok.Data;
 public class DocumentVO {
 
 	private String template;
+	private String id;
+	private String active;
+	private String stateId;
+	private String stateName;
 	private List<FieldVO> fields;
 }
