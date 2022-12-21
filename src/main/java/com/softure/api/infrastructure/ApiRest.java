@@ -3,6 +3,7 @@ package com.softure.api.infrastructure;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -72,6 +73,13 @@ public class ApiRest {
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey);
 		return apiSendWithLoginService.call( item );
+	}
+	
+	@GetMapping("/ok")
+	public String getFromApi(@RequestHeader(name = "x-api-key") String apiKey
+		) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return "OK";
 	}
 
 }

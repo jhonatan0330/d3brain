@@ -26,6 +26,7 @@ public class ApiGetService {
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setPlantilla(filter.getTemplate());
 		filterDTO.setSecurityToken(token);
+		filterDTO.setNombre(filter.getCode());
 		filterDTO.setEstado(filter.getActive());
 		filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
 		filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
@@ -43,6 +44,7 @@ public class ApiGetService {
 			DocumentVO document = new DocumentVO();
 			document.setTemplate(pedidoVentaDTO.getPlantilla());
 			document.setId(pedidoVentaDTO.getLlaveTabla());
+			document.setCode(pedidoVentaDTO.getNombre());
 			document.setActive(pedidoVentaDTO.getEstado());
 			document.setStateId(pedidoVentaDTO.getEstadoExpediente());
 			document.setStateName(pedidoVentaDTO.getEstadoNombre());

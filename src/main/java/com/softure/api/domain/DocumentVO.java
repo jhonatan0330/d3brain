@@ -9,6 +9,7 @@ public class DocumentVO {
 
 	private String template;
 	private String id;
+	private String code;
 	private String active;
 	private String stateId;
 	private String stateName;
