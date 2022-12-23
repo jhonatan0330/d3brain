@@ -11,6 +11,7 @@
 			,cpes_estadodocumento as  estadoDocumento
 			,npes_avance as  avance
 			,cpes_nombre as  nombre
+			,cpes_codigo as  codigo
 			,cpes_proceso as  proceso
 			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  procesoNombre
 			,cpes_estado as estado
@@ -33,6 +34,9 @@
 			</if>
 			<if test="nombre!=null">
 				and cpes_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cpes_codigo = #{codigo}
 			</if>
 			<if test="proceso!=null">
 				and cpes_proceso = #{proceso}
@@ -90,6 +94,9 @@
 		<if test="nombre!=null">
 			,cpes_nombre
 		</if>
+		<if test="codigo!=null">
+			,cpes_codigo
+		</if>
 		<if test="proceso!=null">
 			,cpes_proceso
 		</if>
@@ -110,6 +117,9 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
 		<if test="proceso!=null">
 			,#{proceso}
 		</if>
@@ -126,6 +136,7 @@
 				cpes_estadodocumento = #{estadoDocumento},
 				npes_avance = #{avance},
 				cpes_nombre = #{nombre},
+				cpes_codigo = #{codigo},
 				cpes_proceso = #{proceso},
 				cpes_estado =#{estado}
 		<include refid="whereProcesoEstadoPrimaryKeyFragment" />
@@ -138,6 +149,7 @@
 			,cpes_estadodocumento as  estadoDocumento
 			,npes_avance as  avance
 			,cpes_nombre as  nombre
+			,cpes_codigo as  nombre
 			,cpes_proceso as  proceso
 			,cpes_estado as estado
 		from procesoestado_pesp a

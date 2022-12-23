@@ -50,7 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class CallExecuteAPI {
+public class WebServiceExecuteAPI {
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 
@@ -234,6 +234,8 @@ public class CallExecuteAPI {
 			Map<String, String> headerProperties, PedidoVentaDTO modificador) throws ServerException {
 
 		String template = generateOutputFile(service.getTemplate(), callWS.getParametros());
+		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
+		//if(template!=null) template = codifyToHTML(template); 
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getServidorNombre(), callWS.getParametros(),
 				callWS.getExtracciones()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
@@ -712,5 +714,4 @@ public class CallExecuteAPI {
 		result = result + "\n\nParameters\n\n" + parameters + "\n\nExtractions\n\n" + extractions;
 		return result + "\n\nBODY\n\n";
 	}
-
 }

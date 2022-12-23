@@ -35,7 +35,7 @@ import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-import com.softure.webservice.application.CallExecuteAPI;
+import com.softure.webservice.application.WebServiceExecuteAPI;
 
 @Component
 public class CallManageTransition {
@@ -59,7 +59,7 @@ public class CallManageTransition {
 	@Autowired
 	private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired
-	private CallExecuteAPI apiService;
+	private WebServiceExecuteAPI apiService;
 	@Autowired
 	private ActividadSvc actividadService;
 	@Autowired

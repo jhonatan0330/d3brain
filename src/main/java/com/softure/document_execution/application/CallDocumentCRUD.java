@@ -53,7 +53,7 @@ import com.softure.process_form.domain.PlantillaConsecutivoFilterDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-import com.softure.webservice.application.CallExecuteAPI;
+import com.softure.webservice.application.WebServiceExecuteAPI;
 
 @Component
 public class CallDocumentCRUD {
@@ -78,7 +78,7 @@ public class CallDocumentCRUD {
 	@Autowired
 	private CallManageTransition manageTransitionFunction;
 	@Autowired
-	private CallExecuteAPI apiService;
+	private WebServiceExecuteAPI apiService;
 	@Autowired
 	private ConsecutivoSvc consecutivoService;
 	@Autowired

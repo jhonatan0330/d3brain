@@ -186,6 +186,8 @@ public class CallDocumentListWithFilters {
 			if(propiedadesFiltro==null ) {
 				try {
 					return listadoCompleto(pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token, null); 
+				}catch (ServerException e) {
+					throw new ServerException(e.getMessage());
 				}catch (Exception e) {
 					throw new ServerException(e.getCause().getMessage());
 				}	

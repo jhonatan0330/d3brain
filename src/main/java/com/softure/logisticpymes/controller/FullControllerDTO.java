@@ -115,12 +115,18 @@ import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.java.dto.exception.FlexException;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.logisticpymes.application.AuditoriaSvc;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
-import com.softure.logisticpymes.domain.*;
+import com.softure.logisticpymes.domain.CambioDTO;
+import com.softure.logisticpymes.domain.CambioFilterDTO;
+import com.softure.logisticpymes.domain.PuestoDTO;
+import com.softure.logisticpymes.domain.PuestoFilterDTO;
+import com.softure.logisticpymes.domain.ServidorDTO;
+import com.softure.logisticpymes.domain.ServidorFilterDTO;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.mail.application.MensajeSvc;
 import com.softure.mail.domain.MensajeDTO;
@@ -5655,80 +5661,6 @@ public class FullControllerDTO {
 	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return usuarioAutenticacionService.cambiarClave(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@Autowired private AuditoriaSvc auditoriaService;
-	
-	@RequestMapping(value="/consultaXIdAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO consultaXIdAuditoria(@RequestBody String llave) throws FlexException {
-		try {
-			return auditoriaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/contarResultadosAuditoria", method=RequestMethod.POST)
-	public int contarResultadosAuditoria(@RequestBody AuditoriaFilterDTO dto) throws FlexException  {
-		try {
-			return auditoriaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/consultaUnicaAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO consultaUnicaAuditoria(@RequestBody AuditoriaFilterDTO dto) throws FlexException  {
-		try {
-			return auditoriaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/listarConsultaAuditoria", method=RequestMethod.POST)
-	public List<AuditoriaDTO> listarConsultaAuditoria(@RequestBody AuditoriaFilterDTO dto) throws FlexException  {
-		try {
-			return auditoriaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/activarAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO activarAuditoria(@RequestBody AuditoriaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return auditoriaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/inactivarAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO inactivarAuditoria(@RequestBody AuditoriaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return auditoriaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/actualizarAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO actualizarAuditoria(@RequestBody AuditoriaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return auditoriaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@RequestMapping(value="/guardarAuditoria", method=RequestMethod.POST)
-	public AuditoriaDTO guardarAuditoria(@RequestBody AuditoriaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return auditoriaService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

@@ -27,7 +27,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	
 	// BEGIN region servicesWebServiceEjecucion
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired private CallExecuteAPI executeAPIFunction;
+	@Autowired private WebServiceExecuteAPI executeAPIFunction;
 	@Autowired private WebServiceSvc webServiceSvc;
 	// END region servicesWebServiceEjecucion
 

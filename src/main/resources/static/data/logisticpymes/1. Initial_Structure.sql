@@ -79,7 +79,6 @@ CREATE INDEX ix_z_pvc_pedidoventacaracteristica_valoropcion ON z_pvc_pedidoventa
 
 ALTER TABLE z_pvc_pedidoventacaracteristica ADD CONSTRAINT fk_z_pvc_pedidoventacaracteristicacampo FOREIGN KEY (cpvc_campo) REFERENCES documentoplantillacaracteristica_dpcp(cdpc_llave);
 ALTER TABLE z_pvc_pedidoventacaracteristica ADD CONSTRAINT fk_z_pvc_pedidoventacaracteristicadocumento FOREIGN KEY (cpvc_documento) REFERENCES pedidoventa_pdvp(cpdv_llave);
-ALTER TABLE z_pvc_pedidoventacaracteristica ADD CONSTRAINT fk_z_pvc_pedidoventacaracteristicatransaccionregistro FOREIGN KEY (cpvc_transaccionregistro) REFERENCES documentotransaccion_trap(ctra_llave);
 
 
 CREATE TABLE z_dex_documentorelacionexpediente (
@@ -97,8 +96,6 @@ CREATE INDEX ix_z_dex_documentorelacionexpediente_campomaestro ON z_dex_document
 
 ALTER TABLE z_dex_documentorelacionexpediente ADD CONSTRAINT fk_z_dex_documentorelacionexpedientecampomaestro FOREIGN KEY (cdex_campomaestro) REFERENCES z_pvc_pedidoventacaracteristica(cpvc_llave);
 ALTER TABLE z_dex_documentorelacionexpediente ADD CONSTRAINT fk_z_dex_documentorelacionexpedienteexpedientedetalle FOREIGN KEY (cdex_expedientedetalle) REFERENCES pedidoventa_pdvp(cpdv_llave);
-ALTER TABLE z_dex_documentorelacionexpediente ADD CONSTRAINT fk_z_dex_documentorelacionexpedientetransaccioninactivo FOREIGN KEY (cdex_transaccioninactivo) REFERENCES documentotransaccion_trap(ctra_llave);
-ALTER TABLE z_dex_documentorelacionexpediente ADD CONSTRAINT fk_z_dex_documentorelacionexpedientetransaccionregistro FOREIGN KEY (cdex_transaccionregistro) REFERENCES documentotransaccion_trap(ctra_llave);
 
 
 CREATE TABLE z_pvd_pedidoventadinero (
@@ -151,4 +148,47 @@ CREATE TABLE z_rej_reporteejecucion (
 	CONSTRAINT fk_z_rej_reporteejecucionreporte FOREIGN KEY (crej_reporte) REFERENCES reportebase_rpbp(crpb_llave)
 );
 
+CREATE TABLE z_dpv_detallepedidoventa (
+	cdpv_llave varchar(32) NOT NULL,
+	cdpv_producto varchar(32) NOT NULL,
+	mdpv_cantidad numeric(18, 6) NOT NULL DEFAULT 0,
+	mdpv_valorunitario numeric(18, 6) NOT NULL DEFAULT 0,
+	mdpv_valorsubtotal numeric(18, 6) NOT NULL DEFAULT 0,
+	mdpv_valortotal numeric(18, 6) NOT NULL DEFAULT 0,
+	mdpv_cantidadtotal numeric(18, 6) NOT NULL DEFAULT 0,
+	cdpv_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	cdpv_productotercero varchar(32) NULL,
+	ndpv_cantidadpromocion int4 NOT NULL DEFAULT 0,
+	ndpv_cantidadpromocionbase int4 NOT NULL DEFAULT 0,
+	mdpv_valorminimo numeric(18, 6) NOT NULL DEFAULT 0,
+	mdpv_valormaximo numeric(18, 6) NOT NULL DEFAULT 0,
+	cdpv_plantilla varchar(32) NOT NULL,
+	cdpv_documento varchar(32) NOT NULL,
+	cdpv_transaccionregistro varchar(32) NOT NULL,
+	cdpv_transaccioninactivo varchar(32) NULL,
+	CONSTRAINT pk_z_dpv_detallepedidoventa PRIMARY KEY (cdpv_llave)
+);
 
+ALTER TABLE detallepedidoventa_dpvp ADD CONSTRAINT fk_z_dpv_detallepedidoventadocumento FOREIGN KEY (cdpv_documento) REFERENCES pedidoventa_pdvp(cpdv_llave);
+ALTER TABLE detallepedidoventa_dpvp ADD CONSTRAINT fk_z_dpv_detallepedidoventaproducto FOREIGN KEY (cdpv_producto) REFERENCES producto_prop(cpro_llave);
+ALTER TABLE detallepedidoventa_dpvp ADD CONSTRAINT fk_z_dpv_detallepedidoventaproductotercero FOREIGN KEY (cdpv_productotercero) REFERENCES usuariorolproducto_urpp(curp_llave);
+
+CREATE TABLE z_dcp_detallecaracteristicaproducto (
+	cdcp_llave varchar(32) NOT NULL,
+	cdcp_entidad varchar(32) NOT NULL,
+	cdcp_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	ddcp_valorfecha timestamptz NULL,
+	cdcp_valortext varchar(4000) NULL,
+	mdcp_valornumero numeric(18, 6) NOT NULL DEFAULT 0,
+	cdcp_valoropcion varchar(32) NULL,
+	cdcp_campo varchar(32) NOT NULL,
+	cdcp_transaccionregistro varchar(32) NOT NULL,
+	cdcp_transaccioninactivo varchar(32) NULL,
+	CONSTRAINT pk_z_dcp_detallecaracteristicaproducto PRIMARY KEY (cdcp_llave)
+);
+
+ALTER TABLE detallecaracteristicaproducto_dcpp ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductocampo FOREIGN KEY (cdcp_campo) REFERENCES productocaracteristica_pcrp(cpcr_llave);
+ALTER TABLE detallecaracteristicaproducto_dcpp ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductovaloropcion FOREIGN KEY (cdcp_valoropcion) REFERENCES pedidoventa_pdvp(cpdv_llave);
+
+CREATE INDEX IF NOT EXISTS ix_procesotransicionautomatica_ejecucion ON procesotransicionautomatica_ptap USING btree (dpta_ejecucion);
+CREATE INDEX IF NOT EXISTS ix_procesotransicionautomatica_transicion ON procesotransicionautomatica_ptap USING btree (cpta_transicion);

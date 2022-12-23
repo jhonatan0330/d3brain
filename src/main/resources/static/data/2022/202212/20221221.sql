@@ -100,7 +100,7 @@ ALTER TABLE relacioninterna_ritp
 
 CREATE OR REPLACE FUNCTION migrar_campos(_plantilla character varying, _fecha_maxima timestamp with time zone) RETURNS numeric
     LANGUAGE plpgsql
-    AS $$
+    AS '
 declare 
 	documentos character varying[];
 	campos character varying[];
@@ -108,7 +108,7 @@ declare
 	v_cnt numeric;
 begin
 	if
-		(select count(*) from procesotransicion_ptrp where cptr_estado = 'A' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
+		(select count(*) from procesotransicion_ptrp where cptr_estado = ''A'' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
 	then
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
@@ -120,7 +120,7 @@ begin
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
 				where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
-				and npdv_historico is null and cpdv_estado != 'A'
+				and npdv_historico is null and cpdv_estado != ''A''
 				limit 500) 
 			into documentos;
 	end if;	
@@ -163,5 +163,4 @@ begin
 	update pedidoventa_pdvp set npdv_historico = 3 where cpdv_llave = any(documentos);
 	GET DIAGNOSTICS v_cnt = ROW_COUNT;
 	return v_cnt;
-END;
-$$;
+END; ';

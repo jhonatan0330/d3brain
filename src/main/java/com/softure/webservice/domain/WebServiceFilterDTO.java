@@ -6,40 +6,19 @@ package com.softure.webservice.domain;
 import org.apache.ibatis.type.Alias;
 
 import com.softure.java.domain.BasicFilterDTO;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Alias("WebServiceFilterDTO")
 public class WebServiceFilterDTO extends BasicFilterDTO
 {
 
 	private String nombre;
+	private String codigo;
 	private String servidor;
 	private String servidorNombre;
-
-	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	
-	public String getNombre() {
-		return nombre;
-	}
-	
-	
-	public void setServidor(String servidor) {
-		this.servidor = servidor;
-	}
-	
-	public String getServidor() {
-		return servidor;
-	}
-	
-	
-	public void setServidorNombre(String servidorNombre) {
-		this.servidorNombre = servidorNombre;
-	}
-	
-	public String getServidorNombre() {
-		return servidorNombre;
-	}
-	
 
 }

@@ -35,6 +35,7 @@ CREATE TABLE procesoestado_pesp(
         cpes_estadodocumento character varying(1) NOT NULL,
         npes_avance int NOT NULL DEFAULT 0,
         cpes_nombre character varying(100) NOT NULL,
+        cpes_codigo character varying(50),
         cpes_proceso character varying(32) NOT NULL,
         cpes_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_procesoestado_pesp PRIMARY KEY (cpes_llave)
@@ -442,6 +443,7 @@ CREATE TABLE usuario_usrp(
 CREATE TABLE webservice_wbsp(
         cwbs_llave character varying(32) NOT NULL,
         cwbs_nombre character varying(50) NOT NULL,
+        cwbs_codigo character varying(50),
         cwbs_template character varying(120000) NOT NULL,
         cwbs_servidor character varying(32) NOT NULL,
         cwbs_estado character varying(1) NOT NULL DEFAULT 'A',
@@ -853,16 +855,6 @@ CREATE TABLE usuarioautenticacion_uaup(
         CONSTRAINT PK_usuarioautenticacion_uaup PRIMARY KEY (cuau_llave)
     );
  
-CREATE TABLE auditoria_audp(
-        caud_llave character varying(32) NOT NULL,
-        caud_usuario character varying(32) NOT NULL,
-        caud_clase character varying(100) NOT NULL,
-        caud_llaveclase character varying(32) NOT NULL,
-        caud_operacion character varying(4000) NOT NULL,
-        daud_fecha timestamp with time zone NOT NULL,
-        caud_estado character varying(1) NOT NULL DEFAULT 'A',
-        CONSTRAINT PK_auditoria_audp PRIMARY KEY (caud_llave)
-    );
  
 CREATE TABLE transaccionerror_terp(
         cter_llave character varying(32) NOT NULL,
@@ -895,12 +887,7 @@ ALTER TABLE PlantillaConsecutivo_pcnp ADD CONSTRAINT FK_PlantillaConsecutivocara
 ALTER TABLE PlantillaConsecutivo_pcnp ADD CONSTRAINT FK_PlantillaConsecutivoconsecutivo FOREIGN KEY (cpcn_consecutivo) REFERENCES Consecutivo_conp(ccon_llave);
 ALTER TABLE ProcesoTransicion_ptrp ADD CONSTRAINT FK_ProcesoTransicionproceso FOREIGN KEY (cptr_proceso) REFERENCES Proceso_prcp(cprc_llave);
 ALTER TABLE ProcesoEstado_pesp ADD CONSTRAINT FK_ProcesoEstadoproceso FOREIGN KEY (cpes_proceso) REFERENCES Proceso_prcp(cprc_llave);
-ALTER TABLE PedidoVenta_pdvp ADD CONSTRAINT FK_PedidoVentatransaccion FOREIGN KEY (cpdv_transaccion) REFERENCES DocumentoTransaccion_trap(ctra_llave);
-ALTER TABLE DocumentoRelacionExpediente_dexp ADD CONSTRAINT FK_DocumentoRelacionExpedientetransaccionInactivo FOREIGN KEY (cdex_transaccionInactivo) REFERENCES DocumentoTransaccion_trap(ctra_llave);
 ALTER TABLE DocumentoTransaccion_trap ADD CONSTRAINT FK_DocumentoTransaccionusuario FOREIGN KEY (ctra_usuario) REFERENCES Usuario_usrp(cusr_llave);
-ALTER TABLE DocumentoRelacionExpediente_dexp ADD CONSTRAINT FK_DocumentoRelacionExpedientetransaccionRegistro FOREIGN KEY (cdex_transaccionRegistro) REFERENCES DocumentoTransaccion_trap(ctra_llave);
-ALTER TABLE DetallePedidoVenta_dpvp ADD CONSTRAINT FK_DetallePedidoVentatransaccionRegistro FOREIGN KEY (cdpv_transaccionRegistro) REFERENCES DocumentoTransaccion_trap(ctra_llave);
-ALTER TABLE PedidoVentaCaracteristica_pvcp ADD CONSTRAINT FK_PedidoVentaCaracteristicatransaccionRegistro FOREIGN KEY (cpvc_transaccionRegistro) REFERENCES DocumentoTransaccion_trap(ctra_llave);
 ALTER TABLE DocumentoRelacionGestor_drgp ADD CONSTRAINT FK_DocumentoRelacionGestorestadoFinal FOREIGN KEY (cdrg_estadoFinal) REFERENCES ProcesoEstado_pesp(cpes_llave);
 ALTER TABLE DocumentoRelacionGestor_drgp ADD CONSTRAINT FK_DocumentoRelacionGestorestadoInicial FOREIGN KEY (cdrg_estadoInicial) REFERENCES ProcesoEstado_pesp(cpes_llave);
 ALTER TABLE ProcesoTransicion_ptrp ADD CONSTRAINT FK_ProcesoTransicionestadoLLegada FOREIGN KEY (cptr_estadoLLegada) REFERENCES ProcesoEstado_pesp(cpes_llave);
@@ -979,7 +966,6 @@ ALTER TABLE CargaArchivo_carp ADD CONSTRAINT FK_CargaArchivousuario FOREIGN KEY 
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionusuario FOREIGN KEY (cuau_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE UsuarioAutenticacionAutorizacion_uaap ADD CONSTRAINT FK_UsuarioAutenticacionAutorizacionusuario FOREIGN KEY (cuaa_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE PostPregunta_pprp ADD CONSTRAINT FK_PostPreguntaautor FOREIGN KEY (cppr_autor) REFERENCES Usuario_usrp(cusr_llave);
-ALTER TABLE Auditoria_audp ADD CONSTRAINT FK_Auditoriausuario FOREIGN KEY (caud_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE PostCalificacion_pclp ADD CONSTRAINT FK_PostCalificacionusuario FOREIGN KEY (cpcl_usuario) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE TrazabilidadProductoInventario_tpip ADD CONSTRAINT FK_TrazabilidadProductoInventarioresponsable FOREIGN KEY (ctpi_responsable) REFERENCES Usuario_usrp(cusr_llave);
 ALTER TABLE UsuarioSesion_ussp ADD CONSTRAINT FK_UsuarioSesionusuario FOREIGN KEY (cuss_usuario) REFERENCES Usuario_usrp(cusr_llave);

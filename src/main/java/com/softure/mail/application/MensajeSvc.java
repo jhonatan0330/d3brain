@@ -501,7 +501,7 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filter.setTipo(ServidorDTO.MAIL);
 		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
-		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado");
+		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado para enviar mensaje al administrador.\n " + messageTitle + "\n" +messageText);
 		JavaMailSenderImpl mailSender = getMailSender(servidores.get(0));
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
 		SimpleMailMessage message = new SimpleMailMessage();  

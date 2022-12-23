@@ -8,6 +8,7 @@
 		select
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
 			,cwbs_template as  template
 			,cwbs_servidor as  servidor
 			,(select cser_url from servidor_serp where cser_llave = cwbs_servidor) as  servidorNombre
@@ -25,6 +26,9 @@
 			</if>
 			<if test="nombre!=null">
 				and cwbs_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cwbs_codigo = #{codigo}
 			</if>
 			<if test="servidor!=null">
 				and cwbs_servidor = #{servidor}
@@ -70,6 +74,9 @@
 		<if test="nombre!=null">
 			,cwbs_nombre
 		</if>
+		<if test="codigo!=null">
+			,cwbs_codigo
+		</if>
 		<if test="template!=null">
 			,cwbs_template
 		</if>
@@ -83,6 +90,9 @@
 			#{llaveTabla}
 		<if test="nombre!=null">
 			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
 		</if>
 		<if test="template!=null">
 			,#{template}
@@ -100,6 +110,7 @@
 		update webservice_wbsp
 			set
 				cwbs_nombre = #{nombre},
+				cwbs_codigo = #{codigo},
 				cwbs_template = #{template},
 				cwbs_servidor = #{servidor},
 				cwbs_estado =#{estado}
@@ -110,6 +121,7 @@
 		select
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
 			,cwbs_template as  template
 			,cwbs_servidor as  servidor
 			,cwbs_estado as estado
