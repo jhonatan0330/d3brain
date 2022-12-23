@@ -239,6 +239,14 @@ public class WebServiceCallPrepare {
 			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
 					+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") + "_KEY"
 					+ ConstantesGenerales.IGUAL + campo.getValorOpcion();
+			if(campo.getExpedientes()!=null && !campo.getExpedientes().isEmpty()) {
+				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
+				if(iElement!=null && iElement.getNombre()!=null) {
+					parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
+							+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") + "_ID"
+							+ ConstantesGenerales.IGUAL + iElement.getNombre();
+				}	
+			}
 		}
 		return parameters;
 	}

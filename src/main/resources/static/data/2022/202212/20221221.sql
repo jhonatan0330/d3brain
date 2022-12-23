@@ -65,8 +65,6 @@ ALTER TABLE procesoestado_pesp
 ALTER TABLE relacioninterna_ritp
 	ALTER COLUMN drit_fechainicio DROP NOT NULL;
 
-ALTER TABLE transaccionerror_terp
-	ALTER COLUMN cter_usuario SET NOT NULL;
 
 ALTER TABLE webservice_wbsp
 	ADD COLUMN cwbs_codigo character varying(50);
