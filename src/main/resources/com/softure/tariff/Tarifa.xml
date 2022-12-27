@@ -59,6 +59,12 @@
 			<if test="dimension4!=null">
 				and ctar_dimension4 = #{dimension4}
 			</if>
+			<if test="filtroParametro!=null">
+				and (  upper(descripcion(ctar_recurso)) like upper('%' || #{filtroParametro} || '%') or  
+						upper(descripcion(ctar_dimension2)) like upper('%' || #{filtroParametro} || '%')or
+						upper(descripcion(ctar_dimension3)) like upper('%' || #{filtroParametro} || '%') or
+						upper(descripcion(ctar_dimension4)) like upper('%' || #{filtroParametro} || '%'))
+			</if>
 	</sql>
 
 	<sql id="paginationTarifaFragment">
