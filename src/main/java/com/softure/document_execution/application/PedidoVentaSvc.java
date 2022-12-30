@@ -100,11 +100,11 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		return super.listarConsulta(dto);
 	}
 	
-	public PedidoVentaDTO consultaCompleta(PedidoVentaFilterDTO dto)throws ServerException{
+	public PedidoVentaDTO consultaCompleta(String documentId, String token)throws ServerException{
 		// BEGIN region consultaCompleta
-		if(dto.getLlaveTabla()==null) throw new ServerException("En el desarrollo se debe crear el objeto desde la plantilla");
-		String securityToken = dto.getSecurityToken();
-		PedidoVentaDTO bd = consultaXIdConDinero(dto.getLlaveTabla());
+		if(documentId==null) throw new ServerException("En el desarrollo se debe crear el objeto desde la plantilla");
+		String securityToken = token;
+		PedidoVentaDTO bd = consultaXIdConDinero(documentId);
 		if(bd == null) throw new ServerException("El identificador del DTO es incorrecto");
 		//VAlido que el estado del pedido me permita modificaciones
 		boolean modificable = true;

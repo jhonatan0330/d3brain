@@ -51,7 +51,7 @@ public class DocumentController {
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
-		return pedidoVentaService.consultaCompleta(filter);
+		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla(), token);
 	}
 	
 	@RequestMapping(value="/getDocuments", method=RequestMethod.POST)

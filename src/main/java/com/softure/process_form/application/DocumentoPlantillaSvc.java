@@ -245,6 +245,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 // BEGIN region aditionalMethods
 	
 	public DocumentoPlantillaDTO consultarPorCodigo(String codigo) throws ServerException{
+		if(codigo==null || codigo.isEmpty()) throw new ServerException("Es obligatorio colocar la plantilla");
 		DocumentoPlantillaFilterDTO filtro = new DocumentoPlantillaFilterDTO();
 		filtro.setCodigo(codigo);
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);

@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
 import com.softure.mail.application.MensajeSvc;
@@ -104,10 +103,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		// BEGIN Actividad_guardar
 		//Esto solo se usa para cuando cambio de responsable un documento, puede que si no se usa bien se duplique el mensaje
 		crearActividad(dto, token);
-		PedidoVentaFilterDTO pedidoFilter = new PedidoVentaFilterDTO();
-		pedidoFilter.setLlaveTabla(dto.getDocumento());
-		pedidoFilter.setSecurityToken(token);
-		PedidoVentaDTO pedido = pedidoService.consultaCompleta(pedidoFilter);
+		PedidoVentaDTO pedido = pedidoService.consultaCompleta(dto.getDocumento(), token);
 		//Esto es para que se vean losparametros del mensaje
 		PedidoVentaDTO pedidoModificador = new PedidoVentaDTO();
 		pedidoModificador.setNombre(pedido.getNombre());

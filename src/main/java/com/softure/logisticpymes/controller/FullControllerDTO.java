@@ -980,7 +980,7 @@ public class FullControllerDTO {
 	@RequestMapping(value="/consultaCompletaPedidoVenta", method=RequestMethod.POST)
 	public PedidoVentaDTO consultaCompletaPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
 		try {
-			return pedidoVentaService.consultaCompleta(dto);
+			return pedidoVentaService.consultaCompleta(dto.getLlaveTabla(), dto.getSecurityToken());
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

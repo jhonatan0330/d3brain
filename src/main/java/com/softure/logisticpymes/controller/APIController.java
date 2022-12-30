@@ -61,7 +61,7 @@ public class APIController {
 	@RequestMapping(value="/consultarDocumento", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
 		documentoFiltro.setSecurityToken(token);
-		return pedidoVentaService.consultaCompleta(documentoFiltro);
+		return pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
 	}
 
 	@RequestMapping(value="/guardarDocumento", method=RequestMethod.POST)
