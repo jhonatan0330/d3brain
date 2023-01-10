@@ -19,7 +19,6 @@ public class WebServiceDTO extends BasicParamDTO
 	private String nombre;
 	private String codigo;
 	private String template;
-	private String servidor;
-	private String servidorNombre;
+	private String url;
 
 }

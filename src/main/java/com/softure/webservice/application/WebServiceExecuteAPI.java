@@ -95,6 +95,8 @@ public class WebServiceExecuteAPI {
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
+		if (service.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0)
+			throw new ServerException("El servicio " + service.getNombre() +" no se encuentra Activo." + serviceId);
 		// Obtengo propiedades del servicio
 		String userId = webServiceSvc.getUserFlex(token);
 		service.setPropiedades(
@@ -236,7 +238,7 @@ public class WebServiceExecuteAPI {
 		String template = generateOutputFile(service.getTemplate(), callWS.getParametros());
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		//if(template!=null) template = codifyToHTML(template); 
-		String fullOutput = writeHeadersAndUrl(headerProperties, service.getServidorNombre(), callWS.getParametros(),
+		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
 				callWS.getExtracciones()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		String responseApi = null;
@@ -254,6 +256,7 @@ public class WebServiceExecuteAPI {
 						responseApi = resultExtraction + "\n\n" + responseApi;
 					} else {
 						callWS.setExtracciones(resultExtraction);
+						// Esto lo puedo quitar con lso apis locales
 						if (modificador != null)
 							documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
 									token, resultExtraction);
@@ -412,7 +415,7 @@ public class WebServiceExecuteAPI {
 			throws ServerException {
 		URL url;
 		try {
-			url = new URL(serverName.getServidorNombre());
+			url = new URL(serverName.getUrl());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);

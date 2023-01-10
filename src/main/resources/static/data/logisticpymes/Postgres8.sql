@@ -445,7 +445,7 @@ CREATE TABLE webservice_wbsp(
         cwbs_nombre character varying(50) NOT NULL,
         cwbs_codigo character varying(50),
         cwbs_template character varying(120000) NOT NULL,
-        cwbs_servidor character varying(32) NOT NULL,
+        cwbs_url character varying(2000) NOT NULL,
         cwbs_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_webservice_wbsp PRIMARY KEY (cwbs_llave)
     );

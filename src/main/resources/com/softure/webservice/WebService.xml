@@ -10,8 +10,7 @@
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
 			,cwbs_template as  template
-			,cwbs_servidor as  servidor
-			,(select cser_url from servidor_serp where cser_llave = cwbs_servidor) as  servidorNombre
+			,cwbs_url as  url
 			,cwbs_estado as estado
 		from webservice_wbsp a
 	</sql>
@@ -30,8 +29,8 @@
 			<if test="codigo!=null">
 				and cwbs_codigo = #{codigo}
 			</if>
-			<if test="servidor!=null">
-				and cwbs_servidor = #{servidor}
+			<if test="url!=null">
+				and cwbs_url = #{url}
 			</if>
 	</sql>
 
@@ -80,8 +79,8 @@
 		<if test="template!=null">
 			,cwbs_template
 		</if>
-		<if test="servidor!=null">
-			,cwbs_servidor
+		<if test="url!=null">
+			,cwbs_url
 		</if>
 		<if test="estado!=null">
 			,cwbs_estado
@@ -97,8 +96,8 @@
 		<if test="template!=null">
 			,#{template}
 		</if>
-		<if test="servidor!=null">
-			,#{servidor}
+		<if test="url!=null">
+			,#{url}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -112,7 +111,7 @@
 				cwbs_nombre = #{nombre},
 				cwbs_codigo = #{codigo},
 				cwbs_template = #{template},
-				cwbs_servidor = #{servidor},
+				cwbs_url = #{url},
 				cwbs_estado =#{estado}
 		<include refid="whereWebServicePrimaryKeyFragment" />
 	</select>
@@ -123,7 +122,7 @@
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
 			,cwbs_template as  template
-			,cwbs_servidor as  servidor
+			,cwbs_url as  url
 			,cwbs_estado as estado
 		from webservice_wbsp a
 	</sql>

@@ -64,8 +64,9 @@ public class CallDocumentUpdateFromAutomatic {
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
 			PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
-			if(extractionMap.get(propiedadDTO.getLlaveTabla()).getClass().getName().compareTo("java.lang.String")==0) {				
-				newField.setValorText((String) extractionMap.get(propiedadDTO.getLlaveTabla()));
+			Object itemToAdition = extractionMap.get(propiedadDTO.getLlaveTabla()); 
+			if(itemToAdition!=null && itemToAdition.getClass().getName().compareTo("java.lang.String")==0) {				
+				newField.setValorText((String) itemToAdition);
 			}
 			// campo
 			List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());

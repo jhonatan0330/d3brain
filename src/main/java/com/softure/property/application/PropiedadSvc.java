@@ -881,6 +881,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			bdFilter.setNombre(dto.getValor().toUpperCase());
 			bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			bd = apiService.consultaUnica(bdFilter);
+			if(bd==null){//Consulto por codigo
+				bdFilter = new WebServiceFilterDTO();
+				bdFilter.setCodigo(dto.getValor().toUpperCase());
+				bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				bd = apiService.consultaUnica(bdFilter);
+			}	
 			if(bd==null) throw new ServerException("El api no fue reconocido");
 		}
 		dto.setValor(bd.getLlaveTabla());

@@ -18,7 +18,6 @@ public class WebServiceFilterDTO extends BasicFilterDTO
 
 	private String nombre;
 	private String codigo;
-	private String servidor;
-	private String servidorNombre;
+	private String url;
 
 }
