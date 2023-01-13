@@ -84,7 +84,7 @@ public class ApiGetService {
 				FieldVO field = new FieldVO();
 				field.setField(iField.getCampoDTO().getNombre());
 				field.setValue(iField.getValorText());
-				field.setId(iField.getValorOpcion());
+				// field.setId(iField.getValorOpcion());
 				fields.add(field);	
 			}
 		}

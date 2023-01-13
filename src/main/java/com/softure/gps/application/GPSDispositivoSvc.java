@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
 import com.softure.gps.infrastructure.GPSDispositivoMapper;
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -89,6 +90,15 @@ public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositiv
 	}
 
 // BEGIN region aditionalMethods
+	public GPSDispositivoDTO getGPSFromToken(String token) throws ServerException {
+		GPSDispositivoFilterDTO filtro = new GPSDispositivoFilterDTO();
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setUsuario(getUserFlex(token));
+		List<GPSDispositivoDTO> dispositivos = listarConsulta(filtro);
+		if(dispositivos==null || dispositivos.isEmpty()) return null;
+		if(dispositivos.size()> 1) throw new ServerException("Muchos dispoistivos");
+		return dispositivos.get(0);
+	}
 // END region aditionalMethods
 
 }

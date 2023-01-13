@@ -12,10 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.api.application.ApiAuthorizeService;
 import com.softure.api.application.ApiGetService;
-import com.softure.api.application.ApiGetWithLoginService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
-import com.softure.api.application.ApiSendWithLoginService;
 import com.softure.api.domain.DocumentVO;
 import com.softure.api.domain.DocumentWithLoginVO;
 import com.softure.api.domain.FilterDocumentVO;
@@ -30,10 +28,8 @@ public class ApiRest {
 
 	@Autowired ApiAuthorizeService apiAuthorizeService;
 	@Autowired ApiGetService apiGetService;
-	@Autowired ApiGetWithLoginService apiGetWithLoginService;
 	@Autowired ApiLoginService apiLoginService;
 	@Autowired ApiSendService apiSendService;
-	@Autowired ApiSendWithLoginService apiSendWithLoginService;
 	
 	@PostMapping("/get")
 	public List<DocumentVO> getFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
@@ -47,15 +43,16 @@ public class ApiRest {
 	public List<DocumentVO> getFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody FilterWithLoginVO filter
 		) throws ServerException {
-		apiAuthorizeService.call(apiKey);
-		return apiGetWithLoginService.call(filter);
+		IdResponse token = apiLoginService.call(filter.getLogin());
+		apiAuthorizeService.call(apiKey, token.getId());
+		return apiGetService.call(token.getId(), filter.getDocument());
 	}
 	
 	@PostMapping("/login")
 	public IdResponse login(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody LoginVO login
 		) throws ServerException {
-		apiAuthorizeService.call(apiKey);
+		apiAuthorizeService.call(apiKey, null);
 		return apiLoginService.call(login);
 	}
 	
@@ -71,15 +68,21 @@ public class ApiRest {
 	public IdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentWithLoginVO item
 		) throws ServerException {
-		apiAuthorizeService.call(apiKey);
-		return apiSendWithLoginService.call( item );
+		IdResponse token = apiLoginService.call(item.getLogin());
+		apiAuthorizeService.call(apiKey, token.getId());
+		return apiSendService.call(token.getId(), item.getDocument());
 	}
 	
 	@GetMapping("/ok")
-	public String getFromApi(@RequestHeader(name = "x-api-key") String apiKey
+	public String ok(@RequestHeader(name = "x-api-key") String apiKey
 		) throws ServerException {
-		apiAuthorizeService.call(apiKey);
+		apiAuthorizeService.call(apiKey, null);
 		return "OK";
+	}
+	
+	@GetMapping("/ping")
+	public String ping() throws ServerException {
+		return "PING";
 	}
 
 }

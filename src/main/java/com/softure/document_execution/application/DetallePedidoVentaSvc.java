@@ -486,7 +486,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			cpCantidad.setCampoDTO(baseCantidad);
 			cpCantidad.setDocumento(field.getLlaveTabla());	
 			cpCantidad.setValorNumero(field.getCantidad());
-			cpCantidad.setValorText(field.getCantidad().toString());
+			if(field.getCantidad()!=null)cpCantidad.setValorText(field.getCantidad().toString());
 			cpCantidad.setCampo("***CANTIDAD");
 			field.getCaracteristicas().add(0, cpCantidad);
 			field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.PRODUCTO_CAMPO_CANTIDAD, baseCantidad.getLlaveTabla(), null));
@@ -507,7 +507,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		cpProducto.setCampoDTO(baseProducto);
 		cpProducto.setDocumento(field.getLlaveTabla());	
 		cpProducto.setValorOpcion(field.getProductoDocumento());
-		cpProducto.setPrincipal(documentoService.consultaXId(field.getProductoDocumento()));
+		if(field.getProductoDocumento()!=null)cpProducto.setPrincipal(documentoService.consultaXId(field.getProductoDocumento()));
 		cpProducto.setCampo("***PRODUCTO");
 		field.getCaracteristicas().add(0, cpProducto);
 		
@@ -532,7 +532,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				PedidoVentaCaracteristicaDTO cpTotal = new PedidoVentaCaracteristicaDTO();
 				cpTotal.setDocumento(field.getLlaveTabla());	
 				cpTotal.setValorNumero(field.getValorTotal());
-				cpTotal.setValorText(cpTotal.getValorNumero().toString());
+				if(cpTotal.getValorNumero()!=null)cpTotal.setValorText(cpTotal.getValorNumero().toString());
 				cpTotal.setCampoDTO(baseTotal);
 				cpTotal.setCampo("***TOTAL");
 				field.getCaracteristicas().add(cpTotal);

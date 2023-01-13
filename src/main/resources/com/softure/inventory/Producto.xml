@@ -221,7 +221,7 @@
 	<select id="filtrarPorCodigo" resultType="ProductoDTO">
 		<include refid="selectProductoFragment" />
 		inner join pedidoventa_pdvp pp2 on (cpro_documento = cpdv_llave)
-		where cpdv_textofiltro = #{codigo}
+		where pp2.cpdv_nombre = #{codigo} or descripcion(pp2.cpdv_llave) = #{codigo}
 		order by nombre 
 	</select>
 <!--// END region script-->

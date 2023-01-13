@@ -28,7 +28,6 @@ public class Propiedades {
 	public static final String API_VALIDATION = "API_VALIDATION";
 	public static final String API_MAX_TRY = "API_MAX_TRY";
 	public static final String API_ASYNCHRONOUS = "API_ASYNCHRONOUS";
-	//Pendientes
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
 	
 	public static final String API_EXTRACTION = "API_EXTRACTION";
@@ -36,7 +35,7 @@ public class Propiedades {
 	public static final String API_ITERATION_ONE_EXECUTION = "API_ITERATION_ONE_EXECUTION";
 	public static final String API_READ_TIMEOUT = "API_READ_TIMEOUT";
 	public static final String API_CONNECT_TIMEOUT = "API_CONNECT_TIMEOUT";
-	
+	public static final String API_KEY = "API_KEY";
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -403,6 +402,7 @@ public class Propiedades {
 					+ "Si el documento no viene con ese campo no se muestra ningun mensaje";break;}
 			case API_TRANSACCION: 
 			case API : {ruleProperty = "Identifica el API que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";break;}
+			case API_KEY : {ruleProperty = "Coloca un texto que funcionara como token de validacion para los sistemas que se conecten por medio del API(x-api-key).\n";break;}
 			case API_ASYNCHRONOUS : {ruleProperty = "Esta propiedad hace que el API se ejecute al terminar todo el proceso de la transaccion de forma asincrona, ejemplo los mensajes de texto que se vana  enviar cuando todo termine ok";break;}
 			case API_HEADER : {ruleProperty = "Variables del Header de la peticion del API Valor contiene el KEY y Motivo contiene el texto.\n";break;}
 			case API_CODE_DIRECT : {ruleProperty = "Se encarga de reemplazar un valor en el template.\n\nEn el template debes tener la estructura => {{D_XXXXXXX}} , donde XXXXXX es el codigo del campo";break;}
