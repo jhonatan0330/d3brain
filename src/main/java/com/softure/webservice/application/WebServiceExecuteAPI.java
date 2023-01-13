@@ -30,7 +30,7 @@ import com.softure.document_transition.application.CallDocumentUpdateFromAutomat
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -69,7 +69,7 @@ public class WebServiceExecuteAPI {
 	@Autowired
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
 	@Autowired
-	private MensajeSvc mensajeSvc;
+	private MailSendMessageToAdminService mensajeToAdminService;
 	@Autowired
 	private WebServiceCallPrepare prepareDataService;
 	@Autowired
@@ -184,7 +184,7 @@ public class WebServiceExecuteAPI {
 			infoError = infoError + "\nEntrada " + callWS.getEntrada();
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date()) + "]";
-			mensajeSvc.mensaje2Administrator("Error en ejecucion de un API " + service.getNombre(), infoError);
+			mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
 		}

@@ -36,7 +36,7 @@ import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailGenerateMessageService;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -74,7 +74,7 @@ public class CallDocumentCRUD {
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
 	@Autowired
-	private MensajeSvc mensajeSvc;
+	private MailGenerateMessageService generateMessageService;
 	@Autowired
 	private CallManageTransition manageTransitionFunction;
 	@Autowired
@@ -118,7 +118,7 @@ public class CallDocumentCRUD {
 		} catch (Exception e) {
 			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario());
 			throw new ServerException(e.getMessage());
-		} 
+		}
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -154,8 +154,9 @@ public class CallDocumentCRUD {
 	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
 		return updateWithoutTransaction(dto, modificadorId, token, false);
 	}
-	
-	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, String token, boolean isUpdateAutomatic) throws ServerException {
+
+	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, String token,
+			boolean isUpdateAutomatic) throws ServerException {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		PedidoVentaDTO bd = pedidoService.consultaXId(dto.getLlaveTabla());
 		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
@@ -168,7 +169,8 @@ public class CallDocumentCRUD {
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
-		if (!isUpdateAutomatic && Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
+		if (!isUpdateAutomatic
+				&& Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
 		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null) {
@@ -184,9 +186,10 @@ public class CallDocumentCRUD {
 			iterador.setPrincipal(bd);
 		}
 		validateFields(dto, plantilla, token, isUpdateAutomatic);
-		
-		if(!isUpdateAutomatic) propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
-		
+
+		if (!isUpdateAutomatic)
+			propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
+
 		if (dto.getNombre() == null) {
 			dto.setNombre(bd.getNombre());// Cuando envio modificar lo envio vacio
 			dto.setConsecutivo(bd.getConsecutivo());
@@ -246,7 +249,7 @@ public class CallDocumentCRUD {
 	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token) throws ServerException {
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
-		if(dto.getFuncionario()==null)
+		if (dto.getFuncionario() == null)
 			throw new ServerException("Para crear el documento debes enviar el funcionario");
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
@@ -256,17 +259,17 @@ public class CallDocumentCRUD {
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
-		
+
 		validateFields(dto, plantilla, token, false);
 
 		propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
-		
+
 		validateConsecutiveNumber(dto, plantilla, token);
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validateBalance(dto, plantilla);
 		if (dto.getTransaccion() == null)
 			dto.setTransaccion(transaccionSvc.crear(token).getLlaveTabla());
-		
+
 		dto.setFechaRegistro(new Date());
 		dto.setHistorico(null);
 		PedidoVentaDTO pedido = pedidoService.save(dto);
@@ -293,17 +296,15 @@ public class CallDocumentCRUD {
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
 		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
-		if (apis!=null &&!apis.isEmpty()) {
+		if (apis != null && !apis.isEmpty()) {
 			for (PropiedadDTO api : apis) {
-				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);	
+				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);
 			}
 		}
-			
+
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
-	
-	
 
 	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion)
 			throws ServerException {
@@ -315,7 +316,7 @@ public class CallDocumentCRUD {
 		} else {// Cuando son transacciones que no inician un proceso (aqui traza del documento
 				// en tipo proceso traza al proceso)
 				// cundo son solo documetnos sin transciones se envian mensajes
-			mensajeSvc.gestionarMensajes(pedido, null, usuarioService.consultaXId(pedido.getFuncionario()), pedido,
+			generateMessageService.call(pedido, null, usuarioService.consultaXId(pedido.getFuncionario()), pedido,
 					token);
 			// Pase aqui la traza ya que debo integrar
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null,
@@ -362,14 +363,14 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void validateFields(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token, boolean isUpdateAutomatic)
-			throws ServerException {
+	private void validateFields(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token,
+			boolean isUpdateAutomatic) throws ServerException {
 		if (plantilla != null && plantilla.getCaracteristicas() != null && !plantilla.getCaracteristicas().isEmpty()) {
 			String filtroTexto = "";
 			if (dto.getCaracteristicas() == null)
 				throw new ServerException("Es necesesario registrar informacion adicional.");
-			//En casos como generacion automatica vienen en desorden
-			List<PedidoVentaCaracteristicaDTO> ordenadas = new ArrayList<PedidoVentaCaracteristicaDTO>(); 
+			// En casos como generacion automatica vienen en desorden
+			List<PedidoVentaCaracteristicaDTO> ordenadas = new ArrayList<PedidoVentaCaracteristicaDTO>();
 			for (DocumentoPlantillaCaracteristicaDTO campoPlantilla : plantilla.getCaracteristicas()) {
 				boolean campoEncontrado = false;
 				// 1 Coloco los campos DTO
@@ -392,13 +393,15 @@ public class CallDocumentCRUD {
 							+ " no viene registrado en el documento " + plantilla.getNombre());
 			}
 			dto.setCaracteristicas(ordenadas);
-			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {// Valido para actualizar que el campo si se pueda modiifcar
+			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {// Valido para actualizar que el campo si se pueda
+																	// modiifcar
 				if (!plantilla.getCaracteristicas().isEmpty()) {
 					boolean iContadorModificadas = false;
 					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getCaracteristicas()) {
 						if (iCampoDocumento.getModificado()) {
 							if (Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(),
-									Propiedades.PERMISO_CAMPO_MODIFICABLE) == null && Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(),
+									Propiedades.PERMISO_CAMPO_MODIFICABLE) == null
+									&& Propiedades.obtenerParametro(iCampoDocumento.getCampoDTO(),
 											Propiedades.PERMISO_CAMPO_BLOQUEAR) == null) {
 								String mensajeError = "El campo " + iCampoDocumento.getCampoDTO().getNombre();
 								mensajeError = mensajeError + " de la plantilla "
@@ -719,12 +722,12 @@ public class CallDocumentCRUD {
 			String usrId = null;
 			String usrMail = null;
 			String usrPhone = null;
-			
-			String campoCorreo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
-					dto.getPlantilla(), Propiedades.CORREO_ROL, getUserID(token));
-			String campoCelular = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
-					dto.getPlantilla(), Propiedades.CELULAR_ROL, getUserID(token));
-			
+
+			String campoCorreo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
+					Propiedades.CORREO_ROL, getUserID(token));
+			String campoCelular = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
+					Propiedades.CELULAR_ROL, getUserID(token));
+
 			// En casos que el mismo usuario se coloque varias veces en un mismo formulario
 			// x ejemplo contactos de varios proyectos
 			String campoConsecutivo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
@@ -739,7 +742,7 @@ public class CallDocumentCRUD {
 			if (dto.getCaracteristicas().size() == 0)
 				throw new ServerException("Se debe colocar la caracteristica nombre del documento");
 			for (PedidoVentaCaracteristicaDTO pvc : dto.getCaracteristicas()) {
-				if (usrId ==null && pvc.getCampo().compareTo(campoConsecutivo) == 0) {
+				if (usrId == null && pvc.getCampo().compareTo(campoConsecutivo) == 0) {
 					if (pvc.getCampoDTO() == null)
 						pvc.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(pvc.getCampo()));
 					switch (pvc.getCampoDTO().getFormato()) {
@@ -753,10 +756,10 @@ public class CallDocumentCRUD {
 						throw new ServerException("El componente no es tipo texto o numero");
 					}
 				}
-				if (usrMail ==null && campoCorreo != null && pvc.getCampo().compareTo(campoCorreo) == 0) {
+				if (usrMail == null && campoCorreo != null && pvc.getCampo().compareTo(campoCorreo) == 0) {
 					usrMail = pvc.getValorText();
 				}
-				if (usrPhone ==null && campoCelular != null && pvc.getCampo().compareTo(campoCelular) == 0) {
+				if (usrPhone == null && campoCelular != null && pvc.getCampo().compareTo(campoCelular) == 0) {
 					usrPhone = pvc.getValorText();
 				}
 			}
@@ -800,9 +803,10 @@ public class CallDocumentCRUD {
 			}
 
 			// 3. actualizo nombre y el id
-			if (usr.getNombre().compareTo(usrNombre) != 0 || usr.getIdentificacion().compareTo(usrId) != 0 
-					|| (usrMail!=null && (usr.getCorreo()==null || usr.getCorreo().compareTo(usrMail) != 0))
-					|| (usrPhone!=null && (usr.getTelefono()==null || usr.getTelefono().compareTo(usrPhone) != 0))) {
+			if (usr.getNombre().compareTo(usrNombre) != 0 || usr.getIdentificacion().compareTo(usrId) != 0
+					|| (usrMail != null && (usr.getCorreo() == null || usr.getCorreo().compareTo(usrMail) != 0))
+					|| (usrPhone != null
+							&& (usr.getTelefono() == null || usr.getTelefono().compareTo(usrPhone) != 0))) {
 				UsuarioDTO usrActualizar = new UsuarioDTO();
 				usrActualizar.setEstado(usr.getEstado());
 				usrActualizar.setIdentificacion(usrId);

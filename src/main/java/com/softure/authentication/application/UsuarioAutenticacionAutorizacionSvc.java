@@ -18,7 +18,7 @@ import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionFilterD
 import com.softure.authentication.infrastructure.UsuarioAutenticacionAutorizacionMapper;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailRecoverPasswordService;
 
 @Service("usuarioAutenticacionAutorizacionService")
 public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenticacionAutorizacionDTO, UsuarioAutenticacionAutorizacionFilterDTO> {
@@ -27,7 +27,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 	private UsuarioAutenticacionAutorizacionMapper usuarioAutenticacionAutorizacionMapper;
 	
 	// BEGIN region servicesUsuarioAutenticacionAutorizacion
-	@Autowired private MensajeSvc mensajeService;
+	@Autowired private MailRecoverPasswordService mailRecoverPasswordService;
 	// END region servicesUsuarioAutenticacionAutorizacion
 
 	@Override
@@ -101,7 +101,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 		dto.setFechaMaxima(new Date(dto.getFechaSolicitud().getTime()+15*60*1000));
 		dto.setCodigo(String.valueOf(Double.valueOf(Math.random()*1000000).intValue()));
 		dto = save(dto);
-		mensajeService.mensaje2Recover(correo, dto.getLlaveTabla(), dto.getCodigo() );	
+		mailRecoverPasswordService.call(correo, dto.getLlaveTabla(), dto.getCodigo() );	
 	}
 	
 	public UsuarioAutenticacionAutorizacionDTO validar(String llave, String code, String newKey, String ip) throws ServerException {

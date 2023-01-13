@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_designer.domain.ProcesoTransicionAutomaticaDTO;
 import com.softure.process_designer.domain.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -45,7 +45,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	private ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
 	
 	// BEGIN region servicesProcesoTransicionAutomatica
-	@Autowired private MensajeSvc mensajeSvc;
+	@Autowired private MailSendMessageToAdminService sendMessageToAdminSvc;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private CallDocumentNewFromAutomatic createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
@@ -150,7 +150,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					procesoTransicionAutomaticaDTO.setMensaje("ERROR : " + e.getMessage());
 					try {
 						try {
-							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage()+ "\n\n(" +procesoTransicionAutomaticaDTO.getLlaveTabla() + ")");
+							sendMessageToAdminSvc.call("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage()+ "\n\n(" +procesoTransicionAutomaticaDTO.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 						procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);
@@ -218,7 +218,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
 				try {
-					mensajeSvc.mensaje2Administrator("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");					
+					sendMessageToAdminSvc.call("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");					
 				} catch (Exception e) {
 					error = "*****ERROR SERVIDOR DE CORREO PARA MENSAJE***** revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " +  propiedadDTO.getTexto() + " ) " + e.getMessage() + " ERROR =" + error;
 				}
@@ -312,7 +312,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					} catch (Exception e) {
 						dto.setMensaje("ERROR : " + e.getMessage());
 						try {
-							mensajeSvc.mensaje2Administrator("Error en ejecucion de transaccion de limpieza de datos" + dto.getPlantillaNombre(), e.getMessage() + "\n\n(" +dto.getLlaveTabla() + ")");
+							sendMessageToAdminSvc.call("Error en ejecucion de transaccion de limpieza de datos" + dto.getPlantillaNombre(), e.getMessage() + "\n\n(" +dto.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 					}

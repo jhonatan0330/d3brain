@@ -46,7 +46,7 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.report.infrastructure.ReporteServlet;
 import com.softure.upload.infrastructure.DownloaderServlet;
@@ -61,7 +61,7 @@ import com.softure.webservice.application.WebServiceEjecucionSvc;
 public class Sw42WebApplication  extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	@Autowired private Environment env;
-	@Autowired private MensajeSvc mensajeService;
+	@Autowired private MailReleaseMessageQueueService releaseQueueService;
 	@Autowired private ProcesoTransicionAutomaticaSvc transicionservice;
 	@Autowired private UsuarioAutenticacionSvc autService;
 	@Autowired private WebServiceEjecucionSvc apiService;
@@ -213,7 +213,7 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
 	public void sendMail() throws ServerException {
 		if(env.getProperty("cron.enabled").compareTo("true")==0) {
 			System.out.println("*******CORREOS****" + new Date().toString());
-			mensajeService.tareaCorreoElectronico();
+			releaseQueueService.call();
 		}
 	}
 	

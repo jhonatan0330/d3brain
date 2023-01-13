@@ -1,0 +1,44 @@
+package com.softure.mail.application;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.stereotype.Service;
+
+import com.softure.authentication.application.OrganizacionSvc;
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.domain.OrganizacionDTO;
+import com.softure.java.cons.ConstantesGenerales;
+import com.softure.java.dto.exception.ServerException;
+import com.softure.logisticpymes.application.ServidorSvc;
+import com.softure.logisticpymes.domain.ServidorDTO;
+import com.softure.logisticpymes.domain.ServidorFilterDTO;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+
+@Service
+public class MailSendMessageToAdminService {
+
+	@Autowired private ServidorSvc servidorService;
+	@Autowired private OrganizacionSvc organizacionService;
+	
+	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	public void call(String messageTitle, String messageText) throws ServerException {
+		UsuarioDTO userAdmin = autenticacionService.getUserSystem();
+		if(userAdmin==null || userAdmin.getCorreo()==null ) return;
+		ServidorFilterDTO filter = new ServidorFilterDTO();
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setTipo(ServidorDTO.MAIL);
+		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
+		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado para enviar mensaje al administrador.\n " + messageTitle + "\n" +messageText);
+		JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidores.get(0));
+		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
+		SimpleMailMessage message = new SimpleMailMessage();  
+        message.setFrom(servidores.get(0).getUsuario());
+	    message.setTo(userAdmin.getCorreo());
+	    message.setSubject(messageTitle);  
+	    message.setText(principal.getNombre() + " " + messageText);  
+	    mailSender.send(message);
+	}
+}

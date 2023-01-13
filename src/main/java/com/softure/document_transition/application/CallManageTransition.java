@@ -22,7 +22,7 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.domain.UsuarioDTO;
-import com.softure.mail.application.MensajeSvc;
+import com.softure.mail.application.MailGenerateMessageService;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
@@ -44,8 +44,8 @@ public class CallManageTransition {
 	private DocumentoPlantillaSvc documentoService;
 	@Autowired
 	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired
-	private MensajeSvc mensajeSvc;
+	@Autowired 
+	private MailGenerateMessageService generateMessageService;
 	@Autowired
 	private ProcesoEstadoSvc estadoService;
 	@Autowired
@@ -171,7 +171,7 @@ public class CallManageTransition {
 					token, transaccion, nameTrace, userID, documentRecentCreateInTransition);
 			// Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato
 			// tiene ponerlo antes o despues
-			mensajeSvc.gestionarMensajes(expedienteDTO, dto, null, documentoDTO, token);
+			generateMessageService.call(expedienteDTO, dto, null, documentoDTO, token);
 			break;
 		case ProcesoEstadoDTO.TIPO_API:
 			respuesta = executeAPI(dto.getEstadoLLegada(), expedienteDTO, documentoDTO, token, documentRecentCreateInTransition);
@@ -186,7 +186,7 @@ public class CallManageTransition {
 			pedidoService.update(expedienteDTO);
 			UsuarioDTO responsable = assignResponsibleToActivity(expediente, filtroEstado.getLlaveTabla(),
 					filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
-			mensajeSvc.gestionarMensajes(expedienteDTO, dto, responsable, documentoDTO, token);
+			generateMessageService.call(expedienteDTO, dto, responsable, documentoDTO, token);
 			break;
 		}
 

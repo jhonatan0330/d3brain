@@ -127,6 +127,7 @@ import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
+import com.softure.mail.application.MailUserSendMessage;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.mail.application.MensajeSvc;
 import com.softure.mail.domain.MensajeDTO;
@@ -3334,11 +3335,13 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
+	
+	@Autowired private MailUserSendMessage userSendMessage;
 
 	@RequestMapping(value="/enviarMensajeMensaje", method=RequestMethod.POST)
 	public MensajeDTO enviarMensajeMensaje(@RequestBody MensajeFilterDTO dto)throws FlexException {
 		try {
-			return mensajeService.enviarMensaje(dto);
+			return userSendMessage.call(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
