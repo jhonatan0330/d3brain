@@ -183,6 +183,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	public void crearAutenticacion(String usuario, String token) throws ServerException{
 		UsuarioAutenticacionFilterDTO filtro1 = new UsuarioAutenticacionFilterDTO();
 		filtro1.setUsuario(usuario);
+		filtro1.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		if(consultaUnica(filtro1) == null) {
 			UsuarioDTO user = usuarioService.consultaXId(usuario);
 			UsuarioAutenticacionDTO aut = new UsuarioAutenticacionDTO();
