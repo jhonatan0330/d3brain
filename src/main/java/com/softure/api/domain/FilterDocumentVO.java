@@ -8,6 +8,7 @@ import lombok.Data;
 public class FilterDocumentVO {
 
 	private String template;
+	private String id;
 	private String code;
 	private String filterText;
 	private List<String> states;

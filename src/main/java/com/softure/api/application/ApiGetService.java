@@ -34,14 +34,18 @@ public class ApiGetService {
 		if(templateBD==null) throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
 		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
-		filterDTO.setPlantilla(templateBD.getLlaveTabla());
 		filterDTO.setSecurityToken(token);
-		filterDTO.setNombre(filter.getCode());
-		filterDTO.setEstado(filter.getActive());
-		filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
-		filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
-		if(filter.getStates()!=null && !filter.getStates().isEmpty()) {
-			filterDTO.setEstadoExpediente( String.join(";", filter.getStates()) );
+		if(filter.getId()==null) {
+			filterDTO.setPlantilla(templateBD.getLlaveTabla());
+			filterDTO.setNombre(filter.getCode());
+			filterDTO.setEstado(filter.getActive());
+			filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
+			filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
+			if(filter.getStates()!=null && !filter.getStates().isEmpty()) {
+				filterDTO.setEstadoExpediente( String.join(";", filter.getStates()) );
+			}	
+		} else {
+			filterDTO.setLlaveTabla(filter.getId());
 		}
 		List<PedidoVentaDTO> results = listService.listarAvanzado(filterDTO); 
 		return transformPedidoVentaToDocument(results, token, templateBD);
