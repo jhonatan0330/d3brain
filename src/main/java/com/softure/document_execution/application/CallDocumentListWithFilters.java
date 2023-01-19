@@ -63,6 +63,8 @@ public class CallDocumentListWithFilters {
 				if(dto.getTextoFiltro()==null) throw new ServerException("Para los campos de herencia se debe colocar el id del documento base en el campo texto filtro");
 				String tokenHeredable = dto.getSecurityToken();
 				dto.setSecurityToken(null);//Se quito que solo viera los que tiene permiso
+				// La idea es implementar los filtros en los campos de los formularios de herencia
+				if(dto.getEstado()==null && dto.getEstadoExpediente()==null) dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				List<String> estadosFiltro = organizarFiltros(dto);
 				List<String> textoFiltroComas = organizarFiltroComas(dto);
 				try {
