@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softure.gps.application.GPSGetDevicesByQueryService;
 import com.softure.gps.application.GPSGetDevicesByTokenService;
 import com.softure.gps.application.GPSLocalizacionSvc;
+import com.softure.gps.application.GPSReportLocationsService;
+import com.softure.gps.domain.DeviceVO;
 import com.softure.gps.domain.GPSDispositivoDTO;
+import com.softure.gps.domain.GPSEnrollDeviceService;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
+import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
 
 @RestController
@@ -30,6 +34,13 @@ public class GPSRest {
 	@Autowired private GPSLocalizacionSvc localizacionGPS;
 	@Autowired private GPSGetDevicesByQueryService getDevicesByQueryService;
 	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
+	@Autowired private GPSEnrollDeviceService enrollDeviceService;
+	@Autowired private GPSReportLocationsService reportLocationsService;
+	
+	@PostMapping(value="/enroll-device")
+	public IdResponse enroll(@RequestHeader("Authorization") String token, @RequestBody DeviceVO device)  throws ServerException  {
+		return enrollDeviceService.call(token, device.getName());
+	}
 	
 	@GetMapping(value="/getGPS")
 	public GPSDispositivoDTO getGPS(@RequestHeader("Authorization") String token)  throws ServerException  {
@@ -46,9 +57,9 @@ public class GPSRest {
 		return 	localizacionGPS.listarConsulta(location);
 	}
 	
-	@PostMapping(value="/saveGPSLocation")
-	public GPSLocalizacionDTO saveGPSLocation(@RequestHeader("Authorization") String token, @RequestBody GPSLocalizacionDTO location)  throws ServerException  {
-		return localizacionGPS.save(location);
+	@PostMapping(value="/save-locations")
+	public IdResponse saveGPSLocation(@RequestHeader("Authorization") String token, @RequestBody List<GPSLocalizacionDTO> locations)  throws ServerException  {
+		return reportLocationsService.call(token, locations);
 	}
 
 	@PostMapping(value="/getGPSDocument")
