@@ -11,7 +11,6 @@ import com.softure.api.domain.FieldVO;
 import com.softure.api.domain.FilterDocumentVO;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
-import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
@@ -23,16 +22,16 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service
 public class ApiGetService {
 
-	@Autowired CallDocumentListWithFilters listService;
-	@Autowired DocumentoPlantillaSvc templateService;
-	@Autowired PedidoVentaSvc documentService;
+	@Autowired private CallDocumentListWithFilters listService;
+	@Autowired private DocumentoPlantillaSvc templateService;
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
 	public List<DocumentVO> call(String token, FilterDocumentVO filter) throws ServerException {
 		
+		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
+		
 		DocumentoPlantillaDTO templateBD = templateService.consultarPorCodigo(filter.getTemplate());
 		if(templateBD==null) throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
-		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setSecurityToken(token);
 		if(filter.getId()==null) {

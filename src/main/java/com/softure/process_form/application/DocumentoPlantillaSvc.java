@@ -135,7 +135,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return listarPlantillasUsuario(dto, false);
 		// END region consultaUsuario
 	}
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	
+	
 	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token)throws ServerException{
 		// BEGIN region obtenerCampos
 		dto.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token));

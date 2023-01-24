@@ -50,7 +50,7 @@ public class ApiSendService {
 	}
 
 	private void validateItem(DocumentVO item) throws ServerException {
-		if (item.getTemplate() == null)
+		if (item.getTemplate() == null || item.getTemplate().isEmpty())
 			throw new ServerException("El codigo de la plantilla es null, recuerda usar el campo template");
 		if (item.getFields() == null)
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag fields");
@@ -187,28 +187,7 @@ public class ApiSendService {
 			}
 			detallePedidoVentaService.createFieldsProduct(detalle);
 		}
-		/*for (ProductVO iProductVO : products) {
-			for (DetallePedidoVentaDTO iCampo : result) {
-				if (iCampo.getProductoCodigo().getCodigo().compareTo(fieldVO.getField()) == 0) {
-					chooseValueToField(fieldVO, iCampo);
-				}
-			}
-		}*/
 		
 		return result;
 	}
-
-	/*private List<PedidoVentaCaracteristicaDTO> assignateFeaturesToProduct(List<FieldVO> features) {
-		if (features == null || features.isEmpty())
-			return null;
-		List<PedidoVentaCaracteristicaDTO> result = new ArrayList<>();
-		for (FieldVO iFeatureVO : features) {
-			PedidoVentaCaracteristicaDTO item = new PedidoVentaCaracteristicaDTO();
-			result.add(item);
-		}
-		return result;
-	}*/
-	
-	
-
 }

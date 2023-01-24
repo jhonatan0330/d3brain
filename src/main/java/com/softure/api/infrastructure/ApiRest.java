@@ -11,12 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.api.application.ApiAuthorizeService;
+import com.softure.api.application.ApiGetFieldDataService;
 import com.softure.api.application.ApiGetService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
 import com.softure.api.domain.DocumentVO;
 import com.softure.api.domain.DocumentWithLoginVO;
+import com.softure.api.domain.FieldVO;
 import com.softure.api.domain.FilterDocumentVO;
+import com.softure.api.domain.FilterDocumentFieldWithLoginVO;
 import com.softure.api.domain.FilterWithLoginVO;
 import com.softure.api.domain.LoginVO;
 import com.softure.java.domain.IdResponse;
@@ -28,6 +31,7 @@ public class ApiRest {
 
 	@Autowired ApiAuthorizeService apiAuthorizeService;
 	@Autowired ApiGetService apiGetService;
+	@Autowired ApiGetFieldDataService apiGetFieldDataService;
 	@Autowired ApiLoginService apiLoginService;
 	@Autowired ApiSendService apiSendService;
 	
@@ -46,6 +50,15 @@ public class ApiRest {
 		IdResponse token = apiLoginService.call(filter.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiGetService.call(token.getId(), filter.getDocument());
+	}
+	
+	@PostMapping("/getFieldWithLogin")
+	public FieldVO getFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody FilterDocumentFieldWithLoginVO filter
+		) throws ServerException {
+		IdResponse token = apiLoginService.call(filter.getLogin());
+		apiAuthorizeService.call(apiKey, token.getId());
+		return apiGetFieldDataService.call(token.getId(), filter.getField());
 	}
 	
 	@PostMapping("/login")
