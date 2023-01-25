@@ -234,14 +234,14 @@ public class CallDocumentCRUD {
 			iterador.setPrincipal(bd);
 		}
 		dto.setCaracteristicas(saveInternalFields(dto, token));
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId,
+				dto.getFuncionario(), token);
 		manageTemplateTypes(dto, plantilla, token);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
 			relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(),
 					dto.getEstadoExpediente(), (dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null,
 					token, null, dto.getHistorico(), transaccion);
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId,
-				dto.getFuncionario(), token);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return dto;
 	}
@@ -291,10 +291,11 @@ public class CallDocumentCRUD {
 		pedido.setCaracteristicas(saveInternalFields(dto, token));
 		if (dto.getDinero() != null && pedido.getDinero() == null)
 			pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
-		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
-		manageTemplateTypes(dto, plantilla, token);
+		// Al crear un documento que va a un API se estaba ejecutando el api y despues decia que fallaba :(
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
+		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
+		manageTemplateTypes(dto, plantilla, token);
 		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
 		if (apis != null && !apis.isEmpty()) {
 			for (PropiedadDTO api : apis) {
