@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
-public class FilterDocumentVO {
+public class DocumentFilterRequest {
 
 	private String template;
 	private String id;
@@ -26,4 +26,5 @@ public class FilterDocumentVO {
 	private Date dateMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date dateMax;
+	private List<FieldRequest> filters;
 }

@@ -11,9 +11,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.api.domain.DocumentVO;
-import com.softure.api.domain.FieldVO;
-import com.softure.api.domain.ProductVO;
+import com.softure.api.domain.DocumentRequest;
+import com.softure.api.domain.FieldResponse;
+import com.softure.api.domain.ProductResponse;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
@@ -36,7 +36,7 @@ public class ApiSendService {
 	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired private ProductoSvc productoService;
 
-	public IdResponse call(String token, DocumentVO item) throws ServerException {
+	public IdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);
 		// Con el codigo de la plantilla consultar la plantilla completa
 		DocumentoPlantillaDTO template = findTemplate(item.getTemplate(), token);
@@ -49,12 +49,12 @@ public class ApiSendService {
 		return new IdResponse(document.getLlaveTabla(), document.getNombre());
 	}
 
-	private void validateItem(DocumentVO item) throws ServerException {
+	private void validateItem(DocumentRequest item) throws ServerException {
 		if (item.getTemplate() == null || item.getTemplate().isEmpty())
 			throw new ServerException("El codigo de la plantilla es null, recuerda usar el campo template");
 		if (item.getFields() == null)
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag fields");
-		for (FieldVO fieldVO : item.getFields()) {
+		for (FieldResponse fieldVO : item.getFields()) {
 			if (fieldVO.getField() == null)
 				throw new ServerException("Existe un campo " + fieldVO.getField()
 						+ " que el valor FIELD ES VACIO, si no se envia valor no es necesario colocar el campo");
@@ -64,10 +64,10 @@ public class ApiSendService {
 		}
 	}
 
-	private void assignateValue(PedidoVentaDTO document, List<FieldVO> fields) throws ServerException {
+	private void assignateValue(PedidoVentaDTO document, List<FieldResponse> fields) throws ServerException {
 		if (fields == null || fields.isEmpty())
 			return;
-		for (FieldVO fieldVO : fields) {
+		for (FieldResponse fieldVO : fields) {
 			for (PedidoVentaCaracteristicaDTO iCampo : document.getCaracteristicas()) {
 				if (iCampo.getCampoDTO().getCodigo().compareTo(fieldVO.getField()) == 0) {
 					chooseValueToField(fieldVO, iCampo);
@@ -76,7 +76,7 @@ public class ApiSendService {
 		}
 	}
 
-	private void chooseValueToField(FieldVO fieldVO, PedidoVentaCaracteristicaDTO iCampo) throws ServerException {
+	private void chooseValueToField(FieldResponse fieldVO, PedidoVentaCaracteristicaDTO iCampo) throws ServerException {
 		switch (iCampo.getCampoDTO().getFormato()) {
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
 			iCampo.setValorNumero(transformNumber(fieldVO.getValue()));
@@ -153,11 +153,11 @@ public class ApiSendService {
 		return plantillaService.obtenerCampos(templateDTO, token);
 	}
 
-	private List<DetallePedidoVentaDTO> assignateValueToProducts(List<ProductVO> products) throws ServerException {
+	private List<DetallePedidoVentaDTO> assignateValueToProducts(List<ProductResponse> products) throws ServerException {
 		if (products == null || products.isEmpty())
 			return null;
 		List<DetallePedidoVentaDTO> result = new ArrayList<>();
-		for (ProductVO iProductVO : products) {
+		for (ProductResponse iProductVO : products) {
 			if(iProductVO.getCode()==null) throw new ServerException("Es necesario colocar el codigo del producto");
 			DetallePedidoVentaDTO item = new DetallePedidoVentaDTO();
 			item.setCantidad(iProductVO.getTotalQuantity());

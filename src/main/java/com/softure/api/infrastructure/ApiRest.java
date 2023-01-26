@@ -15,13 +15,14 @@ import com.softure.api.application.ApiGetFieldDataService;
 import com.softure.api.application.ApiGetService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
-import com.softure.api.domain.DocumentVO;
-import com.softure.api.domain.DocumentWithLoginVO;
-import com.softure.api.domain.FieldVO;
-import com.softure.api.domain.FilterDocumentVO;
-import com.softure.api.domain.FilterDocumentFieldWithLoginVO;
-import com.softure.api.domain.FilterWithLoginVO;
-import com.softure.api.domain.LoginVO;
+import com.softure.api.domain.DocumentFilterRequest;
+import com.softure.api.domain.DocumentResponse;
+import com.softure.api.domain.DocumentFilterWithLoginRequest;
+import com.softure.api.domain.DocumentRequest;
+import com.softure.api.domain.DocumentWithLoginRequest;
+import com.softure.api.domain.FieldResponse;
+import com.softure.api.domain.DataFieldWithLoginRequest;
+import com.softure.api.domain.LoginRequest;
 import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
 
@@ -36,25 +37,25 @@ public class ApiRest {
 	@Autowired ApiSendService apiSendService;
 	
 	@PostMapping("/get")
-	public List<DocumentVO> getFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody FilterDocumentVO filter
+	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody DocumentFilterRequest filter
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey,token);
 		return apiGetService.call(token, filter);
 	}
 	
 	@PostMapping("/getWithLogin")
-	public List<DocumentVO> getFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody FilterWithLoginVO filter
+	public List<DocumentResponse> getDocumentFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody DocumentFilterWithLoginRequest filter
 		) throws ServerException {
 		IdResponse token = apiLoginService.call(filter.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiGetService.call(token.getId(), filter.getDocument());
 	}
 	
-	@PostMapping("/getFieldWithLogin")
-	public FieldVO getFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody FilterDocumentFieldWithLoginVO filter
+	@PostMapping("/getDataFieldWithLogin")
+	public FieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody DataFieldWithLoginRequest filter
 		) throws ServerException {
 		IdResponse token = apiLoginService.call(filter.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
@@ -63,7 +64,7 @@ public class ApiRest {
 	
 	@PostMapping("/login")
 	public IdResponse login(@RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody LoginVO login
+			,@RequestBody LoginRequest login
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey, null);
 		return apiLoginService.call(login);
@@ -71,7 +72,7 @@ public class ApiRest {
 	
 	@PostMapping("/send")
 	public IdResponse send(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentVO item
+			,@RequestBody DocumentRequest item
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey,token);
 		return apiSendService.call(token, item);
@@ -79,7 +80,7 @@ public class ApiRest {
 	
 	@PostMapping("/sendWithLogin")
 	public IdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentWithLoginVO item
+			,@RequestBody DocumentWithLoginRequest item
 		) throws ServerException {
 		IdResponse token = apiLoginService.call(item.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());

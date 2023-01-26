@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class DocumentVO {
+public class DocumentRequest {
 
 	private String template;
 	private String id;
@@ -17,5 +17,5 @@ public class DocumentVO {
 	private String active;
 	private String stateId;
 	private String stateName;
-	private List<FieldVO> fields;
+	private List<FieldResponse> fields;
 }

@@ -5,8 +5,8 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class FilterFieldVO {
+public class DataFieldRequest {
 	private String template;
 	private String code;
-	private List<FieldVO> preconditions;
+	private List<FieldResponse> preconditions;
 }

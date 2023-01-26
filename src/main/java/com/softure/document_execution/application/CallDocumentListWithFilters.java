@@ -120,6 +120,7 @@ public class CallDocumentListWithFilters {
 		filterDTO.setFiltroParametro(dtoFilter.getFiltroParametro());
 		filterDTO.setEstado(dtoFilter.getEstado());
 		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
+		filterDTO.setFiltersByFields(dtoFilter.getFiltersByFields());
 		String secToken =null;
 		List<PropiedadDTO> propiedadesFiltro = null;
 		filterDTO.setPlantilla(templateFilter);

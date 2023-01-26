@@ -1,6 +1,5 @@
 package com.softure.api.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -10,10 +9,10 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class ProductVO {
+public class FieldResponse {
 	
-	private BigDecimal totalQuantity;
-	private BigDecimal totalValue;
-	private String code;
-	private List<FieldVO> features;
+	private String field;
+	private String value;
+	private List<ProductResponse> products;
+	
 }

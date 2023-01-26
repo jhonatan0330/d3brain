@@ -275,6 +275,11 @@
 					)<if test="dto.funcionario!=null">or cpdv_funcionario = #{dto.funcionario}</if>)
 	        </foreach>
 		</if>
+		<if test="dto.filtersByFields!=null">
+			<foreach item="item" index="index" collection="dto.filtersByFields" >
+				<if test="item.valorOpcion!=null">and (#{item.valorOpcion} = (select cp.cpvc_valoropcion from campo_documento cp where cp.cdrc_documento = cpdv_llave and cp.cpvc_campo = #{item.campo}))</if>
+			</foreach>
+		</if>
 		<include refid="orderMainFragment" />
 	</select>
 	

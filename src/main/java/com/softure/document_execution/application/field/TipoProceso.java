@@ -98,6 +98,7 @@ public class TipoProceso {
 					} else {
 						//Esto se hizo para las cargas masivas en caso que llegue un valor texto intentamos consultarlo
 						// especialmente se hizo para los dependientes
+						//Esta cpopiado en varias partes miestras analizo como colocarlo en alguna funcion
 						if(pCampo.getValorText()!=null) {
 							PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 							filter.setCampo(pCampo.getCampo());

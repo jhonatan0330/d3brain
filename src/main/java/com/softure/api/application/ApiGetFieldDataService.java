@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.api.domain.FieldVO;
-import com.softure.api.domain.FilterFieldVO;
+import com.softure.api.domain.FieldResponse;
+import com.softure.api.domain.DataFieldRequest;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
@@ -21,7 +21,7 @@ public class ApiGetFieldDataService {
 	@Autowired private DocumentoPlantillaSvc templateService;
 	@Autowired private PedidoVentaCaracteristicaSvc fieldService;
 
-	public FieldVO call(String token, FilterFieldVO filter) throws ServerException {
+	public FieldResponse call(String token, DataFieldRequest filter) throws ServerException {
 		validateFilter(token, filter);
 		DocumentoPlantillaDTO templateBD = findTemplate(filter.getTemplate(), token);
 		DocumentoPlantillaCaracteristicaDTO fieldBD = findField(filter.getCode(), templateBD);
@@ -31,7 +31,7 @@ public class ApiGetFieldDataService {
 		fieldFilter.setCampoDTO(fieldBD);
 		if(filter.getPreconditions()!=null && !filter.getPreconditions().isEmpty()) {
 			fieldFilter.setDependientes(new ArrayList<>());
-			for (FieldVO iPrecondition : filter.getPreconditions()) {
+			for (FieldResponse iPrecondition : filter.getPreconditions()) {
 				DocumentoPlantillaCaracteristicaDTO fieldDependent = findField(iPrecondition.getField(), templateBD);
 				PedidoVentaCaracteristicaDTO dependent = new PedidoVentaCaracteristicaDTO();
 				dependent.setCampo(fieldDependent.getLlaveTabla());
@@ -52,7 +52,7 @@ public class ApiGetFieldDataService {
 		throw new ServerException("No se identifica un campo de codigo " + code + " en la plantilla " + templateBD.getNombre());
 	}
 
-	private void validateFilter(String token, FilterFieldVO filter) throws ServerException {
+	private void validateFilter(String token, DataFieldRequest filter) throws ServerException {
 		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
 		if (filter.getTemplate() == null || filter.getTemplate().isEmpty())
 			throw new ServerException("El codigo de la plantilla es null, recuerda usar el campo template");

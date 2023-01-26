@@ -1,7 +1,5 @@
 package com.softure.api.domain;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -9,10 +7,9 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class FieldVO {
+public class FieldRequest {
 	
 	private String field;
 	private String value;
-	private List<ProductVO> products;
 	
 }
