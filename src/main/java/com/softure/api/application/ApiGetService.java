@@ -40,6 +40,10 @@ public class ApiGetService {
 			filterDTO.setEstado(filter.getActive());
 			filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
 			filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
+			filterDTO.setFechaMin(filter.getDateMin());
+			filterDTO.setFechaMax(filter.getDateMax());
+			filterDTO.setFechaRegistroMin(filter.getCreationDateMin());
+			filterDTO.setFechaRegistroMax(filter.getCreationDateMax());
 			if(filter.getStates()!=null && !filter.getStates().isEmpty()) {
 				filterDTO.setEstadoExpediente( String.join(";", filter.getStates()) );
 			}	
