@@ -1,26 +1,8 @@
 package com.softure.gps.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.Date;
-
-import com.softure.authorization.application.UsuarioRolSvc;
-import com.softure.authorization.domain.UsuarioRolDTO;
-import com.softure.authorization.domain.UsuarioRolFilterDTO;
-import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.application.field.Propiedades;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.gps.domain.GPSDispositivoDTO;
-import com.softure.gps.domain.GPSDispositivoFilterDTO;
-import com.softure.gps.domain.GPSLocalizacionDTO;
-import com.softure.gps.domain.GPSLocalizacionFilterDTO;
-import com.softure.gps.infrastructure.GPSLocalizacionMapper;
-import com.softure.java.cons.ConstantesGenerales;
-import com.softure.property.application.PropiedadSvc;
-// END region interImport
-import com.softure.property.domain.PropiedadDTO;
-import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -29,6 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.softure.gps.domain.GPSDispositivoDTO;
+import com.softure.gps.domain.GPSLocalizacionDTO;
+import com.softure.gps.domain.GPSLocalizacionFilterDTO;
+import com.softure.gps.infrastructure.GPSLocalizacionMapper;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -40,10 +26,6 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	
 	// BEGIN region servicesGPSLocalizacion
 	@Autowired private GPSDispositivoSvc gpsDispositivoService;
-	@Autowired private PedidoVentaSvc documentoService;
-	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private UsuarioRolSvc usuarioRolService;
-	@Autowired private GPSDispositivoSvc dispositivoService;
 	// END region servicesGPSLocalizacion
 
 	@Override
@@ -114,30 +96,12 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	}
 
 // BEGIN region aditionalMethods
-	public List<GPSLocalizacionDTO> listarDocumento(GPSLocalizacionFilterDTO dto)throws ServerException {
-		//Valido que ese documento si tenga fechas de GPS
-		PedidoVentaDTO documento = documentoService.consultaXId(dto.getDocumento());
-		if(documento==null) throw new ServerException("Este documento no existe");
-		//Consulto que ese documento tenga usuario, tenga dispositivo
-		PropiedadDTO propiedad = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA, documento.getPlantilla(), Propiedades.GPS, getUserFlex(dto.getSecurityToken()));
-		if(propiedad==null) throw new ServerException("Este documento no se encuentra configurado para mostrar GPS");
-		//Consulto el usuario
-		UsuarioRolFilterDTO filtroRol = new UsuarioRolFilterDTO();
-		filtroRol.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		filtroRol.setDocumento(documento.getLlaveTabla());
-		UsuarioRolDTO uRol = usuarioRolService.consultaUnica(filtroRol);
-		if(uRol==null) throw new ServerException("Este documento no se encuentra relacionado a un usuario");
-		//Consulto el dispositivo
-		GPSDispositivoFilterDTO filtroDispositivo = new GPSDispositivoFilterDTO();
-		filtroDispositivo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		filtroDispositivo.setUsuario(uRol.getUsuario());
-		GPSDispositivoDTO dispositivo = dispositivoService.consultaUnica(filtroDispositivo);
-		if(dispositivo==null) throw new ServerException("El usuario no tiene relacionando un dispositivo");
-		//con el dipsositivo filtro 
-		GPSLocalizacionFilterDTO filtro = new GPSLocalizacionFilterDTO();
-		filtro.setDispositivo(dispositivo.getLlaveTabla());
-		//filtro.setFechaMin(fechaMin);
-		return listarConsulta(filtro);
+	public List<GPSLocalizacionDTO> listarFullByDay(GPSLocalizacionFilterDTO dto)
+			throws ServerException {
+		if(dto.getFechaMin()==null) throw new ServerException("Es necesario la fecha de inicio");
+		if(dto.getFechaMax()==null) throw new ServerException("Es necesario la fecha de fin");
+		if(dto.getDispositivo()==null) throw new ServerException("Es necesario el dispositivo");
+		return gPSLocalizacionMapper.listarFullByDay(dto);
 	}
 // END region aditionalMethods
 

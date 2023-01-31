@@ -161,6 +161,10 @@
 
 
 <!--// BEGIN region script-->
+	<select id="listarFullByDay" parameterType="GPSLocalizacionDTO" resultType="GPSLocalizacionDTO">
+		<include refid="selectGPSLocalizacionFragment" />
+		<include refid="whereGPSLocalizacionFragment" />
+	</select>
 <!--// END region script-->
 
 </mapper>

@@ -54,16 +54,12 @@ public class GPSRest {
 	
 	@PostMapping(value="/getGPSLocation")
 	public List<GPSLocalizacionDTO> getGPSLocation(@RequestHeader("Authorization") String token, @RequestBody GPSLocalizacionFilterDTO location)  throws ServerException  {
-		return 	localizacionGPS.listarConsulta(location);
+		return 	localizacionGPS.listarFullByDay(location);
 	}
 	
 	@PostMapping(value="/save-locations")
-	public IdResponse saveGPSLocation(@RequestHeader("Authorization") String token, @RequestBody List<GPSLocalizacionDTO> locations)  throws ServerException  {
+	public IdResponse savesLocation(@RequestHeader("Authorization") String token, @RequestBody List<GPSLocalizacionDTO> locations)  throws ServerException  {
 		return reportLocationsService.call(token, locations);
 	}
 
-	@PostMapping(value="/getGPSDocument")
-	public List<GPSLocalizacionDTO> getGPSDocument(@RequestHeader("Authorization") String token, @RequestBody GPSLocalizacionFilterDTO location)  throws ServerException  {
-		return 	localizacionGPS.listarDocumento(location);
-	}
 }
