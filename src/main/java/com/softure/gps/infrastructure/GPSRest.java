@@ -39,7 +39,7 @@ public class GPSRest {
 	
 	@PostMapping(value="/enroll-device")
 	public IdResponse enroll(@RequestHeader("Authorization") String token, @RequestBody DeviceVO device)  throws ServerException  {
-		return enrollDeviceService.call(token, device.getName());
+		return enrollDeviceService.call(token);
 	}
 	
 	@GetMapping(value="/getGPS")

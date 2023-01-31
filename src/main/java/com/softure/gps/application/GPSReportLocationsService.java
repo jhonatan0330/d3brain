@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.gps.domain.GPSDispositivoDTO;
+import com.softure.gps.domain.GPSEnrollDeviceService;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
@@ -20,12 +21,16 @@ public class GPSReportLocationsService {
 	
 	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
 	@Autowired private GPSLocalizacionSvc locationService;
+	@Autowired private GPSEnrollDeviceService enrollDeviceService;
 
 	@Transactional
 	public IdResponse call(String token, List<GPSLocalizacionDTO> locations) throws ServerException {
 		GPSDispositivoDTO device = getDevicesByTokenService.call(token);
 		//if(name ==null || name.isEmpty()) throw new ServerException("El identificador del dispositivo viene vacio");
-		if(device == null) throw new ServerException("No se identifico el dispositivo por el token");
+		if(device == null) {
+			device = new GPSDispositivoDTO();
+			device.setLlaveTabla( enrollDeviceService.call(token).getId());
+		}
 		for (GPSLocalizacionDTO gpsLocalizacionDTO : locations) {
 			gpsLocalizacionDTO.setDispositivo(device.getLlaveTabla());
 			gpsLocalizacionDTO.setDocumento(null);

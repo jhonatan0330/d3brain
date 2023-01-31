@@ -16,7 +16,7 @@ public class GPSEnrollDeviceService {
 	@Autowired private GPSDispositivoSvc deviceService;
 	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
 	
-	public IdResponse call(String token, String name) throws ServerException {
+	public IdResponse call(String token) throws ServerException {
 		GPSDispositivoDTO newDTO = getDevicesByTokenService.call(token);
 		//if(name ==null || name.isEmpty()) throw new ServerException("El identificador del dispositivo viene vacio");
 		if(newDTO != null) return  new IdResponse(newDTO.getLlaveTabla());
