@@ -19,6 +19,7 @@ public class GPSLocalizacionDTO extends BasicDTO
 	private BigDecimal longitud;
 	private BigDecimal latitud;
 	private String documento;
+	private String codigo;
 
 	public void setDispositivo(String dispositivo) {
 		this.dispositivo = dispositivo;
@@ -57,5 +58,13 @@ public class GPSLocalizacionDTO extends BasicDTO
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 }

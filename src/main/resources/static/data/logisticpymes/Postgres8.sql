@@ -466,6 +466,8 @@ CREATE TABLE gpslocalizacion_gplp(
         dgpl_fecha timestamp with time zone NOT NULL,
         mgpl_longitud NUMERIC(18,6) NOT NULL DEFAULT 0,
         mgpl_latitud NUMERIC(18,6) NOT NULL DEFAULT 0,
+        cgpl_documento character varying(32),
+        cgpl_codigo character varying(32),
         cgpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_gpslocalizacion_gplp PRIMARY KEY (cgpl_llave)
     );

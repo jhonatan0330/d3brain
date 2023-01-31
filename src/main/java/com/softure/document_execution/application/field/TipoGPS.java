@@ -8,11 +8,13 @@ import org.springframework.stereotype.Component;
 
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.gps.application.GPSReportLocationsService;
 import com.softure.java.dto.exception.ServerException;
 
 @Component
 public class TipoGPS {
 
+	@Autowired private GPSReportLocationsService gpsReportLocationService;
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
@@ -21,7 +23,7 @@ public class TipoGPS {
 				&& pCampo.getValorText()==null)
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
 		if(pCampo.getValorText()==null) return;
-		Pattern pat = Pattern.compile("^((\\-?|\\+?)?\\d+(\\.\\d+)?),\\s*((\\-?|\\+?)?\\d+(\\.\\d+)?)$");
+		Pattern pat = Pattern.compile("^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$");
 	    Matcher mat = pat.matcher(pCampo.getValorText());                                                                           
 	    if (!mat.matches())
 	    	throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " El campo no cumple con el format de las coordenadas latitud y longitud");
@@ -48,9 +50,9 @@ public class TipoGPS {
 		if(pCampo.getValorText()==null){
 			return pCampo;
 		}else{
+			gpsReportLocationService.callByForm(token, pCampo.getValorText(), pCampo.getDocumento(), pCampo.getPrincipal().getNombre());
 			return campoService.guardar(pCampo, token);
 		}
 	}
-	
 		
 }
