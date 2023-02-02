@@ -35,7 +35,7 @@ public class Propiedades {
 	public static final String API_ITERATION_ONE_EXECUTION = "API_ITERATION_ONE_EXECUTION";
 	public static final String API_READ_TIMEOUT = "API_READ_TIMEOUT";
 	public static final String API_CONNECT_TIMEOUT = "API_CONNECT_TIMEOUT";
-	public static final String API_KEY = "API_KEY";
+	
 	
 	//CAMPOS
 	public static final String FILTRO = "FILTRO";
@@ -223,7 +223,10 @@ public class Propiedades {
 	public static final String OCULTAR_MENSAJE_LICENCIA = "OCULTAR_MENSAJE_LICENCIA";
 	public static final String FORCE_NOTIFICATION = "FORCE_NOTIFICACTION";
 	public static final String TABLERO_CONTROL_SQL = "TABLERO_CONTROL_SQL";
-	
+
+	// Organizacion
+	public static final String API_KEY = "API_KEY";
+	public static final String COVERAGE_IMAGE = "COVERAGE_IMAGE";
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
 		PropiedadDTO parametroTipo =  new PropiedadDTO();
@@ -445,6 +448,8 @@ public class Propiedades {
 						+ "FORMATO_EXPORTAR\n";break;}
 			case CONSECUTIVO : {ruleProperty =  " Codigo del campo que va a colocar consecutivo del documento, se usa con un consecutivo manual.\n";break;}
 			case COPY_TEXT : {ruleProperty =  " Al momento de guardar el documento se va a copiar este texto en el portapapeles, [CODE]=(codigo del documento).\n";break;}
+			case COVERAGE_IMAGE : {ruleProperty =  " Coloca toda la url de laimagen de fondo que deseas ver en el perfil principal.\n";break;}
+			
 			case CORREO_ROL : {ruleProperty =  " Codigo del campo que va a colocar almacenar el correo del usuario.\n";break;}
 			case CUENTA_MOVIMIENTO : {ruleProperty =  " Si desea generar un movimiento de caja coloca I (Ingresos) G (Gastos).\n";break;}
 			case CUENTA_ANULAR_MOVIMIENTO : {ruleProperty =  " Este campo anula un movimiento que este vinculado con el proceso seleccionado, lo elimina del movimiento de cuentas\n";break;}

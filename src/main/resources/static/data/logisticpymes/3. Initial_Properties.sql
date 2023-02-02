@@ -412,3 +412,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
 	VALUES('PROP_219' , 'O', 'API-KEY', 'API_KEY', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
+	VALUES('PROP_220' , 'O', 'COVERAGE_IMAGE', 'COVERAGE_IMAGE', 'REQUISITO', true);

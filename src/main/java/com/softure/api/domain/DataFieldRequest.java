@@ -8,5 +8,5 @@ import lombok.Data;
 public class DataFieldRequest {
 	private String template;
 	private String code;
-	private List<FieldResponse> preconditions;
+	private List<FieldRequest> preconditions;
 }
