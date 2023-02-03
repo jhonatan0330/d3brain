@@ -20,7 +20,7 @@ public class ApiAuthorizeService {
 		if(apiKey==null || apiKey.isEmpty()) throw new ServerException("Ingresa el codigo de la app asignado");
 		if(token!=null) user = organizationService.getUserFlex(token);
 		if(apiKeyOrganization==null) getApiKeyHeader(user);
-		if(apiKeyOrganization==null) throw new ServerException("Notifica al administrador que no se encuentra configurada la clave de acceso");
+		if(apiKeyOrganization==null) throw new ServerException("Notifica al administrador que no se encuentra configurada la clave de acceso x-api-key en la organizacion");
 		if(apiKey.compareTo(apiKeyOrganization)!=0) throw new ServerException("El x-api-key que envias no concuerda con el registrado en la plataforma: " + apiKey);
 		return;
 	}

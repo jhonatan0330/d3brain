@@ -160,7 +160,7 @@ public class TipoNumero {
 				campoService.inactivar(bd, token);
 				return pCampo;
 			} else {
-				if (pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
+				if (bd.getValorNumero()!=null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
 					return pCampo;
 				} else {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());

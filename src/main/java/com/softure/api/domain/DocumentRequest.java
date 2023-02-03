@@ -13,5 +13,5 @@ public class DocumentRequest {
 	private String active;
 	private String stateId;
 	private String stateName;
-	private List<FieldResponse> fields;
+	private List<FieldRequest> fields;
 }

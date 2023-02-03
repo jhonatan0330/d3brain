@@ -20,7 +20,7 @@ import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.DocumentFilterWithLoginRequest;
 import com.softure.api.domain.DocumentRequest;
 import com.softure.api.domain.DocumentWithLoginRequest;
-import com.softure.api.domain.FieldResponse;
+import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DataFieldWithLoginRequest;
 import com.softure.api.domain.LoginRequest;
 import com.softure.java.domain.IdResponse;
@@ -54,7 +54,7 @@ public class ApiRest {
 	}
 	
 	@PostMapping("/getDataFieldWithLogin")
-	public FieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
+	public DataFieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DataFieldWithLoginRequest filter
 		) throws ServerException {
 		IdResponse token = apiLoginService.call(filter.getLogin());

@@ -1,5 +1,7 @@
 package com.softure.api.domain;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -11,11 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(Include.NON_NULL)
-public class FieldResponse {
+public class DataFieldResponse {
 	
-	private String code;
-	private String name;
+	private String field;
 	private String value;
-	
+	private List<DocumentResponse> documents;
 	
 }

@@ -10,10 +10,10 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class ProductResponse {
+public class ProductRequest {
 	
 	private BigDecimal totalQuantity;
 	private BigDecimal totalValue;
 	private String code;
-	private List<FieldResponse> features;
+	private List<FieldRequest> features;
 }

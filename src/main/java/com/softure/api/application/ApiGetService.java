@@ -6,17 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.softure.api.domain.DocumentFilterRequest;
 import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
-import com.softure.api.domain.FieldResponse;
-import com.softure.api.domain.DocumentFilterRequest;
 import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
-import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -41,6 +40,7 @@ public class ApiGetService {
 		if(filter.getId()==null) {
 			filterDTO.setPlantilla(templateBD.getLlaveTabla());
 			filterDTO.setNombre(filter.getCode());
+			if(filter.getActive()==null) filter.setActive(ConstantesGenerales.ESTADO_ACTIVO);
 			filterDTO.setEstado(filter.getActive());
 			filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
 			filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
@@ -61,51 +61,10 @@ public class ApiGetService {
 			filterDTO.setLlaveTabla(filter.getId());
 		}
 		List<PedidoVentaDTO> results = listService.listarAvanzado(filterDTO); 
-		return transformPedidoVentaToDocument(results, token, templateBD);
+		return ApiCommon.transformPedidoVentaToDocument(token, pedidoVentaCaracteristicaService, results,  templateBD);
 	}
 
-	private List<DocumentResponse> transformPedidoVentaToDocument(List<PedidoVentaDTO> results, String token, DocumentoPlantillaDTO template) throws ServerException {
-		List<DocumentResponse> documents = new ArrayList<>();
-		if(results==null) return documents;
-		for (PedidoVentaDTO pedidoVentaDTO : results) {
-			//pedidoVentaDTO = documentService.consultaXIdConDinero(pedidoVentaDTO.getLlaveTabla());
-			pedidoVentaDTO.setCaracteristicas( pedidoVentaCaracteristicaService.listar2Documento(pedidoVentaDTO.getLlaveTabla(), pedidoVentaDTO.getHistorico()));
-			for (PedidoVentaCaracteristicaDTO field : pedidoVentaDTO.getCaracteristicas()){
-				for (DocumentoPlantillaCaracteristicaDTO fieldTemplate : template.getCaracteristicas()){
-					if(field.getCampo().compareTo(fieldTemplate.getLlaveTabla())==0){
-						field.setCampoDTO(fieldTemplate);
-						break;
-					}
-				}
-			}
-			//pedidoVentaDTO = documentService.consultaCompleta(pedidoVentaDTO.getLlaveTabla(), token);
-			DocumentResponse document = new DocumentResponse();
-			document.setTemplate(pedidoVentaDTO.getPlantilla());
-			document.setId(pedidoVentaDTO.getLlaveTabla());
-			document.setCode(pedidoVentaDTO.getNombre());
-			document.setActive(pedidoVentaDTO.getEstado());
-			document.setStateId(pedidoVentaDTO.getEstadoExpediente());
-			document.setStateName(pedidoVentaDTO.getEstadoNombre());
-			document.setFields(generateFields(pedidoVentaDTO.getCaracteristicas()));
-			documents.add(document);
-		}
-		return documents;
-	}
-
-	private List<FieldResponse> generateFields(List<PedidoVentaCaracteristicaDTO> caracteristicas) {
-		if(caracteristicas==null || caracteristicas.isEmpty()) return null;
-		List<FieldResponse> fields = new ArrayList<>();
-		for (PedidoVentaCaracteristicaDTO iField: caracteristicas) {
-			if(iField.getValorText()!=null && iField.getCampoDTO()!=null) {
-				FieldResponse field = new FieldResponse();
-				field.setField(iField.getCampoDTO().getNombre());
-				field.setValue(iField.getValorText());
-				// field.setId(iField.getValorOpcion());
-				fields.add(field);	
-			}
-		}
-		return fields;
-	}
+	
 	
 	private PedidoVentaCaracteristicaFilterDTO getFieldValue(String token, FieldRequest fieldRequest, DocumentoPlantillaDTO template) throws ServerException {
 		if(fieldRequest.getField()==null || fieldRequest.getField().isEmpty()) throw new ServerException("Existe un campo sin Field");
@@ -115,24 +74,12 @@ public class ApiGetService {
 			if(fieldRequest.getField().compareTo(fieldTemplate.getCodigo())==0){
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
-				//Esto se hizo para las cargas masivas en caso que llegue un valor texto intentamos consultarlo
-				// especialmente se hizo para los dependientes
-				//Esta cpopiado en varias partes miestras analizo como colocarlo en alguna funcion
-				PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
-				filter.setCampo(fieldTemplate.getLlaveTabla());
-				filter.setCampoDTO(fieldTemplate);
-				filter.setSecurityToken(token);
-				//filter.setDependientes(pCampo.getDependientes());
-				filter.setFiltroParametro(fieldRequest.getValue());
-				PedidoVentaCaracteristicaFilterDTO resultField = listDocumentFromFieldProcessFunction.execute(filter, fieldTemplate);
-				if(resultField == null || resultField.getCampoDTO()==null || resultField.getCampoDTO().getDocumentos() ==null || resultField.getCampoDTO().getDocumentos().isEmpty()) 
-					throw new ServerException("Revisando el campo " + fieldTemplate.getNombre() +" No se encuentra el documento con codigo : " + fieldRequest.getValue());
-				if(resultField.getCampoDTO().getDocumentos().size()>1)
-					throw new ServerException("El campo " + fieldTemplate.getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + fieldRequest.getValue());
-				result.setValorOpcion(resultField.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+				result.setValorOpcion(ApiCommon.getValueOpctionFromText(token, listDocumentFromFieldProcessFunction, fieldRequest.getValue(), fieldTemplate));
 				break;
 			}
 		}
 		return result;
 	}
+
+
 }

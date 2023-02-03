@@ -1,16 +1,21 @@
 package com.softure.api.application;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.api.domain.FieldResponse;
 import com.softure.api.domain.DataFieldRequest;
+import com.softure.api.domain.DataFieldResponse;
+import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
+import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
+import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -24,7 +29,14 @@ public class ApiGetFieldDataService {
 	@Autowired
 	private PedidoVentaCaracteristicaSvc fieldService;
 
-	public FieldResponse call(String token, DataFieldRequest filter) throws ServerException {
+	@Autowired
+	private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired
+	private ProductoSvc productoService;
+	@Autowired
+	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
+
+	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {
 		validateFilter(token, filter);
 		DocumentoPlantillaDTO templateBD = findTemplate(filter.getTemplate(), token);
 		DocumentoPlantillaCaracteristicaDTO fieldBD = findField(filter.getCode(), templateBD);
@@ -39,12 +51,25 @@ public class ApiGetFieldDataService {
 				PedidoVentaCaracteristicaDTO dependent = new PedidoVentaCaracteristicaDTO();
 				dependent.setCampo(fieldDependent.getLlaveTabla());
 				dependent.setCampoDTO(fieldDependent);
+				ApiCommon.chooseValueToField(
+						iPrecondition, dependent,
+						productoService, detallePedidoVentaService);
+				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
+					dependent.setValorOpcion(ApiCommon.getValueOpctionFromText(token,
+							listDocumentFromFieldProcessFunction, iPrecondition.getValue(), fieldDependent));
 				fieldFilter.getDependientes().add(dependent);
 			}
 		}
 		fieldFilter.setSecurityToken(token);
-		fieldService.completarDatosBase(fieldFilter);
-		return null;
+		PedidoVentaCaracteristicaDTO fieldData = fieldService.completarDatosBase(fieldFilter);
+		List<DocumentResponse> docs = null;
+		if(fieldData.getCampoDTO().getDocumentos()!=null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
+			DocumentoPlantillaDTO templateList = templateService.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
+			templateList = templateService.obtenerCampos(templateList, token);
+			docs = ApiCommon
+			.transformPedidoVentaToDocument(token, fieldService, fieldData.getCampoDTO().getDocumentos(), templateList);
+		}
+		return new DataFieldResponse(fieldData.getCampoDTO().getCodigo(), fieldData.getValorText(), docs);
 	}
 
 	private DocumentoPlantillaCaracteristicaDTO findField(String code, DocumentoPlantillaDTO templateBD)

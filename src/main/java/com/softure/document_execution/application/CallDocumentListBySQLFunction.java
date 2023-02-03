@@ -11,6 +11,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 
@@ -38,12 +39,19 @@ public class CallDocumentListBySQLFunction {
 				entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
 			List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
 			for (PedidoVentaCaracteristicaDTO iDependiente : dependientes) {
-				if(iDependiente.getValorOpcion()==null && iDependiente.getExpedientes()!=null) {
-					//Esto aplica para los campos multiples
-					for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
-						PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
-						pd.setValorOpcion(iExpediente.getLlaveTabla());
-						expedientesMultiples.add(pd);
+				if(iDependiente.getValorOpcion()==null) {
+					if(iDependiente.getExpedientes()!=null ) {
+						//Esto aplica para los campos multiples
+						for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
+							PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
+							pd.setValorOpcion(iExpediente.getLlaveTabla());
+							expedientesMultiples.add(pd);
+						}	
+					}
+					if(iDependiente.getValorText()==null) {
+						if(iDependiente.getValorFecha()!=null) {
+							iDependiente.setValorText(SoftureUtil.formatDateTime(iDependiente.getValorFecha()));
+						}
 					}
 				}
 			}

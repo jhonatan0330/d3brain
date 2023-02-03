@@ -106,6 +106,6 @@ public class ConstantesGenerales {
 
 	public static final String USUARIO = "USR";
 	
-	public static final String LOGO = "http://golyat.cloud/imagenes/modulo.png";
-	public static final String AVATAR = "http://golyat.cloud/imagenes/avatar.png";
+	public static final String LOGO = "https://fs.golyat.cloud/modulo.png";
+	public static final String AVATAR = "https://fs.golyat.cloud/avatar.png";
 }
