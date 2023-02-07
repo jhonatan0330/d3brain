@@ -46,6 +46,7 @@ public class ApiGetService {
 			filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());
 			filterDTO.setFechaMin(filter.getDateMin());
 			filterDTO.setFechaMax(filter.getDateMax());
+			filterDTO.setFiltroParametro(filter.getFilterText());
 			filterDTO.setFechaRegistroMin(filter.getCreationDateMin());
 			filterDTO.setFechaRegistroMax(filter.getCreationDateMax());
 			if(filter.getStates()!=null && !filter.getStates().isEmpty()) {
@@ -74,7 +75,8 @@ public class ApiGetService {
 			if(fieldRequest.getField().compareTo(fieldTemplate.getCodigo())==0){
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
-				result.setValorOpcion(ApiCommon.getValueOpctionFromText(token, listDocumentFromFieldProcessFunction, fieldRequest.getValue(), fieldTemplate));
+				if(fieldTemplate.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0)
+					result.setValorOpcion(ApiCommon.getValueOpctionFromText(token, listDocumentFromFieldProcessFunction, fieldRequest.getValue(), fieldTemplate));
 				break;
 			}
 		}

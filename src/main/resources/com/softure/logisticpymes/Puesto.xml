@@ -54,8 +54,7 @@
 	<select id="listar" parameterType="PuestoDTO" resultType="PuestoDTO">
 		<include refid="selectPuestoFragment" />
 		<include refid="wherePuestoFragment" />
-		order by npue_fila 
-		, npue_columna 
+		order by cpue_nombre
 		<include refid="paginationPuestoFragment" />
 	</select>
 
@@ -142,8 +141,7 @@
 	<select id="listarSimple" resultType="PuestoDTO">
 		<include refid="selectSimplePuestoFragment" />
 		<include refid="wherePuestoFragment" />
-		order by npue_fila 
-		, npue_columna 
+		order cpue_nombre 
 		<include refid="paginationPuestoFragment" />
 	</select>
 	

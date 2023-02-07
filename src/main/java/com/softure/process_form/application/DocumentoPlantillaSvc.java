@@ -274,7 +274,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}else {
 			plantilla.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), dto.getSecurityToken()));			
 		}
-		if(plantilla.getPropiedades()==null || plantilla.getPropiedades().isEmpty()) throw new ServerException("El usuario no tiene permiso sobre el documento " + plantilla.getLlaveTabla());
+		if(plantilla.getPropiedades()==null || plantilla.getPropiedades().isEmpty()) throw new ServerException("El usuario no tiene permiso sobre el documento " + plantilla.getNombre());
 		return plantilla;
 	}
 	

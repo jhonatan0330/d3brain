@@ -29,6 +29,7 @@ public class TipoDisponibilidad {
 	@Autowired private PuestoSvc puestoService;
 	
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+		
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if(bd!=null){
 			if(pCampo.getValorText()==null){
@@ -68,26 +69,7 @@ public class TipoDisponibilidad {
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
-		if(pCampo.getDependientes()==null || pCampo.getDependientes().isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
-		String estructura = Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
-		if(estructura.isEmpty()) throw new ServerException("Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
-		PedidoVentaCaracteristicaDTO dependienteCroquis = null;
-		for (PedidoVentaCaracteristicaDTO iDependiente : pCampo.getDependientes()) {
-			if(iDependiente.getCampo().compareTo(estructura)==0) {
-				dependienteCroquis = iDependiente;
-				break;
-			}
-		}
-		
-		if(dependienteCroquis==null) throw new ServerException("No se encontro en los dependientes la estructura del croquis");
-		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
-		if(vCroquis==null) throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
-
-		pBase.setImagen(vCroquis.getValorText());
-		PuestoFilterDTO filtro = new PuestoFilterDTO();
-		filtro.setCampo(vCroquis.getLlaveTabla());
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
+		List<PuestoDTO> componentesActuales = getOptionsToSelect(pCampo.getDependientes(), pBase);
 		if(componentesActuales!=null && !componentesActuales.isEmpty()){
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 			for (PuestoDTO actual : componentesActuales){
@@ -122,6 +104,30 @@ public class TipoDisponibilidad {
 		
 		return pCampo;
 	}
+
+	private List<PuestoDTO> getOptionsToSelect(List<PedidoVentaCaracteristicaDTO> dependents,
+			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
+		if(dependents==null || dependents.isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
+		String estructura = Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
+		if(estructura.isEmpty()) throw new ServerException("Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
+		PedidoVentaCaracteristicaDTO dependienteCroquis = null;
+		for (PedidoVentaCaracteristicaDTO iDependiente : dependents) {
+			if(iDependiente.getCampo().compareTo(estructura)==0) {
+				dependienteCroquis = iDependiente;
+				break;
+			}
+		}
+		
+		if(dependienteCroquis==null) throw new ServerException("No se encontro en los dependientes la estructura del croquis");
+		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
+		if(vCroquis==null) throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
+
+		pBase.setImagen(vCroquis.getValorText());
+		PuestoFilterDTO filtro = new PuestoFilterDTO();
+		filtro.setCampo(vCroquis.getLlaveTabla());
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return puestoService.listarConsulta(filtro);
+	}
 	
 	private PedidoVentaDTO convertirPuestoEnDocumento(PuestoDTO actual) {
 		PedidoVentaDTO componente = new PedidoVentaDTO();
@@ -136,10 +142,33 @@ public class TipoDisponibilidad {
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		String[] locations = null;
+		if(pCampo.getValorText()!=null && pCampo.getValorText().isEmpty()) pCampo.setValorText(null);
+		
+		//Valido obligatoriedad
+		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorText()==null) 
+			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+		
 		if(pCampo.getValorText()!=null) locations = pCampo.getValorText().split("-");
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null 
 				&& (locations==null || locations.length==0)) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
 		if(locations!=null){
+			
+			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
+			if(currentItems==null || currentItems.isEmpty()) throw new ServerException("No hay opciones para seleccionar una posicion del croquis");
+			for (String actual : locations){
+				if(actual!=null && !actual.isEmpty()) {
+					PuestoDTO findItem = null;
+					for(PuestoDTO iPuesto: currentItems) {
+						if(iPuesto.getNombre().compareTo(actual)==0) {
+							findItem = iPuesto;
+							break;
+						}
+						
+					}
+					if(findItem ==null) throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " la posicion " + actual + " no pertence al croquis");	
+				}
+			}
+			
 			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.DISPONIBILIDAD_FUNCION_SQL);
 			if(funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());

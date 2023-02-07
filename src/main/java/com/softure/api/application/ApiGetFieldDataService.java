@@ -17,6 +17,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
@@ -62,14 +63,24 @@ public class ApiGetFieldDataService {
 		}
 		fieldFilter.setSecurityToken(token);
 		PedidoVentaCaracteristicaDTO fieldData = fieldService.completarDatosBase(fieldFilter);
+		DataFieldResponse result = new DataFieldResponse();
+		result.setField(fieldData.getCampoDTO().getCodigo());
+		result.setInternalId(fieldData.getValorOpcion());
+		result.setValue(fieldData.getValorText());
+		if(result.getValue()==null && fieldData.getValorNumero()!=null ) result.setValue(SoftureUtil.formatNumber(fieldData.getValorNumero()));
 		List<DocumentResponse> docs = null;
 		if(fieldData.getCampoDTO().getDocumentos()!=null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
-			DocumentoPlantillaDTO templateList = templateService.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
-			templateList = templateService.obtenerCampos(templateList, token);
+			//Para obtener los puestos de un pasaje no se llenaba plantilla
+			DocumentoPlantillaDTO templateList = null;
+			if(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla()!=null) {
+				templateList = templateService.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
+				templateList = templateService.obtenerCampos(templateList, token);	
+			}
 			docs = ApiCommon
 			.transformPedidoVentaToDocument(token, fieldService, fieldData.getCampoDTO().getDocumentos(), templateList);
+			result.setDocuments(docs);
 		}
-		return new DataFieldResponse(fieldData.getCampoDTO().getCodigo(), fieldData.getValorText(), docs);
+		return result;
 	}
 
 	private DocumentoPlantillaCaracteristicaDTO findField(String code, DocumentoPlantillaDTO templateBD)

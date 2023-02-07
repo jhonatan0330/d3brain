@@ -15,6 +15,7 @@ public class FieldResponse {
 	
 	private String code;
 	private String name;
+	private String internalId;
 	private String value;
 	
 	
