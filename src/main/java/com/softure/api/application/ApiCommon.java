@@ -148,7 +148,8 @@ public class ApiCommon {
 				|| resultField.getCampoDTO().getDocumentos() == null
 				|| resultField.getCampoDTO().getDocumentos().isEmpty())
 			throw new ServerException("Revisando el campo " + fieldTemplate.getNombre()
-					+ " No se encuentra el documento con codigo : " + valueText);
+					+ " No se encuentra el documento con codigo : " + valueText
+					+ "\nRevisa que el usuario tenga permiso de visualizar el documento");
 		if (resultField.getCampoDTO().getDocumentos().size() > 1)
 			throw new ServerException("El campo " + fieldTemplate.getNombre() + " obtiene "
 					+ resultField.getCampoDTO().getDocumentos().size() + " resultados que concuerdan con el criterio : "

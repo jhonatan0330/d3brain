@@ -277,7 +277,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					
 					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
 					if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
-						throw new ServerException("La transicion debe tener una relacion. Revisar.  ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
+						throw new ServerException("La transicion debe tener una unica (1) relacion que indique en que campo de la plantilla se va a guardar el documento resultado del temporizador. Revisar.  ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					}else {
 						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
 						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
