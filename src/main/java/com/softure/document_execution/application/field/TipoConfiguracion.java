@@ -234,32 +234,41 @@ public class TipoConfiguracion {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorOpcion() == null || pCampo.getValorOpcion().isEmpty())) {
-			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.VISIBLE_VALOR_DEPENDIENTE); 
-			if( visibleValueOK == null || pCampo.getDependientes()==null) {
-				throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());				
-			}else {
+			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
+					Propiedades.VISIBLE_VALOR_DEPENDIENTE);
+			if (visibleValueOK == null || pCampo.getDependientes() == null) {
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			} else {
 				String optionsToSelect = null;
 				for (PropiedadDTO propiedadDTO : visibleValueOK) {
-					if(optionsToSelect !=null) break;
+					if (optionsToSelect != null)
+						break;
 					for (PedidoVentaCaracteristicaDTO iFieldDependent : pCampo.getDependientes()) {
-						if(propiedadDTO.getValor().compareTo(iFieldDependent.getValorText())==0) {
+						if (propiedadDTO.getValor().compareTo(iFieldDependent.getValorText()) == 0) {
 							optionsToSelect = propiedadDTO.getValor();
 							break;
 						}
 					}
 				}
-				if(optionsToSelect!=null)throw new ServerException("Es obligatorio seleccionar un valor en el campo " + pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
+				if (optionsToSelect != null)
+					throw new ServerException("Es obligatorio seleccionar un valor en el campo "
+							+ pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
 			}
 		}
 		if (pCampo.getValorOpcion() != null) {
 			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(),
 					Propiedades.CONFIGURACION_ENTIDAD);
 			if (valorConfiguracion.isEmpty()) {
-				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos opcion asi que lo restringui
-				// en futuras mejoras deberia que la propiedad tuviera un id y asi le puedo colocar este Id y usarlo
-				if(pCampo.getValorOpcion().length()>32) 
-					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0,32));
-				if(pCampo.getValorOpcion().length()!=32) pCampo.setValorText(pCampo.getValorOpcion());
+				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos
+				// opcion asi que lo restringui
+				// en futuras mejoras deberia que la propiedad tuviera un id y asi le puedo
+				// colocar este Id y usarlo
+				if (pCampo.getValorOpcion().length() > 32)
+					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0, 32));
+				if (pCampo.getValorOpcion().length() != 32)
+					pCampo.setValorText(pCampo.getValorOpcion());
 			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:
@@ -381,7 +390,8 @@ public class TipoConfiguracion {
 			for (PropiedadDTO iPropiedades : campos) {
 				PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 				adaptadoT.setLlaveTabla(iPropiedades.getValor());
-				if(adaptadoT.getLlaveTabla().length()>32) adaptadoT.setLlaveTabla(adaptadoT.getLlaveTabla().substring(0,32));
+				if (adaptadoT.getLlaveTabla().length() > 32)
+					adaptadoT.setLlaveTabla(adaptadoT.getLlaveTabla().substring(0, 32));
 				adaptadoT.setNombre(iPropiedades.getValor());
 				pBase.getDocumentos().add(adaptadoT);
 			}

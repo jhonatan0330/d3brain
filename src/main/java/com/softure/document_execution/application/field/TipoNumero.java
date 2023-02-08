@@ -36,7 +36,7 @@ public class TipoNumero {
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
 		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico
-			
+
 			if (!formula.isEmpty()) {
 				BigDecimal valorCalculado = calcular(pCampo, formula);
 				pCampo.setValorNumero(valorCalculado);
@@ -85,7 +85,9 @@ public class TipoNumero {
 		// Revisar que es opcional
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
-			throw new ServerException("Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre());
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+					+ pCampo.getCampoDTO().getCodigo() + ")");
 		// Solo para modificaciones
 		if (pCampo.getLlaveTabla() != null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE) == null
@@ -102,19 +104,21 @@ public class TipoNumero {
 									+ SoftureUtil.formatMoney(bd.getValorNumero()));
 			}
 		}
-		
+
 		// Validar minimo y maximo
 		String minimum = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MINIMO);
-		if(!minimum.isEmpty()) {
+		if (!minimum.isEmpty()) {
 			BigDecimal valueMinimum = calcular(pCampo, minimum);
-			if(valueMinimum.compareTo(pCampo.getValorNumero())>0)
-				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " tiene valor minimo permitido es " + valueMinimum.toString());
+			if (valueMinimum.compareTo(pCampo.getValorNumero()) > 0)
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+						+ " tiene valor minimo permitido es " + valueMinimum.toString());
 		}
 		String maximum = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MAXIMO);
-		if(!maximum.isEmpty()) {
+		if (!maximum.isEmpty()) {
 			BigDecimal valueMaximum = calcular(pCampo, maximum);
-			if(valueMaximum.compareTo(pCampo.getValorNumero())<0)
-				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " tiene valor maximo permitido es " + valueMaximum.toString());
+			if (valueMaximum.compareTo(pCampo.getValorNumero()) < 0)
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+						+ " tiene valor maximo permitido es " + valueMaximum.toString());
 		}
 		formatText(pCampo);
 	}
@@ -160,7 +164,7 @@ public class TipoNumero {
 				campoService.inactivar(bd, token);
 				return pCampo;
 			} else {
-				if (bd.getValorNumero()!=null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
+				if (bd.getValorNumero() != null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
 					return pCampo;
 				} else {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
