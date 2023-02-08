@@ -22,6 +22,7 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO
 	private Date fechaMax;
 	private String funcionario;
 	private String funcionarioNombre;
+	private String proceso;
 	private String plantilla;
 	private String nombre;
 	private String imagen;
@@ -96,7 +97,14 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO
 	public String getPlantilla() {
 		return plantilla;
 	}
+
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
+	}
 	
+	public String getProceso() {
+		return proceso;
+	}
 	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;

@@ -23,6 +23,8 @@ import com.softure.java.services.SoftureUtil;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
+import com.softure.process_designer.application.ProcesoTransicionSvc;
+import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
@@ -42,6 +44,7 @@ public class CallDocumentListWithFilters {
 	@Autowired private RolAccesoSvc rolService;
 	@Autowired private CuentaSvc cuentaService;
 	@Autowired private PedidoVentaDineroSvc dineroService;
+	@Autowired private ProcesoTransicionSvc transicionService;
 	
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto)throws ServerException{
 		if(dto==null) throw new ServerException("Tronco de error");
@@ -111,6 +114,17 @@ public class CallDocumentListWithFilters {
 					return resultManyTemplates;
 				}
 			}
+		}
+		//Desde la interfaz llegan los modulos de procesos
+		if(dto.getProceso()!=null) {
+			List<PedidoVentaDTO> resultManyTemplates = new ArrayList<>();
+			List<ProcesoTransicionDTO> transitionToStartProcess = transicionService.listarTransaccionesIniciales(null, dto.getProceso()); 
+			if(transitionToStartProcess!=null && !transitionToStartProcess.isEmpty()) {
+				for (ProcesoTransicionDTO iTransition : transitionToStartProcess) {
+					resultManyTemplates.addAll( readResultByTemplate(dto, iTransition.getPlantilla()) );
+				}	
+			}
+			return resultManyTemplates;
 		}
 		return readResultByTemplate(dto, dto.getPlantilla());
 	}

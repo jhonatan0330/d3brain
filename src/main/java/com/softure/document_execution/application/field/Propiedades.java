@@ -189,6 +189,7 @@ public class Propiedades {
 	public static final String PLANTILLA_OCULTAR_GUARDAR = "PLANTILLA_OCULTAR_GUARDAR";
 	public static final String PERIODO_LIMPIEZA_HISTORICO = "PERIODO_LIMPIEZA_HISTORICO";
 	
+	public static final String PLANTILLA_INICIA_PROCESO = "PLANTILLA_INICIA_PROCESO";
 	
 	//REPORTE
 	public static final String REPORTE_ENCABEZADO = "REPORTE_ENCABEZADO";

@@ -354,7 +354,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			filtroTransicion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			
 			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol(filtroTransicion);
-			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null);
+			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null, null);
 			
 			List<PropiedadDTO> todasPropiedadesEvitandoConsultaBD = null;
 			if(todosPermisos) {
@@ -396,6 +396,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						if(procesoInicial!=null) {
 							statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
 									procesoInicial);
+							PropiedadDTO propertyTemplateStartProcess = new PropiedadDTO();
+							propertyTemplateStartProcess.setKey(Propiedades.PLANTILLA_INICIA_PROCESO);
+							iplantillaPermitida.getPropiedades().add(propertyTemplateStartProcess);
 						}
 						if (iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(crearEstadosBasicos());
 
@@ -413,7 +416,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 								}
 							}
 						}
-						
 						result.add(iplantillaPermitida);	
 					}
 				}

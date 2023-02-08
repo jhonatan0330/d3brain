@@ -133,14 +133,15 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return null;
 	}
 	
-	public List<ProcesoTransicionDTO> listarTransaccionesIniciales(String plantilla) throws ServerException {
+	public List<ProcesoTransicionDTO> listarTransaccionesIniciales(String plantilla, String proceso) throws ServerException {
 		ProcesoTransicionFilterDTO filtro = new ProcesoTransicionFilterDTO();
 		filtro.setPlantilla(plantilla);
+		filtro.setProceso(proceso);
 		return procesoTransicionMapper.listarTransaccionInicial(filtro);
 	}
 	
 	public ProcesoTransicionDTO consultarTransaccionInicial(String plantilla) throws ServerException {
-		List<ProcesoTransicionDTO> result = listarTransaccionesIniciales(plantilla);
+		List<ProcesoTransicionDTO> result = listarTransaccionesIniciales(plantilla, null);
 		if(result!=null && !result.isEmpty()) {
 			if(result.size()==1) {
 				return result.get(0);
