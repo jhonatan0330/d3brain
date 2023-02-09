@@ -295,7 +295,6 @@
 		<if test="dto.fechaMax!=null">and a.dpdv_fecha <![CDATA[ < ]]>  #{dto.fechaMax}</if>
 		<if test="dto.plantilla!=null">and a.cpdv_plantilla = #{dto.plantilla}</if>
 		<if test="dto.nombre!=null">and a.cpdv_nombre = #{dto.nombre}</if>
-		<if test="dto.estadoExpediente!=null">and a.cpdv_estadoexpediente = #{dto.estadoExpediente}</if>
 		<if test="dto.filtroParametro!=null">and (a.cpdv_nombre like upper('%' || #{dto.filtroParametro} || '%') or a.cpdv_textofiltro like '%' || #{dto.filtroParametro} || '%')</if>
 		<if test="filtroEstados!=null">	and a.cpdv_estadoexpediente in <foreach item="item" collection="filtroEstados" separator="," open="(" close=")">#{item}</foreach></if>
 		<if test="filtroTexto!=null">and (a.cpdv_textofiltro like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>)

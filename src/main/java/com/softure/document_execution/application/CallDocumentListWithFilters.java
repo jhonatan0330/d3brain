@@ -306,7 +306,6 @@ public class CallDocumentListWithFilters {
 		if(dto.getEstadoExpediente()!=null && dto.getEstadoExpediente().contains(";")) {
 			if(dto.getEstadoExpediente().startsWith(";"))dto.setEstadoExpediente(dto.getEstadoExpediente().substring(1));
 			estadosFiltro = Arrays.asList(dto.getEstadoExpediente().split(";"));
-			dto.setEstadoExpediente(null);
 		}
 		return estadosFiltro;
 	}

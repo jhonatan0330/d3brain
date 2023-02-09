@@ -420,7 +420,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					}
 				}
 			}
-			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
+			for (int i = plantillasPermitidas.size()-1; i >= 0 ; i--) {
+				DocumentoPlantillaDTO iplantillaPermitida = plantillasPermitidas.get(i);
 				if(iplantillaPermitida.getLlaveTabla()==null) {
 					statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
 							iplantillaPermitida.getProceso());
