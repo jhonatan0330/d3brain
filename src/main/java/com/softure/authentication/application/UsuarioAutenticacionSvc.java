@@ -273,6 +273,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				reportarError(dto, e.getMessage());
 			}
 			if(fechaMinima!=null){
+				if(dto.getClaveAnterior().length()>13) dto.setClaveAnterior(dto.getClaveAnterior().substring(0,13));
 				int cliente = Integer.parseInt(dto.getClaveAnterior().replace(".", ""));
 				int servidor = Integer.parseInt(fechaMinima.replace(".", ""));
 				if(cliente < servidor) reportarError(dto, "Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: " + String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
