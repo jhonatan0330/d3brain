@@ -58,8 +58,8 @@ public class CallDocumentCommons {
 						}else {//Aqui falta que lo tome de la caracteristica
 							expediente.getDinero().setValorCampo( expediente.getDinero().getValorTotal());
 						}
+						valor = valor.add(expediente.getDinero().getValorCampo());
 					}
-					valor = valor.add(expediente.getDinero().getValorCampo());
 				}
 			}
 		}
