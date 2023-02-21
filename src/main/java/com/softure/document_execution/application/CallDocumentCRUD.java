@@ -291,7 +291,8 @@ public class CallDocumentCRUD {
 		pedido.setCaracteristicas(saveInternalFields(dto, token));
 		if (dto.getDinero() != null && pedido.getDinero() == null)
 			pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
-		// Al crear un documento que va a un API se estaba ejecutando el api y despues decia que fallaba :(
+		// Al crear un documento que va a un API se estaba ejecutando el api y despues
+		// decia que fallaba :(
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
@@ -338,23 +339,25 @@ public class CallDocumentCRUD {
 			PedidoVentaDineroDTO dineroCalculado = new PedidoVentaDineroDTO();
 			dineroCalculado.setValorTotal(campoValor.getValorNumero());
 			dineroCalculado.setSaldo(BigDecimal.ZERO);
-			if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {// Si es modificar debo
-																							// actualizar el saldo//solo
-																							// tienen saldo los que son
-																							// de proceso
+			// Si es modificar debo actualizar el saldo, solo tienen saldo los que son de
+			// proceso
+			if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
 				PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
 						pedido.getHistorico());
 				if (anterior != null)
 					dineroCalculado.setSaldo(anterior.getSaldo());
 				if (campoValor.getModificado()) {
-					ProcesoTransicionDTO inicial = transicionService.consultarTransaccionInicial(pedido.getPlantilla());
-					if (inicial != null && inicial.getAfectaSaldo() != null) {
-						if (anterior != null) {
-							BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
-							dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
-						} else {
+					// En el proceso de facturacion se softure el saldo sube en el momento que se
+					// aprueba la factura y desde el inicial no es afecta saldo
+					if (anterior != null) {
+						BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
+						dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
+
+					} else {
+						ProcesoTransicionDTO inicial = transicionService
+								.consultarTransaccionInicial(pedido.getPlantilla());
+						if (inicial != null && inicial.getAfectaSaldo() != null)
 							dineroCalculado.setSaldo(campoValor.getValorNumero());
-						}
 					}
 				}
 			}

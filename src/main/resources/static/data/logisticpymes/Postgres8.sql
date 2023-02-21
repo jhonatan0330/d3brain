@@ -468,9 +468,11 @@ CREATE TABLE gpslocalizacion_gplp(
         mgpl_latitud NUMERIC(18,6) NOT NULL DEFAULT 0,
         cgpl_documento character varying(32),
         cgpl_codigo character varying(32),
+        dgpl_fechareporte timestamp with time zone NOT NULL,
         cgpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_gpslocalizacion_gplp PRIMARY KEY (cgpl_llave)
     );
+    
  
 CREATE TABLE mensaje_msjp(
         cmsj_llave character varying(32) NOT NULL,
@@ -883,6 +885,23 @@ CREATE TABLE organizacion_orgp(
         corg_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_organizacion_orgp PRIMARY KEY (corg_llave)
     );
+
+	
+CREATE TABLE task_task_tsk (
+        ctsk_llave character varying(32) NOT NULL,
+        ctsk_user character varying(32)  NOT NULL,
+        ctsk_title character varying(200) NOT NULL,
+        ctsk_notes character varying(4000),
+        dtsk_completed timestamp with time zone,
+        dtsk_due timestamp with time zone,
+        ntsk_priority int4 NOT NULL DEFAULT 0,
+        ntsk_order int4 NOT NULL DEFAULT 0,
+        dtsk_createdAt timestamp with time zone  NOT NULL,
+        dtsk_updatedAt timestamp with time zone,
+        ctsk_state character varying(1) NOT NULL DEFAULT 'A',
+        CONSTRAINT PK_task_task_tsk PRIMARY KEY (ctsk_llave)
+    );
+ 
 
 ALTER TABLE PlantillaConsecutivo_pcnp ADD CONSTRAINT FK_PlantillaConsecutivovalorOpcion FOREIGN KEY (cpcn_valorOpcion) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE PlantillaConsecutivo_pcnp ADD CONSTRAINT FK_PlantillaConsecutivocaracteristica FOREIGN KEY (cpcn_caracteristica) REFERENCES DocumentoPlantillaCaracteristica_dpcp(cdpc_llave);

@@ -86,7 +86,8 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	public GPSLocalizacionDTO guardar(GPSLocalizacionDTO dto, String token) throws ServerException {
 		// BEGIN GPSLocalizacion_guardar
 		if(dto==null) throw new ServerException("El objeto no puede ser vacio");
-		dto.setFecha(new Date());
+		if(dto.getFecha()==null) throw new ServerException("La ubicacion debe tener fecha");
+		dto.setFechaReporte(new Date());
 		GPSDispositivoDTO dispositivo = gpsDispositivoService.consultaXId(dto.getDispositivo());
 		dispositivo.setUltimaConexion(dto.getFecha());
 		gpsDispositivoService.save(dispositivo);

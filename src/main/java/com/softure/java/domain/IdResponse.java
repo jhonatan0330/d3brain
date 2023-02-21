@@ -14,7 +14,6 @@ public class IdResponse {
 	private String code;
 	
 	public IdResponse(String id) {
-		super();
 		this.id = id;
 	}
 	

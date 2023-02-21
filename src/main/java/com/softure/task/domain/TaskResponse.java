@@ -1,0 +1,22 @@
+package com.softure.task.domain;
+
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import lombok.Data;
+
+@Data
+@JsonInclude(Include.NON_NULL)
+public class TaskResponse
+{
+	private String llaveTabla;
+	private String title;
+	private String notes;
+	private boolean completed;
+	private Date dueDate;
+	private Integer priority;
+	private Integer order;
+    
+}

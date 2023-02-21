@@ -14,6 +14,7 @@
 			,cgpl_documento as  documento
 			,cgpl_codigo as  codigo
 			,cgpl_estado as estado
+			,dgpl_fechareporte as  fechaReporte
 		from gpslocalizacion_gplp a
 	</sql>
 
@@ -92,6 +93,9 @@
 		<if test="codigo!=null">
 			,cgpl_codigo
 		</if>
+		<if test="fechaReporte!=null">
+			,dgpl_fechareporte
+		</if>
 		<if test="estado!=null">
 			,cgpl_estado
 		</if>
@@ -115,6 +119,9 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
+		<if test="fechareporte!=null">
+			,#{fechaReporte}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -130,6 +137,7 @@
 				mgpl_latitud = #{latitud},
 				cgpl_documento = #{documento},
 				cgpl_codigo = #{codigo},
+				dgpl_fechareporte = #{fechaReporte},
 				cgpl_estado =#{estado}
 		<include refid="whereGPSLocalizacionPrimaryKeyFragment" />
 	</select>
@@ -143,6 +151,7 @@
 			,mgpl_latitud as  latitud
 			,cgpl_documento as  documento
 			,cgpl_codigo as  codigo
+			,dgpl_fechareporte as  fechaReporte
 			,cgpl_estado as estado
 		from gpslocalizacion_gplp a
 	</sql>

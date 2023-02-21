@@ -20,6 +20,8 @@ public class GPSLocalizacionDTO extends BasicDTO
 	private BigDecimal latitud;
 	private String documento;
 	private String codigo;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaReporte;
 
 	public void setDispositivo(String dispositivo) {
 		this.dispositivo = dispositivo;
@@ -56,8 +58,6 @@ public class GPSLocalizacionDTO extends BasicDTO
 	public String getDocumento() {
 		return documento;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 	public String getCodigo() {
 		return codigo;
@@ -66,5 +66,12 @@ public class GPSLocalizacionDTO extends BasicDTO
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-
+	public void setFechaReporte(Date fechaReporte) {
+		this.fechaReporte = fechaReporte;
+	}
+	
+	public Date getFechaReporte() {
+		return fechaReporte;
+	}
+	
 }

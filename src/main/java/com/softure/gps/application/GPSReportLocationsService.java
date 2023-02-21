@@ -34,6 +34,7 @@ public class GPSReportLocationsService {
 		for (GPSLocalizacionDTO gpsLocalizacionDTO : locations) {
 			gpsLocalizacionDTO.setDispositivo(device.getLlaveTabla());
 			gpsLocalizacionDTO.setDocumento(null);
+			gpsLocalizacionDTO.setFechaReporte(new Date());
 			gpsLocalizacionDTO.setEstado(null);
 			locationService.save(gpsLocalizacionDTO);
 		}
@@ -51,6 +52,7 @@ public class GPSReportLocationsService {
 		gpsLocalizacionDTO.setDocumento(documento);
 		gpsLocalizacionDTO.setCodigo(codigo);
 		gpsLocalizacionDTO.setFecha(new Date());
+		gpsLocalizacionDTO.setFechaReporte(new Date());
 		Pattern pat = Pattern.compile("^([-+])?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*([-+])?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$");
 	    Matcher mat = pat.matcher(location);                                                                           
 	    if (!mat.matches()) return;

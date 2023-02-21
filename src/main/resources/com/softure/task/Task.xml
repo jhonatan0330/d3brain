@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.task.infrastructure.TaskMapper">
+
+	<sql id="selectTaskFragment">
+		select
+			ctsk_llave as  llaveTabla
+			,ctsk_user as  user
+			,ctsk_title as  title
+			,ctsk_notes as  notes
+			,ntsk_priority as  priority
+			,ntsk_order as  order
+			,dtsk_completed as  completed
+			,dtsk_dueDate as  dueDate
+			,dtsk_createdAt as  createdAt
+			,dtsk_updatedAt as  updatedAt
+			,ctsk_state as estado
+		from task_task_tsk a
+	</sql>
+
+	<sql id="whereTaskFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ctsk_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ctsk_state = #{estado}
+			</if>
+			<if test="user!=null">
+				and ctsk_user = #{user}
+			</if>
+	</sql>
+
+	<sql id="paginationTaskFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTaskPrimaryKeyFragment">
+		where
+			ctsk_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TaskDTO" resultType="TaskDTO">
+		<include refid="selectTaskFragment" />
+		<include refid="whereTaskFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TaskDTO" resultType="TaskDTO">
+		<include refid="selectTaskFragment" />
+		<include refid="whereTaskFragment" />
+		<include refid="paginationTaskFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TaskDTO" resultType="int">
+		select count(*)
+		from task_task_tsk
+		<include refid="whereTaskFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TaskDTO" resultType="TaskDTO">
+		insert into task_task_tsk(
+			ctsk_llave
+		<if test="user!=null">
+			,ctsk_user
+		</if>
+		<if test="title!=null">
+			,ctsk_title
+		</if>
+		<if test="notes!=null">
+			,ctsk_notes
+		</if>
+		<if test="priority!=null">
+			,ntsk_priority
+		</if>			
+		<if test="order!=null">
+			,ntsk_order
+		</if>
+		<if test="completed!=null">
+			,dtsk_completed
+		</if>
+		<if test="dueDate!=null">
+			,dtsk_dueDate
+		</if>
+		<if test="createdAt!=null">
+			,dtsk_createdAt
+		</if>
+		<if test="updatedAt!=null">
+			,dtsk_updatedAt
+		</if>
+		<if test="estado!=null">
+			,ctsk_state
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="user!=null">
+			,#{user}
+		</if>
+		<if test="title!=null">
+			,#{title}
+		</if>
+		<if test="notes!=null">
+			,#{notes}
+		</if>
+		<if test="priority!=null">
+			,#{priority}
+		</if>			
+		<if test="order!=null">
+			,#{order}
+		</if>
+		<if test="completed!=null">
+			,#{completed}
+		</if>
+		<if test="dueDate!=null">
+			,#{dueDate}
+		</if>
+		<if test="createdAt!=null">
+			,#{createdAt}
+		</if>
+		<if test="updatedAt!=null">
+			,#{updatedAt}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TaskDTO" resultType="TaskDTO">
+		update task_task_tsk
+			set
+				ctsk_user = #{user},
+				ctsk_title = #{title},
+				ctsk_notes = #{notes},
+				ntsk_order = #{order},
+				ntsk_priority = #{priority},
+				dtsk_completed = #{completed},
+				dtsk_dueDate = #{dueDate},
+				dtsk_createdAt = #{createdAt},
+				dtsk_updatedAt = #{updatedAt},
+				ctsk_state =#{estado}
+		<include refid="whereTaskPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleTaskFragment">
+		select
+			ctsk_llave as  llaveTabla
+			,ctsk_user as  user
+			,ctsk_title as  title
+			,ctsk_notes as  notes
+			,ntsk_priority as  priority
+			,ntsk_order as  order
+			,dtsk_completed as  completed
+			,dtsk_dueDate as  dueDate
+			,dtsk_createdAt as  createdAt
+			,dtsk_updatedAt as  updatedAt
+			,ctsk_state as estado
+		from task_task_tsk a
+	</sql>
+	
+	<select id="consultarSimple" resultType="TaskDTO">
+		<include refid="selectSimpleTaskFragment" />
+		<include refid="whereTaskFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="TaskDTO">
+		<include refid="selectSimpleTaskFragment" />
+		<include refid="whereTaskFragment" />
+		<include refid="paginationTaskFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>
