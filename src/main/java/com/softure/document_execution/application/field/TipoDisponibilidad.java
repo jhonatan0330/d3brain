@@ -155,8 +155,10 @@ public class TipoDisponibilidad {
 			
 			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
 			if(currentItems==null || currentItems.isEmpty()) throw new ServerException("No hay opciones para seleccionar una posicion del croquis");
+			int positionCount = 0;
 			for (String actual : locations){
 				if(actual!=null && !actual.isEmpty()) {
+					positionCount++;
 					PuestoDTO findItem = null;
 					for(PuestoDTO iPuesto: currentItems) {
 						if(iPuesto.getNombre().compareTo(actual)==0) {
@@ -168,7 +170,7 @@ public class TipoDisponibilidad {
 					if(findItem ==null) throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " la posicion " + actual + " no pertence al croquis");	
 				}
 			}
-			
+			pCampo.setValorNumero(new BigDecimal(positionCount));
 			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.DISPONIBILIDAD_FUNCION_SQL);
 			if(funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
