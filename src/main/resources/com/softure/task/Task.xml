@@ -55,6 +55,7 @@
 	<select id="listar" parameterType="TaskDTO" resultType="TaskDTO">
 		<include refid="selectTaskFragment" />
 		<include refid="whereTaskFragment" />
+		order by ntsk_order
 		<include refid="paginationTaskFragment" />
 	</select>
 

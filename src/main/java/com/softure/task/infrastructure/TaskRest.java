@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -59,7 +60,7 @@ public class TaskRest {
 	}
 
 	@PostMapping(value="/delete/{id}")
-	public IdResponse delete(@RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
+	public IdResponse delete(@RequestHeader("Authorization") String token, @PathVariable("id") String id)  throws ServerException  {
 		return taskDeleteService.call(id, token);
 	}
 }
