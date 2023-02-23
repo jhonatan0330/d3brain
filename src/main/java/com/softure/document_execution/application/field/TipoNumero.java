@@ -247,7 +247,7 @@ public class TipoNumero {
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
 				if (iDep.getValorOpcion() == null) {
 					if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-						iDep.setValorOpcion(iDep.getValorNumero().toString());
+						iDep.setValorOpcion((iDep.getValorNumero()==null)?"0":iDep.getValorNumero().toString());
 					}
 				}
 			}
