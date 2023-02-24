@@ -72,6 +72,8 @@ public class TipoNumero {
 						.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
 					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
 							pCampo.getDocumento(), pCampo.getDependientes());
+					//Algunas funciones no traen el valor del cero
+					if(valorCalculado == null) valorCalculado = BigDecimal.ZERO; 
 					BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 					if (diferencia.abs().longValue() > 1)
 						throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
