@@ -29,8 +29,6 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
-import com.softure.notification.application.ActividadSvc;
-import com.softure.notification.domain.ActividadDTO;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.upload.application.UploadSvc;
@@ -40,7 +38,6 @@ import com.softure.upload.application.UploadSvc;
 @RequestMapping("/rest")
 public class APIController {
 
-	@Autowired private ActividadSvc actividadService;
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
 	@Autowired private PedidoVentaSvc pedidoVentaService;
@@ -140,21 +137,6 @@ public class APIController {
 			throw new ServerException(e.getMessage());
 		}
     }
-	
-	@RequestMapping(value="/usuariosXRol", method=RequestMethod.POST)
-	public List<UsuarioDTO> usuariosXRol(@RequestBody PedidoVentaFilterDTO document, @RequestHeader("Authorization") String token)  throws ServerException  {
-		if(document==null) throw new ServerException("Porfavor envie el objeto documento");
-		if(document.getLlaveTabla()==null) throw new ServerException("Porfavor envie la llave del documento");
-		PedidoVentaDTO documento = pedidoVentaService.consultaXId(document.getLlaveTabla());
-		if(documento==null) throw new ServerException("No se encuentra documento con esa llave");
-		if(documento.getEstadoExpediente()==null) throw new ServerException("El documento no tiene estado");
-		return usuarioService.getUsersState(documento.getEstadoExpediente(), token);
-	}
-	
-	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
-	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return actividadService.guardar(asignacion, token);	
-	}
 	
 	@RequestMapping(value="/changeState", method=RequestMethod.POST)
 	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,@RequestHeader("Authorization") String token)  throws ServerException  {

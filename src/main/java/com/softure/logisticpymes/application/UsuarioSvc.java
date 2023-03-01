@@ -146,8 +146,8 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 
 // BEGIN region aditionalMethods
-	public List<UsuarioDTO> getUsersState(String state, String token)throws ServerException{
-		return usuarioMapper.getUsersState(state, token);
+	public List<UsuarioDTO> getUsersState(String document)throws ServerException{
+		return usuarioMapper.getUsersState(document);
 	}
 	
 	public UsuarioDTO changePicture(String url, String token) throws ServerException {

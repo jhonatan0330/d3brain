@@ -136,7 +136,7 @@ insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_est
 		<parameter name="P_FECHA_INICIO_PLANTILLA" class="java.util.Date"/>
 		<parameter name="P_FECHA_FIN_PLANTILLA" class="java.util.Date"/>
 		<queryString language="SQL">
-			<![CDATA[select cdpl_nombre as plantilla, count(*) as cantidad from pedidoventa_pdvp inner join documentoplantilla_dplp on (cdpl_llave = cpdv_plantilla) where dpdv_fecharegistro >= $P{P_FECHA_INICIO_PLANTILLA} and dpdv_fecharegistro < $P{P_FECHA_FIN_PLANTILLA} group by cdpl_nombre order by 2 desc]]>
+			<![CDATA[select cdpl_nombre as plantilla, count(*) as cantidad from pedidoventa_pdvp inner join documentoplantilla_dplp on (cdpl_llave = cpdv_plantilla) where dpdv_fecharegistro >= $P{P_FECHA_INICIO_PLANTILLA} and dpdv_fecharegistro < $P{P_FECHA_FIN_PLANTILLA} group by cdpl_nombre order by 2 desc limit 25]]>
 		</queryString>
 		<field name="plantilla" class="java.lang.String"/>
 		<field name="cantidad" class="java.lang.Long"/>

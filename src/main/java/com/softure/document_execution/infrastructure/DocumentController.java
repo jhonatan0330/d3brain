@@ -28,8 +28,6 @@ import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.notification.application.ActividadSvc;
-import com.softure.notification.domain.ActividadDTO;
 import com.softure.tariff.application.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.upload.application.UploadSvc;
@@ -41,7 +39,6 @@ public class DocumentController {
 
 	@Autowired private PedidoVentaSvc pedidoVentaService;
 	@Autowired private UploadSvc uploadService;
-	@Autowired private ActividadSvc actividadService;
 	@Autowired private ProductoSvc productService;
 	@Autowired private TarifaSvc tarifaService;
 	@Autowired private ProductoInventarioSvc inventoryService;
@@ -77,22 +74,6 @@ public class DocumentController {
 		return result;
 	}
 	
-	@RequestMapping(value="/getDashboard", method=RequestMethod.POST)
-	public List<PedidoVentaDTO> listarDashboard(@RequestBody String token) throws ServerException {
-		PedidoVentaFilterDTO pd = new PedidoVentaFilterDTO();
-		pd.setSecurityToken(token);
-		return listDocumentWithFiltersFunction.listarUsuario(pd);
-	}
-	
-	@RequestMapping(value="/getUserActivities", method=RequestMethod.GET)
-	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {
-		return actividadService.listUserActivities(token);
-	}
-	
-	@RequestMapping(value="/readActivity", method=RequestMethod.POST)
-	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token) throws ServerException {
-		return actividadService.readActivity(activity.getLlaveTabla(), token);
-	}
 	
 	@RequestMapping(value="/upload", method=RequestMethod.POST)
     public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
@@ -103,11 +84,6 @@ public class DocumentController {
 			throw new ServerException(e.getMessage());
 		}
     }
-	
-	@RequestMapping(value="/reasignar", method=RequestMethod.POST)
-	public ActividadDTO reasignar(@RequestBody ActividadDTO asignacion, String token)  throws ServerException  {
-		return actividadService.guardar(asignacion, token);	
-	}
 	
 	@GetMapping(value="/getInventory/{id}")
 	public List<ProductoInventarioDTO> getInventory(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {

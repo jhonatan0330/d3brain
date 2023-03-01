@@ -165,10 +165,14 @@ where
 <!--// BEGIN region script-->
 	<select id="getUsersState" resultType="UsuarioDTO">
 		<include refid="selectUsuarioFragment" />
-, propiedad_ppdp, usuariorol_erlp 
-	where cppd_propiedadvalor = 'PROP_89' and cppd_estado = 'A' and cppd_campo = #{state} 
-		and cerl_rolacceso= cppd_valor and cerl_estado = 'A'
-		and cusr_llave = cerl_usuario and cusr_estado = 'A'
+		inner join pedidoventa_pdvp on (cpdv_llave = #{document})
+		inner join propiedad_ppdp on (cppd_propiedadvalor = 'PROP_89' and cppd_estado = 'A')
+		inner join usuariorol_erlp on (cerl_rolacceso = cppd_valor and cerl_estado = 'A')
+		inner join actividad_actp on (cact_estado = 'A' and cact_documento = cpdv_llave)
+	where cppd_campo = cpdv_estadoexpediente
+		and cusr_llave = cerl_usuario 
+		and cusr_estado = 'A'
+		and cusr_llave != cact_responsable
 	</select>
 <!--// END region script-->
 

@@ -15,6 +15,6 @@ public interface UsuarioMapper extends IBasicMapper<UsuarioDTO, UsuarioFilterDTO
 	List<UsuarioDTO> listarRol(UsuarioFilterDTO dto);
 
 // BEGIN region aditionalMethods  
-	List<UsuarioDTO> getUsersState(@Param("state")String state, @Param("token")String token);
+	List<UsuarioDTO> getUsersState(@Param("document")String document);
 // END region aditionalMethods
 }
