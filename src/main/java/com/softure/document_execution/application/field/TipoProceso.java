@@ -41,6 +41,7 @@ import com.softure.money.domain.MovimientoFilterDTO;
 import com.softure.money.domain.TurnoDTO;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
+import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -567,9 +568,13 @@ public class TipoProceso {
 				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			}else {
 				if(primerLlamado) {
-					String mensajeFault = "Revisa porque este documento no genera ninguna transicion, el campo lo solicita. ( " + procesoDTO.getNombre() + " )" ;
-					if(procesoDTO.getDescripcion()!=null)mensajeFault = mensajeFault + procesoDTO.getDescripcion();
-					mensajeFault = mensajeFault + " ( desde el estado : " + estadoService.consultaXId(procesoDTO.getEstadoExpediente()).getNombre() + ")"; 
+					ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
+					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId( documento.getPlantilla() );
+					String mensajeFault = "Revisa porque las plantillas " + plantilla.getNombre() + " ( Codigo = " + plantilla.getCodigo() + " ) no generan ninguna transicion en el proceso " + pState.getProcesoNombre();
+					mensajeFault = mensajeFault + " desde el estado " + pState.getNombre() + " (Codigo = " + pState.getCodigo() + ")"; 
+					mensajeFault = mensajeFault + ", el campo lo solicita. ( Documento = " + procesoDTO.getNombre() + " )" ;
+					if(procesoDTO.getDescripcion()!=null) mensajeFault = mensajeFault + procesoDTO.getDescripcion();
+					
 					throw new ServerException( mensajeFault) ;
 				}
 			}

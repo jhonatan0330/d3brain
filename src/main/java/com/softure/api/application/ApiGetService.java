@@ -55,7 +55,9 @@ public class ApiGetService {
 			if(filter.getFilters()!=null && !filter.getFilters().isEmpty()) {
 				filterDTO.setFiltersByFields(new ArrayList<>());
 				for (FieldRequest iField : filter.getFilters()) {
-					filterDTO.getFiltersByFields().add(getFieldValue(token, iField, templateBD));
+					PedidoVentaCaracteristicaFilterDTO fieldValueToAdd = getFieldValue(token, iField, templateBD);
+					if(fieldValueToAdd ==null) throw new ServerException("Estas usando un filtro por el campo co codigo "+ iField.getField() +" pero este campo no hace parte de la plantilla de documentos " + templateBD.getNombre());
+					filterDTO.getFiltersByFields().add(fieldValueToAdd);
 				}
 			}
 		} else {
@@ -70,17 +72,17 @@ public class ApiGetService {
 	private PedidoVentaCaracteristicaFilterDTO getFieldValue(String token, FieldRequest fieldRequest, DocumentoPlantillaDTO template) throws ServerException {
 		if(fieldRequest.getField()==null || fieldRequest.getField().isEmpty()) throw new ServerException("Existe un campo sin Field");
 		if(fieldRequest.getValue()==null || fieldRequest.getValue().isEmpty()) throw new ServerException("El campo " + fieldRequest.getField()  + "no tienen value");
-		PedidoVentaCaracteristicaFilterDTO result = new PedidoVentaCaracteristicaFilterDTO();
 		for (DocumentoPlantillaCaracteristicaDTO fieldTemplate : template.getCaracteristicas()){
 			if(fieldRequest.getField().compareTo(fieldTemplate.getCodigo())==0){
+				PedidoVentaCaracteristicaFilterDTO result = new PedidoVentaCaracteristicaFilterDTO();
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
 				if(fieldTemplate.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0)
 					result.setValorOpcion(ApiCommon.getValueOpctionFromText(token, listDocumentFromFieldProcessFunction, fieldRequest.getValue(), fieldTemplate));
-				break;
+				return result;
 			}
 		}
-		return result;
+		return null;
 	}
 
 
