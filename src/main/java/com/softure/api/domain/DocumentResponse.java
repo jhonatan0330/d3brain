@@ -1,5 +1,6 @@
 package com.softure.api.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,4 +19,6 @@ public class DocumentResponse {
 	private String stateId;
 	private String stateName;
 	private List<FieldResponse> fields;
+	private BigDecimal valueV;
+	private BigDecimal valueS;
 }
