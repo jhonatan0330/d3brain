@@ -186,9 +186,9 @@ public class ApiCommon {
 			document.setFields(generateFields(pedidoVentaDTO.getCaracteristicas()));
 			if(pedidoVentaDTO.getDinero() != null) {
 				if(pedidoVentaDTO.getDinero().getValorTotal()!=null && pedidoVentaDTO.getDinero().getValorTotal().compareTo(BigDecimal.ZERO)!=0)
-					document.setValueV(pedidoVentaDTO.getDinero().getValorTotal());
+					document.setFullValue(pedidoVentaDTO.getDinero().getValorTotal());
 				if(pedidoVentaDTO.getDinero().getSaldo()!=null && pedidoVentaDTO.getDinero().getSaldo().compareTo(BigDecimal.ZERO)!=0)
-					document.setValueS(pedidoVentaDTO.getDinero().getSaldo());
+					document.setPendingValue(pedidoVentaDTO.getDinero().getSaldo());
 			}
 			documents.add(document);
 		}

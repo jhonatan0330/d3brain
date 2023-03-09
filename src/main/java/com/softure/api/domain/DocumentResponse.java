@@ -19,6 +19,6 @@ public class DocumentResponse {
 	private String stateId;
 	private String stateName;
 	private List<FieldResponse> fields;
-	private BigDecimal valueV;
-	private BigDecimal valueS;
+	private BigDecimal fullValue;
+	private BigDecimal pendingValue;
 }
