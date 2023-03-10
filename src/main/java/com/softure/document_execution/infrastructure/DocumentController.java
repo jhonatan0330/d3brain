@@ -27,6 +27,8 @@ import com.softure.inventory.application.ProductoInventarioSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
+import com.softure.notification.application.ActividadSvc;
+import com.softure.notification.domain.ActividadDTO;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.tariff.application.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
@@ -45,6 +47,7 @@ public class DocumentController {
 	@Autowired private DeduccionProductoSvc deduccionService;
 	@Autowired private CallDocumentCRUD saveUpdateDocumentFunction;
 	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired private ActividadSvc actividadService;
 	
 	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -113,5 +116,15 @@ public class DocumentController {
 	@PostMapping(value="/recalculateInventory")
 	public void recalculateInventory(@RequestBody String documentId, @RequestHeader("Authorization") String token) throws ServerException {
 		deduccionService.recalcularInventarioDocumento(documentId, token);
+	}
+	
+	@RequestMapping(value="/getUserActivities", method=RequestMethod.GET)
+	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {
+		return actividadService.listUserActivities(token);
+	}
+	
+	@RequestMapping(value="/readActivity", method=RequestMethod.POST)
+	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token) throws ServerException {
+		return actividadService.readActivity(activity.getLlaveTabla(), token);
 	}
 }
