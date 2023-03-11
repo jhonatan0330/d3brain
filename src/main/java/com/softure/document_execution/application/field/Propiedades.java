@@ -116,6 +116,7 @@ public class Propiedades {
 	public static final String PRODUCTOS_FUNCION_SQL = "PRODUCTOS_FUNCION_SQL";
 	public static final String PRODUCTOS_FUNCION_CAMPO = "PRODUCTOS_FUNCION_CAMPO";
 	public static final String PRODUCTOS_TERCERO = "PRODUCTOS_TERCERO";
+	public static final String PRODUCTO_PUESTO = "PRODUCTO_PUESTO";
 
 	public static final String PROCESO_POP = "PROCESO_OCULTAR_POP";
 	public static final String PROCESO_ACCIONES = "PROCESO_ACCIONES";
@@ -553,6 +554,7 @@ public class Propiedades {
 			case PRODUCTO_CAMPO_VALOR_UNITARIO : {ruleProperty =  "Referencia el campo que va a mostrar el valor unitario.\n";break;}
 			case PRODUCTO_CAMPO_CANTIDAD : {ruleProperty =  "EL softwate toma este campo como la cantidad a registrar del item de venta.\n";break;}
 			case PRODUCTO_CAMPO_TOTAL : {ruleProperty =  "Este campo sera el valor total del producto.\n";break;}
+			case PRODUCTO_PUESTO : {ruleProperty =  "Este campo consultara un producto y este producto sera aplicado al puesto con una sola unidad, se usa principalmente para obtener el detall del producto.\n";break;}
 			case PROCESO_INCLUIR_TRAZA_PRINCIPAL : {ruleProperty =  "Cuando colocas esta propiedad en el proceso que se selecciona en el campo aparecera este documento como parte de la trazabilidad.\n No es necesario usar BPM.\n";break;}
 			case P_SUBREPORT_ : {ruleProperty =  " Coloque los diferentes subreportes que se necesitan.\n";break;}
 			case READ_QR : {ruleProperty =  "En los campos proceso muestra el boton para activar la camara de lectura de codigos QR, selecciona el formato del codigo de barras, entre menos mejor\n\nFormatos = 'AZTEC','CODABAR','CODE_39','CODE_93','CODE_128','DATA_MATRIX','EAN_8','EAN_13','ITF','MAXICODE','PDF_417','QR_CODE','RSS_14','RSS_EXPANDED','UPC_A','UPC_E','UPC_EAN_EXTENSION'";break;}

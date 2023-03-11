@@ -559,6 +559,16 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto( bodega.getNombre() );
 	}
 	
+	private void identificadorProducto(PropiedadDTO dto) throws ServerException {
+		ProductoDTO producto = productoService.consultaXId(dto.getValor());
+		if(producto==null){
+			producto = productoService.filtrarPorCodigo(dto.getValor());
+			if(producto==null) throw new ServerException("No se encontro un producto con nombre o Codigo que concuerde");
+		}
+		dto.setValor( producto.getLlaveTabla() );
+		dto.setTexto( producto.getNombre() );
+	}
+	
 	private void identificadorCategoriaProducto(PropiedadDTO dto, String token) throws ServerException {
 		if(dto.getValor().compareTo("*")==0) {//Si viene en cero se crea el campo
 			DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
@@ -718,6 +728,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			
 			case Propiedades.PRODUCTOS_FUNCION_CAMPO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTOS_TERCERO : {return identificadorCampo(dto, token);}
+			case Propiedades.PRODUCTO_PUESTO: { identificadorProducto(dto);break;}
 			case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO : {return identificadorCampo(dto, token);}
 			case Propiedades.PRODUCTO_CAMPO_CANTIDAD: {return identificadorCampo(dto, token);}

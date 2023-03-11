@@ -414,3 +414,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_219' , 'O', 'API-KEY', 'API_KEY', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_multiple)
 	VALUES('PROP_220' , 'O', 'COVERAGE_IMAGE', 'COVERAGE_IMAGE', 'REQUISITO', true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_221' , 'C', 'PRODUCTO APLICADO UBICACION CROQUIS', 'PRODUCTO_PUESTO', 'REQUISITO', 'U');

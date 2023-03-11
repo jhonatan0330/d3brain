@@ -1,20 +1,22 @@
 package com.softure.document_execution.domain;
 
-import java.util.List;
-
 import java.math.BigDecimal;
 // BEGIN region interImport
 // END region interImport
+import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
 import com.softure.logisticpymes.domain.BasicParamDTO;
 import com.softure.tariff.domain.TarifaDTO;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Alias("DetallePedidoVentaDTO")
+@Getter
+@Setter
 public class DetallePedidoVentaDTO extends BasicParamDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documento;
@@ -38,7 +40,8 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	private List<TarifaDTO> tarifas;
 	private String transaccionRegistro;
 	private String transaccionInactivo;
-
+	private String campo;
+/*
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
@@ -185,8 +188,6 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	
 	public String getTransaccionInactivo() {
 		return transaccionInactivo;
-	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+	}*/
 
 }

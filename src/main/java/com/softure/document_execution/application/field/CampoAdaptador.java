@@ -36,7 +36,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION:{ tipoConfiguracion.cargarConsultaCampo(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.CROQUIS:{ tipoCroquis.cargarConsultaCampo(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{ tipoDetallePedido.cargarConsultaCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.cargarConsultaCampo(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.cargarConsultaCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{ tipoProceso.cargarConsultaCampo(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{ tipoProductoLista.cargarConsultaCampo(pCampo);break;}
 			default:{break;}

@@ -639,6 +639,22 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(cpTotal!=null) cpTotal.setValorNumero(detail.getValorTotal());//Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 		
 	}
+	
+	public List<ProductoDTO> getCompleteDetailFromProductId(String productId, String token) throws ServerException {
+		DetallePedidoVentaDTO result = new DetallePedidoVentaDTO();
+		result.setProducto(productId);
+		List<ProductoDTO> productos = new ArrayList<>();
+		ProductoDTO productFilter = new ProductoDTO();
+		productFilter.setLlaveTabla(productId);
+		productos.add(productFilter);
+		productos = simplificarConsultaBDProductos(productos);
+		for (ProductoDTO productoDTO : productos) {
+			DetallePedidoVentaDTO filtroPlantilla = new DetallePedidoVentaDTO();
+	        filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
+			productoDTO.setDetallePlantilla(consultaCompleta(filtroPlantilla, null, null, null, null, productos, token));
+		}
+		return productos;
+	}
 
 	// END region aditionalMethods
 

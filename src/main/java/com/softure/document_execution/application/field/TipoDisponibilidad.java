@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
+import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -23,69 +25,85 @@ import com.softure.property.domain.PropiedadDTO;
 
 @Component
 public class TipoDisponibilidad {
-	
-	@Autowired private DocumentoPlantillaCaracteristicaSvc baseService;
-	@Autowired private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired private PuestoSvc puestoService;
-	
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
-		
+
+	@Autowired
+	private DocumentoPlantillaCaracteristicaSvc baseService;
+	@Autowired
+	private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired
+	private DetallePedidoVentaSvc inventoryService;
+	@Autowired
+	private PuestoSvc puestoService;
+	@Autowired
+	private CallProductValidateAndSave validateAndSave;
+	@Autowired
+	private DetallePedidoVentaSvc detallePedidoVentaService;
+
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+			throws ServerException {
+
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
-		if(bd!=null){
-			if(pCampo.getValorText()==null){
+		if (bd != null) {
+			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
 				return pCampo;
-			}else{
-				if(pCampo.getValorText().compareTo(bd.getValorText())==0){
+			} else {
+				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
 					return pCampo;
-				}else{
+				} else {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
 				}
 			}
 		}
-		if(pCampo.getValorText()==null){
+		if (pCampo.getValorText() == null) {
 			return pCampo;
-		}else{
+		} else {
 			pCampo = campoService.guardar(pCampo, token);
+			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
+				pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
+						pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+			}
 			return pCampo;
 		}
 	}
 
-	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
-		if(pCampo.getValorOpcion()!=null && pCampo.getValorAuxiliar()!=null){
-			pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			PedidoVentaCaracteristicaDTO vCampoViaje = new PedidoVentaCaracteristicaDTO();
-			vCampoViaje.setValorOpcion(pCampo.getValorOpcion());
-			vCampoViaje.setCampo(pCampo.getValorAuxiliar());
-			pCampo.getDependientes().add(vCampoViaje);
-			// consultarDatosBase(pCampo);  -Lo quito en la migracion de filters
-			pCampo.setDependientes(null);
+	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+		//Retire algo que tenia que ver con el valor opcion ver hisotiral
+		String producto = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.PRODUCTO_PUESTO);
+		if (!producto.isEmpty()) {
+			if (!pCampo.getModificado())
+				pCampo.setDetalles(
+						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token));
 		}
 	}
 
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
+			throws ServerException {
+		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo(),
+				pCampo.getSecurityToken());
 		List<PuestoDTO> componentesActuales = getOptionsToSelect(pCampo.getDependientes(), pBase);
-		if(componentesActuales!=null && !componentesActuales.isEmpty()){
+		if (componentesActuales != null && !componentesActuales.isEmpty()) {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-			for (PuestoDTO actual : componentesActuales){
+			for (PuestoDTO actual : componentesActuales) {
 				pBase.getDocumentos().add(convertirPuestoEnDocumento(actual));
 			}
 			PropiedadDTO funcion = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_FUNCION_SQL);
-			if(funcion != null) {
+			if (funcion != null) {
 				campoService.validarDependientes(pBase, pCampo.getDependientes());
-				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getDocumento(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
-				if(ocupados!=null && !ocupados.isEmpty()) {
+				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
+						funcion.getLlaveTabla(), pCampo.getDocumento(),
+						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
 						String[] pOcupados = iOcupado.getValorText().split("-");
 						for (String iPuesto : pOcupados) {
-							if(!iPuesto.isEmpty()) {
+							if (!iPuesto.isEmpty()) {
 								for (PedidoVentaDTO iEspacio : pBase.getDocumentos()) {
-									if(iEspacio.getNombre().compareTo(iPuesto)==0) {
+									if (iEspacio.getNombre().compareTo(iPuesto) == 0) {
 										iEspacio.setLlaveTabla(iOcupado.getDocumento());
 										iEspacio.setPlantilla(iOcupado.getValorAuxiliar());
 										iEspacio.setEstadoExpediente(iOcupado.getEstado());
@@ -99,28 +117,35 @@ public class TipoDisponibilidad {
 				}
 			}
 		}
-
+		String producto = Propiedades.obtenerValor(pBase, Propiedades.PRODUCTO_PUESTO);
+		if (!producto.isEmpty()) {
+			pBase.setProductos(inventoryService.getCompleteDetailFromProductId(producto, pCampo.getSecurityToken()));
+		}
 		pCampo.setCampoDTO(pBase);
-		
 		return pCampo;
 	}
 
 	private List<PuestoDTO> getOptionsToSelect(List<PedidoVentaCaracteristicaDTO> dependents,
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
-		if(dependents==null || dependents.isEmpty())throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
+		if (dependents == null || dependents.isEmpty())
+			throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
 		String estructura = Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
-		if(estructura.isEmpty()) throw new ServerException("Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
+		if (estructura.isEmpty())
+			throw new ServerException(
+					"Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
 		PedidoVentaCaracteristicaDTO dependienteCroquis = null;
 		for (PedidoVentaCaracteristicaDTO iDependiente : dependents) {
-			if(iDependiente.getCampo().compareTo(estructura)==0) {
+			if (iDependiente.getCampo().compareTo(estructura) == 0) {
 				dependienteCroquis = iDependiente;
 				break;
 			}
 		}
-		
-		if(dependienteCroquis==null) throw new ServerException("No se encontro en los dependientes la estructura del croquis");
+
+		if (dependienteCroquis == null)
+			throw new ServerException("No se encontro en los dependientes la estructura del croquis");
 		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
-		if(vCroquis==null) throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
+		if (vCroquis == null)
+			throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
 
 		pBase.setImagen(vCroquis.getValorText());
 		PuestoFilterDTO filtro = new PuestoFilterDTO();
@@ -128,7 +153,7 @@ public class TipoDisponibilidad {
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		return puestoService.listarConsulta(filtro);
 	}
-	
+
 	private PedidoVentaDTO convertirPuestoEnDocumento(PuestoDTO actual) {
 		PedidoVentaDTO componente = new PedidoVentaDTO();
 		// componente.setLlaveTabla(actual.getLlaveTabla());
@@ -140,49 +165,60 @@ public class TipoDisponibilidad {
 		return componente;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		String[] locations = null;
-		if(pCampo.getValorText()!=null && pCampo.getValorText().isEmpty()) pCampo.setValorText(null);
-		
-		//Valido obligatoriedad
-		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorText()==null) 
+		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
+			pCampo.setValorText(null);
+
+		// Valido obligatoriedad
+		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
+				&& pCampo.getValorText() == null)
 			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
-		
-		if(pCampo.getValorText()!=null) locations = pCampo.getValorText().split("-");
-		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null 
-				&& (locations==null || locations.length==0)) throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
-		if(locations!=null){
-			
+
+		if (pCampo.getValorText() != null)
+			locations = pCampo.getValorText().split("-");
+		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
+				&& (locations == null || locations.length == 0))
+			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+		if (locations != null) {
+
 			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
-			if(currentItems==null || currentItems.isEmpty()) throw new ServerException("No hay opciones para seleccionar una posicion del croquis");
+			if (currentItems == null || currentItems.isEmpty())
+				throw new ServerException("No hay opciones para seleccionar una posicion del croquis");
 			int positionCount = 0;
-			for (String actual : locations){
-				if(actual!=null && !actual.isEmpty()) {
+			for (String actual : locations) {
+				if (actual != null && !actual.isEmpty()) {
 					positionCount++;
 					PuestoDTO findItem = null;
-					for(PuestoDTO iPuesto: currentItems) {
-						if(iPuesto.getNombre().compareTo(actual)==0) {
+					for (PuestoDTO iPuesto : currentItems) {
+						if (iPuesto.getNombre().compareTo(actual) == 0) {
 							findItem = iPuesto;
 							break;
 						}
-						
+
 					}
-					if(findItem ==null) throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " la posicion " + actual + " no pertence al croquis");	
+					if (findItem == null)
+						throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " la posicion "
+								+ actual + " no pertence al croquis");
 				}
 			}
 			pCampo.setValorNumero(new BigDecimal(positionCount));
-			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.DISPONIBILIDAD_FUNCION_SQL);
-			if(funcion != null) {
+			PropiedadDTO funcion = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+					Propiedades.DISPONIBILIDAD_FUNCION_SQL);
+			if (funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
-				List<PedidoVentaCaracteristicaDTO> ocupados =  campoService.camposOcupadosCroquis(funcion.getLlaveTabla(), pCampo.getLlaveTabla(), campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
-				if(ocupados!=null && !ocupados.isEmpty()) {
+				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
+						funcion.getLlaveTabla(), pCampo.getLlaveTabla(),
+						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
 						String[] pOcupados = iOcupado.getValorText().split("-");
 						for (String iPuesto : pOcupados) {
-							if(!iPuesto.isEmpty()) {
-								for (String actual : locations){
-									if(actual.compareTo(iPuesto)==0) {
-										throw new ServerException("El "+ pCampo.getCampoDTO().getNombre() +" " + iPuesto + " ya se encuentra ocupado");
+							if (!iPuesto.isEmpty()) {
+								for (String actual : locations) {
+									if (actual.compareTo(iPuesto) == 0) {
+										throw new ServerException("El " + pCampo.getCampoDTO().getNombre() + " "
+												+ iPuesto + " ya se encuentra ocupado");
 									}
 								}
 							}
@@ -191,12 +227,25 @@ public class TipoDisponibilidad {
 				}
 			}
 			pCampo.setValorText("");
-			for(String componente : locations){
-				 if(!componente.isEmpty()) pCampo.setValorText( pCampo.getValorText() + "-" + componente);
+			for (String componente : locations) {
+				if (!componente.isEmpty())
+					pCampo.setValorText(pCampo.getValorText() + "-" + componente);
 			}
-		}else{
+
+			List<DetallePedidoVentaDTO> agrupados = new ArrayList<DetallePedidoVentaDTO>();
+			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
+				agrupados = validateAndSave.orderToValidate(pCampo.getDetalles());
+				pCampo.setDetalles(agrupados);
+			}
+			if (pCampo.getDocumento() != null) {
+				pCampo.setDetalles(
+						validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null, token));
+			} else {
+				pCampo.setDetalles(agrupados);
+			}
+		} else {
 			pCampo.setValorText(null);
 		}
 	}
-	
+
 }

@@ -602,6 +602,8 @@ CREATE TABLE detallepedidoventa_dpvp(
         mdpv_valorsubtotal NUMERIC(18,6) NOT NULL DEFAULT 0,
         cdpv_transaccionregistro character varying(32) NOT NULL,
         cdpv_transaccioninactivo character varying(32),
+        cdpv_campo character varying(32),
+        cdpv_descripcion character varying(200),
         cdpv_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_detallepedidoventa_dpvp PRIMARY KEY (cdpv_llave)
     );

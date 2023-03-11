@@ -6,7 +6,12 @@ package com.softure.document_execution.domain;
 import org.apache.ibatis.type.Alias;
 
 import com.softure.java.domain.BasicFilterDTO;
+
+import lombok.Getter;
+import lombok.Setter;
 @Alias("DetallePedidoVentaFilterDTO")
+@Getter
+@Setter
 public class DetallePedidoVentaFilterDTO extends BasicFilterDTO
 {
 
@@ -22,116 +27,7 @@ public class DetallePedidoVentaFilterDTO extends BasicFilterDTO
 	private String plantilla;
 	private String transaccionRegistro;
 	private String transaccionInactivo;
+	private String campo;
 
-	
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
-	
-	public String getDocumento() {
-		return documento;
-	}
-	
-	
-	public void setProducto(String producto) {
-		this.producto = producto;
-	}
-	
-	public String getProducto() {
-		return producto;
-	}
-	
-	
-	public void setProductoTercero(String productoTercero) {
-		this.productoTercero = productoTercero;
-	}
-	
-	public String getProductoTercero() {
-		return productoTercero;
-	}
-	
-	
-	public void setProductoCodigo(String productoCodigo) {
-		this.productoCodigo = productoCodigo;
-	}
-	
-	public String getProductoCodigo() {
-		return productoCodigo;
-	}
-	
-	
-	public void setProductoImagen(String productoImagen) {
-		this.productoImagen = productoImagen;
-	}
-	
-	public String getProductoImagen() {
-		return productoImagen;
-	}
-	
-	
-	public void setProductoDocumento(String productoDocumento) {
-		this.productoDocumento = productoDocumento;
-	}
-	
-	public String getProductoDocumento() {
-		return productoDocumento;
-	}
-	
-	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	
-	public String getNombre() {
-		return nombre;
-	}
-	
-	
-	public void setCantidadPromocion(Integer cantidadPromocion) {
-		this.cantidadPromocion = cantidadPromocion;
-	}
-	
-	public Integer getCantidadPromocion() {
-		return cantidadPromocion;
-	}
-	
-	
-	public void setCantidadPromocionBase(Integer cantidadPromocionBase) {
-		this.cantidadPromocionBase = cantidadPromocionBase;
-	}
-	
-	public Integer getCantidadPromocionBase() {
-		return cantidadPromocionBase;
-	}
-	
-					
-	
-	public void setPlantilla(String plantilla) {
-		this.plantilla = plantilla;
-	}
-	
-	public String getPlantilla() {
-		return plantilla;
-	}
-	
-					
-	
-	public void setTransaccionRegistro(String transaccionRegistro) {
-		this.transaccionRegistro = transaccionRegistro;
-	}
-	
-	public String getTransaccionRegistro() {
-		return transaccionRegistro;
-	}
-	
-	
-	public void setTransaccionInactivo(String transaccionInactivo) {
-		this.transaccionInactivo = transaccionInactivo;
-	}
-	
-	public String getTransaccionInactivo() {
-		return transaccionInactivo;
-	}
-	
 
 }

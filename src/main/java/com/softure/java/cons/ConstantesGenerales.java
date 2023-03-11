@@ -106,6 +106,6 @@ public class ConstantesGenerales {
 
 	public static final String USUARIO = "USR";
 	
-	public static final String LOGO = "https://fs.softwareparati.cloud/modulo.png";
-	public static final String AVATAR = "https://fs.softwareparati.cloud/avatar.png";
+	public static final String LOGO = "https://fs.softwareparati.com/modulo.png";
+	public static final String AVATAR = "https://fs.softwareparati.com/avatar.png";
 }
