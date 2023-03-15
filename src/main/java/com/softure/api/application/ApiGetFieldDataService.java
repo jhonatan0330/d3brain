@@ -68,7 +68,7 @@ public class ApiGetFieldDataService {
 		result.setInternalId(fieldData.getValorOpcion());
 		result.setValue(fieldData.getValorText());
 		if(result.getValue()==null && fieldData.getValorNumero()!=null ) result.setValue(SoftureUtil.formatNumber(fieldData.getValorNumero()));
-		List<DocumentResponse> docs = null;
+		List<DocumentResponse> docs = new ArrayList<>();
 		if(fieldData.getCampoDTO().getDocumentos()!=null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
 			//Para obtener los puestos de un pasaje no se llenaba plantilla
 			DocumentoPlantillaDTO templateList = null;
@@ -78,8 +78,8 @@ public class ApiGetFieldDataService {
 			}
 			docs = ApiCommon
 			.transformPedidoVentaToDocument(token, fieldService, fieldData.getCampoDTO().getDocumentos(), templateList);
-			result.setDocuments(docs);
 		}
+		result.setDocuments(docs);
 		return result;
 	}
 

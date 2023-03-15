@@ -88,7 +88,9 @@ public class CallDocumentListFromFieldProcess {
 					try {
 						resultados = listDocumentWithFiltersFunction.listarAvanzado(entityFilter);	
 					} catch (ServerException e) {
-						throw new ServerException(e.getMessage() + " Campo :" + pBase.getNombre(), e.getOrigen());
+						String msgException = e.getMessage() + " Campo :" + pBase.getNombre();
+						if(e.getMessage().compareTo("Por favor revise porque el campo no tiene plantilla")==0) msgException = "Por favor revise porque el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "  + pCampo.getCampoDTO().getPlantillaNombre() + " no tiene configurada una fuente de datos que permita buscar datos por el codigo " + pCampo.getFiltroParametro() ;
+						throw new ServerException(msgException, e.getOrigen());
 					}
 					
 				}else {

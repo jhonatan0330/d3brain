@@ -318,8 +318,20 @@ public class CallManageTransition {
 			solucion = transicionService.consultaUnica(solucionFilter);
 			if (solucion == null) {
 				ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
-				throw new ServerException(decisionDTO.getNombre()
-						+ "\nNo se encuentra una transicion con el nombre para  esta respuesta: " + nombreTransicion);
+				String msgException = "La decision "+decisionDTO.getNombre()+" del proceso " + decisionDTO.getProcesoNombre() 
+					+ " esta intentando buscar un camino para la respuesta ( " +nombreTransicion +" ), actualmente ";
+				solucionFilter.setNombre(null);
+				List<ProcesoTransicionDTO> responseTransition = transicionService.listarConsulta(solucionFilter);
+				if(responseTransition!=null && !responseTransition.isEmpty()) {
+					msgException+= " se tiene configurado respuesta para : ";
+					for (int i = 0; i < responseTransition.size(); i++) {
+						msgException+= "\n " + String.valueOf(i+1) + " - " + responseTransition.get(i).getNombre();
+					}
+					msgException+= " \nrevisa la propiedad SQL de la decision";
+				}else {
+					msgException+= " no tienes configurada ninguna respuesta";
+				}
+				throw new ServerException(msgException);
 			}
 		}
 		return solucion;
