@@ -7,12 +7,15 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
 @Alias("DocumentoPlantillaCaracteristicaDTO")
+@JsonInclude(Include.NON_NULL)
 public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 // BEGIN region interfaces  
 // END region interfaces

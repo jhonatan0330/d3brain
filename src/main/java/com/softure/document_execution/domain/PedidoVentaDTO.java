@@ -5,11 +5,14 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.java.domain.BasicDTO;
 
 import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaDTO")
+@JsonInclude(Include.NON_NULL)
 public class PedidoVentaDTO extends BasicDTO
 // BEGIN region interfaces  
 // END region interfaces

@@ -5,6 +5,8 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.java.domain.BasicDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -12,6 +14,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaCaracteristicaDTO")
+@JsonInclude(Include.NON_NULL)
 public class PedidoVentaCaracteristicaDTO extends BasicDTO
 // BEGIN region interfaces  
 // END region interfaces

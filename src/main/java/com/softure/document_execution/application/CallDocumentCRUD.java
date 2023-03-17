@@ -775,6 +775,11 @@ public class CallDocumentCRUD {
 			urFilter.setDocumento(dto.getLlaveTabla());
 			urFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			UsuarioRolDTO ur = usuarioRolService.consultaUnica(urFilter);
+			// Cuando se modifica un contacto que tenia mal el id salia un errro de forgin key
+			if(ur!=null && ur.getUsuarioIdentificacion().compareTo(usrId)!=0) {
+				inactivateRolOfDocument(ur.getDocumento(), token);
+				ur = null;
+			}
 			if (ur == null) {
 				// Si no tengo relacion, busco usuario y creo relacion
 				UsuarioFilterDTO usrFilter = new UsuarioFilterDTO();
@@ -822,13 +827,17 @@ public class CallDocumentCRUD {
 				usuarioService.actualizar(usrActualizar, token);
 			}
 		} else {
-			UsuarioRolFilterDTO rolFilter = new UsuarioRolFilterDTO();
-			rolFilter.setDocumento(dto.getLlaveTabla());
-			rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			UsuarioRolDTO rol = usuarioRolService.consultaUnica(rolFilter);
-			if (rol != null) {
-				usuarioRolService.inactivar(rol, token);
-			}
+			 inactivateRolOfDocument(dto.getLlaveTabla(),  token);
+		}
+	}
+	
+	private void inactivateRolOfDocument(String document, String token) throws ServerException {
+		UsuarioRolFilterDTO rolFilter = new UsuarioRolFilterDTO();
+		rolFilter.setDocumento(document);
+		rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		UsuarioRolDTO rol = usuarioRolService.consultaUnica(rolFilter);
+		if (rol != null) {
+			usuarioRolService.inactivar(rol, token);
 		}
 	}
 
