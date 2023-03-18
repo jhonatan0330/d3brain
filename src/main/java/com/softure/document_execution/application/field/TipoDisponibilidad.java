@@ -21,6 +21,7 @@ import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
 import com.softure.property.domain.PropiedadDTO;
 
 @Component
@@ -38,6 +39,8 @@ public class TipoDisponibilidad {
 	private CallProductValidateAndSave validateAndSave;
 	@Autowired
 	private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired
+	private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
@@ -72,7 +75,7 @@ public class TipoDisponibilidad {
 	}
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
-		//Retire algo que tenia que ver con el valor opcion ver hisotiral
+		// Retire algo que tenia que ver con el valor opcion ver hisotiral
 		String producto = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.PRODUCTO_PUESTO);
 		if (!producto.isEmpty()) {
 			if (!pCampo.getModificado())
@@ -127,23 +130,32 @@ public class TipoDisponibilidad {
 
 	private List<PuestoDTO> getOptionsToSelect(List<PedidoVentaCaracteristicaDTO> dependents,
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
-		if (dependents == null || dependents.isEmpty())
-			throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
-		String estructura = Propiedades.obtenerValor(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
-		if (estructura.isEmpty())
+		PropiedadDTO estructura = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
+		if (estructura == null)
 			throw new ServerException(
 					"Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
-		PedidoVentaCaracteristicaDTO dependienteCroquis = null;
-		for (PedidoVentaCaracteristicaDTO iDependiente : dependents) {
-			if (iDependiente.getCampo().compareTo(estructura) == 0) {
-				dependienteCroquis = iDependiente;
-				break;
+		 if (dependents == null || dependents.isEmpty())
+					 throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
+		PedidoVentaCaracteristicaDTO vCroquis = null;
+		
+		List<PedidoVentaCaracteristicaDTO> fieldsInRelations = findFieldService.call(estructura.getLlaveTabla(), dependents);
+		if(fieldsInRelations!=null && !fieldsInRelations.isEmpty()) {
+			vCroquis = fieldsInRelations.get(0);
+		} else {
+			// Proximamente vamos a retirar esta funcionalidad se maneja solopor el camino
+			PedidoVentaCaracteristicaDTO dependienteCroquis = null;
+			for (PedidoVentaCaracteristicaDTO iDependiente : dependents) {
+				if (iDependiente.getCampo().compareTo(estructura.getValor()) == 0) {
+					dependienteCroquis = iDependiente;
+					break;
+				}
 			}
-		}
 
-		if (dependienteCroquis == null)
-			throw new ServerException("No se encontro en los dependientes la estructura del croquis");
-		PedidoVentaCaracteristicaDTO vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
+			if (dependienteCroquis == null)
+				throw new ServerException("No se encontro en los dependientes la estructura del croquis");
+			vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
+		}
+		
 		if (vCroquis == null)
 			throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
 

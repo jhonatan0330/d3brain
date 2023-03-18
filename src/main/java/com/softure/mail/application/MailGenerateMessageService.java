@@ -9,11 +9,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
-import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
-import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
@@ -24,12 +21,10 @@ import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
-import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
-import com.softure.property.application.RelacionInternaSvc;
+import com.softure.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-import com.softure.property.domain.RelacionInternaDTO;
 
 @Service
 public class MailGenerateMessageService {
@@ -39,15 +34,13 @@ public class MailGenerateMessageService {
 	@Autowired
 	private PropiedadSvc propiedadService;
 	@Autowired
-	private RelacionInternaSvc relacionService;
-	@Autowired
 	private UsuarioSvc usuarioService;
 	@Autowired
 	private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired
-	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired
 	private MensajePlantillaCorreoSvc mailTemplateService;
+	@Autowired
+	private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
 
 	public void call(PedidoVentaDTO pedido, ProcesoTransicionDTO transicionDTO, UsuarioDTO responsable,
 			PedidoVentaDTO modificador, String token) throws ServerException {
@@ -102,77 +95,17 @@ public class MailGenerateMessageService {
 					}
 					// Si tiene relaciones la propiedad entonces el busca los correos que se
 					// encuentren en esas relaciones
-					correosFijos = searchMail(relacionService.relacionesPropiedad(iPropiedad.getLlaveTabla()),
-							modificador.getCaracteristicas());
+					List<PedidoVentaCaracteristicaDTO> fieldsEmailToSend = findFieldService.call(iPropiedad.getLlaveTabla(), modificador.getCaracteristicas());
+					correosFijos = new ArrayList<String>();
+					if(fieldsEmailToSend!=null && !fieldsEmailToSend.isEmpty()) {
+						for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
+							correosFijos.add(iFieldsEmailToSend.getValorText());
+						}
+					}
 				}
 			}
 			colocarMensajes(mensaje, pedido, responsable, modificador, fijos, correosFijos, token);
 		}
-	}
-
-	private List<String> searchMail(List<RelacionInternaDTO> relaciones, List<PedidoVentaCaracteristicaDTO> fields)
-			throws ServerException {
-		if (relaciones == null || relaciones.isEmpty() || fields == null || fields.isEmpty())
-			return null;
-		List<String> correosFijos = null;
-		List<PedidoVentaCaracteristicaDTO> fieldsInternal = null;
-		List<RelacionInternaDTO> relacionesValidadas = new ArrayList<RelacionInternaDTO>();
-		// relacionesSinRepetir.addAll(relaciones.);//SEparado al contructor creo que
-		// para que funcione el remove
-		for (RelacionInternaDTO iRelacion : relaciones) {
-			for (PedidoVentaCaracteristicaDTO iField : fields) {
-				if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
-					relacionesValidadas.add(iRelacion);
-					if (iField.getValorOpcion() != null) {
-						if (fieldsInternal == null)
-							fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
-						fieldsInternal.add(iField);
-					} else {
-						// En caso que sea multiple se debe evaluar todos los expedientes internos
-						if (iField.getCampoDTO() != null
-								&& DocumentoPlantillaCaracteristicaDTO.PROCESO
-										.compareTo(iField.getCampoDTO().getFormato()) == 0
-								&& Propiedades.obtenerValor(iField.getCampoDTO(), Propiedades.MULTIPLE) != null) {
-							DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
-							relacionExpedienteFilter.setCampoMaestro(iField.getLlaveTabla());
-							relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-							List<DocumentoRelacionExpedienteDTO> expedientesAnidados = relacionExpedienteService
-									.listarConsulta(relacionExpedienteFilter);
-							if (expedientesAnidados != null && !expedientesAnidados.isEmpty()) {
-								if (fieldsInternal == null)
-									fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
-								for (DocumentoRelacionExpedienteDTO iAnidado : expedientesAnidados) {
-									PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
-									newField.setValorOpcion(iAnidado.getExpedienteDetalle());
-									fieldsInternal.add(newField);
-								}
-							}
-						} else {
-							if (correosFijos == null)
-								correosFijos = new ArrayList<String>();
-							correosFijos.add(iField.getValorText());
-						}
-					}
-					// break; //Lo reitre para que valide todos los campos
-				}
-			}
-		}
-		if (fieldsInternal != null) {
-			// Esto me toco hacerlo porque se descuadranban los array al remove la relacion
-			List<RelacionInternaDTO> relacionesSinRepetir = new ArrayList<RelacionInternaDTO>();
-			relacionesSinRepetir.addAll(relaciones);
-			for (RelacionInternaDTO iRelacion : relacionesValidadas) {
-				relacionesSinRepetir.remove(iRelacion);
-			}
-			fieldsInternal = campoService.listar2getMessageMailDestiny(fieldsInternal, relacionesSinRepetir);
-			List<String> mailInternal = searchMail(relacionesSinRepetir, fieldsInternal);
-			if (mailInternal != null) {
-				if (correosFijos == null)
-					correosFijos = new ArrayList<String>();
-				correosFijos.addAll(mailInternal);
-			}
-		}
-		return correosFijos;
 	}
 
 	private void colocarMensajes(PropiedadDTO plantillaCorreo, PedidoVentaDTO documento, UsuarioDTO responsable,
