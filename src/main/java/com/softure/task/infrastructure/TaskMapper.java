@@ -1,13 +1,9 @@
 package com.softure.task.infrastructure;
 
-
-import com.softure.java.domain.IBasicMapper;
+import com.softure.shared.infrastructure.SharedCRUDMapperMybatis;
 import com.softure.task.domain.TaskDTO;
-import com.softure.task.domain.TaskFilterDTO;
+import com.softure.task.domain.TaskFilter;
 
-public interface TaskMapper extends IBasicMapper<TaskDTO, TaskFilterDTO>{
-	
+public interface TaskMapper  extends SharedCRUDMapperMybatis<TaskDTO, TaskFilter> {
 
-// BEGIN region aditionalMethods  
-// END region aditionalMethods
 }

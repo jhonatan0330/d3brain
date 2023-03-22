@@ -6,22 +6,22 @@ import org.springframework.stereotype.Service;
 import com.softure.api.domain.LoginRequest;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
-import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiLoginService {
 
 	@Autowired UsuarioAutenticacionSvc authenticationService;
 	
-	public IdResponse call(LoginRequest login) throws ServerException {
+	public SharedIdResponse call(LoginRequest login) throws ServerException {
 		if(login == null) throw new ServerException("No se enviaron datos");
 		if(login.getUser() == null) throw new ServerException("Por favor ingrese el usuario");
 		if(login.getPassword() == null) throw new ServerException("Por favor ingrese la clave");
 		UsuarioAutenticacionFilterDTO user = new UsuarioAutenticacionFilterDTO();
 		user.setSesion(login.getUser());
 		user.setClave(login.getPassword());
-		return new IdResponse( authenticationService.autenticar(user, true).getToken());
+		return new SharedIdResponse( authenticationService.autenticar(user, true).getToken());
 	}
 
 }

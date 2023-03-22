@@ -10,10 +10,10 @@ import com.softure.task.domain.TaskResponse;
 @Service
 public class TaskGetByIdService {
 
-	@Autowired private TaskService taskService;
+	@Autowired private TaskCRUDTaskService taskService;
 	
 	public TaskResponse call(String id) throws ServerException{
-		TaskDTO dto = taskService.consultaXId(id);
+		TaskDTO dto = taskService.findById(id);
 		if(dto!=null) return dto.toResponse();
 		return null;
 	}

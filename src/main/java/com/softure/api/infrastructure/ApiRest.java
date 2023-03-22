@@ -23,8 +23,8 @@ import com.softure.api.domain.DocumentWithLoginRequest;
 import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DataFieldWithLoginRequest;
 import com.softure.api.domain.LoginRequest;
-import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.shared.domain.SharedIdResponse;
 
 @RestController
 @RequestMapping("api")
@@ -48,7 +48,7 @@ public class ApiRest {
 	public List<DocumentResponse> getDocumentFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentFilterWithLoginRequest filter
 		) throws ServerException {
-		IdResponse token = apiLoginService.call(filter.getLogin());
+		SharedIdResponse token = apiLoginService.call(filter.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiGetService.call(token.getId(), filter.getDocument());
 	}
@@ -57,13 +57,13 @@ public class ApiRest {
 	public DataFieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DataFieldWithLoginRequest filter
 		) throws ServerException {
-		IdResponse token = apiLoginService.call(filter.getLogin());
+		SharedIdResponse token = apiLoginService.call(filter.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiGetFieldDataService.call(token.getId(), filter.getField());
 	}
 	
 	@PostMapping("/login")
-	public IdResponse login(@RequestHeader(name = "x-api-key") String apiKey
+	public SharedIdResponse login(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody LoginRequest login
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey, null);
@@ -71,7 +71,7 @@ public class ApiRest {
 	}
 	
 	@PostMapping("/send")
-	public IdResponse send(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
+	public SharedIdResponse send(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentRequest item
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey,token);
@@ -79,10 +79,10 @@ public class ApiRest {
 	}
 	
 	@PostMapping("/sendWithLogin")
-	public IdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey
+	public SharedIdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey
 			,@RequestBody DocumentWithLoginRequest item
 		) throws ServerException {
-		IdResponse token = apiLoginService.call(item.getLogin());
+		SharedIdResponse token = apiLoginService.call(item.getLogin());
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiSendService.call(token.getId(), item.getDocument());
 	}

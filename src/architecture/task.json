@@ -1,0 +1,64 @@
+{
+	"name": "Task",
+	"code": "task",
+	"entities": [
+		{
+			"name": "Task",
+			"prefix": "tsk",
+			"attributes": [
+				{
+					"name": "user",
+					"type": "OTHER_ENTITY"
+				},
+				{
+					"name": "title"
+				},
+				{
+					"name": "notes",
+					"type": "STRING_MAX",
+					"optional": "true"
+				},
+				{
+					"name": "completed",
+					"type": "DATE_TIME",
+					"optional": "true"
+				},
+				{
+					"name": "dueDate",
+					"type": "DATE_TIME",
+					"optional": "true"
+				},
+				{
+					"name": "priority",
+					"type": "INTEGER"
+				},
+				{
+					"name": "order",
+					"type": "INTEGER"
+				}
+			]
+		}
+	],
+	"actions": [
+		{
+			"name": "getByUser",
+			"type": "GET"
+		},
+		{
+			"name": "getById",
+			"type": "GET"
+		},
+		{
+			"name": "create",
+			"type": "POST"
+		},
+		{
+			"name": "update",
+			"type": "POST"
+		},
+		{
+			"name": "delete",
+			"type": "POST"
+		}
+	]
+}

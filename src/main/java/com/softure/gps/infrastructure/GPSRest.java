@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.softure.gps.application.GPSEnrollDeviceService;
 import com.softure.gps.application.GPSGetDevicesByQueryService;
 import com.softure.gps.application.GPSGetDevicesByTokenService;
 import com.softure.gps.application.GPSLocalizacionSvc;
 import com.softure.gps.application.GPSReportLocationsService;
 import com.softure.gps.domain.DeviceVO;
 import com.softure.gps.domain.GPSDispositivoDTO;
-import com.softure.gps.domain.GPSEnrollDeviceService;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
-import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.shared.domain.SharedIdResponse;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -38,7 +38,7 @@ public class GPSRest {
 	@Autowired private GPSReportLocationsService reportLocationsService;
 	
 	@PostMapping(value="/enroll-device")
-	public IdResponse enroll(@RequestHeader("Authorization") String token, @RequestBody DeviceVO device)  throws ServerException  {
+	public SharedIdResponse enroll(@RequestHeader("Authorization") String token, @RequestBody DeviceVO device)  throws ServerException  {
 		return enrollDeviceService.call(token);
 	}
 	
@@ -58,7 +58,7 @@ public class GPSRest {
 	}
 	
 	@PostMapping(value="/save-locations")
-	public IdResponse savesLocation(@RequestHeader("Authorization") String token, @RequestBody List<GPSLocalizacionDTO> locations)  throws ServerException  {
+	public SharedIdResponse savesLocation(@RequestHeader("Authorization") String token, @RequestBody List<GPSLocalizacionDTO> locations)  throws ServerException  {
 		return reportLocationsService.call(token, locations);
 	}
 

@@ -11,10 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.gps.domain.GPSDispositivoDTO;
-import com.softure.gps.domain.GPSEnrollDeviceService;
 import com.softure.gps.domain.GPSLocalizacionDTO;
-import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class GPSReportLocationsService {
@@ -24,7 +23,7 @@ public class GPSReportLocationsService {
 	@Autowired private GPSEnrollDeviceService enrollDeviceService;
 
 	@Transactional
-	public IdResponse call(String token, List<GPSLocalizacionDTO> locations) throws ServerException {
+	public SharedIdResponse call(String token, List<GPSLocalizacionDTO> locations) throws ServerException {
 		GPSDispositivoDTO device = getDevicesByTokenService.call(token);
 		//if(name ==null || name.isEmpty()) throw new ServerException("El identificador del dispositivo viene vacio");
 		if(device == null) {
@@ -40,7 +39,7 @@ public class GPSReportLocationsService {
 		}
 		// No tengo nada que retornar pero para que no salga vacia
 		// algun dia guardare las transacciones de envio
-		return new IdResponse(device.getLlaveTabla());
+		return new SharedIdResponse(device.getLlaveTabla());
 	}
 	
 	public void callByForm(String token, String location, String documento, String codigo) throws ServerException {

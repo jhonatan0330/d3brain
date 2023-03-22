@@ -12,11 +12,11 @@ import lombok.Data;
 public class TaskResponse
 {
 	private String llaveTabla;
+	private String user;
 	private String title;
 	private String notes;
-	private boolean completed;
+	private Date completed;
 	private Date dueDate;
 	private Integer priority;
 	private Integer order;
-    
 }

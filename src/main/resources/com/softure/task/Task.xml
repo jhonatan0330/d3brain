@@ -6,27 +6,29 @@
 
 	<sql id="selectTaskFragment">
 		select
-			ctsk_llave as  llaveTabla
+			ctsk_llave as  id
 			,ctsk_user as  user
 			,ctsk_title as  title
 			,ctsk_notes as  notes
 			,ntsk_priority as  priority
 			,ntsk_order as  order
 			,dtsk_completed as  completed
-			,dtsk_dueDate as  dueDate
-			,dtsk_createdAt as  createdAt
-			,dtsk_updatedAt as  updatedAt
-			,ctsk_state as estado
-		from task_task_tsk a
+			,dtsk_duedate as  dueDate
+			,dtsk_createdat as  createdAt
+			,ctsk_createduser as  createdUser
+			,dtsk_updatedat as  updatedAt
+			,ctsk_updateduser as  updatedUser
+			,ctsk_state as state
+		from task.task_tsk a
 	</sql>
 
 	<sql id="whereTaskFragment">
 		where 1=1
-			<if test="llaveTabla!=null">
-				and ctsk_llave = #{llaveTabla}
+			<if test="id!=null">
+				and ctsk_llave = #{id}
 			</if>
-			<if test="estado!=null">
-				and ctsk_state = #{estado}
+			<if test="state!=null">
+				and ctsk_state = #{state}
 			</if>
 			<if test="user!=null">
 				and ctsk_user = #{user}
@@ -34,40 +36,40 @@
 	</sql>
 
 	<sql id="paginationTaskFragment">
-			<if test="paginacionRegistroFinal!=null">
-				LIMIT #{paginacionRegistroFinal}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
-			<if test="paginacionRegistroInicial!=null">
-				OFFSET #{paginacionRegistroInicial}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
 	</sql>
 
 	<sql id="whereTaskPrimaryKeyFragment">
 		where
-			ctsk_llave	=#{llaveTabla}
+			ctsk_llave	=#{id}
 	</sql>
 
-	<select id="consultar" parameterType="TaskDTO" resultType="TaskDTO">
+	<select id="selectOne" parameterType="TaskDTO" resultType="TaskDTO">
 		<include refid="selectTaskFragment" />
 		<include refid="whereTaskFragment" />
 	</select>
 	
-	<select id="listar" parameterType="TaskDTO" resultType="TaskDTO">
+	<select id="selectMany" parameterType="TaskDTO" resultType="TaskDTO">
 		<include refid="selectTaskFragment" />
 		<include refid="whereTaskFragment" />
 		order by ntsk_order
 		<include refid="paginationTaskFragment" />
 	</select>
 
-	<select id="cantidadRegistros" parameterType="TaskDTO" resultType="int">
+	<select id="count" parameterType="TaskDTO" resultType="int">
 		select count(*)
-		from task_task_tsk
+		from task.task_tsk a
 		<include refid="whereTaskFragment" />
 	</select>
 
 
-	<select id="insertar" parameterType="TaskDTO" resultType="TaskDTO">
-		insert into task_task_tsk(
+	<select id="insert" parameterType="TaskDTO" resultType="TaskDTO">
+		insert into task.task_tsk(
 			ctsk_llave
 		<if test="user!=null">
 			,ctsk_user
@@ -93,14 +95,14 @@
 		<if test="createdAt!=null">
 			,dtsk_createdAt
 		</if>
-		<if test="updatedAt!=null">
-			,dtsk_updatedAt
+		<if test="createdUser!=null">
+			,ctsk_createduser
 		</if>
-		<if test="estado!=null">
+		<if test="state!=null">
 			,ctsk_state
 		</if>
 		) values (
-			#{llaveTabla}
+			#{id}
 		<if test="user!=null">
 			,#{user}
 		</if>
@@ -125,17 +127,17 @@
 		<if test="createdAt!=null">
 			,#{createdAt}
 		</if>
-		<if test="updatedAt!=null">
-			,#{updatedAt}
+		<if test="createdUser!=null">
+			,#{createdUser}
 		</if>
-		<if test="estado!=null">
-			,#{estado}
+		<if test="state!=null">
+			,#{state}
 		</if>
 		)
 	</select>
 
-	<select id="actualizar" parameterType="TaskDTO" resultType="TaskDTO">
-		update task_task_tsk
+	<select id="update" parameterType="TaskDTO" resultType="TaskDTO">
+		update task.task_tsk
 			set
 				ctsk_user = #{user},
 				ctsk_title = #{title},
@@ -143,43 +145,40 @@
 				ntsk_order = #{order},
 				ntsk_priority = #{priority},
 				dtsk_completed = #{completed},
-				dtsk_dueDate = #{dueDate},
-				dtsk_createdAt = #{createdAt},
-				dtsk_updatedAt = #{updatedAt},
-				ctsk_state =#{estado}
+				dtsk_duedate = #{dueDate},
+				dtsk_updatedat = #{updatedAt},
+				ctsk_updateduser = #{updatedUser},
+				ctsk_state =#{state}
 		<include refid="whereTaskPrimaryKeyFragment" />
 	</select>
 	
 	<sql id="selectSimpleTaskFragment">
 		select
-			ctsk_llave as  llaveTabla
+			ctsk_llave as  id
 			,ctsk_user as  user
 			,ctsk_title as  title
 			,ctsk_notes as  notes
 			,ntsk_priority as  priority
 			,ntsk_order as  order
 			,dtsk_completed as  completed
-			,dtsk_dueDate as  dueDate
-			,dtsk_createdAt as  createdAt
-			,dtsk_updatedAt as  updatedAt
-			,ctsk_state as estado
-		from task_task_tsk a
+			,dtsk_duedate as  dueDate
+			,dtsk_createdat as  createdAt
+			,ctsk_createduser as  createdUser
+			,dtsk_updatedat as  updatedAt
+			,ctsk_updateduser as  updatedUser
+			,ctsk_state as state
+		from task.task_tsk a
 	</sql>
 	
-	<select id="consultarSimple" resultType="TaskDTO">
+	<select id="selectOneSimple" resultType="TaskDTO">
 		<include refid="selectSimpleTaskFragment" />
 		<include refid="whereTaskFragment" />
 	</select>
 	
-	<select id="listarSimple" resultType="TaskDTO">
+	<select id="selectManySimple" resultType="TaskDTO">
 		<include refid="selectSimpleTaskFragment" />
 		<include refid="whereTaskFragment" />
 		<include refid="paginationTaskFragment" />
 	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
 
 </mapper>

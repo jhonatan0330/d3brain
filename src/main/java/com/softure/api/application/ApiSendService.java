@@ -13,11 +13,11 @@ import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.java.domain.IdResponse;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiSendService {
@@ -28,7 +28,7 @@ public class ApiSendService {
 	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired private ProductoSvc productoService;
 
-	public IdResponse call(String token, DocumentRequest item) throws ServerException {
+	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);
 		// Con el codigo de la plantilla consultar la plantilla completa
 		DocumentoPlantillaDTO template = findTemplate(item.getTemplate(), token);
@@ -38,7 +38,7 @@ public class ApiSendService {
 		assignateValue(document, item.getFields());
 		// Envio a guardar el documento
 		document = saveDocumentService.save(document, token);
-		return new IdResponse(document.getLlaveTabla(), document.getNombre());
+		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre());
 	}
 
 	private void validateItem(DocumentRequest item) throws ServerException {
