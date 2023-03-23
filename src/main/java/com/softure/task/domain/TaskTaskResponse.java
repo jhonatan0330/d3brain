@@ -9,9 +9,9 @@ import lombok.Data;
 
 @Data
 @JsonInclude(Include.NON_NULL)
-public class TaskResponse
+public class TaskTaskResponse
 {
-	private String llaveTabla;
+	private String id;
 	private String user;
 	private String title;
 	private String notes;

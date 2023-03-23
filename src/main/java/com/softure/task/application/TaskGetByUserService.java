@@ -8,20 +8,20 @@ import org.springframework.stereotype.Service;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.shared.domain.SharedConstants;
-import com.softure.task.domain.TaskDTO;
-import com.softure.task.domain.TaskFilter;
-import com.softure.task.domain.TaskResponse;
+import com.softure.task.domain.TaskTaskDTO;
+import com.softure.task.domain.TaskTaskFilter;
+import com.softure.task.domain.TaskTaskResponse;
 
 @Service
 public class TaskGetByUserService {
 
 	@Autowired private TaskCRUDTaskService taskService;
 	
-	public List<TaskResponse> call(String user) throws ServerException{
-		TaskFilter filter = new TaskFilter();
+	public List<TaskTaskResponse> call(String user) throws ServerException{
+		TaskTaskFilter filter = new TaskTaskFilter();
 		filter.setUser(user);
 		filter.setState(SharedConstants.STATE_ACTIVE);
-		List<TaskDTO> tasks = taskService.findMany(filter);
-		return tasks.stream().map(TaskDTO::toResponse).collect(Collectors.toList());
+		List<TaskTaskDTO> tasks = taskService.findMany(filter);
+		return tasks.stream().map(TaskTaskDTO::toResponse).collect(Collectors.toList());
 	}
 }

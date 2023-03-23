@@ -9,10 +9,10 @@ import com.softure.shared.domain.SharedDataObjectFilter;
 import lombok.Getter;
 import lombok.Setter;
 
-@Alias("TaskFilter")
 @Getter
 @Setter
-public class TaskFilter extends SharedDataObjectFilter
+@Alias("TaskTaskFilter")
+public class TaskTaskFilter extends SharedDataObjectFilter
 {
 
 	private String user;

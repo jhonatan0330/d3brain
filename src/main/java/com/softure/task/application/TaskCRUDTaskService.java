@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.shared.application.SharedCRUDService;
-import com.softure.task.domain.TaskDTO;
-import com.softure.task.domain.TaskFilter;
-import com.softure.task.infrastructure.TaskMapper;
+import com.softure.task.domain.TaskTaskDTO;
+import com.softure.task.domain.TaskTaskFilter;
+import com.softure.task.infrastructure.TaskTaskMapper;
 
 @Service("TaskService")
-public class TaskCRUDTaskService extends SharedCRUDService<TaskDTO, TaskFilter> {
+public class TaskCRUDTaskService extends SharedCRUDService<TaskTaskDTO, TaskTaskFilter> {
 
 	@Autowired
-	private TaskMapper taskMapper;
+	private TaskTaskMapper taskMapper;
 
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -23,10 +23,10 @@ public class TaskCRUDTaskService extends SharedCRUDService<TaskDTO, TaskFilter> 
 	}
 
 	@Override
-	public TaskDTO findById(String llave) throws ServerException {
+	public TaskTaskDTO findById(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. Task");
-		TaskFilter dto = new TaskFilter();
+		TaskTaskFilter dto = new TaskTaskFilter();
 		dto.setId(llave);
 		return taskMapper.selectOne(dto);
 	}

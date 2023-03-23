@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 @Data
-public class TaskRequest
+public class TaskTaskRequest
 {
-	private String llaveTabla;
+	private String id;
 	
 	private String user;
 	
@@ -25,9 +25,9 @@ public class TaskRequest
 	
 	private Integer order;
 
-    public TaskDTO toModel() {
-    	TaskDTO result = new TaskDTO();
-    	result.setId(getLlaveTabla());
+    public TaskTaskDTO toModel() {
+    	TaskTaskDTO result = new TaskTaskDTO();
+    	result.setId(getId());
     	result.setUser(user);
     	result.setTitle(title);
     	result.setNotes(notes);

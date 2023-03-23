@@ -17,8 +17,5 @@ public interface SharedCRUDMapperMybatis<T extends SharedDataObject, TFilter ext
 	T selectOne(TFilter dto);
 	
 	List<T> selectMany(TFilter dto);
-	
-	T selectOneSimple(TFilter dto);
-	
-	List<T> selectManySimple(TFilter dto);
+
 }

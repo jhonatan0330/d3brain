@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 import com.softure.shared.domain.SharedIdResponse;
-import com.softure.task.domain.TaskDTO;
-import com.softure.task.domain.TaskRequest;
+import com.softure.task.domain.TaskTaskDTO;
+import com.softure.task.domain.TaskTaskRequest;
 
 @Service
 public class TaskCreateService {
@@ -16,8 +16,8 @@ public class TaskCreateService {
 	@Autowired private TaskCRUDTaskService taskService;
 	
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
-		TaskDTO dto = task.toModel();
+	public SharedIdResponse call(TaskTaskRequest task, String user) throws ServerException {
+		TaskTaskDTO dto = task.toModel();
 		dto.setUser(user);
 		dto.setCreatedUser(user);
 		return new SharedIdResponse(taskService.save(dto));
