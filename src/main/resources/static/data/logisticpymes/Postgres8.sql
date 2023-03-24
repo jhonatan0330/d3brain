@@ -589,6 +589,7 @@ CREATE TABLE detallepedidoventa_dpvp(
         cdpv_llave character varying(32) NOT NULL,
         cdpv_documento character varying(32) NOT NULL,
         cdpv_producto character varying(32) NOT NULL,
+        cdpv_nombre character varying(200),
         cdpv_productotercero character varying(32),
         mdpv_cantidad NUMERIC(18,6) NOT NULL DEFAULT 0,
         ndpv_cantidadpromocion int NOT NULL DEFAULT 0,
@@ -603,7 +604,6 @@ CREATE TABLE detallepedidoventa_dpvp(
         cdpv_transaccionregistro character varying(32) NOT NULL,
         cdpv_transaccioninactivo character varying(32),
         cdpv_campo character varying(32),
-        cdpv_descripcion character varying(200),
         cdpv_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_detallepedidoventa_dpvp PRIMARY KEY (cdpv_llave)
     );
@@ -940,7 +940,6 @@ ALTER TABLE Bodega_bodp ADD CONSTRAINT FK_Bodegadocumento FOREIGN KEY (cbod_docu
 ALTER TABLE DetallePedidoVenta_dpvp ADD CONSTRAINT FK_DetallePedidoVentadocumento FOREIGN KEY (cdpv_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE Tarifa_tarp ADD CONSTRAINT FK_Tarifarecurso FOREIGN KEY (ctar_recurso) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE WebServiceEjecucion_wsep ADD CONSTRAINT FK_WebServiceEjecuciondocumento FOREIGN KEY (cwse_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
-ALTER TABLE DetalleCaracteristicaProducto_dcpp ADD CONSTRAINT FK_DetalleCaracteristicaProductovalorOpcion FOREIGN KEY (cdcp_valorOpcion) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE PedidoVentaCaracteristica_pvcp ADD CONSTRAINT FK_PedidoVentaCaracteristicadocumento FOREIGN KEY (cpvc_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecuciondocumento FOREIGN KEY (crej_documento) REFERENCES PedidoVenta_pdvp(cpdv_llave);
 ALTER TABLE ProductoInventarioDescuento_pidp ADD CONSTRAINT FK_ProductoInventarioDescuentocaracteristica FOREIGN KEY (cpid_caracteristica) REFERENCES PedidoVenta_pdvp(cpdv_llave);
@@ -1015,7 +1014,6 @@ ALTER TABLE CategoriaProducto_cprp ADD CONSTRAINT FK_CategoriaProductonodoSuperi
 ALTER TABLE Producto_prop ADD CONSTRAINT FK_Productocategoria FOREIGN KEY (cpro_categoria) REFERENCES CategoriaProducto_cprp(ccpr_llave);
 ALTER TABLE ProductoInventario_pinp ADD CONSTRAINT FK_ProductoInventariobodega FOREIGN KEY (cpin_bodega) REFERENCES Bodega_bodp(cbod_llave);
 ALTER TABLE ProductoInventario_pinp ADD CONSTRAINT FK_ProductoInventarioproducto FOREIGN KEY (cpin_producto) REFERENCES Producto_prop(cpro_llave);
-ALTER TABLE DetalleCaracteristicaProducto_dcpp ADD CONSTRAINT FK_DetalleCaracteristicaProductocampo FOREIGN KEY (cdcp_campo) REFERENCES ProductoCaracteristica_pcrp(cpcr_llave);
 ALTER TABLE ProductoCaracteristica_pcrp ADD CONSTRAINT FK_ProductoCaracteristicabase FOREIGN KEY (cpcr_base) REFERENCES Producto_prop(cpro_llave);
 ALTER TABLE UsuarioRolProducto_urpp ADD CONSTRAINT FK_UsuarioRolProductoproducto FOREIGN KEY (curp_producto) REFERENCES Producto_prop(cpro_llave);
 ALTER TABLE DeduccionProducto_dprp ADD CONSTRAINT FK_DeduccionProductobodega FOREIGN KEY (cdpr_bodega) REFERENCES Bodega_bodp(cbod_llave);

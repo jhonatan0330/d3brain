@@ -151,6 +151,8 @@ CREATE TABLE z_rej_reporteejecucion (
 CREATE TABLE z_dpv_detallepedidoventa (
 	cdpv_llave varchar(32) NOT NULL,
 	cdpv_producto varchar(32) NOT NULL,
+	cdpv_nombre character varying(200),
+    cdpv_campo character varying(32),
 	mdpv_cantidad numeric(18, 6) NOT NULL DEFAULT 0,
 	mdpv_valorunitario numeric(18, 6) NOT NULL DEFAULT 0,
 	mdpv_valorsubtotal numeric(18, 6) NOT NULL DEFAULT 0,
@@ -186,9 +188,6 @@ CREATE TABLE z_dcp_detallecaracteristicaproducto (
 	cdcp_transaccioninactivo varchar(32) NULL,
 	CONSTRAINT pk_z_dcp_detallecaracteristicaproducto PRIMARY KEY (cdcp_llave)
 );
-
-ALTER TABLE detallecaracteristicaproducto_dcpp ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductocampo FOREIGN KEY (cdcp_campo) REFERENCES productocaracteristica_pcrp(cpcr_llave);
-ALTER TABLE detallecaracteristicaproducto_dcpp ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductovaloropcion FOREIGN KEY (cdcp_valoropcion) REFERENCES pedidoventa_pdvp(cpdv_llave);
 
 CREATE INDEX IF NOT EXISTS ix_procesotransicionautomatica_ejecucion ON procesotransicionautomatica_ptap USING btree (dpta_ejecucion);
 CREATE INDEX IF NOT EXISTS ix_procesotransicionautomatica_transicion ON procesotransicionautomatica_ptap USING btree (cpta_transicion);
