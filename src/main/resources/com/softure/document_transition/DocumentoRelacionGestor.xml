@@ -278,7 +278,7 @@
 			,null as estado
 			,cact_usuarioregistro as  usuario
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cact_usuarioregistro) as  responsable
-			,null as  responsableImagen
+			,(select cusr_imagen from usuario_usrp where cusr_llave = cact_usuarioregistro) as  responsableImagen
 			,null as  modificadorNombre
 			,cact_comentario as  comentario
 			,null as plantilla
@@ -322,7 +322,7 @@
 	</if>
 	<if test="verMensajes!=null">
 	union
-		select
+				select
 			cmsj_llave as  llaveTabla
 			,cmsj_documento as  documentoPrincipal
 			,null as  documentoModificador
@@ -331,8 +331,8 @@
 			,cmsj_correo as  estadoFinal
 			,null as estado
 			,cmsj_usuario as  usuario
-			,(select cusr_nombre from usuario_usrp where cusr_llave = cmsj_usuario) as  responsable
-			,null as  responsableImagen
+			,(select cusr_nombre from usuario_usrp where cusr_llave = (select corg_usuariosystem from organizacion_orgp oo where corg_estado = 'A' and corg_principal is null)) as  responsable
+			,(select cusr_imagen from usuario_usrp where cusr_llave = (select corg_usuariosystem from organizacion_orgp oo where corg_estado = 'A' and corg_principal is null)) as  responsableImagen
 			,null as  modificadorNombre
 			,cmsj_titulo as  comentario
 			,null as plantilla
@@ -343,10 +343,10 @@
 			,null as ubicacionNombre
 			,null as ubicacionPlantilla
 			,CASE WHEN dmsj_correoenviado IS NULL 
-	            THEN 'Mensaje sin correo enviado'
+	            THEN 'Mensaje sin correo enviado al destinatario ' || (select cusr_nombre from usuario_usrp where cusr_llave = cmsj_usuario)
 	            ELSE CASE WHEN cmsj_correoerror IS NULL 
-	            	THEN 'Mensaje enviado el ' || to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS')
-	            	ELSE to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS') || cmsj_correoerror
+	            	THEN 'Mensaje enviado el ' || to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS') || ' a ' || (select cusr_nombre from usuario_usrp where cusr_llave = cmsj_usuario)
+	            	ELSE to_char(dmsj_correoenviado, 'yyyy-mm-dd HH24:MI:SS') || cmsj_correoerror 
 	            END
 	    	END as nombre
 	    	,null as  transaccion
