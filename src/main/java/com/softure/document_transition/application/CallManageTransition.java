@@ -272,7 +272,7 @@ public class CallManageTransition {
 					resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO, token, null);
 					if(resultAPI.compareTo(ConstantesGenerales.OK)!=0) {
 						documentRecentCreateInTransition = okDocumentsInAPI;
-						if(!okDocumentsInAPI.isEmpty()) resultAPI = "INCOMPLETE";
+						if(!okDocumentsInAPI.isEmpty()) resultAPI = ConstantesGenerales.INCOMPLETE;
 						break;
 					}
 					okDocumentsInAPI.add(pedidoVentaDTO);

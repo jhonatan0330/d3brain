@@ -78,9 +78,6 @@ ALTER TABLE z_dpv_detallepedidoventa
 ALTER TABLE detallecaracteristicaproducto_dcpp
 	ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductocampo FOREIGN KEY (cdcp_campo) REFERENCES productocaracteristica_pcrp(cpcr_llave);
 
-ALTER TABLE detallecaracteristicaproducto_dcpp
-	ADD CONSTRAINT fk_z_dcp_detallecaracteristicaproductovaloropcion FOREIGN KEY (cdcp_valoropcion) REFERENCES pedidoventa_pdvp(cpdv_llave);
-
 ALTER TABLE detallepedidoventa_dpvp
 	ADD CONSTRAINT fk_z_dpv_detallepedidoventadocumento FOREIGN KEY (cdpv_documento) REFERENCES pedidoventa_pdvp(cpdv_llave);
 

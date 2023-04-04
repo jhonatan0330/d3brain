@@ -181,6 +181,12 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			estado = estadoService.consultaXId(dto.getEstadoPartida());
 			if(estado.getProceso().compareTo(dto.getProceso())!=0)throw new ServerException("La plantilla del estado de partida debe ser de la misma maquina de estados");
 			if(dto.getPlantilla()==null && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)==0) throw new ServerException("Transicion sin formulario");
+			if (estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API)==0) {
+				if(dto.getNombre().compareTo(ConstantesGenerales.OK)!=0 && dto.getNombre().compareTo(ConstantesGenerales.ERROR)!=0
+						&& dto.getNombre().compareTo(ConstantesGenerales.INCOMPLETE)!=0) {
+					throw new ServerException("Las opciones que puede tener un Iterador son OK, ERROR o INCOMPLETE");
+				}
+			}
 		}else {
 			if(dto.getPlantilla()==null) throw new ServerException("Transicion sin formulario");
 			// Validar que la transicion de inicio no se use en 2 procesos como inicial
