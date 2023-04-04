@@ -403,6 +403,8 @@ public class CallManageTransition {
 			if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
 				throw new ServerException("No es logico que inicie in proceso restando");
 			dinero.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
+			//Controlar saldo se coloca para poder controlar los cambios de valores dle documento en el tiempo con modificar
+			dinero.setControlarSaldo(true);
 			validateSaldo(transicion, saldoDocumento, dinero, pExpediente);
 			dineroService.update(dinero);// Se acaba de crear siempre va a ser tabla productiva
 			return dinero;
@@ -410,6 +412,8 @@ public class CallManageTransition {
 		dineroService.inactivarConHistorial(dinero, pExpediente.getHistorico());
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
 		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
+		//Controlar saldo se coloca para poder controlar los cambios de valores dle documento en el tiempo con modificar
+		nuevo.setControlarSaldo(true);
 		nuevo.setDocumento(dinero.getDocumento());
 		nuevo.setValorTotal(dinero.getValorTotal());
 		validateSaldo(transicion, saldoDocumento, nuevo, pExpediente);

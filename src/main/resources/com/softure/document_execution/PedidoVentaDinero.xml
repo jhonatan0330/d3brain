@@ -10,6 +10,7 @@
 			,cpvd_documento as  documento
 			,dpvd_fecha as  fecha
 			,mpvd_valortotal as  valorTotal
+			,bpvd_controlarsaldo as  controlarSaldo
 			,mpvd_saldo as  saldo
 			,cpvd_estado as estado
 		from pedidoventadinero_pvdp a
@@ -81,6 +82,9 @@
 		<if test="saldo!=null">
 			,mpvd_saldo
 		</if>
+		<if test="controlarSaldo!=null">
+			,bpvd_controlarsaldo
+		</if>
 		<if test="estado!=null">
 			,cpvd_estado
 		</if>
@@ -98,6 +102,9 @@
 		<if test="saldo!=null">
 			,#{saldo}
 		</if>
+		<if test="controlarSaldo!=null">
+			,#{controlarSaldo}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -111,6 +118,7 @@
 				dpvd_fecha = #{fecha},
 				mpvd_valortotal = #{valorTotal},
 				mpvd_saldo = #{saldo},
+				bpvd_controlarsaldo = #{controlarSaldo},
 				cpvd_estado =#{estado}
 		<include refid="wherePedidoVentaDineroPrimaryKeyFragment" />
 	</select>
@@ -122,6 +130,7 @@
 			,dpvd_fecha as  fecha
 			,mpvd_valortotal as  valorTotal
 			,mpvd_saldo as  saldo
+			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
 		from pedidoventadinero_pvdp a
 	</sql>
@@ -148,6 +157,7 @@
 			,dpvd_fecha as  fecha
 			,mpvd_valortotal as  valorTotal
 			,mpvd_saldo as  saldo
+			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
 		from <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
 		where cpvd_estado ='A' and cpvd_documento = #{idCampo}
@@ -161,6 +171,7 @@
 			,dpvd_fecha as  fecha
 			,mpvd_valortotal as  valorTotal
 			,mpvd_saldo as  saldo
+			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
 		from pedidoventadinero_pvdp
 		where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="documentos" separator="," >#{item.llaveTabla}</foreach>)
@@ -173,6 +184,7 @@
 			,dpvd_fecha as  fecha
 			,mpvd_valortotal as  valorTotal
 			,mpvd_saldo as  saldo
+			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
 		from z_pvd_pedidoventadinero
 			where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>)
@@ -194,6 +206,9 @@
 		<if test="saldo!=null">
 			,mpvd_saldo
 		</if>
+		<if test="controlarSaldo!=null">
+			,bpvd_controlarsaldo
+		</if>
 		<if test="estado!=null">
 			,cpvd_estado
 		</if>
@@ -210,6 +225,9 @@
 		</if>
 		<if test="saldo!=null">
 			,#{saldo}
+		</if>
+		<if test="controlarSaldo!=null">
+			,#{controlarSaldo}
 		</if>
 		<if test="estado!=null">
 			,#{estado}

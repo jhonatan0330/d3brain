@@ -101,10 +101,11 @@ ALTER TABLE z_dex_documentorelacionexpediente ADD CONSTRAINT fk_z_dex_documentor
 CREATE TABLE z_pvd_pedidoventadinero (
 	cpvd_llave varchar(32) NOT NULL,
 	cpvd_documento varchar(32) NOT NULL,
+	dpvd_fecha timestamptz NOT NULL,
 	mpvd_valortotal numeric(18,6) NOT NULL DEFAULT 0,
 	mpvd_saldo numeric(18,6) NOT NULL DEFAULT 0,
+	bpvc_controlarsaldo boolean NOT NULL DEFAULT false,
 	cpvd_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
-	dpvd_fecha timestamptz NOT NULL,
 	CONSTRAINT pk_z_pvd_pedidoventadinero_pvdp PRIMARY KEY (cpvd_llave),
 	CONSTRAINT fk_z_pvd_pedidoventadinerodocumento FOREIGN KEY (cpvd_documento) REFERENCES pedidoventa_pdvp(cpdv_llave)
 );

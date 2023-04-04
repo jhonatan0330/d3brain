@@ -219,6 +219,7 @@ CREATE TABLE pedidoventadinero_pvdp(
         dpvd_fecha timestamp with time zone NOT NULL,
         mpvd_valortotal NUMERIC(18,6) NOT NULL DEFAULT 0,
         mpvd_saldo NUMERIC(18,6) NOT NULL DEFAULT 0,
+        bpvc_controlarsaldo boolean NOT NULL DEFAULT false,
         cpvd_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_pedidoventadinero_pvdp PRIMARY KEY (cpvd_llave)
     );

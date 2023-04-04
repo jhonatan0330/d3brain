@@ -9,8 +9,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaDineroDTO")
 public class PedidoVentaDineroDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documento;
@@ -19,6 +17,7 @@ public class PedidoVentaDineroDTO extends BasicDTO
 	private BigDecimal valorTotal;
 	private BigDecimal saldo;
 	private BigDecimal valorCampo;
+	private boolean controlarSaldo;
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
@@ -55,7 +54,13 @@ public class PedidoVentaDineroDTO extends BasicDTO
 	public BigDecimal getValorCampo() {
 		return valorCampo;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+
+	public boolean getControlarSaldo() {
+		return controlarSaldo;
+	}
+
+	public void setControlarSaldo(boolean controlarSaldo) {
+		this.controlarSaldo = controlarSaldo;
+	}
 
 }

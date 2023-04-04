@@ -344,22 +344,27 @@ public class CallDocumentCRUD {
 			if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
 				PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
 						pedido.getHistorico());
-				if (anterior != null)
+				if (anterior != null) {
 					dineroCalculado.setSaldo(anterior.getSaldo());
-				if (campoValor.getModificado()) {
-					// En el proceso de facturacion se softure el saldo sube en el momento que se
-					// aprueba la factura y desde el inicial no es afecta saldo
-					if (anterior != null) {
+					if (campoValor.getModificado() && anterior.getControlarSaldo()) {
 						BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
 						dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
+						/*
+						// En el proceso de facturacion se softure el saldo sube en el momento que se
+						// aprueba la factura y desde el inicial no es afecta saldo
+						if (anterior != null) {
+							BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
+							dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
 
-					} else {
-						ProcesoTransicionDTO inicial = transicionService
-								.consultarTransaccionInicial(pedido.getPlantilla());
-						if (inicial != null && inicial.getAfectaSaldo() != null)
-							dineroCalculado.setSaldo(campoValor.getValorNumero());
+						} else {
+							ProcesoTransicionDTO inicial = transicionService
+									.consultarTransaccionInicial(pedido.getPlantilla());
+							if (inicial != null && inicial.getAfectaSaldo() != null)
+								dineroCalculado.setSaldo(campoValor.getValorNumero());
+						}*/
 					}
 				}
+					
 			}
 			pedido.setDinero(dineroCalculado);
 		} else {
