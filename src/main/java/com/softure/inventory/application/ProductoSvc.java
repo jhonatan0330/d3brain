@@ -8,13 +8,18 @@ import java.util.ArrayList;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.inventory.infrastructure.ProductoMapper;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.property.application.PropiedadSvc;
+import com.softure.property.domain.PropiedadDTO;
+import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import javax.annotation.PostConstruct;
 
@@ -34,6 +39,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	// BEGIN region servicesProducto
 	@Autowired private UsuarioRolProductoSvc usuarioRolProductoSvc;
 	@Autowired private CategoriaProductoSvc categoriaSvc;
+	@Autowired private PropiedadSvc propiedadService;
 	// END region servicesProducto
 
 	@Override
@@ -111,7 +117,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 
 // BEGIN region aditionalMethods
 	
-	public ProductoDTO crearDesdeDocumento(PedidoVentaDTO documento, String categoria) throws ServerException{
+	public ProductoDTO crearDesdeDocumento(PedidoVentaDTO documento, String categoria, String token) throws ServerException{
 		ProductoFilterDTO newProductoFilter = new ProductoFilterDTO();
 		newProductoFilter.setDocumento(documento.getLlaveTabla());
 		ProductoDTO newProducto = consultaUnica(newProductoFilter);
@@ -122,6 +128,15 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 			newProducto.setDocumento(documento.getLlaveTabla());
 			newProducto.setNombre(documento.getDescripcion());
 			newProducto = save(newProducto);
+			CategoriaProductoDTO category = categoriaSvc.consultaXId(categoria);
+			if(category.getInventarios()) {
+				PropiedadDTO propiedadModifcable = new PropiedadDTO();
+				propiedadModifcable.setCampo(newProducto.getLlaveTabla());
+				propiedadModifcable.setKey(Propiedades.INVENTARIO_OBLIGATORIO);
+				propiedadModifcable.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
+				propiedadModifcable.setValor("1");
+				propiedadService.guardar(propiedadModifcable, token);
+			}
 			categoriaSvc.organizarInventario();
 		}else {
 			if(documento.getEstado().compareTo(newProducto.getEstado())!=0){

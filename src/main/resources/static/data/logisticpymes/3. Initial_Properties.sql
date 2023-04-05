@@ -417,3 +417,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_221' , 'C', 'PRODUCTO APLICADO UBICACION CROQUIS', 'PRODUCTO_PUESTO', 'REQUISITO', 'U');
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_221' , 'C', 'PRODUCTO APLICADO UBICACION CROQUIS', 'PRODUCTO_PUESTO', 'REQUISITO', 'U');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_222' , 'L', 'INVENTARIO_OBLIGATORIO', 'CREAR INVENTARIO EN BODEGA DEL PRODUCTO', 'REQUISITO', true);

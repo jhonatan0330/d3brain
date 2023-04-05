@@ -294,6 +294,13 @@ public class AuxiliarProcesoBodega {
 						productoFilter.setProducto(detalle.getProducto());
 						productoFilter.setBodega(recursoInventario);
 						ProductoInventarioDTO producto = productoInventarioService.consultaUnica(productoFilter);
+						//En algunos casos es obligatorio crear el inventario
+						if(producto==null && Propiedades.obtenerParametro(pCampo.getDetalles().get(0), Propiedades.INVENTARIO_OBLIGATORIO)!=null) {
+							producto = new ProductoInventarioDTO();
+							producto.setProducto(detalle.getProducto());
+							producto.setBodega(recursoInventario);
+							producto = productoInventarioService.guardar(producto, token);
+						}
 						if(producto!=null){
 							DeduccionProductoDTO salida = new DeduccionProductoDTO();
 							salida.setBodega(recursoInventario);

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Date;
 import java.math.BigDecimal;
 
+import com.softure.inventory.domain.BodegaDTO;
+import com.softure.inventory.domain.CategoriaProductoDTO;
+import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.ProductoInventarioMapper;
@@ -27,10 +30,13 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	
 	@Autowired
 	private ProductoInventarioMapper productoInventarioMapper;
+	@Autowired
+	private ProductoSvc productService;
+	@Autowired
+	private BodegaSvc storeService;
+	@Autowired
+	private CategoriaProductoSvc categoryService;
 	
-	// BEGIN region servicesProductoInventario
-	// END region servicesProductoInventario
-
 	@Override
 	public ProductoInventarioDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. ProductoInventario");
@@ -99,13 +105,10 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDTO guardar(ProductoInventarioDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventario_guardar
-		if(dto.getCantidadMinima()==null)throw new ServerException("Se debe registrar la cantidad minima");
-		if(dto.getCantidadMaxima()==null)throw new ServerException("Se debe registrar la cantidad maxima");
-		if(dto.getCantidadMinima().compareTo(dto.getCantidadMaxima())>=0)
-			throw new ServerException("La cantidad minima no puede ser mayor o igual a la maxima");
+		ProductoDTO product = productService.consultaXId(dto.getProducto());
+		BodegaDTO store = storeService.consultaXId(dto.getBodega());
 		
 		ProductoInventarioFilterDTO unicoFilter = new ProductoInventarioFilterDTO();
 		unicoFilter.setBodega(dto.getBodega());
@@ -113,14 +116,24 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 		ProductoInventarioDTO unico = consultaUnica(unicoFilter);
 		if(unico!=null){
 			if(unico.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0){
-				throw new ServerException("Este producto ya se encuentra referenciado para controlar en esta bodega");
+				throw new ServerException("Este producto " + product.getNombre() +" ya se encuentra referenciado para controlar en esta bodega " + store.getNombre());
 			}else{
-				throw new ServerException("Este producto se encuentra inactivo para manejo de inventarios en esta bodega");
+				throw new ServerException("Este producto se encuentra inactivo para manejo de inventarios en esta bodega" + store.getNombre());
 			}
 		}
+		if(dto.getCantidadMinima()==null) dto.setCantidadMinima(BigDecimal.ZERO);
+		if(dto.getCantidadMaxima()==null) {
+			CategoriaProductoDTO category = categoryService.consultaXId(product.getCategoria());
+			dto.setCantidadMaxima(category.getCantidadMaxima());
+			if(dto.getCantidadMaxima().compareTo(BigDecimal.ZERO) ==0)
+				dto.setCantidadMaxima(BigDecimal.valueOf(1000));
+		}
+		if(dto.getCantidadMinima().compareTo(dto.getCantidadMaxima())>=0)
+			throw new ServerException("La cantidad minima no puede ser mayor o igual a la maxima");
+		
 		dto.setCantidadActual(BigDecimal.ZERO);
 		dto.setFechaInicial(new Date());
-		return super.guardar(dto, token);
+		return super.save(dto);
 		// END ProductoInventario_guardar
 	}
 

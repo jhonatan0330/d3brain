@@ -117,7 +117,6 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DeduccionProductoDTO guardar(DeduccionProductoDTO dto, String token) throws ServerException {
 		// BEGIN DeduccionProducto_guardar
 		if(dto.getFecha()==null) dto.setFecha(new Date());

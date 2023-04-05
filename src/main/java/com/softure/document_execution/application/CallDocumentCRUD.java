@@ -708,7 +708,7 @@ public class CallDocumentCRUD {
 
 		PropiedadDTO categoria = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO);
 		if (categoria != null)
-			productoService.crearDesdeDocumento(dto, categoria.getValor());
+			productoService.crearDesdeDocumento(dto, categoria.getValor(), token);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_BODEGA) != null)
 			bodegaService.crearDesdeDocumento(dto);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
