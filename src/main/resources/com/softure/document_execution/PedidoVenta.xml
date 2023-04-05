@@ -290,7 +290,7 @@
 	</sql>
 	<sql id="filterMainFragment">
 		<if test="dto.llaveTabla!=null">and a.cpdv_llave = #{dto.llaveTabla}</if>
-		<if test="dto.estado!=null">and a.cpdv_estado = #{dto.estado}</if>
+		<if test="filtroEstadoGeneralesMultiple==null"><if test="dto.estado!=null">and a.cpdv_estado = #{dto.estado}</if></if>
 		<if test="dto.fechaMin!=null">and a.dpdv_fecha >= #{dto.fechaMin}</if>
 		<if test="dto.fechaMax!=null">and a.dpdv_fecha <![CDATA[ < ]]>  #{dto.fechaMax}</if>
 		<if test="dto.plantilla!=null">and a.cpdv_plantilla = #{dto.plantilla}</if>
@@ -300,6 +300,7 @@
 		<if test="filtroTexto!=null">and (a.cpdv_textofiltro like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>)
 				or a.cpdv_nombre like any (array<foreach item="item" collection="filtroTexto" separator="," open="[" close="]">'%'|| #{item} || '%'</foreach>))
 		</if>
+		<if test="filtroEstadoGeneralesMultiple!=null">	and a.cpdv_estado in <foreach item="item" collection="filtroEstadoGeneralesMultiple" separator="," open="(" close=")">#{item}</foreach></if>
 	</sql>
 	
 	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">

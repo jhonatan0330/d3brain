@@ -63,15 +63,10 @@ public class CallDocumentListWithFilters {
 						+ "), filtro ( " + dto.getFiltroParametro() + "), nombre ( " + dto.getNombre() + ")");
 		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().isEmpty())
 			dto.setFiltroParametro(null);
+		// Yo tenia el normalize por BD pero no fue una buena practica porque consume
+		// mucha memoria
 		if (dto.getFiltroParametro() != null)
-			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());// Yo tenia el
-																										// normalize por
-																										// BD pero no
-																										// fue una buena
-																										// practica
-																										// porque
-																										// consume mucha
-																										// memoria
+			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());
 		if (dto.getNombre() != null)
 			dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
 		if (dto.getCampoPropiedad() != null) {
@@ -98,31 +93,20 @@ public class CallDocumentListWithFilters {
 				dto.setSecurityToken(null);// Se quito que solo viera los que tiene permiso
 				// La idea es implementar los filtros en los campos de los formularios de
 				// herencia
-				if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-					dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-				List<String> estadosFiltro = organizarFiltros(dto);
+				List<String> generalState = generateFiltersByGeneralState(dto);
+				List<String> estadosFiltro = generateFiltersByStateFromProcess(dto);
 				List<String> textoFiltroComas = organizarFiltroComas(dto);
 				try {
 					List<String> relacionesPropiedadHeredable = propiedadService
 							.camposRelacionados(propiedadHeredable1);
 					if (relacionesPropiedadHeredable == null || relacionesPropiedadHeredable.isEmpty())
 						throw new ServerException("Este campo de heredable no tiene relaciones de campos");
+
 					return listadoCompleto(
-							pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable, // Consulto
-																													// las
-																													// realaciones
-																													// del
-																													// campo
-																													// para
-																													// saber
-																													// cuales
-																													// campos
-																													// heredan
-																													// con
-																													// la
-																													// funcion
-																													// de
-									dto.getTextoFiltro(), null, null, textoFiltroComas),
+							// Consulto las realaciones del campo para saber cuales campos heredan con la
+							// funcion de
+							pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable,
+									dto.getTextoFiltro(), null, null, textoFiltroComas, generalState),
 							tokenHeredable, null);
 				} catch (Exception e) {
 					throw new ServerException(e.getMessage());
@@ -202,8 +186,9 @@ public class CallDocumentListWithFilters {
 		filterDTO.setPaginacionRegistroInicial(dtoFilter.getPaginacionRegistroInicial());
 		filterDTO.setPaginacionRegistroFinal(dtoFilter.getPaginacionRegistroFinal());
 		pedidoVentaService.paginar(filterDTO);
-		DocumentoPlantillaDTO plantilla = null;// Es para almacenar las propiedades soloque tengo que pasar un
-												// BasicaPAram porque iba a pasar solo las propiedades
+		// Es para almacenar las propiedades soloque tengo que pasar un BasicaPAram
+		// porque iba a pasar solo las propiedades
+		DocumentoPlantillaDTO plantilla = null;
 		// Consulto que la plantilla solicitada tenga permisos
 		if (templateFilter != null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
 			boolean verTodos = false;
@@ -267,7 +252,7 @@ public class CallDocumentListWithFilters {
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
-							pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null), token,
+							pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null, null), token,
 							null);
 				} catch (ServerException e) {
 					throw new ServerException(e.getMessage());
@@ -282,7 +267,7 @@ public class CallDocumentListWithFilters {
 			String ordenAscendente = null;
 			// Esto filtra los resultados por estado, pero si va a consultar un solo
 			// registro mejor lo dejo solo para que sea consulta por id
-			List<String> estadosFiltro = organizarFiltros(dtoFilter);
+			List<String> estadosFiltro = generateFiltersByStateFromProcess(dtoFilter);
 			if (dtoFilter.getLlaveTabla() == null) {
 				if (templateFilter == null) { // Esto es para los procesos deben traer los estados
 					if (estadosFiltro == null)
@@ -327,7 +312,7 @@ public class CallDocumentListWithFilters {
 				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
 						estadosFiltro, textoFiltroComas);
 			return listadoCompleto(pedidoVentaMapper.listarPermitidos(filterDTO, estadosFiltro, null, null, orden,
-					ordenAscendente, textoFiltroComas), token, null);
+					ordenAscendente, textoFiltroComas, null), token, null);
 		}
 	}
 
@@ -368,26 +353,12 @@ public class CallDocumentListWithFilters {
 		pedidoVentaService.paginar(dto);
 		if (funcionBusqueda != null) {// && funcionBusqueda.compareTo(ConstantesGenerales.OK)!=0) {
 			try {
-				List<String> filtrosEstado = organizarFiltros(dto);// Todo esto se hizo porque se null el valor opcion
-																	// sucede que usabamos == y tocaba choose
+				// Todo esto se hizo porque se null el valor opcion sucede que usabamos == y tocaba choose
+				List<String> filtrosEstado = generateFiltersByStateFromProcess(dto);
 				funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
+				// Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
 				if (dto.getFiltroParametro() != null)
-					dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());// Yo
-																														// tenia
-																														// el
-																														// normalize
-																														// por
-																														// BD
-																														// pero
-																														// no
-																														// fue
-																														// una
-																														// buena
-																														// practica
-																														// porque
-																														// consume
-																														// mucha
-																														// memoria
+					dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());
 				return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda,
 						filtrosEstado, parametros);
 			} catch (Exception e) {
@@ -404,7 +375,7 @@ public class CallDocumentListWithFilters {
 		}
 	}
 
-	private List<String> organizarFiltros(PedidoVentaFilterDTO dto) {
+	private List<String> generateFiltersByStateFromProcess(PedidoVentaFilterDTO dto) {
 		List<String> estadosFiltro = null;
 		if (dto.getEstadoExpediente() != null) {
 			// Saco aparte el filtro debido a ue consulto varias plantillas se modifica el
@@ -423,6 +394,24 @@ public class CallDocumentListWithFilters {
 		return estadosFiltro;
 	}
 
+	private List<String> generateFiltersByGeneralState(PedidoVentaFilterDTO dto) {
+		List<String> result = null;
+		if (dto.getEstado() != null) {
+			String textToGenerateFilters = dto.getEstado();
+			if (textToGenerateFilters.contains(";")) {
+				if (textToGenerateFilters.startsWith(";"))
+					textToGenerateFilters = textToGenerateFilters.substring(1);
+				result = Arrays.asList(textToGenerateFilters.split(";"));
+			} else {
+				result = new ArrayList<>();
+				result.add(textToGenerateFilters);
+			}
+		}
+		if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
+			result = List.of(ConstantesGenerales.ESTADO_ACTIVO,ConstantesGenerales.ESTADO_FINALIZADO);
+		return result;
+	}
+	
 	public List<PedidoVentaDTO> listadoCompleto(List<PedidoVentaDTO> result, String securityToken, String campoValor)
 			throws ServerException {
 		if (result != null && !result.isEmpty()) {
@@ -506,11 +495,11 @@ public class CallDocumentListWithFilters {
 								campo = documentoPlantillaCaracteristicaService.consultaUnica(campoFilter);
 							}
 							if (campo == null) {
-								hmapCampo.put(iterador.getPlantilla(), "");// Lo coloco empty para que no lo busque de
-																			// nuevo
+								// Lo coloco empty para que no lo busque de nuevo
+								hmapCampo.put(iterador.getPlantilla(), "");
 							} else {
-								hmapCampo.put(iterador.getPlantilla(), campo.getLlaveTabla());// Le coloco la llave del
-																								// campo a buscar
+								// Le coloco la llave del campo a buscar
+								hmapCampo.put(iterador.getPlantilla(), campo.getLlaveTabla());
 							}
 						}
 						campoValorIterador = hmapCampo.get(iterador.getPlantilla());
