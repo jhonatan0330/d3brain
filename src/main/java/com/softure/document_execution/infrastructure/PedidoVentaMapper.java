@@ -37,7 +37,8 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("filtroEstados") List<String> filtroEstados, @Param("ordenNombre") String ordenNombre,
 			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
 			@Param("usuario") String usuario, @Param("camposFiltro") List<PropiedadDTO> camposFiltro,
-			@Param("relaciones") List<String> relaciones);
+			@Param("relaciones") List<String> relaciones,
+			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple);
 
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
 

@@ -333,7 +333,7 @@ public class CallDocumentListWithFilters {
 			relaciones = null;
 		return listadoCompleto(
 				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente,
-						textoFiltroComas, pedidoVentaService.getUserFlex(token), camposFiltro, relaciones),
+						textoFiltroComas, pedidoVentaService.getUserFlex(token), camposFiltro, relaciones, null),
 				token, null);
 	}
 
