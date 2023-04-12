@@ -63,6 +63,8 @@ import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 // END region interImport
 
@@ -75,6 +77,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.java.dto.exception.ServerException;
 
+@Slf4j
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
@@ -217,6 +220,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 				propiedadMapper.eliminarFuncionPrevalidacion(dto);
 				break;
+			case Propiedades.FUNCION_SQL_PREVALIDATE_API:
+				propiedadMapper.eliminarFuncionPrevalidateAPI(dto);
+				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
 				break;
@@ -332,6 +338,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 					propiedadMapper.crearFuncionPrevalidacion(dto);
+					break;
+				case Propiedades.FUNCION_SQL_PREVALIDATE_API:
+					propiedadMapper.crearFuncionPrevalidateAPI(dto);
 					break;
 				default:
 					propiedadMapper.crearFuncion(dto);
@@ -1087,7 +1096,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (!excluidas.isEmpty()) {
 				for (PropiedadDTO iPropiedadDTO : excluidas) {
 					// Aqui me di cuenta que estaba borrando todas las propiedades de la plantilla
-					// Filtro el valor: en las opciones de una lista (multiple) se puede dejar de un tipo y mostrar el otro
+					// Filtro el valor: en las opciones de una lista (multiple) se puede dejar de un
+					// tipo y mostrar el otro
 					consultadas.removeIf(x -> (x.getPropiedadValor().compareTo(iPropiedadDTO.getPropiedadValor()) == 0
 							&& x.getCampo().compareTo(iPropiedadDTO.getCampo()) == 0
 							&& x.getValor().compareTo(iPropiedadDTO.getValor()) == 0));
@@ -1179,13 +1189,29 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (validaciones == null || validaciones.isEmpty())
 			return;
 		for (PropiedadDTO pPropiedad : validaciones) {
-			System.out.format("\nPre validando funcion SQL (%s)", pPropiedad.getMotivo());
+			log.debug("\nPre validando funcion SQL (%s)", pPropiedad.getMotivo());
 			try {
 				propiedadMapper.funcionPrevalidacionPlantilla(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
 						campos);
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(),
 						" Motivo: " + pPropiedad.getMotivo() + " Propiedad : " + pPropiedad.getNombre());
+			}
+		}
+	}
+
+	public void prevalidateAPI(BasicParamDTO dto, String document, String editor, String extractions)  throws ServerException {
+		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto,
+				Propiedades.FUNCION_SQL_PREVALIDATE_API);
+		if (validaciones == null || validaciones.isEmpty())
+			return;
+		for (PropiedadDTO pPropiedad : validaciones) {
+			log.debug("Pre validando APIfuncion SQL (%s)", pPropiedad.getMotivo());
+			try {
+				propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
+						document, editor, extractions);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), " Propiedad : " + pPropiedad.getNombre());
 			}
 		}
 	}

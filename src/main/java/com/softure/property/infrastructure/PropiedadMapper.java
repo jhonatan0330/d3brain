@@ -19,6 +19,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 // BEGIN region aditionalMethods  
 	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
 	void funcionPrevalidacionPlantilla(@Param("funcion") String funcion,@Param("campos") List<PedidoVentaCaracteristicaDTO> campos);
+	void funcionPrevalidateAPI(@Param("funcion") String funcion,@Param("documento") String documento, @Param("modificador") String modificador, @Param("extracciones") String extracciones);
 	void crearFuncion(PropiedadDTO dto);
 	void crearFuncionMail(PropiedadDTO dto);
 	void crearFuncionFiltros(PropiedadDTO dto);
@@ -31,6 +32,8 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	void crearFuncionCampoGenerar(PropiedadDTO dto);
 	void crearFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
 	void crearFuncionPrevalidacion(PropiedadDTO dto);
+	void crearFuncionPrevalidateAPI(PropiedadDTO dto);
+	void eliminarFuncionPrevalidateAPI(PropiedadDTO dto);
 	void eliminarFuncionPrevalidacion(PropiedadDTO dto);
 	void eliminarFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
 	void eliminarFuncionCampoGenerar(PropiedadDTO dto);

@@ -19,6 +19,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
@@ -36,6 +37,8 @@ public class WebServiceCallPrepare {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
+	@Autowired
+	private PropiedadSvc propiedadesSvc;
 	
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document,
 			PedidoVentaDTO modificador, String token, String userId, String initialPameters)
@@ -53,9 +56,11 @@ public class WebServiceCallPrepare {
 			callWS.setModificador(modificador.getLlaveTabla());
 			callWS.setTransaccion(modificador.getTransaccion());
 		}
+		propiedadesSvc.prevalidateAPI(service, callWS.getDocumento(), callWS.getModificador(), parameters);
 		return webServiceEjecucionSvc.save(callWS);
 	}
 	
+
 	/**
 	 * Se encarga de tomar los valores de los documentos y generar los campos que se
 	 * necesitan para los reemplazos
