@@ -1,10 +1,18 @@
 package com.softure.property.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+// END region interImport
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
@@ -23,6 +31,7 @@ import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.cons.ConstantesGenerales;
+import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.CambioSvc;
@@ -64,18 +73,6 @@ import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.StringUtils;
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Slf4j
 @Service("propiedadService")
@@ -142,7 +139,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Override
 	public PropiedadDTO activar(PropiedadDTO dto, String token) throws ServerException {
 		// BEGIN Propiedad_activar
-		return super.activar(dto, token);
+		throw new ServerException("No se permite activar las propiedades");
 		// END Propiedad_activar
 	}
 
@@ -1200,20 +1197,28 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 	}
 
-	public void prevalidateAPI(BasicParamDTO dto, String document, String editor, String extractions)  throws ServerException {
+	// Esto es importante para que cuando falle la transaccion no se bloquee
+	// https://medium.com/geekculture/spring-transactional-rollback-handling-741fcad043c6
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public String prevalidateAPI(BasicParamDTO dto, String document, String editor, String extractions) {
 		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto,
 				Propiedades.FUNCION_SQL_PREVALIDATE_API);
 		if (validaciones == null || validaciones.isEmpty())
-			return;
+			return null;
 		for (PropiedadDTO pPropiedad : validaciones) {
 			log.debug("Pre validando APIfuncion SQL (%s)", pPropiedad.getMotivo());
 			try {
 				propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
 						document, editor, extractions);
-			} catch (Exception e) {
-				throw new ServerException(e.getMessage(), " Propiedad : " + pPropiedad.getNombre());
+			} catch (Exception se) {
+				if(se.getCause()!=null) {
+					return se.getCause().getMessage();
+				}else {					
+					return se.getMessage();
+				}
 			}
 		}
+		return null;
 	}
 
 	public void validarFuncion(PropiedadDTO dto, String documento, String modificador, String token)

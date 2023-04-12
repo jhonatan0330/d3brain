@@ -751,8 +751,20 @@ public class Propiedades {
 		}
 		case FUNCION_SQL_PREVALIDATE_API: {
 			ruleProperty = "En algunos casos es necesario realizar unas validaciones previas al API que eviten que enviemos errores al endpoint, lo hacemos con una funcion de base de datos "
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parameter character varying) RETURNS character varying AS\n\n"
-					+ "Hemos creado una funcion getTextFromExtraction(key character varying) que retorna el valor de esa varibale o null si no existe";
+					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying[]) RETURNS void AS\n\n"
+					+ "Esta funcion sirve para obtener un parametro en el texto de parametros que extrae el api SELECT SUBSTRING (parametros,'CODE=([\\d\\w\\s,]*)') as texto_extrae_parametros"
+					+ "\n\n si necesita que salga algun error utiliza raise exception"
+					+ "\n\nEste es un ejemplo de validar un telefono"
+					+ "\ndeclare\n"
+					+ "  numero_telefono character varying;\n"
+					+ "begin\r\n"
+					+ "  SELECT SUBSTRING (parametros,'TELEFONO=([\\d]*)') into numero_telefono;\r\n"
+					+ "  if ( SELECT REGEXP_MATCHES(numero_telefono,'^\\d{10}$') is not null ) then\r\n"
+					+ "  	-- todo OK\r\n"
+					+ "  else\r\n"
+					+ "    raise exception 'El telefono recibido debe contener 10 numeros. Enviaste el numero %', numero_telefono;    \r\n"
+					+ "  end if;\r\n"
+					+ "end";
 			break;
 		}
 		case GENERA_DOCUMENTO_CAMPO: {

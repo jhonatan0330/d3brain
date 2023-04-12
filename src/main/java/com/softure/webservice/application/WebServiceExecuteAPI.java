@@ -105,6 +105,17 @@ public class WebServiceExecuteAPI {
 		log.info("[" + document.getNombre() + "] Procesando API (" + service.getNombre() + ")");
 		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, token, userId,
 				previousParameter);
+		String preValidation = propiedadesSvc.prevalidateAPI(service, apiBasic.getDocumento(),
+				apiBasic.getModificador(), apiBasic.getParametros());
+		if (preValidation != null) {
+			apiBasic.setFechaEjecucion(new Date());
+			apiBasic.setError(preValidation);
+			webServiceEjecucionSvc.update(apiBasic);
+			publishErrorMessage(service, apiBasic);
+			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
+					+ ") por error de validacion previa a la ejecucion");
+			return ConstantesGenerales.ERROR;
+		}
 		String result = ConstantesGenerales.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {

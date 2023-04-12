@@ -345,7 +345,7 @@ COST 100;
     </select>
     
     <select id="crearFuncionPrevalidateAPI" parameterType="PropiedadDTO" >
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying[]) RETURNS void AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying) RETURNS void AS
 $BODY$
 ${valor}
 $BODY$
@@ -354,7 +354,7 @@ COST 100;
     </select>
 
     <select id="eliminarFuncionPrevalidateAPI" parameterType="PropiedadDTO" >
-        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, character varying[]);
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, character varying);
     </select>
 
     <select id="crearFuncionFiltros" parameterType="PropiedadDTO" >
@@ -490,8 +490,8 @@ COST 100;
         select propiedad_${funcion} ( <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
     </select>
     
-    <select id="funcionPrevalidateAPI" resultType="java.lang.String">
-        select propiedad_${funcion} (#{documento}, #{modificador}, #{extracciones})
+    <select id="funcionPrevalidateAPI" resultType="int">
+        select 1 from propiedad_${funcion} (#{documento}, #{modificador}, #{extracciones})
     </select>
 
     <select id="consultarValor" parameterType="PropiedadDTO" resultType="PropiedadDTO">
