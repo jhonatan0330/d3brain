@@ -248,7 +248,7 @@ public class CallDocumentListWithFilters {
 			filtro.setFuncionarioNombre(dtoFilter.getFuncionarioNombre());
 			filtro.setFuncionario(filterDTO.getFuncionario()); // No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
-			filtro.setCaracteristicas(filterDTO.getCaracteristicas());
+			if(secToken!=null || filtro.getFuncionario()!=null)filtro.setCaracteristicas(filterDTO.getCaracteristicas());
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(

@@ -48,23 +48,44 @@ public class TipoTexto {
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if (!formato.isEmpty()) {
 			String[] registros = pCampo.getValorText().split(";");
-			String emailRegex = "^[0-9]*$";
-			if (formato.compareTo("E") == 0)
-				emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-			if (formato.compareTo("T") == 0)
-				emailRegex = "^3[0-9]{9}$";
-			Pattern pat = Pattern.compile(emailRegex);
-			for (String iRegistro : registros) {
-				if (iRegistro != null && !iRegistro.isEmpty()) {
-					if (!pat.matcher(iRegistro).matches())
-						throw new ServerException("Revisa el campo ya que no tiene un formato valido, " + iRegistro);
-				}
+			switch (formato) {
+			case "E": {
+				validateFormatProperty(registros, "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+				pCampo.setValorText(pCampo.getValorText().toLowerCase());
+				break;
 			}
-			pCampo.setValorText(pCampo.getValorText().toLowerCase());
+			case "T": {
+				validateFormatProperty(registros, "^3[0-9]{9}$");
+				pCampo.setValorText(pCampo.getValorText().toLowerCase());
+				break;
+			}
+			case "S": {
+				break;
+			}
+			case "N": {
+				validateFormatProperty(registros, "^[0-9]*$");
+				pCampo.setValorText(pCampo.getValorText().toLowerCase());
+				break;
+			}
+			default:
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
+						+ pCampo.getCampoDTO().getNombre() + " tiene FORMATO no valido :" + formato);
+			}
+			
 		} else {
 			String parametro = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LARGO);
 			if (parametro.isEmpty())
 				pCampo.setValorText(pCampo.getValorText().toUpperCase());
+		}
+	}
+
+	private void validateFormatProperty(String[] registros, String emailRegex) throws ServerException {
+		Pattern pat = Pattern.compile(emailRegex);
+		for (String iRegistro : registros) {
+			if (iRegistro != null && !iRegistro.isEmpty()) {
+				if (!pat.matcher(iRegistro).matches())
+					throw new ServerException("Revisa el campo ya que no tiene un formato valido, " + iRegistro);
+			}
 		}
 	}
 

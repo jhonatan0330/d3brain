@@ -735,7 +735,7 @@ public class Propiedades {
 			break;
 		}
 		case FORMATO: {
-			ruleProperty = " Para campos texto N(Solo numero), E(Correo electronico), T(Telefono).\n\n Para campos numero se utiliza un DecimalFormat";
+			ruleProperty = " Para campos texto N(Solo numero), E(Correo electronico), T(Telefono).\n\n Para campos numero se utiliza un DecimalFormat\n\nS(Simple) = El texto no se coloca en mayusculas";
 			break;
 		}
 		case FUNCION_SQL_VALIDAR_ANTES: {
