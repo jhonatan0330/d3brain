@@ -805,8 +805,12 @@ public class TipoProceso {
 		String catalogoCierre = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CUENTA_CERRAR_CAJA);
 		if(!catalogoCierre.isEmpty()){
 			TurnoDTO turno = new TurnoDTO();
-			turno.setUsuario(campoService.getUserFlex(token));
-			turno.setDocumento(pCampo.getValorOpcion());
+			// Asi estaba antes para lograr que solo cerrar el mismo usuario, ahora esto se hace por funcion
+			//turno.setUsuario(campoService.getUserFlex(token));
+			//turno.setDocumento(pCampo.getValorOpcion());
+			if (pCampo.getDependientes() ==null || pCampo.getDependientes().isEmpty() || pCampo.getDependientes().get(0)==null)
+				throw new ServerException("PAra el cierre de caja se debe teenr un dependiente que es el documento que realizo la apertura");
+			turno.setDocumento(pCampo.getDependientes().get(0).getValorOpcion());
 			turno = turnoService.consultarTurnoActual(turno);
 			if(turno==null) throw new ServerException("No se identifica el turno en ejecucion");
 			CuentaDTO caja = cuentaService.consultaXId(turno.getCuenta());
