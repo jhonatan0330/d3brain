@@ -108,7 +108,9 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		if(consecutivoBD.getPadding()==null) {
 			cons = cons + consecutivoBD.getNumeroActual().toBigInteger().toString();	
 		}else {
-			cons = cons + String.format(consecutivoBD.getPadding(), consecutivoBD.getNumeroActual().toBigInteger());
+			if(!consecutivoBD.getPadding().contains("%"))
+				throw new ServerException("El padding del consecutivo no es correcto sigue este ejemplo : %07d (rellena con ceros en 7 espacios)");
+			cons = cons + String.format(consecutivoBD.getPadding().toLowerCase(), consecutivoBD.getNumeroActual().toBigInteger());
 		}
 		if(consecutivoBD.getSufijo()!=null) cons = cons + consecutivoBD.getSufijo();
 		consecutivoBD.setConsecutivoActual(cons);

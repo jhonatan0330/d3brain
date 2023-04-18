@@ -119,7 +119,7 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
-		<if test="fechareporte!=null">
+		<if test="fechaReporte!=null">
 			,#{fechaReporte}
 		</if>
 		<if test="estado!=null">
