@@ -3,9 +3,6 @@ package com.softure.java.services;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -180,24 +177,5 @@ public class ReportesUtil {
 		}
 	}
 
-	public static final String[] FORMATOS_FECHA;
-	static {
-		FORMATOS_FECHA = new String[] { "dd/MM/yyyy hh:mm a", "dd/MM/yyyy hh:mm:ss a", "dd/MM/yyyy", "yyyy-MM-dd", "dd-MMM-yyyy", "dd.MM.yy", "yyyy.MM.dd G 'at' hh:mm:ss z", "EEE, MMM d, ''yy",
-				"h:mm a", "H:mm", "H:mm:ss:SSS", "K:mm a,z", "yyyy.MMMMM.dd GGG hh:mm aaa", "EEE MMM d hh:mm:ss zZ yyyy" };
-	}
-
-	public static Timestamp verificarFechaHora(String texto) {
-		Timestamp retornar = null;
-		for (String formato : FORMATOS_FECHA) {
-			try {
-				SimpleDateFormat format = new SimpleDateFormat(formato);
-				Date fechaAyuda =format.parse(texto);
-				retornar = new Timestamp(fechaAyuda.getTime());
-				return retornar;
-			} catch (Exception e) {
-				continue;
-			}
-		}
-		return null;
-	}
+	
 }

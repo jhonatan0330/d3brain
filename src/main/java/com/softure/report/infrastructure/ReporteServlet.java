@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.softure.java.services.ReportesUtil;
+import com.softure.java.services.SoftureUtil;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReporteBaseDTO;
 
@@ -92,7 +92,7 @@ public class ReporteServlet extends HttpServlet{
 			//seccion de parametros
 			for (Enumeration<String> parametros = request.getParameterNames(); parametros.hasMoreElements();) {
 				String parametro = (String) parametros.nextElement();
-				Timestamp date = ReportesUtil.verificarFechaHora(request.getParameter(parametro));
+				Timestamp date = SoftureUtil.verificarFechaHora(request.getParameter(parametro));
 				if (date == null) {
 					String parametroUpper = parametro.toUpperCase();
 					if(parametroUpper.compareTo("P_MULTIPLE")==0) {
