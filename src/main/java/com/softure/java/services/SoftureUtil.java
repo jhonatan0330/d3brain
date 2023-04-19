@@ -122,19 +122,22 @@ public class SoftureUtil {
 				"H:mm:ss:SSS", "K:mm a,z", "yyyy.MMMMM.dd GGG hh:mm aaa", "EEE MMM d hh:mm:ss zZ yyyy" };
 	}
 
-	public static Timestamp verificarFechaHora(String texto) throws ServerException {
-		return new Timestamp(toDate(texto).getTime());
+	public static Timestamp verificarFechaHora(String texto) {
+		Date dateParse = toDate(texto);
+		if(dateParse ==null) return null;
+		return new Timestamp(dateParse.getTime());
 	}
 
-	public static Date toDate(String text) throws ServerException {
+	public static Date toDate(String text) {
 		for (String formatString : FORMATOS_FECHA) {
 			try {
-				return new SimpleDateFormat(formatString).parse(formatString);
+				return new SimpleDateFormat(formatString).parse(text);
 			} catch (ParseException e) {
 				continue;
 			}
 		}
-		throw new ServerException("El formato de fecha no se ha logrado identificar");
+		return null;
+		
 	}
 
 	public static String getURL(String url, String serverPath) throws IOException {

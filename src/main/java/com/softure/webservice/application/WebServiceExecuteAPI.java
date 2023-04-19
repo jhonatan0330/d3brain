@@ -660,7 +660,9 @@ public class WebServiceExecuteAPI {
 				if (matcher.find()) {
 					switch (campo.getFormato()) {
 					case DocumentoPlantillaCaracteristicaDTO.FECHA:
-						nueva.setValorFecha(SoftureUtil.toDate(matcher.group(1)));
+						Date dateParsed = SoftureUtil.toDate(matcher.group(1));
+						if(dateParsed == null) throw new ServerException("El valor " + matcher.group(1) + " no se pudo identificar como una fecha");
+						nueva.setValorFecha(dateParsed);
 						nueva.setValorText(SoftureUtil.formatDateMassiveFile(nueva.getValorFecha()));
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.NUMERO:
