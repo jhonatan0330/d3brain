@@ -119,10 +119,27 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 			PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction.execute(filter, dtoCarga);
 			if(result == null || result.getCampoDTO()==null || result.getCampoDTO().getDocumentos() ==null || result.getCampoDTO().getDocumentos().isEmpty()) 
 				throw new ServerException("Revisando el campo " + dtoCarga.getNombre() +" No se encuentra el documento con codigo : " + iDoc.getNombre());
-			if(result.getCampoDTO().getDocumentos().size()>1)
-				throw new ServerException("El campo " + dtoCarga.getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + iDoc.getNombre());
+			String keyOfDocument = null;
+			if(result.getCampoDTO().getDocumentos().size()>1) {
+				String textToCompare = null;
+				// Esto es porque el fitro trae muchos resultados ejemplo busco el 60 y me trae el 601
+				for (PedidoVentaDTO pedidoVentaDTO : result.getCampoDTO().getDocumentos()) {
+					if(pedidoVentaDTO.getTextoFiltro()==null) {
+						textToCompare = ConstantesGenerales.COMA +  pedidoVentaDTO.getNombre() + ConstantesGenerales.COMA;
+					}else {
+						textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getTextoFiltro();
+					}
+					if(textToCompare.contains(ConstantesGenerales.COMA +  iDoc.getNombre() + ConstantesGenerales.COMA)) {
+						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
+						break;
+					}
+				}
+			}else {
+				keyOfDocument = result.getCampoDTO().getDocumentos().get(0).getLlaveTabla();
+			}
+			if(keyOfDocument==null) throw new ServerException("El campo " + dtoCarga.getNombre() +" obtiene " + result.getCampoDTO().getDocumentos().size() +" resultados que concuerdan con el criterio : " + iDoc.getNombre() + " y ninguno tiene el mismo nombre");
 			PedidoVentaDTO addItem = new PedidoVentaDTO();
-			addItem.setLlaveTabla(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+			addItem.setLlaveTabla(keyOfDocument);
 			addItem.setNombre(iDoc.getNombre());
 			documentAproval.add( addItem );
 		}
