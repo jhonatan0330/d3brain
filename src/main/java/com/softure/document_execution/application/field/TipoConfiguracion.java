@@ -364,7 +364,7 @@ public class TipoConfiguracion {
 				campoService.inactivar(bd, token);
 				return pCampo;
 			} else {
-				if (pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
+				if (bd.getValorOpcion()!=null && pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
 					return pCampo;
 				} else {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
@@ -389,7 +389,12 @@ public class TipoConfiguracion {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 			for (PropiedadDTO iPropiedades : campos) {
 				PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
-				adaptadoT.setLlaveTabla(iPropiedades.getValor());
+				if(iPropiedades.getTexto()!=null) {
+					adaptadoT.setLlaveTabla(iPropiedades.getTexto());
+					adaptadoT.setDescripcion(iPropiedades.getTexto());
+				}else {
+					adaptadoT.setLlaveTabla(iPropiedades.getValor());	
+				}
 				if (adaptadoT.getLlaveTabla().length() > 32)
 					adaptadoT.setLlaveTabla(adaptadoT.getLlaveTabla().substring(0, 32));
 				adaptadoT.setNombre(iPropiedades.getValor());

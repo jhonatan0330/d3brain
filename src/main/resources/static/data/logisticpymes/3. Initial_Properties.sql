@@ -210,8 +210,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_116' , 'P', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_117' , 'L', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple, bpvd_textoculto) 
-	VALUES('PROP_118' , 'C', 'OPCIONES', 'OPCIONES', 'REQUISITO', 'G', true, true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+	VALUES('PROP_118' , 'C', 'OPCIONES', 'OPCIONES', 'REQUISITO', 'G', true);
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_120' , 'L', 'FUNCION CONSULTA DATOS', 'PROCESO_FUNCION_SQL', 'REQUISITO', true, true);

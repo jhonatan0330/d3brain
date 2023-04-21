@@ -866,6 +866,10 @@ public class Propiedades {
 			ruleProperty = "El rol que tenga esta propieadd no vera nunca los mensajes de vencimiento de sistema\n";
 			break;
 		}
+		case OPCIONES: {
+			ruleProperty = "Esta opcion se mostrara como una opción, si llenas la propiedad texto ese valor se colocara como el identificador y en la propiedad el campo valor sera el nombre.\nNo es obligatorio llenar el campo texto ";
+			break;
+		}
 		case ORDEN: {
 			ruleProperty = " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";
 			break;
