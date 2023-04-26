@@ -130,30 +130,41 @@ public class TipoFecha {
 				if(pCampo.getModificado()){// en algunos casos se modifican datos de documentos viejos en donde se deja la misma fecha
 					String maximo = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_MAXIMA);
 					if(!maximo.isEmpty()){
-						long tiempoAdicional = Long.valueOf(maximo);
-						Date fechaMaxima = new Date(new Date().getTime() + tiempoAdicional);
-						if(pCampo.getValorFecha().compareTo(fechaMaxima)>0)throw new ServerException("La fecha "+ pCampo.getCampoDTO().getNombre() + " debe ser menor a "  + SoftureUtil.formatDateTime(fechaMaxima));
+						try {
+							long tiempoAdicional = Long.valueOf(maximo);
+							Date fechaMaxima = new Date(new Date().getTime() + tiempoAdicional);
+							if(pCampo.getValorFecha().compareTo(fechaMaxima)>0)throw new ServerException("La fecha "+ pCampo.getCampoDTO().getNombre() + " debe ser menor a "  + SoftureUtil.formatDateTime(fechaMaxima));	
+						}catch(NumberFormatException exNumber) {
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " contiene un valor que no puede convertirse en numero como fecha maxima. " + exNumber.getMessage());
+						}
+						
 					}
 					String minimo = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_MINIMA);
 					if(!minimo.isEmpty()){
-						long tiempoAdicional = Long.valueOf(minimo);
-						Calendar fechaMinimaCalendar = Calendar.getInstance();
-						if(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_CON_HORA).isEmpty()){
-							fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
-							fechaMinimaCalendar.set(Calendar.HOUR_OF_DAY, 0);
-							fechaMinimaCalendar.set(Calendar.MINUTE, 0);
-							fechaMinimaCalendar.set(Calendar.SECOND, 0);
-							fechaMinimaCalendar.set(Calendar.MILLISECOND, 0);
+					
+						try {
+							long tiempoAdicional = Long.valueOf(minimo);
+							Calendar fechaMinimaCalendar = Calendar.getInstance();
+							if(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_CON_HORA).isEmpty()){
+								fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
+								fechaMinimaCalendar.set(Calendar.HOUR_OF_DAY, 0);
+								fechaMinimaCalendar.set(Calendar.MINUTE, 0);
+								fechaMinimaCalendar.set(Calendar.SECOND, 0);
+								fechaMinimaCalendar.set(Calendar.MILLISECOND, 0);
+							}
+							if(!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR).isEmpty()){
+								fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
+								fechaMinimaCalendar.set(Calendar.YEAR, 0);
+								fechaMinimaCalendar.set(Calendar.MONTH, 0);
+								fechaMinimaCalendar.set(Calendar.DAY_OF_MONTH, 0);
+								fechaMinimaCalendar.set(Calendar.SECOND, 0);
+								fechaMinimaCalendar.set(Calendar.MILLISECOND, 0);
+							}
+							if(pCampo.getValorFecha().compareTo(fechaMinimaCalendar.getTime())<0)throw new ServerException("La fecha "+ pCampo.getCampoDTO().getNombre() + " debe ser mayor a "  + SoftureUtil.formatDateTime(fechaMinimaCalendar.getTime()));	
+						}catch(NumberFormatException exNumber) {
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " contiene un valor que no puede convertirse en numero como fecha minima. " + exNumber.getMessage());
 						}
-						if(!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR).isEmpty()){
-							fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
-							fechaMinimaCalendar.set(Calendar.YEAR, 0);
-							fechaMinimaCalendar.set(Calendar.MONTH, 0);
-							fechaMinimaCalendar.set(Calendar.DAY_OF_MONTH, 0);
-							fechaMinimaCalendar.set(Calendar.SECOND, 0);
-							fechaMinimaCalendar.set(Calendar.MILLISECOND, 0);
-						}
-						if(pCampo.getValorFecha().compareTo(fechaMinimaCalendar.getTime())<0)throw new ServerException("La fecha "+ pCampo.getCampoDTO().getNombre() + " debe ser mayor a "  + SoftureUtil.formatDateTime(fechaMinimaCalendar.getTime()));
+						
 					}
 				}
 			}
