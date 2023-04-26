@@ -36,6 +36,12 @@ public class MailSendMessageService {
 
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajeDTO call(MensajeDTO dto, String usuario, String token) throws ServerException {
+		if(dto.getCorreo() == null || dto.getCorreo().isEmpty()) {
+			dto.setCorreoError("No se envia correo debido a que no se tiene registrado el mail de correo");
+			dto.setCorreoEnviado(new Date());
+			mensajeMapper.actualizar(dto);
+			return dto;
+		}
 		try {
 			MensajePlantillaCorreoDTO plantilla = mailTemplateService.consultaXId(dto.getTemplate());
 			ServidorDTO servidor = null;
