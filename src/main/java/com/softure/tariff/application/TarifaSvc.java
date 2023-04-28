@@ -128,9 +128,36 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			filtroDocumentoFilter.setNombre(dto.getRecursoNombre());
 			filtroDocumentoFilter.setPlantilla(tarifario.getTipoRecurso());
 			PedidoVentaDTO filtroDocumento = documentoService.consultaUnica(filtroDocumentoFilter);
-			if(filtroDocumento==null) throw new ServerException("No se identifica producto con el codigo : " + dto.getRecursoNombre());
+			if(filtroDocumento==null) throw new ServerException("No se identifica "+ tarifario.getTipoRecursoNombre() +" con el codigo : " + dto.getRecursoNombre());
 			dto.setRecurso(filtroDocumento.getLlaveTabla());
 		}
+		if(tarifario.getTipoDimension2()!=null && dto.getDimension2()==null &&dto.getDimension2Nombre()!=null) {
+			PedidoVentaFilterDTO filtroDocumentoFilter = new PedidoVentaFilterDTO();
+			filtroDocumentoFilter.setNombre(dto.getDimension2Nombre());
+			filtroDocumentoFilter.setPlantilla(tarifario.getTipoDimension2());
+			PedidoVentaDTO filtroDocumento = documentoService.consultaUnica(filtroDocumentoFilter);
+			if(filtroDocumento==null) throw new ServerException("No se identifica "+ tarifario.getTipoDimension2Nombre() +" con el codigo : " + dto.getDimension2Nombre());
+			dto.setDimension2(filtroDocumento.getLlaveTabla());
+		}
+		
+		if(tarifario.getTipoDimension3()!=null && dto.getDimension3()==null &&dto.getDimension3Nombre()!=null) {
+			PedidoVentaFilterDTO filtroDocumentoFilter = new PedidoVentaFilterDTO();
+			filtroDocumentoFilter.setNombre(dto.getDimension3Nombre());
+			filtroDocumentoFilter.setPlantilla(tarifario.getTipoDimension3());
+			PedidoVentaDTO filtroDocumento = documentoService.consultaUnica(filtroDocumentoFilter);
+			if(filtroDocumento==null) throw new ServerException("No se identifica "+ tarifario.getTipoDimension3Nombre() +" con el codigo : " + dto.getDimension3Nombre());
+			dto.setDimension3(filtroDocumento.getLlaveTabla());
+		}
+		
+		if(tarifario.getTipoDimension4()!=null && dto.getDimension4()==null &&dto.getDimension4Nombre()!=null) {
+			PedidoVentaFilterDTO filtroDocumentoFilter = new PedidoVentaFilterDTO();
+			filtroDocumentoFilter.setNombre(dto.getDimension4Nombre());
+			filtroDocumentoFilter.setPlantilla(tarifario.getTipoDimension4());
+			PedidoVentaDTO filtroDocumento = documentoService.consultaUnica(filtroDocumentoFilter);
+			if(filtroDocumento==null) throw new ServerException("No se identifica "+ tarifario.getTipoDimension4Nombre() +" con el codigo : " + dto.getDimension4Nombre());
+			dto.setDimension4(filtroDocumento.getLlaveTabla());
+		}
+		
 		if(!tarifario.getProductoOpcional() && dto.getProducto()==null) throw new ServerException("Seleccione el producto porfavor");
 		if (validarTarifa(dto)!=null) throw new ServerException("Existe una tarifa con las mismas condiciones de tarifario, origen y destino activa, por favor revise su configuracion");
 		//if(tarifario.getDeducciones() && dto.getDeduccion()!=null) throw new ServerException("El tarifario no recibe deducciones");
