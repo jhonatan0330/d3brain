@@ -162,7 +162,9 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			}else {
 				documentoRelacionGestorMapper.actualizarHistoricTable(actual);
 			}
-			if(gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
+			// Esto no es necesario en universal generaba un error que las guias no cambiaban de ubicacion
+			// toca en cada estado colocar la ubicacion
+			// if(gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
 		if(historico ==null) {

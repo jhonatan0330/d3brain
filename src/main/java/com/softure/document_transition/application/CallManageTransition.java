@@ -126,7 +126,11 @@ public class CallManageTransition {
 		if (anteriorEstado != null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) == 0) {
 			documentRecentCreateInTransition = iterateInState(respuesta, expedienteDTO, documentoDTO, token, relacionAnterior);
 		} else {
-			String ubicacion = obtenerUbicacion(documentoDTO, dto.getLlaveTabla(), token);
+			String ubicacion = null;
+			//Solamente debo validar las ubicaciones en los estados, los otros puntos de control no cambian la ubicacion
+			if(dto.getEstadoLlegadaTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)==0) {
+				ubicacion = obtenerUbicacion(documentoDTO, dto.getLlaveTabla(), token);
+			}
 			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
 					dto.getAfectaSaldo());
 			afectado = moveBalanceDocument(expediente, token, dto, valorModificador, dineroProcesado);
@@ -311,30 +315,31 @@ public class CallManageTransition {
 		solucionFilter.setEstadoPartida(estadoActual);
 		solucionFilter.setNombre(nombreTransicion);
 		solucionFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-		ProcesoTransicionDTO solucion = transicionService.consultaUnica(solucionFilter);
-		if (solucion == null) {
-			//La idea es evitar que se pierda informacion enn las apis ya que no se guarda los archivos
-			solucionFilter.setNombre(ConstantesGenerales.OK);
-			solucion = transicionService.consultaUnica(solucionFilter);
-			if (solucion == null) {
-				ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
-				String msgException = "La decision "+decisionDTO.getNombre()+" del proceso " + decisionDTO.getProcesoNombre() 
-					+ " esta intentando buscar un camino para la respuesta ( " +nombreTransicion +" ), actualmente ";
-				solucionFilter.setNombre(null);
-				List<ProcesoTransicionDTO> responseTransition = transicionService.listarConsulta(solucionFilter);
-				if(responseTransition!=null && !responseTransition.isEmpty()) {
-					msgException+= " se tiene configurado respuesta para : ";
-					for (int i = 0; i < responseTransition.size(); i++) {
-						msgException+= "\n " + String.valueOf(i+1) + " - " + responseTransition.get(i).getNombre();
-					}
-					msgException+= " \nrevisa la propiedad SQL de la decision";
-				}else {
-					msgException+= " no tienes configurada ninguna respuesta";
-				}
-				throw new ServerException(msgException);
-			}
+		List<ProcesoTransicionDTO> soluciones = transicionService.listarConsulta(solucionFilter);
+		if(soluciones !=null && !soluciones.isEmpty()) {
+			if(soluciones.size()>1) throw new ServerException("En el proceso " + soluciones.get(0).getProcesoNombre() + " en el estado " + soluciones.get(0).getEstadoPartidaNombre() + " existen mas de una relacion que cumple con el nombre " + soluciones.get(0).getNombre() );
+			return soluciones.get(0);
 		}
-		return solucion;
+		
+		//La idea es evitar que se pierda informacion enn las apis ya que no se guarda los archivos
+		solucionFilter.setNombre(ConstantesGenerales.OK);
+		ProcesoTransicionDTO solucion = transicionService.consultaUnica(solucionFilter);
+		if (solucion != null)  return solucion;
+		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
+		String msgException = "La decision "+decisionDTO.getNombre()+" del proceso " + decisionDTO.getProcesoNombre() 
+			+ " esta intentando buscar un camino para la respuesta ( " +nombreTransicion +" ), actualmente ";
+		solucionFilter.setNombre(null);
+		List<ProcesoTransicionDTO> responseTransition = transicionService.listarConsulta(solucionFilter);
+		if(responseTransition!=null && !responseTransition.isEmpty()) {
+			msgException+= " se tiene configurado respuesta para : ";
+			for (int i = 0; i < responseTransition.size(); i++) {
+				msgException+= "\n " + String.valueOf(i+1) + " - " + responseTransition.get(i).getNombre();
+			}
+			msgException+= " \nrevisa la propiedad SQL de la decision";
+		}else {
+			msgException+= " no tienes configurada ninguna respuesta";
+		}
+		throw new ServerException(msgException);
 	}
 
 	private String getUserId(String token) throws ServerException {
@@ -369,6 +374,8 @@ public class CallManageTransition {
 				 * responsable.setResponsable(obtenerUsuarioDocumento(campoValor.getValorOpcion(
 				 * ))); }else{ responsable.setResponsable(null); }
 				 */
+				//Esto lo coloque porque en ese estado se supone que ya no debe quedar a nombre de nadie por eso se debe borrar
+				responsable.setResponsable(null);
 			}
 		}
 		responsable.setDocumento(pedido);
