@@ -370,6 +370,8 @@ public class WebServiceCallPrepare {
 			if (auxiliarFormat == null)
 				return iCampo.getValorText();
 			iCampo.setValorFecha(getDateWithTransformations(iCampo.getValorFecha(), auxiliarFormat));
+			if(auxiliarFormat.contains("(")) 
+				auxiliarFormat = auxiliarFormat.substring(0,auxiliarFormat.indexOf("("));
 			return SoftureUtil.formatWithParameter(iCampo.getValorFecha(), auxiliarFormat);
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 			/*
