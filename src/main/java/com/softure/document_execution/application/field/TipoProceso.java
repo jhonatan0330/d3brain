@@ -119,7 +119,7 @@ public class TipoProceso {
 				}
 				//Valido obligatoriedad
 				if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorOpcion()==null) 
-					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 				
 				String bodega = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
 				if(!bodega.isEmpty()) tipoBodega.validarPrepararCampo(pCampo, bodega);

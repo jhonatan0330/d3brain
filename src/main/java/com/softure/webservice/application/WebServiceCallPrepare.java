@@ -36,16 +36,17 @@ public class WebServiceCallPrepare {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	
-	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document,
-			PedidoVentaDTO modificador, String token, String userId, String initialPameters)
-			throws ServerException {
+
+	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+			String token, String userId, String initialPameters) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
 		String parameters = getParameters(service, document, modificador);
-		if (initialPameters!=null) { parameters = parameters + initialPameters; }
+		if (initialPameters != null) {
+			parameters = parameters + initialPameters;
+		}
 		callWS.setParametros(parameters);
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());
@@ -55,7 +56,6 @@ public class WebServiceCallPrepare {
 		}
 		return webServiceEjecucionSvc.save(callWS);
 	}
-	
 
 	/**
 	 * Se encarga de tomar los valores de los documentos y generar los campos que se
@@ -116,29 +116,26 @@ public class WebServiceCallPrepare {
 						throw new ServerException(
 								"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
 					if (iProp.getTexto().startsWith("E_FECHA_")) {
-						Date fieldDate = getDateWithTransformations(iProp.getTexto());
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  iProp.getTexto()
+						Date fieldDate = getDateWithTransformations(new Date(), iProp.getTexto());
+						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
 								+ ConstantesGenerales.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 					} else {
 						switch (iProp.getTexto()) {
 						case "E_ID":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
-										+ iProp.getTexto() + ConstantesGenerales.IGUAL
-										+ document.getLlaveTabla();
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ ConstantesGenerales.IGUAL + document.getLlaveTabla();
 							break;
 						case "E_CODE":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
-										+ iProp.getTexto() + ConstantesGenerales.IGUAL
-										+ document.getNombre();
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ ConstantesGenerales.IGUAL + document.getNombre();
 							break;
 						case "E_CODE_MODIFICATOR":
 							if (modificador != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE 
-										+ iProp.getTexto()  + ConstantesGenerales.IGUAL
-										+ modificador.getNombre();
+								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ ConstantesGenerales.IGUAL + modificador.getNombre();
 							break;
 						default:
 							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
@@ -164,7 +161,7 @@ public class WebServiceCallPrepare {
 							listAux.add(aux);
 							camposOpcionReferidos.addAll(campoService.listar2getApiCode(listAux, relaciones));
 						} else {
-							camposOpcionReferidos.addAll( document.getCaracteristicas().stream()
+							camposOpcionReferidos.addAll(document.getCaracteristicas().stream()
 									.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
 						}
 						if (modificador != null && modificador.getCaracteristicas() != null) {
@@ -181,8 +178,8 @@ public class WebServiceCallPrepare {
 									String codeReplace = iCampo.getCampoDTO().getCodigo();
 									if (iCampo.getTransaccionRegistro() != null)
 										codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
-									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_"
-											+ codeReplace + ConstantesGenerales.IGUAL
+									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_" + codeReplace
+											+ ConstantesGenerales.IGUAL
 											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
 								}
 							}
@@ -230,46 +227,58 @@ public class WebServiceCallPrepare {
 			parameters = null;
 		return parameters;
 	}
-	
+
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
 			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
-		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
-				+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") 
+		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+				+ ((iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
+						? "(" + iRelacion.getAuxiliar() + ")"
+						: "")
 				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, iRelacion.getAuxiliar());
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
-					+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") + "_KEY"
-					+ ConstantesGenerales.IGUAL + campo.getValorOpcion();
-			if(campo.getExpedientes()!=null && !campo.getExpedientes().isEmpty()) {
+			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+					+ ((iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
+							? "(" + iRelacion.getAuxiliar() + ")"
+							: "")
+					+ "_KEY" + ConstantesGenerales.IGUAL + campo.getValorOpcion();
+			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
-				if(iElement!=null && iElement.getNombre()!=null) {
-					parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE +  tipo + "_" + codeReplace
-							+ ((iRelacion.getAuxiliar() != null) ? "(" + iRelacion.getAuxiliar() + ")" : "") + "_ID"
-							+ ConstantesGenerales.IGUAL + iElement.getNombre();
-				}	
+				if (iElement != null && iElement.getNombre() != null) {
+					parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+							+ ((iRelacion.getAuxiliar() != null && iRelacion.getAuxiliar().isEmpty())
+									? "(" + iRelacion.getAuxiliar() + ")"
+									: "")
+							+ "_ID" + ConstantesGenerales.IGUAL + iElement.getNombre();
+				}
 			}
 		}
 		return parameters;
 	}
-	
-	private Date getDateWithTransformations(String texto) {
-		Date result = new Date();
-		if (texto.contains("(")) {
-			// Ejemplo E_FECHA_XXX[-15D]
-			String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - 2);
-			long timeToAdd = 0;
-			try {
-				timeToAdd = Long.parseLong(formulaTime.substring(1));
-			} catch (Exception e) {
-				timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
-			}
-			if (formulaTime.contains("-"))
-				timeToAdd = timeToAdd * -1; // Si es negativo
-			result = new Date(result.getTime() + timeToAdd * 24 * 60 * 60 * 1000);
+
+	private Date getDateWithTransformations(Date result, String texto) {
+		if (!texto.contains("("))
+			return result;
+		// Tengo que uitar esto y dejar todo por milisegundos
+		// Ejemplo E_FECHA_XXX[-15D]
+		String lastCharToForm = texto.substring(texto.length() - 2, texto.length() - 1);
+		int lastCharacter = 2;
+		if (lastCharToForm.compareTo("D") != 0)
+			lastCharacter = 1;
+		String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - lastCharacter);
+		long timeToAdd = 0;
+		try {
+			timeToAdd = Long.parseLong(formulaTime.substring(1));
+		} catch (Exception e) {
+			timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
 		}
-		return result;
+		if (formulaTime.contains("-"))
+			timeToAdd = timeToAdd * -1; // Si es negativo
+		if (lastCharToForm.compareTo("D") == 0)
+			timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
+		return new Date(result.getTime() + timeToAdd);
+
 	}
-	
+
 	/**
 	 * Recibo unos campos y una relaciones, valido que campos cumplen con las
 	 * relaciones (con el atributo campo), selecciono los campos que cumplen con
@@ -347,7 +356,7 @@ public class WebServiceCallPrepare {
 		}
 		return camposEscogidos;
 	}
-	
+
 	/**
 	 * 
 	 * @param iCampo
@@ -360,6 +369,7 @@ public class WebServiceCallPrepare {
 		case DocumentoPlantillaCaracteristicaDTO.FECHA:
 			if (auxiliarFormat == null)
 				return iCampo.getValorText();
+			iCampo.setValorFecha(getDateWithTransformations(iCampo.getValorFecha(), auxiliarFormat));
 			return SoftureUtil.formatWithParameter(iCampo.getValorFecha(), auxiliarFormat);
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 			/*
@@ -371,7 +381,8 @@ public class WebServiceCallPrepare {
 			 * ir con decimales
 			 */
 			return new DecimalFormat("#.######").format(iCampo.getValorNumero().doubleValue());
-			//Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare despues
+		// Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare
+		// despues
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
 		case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 			return iCampo.getValorText();
