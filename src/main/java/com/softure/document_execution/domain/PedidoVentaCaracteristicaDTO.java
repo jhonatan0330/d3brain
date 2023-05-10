@@ -37,6 +37,8 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 	private boolean modificado;
 	private String transaccionRegistro;
 	private String transaccionInactivo;
+	private PedidoVentaDTO documentsToBPM;
+	private boolean modificadoBPM;
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
@@ -149,6 +151,22 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 	
 	public String getTransaccionInactivo() {
 		return transaccionInactivo;
+	}
+	
+	public PedidoVentaDTO getDocumentsToBPM() {
+		return documentsToBPM;
+	}
+
+	public void setDocumentsToBPM(PedidoVentaDTO documentsToBPM) {
+		this.documentsToBPM = documentsToBPM;
+	}
+
+	public boolean isModificadoBPM() {
+		return modificadoBPM;
+	}
+
+	public void setModificadoBPM(boolean modificadoBPM) {
+		this.modificadoBPM = modificadoBPM;
 	}
 // BEGIN region metodoInterfaces
 	public PedidoVentaCaracteristicaDTO clone() {

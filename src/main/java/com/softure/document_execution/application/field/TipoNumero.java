@@ -64,22 +64,29 @@ public class TipoNumero {
 			// Valido que se calcule bien la funcion
 			PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 					Propiedades.NUMERO_FUNCION_SQL);
-			if (bloqProperty != null && funcionCalculo != null
-					&& Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) != null
-					&& pCampo.getModificado()) {
-				// Valido que del cliente este ien calculado
-				if (pCampo.getLlaveTabla() == null || (pCampo.getLlaveTabla() != null && Propiedades
-						.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
-					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
-							pCampo.getDocumento(), pCampo.getDependientes());
-					//Algunas funciones no traen el valor del cero
-					if(valorCalculado == null) valorCalculado = BigDecimal.ZERO; 
-					BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
-					if (diferencia.abs().longValue() > 1)
-						throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
-								+ " no se calculo correctamente, valor esperado : ("
-								+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
-								+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
+			if (bloqProperty != null && funcionCalculo != null) {
+				//Dividi el tema del depende ya que siempre tengo que calcular el valor sin necesidad del depende
+				if(Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) != null) {
+					if(pCampo.getModificado()) {
+						// Valido que del cliente este ien calculado
+						if (pCampo.getLlaveTabla() == null || (pCampo.getLlaveTabla() != null && Propiedades
+								.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
+							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
+									pCampo.getDocumento(), pCampo.getDependientes());
+							//Algunas funciones no traen el valor del cero
+							if(valorCalculado == null) valorCalculado = BigDecimal.ZERO; 
+							BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
+							if (diferencia.abs().longValue() > 1)
+								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+										+ " no se calculo correctamente, valor esperado : ("
+										+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
+										+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
+						}
+					}
+				}else {
+					//En box hay un campo que calcula el area, en guardar todo bien pero al modificar no se guardaba
+					//lo arreglo aqui para que si guarde
+					pCampo.setModificado(true);
 				}
 			}
 		}

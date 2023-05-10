@@ -105,6 +105,8 @@ public class CallDocumentCRUD {
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired
 	private PedidoVentaDineroSvc dineroService;
+	@Autowired
+	private CallBPM bpmService;
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
@@ -236,6 +238,7 @@ public class CallDocumentCRUD {
 		dto.setCaracteristicas(saveInternalFields(dto, token));
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId,
 				dto.getFuncionario(), token);
+		bpmService.execute(dto, token);
 		manageTemplateTypes(dto, plantilla, token);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
@@ -295,6 +298,7 @@ public class CallDocumentCRUD {
 		// decia que fallaba :(
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
+		bpmService.execute(pedido, token);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		manageTemplateTypes(dto, plantilla, token);
 		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
@@ -303,7 +307,6 @@ public class CallDocumentCRUD {
 				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);
 			}
 		}
-
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
@@ -350,21 +353,20 @@ public class CallDocumentCRUD {
 						BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
 						dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
 						/*
-						// En el proceso de facturacion se softure el saldo sube en el momento que se
-						// aprueba la factura y desde el inicial no es afecta saldo
-						if (anterior != null) {
-							BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
-							dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
-
-						} else {
-							ProcesoTransicionDTO inicial = transicionService
-									.consultarTransaccionInicial(pedido.getPlantilla());
-							if (inicial != null && inicial.getAfectaSaldo() != null)
-								dineroCalculado.setSaldo(campoValor.getValorNumero());
-						}*/
+						 * // En el proceso de facturacion se softure el saldo sube en el momento que se
+						 * // aprueba la factura y desde el inicial no es afecta saldo if (anterior !=
+						 * null) { BigDecimal diferencia =
+						 * campoValor.getValorNumero().subtract(anterior.getValorTotal());
+						 * dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
+						 * 
+						 * } else { ProcesoTransicionDTO inicial = transicionService
+						 * .consultarTransaccionInicial(pedido.getPlantilla()); if (inicial != null &&
+						 * inicial.getAfectaSaldo() != null)
+						 * dineroCalculado.setSaldo(campoValor.getValorNumero()); }
+						 */
 					}
 				}
-					
+
 			}
 			pedido.setDinero(dineroCalculado);
 		} else {
@@ -683,6 +685,8 @@ public class CallDocumentCRUD {
 			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla(),
 					documento.getHistorico());
 			if (anterior != null) {
+				// En box sucedia que se guardaba y se hacia una tercera modificacion y el saldo no se controlaba
+				documento.getDinero().setControlarSaldo(anterior.getControlarSaldo());
 				// Si todo es igual lo dejo quieto
 				if (documento.getDinero().getValorTotal().compareTo(anterior.getValorTotal()) == 0
 						&& documento.getDinero().getSaldo().compareTo(anterior.getSaldo()) == 0)
@@ -780,8 +784,9 @@ public class CallDocumentCRUD {
 			urFilter.setDocumento(dto.getLlaveTabla());
 			urFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			UsuarioRolDTO ur = usuarioRolService.consultaUnica(urFilter);
-			// Cuando se modifica un contacto que tenia mal el id salia un errro de forgin key
-			if(ur!=null && ur.getUsuarioIdentificacion().compareTo(usrId)!=0) {
+			// Cuando se modifica un contacto que tenia mal el id salia un errro de forgin
+			// key
+			if (ur != null && ur.getUsuarioIdentificacion().compareTo(usrId) != 0) {
 				inactivateRolOfDocument(ur.getDocumento(), token);
 				ur = null;
 			}
@@ -832,10 +837,10 @@ public class CallDocumentCRUD {
 				usuarioService.actualizar(usrActualizar, token);
 			}
 		} else {
-			 inactivateRolOfDocument(dto.getLlaveTabla(),  token);
+			inactivateRolOfDocument(dto.getLlaveTabla(), token);
 		}
 	}
-	
+
 	private void inactivateRolOfDocument(String document, String token) throws ServerException {
 		UsuarioRolFilterDTO rolFilter = new UsuarioRolFilterDTO();
 		rolFilter.setDocumento(document);
