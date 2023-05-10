@@ -261,14 +261,22 @@ public class TipoConfiguracion {
 			String valorConfiguracion = Propiedades.obtenerValor(pCampo.getCampoDTO(),
 					Propiedades.CONFIGURACION_ENTIDAD);
 			if (valorConfiguracion.isEmpty()) {
+				List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
+				PropiedadDTO option =  null;
+				for (PropiedadDTO propiedadDTO : options) {
+					if(propiedadDTO.getTexto()==null) propiedadDTO.setTexto(propiedadDTO.getValor());
+					if(propiedadDTO.getTexto().compareTo(pCampo.getValorOpcion())==0) {
+						option = propiedadDTO;
+						break;
+					}
+				}
+				if(option ==null) throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +  " No se identifico la opcion a seleccionar "+ pCampo.getValorOpcion());
 				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos
 				// opcion asi que lo restringui
-				// en futuras mejoras deberia que la propiedad tuviera un id y asi le puedo
-				// colocar este Id y usarlo
 				if (pCampo.getValorOpcion().length() > 32)
 					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0, 32));
-				if (pCampo.getValorOpcion().length() != 32)
-					pCampo.setValorText(pCampo.getValorOpcion());
+				//if (pCampo.getValorOpcion().length() != 32)
+					pCampo.setValorText(option.getTexto());
 			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:

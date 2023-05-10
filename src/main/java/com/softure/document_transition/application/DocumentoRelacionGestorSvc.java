@@ -164,7 +164,8 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			}
 			// Esto no es necesario en universal generaba un error que las guias no cambiaban de ubicacion
 			// toca en cada estado colocar la ubicacion
-			// if(gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
+			// lo volvi a activar para las transacciones que no tienen modificador asi no me borra al modificar el documento
+			if(modificador ==null && gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
 		if(historico ==null) {
