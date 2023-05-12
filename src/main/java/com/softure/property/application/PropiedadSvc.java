@@ -530,6 +530,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.CAMPO) == 0) {
 				if (dto.getKey().compareTo(Propiedades.DEPENDE) == 0
 						|| dto.getKey().compareTo(Propiedades.MODIFICAR_CAMPO) == 0
+						|| dto.getKey().compareTo(Propiedades.INFORMATIVE_DATA) == 0
 						|| dto.getKey().compareTo(Propiedades.PRODUCTOS_FUNCION_CAMPO) == 0
 						|| dto.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0
 						|| dto.getKey().compareTo(Propiedades.DISPONIBILIDAD_CROQUIS) == 0
@@ -823,6 +824,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.MODIFICAR_CAMPO: {
 			return identificadorCampo(dto, token);
 		}
+		case Propiedades.INFORMATIVE_DATA: {
+			return identificadorCampo(dto, token);
+		}
 		case Propiedades.PROCESO_VALOR: {
 			identificadorValorProceso(dto, token);
 			break;
@@ -1025,6 +1029,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.MODIFICAR_CAMPO: {
+			break;
+		}
+		case Propiedades.INFORMATIVE_DATA: {
 			break;
 		}
 		default: {

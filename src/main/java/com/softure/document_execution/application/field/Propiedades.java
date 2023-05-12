@@ -48,6 +48,8 @@ public class Propiedades {
 	public static final String INVISIBLE = "INVISIBLE";
 	public static final String VISIBLE_VALOR_DEPENDIENTE = "VISIBLE_VALOR_DEPENDIENTE";
 	public static final String MODIFICAR_CAMPO = "MODIFICAR_CAMPO";
+	
+	public static final String INFORMATIVE_DATA = "INFORMATIVE_DATA";
 
 	public static final String AUTOLOAD = "AUTOLOAD";
 	public static final String AUTOLOAD_SAVE = "AUTOLOAD_SAVE";
@@ -785,6 +787,10 @@ public class Propiedades {
 					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"
 					+ "\n\nEstructura de la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";
+			break;
+		}
+		case INFORMATIVE_DATA: {
+			ruleProperty = "Seleccionar el campo que tiene el documento del cual vamos a obtener la informacion y en las refencias colocas el campo del cual vamos a traer la informacion del documento";
 			break;
 		}
 		case FORCE_NOTIFICATION: {

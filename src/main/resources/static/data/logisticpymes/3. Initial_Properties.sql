@@ -417,9 +417,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_221' , 'C', 'PRODUCTO APLICADO UBICACION CROQUIS', 'PRODUCTO_PUESTO', 'REQUISITO', 'U');
-	
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
-	VALUES('PROP_221' , 'C', 'PRODUCTO APLICADO UBICACION CROQUIS', 'PRODUCTO_PUESTO', 'REQUISITO', 'U');
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_222' , 'L', 'INVENTARIO_OBLIGATORIO', 'CREAR INVENTARIO EN BODEGA DEL PRODUCTO', 'REQUISITO', true);
@@ -428,3 +425,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_223' , 'W', 'API - HORAS EN QUE EL API APLAZA', 'API_SCHEDULE_TIME_BLOCK', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_multiple) 
 	VALUES('PROP_224' , 'W', 'API - VALIDAR ANTES DE EJECUTAR', 'FUNCION_SQL_PREVALIDATE_API', 'REQUISITO', true,  true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_225' , 'C', 'RELACIONAR DOCUMENTO Y CAMPO', 'INFORMATIVE_DATA', 'REQUISITO', 'V');

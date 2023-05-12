@@ -19,6 +19,7 @@ public class CampoAdaptador {
 	@Autowired private TipoDetallePedido tipoDetallePedido;
 	@Autowired private TipoDisponibilidad tipoDisponibilidad;
 	@Autowired private TipoFecha tipoFecha;
+	@Autowired private TipoInformativo tipoInformativo;
 	@Autowired private TipoGPS tipoGPS;
 	@Autowired private TipoNumero tipoNumero;
 	@Autowired private TipoProceso tipoProceso;
@@ -57,6 +58,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{ tipoDetallePedido.validarPrepararCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.validarPrepararCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{ tipoFecha.validarPrepararCampo(pCampo, token);break;}
+			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{ tipoInformativo.validarPrepararCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{ tipoNumero.validarPrepararCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{ tipoProceso.validarPrepararCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{ tipoProductoLista.validarPrepararCampo(pCampo, token);break;}
@@ -83,6 +85,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.GPS:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
+			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{vResultado = tipoInformativo.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.guardarCampo(pCampo, token);break;}
@@ -109,6 +112,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.CROQUIS:{vResultado = tipoCroquis.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{vResultado = tipoDetallePedido.consultarDatosBase(pCampo);break;}	
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.consultarDatosBase(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{vResultado = tipoInformativo.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.consultarDatosBase(pCampo);break;}

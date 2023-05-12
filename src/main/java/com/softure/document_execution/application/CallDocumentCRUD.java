@@ -436,12 +436,16 @@ public class CallDocumentCRUD {
 						Propiedades.DEPENDE);
 				List<PropiedadDTO> modificarCampo = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
 						Propiedades.MODIFICAR_CAMPO);
-				if (codigoDepende != null || modificarCampo != null) {
+				List<PropiedadDTO> informativeCampo = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
+						Propiedades.INFORMATIVE_DATA);
+				if (codigoDepende != null || modificarCampo != null || informativeCampo != null) {
 					List<PropiedadDTO> dependencias = new ArrayList<PropiedadDTO>();
 					if (codigoDepende != null)
 						dependencias.addAll(codigoDepende);
 					if (modificarCampo != null)
 						dependencias.addAll(modificarCampo);
+					if (informativeCampo != null)
+						dependencias.addAll(informativeCampo);
 					for (PropiedadDTO codigo : dependencias) {
 						for (PedidoVentaCaracteristicaDTO fieldExpediente : dto.getCaracteristicas()) {
 							if (codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0) {

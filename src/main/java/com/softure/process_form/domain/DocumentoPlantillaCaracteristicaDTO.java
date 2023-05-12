@@ -33,6 +33,7 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	public static final String PRODUCTO_LISTA = "Q";
 	public static final String GPS = "P";
 	public static final String SECCION = "S";
+	public static final String INFORMATIVO = "V";
 
 	private String objetivo;
 	private String plantilla;
