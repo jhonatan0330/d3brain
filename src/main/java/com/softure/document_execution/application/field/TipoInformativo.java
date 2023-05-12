@@ -121,7 +121,18 @@ public class TipoInformativo {
 		if(pCampoFilter.getCampo()==null) throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 				+ " En el campo " + pCampo.getCampoDTO().getNombre() + " no tiene una relacion relacionada con la plantilla del documento base");
 		
-		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampoFilter, documentToGet.getHistorico());
+		PedidoVentaCaracteristicaDTO bd = null;
+		// En caso que sea una transaccion de aPI de un documento que se esta creando las caracteristicas ya se tienen en memoria
+		if(documentToGet.getCaracteristicas()!=null) {
+			for (PedidoVentaCaracteristicaDTO iField : documentToGet.getCaracteristicas()) {
+				if(iField.getCampo().compareTo(pCampoFilter.getCampo())==0) {
+					bd = iField;
+					break;
+				}
+			}
+		} else {
+			bd = campoService.buscarActivo(pCampoFilter, documentToGet.getHistorico());	
+		}
 		if(bd ==null) {
 			cleanFieldToResponse(pCampo);
 		} else {
