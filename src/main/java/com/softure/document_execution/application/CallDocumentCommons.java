@@ -48,6 +48,7 @@ public class CallDocumentCommons {
 					for (DocumentoRelacionExpedienteDTO iRelacion : relaciones) {
 						if(iRelacion.getExpedienteDetalle().compareTo(expediente.getLlaveTabla())==0) {
 							if(expediente.getDinero()!=null)expediente.getDinero().setValorCampo(iRelacion.getValor());
+							valor = valor.add(iRelacion.getValor());
 							ValorNuevo = false;
 							break;
 						}
