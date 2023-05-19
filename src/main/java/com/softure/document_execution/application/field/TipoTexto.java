@@ -50,12 +50,12 @@ public class TipoTexto {
 			String[] registros = pCampo.getValorText().split(";");
 			switch (formato) {
 			case "E": {
-				validateFormatProperty(registros, "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+				validateFormatProperty(registros, "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
 			case "T": {
-				validateFormatProperty(registros, "^3[0-9]{9}$");
+				validateFormatProperty(registros, "^3[0-9]{9}$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
@@ -63,7 +63,7 @@ public class TipoTexto {
 				break;
 			}
 			case "N": {
-				validateFormatProperty(registros, "^[0-9]*$");
+				validateFormatProperty(registros, "^[0-9]*$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
@@ -79,12 +79,13 @@ public class TipoTexto {
 		}
 	}
 
-	private void validateFormatProperty(String[] registros, String emailRegex) throws ServerException {
+	private void validateFormatProperty(String[] registros, String emailRegex, PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		Pattern pat = Pattern.compile(emailRegex);
 		for (String iRegistro : registros) {
 			if (iRegistro != null && !iRegistro.isEmpty()) {
 				if (!pat.matcher(iRegistro).matches())
-					throw new ServerException("Revisa el campo ya que no tiene un formato valido, " + iRegistro);
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() +" Revisa el campo ya que no tiene un formato valido, " + iRegistro);
 			}
 		}
 	}

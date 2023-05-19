@@ -369,11 +369,9 @@ public class CallBPM {
 				}
 				maquinaEstados = hmap.get(procesoDTO.getPlantilla());
 				if (procesoDTO.getEstado() == null) {
-					// Creo una relacion entre el campo y los pedidos detalles, primero reviso si
-					// existe
+					// Esto lo tuve que hacer en logimax para un cilo que se generaba de
+					modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 					if (maquinaEstados != null) {
-						// Esto lo tuve que hacer en logimax para un cilo que se generaba de
-						modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 								Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
 							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
