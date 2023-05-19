@@ -115,7 +115,8 @@ public class Propiedades {
 	public static final String PRODUCTO_CAMPO_CANTIDAD = "PRODUCTO_CAMPO_CANTIDAD";
 	public static final String PRODUCTO_CAMPO_TOTAL = "PRODUCTO_CAMPO_TOTAL";
 	public static final String UNICO_PRODUCTO = "UNICO_PRODUCTO";
-	public static final String INVENTARIO_OBLIGATORIO = "INVENTARIO_OBLIGATORIO";
+	//public static final String INVENTARIO_OBLIGATORIO = "INVENTARIO_OBLIGATORIO";
+	public static final String INVENTARIO_OPCIONAL = "INVENTARIO_OPCIONAL";
 	public static final String DETALLE_TARIFA_PRODUCTO = "DETALLE_TARIFA_PRODUCTO";
 	public static final String DETALLE_TARIFARIO_SQL = "DETALLE_TARIFARIO_SQL";
 	public static final String DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD = "DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD";
@@ -787,6 +788,10 @@ public class Propiedades {
 					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"
 					+ "\n\nEstructura de la funcion\n"
 					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";
+			break;
+		}
+		case INVENTARIO_OPCIONAL: {
+			ruleProperty = "En los productos, dependiendo la categoria pueden tener inventario, por defecto vamos a obligar a tener inventario, con esta propiedad no obligamos el producto y omite esa configuracion";
 			break;
 		}
 		case INFORMATIVE_DATA: {
