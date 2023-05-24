@@ -13,14 +13,12 @@ import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.BodegaSvc;
-import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.DeduccionProductoSvc;
 import com.softure.inventory.application.ProductoInventarioDescuentoSvc;
 import com.softure.inventory.application.ProductoInventarioSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.BodegaFilterDTO;
-import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.DeduccionProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
@@ -47,7 +45,6 @@ public class AuxiliarProcesoBodega {
 	@Autowired private ProductoInventarioSvc productoInventarioService;
 	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
 	@Autowired private RelacionInternaSvc relacionService;
-	@Autowired private CategoriaProductoSvc categoriaSvc;
 		
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String bodega) throws ServerException{
 		BodegaDTO bodegaDTO =  bodegaService.consultaXId(bodega);
@@ -298,7 +295,7 @@ public class AuxiliarProcesoBodega {
 						productoFilter.setBodega(recursoInventario);
 						ProductoInventarioDTO producto = productoInventarioService.consultaUnica(productoFilter);
 						//En algunos casos es obligatorio crear la relacion de bodega de inventario del producto
-						if(producto==null) {
+						/*if(producto==null) {
 							ProductoDTO productDB = productoService.consultaXId(detalle.getProducto());
 							CategoriaProductoDTO category = categoriaSvc.consultaXId(productDB.getCategoria());
 							if(category.getInventarios()) {
@@ -309,7 +306,7 @@ public class AuxiliarProcesoBodega {
 									producto = productoInventarioService.guardar(producto, token);		
 								}
 							}
-						}
+						}*/
 						if(producto!=null){
 							DeduccionProductoDTO salida = new DeduccionProductoDTO();
 							salida.setBodega(recursoInventario);

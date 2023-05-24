@@ -369,6 +369,8 @@ public class CallBPM {
 				}
 				maquinaEstados = hmap.get(procesoDTO.getPlantilla());
 				if (procesoDTO.getEstado() == null) {
+					// Lo empece en documentos con maquina de estados y sin maquina de estados
+					// La idea es que no toque hacer bpm para que modifique otro documento
 					// Esto lo tuve que hacer en logimax para un cilo que se generaba de
 					modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
 					if (maquinaEstados != null) {

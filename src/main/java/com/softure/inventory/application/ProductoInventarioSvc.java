@@ -118,7 +118,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 			if(unico.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0){
 				throw new ServerException("Este producto " + product.getNombre() +" ya se encuentra referenciado para controlar en esta bodega " + store.getNombre());
 			}else{
-				throw new ServerException("Este producto se encuentra inactivo para manejo de inventarios en esta bodega" + store.getNombre());
+				throw new ServerException("Este producto " + product.getNombre() +" se encuentra inactivo para manejo de inventarios en esta bodega " + store.getNombre());
 			}
 		}
 		if(dto.getCantidadMinima()==null) dto.setCantidadMinima(BigDecimal.ZERO);
