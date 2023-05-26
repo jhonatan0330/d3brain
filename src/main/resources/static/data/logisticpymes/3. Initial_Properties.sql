@@ -433,3 +433,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_226' , 'L', 'INVENTARIO_OPCIONAL', 'OMITIR CREAR INVENTARIO EN BODEGA DEL PRODUCTO', 'REQUISITO', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_227' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO', 'N');

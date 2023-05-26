@@ -25,6 +25,9 @@
 			<if test="documento!=null">
 				and cbod_documento = #{documento}
 			</if>
+			<if test="filtroParametro!=null">
+				and (descripcion(cbod_documento) like upper('%' || #{filtroParametro} || '%'))
+			</if>
 	</sql>
 
 	<sql id="paginationBodegaFragment">
