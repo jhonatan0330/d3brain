@@ -12,7 +12,9 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
+import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
@@ -24,6 +26,8 @@ public class TipoInformativo {
 	private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	@Autowired
+	private DocumentoPlantillaSvc templateService;
 	@Autowired
 	private RelacionInternaSvc relacionService;
 	@Autowired
@@ -118,8 +122,13 @@ public class TipoInformativo {
 			}
 		}
 		
-		if(pCampoFilter.getCampo()==null) throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-				+ " En el campo " + pCampo.getCampoDTO().getNombre() + " no tiene una relacion relacionada con la plantilla del documento base");
+		if(pCampoFilter.getCampo()==null) {
+			DocumentoPlantillaDTO templateError = templateService.consultaXId(documentToGet.getPlantilla()); 
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					+ " En el campo " + pCampo.getCampoDTO().getNombre() + " no tiene una relacion relacionada con la plantilla "
+					+ templateError.getNombre());
+		}
+				
 		
 		PedidoVentaCaracteristicaDTO bd = null;
 		// En caso que sea una transaccion de aPI de un documento que se esta creando las caracteristicas ya se tienen en memoria
