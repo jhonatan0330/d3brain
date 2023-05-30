@@ -2,7 +2,7 @@
 INSERT INTO cambio_cmbp(ccmb_llave,  ccmb_nombre,  ccmb_motivo,  dcmb_fecha,  dcmb_fechaaplicacion,  ccmb_estado,  ccmb_sesionactiva)VALUES('SC_REP',  'SC REPORTES DOCUMENTACION',  'Ingresar los reportes de documentación',  now(),  NULL,  'A',  NULL);
 
 INSERT INTO documentoplantilla_dplp(cdpl_llave,  cdpl_nombre,  cdpl_imagen, cdpl_codigo, cdpl_objetivo, cdpl_proceso)
-	VALUES('DPL_REP',  'INFORMES GENERALES', 'http://golyat.cloud/imagenes/modulo.png',  'DOCUMENTACION', 'Permite imprimir los reportes que muestran la documentación del sistema', 'SOPORTE');
+	VALUES('DPL_REP',  'INFORMES GENERALES', 'https://fs.softwareaparati.com/imagenes/modulo.png',  'DOCUMENTACION', 'Permite imprimir los reportes que muestran la documentación del sistema', 'SOPORTE');
 
 INSERT INTO propiedad_ppdp(cppd_llave, cppd_propiedadvalor, cppd_campo, cppd_valor, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo)
 	VALUES( 'INFORMES_TIPO_REPORTE' , 'PROP_142', 'DPL_REP', '1', now(), now(), 'SC_REP', 'L');
