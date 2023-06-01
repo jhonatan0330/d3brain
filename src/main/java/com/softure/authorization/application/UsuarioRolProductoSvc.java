@@ -93,6 +93,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		UsuarioRolProductoDTO existe = consultaUnica(existeFilter);
 		if(existe !=null) throw new ServerException("Este producto ya tiene promocion para este usuario. " + existe.getProductoNombre() );
+		if(dto.getNombre()!=null && dto.getNombre().isEmpty()) dto.setNombre(null);
 		dto.setModificador(getUserFlex(token));
 		return super.guardar(dto, token);
 		// END UsuarioRolProducto_guardar

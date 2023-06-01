@@ -379,9 +379,6 @@ public class CallBPM {
 							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
 									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
 									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
-							System.out.format("\n[%s (%s) - %s] Calculando caminos BPM",
-									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-									pCampo.getCampoDTO().getNombre());
 							List<String> caminosGestionar = getCaminos(pCampo);
 							List<String> documentosGestionados = new ArrayList<String>();
 							documentosGestionados.add(pCampo.getDocumento());

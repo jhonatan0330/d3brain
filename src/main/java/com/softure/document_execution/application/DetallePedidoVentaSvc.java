@@ -318,6 +318,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		//String productoBase = producto.getProductoBase();//Cuando se configura producto base se toma los valores y carcteristicas del base
 		if (dto.getLlaveTabla() != null) {
 			result = consultaXId(dto.getLlaveTabla());
+			if(result.getNombre()==null || result.getNombre().isEmpty())result.setNombre(producto.getNombre());
 		} else {
 			result = new DetallePedidoVentaDTO();
 			result.setProducto(producto.getLlaveTabla());
@@ -334,7 +335,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				fPromocion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				UsuarioRolProductoDTO filterPromocion = usuarioRolProductoService.consultaUnica(fPromocion);
 				if (filterPromocion == null)throw new ServerException("El producto en la plantilla no se encuentra configurado");
-				result.setNombre((filterPromocion.getNombre() != null) ? filterPromocion.getNombre() : filterPromocion.getProductoNombre());
+				result.setNombre((filterPromocion.getNombre() != null && !filterPromocion.getNombre().isEmpty()) ? filterPromocion.getNombre() : filterPromocion.getProductoNombre());
 				result.setProductoTercero(filterPromocion.getLlaveTabla());
 				result.setCantidadPromocion(filterPromocion.getCantidadPromocion());
 				result.setCantidadPromocionBase(filterPromocion.getCantidadPromocionBase());
