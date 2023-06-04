@@ -382,6 +382,7 @@ public class WebServiceCallPrepare {
 			 * decimales text = text.replace(",", ""); // Para logimax los numero no debian
 			 * ir con decimales
 			 */
+			if(iCampo.getValorNumero()==null) return iCampo.getValorText();
 			return new DecimalFormat("#.######").format(iCampo.getValorNumero().doubleValue());
 		// Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare
 		// despues

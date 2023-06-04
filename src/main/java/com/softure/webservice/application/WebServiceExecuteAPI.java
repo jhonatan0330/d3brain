@@ -251,7 +251,7 @@ public class WebServiceExecuteAPI {
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
-				callWS.getExtracciones()) + template;
+				callWS.getExtracciones(), service.getNombre()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
 		String responseApi = null;
 		try {
@@ -721,8 +721,8 @@ public class WebServiceExecuteAPI {
 	 * @param url     URL a la que se conecta el API
 	 * @return
 	 */
-	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions) {
-		String result = "URL\n\n " + url + "\n\nHeaders\n\n";
+	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions, String name) {
+		String result = "URL\n " + url + "Name\n " + name + "\n\nHeaders\n\n";
 		if (headers != null && headers.size() != 0) {
 			for (Entry<String, String> item : headers.entrySet()) {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
