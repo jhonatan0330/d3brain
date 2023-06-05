@@ -1215,8 +1215,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		for (PropiedadDTO pPropiedad : validaciones) {
 			log.debug("Pre validando APIfuncion SQL (%s)", pPropiedad.getMotivo());
 			try {
+				String extractionsWithEnd = extractions;
+				if(extractionsWithEnd!=null) extractionsWithEnd = extractionsWithEnd + ";;";
 				propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
-						document, editor, extractions);
+						document, editor, extractionsWithEnd);
 			} catch (Exception se) {
 				if(se.getCause()!=null) {
 					return se.getCause().getMessage();
