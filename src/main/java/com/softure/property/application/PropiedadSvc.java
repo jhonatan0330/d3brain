@@ -1251,9 +1251,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		List<PropiedadDTO> result = new ArrayList<PropiedadDTO>();// Existe otroparecido en helperjosn
 		for (PropiedadDTO propiedadDTO : propiedadedBase) {
 			boolean agregar = true;
-			if (propiedadDTO.getPropiedadValor().compareTo(Propiedades.TEMPORIZADOR) == 0)
+			if (propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0)
 				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
-			if (propiedadDTO.getPropiedadValor().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO) == 0)
+			if (propiedadDTO.getKey().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO) == 0)
 				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
 			if (agregar) {
 				PropiedadDTO newPropiedad = new PropiedadDTO();
@@ -1269,10 +1269,15 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				newPropiedad.setUsuario(propiedadDTO.getUsuario());
 				newPropiedad.setFechaInicial(propiedadDTO.getFechaInicial());
 				newPropiedad.setFechaFinal(propiedadDTO.getFechaFinal());
-				newPropiedad.setValor(propiedadDTO.getTexto());// Sucede que los campos de una plantilla los copiaba mal
-																// referenciados
-				if (newPropiedad.getValor() == null) {
+				if(propiedadDTO.getKey().compareTo(Propiedades.REPORTE_IMAGEN) == 0) {
+					newPropiedad.setTexto(propiedadDTO.getTexto());
 					newPropiedad.setValor(propiedadDTO.getValor());
+				} else {
+					// Sucede que los campos de una plantilla los copiaba mal referenciados
+					newPropiedad.setValor(propiedadDTO.getTexto());
+					if (newPropiedad.getValor() == null) {
+						newPropiedad.setValor(propiedadDTO.getValor());
+					}	
 				}
 				result.add(guardar(newPropiedad, token));
 			}
