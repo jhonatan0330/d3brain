@@ -1,20 +1,20 @@
 
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('SYSTEM', 'SYSTEM', 'SISTEMA', 'https://fs.softwareaparati.com/imagenes/avatar.png');
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'https://fs.softwareaparati.com/avatar.png');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('SYSTEM', 'SYSTEM', 'SYSTEM', 'https://fs.softwareparati.com/imagenes/avatar.png', 'jhonatan.garcia@colombiansofture.com');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'https://fs.softwareparati.com/avatar.png', 'jhonatan.garcia@colombiansofture.com');
 INSERT INTO usuarioautenticacion_uaup(cuau_llave, cuau_usuario, cuau_sesion, cuau_clave, duau_fechamaxima)VALUES ('SYSTEM', 'SYSTEM', '1', '1', now());
 --Modulos
 INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
     VALUES ('AdministracionLogisticpymes', 'Administracion', 'com.softure.logisticpymes.view.ui.UIAdministracion', 'A');
-INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
-    VALUES ('Inventarios', 'INVENTARIOS', 'com.softure.logisticpymes.view.ui.UIInventario', 'A');
-INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
-    VALUES ('Productos', 'PRODUCTOS', 'Control de los productos de una empresa', 'com.softure.logisticpymes.view.ui.UIProducto', 'A');
-INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
-    VALUES ('UITarifario', 'UITarifario', 'UITarifario', 'com.softure.logisticpymes.view.ui.UITarifario', 'A');
-INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
-    VALUES ('UIVotacion', 'UIVotacion', 'PLantilla para entrar a votar', 'com.softure.logisticpymes.view.ui.UIVotacion', 'A');
-INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
-    VALUES ('UIVotantes', 'UIVotantes', 'Configurar encuestas', 'com.softure.logisticpymes.view.ui.UIVotantes', 'A');
+-- INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
+--     VALUES ('Inventarios', 'INVENTARIOS', 'com.softure.logisticpymes.view.ui.UIInventario', 'A');
+--INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
+--     VALUES ('Productos', 'PRODUCTOS', 'Control de los productos de una empresa', 'com.softure.logisticpymes.view.ui.UIProducto', 'A');
+-- INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
+--     VALUES ('UITarifario', 'UITarifario', 'UITarifario', 'com.softure.logisticpymes.view.ui.UITarifario', 'A');
+-- INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
+--     VALUES ('UIVotacion', 'UIVotacion', 'PLantilla para entrar a votar', 'com.softure.logisticpymes.view.ui.UIVotacion', 'A');
+-- INSERT INTO modulo_modp(cmod_llave, cmod_descripcion, cmod_nombre, cmod_url, cmod_estado)
+--     VALUES ('UIVotantes', 'UIVotantes', 'Configurar encuestas', 'com.softure.logisticpymes.view.ui.UIVotantes', 'A');
 
 --
 insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, to_char(now(), 'yyyy-MM-dd') from pg_class where relname = 'usuario_usrp';
@@ -54,7 +54,9 @@ INSERT INTO propiedad_ppdp (cppd_llave, cppd_propiedadvalor, cppd_campo, cppd_va
 	VALUES( 'ORDE_ADMINISTRADOR' , 'PROP_51', 'ADMINISTRADOR', 'N', 'NOMBRE', now(), now(), 'SC-1', 'L');
 INSERT INTO propiedad_ppdp (cppd_llave, cppd_propiedadvalor, cppd_campo, cppd_valor, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo)
 	VALUES( 'ADMINISTRADOR_TIPO_ROL' , 'PROP_141', 'ADMINISTRADOR', '1', now(), now(), 'SC-1', 'L');
-	
+INSERT INTO propiedad_ppdp (cppd_llave, cppd_propiedadvalor, cppd_campo, cppd_valor, cppd_texto, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo)
+	VALUES( 'CORREO_ADMINISTRADOR' , 'PROP_207', 'ADMINISTRADOR', '4e3014ec945e4c718dc50481220fcf80', 'CORREO', now(), now(), 'SC-1', 'L');
+		
 INSERT INTO rolacceso_racp(crac_llave, brac_permisoscompletos, crac_plantilla)
     VALUES ('ADMINISTRADOR',  true, 'ADMINISTRADOR');
 
@@ -83,7 +85,6 @@ INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_imagen, corg_slogan
 VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'http://golyat.cloud/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
 
 
-
 insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
 values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','https://fs.softwareaparati.com/imagenes/modulo.png','D228','.','SOPORTE');
 
@@ -98,7 +99,7 @@ insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndp
 -- -------------------
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
-	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@golyat.cloud', 'conde123',  'E', 1, 'A'
+	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', '$ofture123***',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
 
 insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) values ('ea45ec023c754313a0714687efb633fb','seguimiento de sistema','A','SEGUIMIENTO DE SISTEMA','seguimiento de sistema','smtp.gmail.com');
