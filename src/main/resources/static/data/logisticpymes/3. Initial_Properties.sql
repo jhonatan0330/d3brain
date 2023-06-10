@@ -437,3 +437,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_227' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO', 'N');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_228' , 'C', 'LEER CODIGO QR', 'READ_QR', 'REQUISITO', 'T', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_229' , 'C', 'BINARIO_PREGUNTA', 'BINARIO_PREGUNTA', 'REQUISITO', 'I', true);
