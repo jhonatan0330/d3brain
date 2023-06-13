@@ -212,6 +212,8 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		filtroCampo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filtroCampo.setSecurityToken(token);
 		filtroCampo.setPlantilla(plantilla);
+		// Aumentar a 500 la cantidad de campos de un formulario, de preguntas
+		filtroCampo.setPaginacionRegistroFinal(500);
 		return listarConsulta(filtroCampo);
 	}
 	

@@ -851,6 +851,7 @@ public class FullControllerDTO {
 	@RequestMapping(value="/listarConsultaDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
 	public List<DocumentoPlantillaCaracteristicaDTO> listarConsultaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
+			dto.setPaginacionRegistroFinal(500);
 			return documentoPlantillaCaracteristicaService.listarConsulta(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
