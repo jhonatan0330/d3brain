@@ -231,6 +231,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		filtro.setPlantilla(dto.getPlantilla());
+		filtro.setPaginacionRegistroFinal(500);
 		List<DocumentoPlantillaCaracteristicaDTO> campos = listarConsulta(filtro);
 		if(campos!=null && !campos.isEmpty()){
 			int cont = 1;
