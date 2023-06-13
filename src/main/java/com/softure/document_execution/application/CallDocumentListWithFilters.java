@@ -306,6 +306,7 @@ public class CallDocumentListWithFilters {
 			}
 			filterDTO.setEstadoExpediente(dtoFilter.getEstadoExpediente());
 			List<String> textoFiltroComas = organizarFiltroComas(dtoFilter);
+			if(textoFiltroComas!=null) filterDTO.setFiltroParametro(null);
 			if (filterDTO.getFuncionarioNombre() == null)
 				filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
 			if (propiedadesFiltro != null)
