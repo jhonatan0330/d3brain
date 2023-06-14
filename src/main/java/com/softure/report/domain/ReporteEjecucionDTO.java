@@ -8,10 +8,7 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("ReporteEjecucionDTO")
 public class ReporteEjecucionDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
-
 	private String reporte;
 	private String documento;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -20,6 +17,7 @@ public class ReporteEjecucionDTO extends BasicDTO
 	private Date fechaFin;
 	private String error;
 	private String usuario;
+	private String url;
 
 	public void setReporte(String reporte) {
 		this.reporte = reporte;
@@ -63,7 +61,12 @@ public class ReporteEjecucionDTO extends BasicDTO
 	public String getUsuario() {
 		return usuario;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
 }

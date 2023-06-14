@@ -252,7 +252,7 @@ public class WebServiceExecuteAPI {
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
 				callWS.getExtracciones(), service.getNombre()) + template;
-		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token));
+		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice"));
 		String responseApi = null;
 		try {
 			responseApi = callApi(service, template, headerProperties);
@@ -287,7 +287,7 @@ public class WebServiceExecuteAPI {
 
 		if (callWS.getExtracciones() != null)
 			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
-		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token));
+		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice"));
 		callWS.setFechaEjecucion(new Date());
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
@@ -364,7 +364,7 @@ public class WebServiceExecuteAPI {
 			String newValue = matcher.group(1);
 			if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
 				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
-						Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token);
+						Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 			}
 
 			String codeAndEqual = ((propiedadDTO.getTexto() == null) ? propiedadDTO.getLlaveTabla()
@@ -558,7 +558,7 @@ public class WebServiceExecuteAPI {
 				storageMassiveString = storageMassiveString + "</root>";
 				log.info("[" + templateDTO.getCodigo() + "] Escribiendo documento de carga masiva ("
 						+ documentFromMap.size() + ")");
-				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token) + ";;";
+				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice") + ";;";
 			}
 		}
 		if (result.endsWith(";;"))

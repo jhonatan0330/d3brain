@@ -13,6 +13,7 @@
 			,drej_fechafin as  fechaFin
 			,crej_error as  error
 			,crej_usuario as  usuario
+			,crej_url as  url
 			,crej_estado as estado
 		from reporteejecucion_rejp a
 	</sql>
@@ -45,6 +46,9 @@
 			</if>
 			<if test="usuario!=null">
 				and crej_usuario = #{usuario}
+			</if>
+			<if test="url!=null">
+				and crej_url = #{url}
 			</if>
 	</sql>
 
@@ -101,6 +105,9 @@
 		<if test="usuario!=null">
 			,crej_usuario
 		</if>
+		<if test="url!=null">
+			,crej_url
+		</if>
 		<if test="estado!=null">
 			,crej_estado
 		</if>
@@ -124,6 +131,9 @@
 		<if test="usuario!=null">
 			,#{usuario}
 		</if>
+		<if test="url!=null">
+			,#{url}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -139,6 +149,7 @@
 				drej_fechafin = #{fechaFin},
 				crej_error = #{error},
 				crej_usuario = #{usuario},
+				crej_url = #{url},
 				crej_estado =#{estado}
 		<include refid="whereReporteEjecucionPrimaryKeyFragment" />
 	</select>
@@ -152,6 +163,7 @@
 			,drej_fechafin as  fechaFin
 			,crej_error as  error
 			,crej_usuario as  usuario
+			,crej_url as  url
 			,crej_estado as estado
 		from reporteejecucion_rejp a
 	</sql>

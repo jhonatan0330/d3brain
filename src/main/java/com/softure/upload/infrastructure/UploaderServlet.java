@@ -56,7 +56,7 @@ public class UploaderServlet extends HttpServlet {
 				if (formItems != null && formItems.size() > 0) {
 					for (FileItem item : formItems) {
 						if (!item.isFormField()) {
-							result = uploadService.uploadFile(item.get(), item.getName(), auth);
+							result = uploadService.uploadFile(item.get(), item.getName(), auth, null);
 							out.println("<result><operation state='true'>" + result + "</operation></result>");
 						}
 					}

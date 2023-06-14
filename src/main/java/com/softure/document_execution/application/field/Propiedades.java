@@ -209,6 +209,7 @@ public class Propiedades {
 	public static final String REP_VISIBLE_STATE = "REP_VISIBLE_STATE";
 	public static final String REP_PRINT_ONE = "REP_PRINT_ONE";
 	public static final String REPORTE_IMAGEN = "REPORTE_IMAGEN";
+	public static final String REP_EXCLUDE_STORAGE_FILE = "REP_EXCLUDE_STORAGE_FILE";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -1025,6 +1026,10 @@ public class Propiedades {
 		}
 		case REP_VISIBLE_STATE: {
 			ruleProperty = "El reporte solo se visualiza si el documento se encuentra en un estado especifico.\n";
+			break;
+		}
+		case REP_EXCLUDE_STORAGE_FILE: {
+			ruleProperty = "El reporte no se almacena en el servidor.\n";
 			break;
 		}
 		case REP_PRINT_ONE: {

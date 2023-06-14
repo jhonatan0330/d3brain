@@ -29,7 +29,7 @@ public class UploadSvc {
 	@Autowired private CargaArchivoSvc cargaService;
 	@Autowired private ServidorSvc servidorService;
 	
-	public String uploadFile(byte[] bytes, String name, String token) throws ServerException {
+	public String uploadFile(byte[] bytes, String name, String token, String typeFile) throws ServerException {
 		CargaArchivoDTO registro = new CargaArchivoDTO();
 		registro.setFechaInicio(new Date());
 		registro.setSize(bytes.length);
@@ -47,7 +47,7 @@ public class UploadSvc {
 			}
 		}else{
 			try {
-				registro.setUrl(uploadFTP(bytes, name, registro));
+				registro.setUrl(uploadFTP(bytes, name, registro, typeFile));
 				cargaService.guardar(registro, null);
 				return registro.getUrl();
 			}catch (Exception e) {
@@ -64,7 +64,7 @@ public class UploadSvc {
 	}
 	
 	
-	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro) throws ServerException{
+	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro, String typeFile) throws ServerException{
 		ServidorDTO servidor =  servidorService.obtenerServidorPrincipal(ServidorDTO.FTP);
 		if(servidor==null) throw new ServerException("Configure el servidor FTP");
 		
@@ -96,6 +96,11 @@ public class UploadSvc {
 			}
 			// Creates a directory
 			createInFolder(ftpClient, dirToCreate);
+			
+			if(typeFile!=null) {
+				dirToCreate = dirToCreate + "/" + typeFile;
+				createInFolder(ftpClient, typeFile);
+			}
 			
 			SimpleDateFormat sm = new SimpleDateFormat("yyyy");
 			String yearFolder = sm.format(new Date());

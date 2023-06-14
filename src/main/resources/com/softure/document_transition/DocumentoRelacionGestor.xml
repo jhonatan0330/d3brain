@@ -439,7 +439,7 @@
 			,null as ubicacionPlantilla
 			,(select crpb_nombre from reportebase_rpbp where crpb_llave = crej_reporte) as nombre
 			,null as  transaccion
-			,null as adjunto 
+			,crej_url as adjunto 
 		  from reporteejecucion_rejp
 		  where crej_documento = #{dto.documentoPrincipal}
 	</if>

@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import com.softure.report.domain.ReporteBaseFilterDTO;
 import com.softure.report.domain.ReporteEjecucionDTO;
 import com.softure.report.domain.ReporteEjecucionFilterDTO;
 import com.softure.report.infrastructure.ReporteBaseMapper;
+import com.softure.upload.application.UploadSvc;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
@@ -52,6 +54,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired private UsuarioSvc usuarioService;
 	public static final String P_KEY = "P_KEY";
 	@Autowired private ReporteEjecucionSvc ejecucionService;
+	@Autowired private UploadSvc uploadService;
 	// END region servicesReporteBase
 
 	@Override
@@ -255,6 +258,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			}
 			ejecucion.setFechaFin(new Date());
 			try {
+				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
+				if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte, token, "reports"));
 				ejecucionService.save(ejecucion);
 			}catch (Exception e) {	}
 			return resultado;	
