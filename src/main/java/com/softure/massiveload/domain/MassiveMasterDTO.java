@@ -2,19 +2,10 @@ package com.softure.massiveload.domain;
 
 import java.util.Date;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import org.apache.ibatis.type.Alias;
 
 import com.softure.shared.domain.SharedDataObject;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 @Alias("CargaMasivaDTO")
 public class MassiveMasterDTO extends SharedDataObject
 {
@@ -42,6 +33,54 @@ public class MassiveMasterDTO extends SharedDataObject
 		cargaMasiva.setPlantilla(this.plantilla);
 		cargaMasiva.setEstado(this.getState());
 		return cargaMasiva;
+	}
+
+	public String getArchivo() {
+		return archivo;
+	}
+
+	public void setArchivo(String archivo) {
+		this.archivo = archivo;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+	public String getMensaje() {
+		return mensaje;
+	}
+
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+
+	public String getPlantilla() {
+		return plantilla;
+	}
+
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
+	}
+
+	public String getProgreso() {
+		return progreso;
+	}
+
+	public void setProgreso(String progreso) {
+		this.progreso = progreso;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 
 }

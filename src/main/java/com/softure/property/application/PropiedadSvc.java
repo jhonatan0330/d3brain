@@ -8,6 +8,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 // END region interImport
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,12 +74,11 @@ import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
+	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
+	
 	@Autowired
 	private PropiedadMapper propiedadMapper;
 

@@ -18,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,11 +48,11 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 public class WebServiceExecuteAPI {
+	
+	private static Logger log = LoggerFactory.getLogger(WebServiceExecuteAPI.class);
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 

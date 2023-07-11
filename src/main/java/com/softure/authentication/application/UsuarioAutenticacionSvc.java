@@ -326,7 +326,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		
 		if (!fromApi) {
 			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
-			autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));	
+			// autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));	
 		}
 		
 		if(sesion==null) {

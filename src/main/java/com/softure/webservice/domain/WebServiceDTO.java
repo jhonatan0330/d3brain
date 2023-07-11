@@ -7,11 +7,6 @@ import org.apache.ibatis.type.Alias;
 
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 @Alias("WebServiceDTO")
 public class WebServiceDTO extends BasicParamDTO
 {
@@ -20,5 +15,30 @@ public class WebServiceDTO extends BasicParamDTO
 	private String codigo;
 	private String template;
 	private String url;
+	
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getTemplate() {
+		return template;
+	}
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 }

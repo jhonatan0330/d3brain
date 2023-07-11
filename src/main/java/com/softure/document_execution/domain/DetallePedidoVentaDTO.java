@@ -10,12 +10,8 @@ import org.apache.ibatis.type.Alias;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 import com.softure.tariff.domain.TarifaDTO;
 
-import lombok.Getter;
-import lombok.Setter;
 
 @Alias("DetallePedidoVentaDTO")
-@Getter
-@Setter
 public class DetallePedidoVentaDTO extends BasicParamDTO
 {
 
@@ -41,7 +37,7 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	private String transaccionRegistro;
 	private String transaccionInactivo;
 	private String campo;
-/*
+
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
@@ -188,6 +184,14 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	
 	public String getTransaccionInactivo() {
 		return transaccionInactivo;
-	}*/
+	}
+
+	public String getCampo() {
+		return campo;
+	}
+
+	public void setCampo(String campo) {
+		this.campo = campo;
+	}
 
 }

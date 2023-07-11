@@ -7,13 +7,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.softure.shared.domain.SharedDataObject;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Getter
-@Setter
-@NoArgsConstructor
 public class MasivaItemRequest extends SharedDataObject {
 	
 	private String carga;
@@ -32,6 +25,103 @@ public class MasivaItemRequest extends SharedDataObject {
 	@JsonProperty(access = Access.READ_ONLY)
 	private String state;
 	
+
+	public String getCarga() {
+		return carga;
+	}
+
+	public void setCarga(String carga) {
+		this.carga = carga;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public Date getFechaSerializacion() {
+		return fechaSerializacion;
+	}
+
+	public void setFechaSerializacion(Date fechaSerializacion) {
+		this.fechaSerializacion = fechaSerializacion;
+	}
+
+	public Date getFechaSincronizacion() {
+		return fechaSincronizacion;
+	}
+
+	public void setFechaSincronizacion(Date fechaSincronizacion) {
+		this.fechaSincronizacion = fechaSincronizacion;
+	}
+
+	public String getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(String modelo) {
+		this.modelo = modelo;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getProgreso() {
+		return progreso;
+	}
+
+	public void setProgreso(String progreso) {
+		this.progreso = progreso;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
+	}
+
+	public Date getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
 	public MassiveItemDTO toModel() {
 		var cargaMasivaItemModel = new MassiveItemDTO();
 		cargaMasivaItemModel.setId(this.getId());
@@ -44,5 +134,4 @@ public class MasivaItemRequest extends SharedDataObject {
 		cargaMasivaItemModel.setNombre(this.nombre);
 		return cargaMasivaItemModel;
 	}
-
 }

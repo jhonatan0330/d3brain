@@ -7,11 +7,7 @@ import org.apache.ibatis.type.Alias;
 
 import com.softure.java.domain.BasicFilterDTO;
 
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 @Alias("WebServiceFilterDTO")
 public class WebServiceFilterDTO extends BasicFilterDTO
 {
@@ -19,5 +15,24 @@ public class WebServiceFilterDTO extends BasicFilterDTO
 	private String nombre;
 	private String codigo;
 	private String url;
+	
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getCodigo() {
+		return codigo;
+	}
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 }

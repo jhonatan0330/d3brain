@@ -6,11 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 //End of user code
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 public class MassiveMasterRequest {
 	
 	private String cargaMasivaId;
@@ -34,6 +30,70 @@ public class MassiveMasterRequest {
 		cargaMasivaModel.setMensaje(this.mensaje);
 		cargaMasivaModel.setPlantilla(this.plantilla);
 		return cargaMasivaModel;
+	}
+
+	public String getCargaMasivaId() {
+		return cargaMasivaId;
+	}
+
+	public void setCargaMasivaId(String cargaMasivaId) {
+		this.cargaMasivaId = cargaMasivaId;
+	}
+
+	public String getArchivo() {
+		return archivo;
+	}
+
+	public void setArchivo(String archivo) {
+		this.archivo = archivo;
+	}
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+	public String getMensaje() {
+		return mensaje;
+	}
+
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+
+	public String getPlantilla() {
+		return plantilla;
+	}
+
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
+	}
+
+	public String getProgreso() {
+		return progreso;
+	}
+
+	public void setProgreso(String progreso) {
+		this.progreso = progreso;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
+	}
+
+	public String getEstado() {
+		return estado;
+	}
+
+	public void setEstado(String estado) {
+		this.estado = estado;
 	}
 
 }

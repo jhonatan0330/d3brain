@@ -24,7 +24,6 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private Integer tableroControl;
 	private UsuarioDTO usuarioDTO;
 	private OrganizacionDTO organizacion;
-	private List<OrganizacionDTO> organizaciones;
 	private String mensaje;
 	private String token;
 	private List<ModuloContratadoDTO> modulos;
@@ -89,13 +88,6 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	
 	public OrganizacionDTO getOrganizacion() {
 		return organizacion;
-	}
-	public void setOrganizaciones(List<OrganizacionDTO> organizaciones) {
-		this.organizaciones = organizaciones;
-	}
-	
-	public List<OrganizacionDTO> getOrganizaciones() {
-		return organizaciones;
 	}
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;
