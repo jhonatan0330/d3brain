@@ -117,14 +117,14 @@ public class MailGenerateMessageService {
         if (formatosPlantilla == null)
             throw new ServerException("Revisa porque el identificador del mensaje no aparece en BD." + plantillaCorreo);
         // No envio mensaje al que creo el documento
-        String usuarioGenerador = null;
-        String usuarioToken = (token == null) ? null : usuarioService.getUserFlex(token);
+        String usuarioGenerador = (token == null) ? null : usuarioService.getUserFlex(token);
         PropiedadDTO mensajeFuncion = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
-                plantillaCorreo.getCampo(), Propiedades.MENSAJE_DESTINATARIOS_SQL, usuarioToken);
+                plantillaCorreo.getCampo(), Propiedades.MENSAJE_DESTINATARIOS_SQL, usuarioGenerador);
         PropiedadDTO mensajeReporte = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
-                plantillaCorreo.getCampo(), Propiedades.MENSAJE_REPORTE, usuarioToken);
-        if (mensajeReporte == null)
-            usuarioGenerador = usuarioService.getUserFlex(token);
+                plantillaCorreo.getCampo(), Propiedades.MENSAJE_REPORTE, usuarioGenerador);
+        // Por algun motivo validaba esto del reporte creo que tiene que ver con algun null
+        //if (mensajeReporte == null)
+        //    usuarioGenerador = usuarioService.getUserFlex(token);
         if (responsable != null
                 && (usuarioGenerador == null || responsable.getLlaveTabla().compareTo(usuarioGenerador) != 0)) {
             // Evitar enviar correo al mismo que lo creo
