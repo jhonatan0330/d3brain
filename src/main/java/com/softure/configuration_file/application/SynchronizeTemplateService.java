@@ -10,6 +10,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import com.softure.report.domain.ReporteBaseDTO;
 
 @Service
 public class SynchronizeTemplateService {
@@ -28,6 +29,7 @@ public class SynchronizeTemplateService {
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
+					changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
 				}
 				else
 				{
@@ -38,12 +40,24 @@ public class SynchronizeTemplateService {
 					newProcess.setNombre(remote.getNombre());
 					newProcess.setObjetivo(remote.getObjetivo());
 					newProcess = templateService.save(newProcess);
+					changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), newProcess.getLlaveTabla());
 				}
 			}
 		}
+		reportSynchronizeService.call(token, hierarchy);
 		callAfterCreateAllTemplate(token, hierarchy);
 	}
 	
+	private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote,
+			String local) {
+		for (ReporteBaseDTO remoteProcess : remoteList) {
+			if(remoteProcess.getPlantilla()!=null && remoteProcess.getPlantilla().compareTo(remote)==0) {
+				remoteProcess.setPlantilla(local);
+			}
+		}
+		
+	}
+
 	private void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize();
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
@@ -62,7 +76,7 @@ public class SynchronizeTemplateService {
 
 	private void synchronizeFieldReport(String token, HierarchyExporterDTO hierarchy, String remote,
 			String local) throws ServerException {
-		reportSynchronizeService.call(token, hierarchy, remote, local);
+		
 		fieldSynchronizeService.call(token, hierarchy, remote, local);
 		propertiesSynchronizeService.call(hierarchy.getProperties(), remote,
 				PropiedadValorDefinidoDTO.PLANTILLA, local, token);

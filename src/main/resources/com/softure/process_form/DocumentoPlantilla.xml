@@ -203,6 +203,7 @@
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
 		<include refid="selectSimpleDocumentoPlantillaFragment" />
 		where cdpl_estado = 'A'
+		order by cdpl_nombre
 	</select>
 <!--// END region script-->
 

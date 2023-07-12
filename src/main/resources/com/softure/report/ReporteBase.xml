@@ -220,8 +220,20 @@
 	</select>
 	
 	<select id="getFullToSynchronize" resultType="ReporteBaseDTO">
-		<include refid="selectSimpleReporteBaseFragment" />
-		where crpb_estado ='A'
+		select
+			crpb_llave as  llaveTabla
+			,crpb_plantilla as  plantilla
+			,crpb_nombre as  nombre
+			,crpb_codigo as  codigo
+			,brpb_soloexistente as  soloExistente
+			,crpb_variables as  variables
+			,nrpb_version as  version
+			,crpb_descripcion as  descripcion
+			,crpb_servidor as  servidor
+			,brpb_publico as  publico
+		from reportebase_rpbp a 
+			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = a.crpb_plantilla) 
+		where crpb_estado = 'A' and dd.cdpl_estado = 'A'
 	</select>
 <!--// END region script-->
 

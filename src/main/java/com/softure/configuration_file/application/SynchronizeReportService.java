@@ -1,7 +1,6 @@
 package com.softure.configuration_file.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,9 @@ public class SynchronizeReportService {
 	@Autowired ReporteBaseSvc reportService;
 	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 	
-	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate) throws ServerException {
-		List<ReporteBaseDTO> localListToErase = getReportsFromTemplate (reportService.getFullToSynchronize(), localTemplate);
-		List<ReporteBaseDTO> remoteList = getReportsFromTemplate( hierarchy.getReports(), remoteTemplate);
+	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize();
+		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
@@ -32,7 +31,7 @@ public class SynchronizeReportService {
 				else
 				{
 					ReporteBaseDTO newReport = new ReporteBaseDTO();
-					newReport.setPlantilla(localTemplate);
+					newReport.setPlantilla(remote.getPlantilla());
 					newReport.setCodigo(remote.getCodigo());
 					newReport.setDescripcion(remote.getDescripcion());
 					newReport.setSoloExistente(remote.getSoloExistente());
@@ -42,17 +41,17 @@ public class SynchronizeReportService {
 				}
 			}
 		}
-		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate);
+		callAfterCreateAll(token, hierarchy);
 	}
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate) throws ServerException {
-		List<ReporteBaseDTO> localListToErase = getReportsFromTemplate (reportService.getFullToSynchronize(), localTemplate);
-		List<ReporteBaseDTO> remoteList = getReportsFromTemplate( hierarchy.getReports(), remoteTemplate);
+	
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize();
+		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
 				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
-					System.out.println(local.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token);
@@ -61,12 +60,13 @@ public class SynchronizeReportService {
 		}
 	}
 
+	/*
 	private List<ReporteBaseDTO> getReportsFromTemplate(List<ReporteBaseDTO> fullToSynchronize, String template) {
 		if(fullToSynchronize ==null || fullToSynchronize.isEmpty())	return null;
 		return fullToSynchronize.stream()
 			      .filter(report -> (report.getPlantilla().compareTo(template)==0))
 			      .collect(Collectors.toList());
-	}
+	}*/
 
 	public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		List<ReporteBaseDTO> localToErase = reportService.getFullToSynchronize();

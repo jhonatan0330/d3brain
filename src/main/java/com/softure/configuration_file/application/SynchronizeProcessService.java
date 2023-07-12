@@ -78,7 +78,6 @@ public class SynchronizeProcessService {
 				remoteProcess.setMacroproceso(local);
 			}
 		}
-		
 	}
 
 	public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {

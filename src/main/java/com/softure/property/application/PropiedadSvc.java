@@ -298,7 +298,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				}
 				case PropiedadValorDefinidoDTO.CAMPO: {
 					DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(existe.getCampo());
-					error = error + "en el campo " + campo.getNombre() +" la plantilla " + campo.getPlantillaNombre();
+					error = error + " en el campo " + campo.getNombre() +" la plantilla " + campo.getPlantillaNombre();
+					break;
+				}
+				case PropiedadValorDefinidoDTO.REPORTE: {
+					ReporteBaseDTO campo = reporteService.consultaXId(existe.getCampo());
+					error = error + " en el reporte " + campo.getNombre() +" de la plantilla " + campo.getPlantillaNombre();
 					break;
 				}
 				default:
@@ -728,8 +733,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (reporte == null) {
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
 			reporteFilter.setNombre(dto.getValor().toUpperCase());
-			reporteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);// Busco los activos porque los que son
-																		// subreportes nos e muestran
+			// Busco los activos porque los que son subreportes no se muestran
+			reporteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 			reporte = reporteService.consultaUnica(reporteFilter);
 			if (reporte == null) {// Consulto por codigo
 				reporteFilter = new ReporteBaseFilterDTO();
