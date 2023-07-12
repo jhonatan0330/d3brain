@@ -413,8 +413,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					RolAccesoDTO nuevo = new RolAccesoDTO();
 					nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
 					nuevo = rolService.guardar(nuevo, token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
+					//guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+					//		plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
 					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 							plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*", token), token);
 					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
@@ -1329,9 +1329,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				throw new ServerException(
 						"Todas las imagenes del reporte deben tener la propiedad On Error Type con valor = Blank.");
 			if (StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[$") + StringUtils
-					.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream") < imageCount)
+					.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream") < imageCount) {
+				ReporteBaseDTO report = reporteService.consultaXId(dto.getCampo());
 				throw new ServerException(
-						"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN");
+						"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN  en el reporte " + report.getNombre() + " de la plantilla " + report.getPlantillaNombre());
+			}
 		}
 	}
 

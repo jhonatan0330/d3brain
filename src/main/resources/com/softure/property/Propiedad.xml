@@ -641,6 +641,35 @@ COST 100;
 			,cppd_bloqueo as  bloqueo
 		from propiedad_ppdp a
         where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+        and cppd_propiedadvalor != 'PROP_117' and cppd_propiedadvalor != 'PROP_136' 
+union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+		from propiedad_ppdp a
+        where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+        and cppd_propiedadvalor = 'PROP_117' and cppd_valor = '*'
+union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+		from propiedad_ppdp a
+        where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+        and cppd_propiedadvalor = 'PROP_136' and cppd_valor = '*'
     </select>    
 <!--// END region script-->
 

@@ -23,7 +23,7 @@ public class SynchronizeReportService {
 		
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
-				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo());
+				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
@@ -49,7 +49,7 @@ public class SynchronizeReportService {
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
-				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo());
+				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
@@ -73,7 +73,7 @@ public class SynchronizeReportService {
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
-				ReporteBaseDTO local = findTemplateInList(localToErase, remote.getCodigo());
+				ReporteBaseDTO local = findTemplateInList(localToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localToErase.remove(local);
@@ -84,9 +84,9 @@ public class SynchronizeReportService {
 		}
 	}
 
-	private ReporteBaseDTO findTemplateInList(List<ReporteBaseDTO> array, String code) {
+	private ReporteBaseDTO findTemplateInList(List<ReporteBaseDTO> array, String code, String nombre) {
 		for (ReporteBaseDTO localProcess : array) {
-			if (code.compareTo(localProcess.getCodigo()) == 0) {
+			if (code.compareTo(localProcess.getCodigo()) == 0 && nombre.compareTo(localProcess.getNombre()) == 0) {
 				return localProcess;
 			}
 		}
