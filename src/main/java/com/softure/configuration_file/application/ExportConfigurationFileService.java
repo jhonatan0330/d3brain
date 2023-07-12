@@ -10,6 +10,7 @@ import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.configuration_file.domain.FileVO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -19,6 +20,7 @@ import com.softure.property.application.PropiedadValorDefinidoSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.upload.application.UploadSvc;
+import com.softure.webservice.application.WebServiceSvc;
 
 @Service
 public class ExportConfigurationFileService {
@@ -34,10 +36,14 @@ public class ExportConfigurationFileService {
 	@Autowired	private DocumentoPlantillaSvc templateService;
 	@Autowired	private ReporteBaseSvc reportService;
 	@Autowired	private DocumentoPlantillaCaracteristicaSvc fieldService;
+	@Autowired	private MensajePlantillaCorreoSvc messageService;
+	@Autowired	private WebServiceSvc apiService;
 
 	public FileVO call(String token) throws ServerException {
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
+		hierarchy.setMessages(messageService.getFullToSynchronize());
+		hierarchy.setApis(apiService.getFullToSynchronize());
 		hierarchy.setOrganization(organizationService.obtenerPrincipal(null));
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());

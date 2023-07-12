@@ -88,6 +88,10 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 		// END MensajePlantillaCorreo_guardar
 	}
 
+	public List<MensajePlantillaCorreoDTO> getFullToSynchronize() {
+		return mensajePlantillaCorreoMapper.getFullToSynchronize();
+	}
+
 // BEGIN region aditionalMethods
 // END region aditionalMethods
 

@@ -136,7 +136,10 @@
 		<include refid="paginationMensajePlantillaCorreoFragment" />
 	</select>
 	
-
+	<select id="getFullToSynchronize" resultType="MensajePlantillaCorreoDTO">
+		<include refid="selectSimpleMensajePlantillaCorreoFragment" />
+		where cmpl_estado = 'A'
+	</select>
 
 <!--// BEGIN region script-->
 <!--// END region script-->

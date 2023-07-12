@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.dto.exception.ServerException;	
+import com.softure.java.dto.exception.ServerException;
 import com.softure.property.application.PropiedadValorDefinidoSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -15,7 +15,6 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 public class SynchronizeTypePropertiesService {
 
 	@Autowired private PropiedadValorDefinidoSvc typesService;
-	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();

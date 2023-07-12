@@ -24,6 +24,8 @@ public class ImportConfigurationFileService {
 	
 	@Autowired CambioSvc changeService;
 	@Autowired SynchronizeTypePropertiesService sincronizeTypeService;
+	@Autowired SynchronizeMessageService sincronizeMessageService;
+	@Autowired SynchronizeApiService sincronizeApiService;
 	@Autowired SynchronizeOrganizationService sincronizeOrganizationService;
 	@Autowired SynchronizeProcessService sincronizeProcessService;
 	@Autowired SynchronizeTemplateService sincronizeTemplateService;
@@ -63,6 +65,8 @@ public class ImportConfigurationFileService {
 			      .collect(Collectors.toList()));
 		
 		sincronizeTypeService.call(token, hierarchy);
+		sincronizeMessageService.call(token, hierarchy);
+		sincronizeApiService.call(token, hierarchy);
 		sincronizeOrganizationService.call(token, hierarchy);
 		sincronizeProcessService.call(token, hierarchy);
 		sincronizeTemplateService.call(token, hierarchy);

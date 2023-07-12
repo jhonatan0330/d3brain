@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authorization.domain.RolAccesoDTO;
+import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -12,6 +13,7 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.report.domain.ReporteBaseDTO;
+import com.softure.webservice.domain.WebServiceDTO;
 
 public class HierarchyExporterDTO {
 
@@ -25,6 +27,8 @@ public class HierarchyExporterDTO {
 	private List<RolAccesoDTO> roles;
 	private List<ReporteBaseDTO> reports;
 	private List<PropiedadValorDefinidoDTO> propertyTypes;
+	private List<MensajePlantillaCorreoDTO> messages;
+	private List<WebServiceDTO> apis;
 
 	public OrganizacionDTO getOrganization() {
 		return organization;
@@ -104,6 +108,22 @@ public class HierarchyExporterDTO {
 
 	public void setPropertyTypes(List<PropiedadValorDefinidoDTO> propertyTypes) {
 		this.propertyTypes = propertyTypes;
+	}
+
+	public List<MensajePlantillaCorreoDTO> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<MensajePlantillaCorreoDTO> messages) {
+		this.messages = messages;
+	}
+
+	public List<WebServiceDTO> getApis() {
+		return apis;
+	}
+
+	public void setApis(List<WebServiceDTO> apis) {
+		this.apis = apis;
 	}
 	
 }

@@ -28,8 +28,6 @@ public class SynchronizeReportService {
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token);
 				}
 				else
 				{
@@ -40,13 +38,27 @@ public class SynchronizeReportService {
 					newReport.setSoloExistente(remote.getSoloExistente());
 					newReport.setNombre(remote.getNombre());
 					newReport.setVariables(remote.getVariables());
-					newReport = reportService.guardar(newReport, token);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, newReport.getLlaveTabla(), token);
+					newReport = reportService.save(newReport);
 				}
 			}
 		}
-
+		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate);
+	}
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate) throws ServerException {
+		List<ReporteBaseDTO> localListToErase = getReportsFromTemplate (reportService.getFullToSynchronize(), localTemplate);
+		List<ReporteBaseDTO> remoteList = getReportsFromTemplate( hierarchy.getReports(), remoteTemplate);
+		if (remoteList != null && !remoteList.isEmpty()) {
+			for (ReporteBaseDTO remote : remoteList) {
+				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo());
+				// Creo el nuevo proceso
+				if (local!=null){
+					System.out.println(local.getNombre());
+					localListToErase.remove(local);
+					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token);
+				}
+			}
+		}
 	}
 
 	private List<ReporteBaseDTO> getReportsFromTemplate(List<ReporteBaseDTO> fullToSynchronize, String template) {

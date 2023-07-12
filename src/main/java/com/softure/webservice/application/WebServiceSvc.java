@@ -88,6 +88,10 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		// END WebService_guardar
 	}
 
+	public List<WebServiceDTO> getFullToSynchronize() {
+		return webServiceMapper.getFullToSynchronize();
+	}
+
 // BEGIN region aditionalMethods
 // END region aditionalMethods
 

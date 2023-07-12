@@ -140,6 +140,16 @@
 	</select>
 	
 
+	<select id="getFullToSynchronize" resultType="WebServiceDTO">
+		select
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
+			,cwbs_template as  template
+			,cwbs_url as  url
+		from webservice_wbsp a
+		where cwbs_estado = 'A'
+	</select>
 
 <!--// BEGIN region script-->
 <!--// END region script-->
