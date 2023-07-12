@@ -272,6 +272,10 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			throw new Exception(e.getMessage());
 		}
 	}
+
+	public List<ReporteBaseDTO> getFullToSynchronize() {
+		return reporteBaseMapper.getFullToSynchronize();
+	}
 	
 // END region aditionalMethods
 

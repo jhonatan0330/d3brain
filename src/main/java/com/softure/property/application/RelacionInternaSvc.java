@@ -138,6 +138,10 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 		return super.listarConsulta(filtro);
 	}
+	
+	public List<RelacionInternaDTO> getRelationsFullToSynchronize()throws ServerException {
+		return relacionInternaMapper.getRelationsFullToSynchronize();
+	}
 // END region aditionalMethods
 
 }

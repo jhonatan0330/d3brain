@@ -459,6 +459,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			}
 		}
 	}
+
+	public List<DocumentoPlantillaDTO> getFullToSynchronize() {
+		return documentoPlantillaMapper.getFullToSynchronize();
+	}
 	
 // END region aditionalMethods
 

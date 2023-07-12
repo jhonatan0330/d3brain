@@ -102,4 +102,8 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 	}
 // END region aditionalMethods
 
+	public List<PropiedadValorDefinidoDTO> getFullToSynchronize() {
+		return propiedadValorDefinidoMapper.getFullToSynchronize();
+	}
+
 }

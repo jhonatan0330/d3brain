@@ -13,5 +13,7 @@ public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFil
 
 // BEGIN region aditionalMethods  
 	int permisosCompletos(String user);
+	List<RolAccesoDTO> getFullToSynchronize();
 // END region aditionalMethods
+
 }

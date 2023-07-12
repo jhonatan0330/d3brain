@@ -13,5 +13,8 @@ public interface ReporteBaseMapper extends IBasicMapper<ReporteBaseDTO, ReporteB
 
 // BEGIN region aditionalMethods  
 	List<ReporteBaseDTO> listarMenu();
+	List<ReporteBaseDTO> getFullToSynchronize();
 // END region aditionalMethods
+
+	
 }

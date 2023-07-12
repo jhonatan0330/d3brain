@@ -3,10 +3,10 @@ package com.softure.logisticpymes.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.authentication.application.OrganizacionSvc;
@@ -233,7 +233,7 @@ public class FullControllerDTO {
 	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
 	@Autowired private CallDocumentCRUD crudService;
 	
-	@RequestMapping(value="/consultaXIdPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO consultaXIdPlantillaConsecutivo(@RequestBody String llave) throws FlexException {
 		try {
 			return plantillaConsecutivoService.consultaXId(llave);
@@ -242,7 +242,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPlantillaConsecutivo")
 	public int contarResultadosPlantillaConsecutivo(@RequestBody PlantillaConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.contarResultados(dto);
@@ -251,7 +251,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO consultaUnicaPlantillaConsecutivo(@RequestBody PlantillaConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.consultaUnica(dto);
@@ -260,7 +260,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPlantillaConsecutivo")
 	public List<PlantillaConsecutivoDTO> listarConsultaPlantillaConsecutivo(@RequestBody PlantillaConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.listarConsulta(dto);
@@ -269,7 +269,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/activarPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO activarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.activar(dto, token);
@@ -278,7 +278,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO inactivarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.inactivar(dto, token);
@@ -287,7 +287,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO actualizarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.actualizar(dto, token);
@@ -296,7 +296,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPlantillaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO guardarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return plantillaConsecutivoService.guardar(dto, token);		
@@ -308,7 +308,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProcesoSvc procesoService;
 	
-	@RequestMapping(value="/consultaXIdProceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProceso")
 	public ProcesoDTO consultaXIdProceso(@RequestBody String llave) throws FlexException {
 		try {
 			return procesoService.consultaXId(llave);
@@ -317,7 +317,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProceso", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProceso")
 	public int contarResultadosProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoService.contarResultados(dto);
@@ -326,7 +326,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProceso")
 	public ProcesoDTO consultaUnicaProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoService.consultaUnica(dto);
@@ -335,7 +335,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProceso", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProceso")
 	public List<ProcesoDTO> listarConsultaProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoService.listarConsulta(dto);
@@ -344,7 +344,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/activarProceso")
 	public ProcesoDTO activarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoService.activar(dto, token);
@@ -353,7 +353,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProceso")
 	public ProcesoDTO inactivarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoService.inactivar(dto, token);
@@ -362,7 +362,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProceso")
 	public ProcesoDTO actualizarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoService.actualizar(dto, token);
@@ -371,7 +371,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProceso")
 	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoService.guardar(dto, token);		
@@ -381,7 +381,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/consultarArbolProceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultarArbolProceso")
 	public List<ProcesoDTO> consultarArbolProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
 		try {
 			return procesoService.consultarArbol(dto);
@@ -390,7 +390,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/exportarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/exportarProceso")
 	public String exportarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
 		try {
 			return procesoService.exportar(dto);
@@ -399,7 +399,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/importarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/importarProceso")
 	public String importarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
 		try {
 			return procesoService.importar(dto);
@@ -408,7 +408,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/obtenerProcesoParaGraficarProceso", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerProcesoParaGraficarProceso")
 	public ProcesoDTO obtenerProcesoParaGraficarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
 		try {
 			return procesoService.obtenerProcesoParaGraficar(dto);
@@ -419,7 +419,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DocumentoTransaccionSvc documentoTransaccionService;
 	
-	@RequestMapping(value="/consultaXIdDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDocumentoTransaccion")
 	public DocumentoTransaccionDTO consultaXIdDocumentoTransaccion(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoTransaccionService.consultaXId(llave);
@@ -428,7 +428,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDocumentoTransaccion")
 	public int contarResultadosDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
 		try {
 			return documentoTransaccionService.contarResultados(dto);
@@ -437,7 +437,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDocumentoTransaccion")
 	public DocumentoTransaccionDTO consultaUnicaDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
 		try {
 			return documentoTransaccionService.consultaUnica(dto);
@@ -446,7 +446,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDocumentoTransaccion")
 	public List<DocumentoTransaccionDTO> listarConsultaDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
 		try {
 			return documentoTransaccionService.listarConsulta(dto);
@@ -455,7 +455,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/activarDocumentoTransaccion")
 	public DocumentoTransaccionDTO activarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoTransaccionService.activar(dto, token);
@@ -464,7 +464,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDocumentoTransaccion")
 	public DocumentoTransaccionDTO inactivarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoTransaccionService.inactivar(dto, token);
@@ -473,7 +473,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDocumentoTransaccion")
 	public DocumentoTransaccionDTO actualizarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoTransaccionService.actualizar(dto, token);
@@ -482,7 +482,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDocumentoTransaccion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumentoTransaccion")
 	public DocumentoTransaccionDTO guardarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoTransaccionService.guardar(dto, token);		
@@ -494,7 +494,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProcesoEstadoSvc procesoEstadoService;
 	
-	@RequestMapping(value="/consultaXIdProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProcesoEstado")
 	public ProcesoEstadoDTO consultaXIdProcesoEstado(@RequestBody String llave) throws FlexException {
 		try {
 			return procesoEstadoService.consultaXId(llave);
@@ -503,7 +503,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProcesoEstado")
 	public int contarResultadosProcesoEstado(@RequestBody ProcesoEstadoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoEstadoService.contarResultados(dto);
@@ -512,7 +512,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProcesoEstado")
 	public ProcesoEstadoDTO consultaUnicaProcesoEstado(@RequestBody ProcesoEstadoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoEstadoService.consultaUnica(dto);
@@ -521,7 +521,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProcesoEstado")
 	public List<ProcesoEstadoDTO> listarConsultaProcesoEstado(@RequestBody ProcesoEstadoFilterDTO dto) throws FlexException  {
 		try {
 			return procesoEstadoService.listarConsulta(dto);
@@ -530,7 +530,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/activarProcesoEstado")
 	public ProcesoEstadoDTO activarProcesoEstado(@RequestBody ProcesoEstadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoEstadoService.activar(dto, token);
@@ -539,7 +539,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProcesoEstado")
 	public ProcesoEstadoDTO inactivarProcesoEstado(@RequestBody ProcesoEstadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoEstadoService.inactivar(dto, token);
@@ -548,7 +548,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProcesoEstado")
 	public ProcesoEstadoDTO actualizarProcesoEstado(@RequestBody ProcesoEstadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoEstadoService.actualizar(dto, token);
@@ -557,7 +557,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProcesoEstado", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProcesoEstado")
 	public ProcesoEstadoDTO guardarProcesoEstado(@RequestBody ProcesoEstadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoEstadoService.guardar(dto, token);		
@@ -569,7 +569,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService;
 	
-	@RequestMapping(value="/consultaXIdProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO consultaXIdProcesoTransicionAutomatica(@RequestBody String llave) throws FlexException {
 		try {
 			return procesoTransicionAutomaticaService.consultaXId(llave);
@@ -578,7 +578,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProcesoTransicionAutomatica")
 	public int contarResultadosProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.contarResultados(dto);
@@ -587,7 +587,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO consultaUnicaProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.consultaUnica(dto);
@@ -596,7 +596,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProcesoTransicionAutomatica")
 	public List<ProcesoTransicionAutomaticaDTO> listarConsultaProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.listarConsulta(dto);
@@ -605,7 +605,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/activarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO activarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.activar(dto, token);
@@ -614,7 +614,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO inactivarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.inactivar(dto, token);
@@ -623,7 +623,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO actualizarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.actualizar(dto, token);
@@ -632,7 +632,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO guardarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionAutomaticaService.guardar(dto, token);		
@@ -642,7 +642,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/ejecutarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/ejecutarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO ejecutarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return procesoTransicionAutomaticaService.ejecutar(dto, token);
@@ -651,7 +651,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/programarProcesoTransicionAutomatica", method=RequestMethod.POST)
+	@PostMapping(value="/programarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO programarProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return procesoTransicionAutomaticaService.programar(dto, token);
@@ -662,7 +662,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DocumentoRelacionExpedienteSvc documentoRelacionExpedienteService;
 	
-	@RequestMapping(value="/consultaXIdDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO consultaXIdDocumentoRelacionExpediente(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoRelacionExpedienteService.consultaXId(llave);
@@ -671,7 +671,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDocumentoRelacionExpediente")
 	public int contarResultadosDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.contarResultados(dto);
@@ -680,7 +680,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO consultaUnicaDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.consultaUnica(dto);
@@ -689,7 +689,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDocumentoRelacionExpediente")
 	public List<DocumentoRelacionExpedienteDTO> listarConsultaDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.listarConsulta(dto);
@@ -698,7 +698,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/activarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO activarDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.activar(dto, token);
@@ -707,7 +707,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO inactivarDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.inactivar(dto, token);
@@ -716,7 +716,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO actualizarDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.actualizar(dto, token);
@@ -725,7 +725,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDocumentoRelacionExpediente", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO guardarDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionExpedienteService.guardar(dto, token);		
@@ -737,7 +737,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DocumentoRelacionGestorSvc documentoRelacionGestorService;
 	
-	@RequestMapping(value="/consultaXIdDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO consultaXIdDocumentoRelacionGestor(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoRelacionGestorService.consultaXId(llave);
@@ -746,7 +746,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDocumentoRelacionGestor")
 	public int contarResultadosDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.contarResultados(dto);
@@ -755,7 +755,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO consultaUnicaDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.consultaUnica(dto);
@@ -764,7 +764,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDocumentoRelacionGestor")
 	public List<DocumentoRelacionGestorDTO> listarConsultaDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.listarConsulta(dto);
@@ -773,7 +773,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/activarDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO activarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.activar(dto, token);
@@ -782,7 +782,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO inactivarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.inactivar(dto, token);
@@ -791,7 +791,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO actualizarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.actualizar(dto, token);
@@ -800,7 +800,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO guardarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoRelacionGestorService.guardar(dto, token);		
@@ -810,7 +810,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarExpedientesGestionadoresDocumentoRelacionGestor", method=RequestMethod.POST)
+	@PostMapping(value="/listarExpedientesGestionadoresDocumentoRelacionGestor")
 	public List<DocumentoRelacionGestorDTO> listarExpedientesGestionadoresDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto)throws FlexException {
 		try {
 			return documentoRelacionGestorService.listarExpedientesGestionadores(dto);
@@ -821,7 +821,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
 	
-	@RequestMapping(value="/consultaXIdDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO consultaXIdDocumentoPlantillaCaracteristica(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoPlantillaCaracteristicaService.consultaXId(llave);
@@ -830,7 +830,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDocumentoPlantillaCaracteristica")
 	public int contarResultadosDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.contarResultados(dto);
@@ -839,7 +839,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO consultaUnicaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.consultaUnica(dto);
@@ -848,7 +848,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDocumentoPlantillaCaracteristica")
 	public List<DocumentoPlantillaCaracteristicaDTO> listarConsultaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			dto.setPaginacionRegistroFinal(500);
@@ -858,7 +858,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/activarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO activarDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.activar(dto, token);
@@ -867,7 +867,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO inactivarDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.inactivar(dto, token);
@@ -876,7 +876,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO actualizarDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.actualizar(dto, token);
@@ -885,7 +885,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO guardarDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaCaracteristicaService.guardar(dto, token);		
@@ -895,7 +895,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarCargaDocumentoPlantillaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/listarCargaDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO listarCargaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto)throws FlexException {
 		try {
 			return documentoPlantillaCaracteristicaService.listarCarga(dto);
@@ -906,7 +906,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PedidoVentaSvc pedidoVentaService;
 	
-	@RequestMapping(value="/consultaXIdPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPedidoVenta")
 	public PedidoVentaDTO consultaXIdPedidoVenta(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaService.consultaXId(llave);
@@ -915,7 +915,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPedidoVenta")
 	public int contarResultadosPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaService.contarResultados(dto);
@@ -924,7 +924,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPedidoVenta")
 	public PedidoVentaDTO consultaUnicaPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaService.consultaUnica(dto);
@@ -933,7 +933,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPedidoVenta")
 	public List<PedidoVentaDTO> listarConsultaPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaService.listarConsulta(dto);
@@ -942,7 +942,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/activarPedidoVenta")
 	public PedidoVentaDTO activarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaService.activar(dto, token);
@@ -951,7 +951,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPedidoVenta")
 	public PedidoVentaDTO inactivarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaService.inactivar(dto, token);
@@ -960,7 +960,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPedidoVenta")
 	public PedidoVentaDTO actualizarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return crudService.update(dto,dto.getLlaveTabla(), token);
@@ -969,7 +969,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPedidoVenta")
 	public PedidoVentaDTO guardarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return crudService.save(dto, token);		
@@ -979,7 +979,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/consultaCompletaPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaCompletaPedidoVenta")
 	public PedidoVentaDTO consultaCompletaPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
 		try {
 			return pedidoVentaService.consultaCompleta(dto.getLlaveTabla(), dto.getSecurityToken());
@@ -990,7 +990,7 @@ public class FullControllerDTO {
 	
 	@Autowired private CallDocumentListWithFilters documentListWithFiltersFunction;
 	
-	@RequestMapping(value="/listarAvanzadoPedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/listarAvanzadoPedidoVenta")
 	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
 		try {
 			return documentListWithFiltersFunction.listarAvanzado(dto);
@@ -1003,7 +1003,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
-	@RequestMapping(value="/consultaXIdPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO consultaXIdPedidoVentaCaracteristica(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaCaracteristicaService.consultaXId(llave);
@@ -1012,7 +1012,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPedidoVentaCaracteristica")
 	public int contarResultadosPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.contarResultados(dto);
@@ -1021,7 +1021,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO consultaUnicaPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.consultaUnica(dto);
@@ -1030,7 +1030,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPedidoVentaCaracteristica")
 	public List<PedidoVentaCaracteristicaDTO> listarConsultaPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.listarConsulta(dto);
@@ -1039,7 +1039,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/activarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO activarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.activar(dto, token);
@@ -1048,7 +1048,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO inactivarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.inactivar(dto, token);
@@ -1057,7 +1057,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO actualizarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.actualizar(dto, token);
@@ -1066,7 +1066,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO guardarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaCaracteristicaService.guardar(dto, token);		
@@ -1076,7 +1076,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/completarDatosBasePedidoVentaCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/completarDatosBasePedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO completarDatosBasePedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto)throws FlexException {
 		try {
 			return pedidoVentaCaracteristicaService.completarDatosBase(dto);
@@ -1087,7 +1087,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProcesoTransicionSvc procesoTransicionService;
 	
-	@RequestMapping(value="/consultaXIdProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProcesoTransicion")
 	public ProcesoTransicionDTO consultaXIdProcesoTransicion(@RequestBody String llave) throws FlexException {
 		try {
 			return procesoTransicionService.consultaXId(llave);
@@ -1096,7 +1096,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProcesoTransicion")
 	public int contarResultadosProcesoTransicion(@RequestBody ProcesoTransicionFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionService.contarResultados(dto);
@@ -1105,7 +1105,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProcesoTransicion")
 	public ProcesoTransicionDTO consultaUnicaProcesoTransicion(@RequestBody ProcesoTransicionFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionService.consultaUnica(dto);
@@ -1114,7 +1114,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProcesoTransicion")
 	public List<ProcesoTransicionDTO> listarConsultaProcesoTransicion(@RequestBody ProcesoTransicionFilterDTO dto) throws FlexException  {
 		try {
 			return procesoTransicionService.listarConsulta(dto);
@@ -1123,7 +1123,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/activarProcesoTransicion")
 	public ProcesoTransicionDTO activarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionService.activar(dto, token);
@@ -1132,7 +1132,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProcesoTransicion")
 	public ProcesoTransicionDTO inactivarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionService.inactivar(dto, token);
@@ -1141,7 +1141,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProcesoTransicion")
 	public ProcesoTransicionDTO actualizarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionService.actualizar(dto, token);
@@ -1150,7 +1150,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProcesoTransicion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProcesoTransicion")
 	public ProcesoTransicionDTO guardarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return procesoTransicionService.guardar(dto, token);		
@@ -1162,7 +1162,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	
-	@RequestMapping(value="/consultaXIdPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO consultaXIdPedidoVentaAjuste(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaAjusteService.consultaXId(llave);
@@ -1171,7 +1171,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPedidoVentaAjuste")
 	public int contarResultadosPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.contarResultados(dto);
@@ -1180,7 +1180,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO consultaUnicaPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.consultaUnica(dto);
@@ -1189,7 +1189,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPedidoVentaAjuste")
 	public List<PedidoVentaAjusteDTO> listarConsultaPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.listarConsulta(dto);
@@ -1198,7 +1198,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/activarPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO activarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.activar(dto, token);
@@ -1207,7 +1207,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO inactivarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.inactivar(dto, token);
@@ -1216,7 +1216,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO actualizarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.actualizar(dto, token);
@@ -1225,7 +1225,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPedidoVentaAjuste", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPedidoVentaAjuste")
 	public PedidoVentaAjusteDTO guardarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaAjusteService.guardar(dto, token);		
@@ -1237,7 +1237,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DocumentoPlantillaSvc documentoPlantillaService;
 	
-	@RequestMapping(value="/consultaXIdDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDocumentoPlantilla")
 	public DocumentoPlantillaDTO consultaXIdDocumentoPlantilla(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoPlantillaService.consultaXId(llave);
@@ -1246,7 +1246,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDocumentoPlantilla")
 	public int contarResultadosDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException  {
 		try {
 			return documentoPlantillaService.contarResultados(dto);
@@ -1255,7 +1255,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDocumentoPlantilla")
 	public DocumentoPlantillaDTO consultaUnicaDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException  {
 		try {
 			return documentoPlantillaService.consultaUnica(dto);
@@ -1264,7 +1264,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDocumentoPlantilla")
 	public List<DocumentoPlantillaDTO> listarConsultaDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException  {
 		try {
 			return documentoPlantillaService.listarConsulta(dto);
@@ -1273,7 +1273,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/activarDocumentoPlantilla")
 	public DocumentoPlantillaDTO activarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaService.activar(dto, token);
@@ -1282,7 +1282,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDocumentoPlantilla")
 	public DocumentoPlantillaDTO inactivarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaService.inactivar(dto, token);
@@ -1291,7 +1291,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDocumentoPlantilla")
 	public DocumentoPlantillaDTO actualizarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaService.actualizar(dto, token);
@@ -1300,7 +1300,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumentoPlantilla")
 	public DocumentoPlantillaDTO guardarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return documentoPlantillaService.guardar(dto, token);		
@@ -1310,7 +1310,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/consultaUsuarioDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUsuarioDocumentoPlantilla")
 	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)throws FlexException {
 		try {
 			return documentoPlantillaService.consultaUsuario(dto);
@@ -1319,7 +1319,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/obtenerCamposDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerCamposDocumentoPlantilla")
 	public DocumentoPlantillaDTO obtenerCamposDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return documentoPlantillaService.obtenerCampos(dto, token);
@@ -1328,7 +1328,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/duplicarDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/duplicarDocumentoPlantilla")
 	public DocumentoPlantillaDTO duplicarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return documentoPlantillaService.duplicar(dto, token);
@@ -1337,7 +1337,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/consultaAdministradorDocumentoPlantilla", method=RequestMethod.POST)
+	@PostMapping(value="/consultaAdministradorDocumentoPlantilla")
 	public List<DocumentoPlantillaDTO> consultaAdministradorDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)throws FlexException {
 		try {
 			return documentoPlantillaService.consultaAdministrador(dto);
@@ -1348,7 +1348,7 @@ public class FullControllerDTO {
 	
 	@Autowired private MovimientoSvc movimientoService;
 	
-	@RequestMapping(value="/consultaXIdMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdMovimiento")
 	public MovimientoDTO consultaXIdMovimiento(@RequestBody String llave) throws FlexException {
 		try {
 			return movimientoService.consultaXId(llave);
@@ -1357,7 +1357,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosMovimiento")
 	public int contarResultadosMovimiento(@RequestBody MovimientoFilterDTO dto) throws FlexException  {
 		try {
 			return movimientoService.contarResultados(dto);
@@ -1366,7 +1366,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaMovimiento")
 	public MovimientoDTO consultaUnicaMovimiento(@RequestBody MovimientoFilterDTO dto) throws FlexException  {
 		try {
 			return movimientoService.consultaUnica(dto);
@@ -1375,7 +1375,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaMovimiento")
 	public List<MovimientoDTO> listarConsultaMovimiento(@RequestBody MovimientoFilterDTO dto) throws FlexException  {
 		try {
 			return movimientoService.listarConsulta(dto);
@@ -1384,7 +1384,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/activarMovimiento")
 	public MovimientoDTO activarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return movimientoService.activar(dto, token);
@@ -1393,7 +1393,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarMovimiento")
 	public MovimientoDTO inactivarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return movimientoService.inactivar(dto, token);
@@ -1402,7 +1402,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarMovimiento")
 	public MovimientoDTO actualizarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return movimientoService.actualizar(dto, token);
@@ -1411,7 +1411,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/guardarMovimiento")
 	public MovimientoDTO guardarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return movimientoService.guardar(dto, token);		
@@ -1421,7 +1421,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/obtenerMovimientoAnteriorFechaMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerMovimientoAnteriorFechaMovimiento")
 	public List<MovimientoDTO> obtenerMovimientoAnteriorFechaMovimiento(@RequestBody MovimientoFilterDTO dto)throws FlexException {
 		try {
 			return movimientoService.obtenerMovimientoAnteriorFecha(dto);
@@ -1430,7 +1430,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/obtenerMovimientoSiguienteFechaMovimiento", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerMovimientoSiguienteFechaMovimiento")
 	public List<MovimientoDTO> obtenerMovimientoSiguienteFechaMovimiento(@RequestBody MovimientoFilterDTO dto)throws FlexException {
 		try {
 			return movimientoService.obtenerMovimientoSiguienteFecha(dto);
@@ -1441,7 +1441,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TurnoSvc turnoService;
 	
-	@RequestMapping(value="/consultaXIdTurno", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTurno")
 	public TurnoDTO consultaXIdTurno(@RequestBody String llave) throws FlexException {
 		try {
 			return turnoService.consultaXId(llave);
@@ -1450,7 +1450,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTurno", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTurno")
 	public int contarResultadosTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
 		try {
 			return turnoService.contarResultados(dto);
@@ -1459,7 +1459,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTurno", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTurno")
 	public TurnoDTO consultaUnicaTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
 		try {
 			return turnoService.consultaUnica(dto);
@@ -1468,7 +1468,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTurno", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTurno")
 	public List<TurnoDTO> listarConsultaTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
 		try {
 			return turnoService.listarConsulta(dto);
@@ -1477,7 +1477,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTurno", method=RequestMethod.POST)
+	@PostMapping(value="/activarTurno")
 	public TurnoDTO activarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return turnoService.activar(dto, token);
@@ -1486,7 +1486,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTurno", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTurno")
 	public TurnoDTO inactivarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return turnoService.inactivar(dto, token);
@@ -1495,7 +1495,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTurno", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTurno")
 	public TurnoDTO actualizarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return turnoService.actualizar(dto, token);
@@ -1504,7 +1504,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTurno", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTurno")
 	public TurnoDTO guardarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return turnoService.guardar(dto, token);		
@@ -1516,7 +1516,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TarifaSvc tarifaService;
 	
-	@RequestMapping(value="/consultaXIdTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTarifa")
 	public TarifaDTO consultaXIdTarifa(@RequestBody String llave) throws FlexException {
 		try {
 			return tarifaService.consultaXId(llave);
@@ -1525,7 +1525,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTarifa")
 	public int contarResultadosTarifa(@RequestBody TarifaFilterDTO dto) throws FlexException  {
 		try {
 			return tarifaService.contarResultados(dto);
@@ -1534,7 +1534,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTarifa")
 	public TarifaDTO consultaUnicaTarifa(@RequestBody TarifaFilterDTO dto) throws FlexException  {
 		try {
 			return tarifaService.consultaUnica(dto);
@@ -1543,7 +1543,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTarifa")
 	public List<TarifaDTO> listarConsultaTarifa(@RequestBody TarifaFilterDTO dto) throws FlexException  {
 		try {
 			return tarifaService.listarConsulta(dto);
@@ -1552,7 +1552,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/activarTarifa")
 	public TarifaDTO activarTarifa(@RequestBody TarifaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifaService.activar(dto, token);
@@ -1561,7 +1561,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTarifa")
 	public TarifaDTO inactivarTarifa(@RequestBody TarifaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifaService.inactivar(dto, token);
@@ -1570,7 +1570,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTarifa")
 	public TarifaDTO actualizarTarifa(@RequestBody TarifaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifaService.actualizar(dto, token);
@@ -1579,7 +1579,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTarifa", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTarifa")
 	public TarifaDTO guardarTarifa(@RequestBody TarifaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifaService.guardar(dto, token);		
@@ -1591,7 +1591,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PedidoVentaDineroSvc pedidoVentaDineroService;
 	
-	@RequestMapping(value="/consultaXIdPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPedidoVentaDinero")
 	public PedidoVentaDineroDTO consultaXIdPedidoVentaDinero(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaDineroService.consultaXId(llave);
@@ -1600,7 +1600,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPedidoVentaDinero")
 	public int contarResultadosPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.contarResultados(dto);
@@ -1609,7 +1609,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPedidoVentaDinero")
 	public PedidoVentaDineroDTO consultaUnicaPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.consultaUnica(dto);
@@ -1618,7 +1618,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPedidoVentaDinero")
 	public List<PedidoVentaDineroDTO> listarConsultaPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.listarConsulta(dto);
@@ -1627,7 +1627,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/activarPedidoVentaDinero")
 	public PedidoVentaDineroDTO activarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.activar(dto, token);
@@ -1636,7 +1636,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPedidoVentaDinero")
 	public PedidoVentaDineroDTO inactivarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.inactivar(dto, token);
@@ -1645,7 +1645,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPedidoVentaDinero")
 	public PedidoVentaDineroDTO actualizarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.actualizar(dto, token);
@@ -1654,7 +1654,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPedidoVentaDinero", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPedidoVentaDinero")
 	public PedidoVentaDineroDTO guardarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaDineroService.guardar(dto, token);		
@@ -1666,7 +1666,7 @@ public class FullControllerDTO {
 	
 	@Autowired private CuentaSvc cuentaService;
 	
-	@RequestMapping(value="/consultaXIdCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdCuenta")
 	public CuentaDTO consultaXIdCuenta(@RequestBody String llave) throws FlexException {
 		try {
 			return cuentaService.consultaXId(llave);
@@ -1675,7 +1675,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosCuenta")
 	public int contarResultadosCuenta(@RequestBody CuentaFilterDTO dto) throws FlexException  {
 		try {
 			return cuentaService.contarResultados(dto);
@@ -1684,7 +1684,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaCuenta")
 	public CuentaDTO consultaUnicaCuenta(@RequestBody CuentaFilterDTO dto) throws FlexException  {
 		try {
 			return cuentaService.consultaUnica(dto);
@@ -1693,7 +1693,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaCuenta")
 	public List<CuentaDTO> listarConsultaCuenta(@RequestBody CuentaFilterDTO dto) throws FlexException  {
 		try {
 			return cuentaService.listarConsulta(dto);
@@ -1702,7 +1702,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/activarCuenta")
 	public CuentaDTO activarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cuentaService.activar(dto, token);
@@ -1711,7 +1711,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarCuenta")
 	public CuentaDTO inactivarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cuentaService.inactivar(dto, token);
@@ -1720,7 +1720,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarCuenta")
 	public CuentaDTO actualizarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cuentaService.actualizar(dto, token);
@@ -1729,7 +1729,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarCuenta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarCuenta")
 	public CuentaDTO guardarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cuentaService.guardar(dto, token);		
@@ -1741,7 +1741,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TarifarioSvc tarifarioService;
 	
-	@RequestMapping(value="/consultaXIdTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTarifario")
 	public TarifarioDTO consultaXIdTarifario(@RequestBody String llave) throws FlexException {
 		try {
 			return tarifarioService.consultaXId(llave);
@@ -1750,7 +1750,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTarifario")
 	public int contarResultadosTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
 			return tarifarioService.contarResultados(dto);
@@ -1759,7 +1759,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTarifario")
 	public TarifarioDTO consultaUnicaTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
 			return tarifarioService.consultaUnica(dto);
@@ -1768,7 +1768,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTarifario")
 	public List<TarifarioDTO> listarConsultaTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
 			return tarifarioService.listarConsulta(dto);
@@ -1777,7 +1777,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/activarTarifario")
 	public TarifarioDTO activarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifarioService.activar(dto, token);
@@ -1786,7 +1786,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTarifario")
 	public TarifarioDTO inactivarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifarioService.inactivar(dto, token);
@@ -1795,7 +1795,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTarifario")
 	public TarifarioDTO actualizarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifarioService.actualizar(dto, token);
@@ -1804,7 +1804,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTarifario", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTarifario")
 	public TarifarioDTO guardarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return tarifarioService.guardar(dto, token);		
@@ -1815,7 +1815,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ActividadSvc actividadService;
 	
-	@RequestMapping(value="/consultaXIdActividad", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdActividad")
 	public ActividadDTO consultaXIdActividad(@RequestBody String llave) throws FlexException {
 		try {
 			return actividadService.consultaXId(llave);
@@ -1824,7 +1824,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosActividad", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosActividad")
 	public int contarResultadosActividad(@RequestBody ActividadFilterDTO dto) throws FlexException  {
 		try {
 			return actividadService.contarResultados(dto);
@@ -1833,7 +1833,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaActividad", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaActividad")
 	public ActividadDTO consultaUnicaActividad(@RequestBody ActividadFilterDTO dto) throws FlexException  {
 		try {
 			return actividadService.consultaUnica(dto);
@@ -1842,7 +1842,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaActividad", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaActividad")
 	public List<ActividadDTO> listarConsultaActividad(@RequestBody ActividadFilterDTO dto) throws FlexException  {
 		try {
 			return actividadService.listarConsulta(dto);
@@ -1851,7 +1851,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarActividad", method=RequestMethod.POST)
+	@PostMapping(value="/activarActividad")
 	public ActividadDTO activarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return actividadService.activar(dto, token);
@@ -1860,7 +1860,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarActividad", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarActividad")
 	public ActividadDTO inactivarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return actividadService.inactivar(dto, token);
@@ -1869,7 +1869,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarActividad", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarActividad")
 	public ActividadDTO actualizarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return actividadService.actualizar(dto, token);
@@ -1878,7 +1878,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarActividad", method=RequestMethod.POST)
+	@PostMapping(value="/guardarActividad")
 	public ActividadDTO guardarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return actividadService.guardar(dto, token);		
@@ -1890,7 +1890,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PedidoVentaTiempoSvc pedidoVentaTiempoService;
 	
-	@RequestMapping(value="/consultaXIdPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO consultaXIdPedidoVentaTiempo(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaTiempoService.consultaXId(llave);
@@ -1899,7 +1899,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPedidoVentaTiempo")
 	public int contarResultadosPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.contarResultados(dto);
@@ -1908,7 +1908,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO consultaUnicaPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.consultaUnica(dto);
@@ -1917,7 +1917,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPedidoVentaTiempo")
 	public List<PedidoVentaTiempoDTO> listarConsultaPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.listarConsulta(dto);
@@ -1926,7 +1926,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/activarPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO activarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.activar(dto, token);
@@ -1935,7 +1935,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO inactivarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.inactivar(dto, token);
@@ -1944,7 +1944,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO actualizarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.actualizar(dto, token);
@@ -1953,7 +1953,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPedidoVentaTiempo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPedidoVentaTiempo")
 	public PedidoVentaTiempoDTO guardarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return pedidoVentaTiempoService.guardar(dto, token);		
@@ -1965,7 +1965,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PropiedadSvc propiedadService;
 	
-	@RequestMapping(value="/consultaXIdPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPropiedad")
 	public PropiedadDTO consultaXIdPropiedad(@RequestBody String llave) throws FlexException {
 		try {
 			return propiedadService.consultaXId(llave);
@@ -1974,7 +1974,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPropiedad")
 	public int contarResultadosPropiedad(@RequestBody PropiedadFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadService.contarResultados(dto);
@@ -1983,7 +1983,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPropiedad")
 	public PropiedadDTO consultaUnicaPropiedad(@RequestBody PropiedadFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadService.consultaUnica(dto);
@@ -1992,7 +1992,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPropiedad")
 	public List<PropiedadDTO> listarConsultaPropiedad(@RequestBody PropiedadFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadService.listarConsulta(dto);
@@ -2001,7 +2001,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/activarPropiedad")
 	public PropiedadDTO activarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadService.activar(dto, token);
@@ -2010,7 +2010,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPropiedad")
 	public PropiedadDTO inactivarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadService.inactivar(dto, token);
@@ -2019,7 +2019,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPropiedad")
 	public PropiedadDTO actualizarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadService.actualizar(dto, token);
@@ -2028,7 +2028,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPropiedad", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPropiedad")
 	public PropiedadDTO guardarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadService.guardar(dto, token);		
@@ -2040,7 +2040,7 @@ public class FullControllerDTO {
 	
 	@Autowired private RelacionInternaSvc relacionInternaService;
 	
-	@RequestMapping(value="/consultaXIdRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdRelacionInterna")
 	public RelacionInternaDTO consultaXIdRelacionInterna(@RequestBody String llave) throws FlexException {
 		try {
 			return relacionInternaService.consultaXId(llave);
@@ -2049,7 +2049,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosRelacionInterna")
 	public int contarResultadosRelacionInterna(@RequestBody RelacionInternaFilterDTO dto) throws FlexException  {
 		try {
 			return relacionInternaService.contarResultados(dto);
@@ -2058,7 +2058,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaRelacionInterna")
 	public RelacionInternaDTO consultaUnicaRelacionInterna(@RequestBody RelacionInternaFilterDTO dto) throws FlexException  {
 		try {
 			return relacionInternaService.consultaUnica(dto);
@@ -2067,7 +2067,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaRelacionInterna")
 	public List<RelacionInternaDTO> listarConsultaRelacionInterna(@RequestBody RelacionInternaFilterDTO dto) throws FlexException  {
 		try {
 			return relacionInternaService.listarConsulta(dto);
@@ -2076,7 +2076,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/activarRelacionInterna")
 	public RelacionInternaDTO activarRelacionInterna(@RequestBody RelacionInternaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return relacionInternaService.activar(dto, token);
@@ -2085,7 +2085,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarRelacionInterna")
 	public RelacionInternaDTO inactivarRelacionInterna(@RequestBody RelacionInternaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return relacionInternaService.inactivar(dto, token);
@@ -2094,7 +2094,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarRelacionInterna")
 	public RelacionInternaDTO actualizarRelacionInterna(@RequestBody RelacionInternaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return relacionInternaService.actualizar(dto, token);
@@ -2103,7 +2103,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/guardarRelacionInterna")
 	public RelacionInternaDTO guardarRelacionInterna(@RequestBody RelacionInternaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return relacionInternaService.guardar(dto, token);		
@@ -2113,7 +2113,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarRelacionRelacionInterna", method=RequestMethod.POST)
+	@PostMapping(value="/listarRelacionRelacionInterna")
 	public List<RelacionInternaDTO> listarRelacionRelacionInterna(@RequestBody RelacionInternaFilterDTO dto)throws FlexException {
 		try {
 			return relacionInternaService.listarRelacion(dto);
@@ -2124,7 +2124,7 @@ public class FullControllerDTO {
 	
 	@Autowired private EncuestaRespuestaSvc encuestaRespuestaService;
 	
-	@RequestMapping(value="/consultaXIdEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdEncuestaRespuesta")
 	public EncuestaRespuestaDTO consultaXIdEncuestaRespuesta(@RequestBody String llave) throws FlexException {
 		try {
 			return encuestaRespuestaService.consultaXId(llave);
@@ -2133,7 +2133,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosEncuestaRespuesta")
 	public int contarResultadosEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaRespuestaService.contarResultados(dto);
@@ -2142,7 +2142,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaEncuestaRespuesta")
 	public EncuestaRespuestaDTO consultaUnicaEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaRespuestaService.consultaUnica(dto);
@@ -2151,7 +2151,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaEncuestaRespuesta")
 	public List<EncuestaRespuestaDTO> listarConsultaEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaRespuestaService.listarConsulta(dto);
@@ -2160,7 +2160,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/activarEncuestaRespuesta")
 	public EncuestaRespuestaDTO activarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaRespuestaService.activar(dto, token);
@@ -2169,7 +2169,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarEncuestaRespuesta")
 	public EncuestaRespuestaDTO inactivarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaRespuestaService.inactivar(dto, token);
@@ -2178,7 +2178,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarEncuestaRespuesta")
 	public EncuestaRespuestaDTO actualizarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaRespuestaService.actualizar(dto, token);
@@ -2187,7 +2187,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarEncuestaRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarEncuestaRespuesta")
 	public EncuestaRespuestaDTO guardarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaRespuestaService.guardar(dto, token);		
@@ -2199,7 +2199,7 @@ public class FullControllerDTO {
 	
 	@Autowired private CambioSvc cambioService;
 	
-	@RequestMapping(value="/consultaXIdCambio", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdCambio")
 	public CambioDTO consultaXIdCambio(@RequestBody String llave) throws FlexException {
 		try {
 			return cambioService.consultaXId(llave);
@@ -2208,7 +2208,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosCambio", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosCambio")
 	public int contarResultadosCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
 		try {
 			return cambioService.contarResultados(dto);
@@ -2217,7 +2217,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaCambio", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaCambio")
 	public CambioDTO consultaUnicaCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
 		try {
 			return cambioService.consultaUnica(dto);
@@ -2226,7 +2226,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaCambio", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaCambio")
 	public List<CambioDTO> listarConsultaCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
 		try {
 			return cambioService.listarConsulta(dto);
@@ -2235,7 +2235,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarCambio", method=RequestMethod.POST)
+	@PostMapping(value="/activarCambio")
 	public CambioDTO activarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cambioService.activar(dto, token);
@@ -2244,7 +2244,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarCambio", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarCambio")
 	public CambioDTO inactivarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cambioService.inactivar(dto, token);
@@ -2253,7 +2253,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarCambio", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarCambio")
 	public CambioDTO actualizarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cambioService.actualizar(dto, token);
@@ -2262,7 +2262,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarCambio", method=RequestMethod.POST)
+	@PostMapping(value="/guardarCambio")
 	public CambioDTO guardarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cambioService.guardar(dto, token);		
@@ -2274,7 +2274,7 @@ public class FullControllerDTO {
 	
 	@Autowired private EncuestaOpcionRespuestaSvc encuestaOpcionRespuestaService;
 	
-	@RequestMapping(value="/consultaXIdEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO consultaXIdEncuestaOpcionRespuesta(@RequestBody String llave) throws FlexException {
 		try {
 			return encuestaOpcionRespuestaService.consultaXId(llave);
@@ -2283,7 +2283,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosEncuestaOpcionRespuesta")
 	public int contarResultadosEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.contarResultados(dto);
@@ -2292,7 +2292,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO consultaUnicaEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.consultaUnica(dto);
@@ -2301,7 +2301,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaEncuestaOpcionRespuesta")
 	public List<EncuestaOpcionRespuestaDTO> listarConsultaEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.listarConsulta(dto);
@@ -2310,7 +2310,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/activarEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO activarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.activar(dto, token);
@@ -2319,7 +2319,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO inactivarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.inactivar(dto, token);
@@ -2328,7 +2328,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO actualizarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.actualizar(dto, token);
@@ -2337,7 +2337,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarEncuestaOpcionRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarEncuestaOpcionRespuesta")
 	public EncuestaOpcionRespuestaDTO guardarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaOpcionRespuestaService.guardar(dto, token);		
@@ -2349,7 +2349,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PropiedadValorDefinidoSvc propiedadValorDefinidoService;
 	
-	@RequestMapping(value="/consultaXIdPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO consultaXIdPropiedadValorDefinido(@RequestBody String llave) throws FlexException {
 		try {
 			return propiedadValorDefinidoService.consultaXId(llave);
@@ -2358,7 +2358,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPropiedadValorDefinido")
 	public int contarResultadosPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.contarResultados(dto);
@@ -2367,7 +2367,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO consultaUnicaPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.consultaUnica(dto);
@@ -2376,7 +2376,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPropiedadValorDefinido")
 	public List<PropiedadValorDefinidoDTO> listarConsultaPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.listarConsulta(dto);
@@ -2385,7 +2385,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/activarPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO activarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.activar(dto, token);
@@ -2394,7 +2394,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO inactivarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.inactivar(dto, token);
@@ -2403,7 +2403,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO actualizarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.actualizar(dto, token);
@@ -2412,7 +2412,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO guardarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return propiedadValorDefinidoService.guardar(dto, token);		
@@ -2422,7 +2422,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarPorOrigenPropiedadValorDefinido", method=RequestMethod.POST)
+	@PostMapping(value="/listarPorOrigenPropiedadValorDefinido")
 	public List<PropiedadValorDefinidoDTO> listarPorOrigenPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto)throws FlexException {
 		try {
 			return propiedadValorDefinidoService.listarPorOrigen(dto);
@@ -2433,7 +2433,7 @@ public class FullControllerDTO {
 	
 	@Autowired private EncuestaGrupoSvc encuestaGrupoService;
 	
-	@RequestMapping(value="/consultaXIdEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdEncuestaGrupo")
 	public EncuestaGrupoDTO consultaXIdEncuestaGrupo(@RequestBody String llave) throws FlexException {
 		try {
 			return encuestaGrupoService.consultaXId(llave);
@@ -2442,7 +2442,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosEncuestaGrupo")
 	public int contarResultadosEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaGrupoService.contarResultados(dto);
@@ -2451,7 +2451,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaEncuestaGrupo")
 	public EncuestaGrupoDTO consultaUnicaEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaGrupoService.consultaUnica(dto);
@@ -2460,7 +2460,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaEncuestaGrupo")
 	public List<EncuestaGrupoDTO> listarConsultaEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaGrupoService.listarConsulta(dto);
@@ -2469,7 +2469,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/activarEncuestaGrupo")
 	public EncuestaGrupoDTO activarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaGrupoService.activar(dto, token);
@@ -2478,7 +2478,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarEncuestaGrupo")
 	public EncuestaGrupoDTO inactivarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaGrupoService.inactivar(dto, token);
@@ -2487,7 +2487,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarEncuestaGrupo")
 	public EncuestaGrupoDTO actualizarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaGrupoService.actualizar(dto, token);
@@ -2496,7 +2496,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarEncuestaGrupo")
 	public EncuestaGrupoDTO guardarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaGrupoService.guardar(dto, token);		
@@ -2506,7 +2506,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/responderEncuestaEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/responderEncuestaEncuestaGrupo")
 	public EncuestaGrupoDTO responderEncuestaEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return encuestaGrupoService.responderEncuesta(dto, token);
@@ -2515,7 +2515,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/copiarEncuestaGrupo", method=RequestMethod.POST)
+	@PostMapping(value="/copiarEncuestaGrupo")
 	public EncuestaGrupoDTO copiarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return encuestaGrupoService.copiar(dto, token);
@@ -2526,7 +2526,7 @@ public class FullControllerDTO {
 	
 	@Autowired private EncuestaPreguntaSvc encuestaPreguntaService;
 	
-	@RequestMapping(value="/consultaXIdEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdEncuestaPregunta")
 	public EncuestaPreguntaDTO consultaXIdEncuestaPregunta(@RequestBody String llave) throws FlexException {
 		try {
 			return encuestaPreguntaService.consultaXId(llave);
@@ -2535,7 +2535,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosEncuestaPregunta")
 	public int contarResultadosEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaPreguntaService.contarResultados(dto);
@@ -2544,7 +2544,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaEncuestaPregunta")
 	public EncuestaPreguntaDTO consultaUnicaEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaPreguntaService.consultaUnica(dto);
@@ -2553,7 +2553,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaEncuestaPregunta")
 	public List<EncuestaPreguntaDTO> listarConsultaEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaPreguntaService.listarConsulta(dto);
@@ -2562,7 +2562,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/activarEncuestaPregunta")
 	public EncuestaPreguntaDTO activarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaPreguntaService.activar(dto, token);
@@ -2571,7 +2571,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarEncuestaPregunta")
 	public EncuestaPreguntaDTO inactivarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaPreguntaService.inactivar(dto, token);
@@ -2580,7 +2580,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarEncuestaPregunta")
 	public EncuestaPreguntaDTO actualizarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaPreguntaService.actualizar(dto, token);
@@ -2589,7 +2589,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarEncuestaPregunta")
 	public EncuestaPreguntaDTO guardarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaPreguntaService.guardar(dto, token);		
@@ -2599,7 +2599,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarPermitidasEncuestaPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/listarPermitidasEncuestaPregunta")
 	public List<EncuestaPreguntaDTO> listarPermitidasEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto)throws FlexException {
 		try {
 			return encuestaPreguntaService.listarPermitidas(dto);
@@ -2610,7 +2610,7 @@ public class FullControllerDTO {
 	
 	@Autowired private EncuestaSvc encuestaService;
 	
-	@RequestMapping(value="/consultaXIdEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdEncuesta")
 	public EncuestaDTO consultaXIdEncuesta(@RequestBody String llave) throws FlexException {
 		try {
 			return encuestaService.consultaXId(llave);
@@ -2619,7 +2619,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosEncuesta")
 	public int contarResultadosEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaService.contarResultados(dto);
@@ -2628,7 +2628,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaEncuesta")
 	public EncuestaDTO consultaUnicaEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaService.consultaUnica(dto);
@@ -2637,7 +2637,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaEncuesta")
 	public List<EncuestaDTO> listarConsultaEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
 		try {
 			return encuestaService.listarConsulta(dto);
@@ -2646,7 +2646,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/activarEncuesta")
 	public EncuestaDTO activarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaService.activar(dto, token);
@@ -2655,7 +2655,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarEncuesta")
 	public EncuestaDTO inactivarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaService.inactivar(dto, token);
@@ -2664,7 +2664,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarEncuesta")
 	public EncuestaDTO actualizarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaService.actualizar(dto, token);
@@ -2673,7 +2673,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarEncuesta")
 	public EncuestaDTO guardarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return encuestaService.guardar(dto, token);		
@@ -2683,7 +2683,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/copiarEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/copiarEncuesta")
 	public EncuestaDTO copiarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return encuestaService.copiar(dto, token);
@@ -2692,7 +2692,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/listarDisponiblesEncuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarDisponiblesEncuesta")
 	public List<EncuestaDTO> listarDisponiblesEncuesta(@RequestBody EncuestaFilterDTO dto)throws FlexException {
 		try {
 			return encuestaService.listarDisponibles(dto);
@@ -2703,7 +2703,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioRolSvc usuarioRolService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioRol")
 	public UsuarioRolDTO consultaXIdUsuarioRol(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioRolService.consultaXId(llave);
@@ -2712,7 +2712,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioRol")
 	public int contarResultadosUsuarioRol(@RequestBody UsuarioRolFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolService.contarResultados(dto);
@@ -2721,7 +2721,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioRol")
 	public UsuarioRolDTO consultaUnicaUsuarioRol(@RequestBody UsuarioRolFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolService.consultaUnica(dto);
@@ -2730,7 +2730,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioRol")
 	public List<UsuarioRolDTO> listarConsultaUsuarioRol(@RequestBody UsuarioRolFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolService.listarConsulta(dto);
@@ -2739,7 +2739,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioRol")
 	public UsuarioRolDTO activarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolService.activar(dto, token);
@@ -2748,7 +2748,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioRol")
 	public UsuarioRolDTO inactivarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolService.inactivar(dto, token);
@@ -2757,7 +2757,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioRol")
 	public UsuarioRolDTO actualizarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolService.actualizar(dto, token);
@@ -2766,7 +2766,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioRol", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioRol")
 	public UsuarioRolDTO guardarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolService.guardar(dto, token);		
@@ -2778,7 +2778,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PuestoSvc puestoService;
 	
-	@RequestMapping(value="/consultaXIdPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPuesto")
 	public PuestoDTO consultaXIdPuesto(@RequestBody String llave) throws FlexException {
 		try {
 			return puestoService.consultaXId(llave);
@@ -2787,7 +2787,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPuesto")
 	public int contarResultadosPuesto(@RequestBody PuestoFilterDTO dto) throws FlexException  {
 		try {
 			return puestoService.contarResultados(dto);
@@ -2796,7 +2796,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPuesto")
 	public PuestoDTO consultaUnicaPuesto(@RequestBody PuestoFilterDTO dto) throws FlexException  {
 		try {
 			return puestoService.consultaUnica(dto);
@@ -2805,7 +2805,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPuesto")
 	public List<PuestoDTO> listarConsultaPuesto(@RequestBody PuestoFilterDTO dto) throws FlexException  {
 		try {
 			return puestoService.listarConsulta(dto);
@@ -2814,7 +2814,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/activarPuesto")
 	public PuestoDTO activarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return puestoService.activar(dto, token);
@@ -2823,7 +2823,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPuesto")
 	public PuestoDTO inactivarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return puestoService.inactivar(dto, token);
@@ -2832,7 +2832,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPuesto")
 	public PuestoDTO actualizarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return puestoService.actualizar(dto, token);
@@ -2841,7 +2841,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPuesto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPuesto")
 	public PuestoDTO guardarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return puestoService.guardar(dto, token);		
@@ -2853,7 +2853,7 @@ public class FullControllerDTO {
 	
 	@Autowired private RolAccesoSvc rolAccesoService;
 	
-	@RequestMapping(value="/consultaXIdRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdRolAcceso")
 	public RolAccesoDTO consultaXIdRolAcceso(@RequestBody String llave) throws FlexException {
 		try {
 			return rolAccesoService.consultaXId(llave);
@@ -2862,7 +2862,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosRolAcceso")
 	public int contarResultadosRolAcceso(@RequestBody RolAccesoFilterDTO dto) throws FlexException  {
 		try {
 			return rolAccesoService.contarResultados(dto);
@@ -2871,7 +2871,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaRolAcceso")
 	public RolAccesoDTO consultaUnicaRolAcceso(@RequestBody RolAccesoFilterDTO dto) throws FlexException  {
 		try {
 			return rolAccesoService.consultaUnica(dto);
@@ -2880,7 +2880,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaRolAcceso")
 	public List<RolAccesoDTO> listarConsultaRolAcceso(@RequestBody RolAccesoFilterDTO dto) throws FlexException  {
 		try {
 			return rolAccesoService.listarConsulta(dto);
@@ -2889,7 +2889,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/activarRolAcceso")
 	public RolAccesoDTO activarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return rolAccesoService.activar(dto, token);
@@ -2898,7 +2898,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarRolAcceso")
 	public RolAccesoDTO inactivarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return rolAccesoService.inactivar(dto, token);
@@ -2907,7 +2907,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarRolAcceso")
 	public RolAccesoDTO actualizarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return rolAccesoService.actualizar(dto, token);
@@ -2916,7 +2916,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/guardarRolAcceso")
 	public RolAccesoDTO guardarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return rolAccesoService.guardar(dto, token);		
@@ -2926,7 +2926,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/consultaUsuarioDocumentoRolAcceso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUsuarioDocumentoRolAcceso")
 	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestBody RolAccesoFilterDTO dto)throws FlexException {
 		try {
 			return rolAccesoService.consultaUsuarioDocumento(dto);
@@ -2937,7 +2937,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioSvc usuarioService;
 	
-	@RequestMapping(value="/consultaXIdUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuario")
 	public UsuarioDTO consultaXIdUsuario(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioService.consultaXId(llave);
@@ -2946,7 +2946,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuario")
 	public int contarResultadosUsuario(@RequestBody UsuarioFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioService.contarResultados(dto);
@@ -2955,7 +2955,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuario")
 	public UsuarioDTO consultaUnicaUsuario(@RequestBody UsuarioFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioService.consultaUnica(dto);
@@ -2964,7 +2964,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuario")
 	public List<UsuarioDTO> listarConsultaUsuario(@RequestBody UsuarioFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioService.listarConsulta(dto);
@@ -2973,7 +2973,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuario")
 	public UsuarioDTO activarUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioService.activar(dto, token);
@@ -2982,7 +2982,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuario")
 	public UsuarioDTO inactivarUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioService.inactivar(dto, token);
@@ -2991,7 +2991,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuario")
 	public UsuarioDTO actualizarUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioService.actualizar(dto, token);
@@ -3000,7 +3000,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuario")
 	public UsuarioDTO guardarUsuario(@RequestBody UsuarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioService.guardar(dto, token);		
@@ -3010,7 +3010,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarRolUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/listarRolUsuario")
 	public List<UsuarioDTO> listarRolUsuario(@RequestBody UsuarioFilterDTO dto)throws FlexException {
 		try {
 			return usuarioService.listarRol(dto);
@@ -3021,7 +3021,7 @@ public class FullControllerDTO {
 	
 	@Autowired private WebServiceSvc webServiceService;
 	
-	@RequestMapping(value="/consultaXIdWebService", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdWebService")
 	public WebServiceDTO consultaXIdWebService(@RequestBody String llave) throws FlexException {
 		try {
 			return webServiceService.consultaXId(llave);
@@ -3030,7 +3030,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosWebService", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosWebService")
 	public int contarResultadosWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceService.contarResultados(dto);
@@ -3039,7 +3039,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaWebService", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaWebService")
 	public WebServiceDTO consultaUnicaWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceService.consultaUnica(dto);
@@ -3048,7 +3048,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaWebService", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaWebService")
 	public List<WebServiceDTO> listarConsultaWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceService.listarConsulta(dto);
@@ -3057,7 +3057,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarWebService", method=RequestMethod.POST)
+	@PostMapping(value="/activarWebService")
 	public WebServiceDTO activarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceService.activar(dto, token);
@@ -3066,7 +3066,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarWebService", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarWebService")
 	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceService.inactivar(dto, token);
@@ -3075,7 +3075,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarWebService", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarWebService")
 	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceService.actualizar(dto, token);
@@ -3084,7 +3084,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarWebService", method=RequestMethod.POST)
+	@PostMapping(value="/guardarWebService")
 	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceService.guardar(dto, token);		
@@ -3096,7 +3096,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PostRespuestaSvc postRespuestaService;
 	
-	@RequestMapping(value="/consultaXIdPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPostRespuesta")
 	public PostRespuestaDTO consultaXIdPostRespuesta(@RequestBody String llave) throws FlexException {
 		try {
 			return postRespuestaService.consultaXId(llave);
@@ -3105,7 +3105,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPostRespuesta")
 	public int contarResultadosPostRespuesta(@RequestBody PostRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return postRespuestaService.contarResultados(dto);
@@ -3114,7 +3114,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPostRespuesta")
 	public PostRespuestaDTO consultaUnicaPostRespuesta(@RequestBody PostRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return postRespuestaService.consultaUnica(dto);
@@ -3123,7 +3123,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPostRespuesta")
 	public List<PostRespuestaDTO> listarConsultaPostRespuesta(@RequestBody PostRespuestaFilterDTO dto) throws FlexException  {
 		try {
 			return postRespuestaService.listarConsulta(dto);
@@ -3132,7 +3132,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/activarPostRespuesta")
 	public PostRespuestaDTO activarPostRespuesta(@RequestBody PostRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postRespuestaService.activar(dto, token);
@@ -3141,7 +3141,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPostRespuesta")
 	public PostRespuestaDTO inactivarPostRespuesta(@RequestBody PostRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postRespuestaService.inactivar(dto, token);
@@ -3150,7 +3150,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPostRespuesta")
 	public PostRespuestaDTO actualizarPostRespuesta(@RequestBody PostRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postRespuestaService.actualizar(dto, token);
@@ -3159,7 +3159,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPostRespuesta")
 	public PostRespuestaDTO guardarPostRespuesta(@RequestBody PostRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postRespuestaService.guardar(dto, token);		
@@ -3169,7 +3169,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarEnOrdenPostRespuesta", method=RequestMethod.POST)
+	@PostMapping(value="/listarEnOrdenPostRespuesta")
 	public List<PostRespuestaDTO> listarEnOrdenPostRespuesta(@RequestBody PostRespuestaFilterDTO dto)throws FlexException {
 		try {
 			return postRespuestaService.listarEnOrden(dto);
@@ -3180,7 +3180,7 @@ public class FullControllerDTO {
 	
 	@Autowired private GPSLocalizacionSvc gPSLocalizacionService;
 	
-	@RequestMapping(value="/consultaXIdGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdGPSLocalizacion")
 	public GPSLocalizacionDTO consultaXIdGPSLocalizacion(@RequestBody String llave) throws FlexException {
 		try {
 			return gPSLocalizacionService.consultaXId(llave);
@@ -3189,7 +3189,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosGPSLocalizacion")
 	public int contarResultadosGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
 		try {
 			return gPSLocalizacionService.contarResultados(dto);
@@ -3198,7 +3198,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaGPSLocalizacion")
 	public GPSLocalizacionDTO consultaUnicaGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
 		try {
 			return gPSLocalizacionService.consultaUnica(dto);
@@ -3207,7 +3207,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaGPSLocalizacion")
 	public List<GPSLocalizacionDTO> listarConsultaGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
 		try {
 			return gPSLocalizacionService.listarConsulta(dto);
@@ -3216,7 +3216,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarGPSLocalizacion")
 	public GPSLocalizacionDTO activarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSLocalizacionService.activar(dto, token);
@@ -3225,7 +3225,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarGPSLocalizacion")
 	public GPSLocalizacionDTO inactivarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSLocalizacionService.inactivar(dto, token);
@@ -3234,7 +3234,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarGPSLocalizacion")
 	public GPSLocalizacionDTO actualizarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSLocalizacionService.actualizar(dto, token);
@@ -3243,7 +3243,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarGPSLocalizacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarGPSLocalizacion")
 	public GPSLocalizacionDTO guardarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSLocalizacionService.guardar(dto, token);		
@@ -3255,7 +3255,7 @@ public class FullControllerDTO {
 	
 	@Autowired private MensajeSvc mensajeService;
 	
-	@RequestMapping(value="/consultaXIdMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdMensaje")
 	public MensajeDTO consultaXIdMensaje(@RequestBody String llave) throws FlexException {
 		try {
 			return mensajeService.consultaXId(llave);
@@ -3264,7 +3264,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosMensaje")
 	public int contarResultadosMensaje(@RequestBody MensajeFilterDTO dto) throws FlexException  {
 		try {
 			return mensajeService.contarResultados(dto);
@@ -3273,7 +3273,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaMensaje")
 	public MensajeDTO consultaUnicaMensaje(@RequestBody MensajeFilterDTO dto) throws FlexException  {
 		try {
 			return mensajeService.consultaUnica(dto);
@@ -3282,7 +3282,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaMensaje")
 	public List<MensajeDTO> listarConsultaMensaje(@RequestBody MensajeFilterDTO dto) throws FlexException  {
 		try {
 			return mensajeService.listarConsulta(dto);
@@ -3291,7 +3291,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/activarMensaje")
 	public MensajeDTO activarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajeService.activar(dto, token);
@@ -3300,7 +3300,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarMensaje")
 	public MensajeDTO inactivarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajeService.inactivar(dto, token);
@@ -3309,7 +3309,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarMensaje")
 	public MensajeDTO actualizarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajeService.actualizar(dto, token);
@@ -3318,7 +3318,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/guardarMensaje")
 	public MensajeDTO guardarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajeService.guardar(dto, token);		
@@ -3328,7 +3328,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/mensajesUsuarioMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/mensajesUsuarioMensaje")
 	public List<MensajeDTO> mensajesUsuarioMensaje(@RequestBody MensajeFilterDTO dto)throws FlexException {
 		try {
 			return mensajeService.mensajesUsuario(dto);
@@ -3339,7 +3339,7 @@ public class FullControllerDTO {
 	
 	@Autowired private MailUserSendMessage userSendMessage;
 
-	@RequestMapping(value="/enviarMensajeMensaje", method=RequestMethod.POST)
+	@PostMapping(value="/enviarMensajeMensaje")
 	public MensajeDTO enviarMensajeMensaje(@RequestBody MensajeFilterDTO dto)throws FlexException {
 		try {
 			return userSendMessage.call(dto);
@@ -3350,7 +3350,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PostCalificacionSvc postCalificacionService;
 	
-	@RequestMapping(value="/consultaXIdPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPostCalificacion")
 	public PostCalificacionDTO consultaXIdPostCalificacion(@RequestBody String llave) throws FlexException {
 		try {
 			return postCalificacionService.consultaXId(llave);
@@ -3359,7 +3359,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPostCalificacion")
 	public int contarResultadosPostCalificacion(@RequestBody PostCalificacionFilterDTO dto) throws FlexException  {
 		try {
 			return postCalificacionService.contarResultados(dto);
@@ -3368,7 +3368,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPostCalificacion")
 	public PostCalificacionDTO consultaUnicaPostCalificacion(@RequestBody PostCalificacionFilterDTO dto) throws FlexException  {
 		try {
 			return postCalificacionService.consultaUnica(dto);
@@ -3377,7 +3377,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPostCalificacion")
 	public List<PostCalificacionDTO> listarConsultaPostCalificacion(@RequestBody PostCalificacionFilterDTO dto) throws FlexException  {
 		try {
 			return postCalificacionService.listarConsulta(dto);
@@ -3386,7 +3386,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarPostCalificacion")
 	public PostCalificacionDTO activarPostCalificacion(@RequestBody PostCalificacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postCalificacionService.activar(dto, token);
@@ -3395,7 +3395,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPostCalificacion")
 	public PostCalificacionDTO inactivarPostCalificacion(@RequestBody PostCalificacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postCalificacionService.inactivar(dto, token);
@@ -3404,7 +3404,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPostCalificacion")
 	public PostCalificacionDTO actualizarPostCalificacion(@RequestBody PostCalificacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postCalificacionService.actualizar(dto, token);
@@ -3413,7 +3413,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPostCalificacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPostCalificacion")
 	public PostCalificacionDTO guardarPostCalificacion(@RequestBody PostCalificacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postCalificacionService.guardar(dto, token);		
@@ -3425,7 +3425,7 @@ public class FullControllerDTO {
 	
 	@Autowired private WebServiceEjecucionSvc webServiceEjecucionService;
 	
-	@RequestMapping(value="/consultaXIdWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdWebServiceEjecucion")
 	public WebServiceEjecucionDTO consultaXIdWebServiceEjecucion(@RequestBody String llave) throws FlexException {
 		try {
 			return webServiceEjecucionService.consultaXId(llave);
@@ -3434,7 +3434,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosWebServiceEjecucion")
 	public int contarResultadosWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceEjecucionService.contarResultados(dto);
@@ -3443,7 +3443,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaWebServiceEjecucion")
 	public WebServiceEjecucionDTO consultaUnicaWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceEjecucionService.consultaUnica(dto);
@@ -3452,7 +3452,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaWebServiceEjecucion")
 	public List<WebServiceEjecucionDTO> listarConsultaWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return webServiceEjecucionService.listarConsulta(dto);
@@ -3461,7 +3461,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/activarWebServiceEjecucion")
 	public WebServiceEjecucionDTO activarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceEjecucionService.activar(dto, token);
@@ -3470,7 +3470,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarWebServiceEjecucion")
 	public WebServiceEjecucionDTO inactivarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceEjecucionService.inactivar(dto, token);
@@ -3479,7 +3479,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarWebServiceEjecucion")
 	public WebServiceEjecucionDTO actualizarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceEjecucionService.actualizar(dto, token);
@@ -3488,7 +3488,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarWebServiceEjecucion")
 	public WebServiceEjecucionDTO guardarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return webServiceEjecucionService.guardar(dto, token);		
@@ -3498,7 +3498,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/ejecutarAPIWebServiceEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/ejecutarAPIWebServiceEjecucion")
 	public WebServiceEjecucionDTO ejecutarAPIWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto)throws FlexException {
 		try {
 			return webServiceEjecucionService.ejecutarAPI(dto);
@@ -3509,7 +3509,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PostPreguntaSvc postPreguntaService;
 	
-	@RequestMapping(value="/consultaXIdPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPostPregunta")
 	public PostPreguntaDTO consultaXIdPostPregunta(@RequestBody String llave) throws FlexException {
 		try {
 			return postPreguntaService.consultaXId(llave);
@@ -3518,7 +3518,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPostPregunta")
 	public int contarResultadosPostPregunta(@RequestBody PostPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return postPreguntaService.contarResultados(dto);
@@ -3527,7 +3527,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPostPregunta")
 	public PostPreguntaDTO consultaUnicaPostPregunta(@RequestBody PostPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return postPreguntaService.consultaUnica(dto);
@@ -3536,7 +3536,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPostPregunta")
 	public List<PostPreguntaDTO> listarConsultaPostPregunta(@RequestBody PostPreguntaFilterDTO dto) throws FlexException  {
 		try {
 			return postPreguntaService.listarConsulta(dto);
@@ -3545,7 +3545,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/activarPostPregunta")
 	public PostPreguntaDTO activarPostPregunta(@RequestBody PostPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postPreguntaService.activar(dto, token);
@@ -3554,7 +3554,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPostPregunta")
 	public PostPreguntaDTO inactivarPostPregunta(@RequestBody PostPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postPreguntaService.inactivar(dto, token);
@@ -3563,7 +3563,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPostPregunta")
 	public PostPreguntaDTO actualizarPostPregunta(@RequestBody PostPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postPreguntaService.actualizar(dto, token);
@@ -3572,7 +3572,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPostPregunta")
 	public PostPreguntaDTO guardarPostPregunta(@RequestBody PostPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return postPreguntaService.guardar(dto, token);		
@@ -3582,7 +3582,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/listarEnOrdenPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/listarEnOrdenPostPregunta")
 	public List<PostPreguntaDTO> listarEnOrdenPostPregunta(@RequestBody PostPreguntaFilterDTO dto)throws FlexException {
 		try {
 			return postPreguntaService.listarEnOrden(dto);
@@ -3591,7 +3591,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/listarPreguntasSinRespuestaPostPregunta", method=RequestMethod.POST)
+	@PostMapping(value="/listarPreguntasSinRespuestaPostPregunta")
 	public List<PostPreguntaDTO> listarPreguntasSinRespuestaPostPregunta(@RequestBody PostPreguntaFilterDTO dto)throws FlexException {
 		try {
 			return postPreguntaService.listarPreguntasSinRespuesta(dto);
@@ -3602,7 +3602,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ServidorSvc servidorService;
 	
-	@RequestMapping(value="/consultaXIdServidor", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdServidor")
 	public ServidorDTO consultaXIdServidor(@RequestBody String llave) throws FlexException {
 		try {
 			return servidorService.consultaXId(llave);
@@ -3611,7 +3611,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosServidor", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosServidor")
 	public int contarResultadosServidor(@RequestBody ServidorFilterDTO dto) throws FlexException  {
 		try {
 			return servidorService.contarResultados(dto);
@@ -3620,7 +3620,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaServidor", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaServidor")
 	public ServidorDTO consultaUnicaServidor(@RequestBody ServidorFilterDTO dto) throws FlexException  {
 		try {
 			return servidorService.consultaUnica(dto);
@@ -3629,7 +3629,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaServidor", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaServidor")
 	public List<ServidorDTO> listarConsultaServidor(@RequestBody ServidorFilterDTO dto) throws FlexException  {
 		try {
 			return servidorService.listarConsulta(dto);
@@ -3638,7 +3638,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarServidor", method=RequestMethod.POST)
+	@PostMapping(value="/activarServidor")
 	public ServidorDTO activarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return servidorService.activar(dto, token);
@@ -3647,7 +3647,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarServidor", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarServidor")
 	public ServidorDTO inactivarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return servidorService.inactivar(dto, token);
@@ -3656,7 +3656,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarServidor", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarServidor")
 	public ServidorDTO actualizarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return servidorService.actualizar(dto, token);
@@ -3665,7 +3665,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarServidor", method=RequestMethod.POST)
+	@PostMapping(value="/guardarServidor")
 	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return servidorService.guardar(dto, token);		
@@ -3677,7 +3677,7 @@ public class FullControllerDTO {
 	
 	@Autowired private MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
 	
-	@RequestMapping(value="/consultaXIdMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO consultaXIdMensajePlantillaCorreo(@RequestBody String llave) throws FlexException {
 		try {
 			return mensajePlantillaCorreoService.consultaXId(llave);
@@ -3686,7 +3686,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosMensajePlantillaCorreo")
 	public int contarResultadosMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.contarResultados(dto);
@@ -3695,7 +3695,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO consultaUnicaMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.consultaUnica(dto);
@@ -3704,7 +3704,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaMensajePlantillaCorreo")
 	public List<MensajePlantillaCorreoDTO> listarConsultaMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.listarConsulta(dto);
@@ -3713,7 +3713,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/activarMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO activarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.activar(dto, token);
@@ -3722,7 +3722,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO inactivarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.inactivar(dto, token);
@@ -3731,7 +3731,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO actualizarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.actualizar(dto, token);
@@ -3740,7 +3740,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarMensajePlantillaCorreo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO guardarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.guardar(dto, token);		
@@ -3752,7 +3752,7 @@ public class FullControllerDTO {
 	
 	@Autowired private GPSDispositivoSvc gPSDispositivoService;
 	
-	@RequestMapping(value="/consultaXIdGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdGPSDispositivo")
 	public GPSDispositivoDTO consultaXIdGPSDispositivo(@RequestBody String llave) throws FlexException {
 		try {
 			return gPSDispositivoService.consultaXId(llave);
@@ -3761,7 +3761,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosGPSDispositivo")
 	public int contarResultadosGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
 		try {
 			return gPSDispositivoService.contarResultados(dto);
@@ -3770,7 +3770,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaGPSDispositivo")
 	public GPSDispositivoDTO consultaUnicaGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
 		try {
 			return gPSDispositivoService.consultaUnica(dto);
@@ -3779,7 +3779,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaGPSDispositivo")
 	public List<GPSDispositivoDTO> listarConsultaGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
 		try {
 			return gPSDispositivoService.listarConsulta(dto);
@@ -3788,7 +3788,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/activarGPSDispositivo")
 	public GPSDispositivoDTO activarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSDispositivoService.activar(dto, token);
@@ -3797,7 +3797,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarGPSDispositivo")
 	public GPSDispositivoDTO inactivarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSDispositivoService.inactivar(dto, token);
@@ -3806,7 +3806,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarGPSDispositivo")
 	public GPSDispositivoDTO actualizarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSDispositivoService.actualizar(dto, token);
@@ -3815,7 +3815,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarGPSDispositivo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarGPSDispositivo")
 	public GPSDispositivoDTO guardarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return gPSDispositivoService.guardar(dto, token);		
@@ -3827,7 +3827,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
 	
-	@RequestMapping(value="/consultaXIdTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO consultaXIdTrazabilidadProductoInventario(@RequestBody String llave) throws FlexException {
 		try {
 			return trazabilidadProductoInventarioService.consultaXId(llave);
@@ -3836,7 +3836,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTrazabilidadProductoInventario")
 	public int contarResultadosTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.contarResultados(dto);
@@ -3845,7 +3845,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO consultaUnicaTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.consultaUnica(dto);
@@ -3854,7 +3854,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTrazabilidadProductoInventario")
 	public List<TrazabilidadProductoInventarioDTO> listarConsultaTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.listarConsulta(dto);
@@ -3863,7 +3863,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/activarTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO activarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.activar(dto, token);
@@ -3872,7 +3872,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO inactivarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.inactivar(dto, token);
@@ -3881,7 +3881,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO actualizarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.actualizar(dto, token);
@@ -3890,7 +3890,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTrazabilidadProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO guardarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return trazabilidadProductoInventarioService.guardar(dto, token);		
@@ -3902,7 +3902,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
 	
-	@RequestMapping(value="/consultaXIdDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDetallePedidoVenta")
 	public DetallePedidoVentaDTO consultaXIdDetallePedidoVenta(@RequestBody String llave) throws FlexException {
 		try {
 			return detallePedidoVentaService.consultaXId(llave);
@@ -3911,7 +3911,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDetallePedidoVenta")
 	public int contarResultadosDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return detallePedidoVentaService.contarResultados(dto);
@@ -3920,7 +3920,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDetallePedidoVenta")
 	public DetallePedidoVentaDTO consultaUnicaDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return detallePedidoVentaService.consultaUnica(dto);
@@ -3929,7 +3929,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDetallePedidoVenta")
 	public List<DetallePedidoVentaDTO> listarConsultaDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
 		try {
 			return detallePedidoVentaService.listarConsulta(dto);
@@ -3938,7 +3938,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/activarDetallePedidoVenta")
 	public DetallePedidoVentaDTO activarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detallePedidoVentaService.activar(dto, token);
@@ -3947,7 +3947,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDetallePedidoVenta")
 	public DetallePedidoVentaDTO inactivarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detallePedidoVentaService.inactivar(dto, token);
@@ -3956,7 +3956,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDetallePedidoVenta")
 	public DetallePedidoVentaDTO actualizarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detallePedidoVentaService.actualizar(dto, token);
@@ -3965,7 +3965,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDetallePedidoVenta", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDetallePedidoVenta")
 	public DetallePedidoVentaDTO guardarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detallePedidoVentaService.guardar(dto, token);		
@@ -3977,7 +3977,7 @@ public class FullControllerDTO {
 	
 	@Autowired private CategoriaProductoSvc categoriaProductoService;
 	
-	@RequestMapping(value="/consultaXIdCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdCategoriaProducto")
 	public CategoriaProductoDTO consultaXIdCategoriaProducto(@RequestBody String llave) throws FlexException {
 		try {
 			return categoriaProductoService.consultaXId(llave);
@@ -3986,7 +3986,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosCategoriaProducto")
 	public int contarResultadosCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return categoriaProductoService.contarResultados(dto);
@@ -3995,7 +3995,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaCategoriaProducto")
 	public CategoriaProductoDTO consultaUnicaCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return categoriaProductoService.consultaUnica(dto);
@@ -4004,7 +4004,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaCategoriaProducto")
 	public List<CategoriaProductoDTO> listarConsultaCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return categoriaProductoService.listarConsulta(dto);
@@ -4013,7 +4013,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/activarCategoriaProducto")
 	public CategoriaProductoDTO activarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return categoriaProductoService.activar(dto, token);
@@ -4022,7 +4022,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarCategoriaProducto")
 	public CategoriaProductoDTO inactivarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return categoriaProductoService.inactivar(dto, token);
@@ -4031,7 +4031,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarCategoriaProducto")
 	public CategoriaProductoDTO actualizarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return categoriaProductoService.actualizar(dto, token);
@@ -4040,7 +4040,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarCategoriaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarCategoriaProducto")
 	public CategoriaProductoDTO guardarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return categoriaProductoService.guardar(dto, token);		
@@ -4052,7 +4052,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProductoInventarioSvc productoInventarioService;
 	
-	@RequestMapping(value="/consultaXIdProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProductoInventario")
 	public ProductoInventarioDTO consultaXIdProductoInventario(@RequestBody String llave) throws FlexException {
 		try {
 			return productoInventarioService.consultaXId(llave);
@@ -4061,7 +4061,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProductoInventario")
 	public int contarResultadosProductoInventario(@RequestBody ProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioService.contarResultados(dto);
@@ -4070,7 +4070,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProductoInventario")
 	public ProductoInventarioDTO consultaUnicaProductoInventario(@RequestBody ProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioService.consultaUnica(dto);
@@ -4079,7 +4079,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProductoInventario")
 	public List<ProductoInventarioDTO> listarConsultaProductoInventario(@RequestBody ProductoInventarioFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioService.listarConsulta(dto);
@@ -4088,7 +4088,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/activarProductoInventario")
 	public ProductoInventarioDTO activarProductoInventario(@RequestBody ProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioService.activar(dto, token);
@@ -4097,7 +4097,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProductoInventario")
 	public ProductoInventarioDTO inactivarProductoInventario(@RequestBody ProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioService.inactivar(dto, token);
@@ -4106,7 +4106,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProductoInventario")
 	public ProductoInventarioDTO actualizarProductoInventario(@RequestBody ProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioService.actualizar(dto, token);
@@ -4115,7 +4115,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProductoInventario", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProductoInventario")
 	public ProductoInventarioDTO guardarProductoInventario(@RequestBody ProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioService.guardar(dto, token);		
@@ -4127,7 +4127,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProductoCaracteristicaSvc productoCaracteristicaService;
 	
-	@RequestMapping(value="/consultaXIdProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProductoCaracteristica")
 	public ProductoCaracteristicaDTO consultaXIdProductoCaracteristica(@RequestBody String llave) throws FlexException {
 		try {
 			return productoCaracteristicaService.consultaXId(llave);
@@ -4136,7 +4136,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProductoCaracteristica")
 	public int contarResultadosProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return productoCaracteristicaService.contarResultados(dto);
@@ -4145,7 +4145,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProductoCaracteristica")
 	public ProductoCaracteristicaDTO consultaUnicaProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return productoCaracteristicaService.consultaUnica(dto);
@@ -4154,7 +4154,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProductoCaracteristica")
 	public List<ProductoCaracteristicaDTO> listarConsultaProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
 			return productoCaracteristicaService.listarConsulta(dto);
@@ -4163,7 +4163,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/activarProductoCaracteristica")
 	public ProductoCaracteristicaDTO activarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoCaracteristicaService.activar(dto, token);
@@ -4172,7 +4172,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProductoCaracteristica")
 	public ProductoCaracteristicaDTO inactivarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoCaracteristicaService.inactivar(dto, token);
@@ -4181,7 +4181,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProductoCaracteristica")
 	public ProductoCaracteristicaDTO actualizarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoCaracteristicaService.actualizar(dto, token);
@@ -4190,7 +4190,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProductoCaracteristica", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProductoCaracteristica")
 	public ProductoCaracteristicaDTO guardarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoCaracteristicaService.guardar(dto, token);		
@@ -4202,7 +4202,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioRolProductoSvc usuarioRolProductoService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioRolProducto")
 	public UsuarioRolProductoDTO consultaXIdUsuarioRolProducto(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioRolProductoService.consultaXId(llave);
@@ -4211,7 +4211,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioRolProducto")
 	public int contarResultadosUsuarioRolProducto(@RequestBody UsuarioRolProductoFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolProductoService.contarResultados(dto);
@@ -4220,7 +4220,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioRolProducto")
 	public UsuarioRolProductoDTO consultaUnicaUsuarioRolProducto(@RequestBody UsuarioRolProductoFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolProductoService.consultaUnica(dto);
@@ -4229,7 +4229,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioRolProducto")
 	public List<UsuarioRolProductoDTO> listarConsultaUsuarioRolProducto(@RequestBody UsuarioRolProductoFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioRolProductoService.listarConsulta(dto);
@@ -4238,7 +4238,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioRolProducto")
 	public UsuarioRolProductoDTO activarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.activar(dto, token);
@@ -4247,7 +4247,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioRolProducto")
 	public UsuarioRolProductoDTO inactivarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.inactivar(dto, token);
@@ -4256,7 +4256,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioRolProducto")
 	public UsuarioRolProductoDTO actualizarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.actualizar(dto, token);
@@ -4265,7 +4265,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioRolProducto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioRolProducto")
 	public UsuarioRolProductoDTO guardarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.guardar(dto, token);		
@@ -4277,7 +4277,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
 	
-	@RequestMapping(value="/consultaXIdDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO consultaXIdDetalleCaracteristicaProducto(@RequestBody String llave) throws FlexException {
 		try {
 			return detalleCaracteristicaProductoService.consultaXId(llave);
@@ -4286,7 +4286,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDetalleCaracteristicaProducto")
 	public int contarResultadosDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.contarResultados(dto);
@@ -4295,7 +4295,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO consultaUnicaDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.consultaUnica(dto);
@@ -4304,7 +4304,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDetalleCaracteristicaProducto")
 	public List<DetalleCaracteristicaProductoDTO> listarConsultaDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.listarConsulta(dto);
@@ -4313,7 +4313,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/activarDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO activarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.activar(dto, token);
@@ -4322,7 +4322,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO inactivarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.inactivar(dto, token);
@@ -4331,7 +4331,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO actualizarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.actualizar(dto, token);
@@ -4340,7 +4340,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDetalleCaracteristicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO guardarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return detalleCaracteristicaProductoService.guardar(dto, token);		
@@ -4352,7 +4352,7 @@ public class FullControllerDTO {
 	
 	@Autowired private BodegaSvc bodegaService;
 	
-	@RequestMapping(value="/consultaXIdBodega", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdBodega")
 	public BodegaDTO consultaXIdBodega(@RequestBody String llave) throws FlexException {
 		try {
 			return bodegaService.consultaXId(llave);
@@ -4361,7 +4361,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosBodega", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosBodega")
 	public int contarResultadosBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
 		try {
 			return bodegaService.contarResultados(dto);
@@ -4370,7 +4370,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaBodega", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaBodega")
 	public BodegaDTO consultaUnicaBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
 		try {
 			return bodegaService.consultaUnica(dto);
@@ -4379,7 +4379,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaBodega", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaBodega")
 	public List<BodegaDTO> listarConsultaBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
 		try {
 			return bodegaService.listarConsulta(dto);
@@ -4388,7 +4388,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarBodega", method=RequestMethod.POST)
+	@PostMapping(value="/activarBodega")
 	public BodegaDTO activarBodega(@RequestBody BodegaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return bodegaService.activar(dto, token);
@@ -4397,7 +4397,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarBodega", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarBodega")
 	public BodegaDTO inactivarBodega(@RequestBody BodegaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return bodegaService.inactivar(dto, token);
@@ -4406,7 +4406,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarBodega", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarBodega")
 	public BodegaDTO actualizarBodega(@RequestBody BodegaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return bodegaService.actualizar(dto, token);
@@ -4415,7 +4415,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarBodega", method=RequestMethod.POST)
+	@PostMapping(value="/guardarBodega")
 	public BodegaDTO guardarBodega(@RequestBody BodegaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return bodegaService.guardar(dto, token);		
@@ -4427,7 +4427,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProductoSvc productoService;
 	
-	@RequestMapping(value="/consultaXIdProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProducto")
 	public ProductoDTO consultaXIdProducto(@RequestBody String llave) throws FlexException {
 		try {
 			return productoService.consultaXId(llave);
@@ -4436,7 +4436,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProducto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProducto")
 	public int contarResultadosProducto(@RequestBody ProductoFilterDTO dto) throws FlexException  {
 		try {
 			return productoService.contarResultados(dto);
@@ -4445,7 +4445,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProducto")
 	public ProductoDTO consultaUnicaProducto(@RequestBody ProductoFilterDTO dto) throws FlexException  {
 		try {
 			return productoService.consultaUnica(dto);
@@ -4454,7 +4454,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProducto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProducto")
 	public List<ProductoDTO> listarConsultaProducto(@RequestBody ProductoFilterDTO dto) throws FlexException  {
 		try {
 			return productoService.listarConsulta(dto);
@@ -4463,7 +4463,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProducto", method=RequestMethod.POST)
+	@PostMapping(value="/activarProducto")
 	public ProductoDTO activarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoService.activar(dto, token);
@@ -4472,7 +4472,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProducto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProducto")
 	public ProductoDTO inactivarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoService.inactivar(dto, token);
@@ -4481,7 +4481,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProducto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProducto")
 	public ProductoDTO actualizarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoService.actualizar(dto, token);
@@ -4490,7 +4490,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProducto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProducto")
 	public ProductoDTO guardarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoService.guardar(dto, token);		
@@ -4502,7 +4502,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
 	
-	@RequestMapping(value="/consultaXIdProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO consultaXIdProductoInventarioDescuento(@RequestBody String llave) throws FlexException {
 		try {
 			return productoInventarioDescuentoService.consultaXId(llave);
@@ -4511,7 +4511,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosProductoInventarioDescuento")
 	public int contarResultadosProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.contarResultados(dto);
@@ -4520,7 +4520,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO consultaUnicaProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.consultaUnica(dto);
@@ -4529,7 +4529,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaProductoInventarioDescuento")
 	public List<ProductoInventarioDescuentoDTO> listarConsultaProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoFilterDTO dto) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.listarConsulta(dto);
@@ -4538,7 +4538,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/activarProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO activarProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.activar(dto, token);
@@ -4547,7 +4547,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO inactivarProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.inactivar(dto, token);
@@ -4556,7 +4556,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO actualizarProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.actualizar(dto, token);
@@ -4565,7 +4565,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarProductoInventarioDescuento", method=RequestMethod.POST)
+	@PostMapping(value="/guardarProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO guardarProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return productoInventarioDescuentoService.guardar(dto, token);		
@@ -4577,7 +4577,7 @@ public class FullControllerDTO {
 	
 	@Autowired private DeduccionProductoSvc deduccionProductoService;
 	
-	@RequestMapping(value="/consultaXIdDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdDeduccionProducto")
 	public DeduccionProductoDTO consultaXIdDeduccionProducto(@RequestBody String llave) throws FlexException {
 		try {
 			return deduccionProductoService.consultaXId(llave);
@@ -4586,7 +4586,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosDeduccionProducto")
 	public int contarResultadosDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
 		try {
 			return deduccionProductoService.contarResultados(dto);
@@ -4595,7 +4595,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaDeduccionProducto")
 	public DeduccionProductoDTO consultaUnicaDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
 		try {
 			return deduccionProductoService.consultaUnica(dto);
@@ -4604,7 +4604,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaDeduccionProducto")
 	public List<DeduccionProductoDTO> listarConsultaDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
 		try {
 			return deduccionProductoService.listarConsulta(dto);
@@ -4613,7 +4613,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/activarDeduccionProducto")
 	public DeduccionProductoDTO activarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return deduccionProductoService.activar(dto, token);
@@ -4622,7 +4622,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarDeduccionProducto")
 	public DeduccionProductoDTO inactivarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return deduccionProductoService.inactivar(dto, token);
@@ -4631,7 +4631,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarDeduccionProducto")
 	public DeduccionProductoDTO actualizarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return deduccionProductoService.actualizar(dto, token);
@@ -4640,7 +4640,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarDeduccionProducto", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDeduccionProducto")
 	public DeduccionProductoDTO guardarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return deduccionProductoService.guardar(dto, token);		
@@ -4652,7 +4652,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ModuloContratadoSvc moduloContratadoService;
 	
-	@RequestMapping(value="/consultaXIdModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdModuloContratado")
 	public ModuloContratadoDTO consultaXIdModuloContratado(@RequestBody String llave) throws FlexException {
 		try {
 			return moduloContratadoService.consultaXId(llave);
@@ -4661,7 +4661,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosModuloContratado")
 	public int contarResultadosModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
 		try {
 			return moduloContratadoService.contarResultados(dto);
@@ -4670,7 +4670,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaModuloContratado")
 	public ModuloContratadoDTO consultaUnicaModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
 		try {
 			return moduloContratadoService.consultaUnica(dto);
@@ -4679,7 +4679,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaModuloContratado")
 	public List<ModuloContratadoDTO> listarConsultaModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
 		try {
 			return moduloContratadoService.listarConsulta(dto);
@@ -4688,7 +4688,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/activarModuloContratado")
 	public ModuloContratadoDTO activarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloContratadoService.activar(dto, token);
@@ -4697,7 +4697,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarModuloContratado")
 	public ModuloContratadoDTO inactivarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloContratadoService.inactivar(dto, token);
@@ -4706,7 +4706,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarModuloContratado")
 	public ModuloContratadoDTO actualizarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloContratadoService.actualizar(dto, token);
@@ -4715,7 +4715,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/guardarModuloContratado")
 	public ModuloContratadoDTO guardarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloContratadoService.guardar(dto, token);		
@@ -4725,7 +4725,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/modulosUsuarioModuloContratado", method=RequestMethod.POST)
+	@PostMapping(value="/modulosUsuarioModuloContratado")
 	public List<ModuloContratadoDTO> modulosUsuarioModuloContratado(@RequestBody ModuloContratadoFilterDTO dto)throws FlexException {
 		try {
 			return moduloContratadoService.modulosUsuario(dto);
@@ -4736,7 +4736,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ModuloSvc moduloService;
 	
-	@RequestMapping(value="/consultaXIdModulo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdModulo")
 	public ModuloDTO consultaXIdModulo(@RequestBody String llave) throws FlexException {
 		try {
 			return moduloService.consultaXId(llave);
@@ -4745,7 +4745,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosModulo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosModulo")
 	public int contarResultadosModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
 		try {
 			return moduloService.contarResultados(dto);
@@ -4754,7 +4754,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaModulo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaModulo")
 	public ModuloDTO consultaUnicaModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
 		try {
 			return moduloService.consultaUnica(dto);
@@ -4763,7 +4763,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaModulo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaModulo")
 	public List<ModuloDTO> listarConsultaModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
 		try {
 			return moduloService.listarConsulta(dto);
@@ -4772,7 +4772,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarModulo", method=RequestMethod.POST)
+	@PostMapping(value="/activarModulo")
 	public ModuloDTO activarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloService.activar(dto, token);
@@ -4781,7 +4781,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarModulo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarModulo")
 	public ModuloDTO inactivarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloService.inactivar(dto, token);
@@ -4790,7 +4790,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarModulo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarModulo")
 	public ModuloDTO actualizarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloService.actualizar(dto, token);
@@ -4799,7 +4799,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarModulo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarModulo")
 	public ModuloDTO guardarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return moduloService.guardar(dto, token);		
@@ -4811,7 +4811,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ReporteBaseSvc reporteBaseService;
 	
-	@RequestMapping(value="/consultaXIdReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdReporteBase")
 	public ReporteBaseDTO consultaXIdReporteBase(@RequestBody String llave) throws FlexException {
 		try {
 			return reporteBaseService.consultaXId(llave);
@@ -4820,7 +4820,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosReporteBase")
 	public int contarResultadosReporteBase(@RequestBody ReporteBaseFilterDTO dto) throws FlexException  {
 		try {
 			return reporteBaseService.contarResultados(dto);
@@ -4829,7 +4829,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaReporteBase")
 	public ReporteBaseDTO consultaUnicaReporteBase(@RequestBody ReporteBaseFilterDTO dto) throws FlexException  {
 		try {
 			return reporteBaseService.consultaUnica(dto);
@@ -4838,7 +4838,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaReporteBase")
 	public List<ReporteBaseDTO> listarConsultaReporteBase(@RequestBody ReporteBaseFilterDTO dto) throws FlexException  {
 		try {
 			return reporteBaseService.listarConsulta(dto);
@@ -4847,7 +4847,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/activarReporteBase")
 	public ReporteBaseDTO activarReporteBase(@RequestBody ReporteBaseDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteBaseService.activar(dto, token);
@@ -4856,7 +4856,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarReporteBase")
 	public ReporteBaseDTO inactivarReporteBase(@RequestBody ReporteBaseDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteBaseService.inactivar(dto, token);
@@ -4865,7 +4865,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarReporteBase")
 	public ReporteBaseDTO actualizarReporteBase(@RequestBody ReporteBaseDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteBaseService.actualizar(dto, token);
@@ -4874,7 +4874,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarReporteBase", method=RequestMethod.POST)
+	@PostMapping(value="/guardarReporteBase")
 	public ReporteBaseDTO guardarReporteBase(@RequestBody ReporteBaseDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteBaseService.guardar(dto, token);		
@@ -4886,7 +4886,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioOrganizacionSvc usuarioOrganizacionService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO consultaXIdUsuarioOrganizacion(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioOrganizacionService.consultaXId(llave);
@@ -4895,7 +4895,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioOrganizacion")
 	public int contarResultadosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.contarResultados(dto);
@@ -4904,7 +4904,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO consultaUnicaUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.consultaUnica(dto);
@@ -4913,7 +4913,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioOrganizacion")
 	public List<UsuarioOrganizacionDTO> listarConsultaUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.listarConsulta(dto);
@@ -4922,7 +4922,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO activarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.activar(dto, token);
@@ -4931,7 +4931,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO inactivarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.inactivar(dto, token);
@@ -4940,7 +4940,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO actualizarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.actualizar(dto, token);
@@ -4949,7 +4949,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO guardarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioOrganizacionService.guardar(dto, token);		
@@ -4959,7 +4959,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/sincronizarUsuariosUsuarioOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/sincronizarUsuariosUsuarioOrganizacion")
 	public List<UsuarioOrganizacionDTO> sincronizarUsuariosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return usuarioOrganizacionService.sincronizarUsuarios(dto, token);
@@ -4970,7 +4970,7 @@ public class FullControllerDTO {
 	
 	@Autowired private PermisoSvc permisoService;
 	
-	@RequestMapping(value="/consultaXIdPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdPermiso")
 	public PermisoDTO consultaXIdPermiso(@RequestBody String llave) throws FlexException {
 		try {
 			return permisoService.consultaXId(llave);
@@ -4979,7 +4979,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosPermiso")
 	public int contarResultadosPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
 		try {
 			return permisoService.contarResultados(dto);
@@ -4988,7 +4988,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaPermiso")
 	public PermisoDTO consultaUnicaPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
 		try {
 			return permisoService.consultaUnica(dto);
@@ -4997,7 +4997,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaPermiso")
 	public List<PermisoDTO> listarConsultaPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
 		try {
 			return permisoService.listarConsulta(dto);
@@ -5006,7 +5006,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/activarPermiso")
 	public PermisoDTO activarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return permisoService.activar(dto, token);
@@ -5015,7 +5015,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarPermiso")
 	public PermisoDTO inactivarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return permisoService.inactivar(dto, token);
@@ -5024,7 +5024,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarPermiso")
 	public PermisoDTO actualizarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return permisoService.actualizar(dto, token);
@@ -5033,7 +5033,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarPermiso", method=RequestMethod.POST)
+	@PostMapping(value="/guardarPermiso")
 	public PermisoDTO guardarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return permisoService.guardar(dto, token);		
@@ -5045,7 +5045,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO consultaXIdUsuarioAutenticacionAutorizacion(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioAutenticacionAutorizacionService.consultaXId(llave);
@@ -5054,7 +5054,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioAutenticacionAutorizacion")
 	public int contarResultadosUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.contarResultados(dto);
@@ -5063,7 +5063,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO consultaUnicaUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.consultaUnica(dto);
@@ -5072,7 +5072,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioAutenticacionAutorizacion")
 	public List<UsuarioAutenticacionAutorizacionDTO> listarConsultaUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.listarConsulta(dto);
@@ -5081,7 +5081,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO activarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.activar(dto, token);
@@ -5090,7 +5090,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO inactivarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.inactivar(dto, token);
@@ -5099,7 +5099,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO actualizarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.actualizar(dto, token);
@@ -5108,7 +5108,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioAutenticacionAutorizacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO guardarUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionAutorizacionService.guardar(dto, token);		
@@ -5120,7 +5120,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioSesionSvc usuarioSesionService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioSesion")
 	public UsuarioSesionDTO consultaXIdUsuarioSesion(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioSesionService.consultaXId(llave);
@@ -5129,7 +5129,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioSesion")
 	public int contarResultadosUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionService.contarResultados(dto);
@@ -5138,7 +5138,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioSesion")
 	public UsuarioSesionDTO consultaUnicaUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionService.consultaUnica(dto);
@@ -5147,7 +5147,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioSesion")
 	public List<UsuarioSesionDTO> listarConsultaUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionService.listarConsulta(dto);
@@ -5156,7 +5156,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioSesion")
 	public UsuarioSesionDTO activarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.activar(dto, token);
@@ -5165,7 +5165,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioSesion")
 	public UsuarioSesionDTO inactivarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.inactivar(dto, token);
@@ -5174,7 +5174,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioSesion")
 	public UsuarioSesionDTO actualizarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.actualizar(dto, token);
@@ -5183,7 +5183,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioSesion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioSesion")
 	public UsuarioSesionDTO guardarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionService.guardar(dto, token);		
@@ -5195,7 +5195,7 @@ public class FullControllerDTO {
 	
 	@Autowired private CargaArchivoSvc cargaArchivoService;
 	
-	@RequestMapping(value="/consultaXIdCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdCargaArchivo")
 	public CargaArchivoDTO consultaXIdCargaArchivo(@RequestBody String llave) throws FlexException {
 		try {
 			return cargaArchivoService.consultaXId(llave);
@@ -5204,7 +5204,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosCargaArchivo")
 	public int contarResultadosCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
 		try {
 			return cargaArchivoService.contarResultados(dto);
@@ -5213,7 +5213,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaCargaArchivo")
 	public CargaArchivoDTO consultaUnicaCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
 		try {
 			return cargaArchivoService.consultaUnica(dto);
@@ -5222,7 +5222,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaCargaArchivo")
 	public List<CargaArchivoDTO> listarConsultaCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
 		try {
 			return cargaArchivoService.listarConsulta(dto);
@@ -5231,7 +5231,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/activarCargaArchivo")
 	public CargaArchivoDTO activarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cargaArchivoService.activar(dto, token);
@@ -5240,7 +5240,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarCargaArchivo")
 	public CargaArchivoDTO inactivarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cargaArchivoService.inactivar(dto, token);
@@ -5249,7 +5249,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarCargaArchivo")
 	public CargaArchivoDTO actualizarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cargaArchivoService.actualizar(dto, token);
@@ -5258,7 +5258,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarCargaArchivo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarCargaArchivo")
 	public CargaArchivoDTO guardarCargaArchivo(@RequestBody CargaArchivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return cargaArchivoService.guardar(dto, token);		
@@ -5270,7 +5270,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ReporteEjecucionSvc reporteEjecucionService;
 	
-	@RequestMapping(value="/consultaXIdReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdReporteEjecucion")
 	public ReporteEjecucionDTO consultaXIdReporteEjecucion(@RequestBody String llave) throws FlexException {
 		try {
 			return reporteEjecucionService.consultaXId(llave);
@@ -5279,7 +5279,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosReporteEjecucion")
 	public int contarResultadosReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return reporteEjecucionService.contarResultados(dto);
@@ -5288,7 +5288,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaReporteEjecucion")
 	public ReporteEjecucionDTO consultaUnicaReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return reporteEjecucionService.consultaUnica(dto);
@@ -5297,7 +5297,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaReporteEjecucion")
 	public List<ReporteEjecucionDTO> listarConsultaReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
 		try {
 			return reporteEjecucionService.listarConsulta(dto);
@@ -5306,7 +5306,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/activarReporteEjecucion")
 	public ReporteEjecucionDTO activarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteEjecucionService.activar(dto, token);
@@ -5315,7 +5315,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarReporteEjecucion")
 	public ReporteEjecucionDTO inactivarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteEjecucionService.inactivar(dto, token);
@@ -5324,7 +5324,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarReporteEjecucion")
 	public ReporteEjecucionDTO actualizarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteEjecucionService.actualizar(dto, token);
@@ -5333,7 +5333,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarReporteEjecucion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarReporteEjecucion")
 	public ReporteEjecucionDTO guardarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return reporteEjecucionService.guardar(dto, token);		
@@ -5345,7 +5345,7 @@ public class FullControllerDTO {
 	
 	@Autowired private ConsecutivoSvc consecutivoService;
 	
-	@RequestMapping(value="/consultaXIdConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdConsecutivo")
 	public ConsecutivoDTO consultaXIdConsecutivo(@RequestBody String llave) throws FlexException {
 		try {
 			return consecutivoService.consultaXId(llave);
@@ -5354,7 +5354,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosConsecutivo")
 	public int contarResultadosConsecutivo(@RequestBody ConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return consecutivoService.contarResultados(dto);
@@ -5363,7 +5363,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaConsecutivo")
 	public ConsecutivoDTO consultaUnicaConsecutivo(@RequestBody ConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return consecutivoService.consultaUnica(dto);
@@ -5372,7 +5372,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaConsecutivo")
 	public List<ConsecutivoDTO> listarConsultaConsecutivo(@RequestBody ConsecutivoFilterDTO dto) throws FlexException  {
 		try {
 			return consecutivoService.listarConsulta(dto);
@@ -5381,7 +5381,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/activarConsecutivo")
 	public ConsecutivoDTO activarConsecutivo(@RequestBody ConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return consecutivoService.activar(dto, token);
@@ -5390,7 +5390,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarConsecutivo")
 	public ConsecutivoDTO inactivarConsecutivo(@RequestBody ConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return consecutivoService.inactivar(dto, token);
@@ -5399,7 +5399,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarConsecutivo")
 	public ConsecutivoDTO actualizarConsecutivo(@RequestBody ConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return consecutivoService.actualizar(dto, token);
@@ -5408,7 +5408,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/guardarConsecutivo")
 	public ConsecutivoDTO guardarConsecutivo(@RequestBody ConsecutivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return consecutivoService.guardar(dto, token);		
@@ -5418,7 +5418,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/asignarConsecutivoConsecutivo", method=RequestMethod.POST)
+	@PostMapping(value="/asignarConsecutivoConsecutivo")
 	public ConsecutivoDTO asignarConsecutivoConsecutivo(@RequestBody ConsecutivoDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return consecutivoService.asignarConsecutivo(dto, token);
@@ -5429,7 +5429,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TransaccionLogSvc transaccionLogService;
 	
-	@RequestMapping(value="/consultaXIdTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTransaccionLog")
 	public TransaccionLogDTO consultaXIdTransaccionLog(@RequestBody String llave) throws FlexException {
 		try {
 			return transaccionLogService.consultaXId(llave);
@@ -5438,7 +5438,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTransaccionLog")
 	public int contarResultadosTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionLogService.contarResultados(dto);
@@ -5447,7 +5447,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTransaccionLog")
 	public TransaccionLogDTO consultaUnicaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionLogService.consultaUnica(dto);
@@ -5456,7 +5456,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTransaccionLog")
 	public List<TransaccionLogDTO> listarConsultaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionLogService.listarConsulta(dto);
@@ -5465,7 +5465,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/activarTransaccionLog")
 	public TransaccionLogDTO activarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionLogService.activar(dto, token);
@@ -5474,7 +5474,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTransaccionLog")
 	public TransaccionLogDTO inactivarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionLogService.inactivar(dto, token);
@@ -5483,7 +5483,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTransaccionLog")
 	public TransaccionLogDTO actualizarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionLogService.actualizar(dto, token);
@@ -5492,7 +5492,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTransaccionLog", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTransaccionLog")
 	public TransaccionLogDTO guardarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionLogService.guardar(dto, token);		
@@ -5504,7 +5504,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioSesionErrorSvc usuarioSesionErrorService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioSesionError")
 	public UsuarioSesionErrorDTO consultaXIdUsuarioSesionError(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioSesionErrorService.consultaXId(llave);
@@ -5513,7 +5513,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioSesionError")
 	public int contarResultadosUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.contarResultados(dto);
@@ -5522,7 +5522,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioSesionError")
 	public UsuarioSesionErrorDTO consultaUnicaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.consultaUnica(dto);
@@ -5531,7 +5531,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioSesionError")
 	public List<UsuarioSesionErrorDTO> listarConsultaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.listarConsulta(dto);
@@ -5540,7 +5540,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioSesionError")
 	public UsuarioSesionErrorDTO activarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.activar(dto, token);
@@ -5549,7 +5549,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioSesionError")
 	public UsuarioSesionErrorDTO inactivarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.inactivar(dto, token);
@@ -5558,7 +5558,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioSesionError")
 	public UsuarioSesionErrorDTO actualizarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.actualizar(dto, token);
@@ -5567,7 +5567,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioSesionError", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioSesionError")
 	public UsuarioSesionErrorDTO guardarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioSesionErrorService.guardar(dto, token);		
@@ -5579,7 +5579,7 @@ public class FullControllerDTO {
 	
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	
-	@RequestMapping(value="/consultaXIdUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO consultaXIdUsuarioAutenticacion(@RequestBody String llave) throws FlexException {
 		try {
 			return usuarioAutenticacionService.consultaXId(llave);
@@ -5588,7 +5588,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosUsuarioAutenticacion")
 	public int contarResultadosUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.contarResultados(dto);
@@ -5597,7 +5597,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO consultaUnicaUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.consultaUnica(dto);
@@ -5606,7 +5606,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaUsuarioAutenticacion")
 	public List<UsuarioAutenticacionDTO> listarConsultaUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.listarConsulta(dto);
@@ -5615,7 +5615,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO activarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.activar(dto, token);
@@ -5624,7 +5624,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO inactivarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.inactivar(dto, token);
@@ -5633,7 +5633,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO actualizarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.actualizar(dto, token);
@@ -5642,7 +5642,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO guardarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioAutenticacionService.guardar(dto, token);		
@@ -5652,7 +5652,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/autenticarUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/autenticarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto)throws FlexException {
 		try {
 			return usuarioAutenticacionService.autenticar(dto);
@@ -5661,7 +5661,7 @@ public class FullControllerDTO {
 		}
 	}
 
-	@RequestMapping(value="/cambiarClaveUsuarioAutenticacion", method=RequestMethod.POST)
+	@PostMapping(value="/cambiarClaveUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
 			return usuarioAutenticacionService.cambiarClave(dto, token);
@@ -5673,7 +5673,7 @@ public class FullControllerDTO {
 	
 	@Autowired private TransaccionErrorSvc transaccionErrorService;
 	
-	@RequestMapping(value="/consultaXIdTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdTransaccionError")
 	public TransaccionErrorDTO consultaXIdTransaccionError(@RequestBody String llave) throws FlexException {
 		try {
 			return transaccionErrorService.consultaXId(llave);
@@ -5682,7 +5682,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosTransaccionError")
 	public int contarResultadosTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionErrorService.contarResultados(dto);
@@ -5691,7 +5691,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaTransaccionError")
 	public TransaccionErrorDTO consultaUnicaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionErrorService.consultaUnica(dto);
@@ -5700,7 +5700,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaTransaccionError")
 	public List<TransaccionErrorDTO> listarConsultaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
 		try {
 			return transaccionErrorService.listarConsulta(dto);
@@ -5709,7 +5709,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/activarTransaccionError")
 	public TransaccionErrorDTO activarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionErrorService.activar(dto, token);
@@ -5718,7 +5718,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarTransaccionError")
 	public TransaccionErrorDTO inactivarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionErrorService.inactivar(dto, token);
@@ -5727,7 +5727,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarTransaccionError")
 	public TransaccionErrorDTO actualizarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionErrorService.actualizar(dto, token);
@@ -5736,7 +5736,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarTransaccionError", method=RequestMethod.POST)
+	@PostMapping(value="/guardarTransaccionError")
 	public TransaccionErrorDTO guardarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return transaccionErrorService.guardar(dto, token);		
@@ -5748,7 +5748,7 @@ public class FullControllerDTO {
 	
 	@Autowired private OrganizacionSvc organizacionService;
 	
-	@RequestMapping(value="/consultaXIdOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaXIdOrganizacion")
 	public OrganizacionDTO consultaXIdOrganizacion(@RequestBody String llave) throws FlexException {
 		try {
 			return organizacionService.consultaXId(llave);
@@ -5757,7 +5757,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/contarResultadosOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/contarResultadosOrganizacion")
 	public int contarResultadosOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return organizacionService.contarResultados(dto);
@@ -5766,7 +5766,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/consultaUnicaOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/consultaUnicaOrganizacion")
 	public OrganizacionDTO consultaUnicaOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return organizacionService.consultaUnica(dto);
@@ -5775,7 +5775,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/listarConsultaOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/listarConsultaOrganizacion")
 	public List<OrganizacionDTO> listarConsultaOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException  {
 		try {
 			return organizacionService.listarConsulta(dto);
@@ -5784,7 +5784,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/activarOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/activarOrganizacion")
 	public OrganizacionDTO activarOrganizacion(@RequestBody OrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return organizacionService.activar(dto, token);
@@ -5793,7 +5793,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/inactivarOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/inactivarOrganizacion")
 	public OrganizacionDTO inactivarOrganizacion(@RequestBody OrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return organizacionService.inactivar(dto, token);
@@ -5802,7 +5802,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/actualizarOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/actualizarOrganizacion")
 	public OrganizacionDTO actualizarOrganizacion(@RequestBody OrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return organizacionService.actualizar(dto, token);
@@ -5811,7 +5811,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@RequestMapping(value="/guardarOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/guardarOrganizacion")
 	public OrganizacionDTO guardarOrganizacion(@RequestBody OrganizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return organizacionService.guardar(dto, token);		
@@ -5821,7 +5821,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@RequestMapping(value="/obtenerPrincipalOrganizacion", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO dto)throws FlexException {
 		try {
 			return organizacionService.obtenerPrincipal(dto);

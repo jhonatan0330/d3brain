@@ -199,6 +199,11 @@
 			)
 		order by nombre;
 	</select>
+	
+	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
+		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		where cdpl_estado = 'A'
+	</select>
 <!--// END region script-->
 
 </mapper>

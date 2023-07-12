@@ -415,4 +415,8 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	}
 // END region aditionalMethods
 
+	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize() {
+		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize();
+	}
+
 }

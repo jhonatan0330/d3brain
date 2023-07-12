@@ -8,9 +8,12 @@ import java.util.Date;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.java.domain.BasicDTO;
 
 @Alias("RelacionInternaDTO")
+@JsonInclude(Include.NON_NULL)
 public class RelacionInternaDTO extends BasicDTO
 // BEGIN region interfaces  
 // END region interfaces

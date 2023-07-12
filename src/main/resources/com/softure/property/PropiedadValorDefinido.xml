@@ -309,6 +309,11 @@
 		order by cpvd_origen 
 		, cpvd_nombre 
 	</select>
+	
+	<select id="getFullToSynchronize" resultType="PropiedadValorDefinidoDTO">
+		<include refid="selectSimplePropiedadValorDefinidoFragment" />
+		where cpvd_estado = 'A' and cpvd_llave not like 'PROP_%'
+	</select>
 <!--// END region script-->
 
 </mapper>

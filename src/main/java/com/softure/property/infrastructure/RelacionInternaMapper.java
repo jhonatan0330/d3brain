@@ -12,5 +12,6 @@ public interface RelacionInternaMapper extends IBasicMapper<RelacionInternaDTO, 
 	List<RelacionInternaDTO> listarRelacion(RelacionInternaFilterDTO dto);
 
 // BEGIN region aditionalMethods  
+	List<RelacionInternaDTO> getRelationsFullToSynchronize();
 // END region aditionalMethods
 }

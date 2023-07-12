@@ -272,7 +272,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("No se encuentra la propiedad con Id " + dto.getPropiedadValor());
 		dto.setTipo(valorDefinido.getOrigen());
 		dto.setKey(valorDefinido.getCodigo());
-		if (dto.getValor().compareTo("-help") == 0)
+		if (dto.getValor()!=null && dto.getValor().compareTo("-help") == 0)
 			throw new ServerException("Ayuda de " + dto.getKey() + "\n\n\n" + Propiedades.instrucciones(dto.getKey()));
 		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (!valorDefinido.getNecesitaDesarrollo())
@@ -289,8 +289,25 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setUsuario(dto.getUsuario());
 			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
 			PropiedadDTO existe = consultaUnica(existeFilter);
-			if (existe != null)
-				throw new ServerException("Esta propiedad ya fue definida " + existe.getNombre());
+			if (existe != null) {
+				String error = "Esta propiedad ya fue definida " + existe.getNombre();
+				switch (existe.getTipo()) {
+				case PropiedadValorDefinidoDTO.PLANTILLA: {
+					error = error + " en la plantilla " + plantillaService.consultaXId(existe.getCampo()).getNombre();
+					break;
+				}
+				case PropiedadValorDefinidoDTO.CAMPO: {
+					DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(existe.getCampo());
+					error = error + "en el campo " + campo.getNombre() +" la plantilla " + campo.getPlantillaNombre();
+					break;
+				}
+				default:
+					error = error + "(" + existe.getTipo() +")";
+					break;
+				}
+				throw new ServerException(error);
+			}
+				
 		} else {
 			dto.setLlaveTabla(null);
 			// Falta validar que venga el mismo tipo para que no nos hagan gol
@@ -371,16 +388,16 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					reporte.setNombre(plantillaPrincipal.getNombre());
 					reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
 					reporteService.guardar(reporte, token);
+					campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
+					PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+							plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
+					historico.setFechaInicial(new Date());
+					historico.setMotivo("Pasar a tabla historico");
+					historico.setTexto("00:00:07:00:00");
+					guardar(historico, token);
+					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+							plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 				}
-				campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
-				PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
-				historico.setFechaInicial(new Date());
-				historico.setMotivo("Pasar a tabla historico");
-				historico.setTexto("00:00:07:00:00");
-				guardar(historico, token);
-				guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 				break;
 			case Propiedades.PLANTILLA_TIPO_ROL:
 				RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
@@ -885,7 +902,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.ORDEN: {
-			break;
+			dto.setValor("N");
+			dto.setTexto("POR NOMBRE");
+			return false;
 		}
 		case Propiedades.CUENTA_SOBREGIRO: {
 			return identificadorCampo(dto, token);
@@ -1353,6 +1372,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return propiedadMapper.listarProductoSimplificado(productos);
 	}
 
+	public List<PropiedadDTO> getFullPropertiesToConfiguration() throws ServerException {
+		return propiedadMapper.getFullPropertiesToConfiguration();
+	}
+	
 	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario)
 			throws ServerException {
 

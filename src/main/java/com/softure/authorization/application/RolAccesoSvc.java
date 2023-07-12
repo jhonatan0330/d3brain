@@ -118,4 +118,8 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	}
 // END region aditionalMethods
 
+	public List<RolAccesoDTO> getFullToSynchronize() {
+		return rolAccesoMapper.getFullToSynchronize();
+	}
+
 }

@@ -218,6 +218,11 @@
 		from reportebase_rpbp a
 		where crpb_estado ='A' and crpb_llave not in (select cppd_valor from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor in ('PROP_72','PROP_70','PROP_100','PROP_137'))
 	</select>
+	
+	<select id="getFullToSynchronize" resultType="ReporteBaseDTO">
+		<include refid="selectSimpleReporteBaseFragment" />
+		where crpb_estado ='A'
+	</select>
 <!--// END region script-->
 
 </mapper>

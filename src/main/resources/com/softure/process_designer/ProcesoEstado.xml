@@ -201,6 +201,12 @@
 		select propiedad_${estado} (#{documento}, #{modificador}, #{token})
 	</select>
 	
+	<select id="getFullToSynchronize" resultType="ProcesoEstadoDTO">
+		<include refid="selectSimpleProcesoEstadoFragment" />
+		where cpes_estado = 'A'
+	</select>
+	
+	
 <!--// END region script-->
 
 </mapper>

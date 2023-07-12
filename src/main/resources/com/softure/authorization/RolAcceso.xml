@@ -147,6 +147,19 @@ and cerl_usuario = (select cuss_usuario from usuariosesion_ussp  where cuss_llav
 	select count(*) from usuariorol_erlp, rolacceso_racp where crac_llave = cerl_rolacceso 
 				and brac_permisoscompletos and cerl_estado = 'A' and cerl_usuario = #{user}
 	</select>
+	
+	<select id="getFullToSynchronize" resultType="RolAccesoDTO">
+		select
+			crac_llave as  llaveTabla
+			,crac_plantilla as  plantilla
+			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  codigo
+			,brac_permisoscompletos as  permisosCompletos
+			,nrac_minutossesion as  minutosSesion
+			,crac_estado as estado
+		from rolacceso_racp a
+		
+		where crac_estado ='A'
+	</select>
 <!--// END region script-->
 
 </mapper>

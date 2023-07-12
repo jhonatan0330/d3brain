@@ -178,6 +178,20 @@
 
 
 <!--// BEGIN region script-->
+	<select id="getFullToSynchronize" resultType="ProcesoDTO">
+		select
+			cprc_llave as  llaveTabla
+			,cprc_tipo as  tipo
+			,cprc_objetivo as  objetivo
+			,cprc_imagen as  imagen
+			,nprc_prioridad as  prioridad
+			,cprc_macroproceso as  macroproceso
+			,cprc_nombre as  nombre
+			,cprc_codigo as  codigo
+		from proceso_prcp a
+		where cprc_estado = 'A'
+		order by nprc_prioridad, cprc_nombre 
+	</select>
 <!--// END region script-->
 
 </mapper>

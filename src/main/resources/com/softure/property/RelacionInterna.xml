@@ -194,6 +194,15 @@
 	
 
 <!--// BEGIN region script-->
+	<select id="getRelationsFullToSynchronize" resultType="RelacionInternaDTO">
+		select
+			crit_propiedad as  propiedad
+			,crit_plantilla as  plantilla
+			,crit_campo as  campo
+			,crit_auxiliar as  auxiliar
+		from relacioninterna_ritp a
+		where crit_estado = 'A'
+	</select>
 <!--// END region script-->
 
 </mapper>

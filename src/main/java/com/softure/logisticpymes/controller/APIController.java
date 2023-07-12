@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,20 +48,20 @@ public class APIController {
 	@Autowired private UploadSvc uploadService;
 	@Autowired private CampoAdaptador adaptador;
 	
-	@RequestMapping(value="/logOut", method=RequestMethod.POST)
+	@PostMapping(value="/logOut")
 	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion, @RequestHeader("Authorization") String token) throws ServerException {
 		if(autenticacion==null) throw new ServerException("Los datos de autenticacion son nulos");
 		usuarioAutenticacionService.inactivar(autenticacion, token);
 		return null;
 	}
 	
-	@RequestMapping(value="/consultarDocumento", method=RequestMethod.POST)
+	@PostMapping(value="/consultarDocumento")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
 		documentoFiltro.setSecurityToken(token);
 		return pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
 	}
 
-	@RequestMapping(value="/guardarDocumento", method=RequestMethod.POST)
+	@PostMapping(value="/guardarDocumento")
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(documento.getLlaveTabla()==null){
@@ -78,31 +78,31 @@ public class APIController {
 		return result;
 	}
 	
-	@RequestMapping(value="/consultarUsuario", method=RequestMethod.POST)
+	@PostMapping(value="/consultarUsuario")
 	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
 		dto.setSecurityToken(token);
 		return usuarioService.consultaUnica(dto);	
 	}
 		
-	@RequestMapping(value="/consultarDatosBase", method=RequestMethod.POST)
+	@PostMapping(value="/consultarDatosBase")
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
 		dto.setSecurityToken(token);
 		return adaptador.consultarDatosBase(dto);
 	}
 	
 	
-	@RequestMapping(value="/listarDocumentos", method=RequestMethod.POST)
+	@PostMapping(value="/listarDocumentos")
 	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException {
 		documentoFiltro.setSecurityToken(token);
 		return listDocumentWithFiltersFunction.listarAvanzado(documentoFiltro);
 	}
 	
-	@RequestMapping(value="/obtenerCampos", method=RequestMethod.POST)
+	@PostMapping(value="/obtenerCampos")
 	public DocumentoPlantillaDTO obtenerCampos(@RequestBody DocumentoPlantillaDTO documentoFiltro,  @RequestHeader("Authorization") String token) throws ServerException {
 		return documentoplantillaService.obtenerCampos(documentoFiltro, token);
 	}
 	
-	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	@PostMapping(value="/upload")
     public ApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
@@ -116,7 +116,7 @@ public class APIController {
     }
 	
 	
-	@RequestMapping(value="/uploadResponseString", method=RequestMethod.POST)
+	@PostMapping(value="/uploadResponseString")
     public String handleFileUploadFlex(@RequestParam("file") MultipartFile file) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
@@ -127,7 +127,7 @@ public class APIController {
 		}
     }
 	
-	@RequestMapping(value="/changePicture", method=RequestMethod.POST)
+	@PostMapping(value="/changePicture")
     public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
@@ -138,7 +138,7 @@ public class APIController {
 		}
     }
 	
-	@RequestMapping(value="/changeState", method=RequestMethod.POST)
+	@PostMapping(value="/changeState")
 	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,@RequestHeader("Authorization") String token)  throws ServerException  {
 		return pedidoVentaAjusteService.guardar(ajuste, token);	
 	}

@@ -11,5 +11,6 @@ public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO
 
 // BEGIN region aditionalMethods  
 	List<ProcesoDTO> noUsoSoloQuitoErrorList();
+	List<ProcesoDTO> getFullToSynchronize();
 // END region aditionalMethods
 }

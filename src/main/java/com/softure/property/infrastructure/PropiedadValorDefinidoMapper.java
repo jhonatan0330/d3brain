@@ -12,4 +12,6 @@ public interface PropiedadValorDefinidoMapper extends IBasicMapper<PropiedadValo
 // BEGIN region aditionalMethods  
 	List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto);
 // END region aditionalMethods
+
+	List<PropiedadValorDefinidoDTO> getFullToSynchronize();
 }

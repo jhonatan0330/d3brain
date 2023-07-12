@@ -183,6 +183,12 @@
 		and dpc_a.cdpc_estado = 'A' and dpc_a.cdpc_llave = ppd.cppd_campo and ppd.cppd_propiedadvalor = 'PROP_94' and ppd.cppd_estado = 'A'), ',', ''))
 	where cpdv_plantilla = (select cdpc_plantilla from documentoplantillacaracteristica_dpcp  where cdpc_llave = #{llaveTabla})
 	</update >
+	
+	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
+		where cdpc_estado = 'A'
+		order by cdpc_plantilla, ndpc_orden 
+	</select>
 <!--// END region script-->
 
 </mapper>

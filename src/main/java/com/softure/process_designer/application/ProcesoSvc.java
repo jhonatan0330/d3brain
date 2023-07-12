@@ -324,6 +324,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		return proceso;
 	}
 
+	public List<ProcesoDTO> getFullToSynchronize() throws ServerException {
+		return procesoMapper.getFullToSynchronize();
+	}
 // END region aditionalMethods
 
 }
