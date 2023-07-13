@@ -84,17 +84,7 @@ INSERT INTO usuariorol_erlp(cerl_llave, cerl_usuario, cerl_rolacceso, cerl_docum
 INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_imagen, corg_slogan,  corg_mensajeingreso, corg_codigo, corg_usuariosystem) 
 VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'http://golyat.cloud/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
 
-
-insert into documentoplantilla_dplp (cdpl_llave,cdpl_nombre,cdpl_imagen,cdpl_codigo,cdpl_objetivo,cdpl_proceso) 
-values ('57c7788e671b4bc192fe2700ad71378d','COMPORTAMIENTO GENERAL DEL SISTEMA','https://fs.softwareaparati.com/imagenes/modulo.png','D228','.','SOPORTE');
-
--- -------------------
--- INSERTS for public.documentoplantillacaracteristica_dpcp
--- -------------------
-insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) values ('147cac472c604deaa943c7a6cb5d3893','57c7788e671b4bc192fe2700ad71378d',1,'FECHA','FECHA','F','Contiene las fechas del reporte');
-insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,ndpc_orden,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) values ('d1c9f83727ea43f2ad97d90b0f4eb0f8','57c7788e671b4bc192fe2700ad71378d',2,'INTERESADOS','INTERESADOS','Z','.');
-
--- -------------------
+----------
 -- INSERTS for public.mensajeplantillacorreo_mplp
 -- -------------------
 
@@ -102,39 +92,3 @@ INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser
 	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', '$ofture123***',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
 
-insert into mensajeplantillacorreo_mplp (cmpl_llave,cmpl_texto,cmpl_estado,cmpl_nombre,cmpl_titulo,cmpl_servidor) values ('ea45ec023c754313a0714687efb633fb','seguimiento de sistema','A','SEGUIMIENTO DE SISTEMA','seguimiento de sistema','smtp.gmail.com');
-
-
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('f25e50668a944633ab3476ffff6ec291','57c7788e671b4bc192fe2700ad71378d','1',NULL,'A','PROP_142',TIMESTAMP '2021-10-02 07:11:35.573000 -0500',TIMESTAMP '2021-10-02 07:11:35.570000 -0500',NULL,'SC-1',NULL,'L',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('e185c5a0fa144aff8ae8fe9d59310c16','147cac472c604deaa943c7a6cb5d3893','*',NULL,'A','PROP_25',TIMESTAMP '2021-10-02 07:11:35.699000 -0500',TIMESTAMP '2021-10-02 07:11:35.696000 -0500',NULL,'SC-1',NULL,'C',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('b3c95a486d1f40acbc317dbb668a4d1f','57c7788e671b4bc192fe2700ad71378d','15','00:00:07:00:00','A','PROP_185',TIMESTAMP '2021-10-02 07:11:35.730000 -0500',TIMESTAMP '2021-10-02 07:11:35.727000 -0500','Pasar a tabla historico','SC-1',NULL,'L',NULL,TIMESTAMP '2021-10-02 07:11:35.722000 -0500',NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('607904404ea94ef89e486945563bb843','147cac472c604deaa943c7a6cb5d3893','1',NULL,'A','PROP_134',TIMESTAMP '2021-10-02 07:11:49.687000 -0500',TIMESTAMP '2021-10-02 07:11:49.685000 -0500',NULL,'SC-1',NULL,'C',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('0ef9a69c966a488681689637ba18b2da','d1c9f83727ea43f2ad97d90b0f4eb0f8','1',NULL,'A','PROP_32',TIMESTAMP '2021-10-02 07:32:49.426000 -0500',TIMESTAMP '2021-10-02 07:32:49.423000 -0500',NULL,'SC-1',NULL,'C',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('27bceb25b46e4de7bd10aae3454e3457','57c7788e671b4bc192fe2700ad71378d','begin
-return query
-	select administrador.* from pedidoventa_pdvp administrador
-	where ''ADMINISTRADOR'' = cpdv_plantilla and cpdv_estado = ''A'';
-end;','00:00:01:00:00','A','PROP_189',TIMESTAMP '2021-10-02 07:33:12.388000 -0500',TIMESTAMP '2021-10-02 07:33:12.388000 -0500','Consulta los usuarios de soporte','SC-1',NULL,'L',NULL,TIMESTAMP '2021-10-02 04:00:00.000000 -0500',NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('99edc409f74d43418f18dfbc9497eccc','d1c9f83727ea43f2ad97d90b0f4eb0f8','1',NULL,'A','PROP_134',TIMESTAMP '2021-10-02 08:28:42.609000 -0500',TIMESTAMP '2021-10-02 08:28:42.606000 -0500',NULL,'SC-1',NULL,'C',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('ca3c8d97bba8468a846057f5af6922f9','57c7788e671b4bc192fe2700ad71378d','ea45ec023c754313a0714687efb633fb','SEGUIMIENTO DE SISTEMA','A','PROP_57',TIMESTAMP '2021-10-02 08:51:04.226000 -0500',TIMESTAMP '2021-10-02 08:51:04.221000 -0500',NULL,'SC-1',NULL,'L',NULL,NULL,NULL,NULL,NULL);
-insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion,cppd_motivo,cppd_cambiocreacion,cppd_cambioeliminacion,cppd_tipo,cppd_rol,dppd_fechainicial,dppd_fechafinal,cppd_usuario,cppd_bloqueo) values ('ef5ebb5f3c784a9dab34c03e8142e6d6','57c7788e671b4bc192fe2700ad71378d','*',NULL,'A','PROP_117',TIMESTAMP '2021-10-02 08:58:29.489000 -0500',TIMESTAMP '2021-10-02 08:58:29.489000 -0500',NULL,'SC-1',NULL,'L',NULL,NULL,NULL,NULL,NULL);
-
-insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar, drit_fechainicio, crit_cambiocreacion) values ('e151cf6ad9d84088a7faf265bdfe6a0e','A','27bceb25b46e4de7bd10aae3454e3457','57c7788e671b4bc192fe2700ad71378d','d1c9f83727ea43f2ad97d90b0f4eb0f8',NULL, now(), 'SC-1');
-insert into relacioninterna_ritp (crit_llave,crit_estado,crit_propiedad,crit_plantilla,crit_campo,crit_auxiliar, drit_fechainicio, crit_cambiocreacion) 
-	values ('43a64e5a45da420d8d421a9a5c35c421','A','ef5ebb5f3c784a9dab34c03e8142e6d6','ADMINISTRADOR','4e3014ec945e4c718dc50481220fcf80',NULL, now(), 'SC-1');
-INSERT INTO relacioninterna_ritp (crit_llave, crit_estado, crit_propiedad, crit_plantilla, crit_campo, crit_auxiliar, drit_fechainicio, crit_cambiocreacion) VALUES('04c7354220e045a997b06baead97cf96', 'A', 'ef5ebb5f3c784a9dab34c03e8142e6d6', '57c7788e671b4bc192fe2700ad71378d', 'd1c9f83727ea43f2ad97d90b0f4eb0f8', NULL, now(), 'SC-1');
-
-CREATE OR REPLACE FUNCTION propiedad_27bceb25b46e4de7bd10aae3454e3457(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])
-  RETURNS SETOF pedidoventa_pdvp
-  LANGUAGE plpgsql
-AS
-$body$
-begin
-return query
-select administrador.* from pedidoventa_pdvp administrador
-	where 'ADMINISTRADOR' = cpdv_plantilla and cpdv_estado = 'A';
-end;
-$body$
-  VOLATILE
-  COST 100
-  ROWS 1000;

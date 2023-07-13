@@ -25,7 +25,7 @@ public class SynchronizePropertiesService {
 		// Saco un listado de las propiedades a borrar
 		if (propertiesRemote != null && !propertiesRemote.isEmpty()) {
 			for (PropiedadDTO remoteProperty : propertiesRemote) {
-				PropiedadDTO findProperty = findPropertyInList(localPropertiesToErase, remoteProperty.getPropiedadValor(), remoteProperty.getValor(), remoteProperty.getTexto());
+				PropiedadDTO findProperty = findPropertyInList(localPropertiesToErase, remoteProperty.getPropiedadValor(), remoteProperty.getValor(), remoteProperty.getTexto(), remoteProperty.getRol());
 				//Creo la nueva propiedad
 				if(findProperty!= null) {
 					localPropertiesToErase.remove(findProperty);
@@ -40,6 +40,27 @@ public class SynchronizePropertiesService {
 						newProperty.setValor(remoteProperty.getValor());
 					}else {
 						switch (remoteProperty.getPropiedadValor()) {
+						case "PROP_29":
+						case "PROP_41":
+						case "PROP_54":
+						case "PROP_58":
+						case "PROP_59":
+						case "PROP_69":
+						case "PROP_74":
+						case "PROP_90":
+						case "PROP_120":
+						case "PROP_122":
+						case "PROP_125":
+						case "PROP_139":
+						case "PROP_146":
+						case "PROP_147":
+						case "PROP_156":
+						case "PROP_159":
+						case "PROP_160":
+						case "PROP_164":
+						case "PROP_182":
+						case "PROP_187":
+						case "PROP_224":
 						case "PROP_140":
 						case "PROP_51":
 						case "PROP_189":
@@ -72,13 +93,15 @@ public class SynchronizePropertiesService {
 			      .collect(Collectors.toList());
 	}
 	
-	private PropiedadDTO findPropertyInList(List<PropiedadDTO> array, String code, String value, String text) {
+	private PropiedadDTO findPropertyInList(List<PropiedadDTO> array, String code, String value, String text, String role) {
 		for (PropiedadDTO property : array) {
-			if (code.compareTo(property.getPropiedadValor()) == 0) {
-				if(property.getTexto()!=null && text!= null && property.getTexto().compareTo(text)==0)
-					return property;
-				if(property.getValor()!=null && property.getValor().compareTo(value)==0)
-					return property;
+			if((role == null && property.getRol()==null) || (property.getRol()!=null && role!=null && role.compareTo(property.getRol())==0)) {
+				if (code.compareTo(property.getPropiedadValor()) == 0) {
+					if(property.getTexto()!=null && text!= null && property.getTexto().compareTo(text)==0)
+						return property;
+					if(property.getValor()!=null && property.getValor().compareTo(value)==0)
+						return property;
+				}	
 			}
 		}
 		return null;

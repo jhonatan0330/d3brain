@@ -10,7 +10,9 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
+import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
+import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service
@@ -32,6 +34,8 @@ public class SynchronizeProcessService {
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remoteProcess.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.PROCESO, localProcess.getLlaveTabla(), token);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
+					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
+					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
 				}
 				else
 				{
@@ -47,6 +51,8 @@ public class SynchronizeProcessService {
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remoteProcess.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.PROCESO, newProcess.getLlaveTabla(), token);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
+					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
+					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 				}
 			}
 		}
@@ -79,8 +85,24 @@ public class SynchronizeProcessService {
 			}
 		}
 	}
+	
+	private void changeProcessInStates(List<ProcesoEstadoDTO> array, String remote, String local) {
+		for (ProcesoEstadoDTO remoteProcess : array) {
+			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
+				remoteProcess.setProceso(local);
+			}
+		}
+	}
+	
+	private void changeProcessInTransition(List<ProcesoTransicionDTO> array, String remote, String local) {
+		for (ProcesoTransicionDTO remoteProcess : array) {
+			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
+				remoteProcess.setProceso(local);
+			}
+		}
+	}
 
-	public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	/*public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize();
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
 		if (processRemote != null && !processRemote.isEmpty()) {
@@ -94,7 +116,7 @@ public class SynchronizeProcessService {
 				}
 			}
 		}
-	}
+	}*/
 
 	private ProcesoDTO findProcessInList(List<ProcesoDTO> array, String code) {
 		for (ProcesoDTO localProcess : array) {

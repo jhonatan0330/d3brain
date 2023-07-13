@@ -256,6 +256,24 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	public List<PropiedadDTO> listarConsulta(PropiedadFilterDTO dto) throws ServerException {
 		return super.listarConsulta(dto);
 	}
+	
+	private String getLocationError(String type, String fieldId) throws ServerException {
+		switch (type) {
+		case PropiedadValorDefinidoDTO.PLANTILLA: {
+			return " en la plantilla " + plantillaService.consultaXId(fieldId).getNombre();
+		}
+		case PropiedadValorDefinidoDTO.CAMPO: {
+			DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(fieldId);
+			return " en el campo " + campo.getNombre() +" la plantilla " + campo.getPlantillaNombre();
+		}
+		case PropiedadValorDefinidoDTO.REPORTE: {
+			ReporteBaseDTO campo = reporteService.consultaXId(fieldId);
+			return " en el reporte " + campo.getNombre() +" de la plantilla " + campo.getPlantillaNombre();
+		}
+		default:
+			return "(" + fieldId +")";
+		}
+	}
 
 	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -278,7 +296,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (!valorDefinido.getNecesitaDesarrollo())
 			dto.setFechaImplementacion(new Date());
 		if (valorDefinido.getSolicitaMotivo() && dto.getMotivo() == null)
-			throw new ServerException("La propiedad necesita tener motivo. \n" + valorDefinido.getNombre());
+			throw new ServerException("La propiedad necesita tener motivo. \n" + valorDefinido.getNombre() + getLocationError(dto.getTipo(), dto.getCampo()));
 		if (!valorDefinido.getMultiple() && dto.getLlaveTabla() == null) {// Por el momento solo valida las nuevas
 			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
 			existeFilter.setCampo(dto.getCampo());
@@ -289,29 +307,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setUsuario(dto.getUsuario());
 			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
 			PropiedadDTO existe = consultaUnica(existeFilter);
-			if (existe != null) {
-				String error = "Esta propiedad ya fue definida " + existe.getNombre();
-				switch (existe.getTipo()) {
-				case PropiedadValorDefinidoDTO.PLANTILLA: {
-					error = error + " en la plantilla " + plantillaService.consultaXId(existe.getCampo()).getNombre();
-					break;
-				}
-				case PropiedadValorDefinidoDTO.CAMPO: {
-					DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(existe.getCampo());
-					error = error + " en el campo " + campo.getNombre() +" la plantilla " + campo.getPlantillaNombre();
-					break;
-				}
-				case PropiedadValorDefinidoDTO.REPORTE: {
-					ReporteBaseDTO campo = reporteService.consultaXId(existe.getCampo());
-					error = error + " en el reporte " + campo.getNombre() +" de la plantilla " + campo.getPlantillaNombre();
-					break;
-				}
-				default:
-					error = error + "(" + existe.getTipo() +")";
-					break;
-				}
-				throw new ServerException(error);
-			}
+			if (existe != null) 
+				throw new ServerException("Esta propiedad ya fue definida " + existe.getNombre() + getLocationError(existe.getTipo(), existe.getCampo()));
 				
 		} else {
 			dto.setLlaveTabla(null);

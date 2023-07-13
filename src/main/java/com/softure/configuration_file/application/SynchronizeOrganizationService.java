@@ -19,15 +19,10 @@ public class SynchronizeOrganizationService {
 
 	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipalPropiedades(null);
-		hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
+		// hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
 		propertiesSynchronizeService.call(hierarchy.getProperties(), mainOrganization.getLlaveTabla(),
 				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), token);
 	}
 
-	public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipalPropiedades(null);
-		propertiesSynchronizeService.call(hierarchy.getProperties(), mainOrganization.getLlaveTabla(),
-				hierarchy.getOrganization().getLlaveTabla(), PropiedadValorDefinidoDTO.ORGANIZACION, token);
-	}
 
 }

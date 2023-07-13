@@ -13,6 +13,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoSvc;
+import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.property.application.PropiedadSvc;
@@ -33,6 +34,7 @@ public class ExportConfigurationFileService {
 	@Autowired  private RolAccesoSvc rolService;
 	@Autowired	private ProcesoSvc procesoService;
 	@Autowired	private ProcesoEstadoSvc stateService;
+	@Autowired	private ProcesoTransicionSvc transitionService;
 	@Autowired	private DocumentoPlantillaSvc templateService;
 	@Autowired	private ReporteBaseSvc reportService;
 	@Autowired	private DocumentoPlantillaCaracteristicaSvc fieldService;
@@ -49,6 +51,7 @@ public class ExportConfigurationFileService {
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
 		hierarchy.setProcess(procesoService.getFullToSynchronize());
 		hierarchy.setStates(stateService.getFullToSynchronize());
+		hierarchy.setTransitions(transitionService.getFullToSynchronize());
 		hierarchy.setTemplates(templateService.getFullToSynchronize());
 		hierarchy.setRoles(rolService.getFullToSynchronize());
 		hierarchy.setReports(reportService.getFullToSynchronize());

@@ -67,6 +67,7 @@ public class SynchronizeApiService {
 		return null;
 	}
 
+
 	/*
 	private void changePropertiesIdCode(List<PropiedadDTO> processRemote, String remote, String local) {
 		for (PropiedadDTO remoteProcess : processRemote) {

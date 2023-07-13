@@ -13,11 +13,9 @@ import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 
 public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionDTO, ProcesoTransicionFilterDTO>{
 	
-
-// BEGIN region aditionalMethods  
 	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
 	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
 	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento, @Param("expediente") String expediente);
-// END region aditionalMethods
+	List<ProcesoTransicionDTO> getFullToSynchronize();
 }

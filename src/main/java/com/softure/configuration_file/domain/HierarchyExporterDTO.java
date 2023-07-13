@@ -7,6 +7,7 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
+import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadDTO;
@@ -20,6 +21,7 @@ public class HierarchyExporterDTO {
 	private OrganizacionDTO organization;
 	private List<ProcesoDTO> process;
 	private List<ProcesoEstadoDTO> states;
+	private List<ProcesoTransicionDTO> transitions;
 	private List<PropiedadDTO> properties;
 	private List<RelacionInternaDTO> relations;
 	private List<DocumentoPlantillaDTO> templates;
@@ -124,6 +126,14 @@ public class HierarchyExporterDTO {
 
 	public void setApis(List<WebServiceDTO> apis) {
 		this.apis = apis;
+	}
+
+	public List<ProcesoTransicionDTO> getTransitions() {
+		return transitions;
+	}
+
+	public void setTransitions(List<ProcesoTransicionDTO> transitions) {
+		this.transitions = transitions;
 	}
 	
 }

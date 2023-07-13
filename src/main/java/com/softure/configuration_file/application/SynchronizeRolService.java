@@ -1,5 +1,6 @@
 package com.softure.configuration_file.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service
@@ -17,12 +19,10 @@ public class SynchronizeRolService {
 	@Autowired RolAccesoSvc rolService;
 	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 	
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties) throws ServerException {
 		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize();
-
 		List<RolAccesoDTO> remoteList = hierarchy.getRoles();
-		// Saco un listado de las propiedades nuevas
-		// Saco un listado de las propiedades a borrar
+		List<PropiedadDTO> propertiesWithReplaceRol = new ArrayList<>();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (RolAccesoDTO remote : remoteList) {
 				RolAccesoDTO local = findTemplateInList(localListToErase, remote.getCodigo());
@@ -31,12 +31,28 @@ public class SynchronizeRolService {
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.ROL, local.getLlaveTabla(), token);
+					boolean isToMigrate = false;
+					for (PropiedadDTO iProperty : propierties) {
+						isToMigrate = false;
+						if(iProperty.getRol()!=null && iProperty.getRol().compareTo(remote.getLlaveTabla())==0) {
+							iProperty.setRol(local.getLlaveTabla());
+							isToMigrate = true;
+						}
+						if(iProperty.getRolExcluyente()!=null && iProperty.getRolExcluyente().compareTo(remote.getLlaveTabla())==0) {
+							iProperty.setRolExcluyente(local.getLlaveTabla());
+							isToMigrate = true;
+						}
+						
+						if(isToMigrate && iProperty.getEstado()==null) {
+							propertiesWithReplaceRol.add(iProperty);
+							iProperty.setEstado("YA");
+						}
+					}
 				}
 				//Uy seria muy raro else
 			}
 		}
-
-
+		return propertiesWithReplaceRol;
 	}
 
 	private RolAccesoDTO findTemplateInList(List<RolAccesoDTO> array, String code) {

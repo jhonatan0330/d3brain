@@ -257,6 +257,23 @@
 			and cdex_expedientedetalle = #{expediente}
 			order by dtra_fecha  desc limit 1
 	</select>
+	
+	<select id="getFullToSynchronize" resultType="ProcesoTransicionDTO">
+		select
+			cptr_llave as  llaveTabla
+			,cptr_nombre as  nombre
+			,cptr_proceso as  proceso
+			,cptr_estadopartida as  estadoPartida
+			,cptr_plantilla as  plantilla
+			,bptr_documentador as  documentador
+			,cptr_afectasaldo as  afectaSaldo
+			,bptr_rapida as  rapida
+			,cptr_estadollegada as  estadoLLegada
+			,cptr_estado as estado
+		from procesotransicion_ptrp a
+		inner join proceso_prcp on (cprc_llave =cptr_estado)
+		where cptr_estado = 'A' and cprc_estado = 'A'
+	</select>
 <!--// END region script-->
 
 </mapper>
