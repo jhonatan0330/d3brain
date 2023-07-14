@@ -27,6 +27,7 @@ public class SynchronizeProcessService {
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
 		if (processRemote != null && !processRemote.isEmpty()) {
 			for (ProcesoDTO remoteProcess : processRemote) {
+				System.out.println("Proceso : " + remoteProcess.getNombre());
 				ProcesoDTO localProcess = findProcessInList(localProcessToErase, remoteProcess.getCodigo());
 				// Creo el nuevo proceso
 				if (localProcess!=null){

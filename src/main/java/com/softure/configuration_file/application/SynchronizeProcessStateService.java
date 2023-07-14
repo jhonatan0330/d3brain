@@ -23,7 +23,7 @@ public class SynchronizeProcessStateService {
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			for (ProcesoEstadoDTO remote : remoteTocompare) {
-				System.out.println(remote.getNombre());
+				System.out.println("Estado :" + remote.getNombre()  + "  --  " + remote.getProcesoNombre());
 				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
 				if (local!=null){
 					localToErase.remove(local);

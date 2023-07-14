@@ -111,6 +111,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 			if(estado.getNombre()==null) throw new ServerException("No se puede colocar el signo porque el nombre del estado es nulo");
 			if(!estado.getNombre().endsWith("?")) estado.setNombre(estado.getNombre() + "?"); 
 		}
+		if(estado.getCodigo()==null) estado.setCodigo(generarLlave());
 	}
 	
 	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador, String token) throws ServerException {

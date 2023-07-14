@@ -35,7 +35,7 @@ CREATE TABLE procesoestado_pesp(
         cpes_estadodocumento character varying(1) NOT NULL,
         npes_avance int NOT NULL DEFAULT 0,
         cpes_nombre character varying(100) NOT NULL,
-        cpes_codigo character varying(50),
+        cpes_codigo character varying(50) NOT NULL,
         cpes_proceso character varying(32) NOT NULL,
         cpes_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_procesoestado_pesp PRIMARY KEY (cpes_llave)
@@ -127,6 +127,7 @@ CREATE TABLE pedidoventacaracteristica_pvcp(
 CREATE TABLE procesotransicion_ptrp(
         cptr_llave character varying(32) NOT NULL,
         cptr_nombre character varying(100) NOT NULL,
+        cptr_codigo character varying(50) NOT NULL,
         cptr_proceso character varying(32) NOT NULL,
         cptr_estadopartida character varying(32),
         cptr_plantilla character varying(32),

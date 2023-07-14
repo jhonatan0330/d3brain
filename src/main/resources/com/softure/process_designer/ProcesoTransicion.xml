@@ -11,6 +11,7 @@
 			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
 			,(select coalesce(max(npes_avance) ,100) from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaOrden
 			,cptr_nombre as  nombre
+			,cptr_codigo as  codigo
 			,cptr_proceso as  proceso
 			,cptr_estadopartida as  estadoPartida
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaNombre
@@ -37,6 +38,9 @@
 			</if>
 			<if test="nombre!=null">
 				and cptr_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cptr_codigo = #{codigo}
 			</if>
 			<if test="proceso!=null">
 				and cptr_proceso = #{proceso}
@@ -103,6 +107,9 @@
 		<if test="nombre!=null">
 			,cptr_nombre
 		</if>
+		<if test="codigo!=null">
+			,cptr_codigo
+		</if>
 		<if test="proceso!=null">
 			,cptr_proceso
 		</if>
@@ -131,6 +138,9 @@
 			#{llaveTabla}
 		<if test="nombre!=null">
 			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
 		</if>
 		<if test="proceso!=null">
 			,#{proceso}
@@ -163,6 +173,7 @@
 		update procesotransicion_ptrp
 			set
 				cptr_nombre = #{nombre},
+				cptr_codigo = #{codigo},
 				cptr_proceso = #{proceso},
 				cptr_estadopartida = #{estadoPartida},
 				cptr_plantilla = #{plantilla},
@@ -178,6 +189,7 @@
 		select
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
+			,cptr_codigo as  codigo
 			,cptr_proceso as  proceso
 			,cptr_estadopartida as  estadoPartida
 			,cptr_plantilla as  plantilla
@@ -211,6 +223,7 @@
 		select
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
+			,cptr_codigo as  codigo
 			,cptr_proceso as  proceso
 			,cptr_estadopartida as  estadoPartida
 			,null as  estadoPartidaNombre
@@ -262,6 +275,8 @@
 		select
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  procesoNombre
+			,cptr_codigo as  codigo
 			,cptr_proceso as  proceso
 			,cptr_estadopartida as  estadoPartida
 			,cptr_plantilla as  plantilla
@@ -271,8 +286,15 @@
 			,cptr_estadollegada as  estadoLLegada
 			,cptr_estado as estado
 		from procesotransicion_ptrp a
-		inner join proceso_prcp on (cprc_llave =cptr_estado)
+			inner join proceso_prcp on (cprc_llave =cptr_proceso)
+			left join procesoestado_pesp pe_inicial on (pe_inicial.cpes_llave = cptr_estadopartida)
+			left join procesoestado_pesp pe_final on (pe_final.cpes_llave = cptr_estadopartida)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = cptr_plantilla) 
 		where cptr_estado = 'A' and cprc_estado = 'A'
+			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null) 
+			and (pe_inicial.cpes_estado = 'A' or pe_inicial.cpes_estado is null) 
+			and (pe_final.cpes_estado = 'A' or pe_final.cpes_estado is null) 
+		order by procesoNombre
 	</select>
 <!--// END region script-->
 

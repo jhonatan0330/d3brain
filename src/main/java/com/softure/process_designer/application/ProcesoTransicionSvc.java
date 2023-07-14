@@ -210,6 +210,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			}
 			//dto.setDocumentador(true);
 		}
+		if(dto.getCodigo()==null) dto.setCodigo(generarLlave());
 	}
 	
 	

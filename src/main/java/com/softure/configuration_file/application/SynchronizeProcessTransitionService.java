@@ -26,22 +26,37 @@ public class SynchronizeProcessTransitionService {
 				// Creo el nuevo proceso
 				if (local!=null){
 					localToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token);
 				}
 				else
 				{
 					ProcesoTransicionDTO newState = new ProcesoTransicionDTO();
 					newState.setAfectaSaldo(remote.getAfectaSaldo());
+					newState.setCodigo(remote.getCodigo());
 					newState.setDocumentador(remote.getDocumentador());
 					newState.setProceso(remote.getProceso());
+					newState.setPlantilla(remote.getPlantilla());
 					newState.setEstadoLLegada(remote.getEstadoLLegada());
 					newState.setEstadoPartida(remote.getEstadoPartida());
 					newState.setNombre(remote.getNombre());
 					newState.setRapida(remote.getRapida());
 					newState = processTransitionService.save(newState);
+				}
+			}
+		}
+		callAfterCreateAll(token, hierarchy);
+	}
+	
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy)throws ServerException {
+		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize();
+		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
+		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
+			for (ProcesoTransicionDTO remote : remoteTocompare) {
+				System.out.println("Transicion : " + remote.getNombre() + "  --  " + remote.getProcesoNombre());
+				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
+				if (local!=null){
+					localToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.TRANSICION, newState.getLlaveTabla(), token);
+							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token);
 				}
 			}
 		}

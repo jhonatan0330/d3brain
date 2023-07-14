@@ -14,6 +14,7 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO
 	private Integer estadoPartidaOrden;
 	private Integer estadoLlegadaOrden;
 	private String nombre;
+	private String codigo;
 	private String proceso;
 	private String estadoPartida;
 	private String estadoPartidaNombre;
@@ -169,6 +170,14 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO
 	
 	public String getEstadoLlegadaTipo() {
 		return estadoLlegadaTipo;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 	
 

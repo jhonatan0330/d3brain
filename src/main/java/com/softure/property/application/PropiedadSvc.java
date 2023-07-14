@@ -410,8 +410,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					RolAccesoDTO nuevo = new RolAccesoDTO();
 					nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
 					nuevo = rolService.guardar(nuevo, token);
-					//guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-					//		plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
+					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+							plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
 					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 							plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*", token), token);
 					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,

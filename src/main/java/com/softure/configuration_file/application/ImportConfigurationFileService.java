@@ -58,12 +58,13 @@ public class ImportConfigurationFileService {
 		CambioDTO changeRequest = new CambioDTO();
 		changeRequest.setMotivo("Importacion");
 		changeService.guardar(changeRequest, token);
+		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-			      .filter(property -> (property.getPropiedadValor()=="PROP_141"))
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")==0))
 			      .collect(Collectors.toList());
 		
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-			      .filter(property -> (property.getPropiedadValor()!="PROP_141"))
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")!=0))
 			      .collect(Collectors.toList()));
 		
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -80,6 +81,7 @@ public class ImportConfigurationFileService {
 		sincronizeOrganizationService.call(token, hierarchy);
 		sincronizeProcessService.call(token, hierarchy);
 		sincronizeTemplateService.call(token, hierarchy);
+		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles);
 		sincronizeProcessStateService.call(token, hierarchy);
 		sincronizeProcessTransitionService.call(token, hierarchy);
 		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties);

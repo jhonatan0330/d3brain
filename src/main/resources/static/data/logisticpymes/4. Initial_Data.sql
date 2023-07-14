@@ -29,7 +29,7 @@ INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, 
 	VALUES ('SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'https://fs.softwareaparati.com/imagenes/modulo.png');
 
 INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_imagen, cdpl_objetivo, cdpl_proceso)
-    VALUES ('ADMINISTRADOR', 'ADM', 'BPM ADMINISTRADOR', 'https://fs.softwareaparati.com/imagenes/modulo.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
+    VALUES ('ADMINISTRADOR', 'ADM', 'SOPORTE SOFTWARE PARA TI', 'https://file.softwareparati.com/softure/2019/12/28/f580bc7ca449440f8e9b581b252790c9.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
 
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave, cdpc_plantilla, ndpc_orden, cdpc_nombre, cdpc_codigo, cdpc_formato, cdpc_objetivo)
     VALUES ('ADMINISTRADOR-ID', 'ADMINISTRADOR',  1, 'ID', 'ID', 'T', 'Contiene el numero de cedula del administrador');
@@ -44,7 +44,7 @@ INSERT INTO propiedad_ppdp (cppd_llave, cppd_tipo, cppd_propiedadvalor, cppd_cam
 insert into documentoplantillacaracteristica_dpcp (cdpc_llave,cdpc_plantilla,cdpc_estado,ndpc_orden,cdpc_imagen,cdpc_nombre,cdpc_codigo,cdpc_formato,cdpc_objetivo) 
 	values ('4e3014ec945e4c718dc50481220fcf80','ADMINISTRADOR','A',7,NULL,'CORREO','CORREO','T','.');
 insert into propiedad_ppdp (cppd_llave,cppd_campo,cppd_valor,cppd_texto,cppd_estado,cppd_propiedadvalor,dppd_fechadefinicion,dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo) 
-	values ('49e5294011124e138dd7c661621866de','4e3014ec945e4c718dc50481220fcf80','E',NULL,'A','PROP_75',TIMESTAMP '2021-10-02 16:21:33.150000 -0500',TIMESTAMP '2021-10-02 16:21:33.125000 -0500', 'SC-1','C');
+	values ('49e5294011124e138dd7c661621866de','4e3014ec945e4c718dc50481220fcf80','E',NULL,'A','PROP_75',now(),now(), 'SC-1','C');
 	
 INSERT INTO propiedad_ppdp (cppd_llave, cppd_propiedadvalor, cppd_campo, cppd_valor, cppd_texto,  dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion, cppd_tipo) 
 	VALUES( 'DESC_ADMINISTRADOR' , 'PROP_44', 'ADMINISTRADOR', 'ADMINISTRADOR-NM', 'NOMBRE', now(), now(), 'SC-1', 'L');

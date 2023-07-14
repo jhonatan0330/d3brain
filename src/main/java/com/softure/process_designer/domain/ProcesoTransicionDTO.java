@@ -31,6 +31,7 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 	private String estadoLLegada;
 	private String estadoLlegadaNombre;
 	private String estadoLlegadaTipo;
+	private String codigo;
 
 	public void setProcesoNombre(String procesoNombre) {
 		this.procesoNombre = procesoNombre;
@@ -146,5 +147,13 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
 
 }

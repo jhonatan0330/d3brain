@@ -54,7 +54,7 @@ public class SynchronizeTemplateFieldService {
 				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
-					System.out.println(local.getPlantillaNombre() + " : " + local.getNombre());
+					System.out.println( " -- " + local.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token);

@@ -10,6 +10,7 @@ import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 
@@ -99,5 +100,23 @@ public class SynchronizeTemplateService {
 			}
 		}
 		return null;
+	}
+	
+	public void callCreateRol(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propertiesToCreateRole) throws ServerException {
+		
+		if (propertiesToCreateRole == null || propertiesToCreateRole.isEmpty()) return; 
+		
+		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize();
+		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
+		
+		for (PropiedadDTO propertyRole : propertiesToCreateRole) {
+			for (DocumentoPlantillaDTO remote : remoteList) {
+				if(remote.getLlaveTabla().compareTo(propertyRole.getCampo())==0) {
+					DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
+					propertiesSynchronizeService.call(propertiesToCreateRole, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token);
+				}
+			}
+		}
 	}
 }
