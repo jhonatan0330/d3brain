@@ -101,7 +101,7 @@ public class WebServiceCallPrepare {
 									String codeReplace = (campo.getTransaccionRegistro() == null)
 											? campo.getCampoDTO().getCodigo()
 											: campo.getTransaccionRegistro();
-									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D");
+									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D",iRelacion.getAuxiliar());
 								}
 							}
 						}
@@ -178,9 +178,11 @@ public class WebServiceCallPrepare {
 									String codeReplace = iCampo.getCampoDTO().getCodigo();
 									if (iCampo.getTransaccionRegistro() != null)
 										codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
-									parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_" + codeReplace
+									parameters = addParameterString(parameters, null, iCampo,
+											codeReplace, "R", iCampo.getTransaccionRegistro());
+									/*parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_" + codeReplace
 											+ ConstantesGenerales.IGUAL
-											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
+											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());*/
 								}
 							}
 						}
@@ -214,7 +216,7 @@ public class WebServiceCallPrepare {
 										if (campo.getCampoDTO() == null)
 											campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 										parameters = addParameterString(parameters, iRelacion, campo,
-												campo.getCampoDTO().getCodigo(), "M");
+												campo.getCampoDTO().getCodigo(), "M",iRelacion.getAuxiliar());
 									}
 								}
 							}
@@ -229,25 +231,24 @@ public class WebServiceCallPrepare {
 	}
 
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
-			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo) {
+			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField) {
+		String valueAuxToCode ="";
+		if(iRelacion!=null) {
+			if(iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
+					valueAuxToCode ="(" + iRelacion.getAuxiliar() + ")";
+		}
 		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-				+ ((iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
-						? "(" + iRelacion.getAuxiliar() + ")"
-						: "")
-				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, iRelacion.getAuxiliar());
+				+ valueAuxToCode
+				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, formatToField);
 		if (campo.getValorOpcion() != null) {
 			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-					+ ((iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
-							? "(" + iRelacion.getAuxiliar() + ")"
-							: "")
+					+ valueAuxToCode
 					+ "_KEY" + ConstantesGenerales.IGUAL + campo.getValorOpcion();
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
 					parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-							+ ((iRelacion.getAuxiliar() != null && iRelacion.getAuxiliar().isEmpty())
-									? "(" + iRelacion.getAuxiliar() + ")"
-									: "")
+							+ valueAuxToCode
 							+ "_ID" + ConstantesGenerales.IGUAL + iElement.getNombre();
 				}
 			}
