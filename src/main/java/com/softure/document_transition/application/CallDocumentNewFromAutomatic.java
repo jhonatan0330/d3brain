@@ -133,7 +133,10 @@ public class CallDocumentNewFromAutomatic {
 				break;
 			case Propiedades.GENERA_DOCUMENTO_TEXTO:
 				String textValueToNewField = iPropiedadDTO.getValor();
-				PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, iPropiedadDTO.getValor());
+				
+				List<RelacionInternaDTO> relacionesNumber = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+				if (relacionesNumber == null || relacionesNumber.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas que contenga el consecutivo");
+				PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, relacionesNumber.get(0).getCampo());
 				if (textValueToNewField.compareTo("#NUMBER") == 0) {
 					fieldNew.setValorNumero(new BigDecimal(iterationNumber));
 					fieldNew.setValorText(String.valueOf(iterationNumber));
