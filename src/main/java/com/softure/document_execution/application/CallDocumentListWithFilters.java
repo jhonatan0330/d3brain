@@ -17,6 +17,8 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
+import com.softure.inventory.application.ProductoCaracteristicaSvc;
+import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
@@ -54,6 +56,8 @@ public class CallDocumentListWithFilters {
 	private PedidoVentaDineroSvc dineroService;
 	@Autowired
 	private ProcesoTransicionSvc transicionService;
+	@Autowired
+	private ProductoCaracteristicaSvc productoCaracteristicaService;
 
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto == null)
@@ -79,8 +83,20 @@ public class CallDocumentListWithFilters {
 		if (dto.getCampoOrigen() != null) {
 			DocumentoPlantillaCaracteristicaDTO campoPlantilla = documentoPlantillaCaracteristicaService
 					.consultaXId(dto.getCampoOrigen());
-			if (campoPlantilla == null)
-				throw new ServerException("Revise porque el campo enviado de filtro no es correcto");
+			if (campoPlantilla == null) {
+				// Aqui me toco colcoar esto porque los productos tambien llaman estas propiedades
+				// la idea es algun dia unificar las caracteristicas de producto con las de plantillas
+				// por el momento excusas por este  remache, lo copie de propiedadsc identificador campo
+				ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
+						.consultaXId(dto.getCampoOrigen());
+				if (filtroProducto == null) {
+					throw new ServerException("Revise porque el campo enviado de filtro no es correcto");
+				} else {
+					campoPlantilla = new DocumentoPlantillaCaracteristicaDTO();
+					campoPlantilla.setLlaveTabla(filtroProducto.getLlaveTabla());
+					campoPlantilla.setCodigo(filtroProducto.getCodigo());
+				}
+			}
 			campoPlantilla = documentoPlantillaCaracteristicaService.cargarComplementos(campoPlantilla,
 					dto.getSecurityToken());
 			PropiedadDTO propiedadHeredable1 = Propiedades.obtenerParametro(campoPlantilla,
