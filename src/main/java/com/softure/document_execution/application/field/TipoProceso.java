@@ -530,11 +530,11 @@ public class TipoProceso {
 			// hace por funcion
 			// turno.setUsuario(campoService.getUserFlex(token));
 			// turno.setDocumento(pCampo.getValorOpcion());
-			if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty()
-					|| pCampo.getDependientes().get(0) == null)
-				throw new ServerException(
-						"PAra el cierre de caja se debe teenr un dependiente que es el documento que realizo la apertura");
-			turno.setDocumento(pCampo.getDependientes().get(0).getValorOpcion());
+			//if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty()
+			//		|| pCampo.getDependientes().get(0) == null)
+			//	throw new ServerException(
+			//			"PAra el cierre de caja se debe teenr un dependiente que es el documento que realizo la apertura");
+			turno.setDocumento(pCampo.getValorOpcion());
 			turno = turnoService.consultarTurnoActual(turno);
 			if (turno == null)
 				throw new ServerException("No se identifica el turno en ejecucion");
