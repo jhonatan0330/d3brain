@@ -972,7 +972,7 @@ public class FullControllerDTO {
 	@PostMapping(value="/guardarPedidoVenta")
 	public PedidoVentaDTO guardarPedidoVenta(@RequestBody PedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
-			return crudService.save(dto, token);		
+			return crudService.save(dto, token, null);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

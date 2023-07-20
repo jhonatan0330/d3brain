@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,37 +51,37 @@ public class TemplateController {
 		return documentoplantillaService.consultaUsuario(filter);	
 	}
 	
-	@RequestMapping(value="/getFields", method=RequestMethod.GET)
+	@GetMapping(value="/getFields")
 	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {
 		DocumentoPlantillaDTO filterTemplate = new DocumentoPlantillaDTO();
 		filterTemplate.setLlaveTabla(id);
 		return documentoplantillaService.obtenerCampos(filterTemplate, token);
 	}
 	
-	@RequestMapping(value="/getFieldData", method=RequestMethod.POST)
+	@PostMapping(value="/getFieldData")
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
 		filterField.setSecurityToken(token);
 		return adaptador.consultarDatosBase(filterField);
 	}
 	
-	@RequestMapping(value="/getTrace", method=RequestMethod.POST)
+	@PostMapping(value="/getTrace")
 	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
 		filterField.setSecurityToken(token);
 		return gestionService.listarExpedientesGestionadores(filterField);
 	}
 	
-	@RequestMapping(value="/getTraceFields/{documentId}/{transaction}", method=RequestMethod.GET)
+	@GetMapping(value="/getTraceFields/{documentId}/{transaction}")
 	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable String documentId, @PathVariable String transaction, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return fieldsService.listar2Gestor(documentId, transaction);
 	}
 	
-	@RequestMapping(value="/getPropertyRelations", method=RequestMethod.POST)
+	@PostMapping(value="/getPropertyRelations")
 	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter, @RequestHeader("Authorization") String token)  throws ServerException  {
 		filter.setSecurityToken(token);
 		return relacionesService.listarConsulta(filter);
 	}
 	
-	@RequestMapping(value="/validateLoad", method=RequestMethod.POST)
+	@PostMapping(value="/validateLoad")
 	public DocumentoPlantillaCaracteristicaDTO validateLoad(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter, @RequestHeader("Authorization") String token)  throws ServerException  {
 		filter.setSecurityToken(token);
 		return campoService.listarCarga(filter);

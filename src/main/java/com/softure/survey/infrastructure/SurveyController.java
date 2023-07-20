@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.java.dto.exception.ServerException;
@@ -34,24 +35,24 @@ public class SurveyController {
 	@Autowired private PostPreguntaSvc preguntaService;
 	@Autowired private PostRespuestaSvc respuestaService;
 	
-	@RequestMapping(value="/getAvailable", method=RequestMethod.GET)
+	@GetMapping(value="/getAvailable")
 	public List<EncuestaDTO> obtenerCampos(@RequestHeader("Authorization") String token) throws ServerException {
 		EncuestaFilterDTO filter = new EncuestaFilterDTO();
 		filter.setSecurityToken(token);
 		return encuestaService.listarDisponibles(filter);
 	}
 	
-	@RequestMapping(value="/responseGroupSurvey", method=RequestMethod.POST)
+	@PostMapping(value="/responseGroupSurvey")
 	public EncuestaGrupoDTO responseSurvey(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return groupService.responderEncuesta(dto, token);
 	}
 	
-	@RequestMapping(value="/getFAQ", method=RequestMethod.GET)
+	@GetMapping(value="/getFAQ")
 	public List<PostPreguntaDTO> obtenerPreguntas(@RequestHeader("Authorization") String token) throws ServerException {
 		return preguntaService.listarEnOrden(new PostPreguntaFilterDTO());
 	}
 	
-	@RequestMapping(value="/getFAQResponse/{id}", method=RequestMethod.GET)
+	@GetMapping(value="/getFAQResponse/{id}")
 	public List<PostRespuestaDTO> obtenerREspuestas(@RequestHeader("Authorization") String token, @PathVariable String id) throws ServerException {
 		PostRespuestaFilterDTO filter  = new PostRespuestaFilterDTO();
 		filter.setPregunta(id);

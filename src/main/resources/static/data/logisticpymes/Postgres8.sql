@@ -25,6 +25,7 @@ CREATE TABLE documentotransaccion_trap(
         ctra_llave character varying(32) NOT NULL,
         dtra_fecha timestamp with time zone NOT NULL,
         ctra_usuario character varying(32) NOT NULL,
+        ctra_sesion character varying(32),
         ctra_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentotransaccion_trap PRIMARY KEY (ctra_llave)
     );
@@ -812,6 +813,7 @@ CREATE TABLE reporteejecucion_rejp(
         drej_fechainicio timestamp with time zone NOT NULL,
         drej_fechafin timestamp with time zone NOT NULL,
         crej_error character varying(4000),
+        crej_url character varying(4000),
         crej_usuario character varying(32),
         crej_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_reporteejecucion_rejp PRIMARY KEY (crej_llave)

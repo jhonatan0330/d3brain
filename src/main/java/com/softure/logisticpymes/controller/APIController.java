@@ -62,10 +62,10 @@ public class APIController {
 	}
 
 	@PostMapping(value="/guardarDocumento")
-	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(documento.getLlaveTabla()==null){
-			documento = saveUpdateDocumentFunction.save(documento, token);
+			documento = saveUpdateDocumentFunction.save(documento, token, session);
 		}else{
 			documento = saveUpdateDocumentFunction.update(documento, null, token);
 		}

@@ -90,11 +90,12 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	}
 
 // BEGIN region aditionalMethods
-	public TransaccionLogDTO finalizar(Date startDate, String transactionId) throws ServerException {
+	public TransaccionLogDTO finalizar(Date startDate, String transactionId, String session) throws ServerException {
 		TransaccionLogDTO newLog = new TransaccionLogDTO();
 		newLog.setFechaInicio(startDate);
 		newLog.setFechaFin(new Date());
 		newLog.setTransaccion(transactionId);
+		newLog.setSesion(session);
 		return save(newLog);
 	}
 // END region aditionalMethods

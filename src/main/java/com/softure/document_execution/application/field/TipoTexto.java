@@ -55,7 +55,7 @@ public class TipoTexto {
 				break;
 			}
 			case "T": {
-				validateFormatProperty(registros, "^3[0-9]{9}$", pCampo);
+				validateFormatProperty(registros, "^[3,6][0-9]{9}$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}

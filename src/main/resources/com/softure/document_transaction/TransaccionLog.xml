@@ -10,6 +10,7 @@
 			,dtlg_fechainicio as  fechaInicio
 			,dtlg_fechafin as  fechaFin
 			,ctlg_transaccion as  transaccion
+			,ctlg_sesion as sesion
 			,ctlg_estado as estado
 		from transaccionlog_tlgp a
 	</sql>
@@ -36,6 +37,9 @@
 			</if>
 			<if test="transaccion!=null">
 				and ctlg_transaccion = #{transaccion}
+			</if>
+			<if test="sesion!=null">
+				and ctlg_sesion = #{sesion}
 			</if>
 	</sql>
 
@@ -83,6 +87,9 @@
 		<if test="transaccion!=null">
 			,ctlg_transaccion
 		</if>
+		<if test="sesion!=null">
+			,ctlg_sesion
+		</if>
 		<if test="estado!=null">
 			,ctlg_estado
 		</if>
@@ -97,6 +104,9 @@
 		<if test="transaccion!=null">
 			,#{transaccion}
 		</if>
+		<if test="sesion!=null">
+			,#{sesion}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -109,6 +119,7 @@
 				dtlg_fechainicio = #{fechaInicio},
 				dtlg_fechafin = #{fechaFin},
 				ctlg_transaccion = #{transaccion},
+				ctlg_sesion = #{sesion},
 				ctlg_estado =#{estado}
 		<include refid="whereTransaccionLogPrimaryKeyFragment" />
 	</select>
@@ -119,6 +130,7 @@
 			,dtlg_fechainicio as  fechaInicio
 			,dtlg_fechafin as  fechaFin
 			,ctlg_transaccion as  transaccion
+			,ctlg_sesion as  sesion
 			,ctlg_estado as estado
 		from transaccionlog_tlgp a
 	</sql>

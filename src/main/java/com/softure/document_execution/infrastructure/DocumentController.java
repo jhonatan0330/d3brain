@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,22 +48,22 @@ public class DocumentController {
 	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired private ActividadSvc actividadService;
 	
-	@RequestMapping(value="/getDocument", method=RequestMethod.POST)
+	@PostMapping(value="/getDocument")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
 		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla(), token);
 	}
 	
-	@RequestMapping(value="/getDocuments", method=RequestMethod.POST)
+	@PostMapping(value="/getDocuments")
 	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter, @RequestHeader("Authorization") String token) throws ServerException {
 		filter.setSecurityToken(token);
 		return listDocumentWithFiltersFunction.listarAvanzado(filter);
 	}
 
-	@RequestMapping(value="/saveDocument", method=RequestMethod.POST)
+	@PostMapping(value="/saveDocument")
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document, @RequestBody String token)  throws ServerException  {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(document.getLlaveTabla()==null){
-			document = saveUpdateDocumentFunction.save(document, token);
+			document = saveUpdateDocumentFunction.save(document, token, null);
 		}else{
 			document = saveUpdateDocumentFunction.update(document, null, token);
 		}
@@ -78,7 +77,7 @@ public class DocumentController {
 	}
 	
 	
-	@RequestMapping(value="/upload", method=RequestMethod.POST)
+	@PostMapping(value="/upload")
     public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
@@ -118,12 +117,12 @@ public class DocumentController {
 		deduccionService.recalcularInventarioDocumento(documentId, token);
 	}
 	
-	@RequestMapping(value="/getUserActivities", method=RequestMethod.GET)
+	@GetMapping(value="/getUserActivities")
 	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {
 		return actividadService.listUserActivities(token);
 	}
 	
-	@RequestMapping(value="/readActivity", method=RequestMethod.POST)
+	@PostMapping(value="/readActivity")
 	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token) throws ServerException {
 		return actividadService.readActivity(activity.getLlaveTabla(), token);
 	}

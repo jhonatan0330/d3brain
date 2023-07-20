@@ -37,7 +37,7 @@ public class ApiSendService {
 		// Por cada campo con el codigo del campo colocar
 		assignateValue(document, item.getFields());
 		// Envio a guardar el documento
-		document = saveDocumentService.save(document, token);
+		document = saveDocumentService.save(document, token, null);
 		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre());
 	}
 

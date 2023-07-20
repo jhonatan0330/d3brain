@@ -17,6 +17,7 @@ public class TransaccionLogDTO extends BasicDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFin;
 	private String transaccion;
+	private String sesion;
 
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
@@ -41,5 +42,13 @@ public class TransaccionLogDTO extends BasicDTO
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
+
+	public String getSesion() {
+		return sesion;
+	}
+
+	public void setSesion(String sesion) {
+		this.sesion = sesion;
+	}
 
 }

@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "fixedDelayTask.in.milliseconds",
+    "type": "java.lang.String",
+    "description": "A description for 'fixedDelayTask.in.milliseconds'"
+  },
+  {
+    "name": "fixedDelayMail.in.milliseconds",
+    "type": "java.lang.String",
+    "description": "A description for 'fixedDelayMail.in.milliseconds'"
+  },
+  {
+    "name": "cron.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'cron.enabled'"
+  }
+]}

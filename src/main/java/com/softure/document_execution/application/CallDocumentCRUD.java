@@ -26,6 +26,7 @@ import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transaction.application.TransaccionErrorSvc;
 import com.softure.document_transaction.application.TransaccionLogSvc;
 import com.softure.document_transaction.domain.DocumentoTransaccionDTO;
+import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.document_transition.application.CallManageTransition;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.inventory.application.BodegaSvc;
@@ -62,7 +63,6 @@ public class CallDocumentCRUD {
 	private CampoAdaptador adaptador;
 	@Autowired
 	private PedidoVentaSvc pedidoService;
-
 	@Autowired
 	private ProcesoEstadoSvc estadoService;
 	@Autowired
@@ -109,13 +109,21 @@ public class CallDocumentCRUD {
 	private CallBPM bpmService;
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO save(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
+		String userId = getUserID(token);
+		if (session != null) {
+			TransaccionLogFilterDTO validateDuplicate = new TransaccionLogFilterDTO();
+			validateDuplicate.setSesion(session + "-" + userId);
+			if (logSvc.listarConsulta(validateDuplicate).size() != 0)
+				throw new ServerException(
+						"Identificadmos que esta informacion ya esta almacenada por favor valida si ya se guardo el registro o sino cierra el formulario y vuelve a registrar. Gracias por tu comprension");
+		}
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
-		dto.setFuncionario(getUserID(token));
+		dto.setFuncionario(userId);
 		try {
 			PedidoVentaDTO result = saveWithoutTransaction(dto, token);
-			logSvc.finalizar(tran.getFecha(), dto.getTransaccion());
+			logSvc.finalizar(tran.getFecha(), dto.getTransaccion(), session + "-" + userId);
 			return result;
 		} catch (Exception e) {
 			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario());
@@ -689,7 +697,8 @@ public class CallDocumentCRUD {
 			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla(),
 					documento.getHistorico());
 			if (anterior != null) {
-				// En box sucedia que se guardaba y se hacia una tercera modificacion y el saldo no se controlaba
+				// En box sucedia que se guardaba y se hacia una tercera modificacion y el saldo
+				// no se controlaba
 				documento.getDinero().setControlarSaldo(anterior.getControlarSaldo());
 				// Si todo es igual lo dejo quieto
 				if (documento.getDinero().getValorTotal().compareTo(anterior.getValorTotal()) == 0
