@@ -424,7 +424,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				break;
 			}
 		}
-		relacionarCampo(dto, token);
+		//relacionarCampo(dto, token);
 		return dto;
 		// END Propiedad_guardar
 	}
@@ -851,52 +851,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorValorProceso(dto, token);
 			break;
 		}
-		case Propiedades.UBICACION: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.GENERA_DOCUMENTO_CAMPO: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.RELACIONAR_DOCUMENTOS: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.RETIRAR_DOCUMENTOS: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PLANTILLA_CARGA_MASIVA_MULTIPLE: {
-			return identificadorCampo(dto, token);
-		}
-
-		case Propiedades.TERCERO: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PERMISO_PLANTILLA_INICIO_RAPIDO: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.DESCRIPCION: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.CAMPO_EVIDENCIA: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.DESCRIPCION_NIVEL2: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.TOTAL: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.CONSECUTIVO: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.FECHA: {
-			return identificadorCampo(dto, token);
-		}
+		case Propiedades.UBICACION: 
+		case Propiedades.GENERA_DOCUMENTO_CAMPO: 
+		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE: 
+		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR: 
+		case Propiedades.RELACIONAR_DOCUMENTOS: 
+		case Propiedades.RETIRAR_DOCUMENTOS: 
+		case Propiedades.PLANTILLA_CARGA_MASIVA_MULTIPLE: 
+		case Propiedades.TERCERO: 
+		case Propiedades.PERMISO_PLANTILLA_INICIO_RAPIDO: 
+		case Propiedades.DESCRIPCION: 
+		case Propiedades.CAMPO_EVIDENCIA: 
+		case Propiedades.DESCRIPCION_NIVEL2: 
+		case Propiedades.TOTAL: 
+		case Propiedades.CONSECUTIVO: 
+		case Propiedades.FECHA: 
 		case Propiedades.RESPONSABLE: {
 			return identificadorCampo(dto, token);
 		}
@@ -908,13 +877,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			dto.setTexto("POR NOMBRE");
 			return false;
 		}
-		case Propiedades.CUENTA_SOBREGIRO: {
-			return identificadorCampo(dto, token);
-		}
-
-		case Propiedades.PRODUCTOS_FUNCION_CAMPO: {
-			return identificadorCampo(dto, token);
-		}
+		case Propiedades.CUENTA_SOBREGIRO: 
+		case Propiedades.PRODUCTOS_FUNCION_CAMPO:
 		case Propiedades.PRODUCTOS_TERCERO: {
 			return identificadorCampo(dto, token);
 		}
@@ -922,31 +886,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorProducto(dto);
 			break;
 		}
-		case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO: {
+		case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO: 
+		case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO: 
+		case Propiedades.PRODUCTO_CAMPO_CANTIDAD:
+		case Propiedades.PRODUCTO_CAMPO_TOTAL:
+		case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO:{
 			return identificadorCampo(dto, token);
 		}
-		case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PRODUCTO_CAMPO_CANTIDAD: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PRODUCTO_CAMPO_TOTAL: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO: {
-			return identificadorCampo(dto, token);
-		}
-
+		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
 		case Propiedades.DETALLE_CATEGORIA: {
 			identificadorCategoriaProducto(dto, token);
 			break;
 		}
-		case Propiedades.PLANTILLA_TIPO_PRODUCTO: {
-			identificadorCategoriaProducto(dto, token);
-			break;
-		}
-
 		case Propiedades.REPORTE_ENCABEZADO:
 		case Propiedades.REPORTE_PIE_PAGINA:
 		case Propiedades.REPORTE_EXCEL:
@@ -960,7 +911,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorEstadoReporte(dto);
 			break;
 		}
-
 		case Propiedades.REPORTE_JRXML: {
 			identificadorJRXML(dto);
 			break;
@@ -974,14 +924,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorMensaje(dto);
 			break;
 		}
-
 		case Propiedades.API_AUTHENTICATION:
 		case Propiedades.API_TRANSACCION:
 		case Propiedades.API: {
 			identificadorApi(dto);
 			break;
 		}
-
 		case Propiedades.MENSAJE_DESTINATARIO:
 		case Propiedades.ESTADO_ASIGNAR: {
 			identificadorUsuario(dto);
@@ -992,13 +940,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorRol(dto, token);
 			break;
 		}
+		case Propiedades.CELULAR_ROL:
 		case Propiedades.CORREO_ROL: {
 			return identificadorCampo(dto, token);
 		}
-		case Propiedades.CELULAR_ROL: {
-			return identificadorCampo(dto, token);
-		}
-
 		case Propiedades.COLOR: {
 			identificarColor(dto);
 			break;
@@ -1024,7 +969,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					"Cuando registras una propiedad de temporizador debes colocar en el texto lla clave de tiempo de repeticion. OBserva la ayuda");
 	}
 
-	private void relacionarCampo(PropiedadDTO dto, String token) throws ServerException {
+	/*private void relacionarCampo(PropiedadDTO dto, String token) throws ServerException {
 		switch (dto.getKey()) {
 		case Propiedades.TERCERO: {
 			break;
@@ -1064,7 +1009,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		relacion.setPropiedad(dto.getLlaveTabla());
 		relacion.setCampo(dto.getValor());
 		relacionService.guardar(relacion, token);
-	}
+	}*/
 
 	public String obtenerUnica(String tipo, String plantilla, String key, String usuario) throws ServerException {
 		PropiedadDTO filtroOrden = obtenerPropiedad(tipo, plantilla, key, usuario);

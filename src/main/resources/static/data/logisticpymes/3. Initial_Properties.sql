@@ -138,8 +138,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_78' , 'L', 'PERMISO MODIFICAR', 'PERMISO_PLANTILLA_MODIFICAR', 'PERMISOS', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
 	VALUES('PROP_79' , 'L', 'PERMISO ELIMINAR', 'PERMISO_PLANTILLA_ELIMINAR', 'PERMISOS', true, true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol) 
-	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol, bpvd_multiple) 
+	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_81' , 'L', 'OCULTAR_TOTAL', 'PERMISO_PLANTILLA_OCULTAR_TOTAL', 'PERMISOS', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
@@ -441,3 +441,4 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_229' , 'C', 'BINARIO_PREGUNTA', 'BINARIO_PREGUNTA', 'REQUISITO', 'I', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_230' , 'E', 'OMITIR LA IMPRESION DEL REPORTE', 'REP_EXCLUDE_STORAGE_FILE', 'REQUISITO', true);
+	

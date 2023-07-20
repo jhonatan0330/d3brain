@@ -177,6 +177,7 @@ public class Propiedades {
 	public static final String PERMISO_PLANTILLA_VER_TODOS = "PERMISO_PLANTILLA_VER_TODOS";
 	public static final String PERMISO_PLANTILLA_LISTAR_MENU = "PERMISO_PLANTILLA_LISTAR_MENU";
 	public static final String PERMISO_PLANTILLA_LISTAR_MENU_PROCESO = "PERMISO_PLANTILLA_LISTAR_MENU_PROCESO";
+	
 
 	public static final String PERMISO_CAMPO_BLOQUEAR = "PERMISO_CAMPO_BLOQUEAR";
 	public static final String PERMISO_CAMPO_MODIFICABLE = "PERMISO_CAMPO_MODIFICABLE";
@@ -888,6 +889,10 @@ public class Propiedades {
 		}
 		case ORDEN_DESCENDENTE: {
 			ruleProperty = " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";
+			break;
+		}
+		case PERMISO_PLANTILLA_INICIO_RAPIDO: {
+			ruleProperty = "Colcoa el campo que deseas copiar en un formulario nuevo que se abrira al momento de guardar un registro";
 			break;
 		}
 		case PERMISO_PLANTILLA_LISTAR_MENU:
