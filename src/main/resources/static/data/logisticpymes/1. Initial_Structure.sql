@@ -124,6 +124,7 @@ CREATE TABLE Z_drg_documentorelaciongestor (
 	cdrg_usuario varchar(32) NOT NULL,
 	ddrg_cierre timestamptz NULL,
 	cdrg_nombre varchar(100) NOT NULL,
+	bdrg_estadorepetido bool NOT NULL DEFAULT false,
 	cdrg_transaccion varchar(32) NULL,
 	CONSTRAINT pk_z_drg_documentorelaciongestor_drgp PRIMARY KEY (cdrg_llave),
 	CONSTRAINT fk_z_drg_documentorelaciongestordocumentomodificador FOREIGN KEY (cdrg_documentomodificador) REFERENCES pedidoventa_pdvp(cpdv_llave),

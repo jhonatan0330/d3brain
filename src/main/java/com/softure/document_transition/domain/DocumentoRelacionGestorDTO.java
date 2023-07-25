@@ -36,6 +36,7 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date cierre;
 	private String nombre;
+	private boolean estadorepetido;
 	private String adjunto;
 
 	public void setDocumentoPrincipal(String documentoPrincipal) {
@@ -194,5 +195,13 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
+
+	public boolean getEstadorepetido() {
+		return estadorepetido;
+	}
+
+	public void setEstadorepetido(boolean estadorepetido) {
+		this.estadorepetido = estadorepetido;
+	}
 
 }

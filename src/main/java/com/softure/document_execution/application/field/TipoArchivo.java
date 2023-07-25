@@ -14,11 +14,19 @@ public class TipoArchivo {
 	private PedidoVentaCaracteristicaSvc campoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
-		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
-				&& (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()))
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-					+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-					+ pCampo.getCampoDTO().getCodigo() + ")");
+		if(pCampo.getValorText() == null || pCampo.getValorText().isEmpty()) {
+			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");	
+			if(pCampo.getValorText().isEmpty())pCampo.setValorText(null);
+		}else {
+			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.MULTIPLE_FILE) == null) {
+				if(pCampo.getValorText().contains(";;"))
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							+ " revisa el campo " + pCampo.getCampoDTO().getNombre() + " el permite un solo adjunto y esta enviando varios adjuntos ");	
+			}
+		}
 	}
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)

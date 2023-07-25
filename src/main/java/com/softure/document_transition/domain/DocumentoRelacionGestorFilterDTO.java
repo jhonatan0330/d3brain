@@ -34,6 +34,7 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date cierreMax;
 	private String nombre;
+	private boolean estadorepetidoFilter;
 	private String adjunto;
 
 	
@@ -230,6 +231,14 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	
 	public String getAdjunto() {
 		return adjunto;
+	}
+
+	public boolean getEstadorepetidoFilter() {
+		return estadorepetidoFilter;
+	}
+
+	public void setEstadorepetidoFilter(boolean estadorepetidoFilter) {
+		this.estadorepetidoFilter = estadorepetidoFilter;
 	}
 	
 

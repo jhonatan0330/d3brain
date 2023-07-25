@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.document_transition.infrastructure.DocumentoRelacionGestorMapper;
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -143,6 +144,23 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		}else {
 			actual = anterior;
 		}
+		
+		// Para ayudar a obtener la ultima gestion de cada estado vamos avanzando 
+		if (actual !=null) {
+			DocumentoRelacionGestorFilterDTO filter = new DocumentoRelacionGestorFilterDTO();
+			filter.setEstadorepetidoFilter(false);
+			filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filter.setDocumentoPrincipal(principal);
+			filter.setEstadoFinal(estadoFinal);
+			List<DocumentoRelacionGestorDTO> actuales = listarConsulta(filter);
+			if(actuales!=null && !actuales.isEmpty()) {
+				for (DocumentoRelacionGestorDTO documentoRelacionGestorDTO : actuales) {
+					documentoRelacionGestorDTO.setEstadorepetido(true);
+					update(documentoRelacionGestorDTO);
+				}
+			}
+		}
+		
 		DocumentoRelacionGestorDTO gestor = new DocumentoRelacionGestorDTO();
 		gestor.setDocumentoPrincipal(principal);
 		gestor.setDocumentoModificador(modificador);

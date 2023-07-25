@@ -20,6 +20,7 @@
 			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
+			,bdrg_estadorepetido as  estadorepetido
 			,cdrg_estado as estado
 		from documentorelaciongestor_drgp a
 	</sql>
@@ -70,6 +71,9 @@
 			</if>
 			<if test="nombre!=null">
 				and cdrg_nombre = #{nombre}
+			</if>
+			<if test="estadorepetidoFilter!=null">
+				and bdrg_estadorepetido = #{estadorepetidoFilter}
 			</if>
 	</sql>
 
@@ -142,6 +146,9 @@
 		<if test="nombre!=null">
 			,cdrg_nombre
 		</if>
+		<if test="estadorepetido!=null">
+			,bdrg_estadorepetido
+		</if>
 		<if test="estado!=null">
 			,cdrg_estado
 		</if>
@@ -180,6 +187,9 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
+		<if test="estadorepetido!=null">
+			,#{estadorepetido}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -200,6 +210,7 @@
 				cdrg_transaccion = #{transaccion},
 				ddrg_cierre = #{cierre},
 				cdrg_nombre = #{nombre},
+				bdrg_estadorepetido = #{estadorepetido},
 				cdrg_estado =#{estado}
 		<include refid="whereDocumentoRelacionGestorPrimaryKeyFragment" />
 	</select>
@@ -218,6 +229,7 @@
 			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
+			,bdrg_estadorepetido as  estadorepetido
 			,cdrg_estado as estado
 		from documentorelaciongestor_drgp a
 	</sql>
@@ -510,6 +522,9 @@
 		<if test="nombre!=null">
 			,cdrg_nombre
 		</if>
+		<if test="estadorepetido!=null">
+			,bdrg_estadorepetido
+		</if>
 		<if test="estado!=null">
 			,cdrg_estado
 		</if>
@@ -548,6 +563,9 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
+		<if test="estadorepetido!=null">
+			,#{estadorepetido}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -568,6 +586,7 @@
 				cdrg_transaccion = #{transaccion},
 				ddrg_cierre = #{cierre},
 				cdrg_nombre = #{nombre},
+				bdrg_estadorepetido = #{estadorepetido},
 				cdrg_estado =#{estado}
 		<include refid="whereDocumentoRelacionGestorPrimaryKeyFragment" />
 	</select>

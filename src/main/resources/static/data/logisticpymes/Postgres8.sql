@@ -77,6 +77,7 @@ CREATE TABLE documentorelaciongestor_drgp(
         cdrg_transaccion character varying(32),
         ddrg_cierre timestamp with time zone,
         cdrg_nombre character varying(100) NOT NULL,
+        bdrg_estadorepetido bool NOT NULL DEFAULT false,
         cdrg_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentorelaciongestor_drgp PRIMARY KEY (cdrg_llave)
     );
