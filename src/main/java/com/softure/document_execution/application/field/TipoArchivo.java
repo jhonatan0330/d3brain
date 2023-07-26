@@ -19,7 +19,7 @@ public class TipoArchivo {
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 						+ pCampo.getCampoDTO().getCodigo() + ")");	
-			if(pCampo.getValorText().isEmpty())pCampo.setValorText(null);
+			if(pCampo.getValorText() != null && pCampo.getValorText().isEmpty())pCampo.setValorText(null);
 		}else {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.MULTIPLE_FILE) == null) {
 				if(pCampo.getValorText().contains(";;"))
