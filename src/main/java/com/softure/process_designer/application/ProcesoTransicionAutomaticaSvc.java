@@ -189,20 +189,25 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		for (PropiedadDTO propiedadDTO : faltantes) {
 			Date fechaProgramada = null;
 			String error = null;
-			if(propiedadDTO.getFechaInicial().compareTo(new Date())>0) {
-				fechaProgramada = propiedadDTO.getFechaInicial();
+			if(propiedadDTO.getFechaInicial()==null) {
+				error = "*****ERROR***** No tiene fecha inicial Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) ";
 			}else {
-				Date ultimaEjecucion = procesoTransicionAutomaticaMapper.obtenerFechaUltimaEjecucion(propiedadDTO.getCampo());
-				try {
-					if(ultimaEjecucion==null) {
-						fechaProgramada = calcularFecha(propiedadDTO.getFechaInicial(), propiedadDTO.getTexto());
-					}else {
-						fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
-					}
-				} catch (ServerException e) {
-					error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) " + e.getMessage();
-				} 
+				if(propiedadDTO.getFechaInicial().compareTo(new Date())>0) {
+					fechaProgramada = propiedadDTO.getFechaInicial();
+				}else {
+					Date ultimaEjecucion = procesoTransicionAutomaticaMapper.obtenerFechaUltimaEjecucion(propiedadDTO.getCampo());
+					try {
+						if(ultimaEjecucion==null) {
+							fechaProgramada = calcularFecha(propiedadDTO.getFechaInicial(), propiedadDTO.getTexto());
+						}else {
+							fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
+						}
+					} catch (ServerException e) {
+						error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) " + e.getMessage();
+					} 
+				}
 			}
+			
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
 			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0 && propiedadDTO.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION)==0) {
 				programar.setTransicion(propiedadDTO.getCampo());	

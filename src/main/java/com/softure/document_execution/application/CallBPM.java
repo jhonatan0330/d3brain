@@ -128,11 +128,16 @@ public class CallBPM {
 						"Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
 			// Manejo de los saldos de los procesos
 			if (transicion != null) {
-				manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
-						null, null, securityToken, transaccion, null);
+				ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
+				// Esto lo hice solamente para una transicion inicial que gneraba un ciclo con
+				// iteraciones
+				if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) != 0) {
+					manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
+							null, null, securityToken, transaccion, null);
+				}
+				// Para evitar que se generen ciclos validando los mismos documentos
 				if (documentosGestionados == null)
-					documentosGestionados = new ArrayList<String>();// Para evitar que se generen ciclos validando los
-																	// mismos documentos
+					documentosGestionados = new ArrayList<String>();
 				documentosGestionados.add(expediente.getLlaveTabla());
 				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			} else {
@@ -255,8 +260,8 @@ public class CallBPM {
 				throw new ServerException(error.toString());
 			}
 		} else {
-			DocumentoRelacionGestorDTO ultimoGestor = gestores.get(0); // El query trae desc, escojo el primero para que
-																		// es el ultimo
+			// El query trae desc, escojo el primero para que es el ultimo
+			DocumentoRelacionGestorDTO ultimoGestor = gestores.get(0);
 			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
 					ultimoGestor.getEstadoInicial(), procesoDTO.getEstadoExpediente());
 			if (transicion == null)
