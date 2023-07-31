@@ -9,6 +9,7 @@ import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.infrastructure.TarifaMapper;
+import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -38,7 +39,8 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	// BEGIN region servicesTarifa
 	@Autowired private TarifarioSvc tarifarioService;
 	@Autowired private ProductoSvc productoService;
-	@Autowired private PedidoVentaSvc documentoService;	
+	@Autowired private PedidoVentaSvc documentoService;
+	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	// END region servicesTarifa
 
 	@Override
@@ -133,11 +135,15 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		}
 		if(tarifario.getTipoDimension2()!=null && dto.getDimension2()==null &&dto.getDimension2Nombre()!=null) {
 			PedidoVentaFilterDTO filtroDocumentoFilter = new PedidoVentaFilterDTO();
-			filtroDocumentoFilter.setNombre(dto.getDimension2Nombre());
+			filtroDocumentoFilter.setFiltroParametro(dto.getDimension2Nombre());
 			filtroDocumentoFilter.setPlantilla(tarifario.getTipoDimension2());
-			PedidoVentaDTO filtroDocumento = documentoService.consultaUnica(filtroDocumentoFilter);
-			if(filtroDocumento==null) throw new ServerException("No se identifica "+ tarifario.getTipoDimension2Nombre() +" con el codigo : " + dto.getDimension2Nombre());
-			dto.setDimension2(filtroDocumento.getLlaveTabla());
+			filtroDocumentoFilter.setSecurityToken(token);
+			
+			List<PedidoVentaDTO> filtroDocumento = listDocumentWithFiltersFunction.listarAvanzado(filtroDocumentoFilter);
+			
+			if(filtroDocumento==null || filtroDocumento.isEmpty()) throw new ServerException("No se identifica "+ tarifario.getTipoDimension2Nombre() +" con el codigo : " + dto.getDimension2Nombre());
+			if(filtroDocumento.size()>1) throw new ServerException("Existen muchos "+ tarifario.getTipoDimension2Nombre() +" con el codigo : " + dto.getDimension2Nombre());
+			dto.setDimension2(filtroDocumento.get(0).getLlaveTabla());
 		}
 		
 		if(tarifario.getTipoDimension3()!=null && dto.getDimension3()==null &&dto.getDimension3Nombre()!=null) {

@@ -58,6 +58,8 @@ public class CallDocumentListFromFieldProcess {
 				entityFilter.setSecurityToken(pCampo.getSecurityToken());
 				entityFilter.setFiltroParametro(pCampo.getFiltroParametro());//Coloco los filtros necesarios
 				if(entityFilter.getFiltroParametro()!=null && entityFilter.getFiltroParametro().compareTo("*")==0)entityFilter.setFiltroParametro(null);
+				
+				if(entityFilter.getFiltroParametro()!=null && entityFilter.getFiltroParametro().endsWith(" "))entityFilter.setFiltroParametro(entityFilter.getFiltroParametro().substring(0,entityFilter.getFiltroParametro().length()-1));
 				entityFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
 				
 				if(funcionConsulta == null) {

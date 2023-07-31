@@ -116,7 +116,7 @@ public class CallDocumentCRUD {
 			validateDuplicate.setSesion(session + "-" + userId);
 			if (logSvc.listarConsulta(validateDuplicate).size() != 0)
 				throw new ServerException(
-						"Identificadmos que esta informacion ya esta almacenada por favor valida si ya se guardo el registro o sino cierra el formulario y vuelve a registrar. Gracias por tu comprension");
+						"Identificamos que esta informacion ya esta almacenada por favor valida si ya se guardo el registro o sino cierra el formulario y vuelve a registrar. Gracias por tu comprension");
 		}
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());

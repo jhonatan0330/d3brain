@@ -71,6 +71,7 @@ public class CallDocumentListWithFilters {
 		// mucha memoria
 		if (dto.getFiltroParametro() != null)
 			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());
+		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().endsWith(" "))dto.setFiltroParametro(dto.getFiltroParametro().substring(0,dto.getFiltroParametro().length()-1));
 		if (dto.getNombre() != null)
 			dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
 		if (dto.getCampoPropiedad() != null) {
@@ -406,7 +407,6 @@ public class CallDocumentListWithFilters {
 				estadosFiltro = new ArrayList<>();
 				estadosFiltro.add(textToGenerateFilters);
 			}
-
 		}
 		return estadosFiltro;
 	}
@@ -457,8 +457,8 @@ public class CallDocumentListWithFilters {
 								PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
 								Propiedades.PLANTILLA_TIPO_CUENTA, null);
 						if (propiedadCuenta != null) {
-							hmap.put(iterador.getPlantilla(), "TIPO_CUENTA_VALOR");// Para que los tipo cuenta muestre
-																					// el saldo
+							// Para que los tipo cuenta muestre el saldo
+							hmap.put(iterador.getPlantilla(), "TIPO_CUENTA_VALOR");
 						} else {
 							PropiedadDTO propiedad = propiedadService.obtenerPropiedad(
 									PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.TOTAL,
