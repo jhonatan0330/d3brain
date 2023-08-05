@@ -440,21 +440,12 @@ public class CallDocumentCRUD {
 			// 2. Coloco los dependientes//Actualizar dependencias despues de los camps para
 			// que queden completas asi el campo este despues en orden
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
+				String[] props = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO,
+						Propiedades.INFORMATIVE_DATA, Propiedades.UPDATE_INFORMATIVE_FIELD };
 				List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
-						Propiedades.DEPENDE);
-				List<PropiedadDTO> modificarCampo = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
-						Propiedades.MODIFICAR_CAMPO);
-				List<PropiedadDTO> informativeCampo = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
-						Propiedades.INFORMATIVE_DATA);
-				if (codigoDepende != null || modificarCampo != null || informativeCampo != null) {
-					List<PropiedadDTO> dependencias = new ArrayList<PropiedadDTO>();
-					if (codigoDepende != null)
-						dependencias.addAll(codigoDepende);
-					if (modificarCampo != null)
-						dependencias.addAll(modificarCampo);
-					if (informativeCampo != null)
-						dependencias.addAll(informativeCampo);
-					for (PropiedadDTO codigo : dependencias) {
+						props);
+				if (codigoDepende!=null) {
+					for (PropiedadDTO codigo : codigoDepende) {
 						for (PedidoVentaCaracteristicaDTO fieldExpediente : dto.getCaracteristicas()) {
 							if (codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0) {
 								if (campoDocumento.getDependientes() == null)

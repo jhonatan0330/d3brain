@@ -554,6 +554,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| dto.getKey().compareTo(Propiedades.PRODUCTOS_FUNCION_CAMPO) == 0
 						|| dto.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0
 						|| dto.getKey().compareTo(Propiedades.DISPONIBILIDAD_CROQUIS) == 0
+						|| dto.getKey().compareTo(Propiedades.UPDATE_INFORMATIVE_FIELD) == 0
 						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS) == 0) {
 					DocumentoPlantillaCaracteristicaDTO filtro = campoService.consultaXId(dto.getCampo());
 					if (filtro == null) {
@@ -763,8 +764,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			estado = estadoService.consultaUnica(estadoFiltro);
 			if (estado == null) {
 				ProcesoDTO proceso = procesoService.consultaXId(plantilla.getProceso());
-				throw new ServerException("No se encontro estado con el nombre " + dto.getValor() + " en el proceso "
-						+ proceso.getNombre());
+				if(proceso ==null) {
+					throw new ServerException("Comienza revisando el proceso de la plantilla del reporte");
+				}else {
+					throw new ServerException("No se encontro estado con el nombre " + dto.getValor() + " en el proceso "
+							+ proceso.getNombre());
+				}
 			}
 		}
 		dto.setValor(estado.getLlaveTabla());
@@ -835,6 +840,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorBodega(dto);
 			break;
 		}
+		case Propiedades.UPDATE_INFORMATIVE_FIELD:
 		case Propiedades.DEPENDE: {
 			return identificadorCampo(dto, token);
 		}

@@ -80,6 +80,10 @@ public class TipoProceso {
 	@Autowired
 	private AuxiliarProcesoBodega tipoBodega;
 
+	@Autowired
+	private CallUpdateInformativeField updateInformativeService;
+
+	
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getValorOpcion() != null)
 			pCampo.setPrincipal(pedidoService.consultaXId(pCampo.getValorOpcion()));// Consulto el Id por proceso
@@ -370,6 +374,7 @@ public class TipoProceso {
 							bd.setPrincipal(pCampo.getPrincipal());
 							campoService.inactivar(bd, token);
 						}
+						updateInformativeService.call(pCampo, token);
 						return inactivar(bd, null, token);// Se inactiva el anterior, toca revisar el inactivar
 					} else {
 						if (bd.getValorOpcion() != null
@@ -391,6 +396,7 @@ public class TipoProceso {
 				}
 				if (pCampo.getValorOpcion() == null) {
 					cerrarCaja(pCampo, token);
+					updateInformativeService.call(pCampo, token);
 					return pCampo;
 				} else {
 					System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",
@@ -419,6 +425,7 @@ public class TipoProceso {
 							pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
 							pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					// throw new ServerException("Probando");
+					updateInformativeService.call(pCampo, token);
 				}
 			} else {
 				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getPlantillaNombre(),
@@ -621,16 +628,10 @@ public class TipoProceso {
 
 	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 
+		String[] props = { Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS };
 		List<PropiedadDTO> relacionExternaAgregar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
-				Propiedades.RELACIONAR_DOCUMENTOS);
-		List<PropiedadDTO> relacionExternaRetirar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
-				Propiedades.RETIRAR_DOCUMENTOS);
-		if (relacionExternaAgregar == null && relacionExternaRetirar == null)
-			return;
-		if (relacionExternaAgregar == null)
-			relacionExternaAgregar = new ArrayList<PropiedadDTO>();
-		if (relacionExternaRetirar != null)
-			relacionExternaAgregar.addAll(relacionExternaRetirar);
+				props);
+		if (relacionExternaAgregar == null)	return;
 		if (pCampo.getDependientes() == null)
 			throw new ServerException(
 					"relacionado o retirando documentos no esta relacionado el dependiente que contiene el campo proceso que vamos a afectar");

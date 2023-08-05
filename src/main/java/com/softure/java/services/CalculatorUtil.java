@@ -112,7 +112,7 @@ public class CalculatorUtil {
     		if(text.isEmpty())text = "0";
     		return new BigDecimal(text);
 	    }catch (NumberFormatException e) {
-			throw new ServerException("Error al convertir a numero el texto " + text);
+			throw new ServerException("Error al convertir a numero el texto " + text + ". Revisa los dependientes");
 		}
     }
 }

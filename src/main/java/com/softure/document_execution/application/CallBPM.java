@@ -178,8 +178,8 @@ public class CallBPM {
 						DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
 						relacionExpedienteFilter.setCampoMaestro(campo.getLlaveTabla());
 						relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-						relacionExpedienteFilter.setPaginacionRegistroFinal(5000);// Esto es para poder listar todos los
-																					// relacionados
+						relacionExpedienteFilter.setPaginacionRegistroFinal(5000);
+						// Esto es para poder listar todos los relacionados
 						expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
 					}
 				} else {

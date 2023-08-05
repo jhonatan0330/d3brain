@@ -156,8 +156,6 @@ public class TipoInformativo {
 		return pCampo;
 	}
 
-
-
 	private void cleanFieldToResponse(PedidoVentaCaracteristicaFilterDTO pCampo) {
 		pCampo.setValorAuxiliar(null);
 		pCampo.setValorFechaMin(null);

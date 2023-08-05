@@ -204,13 +204,10 @@ public class TipoNumero {
 					if (iterable.getDetalles() != null && !iterable.getDetalles().isEmpty()) {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
 						for (DetallePedidoVentaDTO iDetalle : iterable.getDetalles()) {
-
+							// Aveces vienen  inactivos y esos  no toca tenerlos  en cuenta
 							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
 									&& (iDetalle.getEstado() == null || iDetalle.getEstado()
-											.compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0)) {// Aveces vienen
-																									// inactivos y esos
-																									// no toca tenerlos
-																									// en cuenta
+											.compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0)) {
 								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
 									if (iCaracteristica.getCampoDTO() == null)
 										iCaracteristica.setCampoDTO(

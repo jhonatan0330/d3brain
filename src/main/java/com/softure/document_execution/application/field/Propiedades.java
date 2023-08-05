@@ -50,6 +50,7 @@ public class Propiedades {
 	public static final String MODIFICAR_CAMPO = "MODIFICAR_CAMPO";
 	
 	public static final String INFORMATIVE_DATA = "INFORMATIVE_DATA";
+	public static final String UPDATE_INFORMATIVE_FIELD = "UPDATE_INFORMATIVE_FIELD";
 
 	public static final String AUTOLOAD = "AUTOLOAD";
 	public static final String AUTOLOAD_SAVE = "AUTOLOAD_SAVE";
@@ -1089,6 +1090,12 @@ public class Propiedades {
 		case UBICACION: {
 			ruleProperty = "Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado"
 					+ "\n\n No se puede asignar a una transicion que termine en una decision";
+			break;
+		}		
+		case UPDATE_INFORMATIVE_FIELD: {
+			ruleProperty = "Esta propiedad referencia los campos del documento que tienen campos informativos que tienen que ser actualizados"
+					+ "\n\nEn las relaciones debes referenciar el campo informativo de la plantilla destino"
+					+ "\n\nTen en cuenta que solo se actualizaran documentos en estado activo, los inactivos y cerrados no se actualizan";
 			break;
 		}
 		case UNICO_PRODUCTO: {
