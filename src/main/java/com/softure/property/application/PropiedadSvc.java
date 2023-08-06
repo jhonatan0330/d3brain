@@ -879,8 +879,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.ORDEN: {
-			dto.setValor("N");
-			dto.setTexto("POR NOMBRE");
+			if(dto.getValor().compareTo("D")==0) {
+				dto.setTexto("POR DESCRIPCION");
+			}else {
+				dto.setValor("N");
+				dto.setTexto("POR NOMBRE");	
+			}
 			return false;
 		}
 		case Propiedades.CUENTA_SOBREGIRO: 
