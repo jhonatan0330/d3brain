@@ -62,6 +62,7 @@ public class Propiedades {
 	public static final String OK = "TRUE";
 	public static final String TRUE = "1";
 	public static final String READ_QR = "READ_QR";
+	public static final String SAVE_TO_SELECT = "SAVE_TO_SELECT";
 
 	public static final String ARCHIVO_TAMANO_MAXIMO = "ARCHIVO_TAMANO_MAXIMO";
 	public static final String ARCHIVO_TIPO = "BASICA";
@@ -1048,6 +1049,10 @@ public class Propiedades {
 		}
 		case REPORTE_JRXML: {
 			ruleProperty = "Se coloca el texto del jrxml.\n\nLas imagenes deben estar como parametros o como campos de la consulta el valida el texto del source de la imagen sea un parametro para base64 o un campo($)\nimageExpression><![CDATA[$ \nimageExpression><![CDATA[new ByteArrayInputStream";
+			break;
+		}
+		case SAVE_TO_SELECT: {
+			ruleProperty = "En algunos formularios es necesario avanzar rapido al seleccionar un dato, con esta propiedad s envia a guardar el formulario, muy util para cargues y descargues con pistolas de QR, se usa mucho con la propiedad INICIO RAPIDO";
 			break;
 		}
 		case SOLICITAR_FECHAS: {

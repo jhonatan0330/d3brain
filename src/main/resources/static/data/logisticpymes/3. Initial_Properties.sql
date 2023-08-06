@@ -441,6 +441,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_229' , 'C', 'BINARIO_PREGUNTA', 'BINARIO_PREGUNTA', 'REQUISITO', 'I', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_230' , 'E', 'OMITIR LA IMPRESION DEL REPORTE', 'REP_EXCLUDE_STORAGE_FILE', 'REQUISITO', true);
-	
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
+	INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
 	VALUES('PROP_231' , 'C', 'ACTUALIZAR CAMPO INFORMATIVO', 'UPDATE_INFORMATIVE_FIELD', 'REQUISITO', 'Z', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_232' , 'C', 'GUARDAR AL SELECCIONAR', 'SAVE_TO_SELECT', 'REQUISITO', 'Z', true);
