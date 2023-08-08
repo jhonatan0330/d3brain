@@ -202,8 +202,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_112' , 'P', 'MENSAJE REPORTE', 'MENSAJE_REPORTE', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_113' , 'L', 'MENSAJE REPORTE', 'MENSAJE_REPORTE', 'REQUISITO');
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
-	VALUES('PROP_114' , 'L', 'PERMISO VER FORMULARIOS', 'PERMISO_PLANTILLA_VER', 'PERMISOS', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
+	VALUES('PROP_114' , 'L', 'PERMISO VER FORMULARIOS', 'PERMISO_PLANTILLA_VER', 'PERMISOS', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_115' , 'T', 'MENSAJE DESTINATARIO', 'MENSAJE_DESTINATARIO', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 

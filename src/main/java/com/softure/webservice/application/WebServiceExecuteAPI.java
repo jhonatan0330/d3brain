@@ -724,7 +724,7 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 */
 	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions, String name) {
-		String result = "URL\n " + url + "Name\n " + name + "\n\nHeaders\n\n";
+		String result = "URL\n " + url + "\n\nName\n " + name + "\n\nHeaders\n\n";
 		if (headers != null && headers.size() != 0) {
 			for (Entry<String, String> item : headers.entrySet()) {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
