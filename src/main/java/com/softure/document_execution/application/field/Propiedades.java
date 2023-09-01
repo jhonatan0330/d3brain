@@ -857,11 +857,11 @@ public class Propiedades {
 			break;
 		}
 		case NUMERO_MINIMO: {
-			ruleProperty = " Formula para calcular el valor MINimo de un campo.\n";
+			ruleProperty = " Formula para calcular el valor MINimo de un campo.\nEn caso que coloque un valor en el motivo de la propiedad este mensaje se va a mostrar";
 			break;
 		}
 		case NUMERO_MAXIMO: {
-			ruleProperty = " Formula para calcular el valor MAXimo de un campo.\n";
+			ruleProperty = " Formula para calcular el valor MAXimo de un campo.\nEn caso que coloque un valor en el motivo de la propiedad este mensaje se va a mostrar";
 			break;
 		}
 		case NUMERO_FUNCION_SQL: {
