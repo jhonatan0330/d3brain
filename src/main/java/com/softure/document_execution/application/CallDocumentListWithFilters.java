@@ -189,7 +189,15 @@ public class CallDocumentListWithFilters {
 		filterDTO.setFiltroParametro(dtoFilter.getFiltroParametro());
 		filterDTO.setEstado(dtoFilter.getEstado());
 		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
-		filterDTO.setFiltersByFields(dtoFilter.getFiltersByFields());
+		if(dtoFilter.getFiltersByFields()!=null) {
+			for (PedidoVentaCaracteristicaFilterDTO iFilterField : dtoFilter.getFiltersByFields()) {
+				if(iFilterField.getValorAuxiliar()==null || iFilterField.getValorAuxiliar().compareTo(templateFilter)==0) {
+					if(filterDTO.getFiltersByFields()==null)filterDTO.setFiltersByFields(new ArrayList<>());
+					filterDTO.getFiltersByFields().add(iFilterField);
+				}
+			}
+		}
+		
 		String secToken = null;
 		List<PropiedadDTO> propiedadesFiltro = null;
 		filterDTO.setPlantilla(templateFilter);
