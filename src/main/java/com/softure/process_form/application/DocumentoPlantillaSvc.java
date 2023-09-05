@@ -361,6 +361,17 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas);
 			}else {
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
+				List<PropiedadDTO> todasPropiedadesReportesOcultos = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, usuario);
+				if(todasPropiedadesReportesOcultos !=null && !todasPropiedadesReportesOcultos.isEmpty()) {
+					for (PropiedadDTO propiedadDTO : todasPropiedadesReportesOcultos) {
+						for (ReporteBaseDTO iReport : reportes) {
+							if(iReport.getLlaveTabla().compareTo(propiedadDTO.getCampo())==0) {
+								reportes.remove(iReport);
+								break;
+							}
+						}
+					}
+				}
 			}
 			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
 			List<PropiedadDTO> todasPropiedadesReportes = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);

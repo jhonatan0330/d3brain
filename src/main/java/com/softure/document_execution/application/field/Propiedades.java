@@ -213,6 +213,7 @@ public class Propiedades {
 	public static final String REP_PRINT_ONE = "REP_PRINT_ONE";
 	public static final String REPORTE_IMAGEN = "REPORTE_IMAGEN";
 	public static final String REP_EXCLUDE_STORAGE_FILE = "REP_EXCLUDE_STORAGE_FILE";
+	public static final String OCULTAR_REPORTE = "OCULTAR_REPORTE";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -879,6 +880,10 @@ public class Propiedades {
 		}
 		case OCULTAR_MENSAJE_LICENCIA: {
 			ruleProperty = "El rol que tenga esta propieadd no vera nunca los mensajes de vencimiento de sistema\n";
+			break;
+		}
+		case OCULTAR_REPORTE: {
+			ruleProperty = "Evita que el reporte sea mostrado al usuario\n";
 			break;
 		}
 		case OPCIONES: {
