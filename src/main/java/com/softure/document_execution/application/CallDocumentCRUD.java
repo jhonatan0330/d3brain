@@ -198,7 +198,7 @@ public class CallDocumentCRUD {
 		validateFields(dto, plantilla, token, isUpdateAutomatic);
 
 		if (!isUpdateAutomatic)
-			propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
+			propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), dto.getLlaveTabla(), token);
 
 		if (dto.getNombre() == null) {
 			dto.setNombre(bd.getNombre());// Cuando envio modificar lo envio vacio
@@ -273,7 +273,7 @@ public class CallDocumentCRUD {
 
 		validateFields(dto, plantilla, token, false);
 
-		propiedadService.prevalidate(plantilla, dto.getCaracteristicas());
+		propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), null, token);
 
 		validateConsecutiveNumber(dto, plantilla, token);
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));

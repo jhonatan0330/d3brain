@@ -1164,7 +1164,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 	}
 
-	public void prevalidate(BasicParamDTO dto, List<PedidoVentaCaracteristicaDTO> campos) throws ServerException {
+	public void prevalidate(BasicParamDTO dto, List<PedidoVentaCaracteristicaDTO> campos, String documento, String token) throws ServerException {
 		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto,
 				Propiedades.FUNCION_SQL_VALIDAR_ANTES);
 		if (validaciones == null || validaciones.isEmpty())
@@ -1172,11 +1172,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		for (PropiedadDTO pPropiedad : validaciones) {
 			log.debug("\nPre validando funcion SQL (%s)", pPropiedad.getMotivo());
 			try {
-				propiedadMapper.funcionPrevalidacionPlantilla(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
-						campos);
+				propiedadMapper.funcionPrevalidacionPlantilla( SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
+						documento, token, campos);
 			} catch (Exception e) {
-				throw new ServerException(e.getMessage(),
-						" Motivo: " + pPropiedad.getMotivo() + " Propiedad : " + pPropiedad.getNombre());
+				throw new ServerException(e.getMessage());
 			}
 		}
 	}

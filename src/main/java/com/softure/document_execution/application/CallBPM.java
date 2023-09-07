@@ -120,7 +120,7 @@ public class CallBPM {
 				documento.getNombre());
 		if (procesoDTO.getEstadoExpediente() != null) {
 			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
-					procesoDTO.getEstadoExpediente(), null);
+					procesoDTO.getEstadoExpediente(), null, procesoDTO.getNombre());
 			if (expediente.getEstadoExpediente() == null)
 				throw new ServerException("Revise el estado del expediente que no es NULO : " + expediente.getNombre());
 			if (expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente()) != 0)
@@ -263,7 +263,7 @@ public class CallBPM {
 			// El query trae desc, escojo el primero para que es el ultimo
 			DocumentoRelacionGestorDTO ultimoGestor = gestores.get(0);
 			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
-					ultimoGestor.getEstadoInicial(), procesoDTO.getEstadoExpediente());
+					ultimoGestor.getEstadoInicial(), procesoDTO.getEstadoExpediente(), procesoDTO.getNombre());
 			if (transicion == null)
 				return;// throw new ServerException("Existen documentos sin transicion para gestionar."
 						// + procesoDTO.getNombre());
@@ -331,7 +331,7 @@ public class CallBPM {
 		return caminosValidados;
 	}
 
-	private ProcesoTransicionDTO consultarTransicion(String plantilla, String estadoPartida, String estadoLlegada)
+	private ProcesoTransicionDTO consultarTransicion(String plantilla, String estadoPartida, String estadoLlegada, String documentName)
 			throws ServerException {
 		// Consulto la transicion del documento
 		ProcesoTransicionFilterDTO transicion = new ProcesoTransicionFilterDTO();
@@ -344,7 +344,7 @@ public class CallBPM {
 			return null;// throw new ServerException("Existen documentos sin transicion para gestionar."
 						// + procesoDTO.getNombre());
 		if (transiciones.size() > 1) {
-			String message = "Existen muchas transiciones que cumplen con las condiciones del expediente.\n";
+			String message = "Existen muchas transiciones que cumplen con las condiciones del expediente "+documentName+".\n";
 			message = message.concat("Plantilla : " + transiciones.get(0).getPlantillaNombre() + "\n");
 			if (estadoPartida == null) {
 				message = message.concat("Estado Partida : NULL");
