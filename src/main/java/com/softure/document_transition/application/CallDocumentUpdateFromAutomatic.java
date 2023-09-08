@@ -67,17 +67,17 @@ public class CallDocumentUpdateFromAutomatic {
 			Object itemToAdition = extractionMap.get(propiedadDTO.getLlaveTabla()); 
 			if(itemToAdition!=null && itemToAdition.getClass().getName().compareTo("java.lang.String")==0) {				
 				newField.setValorText((String) itemToAdition);
-			}
-			// campo
-			List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
-			for (RelacionInternaDTO iRelation : relations) {
-				if (iRelation.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
-					newField.setCampo(iRelation.getCampo());
-					propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
+				// campo
+				List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
+				for (RelacionInternaDTO iRelation : relations) {
+					if (iRelation.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
+						newField.setCampo(iRelation.getCampo());
+						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
+					}
 				}
+				newField.setModificado(true);
+				generateFieldsFromProperty.add(newField);
 			}
-			newField.setModificado(true);
-			generateFieldsFromProperty.add(newField);
 		}
 		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador, token,
 				propertiesToSearchFieldDestiny);

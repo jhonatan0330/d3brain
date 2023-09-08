@@ -51,7 +51,7 @@ import freemarker.template.Template;
 
 @Component
 public class WebServiceExecuteAPI {
-	
+
 	private static Logger log = LoggerFactory.getLogger(WebServiceExecuteAPI.class);
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
@@ -261,20 +261,25 @@ public class WebServiceExecuteAPI {
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			if (callWS.getError() == null) {
-				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_TO_BASE_64 };
+				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_NO_ERROR,
+						Propiedades.API_EXTRACTION_TO_BASE_64 };
 				List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 				String resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
 				if (resultExtraction != null) {
 					if (resultExtraction.startsWith(ERROR_EXTRAYENDO)) {
 						callWS.setError(resultExtraction);
 						responseApi = resultExtraction + "\n\n" + responseApi;
+						resultExtraction = resultExtraction.substring(resultExtraction.indexOf(
+								ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS) + 3);
+						if (resultExtraction.length() == 0)
+							resultExtraction = null;
 					} else {
 						callWS.setExtracciones(resultExtraction);
-						// Esto lo puedo quitar con lso apis locales
-						if (modificador != null)
-							documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
-									token, resultExtraction);
 					}
+					// Esto lo puedo quitar con lso apis locales
+					if (modificador != null && resultExtraction != null)
+						documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
+								token, resultExtraction);
 				}
 			} else {
 				responseApi = callWS.getError() + "\n\n" + responseApi;
@@ -358,25 +363,31 @@ public class WebServiceExecuteAPI {
 		if (extractionList == null || extractionList.isEmpty())
 			return null;
 		String result = "";
+		String errorResult = "";
 		for (PropiedadDTO propiedadDTO : extractionList) {
 			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
 			if (!matcher.matches()) {
-				return ERROR_EXTRAYENDO + propiedadDTO.getValor();
+				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
+					errorResult = errorResult  + ERROR_EXTRAYENDO
+							+ propiedadDTO.getValor() + ConstantesGenerales.PUNTO_COMA_DOBLE;
+				}
+			} else {
+				String newValue = matcher.group(1);
+				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
+					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
+							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
+				}
+				String codeAndEqual = ((propiedadDTO.getTexto() == null) ? propiedadDTO.getLlaveTabla()
+						: propiedadDTO.getTexto());
+				if (!codeAndEqual.contains(ConstantesGenerales.IGUAL))
+					codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
+				// en la extraccion de autenticacion debo colocar el header
+				result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + codeAndEqual + newValue;
 			}
-			String newValue = matcher.group(1);
-			if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
-				newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
-						Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
-			}
-
-			String codeAndEqual = ((propiedadDTO.getTexto() == null) ? propiedadDTO.getLlaveTabla()
-					: propiedadDTO.getTexto());
-			if (!codeAndEqual.contains(ConstantesGenerales.IGUAL))
-				codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
-			// en la extraccion de autenticacion debo colocar el header
-			result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + codeAndEqual + newValue;
 		}
-		if (result == "")
+		if (errorResult.length() != 0)
+			result = errorResult + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + result;
+		if (result.length() == 0)
 			result = null;
 		return result;
 	}
@@ -560,7 +571,9 @@ public class WebServiceExecuteAPI {
 				storageMassiveString = storageMassiveString + "</root>";
 				log.info("[" + templateDTO.getCodigo() + "] Escribiendo documento de carga masiva ("
 						+ documentFromMap.size() + ")");
-				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice") + ";;";
+				result = result
+						+ uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice")
+						+ ";;";
 			}
 		}
 		if (result.endsWith(";;"))
@@ -663,7 +676,9 @@ public class WebServiceExecuteAPI {
 					switch (campo.getFormato()) {
 					case DocumentoPlantillaCaracteristicaDTO.FECHA:
 						Date dateParsed = SoftureUtil.toDate(matcher.group(1));
-						if(dateParsed == null) throw new ServerException("El valor " + matcher.group(1) + " no se pudo identificar como una fecha");
+						if (dateParsed == null)
+							throw new ServerException(
+									"El valor " + matcher.group(1) + " no se pudo identificar como una fecha");
 						nueva.setValorFecha(dateParsed);
 						nueva.setValorText(SoftureUtil.formatDateMassiveFile(nueva.getValorFecha()));
 						break;
@@ -723,7 +738,8 @@ public class WebServiceExecuteAPI {
 	 * @param url     URL a la que se conecta el API
 	 * @return
 	 */
-	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions, String name) {
+	private String writeHeadersAndUrl(Map<String, String> headers, String url, String parameters, String extractions,
+			String name) {
 		String result = "URL\n " + url + "\n\nName\n " + name + "\n\nHeaders\n\n";
 		if (headers != null && headers.size() != 0) {
 			for (Entry<String, String> item : headers.entrySet()) {

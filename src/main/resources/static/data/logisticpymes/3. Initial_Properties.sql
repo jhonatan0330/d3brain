@@ -451,6 +451,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
 	VALUES('PROP_234' , 'E', 'OCULTAR REPORTE', 'OCULTAR_REPORTE', 'REQUISITO', true, true);
-	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_235' , 'W', 'API_EXTRACTION_NO_ERROR', 'API_EXTRACTION_NO_ERROR', 'REQUISITO', true);	
 	
 	

@@ -32,6 +32,7 @@ public class Propiedades {
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
 
 	public static final String API_EXTRACTION = "API_EXTRACTION";
+	public static final String API_EXTRACTION_NO_ERROR = "API_EXTRACTION_NO_ERROR";
 	public static final String API_EXTRACTION_TO_BASE_64 = "API_EXTRACTION_TO_BASE_64";
 	public static final String API_ITERATION_ONE_EXECUTION = "API_ITERATION_ONE_EXECUTION";
 	public static final String API_READ_TIMEOUT = "API_READ_TIMEOUT";
@@ -534,6 +535,10 @@ public class Propiedades {
 			break;
 		}
 		case API_EXTRACTION: {
+			ruleProperty = "Extrae un valor con expresion regular, si tienes dudas busca por internet Java String match, esa extracción se debe colocar en un campo\n\nEn las relaciones se coloca el campo que deseamos que actualice con el valor a extraer.\n\n";
+			break;
+		}
+		case API_EXTRACTION_NO_ERROR: {
 			ruleProperty = "Extrae un valor con expresion regular, si tienes dudas busca por internet Java String match, esa extracción se debe colocar en un campo\n\nEn las relaciones se coloca el campo que deseamos que actualice con el valor a extraer.\n\n";
 			break;
 		}

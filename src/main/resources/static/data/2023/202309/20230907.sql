@@ -48,3 +48,6 @@ END;
 SELECT create_function_propiedad();
 
 DROP FUNCTION create_function_propiedad();
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_235' , 'W', 'API_EXTRACTION_NO_ERROR', 'API_EXTRACTION_NO_ERROR', 'REQUISITO', true);	
