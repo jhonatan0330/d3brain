@@ -317,6 +317,9 @@ public class CallDocumentListWithFilters {
 						if (filterDTO.getFechaMax() == null)
 							throw new ServerException("Por favor seleccione fecha de fin para la consulta");
 					}
+					if(filterDTO.getFechaMax()!=null && filterDTO.getFechaMin()!=null) {
+						if(filterDTO.getFechaMin().compareTo(filterDTO.getFechaMax())>0)throw new ServerException("Revisa las fechas, la fecha minima no puede ser menor a la fecha maxima");
+					}
 					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
 					if (orden.isEmpty())
 						orden = null;
