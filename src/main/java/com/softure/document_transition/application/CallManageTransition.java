@@ -140,10 +140,16 @@ public class CallManageTransition {
 			modificadorId = documentoDTO.getLlaveTabla();
 			// Genero documento en caso que toque
 			if (dto.getPlantilla() != null) {
+				String tokenToGenerateDocument = token;
+				// En caso de los apis si no habia colocado el permiso fallaba por ese permiso
+				// pero el api se enviaba asi que peligro porque terminaba haciend varias veces
+				// lo mismo Varios SMS, Varios Manifiestos
+				if (anteriorEstado != null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API) == 0)
+					tokenToGenerateDocument = autenticacionService.generateAdministratorToken().getLlaveTabla();
 				// Tengo que optimizar esto siempre va a preguntar si tiene documentos para
 				// generar
 				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,
-						expedienteDTO, documentoDTO.getTransaccion(), token, 0);
+						expedienteDTO, documentoDTO.getTransaccion(), tokenToGenerateDocument, 0);
 				// Por si es la transicion inicial no le quite el poder del documento que genero
 				if (automatico != null && automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
 					modificadorId = automatico.getLlaveTabla();

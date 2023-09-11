@@ -753,7 +753,7 @@ public class Propiedades {
 		}
 		case FUNCION_SQL_VALIDAR_ANTES: {
 			ruleProperty = " Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( parametros character varying[]) RETURNS void AS";
+					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( documento character varying, token character varying, parametros character varying[]) RETURNS void AS";
 			break;
 		}
 		case FUNCION_SQL_VALIDAR: {
