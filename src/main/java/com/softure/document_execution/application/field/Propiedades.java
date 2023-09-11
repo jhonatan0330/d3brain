@@ -215,6 +215,7 @@ public class Propiedades {
 	public static final String REPORTE_IMAGEN = "REPORTE_IMAGEN";
 	public static final String REP_EXCLUDE_STORAGE_FILE = "REP_EXCLUDE_STORAGE_FILE";
 	public static final String OCULTAR_REPORTE = "OCULTAR_REPORTE";
+	public static final String REP_AUTOPRINT = "REP_AUTOPRINT";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -1039,6 +1040,10 @@ public class Propiedades {
 		}
 		case REPORTE_EXCEL: {
 			ruleProperty = "Nombre del reporte que se va a ejecutar cuando sea en excel, puede estar inactivo.\n";
+			break;
+		}
+		case REP_AUTOPRINT: {
+			ruleProperty = "El reporte se imprime despues de creado o modificado el documento.\n";
 			break;
 		}
 		case REP_VISIBLE_STATE: {

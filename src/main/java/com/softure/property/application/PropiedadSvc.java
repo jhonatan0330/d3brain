@@ -389,7 +389,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					reporte.setDescripcion("PENDIENTE");
 					reporte.setNombre(plantillaPrincipal.getNombre());
 					reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
-					reporteService.guardar(reporte, token);
+					reporte = reporteService.guardar(reporte, token);
+					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
+							reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1", token), token);
 					campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
 					PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 							plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);

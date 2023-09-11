@@ -7,9 +7,12 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
 @Alias("ProcesoEstadoDTO")
+@JsonInclude(Include.NON_NULL)
 public class ProcesoEstadoDTO extends BasicParamDTO
 {
 	public static final String TIPO_ESTADO = "E";

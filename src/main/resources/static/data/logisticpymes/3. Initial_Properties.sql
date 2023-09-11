@@ -445,13 +445,12 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_231' , 'C', 'ACTUALIZAR CAMPO INFORMATIVO', 'UPDATE_INFORMATIVE_FIELD', 'REQUISITO', 'Z', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_232' , 'C', 'GUARDAR AL SELECCIONAR', 'SAVE_TO_SELECT', 'REQUISITO', 'Z', true);
-
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_233' , 'C', 'BUSQUEDA SIN TEXTO', 'BUSQUEDA_SIN_TEXTO', 'REQUISITO', 'J', true);
-	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol) 
 	VALUES('PROP_234' , 'E', 'OCULTAR REPORTE', 'OCULTAR_REPORTE', 'REQUISITO', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_235' , 'W', 'API_EXTRACTION_NO_ERROR', 'API_EXTRACTION_NO_ERROR', 'REQUISITO', true);	
-	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_236' , 'E', 'IMPRESION INMEDIATAMENTE', 'REP_AUTOPRINT', 'REQUISITO', true);
 	
