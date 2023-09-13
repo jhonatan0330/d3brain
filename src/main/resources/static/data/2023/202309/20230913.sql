@@ -17,7 +17,7 @@ select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-'
 from webservice_wbsp ww 
 	inner join propiedad_ppdp pp on (pp.cppd_campo =  ww.cwbs_llave and pp.cppd_estado = 'A')
 where ww.cwbs_estado = 'A'
-	and pp.cppd_propiedadvalor = 'PROP_195'
+	and pp.cppd_propiedadvalor = 'PROP_195';
 
 update propiedad_ppdp set cppd_texto = 'JWT'
 where cppd_propiedadvalor = 'PROP_192' and cppd_texto = 'Authorization=Bearer ';
