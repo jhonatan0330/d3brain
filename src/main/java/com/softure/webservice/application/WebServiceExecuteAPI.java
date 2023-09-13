@@ -151,25 +151,32 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = ConstantesGenerales.OK;
-		WebServiceEjecucionDTO authenticationWS = executeAuthenticationWebService(service, callWS, token);
-		String tokenAuthentication = null;
-		if (authenticationWS != null) {
-			if (authenticationWS.getError() != null) {
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token);
+		String extractionApiPrecondition = null;
+		if (preconditionWS != null) {
+			if (preconditionWS.getError() != null) {
 				if (callWS.getSincrona() != null) {
 					callWS.setSincrona(null);
 				}
 				callWS.setFechaEjecucion(new Date());
-				callWS.setError(authenticationWS.getError());
+				callWS.setError(preconditionWS.getError());
 				webServiceEjecucionSvc.update(callWS);
-				publishErrorMessage(service, authenticationWS);
+				publishErrorMessage(service, preconditionWS);
 				log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre()
-						+ ") por error de autenticacion");
+						+ ") por error de API precondicion ");
 				return ConstantesGenerales.ERROR;
 			}
-			if (authenticationWS.getExtracciones() != null)
-				tokenAuthentication = authenticationWS.getExtracciones();
+			if (preconditionWS.getExtracciones() != null) {
+				extractionApiPrecondition = preconditionWS.getExtracciones();
+				if(callWS.getParametros()==null) {
+					callWS.setParametros(extractionApiPrecondition);
+				} else {
+					callWS.setParametros(callWS.getParametros() +  extractionApiPrecondition);
+				}
+			}
+				
 		}
-		Map<String, String> headers = getHeaderProperties(service, tokenAuthentication);
+		Map<String, String> headers = getHeaderProperties(service, extractionApiPrecondition);
 		// Execution
 		callWS = launchWebService(service, callWS, token, headers, modificador);
 		// Primero intento de nuevo ejecutarlo
@@ -215,23 +222,23 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO executeAuthenticationWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
+	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
 			String token) throws ServerException {
-		PropiedadDTO authenticationProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
-		if (authenticationProp == null)
+		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
+		if (previousProp == null)
 			return null;
-		WebServiceDTO authenticationEndPoint = webServiceSvc.consultaXId(authenticationProp.getValor());
-		if (authenticationEndPoint == null)
-			throw new ServerException("El id del servicio no se encuentra en la BD." + authenticationProp.getValor());
-		authenticationEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
-				authenticationEndPoint.getLlaveTabla(), null, callWS.getUsuario()));
-		Map<String, String> headers = getHeaderProperties(authenticationEndPoint, null);
+		WebServiceDTO previousEndPoint = webServiceSvc.consultaXId(previousProp.getValor());
+		if (previousEndPoint == null)
+			throw new ServerException("El id del servicio no se encuentra en la BD." + previousProp.getValor());
+		previousEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
+				previousEndPoint.getLlaveTabla(), null, callWS.getUsuario()));
+		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
 		PedidoVentaDTO documentMain = new PedidoVentaDTO();
 		documentMain.setLlaveTabla(callWS.getDocumento());
-		WebServiceEjecucionDTO authenticationWS = prepareDataService.call(authenticationEndPoint, documentMain, null,
+		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, null,
 				token, callWS.getUsuario(), null);
-		return launchWebService(authenticationEndPoint, authenticationWS, token, headers, null);
+		return launchWebService(previousEndPoint, previousWS, token, headers, null);
 	}
 
 	/**
@@ -249,7 +256,21 @@ public class WebServiceExecuteAPI {
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
 			Map<String, String> headerProperties, PedidoVentaDTO modificador) throws ServerException {
 
-		String template = generateOutputFile(service.getTemplate(), callWS.getParametros());
+		String parameters = callWS.getParametros();
+		// Reemplazos
+		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_REPLACE);
+		if (replaceProperties != null && !replaceProperties.isEmpty()) {
+			if(parameters==null) parameters = "";
+			for (PropiedadDTO iProp : replaceProperties) {
+				if (iProp.getTexto() == null)
+					throw new ServerException(
+							"Es necesario colocar texto en la propiedad de codigo a reemplazar " + iProp.getValor());
+				parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
+				+ ConstantesGenerales.IGUAL + iProp.getValor();
+			}
+		}
+		
+		String template = generateOutputFile(service.getTemplate(), parameters);
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
@@ -296,8 +317,20 @@ public class WebServiceExecuteAPI {
 			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice"));
 		callWS.setFechaEjecucion(new Date());
+		String extractionHelperToLong = null;
+		if(callWS.getExtracciones()!=null && callWS.getExtracciones().length() >4000) {
+			extractionHelperToLong = callWS.getExtracciones();
+			callWS.setExtracciones(uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
+		}
+		String parameterHelperToLong = null;
+		if(callWS.getParametros()!=null && callWS.getParametros().length() >4000) {
+			parameterHelperToLong = callWS.getParametros();
+			callWS.setParametros(uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
+		}
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
+		if(extractionHelperToLong!=null) callWS.setExtracciones(extractionHelperToLong);
+		if(parameterHelperToLong!=null) callWS.setParametros(parameterHelperToLong);
 		return callWS;
 	}
 
@@ -479,7 +512,7 @@ public class WebServiceExecuteAPI {
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 			log.info("[" + con.getURL().toString() + "] Body API\n" + body);
-			wr.write(body.getBytes(StandardCharsets.UTF_8));
+			wr.write(body.getBytes(StandardCharsets.ISO_8859_1));
 			wr.close();
 
 			log.info("[" + con.getURL().toString() + "] Procesando API status (" + con.getResponseCode() + ")");
@@ -712,10 +745,11 @@ public class WebServiceExecuteAPI {
 			result = new HashMap<>();
 			for (PropiedadDTO iProp : service.getPropiedades()) {
 				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
-					result.put(iProp.getValor(), iProp.getMotivo());
+					result.put(iProp.getValor(), generateOutputFile(iProp.getMotivo(), tokenAuthentication) );
 				}
 			}
 		}
+		/*
 		if (tokenAuthentication != null) {
 			if (result == null)
 				result = new HashMap<>();
@@ -726,7 +760,7 @@ public class WebServiceExecuteAPI {
 					result.put(iExtraction.substring(0, indexEqual), iExtraction.substring(indexEqual + 1));
 				}
 			}
-		}
+		}*/
 		return result;
 	}
 

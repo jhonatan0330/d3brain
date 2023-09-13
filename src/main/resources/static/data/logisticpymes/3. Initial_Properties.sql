@@ -453,4 +453,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_235' , 'W', 'API_EXTRACTION_NO_ERROR', 'API_EXTRACTION_NO_ERROR', 'REQUISITO', true);	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_236' , 'E', 'IMPRESION INMEDIATAMENTE', 'REP_AUTOPRINT', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_237' , 'W', 'CODIGOS PARA REEMPLAZAR', 'API_CODE_REPLACE', 'REQUISITO', true);
 	
+		
