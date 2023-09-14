@@ -359,10 +359,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<PropiedadDTO> todasPropiedadesEvitandoConsultaBD = null;
 			if(todosPermisos) {
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas);
-				todasPropiedadesEvitandoConsultaBD = clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
+				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			}else {
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
-				todasPropiedadesEvitandoConsultaBD = clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
+				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 				List<PropiedadDTO> todasPropiedadesReportesOcultos = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, usuario);
 				if(todasPropiedadesReportesOcultos !=null && !todasPropiedadesReportesOcultos.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : todasPropiedadesReportesOcultos) {
@@ -376,11 +376,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 			}
 			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
-			todasPropiedadesEstados = clearResponseProperties(todasPropiedadesEstados);
+			todasPropiedadesEstados = configuracionSvc.clearResponseProperties(todasPropiedadesEstados);
 			List<PropiedadDTO> todasPropiedadesReportes = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);
-			todasPropiedadesReportes = clearResponseProperties(todasPropiedadesReportes);
+			todasPropiedadesReportes = configuracionSvc.clearResponseProperties(todasPropiedadesReportes);
 			List<PropiedadDTO> propiedadesReporteAutoPrint = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_AUTOPRINT, usuario);
-			if(propiedadesReporteAutoPrint!=null && !propiedadesReporteAutoPrint.isEmpty()) todasPropiedadesReportes.addAll(clearResponseProperties(propiedadesReporteAutoPrint));
+			if(propiedadesReporteAutoPrint!=null && !propiedadesReporteAutoPrint.isEmpty()) todasPropiedadesReportes.addAll(configuracionSvc.clearResponseProperties(propiedadesReporteAutoPrint));
 			
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
 				nuevaPlantilla = true;
@@ -451,28 +451,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return result;
 	}
 	
-	private List<PropiedadDTO> clearResponseProperties(List<PropiedadDTO> pProperties) {
-		if(pProperties==null) return new ArrayList<>();
-		for (PropiedadDTO propiedadDTO : pProperties) {
-			if(propiedadDTO.getKey().contains("SQL"))propiedadDTO.setValor("");
-			propiedadDTO.setUsuario(null);
-			propiedadDTO.setUsuarioExcluyente(null);
-			propiedadDTO.setUsuarioExcluyenteNombre(null);
-			propiedadDTO.setUsuarioNombre(null);
-			propiedadDTO.setRol(null);
-			propiedadDTO.setRolExcluyente(null);
-			propiedadDTO.setRolExcluyenteNombre(null);
-			propiedadDTO.setRolNombre(null);
-			propiedadDTO.setCambioCreacion(null);
-			propiedadDTO.setCambioEliminacion(null);
-			propiedadDTO.setFechaDefinicion(null);
-			propiedadDTO.setFechaImplementacion(null);
-			propiedadDTO.setFechaFinal(null);
-			propiedadDTO.setFechaInicial(null);
-			propiedadDTO.setBloqueo(null);
-		}
-		return pProperties;
-	}
+	
 
 	private void statesFromProcess(List<ProcesoEstadoDTO> estados, List<ProcesoTransicionDTO> transiciones,
 			List<PropiedadDTO> todasPropiedadesEstados, DocumentoPlantillaDTO iplantillaPermitida,

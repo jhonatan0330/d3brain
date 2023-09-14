@@ -1374,6 +1374,29 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		return "";
 	}
+	
+	public List<PropiedadDTO> clearResponseProperties(List<PropiedadDTO> pProperties) {
+		if(pProperties==null) return new ArrayList<>();
+		for (PropiedadDTO propiedadDTO : pProperties) {
+			if(propiedadDTO.getKey().contains("SQL"))propiedadDTO.setValor("");
+			propiedadDTO.setUsuario(null);
+			propiedadDTO.setUsuarioExcluyente(null);
+			propiedadDTO.setUsuarioExcluyenteNombre(null);
+			propiedadDTO.setUsuarioNombre(null);
+			propiedadDTO.setRol(null);
+			propiedadDTO.setRolExcluyente(null);
+			propiedadDTO.setRolExcluyenteNombre(null);
+			propiedadDTO.setRolNombre(null);
+			propiedadDTO.setCambioCreacion(null);
+			propiedadDTO.setCambioEliminacion(null);
+			propiedadDTO.setFechaDefinicion(null);
+			propiedadDTO.setFechaImplementacion(null);
+			propiedadDTO.setFechaFinal(null);
+			propiedadDTO.setFechaInicial(null);
+			propiedadDTO.setBloqueo(null);
+		}
+		return pProperties;
+	}
 // END region aditionalMethods
 
 }

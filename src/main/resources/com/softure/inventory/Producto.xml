@@ -164,7 +164,7 @@
 		where cpro_estado ='A' and cpdv_estado = 'A' and cdpl_estado = 'A'
 		and cpro_categoria in (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_127' and cppd_estado = 'A' and cppd_campo = #{campo})
 		<if test="filtro!=null">
-		and (cpdv_textofiltro = #{filtro}
+		and (cpdv_textofiltro like ('%' || #{filtro} || '%')
 			or upper(descripcion(cpro_documento)) like ('%' || #{filtro} || '%')
 			or cpdv_nombre like ('%' || #{filtro} || '%')
 		)
