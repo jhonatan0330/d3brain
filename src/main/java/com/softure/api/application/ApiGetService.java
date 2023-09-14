@@ -56,7 +56,7 @@ public class ApiGetService {
 				filterDTO.setFiltersByFields(new ArrayList<>());
 				for (FieldRequest iField : filter.getFilters()) {
 					PedidoVentaCaracteristicaFilterDTO fieldValueToAdd = getFieldValue(token, iField, templateBD);
-					if(fieldValueToAdd ==null) throw new ServerException("Estas usando un filtro por el campo co codigo "+ iField.getField() +" pero este campo no hace parte de la plantilla de documentos " + templateBD.getNombre());
+					if(fieldValueToAdd ==null) throw new ServerException("Estas usando un filtro por el campo con codigo "+ iField.getField() +" pero este campo no hace parte de la plantilla de documentos " + templateBD.getNombre());
 					filterDTO.getFiltersByFields().add(fieldValueToAdd);
 				}
 			}

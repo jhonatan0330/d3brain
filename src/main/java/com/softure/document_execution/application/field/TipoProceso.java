@@ -83,7 +83,6 @@ public class TipoProceso {
 	@Autowired
 	private CallUpdateInformativeField updateInformativeService;
 
-	
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getValorOpcion() != null)
 			pCampo.setPrincipal(pedidoService.consultaXId(pCampo.getValorOpcion()));// Consulto el Id por proceso
@@ -124,11 +123,21 @@ public class TipoProceso {
 									|| result.getCampoDTO().getDocumentos().isEmpty())
 								throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre()
 										+ " No se encuentra el documento con codigo : " + pCampo.getValorText());
-							if (result.getCampoDTO().getDocumentos().size() > 1)
+							if (result.getCampoDTO().getDocumentos().size() > 1) {
+								for (PedidoVentaDTO iDocument : result.getCampoDTO().getDocumentos()) {
+									if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0) {
+										pCampo.setValorOpcion(iDocument.getLlaveTabla());
+										break;
+									}
+								}
+							} else {
+								pCampo.setValorOpcion(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+							}
+							if (pCampo.getValorOpcion() == null)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " obtiene "
 										+ result.getCampoDTO().getDocumentos().size()
 										+ " resultados que concuerdan con el criterio : " + pCampo.getValorText());
-							pCampo.setValorOpcion(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+
 						}
 					}
 
@@ -278,20 +287,26 @@ public class TipoProceso {
 		if (pCampo.getModificado()) {
 			// Retiro de los actuales los que volvieron a enviar
 			for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
-				// Para las cargas masivas como no tengo los dependientes lo hago ya en la generacion del documento
-				if(procesoDTO.getLlaveTabla()==null && procesoDTO.getNombre()!=null) {
+				// Para las cargas masivas como no tengo los dependientes lo hago ya en la
+				// generacion del documento
+				if (procesoDTO.getLlaveTabla() == null && procesoDTO.getNombre() != null) {
 					PedidoVentaFilterDTO filterMultiple = new PedidoVentaFilterDTO();
 					filterMultiple.setCampoOrigen(pCampo.getCampo());
 					filterMultiple.setSecurityToken(token);
 					filterMultiple.setFiltroParametro(procesoDTO.getNombre());
-					if(pCampo.getDependientes()!=null && !pCampo.getDependientes().isEmpty()) {
+					if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
 						filterMultiple.setLlaveTabla(pCampo.getDependientes().get(0).getValorOpcion());
 					}
-					List<PedidoVentaDTO> resultListDocuments = listDocumentWithFiltersFunction.listarAvanzado(filterMultiple);
-					if(resultListDocuments == null || resultListDocuments.isEmpty()) 
-						throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre() +" No se encuentra el documento con codigo : " + procesoDTO.getNombre());
-					if(resultListDocuments.size()>1) throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() +" obtiene " + resultListDocuments.size() +" resultados que concuerdan con el criterio : " + procesoDTO.getNombre());
-					procesoDTO.setLlaveTabla( resultListDocuments.get(0).getLlaveTabla() );
+					List<PedidoVentaDTO> resultListDocuments = listDocumentWithFiltersFunction
+							.listarAvanzado(filterMultiple);
+					if (resultListDocuments == null || resultListDocuments.isEmpty())
+						throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre()
+								+ " No se encuentra el documento con codigo : " + procesoDTO.getNombre());
+					if (resultListDocuments.size() > 1)
+						throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " obtiene "
+								+ resultListDocuments.size() + " resultados que concuerdan con el criterio : "
+								+ procesoDTO.getNombre());
+					procesoDTO.setLlaveTabla(resultListDocuments.get(0).getLlaveTabla());
 					procesoDTO.setEstadoExpediente(resultListDocuments.get(0).getEstadoExpediente());
 					procesoDTO.setPlantilla(resultListDocuments.get(0).getPlantilla());
 				}
@@ -504,7 +519,10 @@ public class TipoProceso {
 
 	private void relacionarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
 			String token) throws ServerException {
-		if(procesoDTO.getLlaveTabla()==null) throw new ServerException("Por favor valida el motivo por el cual no s eidentifica la llave del expediente en el campo " + pCampo.getCampoDTO().getNombre());
+		if (procesoDTO.getLlaveTabla() == null)
+			throw new ServerException(
+					"Por favor valida el motivo por el cual no s eidentifica la llave del expediente en el campo "
+							+ pCampo.getCampoDTO().getNombre());
 		// Creo una relacion entre el campo y los pedidos detalles, primero reviso si
 		// existe
 		DocumentoRelacionExpedienteFilterDTO docExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
@@ -537,10 +555,11 @@ public class TipoProceso {
 			// hace por funcion
 			// turno.setUsuario(campoService.getUserFlex(token));
 			// turno.setDocumento(pCampo.getValorOpcion());
-			//if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty()
-			//		|| pCampo.getDependientes().get(0) == null)
-			//	throw new ServerException(
-			//			"PAra el cierre de caja se debe teenr un dependiente que es el documento que realizo la apertura");
+			// if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty()
+			// || pCampo.getDependientes().get(0) == null)
+			// throw new ServerException(
+			// "PAra el cierre de caja se debe teenr un dependiente que es el documento que
+			// realizo la apertura");
 			turno.setDocumento(pCampo.getValorOpcion());
 			turno = turnoService.consultarTurnoActual(turno);
 			if (turno == null)
@@ -629,9 +648,9 @@ public class TipoProceso {
 	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 
 		String[] props = { Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS };
-		List<PropiedadDTO> relacionExternaAgregar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
-				props);
-		if (relacionExternaAgregar == null)	return;
+		List<PropiedadDTO> relacionExternaAgregar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), props);
+		if (relacionExternaAgregar == null)
+			return;
 		if (pCampo.getDependientes() == null)
 			throw new ServerException(
 					"relacionado o retirando documentos no esta relacionado el dependiente que contiene el campo proceso que vamos a afectar");
