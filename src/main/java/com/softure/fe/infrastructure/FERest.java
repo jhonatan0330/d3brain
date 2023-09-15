@@ -27,10 +27,10 @@ public class FERest {
 	SignerService signerService;
 
 	@PostMapping("/sign")
-	public FEResponse transformXML(@RequestBody String xml) throws ServerException {
+	public FEResponse transformXML(@RequestBody String xml) throws ServerException {	
 		FEResponse responseFe = new FEResponse();
 		try {
-			responseFe.setXml(signerService.sign(xml));
+			signerService.sign(xml, responseFe);
 			responseFe.setResult("200");
 		} catch (KeyStoreException e) {
 			responseFe.setError(e.getMessage());

@@ -302,7 +302,17 @@ public class TipoProceso {
 					if (resultListDocuments == null || resultListDocuments.isEmpty())
 						throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre()
 								+ " No se encuentra el documento con codigo : " + procesoDTO.getNombre());
-					if (resultListDocuments.size() > 1)
+					if (resultListDocuments.size() > 1) {
+						for (PedidoVentaDTO iDocument : resultListDocuments) {
+							if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0) {
+								pCampo.setValorOpcion(iDocument.getLlaveTabla());
+								break;
+							}
+						}
+					} else {
+						pCampo.setValorOpcion(resultListDocuments.get(0).getLlaveTabla());
+					}
+					if (pCampo.getValorOpcion() == null)
 						throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " obtiene "
 								+ resultListDocuments.size() + " resultados que concuerdan con el criterio : "
 								+ procesoDTO.getNombre());

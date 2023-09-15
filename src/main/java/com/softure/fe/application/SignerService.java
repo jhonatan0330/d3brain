@@ -7,9 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -24,6 +27,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,9 +37,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.softure.fe.domain.DirectPasswordProvider;
+import com.softure.fe.domain.FEResponse;
 import com.softure.fe.domain.FirstCertificateSelector;
 import com.softure.fe.domain.KeyStoreDataProvider;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.upload.application.UploadSvc;
 
 import xades4j.XAdES4jException;
 import xades4j.algorithms.EnvelopedSignatureTransform;
@@ -57,6 +63,9 @@ import xades4j.utils.XadesProfileResolutionException;
 @Service
 public class SignerService {
 
+	@Autowired
+	private UploadSvc uploadService;
+	
     private XadesSigner signer;
     private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
     
@@ -137,7 +146,7 @@ public class SignerService {
         return writer.toString();
     }
     
-    public String zipFileWithoutSaveLocal(String data) throws IOException {
+    public String zipFileWithoutSaveLocal(String data, FEResponse responseFe) throws IOException, ServerException {
 
         String fileNameInZip = "fe.xml";
 
@@ -160,22 +169,78 @@ public class SignerService {
 
             zos.closeEntry();
         }
-
         byte[] bytes = baos.toByteArray();
+        responseFe.setZipUrl( uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-	public String sign(String xmlIn) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
-
+	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
         Document doc = loadDocument( xmlIn );
-        Node elemToSign = selectNode( doc );
+        doc = processCUFE(doc, responseFe);
+        doc = processSoftwareSecurityCode(doc);
+        doc = processExtensionContent(doc);
+        responseFe.setXml( zipFileWithoutSaveLocal(saveDocument( doc ), responseFe));
+	}
+	
+	private Document processExtensionContent(Document doc) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException{
+		Node elemToSign = selectNode( doc );
         String certificate = getValueInNode( elemToSign, "ext:Certificate");
         String password = getValueInNode( elemToSign, "ext:Password"); 
         initialize( Base64.getDecoder().decode(certificate), password );
         DataObjectDesc DataObjectRef =  createDataObjectToSign();
+        elemToSign.setTextContent("");
         sign( DataObjectRef, elemToSign );
-        return zipFileWithoutSaveLocal(saveDocument( doc ));
+		return doc;
 	}
+	
+	private Document processCUFE(Document doc, FEResponse responseFe) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("cbc:UUID");
+		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del CUFE cbc:UUID");
+        String CUFEplain = tags.item(0).getTextContent();
+        if(CUFEplain==null || CUFEplain.isEmpty()) throw new ServerException("El texto del CUFE esta vacio");
+        String CUFEencrypt = encryptThisString(CUFEplain);
+        tags.item(0).setTextContent(CUFEencrypt);
+        responseFe.setCufe(CUFEencrypt);
+		return processQR(doc, CUFEencrypt);
+	}
+	
+	private Document processQR(Document doc, String cufe) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("sts:QRCode");
+		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
+        String plain = tags.item(0).getTextContent();
+        if(plain==null || plain.isEmpty()) throw new ServerException("El texto del sts:QRCode esta vacio");
+        tags.item(0).setTextContent(plain.replace("REPLACE_CUFE_CODE", cufe));
+		return doc;
+	}
+	
+	private Document processSoftwareSecurityCode(Document doc) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("sts:SoftwareSecurityCode");
+		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del sts:SoftwareSecurityCode");
+        String plain = tags.item(0).getTextContent();
+        if(plain==null || plain.isEmpty()) throw new ServerException("El texto del sts:SoftwareSecurityCode esta vacio");
+        String encrypt = encryptThisString(plain);
+        tags.item(0).setTextContent(encrypt);
+		return doc;
+	}
+	
+	private String encryptThisString(String input) throws ServerException{
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-384");
+ 
+            byte[] messageDigest = md.digest(input.getBytes());
+            BigInteger no = new BigInteger(1, messageDigest);
+  
+            String hashtext = no.toString(16);
+  
+            while (hashtext.length() < 32) {
+                hashtext = "0" + hashtext;
+            }
+  
+            return hashtext;
+        }      catch (NoSuchAlgorithmException e) {
+            throw new ServerException(e.getMessage());
+        }
+    }
 }
 
 

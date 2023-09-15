@@ -151,7 +151,7 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = ConstantesGenerales.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token);
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador);
 		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -223,7 +223,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
-			String token) throws ServerException {
+			String token, PedidoVentaDTO updater) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
@@ -236,9 +236,9 @@ public class WebServiceExecuteAPI {
 		// *****Execute
 		PedidoVentaDTO documentMain = new PedidoVentaDTO();
 		documentMain.setLlaveTabla(callWS.getDocumento());
-		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, null,
+		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater,
 				token, callWS.getUsuario(), null);
-		return launchWebService(previousEndPoint, previousWS, token, headers, null);
+		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}
 
 	/**
@@ -511,7 +511,8 @@ public class WebServiceExecuteAPI {
 
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			log.info("[" + con.getURL().toString() + "] Body API\n" + body);
+			//log.info("[" + con.getURL().toString() + "] Body API\n" + body);
+			// Esta codificaion es para soportar DIAn con tildes
 			wr.write(body.getBytes(StandardCharsets.ISO_8859_1));
 			wr.close();
 
