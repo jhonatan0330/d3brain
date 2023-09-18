@@ -14,6 +14,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.report.domain.ReporteBaseFilterDTO;
 import com.softure.report.domain.ReporteEjecucionDTO;
@@ -196,6 +197,14 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return parametrosJasper;
 	}
 	
+	public ReporteBaseDTO getByCode(String code, String template) throws ServerException {
+		ReporteBaseFilterDTO filter = new ReporteBaseFilterDTO();
+		filter.setCodigo(code);
+		filter.setPlantilla(template);
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return consultaUnica(filter);
+	}
+	
 	public ReporteBaseDTO validateReport(String reportId, String token) throws ServerException {
 		ReporteBaseDTO base = consultaXId(reportId);
 		if(base == null) throw new ServerException("Reporte base no encontrado");
@@ -208,7 +217,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return getUserFlex(token);
 	}
 	
-	public byte[] generarReporte(ReporteBaseDTO reporte, String key, Map<String, Object> parametrosJasper, String token) throws Exception {
+	public ReportDTO generarReporte(ReporteBaseDTO reporte, String key, Map<String, Object> parametrosJasper, String token) throws Exception {
 		ReporteEjecucionDTO ejecucion = new ReporteEjecucionDTO();
 		ejecucion.setFechaInicio(new Date());
 		ejecucion.setReporte(reporte.getLlaveTabla());
@@ -226,6 +235,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		String usuario = getUserFromParameters(token);
 		ejecucion.setDocumento(key);
 		ejecucion.setUsuario(usuario);
+		ReportDTO finish = new ReportDTO();
 		try {
 			if(usuario == null ) {
 				if(reporte.getPublico()) {
@@ -260,9 +270,11 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			try {
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
 				if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte, token, "reports"));
-				ejecucionService.save(ejecucion);
+				ejecucion = ejecucionService.save(ejecucion);
 			}catch (Exception e) {	}
-			return resultado;	
+			finish.setData(ejecucion);
+			finish.setContent(resultado);
+			return finish;	
 		}catch (Exception e) {
 			ejecucion.setError(e.getMessage());
 			ejecucion.setFechaFin(new Date());
@@ -271,6 +283,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			}catch (Exception ex) {	}
 			throw new Exception(e.getMessage());
 		}
+		
 	}
 
 	public List<ReporteBaseDTO> getFullToSynchronize() {

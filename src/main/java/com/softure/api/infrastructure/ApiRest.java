@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softure.api.application.ApiAuthorizeService;
 import com.softure.api.application.ApiGetFieldDataService;
+import com.softure.api.application.ApiGetReportService;
 import com.softure.api.application.ApiGetService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
@@ -23,6 +24,7 @@ import com.softure.api.domain.DocumentWithLoginRequest;
 import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DataFieldWithLoginRequest;
 import com.softure.api.domain.LoginRequest;
+import com.softure.api.domain.ReportRequest;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.shared.domain.SharedIdResponse;
 
@@ -32,6 +34,7 @@ public class ApiRest {
 
 	@Autowired ApiAuthorizeService apiAuthorizeService;
 	@Autowired ApiGetService apiGetService;
+	@Autowired ApiGetReportService apiGetReportService;
 	@Autowired ApiGetFieldDataService apiGetFieldDataService;
 	@Autowired ApiLoginService apiLoginService;
 	@Autowired ApiSendService apiSendService;
@@ -42,6 +45,14 @@ public class ApiRest {
 		) throws ServerException {
 		apiAuthorizeService.call(apiKey,token);
 		return apiGetService.call(token, filter);
+	}
+	
+	@PostMapping("/getReport")
+	public SharedIdResponse getReportFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody ReportRequest filter
+		) throws ServerException {
+		apiAuthorizeService.call(apiKey,token);
+		return apiGetReportService.call(token, filter);
 	}
 	
 	@PostMapping("/getWithLogin")
@@ -61,6 +72,7 @@ public class ApiRest {
 		apiAuthorizeService.call(apiKey, token.getId());
 		return apiGetFieldDataService.call(token.getId(), filter.getField());
 	}
+	
 	
 	@PostMapping("/login")
 	public SharedIdResponse login(@RequestHeader(name = "x-api-key") String apiKey

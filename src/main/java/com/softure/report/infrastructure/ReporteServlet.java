@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.softure.java.services.SoftureUtil;
 import com.softure.report.application.ReporteBaseSvc;
+import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 
 public class ReporteServlet extends HttpServlet{
@@ -105,9 +106,10 @@ public class ReporteServlet extends HttpServlet{
 				}
 			}
 			String key = request.getParameter(ReporteBaseSvc.P_KEY);
-			byte[] resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper, request.getParameter("P_TOKEN"));
-			if(resultado!=null){
-				InputStream input = new ByteArrayInputStream(resultado);
+			
+			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper, request.getParameter("P_TOKEN"));
+			if(resultado!=null && resultado.getContent()!=null){
+				InputStream input = new ByteArrayInputStream(resultado.getContent());
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
 				//ReporteBaseDTO base = reporteBaseService.consultaXId(nombreReporte);

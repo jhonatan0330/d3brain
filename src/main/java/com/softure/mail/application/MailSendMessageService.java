@@ -23,6 +23,7 @@ import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.mail.infrastructure.MensajeMapper;
 import com.softure.report.application.ReporteBaseSvc;
+import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 
 @Service
@@ -69,12 +70,12 @@ public class MailSendMessageService {
 			mailMsg.setSubject(dto.getTitulo());
 			mailMsg.setText(MailUtils.replaceParameterInBodyMessage(plantilla.getTexto(), dto.getParametros()),true);
 			if(conReporte) {
-				byte[] reporte = reporteBaseService.generarReporte(
+				ReportDTO reporte = reporteBaseService.generarReporte(
 						reporteBaseService.validateReport(dto.getReporte(), token), 
 						dto.getDocumento(), null, token);
 				if(reporte!=null) {
 					ReporteBaseDTO base = reporteBaseService.consultaXId(dto.getReporte());
-					mailMsg.addAttachment(base.getNombre() + ".pdf", new ByteArrayDataSource(reporte, "application/pdf"));
+					mailMsg.addAttachment(base.getNombre() + ".pdf", new ByteArrayDataSource(reporte.getContent(), "application/pdf"));
 				}
 			}
 			mailSender.send(mimeMessage);

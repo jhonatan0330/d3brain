@@ -18,6 +18,7 @@ public class DocumentResponse {
 	private List<FieldResponse> fields;
 	private BigDecimal fullValue;
 	private BigDecimal pendingValue;
+	
 	public String getTemplate() {
 		return template;
 	}
