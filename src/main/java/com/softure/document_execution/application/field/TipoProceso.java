@@ -125,7 +125,7 @@ public class TipoProceso {
 										+ " No se encuentra el documento con codigo : " + pCampo.getValorText());
 							if (result.getCampoDTO().getDocumentos().size() > 1) {
 								for (PedidoVentaDTO iDocument : result.getCampoDTO().getDocumentos()) {
-									if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0) {
+									if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0 ||(iDocument.getDescripcion()!=null && iDocument.getDescripcion().compareTo(pCampo.getValorText())==0)) {
 										pCampo.setValorOpcion(iDocument.getLlaveTabla());
 										break;
 									}
