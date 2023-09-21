@@ -101,6 +101,15 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 		}
 		return documentoRelacionExpedienteMapper.listarHeredados(plantilla, campoMaestro, llaveOpcion, plantillaTransicion);
 	}
+	
+	public List<DocumentoRelacionExpedienteDTO> listByField(String field)
+			throws ServerException {
+		DocumentoRelacionExpedienteFilterDTO filter = new DocumentoRelacionExpedienteFilterDTO();
+		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setCampoMaestro(field);
+		filter.setPaginacionRegistroFinal(5000);
+		return listarConsulta(filter);
+	}
 // END region aditionalMethods
 
 }

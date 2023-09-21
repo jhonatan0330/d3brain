@@ -175,12 +175,8 @@ public class CallBPM {
 								plantillasRevisadas);
 					} else {
 						// Esto creo que se podria optimizar algun día y solo ahce un llamado por todos
-						DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
-						relacionExpedienteFilter.setCampoMaestro(campo.getLlaveTabla());
-						relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-						relacionExpedienteFilter.setPaginacionRegistroFinal(5000);
 						// Esto es para poder listar todos los relacionados
-						expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpedienteFilter);
+						expedientesAnidados = relacionExpedienteService.listByField(campo.getLlaveTabla());
 					}
 				} else {
 					expedientesAnidados = new ArrayList<DocumentoRelacionExpedienteDTO>();
@@ -286,10 +282,7 @@ public class CallBPM {
 			for (PedidoVentaCaracteristicaDTO campo : gestionables) {
 				List<DocumentoRelacionExpedienteDTO> expedientesAnidados;
 				if (campo.getValorOpcion() == null) {// En caso que sean multiples
-					DocumentoRelacionExpedienteFilterDTO relacionExpediente = new DocumentoRelacionExpedienteFilterDTO();
-					relacionExpediente.setCampoMaestro(campo.getLlaveTabla());
-					relacionExpediente.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-					expedientesAnidados = relacionExpedienteService.listarConsulta(relacionExpediente);
+					expedientesAnidados = relacionExpedienteService.listByField(campo.getLlaveTabla());
 				} else {
 					expedientesAnidados = new ArrayList<DocumentoRelacionExpedienteDTO>();
 					DocumentoRelacionExpedienteDTO relacionExpediente = new DocumentoRelacionExpedienteDTO();

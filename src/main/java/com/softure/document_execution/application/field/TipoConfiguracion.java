@@ -238,8 +238,7 @@ public class TipoConfiguracion {
 					Propiedades.VISIBLE_VALOR_DEPENDIENTE);
 			if (visibleValueOK == null || pCampo.getDependientes() == null) {
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-						+ pCampo.getCampoDTO().getCodigo() + ")");
+						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + ")");
 			} else {
 				String optionsToSelect = null;
 				for (PropiedadDTO propiedadDTO : visibleValueOK) {
@@ -276,7 +275,7 @@ public class TipoConfiguracion {
 				if (pCampo.getValorOpcion().length() > 32)
 					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0, 32));
 				//if (pCampo.getValorOpcion().length() != 32)
-					pCampo.setValorText(option.getTexto());
+				pCampo.setValorText(option.getValor());
 			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:

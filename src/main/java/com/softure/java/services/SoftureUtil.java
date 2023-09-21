@@ -210,6 +210,7 @@ public class SoftureUtil {
 	 * @return regreso el mapa vacio si no hay resultados que concuerden
 	 * @throws ServerException
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<String, Object> createMaptoString(String str) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (str == null || str.isEmpty())
@@ -225,19 +226,39 @@ public class SoftureUtil {
 				textoReemplazar = iParametro.substring(posIgual + 1, iParametro.length());
 				if (codigo.contains("[")) {
 					String newCode = codigo.substring(0, codigo.indexOf("["));
-					@SuppressWarnings("unchecked")
-					ArrayList<String> arrayObjectsString = (ArrayList<String>) result.get(newCode);
-					if (arrayObjectsString == null) {
-						arrayObjectsString = new ArrayList<>();
+					if(textoReemplazar.contains(ConstantesGenerales.LINEA_MEDIA_DOBLE)) {
+						result.put(newCode, generateItemsFromParameters((ArrayList<Object>) result.get(newCode), textoReemplazar));
+					}else {
+						ArrayList<String> arrayObjectsString = (ArrayList<String>) result.get(newCode);
+						if (arrayObjectsString == null)	arrayObjectsString = new ArrayList<>();
+						arrayObjectsString.add(textoReemplazar);
+						result.put(newCode, arrayObjectsString);	
 					}
-					arrayObjectsString.add(textoReemplazar);
-					result.put(newCode, arrayObjectsString);
 				} else {
 					result.put(codigo, textoReemplazar);
 				}
 			}
 		}
 		return result;
+	}
+	
+	private static ArrayList<Object> generateItemsFromParameters(ArrayList<Object> arrayObjects , String str){
+		String[] params = str.split(ConstantesGenerales.LINEA_MEDIA_DOBLE);
+		if (arrayObjects == null) arrayObjects = new ArrayList<>();
+		Map<String, String> parametersItem =  new HashMap<String, String>();
+		int posIgual = -1;
+		String codigo = null;
+		String textoReemplazar = null;
+		for (String iParametro : params) {
+			posIgual = iParametro.indexOf(ConstantesGenerales.COMA_DOBLE);
+			if (posIgual > 0) {
+				codigo = iParametro.substring(0, posIgual);
+				textoReemplazar = iParametro.substring(posIgual + 2, iParametro.length());
+				parametersItem.put(codigo, textoReemplazar);
+			}
+		}
+		if(!parametersItem.isEmpty()) arrayObjects.add(parametersItem);
+		return arrayObjects;
 	}
 
 }

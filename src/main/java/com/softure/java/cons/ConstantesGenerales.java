@@ -14,8 +14,10 @@ public class ConstantesGenerales {
 	public static final String PUNTO = ".";
 	public static final String PUNTO_COMA = ";";
 	public static final String PUNTO_COMA_DOBLE = ";;";
+	public static final String LINEA_MEDIA_DOBLE = "--";
 	/** = , */
 	public static final String COMA = ",";
+	public static final String COMA_DOBLE = ",,";
 	/** = = */
 	public static final String IGUAL = "=";
 	/** = / */

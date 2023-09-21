@@ -121,7 +121,7 @@ public class WebServiceExecuteAPI {
 		String result = ConstantesGenerales.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
-			result = executeApi(service, apiBasic, token, modificador);
+			result = executeApi(service, apiBasic, token, modificador, document);
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			applyScheduleToExecute(apiBasic, service);
@@ -142,7 +142,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			PedidoVentaDTO modificador) throws ServerException {
+			PedidoVentaDTO modificador, PedidoVentaDTO documentMain) throws ServerException {
 		if (callWS.getFechaEjecucion() != null)
 			return ConstantesGenerales.OK;
 		if (service.getPropiedades() == null) {
@@ -151,7 +151,7 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = ConstantesGenerales.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador);
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador, documentMain);
 		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -223,7 +223,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
-			String token, PedidoVentaDTO updater) throws ServerException {
+			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
@@ -234,8 +234,11 @@ public class WebServiceExecuteAPI {
 				previousEndPoint.getLlaveTabla(), null, callWS.getUsuario()));
 		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
-		PedidoVentaDTO documentMain = new PedidoVentaDTO();
-		documentMain.setLlaveTabla(callWS.getDocumento());
+		if(documentMain == null){
+			documentMain = new PedidoVentaDTO();
+			documentMain.setLlaveTabla(callWS.getDocumento());	
+		}
+		if(updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla())==0) documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater,
 				token, callWS.getUsuario(), null);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
@@ -444,7 +447,7 @@ public class WebServiceExecuteAPI {
 					}
 				}
 			}
-			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\[\\]]*\\}\\}", "");
+			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
 			if (plantilla.contains("$")) {
 				StringWriter out = new StringWriter();
 				try {

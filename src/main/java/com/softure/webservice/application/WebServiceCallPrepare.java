@@ -3,15 +3,19 @@ package com.softure.webservice.application;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.softure.document_execution.application.CallDocumentCommons;
+import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
@@ -36,6 +40,8 @@ public class WebServiceCallPrepare {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
+	@Autowired
+	private DocumentoRelacionExpedienteSvc documentsInFieldService;
 
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
 			String token, String userId, String initialPameters) throws ServerException {
@@ -101,7 +107,7 @@ public class WebServiceCallPrepare {
 									String codeReplace = (campo.getTransaccionRegistro() == null)
 											? campo.getCampoDTO().getCodigo()
 											: campo.getTransaccionRegistro();
-									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D",iRelacion.getAuxiliar());
+									parameters = addParameterString(parameters, iRelacion, campo, codeReplace, "D",iRelacion.getAuxiliar(), service);
 								}
 							}
 						}
@@ -179,10 +185,7 @@ public class WebServiceCallPrepare {
 									if (iCampo.getTransaccionRegistro() != null)
 										codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
 									parameters = addParameterString(parameters, null, iCampo,
-											codeReplace, "R", iCampo.getTransaccionRegistro());
-									/*parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "R_" + codeReplace
-											+ ConstantesGenerales.IGUAL
-											+ formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());*/
+											codeReplace, "R", iCampo.getTransaccionRegistro(), service);
 								}
 							}
 						}
@@ -216,7 +219,7 @@ public class WebServiceCallPrepare {
 										if (campo.getCampoDTO() == null)
 											campo.setCampoDTO(fieldService.consultaXId(campo.getCampo()));
 										parameters = addParameterString(parameters, iRelacion, campo,
-												campo.getCampoDTO().getCodigo(), "M",iRelacion.getAuxiliar());
+												campo.getCampoDTO().getCodigo(), "M",iRelacion.getAuxiliar(), service);
 									}
 								}
 							}
@@ -231,7 +234,7 @@ public class WebServiceCallPrepare {
 	}
 
 	private String addParameterString(String parameters, RelacionInternaDTO iRelacion,
-			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField) {
+			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField, WebServiceDTO service) throws ServerException {
 		String valueAuxToCode ="";
 		if(iRelacion!=null) {
 			if(iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
@@ -252,7 +255,54 @@ public class WebServiceCallPrepare {
 							+ "_ID" + ConstantesGenerales.IGUAL + iElement.getNombre();
 				}
 			}
+		} else {
+			if(campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0 && service != null) {
+				List<PropiedadDTO> referidas = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE_LIST);
+				if(campo.getExpedientes()==null && referidas!=null && !referidas.isEmpty()) {
+					List<DocumentoRelacionExpedienteDTO> documentsInField = documentsInFieldService.listByField(campo.getLlaveTabla());
+					if(documentsInField!=null && !documentsInField.isEmpty()) {
+						Map<String, List<RelacionInternaDTO>> relations = new HashMap<String, List<RelacionInternaDTO>>();
+						for (PropiedadDTO iProp : referidas) {
+							relations.put(iProp.getLlaveTabla(), relacionService.relacionesPropiedad(iProp.getLlaveTabla()));
+						}						
+						for (int i = 0; i < documentsInField.size(); i++) {
+							DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
+							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "I_" + codeReplace + valueAuxToCode + "["+String.valueOf(i+1)+"]="+ConstantesGenerales.LINEA_MEDIA_DOBLE+"L_NUM"+ConstantesGenerales.COMA_DOBLE+String.valueOf(i+1)+ConstantesGenerales.LINEA_MEDIA_DOBLE+"L_VAL"+ConstantesGenerales.COMA_DOBLE +iRelation.getValor().intValue();
+							for (PropiedadDTO iProp : referidas) {
+								List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
+								if (relaciones != null && !relaciones.isEmpty()) {
+									// Todo esto practimanete lo copie de la funcion de arriba de referidos 
+									List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
+									PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
+									aux.setValorOpcion(iRelation.getExpedienteDetalle());
+									List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
+									listAux.add(aux);
+									camposOpcionReferidos.addAll(campoService.listar2getApiCode(listAux, relaciones));
+									List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(relaciones,
+											camposOpcionReferidos);
+									if (camposReferidos != null) {
+										for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
+											if (iCampo.getValorText() != null) {
+												if (iCampo.getCampoDTO() == null)
+													iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+												String codeReplaceList = iCampo.getCampoDTO().getCodigo();
+												if (iCampo.getTransaccionRegistro() != null)
+													codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
+												//+ConstantesGenerales.LINEA_MEDIA_DOBLE +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
+												parameters = parameters + ConstantesGenerales.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
+														+ ConstantesGenerales.COMA_DOBLE + formatToReplaceAll(iCampo, formatToField);
+												//Coloque el service en null para evitar que se generen ciclos infinitos
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
+		///////
 		return parameters;
 	}
 
@@ -317,7 +367,10 @@ public class WebServiceCallPrepare {
 					// Quite el filtro por los auxiliares cuando son 2 de un mismo campo
 					relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
 					iField.setTransaccionRegistro(iRelacion.getAuxiliar());
-					fieldsInternal.add(iField.clone());
+					//Necesito el id del campo para consultar los expedientes de multiples
+					PedidoVentaCaracteristicaDTO fieldNew = iField.clone();
+					fieldNew.setLlaveTabla(iField.getLlaveTabla());
+					fieldsInternal.add(fieldNew);
 					break;// Antes no estaba este break no se porque
 					// }
 				}

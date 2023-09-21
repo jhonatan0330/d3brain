@@ -24,6 +24,7 @@ public class Propiedades {
 	public static final String API_SECONDARY_DOCUMENT = "API_SECONDARY_DOCUMENT";
 	public static final String API_CODE_DIRECT = "API_CODE_DIRECT";
 	public static final String API_CODE_REFERENCE = "API_CODE_REFERENCE";
+	public static final String API_CODE_REFERENCE_LIST = "API_CODE_REFERENCE_LIST";
 	public static final String API_CODE_ESPECIAL = "API_CODE_ESPECIAL";
 	public static final String API_CODE_REPLACE = "API_CODE_REPLACE";
 	public static final String API_CODE_MODIFICADOR = "API_CODE_MODIFICADOR";
@@ -522,6 +523,10 @@ public class Propiedades {
 		}
 		case API_CODE_REFERENCE: {
 			ruleProperty = "Se encarga de reemplazar un valor en el template, buscando en OTRA PLANTILLA.\n\nEn el template debes tener la estructura => {{R_XXXXXXX}} , donde XXXXXX es el codigo del campo.\n\nLo mas importante en los links relacionar la cadena de pasos en los campos que se debe seguir hasta llegar al campo deseado.\n EJ el nombre de un vendedor en una guia, entregada => (Propiedad se coloca el campo Guia), en los links se coloca el campoo guia vendedor y se agrega vendedor nombre\n\nPAra los campos fechas ademas de incluir el formato con el campo auxiliar tambien puedes icluir en parentesis la suma o resta de milisegundos";
+			break;
+		}
+		case API_CODE_REFERENCE_LIST: {
+			ruleProperty = "Cuando en un campo referenciado colcoas un campo PROCESO y MULTIPLE, el busca dentro de los documentos que tiene ese multiple los campos para colocarlos en los parametros quedan dentro de un array de la siguiente forma R_ITEMS=0;;I_ITEMS[1]=--L_NUM,,1--L_VAL,,0--L_VALOR,,24000--L_GUIA,,CR9007113;;I_ITEMS[2]=--L_NUM,,2--L_VAL,,0--L_VALOR,,43600 y en el tempalte usa lo siguiente <#if I_ITEMS??> <#list I_ITEMS as REMESA>  <cbc:ID>${REMESA.L_NUM}</cbc:ID> ";
 			break;
 		}
 		case API_CODE_ESPECIAL: {

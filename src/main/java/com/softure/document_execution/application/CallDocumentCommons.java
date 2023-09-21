@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
-import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -32,10 +31,7 @@ public class CallDocumentCommons {
 		BigDecimal valor =BigDecimal.ZERO;
 		List<DocumentoRelacionExpedienteDTO> relaciones;
 		if(pCampo.getLlaveTabla()!=null) {
-			DocumentoRelacionExpedienteFilterDTO filtro = new DocumentoRelacionExpedienteFilterDTO();
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-			filtro.setCampoMaestro(pCampo.getLlaveTabla());
-			relaciones = relacionExpedienteService.listarConsulta(filtro);			
+			relaciones = relacionExpedienteService.listByField(pCampo.getLlaveTabla());			
 		}else {
 			relaciones = new ArrayList<DocumentoRelacionExpedienteDTO>();	
 		}

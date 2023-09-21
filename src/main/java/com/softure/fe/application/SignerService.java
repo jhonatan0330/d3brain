@@ -179,6 +179,7 @@ public class SignerService {
         doc = processCUFE(doc, responseFe);
         doc = processSoftwareSecurityCode(doc);
         doc = processExtensionContent(doc);
+        removeEmptyNodes(doc);
         responseFe.setXml( zipFileWithoutSaveLocal(saveDocument( doc ), responseFe));
 	}
 	
@@ -241,6 +242,19 @@ public class SignerService {
             throw new ServerException(e.getMessage());
         }
     }
+	
+	private void removeEmptyNodes(Node node) {
+		NodeList nodeList = node.getChildNodes();
+		for(int i=0; i < nodeList.getLength(); i++){
+			Node childNode = nodeList.item(i);
+			if(childNode.getTextContent().equals("")){
+				childNode.getParentNode().removeChild(childNode);
+				i--;
+			}
+			removeEmptyNodes(childNode);
+		}
+	}
+
 }
 
 
