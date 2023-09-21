@@ -176,10 +176,10 @@ public class SignerService {
 
 	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
         Document doc = loadDocument( xmlIn );
+        removeEmptyNodes(doc);
         doc = processCUFE(doc, responseFe);
         doc = processSoftwareSecurityCode(doc);
         doc = processExtensionContent(doc);
-        removeEmptyNodes(doc);
         responseFe.setXml( zipFileWithoutSaveLocal(saveDocument( doc ), responseFe));
 	}
 	
@@ -233,7 +233,7 @@ public class SignerService {
   
             String hashtext = no.toString(16);
   
-            while (hashtext.length() < 32) {
+            while (hashtext.length() < 96) {
                 hashtext = "0" + hashtext;
             }
   

@@ -76,7 +76,8 @@ public class CallDocumentUpdateFromAutomatic {
 					}
 				}
 				newField.setModificado(true);
-				generateFieldsFromProperty.add(newField);
+				// Coloque esta validacion ya que cuando una relacion no concuerda no se debe agregar
+				if(newField.getCampo()!=null)generateFieldsFromProperty.add(newField);
 			}
 		}
 		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador, token,
