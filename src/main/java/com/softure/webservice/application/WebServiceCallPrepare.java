@@ -26,6 +26,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
@@ -42,6 +43,8 @@ public class WebServiceCallPrepare {
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired
 	private DocumentoRelacionExpedienteSvc documentsInFieldService;
+	@Autowired
+	private UploadSvc uploadService;
 
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
 			String token, String userId, String initialPameters) throws ServerException {
@@ -54,13 +57,20 @@ public class WebServiceCallPrepare {
 			parameters = parameters + initialPameters;
 		}
 		callWS.setParametros(parameters);
+		String parameterHelperToLong = null;
+		if(callWS.getParametros()!=null && callWS.getParametros().length() > 4000) {
+			parameterHelperToLong = callWS.getParametros();
+			callWS.setParametros(uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
+		}
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());
 		if (modificador != null) {
 			callWS.setModificador(modificador.getLlaveTabla());
 			callWS.setTransaccion(modificador.getTransaccion());
 		}
-		return webServiceEjecucionSvc.save(callWS);
+		callWS = webServiceEjecucionSvc.save(callWS);
+		if(parameterHelperToLong != null)callWS.setParametros(parameterHelperToLong);
+		return callWS;
 	}
 
 	/**

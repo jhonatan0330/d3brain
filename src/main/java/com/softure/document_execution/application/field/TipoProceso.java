@@ -720,8 +720,10 @@ public class TipoProceso {
 										List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDE);
 										if(dependents!=null && !dependents.isEmpty()) {
 											for (PropiedadDTO iDependent : dependents) {
-												if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) 
+												if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
+													iFieldUpdateDocument.setValorNumero(null);
 													iFieldUpdateDocument.setModificado(true);
+												}
 											}
 										}
 									}
