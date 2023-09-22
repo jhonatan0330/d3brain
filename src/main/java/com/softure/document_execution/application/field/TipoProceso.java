@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.CallDocumentListBySQLFunction;
 import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
@@ -49,7 +50,6 @@ public class TipoProceso {
 	private CuentaSvc cuentaService;
 	@Autowired
 	private PedidoVentaSvc pedidoService;
-
 	@Autowired
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired
@@ -64,10 +64,8 @@ public class TipoProceso {
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 	@Autowired
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-
 	@Autowired
 	private MovimientoSvc movimientoService;
-
 	@Autowired
 	private PropiedadSvc propiedadService;
 	@Autowired
@@ -76,12 +74,12 @@ public class TipoProceso {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private TurnoSvc turnoService;
-
 	@Autowired
 	private AuxiliarProcesoBodega tipoBodega;
-
 	@Autowired
 	private CallUpdateInformativeField updateInformativeService;
+	@Autowired
+	private CallDocumentCRUD crudService;
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getValorOpcion() != null)
@@ -513,7 +511,7 @@ public class TipoProceso {
 		}
 	}
 
-	private void retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
+	private boolean retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
 			String token) throws ServerException {
 		// Si es inactivo, busco la relacion del expediente y el campo
 		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
@@ -524,10 +522,12 @@ public class TipoProceso {
 		if (filtroExp != null) {
 			filtroExp.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 			relacionExpedienteService.inactivar(filtroExp, token);
+			return true;
 		}
+		return false;
 	}
 
-	private void relacionarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
+	private boolean relacionarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
 			String token) throws ServerException {
 		if (procesoDTO.getLlaveTabla() == null)
 			throw new ServerException(
@@ -548,7 +548,9 @@ public class TipoProceso {
 				docExpediente.setValor(procesoDTO.getDinero().getSaldo());
 			docExpediente.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 			docExpediente = relacionExpedienteService.guardar(docExpediente, token);
+			return true;
 		}
+		return false;
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
@@ -683,12 +685,48 @@ public class TipoProceso {
 						// toca dejarlo asi porque hay casos donde se salta esta validacion.
 						if (campoDestino != null) {
 							campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
+							campoDestino.setCampoDTO(caracteristicaService.consultaXId(campoDestino.getCampo()));
+							campoDestino.setCampoDTO(caracteristicaService.cargarComplementos(campoDestino.getCampoDTO(), token));
+							String campoValor = Propiedades.obtenerValor(campoDestino.getCampoDTO(), Propiedades.PROCESO_VALOR);
+							campoDestino.setExpedientes(new ArrayList<>());
+							List<PedidoVentaDTO> actualDocuments =  listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(campoDestino.getLlaveTabla(),
+									token, campoValor);
+							if(actualDocuments!=null && !actualDocuments.isEmpty())
+								campoDestino.getExpedientes().addAll(actualDocuments);
 							for (PedidoVentaDTO iDocumentoRelacionar : pCampo.getExpedientes()) {
 								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0) {
-									relacionarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);
+									campoDestino.getExpedientes().add(iDocumentoRelacionar);
+									if(campoValor.isEmpty())relacionarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);									
 								} else {
-									retirarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);
+									for (PedidoVentaDTO iExpediente : campoDestino.getExpedientes()) {
+										if(iExpediente.getLlaveTabla().compareTo(iDocumentoRelacionar.getLlaveTabla())==0){
+											campoDestino.getExpedientes().remove(iExpediente);
+											if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);
+											break;
+										}
+									}
 								}
+							}
+							if(campoValor.isEmpty()) {
+								campoDestino.setValorText(String.valueOf(campoDestino.getExpedientes().size()));
+								campoService.update(campoDestino);
+							}else {
+								PedidoVentaDTO updateDocument = pedidoService.consultaCompleta(dependiente.getValorOpcion(), token);
+								for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
+									if(iFieldUpdateDocument.getCampo().compareTo(campoDestino.getCampo())==0) {
+										iFieldUpdateDocument.setModificado(true);
+										iFieldUpdateDocument.setExpedientes(campoDestino.getExpedientes());
+									} else {
+										List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDE);
+										if(dependents!=null && !dependents.isEmpty()) {
+											for (PropiedadDTO iDependent : dependents) {
+												if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) 
+													iFieldUpdateDocument.setModificado(true);
+											}
+										}
+									}
+								}
+								crudService.updateWithoutTransaction(updateDocument, pCampo.getDocumento(), token, true);
 							}
 						}
 					}

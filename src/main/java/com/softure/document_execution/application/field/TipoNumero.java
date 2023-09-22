@@ -36,7 +36,6 @@ public class TipoNumero {
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
 		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico
-
 			if (!formula.isEmpty()) {
 				BigDecimal valorCalculado = calcular(pCampo, formula);
 				pCampo.setValorNumero(valorCalculado);
@@ -58,6 +57,11 @@ public class TipoNumero {
 									+ " no se calculo correctamente, valor esperado : ("
 									+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
 									+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
+					} else {
+						if (!formula.isEmpty()) {
+							BigDecimal valorCalculado = calcular(pCampo, formula);
+							pCampo.setValorNumero(valorCalculado);
+						} 
 					}
 				}
 			}
