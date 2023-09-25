@@ -53,7 +53,7 @@ public class CalculatorUtil {
         BigDecimal result = null;
 
 
-        posOperator = text.indexOf("-");
+        posOperator = text.indexOf("-",1);
         if(posOperator!=-1){
         	leftOperator = crearBigDecimalMensaje(text.substring(0,posOperator));
         	righOperator = crearBigDecimalMensaje(text.substring(posOperator+1, text.length()));
