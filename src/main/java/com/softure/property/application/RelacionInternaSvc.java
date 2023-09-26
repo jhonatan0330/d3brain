@@ -110,6 +110,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO guardar(RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_guardar
+		if(dto.getAuxiliar()!=null && dto.getAuxiliar().length()==0) dto.setAuxiliar(null);
 		RelacionInternaFilterDTO existeFilter = new RelacionInternaFilterDTO();
 		existeFilter.setCampo(dto.getCampo());
 		existeFilter.setPlantilla(dto.getPlantilla());

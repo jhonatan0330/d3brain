@@ -75,7 +75,11 @@ public class CalculatorUtil {
         			if(posOperator!=-1){
         				leftOperator = crearBigDecimalMensaje(text.substring(0,posOperator));
         				righOperator = crearBigDecimalMensaje(text.substring(posOperator+1, text.length()));
-        				result = leftOperator.divide(righOperator,8, RoundingMode.CEILING);
+        				if(righOperator.compareTo(BigDecimal.ZERO)==0) {
+        					result = BigDecimal.ZERO;
+        				} else {        					
+        					result = leftOperator.divide(righOperator,8, RoundingMode.CEILING);
+        				}
         			}else{
         				posOperator = text.indexOf("%");
         				if(posOperator!=-1){
