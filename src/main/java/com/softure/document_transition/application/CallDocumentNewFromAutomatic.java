@@ -129,7 +129,16 @@ public class CallDocumentNewFromAutomatic {
 						.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
 								(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
 								(documento != null) ? documento.getLlaveTabla() : null);
-				camposNuevos.add(copyFieldDocument(campoGenerado, iPropiedadDTO.getValor()));
+				if (campoGenerado !=null) {
+					List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+					if (relations == null || relations.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
+					for (RelacionInternaDTO iRelacion : relations) {
+						if (documento != null && iRelacion.getPlantilla().compareTo(transicion.getPlantilla()) == 0) {
+							camposNuevos.add(copyFieldDocument(campoGenerado, iRelacion.getCampo()));
+							break;
+						}
+					}					
+				}
 				break;
 			case Propiedades.GENERA_DOCUMENTO_TEXTO:
 				String textValueToNewField = iPropiedadDTO.getValor();

@@ -1,6 +1,7 @@
 package com.softure.document_execution.application.field;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,12 +58,12 @@ public class TipoNumero {
 									+ " no se calculo correctamente, valor esperado : ("
 									+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
 									+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
-					} else {
+					} /*else {
 						if (!formula.isEmpty()) {
 							BigDecimal valorCalculado = calcular(pCampo, formula);
 							pCampo.setValorNumero(valorCalculado);
 						} 
-					}
+					}*/
 				}
 			}
 			// Valido que se calcule bien la funcion
@@ -116,6 +117,15 @@ public class TipoNumero {
 							"El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : "
 									+ SoftureUtil.formatMoney(bd.getValorNumero()));
 			}
+		}
+				
+		try {
+			int roundInt = 0;
+			String roundNumber = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_REDONDEO);
+			if (!roundNumber.isEmpty()) roundInt = Integer.parseInt(roundNumber);
+			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));	
+		} catch (NumberFormatException e) {
+			throw new ServerException(e.getMessage());
 		}
 
 		// Validar minimo y maximo

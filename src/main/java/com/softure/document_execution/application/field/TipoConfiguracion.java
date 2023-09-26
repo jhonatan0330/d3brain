@@ -263,9 +263,9 @@ public class TipoConfiguracion {
 				List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
 				PropiedadDTO option =  null;
 				for (PropiedadDTO propiedadDTO : options) {
-					if(propiedadDTO.getTexto()==null) propiedadDTO.setTexto(propiedadDTO.getValor());
-					if(propiedadDTO.getTexto().compareTo(pCampo.getValorOpcion())==0) {
+					if(propiedadDTO.getValor().compareTo(pCampo.getValorOpcion())==0) {
 						option = propiedadDTO;
+						pCampo.setValorText(option.getTexto());
 						break;
 					}
 				}
@@ -275,7 +275,7 @@ public class TipoConfiguracion {
 				if (pCampo.getValorOpcion().length() > 32)
 					pCampo.setValorOpcion(pCampo.getValorOpcion().substring(0, 32));
 				//if (pCampo.getValorOpcion().length() != 32)
-				pCampo.setValorText(option.getValor());
+				if(pCampo.getValorText()==null) pCampo.setValorText(option.getValor());
 			} else {
 				switch (valorConfiguracion) {
 				case CATEGORIA_PRODUCTOS:
@@ -396,15 +396,13 @@ public class TipoConfiguracion {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 			for (PropiedadDTO iPropiedades : campos) {
 				PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
-				if(iPropiedades.getTexto()!=null) {
-					adaptadoT.setLlaveTabla(iPropiedades.getTexto());
-					adaptadoT.setDescripcion(iPropiedades.getTexto());
-				}else {
-					adaptadoT.setLlaveTabla(iPropiedades.getValor());	
-				}
-				if (adaptadoT.getLlaveTabla().length() > 32)
-					adaptadoT.setLlaveTabla(adaptadoT.getLlaveTabla().substring(0, 32));
+				adaptadoT.setLlaveTabla(iPropiedades.getValor());
 				adaptadoT.setNombre(iPropiedades.getValor());
+				if(iPropiedades.getTexto()!=null)
+					adaptadoT.setDescripcion(iPropiedades.getTexto());
+				if (adaptadoT.getNombre().length() > 32)
+					adaptadoT.setNombre(adaptadoT.getNombre().substring(0, 32));
+				//adaptadoT.setNombre(iPropiedades.getValor());
 				pBase.getDocumentos().add(adaptadoT);
 			}
 		} else {
