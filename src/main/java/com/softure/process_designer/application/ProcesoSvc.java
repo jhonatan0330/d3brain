@@ -5,7 +5,6 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
-import com.softure.document_execution.application.field.ProcesoHelperJson;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.domain.ProcesoDTO;
@@ -39,7 +38,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	@Autowired private ProcesoEstadoSvc estadoService;
 	@Autowired private ProcesoTransicionSvc transicionService;
 	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private ProcesoHelperJson helper;
 	// END region servicesProceso
 
 	@Override
@@ -120,17 +118,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		return result;
 		// END region consultarArbol
 	}
-	public String exportar(ProcesoFilterDTO dto)throws ServerException{
-		// BEGIN region exportar
-		return helper.generarXML(dto);
-		// END region exportar
-	}
-	public String importar(ProcesoFilterDTO dto)throws ServerException{
-		// BEGIN region importar
-		//return helper.convertXML(dto.getObjetivo(), dto.getSecurityToken());
-		return null;
-		// END region importar
-	}
+
 	public ProcesoDTO obtenerProcesoParaGraficar(ProcesoFilterDTO dto)throws ServerException{
 		// BEGIN region obtenerProcesoParaGraficar
 		ProcesoDTO bd = null;
@@ -292,7 +280,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		if(macro.getTipo().compareTo(ProcesoDTO.AGRUPADOR)!=0) throw new ServerException("El macroproceso no es agrupador");
 	}
 	
-	public void preConfigurar(ProcesoDTO dto) throws ServerException {
+	private void preConfigurar(ProcesoDTO dto) throws ServerException {
 		if(dto.getImagen()==null) dto.setImagen(ConstantesGenerales.LOGO);
 		ProcesoFilterDTO filtroCantidad = new ProcesoFilterDTO();
 		int cantidad = contarResultados(filtroCantidad);

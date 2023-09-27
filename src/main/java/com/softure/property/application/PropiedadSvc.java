@@ -150,7 +150,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		// BEGIN Propiedad_actualizar
 		String llaveTabla = dto.getLlaveTabla();
 		dto = guardar(dto, token);
-		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(llaveTabla);
+		
+		relacionService.copyFromProperty(llaveTabla, dto.getLlaveTabla(), token, dto.getCambioCreacion(), true);
+		/*List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(llaveTabla);
 		if (relaciones != null && !relaciones.isEmpty()) {
 			for (RelacionInternaDTO relacionInternaDTO : relaciones) {
 				if (dto.getValor().compareTo(relacionInternaDTO.getCampo()) != 0) {
@@ -163,7 +165,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					relacionService.guardar(nueva, token);
 				}
 			}
-		}
+		}*/
 		PropiedadDTO inactivo = new PropiedadDTO();
 		inactivo.setLlaveTabla(llaveTabla);
 		inactivar(inactivo, token);
@@ -1257,7 +1259,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						newPropiedad.setValor(propiedadDTO.getValor());
 					}	
 				}
-				result.add(guardar(newPropiedad, token));
+				newPropiedad = guardar(newPropiedad, token);
+				result.add(newPropiedad);
+				relacionService.copyFromProperty(propiedadDTO.getLlaveTabla(), newPropiedad.getLlaveTabla(), token, propiedadDTO.getCambioCreacion(), false);
 			}
 		}
 		return result;

@@ -143,6 +143,22 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	public List<RelacionInternaDTO> getRelationsFullToSynchronize()throws ServerException {
 		return relacionInternaMapper.getRelationsFullToSynchronize();
 	}
-// END region aditionalMethods
+
+	public void copyFromProperty(String propertyIdOld, String propertyIdNew, String token, String creationChangeId, boolean mantainDateInitial) throws ServerException {
+		List<RelacionInternaDTO> relations = relacionesPropiedad(propertyIdOld);
+		if (relations != null && !relations.isEmpty()) {
+			for (RelacionInternaDTO iRelation : relations) {
+				RelacionInternaDTO newRelation = new RelacionInternaDTO();
+				newRelation.setAuxiliar(iRelation.getAuxiliar());
+				newRelation.setCampo(iRelation.getCampo());
+				newRelation.setPlantilla(iRelation.getPlantilla());
+				newRelation.setPropiedad(propertyIdNew);
+				if(!mantainDateInitial) newRelation.setFechaInicio(iRelation.getFechaInicio());
+				newRelation.setCambioCreacion(creationChangeId);
+				guardar(newRelation, token);
+			}
+		}
+		
+	}
 
 }

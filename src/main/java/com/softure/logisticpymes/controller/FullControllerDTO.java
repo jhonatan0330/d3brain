@@ -390,24 +390,6 @@ public class FullControllerDTO {
 		}
 	}
 
-	@PostMapping(value="/exportarProceso")
-	public String exportarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
-		try {
-			return procesoService.exportar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value="/importarProceso")
-	public String importarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
-		try {
-			return procesoService.importar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
 	@PostMapping(value="/obtenerProcesoParaGraficarProceso")
 	public ProcesoDTO obtenerProcesoParaGraficarProceso(@RequestBody ProcesoFilterDTO dto)throws FlexException {
 		try {
