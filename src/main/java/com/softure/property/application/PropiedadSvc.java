@@ -1249,7 +1249,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				newPropiedad.setUsuario(propiedadDTO.getUsuario());
 				newPropiedad.setFechaInicial(propiedadDTO.getFechaInicial());
 				newPropiedad.setFechaFinal(propiedadDTO.getFechaFinal());
-				if(propiedadDTO.getKey().compareTo(Propiedades.REPORTE_IMAGEN) == 0) {
+				if(propiedadDTO.getKey().compareTo(Propiedades.REPORTE_IMAGEN) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.OPCIONES) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_REPLACE) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_ESPECIAL) == 0) {
 					newPropiedad.setTexto(propiedadDTO.getTexto());
 					newPropiedad.setValor(propiedadDTO.getValor());
 				} else {
