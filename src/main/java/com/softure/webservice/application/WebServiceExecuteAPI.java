@@ -238,7 +238,7 @@ public class WebServiceExecuteAPI {
 			documentMain = new PedidoVentaDTO();
 			documentMain.setLlaveTabla(callWS.getDocumento());	
 		}
-		if(updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla())==0) documentMain.setNombre(updater.getNombre());
+		if(updater!=null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla())==0) documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater,
 				token, callWS.getUsuario(), null);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
