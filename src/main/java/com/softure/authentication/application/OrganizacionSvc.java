@@ -48,7 +48,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public OrganizacionDTO actualizar( OrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN Organizacion_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public OrganizacionDTO inactivar(OrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN Organizacion_inactivar
 		return super.inactivar(dto, token);
@@ -90,7 +90,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public OrganizacionDTO guardar(OrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN Organizacion_guardar
 		return super.guardar(dto, token);

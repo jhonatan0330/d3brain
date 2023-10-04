@@ -49,7 +49,7 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionLogDTO actualizar( TransaccionLogDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionLog_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionLogDTO inactivar(TransaccionLogDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionLog_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionLogDTO guardar(TransaccionLogDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionLog_guardar
 		return super.guardar(dto, token);

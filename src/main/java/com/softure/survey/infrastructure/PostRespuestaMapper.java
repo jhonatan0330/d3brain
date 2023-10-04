@@ -2,10 +2,12 @@ package com.softure.survey.infrastructure;
 
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.survey.domain.PostRespuestaDTO;
 import com.softure.survey.domain.PostRespuestaFilterDTO;
 
+@SoftureSqlConnMapper("PostRespuestaMapper")
 public interface PostRespuestaMapper extends IBasicMapper<PostRespuestaDTO, PostRespuestaFilterDTO>{
 	
 

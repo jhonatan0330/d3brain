@@ -61,7 +61,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoDTO actualizar( ProcesoDTO dto, String token) throws ServerException {
 		// BEGIN Proceso_actualizar
 		validarMacroproceso(dto.getMacroproceso());
@@ -72,7 +72,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoDTO inactivar(ProcesoDTO dto, String token) throws ServerException {
 		// BEGIN Proceso_inactivar
 		dto = super.inactivar(dto, token);
@@ -137,7 +137,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoDTO guardar(ProcesoDTO dto, String token) throws ServerException {
 		// BEGIN Proceso_guardar
 		preConfigurar(dto);
@@ -148,7 +148,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 
 // BEGIN region aditionalMethods
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	private void organizar(ProcesoDTO dto, String token) throws ServerException{
 		//Consulto todas las caracteristicas del documento
 		ProcesoFilterDTO filtro = new ProcesoFilterDTO();

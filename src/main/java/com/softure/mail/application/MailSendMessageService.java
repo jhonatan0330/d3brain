@@ -35,7 +35,7 @@ public class MailSendMessageService {
 	@Autowired private MensajePlantillaCorreoSvc mailTemplateService;
 	@Autowired private ServidorSvc servidorService;
 
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajeDTO call(MensajeDTO dto, String usuario, String token) throws ServerException {
 		if(dto.getCorreo() == null || dto.getCorreo().isEmpty()) {
 			dto.setCorreoError("No se envia correo debido a que no se tiene registrado el mail de correo");

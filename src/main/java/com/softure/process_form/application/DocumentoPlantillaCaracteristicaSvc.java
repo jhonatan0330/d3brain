@@ -63,7 +63,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO actualizar( DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantillaCaracteristica_actualizar
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
@@ -78,7 +78,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO inactivar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantillaCaracteristica_inactivar
 		dto = super.inactivar(dto, token);
@@ -149,7 +149,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO guardar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantillaCaracteristica_guardar
 		if(dto.getPlantilla()==null) throw new ServerException("Es necesario la plantilla a la que pertenece el campo");
@@ -225,7 +225,7 @@ public class DocumentoPlantillaCaracteristicaSvc extends BasicSvc<DocumentoPlant
 		return campos;
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	private void organizar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException{
 		//Consulto todas las caracteristicas del documento
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();

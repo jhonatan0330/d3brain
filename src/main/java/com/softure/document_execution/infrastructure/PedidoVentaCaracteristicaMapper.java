@@ -7,12 +7,14 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.RelacionInternaDTO;
 
+@SoftureSqlConnMapper("PedidoVentaCaracteristicaMapper")
 public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO>{
 	
 

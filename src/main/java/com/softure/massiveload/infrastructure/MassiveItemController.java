@@ -75,7 +75,7 @@ public class MassiveItemController {
 	}
 
 	@PostMapping("")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse save(@RequestHeader(name = "Authorization") String token
 			, @RequestBody MasivaItemRequest body) throws ServerException {
 		return null;
@@ -83,7 +83,7 @@ public class MassiveItemController {
 	}
 
 	@PutMapping("/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse update(@RequestHeader(name = "Authorization") String token
 			, @RequestBody MasivaItemRequest body, @PathVariable("id") String id) throws ServerException {
 		// return new SharedIdResponse(cargaMasivaItemService.update(token, body, id).getCargaMasivaItemId());
@@ -91,14 +91,14 @@ public class MassiveItemController {
 	}
 	
 	@PutMapping("/activate/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void activate(@RequestHeader(name = "Authorization") String token
 		, @PathVariable("id") String id) throws ServerException {
 		cargaMasivaItemService.restore(id, token);
 	}
 
 	@PutMapping("/inactivate/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void inactivate(@RequestHeader(name = "Authorization") String token
 		, @PathVariable("id") String id) throws ServerException {
 		cargaMasivaItemService.delete(id, token);

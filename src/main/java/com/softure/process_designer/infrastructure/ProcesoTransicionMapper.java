@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 
+@SoftureSqlConnMapper("ProcesoTransicionMapper")
 public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionDTO, ProcesoTransicionFilterDTO>{
 	
 	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);

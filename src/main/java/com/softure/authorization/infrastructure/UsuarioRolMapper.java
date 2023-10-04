@@ -1,10 +1,12 @@
 package com.softure.authorization.infrastructure;
 
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.authorization.domain.UsuarioRolDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("UsuarioRolMapper")
 public interface UsuarioRolMapper extends IBasicMapper<UsuarioRolDTO, UsuarioRolFilterDTO>{
 	
 

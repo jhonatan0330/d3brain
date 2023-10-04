@@ -49,7 +49,7 @@ public class CategoriaProductoSvc extends BasicSvc<CategoriaProductoDTO, Categor
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CategoriaProductoDTO actualizar( CategoriaProductoDTO dto, String token) throws ServerException {
 		// BEGIN CategoriaProducto_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class CategoriaProductoSvc extends BasicSvc<CategoriaProductoDTO, Categor
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CategoriaProductoDTO inactivar(CategoriaProductoDTO dto, String token) throws ServerException {
 		// BEGIN CategoriaProducto_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class CategoriaProductoSvc extends BasicSvc<CategoriaProductoDTO, Categor
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CategoriaProductoDTO guardar(CategoriaProductoDTO dto, String token) throws ServerException {
 		// BEGIN CategoriaProducto_guardar
 		dto = super.guardar(dto, token);

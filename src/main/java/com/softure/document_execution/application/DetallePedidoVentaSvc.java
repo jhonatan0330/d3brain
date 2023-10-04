@@ -90,7 +90,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO actualizar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_actualizar
 		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {
@@ -115,7 +115,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO inactivar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_inactivar
 		if (dto.getTransaccionInactivo() == null)
@@ -143,7 +143,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN DetallePedidoVenta_guardar
 		List<PedidoVentaCaracteristicaDTO> caracteristicas = dto.getCaracteristicas();

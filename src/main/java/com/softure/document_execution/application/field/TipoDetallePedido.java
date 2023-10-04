@@ -397,7 +397,7 @@ public class TipoDetallePedido {
 		return productos;
 	}
 
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {

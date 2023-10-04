@@ -50,7 +50,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionGestorDTO actualizar( DocumentoRelacionGestorDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoRelacionGestor_actualizar
 		return super.actualizar(dto, token);
@@ -58,7 +58,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionGestorDTO inactivar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoRelacionGestor_inactivar
 		return super.inactivar(dto, token);
@@ -107,7 +107,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionGestorDTO guardar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoRelacionGestor_guardar
 		if(documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal())!=null) {

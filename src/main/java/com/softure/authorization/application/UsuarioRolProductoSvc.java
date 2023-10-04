@@ -49,7 +49,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolProductoDTO actualizar( UsuarioRolProductoDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRolProducto_actualizar
 		dto.setCantidadPromocionBase(30);
@@ -59,7 +59,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolProductoDTO inactivar(UsuarioRolProductoDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRolProducto_inactivar
 		return super.inactivar(dto, token);
@@ -84,7 +84,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolProductoDTO guardar(UsuarioRolProductoDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRolProducto_guardar
 		UsuarioRolProductoFilterDTO existeFilter =  new UsuarioRolProductoFilterDTO();

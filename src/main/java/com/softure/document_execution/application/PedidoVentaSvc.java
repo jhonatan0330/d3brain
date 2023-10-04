@@ -69,7 +69,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO actualizar( PedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVenta_actualizar
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction update");
@@ -77,7 +77,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO inactivar(PedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVenta_inactivar
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction inactivate");
@@ -158,7 +158,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO guardar(PedidoVentaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVenta_guardar
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction save");

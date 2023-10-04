@@ -24,7 +24,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	
 	@Autowired private UsuarioSesionMapper usuarioSesionMapper;
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T actualizar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		try {
@@ -85,7 +85,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T guardar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		dto.setLlaveTabla(generarLlave());
@@ -161,7 +161,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 	
-	// @Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	// @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T save(T dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
 		try {
@@ -173,7 +173,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 	
-	// @Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	// @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public T update(T dto) throws ServerException {
 		try {
 			mapper.actualizar(dto); 

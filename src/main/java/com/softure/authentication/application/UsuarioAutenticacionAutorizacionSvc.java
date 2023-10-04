@@ -51,7 +51,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionAutorizacionDTO actualizar( UsuarioAutenticacionAutorizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacionAutorizacion_actualizar
 		return super.actualizar(dto, token);
@@ -59,7 +59,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionAutorizacionDTO inactivar(UsuarioAutenticacionAutorizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacionAutorizacion_inactivar
 		return super.inactivar(dto, token);
@@ -84,7 +84,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionAutorizacionDTO guardar(UsuarioAutenticacionAutorizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacionAutorizacion_guardar
 		return super.guardar(dto, token);

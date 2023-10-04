@@ -48,7 +48,7 @@ public class TarifarioSvc extends BasicSvc<TarifarioDTO, TarifarioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifarioDTO actualizar( TarifarioDTO dto, String token) throws ServerException {
 		// BEGIN Tarifario_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class TarifarioSvc extends BasicSvc<TarifarioDTO, TarifarioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifarioDTO inactivar(TarifarioDTO dto, String token) throws ServerException {
 		// BEGIN Tarifario_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class TarifarioSvc extends BasicSvc<TarifarioDTO, TarifarioFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifarioDTO guardar(TarifarioDTO dto, String token) throws ServerException {
 		// BEGIN Tarifario_guardar
 		return super.guardar(dto, token);

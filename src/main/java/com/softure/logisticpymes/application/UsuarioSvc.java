@@ -57,7 +57,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioDTO actualizar( UsuarioDTO dto, String token) throws ServerException {
 		// BEGIN Usuario_actualizar
 		UsuarioDTO bd = consultaXId(dto.getLlaveTabla());
@@ -79,7 +79,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioDTO inactivar(UsuarioDTO dto, String token) throws ServerException {
 		// BEGIN Usuario_inactivar
 		dto = super.inactivar(dto, token);
@@ -132,7 +132,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioDTO guardar(UsuarioDTO dto, String token) throws ServerException {
 		// BEGIN Usuario_guardar
 		UsuarioFilterDTO filtro  = new UsuarioFilterDTO();

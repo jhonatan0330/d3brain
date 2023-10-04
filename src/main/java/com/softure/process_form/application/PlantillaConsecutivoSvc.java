@@ -49,7 +49,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PlantillaConsecutivoDTO actualizar( PlantillaConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN PlantillaConsecutivo_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PlantillaConsecutivoDTO inactivar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN PlantillaConsecutivo_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PlantillaConsecutivoDTO guardar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN PlantillaConsecutivo_guardar
 		PlantillaConsecutivoFilterDTO bdFilter = new PlantillaConsecutivoFilterDTO();

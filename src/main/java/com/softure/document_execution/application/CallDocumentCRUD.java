@@ -108,7 +108,7 @@ public class CallDocumentCRUD {
 	@Autowired
 	private CallBPM bpmService;
 
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
 		String userId = getUserID(token);
 		if (session != null) {
@@ -131,7 +131,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO inactivateDocumentWithProcess(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO,
 			String token) throws ServerException {
 		// BEGIN PedidoVenta_inactivar
@@ -160,7 +160,7 @@ public class CallDocumentCRUD {
 		// END PedidoVenta_inactivar
 	}
 
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
 		return updateWithoutTransaction(dto, modificadorId, token, false);
 	}

@@ -2,10 +2,12 @@ package com.softure.process_designer.infrastructure;
 
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
 
+@SoftureSqlConnMapper("ProcesoMapper")
 public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO>{
 	
 

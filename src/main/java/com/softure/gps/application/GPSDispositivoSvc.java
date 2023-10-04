@@ -48,7 +48,7 @@ public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositiv
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSDispositivoDTO actualizar( GPSDispositivoDTO dto, String token) throws ServerException {
 		// BEGIN GPSDispositivo_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositiv
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSDispositivoDTO inactivar(GPSDispositivoDTO dto, String token) throws ServerException {
 		// BEGIN GPSDispositivo_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositiv
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSDispositivoDTO guardar(GPSDispositivoDTO dto, String token) throws ServerException {
 		// BEGIN GPSDispositivo_guardar
 		return super.guardar(dto, token);

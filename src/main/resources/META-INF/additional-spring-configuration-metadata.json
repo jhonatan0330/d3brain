@@ -1,8 +1,58 @@
 {"properties": [
   {
-    "name": "fixedDelayTask.in.milliseconds",
+    "name": "cron.enabled",
     "type": "java.lang.String",
-    "description": "A description for 'fixedDelayTask.in.milliseconds'"
+    "description": "A description for 'cron.enabled'"
+  },
+  {
+    "name": "cron.task",
+    "type": "java.lang.String",
+    "description": "A description for 'cron.task'"
+  },
+  {
+    "name": "db.accounting.driver",
+    "type": "java.lang.String",
+    "description": "A description for 'db.accounting.driver'"
+  },
+  {
+    "name": "db.accounting.jdbc-url",
+    "type": "java.lang.String",
+    "description": "A description for 'db.accounting.url'"
+  },
+  {
+    "name": "db.accounting.username",
+    "type": "java.lang.String",
+    "description": "A description for 'db.accounting.username'"
+  },
+  {
+    "name": "db.accounting.password",
+    "type": "java.lang.String",
+    "description": "A description for 'db.accounting.password'"
+  },
+  {
+    "name": "db.driver",
+    "type": "java.lang.String",
+    "description": "A description for 'db.driver'"
+  },
+  {
+    "name": "db.url",
+    "type": "java.lang.String",
+    "description": "A description for 'db.url'"
+  },
+  {
+    "name": "db.username",
+    "type": "java.lang.String",
+    "description": "A description for 'db.username'"
+  },
+  {
+    "name": "db.password",
+    "type": "java.lang.String",
+    "description": "A description for 'db.password'"
+  },
+  {
+    "name": "fixedDelayApi.in.milliseconds",
+    "type": "java.lang.String",
+    "description": "A description for 'fixedDelayApi.in.milliseconds'"
   },
   {
     "name": "fixedDelayMail.in.milliseconds",
@@ -10,8 +60,8 @@
     "description": "A description for 'fixedDelayMail.in.milliseconds'"
   },
   {
-    "name": "cron.enabled",
+    "name": "fixedDelayTask.in.milliseconds",
     "type": "java.lang.String",
-    "description": "A description for 'cron.enabled'"
+    "description": "A description for 'fixedDelayTask.in.milliseconds'"
   }
 ]}

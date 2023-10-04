@@ -67,7 +67,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ActividadDTO actualizar(ActividadDTO dto, String token) throws ServerException {
 		// BEGIN Actividad_actualizar
 		return super.update(dto);
@@ -75,7 +75,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ActividadDTO inactivar(ActividadDTO dto, String token) throws ServerException {
 		// BEGIN Actividad_inactivar
 		dto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
@@ -101,7 +101,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ActividadDTO guardar(ActividadDTO dto, String token) throws ServerException {
 		// BEGIN Actividad_guardar
 		// Esto solo se usa para cuando cambio de responsable un documento, puede que si

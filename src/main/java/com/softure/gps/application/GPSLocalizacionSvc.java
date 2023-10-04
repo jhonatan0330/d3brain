@@ -49,7 +49,7 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSLocalizacionDTO actualizar( GPSLocalizacionDTO dto, String token) throws ServerException {
 		// BEGIN GPSLocalizacion_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSLocalizacionDTO inactivar(GPSLocalizacionDTO dto, String token) throws ServerException {
 		// BEGIN GPSLocalizacion_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public GPSLocalizacionDTO guardar(GPSLocalizacionDTO dto, String token) throws ServerException {
 		// BEGIN GPSLocalizacion_guardar
 		if(dto==null) throw new ServerException("El objeto no puede ser vacio");

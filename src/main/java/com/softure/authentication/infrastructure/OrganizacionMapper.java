@@ -4,10 +4,12 @@ package com.softure.authentication.infrastructure;
 // BEGIN region interImport  
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("OrganizacionMapper")
 public interface OrganizacionMapper extends IBasicMapper<OrganizacionDTO, OrganizacionFilterDTO>{
 	
 

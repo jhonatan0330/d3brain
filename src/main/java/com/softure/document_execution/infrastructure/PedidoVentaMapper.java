@@ -4,12 +4,14 @@ package com.softure.document_execution.infrastructure;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.PropiedadDTO;
 
+@SoftureSqlConnMapper("PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
 // BEGIN region aditionalMethods  

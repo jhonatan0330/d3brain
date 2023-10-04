@@ -52,7 +52,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TurnoDTO actualizar( TurnoDTO dto, String token) throws ServerException {
 		// BEGIN Turno_actualizar
 		return super.actualizar(dto, token);
@@ -60,7 +60,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TurnoDTO inactivar(TurnoDTO dto, String token) throws ServerException {
 		// BEGIN Turno_inactivar
 		return super.inactivar(dto, token);
@@ -85,7 +85,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TurnoDTO guardar(TurnoDTO dto, String token) throws ServerException {
 		// BEGIN Turno_guardar
 		return super.guardar(dto, token);

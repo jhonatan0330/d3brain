@@ -61,7 +61,7 @@ public class TrazabilidadProductoInventarioSvc
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TrazabilidadProductoInventarioDTO actualizar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
 		// BEGIN TrazabilidadProductoInventario_actualizar
@@ -70,7 +70,7 @@ public class TrazabilidadProductoInventarioSvc
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TrazabilidadProductoInventarioDTO inactivar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
 		// BEGIN TrazabilidadProductoInventario_inactivar

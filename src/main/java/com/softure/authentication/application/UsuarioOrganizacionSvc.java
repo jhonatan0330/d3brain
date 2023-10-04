@@ -60,7 +60,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioOrganizacionDTO actualizar( UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_actualizar
 		validateNotMainOrganization(dto.getOrganizacion());
@@ -69,7 +69,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioOrganizacionDTO inactivar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_inactivar
 		return super.inactivar(dto, token);
@@ -92,7 +92,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		return super.listarConsulta(dto);
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public List<UsuarioOrganizacionDTO> sincronizarUsuarios(UsuarioOrganizacionDTO dto, String token)throws ServerException{
 		// BEGIN region sincronizarUsuarios
 		OrganizacionDTO organizacion = organizacionService.consultaXId(dto.getOrganizacion());
@@ -140,7 +140,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioOrganizacionDTO guardar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioOrganizacion_guardar
 		validateNotMainOrganization(dto.getOrganizacion());

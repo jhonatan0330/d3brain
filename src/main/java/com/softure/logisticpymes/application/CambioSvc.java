@@ -49,7 +49,7 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CambioDTO actualizar( CambioDTO dto, String token) throws ServerException {
 		// BEGIN Cambio_actualizar
 		dto.setSesionActiva(token);
@@ -58,7 +58,7 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CambioDTO inactivar(CambioDTO dto, String token) throws ServerException {
 		// BEGIN Cambio_inactivar
 		return super.inactivar(dto, token);
@@ -83,7 +83,7 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CambioDTO guardar(CambioDTO dto, String token) throws ServerException {
 		// BEGIN Cambio_guardar
 		CambioFilterDTO filtro = new CambioFilterDTO();

@@ -48,7 +48,7 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO actualizar( MensajePlantillaCorreoDTO dto, String token) throws ServerException {
 		// BEGIN MensajePlantillaCorreo_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO inactivar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
 		// BEGIN MensajePlantillaCorreo_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO guardar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
 		// BEGIN MensajePlantillaCorreo_guardar
 		return super.guardar(dto, token);

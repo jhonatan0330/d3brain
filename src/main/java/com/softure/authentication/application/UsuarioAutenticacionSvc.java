@@ -70,7 +70,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO actualizar( UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_actualizar
 		return super.actualizar(dto, token);
@@ -78,7 +78,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO inactivar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_inactivar
 		return super.inactivar(dto, token);
@@ -106,7 +106,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return autenticar(dto, false);
 		// END region autenticar
 	}
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO cambiarClave(UsuarioAutenticacionDTO dto, String token)throws ServerException{
 		// BEGIN region cambiarClave
 		UsuarioAutenticacionAutorizacionDTO autho = null;
@@ -171,7 +171,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_guardar
 		dto.setFechaMaxima(getNewMaximunDate());

@@ -48,7 +48,7 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaTiempoDTO actualizar( PedidoVentaTiempoDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaTiempo_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaTiempoDTO inactivar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaTiempo_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaTiempoDTO guardar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaTiempo_guardar
 		return super.guardar(dto, token);

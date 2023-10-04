@@ -48,7 +48,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceDTO actualizar( WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceDTO inactivar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceDTO guardar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_guardar
 		return super.guardar(dto, token);

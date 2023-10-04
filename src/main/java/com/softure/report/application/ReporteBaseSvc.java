@@ -79,7 +79,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ReporteBaseDTO actualizar( ReporteBaseDTO dto, String token) throws ServerException {
 		// BEGIN ReporteBase_actualizar
 		return super.update(dto);
@@ -87,7 +87,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ReporteBaseDTO inactivar(ReporteBaseDTO dto, String token) throws ServerException {
 		// BEGIN ReporteBase_inactivar
 		return super.inactivar(dto, token);
@@ -112,7 +112,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ReporteBaseDTO guardar(ReporteBaseDTO dto, String token) throws ServerException {
 		// BEGIN ReporteBase_guardar
 		return super.save(dto);

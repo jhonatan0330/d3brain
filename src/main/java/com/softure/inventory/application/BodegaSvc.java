@@ -49,7 +49,7 @@ public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public BodegaDTO actualizar( BodegaDTO dto, String token) throws ServerException {
 		// BEGIN Bodega_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public BodegaDTO inactivar(BodegaDTO dto, String token) throws ServerException {
 		// BEGIN Bodega_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public BodegaDTO guardar(BodegaDTO dto, String token) throws ServerException {
 		// BEGIN Bodega_guardar
 		return super.guardar(dto, token);

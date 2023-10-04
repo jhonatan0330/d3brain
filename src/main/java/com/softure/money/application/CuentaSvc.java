@@ -51,7 +51,7 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CuentaDTO actualizar( CuentaDTO dto, String token) throws ServerException {
 		// BEGIN Cuenta_actualizar
 		CuentaDTO cuenta = consultaXId(dto.getLlaveTabla());
@@ -64,7 +64,7 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CuentaDTO inactivar(CuentaDTO dto, String token) throws ServerException {
 		// BEGIN Cuenta_inactivar
 		return super.inactivar(dto, token);
@@ -89,7 +89,7 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CuentaDTO guardar(CuentaDTO dto, String token) throws ServerException {
 		// BEGIN Cuenta_guardar
 		return super.guardar(dto, token);

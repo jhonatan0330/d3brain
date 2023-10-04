@@ -20,7 +20,7 @@ public class WebServiceCopyAPI {
 	@Autowired
 	private PropiedadSvc propiedadesSvc;
 	
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(String serviceId, String token) throws ServerException {
 
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);

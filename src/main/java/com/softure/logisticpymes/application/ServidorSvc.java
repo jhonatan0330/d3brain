@@ -48,7 +48,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO actualizar( ServidorDTO dto, String token) throws ServerException {
 		// BEGIN Servidor_actualizar
 		validateDTO(dto);
@@ -57,7 +57,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO inactivar(ServidorDTO dto, String token) throws ServerException {
 		// BEGIN Servidor_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO guardar(ServidorDTO dto, String token) throws ServerException {
 		// BEGIN Servidor_guardar
 		validateDTO(dto);

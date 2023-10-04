@@ -46,7 +46,7 @@ public class ProductoCaracteristicaSvc extends BasicSvc<ProductoCaracteristicaDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoCaracteristicaDTO actualizar( ProductoCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN ProductoCaracteristica_actualizar
 		return super.actualizar(dto, token);
@@ -54,7 +54,7 @@ public class ProductoCaracteristicaSvc extends BasicSvc<ProductoCaracteristicaDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoCaracteristicaDTO inactivar(ProductoCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN ProductoCaracteristica_inactivar
 		return super.inactivar(dto, token);
@@ -79,7 +79,7 @@ public class ProductoCaracteristicaSvc extends BasicSvc<ProductoCaracteristicaDT
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoCaracteristicaDTO guardar(ProductoCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN ProductoCaracteristica_guardar
 		return super.guardar(dto, token);

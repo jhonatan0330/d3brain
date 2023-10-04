@@ -2,10 +2,12 @@ package com.softure.process_form.infrastructure;
 
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
+@SoftureSqlConnMapper("DocumentoPlantillaMapper")
 public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO>{
 	
 

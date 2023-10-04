@@ -6,11 +6,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("PedidoVentaDineroMapper")
 public interface PedidoVentaDineroMapper extends IBasicMapper<PedidoVentaDineroDTO, PedidoVentaDineroFilterDTO>{
 	
 

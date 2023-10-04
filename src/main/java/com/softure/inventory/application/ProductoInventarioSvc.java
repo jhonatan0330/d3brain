@@ -58,7 +58,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDTO actualizar( ProductoInventarioDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventario_actualizar
 		ProductoInventarioDTO bd = consultaXId(dto.getLlaveTabla());
@@ -80,7 +80,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDTO inactivar(ProductoInventarioDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventario_inactivar
 		return super.inactivar(dto, token);

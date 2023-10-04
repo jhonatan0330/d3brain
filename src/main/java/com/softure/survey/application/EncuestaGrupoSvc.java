@@ -64,7 +64,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaGrupoDTO actualizar( EncuestaGrupoDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaGrupo_actualizar
 		return super.actualizar(dto, token);
@@ -72,7 +72,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaGrupoDTO inactivar(EncuestaGrupoDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaGrupo_inactivar
 		return super.inactivar(dto, token);
@@ -95,7 +95,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 		return super.listarConsulta(dto);
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaGrupoDTO responderEncuesta(EncuestaGrupoDTO dto, String token)throws ServerException{
 		// BEGIN region responderEncuesta
 		List<EncuestaRespuestaDTO>  respuestas = dto.getRespuestas();
@@ -129,7 +129,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 		return bd;
 		// END region responderEncuesta
 	}
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaGrupoDTO copiar(EncuestaGrupoDTO dto, String token)throws ServerException{
 		// BEGIN region copiar
 		String grupoBase =dto.getLlaveTabla();
@@ -166,7 +166,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaGrupoDTO guardar(EncuestaGrupoDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaGrupo_guardar
 		return super.guardar(dto, token);

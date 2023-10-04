@@ -49,7 +49,7 @@ public class ModuloContratadoSvc extends BasicSvc<ModuloContratadoDTO, ModuloCon
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloContratadoDTO actualizar( ModuloContratadoDTO dto, String token) throws ServerException {
 		// BEGIN ModuloContratado_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class ModuloContratadoSvc extends BasicSvc<ModuloContratadoDTO, ModuloCon
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloContratadoDTO inactivar(ModuloContratadoDTO dto, String token) throws ServerException {
 		// BEGIN ModuloContratado_inactivar
 		return super.inactivar(dto, token);
@@ -89,7 +89,7 @@ public class ModuloContratadoSvc extends BasicSvc<ModuloContratadoDTO, ModuloCon
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloContratadoDTO guardar(ModuloContratadoDTO dto, String token) throws ServerException {
 		// BEGIN ModuloContratado_guardar
 		if(dto.getImagen()==null) dto.setImagen(ConstantesGenerales.LOGO);

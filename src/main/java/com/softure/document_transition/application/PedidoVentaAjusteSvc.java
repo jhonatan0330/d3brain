@@ -56,7 +56,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaAjusteDTO actualizar( PedidoVentaAjusteDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaAjuste_actualizar
 		throw new ServerException("Metodo sin implementar");
@@ -64,7 +64,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaAjusteDTO inactivar(PedidoVentaAjusteDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaAjuste_inactivar
 		throw new ServerException("Metodo sin implementar");
@@ -89,7 +89,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaAjusteDTO guardar(PedidoVentaAjusteDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaAjuste_guardar
 		PedidoVentaDTO documento = documentoService.consultaXId(dto.getDocumento());

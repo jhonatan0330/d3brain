@@ -32,7 +32,7 @@ public class ProcessCopy {
 	@Autowired 
 	private ProcesoTransicionSvc transicionService;
 	
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(String processId, String token) throws ServerException {
 
 		ProcesoDTO process = processService.consultaXId(processId);

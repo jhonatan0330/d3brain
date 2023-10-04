@@ -49,7 +49,7 @@ public class PostCalificacionSvc extends BasicSvc<PostCalificacionDTO, PostCalif
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostCalificacionDTO actualizar( PostCalificacionDTO dto, String token) throws ServerException {
 		// BEGIN PostCalificacion_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class PostCalificacionSvc extends BasicSvc<PostCalificacionDTO, PostCalif
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostCalificacionDTO inactivar(PostCalificacionDTO dto, String token) throws ServerException {
 		// BEGIN PostCalificacion_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class PostCalificacionSvc extends BasicSvc<PostCalificacionDTO, PostCalif
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostCalificacionDTO guardar(PostCalificacionDTO dto, String token) throws ServerException {
 		// BEGIN PostCalificacion_guardar
 		dto.setFecha(new Date());

@@ -5,10 +5,12 @@ package com.softure.inventory.infrastructure;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("ProductoMapper")
 public interface ProductoMapper extends IBasicMapper<ProductoDTO, ProductoFilterDTO>{
 	
 

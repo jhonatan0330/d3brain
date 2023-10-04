@@ -55,7 +55,7 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoTransaccionDTO actualizar( DocumentoTransaccionDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoTransaccion_actualizar
 		return super.actualizar(dto, token);
@@ -63,7 +63,7 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoTransaccionDTO inactivar(DocumentoTransaccionDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoTransaccion_inactivar
 		return super.inactivar(dto, token);
@@ -88,7 +88,7 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoTransaccionDTO guardar(DocumentoTransaccionDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoTransaccion_guardar
 		return super.guardar(dto, token);

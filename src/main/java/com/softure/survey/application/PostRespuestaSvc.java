@@ -50,7 +50,7 @@ public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostRespuestaDTO actualizar( PostRespuestaDTO dto, String token) throws ServerException {
 		// BEGIN PostRespuesta_actualizar
 		return super.actualizar(dto, token);
@@ -58,7 +58,7 @@ public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostRespuestaDTO inactivar(PostRespuestaDTO dto, String token) throws ServerException {
 		// BEGIN PostRespuesta_inactivar
 		return super.inactivar(dto, token);
@@ -90,7 +90,7 @@ public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFi
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PostRespuestaDTO guardar(PostRespuestaDTO dto, String token) throws ServerException {
 		// BEGIN PostRespuesta_guardar
 		dto.setFecha(new Date());

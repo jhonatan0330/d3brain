@@ -57,7 +57,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MovimientoDTO actualizar( MovimientoDTO dto, String token) throws ServerException {
 		// BEGIN Movimiento_actualizar
 		MovimientoDTO movimiento = consultaXId(dto.getLlaveTabla());
@@ -70,7 +70,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MovimientoDTO inactivar(MovimientoDTO dto, String token) throws ServerException {
 		// BEGIN Movimiento_inactivar
 		MovimientoDTO movimiento = super.inactivar(dto, token);		
@@ -186,7 +186,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public MovimientoDTO guardar(MovimientoDTO dto, String token) throws ServerException {
 		// BEGIN Movimiento_guardar
 		if(dto.getFechaEvento()==null) throw new ServerException("Registra la fecha del movimiento");

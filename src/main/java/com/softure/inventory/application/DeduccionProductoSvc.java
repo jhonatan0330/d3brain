@@ -69,7 +69,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DeduccionProductoDTO actualizar( DeduccionProductoDTO dto, String token) throws ServerException {
 		// BEGIN DeduccionProducto_actualizar
 		return super.actualizar(dto, token);
@@ -77,7 +77,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DeduccionProductoDTO inactivar(DeduccionProductoDTO dto, String token) throws ServerException {
 		// BEGIN DeduccionProducto_inactivar
 		dto = super.inactivar(dto, token);
@@ -133,7 +133,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	}
 
 // BEGIN region aditionalMethods
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void recalcularInventarioDocumento(String documento, String token) throws ServerException {
 		PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(pedidoService.consultaXId(documento), token);
 		//2. Coloco los dependientes//Actualizar dependencias despues de los camps para que queden completas asi el campo este despues en orden

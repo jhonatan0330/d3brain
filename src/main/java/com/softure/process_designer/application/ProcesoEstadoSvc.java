@@ -52,7 +52,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoEstadoDTO actualizar( ProcesoEstadoDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoEstado_actualizar
 		colocarSignoPregunta(dto);
@@ -65,7 +65,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoEstadoDTO inactivar(ProcesoEstadoDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoEstado_inactivar
 		ProcesoTransicionFilterDTO transicion = new ProcesoTransicionFilterDTO();
@@ -94,7 +94,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoEstadoDTO guardar(ProcesoEstadoDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoEstado_guardar
 		colocarSignoPregunta(dto);

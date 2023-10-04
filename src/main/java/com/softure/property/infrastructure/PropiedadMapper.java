@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.domain.IBasicMapper;
@@ -13,6 +14,7 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadFilterDTO;
 
+@SoftureSqlConnMapper("PropiedadMapper")
 public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFilterDTO>{
 	
 

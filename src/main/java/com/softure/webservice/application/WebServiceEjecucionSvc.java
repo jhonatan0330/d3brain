@@ -52,7 +52,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceEjecucionDTO actualizar( WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_actualizar
 		return super.actualizar(dto, token);
@@ -60,7 +60,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceEjecucionDTO inactivar(WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_inactivar
 		return super.inactivar(dto, token);
@@ -95,7 +95,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public WebServiceEjecucionDTO guardar(WebServiceEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN WebServiceEjecucion_guardar
 		return super.guardar(dto, token);

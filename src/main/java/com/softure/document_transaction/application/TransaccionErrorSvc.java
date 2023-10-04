@@ -49,7 +49,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionErrorDTO actualizar( TransaccionErrorDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionError_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionErrorDTO inactivar(TransaccionErrorDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionError_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TransaccionErrorDTO guardar(TransaccionErrorDTO dto, String token) throws ServerException {
 		// BEGIN TransaccionError_guardar
 		return super.guardar(dto, token);
@@ -90,7 +90,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	}
 
 // BEGIN region aditionalMethods
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
+	@Transactional(value = "transactionManager", propagation = Propagation.NOT_SUPPORTED)
 	public TransaccionErrorDTO finalizar(Date startDate, String error, String userId) throws ServerException {
 		TransaccionErrorDTO newLog = new TransaccionErrorDTO();
 		newLog.setFechaInicio(startDate);

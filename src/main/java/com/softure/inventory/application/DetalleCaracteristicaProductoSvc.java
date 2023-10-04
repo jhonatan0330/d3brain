@@ -48,7 +48,7 @@ public class DetalleCaracteristicaProductoSvc extends BasicSvc<DetalleCaracteris
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetalleCaracteristicaProductoDTO actualizar( DetalleCaracteristicaProductoDTO dto, String token) throws ServerException {
 		// BEGIN DetalleCaracteristicaProducto_actualizar
 		return update(dto);
@@ -56,7 +56,7 @@ public class DetalleCaracteristicaProductoSvc extends BasicSvc<DetalleCaracteris
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetalleCaracteristicaProductoDTO inactivar(DetalleCaracteristicaProductoDTO dto, String token) throws ServerException {
 		// BEGIN DetalleCaracteristicaProducto_inactivar
 		if(dto.getTransaccionInactivo()==null) throw new ServerException("Es necesario registrar la transaccion que anula");
@@ -82,7 +82,7 @@ public class DetalleCaracteristicaProductoSvc extends BasicSvc<DetalleCaracteris
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetalleCaracteristicaProductoDTO guardar(DetalleCaracteristicaProductoDTO dto, String token) throws ServerException {
 		// BEGIN DetalleCaracteristicaProducto_guardar
 		return save(dto);

@@ -56,7 +56,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaDTO actualizar( EncuestaDTO dto, String token) throws ServerException {
 		// BEGIN Encuesta_actualizar
 		SoftureUtil.validarFechaInicioFin(dto.getFechaInicio(), dto.getFechaFin());
@@ -65,7 +65,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaDTO inactivar(EncuestaDTO dto, String token) throws ServerException {
 		// BEGIN Encuesta_inactivar
 		return super.inactivar(dto, token);
@@ -88,7 +88,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 		return super.listarConsulta(dto);
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaDTO copiar(EncuestaDTO dto, String token)throws ServerException{
 		// BEGIN region copiar
 		String encuestaBase = dto.getLlaveTabla();
@@ -137,7 +137,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaDTO guardar(EncuestaDTO dto, String token) throws ServerException {
 		// BEGIN Encuesta_guardar
 		SoftureUtil.validarFechaInicioFin(dto.getFechaInicio(), dto.getFechaFin(), null);

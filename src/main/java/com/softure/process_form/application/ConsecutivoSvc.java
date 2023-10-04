@@ -53,7 +53,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ConsecutivoDTO actualizar( ConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN Consecutivo_actualizar
 		return super.actualizar(dto, token);
@@ -61,7 +61,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ConsecutivoDTO inactivar(ConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN Consecutivo_inactivar
 		return super.inactivar(dto, token);
@@ -84,7 +84,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		return super.listarConsulta(dto);
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ConsecutivoDTO asignarConsecutivo(ConsecutivoDTO dto, String token)throws ServerException{
 		// BEGIN region asignarConsecutivo
 		if(dto.getLlaveTabla()==null) throw new ServerException("Para asignar el consecutivo se debe enviar la clave del consecutivo");
@@ -119,7 +119,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ConsecutivoDTO guardar(ConsecutivoDTO dto, String token) throws ServerException {
 		// BEGIN Consecutivo_guardar
 		return super.guardar(dto, token);

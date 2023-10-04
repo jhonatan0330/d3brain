@@ -64,7 +64,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifaDTO actualizar( TarifaDTO dto, String token) throws ServerException {
 		// BEGIN Tarifa_actualizar
 		TarifaDTO existe  = validarTarifa(dto);
@@ -90,7 +90,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifaDTO inactivar(TarifaDTO dto, String token) throws ServerException {
 		// BEGIN Tarifa_inactivar
 		return super.inactivar(dto, token);
@@ -115,7 +115,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public TarifaDTO guardar(TarifaDTO dto, String token) throws ServerException {
 		// BEGIN Tarifa_guardar
 		TarifarioDTO tarifario = tarifarioService.consultaXId(dto.getTarifario());

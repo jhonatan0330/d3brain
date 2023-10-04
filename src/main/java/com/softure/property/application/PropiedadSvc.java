@@ -145,7 +145,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadDTO actualizar(PropiedadDTO dto, String token) throws ServerException {
 		// BEGIN Propiedad_actualizar
 		String llaveTabla = dto.getLlaveTabla();
@@ -174,7 +174,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadDTO inactivar(PropiedadDTO dto, String token) throws ServerException {
 		// BEGIN Propiedad_inactivar
 		PropiedadDTO bd = consultaXId(dto.getLlaveTabla());
@@ -278,7 +278,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadDTO guardar(PropiedadDTO dto, String token) throws ServerException {
 		// BEGIN Propiedad_guardar
 		if (dto.getUsuarioExcluyente() != null && (dto.getUsuario() != null || dto.getRol() != null))
@@ -1186,7 +1186,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	// Esto es importante para que cuando falle la transaccion no se bloquee
 	// https://medium.com/geekculture/spring-transactional-rollback-handling-741fcad043c6
-	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	@Transactional(value = "transactionManager", propagation=Propagation.REQUIRES_NEW)
 	public String prevalidateAPI(BasicParamDTO dto, String document, String editor, String extractions) {
 		List<PropiedadDTO> validaciones = Propiedades.obtenerVariosParametro(dto,
 				Propiedades.FUNCION_SQL_PREVALIDATE_API);
@@ -1252,7 +1252,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				if(propiedadDTO.getKey().compareTo(Propiedades.REPORTE_IMAGEN) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.OPCIONES) == 0
 						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_REPLACE) == 0
-						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_ESPECIAL) == 0) {
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_CODE_ESPECIAL) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) == 0
+						|| propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
 					newPropiedad.setTexto(propiedadDTO.getTexto());
 					newPropiedad.setValor(propiedadDTO.getValor());
 				} else {

@@ -75,7 +75,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO actualizar( DocumentoPlantillaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantilla_actualizar
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
@@ -89,7 +89,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantilla_inactivar
 		ProcesoTransicionFilterDTO validar = new ProcesoTransicionFilterDTO();
@@ -161,7 +161,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return dto;
 		// END region obtenerCampos
 	}
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO duplicar(DocumentoPlantillaDTO dto, String token)throws ServerException{
 		// BEGIN region duplicar
 		DocumentoPlantillaDTO bd = consultaXId(dto.getLlaveTabla());
@@ -234,7 +234,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO guardar(DocumentoPlantillaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantilla_guardar
 		configurarInicioPlantilla(dto);

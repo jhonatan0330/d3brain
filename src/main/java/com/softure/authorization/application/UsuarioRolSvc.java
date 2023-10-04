@@ -58,7 +58,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolDTO actualizar( UsuarioRolDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRol_actualizar
 		throw new ServerException("Lo que se debe actualizar es el documento");
@@ -66,7 +66,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolDTO inactivar(UsuarioRolDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRol_inactivar
 		dto.setFechaFinal(new Date());
@@ -103,7 +103,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioRolDTO guardar(UsuarioRolDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioRol_guardar
 		dto.setFechaInicial(new Date());

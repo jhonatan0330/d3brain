@@ -15,7 +15,7 @@ public class TaskCreateService {
 
 	@Autowired private TaskCRUDTaskService taskService;
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(TaskTaskRequest task, String user) throws ServerException {
 		TaskTaskDTO dto = task.toModel();
 		dto.setUser(user);

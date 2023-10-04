@@ -51,7 +51,7 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioSesionDTO actualizar( UsuarioSesionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioSesion_actualizar
 		return super.actualizar(dto, token);
@@ -59,7 +59,7 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioSesionDTO inactivar(UsuarioSesionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioSesion_inactivar
 		dto.setFechaCierre(new Date());
@@ -85,7 +85,7 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioSesionDTO guardar(UsuarioSesionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioSesion_guardar
 		return super.save(dto);

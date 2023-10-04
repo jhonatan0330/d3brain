@@ -17,7 +17,7 @@ public class TaskUpdateService {
 
 	@Autowired private TaskCRUDTaskService taskService;
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(TaskTaskRequest task, String user) throws ServerException {
 		if (task==null) throw new ServerException("Es importante enviar los datos de la tarea");
 		if (task.getId()==null || task.getId().isEmpty()) throw new ServerException("Falta la llave de la tarea");

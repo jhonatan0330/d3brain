@@ -48,7 +48,7 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadValorDefinidoDTO actualizar( PropiedadValorDefinidoDTO dto, String token) throws ServerException {
 		// BEGIN PropiedadValorDefinido_actualizar
 		dto = validarPropiedad(dto);
@@ -57,7 +57,7 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadValorDefinidoDTO inactivar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
 		// BEGIN PropiedadValorDefinido_inactivar
 		return super.inactivar(dto, token);
@@ -87,7 +87,7 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadValorDefinidoDTO guardar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
 		// BEGIN PropiedadValorDefinido_guardar
 		dto = validarPropiedad(dto);

@@ -13,7 +13,7 @@ public class TaskDeleteService {
 
 	@Autowired private TaskCRUDTaskService taskService;
 
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(String id, String user) throws ServerException {
 		taskService.delete(id, user);
 		return new SharedIdResponse(id);

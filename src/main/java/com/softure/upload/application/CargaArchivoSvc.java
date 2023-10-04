@@ -49,7 +49,7 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CargaArchivoDTO actualizar( CargaArchivoDTO dto, String token) throws ServerException {
 		// BEGIN CargaArchivo_actualizar
 		return super.actualizar(dto, token);
@@ -57,7 +57,7 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CargaArchivoDTO inactivar(CargaArchivoDTO dto, String token) throws ServerException {
 		// BEGIN CargaArchivo_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CargaArchivoDTO guardar(CargaArchivoDTO dto, String token) throws ServerException {
 		// BEGIN CargaArchivo_guardar
 		dto.setFechaFin(new Date());

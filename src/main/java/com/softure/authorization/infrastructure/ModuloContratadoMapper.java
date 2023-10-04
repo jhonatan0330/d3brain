@@ -2,10 +2,12 @@ package com.softure.authorization.infrastructure;
 
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.authorization.domain.ModuloContratadoDTO;
 import com.softure.authorization.domain.ModuloContratadoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("ModuloContratadoMapper")
 public interface ModuloContratadoMapper extends IBasicMapper<ModuloContratadoDTO, ModuloContratadoFilterDTO>{
 	
 

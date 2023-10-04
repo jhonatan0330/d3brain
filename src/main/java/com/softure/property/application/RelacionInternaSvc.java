@@ -54,7 +54,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO actualizar( RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_actualizar
 		String llaveTabla = dto.getLlaveTabla();
@@ -67,7 +67,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO inactivar(RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_inactivar
 		RelacionInternaDTO bd = consultaXId(dto.getLlaveTabla());
@@ -107,7 +107,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO guardar(RelacionInternaDTO dto, String token) throws ServerException {
 		// BEGIN RelacionInterna_guardar
 		if(dto.getAuxiliar()!=null && dto.getAuxiliar().length()==0) dto.setAuxiliar(null);

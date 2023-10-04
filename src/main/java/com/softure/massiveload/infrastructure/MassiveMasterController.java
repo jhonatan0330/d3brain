@@ -73,7 +73,7 @@ public class MassiveMasterController {
 	}
 
 	@PostMapping("")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse save(@RequestHeader(name = "Authorization") String token
 			, @RequestBody MassiveMasterRequest body) throws ServerException {
 		//return new SharedIdResponse(cargaMasivaService.save(body).getCargaMasivaId());
@@ -81,7 +81,7 @@ public class MassiveMasterController {
 	}
 
 	@PutMapping("/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse update(@RequestHeader(name = "Authorization") String token
 			, @RequestBody MassiveMasterRequest body, @PathVariable("id") String id) throws ServerException {
 		// return new SharedIdResponse(cargaMasivaService.update(token, body, id).getCargaMasivaId());
@@ -89,14 +89,14 @@ public class MassiveMasterController {
 	}
 	
 	@PutMapping("/activate/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void activate(@RequestHeader(name = "Authorization") String token
 		, @PathVariable("id") String id) throws ServerException {
 		cargaMasivaService.restore(id, token);
 	}
 
 	@PutMapping("/inactivate/{id}")
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void inactivate(@RequestHeader(name = "Authorization") String token
 		, @PathVariable("id") String id) throws ServerException {
 		cargaMasivaService.delete(id, token);

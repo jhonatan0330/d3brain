@@ -1,10 +1,12 @@
 package com.softure.notification.infrastructure;
 
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.notification.domain.ActividadFilterDTO;
 
+@SoftureSqlConnMapper("ActividadMapper")
 public interface ActividadMapper extends IBasicMapper<ActividadDTO, ActividadFilterDTO>{
 	
 

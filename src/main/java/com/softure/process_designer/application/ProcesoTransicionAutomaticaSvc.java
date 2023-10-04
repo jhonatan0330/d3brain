@@ -74,7 +74,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO actualizar( ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicionAutomatica_actualizar
 		return super.actualizar(dto, token);
@@ -82,7 +82,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO inactivar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicionAutomatica_inactivar
 		return super.inactivar(dto, token);
@@ -105,7 +105,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		return super.listarConsulta(dto);
 	}
 	
-	//@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	//@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
 		// BEGIN region ejecutar
 		ProcesoTransicionAutomaticaDTO bd = consultaXId(dto.getLlaveTabla());
@@ -113,7 +113,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		return gestionaEjecucion(bd);
 		// END region ejecutar
 	}
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO programar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
 		// BEGIN region programar
 		programateAll();
@@ -122,7 +122,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO guardar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicionAutomatica_guardar
 		return super.guardar(dto, token);

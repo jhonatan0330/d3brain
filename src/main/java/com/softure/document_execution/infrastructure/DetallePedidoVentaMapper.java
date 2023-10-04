@@ -4,10 +4,12 @@ package com.softure.document_execution.infrastructure;
 // BEGIN region interImport  
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("DetallePedidoVentaMapper")
 public interface DetallePedidoVentaMapper extends IBasicMapper<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO>{
 	
 

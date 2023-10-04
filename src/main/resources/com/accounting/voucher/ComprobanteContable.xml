@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.voucher.infrastructure.ComprobanteContableMapper">
+
+	<sql id="selectComprobanteContableFragment">
+		select
+			ccom_llave as  llaveTabla
+			,dcom_fecha as  fecha
+			,ccom_codigo as  codigo
+			,ccom_documento as  documento
+			,ccom_estado as estado
+		from comprobantecontable_comp a
+	</sql>
+
+	<sql id="whereComprobanteContableFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccom_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccom_estado = #{estado}
+			</if>
+			<if test="fechaMin!=null">
+				and dcom_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dcom_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="codigo!=null">
+				and ccom_codigo = #{codigo}
+			</if>
+			<if test="documento!=null">
+				and ccom_documento = #{documento}
+			</if>
+	</sql>
+
+	<sql id="paginationComprobanteContableFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereComprobanteContablePrimaryKeyFragment">
+		where
+			ccom_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ComprobanteContableDTO" resultType="ComprobanteContableDTO">
+		<include refid="selectComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ComprobanteContableDTO" resultType="ComprobanteContableDTO">
+		<include refid="selectComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+		<include refid="paginationComprobanteContableFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ComprobanteContableDTO" resultType="int">
+		select count(*)
+		from comprobantecontable_comp
+		<include refid="whereComprobanteContableFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ComprobanteContableDTO" resultType="ComprobanteContableDTO">
+		insert into comprobantecontable_comp(
+			ccom_llave
+		<if test="fecha!=null">
+			,dcom_fecha
+		</if>
+		<if test="codigo!=null">
+			,ccom_codigo
+		</if>
+		<if test="documento!=null">
+			,ccom_documento
+		</if>
+		<if test="estado!=null">
+			,ccom_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ComprobanteContableDTO" resultType="ComprobanteContableDTO">
+		update comprobantecontable_comp
+			set
+				dcom_fecha = #{fecha},
+				ccom_codigo = #{codigo},
+				ccom_documento = #{documento},
+				ccom_estado =#{estado}
+		<include refid="whereComprobanteContablePrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleComprobanteContableFragment">
+		select
+			ccom_llave as  llaveTabla
+			,dcom_fecha as  fecha
+			,ccom_codigo as  codigo
+			,ccom_documento as  documento
+			,ccom_estado as estado
+		from comprobantecontable_comp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ComprobanteContableDTO">
+		<include refid="selectSimpleComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ComprobanteContableDTO">
+		<include refid="selectSimpleComprobanteContableFragment" />
+		<include refid="whereComprobanteContableFragment" />
+		<include refid="paginationComprobanteContableFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

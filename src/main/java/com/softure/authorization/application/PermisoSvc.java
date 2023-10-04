@@ -48,7 +48,7 @@ public class PermisoSvc extends BasicSvc<PermisoDTO, PermisoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PermisoDTO actualizar( PermisoDTO dto, String token) throws ServerException {
 		// BEGIN Permiso_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class PermisoSvc extends BasicSvc<PermisoDTO, PermisoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PermisoDTO inactivar(PermisoDTO dto, String token) throws ServerException {
 		// BEGIN Permiso_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class PermisoSvc extends BasicSvc<PermisoDTO, PermisoFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PermisoDTO guardar(PermisoDTO dto, String token) throws ServerException {
 		// BEGIN Permiso_guardar
 		return super.guardar(dto, token);

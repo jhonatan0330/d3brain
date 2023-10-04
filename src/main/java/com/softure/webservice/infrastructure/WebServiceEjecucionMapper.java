@@ -4,10 +4,12 @@ package com.softure.webservice.infrastructure;
 // BEGIN region interImport  
 import java.util.List;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 
+@SoftureSqlConnMapper("WebServiceEjecucionMapper")
 public interface WebServiceEjecucionMapper extends IBasicMapper<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO>{
 	
 

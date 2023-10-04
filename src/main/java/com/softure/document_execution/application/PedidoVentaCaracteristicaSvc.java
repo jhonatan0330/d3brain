@@ -63,7 +63,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO actualizar( PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaCaracteristica_actualizar
 		if(dto.getValorNumero()!=null && dto.getValorNumero().compareTo(BigDecimal.ZERO)==0) dto.setValorNumero(null);
@@ -74,7 +74,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaCaracteristica_inactivar
 		if(dto.getTransaccionInactivo()== null) throw new ServerException("Se encesita la transaccion de inactivar");
@@ -106,7 +106,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO guardar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaCaracteristica_guardar
 		if(dto.getPrincipal()==null) throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");

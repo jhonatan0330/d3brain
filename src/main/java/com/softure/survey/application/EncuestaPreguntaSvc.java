@@ -50,7 +50,7 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaPreguntaDTO actualizar( EncuestaPreguntaDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaPregunta_actualizar
 		return super.actualizar(dto, token);
@@ -58,7 +58,7 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaPreguntaDTO inactivar(EncuestaPreguntaDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaPregunta_inactivar
 		return super.inactivar(dto, token);
@@ -93,7 +93,7 @@ public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaP
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public EncuestaPreguntaDTO guardar(EncuestaPreguntaDTO dto, String token) throws ServerException {
 		// BEGIN EncuestaPregunta_guardar
 		return super.guardar(dto, token);

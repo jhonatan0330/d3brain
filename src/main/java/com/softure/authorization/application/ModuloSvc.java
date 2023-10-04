@@ -48,7 +48,7 @@ public class ModuloSvc extends BasicSvc<ModuloDTO, ModuloFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloDTO actualizar( ModuloDTO dto, String token) throws ServerException {
 		// BEGIN Modulo_actualizar
 		return super.actualizar(dto, token);
@@ -56,7 +56,7 @@ public class ModuloSvc extends BasicSvc<ModuloDTO, ModuloFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloDTO inactivar(ModuloDTO dto, String token) throws ServerException {
 		// BEGIN Modulo_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class ModuloSvc extends BasicSvc<ModuloDTO, ModuloFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ModuloDTO guardar(ModuloDTO dto, String token) throws ServerException {
 		// BEGIN Modulo_guardar
 		return super.guardar(dto, token);

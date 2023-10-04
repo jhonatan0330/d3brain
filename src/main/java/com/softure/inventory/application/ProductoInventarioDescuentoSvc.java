@@ -48,7 +48,7 @@ public class ProductoInventarioDescuentoSvc extends BasicSvc<ProductoInventarioD
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDescuentoDTO actualizar( ProductoInventarioDescuentoDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventarioDescuento_actualizar
 		if(dto.getProducto().compareTo(dto.getProductoDescontar())==0) throw new ServerException("No se puede generar una composición del mismo producto");
@@ -57,7 +57,7 @@ public class ProductoInventarioDescuentoSvc extends BasicSvc<ProductoInventarioD
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDescuentoDTO inactivar(ProductoInventarioDescuentoDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventarioDescuento_inactivar
 		return super.inactivar(dto, token);
@@ -82,7 +82,7 @@ public class ProductoInventarioDescuentoSvc extends BasicSvc<ProductoInventarioD
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDescuentoDTO guardar(ProductoInventarioDescuentoDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventarioDescuento_guardar
 		dto = super.guardar(dto, token);

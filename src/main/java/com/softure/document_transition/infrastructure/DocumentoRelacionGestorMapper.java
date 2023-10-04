@@ -5,10 +5,12 @@ import java.util.List;
 // BEGIN region interImport  
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
+@SoftureSqlConnMapper("DocumentoRelacionGestorMapper")
 public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRelacionGestorDTO, DocumentoRelacionGestorFilterDTO>{
 	
 

@@ -50,7 +50,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RolAccesoDTO actualizar( RolAccesoDTO dto, String token) throws ServerException {
 		// BEGIN RolAcceso_actualizar
 		return super.actualizar(dto, token);
@@ -58,7 +58,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RolAccesoDTO inactivar(RolAccesoDTO dto, String token) throws ServerException {
 		// BEGIN RolAcceso_inactivar
 		dto = super.inactivar(dto, token);
@@ -100,7 +100,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	}
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RolAccesoDTO guardar(RolAccesoDTO dto, String token) throws ServerException {
 		// BEGIN RolAcceso_guardar
 		dto = super.guardar(dto, token);

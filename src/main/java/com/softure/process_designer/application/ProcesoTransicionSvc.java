@@ -61,7 +61,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO actualizar( ProcesoTransicionDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicion_actualizar
 		validarTransicion(dto);
@@ -70,7 +70,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO inactivar(ProcesoTransicionDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicion_inactivar
 		ProcesoTransicionDTO bd = consultaXId(dto.getLlaveTabla());
@@ -106,7 +106,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO guardar(ProcesoTransicionDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoTransicion_guardar
 		if(dto.getEstadoLLegada()==null) dto.setEstadoLLegada(dto.getEstadoPartida());
@@ -249,7 +249,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return plantilla.getLlaveTabla();
 	}
 	
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionDTO guardarConCodigo(ProcesoTransicionDTO dto, String codigoFormulario, String plantilla, String token) throws ServerException {
 		if(plantilla==null) {
 			dto.setPlantilla(crearPlantilla(dto, codigoFormulario, token));			

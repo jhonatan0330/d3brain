@@ -6,10 +6,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 
+@SoftureSqlConnMapper("ProcesoEstadoMapper")
 public interface ProcesoEstadoMapper extends IBasicMapper<ProcesoEstadoDTO, ProcesoEstadoFilterDTO>{
 	
 

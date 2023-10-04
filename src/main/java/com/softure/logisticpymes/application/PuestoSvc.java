@@ -47,7 +47,7 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PuestoDTO actualizar( PuestoDTO dto, String token) throws ServerException {
 		// BEGIN Puesto_actualizar
 		//dto = colocarInterno(dto);
@@ -56,7 +56,7 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PuestoDTO inactivar(PuestoDTO dto, String token) throws ServerException {
 		// BEGIN Puesto_inactivar
 		return super.inactivar(dto, token);
@@ -81,7 +81,7 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	
 
 	@Override
-	@Transactional(rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PuestoDTO guardar(PuestoDTO dto, String token) throws ServerException {
 		// BEGIN Puesto_guardar
 		return super.guardar(dto, token);
