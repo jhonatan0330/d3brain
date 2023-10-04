@@ -6,8 +6,8 @@ import com.softure.java.domain.BasicDTO;
 
 import org.apache.ibatis.type.Alias;
 
-@Alias("CatalogoContableDTO")
-public class CatalogoContableDTO extends BasicDTO
+@Alias("CatalogoDTO")
+public class CatalogoDTO extends BasicDTO
 // BEGIN region interfaces  
 // END region interfaces
 {

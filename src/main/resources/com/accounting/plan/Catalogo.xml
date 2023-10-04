@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.accounting.plan.infrastructure.CatalogoContableMapper">
+<mapper namespace="com.accounting.plan.infrastructure.CatalogoMapper">
 
-	<sql id="selectCatalogoContableFragment">
+	<sql id="selectCatalogoFragment">
 		select
 			cctg_llave as  llaveTabla
 			,cctg_nombre as  nombre
@@ -15,7 +15,7 @@
 		from catalogo_ctg a
 	</sql>
 
-	<sql id="whereCatalogoContableFragment">
+	<sql id="whereCatalogoFragment">
 		where 1=1
 			<if test="llaveTabla!=null">
 				and cctg_llave = #{llaveTabla}
@@ -43,7 +43,7 @@
 			</if>
 	</sql>
 
-	<sql id="paginationCatalogoContableFragment">
+	<sql id="paginationCatalogoFragment">
 			<if test="paginacionRegistroFinal!=null">
 				LIMIT #{paginacionRegistroFinal}
 			</if>
@@ -52,31 +52,31 @@
 			</if>
 	</sql>
 
-	<sql id="whereCatalogoContablePrimaryKeyFragment">
+	<sql id="whereCatalogoPrimaryKeyFragment">
 		where
 			cctg_llave	=#{llaveTabla}
 	</sql>
 
-	<select id="consultar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
-		<include refid="selectCatalogoContableFragment" />
-		<include refid="whereCatalogoContableFragment" />
+	<select id="consultar" parameterType="CatalogoDTO" resultType="CatalogoDTO">
+		<include refid="selectCatalogoFragment" />
+		<include refid="whereCatalogoFragment" />
 	</select>
 	
-	<select id="listar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
-		<include refid="selectCatalogoContableFragment" />
-		<include refid="whereCatalogoContableFragment" />
+	<select id="listar" parameterType="CatalogoDTO" resultType="CatalogoDTO">
+		<include refid="selectCatalogoFragment" />
+		<include refid="whereCatalogoFragment" />
 		order by cctg_nombre 
-		<include refid="paginationCatalogoContableFragment" />
+		<include refid="paginationCatalogoFragment" />
 	</select>
 
-	<select id="cantidadRegistros" parameterType="CatalogoContableDTO" resultType="int">
+	<select id="cantidadRegistros" parameterType="CatalogoDTO" resultType="int">
 		select count(*)
 		from catalogo_ctg
-		<include refid="whereCatalogoContableFragment" />
+		<include refid="whereCatalogoFragment" />
 	</select>
 
 
-	<select id="insertar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+	<select id="insertar" parameterType="CatalogoDTO" resultType="CatalogoDTO">
 		insert into catalogo_ctg(
 			cctg_llave
 		<if test="nombre!=null">
@@ -114,7 +114,7 @@
 		)
 	</select>
 
-	<select id="actualizar" parameterType="CatalogoContableDTO" resultType="CatalogoContableDTO">
+	<select id="actualizar" parameterType="CatalogoDTO" resultType="CatalogoDTO">
 		update catalogo_ctg
 			set
 				cctg_nombre = #{nombre},
@@ -122,10 +122,10 @@
 				dctg_fechafinal = #{fechaFinal},
 				cctg_codigo = #{codigo},
 				cctg_estado =#{estado}
-		<include refid="whereCatalogoContablePrimaryKeyFragment" />
+		<include refid="whereCatalogoPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleCatalogoContableFragment">
+	<sql id="selectSimpleCatalogoFragment">
 		select
 			cctg_llave as  llaveTabla
 			,cctg_nombre as  nombre
@@ -136,16 +136,16 @@
 		from catalogo_ctg a
 	</sql>
 	
-	<select id="consultarSimple" resultType="CatalogoContableDTO">
-		<include refid="selectSimpleCatalogoContableFragment" />
-		<include refid="whereCatalogoContableFragment" />
+	<select id="consultarSimple" resultType="CatalogoDTO">
+		<include refid="selectSimpleCatalogoFragment" />
+		<include refid="whereCatalogoFragment" />
 	</select>
 	
-	<select id="listarSimple" resultType="CatalogoContableDTO">
-		<include refid="selectSimpleCatalogoContableFragment" />
-		<include refid="whereCatalogoContableFragment" />
+	<select id="listarSimple" resultType="CatalogoDTO">
+		<include refid="selectSimpleCatalogoFragment" />
+		<include refid="whereCatalogoFragment" />
 		order by cctg_nombre 
-		<include refid="paginationCatalogoContableFragment" />
+		<include refid="paginationCatalogoFragment" />
 	</select>
 	
 

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softure.java.domain.BasicFilterDTO;
 
 import org.apache.ibatis.type.Alias;
-@Alias("CatalogoContableFilterDTO")
-public class CatalogoContableFilterDTO extends BasicFilterDTO
+@Alias("CatalogoFilterDTO")
+public class CatalogoFilterDTO extends BasicFilterDTO
 {
 
 	private String nombre;

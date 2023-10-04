@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.accounting.plan.domain.CuentaAuxiliarPlantillaDTO;
 import com.accounting.plan.domain.CuentaAuxiliarPlantillaFilterDTO;
-import com.accounting.plan.domain.CuentaContableDTO;
+import com.accounting.plan.domain.CuentaDTO;
 import com.accounting.plan.infrastructure.CuentaAuxiliarPlantillaMapper;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -30,7 +30,7 @@ public class CuentaAuxiliarPlantillaSvc extends BasicSvc<CuentaAuxiliarPlantilla
 	
 	// BEGIN region servicesCuentaAuxiliarPlantilla
 	@Autowired private PedidoVentaSvc documentoService;
-	@Autowired private CuentaContableSvc cuentaService;
+	@Autowired private CuentaSvc cuentaService;
 	// END region servicesCuentaAuxiliarPlantilla
 
 	@Override
@@ -103,7 +103,7 @@ public class CuentaAuxiliarPlantillaSvc extends BasicSvc<CuentaAuxiliarPlantilla
 		filtroAuxiliares.setPlantilla(dto.getPlantilla());
 		List<PedidoVentaDTO> auxiliares = documentoService.listarConsulta(filtroAuxiliares);
 		if(auxiliares==null || auxiliares.isEmpty()) return;
-		CuentaContableDTO cuentaPrincipal = cuentaService.consultaXId(dto.getCuentaPrincipal());
+		CuentaDTO cuentaPrincipal = cuentaService.consultaXId(dto.getCuentaPrincipal());
 		for (PedidoVentaDTO pedidoVentaDTO : auxiliares) {
 			cuentaService.guardar(crearAuxiliar(cuentaPrincipal, pedidoVentaDTO), token );
 		}
@@ -116,13 +116,13 @@ public class CuentaAuxiliarPlantillaSvc extends BasicSvc<CuentaAuxiliarPlantilla
 		List<CuentaAuxiliarPlantillaDTO> auxiliares = listarConsulta(filtro);
 		if(auxiliares==null || auxiliares.isEmpty()) return;
 		for (CuentaAuxiliarPlantillaDTO cuentaAuxiliarPlantillaDTO : auxiliares) {
-			CuentaContableDTO cuentaPrincipal = cuentaService.consultaXId(cuentaAuxiliarPlantillaDTO.getCuentaPrincipal());
+			CuentaDTO cuentaPrincipal = cuentaService.consultaXId(cuentaAuxiliarPlantillaDTO.getCuentaPrincipal());
 			cuentaService.guardar(crearAuxiliar(cuentaPrincipal, documento), token);
 		}
 	}
 	
-	private CuentaContableDTO crearAuxiliar(CuentaContableDTO cuentaPrincipal, PedidoVentaDTO documento) {
-		CuentaContableDTO cuentaAuxiliar = new CuentaContableDTO();
+	private CuentaDTO crearAuxiliar(CuentaDTO cuentaPrincipal, PedidoVentaDTO documento) {
+		CuentaDTO cuentaAuxiliar = new CuentaDTO();
 		cuentaAuxiliar.setCatalogo(cuentaPrincipal.getCatalogo());
 		cuentaAuxiliar.setCodigo(cuentaPrincipal.getCodigo() + documento.getConsecutivo().intValue());
 		cuentaAuxiliar.setCuentaPadre(cuentaPrincipal.getLlaveTabla());

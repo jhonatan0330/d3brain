@@ -8,3 +8,6 @@ CREATE TABLE catalogo_ctg (
 	cctg_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_catalogo_ctg PRIMARY KEY (cctg_llave)
 );
+
+
+COMMENT ON TABLE catalogo_ctg IS '2023-10-01';

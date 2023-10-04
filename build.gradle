@@ -9,7 +9,7 @@ version = '2.0.3'
 sourceCompatibility = '17'
 
 bootJar {
-    mainClass = 'com.softure.Sw42WebApplication'
+    mainClass = 'com.Sw42WebApplication'
 }
 
 repositories {

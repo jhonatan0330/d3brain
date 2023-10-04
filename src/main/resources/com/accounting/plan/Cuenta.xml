@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.accounting.plan.infrastructure.CuentaContableMapper">
+<mapper namespace="com.accounting.plan.infrastructure.CuentaMapper">
 
-	<sql id="selectCuentaContableFragment">
+	<sql id="selectCuentaFragment">
 		select
 			ccta_llave as  llaveTabla
 			,ccta_codigo as  codigo
@@ -13,10 +13,10 @@
 			,ccta_catalogo as  catalogo
 			,ccta_cuentapadre as  cuentaPadre
 			,ccta_estado as estado
-		from cuentacontable_ctap a
+		from cuenta_ctap a
 	</sql>
 
-	<sql id="whereCuentaContableFragment">
+	<sql id="whereCuentaFragment">
 		where 1=1
 			<if test="llaveTabla!=null">
 				and ccta_llave = #{llaveTabla}
@@ -38,7 +38,7 @@
 			</if>
 	</sql>
 
-	<sql id="paginationCuentaContableFragment">
+	<sql id="paginationCuentaFragment">
 			<if test="paginacionRegistroFinal!=null">
 				LIMIT #{paginacionRegistroFinal}
 			</if>
@@ -47,31 +47,31 @@
 			</if>
 	</sql>
 
-	<sql id="whereCuentaContablePrimaryKeyFragment">
+	<sql id="whereCuentaPrimaryKeyFragment">
 		where
 			ccta_llave	=#{llaveTabla}
 	</sql>
 
-	<select id="consultar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
-		<include refid="selectCuentaContableFragment" />
-		<include refid="whereCuentaContableFragment" />
+	<select id="consultar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		<include refid="selectCuentaFragment" />
+		<include refid="whereCuentaFragment" />
 	</select>
 	
-	<select id="listar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
-		<include refid="selectCuentaContableFragment" />
-		<include refid="whereCuentaContableFragment" />
-		<include refid="paginationCuentaContableFragment" />
+	<select id="listar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		<include refid="selectCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+		<include refid="paginationCuentaFragment" />
 	</select>
 
-	<select id="cantidadRegistros" parameterType="CuentaContableDTO" resultType="int">
+	<select id="cantidadRegistros" parameterType="CuentaDTO" resultType="int">
 		select count(*)
-		from cuentacontable_ctap
-		<include refid="whereCuentaContableFragment" />
+		from cuenta_ctap
+		<include refid="whereCuentaFragment" />
 	</select>
 
 
-	<select id="insertar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
-		insert into cuentacontable_ctap(
+	<select id="insertar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		insert into Cuenta_ctap(
 			ccta_llave
 		<if test="codigo!=null">
 			,ccta_codigo
@@ -114,8 +114,8 @@
 		)
 	</select>
 
-	<select id="actualizar" parameterType="CuentaContableDTO" resultType="CuentaContableDTO">
-		update cuentacontable_ctap
+	<select id="actualizar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		update Cuenta_ctap
 			set
 				ccta_codigo = #{codigo},
 				ccta_nombre = #{nombre},
@@ -123,10 +123,10 @@
 				ccta_catalogo = #{catalogo},
 				ccta_cuentapadre = #{cuentaPadre},
 				ccta_estado =#{estado}
-		<include refid="whereCuentaContablePrimaryKeyFragment" />
+		<include refid="whereCuentaPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleCuentaContableFragment">
+	<sql id="selectSimpleCuentaFragment">
 		select
 			ccta_llave as  llaveTabla
 			,ccta_codigo as  codigo
@@ -135,18 +135,18 @@
 			,ccta_catalogo as  catalogo
 			,ccta_cuentapadre as  cuentaPadre
 			,ccta_estado as estado
-		from cuentacontable_ctap a
+		from cuenta_ctap a
 	</sql>
 	
-	<select id="consultarSimple" resultType="CuentaContableDTO">
-		<include refid="selectSimpleCuentaContableFragment" />
-		<include refid="whereCuentaContableFragment" />
+	<select id="consultarSimple" resultType="CuentaDTO">
+		<include refid="selectSimpleCuentaFragment" />
+		<include refid="whereCuentaFragment" />
 	</select>
 	
-	<select id="listarSimple" resultType="CuentaContableDTO">
-		<include refid="selectSimpleCuentaContableFragment" />
-		<include refid="whereCuentaContableFragment" />
-		<include refid="paginationCuentaContableFragment" />
+	<select id="listarSimple" resultType="CuentaDTO">
+		<include refid="selectSimpleCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+		<include refid="paginationCuentaFragment" />
 	</select>
 	
 
