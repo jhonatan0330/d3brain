@@ -1,13 +1,16 @@
 package com.softure;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServlet;
+import javax.sql.DataSource;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -34,7 +37,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.mail.application.MailReleaseMessageQueueService;
@@ -54,7 +56,6 @@ public class SoftureConfiguration {
 	@Autowired private Environment env;
 	@Autowired private MailReleaseMessageQueueService releaseQueueService;
 	@Autowired private ProcesoTransicionAutomaticaSvc transicionservice;
-	@Autowired private UsuarioAutenticacionSvc autService;
 	@Autowired private WebServiceEjecucionSvc apiService;
 	
 	@Autowired private AutowireCapableBeanFactory beanFactory;
@@ -62,13 +63,19 @@ public class SoftureConfiguration {
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
 		System.out.println("*********************************************************");
+		System.out.println("BD = " + env.getProperty("db.url"));
+		System.out.println("BD IND = " + env.getProperty("db.accounting.jdbc-url"));
+		System.out.println("Correos Activos = " + env.getProperty("cron.enabled"));
+		System.out.println("Tareas Activas = " + env.getProperty("cron.task"));
 		System.out.println("*********************************************************");
-		// Obtengo version actual 
-		String actualString = autService.getFechaActualizacion();
+		// Obtengo version actual
+		PooledDataSource ds = dynamicDataSource();
+		String actualString = getActualDate(ds);
 		System.out.println("Fecha actual = " + actualString);
+		
 		if(actualString==null) {
 			System.out.println("*********************************************************");
-			System.out.println("*******                                          ********");
+			System.out.println("*******                SOFTURE                   ********");
 			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("*********************************************************");
@@ -80,7 +87,7 @@ public class SoftureConfiguration {
 			actualDate = new SimpleDateFormat("yyyy-MM-dd").parse(actualString);
 		} catch (ParseException e1) {
 			System.out.println("*********************************************************");
-			System.out.println("*******                                          ********");
+			System.out.println("*******               SOFTURE                    ********");
 			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("*********************************************************");
@@ -95,7 +102,7 @@ public class SoftureConfiguration {
 		System.out.println("*********************************************************");
 		System.out.println("************COMIENZA A ACTUALIZAR    ******************");
 		System.out.println("*********************************************************");
-		PooledDataSource ds = dynamicDataSource();
+		
 		String sqlName;
 		boolean error = false;
 		while (iterador.getTime().getTime() < new Date().getTime() && !error) {
@@ -140,14 +147,14 @@ public class SoftureConfiguration {
 		
 		if(!error) {
 			System.out.println("*******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
-			System.out.println("*******                                          ********");
+			System.out.println("*******                SOFTURE                   ********");
 			System.out.println("*******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("****************:)****:)***:)***:)***:)******************");
 			System.out.println("*********************************************************");			
 		} else {
 			System.out.println("*********************************************************");
-			System.out.println("*******     ERROR       ERROR       ERROR        ********");
+			System.out.println("*******     ERROR       SOFTURE     ERROR        ********");
 			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("********!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********");
@@ -219,6 +226,25 @@ public class SoftureConfiguration {
 			System.out.println("*******APIS ASYNC****" + new Date().toString());
 			apiService.apiToTransaction();
 		}
+	}
+	
+	private String getActualDate(DataSource ds) {
+		String result = null;
+		try {
+			Connection conn = ds.getConnection();
+			Statement stmt = conn.createStatement();
+			ResultSet rs;
+			rs = stmt.executeQuery(
+					"select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'catalogo_ctg';");
+			while (rs.next()) {
+				result = rs.getString("description");
+			}
+			conn.close();
+		} catch (Exception e) {
+			System.err.println("Got an exception! ");
+			System.err.println(e.getMessage());
+		}
+		return result;
 	}
 	
 	@Bean	

@@ -39,15 +39,13 @@ public class AccountingConfiguration {
 
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
-		System.out.println("*********************************************************");
-		System.out.println("*********************************************************");
 		// Obtengo version actual
 		DataSource ds = dynamicDataSource();
 		String actualString = getActualDate(ds);
 		System.out.println("Fecha actual = " + actualString);
 		if (actualString == null) {
 			System.out.println("*********************************************************");
-			System.out.println("*******                                          ********");
+			System.out.println("*******              INDICADORES                 ********");
 			System.out.println("*******     LLAMA YA AL SOFTWARE PARA TI .COM    ********");
 			System.out.println("*******                                          ********");
 			System.out.println("*********************************************************");
