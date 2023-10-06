@@ -1294,8 +1294,14 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (StringUtils.countMatches(dto.getValor(), "imageExpression><![CDATA[$") + StringUtils
 					.countMatches(dto.getValor(), "imageExpression><![CDATA[new ByteArrayInputStream") < imageCount) {
 				ReporteBaseDTO report = reporteService.consultaXId(dto.getCampo());
-				throw new ServerException(
-						"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN  en el reporte " + report.getNombre() + " de la plantilla " + report.getPlantillaNombre());
+				if(report.getVariables()!=null && report.getVariables().toUpperCase().contains("HTML")) {
+					if (StringUtils.countMatches(dto.getValor(), "isLazy=\"true\"") < imageCount)
+						throw new ServerException(
+								"Todas las imagenes de un reporte deben tener la propiedad isLazy con valor = true.");					
+				}else {
+					throw new ServerException(
+							"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN  en el reporte " + report.getNombre() + " de la plantilla " + report.getPlantillaNombre());
+				}
 			}
 		}
 	}

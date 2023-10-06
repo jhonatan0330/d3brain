@@ -1,4 +1,4 @@
-package com.softure.java.services;
+package com.softure.report.application;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,9 +9,11 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleHtmlExporterOutput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import net.sf.jasperreports.export.SimpleXlsReportConfiguration;
@@ -177,5 +179,39 @@ public class ReportesUtil {
 		}
 	}
 
+	public static byte[] exportarReporteHTML(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion) throws Exception {
+		try {
+			
+			for (Map.Entry<String, Object> entry: parametrosReporte.entrySet()) {
+				if(entry.getKey().startsWith(P_SUBREPORT)) {
+					JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
+					parametrosReporte.put(entry.getKey(), jasperSubReport);
+					reportejrxml = replaceReport(reportejrxml,jasperSubReport.getName(), entry.getKey());
+				}
+			}
+			
+			JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
+			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametrosReporte, conexion);
+			ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();
+			HtmlExporter vHTMLExporter = new HtmlExporter();
+			vHTMLExporter.setExporterInput(new SimpleExporterInput( jasperPrint));
+			vHTMLExporter.setExporterOutput(new  SimpleHtmlExporterOutput(vByteOutputStream));
+			/*SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
+			configuration.setCollapseRowSpan(true);
+			configuration.setDetectCellType(true);
+			configuration.setIgnoreGraphics(false);
+			configuration.setRemoveEmptySpaceBetweenColumns(true);
+			configuration.setRemoveEmptySpaceBetweenRows(true);
+			configuration.setWhitePageBackground(false);
+			configuration.setWrapText(true);
+			vHTMLExporter.setConfiguration(configuration);
+			*/
+			vHTMLExporter.exportReport();
+			vByteOutputStream.close();	
+			return vByteOutputStream.toByteArray();
+		} catch (Exception e) {
+			throw new Exception(e.getMessage());
+		}
+	}
 	
 }

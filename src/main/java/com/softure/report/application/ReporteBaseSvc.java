@@ -26,9 +26,9 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import javax.sql.DataSource;
-import com.softure.java.services.GeneradorReportes;
+import com.softure.java.dto.exception.ServerException;
 
+import javax.sql.DataSource;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -256,12 +255,20 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			//Seccion del reporte
 			GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
 			byte[] resultado=null;
-			if (tipoReporte!=null && tipoReporte.toUpperCase().equals("XLS")) {
-				propiedadExcel = parametrosJasper.get(Propiedades.REPORTE_EXCEL);
-				if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
-					resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);					
+			if (tipoReporte!=null) {
+				if(tipoReporte.toUpperCase().equals("XLS")) {
+					propiedadExcel = parametrosJasper.get(Propiedades.REPORTE_EXCEL);
+					if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
+						resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);					
+					}else {
+						resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
+					}	
 				}else {
-					resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
+					if(tipoReporte.toUpperCase().equals("HTML")) {
+						resultado = generadorReporte.generarReporteHTML(jrxmlReporte, parametrosJasper);
+					}else {						
+						resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
+					}
 				}
 			}else{
 				resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);

@@ -1,4 +1,4 @@
-package com.softure.java.services;
+package com.softure.report.application;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,6 +38,22 @@ public class GeneradorReportes {
 	public byte[] generarReportePDF(String pNombreReporte,	Map<String, Object> pParametrosReporte) throws Exception {
 		try {
 			return ReportesUtil.exportarReportePDF(pNombreReporte, pParametrosReporte, conexion);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try {
+				if (conexion != null) {
+					conexion.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public byte[] generarReporteHTML(String pNombreReporte,	Map<String, Object> pParametrosReporte) throws Exception {
+		try {
+			return ReportesUtil.exportarReporteHTML(pNombreReporte, pParametrosReporte, conexion);
 		} catch (Exception e) {
 			throw e;
 		} finally {

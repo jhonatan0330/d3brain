@@ -235,7 +235,7 @@ public class SoftureConfiguration {
 			Statement stmt = conn.createStatement();
 			ResultSet rs;
 			rs = stmt.executeQuery(
-					"select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'catalogo_ctg';");
+					"select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'usuario_usrp';");
 			while (rs.next()) {
 				result = rs.getString("description");
 			}
@@ -253,7 +253,7 @@ public class SoftureConfiguration {
 		final ReporteServlet servlet = new ReporteServlet();
 		beanFactory.autowireBean(servlet);
 		servRegBean.setServlet(servlet);
-		servRegBean.addUrlMappings("/reporte/*");
+		servRegBean.addUrlMappings("/reporte/*", "/r/*");
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}

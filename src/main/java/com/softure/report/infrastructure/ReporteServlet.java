@@ -41,6 +41,9 @@ public class ReporteServlet extends HttpServlet{
 			else if (fileName.toLowerCase().contains(".xls")) {
 				response.setContentType("application/vnd.ms-excel");
 			}
+			else if (fileName.toLowerCase().contains(".htm")){
+				response.setContentType("text/html");
+			}
 			else if (fileName.toLowerCase().contains(".doc")) {
 				response.setContentType("application/msword");
 			}
@@ -52,9 +55,6 @@ public class ReporteServlet extends HttpServlet{
 			}
 			else if (fileName.toLowerCase().contains(".js")){
 				response.setContentType("text/javascript");
-			}
-			else if (fileName.toLowerCase().contains(".htm")){
-				response.setContentType("text/html");
 			}
 			else if (fileName.toLowerCase().contains(".css")){
 				response.setContentType("text/css");
@@ -87,6 +87,7 @@ public class ReporteServlet extends HttpServlet{
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {		
 		try {
 			String nombreReporte = request.getParameter("nombre");
+			if(nombreReporte==null)nombreReporte = request.getParameter("n");
 			ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombreReporte, request.getParameter("P_TOKEN"));
 			//Esto debo cambiarlo despues con una validacion de permisos del usuario, por el momento deje asi
 			Map<String, Object> parametrosJasper = new HashMap<String, Object>(); 
@@ -112,7 +113,6 @@ public class ReporteServlet extends HttpServlet{
 				InputStream input = new ByteArrayInputStream(resultado.getContent());
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
-				//ReporteBaseDTO base = reporteBaseService.consultaXId(nombreReporte);
 				downloadFile(response, input, reportBD.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte);
 			}
 		} catch (Exception e) {
