@@ -195,7 +195,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 	
 	public UsuarioDTO getUserSystem() throws ServerException{
-		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
+		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		if(principal==null ) throw new ServerException("No se tiene organizacion principal");
 		if(principal.getUsuarioSystem()==null) throw new ServerException("No se tiene configurado el usuario sistem en la organizacion principal");
 		UsuarioDTO usuarioSystem = usuarioService.consultaXId(principal.getUsuarioSystem());

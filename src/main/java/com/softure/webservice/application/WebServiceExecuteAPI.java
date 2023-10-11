@@ -413,12 +413,14 @@ public class WebServiceExecuteAPI {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 				}
-				String codeAndEqual = ((propiedadDTO.getTexto() == null) ? propiedadDTO.getLlaveTabla()
-						: propiedadDTO.getTexto());
-				if (!codeAndEqual.contains(ConstantesGenerales.IGUAL))
-					codeAndEqual = codeAndEqual + ConstantesGenerales.IGUAL;
-				// en la extraccion de autenticacion debo colocar el header
-				result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + codeAndEqual + newValue;
+				result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla() + ConstantesGenerales.IGUAL;
+				if(newValue!=null && newValue.length() > 4000) {
+					result = result + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
+				}else {
+					result = result + newValue;
+				}
+				// debo colocar oble para que se guarden en formularios
+				if(propiedadDTO.getTexto() != null) result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + ConstantesGenerales.IGUAL + newValue;
 			}
 		}
 		if (errorResult.length() != 0)

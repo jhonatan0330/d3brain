@@ -39,7 +39,7 @@
 			]
 		}
 	],
-	"actions": [
+	"endPoints": [
 		{
 			"name": "getByUser",
 			"type": "GET"

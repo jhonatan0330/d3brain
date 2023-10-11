@@ -106,8 +106,8 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		}
 		List<ProcesoDTO> result = listarConsulta(dto);
 		for (ProcesoDTO procesoDTO : result) {
-			if(procesoDTO.getTipo().compareTo(ProcesoDTO.EJECUTOR)==0) {
-				procesoDTO = completarProceso(procesoDTO, dto.getSecurityToken());			
+			if(procesoDTO.getTipo().compareTo(ProcesoDTO.EJECUTOR)==0 && procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) {
+				procesoDTO = completarProceso(procesoDTO, dto.getSecurityToken());
 			}
 		}
 		if(dto.getFiltroParametro()==null && !onlyOne2ShowClient) {

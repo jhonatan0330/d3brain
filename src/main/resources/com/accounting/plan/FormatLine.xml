@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.FormatLineMapper">
+
+	<sql id="selectFormatLineFragment">
+		select
+			clin_llave as key
+			,clin_formato as format
+			,clin_cuenta as account
+			,clin_description as description
+			,clin_positivo as positive
+			,clin_negativo as negative
+			,clin_estado as state
+		from linea_lin a
+	</sql>
+
+	<sql id="whereFormatLineFragment">
+		where 1=1
+			<if test="key!=null">
+				and clin_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and clin_estado = #{state}
+			</if>
+			<if test="format!=null">
+				and clin_formato = #{format}
+			</if>
+			<if test="account!=null">
+				and clin_cuenta = #{account}
+			</if>
+			<if test="description!=null">
+				and clin_description = #{description}
+			</if>
+			<if test="positive!=null">
+				and clin_positivo = #{positive}
+			</if>
+			<if test="negative!=null">
+				and clin_negativo = #{negative}
+			</if>
+	</sql>
+
+	<sql id="paginationFormatLineFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereFormatLinePrimaryKeyFragment">
+		where
+			clin_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="FormatLineFilterDTO" resultType="FormatLineDTO">
+		<include refid="selectFormatLineFragment" />
+		<include refid="whereFormatLineFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="FormatLineFilterDTO" resultType="FormatLineDTO">
+		<include refid="selectFormatLineFragment" />
+		<include refid="whereFormatLineFragment" />
+		<include refid="paginationFormatLineFragment" />
+	</select>
+
+	<select id="count" parameterType="FormatLineFilterDTO" resultType="int">
+		select count(*)
+		from linea_lin
+		<include refid="whereFormatLineFragment" />
+	</select>
+
+	<select id="insert" parameterType="FormatLineDTO" resultType="FormatLineDTO">
+		insert into linea_lin(
+			clin_llave
+		<if test="format!=null">
+			,clin_formato
+		</if>
+		<if test="account!=null">
+			,clin_cuenta
+		</if>
+		<if test="description!=null">
+			,clin_description
+		</if>
+		<if test="positive!=null">
+			,clin_positivo
+		</if>
+		<if test="negative!=null">
+			,clin_negativo
+		</if>
+		<if test="state!=null">
+			,clin_estado
+		</if>
+		) values (
+			#{key}
+		<if test="format!=null">
+			,#{format}
+		</if>
+		<if test="account!=null">
+			,#{account}
+		</if>
+		<if test="description!=null">
+			,#{description}
+		</if>
+		<if test="positive!=null">
+			,#{positive}
+		</if>
+		<if test="negative!=null">
+			,#{negative}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="FormatLineDTO" resultType="FormatLineDTO">
+		update linea_lin
+			set
+				clin_formato = #{format} 
+				clin_cuenta = #{account} 
+				clin_description = #{description} 
+				clin_positivo = #{positive} 
+				clin_negativo = #{negative} 
+				clin_estado =#{state}
+		<include refid="whereFormatLinePrimaryKeyFragment" />
+	</select>
+	
+</mapper>

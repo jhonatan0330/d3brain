@@ -46,7 +46,7 @@ public class ExportConfigurationFileService {
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setMessages(messageService.getFullToSynchronize());
 		hierarchy.setApis(apiService.getFullToSynchronize());
-		hierarchy.setOrganization(organizationService.obtenerPrincipal(null));
+		hierarchy.setOrganization(organizationService.obtenerPrincipal());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
 		hierarchy.setProcess(procesoService.getFullToSynchronize());

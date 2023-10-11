@@ -403,9 +403,11 @@
 			cwse_llave as  llaveTabla
 			,cwse_documento as  documentoPrincipal
 			,null as  documentoModificador
-			,dwse_fecha as fecha
+			,case when dwse_fechaejecucion is not null then dwse_fechaejecucion
+			 	else dwse_fecha
+			end as fecha
 			,null as  estadoInicial
-			,null as  estadoFinal
+			,(select cwbs_nombre from webservice_wbsp where cwbs_llave = cwse_servicio) as  estadoFinal
 			,null as estado
 			,cwse_usuario as  usuario
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cwse_usuario) as  responsable

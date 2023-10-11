@@ -5806,7 +5806,7 @@ public class FullControllerDTO {
 	@PostMapping(value="/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO dto)throws FlexException {
 		try {
-			return organizacionService.obtenerPrincipal(dto);
+			return organizacionService.obtenerPrincipal();
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

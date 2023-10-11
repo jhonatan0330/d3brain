@@ -6,18 +6,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_03' , 'C', 'BINARIO_VERDADERO', 'BINARIO_VERDADERO', 'FORMATO', 'I');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_04' , 'C', 'BINARIO_FALSO', 'BINARIO_FALSO', 'FORMATO', 'I');
-INSERT INTO propiedadvalordefindeclare
-	factura_credito character varying;
-begin
-	select cpvc_valortext into factura_credito from campo_documento where cdrc_documento = documento and cdpf_codigo = 'FACTURAR_CREDITO';
-	if(factura_credito = 'DESTINATARIO') then
-		return query
-		select * from pedidoventacaracteristica_pvcp pp where pp.cpvc_documento = documento and pp.cpvc_campo = '41699f0fbff8416aa1af5e36a4546a6e';
-	else
-		return query
-		select * from pedidoventacaracteristica_pvcp pp where pp.cpvc_documento = documento and pp.cpvc_campo = 'd7857eca34a24b1db934b42b08c34b67';
-	end if;
-endido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_05' , 'C', 'BODEGA_FIJA', 'BODEGA_FIJA', 'REQUISITO', 'Z');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_06' , 'C', 'BODEGA_MOVIMIENTO', 'BODEGA_MOVIMIENTO', 'REQUISITO', 'Z');
@@ -468,3 +457,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_237' , 'W', 'CODIGOS PARA REEMPLAZAR', 'API_CODE_REPLACE', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_multiple) 
 	VALUES('PROP_238' , 'W', 'REEMPLAZAR CODIGO REFERENCIADO TIPO LISTA', 'API_CODE_REFERENCE_LIST', 'REQUISITO', true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_239' , 'L', 'MONITOREAR', 'PLANTILLA_MONITOR', 'REQUISITO', true);

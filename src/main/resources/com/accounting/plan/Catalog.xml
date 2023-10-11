@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.CatalogMapper">
+
+	<sql id="selectCatalogFragment">
+		select
+			cctg_llave as key
+			,cctg_nombre as name
+			,cctg_codigo as code
+			,dctg_fechainicial as initialDate
+			,dctg_fechafinal as finalDate
+			,cctg_estado as state
+		from catalogo_ctg a
+	</sql>
+
+	<sql id="whereCatalogFragment">
+		where 1=1
+			<if test="key!=null">
+				and cctg_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and cctg_estado = #{state}
+			</if>
+			<if test="name!=null">
+				and cctg_nombre = #{name}
+			</if>
+			<if test="code!=null">
+				and cctg_codigo = #{code}
+			</if>
+			<if test="initialDate!=null">
+				and dctg_fechainicial = #{initialDate}
+			</if>
+			<if test="finalDate!=null">
+				and dctg_fechafinal = #{finalDate}
+			</if>
+	</sql>
+
+	<sql id="paginationCatalogFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereCatalogPrimaryKeyFragment">
+		where
+			cctg_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="CatalogFilterDTO" resultType="CatalogDTO">
+		<include refid="selectCatalogFragment" />
+		<include refid="whereCatalogFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="CatalogFilterDTO" resultType="CatalogDTO">
+		<include refid="selectCatalogFragment" />
+		<include refid="whereCatalogFragment" />
+		<include refid="paginationCatalogFragment" />
+	</select>
+
+	<select id="count" parameterType="CatalogFilterDTO" resultType="int">
+		select count(*)
+		from catalogo_ctg
+		<include refid="whereCatalogFragment" />
+	</select>
+
+	<select id="insert" parameterType="CatalogDTO" resultType="CatalogDTO">
+		insert into catalogo_ctg(
+			cctg_llave
+		<if test="name!=null">
+			,cctg_nombre
+		</if>
+		<if test="code!=null">
+			,cctg_codigo
+		</if>
+		<if test="initialDate!=null">
+			,dctg_fechainicial
+		</if>
+		<if test="finalDate!=null">
+			,dctg_fechafinal
+		</if>
+		<if test="state!=null">
+			,cctg_estado
+		</if>
+		) values (
+			#{key}
+		<if test="name!=null">
+			,#{name}
+		</if>
+		<if test="code!=null">
+			,#{code}
+		</if>
+		<if test="initialDate!=null">
+			,#{initialDate}
+		</if>
+		<if test="finalDate!=null">
+			,#{finalDate}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="CatalogDTO" resultType="CatalogDTO">
+		update catalogo_ctg
+			set
+				cctg_nombre = #{name} 
+				cctg_codigo = #{code} 
+				dctg_fechainicial = #{initialDate} 
+				dctg_fechafinal = #{finalDate} 
+				cctg_estado =#{state}
+		<include refid="whereCatalogPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

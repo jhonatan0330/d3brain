@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.ResultMapExtendMapper">
+
+	<sql id="selectResultMapFragment">
+		select
+			crmp_llave as key
+			,crmp_cuenta as account
+			,nrmp_nivel as level
+			,drmp_fecha as mapDate
+			,nrmp_ano as year
+			,nrmp_mes as month
+			,nrmp_dia as day
+			,nrmp_hora as hour
+			,nrmp_minuto as minute
+			,nrmp_cantidad as quantity
+			,mrmp_valor as value
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldonuevo as newBalance
+			,crmp_estado as state
+		from _ind_${catalog}_${type} a
+	</sql>
+
+	<sql id="whereResultMapFragment">
+		where 1=1
+			<if test="key!=null">
+				and crmp_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and crmp_estado = #{state}
+			</if>
+			<if test="account!=null">
+				and crmp_cuenta = #{account}
+			</if>
+			<if test="level!=null">
+				and nrmp_nivel = #{level}
+			</if>
+			<if test="mapDate!=null">
+				and drmp_fecha = #{mapDate}
+			</if>
+			<if test="year!=null">
+				and nrmp_ano = #{year}
+			</if>
+			<if test="month!=null">
+				and nrmp_mes = #{month}
+			</if>
+			<if test="day!=null">
+				and nrmp_dia = #{day}
+			</if>
+			<if test="hour!=null">
+				and nrmp_hora = #{hour}
+			</if>
+			<if test="minute!=null">
+				and nrmp_minuto = #{minute}
+			</if>
+			<if test="quantity!=null">
+				and nrmp_cantidad = #{quantity}
+			</if>
+			<if test="value!=null">
+				and mrmp_valor = #{value}
+			</if>
+			<if test="positive!=null">
+				and mrmp_positivo = #{positive}
+			</if>
+			<if test="negative!=null">
+				and mrmp_negativo = #{negative}
+			</if>
+			<if test="lastBalance!=null">
+				and mrmp_saldoanterior = #{lastBalance}
+			</if>
+			<if test="newBalance!=null">
+				and mrmp_saldonuevo = #{newBalance}
+			</if>
+	</sql>
+
+	<sql id="paginationResultMapFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereResultMapPrimaryKeyFragment">
+		where
+			crmp_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+		<include refid="paginationResultMapFragment" />
+	</select>
+
+	<select id="count" parameterType="ResultMapFilterDTO" resultType="int">
+		select count(*)
+		from _ind_${catalog}_${type}
+		<include refid="whereResultMapFragment" />
+	</select>
+
+	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
+		insert into _ind_${catalog}_${type}(
+			crmp_llave
+		<if test="account!=null">
+			,crmp_cuenta
+		</if>
+		<if test="level!=null">
+			,nrmp_nivel
+		</if>
+		<if test="mapDate!=null">
+			,drmp_fecha
+		</if>
+		<if test="year!=null">
+			,nrmp_ano
+		</if>
+		<if test="month!=null">
+			,nrmp_mes
+		</if>
+		<if test="day!=null">
+			,nrmp_dia
+		</if>
+		<if test="hour!=null">
+			,nrmp_hora
+		</if>
+		<if test="minute!=null">
+			,nrmp_minuto
+		</if>
+		<if test="quantity!=null">
+			,nrmp_cantidad
+		</if>
+		<if test="value!=null">
+			,mrmp_valor
+		</if>
+		<if test="positive!=null">
+			,mrmp_positivo
+		</if>
+		<if test="negative!=null">
+			,mrmp_negativo
+		</if>
+		<if test="lastBalance!=null">
+			,mrmp_saldoanterior
+		</if>
+		<if test="newBalance!=null">
+			,mrmp_saldonuevo
+		</if>
+		<if test="state!=null">
+			,crmp_estado
+		</if>
+		) values (
+			#{key}
+		<if test="account!=null">
+			,#{account}
+		</if>
+		<if test="level!=null">
+			,#{level}
+		</if>
+		<if test="mapDate!=null">
+			,#{mapDate}
+		</if>
+		<if test="year!=null">
+			,#{year}
+		</if>
+		<if test="month!=null">
+			,#{month}
+		</if>
+		<if test="day!=null">
+			,#{day}
+		</if>
+		<if test="hour!=null">
+			,#{hour}
+		</if>
+		<if test="minute!=null">
+			,#{minute}
+		</if>
+		<if test="quantity!=null">
+			,#{quantity}
+		</if>
+		<if test="value!=null">
+			,#{value}
+		</if>
+		<if test="positive!=null">
+			,#{positive}
+		</if>
+		<if test="negative!=null">
+			,#{negative}
+		</if>
+		<if test="lastBalance!=null">
+			,#{lastBalance}
+		</if>
+		<if test="newBalance!=null">
+			,#{newBalance}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
+		update _ind_${catalog}_${type}
+			set
+				crmp_cuenta = #{account} 
+				nrmp_nivel = #{level} 
+				drmp_fecha = #{mapDate} 
+				nrmp_ano = #{year} 
+				nrmp_mes = #{month} 
+				nrmp_dia = #{day} 
+				nrmp_hora = #{hour} 
+				nrmp_minuto = #{minute} 
+				nrmp_cantidad = #{quantity} 
+				mrmp_valor = #{value} 
+				mrmp_positivo = #{positive} 
+				mrmp_negativo = #{negative} 
+				mrmp_saldoanterior = #{lastBalance} 
+				mrmp_saldonuevo = #{newBalance} 
+				crmp_estado =#{state}
+		<include refid="whereResultMapPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

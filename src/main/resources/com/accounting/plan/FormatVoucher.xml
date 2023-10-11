@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.FormatVoucherMapper">
+
+	<sql id="selectFormatVoucherFragment">
+		select
+			cfrm_llave as key
+			,cfrm_catalogo as catalog
+			,cfrm_plantilla as template
+			,cfrm_estado as state
+		from formato_frm a
+	</sql>
+
+	<sql id="whereFormatVoucherFragment">
+		where 1=1
+			<if test="key!=null">
+				and cfrm_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and cfrm_estado = #{state}
+			</if>
+			<if test="catalog!=null">
+				and cfrm_catalogo = #{catalog}
+			</if>
+			<if test="template!=null">
+				and cfrm_plantilla = #{template}
+			</if>
+	</sql>
+
+	<sql id="paginationFormatVoucherFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereFormatVoucherPrimaryKeyFragment">
+		where
+			cfrm_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="FormatVoucherFilterDTO" resultType="FormatVoucherDTO">
+		<include refid="selectFormatVoucherFragment" />
+		<include refid="whereFormatVoucherFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="FormatVoucherFilterDTO" resultType="FormatVoucherDTO">
+		<include refid="selectFormatVoucherFragment" />
+		<include refid="whereFormatVoucherFragment" />
+		<include refid="paginationFormatVoucherFragment" />
+	</select>
+
+	<select id="count" parameterType="FormatVoucherFilterDTO" resultType="int">
+		select count(*)
+		from formato_frm
+		<include refid="whereFormatVoucherFragment" />
+	</select>
+
+	<select id="insert" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
+		insert into formato_frm(
+			cfrm_llave
+		<if test="catalog!=null">
+			,cfrm_catalogo
+		</if>
+		<if test="template!=null">
+			,cfrm_plantilla
+		</if>
+		<if test="state!=null">
+			,cfrm_estado
+		</if>
+		) values (
+			#{key}
+		<if test="catalog!=null">
+			,#{catalog}
+		</if>
+		<if test="template!=null">
+			,#{template}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
+		update formato_frm
+			set
+				cfrm_catalogo = #{catalog} 
+				cfrm_plantilla = #{template} 
+				cfrm_estado =#{state}
+		<include refid="whereFormatVoucherPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

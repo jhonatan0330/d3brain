@@ -196,6 +196,8 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_BODEGA = "PLANTILLA_TIPO_BODEGA";
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
+	
+	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 
 	public static final String GPS = "GPS";
 	public static final String RELACIONAR_DOCUMENTOS = "RELACIONAR_DOCUMENTOS";
@@ -941,6 +943,10 @@ public class Propiedades {
 		}
 		case PLANTILLA_CARGA_MASIVA_MULTIPLE: {
 			ruleProperty = "Relaciona un campo para que se realice una carga masiva multiple, busca el codigo del campo que va a subir los mnultiples\n";
+			break;
+		}
+		case PLANTILLA_MONITOR: {
+			ruleProperty = "Nos permite monitorear la plantilla en el motor de indicadores, se debe escoger un catalogo para incluir la plantilla y despues en el catalogo se puede administrar";
 			break;
 		}
 		case PLANTILLA_HISTORIAL_ACTIVO: {

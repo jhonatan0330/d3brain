@@ -1,0 +1,341 @@
+{
+	"name": "Motor de indicadores",
+	"code": "accounting",
+	"packages": [
+		{
+			"name": "Planeacion de indicadores por catalogos",
+			"code": "plan",
+			"entities": [
+				{
+					"name": "Catalog",
+					"table": "catalogo",
+					"prefix": "ctg",
+					"attributes": [
+						{
+							"name": "name",
+							"tableName": "nombre",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING",
+							"size": 8
+						},
+						{
+							"name": "initialDate",
+							"tableName": "fechainicial",
+							"type": "DATETIME"
+						},
+						{
+							"name": "finalDate",
+							"tableName": "fechafinal",
+							"type": "DATETIME"
+						}
+					]
+				},
+				{
+					"name": "Account",
+					"table": "cuenta",
+					"prefix": "cue",
+					"attributes": [
+						{
+							"name": "catalog",
+							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "name",
+							"tableName": "nombre",
+							"type": "STRING"
+						},
+						{
+							"name": "parent",
+							"tableName": "padre",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "field",
+							"tableName": "campo",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "type",
+							"tableName": "tipo",
+							"type": "STRING",
+							"size": 1
+						},
+						{
+							"name": "operation",
+							"tableName": "naturaleza",
+							"type": "STRING",
+							"size": 1
+						}
+					]
+				},
+				{
+					"name": "Dimension",
+					"table": "dimension",
+					"prefix": "dim",
+					"attributes": [
+						{
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "name",
+							"tableName": "nombre",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "field",
+							"tableName": "campo",
+							"type": "CLASS"
+						},
+						{
+							"name": "type",
+							"tableName": "tipo",
+							"type": "STRING",
+							"size": 1
+						}
+					]
+				},
+				{
+					"name": "FormatVoucher",
+					"table": "formato",
+					"prefix": "frm",
+					"attributes": [
+						{
+							"name": "catalog",
+							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS"
+						}
+					]
+				},
+				{
+					"name": "FormatLine",
+					"table": "linea",
+					"prefix": "lin",
+					"attributes": [
+						{
+							"name": "format",
+							"tableName": "formato",
+							"type": "CLASS"
+						},
+						{
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "description",
+							"tableName": "description",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						},
+						{
+							"name": "positive",
+							"tableName": "positivo",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "negative",
+							"tableName": "negativo",
+							"type": "STRING",
+							"optional": true
+						}
+					]
+				},
+				{
+					"name": "ValueDimension",
+					"table": "valor",
+					"prefix": "vlr",
+					"attributes": [
+						{
+							"name": "dimension",
+							"tableName": "dimension",
+							"type": "CLASS"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS"
+						}
+					]
+				},
+				{
+					"name": "Fact",
+					"table": "hecho",
+					"prefix": "hch",
+					"attributes": [
+						{
+							"name": "registerDate",
+							"tableName": "fecharegistro",
+							"type": "DATETIME"
+						},
+						{
+							"name": "factDate",
+							"tableName": "fechaevento",
+							"type": "DATETIME"
+						},
+						{
+							"name": "dimension",
+							"tableName": "dimension",
+							"type": "CLASS"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS"
+						},
+						{
+							"name": "id",
+							"tableName": "id",
+							"type": "STRING"
+						}
+					]
+				},
+				{
+					"name": "ResultMap",
+					"table": "mapa_resultados",
+					"prefix": "rmp",
+					"attributes": [
+						{
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "catalog",
+							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
+							"name": "level",
+							"tableName": "nivel",
+							"type": "INT"
+						},
+						{
+							"name": "mapDate",
+							"tableName": "fecha",
+							"type": "DATETIME"
+						},
+						{
+							"name": "year",
+							"tableName": "ano",
+							"type": "INT",
+							"optional": true
+						},
+						{
+							"name": "month",
+							"tableName": "mes",
+							"type": "INT",
+							"optional": true
+						},
+						{
+							"name": "day",
+							"tableName": "dia",
+							"type": "INT",
+							"optional": true
+						},
+						{
+							"name": "hour",
+							"tableName": "hora",
+							"type": "INT",
+							"optional": true
+						},
+						{
+							"name": "minute",
+							"tableName": "minuto",
+							"type": "INT",
+							"optional": true
+						},
+						{
+							"name": "quantity",
+							"tableName": "cantidad",
+							"type": "INT"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "NUMBER"
+						},
+						{
+							"name": "positive",
+							"tableName": "positivo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "negative",
+							"tableName": "negativo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "lastBalance",
+							"tableName": "saldoanterior",
+							"type": "NUMBER"
+						},
+						{
+							"name": "newBalance",
+							"tableName": "saldonuevo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "type",
+							"tableName": "tipo",
+							"type": "STRING",
+							"size": 1
+						}
+					]
+				}
+			],
+			"endPoints": []
+		}
+	]
+}

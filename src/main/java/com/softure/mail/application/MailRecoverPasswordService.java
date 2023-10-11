@@ -34,7 +34,7 @@ public class MailRecoverPasswordService {
 		JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidores.get(0));
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage);
-		OrganizacionDTO principal = organizacionService.obtenerPrincipal(null);
+		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		if (principal.getServidorUrl()==null) throw new ServerException("Se debe configurar la url del servidor principal para la organizacion " + principal.getNombre());
 		try {
 			mailMsg.setFrom(servidores.get(0).getUsuario());

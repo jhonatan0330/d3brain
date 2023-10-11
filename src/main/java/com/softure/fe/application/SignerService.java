@@ -14,6 +14,7 @@ import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Scanner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -65,189 +66,217 @@ public class SignerService {
 
 	@Autowired
 	private UploadSvc uploadService;
-	
-    private XadesSigner signer;
-    private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
-    
-    private void initialize( byte[] keyByte, String password) throws KeyStoreException, XadesProfileResolutionException {
 
-        SignaturePolicyInfoProvider policyInfoProvider = new SignaturePolicyInfoProvider() {
-            public SignaturePolicyBase getSignaturePolicy() {
-                try {
-                    return new SignaturePolicyIdentifierProperty( new ObjectIdentifier( policyUrl ), new URL( policyUrl ).openStream() );
-                } catch (MalformedURLException ex) {
-                    return new SignaturePolicyImpliedProperty();
-                } catch (IOException ex) {
-                    return new SignaturePolicyImpliedProperty();
-                }
-            }
-        };
-        File file = null;
+	private XadesSigner signer;
+	private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
+
+	private void initialize(byte[] keyByte, String password) throws KeyStoreException, XadesProfileResolutionException {
+
+		SignaturePolicyInfoProvider policyInfoProvider = new SignaturePolicyInfoProvider() {
+			public SignaturePolicyBase getSignaturePolicy() {
+				try {
+					return new SignaturePolicyIdentifierProperty(new ObjectIdentifier(policyUrl),
+							new URL(policyUrl).openStream());
+				} catch (MalformedURLException ex) {
+					return new SignaturePolicyImpliedProperty();
+				} catch (IOException ex) {
+					return new SignaturePolicyImpliedProperty();
+				}
+			}
+		};
+		File file = null;
 		try {
 			file = File.createTempFile("FE_DIAN_", ".pfx");
-			//FileUtils.writeByteArrayToFile(file, keyByte);
+			// FileUtils.writeByteArrayToFile(file, keyByte);
 			try (FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
-	            fos.write(keyByte);
-	        }
+				fos.write(keyByte);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        KeyingDataProvider kp = KeyStoreDataProvider
-        		.builder("pkcs12", file, new FirstCertificateSelector())
-        		.storePassword(new DirectPasswordProvider(password))
-        		.entryPassword(new DirectPasswordProvider(password))
-        		.build();
- 
-        XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
-        signer = p.newSigner();
-    }
+		KeyingDataProvider kp = KeyStoreDataProvider.builder("pkcs12", file, new FirstCertificateSelector())
+				.storePassword(new DirectPasswordProvider(password)).entryPassword(new DirectPasswordProvider(password))
+				.build();
 
-    private Document loadDocument( String xmlInPath ) throws IOException, SAXException, ParserConfigurationException {
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        return builder.parse(new InputSource(new StringReader(xmlInPath)));
-    }
-
-    private Node selectNode( Document doc ){
-        NodeList tag = doc.getElementsByTagName("ext:ExtensionContent");
-        return tag.item(1);
-    }
-    
-    private String getValueInNode( Node node, String tag ) throws ServerException{
-    	if(node instanceof Element) {
-    		 Element docElement = (Element)node;
-    		 NodeList tags = docElement.getElementsByTagName(tag);
-    	     if(tags.getLength()==1) {
-    	    	 return tags.item(0).getTextContent();	 
-    	     }
-    	}
-    	throw new ServerException("En el Xml es importatnte que dentro del tag (ext:ExtensionContent) coloque un nuevo tag (" + tag +") que nos brinde la informacion del certificado");
-    }
-
-    private DataObjectDesc createDataObjectToSign(){
-        return new DataObjectReference("").withTransform(new EnvelopedSignatureTransform());
-    }
-
-    private void sign( DataObjectDesc dataObjRef, Node elemToSign ) throws XAdES4jException {
-
-        signer.sign(new SignedDataObjects( dataObjRef ), elemToSign, SignatureAppendingStrategies.AsFirstChild);
-    }
-
-    private String saveDocument( Document doc ) throws TransformerException {
-
-    	DOMSource domSource = new DOMSource(doc);
-        StringWriter writer = new StringWriter();
-        Result output = new StreamResult(writer);
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();        
-
-        transformer.transform(domSource, output);
-        return writer.toString();
-    }
-    
-    public String zipFileWithoutSaveLocal(String data, FEResponse responseFe) throws IOException, ServerException {
-
-        String fileNameInZip = "fe.xml";
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (ZipOutputStream zos = new ZipOutputStream(baos)) {
-
-            ZipEntry zipEntry = new ZipEntry(fileNameInZip);
-            zos.putNextEntry(zipEntry);
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
-            // one line, able to handle large size?
-            //zos.write(bais.readAllBytes());
-
-            // play safe
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = bais.read(buffer)) > 0) {
-                zos.write(buffer, 0, len);
-            }
-
-            zos.closeEntry();
-        }
-        byte[] bytes = baos.toByteArray();
-        responseFe.setZipUrl( uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
-        return Base64.getEncoder().encodeToString(bytes);
-    }
-
-	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
-        Document doc = loadDocument( xmlIn );
-        removeEmptyNodes(doc);
-        doc = processCUFE(doc, responseFe);
-        doc = processSoftwareSecurityCode(doc);
-        doc = processExtensionContent(doc);
-        responseFe.setXml( zipFileWithoutSaveLocal(saveDocument( doc ), responseFe));
+		XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
+		signer = p.newSigner();
 	}
-	
-	private Document processExtensionContent(Document doc) throws KeyStoreException,  IOException, XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException{
-		Node elemToSign = selectNode( doc );
-        String certificate = getValueInNode( elemToSign, "ext:Certificate");
-        String password = getValueInNode( elemToSign, "ext:Password"); 
-        initialize( Base64.getDecoder().decode(certificate), password );
-        DataObjectDesc DataObjectRef =  createDataObjectToSign();
-        elemToSign.setTextContent("");
-        sign( DataObjectRef, elemToSign );
+
+	private Document loadDocument(String xmlInPath) throws IOException, SAXException, ParserConfigurationException {
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		return builder.parse(new InputSource(new StringReader(xmlInPath)));
+	}
+
+	private Node selectNode(Document doc) {
+		NodeList tag = doc.getElementsByTagName("ext:ExtensionContent");
+		return tag.item(tag.getLength() - 1);
+	}
+
+	private String getValueInNode(Node node, String tag) throws ServerException {
+		if (node instanceof Element) {
+			Element docElement = (Element) node;
+			NodeList tags = docElement.getElementsByTagName(tag);
+			if (tags.getLength() == 1) {
+				return tags.item(0).getTextContent();
+			}
+		}
+		throw new ServerException(
+				"En el Xml es importatnte que dentro del tag (ext:ExtensionContent) coloque un nuevo tag (" + tag
+						+ ") que nos brinde la informacion del certificado");
+	}
+
+	private DataObjectDesc createDataObjectToSign() {
+		return new DataObjectReference("").withTransform(new EnvelopedSignatureTransform());
+	}
+
+	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException {
+
+		signer.sign(new SignedDataObjects(dataObjRef), elemToSign, SignatureAppendingStrategies.AsFirstChild);
+	}
+
+	private String saveDocument(Document doc) throws TransformerException {
+
+		DOMSource domSource = new DOMSource(doc);
+		StringWriter writer = new StringWriter();
+		Result output = new StreamResult(writer);
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+
+		transformer.transform(domSource, output);
+		return writer.toString();
+	}
+
+	public String zipFileWithoutSaveLocal(String data, FEResponse responseFe) throws IOException, ServerException {
+
+		String fileNameInZip = "fe.xml";
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+			ZipEntry zipEntry = new ZipEntry(fileNameInZip);
+			zos.putNextEntry(zipEntry);
+
+			ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
+			// one line, able to handle large size?
+			// zos.write(bais.readAllBytes());
+
+			// play safe
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = bais.read(buffer)) > 0) {
+				zos.write(buffer, 0, len);
+			}
+
+			zos.closeEntry();
+		}
+		byte[] bytes = baos.toByteArray();
+		responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
+		return Base64.getEncoder().encodeToString(bytes);
+	}
+
+	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
+			ParserConfigurationException, TransformerException, SAXException, ServerException {
+		Document doc = loadDocument(xmlIn);
+		removeEmptyNodes(doc);
+		doc = processCUFE(doc, responseFe);
+		doc = processSoftwareSecurityCode(doc);
+		doc = processExtensionContent(doc);
+		doc = decriptFilesBase64(doc);
+		responseFe.setXml(zipFileWithoutSaveLocal(saveDocument(doc), responseFe));
+	}
+
+	private Document processExtensionContent(Document doc) throws KeyStoreException, IOException, XAdES4jException,
+			ParserConfigurationException, TransformerException, SAXException, ServerException {
+		Node elemToSign = selectNode(doc);
+		String certificate = getValueInNode(elemToSign, "ext:Certificate");
+		String password = getValueInNode(elemToSign, "ext:Password");
+		initialize(Base64.getDecoder().decode(certificate), password);
+		DataObjectDesc DataObjectRef = createDataObjectToSign();
+		elemToSign.setTextContent("");
+		sign(DataObjectRef, elemToSign);
 		return doc;
 	}
-	
+
 	private Document processCUFE(Document doc, FEResponse responseFe) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("cbc:UUID");
-		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del CUFE cbc:UUID");
-        String CUFEplain = tags.item(0).getTextContent();
-        if(CUFEplain==null || CUFEplain.isEmpty()) throw new ServerException("El texto del CUFE esta vacio");
-        String CUFEencrypt = encryptThisString(CUFEplain);
-        tags.item(0).setTextContent(CUFEencrypt);
-        responseFe.setCufe(CUFEencrypt);
+		if (tags.getLength() == 0)
+			throw new ServerException("No se identifico el tag del CUFE cbc:UUID");
+		String CUFEplain = tags.item(0).getTextContent();
+		if (CUFEplain == null || CUFEplain.isEmpty())
+			throw new ServerException("El texto del CUFE esta vacio");
+		String CUFEencrypt = encryptThisString(CUFEplain);
+		tags.item(0).setTextContent(CUFEencrypt);
+		responseFe.setCufe(CUFEencrypt);
 		return processQR(doc, CUFEencrypt);
 	}
-	
+
 	private Document processQR(Document doc, String cufe) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("sts:QRCode");
-		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
-        String plain = tags.item(0).getTextContent();
-        if(plain==null || plain.isEmpty()) throw new ServerException("El texto del sts:QRCode esta vacio");
-        tags.item(0).setTextContent(plain.replace("REPLACE_CUFE_CODE", cufe));
+		if (tags.getLength() == 0)
+			return doc;// throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
+		String plain = tags.item(0).getTextContent();
+		if (plain == null || plain.isEmpty())
+			return doc; // throw new ServerException("El texto del sts:QRCode esta vacio");
+		tags.item(0).setTextContent(plain.replace("REPLACE_CUFE_CODE", cufe));
 		return doc;
 	}
-	
+
 	private Document processSoftwareSecurityCode(Document doc) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("sts:SoftwareSecurityCode");
-		if(tags.getLength()==0) throw new ServerException("No se identifico el tag del sts:SoftwareSecurityCode");
-        String plain = tags.item(0).getTextContent();
-        if(plain==null || plain.isEmpty()) throw new ServerException("El texto del sts:SoftwareSecurityCode esta vacio");
-        String encrypt = encryptThisString(plain);
-        tags.item(0).setTextContent(encrypt);
+		if (tags.getLength() == 0)
+			return doc; // throw new ServerException("No se identifico el tag del
+						// sts:SoftwareSecurityCode");
+		String plain = tags.item(0).getTextContent();
+		if (plain == null || plain.isEmpty())
+			return doc; // throw new ServerException("El texto del sts:SoftwareSecurityCode esta
+						// vacio");
+		String encrypt = encryptThisString(plain);
+		tags.item(0).setTextContent(encrypt);
 		return doc;
 	}
-	
-	private String encryptThisString(String input) throws ServerException{
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-384");
- 
-            byte[] messageDigest = md.digest(input.getBytes());
-            BigInteger no = new BigInteger(1, messageDigest);
-  
-            String hashtext = no.toString(16);
-  
-            while (hashtext.length() < 96) {
-                hashtext = "0" + hashtext;
-            }
-  
-            return hashtext;
-        }      catch (NoSuchAlgorithmException e) {
-            throw new ServerException(e.getMessage());
-        }
-    }
-	
+
+	private Document decriptFilesBase64(Document doc) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("cbc:Description");
+		if (tags.getLength() == 0)
+			return doc;
+
+		for (int i = 0; i < tags.getLength(); i++) {
+			String plain = tags.item(i).getTextContent();
+			if (plain != null && !plain.isEmpty()) {
+				if(plain.startsWith("http"))plain = getHtmlContent(plain);
+				if(plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"))
+					tags.item(i).setTextContent(new String(Base64.getDecoder().decode(plain)));
+			}
+		}
+		return doc;
+	}
+
+	private String encryptThisString(String input) throws ServerException {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-384");
+
+			byte[] messageDigest = md.digest(input.getBytes());
+			BigInteger no = new BigInteger(1, messageDigest);
+
+			String hashtext = no.toString(16);
+
+			while (hashtext.length() < 96) {
+				hashtext = "0" + hashtext;
+			}
+
+			return hashtext;
+		} catch (NoSuchAlgorithmException e) {
+			throw new ServerException(e.getMessage());
+		}
+	}
+
 	private void removeEmptyNodes(Node node) {
 		NodeList nodeList = node.getChildNodes();
-		for(int i=0; i < nodeList.getLength(); i++){
+		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
-			if(childNode.getTextContent().equals("")){
+			if (childNode.getTextContent().equals("")) {
 				childNode.getParentNode().removeChild(childNode);
 				i--;
 			}
@@ -255,7 +284,26 @@ public class SignerService {
 		}
 	}
 
+	private String getHtmlContent(String _url)  {
+		// Instantiating the URL class
+		URL url;
+		try {
+			url = new URL(_url);
+		} catch (MalformedURLException e) {
+			return _url;
+		}
+		try (// Retrieving the contents of the specified page
+				Scanner sc = new Scanner(url.openStream())) {
+			// Instantiating the StringBuffer class to hold the result
+			StringBuffer sb = new StringBuffer();
+			while (sc.hasNext()) {
+				sb.append(sc.next());
+			}
+			// Retrieving the String from the String Buffer object
+			return sb.toString();
+		} catch (IOException e) {
+			return e.getLocalizedMessage();
+		} 
+	}
+
 }
-
-
-

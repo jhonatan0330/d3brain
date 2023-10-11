@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.AccountMapper">
+
+	<sql id="selectAccountFragment">
+		select
+			ccue_llave as key
+			,ccue_catalogo as catalog
+			,ccue_codigo as code
+			,ccue_nombre as name
+			,ccue_padre as parent
+			,ccue_plantilla as template
+			,ccue_campo as field
+			,ccue_tipo as type
+			,ccue_naturaleza as operation
+			,ccue_estado as state
+		from cuenta_cue a
+	</sql>
+
+	<sql id="whereAccountFragment">
+		where 1=1
+			<if test="key!=null">
+				and ccue_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and ccue_estado = #{state}
+			</if>
+			<if test="catalog!=null">
+				and ccue_catalogo = #{catalog}
+			</if>
+			<if test="code!=null">
+				and ccue_codigo = #{code}
+			</if>
+			<if test="name!=null">
+				and ccue_nombre = #{name}
+			</if>
+			<if test="parent!=null">
+				and ccue_padre = #{parent}
+			</if>
+			<if test="template!=null">
+				and ccue_plantilla = #{template}
+			</if>
+			<if test="field!=null">
+				and ccue_campo = #{field}
+			</if>
+			<if test="type!=null">
+				and ccue_tipo = #{type}
+			</if>
+			<if test="operation!=null">
+				and ccue_naturaleza = #{operation}
+			</if>
+	</sql>
+
+	<sql id="paginationAccountFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereAccountPrimaryKeyFragment">
+		where
+			ccue_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="AccountFilterDTO" resultType="AccountDTO">
+		<include refid="selectAccountFragment" />
+		<include refid="whereAccountFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="AccountFilterDTO" resultType="AccountDTO">
+		<include refid="selectAccountFragment" />
+		<include refid="whereAccountFragment" />
+		<include refid="paginationAccountFragment" />
+	</select>
+
+	<select id="count" parameterType="AccountFilterDTO" resultType="int">
+		select count(*)
+		from cuenta_cue
+		<include refid="whereAccountFragment" />
+	</select>
+
+	<select id="insert" parameterType="AccountDTO" resultType="AccountDTO">
+		insert into cuenta_cue(
+			ccue_llave
+		<if test="catalog!=null">
+			,ccue_catalogo
+		</if>
+		<if test="code!=null">
+			,ccue_codigo
+		</if>
+		<if test="name!=null">
+			,ccue_nombre
+		</if>
+		<if test="parent!=null">
+			,ccue_padre
+		</if>
+		<if test="template!=null">
+			,ccue_plantilla
+		</if>
+		<if test="field!=null">
+			,ccue_campo
+		</if>
+		<if test="type!=null">
+			,ccue_tipo
+		</if>
+		<if test="operation!=null">
+			,ccue_naturaleza
+		</if>
+		<if test="state!=null">
+			,ccue_estado
+		</if>
+		) values (
+			#{key}
+		<if test="catalog!=null">
+			,#{catalog}
+		</if>
+		<if test="code!=null">
+			,#{code}
+		</if>
+		<if test="name!=null">
+			,#{name}
+		</if>
+		<if test="parent!=null">
+			,#{parent}
+		</if>
+		<if test="template!=null">
+			,#{template}
+		</if>
+		<if test="field!=null">
+			,#{field}
+		</if>
+		<if test="type!=null">
+			,#{type}
+		</if>
+		<if test="operation!=null">
+			,#{operation}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="AccountDTO" resultType="AccountDTO">
+		update cuenta_cue
+			set
+				ccue_catalogo = #{catalog} 
+				ccue_codigo = #{code} 
+				ccue_nombre = #{name} 
+				ccue_padre = #{parent} 
+				ccue_plantilla = #{template} 
+				ccue_campo = #{field} 
+				ccue_tipo = #{type} 
+				ccue_naturaleza = #{operation} 
+				ccue_estado =#{state}
+		<include refid="whereAccountPrimaryKeyFragment" />
+	</select>
+	
+</mapper>
