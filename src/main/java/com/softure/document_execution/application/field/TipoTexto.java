@@ -47,15 +47,16 @@ public class TipoTexto {
 		}
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if (!formato.isEmpty()) {
-			String[] registros = pCampo.getValorText().split(";");
 			switch (formato) {
 			case "E": {
-				validateFormatProperty(registros, "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", pCampo);
+				pCampo.setValorText(pCampo.getValorText().replaceAll("\\s", ""));
+				validateFormatProperty(pCampo.getValorText().split(";"), "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
 			case "T": {
-				validateFormatProperty(registros, "^[3,6][0-9]{9}$", pCampo);
+				pCampo.setValorText(pCampo.getValorText().replaceAll("\\s", ""));
+				validateFormatProperty(pCampo.getValorText().split(";"), "^[3,6][0-9]{9}$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
@@ -63,7 +64,7 @@ public class TipoTexto {
 				break;
 			}
 			case "N": {
-				validateFormatProperty(registros, "^[0-9]*$", pCampo);
+				validateFormatProperty(pCampo.getValorText().split(";"), "^[0-9]*$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());
 				break;
 			}
