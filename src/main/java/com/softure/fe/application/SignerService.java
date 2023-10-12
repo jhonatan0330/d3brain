@@ -186,9 +186,9 @@ public class SignerService {
 
 	private String getName(Document doc) {
 		String name = "fe.xml";
-		NodeList tags = doc.getElementsByTagName("cbc:UUID");
-		if (tags.getLength() == 0)
-			name = tags.item(0).getTextContent();
+		NodeList tags = doc.getElementsByTagName("cbc:ID");
+		if (tags.getLength() == 1)
+			name = tags.item(0).getTextContent() + ".xml";
 		return name;
 	}
 
@@ -252,9 +252,14 @@ public class SignerService {
 			if (plain != null && !plain.isEmpty()) {
 				if (plain.startsWith("http"))
 					plain = getHtmlContent(plain);
-				if (plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"))
+				if (plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$")) {
 					plain = new String(Base64.getDecoder().decode(plain.getBytes()));
-				tags.item(i).setTextContent(plain);
+					Node cdata = doc.createCDATASection(plain);
+					tags.item(i).setTextContent("");	
+					tags.item(i).appendChild(cdata);
+				}else {
+					tags.item(i).setTextContent(plain);	
+				}
 			}
 		}
 		return doc;

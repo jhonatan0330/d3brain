@@ -1,9 +1,10 @@
 package com.softure.mail.application;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -91,22 +92,27 @@ public class MailSendMessageService {
 			}
 			if (dto.getAdjuntoURL() != null) {
 				URL attachURL = new URL(dto.getAdjuntoURL());
-				try (BufferedInputStream in = new BufferedInputStream(attachURL.openStream());
-						FileOutputStream fileOutputStream = new FileOutputStream("")) {
-					String urlName = dto.getAdjuntoURL().substring(dto.getAdjuntoURL().lastIndexOf('/') + 1);
-					byte dataBuffer[] = new byte[1024];
-					int bytesRead;
-					while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
-						fileOutputStream.write(dataBuffer, 0, bytesRead);
+				String urlName = dto.getAdjuntoURL().substring(dto.getAdjuntoURL().lastIndexOf('/') + 1);
+				URLConnection conn = attachURL.openConnection();
+				String type = conn.getContentType();
+				try {
+					InputStream in = conn.getInputStream();
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					byte[] b = new byte[1024];
+					int count;
+					while ((count = in.read(b)) >= 0) {
+						out.write(b, 0, count);
 					}
-
-					mailMsg.addAttachment(urlName,
-							new ByteArrayDataSource(dataBuffer, attachURL.openConnection().getContentType()));
+					out.flush();
+					out.close();
+					in.close();
+					mailMsg.addAttachment(urlName, new ByteArrayDataSource(out.toByteArray(), type));
 				} catch (IOException e) {
-					// handle exception
+					dto.setCorreoError(e.getLocalizedMessage());
+					sendToAdminService.call("Error enviando correos electronicos (Adjunto)" + dto.getTitulo(),
+							e.getMessage());
 				}
 			}
-
 			mailSender.send(mimeMessage);
 		} catch (Exception e) {
 			dto.setCorreoError(e.getMessage());
