@@ -15,6 +15,7 @@ public class Propiedades {
 	public static final String FUNCION_SQL_VALIDAR = "FUNCION_SQL_VALIDAR";
 	public static final String MENSAJE = "MENSAJE";
 	public static final String MENSAJE_REPORTE = "MENSAJE_REPORTE";
+	public static final String MENSAJE_ADJUNTO_URL = "MENSAJE_ADJUNTO_URL";
 	public static final String MENSAJE_DESTINATARIOS_SQL = "MENSAJE_DESTINATARIOS_SQL";
 	public static final String MENSAJE_DESTINATARIO = "MENSAJE_DESTINATARIO";
 	public static final String API = "API";
@@ -841,6 +842,10 @@ public class Propiedades {
 		}
 		case MENSAJE: {
 			ruleProperty = "Coloca el nombre de un template de mensaje de correo, este template va a ser enviado por correo.\n";
+			break;
+		}
+		case MENSAJE_ADJUNTO_URL: {
+			ruleProperty = "Referencias un campo para obtener la url del documento que se va a adjuntar en el correo.\n";
 			break;
 		}
 		case MENSAJE_DESTINATARIO: {

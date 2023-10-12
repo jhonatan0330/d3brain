@@ -501,7 +501,7 @@ public class WebServiceExecuteAPI {
 				}
 			}
 
-			int readTimeOut = 60000;
+			int readTimeOut = 120000;
 			PropiedadDTO readTimeOutValue = Propiedades.obtenerParametro(serverName, Propiedades.API_READ_TIMEOUT);
 			if (readTimeOutValue != null) {
 				try {

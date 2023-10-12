@@ -122,6 +122,8 @@ public class MailGenerateMessageService {
                 plantillaCorreo.getCampo(), Propiedades.MENSAJE_DESTINATARIOS_SQL, usuarioGenerador);
         PropiedadDTO mensajeReporte = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
                 plantillaCorreo.getCampo(), Propiedades.MENSAJE_REPORTE, usuarioGenerador);
+        PropiedadDTO mensajeAdjuntoURL = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
+                plantillaCorreo.getCampo(), Propiedades.MENSAJE_ADJUNTO_URL, usuarioGenerador);
         // Por algun motivo validaba esto del reporte creo que tiene que ver con algun null
         //if (mensajeReporte == null)
         //    usuarioGenerador = usuarioService.getUserFlex(token);
@@ -193,6 +195,17 @@ public class MailGenerateMessageService {
         String mensajeTitulo = SoftureUtil.recortar(
                 MailUtils.replaceParameterInBodyMessage(formatosPlantilla.getTitulo(), parametros),
                 MailUtils.LONGITUD_MAXIMA_DESCRIPCION);
+        
+        String attachLink = null;
+        if (mensajeAdjuntoURL!=null) {
+        	List<PedidoVentaCaracteristicaDTO> fieldsEmailToSend = findFieldService.call(mensajeAdjuntoURL.getLlaveTabla(), modificador.getCaracteristicas());
+            if(fieldsEmailToSend!=null && !fieldsEmailToSend.isEmpty()) {
+            	attachLink = "";
+                for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
+                    attachLink = iFieldsEmailToSend.getValorText();
+                }
+            }
+        }
 
         for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
             MensajeDTO mensaje = new MensajeDTO();
@@ -208,6 +221,7 @@ public class MailGenerateMessageService {
             mensaje.setTitulo(mensajeTitulo);
             mensaje.setUsuario(entry.getKey());
             mensaje.setCorreo(entry.getValue());
+            mensaje.setAdjuntoURL(attachLink);
             if (mensajeReporte != null)
                 mensaje.setReporte(mensajeReporte.getValor());
             mensaje.setParametros(parametros);

@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("MensajeDTO")
 public class MensajeDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -26,6 +24,7 @@ public class MensajeDTO extends BasicDTO
 	private String correoError;
 	private String correo;
 	private String reporte;
+	private String adjuntoURL;
 	private String transaccion;
 
 	public void setFecha(Date fecha) {
@@ -98,6 +97,15 @@ public class MensajeDTO extends BasicDTO
 	public String getCorreo() {
 		return correo;
 	}
+	
+	public String getAdjuntoURL() {
+		return adjuntoURL;
+	}
+	
+	public void setAdjuntoURL(String adjuntoURL) {
+		this.adjuntoURL = adjuntoURL;
+	}
+	
 	public void setReporte(String reporte) {
 		this.reporte = reporte;
 	}
@@ -105,6 +113,7 @@ public class MensajeDTO extends BasicDTO
 	public String getReporte() {
 		return reporte;
 	}
+	
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;
 	}

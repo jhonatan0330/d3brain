@@ -148,10 +148,10 @@ public class SignerService {
 		return writer.toString();
 	}
 
-	public String zipFileWithoutSaveLocal(String data, FEResponse responseFe) throws IOException, ServerException {
+	public void zipFileWithoutSaveLocal(String data, FEResponse responseFe, String fileNameInZip)
+			throws IOException, ServerException {
 
-		String fileNameInZip = "fe.xml";
-
+		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
@@ -159,10 +159,6 @@ public class SignerService {
 			zos.putNextEntry(zipEntry);
 
 			ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
-			// one line, able to handle large size?
-			// zos.write(bais.readAllBytes());
-
-			// play safe
 			byte[] buffer = new byte[1024];
 			int len;
 			while ((len = bais.read(buffer)) > 0) {
@@ -173,7 +169,8 @@ public class SignerService {
 		}
 		byte[] bytes = baos.toByteArray();
 		responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
-		return Base64.getEncoder().encodeToString(bytes);
+		responseFe.setZipBase64(Base64.getEncoder().encodeToString(bytes));
+
 	}
 
 	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
@@ -184,7 +181,15 @@ public class SignerService {
 		doc = processSoftwareSecurityCode(doc);
 		doc = processExtensionContent(doc);
 		doc = decriptFilesBase64(doc);
-		responseFe.setXml(zipFileWithoutSaveLocal(saveDocument(doc), responseFe));
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
+	}
+
+	private String getName(Document doc) {
+		String name = "fe.xml";
+		NodeList tags = doc.getElementsByTagName("cbc:UUID");
+		if (tags.getLength() == 0)
+			name = tags.item(0).getTextContent();
+		return name;
 	}
 
 	private Document processExtensionContent(Document doc) throws KeyStoreException, IOException, XAdES4jException,
@@ -245,9 +250,11 @@ public class SignerService {
 		for (int i = 0; i < tags.getLength(); i++) {
 			String plain = tags.item(i).getTextContent();
 			if (plain != null && !plain.isEmpty()) {
-				if(plain.startsWith("http"))plain = getHtmlContent(plain);
-				if(plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"))
-					tags.item(i).setTextContent(new String(Base64.getDecoder().decode(plain)));
+				if (plain.startsWith("http"))
+					plain = getHtmlContent(plain);
+				if (plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"))
+					plain = new String(Base64.getDecoder().decode(plain.getBytes()));
+				tags.item(i).setTextContent(plain);
 			}
 		}
 		return doc;
@@ -284,7 +291,7 @@ public class SignerService {
 		}
 	}
 
-	private String getHtmlContent(String _url)  {
+	private String getHtmlContent(String _url) {
 		// Instantiating the URL class
 		URL url;
 		try {
@@ -292,18 +299,15 @@ public class SignerService {
 		} catch (MalformedURLException e) {
 			return _url;
 		}
-		try (// Retrieving the contents of the specified page
-				Scanner sc = new Scanner(url.openStream())) {
-			// Instantiating the StringBuffer class to hold the result
+		try (Scanner sc = new Scanner(url.openStream())) {
 			StringBuffer sb = new StringBuffer();
 			while (sc.hasNext()) {
 				sb.append(sc.next());
 			}
-			// Retrieving the String from the String Buffer object
 			return sb.toString();
 		} catch (IOException e) {
 			return e.getLocalizedMessage();
-		} 
+		}
 	}
 
 }

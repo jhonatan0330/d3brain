@@ -25,6 +25,7 @@ public class MensajeFilterDTO extends BasicFilterDTO
 	private Date correoEnviadoMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date correoEnviadoMax;
+	private String adjuntoURL;
 	private String reporte;
 	private String transaccion;
 
@@ -124,6 +125,13 @@ public class MensajeFilterDTO extends BasicFilterDTO
 		return reporte;
 	}
 	
+	public String getAdjuntoURL() {
+		return adjuntoURL;
+	}
+	
+	public void setAdjuntoURL(String adjuntoURL) {
+		this.adjuntoURL = adjuntoURL;
+	}
 	
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;

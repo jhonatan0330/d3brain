@@ -11,6 +11,7 @@ public class FEResponse {
 	private String xml;
 	private String cufe;
 	private String zipUrl;
+	private String zipBase64;
 	
 	public String getError() {
 		return error;
@@ -42,5 +43,10 @@ public class FEResponse {
 	public void setZipUrl(String zipUrl) {
 		this.zipUrl = zipUrl;
 	}
-	
+	public String getZipBase64() {
+		return zipBase64;
+	}
+	public void setZipBase64(String zipBase64) {
+		this.zipBase64 = zipBase64;
+	}
 }

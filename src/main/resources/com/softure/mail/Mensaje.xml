@@ -18,6 +18,7 @@
 			,cmsj_correoerror as  correoError
 			,cmsj_correo as  correo
 			,cmsj_reporte as  reporte
+			,cmsj_adjuntourl as  adjuntoURL
 			,cmsj_transaccion as  transaccion
 			,cmsj_estado as estado
 		from mensaje_msjp a
@@ -63,6 +64,9 @@
 			</if>
 			<if test="reporte!=null">
 				and cmsj_reporte = #{reporte}
+			</if>
+			<if test="adjuntoURL!=null">
+				and cmsj_adjuntourl = #{adjuntoURL}
 			</if>
 			<if test="transaccion!=null">
 				and cmsj_transaccion = #{transaccion}
@@ -138,6 +142,9 @@
 		<if test="reporte!=null">
 			,cmsj_reporte
 		</if>
+		<if test="adjuntoURL!=null">
+			,cmsj_adjuntourl
+		</if>
 		<if test="transaccion!=null">
 			,cmsj_transaccion
 		</if>
@@ -179,6 +186,9 @@
 		<if test="reporte!=null">
 			,#{reporte}
 		</if>
+		<if test="adjuntoURL!=null">
+			,#{adjuntoURL}
+		</if>
 		<if test="transaccion!=null">
 			,#{transaccion}
 		</if>
@@ -202,6 +212,7 @@
 				cmsj_correoerror = #{correoError},
 				cmsj_correo = #{correo},
 				cmsj_reporte = #{reporte},
+				cmsj_adjuntourl = #{adjuntoURL},
 				cmsj_transaccion = #{transaccion},
 				cmsj_estado =#{estado}
 		<include refid="whereMensajePrimaryKeyFragment" />
@@ -221,6 +232,7 @@
 			,cmsj_correoerror as  correoError
 			,cmsj_correo as  correo
 			,cmsj_reporte as  reporte
+			,cmsj_adjuntourl as adjuntoURL
 			,cmsj_transaccion as  transaccion
 			,cmsj_estado as estado
 		from mensaje_msjp a
@@ -268,6 +280,7 @@
 			,null as  correoError
 			,correo as  correo
 			,null as  reporte
+			,null as adjuntoURL
 			,null as transaccion
 			,null as estado
 		from propiedad_${llavePropiedad} ( #{documento}, #{modificador}, #{token})
