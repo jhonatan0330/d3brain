@@ -254,6 +254,7 @@ public class MailGenerateMessageService {
                 mensaje.setCorreo(iDestinatario);
                 if (mensajeReporte != null)
                     mensaje.setReporte(mensajeReporte.getValor());
+                mensaje.setAdjuntoURL(attachLink);
                 mensaje.setParametros(parametros);
                 messageService.save(mensaje);
                 System.out.format("\n[%s] Mensaje ( %s ) asignado a correo externo (%s)", documento.getNombre(),

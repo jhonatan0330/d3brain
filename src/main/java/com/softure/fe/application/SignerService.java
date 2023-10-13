@@ -187,7 +187,7 @@ public class SignerService {
 	private String getName(Document doc) {
 		String name = "fe.xml";
 		NodeList tags = doc.getElementsByTagName("cbc:ID");
-		if (tags.getLength() == 1)
+		if (tags.getLength() > 0)
 			name = tags.item(0).getTextContent() + ".xml";
 		return name;
 	}
