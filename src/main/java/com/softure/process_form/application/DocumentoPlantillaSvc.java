@@ -341,6 +341,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			caracteristicaService.createFieldDifference(iCampo, templateUpdate.getLlaveTabla(), token);
 			//newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
 		}
+		
+		PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				templateUpdate.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "60", token);
+		historico.setFechaInicial(new Date());
+		historico.setMotivo("Historico " + templateUpdate.getNombre());
+		historico.setTexto("00:00:07:00:00");
+		configuracionSvc.guardar(historico, token);
 		/*List<PropiedadDTO> updatePermission = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateReferenceId, Propiedades.PERMISO_PLANTILLA_MODIFICAR, token);
 		for (PropiedadDTO propiedadDTO : updatePermission) {
 			PropiedadDTO parametroTipo = new PropiedadDTO();
