@@ -685,6 +685,15 @@ union
         	and (rr.brac_permisoscompletos = false or rr.brac_permisoscompletos is null)
         	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
     </select>
+    
+    <select id="getTemplateWithoutUpdate" resultType="PropiedadDTO">
+		select 
+			distinct dd.cdpl_llave as campo 
+		from documentoplantilla_dplp dd
+			inner join propiedad_ppdp prop_modificar on (prop_modificar.cppd_campo =dd.cdpl_llave and prop_modificar.cppd_estado = 'A' and prop_modificar.cppd_propiedadvalor= 'PROP_78')
+		where dd.cdpl_estado = 'A' 
+			and dd.cdpl_llave not in (select prop_plantilla.cppd_campo from propiedad_ppdp prop_plantilla where prop_plantilla.cppd_estado = 'A' and prop_plantilla.cppd_propiedadvalor= 'PROP_242')
+	</select>	
 <!--// END region script-->
 
 </mapper>

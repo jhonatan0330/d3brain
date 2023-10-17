@@ -8,6 +8,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.binding.BindingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // END region interImport
@@ -489,14 +490,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private void identificadorPlantilla(PropiedadDTO dto, String token) throws ServerException {
 		if (dto.getValor().compareTo("*") == 0) {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
-				DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
-				DocumentoPlantillaDTO plantilla = new DocumentoPlantillaDTO();
-				plantilla.setProceso(plantillaPrincipal.getProceso());
-				plantilla.setImagen(plantillaPrincipal.getImagen());
-				plantilla.setNombre(plantillaPrincipal.getNombre() + " - ANULAR ");
-				plantilla.setObjetivo(dto.getMotivo());
-				plantilla = plantillaService.guardar(plantilla, token);
-				plantillaService.crearCampoProcesos(plantilla.getLlaveTabla(), token);
+				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token);
+				dto.setValor(plantilla.getLlaveTabla());
+			}
+			if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
+				DocumentoPlantillaDTO plantilla = plantillaService.createUpdateTemplate(dto.getCampo(), token);
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 		}
@@ -585,18 +583,28 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						plantillaId = filtro.getPlantilla();
 					}
 				} else {
-					// Obtengo la plantilla para que la busqueda sea correcta
-					PropiedadFilterDTO filtro = new PropiedadFilterDTO();
-					filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
-					filtro.setCampo(dto.getCampo());
-					filtro.setPropiedadValor("PROP_19");
-					filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
-					PropiedadDTO filtroPlantilla = consultaUnica(filtro);
-					if (filtroPlantilla == null)
-						throw new ServerException(
-								"Este campo no tiene una fuente de datos para obtener la plantilla y validar el campo.\nValor : "
-										+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
-					plantillaId = filtroPlantilla.getValor();
+					if (dto.getKey().compareTo(Propiedades.CAMPO_DIFERENCIAS) == 0) {
+						// Obtengo la plantilla para que la busqueda sea correcta
+						PropiedadDTO filtroPlantilla = getPropertyDifferenceTemplate(campoService.consultaXId(dto.getCampo()).getPlantilla());
+						if (filtroPlantilla == null)
+							throw new ServerException(
+									"Este campo no tiene una plantilla de diferencias y validar el campo.\nValor : "
+											+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
+						plantillaId = filtroPlantilla.getValor();
+					}else {
+						// Obtengo la plantilla para que la busqueda sea correcta
+						PropiedadFilterDTO filtro = new PropiedadFilterDTO();
+						filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
+						filtro.setCampo(dto.getCampo());
+						filtro.setPropiedadValor("PROP_19");
+						filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						PropiedadDTO filtroPlantilla = consultaUnica(filtro);
+						if (filtroPlantilla == null)
+							throw new ServerException(
+									"Este campo no tiene una fuente de datos para obtener la plantilla y validar el campo.\nValor : "
+											+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
+						plantillaId = filtroPlantilla.getValor();	
+					}
 				}
 
 			}
@@ -649,6 +657,25 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return false;
 	}
 
+	public PropiedadDTO getPropertyDifferenceTemplate(String templateId) throws ServerException {
+		PropiedadFilterDTO filtro = new PropiedadFilterDTO();
+		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
+		filtro.setCampo(templateId);
+		filtro.setPropiedadValor("PROP_242");
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		return consultaUnica(filtro);
+	}
+	
+	public PropiedadDTO getPropertyDifferenceField(String field) throws ServerException {
+		PropiedadFilterDTO filtro = new PropiedadFilterDTO();
+		filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
+		filtro.setCampo(field);
+		filtro.setPropiedadValor("PROP_243");
+		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		PropiedadDTO filtroPlantilla = consultaUnica(filtro);
+		return filtroPlantilla;
+	}
+	
 	private void identificadorBodega(PropiedadDTO dto) throws ServerException {
 		BodegaDTO bodega = bodegaService.consultaXId(dto.getValor());
 		if (bodega == null) {
@@ -843,22 +870,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	private boolean validar(PropiedadDTO dto, String token) throws ServerException {
 		switch (dto.getKey()) {
-		case Propiedades.PROCESO_ACCIONES: {
-			identificadorPlantilla(dto, token);
-			break;
-		}
-		case Propiedades.PLANTILLA_AUXILIAR: {
-			identificadorPlantilla(dto, token);
-			break;
-		}
-		case Propiedades.API_NEW_DOCUMENT: {
-			identificadorPlantilla(dto, token);
-			break;
-		}
-		case Propiedades.API_SECONDARY_DOCUMENT: {
-			identificadorPlantilla(dto, token);
-			break;
-		}
+		case Propiedades.PROCESO_ACCIONES: 
+		case Propiedades.PLANTILLA_AUXILIAR: 
+		case Propiedades.API_NEW_DOCUMENT: 
+		case Propiedades.API_SECONDARY_DOCUMENT: 
+		case Propiedades.PLANTILLA_DIFERENCIAS: 
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;
@@ -872,6 +888,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.UPDATE_INFORMATIVE_FIELD:
+		case Propiedades.CAMPO_DIFERENCIAS:
 		case Propiedades.DEPENDE: {
 			return identificadorCampo(dto, token);
 		}
@@ -994,7 +1011,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorTarifario(dto);
 			break;
 		}
-
+		case Propiedades.PERMISO_PLANTILLA_MODIFICAR: {
+			validateTemplateDifference(dto, token);
+			break;
+		}
 		case Propiedades.PERIODO_LIMPIEZA_HISTORICO:
 		case Propiedades.TEMPORIZADOR: {
 			validarTemporizador(dto);
@@ -1008,10 +1028,29 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return false;
 	}
 
+	private void validateTemplateDifference(PropiedadDTO dto, String token) throws ServerException {
+		if(getPropertyDifferenceTemplate(dto.getCampo())==null) 
+			guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, dto.getCampo(),
+					Propiedades.PLANTILLA_DIFERENCIAS, "*", token), token);
+		try {
+			List<PropiedadDTO> pendientes = propiedadMapper.getTemplateWithoutUpdate();
+			if(pendientes==null || pendientes.isEmpty()) return;
+			for (PropiedadDTO propiedadDTO : pendientes) {
+				guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, propiedadDTO.getCampo(),
+						Propiedades.PLANTILLA_DIFERENCIAS, "*", token), token);
+			}	
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		}catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+		
+	}
+
 	private void validarTemporizador(PropiedadDTO dto) throws ServerException {
 		if (dto.getTexto() == null)
 			throw new ServerException(
-					"Cuando registras una propiedad de temporizador debes colocar en el texto lla clave de tiempo de repeticion. OBserva la ayuda");
+					"Cuando registras una propiedad de temporizador debes colocar en el texto la clave de tiempo de repeticion. Observa la ayuda");
 	}
 
 	/*

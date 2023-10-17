@@ -190,7 +190,7 @@ public class CallDocumentNewFromAutomatic {
 			nuevo.setLlaveTabla(null);
 			nuevo.setTransaccion(transaccion);
 			nuevo.setFuncionario(userAdmin.getLlaveTabla());
-			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token);
+			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true);
 		} else {
 			return null;
 		}

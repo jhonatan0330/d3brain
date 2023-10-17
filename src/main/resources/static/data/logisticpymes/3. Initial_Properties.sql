@@ -459,9 +459,14 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_238' , 'W', 'REEMPLAZAR CODIGO REFERENCIADO TIPO LISTA', 'API_CODE_REFERENCE_LIST', 'REQUISITO', true, true);
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
-	VALUES('PROP_239' , 'L', 'MONITOREAR', 'PLANTILLA_MONITOR', 'REQUISITO', true);
+	VALUES('PROP_239' , 'C', 'MONITOREAR', 'PLANTILLA_MONITOR', 'REQUISITO', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_240' , 'T', 'MENSAJE ADJUNTO URL', 'MENSAJE_ADJUNTO_URL', 'REQUISITO', true);	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_241' , 'L', 'MENSAJE ADJUNTO URL', 'MENSAJE_ADJUNTO_URL', 'REQUISITO', true);
 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_242' , 'L', 'PLANTILLA REGISTRA DIFERENCIAS', 'PLANTILLA_DIFERENCIAS', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_243' , 'C', 'CAMPO EN PLANTILLA DE DIFERENCIAS', 'CAMPO_DIFERENCIAS', 'REQUISITO');
+	

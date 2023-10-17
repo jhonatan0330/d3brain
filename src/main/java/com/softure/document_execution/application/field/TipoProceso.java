@@ -390,6 +390,9 @@ public class TipoProceso {
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			if (multiple.isEmpty()) {
 				if (bd != null) {
+					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+					pCampo.getDifference().setValorOpcion(bd.getValorOpcion());
+					pCampo.getDifference().setValorText(bd.getValorText());
 					bd.setCampoDTO(pCampo.getCampoDTO());
 					if (pCampo.getValorOpcion() == null) {
 						bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());

@@ -22,6 +22,8 @@ public class TipoFecha {
 	@Autowired private PedidoVentaCaracteristicaSvc campoService;
 	
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
+				pCampo.getCampoDTO().getNombre());
 		if(Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL)==null && pCampo.getValorFecha()==null) 
 			throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre() + " del formulario " +pCampo.getCampoDTO().getPlantillaNombre());
 		if(pCampo.getValorFecha()!=null){

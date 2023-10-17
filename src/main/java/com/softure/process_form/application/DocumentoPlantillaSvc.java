@@ -163,14 +163,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO duplicar(DocumentoPlantillaDTO dto, String token)throws ServerException{
-		// BEGIN region duplicar
 		DocumentoPlantillaDTO bd = consultaXId(dto.getLlaveTabla());
 		// Copio plantilla
 		DocumentoPlantillaDTO copy = new DocumentoPlantillaDTO();
 		copy.setProceso(bd.getProceso());
 		copy.setNombre("COPY_" + bd.getNombre());
 		copy.setImagen(bd.getImagen());
-		copy.setObjetivo(bd.getObjetivo());
+		copy.setObjetivo(".");
 		
 		configurarInicioPlantilla(copy);
 		copy = super.save(copy);
@@ -182,7 +181,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newCampo.setFormato(iCampo.getFormato());
 			newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
-			newCampo.setObjetivo(iCampo.getObjetivo());
+			newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(copy.getLlaveTabla());
 			newCampo = caracteristicaService.guardar(newCampo, token);
@@ -304,6 +303,59 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			}
 		}
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
+	}
+	
+	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token) throws ServerException {
+		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
+		DocumentoPlantillaDTO templateDelete = new DocumentoPlantillaDTO();
+		templateDelete.setProceso(principalTemplate.getProceso());
+		templateDelete.setNombre(principalTemplate.getNombre() + " - DELETE");
+		templateDelete.setObjetivo(".");
+		templateDelete = guardar(templateDelete, token);
+		crearCampoProcesos(templateDelete.getLlaveTabla(), token);
+		return templateDelete;
+	}
+	
+	public DocumentoPlantillaDTO createUpdateTemplate(String templateReferenceId, String token) throws ServerException {
+		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
+		DocumentoPlantillaDTO templateUpdate = new DocumentoPlantillaDTO();
+		templateUpdate.setProceso(principalTemplate.getProceso());
+		templateUpdate.setNombre(principalTemplate.getNombre() + " - UPDATE");
+		templateUpdate.setObjetivo(".");
+		templateUpdate.setCodigo(principalTemplate.getCodigo()+ "_U");
+		templateUpdate = guardar(templateUpdate, token);
+		
+		DocumentoPlantillaCaracteristicaDTO campoProceso = new DocumentoPlantillaCaracteristicaDTO();
+		campoProceso.setCodigo("DOCUMENTO_DIFF");
+		campoProceso.setNombre("DOCUMENTO");
+		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
+		campoProceso.setOrden(1);
+		campoProceso.setPlantilla(templateUpdate.getLlaveTabla());
+		campoProceso.setObjetivo(".");
+		campoProceso = caracteristicaService.guardar(campoProceso, token);
+		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoProceso.getLlaveTabla(),
+				Propiedades.PLANTILLA_AUXILIAR, templateReferenceId, token), token);
+		// Copio campos
+		principalTemplate.setCaracteristicas(caracteristicaService.listarCamposPlantilla(principalTemplate.getLlaveTabla(), null));
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : principalTemplate.getCaracteristicas()) {
+			caracteristicaService.createFieldDifference(iCampo, templateUpdate.getLlaveTabla(), token);
+			//newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
+		}
+		/*List<PropiedadDTO> updatePermission = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateReferenceId, Propiedades.PERMISO_PLANTILLA_MODIFICAR, token);
+		for (PropiedadDTO propiedadDTO : updatePermission) {
+			PropiedadDTO parametroTipo = new PropiedadDTO();
+			parametroTipo.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
+			parametroTipo.setCampo(templateUpdate.getLlaveTabla());
+			parametroTipo.setKey(Propiedades.PERMISO_PLANTILLA_CREAR);
+			parametroTipo.setValor("1");
+			parametroTipo.setRol(propiedadDTO.getRol());
+			parametroTipo.setRolExcluyente(propiedadDTO.getRol());
+			parametroTipo.setBloqueo(propiedadDTO.getBloqueo());
+			parametroTipo.setUsuario(propiedadDTO.getUsuario());
+			parametroTipo.setUsuarioExcluyente(propiedadDTO.getUsuarioExcluyente());
+			configuracionSvc.guardar(propiedadDTO, token);
+		}*/
+		return templateUpdate;
 	}
 	
 	public String crearCampoProcesos(String plantilla, String token) throws ServerException {

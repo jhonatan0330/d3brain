@@ -32,7 +32,8 @@ public class TipoNumero {
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
-
+		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
+				pCampo.getCampoDTO().getNombre());
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
@@ -185,6 +186,8 @@ public class TipoNumero {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
+				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+				pCampo.getDifference().setValorNumero(pCampo.getDifference().getValorNumero().negate());
 				return pCampo;
 			} else {
 				if (bd.getValorNumero() != null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
@@ -193,13 +196,22 @@ public class TipoNumero {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
+					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+					if(bd.getValorNumero()==null) {
+						pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
+					}else {
+						pCampo.getDifference().setValorNumero(pCampo.getValorNumero().add(bd.getValorNumero().negate()));	
+					}
 				}
 			}
 		}
 		if (pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0) {
 			return pCampo;
 		} else {
-
+			if(pCampo.getDifference()==null) {
+				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+				pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
+			}
 			return campoService.guardar(pCampo, token);
 		}
 	}

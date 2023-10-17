@@ -163,7 +163,6 @@ public class Propiedades {
 	public static final String SOLICITAR_FECHAS = "SOLICITAR_FECHAS";
 	public static final String COPY_TEXT = "COPY_TEXT";
 	public static final String AYUDA = "AYUDA";
-	public static final String PLANTILLA_ANULAR = "PLANTILLA_ANULAR";
 	public static final String UBICACION = "UBICACION";
 	public static final String FUNCION_SQL_VALIDAR_ANTES = "FUNCION_SQL_VALIDAR_ANTES";
 
@@ -190,6 +189,9 @@ public class Propiedades {
 	public static final String PERMISO_CAMPO_RENDER = "PERMISO_CAMPO_RENDER";
 	public static final String PERMISO_CAMPO_OPCIONAL = "PERMISO_CAMPO_OPCIONAL";
 
+	public static final String PLANTILLA_ANULAR = "PLANTILLA_ANULAR";
+	public static final String PLANTILLA_DIFERENCIAS = "PLANTILLA_DIFERENCIAS";
+	public static final String CAMPO_DIFERENCIAS = "CAMPO_DIFERENCIAS";
 	public static final String PLANTILLA_TIPO_ROL = "PLANTILLA_TIPO_ROL";
 	public static final String PLANTILLA_TIPO_REPORTE = "PLANTILLA_TIPO_REPORTE";
 	public static final String PLANTILLA_TIPO_CUENTA = "PLANTILLA_TIPO_CUENTA";
@@ -197,7 +199,6 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_BODEGA = "PLANTILLA_TIPO_BODEGA";
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
-	
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 
 	public static final String GPS = "GPS";

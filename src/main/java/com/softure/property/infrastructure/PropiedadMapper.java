@@ -54,5 +54,6 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD(@Param("plantillas") List<DocumentoPlantillaDTO> plantillas);
 	List<PropiedadDTO> listarPlantillasSimplificar(@Param("plantillas") List<DocumentoPlantillaDTO> plantillas, @Param("usuario")String usuario, @Param("fecha") Date fecha);
 	List<PropiedadDTO> getFullPropertiesToConfiguration();
+	List<PropiedadDTO> getTemplateWithoutUpdate();
 // END region aditionalMethods
 }

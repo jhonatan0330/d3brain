@@ -108,7 +108,7 @@ public class CallDocumentCRUD {
 	@Autowired
 	private CallBPM bpmService;
 
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
 		String userId = getUserID(token);
 		if (session != null) {
@@ -122,7 +122,7 @@ public class CallDocumentCRUD {
 		dto.setTransaccion(tran.getLlaveTabla());
 		dto.setFuncionario(userId);
 		try {
-			PedidoVentaDTO result = saveWithoutTransaction(dto, token);
+			PedidoVentaDTO result = saveWithoutTransaction(dto, token, false);
 			logSvc.finalizar(tran.getFecha(), dto.getTransaccion(), session + "-" + userId);
 			return result;
 		} catch (Exception e) {
@@ -131,7 +131,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO inactivateDocumentWithProcess(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO,
 			String token) throws ServerException {
 		// BEGIN PedidoVenta_inactivar
@@ -160,7 +160,7 @@ public class CallDocumentCRUD {
 		// END PedidoVenta_inactivar
 	}
 
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
 		return updateWithoutTransaction(dto, modificadorId, token, false);
 	}
@@ -182,6 +182,8 @@ public class CallDocumentCRUD {
 		if (!isUpdateAutomatic
 				&& Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
+		if( Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_DIFERENCIAS)== null)
+			throw new ServerException("Por favor configura la plantilla de registrar las diferencias. " + plantilla.getNombre());
 		// PedidoVentaDTO pdv = consultaXId(dto.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null) {
 			if (dto.getEstadoExpediente() == null)
@@ -204,8 +206,8 @@ public class CallDocumentCRUD {
 			dto.setNombre(bd.getNombre());// Cuando envio modificar lo envio vacio
 			dto.setConsecutivo(bd.getConsecutivo());
 		}
-		String campoDescripcion = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);// Descripcion para los
-																								// roles
+		// Descripcion para los roles
+		String campoDescripcion = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);
 		if (!campoDescripcion.isEmpty()) {
 			for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 				if (campoDescripcion.compareTo(iterador.getCampo()) == 0) {
@@ -219,10 +221,10 @@ public class CallDocumentCRUD {
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validateBalance(dto, plantilla);
 		String transaccion = dto.getTransaccion();
-		boolean crearTraza = false;// Cuando un formulario modifica otro no debo crear traza ya que esta la del
-									// proceso
-		if (transaccion == null || bd.getTransaccion().compareTo(transaccion) == 0) {// Si son diferetnes vienen de otro
-																						// proceso
+		// Cuando un formulario modifica otro no debo crear traza ya que esta la del proceso
+		boolean crearTraza = false;
+		// Si son diferetnes vienen de otro proceso
+		if (transaccion == null || bd.getTransaccion().compareTo(transaccion) == 0) {
 			transaccion = transaccionSvc.crear(token).getLlaveTabla();
 			crearTraza = true;
 		}
@@ -248,16 +250,67 @@ public class CallDocumentCRUD {
 				dto.getFuncionario(), token);
 		bpmService.execute(dto, token);
 		manageTemplateTypes(dto, plantilla, token);
+		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion,token);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
-			relacionGestorService.trazar(dto.getLlaveTabla(), null, plantilla.getNombre(), dto.getEstadoExpediente(),
-					dto.getEstadoExpediente(), (dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null,
-					token, null, dto.getHistorico(), transaccion);
+			relacionGestorService.trazar(dto.getLlaveTabla(),
+					(updateDocument == null) ? null : updateDocument.getLlaveTabla(), plantilla.getNombre(),
+					dto.getEstadoExpediente(), dto.getEstadoExpediente(),
+					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null, token, null,
+					dto.getHistorico(), transaccion);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return dto;
 	}
 
-	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token) throws ServerException {
+	private PedidoVentaDTO generateUpdateDocument(DocumentoPlantillaDTO template, PedidoVentaDTO dto, String transaccion, String token)
+			throws ServerException {
+		if(dto == null || dto.getCaracteristicas() == null || dto.getCaracteristicas().isEmpty()) return null;
+		PropiedadDTO propertyDiference = Propiedades.obtenerParametro(template, Propiedades.PLANTILLA_DIFERENCIAS);
+		// if(propertyDiference==null) se supone que esto se valida antes
+		List<PedidoVentaCaracteristicaDTO> fieldsDifference = new ArrayList<>();
+		for (PedidoVentaCaracteristicaDTO iField : dto.getCaracteristicas()) {
+			if(iField.getDifference()!=null) {
+				PropiedadDTO fieldDifference = Propiedades.obtenerParametro(iField.getCampoDTO(), Propiedades.CAMPO_DIFERENCIAS);
+				if(fieldDifference==null) throw new ServerException("El campo " + iField.getCampoDTO().getNombre() + " no tiene la propiedad de campo diferencia"); 
+				iField.getDifference().setCampo(fieldDifference.getValor());
+				fieldsDifference.add(iField.getDifference());
+			}
+		}
+		if(fieldsDifference.isEmpty()) return null;
+		
+		DocumentoPlantillaDTO updateTemplate = new DocumentoPlantillaDTO();
+		updateTemplate.setLlaveTabla(propertyDiference.getValor());
+		updateTemplate.setCaracteristicas(documentoPlantillaCaracteristicaService.listarCamposPlantilla(updateTemplate.getLlaveTabla(), token)); 
+		
+		PedidoVentaDTO updateDocument = new PedidoVentaDTO();
+		updateDocument.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+		updateDocument.setPlantilla(updateTemplate.getLlaveTabla());
+		updateDocument.setTransaccion(transaccion);
+		updateDocument.setFuncionario(getUserID(token));
+		String documentId = dto.getLlaveTabla();
+		for (DocumentoPlantillaCaracteristicaDTO iField : updateTemplate.getCaracteristicas()) {
+			PedidoVentaCaracteristicaDTO newField = null;
+			for (PedidoVentaCaracteristicaDTO iDifference : fieldsDifference) {
+				if(iDifference.getCampo().compareTo(iField.getLlaveTabla())==0) {
+					newField = iDifference;
+					fieldsDifference.remove(newField);
+					break;
+				}
+			}
+			if(newField==null) {
+				newField = new PedidoVentaCaracteristicaDTO();
+				newField.setCampo(iField.getLlaveTabla());
+				if(documentId!=null) {
+					newField.setValorOpcion(dto.getLlaveTabla());
+					documentId = null;
+				}
+			}
+			updateDocument.getCaracteristicas().add(newField);
+		}
+		return saveWithoutTransaction(updateDocument, token, true);
+	}
+
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic) throws ServerException {
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
 		if (dto.getFuncionario() == null)
@@ -266,7 +319,7 @@ public class CallDocumentCRUD {
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		plantillaFilter.setSecurityToken(token);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos(token));
+				(isAutomatic)?true:rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
@@ -412,8 +465,8 @@ public class CallDocumentCRUD {
 							+ " no viene registrado en el documento " + plantilla.getNombre());
 			}
 			dto.setCaracteristicas(ordenadas);
-			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {// Valido para actualizar que el campo si se pueda
-																	// modiifcar
+			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {
+				// Valido para actualizar que el campo si se pueda modiifcar
 				if (!plantilla.getCaracteristicas().isEmpty()) {
 					boolean iContadorModificadas = false;
 					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getCaracteristicas()) {
@@ -440,11 +493,11 @@ public class CallDocumentCRUD {
 			// 2. Coloco los dependientes//Actualizar dependencias despues de los camps para
 			// que queden completas asi el campo este despues en orden
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-				String[] props = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO,
-						Propiedades.INFORMATIVE_DATA, Propiedades.UPDATE_INFORMATIVE_FIELD };
+				String[] props = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
+						Propiedades.UPDATE_INFORMATIVE_FIELD };
 				List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
 						props);
-				if (codigoDepende!=null) {
+				if (codigoDepende != null) {
 					for (PropiedadDTO codigo : codigoDepende) {
 						for (PedidoVentaCaracteristicaDTO fieldExpediente : dto.getCaracteristicas()) {
 							if (codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0) {
@@ -498,8 +551,8 @@ public class CallDocumentCRUD {
 		if (fieldsConsecutive != null && !fieldsConsecutive.isEmpty()) {
 			if (pedido.getCaracteristicas() == null || pedido.getCaracteristicas().size() == 0)
 				throw new ServerException("Se debe colocar la caracteristica nombre del documento");
-			PedidoVentaCaracteristicaDTO fieldFirstValueConsecutive = null; // aqui obtengo el valor porque tengo varios
-																			// campos propiedad
+			PedidoVentaCaracteristicaDTO fieldFirstValueConsecutive = null; 
+			// aqui obtengo el valor porque tengo varios campos propiedad
 			for (PedidoVentaCaracteristicaDTO iField : pedido.getCaracteristicas()) {
 				if (fieldFirstValueConsecutive != null)
 					break;
@@ -626,8 +679,8 @@ public class CallDocumentCRUD {
 	}
 
 	private void validateDoubleCodeIdActive(PedidoVentaDTO pedido, String codigoNuevo) throws ServerException {
-		PedidoVentaFilterDTO filtroNombreFilter = new PedidoVentaFilterDTO();// Valido que no existan documentos con el
-																				// mismo nombre ni cerrados ni activos
+		PedidoVentaFilterDTO filtroNombreFilter = new PedidoVentaFilterDTO();
+		// Valido que no existan documentos con el	mismo nombre ni cerrados ni activos
 		filtroNombreFilter.setNombre(codigoNuevo);
 		filtroNombreFilter.setPlantilla(pedido.getPlantilla());
 		List<PedidoVentaDTO> mismoNombre = pedidoService.listarConsulta(filtroNombreFilter);

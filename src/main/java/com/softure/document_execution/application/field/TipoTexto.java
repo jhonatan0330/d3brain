@@ -17,6 +17,8 @@ public class TipoTexto {
 	private PedidoVentaCaracteristicaSvc campoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
+				pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 			pCampo.setValorText(null);
 		if (pCampo.getLlaveTabla() == null
@@ -99,6 +101,8 @@ public class TipoTexto {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
+				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+				pCampo.getDifference().setValorText(bd.getValorText());
 				return pCampo;
 			} else {
 				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
@@ -107,6 +111,8 @@ public class TipoTexto {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
+					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+					pCampo.getDifference().setValorText(bd.getValorText());
 				}
 			}
 		}
