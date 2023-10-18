@@ -36,7 +36,7 @@ public class CallUpdateInformativeField {
 		if (updateProperties == null) return;
 		if (pCampo.getDependientes() == null)
 			throw new ServerException(
-					"Error al soncusltar dependientes");
+					"Error al consultar dependientes");
 		for (PropiedadDTO propiedadDTO : updateProperties) {
 			List<RelacionInternaDTO> relaciones = relacionService
 					.relacionesPropiedad(propiedadDTO.getLlaveTabla());

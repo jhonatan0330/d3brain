@@ -470,3 +470,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_243' , 'C', 'CAMPO EN PLANTILLA DE DIFERENCIAS', 'CAMPO_DIFERENCIAS', 'REQUISITO');
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo)
+	VALUES('PROP_244' , 'T', 'GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION', 'CAMPO PARA GENERAR DOCUMENTO DEL RESULTADO DE LA ITERACION', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_245' , 'P', 'MENSAJE ADJUNTO URL', 'MENSAJE_ADJUNTO_URL', 'REQUISITO', true);

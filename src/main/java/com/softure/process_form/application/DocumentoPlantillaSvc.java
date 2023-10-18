@@ -348,6 +348,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		historico.setMotivo("Historico " + templateUpdate.getNombre());
 		historico.setTexto("00:00:07:00:00");
 		configuracionSvc.guardar(historico, token);
+		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				templateUpdate.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 		/*List<PropiedadDTO> updatePermission = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateReferenceId, Propiedades.PERMISO_PLANTILLA_MODIFICAR, token);
 		for (PropiedadDTO propiedadDTO : updatePermission) {
 			PropiedadDTO parametroTipo = new PropiedadDTO();

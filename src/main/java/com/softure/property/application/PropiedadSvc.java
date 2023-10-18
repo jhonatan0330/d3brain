@@ -908,6 +908,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.UBICACION:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE:
+		case Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR:
 		case Propiedades.RELACIONAR_DOCUMENTOS:
 		case Propiedades.RETIRAR_DOCUMENTOS:

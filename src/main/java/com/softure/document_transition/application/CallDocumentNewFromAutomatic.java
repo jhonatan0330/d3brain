@@ -75,7 +75,8 @@ public class CallDocumentNewFromAutomatic {
 		transicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
-				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR };
+				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR
+				, Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION};
 		List<PropiedadDTO> camposGenerar = Propiedades.obtenerVariosParametro(transicion, cars);
 		if (camposGenerar == null || camposGenerar.isEmpty())
 			return null;
@@ -106,7 +107,7 @@ public class CallDocumentNewFromAutomatic {
 				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
 				if (relaciones == null || relaciones.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 				for (RelacionInternaDTO iRelacion : relaciones) {
-					if (documento != null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
+					if (documento != null && documento.getPlantilla()!=null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
 						camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(
 								documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
 					} else {
@@ -139,6 +140,14 @@ public class CallDocumentNewFromAutomatic {
 						}
 					}					
 				}
+				break;
+			case Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION:
+				PedidoVentaCaracteristicaDTO fieldNewFromIteration = copyFieldDocument(null, iPropiedadDTO.getValor());
+				fieldNewFromIteration.setValorOpcion(documento.getLlaveTabla());
+				fieldNewFromIteration.setValorText(documento.getNombre());
+				fieldNewFromIteration.setValorFecha(documento.getFecha());
+				fieldNewFromIteration.setValorNumero(documento.getConsecutivo());
+				camposNuevos.add(fieldNewFromIteration);
 				break;
 			case Propiedades.GENERA_DOCUMENTO_TEXTO:
 				String textValueToNewField = iPropiedadDTO.getValor();

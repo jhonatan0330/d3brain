@@ -52,7 +52,10 @@ public class CalculatorUtil {
         BigDecimal righOperator;
         BigDecimal result = null;
 
-
+        text  = text.replace("++", "+");
+        text  = text.replace("+-", "-");
+        text  = text.replace("--", "+");
+        text  = text.replace("-+", "-");
         posOperator = text.indexOf("-",1);
         if(posOperator!=-1){
         	leftOperator = crearBigDecimalMensaje(text.substring(0,posOperator));

@@ -133,6 +133,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	
 	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico, String campo)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
+		if(documento ==null) return null;
 		if( historico == null || historico == 0 ) {
 			return pedidoVentaCaracteristicaMapper.listar2Documento(documento, campo);
 		}else {
@@ -263,7 +264,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 	
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
-		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, Propiedades.DEPENDE);
+		String[] cars = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO};
+		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, cars);
 		if(codigoDepende==null || codigoDepende.isEmpty()) return;
 		//Valido que la cantidad de dependientes este correcta
 		if(dependientes==null || dependientes.isEmpty())throw new ServerException("Revise los dependientes.\n " + campo.getNombre());
