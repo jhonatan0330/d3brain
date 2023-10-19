@@ -222,6 +222,7 @@ public class Propiedades {
 	public static final String REP_EXCLUDE_STORAGE_FILE = "REP_EXCLUDE_STORAGE_FILE";
 	public static final String OCULTAR_REPORTE = "OCULTAR_REPORTE";
 	public static final String REP_AUTOPRINT = "REP_AUTOPRINT";
+	public static final String REP_TYPE_EXPORT = "REP_TYPE_EXPORT";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -1067,6 +1068,10 @@ public class Propiedades {
 		}
 		case REP_AUTOPRINT: {
 			ruleProperty = "El reporte se imprime despues de creado o modificado el documento.\n";
+			break;
+		}
+		case REP_TYPE_EXPORT: {
+			ruleProperty = "Esta propiedad permite definr el tipo de reporte a exportar las siguientes son las opciones:.\n XLS :  Descarga un reporte en excel \n HTML :  Muestra el reporte en una pagina web \n PDF : descarga un formato en PDF";
 			break;
 		}
 		case REP_VISIBLE_STATE: {

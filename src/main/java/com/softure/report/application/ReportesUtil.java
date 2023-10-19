@@ -192,20 +192,12 @@ public class ReportesUtil {
 			
 			JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametrosReporte, conexion);
+			
 			ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();
 			HtmlExporter vHTMLExporter = new HtmlExporter();
 			vHTMLExporter.setExporterInput(new SimpleExporterInput( jasperPrint));
 			vHTMLExporter.setExporterOutput(new  SimpleHtmlExporterOutput(vByteOutputStream));
-			/*SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
-			configuration.setCollapseRowSpan(true);
-			configuration.setDetectCellType(true);
-			configuration.setIgnoreGraphics(false);
-			configuration.setRemoveEmptySpaceBetweenColumns(true);
-			configuration.setRemoveEmptySpaceBetweenRows(true);
-			configuration.setWhitePageBackground(false);
-			configuration.setWrapText(true);
-			vHTMLExporter.setConfiguration(configuration);
-			*/
+
 			vHTMLExporter.exportReport();
 			vByteOutputStream.close();	
 			return vByteOutputStream.toByteArray();

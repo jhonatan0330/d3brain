@@ -474,3 +474,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	VALUES('PROP_244' , 'T', 'GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION', 'CAMPO PARA GENERAR DOCUMENTO DEL RESULTADO DE LA ITERACION', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_245' , 'P', 'MENSAJE ADJUNTO URL', 'MENSAJE_ADJUNTO_URL', 'REQUISITO', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_246' , 'E', 'TIPO REPORTE', 'REP_TYPE_EXPORT', 'REQUISITO', true);
+	
+	

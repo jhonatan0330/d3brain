@@ -255,28 +255,35 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			//Seccion del reporte
 			GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
 			byte[] resultado=null;
-			if (tipoReporte!=null) {
-				if(tipoReporte.toUpperCase().equals("XLS")) {
+			if (tipoReporte==null) {
+				tipoReporte = Propiedades.obtenerValor(reporte, Propiedades.REP_TYPE_EXPORT);
+				if(tipoReporte.isEmpty()) {
+					tipoReporte = "pdf";
+					parametrosJasper.put("P_JASPERTIPO", "PDF");
+				}else {
+					parametrosJasper.put("P_JASPERTIPO", tipoReporte);
+				}
+			}
+			switch (tipoReporte.toUpperCase()) {
+				case "XLS": {
 					propiedadExcel = parametrosJasper.get(Propiedades.REPORTE_EXCEL);
 					if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
 						resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);					
 					}else {
 						resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
-					}	
-				}else {
-					if(tipoReporte.toUpperCase().equals("HTML")) {
-						resultado = generadorReporte.generarReporteHTML(jrxmlReporte, parametrosJasper);
-					}else {						
-						resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
 					}
+					break;
 				}
-			}else{
-				resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
-			}
+				case "HTML": {
+					resultado = generadorReporte.generarReporteHTML(jrxmlReporte, parametrosJasper);
+					break;
+				}
+				default:
+					resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
+			}			
 			ejecucion.setFechaFin(new Date());
 			try {
-				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
-				if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte, token, "reports"));
+				if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), token, "reports"));
 				ejecucion = ejecucionService.save(ejecucion);
 			}catch (Exception e) {	}
 			finish.setData(ejecucion);

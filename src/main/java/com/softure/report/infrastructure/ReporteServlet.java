@@ -41,6 +41,9 @@ public class ReporteServlet extends HttpServlet{
 			else if (fileName.toLowerCase().contains(".xls")) {
 				response.setContentType("application/vnd.ms-excel");
 			}
+			else if (fileName.toLowerCase().contains(".html")){
+				response.setContentType("text/html");
+			}
 			else if (fileName.toLowerCase().contains(".htm")){
 				response.setContentType("text/html");
 			}

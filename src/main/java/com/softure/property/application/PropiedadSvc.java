@@ -1346,9 +1346,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						throw new ServerException(
 								"Todas las imagenes de un reporte deben tener la propiedad isLazy con valor = true.");
 				} else {
-					throw new ServerException(
-							"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN  en el reporte "
-									+ report.getNombre() + " de la plantilla " + report.getPlantillaNombre());
+					//throw new ServerException(
+						//	"Todas las imagenes del reporte deben instanciarse como una propiedad REPORTE IMAGEN  en el reporte "
+							//		+ report.getNombre() + " de la plantilla " + report.getPlantillaNombre());
 				}
 			}
 		}
