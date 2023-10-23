@@ -115,6 +115,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 			filter.setLlaveTabla(token);
 			UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
 			if(sesion==null) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
+			if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
 			if(sesion.getFechaCierre()!=null && sesion.getFechaCierre().compareTo(new Date())<0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
 			return sesion.getUsuario();
 		}

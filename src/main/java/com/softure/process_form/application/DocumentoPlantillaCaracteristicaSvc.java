@@ -219,7 +219,11 @@ public class DocumentoPlantillaCaracteristicaSvc
 		
 		DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 		newCampo.setCodigo(iCampo.getCodigo());
-		newCampo.setFormato(iCampo.getFormato());
+		if(iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO)==0) {
+			newCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+		}else {
+			newCampo.setFormato(iCampo.getFormato());
+		}
 		newCampo.setImagen(iCampo.getImagen());
 		newCampo.setNombre(iCampo.getNombre());
 		newCampo.setObjetivo(".");
