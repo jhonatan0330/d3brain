@@ -161,7 +161,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 						textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getTextoFiltro();
 					}
 					if (textToCompare
-							.contains(ConstantesGenerales.COMA + iDoc.getNombre() + ConstantesGenerales.COMA)) {
+							.contains(ConstantesGenerales.COMA + iDoc.getNombre().toUpperCase() + ConstantesGenerales.COMA)) {
 						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 						break;
 					}
