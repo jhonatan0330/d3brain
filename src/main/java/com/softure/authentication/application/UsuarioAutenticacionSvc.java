@@ -336,8 +336,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				reportarError(dto, "Autenticacion incorrecta");
 			if (sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
 				reportarError(dto, "Se encuentra inactiva la sesion");
-			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) < 0)
-				reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");
+			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
+				reportarError(dto, "Usuario perdio autenticacion.\nCODE:caud_usuario");
 			autenticacion = new UsuarioAutenticacionDTO();
 			autenticacion.setUsuario(sesion.getUsuario());
 		} else {

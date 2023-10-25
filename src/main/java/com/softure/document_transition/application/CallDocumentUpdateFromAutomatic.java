@@ -44,28 +44,31 @@ public class CallDocumentUpdateFromAutomatic {
 	 */
 
 	/**
-	 * Mientras que idenrfico para que hago lo de las relaciones me toco este coso raro
+	 * Mientras que idenrfico para que hago lo de las relaciones me toco este coso
+	 * raro
+	 * 
 	 * @param documentId
 	 * @param updaterDocumentId
 	 * @param propertiesToSearchFieldDestiny
 	 * @param token
 	 * @param transaction
-	 * @param extractionText 
+	 * @param extractionText
 	 * @throws ServerException
 	 */
-	public void executeFromAPIExtraction(PedidoVentaDTO modificador,
-			List<PropiedadDTO> propertiesToSearchFieldDestiny, String token, String extractionText)
-			throws ServerException {
-		//Cuando son servicios asincronos no hay un documento modificador?? de pronto afecte las extracciones
-		if(modificador==null) return;
-		//PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
+	public void executeFromAPIExtraction(PedidoVentaDTO modificador, List<PropiedadDTO> propertiesToSearchFieldDestiny,
+			String token, String extractionText) throws ServerException {
+		// Cuando son servicios asincronos no hay un documento modificador?? de pronto
+		// afecte las extracciones
+		if (modificador == null)
+			return;
+		// PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
 		Map<String, Object> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
 			PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
-			Object itemToAdition = extractionMap.get(propiedadDTO.getLlaveTabla()); 
-			if(itemToAdition!=null && itemToAdition.getClass().getName().compareTo("java.lang.String")==0) {				
+			Object itemToAdition = extractionMap.get(propiedadDTO.getLlaveTabla());
+			if (itemToAdition != null && itemToAdition.getClass().getName().compareTo("java.lang.String") == 0) {
 				newField.setValorText((String) itemToAdition);
 				// campo
 				List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
@@ -76,12 +79,14 @@ public class CallDocumentUpdateFromAutomatic {
 					}
 				}
 				newField.setModificado(true);
-				// Coloque esta validacion ya que cuando una relacion no concuerda no se debe agregar
-				if(newField.getCampo()!=null)generateFieldsFromProperty.add(newField);
+				// Coloque esta validacion ya que cuando una relacion no concuerda no se debe
+				// agregar
+				if (newField.getCampo() != null)
+					generateFieldsFromProperty.add(newField);
 			}
 		}
-		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador, token,
-				propertiesToSearchFieldDestiny);
+		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador,
+				token, propertiesToSearchFieldDestiny);
 	}
 
 	/*
@@ -113,14 +118,18 @@ public class CallDocumentUpdateFromAutomatic {
 			String transaction, PedidoVentaDTO procesoDTO, String token,
 			List<PropiedadDTO> propertiesToSearchFieldDestiny) throws ServerException {
 
-		// hay un escenario en el que se modifica un campo del mismo formulario, ver logimax con guias blu
-		// Lo que hago es borra los que tienen modificado false asi solo hago estas funciones cuando es necesario
+		// hay un escenario en el que se modifica un campo del mismo formulario, ver
+		// logimax con guias blu
+		// Lo que hago es borra los que tienen modificado false asi solo hago estas
+		// funciones cuando es necesario
 		List<PedidoVentaCaracteristicaDTO> fieldsNewToIncludeActiveModify = new ArrayList<>();
 		for (PedidoVentaCaracteristicaDTO pedidoVentaCaracteristicaDTO : fieldsNewToInclude) {
-			if(pedidoVentaCaracteristicaDTO.getModificado())fieldsNewToIncludeActiveModify.add(pedidoVentaCaracteristicaDTO);
+			if (pedidoVentaCaracteristicaDTO.getModificado())
+				fieldsNewToIncludeActiveModify.add(pedidoVentaCaracteristicaDTO);
 		}
-		if(fieldsNewToIncludeActiveModify.isEmpty())return;
-		
+		if (fieldsNewToIncludeActiveModify.isEmpty())
+			return;
+
 		PedidoVentaDTO updateDocument = new PedidoVentaDTO();
 		updateDocument.setLlaveTabla(procesoDTO.getLlaveTabla());
 		updateDocument.setEstadoExpediente(procesoDTO.getEstadoExpediente());
@@ -138,8 +147,8 @@ public class CallDocumentUpdateFromAutomatic {
 			updateDocument.setTransaccion(transaction);
 			updateDocument.setCaracteristicas(newFields);
 
-			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction.updateWithoutTransaction(updateDocument,
-					updaterDocumentId, token, true);
+			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction
+					.updateWithoutTransaction(updateDocument, updaterDocumentId, token, true);
 			procesoDTO.setNombre(pedidoActualizado.getNombre());
 			// Cambie pCampo.getPrincipal().getLlaveTabla() x el que esta modificadndo creo
 			// que eso funciona
@@ -200,12 +209,14 @@ public class CallDocumentUpdateFromAutomatic {
 							// Despues valido si se modifica o sigue igual en la funcionalidad de cada campo
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);
-							
-							// Tengo que actualizar el modificador por un tema en el api que no guarda los cambios de los campos
-							if(process.getCaracteristicas()!=null && !process.getCaracteristicas().isEmpty()) {
+
+							// Tengo que actualizar el modificador por un tema en el api que no guarda los
+							// cambios de los campos
+							if (process.getCaracteristicas() != null && !process.getCaracteristicas().isEmpty()) {
 								for (PedidoVentaCaracteristicaDTO iCampoModificador : process.getCaracteristicas()) {
-									if(iCampoModificador.getCampo().compareTo(camposActualesDTO.getLlaveTabla())==0) {
-										//Por el momento solo texto
+									if (iCampoModificador.getCampo()
+											.compareTo(camposActualesDTO.getLlaveTabla()) == 0) {
+										// Por el momento solo texto
 										iCampoModificador.setValorText(iDependiente.getValorText());
 										break;
 									}
@@ -217,12 +228,14 @@ public class CallDocumentUpdateFromAutomatic {
 					break;
 				}
 			}
-			if (newField == null) {// Copio caracteristicas que existen
-				for (PedidoVentaCaracteristicaDTO iActual : currentFields) {
-					if (iActual.getCampo().compareTo(camposActualesDTO.getLlaveTabla()) == 0) {
+			for (PedidoVentaCaracteristicaDTO iActual : currentFields) {
+				if (iActual.getCampo().compareTo(camposActualesDTO.getLlaveTabla()) == 0) {
+					if (newField == null) {// Copio caracteristicas que existen
 						newField = iActual;
-						break;
+					} else {
+						newField.setLlaveTabla(iActual.getLlaveTabla());
 					}
+					break;
 				}
 			}
 			if (newField == null) {// En caso que no exista anteriormente la creo
@@ -261,7 +274,8 @@ public class CallDocumentUpdateFromAutomatic {
 				if (campoComparar == null) {
 					return true;
 				}
-				if ((iCampoModificado.getValorText()==null && campoComparar.getValorText()!=null)|| iCampoModificado.getValorText().compareTo(campoComparar.getValorText()) != 0) {
+				if ((iCampoModificado.getValorText() == null && campoComparar.getValorText() != null)
+						|| iCampoModificado.getValorText().compareTo(campoComparar.getValorText()) != 0) {
 					return true;
 				}
 				// se que una funcion reusaria el codigo peor no se como hacerlo apra 3 tipos de
