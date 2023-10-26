@@ -238,7 +238,7 @@ public class TipoConfiguracion {
 					Propiedades.VISIBLE_VALOR_DEPENDIENTE);
 			if (visibleValueOK == null || pCampo.getDependientes() == null) {
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + ")");
+						+ " es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + ")");
 			} else {
 				String optionsToSelect = null;
 				for (PropiedadDTO propiedadDTO : visibleValueOK) {
