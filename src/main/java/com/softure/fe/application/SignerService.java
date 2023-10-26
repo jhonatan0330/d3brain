@@ -103,7 +103,8 @@ public class SignerService {
 	}
 
 	private Document loadDocument(String xmlInPath) throws IOException, SAXException, ParserConfigurationException {
-
+		// en las FE varios no mbre tiene & ej:J&G, estos nombres mostraban error
+		xmlInPath = xmlInPath.replaceAll("\\&", "\\<\\!\\[CDATA\\[\\&\\]\\]\\>");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DocumentBuilder builder = factory.newDocumentBuilder();
