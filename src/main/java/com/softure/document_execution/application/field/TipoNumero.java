@@ -187,7 +187,7 @@ public class TipoNumero {
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
 				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-				pCampo.getDifference().setValorNumero(pCampo.getDifference().getValorNumero().negate());
+				pCampo.getDifference().setValorNumero(bd.getValorNumero().negate());
 				return pCampo;
 			} else {
 				if (bd.getValorNumero() != null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
