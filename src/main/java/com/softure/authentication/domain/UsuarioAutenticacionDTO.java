@@ -4,7 +4,7 @@ import java.util.List;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.softure.authorization.domain.ModuloContratadoDTO;
+import com.softure.authorization.domain.ModuloDTO;
 import com.softure.java.domain.BasicDTO;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 
@@ -12,8 +12,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("UsuarioAutenticacionDTO")
 public class UsuarioAutenticacionDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String usuario;
@@ -26,7 +24,7 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private OrganizacionDTO organizacion;
 	private String mensaje;
 	private String token;
-	private List<ModuloContratadoDTO> modulos;
+	private List<ModuloDTO> modulos;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaMaxima;
 	private String ip;
@@ -103,11 +101,11 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	public String getToken() {
 		return token;
 	}
-	public void setModulos(List<ModuloContratadoDTO> modulos) {
+	public void setModulos(List<ModuloDTO> modulos) {
 		this.modulos = modulos;
 	}
 	
-	public List<ModuloContratadoDTO> getModulos() {
+	public List<ModuloDTO> getModulos() {
 		return modulos;
 	}
 	public void setFechaMaxima(Date fechaMaxima) {

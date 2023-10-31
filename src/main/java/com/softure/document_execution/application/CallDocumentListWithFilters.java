@@ -72,8 +72,11 @@ public class CallDocumentListWithFilters {
 		if (dto.getFiltroParametro() != null)
 			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());
 		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().endsWith(" "))dto.setFiltroParametro(dto.getFiltroParametro().substring(0,dto.getFiltroParametro().length()-1));
-		if (dto.getNombre() != null)
+		if (dto.getNombre() != null) {
+			dto.setNombre(dto.getNombre().replaceAll("\s", ""));
 			dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
+			if (dto.getNombre().isEmpty()) dto.setNombre(null);
+		}
 		if (dto.getCampoPropiedad() != null) {
 			PropiedadDTO propiedadFuncion = propiedadService.consultaXId(dto.getCampoPropiedad());
 			return listadoCompleto(
@@ -637,7 +640,8 @@ public class CallDocumentListWithFilters {
 				pvrDTO.setTransaccionRegistro(null);
 				pvrDTO.setCampoDTO(campo);
 				dto.getCaracteristicas().add(pvrDTO);
-				if (pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
+				if ((pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
+						|| pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0)
 						&& pvrDTO.getValorOpcion() != null) {
 					PedidoVentaDTO filtroProceso = new PedidoVentaDTO();
 					filtroProceso.setLlaveTabla(pvrDTO.getValorOpcion());

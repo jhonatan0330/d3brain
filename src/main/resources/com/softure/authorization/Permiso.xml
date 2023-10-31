@@ -10,7 +10,7 @@
 			,cper_rolacceso as  rolAcceso
 			,(select cdpl_nombre from rolacceso_racp, documentoplantilla_dplp where cdpl_llave = crac_plantilla and crac_llave = cper_rolacceso) as  rolAccesoNombre
 			,cper_modulo as  modulo
-			,(select cmdc_nombre from modulocontratado_mdcp where cmdc_llave =  cper_modulo) as  moduloNombre
+			,(select cmod_nombre from modulo_modp where cmod_llave = cper_modulo) as  moduloNombre
 			,cper_estado as estado
 		from permiso_perp a
 	</sql>

@@ -60,6 +60,11 @@ public class MainController {
 		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior()==null));
 	}
 	
+	@PostMapping(value="/checkToken")
+	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request, @RequestHeader(name="Authorization", required = false) String token) throws ServerException {
+		return usuarioAutenticacionService.checkToken(token, HttpUtils.getRequestIP(request));
+	}
+	
 	@PostMapping(value="/cambiarClave")
 	public UsuarioAutenticacionDTO cambiarClave(HttpServletRequest request, @RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));

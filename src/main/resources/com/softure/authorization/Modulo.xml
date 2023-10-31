@@ -10,6 +10,7 @@
 			,cmod_nombre as  nombre
 			,cmod_url as  url
 			,cmod_descripcion as  descripcion
+			,cmod_imagen as  imagen
 			,bmod_movil as  movil
 			,cmod_estado as estado
 		from modulo_modp a
@@ -79,6 +80,9 @@
 		<if test="descripcion!=null">
 			,cmod_descripcion
 		</if>
+		<if test="imagen!=null">
+			,cmod_imagen
+		</if>
 		<if test="movil!=null">
 			,bmod_movil
 		</if>
@@ -96,6 +100,9 @@
 		<if test="descripcion!=null">
 			,#{descripcion}
 		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
 		<if test="movil!=null">
 			,#{movil}
 		</if>
@@ -111,6 +118,7 @@
 				cmod_nombre = #{nombre},
 				cmod_url = #{url},
 				cmod_descripcion = #{descripcion},
+				cmod_imagen = #{imagen},
 				bmod_movil = #{movil},
 				cmod_estado =#{estado}
 		<include refid="whereModuloPrimaryKeyFragment" />
@@ -138,9 +146,15 @@
 		order by cmod_nombre 
 		<include refid="paginationModuloFragment" />
 	</select>
-	
 
-
+	<select id="modulosUsuario" parameterType="ModuloDTO" resultType="ModuloDTO">
+		<include refid="selectModuloFragment" />
+		where cmod_estado = 'A' and cmod_llave in (
+			select cper_modulo from permiso_perp where cper_estado = 'A' and cper_rolacceso in (
+				select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
+					select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
+		order by cmod_nombre
+	</select>
 <!--// BEGIN region script-->
 <!--// END region script-->
 

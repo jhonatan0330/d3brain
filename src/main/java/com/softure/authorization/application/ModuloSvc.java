@@ -88,7 +88,12 @@ public class ModuloSvc extends BasicSvc<ModuloDTO, ModuloFilterDTO> {
 		// END Modulo_guardar
 	}
 
-// BEGIN region aditionalMethods
-// END region aditionalMethods
+	public List<ModuloDTO> modulosUsuario(ModuloFilterDTO dto)throws ServerException{
+		// BEGIN region modulosUsuario
+		// Aqui el security token es el usuario por el momento
+		List<ModuloDTO> modulos =  moduloMapper.modulosUsuario(dto);
+		return modulos;
+		// END region modulosUsuario
+	}
 
 }

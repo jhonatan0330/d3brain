@@ -16,8 +16,8 @@ import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
-import com.softure.authorization.application.ModuloContratadoSvc;
-import com.softure.authorization.domain.ModuloContratadoFilterDTO;
+import com.softure.authorization.application.ModuloSvc;
+import com.softure.authorization.domain.ModuloFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
@@ -44,7 +44,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Autowired
 	private UsuarioAutenticacionAutorizacionSvc authorizationService;
 	@Autowired
-	private ModuloContratadoSvc modulosService;
+	private ModuloSvc modulosService;
 	@Autowired
 	private OrganizacionSvc organizacionService;
 	@Autowired
@@ -329,6 +329,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
 		}
 		UsuarioAutenticacionDTO autenticacion = null;
+
 		UsuarioSesionDTO sesion = null;
 		if (dto.getSecurityToken() != null && dto.getClave() == null) {
 			sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
@@ -390,10 +391,28 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			autenticacion
 					.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
 
-			ModuloContratadoFilterDTO filterMod = new ModuloContratadoFilterDTO();
+			ModuloFilterDTO filterMod = new ModuloFilterDTO();
 			filterMod.setSecurityToken(sesion.getLlaveTabla());
 			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));
 		}
+		return autenticacion;
+	}
+
+	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
+		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
+		if (sesion == null || sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0
+				|| (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)) {
+			UsuarioSesionErrorDTO use = new UsuarioSesionErrorDTO();
+			use.setIp(ip);
+			use.setFecha(new Date());
+			use.setSesion(token);
+			use.setError("Erro validando Token");
+			errorService.save(use);
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		}
+
+		UsuarioAutenticacionDTO autenticacion = new UsuarioAutenticacionDTO();
+		autenticacion.setToken(sesion.getLlaveTabla());
 		return autenticacion;
 	}
 

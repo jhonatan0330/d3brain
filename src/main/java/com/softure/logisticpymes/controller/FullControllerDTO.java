@@ -27,14 +27,11 @@ import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorFilterDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
-import com.softure.authorization.application.ModuloContratadoSvc;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.application.PermisoSvc;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
-import com.softure.authorization.domain.ModuloContratadoDTO;
-import com.softure.authorization.domain.ModuloContratadoFilterDTO;
 import com.softure.authorization.domain.ModuloDTO;
 import com.softure.authorization.domain.ModuloFilterDTO;
 import com.softure.authorization.domain.PermisoDTO;
@@ -4626,91 +4623,6 @@ public class FullControllerDTO {
 	public DeduccionProductoDTO guardarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return deduccionProductoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired private ModuloContratadoSvc moduloContratadoService;
-	
-	@PostMapping(value="/consultaXIdModuloContratado")
-	public ModuloContratadoDTO consultaXIdModuloContratado(@RequestBody String llave) throws FlexException {
-		try {
-			return moduloContratadoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosModuloContratado")
-	public int contarResultadosModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
-		try {
-			return moduloContratadoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaModuloContratado")
-	public ModuloContratadoDTO consultaUnicaModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
-		try {
-			return moduloContratadoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaModuloContratado")
-	public List<ModuloContratadoDTO> listarConsultaModuloContratado(@RequestBody ModuloContratadoFilterDTO dto) throws FlexException  {
-		try {
-			return moduloContratadoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarModuloContratado")
-	public ModuloContratadoDTO activarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloContratadoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarModuloContratado")
-	public ModuloContratadoDTO inactivarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloContratadoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarModuloContratado")
-	public ModuloContratadoDTO actualizarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloContratadoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarModuloContratado")
-	public ModuloContratadoDTO guardarModuloContratado(@RequestBody ModuloContratadoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloContratadoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	@PostMapping(value="/modulosUsuarioModuloContratado")
-	public List<ModuloContratadoDTO> modulosUsuarioModuloContratado(@RequestBody ModuloContratadoFilterDTO dto)throws FlexException {
-		try {
-			return moduloContratadoService.modulosUsuario(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

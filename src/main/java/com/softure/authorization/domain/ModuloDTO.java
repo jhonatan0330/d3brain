@@ -9,14 +9,13 @@ import com.softure.java.domain.BasicDTO;
 
 @Alias("ModuloDTO")
 public class ModuloDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String nombre;
 	private String url;
 	private String descripcion;
 	private boolean movil;
+	private String imagen;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -46,7 +45,13 @@ public class ModuloDTO extends BasicDTO
 	public boolean getMovil() {
 		return movil;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
 
 }
