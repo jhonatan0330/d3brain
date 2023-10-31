@@ -38,4 +38,5 @@ SELECT
 from rolacceso_racp rr
 cross join modulo_modp mm
 where mm.cmod_llave !='AdministracionLogisticpymes'
+	and mm.cmod_llave !='UIVotante'
 	and rr.crac_estado = 'A'
