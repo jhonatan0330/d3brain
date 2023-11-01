@@ -12,7 +12,7 @@ public class ModuloDTO extends BasicDTO
 {
 
 	private String nombre;
-	private String url;
+	private String moduloUrl;
 	private String descripcion;
 	private boolean movil;
 	private String imagen;
@@ -24,12 +24,12 @@ public class ModuloDTO extends BasicDTO
 	public String getNombre() {
 		return nombre;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setModuloUrl(String moduloUrl) {
+		this.moduloUrl = moduloUrl;
 	}
 	
-	public String getUrl() {
-		return url;
+	public String getModuloUrl() {
+		return moduloUrl;
 	}
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;

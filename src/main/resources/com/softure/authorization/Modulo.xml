@@ -8,7 +8,7 @@
 		select
 			cmod_llave as  llaveTabla
 			,cmod_nombre as  nombre
-			,cmod_url as  url
+			,cmod_url as  moduloUrl
 			,cmod_descripcion as  descripcion
 			,cmod_imagen as  imagen
 			,bmod_movil as  movil
@@ -74,7 +74,7 @@
 		<if test="nombre!=null">
 			,cmod_nombre
 		</if>
-		<if test="url!=null">
+		<if test="moduloUrl!=null">
 			,cmod_url
 		</if>
 		<if test="descripcion!=null">
@@ -94,8 +94,8 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
-		<if test="url!=null">
-			,#{url}
+		<if test="moduloUrl!=null">
+			,#{moduloUrl}
 		</if>
 		<if test="descripcion!=null">
 			,#{descripcion}
@@ -116,7 +116,7 @@
 		update modulo_modp
 			set
 				cmod_nombre = #{nombre},
-				cmod_url = #{url},
+				cmod_url = #{moduloUrl},
 				cmod_descripcion = #{descripcion},
 				cmod_imagen = #{imagen},
 				bmod_movil = #{movil},
@@ -128,7 +128,7 @@
 		select
 			cmod_llave as  llaveTabla
 			,cmod_nombre as  nombre
-			,cmod_url as  url
+			,cmod_url as  moduloUrl
 			,cmod_descripcion as  descripcion
 			,bmod_movil as  movil
 			,cmod_estado as estado

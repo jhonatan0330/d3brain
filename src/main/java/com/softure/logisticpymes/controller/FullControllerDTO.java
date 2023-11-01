@@ -5723,4 +5723,14 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
+	
+	@PostMapping(value="/modulosUsuarioModuloContratado")
+	public List<ModuloDTO> modulosUsuarioModuloContratado(@RequestBody ModuloFilterDTO dto)throws FlexException {
+		try {
+			return moduloService.modulosUsuario(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	
 }
