@@ -138,7 +138,7 @@ begin
 	from z_drg_documentorelaciongestor dd 
 	group by cdrg_documentoprincipal , cdrg_estadofinal
 	having count(*)>1
-	10000;
+	limit 10000;
 	
 	for ele in select principal, estadofinal 
            from tbl_ultima_z
