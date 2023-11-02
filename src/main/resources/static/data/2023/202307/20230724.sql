@@ -114,7 +114,7 @@ begin
 	where bdrg_estadorepetido = false
 	group by cdrg_documentoprincipal , cdrg_estadofinal
 	having count(*)>1
-	limit 10000;
+	limit 1000;
 
 	for ele in select principal, estadofinal from tbl_ultima
     loop 
@@ -138,7 +138,7 @@ begin
 	from z_drg_documentorelaciongestor dd 
 	group by cdrg_documentoprincipal , cdrg_estadofinal
 	having count(*)>1
-	limit 10000;
+	limit 1000;
 	
 	for ele in select principal, estadofinal 
            from tbl_ultima_z
