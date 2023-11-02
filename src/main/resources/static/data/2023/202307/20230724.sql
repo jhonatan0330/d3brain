@@ -154,21 +154,3 @@ begin
 END;';
 
 select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
-
-select * from organizar_ultima_gestion();
