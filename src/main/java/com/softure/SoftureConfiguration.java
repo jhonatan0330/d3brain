@@ -112,7 +112,7 @@ public class SoftureConfiguration {
 			// System.out.println("Buscando Script = "  + sqlName );
 			Resource fileSql = new ClassPathResource(sqlName);
 			if(fileSql.exists()) {
-				System.out.println("**************Ejecutando Script = "  + sqlName );
+				System.out.println("**************Ejecutando Script = "  + sqlName  + " ****************" + new Date().toString());
 				error = new TransactionTemplate(transactionManager(ds)).execute((ts) -> {
 					Connection conn = null;
 					boolean fallaScript = true;

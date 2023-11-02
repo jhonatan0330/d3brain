@@ -112,6 +112,7 @@ begin
 		cdrg_estadofinal as estadofinal
 	from documentorelaciongestor_drgp dd 
 	where bdrg_estadorepetido = false
+		and cdrg_estadofinal is not null
 	group by cdrg_documentoprincipal , cdrg_estadofinal
 	having count(*)>1
 	limit 1000;
@@ -135,7 +136,9 @@ begin
 	select 
 		cdrg_documentoprincipal as principal,
 		cdrg_estadofinal as estadofinal
-	from z_drg_documentorelaciongestor dd 
+	from z_drg_documentorelaciongestor dd
+	where bdrg_estadorepetido = false
+		and cdrg_estadofinal is not null 
 	group by cdrg_documentoprincipal , cdrg_estadofinal
 	having count(*)>1
 	limit 1000;
