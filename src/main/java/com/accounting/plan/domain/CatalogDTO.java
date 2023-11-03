@@ -1,6 +1,7 @@
 package com.accounting.plan.domain;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.apache.ibatis.type.Alias;
 
@@ -10,7 +11,9 @@ public class CatalogDTO {
 	private String state;
 	private String name;
 	private String code;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date initialDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
 
 	public String getKey() {
