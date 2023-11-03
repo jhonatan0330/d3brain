@@ -38,10 +38,10 @@ public class FactService {
 	}
 
 	public List<FactDTO> getMany(FactFilterDTO dto) throws ServerException {
-		if (dto.getStartIndex() == null)
-			dto.setStartIndex(0);
-		if (dto.getEndIndex() == null || dto.getEndIndex() == 0)
-			dto.setEndIndex(200);
+		if (dto.getIndexStart() == null)
+			dto.setIndexStart(0);
+		if (dto.getIndexEnd() == null || dto.getIndexEnd() == 0)
+			dto.setIndexEnd(200);
 		try {
 			return mapper.getMany(dto);
 		} catch (BindingException ex) {

@@ -55,10 +55,10 @@
 
 	<sql id="paginationAccountFragment">
 			<if test="indexStart!=null">
-				LIMIT #{indexStart}
+				OFFSET #{indexStart}
 			</if>
 			<if test="indexEnd!=null">
-				OFFSET #{indexEnd}
+				LIMIT #{indexEnd}
 			</if>
 	</sql>
 

@@ -1,6 +1,7 @@
 package com.accounting.plan.domain;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.apache.ibatis.type.Alias;
 
@@ -8,7 +9,9 @@ import org.apache.ibatis.type.Alias;
 public class FactDTO {
 	private String key;
 	private String state;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date registerDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date factDate;
 	private String dimension;
 	private String value;

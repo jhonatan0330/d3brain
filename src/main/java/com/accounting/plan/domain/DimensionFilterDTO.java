@@ -8,8 +8,8 @@ public class DimensionFilterDTO {
 	private String key;
 	private String state;
 	private String filter;
-	private Integer startIndex;
-	private Integer endIndex;
+	private Integer indexStart;
+	private Integer indexEnd;
 	private String account;
 	private String name;
 	private String code;
@@ -40,20 +40,20 @@ public class DimensionFilterDTO {
 		this.filter = filter;
 	}
 
-	public Integer getStartIndex() {
-		return startIndex;
+	public Integer getIndexStart() {
+		return indexStart;
 	}
 
-	public void setStartIndex(Integer startIndex) {
-		this.startIndex = startIndex;
+	public void setIndexStart(Integer indexStart) {
+		this.indexStart = indexStart;
 	}
 
-	public Integer getEndIndex() {
-		return endIndex;
+	public Integer getIndexEnd() {
+		return indexEnd;
 	}
 
-	public void setEndIndex(Integer endIndex) {
-		this.endIndex = endIndex;
+	public void setIndexEnd(Integer indexEnd) {
+		this.indexEnd = indexEnd;
 	}
 
 	public String getAccount() {

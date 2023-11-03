@@ -2,6 +2,7 @@ package com.accounting.plan.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import org.apache.ibatis.type.Alias;
 
@@ -12,6 +13,7 @@ public class ResultMapDTO {
 	private String account;
 	private String catalog;
 	private Integer level;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date mapDate;
 	private Integer year;
 	private Integer month;
