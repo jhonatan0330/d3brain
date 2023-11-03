@@ -13,3 +13,4 @@ ALTER TABLE cuenta_cue ADD ccue_plantilla varchar(32);
 ALTER TABLE cuenta_cue ADD ccue_campo varchar(32);
 ALTER TABLE cuenta_cue ADD ccue_tipo varchar(1) NOT NULL ;
 ALTER TABLE cuenta_cue ADD ccue_naturaleza varchar(1) NOT NULL ;
+ALTER TABLE cuenta_cue ADD ccue_situacion varchar(10) NOT NULL ;

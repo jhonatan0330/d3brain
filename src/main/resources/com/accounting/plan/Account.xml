@@ -15,6 +15,7 @@
 			,ccue_campo as field
 			,ccue_tipo as type
 			,ccue_naturaleza as operation
+			,ccue_situacion as status
 			,ccue_estado as state
 		from cuenta_cue a
 	</sql>
@@ -50,6 +51,9 @@
 			</if>
 			<if test="operation!=null">
 				and ccue_naturaleza = #{operation}
+			</if>
+			<if test="status!=null">
+				and ccue_situacion = #{status}
 			</if>
 	</sql>
 
@@ -111,6 +115,9 @@
 		<if test="operation!=null">
 			,ccue_naturaleza
 		</if>
+		<if test="status!=null">
+			,ccue_situacion
+		</if>
 		<if test="state!=null">
 			,ccue_estado
 		</if>
@@ -140,6 +147,9 @@
 		<if test="operation!=null">
 			,#{operation}
 		</if>
+		<if test="status!=null">
+			,#{status}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -157,6 +167,7 @@
 				ccue_campo = #{field} 
 				ccue_tipo = #{type} 
 				ccue_naturaleza = #{operation} 
+				ccue_situacion = #{status} 
 				ccue_estado =#{state}
 		<include refid="whereAccountPrimaryKeyFragment" />
 	</select>

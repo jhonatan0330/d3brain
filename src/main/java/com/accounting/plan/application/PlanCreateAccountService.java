@@ -35,9 +35,12 @@ public class PlanCreateAccountService {
 	@Autowired
 	private ResultMapExtendService mapService;
 
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account, String token) throws ServerException {
-		account = accountService.save(account, token);
+		return  accountService.save(account, token);
+	}
+	
+	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public AccountDTO configurate(AccountDTO account, String token) throws ServerException {
 		if (account.getType() != null && account.getType().compareTo(AccountConst.TYPE_GROUP) != 0
 				&& account.getTemplate() != null) {
 			FormatVoucherDTO format = new FormatVoucherDTO();
@@ -76,14 +79,14 @@ public class PlanCreateAccountService {
 				ResultMapConst.TYPE_PUNTUAL, token);
 		createLevel3(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
 				ResultMapConst.TYPE_TEMPORAL, token);
-		/*createLevel4(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
+		createLevel4(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
 				ResultMapConst.TYPE_PUNTUAL, token);
 		createLevel4(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
 				ResultMapConst.TYPE_TEMPORAL, token);
 		createLevel5(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
 				ResultMapConst.TYPE_PUNTUAL, token);
 		createLevel5(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
-				ResultMapConst.TYPE_TEMPORAL, token);*/
+				ResultMapConst.TYPE_TEMPORAL, token);
 	}
 
 	private void createLevel0(Date initialDate, String accountId, String catalogCode, String type, String token)

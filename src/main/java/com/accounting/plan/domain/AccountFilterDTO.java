@@ -18,6 +18,7 @@ public class AccountFilterDTO {
 	private String field;
 	private String type;
 	private String operation;
+	private String status;
 
 	public String getKey() {
 		return key;
@@ -121,6 +122,14 @@ public class AccountFilterDTO {
 
 	public void setOperation(String operation) {
 		this.operation = operation;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
