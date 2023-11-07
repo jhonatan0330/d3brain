@@ -15,12 +15,12 @@ CREATE TABLE _ind_${code}_temporal (
 	nrmp_dia int,
 	nrmp_hora int,
 	nrmp_minuto int,
-	mrmp_cantidad int NOT NULL DEFAULT 0,
-	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
+	nrmp_cantidad int NOT NULL DEFAULT 0,
+	nrmp_porcentaje NUMERIC(9,6) NOT NULL DEFAULT 0,
+	mrmp_saldoanterior NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
-	mrmp_saldoanterior NUMERIC(18,6) NOT NULL DEFAULT 0,
-	mrmp_saldonuevo NUMERIC(18,6) NOT NULL DEFAULT 0,
+	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
 	citm_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_ind_${code}_temporal PRIMARY KEY (crmp_llave)
 );
@@ -37,11 +37,12 @@ CREATE TABLE _ind_${code}_puntual (
 	nrmp_dia int,
 	nrmp_hora int,
 	nrmp_minuto int,
-	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
+	nrmp_cantidad int NOT NULL DEFAULT 0,
+	nrmp_porcentaje NUMERIC(9,6) NOT NULL DEFAULT 0,
+	mrmp_saldoanterior NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
-	mrmp_saldoanterior NUMERIC(18,6) NOT NULL DEFAULT 0,
-	mrmp_saldonuevo NUMERIC(18,6) NOT NULL DEFAULT 0,
+	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
 	crmp_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_ind_${code}_puntual PRIMARY KEY (crmp_llave)
 );

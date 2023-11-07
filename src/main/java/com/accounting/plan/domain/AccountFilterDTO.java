@@ -11,14 +11,16 @@ public class AccountFilterDTO {
 	private Integer indexStart;
 	private Integer indexEnd;
 	private String catalog;
-	private String code;
+	private String wbs;
 	private String name;
+	private String code;
+	private String status;
 	private String parent;
-	private String template;
-	private String field;
+	private Integer level;
 	private String type;
 	private String operation;
-	private String status;
+	private String template;
+	private String field;
 
 	public String getKey() {
 		return key;
@@ -68,12 +70,12 @@ public class AccountFilterDTO {
 		this.catalog = catalog;
 	}
 
-	public String getCode() {
-		return code;
+	public String getWbs() {
+		return wbs;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setWbs(String wbs) {
+		this.wbs = wbs;
 	}
 
 	public String getName() {
@@ -84,6 +86,22 @@ public class AccountFilterDTO {
 		this.name = name;
 	}
 
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public String getParent() {
 		return parent;
 	}
@@ -92,20 +110,12 @@ public class AccountFilterDTO {
 		this.parent = parent;
 	}
 
-	public String getTemplate() {
-		return template;
+	public Integer getLevel() {
+		return level;
 	}
 
-	public void setTemplate(String template) {
-		this.template = template;
-	}
-
-	public String getField() {
-		return field;
-	}
-
-	public void setField(String field) {
-		this.field = field;
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
 	public String getType() {
@@ -124,12 +134,20 @@ public class AccountFilterDTO {
 		this.operation = operation;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getTemplate() {
+		return template;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setTemplate(String template) {
+		this.template = template;
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
 	}
 
 }

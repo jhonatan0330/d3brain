@@ -1,4 +1,4 @@
-package com.accounting.plan.application;
+package com.accounting.plan.application.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,6 +7,7 @@ import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.accounting.plan.infrastructure.ResultMapExtendMapper;
@@ -18,6 +19,8 @@ public class ResultMapExtendService {
 
 	@Autowired
 	private ResultMapExtendMapper mapper;
+	@Autowired
+	private CatalogService catalogService;
 
 	public ResultMapDTO getById(String id) throws ServerException {
 		if (id == null)
@@ -104,6 +107,19 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
+	}
+	
+	public List<ResultMapDTO> getBalanceByCatalog(String catalogId) throws ServerException {
+		if(catalogId ==null) throw new ServerException("Es necesario colcoar el Id del catalogo");
+		CatalogDTO catalog = catalogService.getById(catalogId);
+		if(catalog ==null) throw new ServerException("No se identifico un catalogo con el identificador " + catalogId);
+		try {
+			return mapper.getBalance(catalog.getKey(), catalog.getCode());
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
 	}
 
 }

@@ -47,6 +47,7 @@
 			<if test="id!=null">
 				and chch_id = #{id}
 			</if>
+
 	</sql>
 
 	<sql id="paginationFactFragment">
@@ -139,13 +140,13 @@
 	<select id="update" parameterType="FactDTO" resultType="FactDTO">
 		update hecho_hch
 			set
-				dhch_fecharegistro = #{registerDate} 
-				dhch_fechaevento = #{factDate} 
-				chch_dimension = #{dimension} 
-				chch_valor = #{value} 
-				chch_codigo = #{code} 
-				chch_plantilla = #{template} 
-				chch_id = #{id} 
+				dhch_fecharegistro = #{registerDate},
+				dhch_fechaevento = #{factDate},
+				chch_dimension = #{dimension},
+				chch_valor = #{value},
+				chch_codigo = #{code},
+				chch_plantilla = #{template},
+				chch_id = #{id},
 				chch_estado =#{state}
 		<include refid="whereFactPrimaryKeyFragment" />
 	</select>

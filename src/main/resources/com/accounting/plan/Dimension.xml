@@ -39,6 +39,7 @@
 			<if test="type!=null">
 				and cdim_tipo = #{type}
 			</if>
+
 	</sql>
 
 	<sql id="paginationDimensionFragment">
@@ -119,11 +120,11 @@
 	<select id="update" parameterType="DimensionDTO" resultType="DimensionDTO">
 		update dimension_dim
 			set
-				cdim_cuenta = #{account} 
-				cdim_nombre = #{name} 
-				cdim_codigo = #{code} 
-				cdim_campo = #{field} 
-				cdim_tipo = #{type} 
+				cdim_cuenta = #{account},
+				cdim_nombre = #{name},
+				cdim_codigo = #{code},
+				cdim_campo = #{field},
+				cdim_tipo = #{type},
 				cdim_estado =#{state}
 		<include refid="whereDimensionPrimaryKeyFragment" />
 	</select>

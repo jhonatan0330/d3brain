@@ -35,6 +35,7 @@
 			<if test="finalDate!=null">
 				and dctg_fechafinal = #{finalDate}
 			</if>
+
 	</sql>
 
 	<sql id="paginationCatalogFragment">
@@ -109,10 +110,10 @@
 	<select id="update" parameterType="CatalogDTO" resultType="CatalogDTO">
 		update catalogo_ctg
 			set
-				cctg_nombre = #{name} 
-				cctg_codigo = #{code} 
-				dctg_fechainicial = #{initialDate} 
-				dctg_fechafinal = #{finalDate} 
+				cctg_nombre = #{name},
+				cctg_codigo = #{code},
+				dctg_fechainicial = #{initialDate},
+				dctg_fechafinal = #{finalDate},
 				cctg_estado =#{state}
 		<include refid="whereCatalogPrimaryKeyFragment" />
 	</select>

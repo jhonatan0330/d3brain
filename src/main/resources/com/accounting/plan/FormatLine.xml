@@ -39,6 +39,7 @@
 			<if test="negative!=null">
 				and clin_negativo = #{negative}
 			</if>
+
 	</sql>
 
 	<sql id="paginationFormatLineFragment">
@@ -119,11 +120,11 @@
 	<select id="update" parameterType="FormatLineDTO" resultType="FormatLineDTO">
 		update linea_lin
 			set
-				clin_formato = #{format} 
-				clin_cuenta = #{account} 
-				clin_description = #{description} 
-				clin_positivo = #{positive} 
-				clin_negativo = #{negative} 
+				clin_formato = #{format},
+				clin_cuenta = #{account},
+				clin_description = #{description},
+				clin_positivo = #{positive},
+				clin_negativo = #{negative},
 				clin_estado =#{state}
 		<include refid="whereFormatLinePrimaryKeyFragment" />
 	</select>

@@ -7,8 +7,10 @@
 	<sql id="selectResultMapFragment">
 		select
 			crmp_llave as key
-			,crmp_cuenta as account
 			,crmp_catalogo as catalog
+			,crmp_cuenta as account
+			,(select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountName
+			,(select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountCode
 			,nrmp_nivel as level
 			,drmp_fecha as mapDate
 			,nrmp_ano as year
@@ -17,11 +19,11 @@
 			,nrmp_hora as hour
 			,nrmp_minuto as minute
 			,nrmp_cantidad as quantity
-			,mrmp_valor as value
+			,nrmp_porcentaje as percentaje
+			,mrmp_saldoanterior as lastBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
-			,mrmp_saldoanterior as lastBalance
-			,mrmp_saldonuevo as newBalance
+			,mrmp_valor as value
 			,crmp_tipo as type
 			,crmp_estado as state
 		from mapa_resultados_rmp a
@@ -35,11 +37,11 @@
 			<if test="state!=null">
 				and crmp_estado = #{state}
 			</if>
-			<if test="account!=null">
-				and crmp_cuenta = #{account}
-			</if>
 			<if test="catalog!=null">
 				and crmp_catalogo = #{catalog}
+			</if>
+			<if test="account!=null">
+				and crmp_cuenta = #{account}
 			</if>
 			<if test="level!=null">
 				and nrmp_nivel = #{level}
@@ -65,8 +67,11 @@
 			<if test="quantity!=null">
 				and nrmp_cantidad = #{quantity}
 			</if>
-			<if test="value!=null">
-				and mrmp_valor = #{value}
+			<if test="percentaje!=null">
+				and nrmp_porcentaje = #{percentaje}
+			</if>
+			<if test="lastBalance!=null">
+				and mrmp_saldoanterior = #{lastBalance}
 			</if>
 			<if test="positive!=null">
 				and mrmp_positivo = #{positive}
@@ -74,15 +79,13 @@
 			<if test="negative!=null">
 				and mrmp_negativo = #{negative}
 			</if>
-			<if test="lastBalance!=null">
-				and mrmp_saldoanterior = #{lastBalance}
-			</if>
-			<if test="newBalance!=null">
-				and mrmp_saldonuevo = #{newBalance}
+			<if test="value!=null">
+				and mrmp_valor = #{value}
 			</if>
 			<if test="type!=null">
 				and crmp_tipo = #{type}
 			</if>
+
 	</sql>
 
 	<sql id="paginationResultMapFragment">
@@ -119,11 +122,11 @@
 	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		insert into mapa_resultados_rmp(
 			crmp_llave
-		<if test="account!=null">
-			,crmp_cuenta
-		</if>
 		<if test="catalog!=null">
 			,crmp_catalogo
+		</if>
+		<if test="account!=null">
+			,crmp_cuenta
 		</if>
 		<if test="level!=null">
 			,nrmp_nivel
@@ -149,8 +152,11 @@
 		<if test="quantity!=null">
 			,nrmp_cantidad
 		</if>
-		<if test="value!=null">
-			,mrmp_valor
+		<if test="percentaje!=null">
+			,nrmp_porcentaje
+		</if>
+		<if test="lastBalance!=null">
+			,mrmp_saldoanterior
 		</if>
 		<if test="positive!=null">
 			,mrmp_positivo
@@ -158,11 +164,8 @@
 		<if test="negative!=null">
 			,mrmp_negativo
 		</if>
-		<if test="lastBalance!=null">
-			,mrmp_saldoanterior
-		</if>
-		<if test="newBalance!=null">
-			,mrmp_saldonuevo
+		<if test="value!=null">
+			,mrmp_valor
 		</if>
 		<if test="type!=null">
 			,crmp_tipo
@@ -172,11 +175,11 @@
 		</if>
 		) values (
 			#{key}
-		<if test="account!=null">
-			,#{account}
-		</if>
 		<if test="catalog!=null">
 			,#{catalog}
+		</if>
+		<if test="account!=null">
+			,#{account}
 		</if>
 		<if test="level!=null">
 			,#{level}
@@ -202,8 +205,11 @@
 		<if test="quantity!=null">
 			,#{quantity}
 		</if>
-		<if test="value!=null">
-			,#{value}
+		<if test="percentaje!=null">
+			,#{percentaje}
+		</if>
+		<if test="lastBalance!=null">
+			,#{lastBalance}
 		</if>
 		<if test="positive!=null">
 			,#{positive}
@@ -211,11 +217,8 @@
 		<if test="negative!=null">
 			,#{negative}
 		</if>
-		<if test="lastBalance!=null">
-			,#{lastBalance}
-		</if>
-		<if test="newBalance!=null">
-			,#{newBalance}
+		<if test="value!=null">
+			,#{value}
 		</if>
 		<if test="type!=null">
 			,#{type}
@@ -229,22 +232,22 @@
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		update mapa_resultados_rmp
 			set
-				crmp_cuenta = #{account} 
-				crmp_catalogo = #{catalog} 
-				nrmp_nivel = #{level} 
-				drmp_fecha = #{mapDate} 
-				nrmp_ano = #{year} 
-				nrmp_mes = #{month} 
-				nrmp_dia = #{day} 
-				nrmp_hora = #{hour} 
-				nrmp_minuto = #{minute} 
-				nrmp_cantidad = #{quantity} 
-				mrmp_valor = #{value} 
-				mrmp_positivo = #{positive} 
-				mrmp_negativo = #{negative} 
-				mrmp_saldoanterior = #{lastBalance} 
-				mrmp_saldonuevo = #{newBalance} 
-				crmp_tipo = #{type} 
+				crmp_catalogo = #{catalog},
+				crmp_cuenta = #{account},
+				nrmp_nivel = #{level},
+				drmp_fecha = #{mapDate},
+				nrmp_ano = #{year},
+				nrmp_mes = #{month},
+				nrmp_dia = #{day},
+				nrmp_hora = #{hour},
+				nrmp_minuto = #{minute},
+				nrmp_cantidad = #{quantity},
+				nrmp_porcentaje = #{percentaje},
+				mrmp_saldoanterior = #{lastBalance},
+				mrmp_positivo = #{positive},
+				mrmp_negativo = #{negative},
+				mrmp_valor = #{value},
+				crmp_tipo = #{type},
 				crmp_estado =#{state}
 		<include refid="whereResultMapPrimaryKeyFragment" />
 	</select>

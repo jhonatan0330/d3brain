@@ -2,6 +2,8 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.accounting.AccountingConnMapper;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.ResultMapFilterDTO;
@@ -19,4 +21,5 @@ public interface ResultMapExtendMapper {
 
 	List<ResultMapDTO> getMany(ResultMapFilterDTO filter);
 
+	List<ResultMapDTO> getBalance(@Param("catalogId")String catalogId, @Param("catalogCode")String catalogCode);
 }

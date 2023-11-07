@@ -8,14 +8,16 @@
 		select
 			ccue_llave as key
 			,ccue_catalogo as catalog
-			,ccue_codigo as code
+			,ccue_wbs as wbs
 			,ccue_nombre as name
+			,ccue_codigo as code
+			,ccue_situacion as status
 			,ccue_padre as parent
-			,ccue_plantilla as template
-			,ccue_campo as field
+			,ncue_nivel as level
 			,ccue_tipo as type
 			,ccue_naturaleza as operation
-			,ccue_situacion as status
+			,ccue_plantilla as template
+			,ccue_campo as field
 			,ccue_estado as state
 		from cuenta_cue a
 	</sql>
@@ -31,20 +33,23 @@
 			<if test="catalog!=null">
 				and ccue_catalogo = #{catalog}
 			</if>
-			<if test="code!=null">
-				and ccue_codigo = #{code}
+			<if test="wbs!=null">
+				and ccue_wbs = #{wbs}
 			</if>
 			<if test="name!=null">
 				and ccue_nombre = #{name}
 			</if>
+			<if test="code!=null">
+				and ccue_codigo = #{code}
+			</if>
+			<if test="status!=null">
+				and ccue_situacion = #{status}
+			</if>
 			<if test="parent!=null">
 				and ccue_padre = #{parent}
 			</if>
-			<if test="template!=null">
-				and ccue_plantilla = #{template}
-			</if>
-			<if test="field!=null">
-				and ccue_campo = #{field}
+			<if test="level!=null">
+				and ncue_nivel = #{level}
 			</if>
 			<if test="type!=null">
 				and ccue_tipo = #{type}
@@ -52,9 +57,13 @@
 			<if test="operation!=null">
 				and ccue_naturaleza = #{operation}
 			</if>
-			<if test="status!=null">
-				and ccue_situacion = #{status}
+			<if test="template!=null">
+				and ccue_plantilla = #{template}
 			</if>
+			<if test="field!=null">
+				and ccue_campo = #{field}
+			</if>
+			<if test="filter!=null">and (upper(ccue_nombre) like upper('%' || #{filter} || '%') or upper(ccue_codigo) like upper('%' || #{filter} || '%'))</if>
 	</sql>
 
 	<sql id="paginationAccountFragment">
@@ -79,6 +88,7 @@
 	<select id="getMany" parameterType="AccountFilterDTO" resultType="AccountDTO">
 		<include refid="selectAccountFragment" />
 		<include refid="whereAccountFragment" />
+		order by wbs 
 		<include refid="paginationAccountFragment" />
 	</select>
 
@@ -94,20 +104,23 @@
 		<if test="catalog!=null">
 			,ccue_catalogo
 		</if>
-		<if test="code!=null">
-			,ccue_codigo
+		<if test="wbs!=null">
+			,ccue_wbs
 		</if>
 		<if test="name!=null">
 			,ccue_nombre
 		</if>
+		<if test="code!=null">
+			,ccue_codigo
+		</if>
+		<if test="status!=null">
+			,ccue_situacion
+		</if>
 		<if test="parent!=null">
 			,ccue_padre
 		</if>
-		<if test="template!=null">
-			,ccue_plantilla
-		</if>
-		<if test="field!=null">
-			,ccue_campo
+		<if test="level!=null">
+			,ncue_nivel
 		</if>
 		<if test="type!=null">
 			,ccue_tipo
@@ -115,8 +128,11 @@
 		<if test="operation!=null">
 			,ccue_naturaleza
 		</if>
-		<if test="status!=null">
-			,ccue_situacion
+		<if test="template!=null">
+			,ccue_plantilla
+		</if>
+		<if test="field!=null">
+			,ccue_campo
 		</if>
 		<if test="state!=null">
 			,ccue_estado
@@ -126,20 +142,23 @@
 		<if test="catalog!=null">
 			,#{catalog}
 		</if>
-		<if test="code!=null">
-			,#{code}
+		<if test="wbs!=null">
+			,#{wbs}
 		</if>
 		<if test="name!=null">
 			,#{name}
 		</if>
+		<if test="code!=null">
+			,#{code}
+		</if>
+		<if test="status!=null">
+			,#{status}
+		</if>
 		<if test="parent!=null">
 			,#{parent}
 		</if>
-		<if test="template!=null">
-			,#{template}
-		</if>
-		<if test="field!=null">
-			,#{field}
+		<if test="level!=null">
+			,#{level}
 		</if>
 		<if test="type!=null">
 			,#{type}
@@ -147,8 +166,11 @@
 		<if test="operation!=null">
 			,#{operation}
 		</if>
-		<if test="status!=null">
-			,#{status}
+		<if test="template!=null">
+			,#{template}
+		</if>
+		<if test="field!=null">
+			,#{field}
 		</if>
 		<if test="state!=null">
 			,#{state}
@@ -159,15 +181,17 @@
 	<select id="update" parameterType="AccountDTO" resultType="AccountDTO">
 		update cuenta_cue
 			set
-				ccue_catalogo = #{catalog} 
-				ccue_codigo = #{code} 
-				ccue_nombre = #{name} 
-				ccue_padre = #{parent} 
-				ccue_plantilla = #{template} 
-				ccue_campo = #{field} 
-				ccue_tipo = #{type} 
-				ccue_naturaleza = #{operation} 
-				ccue_situacion = #{status} 
+				ccue_catalogo = #{catalog},
+				ccue_wbs = #{wbs},
+				ccue_nombre = #{name},
+				ccue_codigo = #{code},
+				ccue_situacion = #{status},
+				ccue_padre = #{parent},
+				ncue_nivel = #{level},
+				ccue_tipo = #{type},
+				ccue_naturaleza = #{operation},
+				ccue_plantilla = #{template},
+				ccue_campo = #{field},
 				ccue_estado =#{state}
 		<include refid="whereAccountPrimaryKeyFragment" />
 	</select>

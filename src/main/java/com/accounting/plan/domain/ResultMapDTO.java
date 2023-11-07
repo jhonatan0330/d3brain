@@ -10,8 +10,10 @@ import org.apache.ibatis.type.Alias;
 public class ResultMapDTO {
 	private String key;
 	private String state;
-	private String account;
 	private String catalog;
+	private String account;
+	private String accountName;
+	private String accountCode;
 	private Integer level;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date mapDate;
@@ -21,11 +23,11 @@ public class ResultMapDTO {
 	private Integer hour;
 	private Integer minute;
 	private Integer quantity;
-	private BigDecimal value;
+	private Float percentaje;
+	private BigDecimal lastBalance;
 	private BigDecimal positive;
 	private BigDecimal negative;
-	private BigDecimal lastBalance;
-	private BigDecimal newBalance;
+	private BigDecimal value;
 	private String type;
 
 	public String getKey() {
@@ -44,6 +46,14 @@ public class ResultMapDTO {
 		return state;
 	}
 
+	public String getCatalog() {
+		return catalog;
+	}
+
+	public void setCatalog(String catalog) {
+		this.catalog = catalog;
+	}
+
 	public String getAccount() {
 		return account;
 	}
@@ -52,12 +62,20 @@ public class ResultMapDTO {
 		this.account = account;
 	}
 
-	public String getCatalog() {
-		return catalog;
+	public String getAccountName() {
+		return accountName;
 	}
 
-	public void setCatalog(String catalog) {
-		this.catalog = catalog;
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
 	}
 
 	public Integer getLevel() {
@@ -124,12 +142,20 @@ public class ResultMapDTO {
 		this.quantity = quantity;
 	}
 
-	public BigDecimal getValue() {
-		return value;
+	public Float getPercentaje() {
+		return percentaje;
 	}
 
-	public void setValue(BigDecimal value) {
-		this.value = value;
+	public void setPercentaje(Float percentaje) {
+		this.percentaje = percentaje;
+	}
+
+	public BigDecimal getLastBalance() {
+		return lastBalance;
+	}
+
+	public void setLastBalance(BigDecimal lastBalance) {
+		this.lastBalance = lastBalance;
 	}
 
 	public BigDecimal getPositive() {
@@ -148,20 +174,12 @@ public class ResultMapDTO {
 		this.negative = negative;
 	}
 
-	public BigDecimal getLastBalance() {
-		return lastBalance;
+	public BigDecimal getValue() {
+		return value;
 	}
 
-	public void setLastBalance(BigDecimal lastBalance) {
-		this.lastBalance = lastBalance;
-	}
-
-	public BigDecimal getNewBalance() {
-		return newBalance;
-	}
-
-	public void setNewBalance(BigDecimal newBalance) {
-		this.newBalance = newBalance;
+	public void setValue(BigDecimal value) {
+		this.value = value;
 	}
 
 	public String getType() {

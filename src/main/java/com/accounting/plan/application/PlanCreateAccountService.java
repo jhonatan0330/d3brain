@@ -12,13 +12,16 @@ import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.FormatLineService;
 import com.accounting.plan.application.base.FormatVoucherService;
+import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
+import com.accounting.plan.domain.AccountFilterDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.FormatLineDTO;
 import com.accounting.plan.domain.FormatVoucherDTO;
 import com.accounting.plan.domain.ResultMapConst;
 import com.accounting.plan.domain.ResultMapDTO;
+import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 
 @Service("PlanCreateAccountTemplateAccountingService")
@@ -35,10 +38,43 @@ public class PlanCreateAccountService {
 	@Autowired
 	private ResultMapExtendService mapService;
 
+	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account, String token) throws ServerException {
-		return  accountService.save(account, token);
+		if(account.getCatalog()==null) throw new ServerException("Es importatne asignar la cuenta a un catalogo");
+		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
+		if(account.getCode()!=null && account.getCode().isEmpty()) account.setCode(null);
+		assignWBSNumber(account, token);
+		if(account.getCode()==null) account.setCode(account.getWbs());
+		return accountService.save(account, token);
 	}
 	
+	private void assignWBSNumber(AccountDTO account, String token) throws ServerException {
+		
+		AccountFilterDTO filter = new AccountFilterDTO();
+		String prefixWBS = "";
+		if(account.getParent()==null) {
+			filter.setLevel(1);
+			account.setLevel(1);
+		} else {
+			filter.setParent(account.getParent());
+			AccountDTO parentAccount = accountService.getById(account.getParent());
+			if(parentAccount == null) throw new ServerException("En la cuenta " +account.getName() +" el nodo principal " +account.getParent()+ " no se encuentra en la BD por su identificador");
+			if(parentAccount.getState().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La cuenta" +parentAccount.getName() +" no se encuentra activa");
+			prefixWBS = parentAccount.getWbs() + ".";
+			account.setLevel(parentAccount.getLevel()+1);
+			if(parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL)==0) {
+				parentAccount.setType(AccountConst.TYPE_GROUP);
+				accountService.update(parentAccount, token);
+			}
+		}
+		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		int countAccount = accountService.count(filter);
+		account.setWbs(prefixWBS + String.format("%1$4s", (countAccount+1)));
+		account.setStatus(AccountConst.STATUS_PLANNING);
+		account.setType(AccountConst.TYPE_OPERATIONAL);
+		account.setOperation(AccountConst.OPERATION_ADD);
+	}
+
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO configurate(AccountDTO account, String token) throws ServerException {
 		if (account.getType() != null && account.getType().compareTo(AccountConst.TYPE_GROUP) != 0

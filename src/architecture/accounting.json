@@ -38,6 +38,7 @@
 					"name": "Account",
 					"table": "cuenta",
 					"prefix": "cue",
+					"filterText": "and (upper(ccue_nombre) like upper('%' || #{filter} || '%') or upper(ccue_codigo) like upper('%' || #{filter} || '%'))",
 					"attributes": [
 						{
 							"name": "catalog",
@@ -45,14 +46,28 @@
 							"type": "CLASS"
 						},
 						{
-							"name": "code",
-							"tableName": "codigo",
-							"type": "STRING"
+							"name": "wbs",
+							"tableName": "wbs",
+							"type": "STRING",
+							"size": 50,
+							"order": true
 						},
 						{
 							"name": "name",
 							"tableName": "nombre",
 							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "status",
+							"tableName": "situacion",
+							"type": "STRING",
+							"size": 10
 						},
 						{
 							"name": "parent",
@@ -61,16 +76,9 @@
 							"optional": true
 						},
 						{
-							"name": "template",
-							"tableName": "plantilla",
-							"type": "CLASS",
-							"optional": true
-						},
-						{
-							"name": "field",
-							"tableName": "campo",
-							"type": "CLASS",
-							"optional": true
+							"name": "level",
+							"tableName": "nivel",
+							"type": "INT"
 						},
 						{
 							"name": "type",
@@ -85,10 +93,16 @@
 							"size": 1
 						},
 						{
-							"name": "status",
-							"tableName": "situacion",
-							"type": "STRING",
-							"size": 10
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "field",
+							"tableName": "campo",
+							"type": "CLASS",
+							"optional": true
 						}
 					]
 				},
@@ -253,14 +267,24 @@
 					"prefix": "rmp",
 					"attributes": [
 						{
+							"name": "catalog",
+							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
 							"name": "account",
 							"tableName": "cuenta",
 							"type": "CLASS"
 						},
 						{
-							"name": "catalog",
-							"tableName": "catalogo",
-							"type": "CLASS"
+							"name": "accountName",
+							"type": "STRING",
+							"script" : "select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta"
+						},
+						{
+							"name": "accountCode",
+							"type": "STRING",
+							"script" : "select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta"
 						},
 						{
 							"name": "level",
@@ -308,8 +332,13 @@
 							"type": "INT"
 						},
 						{
-							"name": "value",
-							"tableName": "valor",
+							"name": "percentaje",
+							"tableName": "porcentaje",
+							"type": "DECIMAL"
+						},
+						{
+							"name": "lastBalance",
+							"tableName": "saldoanterior",
 							"type": "NUMBER"
 						},
 						{
@@ -323,13 +352,8 @@
 							"type": "NUMBER"
 						},
 						{
-							"name": "lastBalance",
-							"tableName": "saldoanterior",
-							"type": "NUMBER"
-						},
-						{
-							"name": "newBalance",
-							"tableName": "saldonuevo",
+							"name": "value",
+							"tableName": "valor",
 							"type": "NUMBER"
 						},
 						{

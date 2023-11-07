@@ -8,6 +8,8 @@
 		select
 			crmp_llave as key
 			,crmp_cuenta as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
 			,nrmp_nivel as level
 			,drmp_fecha as mapDate
 			,nrmp_ano as year
@@ -16,13 +18,14 @@
 			,nrmp_hora as hour
 			,nrmp_minuto as minute
 			,nrmp_cantidad as quantity
-			,mrmp_valor as value
+			,nrmp_porcentaje as percentaje
+			,mrmp_saldoanterior as lastBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
-			,mrmp_saldoanterior as lastBalance
-			,mrmp_saldonuevo as newBalance
+			,mrmp_valor as value
 			,crmp_estado as state
-		from _ind_${catalog}_${type} a
+		from _ind_${catalog}_${type}
+			inner join cuenta_cue on (ccue_llave = crmp_cuenta)
 	</sql>
 
 	<sql id="whereResultMapFragment">
@@ -60,8 +63,11 @@
 			<if test="quantity!=null">
 				and nrmp_cantidad = #{quantity}
 			</if>
-			<if test="value!=null">
-				and mrmp_valor = #{value}
+			<if test="percentaje!=null">
+				and nrmp_porcentaje = #{percentaje}
+			</if>
+			<if test="lastBalance!=null">
+				and mrmp_saldoanterior = #{lastBalance}
 			</if>
 			<if test="positive!=null">
 				and mrmp_positivo = #{positive}
@@ -69,11 +75,8 @@
 			<if test="negative!=null">
 				and mrmp_negativo = #{negative}
 			</if>
-			<if test="lastBalance!=null">
-				and mrmp_saldoanterior = #{lastBalance}
-			</if>
-			<if test="newBalance!=null">
-				and mrmp_saldonuevo = #{newBalance}
+			<if test="value!=null">
+				and mrmp_valor = #{value}
 			</if>
 	</sql>
 
@@ -138,8 +141,11 @@
 		<if test="quantity!=null">
 			,nrmp_cantidad
 		</if>
-		<if test="value!=null">
-			,mrmp_valor
+		<if test="percentaje!=null">
+			,nrmp_porcentaje
+		</if>
+		<if test="lastBalance!=null">
+			,mrmp_saldoanterior
 		</if>
 		<if test="positive!=null">
 			,mrmp_positivo
@@ -147,11 +153,8 @@
 		<if test="negative!=null">
 			,mrmp_negativo
 		</if>
-		<if test="lastBalance!=null">
-			,mrmp_saldoanterior
-		</if>
-		<if test="newBalance!=null">
-			,mrmp_saldonuevo
+		<if test="value!=null">
+			,mrmp_valor
 		</if>
 		<if test="state!=null">
 			,crmp_estado
@@ -185,8 +188,11 @@
 		<if test="quantity!=null">
 			,#{quantity}
 		</if>
-		<if test="value!=null">
-			,#{value}
+		<if test="percentaje!=null">
+			,#{percentaje}
+		</if>
+		<if test="lastBalance!=null">
+			,#{lastBalance}
 		</if>
 		<if test="positive!=null">
 			,#{positive}
@@ -194,11 +200,8 @@
 		<if test="negative!=null">
 			,#{negative}
 		</if>
-		<if test="lastBalance!=null">
-			,#{lastBalance}
-		</if>
-		<if test="newBalance!=null">
-			,#{newBalance}
+		<if test="value!=null">
+			,#{value}
 		</if>
 		<if test="state!=null">
 			,#{state}
@@ -209,22 +212,48 @@
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		update _ind_${catalog}_${type}
 			set
-				crmp_cuenta = #{account} 
-				nrmp_nivel = #{level} 
-				drmp_fecha = #{mapDate} 
-				nrmp_ano = #{year} 
-				nrmp_mes = #{month} 
-				nrmp_dia = #{day} 
-				nrmp_hora = #{hour} 
-				nrmp_minuto = #{minute} 
-				nrmp_cantidad = #{quantity} 
-				mrmp_valor = #{value} 
-				mrmp_positivo = #{positive} 
-				mrmp_negativo = #{negative} 
-				mrmp_saldoanterior = #{lastBalance} 
-				mrmp_saldonuevo = #{newBalance} 
+				crmp_cuenta = #{account},
+				nrmp_nivel = #{level},
+				drmp_fecha = #{mapDate},
+				nrmp_ano = #{year},
+				nrmp_mes = #{month},
+				nrmp_dia = #{day},
+				nrmp_hora = #{hour},
+				nrmp_minuto = #{minute},
+				nrmp_cantidad = #{quantity},
+				nrmp_porcentaje = #{percentaje},
+				mrmp_saldoanterior = #{lastBalance},
+				mrmp_positivo = #{positive},
+				mrmp_negativo = #{negative},
+				mrmp_valor = #{value},
 				crmp_estado =#{state}
 		<include refid="whereResultMapPrimaryKeyFragment" />
+	</select>
+	
+	<select id="getBalance" resultType="ResultMapDTO">
+		select 
+			crmp_llave as key
+			,crmp_cuenta as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
+			,nrmp_nivel as level
+			,drmp_fecha as mapDate
+			,nrmp_ano as year
+			,nrmp_mes as month
+			,nrmp_dia as day
+			,nrmp_hora as hour
+			,nrmp_minuto as minute
+			,nrmp_cantidad as quantity
+			,nrmp_porcentaje as percentaje
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,crmp_estado as state 
+		from cuenta_cue 
+		left join _ind_${catalogCode}_puntual on (crmp_cuenta = ccue_llave and nrmp_nivel = 1)
+		where ccue_catalogo = '${catalogId}' and ncue_nivel = 1 and ccue_estado = 'A'
+		order by ccue_wbs
 	</select>
 	
 </mapper>

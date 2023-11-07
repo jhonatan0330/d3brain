@@ -17,10 +17,12 @@ public class PlanGetAccountService {
 	@Autowired
 	private AccountService accountService;
 	
-	public List<AccountDTO> getActive(String catalogId) throws ServerException{
+	public List<AccountDTO> getActive(String catalogId, String filterText) throws ServerException{
 		AccountFilterDTO filter = new AccountFilterDTO();
 		filter.setCatalog(catalogId);
+		filter.setFilter(filterText);
 		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setIndexEnd(3000);
 		return accountService.getMany(filter);
 	}
 

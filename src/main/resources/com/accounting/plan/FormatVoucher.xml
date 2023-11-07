@@ -27,6 +27,7 @@
 			<if test="template!=null">
 				and cfrm_plantilla = #{template}
 			</if>
+
 	</sql>
 
 	<sql id="paginationFormatVoucherFragment">
@@ -89,8 +90,8 @@
 	<select id="update" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
 		update formato_frm
 			set
-				cfrm_catalogo = #{catalog} 
-				cfrm_plantilla = #{template} 
+				cfrm_catalogo = #{catalog},
+				cfrm_plantilla = #{template},
 				cfrm_estado =#{state}
 		<include refid="whereFormatVoucherPrimaryKeyFragment" />
 	</select>

@@ -9,14 +9,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.accounting.plan.application.PlanCreateAccountService;
 import com.accounting.plan.application.PlanGetAccountService;
+import com.accounting.plan.application.PlanGetBalanceService;
 import com.accounting.plan.application.PlanGetCatalogService;
+import com.accounting.plan.application.PlanUploadAccountService;
 import com.accounting.plan.application.base.IPlanCreateCatalogService;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
+import com.accounting.plan.domain.ResultMapDTO;
 import com.softure.java.dto.exception.ServerException;
 
 @RestController
@@ -30,7 +35,22 @@ public class PlanAccountingRest {
 	@Autowired
 	private PlanCreateAccountService createAccountService;
 	@Autowired
+	private PlanUploadAccountService uploadAccountService;
+	@Autowired
 	private PlanGetAccountService getAccountService;
+	@Autowired
+	private PlanGetBalanceService getBalanceService;
+	
+	
+	@GetMapping("/balance/{catalog}")
+	public List<ResultMapDTO> getBalance(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {
+		return getBalanceService.getBalance(catalog);
+	}
+	
+	@PostMapping("/upload/{catalog}")
+	public void uploadAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, MultipartFile file) throws ServerException {
+		uploadAccountService.call(catalog, token, file);
+	}
 	
 	@PostMapping("/account")
 	public AccountDTO createAccount(@RequestBody AccountDTO account, @RequestHeader("Authorization") String token) throws ServerException {
@@ -38,8 +58,8 @@ public class PlanAccountingRest {
 	}
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {
-		return getAccountService.getActive(catalog);
+	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
+		return getAccountService.getActive(catalog, filter);
 	}
 	
 	@GetMapping(value="/account/{catalog}/{id}")

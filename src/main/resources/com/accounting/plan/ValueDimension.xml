@@ -35,6 +35,7 @@
 			<if test="template!=null">
 				and cvlr_plantilla = #{template}
 			</if>
+
 	</sql>
 
 	<sql id="paginationValueDimensionFragment">
@@ -109,10 +110,10 @@
 	<select id="update" parameterType="ValueDimensionDTO" resultType="ValueDimensionDTO">
 		update valor_vlr
 			set
-				cvlr_dimension = #{dimension} 
-				cvlr_valor = #{value} 
-				cvlr_codigo = #{code} 
-				cvlr_plantilla = #{template} 
+				cvlr_dimension = #{dimension},
+				cvlr_valor = #{value},
+				cvlr_codigo = #{code},
+				cvlr_plantilla = #{template},
 				cvlr_estado =#{state}
 		<include refid="whereValueDimensionPrimaryKeyFragment" />
 	</select>
