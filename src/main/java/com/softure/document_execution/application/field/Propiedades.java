@@ -917,7 +917,7 @@ public class Propiedades {
 			break;
 		}
 		case ORDEN: {
-			ruleProperty = " Determina si se ordena por nombre(N) o por fecha(F), Default F.\n";
+			ruleProperty = " Determina si se ordena por nombre(N), descripcion(D) o por fecha(F), Default F.\n";
 			break;
 		}
 		case ORDEN_DESCENDENTE: {
