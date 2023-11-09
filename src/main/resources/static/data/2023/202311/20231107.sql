@@ -1,7 +1,5 @@
 COMMENT ON TABLE usuario_usrp IS '2023-11-07';
 
-ALTER TABLE z_rej_reporteejecucion ADD crej_url varchar(4000) NULL;
-
 CREATE OR REPLACE FUNCTION public.migrar_campos(_plantilla character varying, _fecha_maxima timestamp with time zone)
  RETURNS numeric
  LANGUAGE plpgsql

@@ -4,3 +4,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_230' , 'E', 'OMITIR LA IMPRESION DEL REPORTE', 'REP_EXCLUDE_STORAGE_FILE', 'REQUISITO', true);
 	
 ALTER TABLE reporteejecucion_rejp ADD crej_url varchar(4000) NULL;
+
+ALTER TABLE z_rej_reporteejecucion ADD crej_url varchar(4000) NULL;
