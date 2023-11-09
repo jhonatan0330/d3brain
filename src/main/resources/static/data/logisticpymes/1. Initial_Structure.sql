@@ -104,7 +104,7 @@ CREATE TABLE z_pvd_pedidoventadinero (
 	dpvd_fecha timestamptz NOT NULL,
 	mpvd_valortotal numeric(18,6) NOT NULL DEFAULT 0,
 	mpvd_saldo numeric(18,6) NOT NULL DEFAULT 0,
-	bpvc_controlarsaldo boolean NOT NULL DEFAULT false,
+	bpvd_controlarsaldo boolean NOT NULL DEFAULT false,
 	cpvd_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_z_pvd_pedidoventadinero_pvdp PRIMARY KEY (cpvd_llave),
 	CONSTRAINT fk_z_pvd_pedidoventadinerodocumento FOREIGN KEY (cpvd_documento) REFERENCES pedidoventa_pdvp(cpdv_llave)
@@ -143,6 +143,7 @@ CREATE TABLE z_rej_reporteejecucion (
 	drej_fechainicio timestamptz NOT NULL,
 	drej_fechafin timestamptz NOT NULL,
 	crej_error varchar(4000) NULL,
+	crej_url character varying(4000),
 	crej_usuario varchar(32) NULL,
 	crej_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_z_rej_reporteejecucion_rejp PRIMARY KEY (crej_llave),
