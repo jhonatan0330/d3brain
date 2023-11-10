@@ -467,17 +467,17 @@ public class WebServiceExecuteAPI {
 
 	/**
 	 * 
-	 * @param serverName       Nombre del servidor
+	 * @param apiService       Nombre del servidor
 	 * @param body             Cuerpo de la peticion POST
 	 * @param headerProperties
 	 * @return
 	 * @throws ServerException
 	 */
-	private String callApi(WebServiceDTO serverName, String body, Map<String, String> headerProperties)
+	private String callApi(WebServiceDTO apiService, String body, Map<String, String> headerProperties)
 			throws ServerException {
 		URL url;
 		try {
-			url = new URL(serverName.getUrl());
+			url = new URL(apiService.getUrl());
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
@@ -491,7 +491,7 @@ public class WebServiceExecuteAPI {
 			}
 
 			int connectTimeOut = 5000;
-			PropiedadDTO connectTimeOutValue = Propiedades.obtenerParametro(serverName,
+			PropiedadDTO connectTimeOutValue = Propiedades.obtenerParametro(apiService,
 					Propiedades.API_CONNECT_TIMEOUT);
 			if (connectTimeOutValue != null) {
 				try {
@@ -502,7 +502,7 @@ public class WebServiceExecuteAPI {
 			}
 
 			int readTimeOut = 120000;
-			PropiedadDTO readTimeOutValue = Propiedades.obtenerParametro(serverName, Propiedades.API_READ_TIMEOUT);
+			PropiedadDTO readTimeOutValue = Propiedades.obtenerParametro(apiService, Propiedades.API_READ_TIMEOUT);
 			if (readTimeOutValue != null) {
 				try {
 					readTimeOut = Integer.valueOf(readTimeOutValue.getValor());
@@ -514,11 +514,13 @@ public class WebServiceExecuteAPI {
 			con.setReadTimeout(readTimeOut);
 			con.connect();
 
+			String standarEncoding = Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR);
+			if(standarEncoding.isEmpty()) standarEncoding = StandardCharsets.UTF_8.toString();
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 			//log.info("[" + con.getURL().toString() + "] Body API\n" + body);
-			// Esta codificaion es para soportar DIAn con tildes
-			wr.write(body.getBytes(StandardCharsets.ISO_8859_1));
+			// LA codificaion ISO_8859_1 es para soportar DIAn con tildes
+			wr.write(body.getBytes(standarEncoding));
 			wr.close();
 
 			log.info("[" + con.getURL().toString() + "] Procesando API status (" + con.getResponseCode() + ")");

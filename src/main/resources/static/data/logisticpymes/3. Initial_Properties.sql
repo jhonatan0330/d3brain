@@ -478,4 +478,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_246' , 'E', 'TIPO REPORTE', 'REP_TYPE_EXPORT', 'REQUISITO', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_247' , 'W', 'API ESTANDAR CODIFICACION', 'API_ENCODE_STANDAR', 'REQUISITO', true);
+	
 	

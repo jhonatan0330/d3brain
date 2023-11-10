@@ -40,6 +40,7 @@ public class Propiedades {
 	public static final String API_ITERATION_ONE_EXECUTION = "API_ITERATION_ONE_EXECUTION";
 	public static final String API_READ_TIMEOUT = "API_READ_TIMEOUT";
 	public static final String API_CONNECT_TIMEOUT = "API_CONNECT_TIMEOUT";
+	public static final String API_ENCODE_STANDAR = "API_ENCODE_STANDAR";
 
 	public static final String API_SCHEDULE_TIME_BLOCK = "API_SCHEDULE_TIME_BLOCK";
 	public static final String FUNCION_SQL_PREVALIDATE_API = "FUNCION_SQL_PREVALIDATE_API";
@@ -573,6 +574,10 @@ public class Propiedades {
 		}
 		case API_CONNECT_TIMEOUT: {
 			ruleProperty = "Cuando se ejecuta un API se tiene un tiempo PARA CONECTARNOS sin generar este error, tienes que colocar el numero de milisegundos que soportara el api sin generar el error connect timeout";
+			break;
+		}
+		case API_ENCODE_STANDAR: {
+			ruleProperty = "Algunos APIs necesitan una codificacion especial para manejar el tema de las tildes y las Ñ, el valor a escribir es una o";
 			break;
 		}
 		case API_VALIDATION: {
