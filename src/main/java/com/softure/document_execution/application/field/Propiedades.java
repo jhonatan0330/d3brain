@@ -757,7 +757,7 @@ public class Propiedades {
 			break;
 		}
 		case FECHA_RANGO_MAXIMO: {
-			ruleProperty = " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin el tiempo es en milisegundos.\n";
+			ruleProperty = " Cuando es rango, este es un limite de tiempo entre la fecha de incio y la fecha de fin.\nEl campo valor cumple con el estandar de Period (ver por internet Java Period y Duration), ejemplo P1Y2M3DT4H5M6S, esto quiere decir 1 año, 2 meses 3 dias 4 horas 5 minutos y 6 segundos";
 			break;
 		}
 		case FECHA_TIMER_BACK: {
