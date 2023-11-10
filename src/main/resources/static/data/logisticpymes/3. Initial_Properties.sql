@@ -142,8 +142,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_80' , 'L', 'INICIO_RAPIDO', 'PERMISO_PLANTILLA_INICIO_RAPIDO', 'PERMISOS', true, true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_81' , 'L', 'OCULTAR_TOTAL', 'PERMISO_PLANTILLA_OCULTAR_TOTAL', 'PERMISOS', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
-	VALUES('PROP_82' , 'L', 'FILTRO POR CAMPO', 'PERMISO_PLANTILLA_CAMPO_FILTRO', 'PERMISOS');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_82' , 'L', 'FILTRO POR CAMPO', 'PERMISO_PLANTILLA_CAMPO_FILTRO', 'PERMISOS', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_83' , 'L', 'ESTADOS POR DEFECTO CONSULTA', 'PERMISO_PLANTILLA_FILTROS_BASE', 'PERMISOS');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
