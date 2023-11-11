@@ -454,7 +454,7 @@
 			,(select crpb_nombre from reportebase_rpbp where crpb_llave = crej_reporte) as nombre
 			,null as  transaccion
 			,crej_url as adjunto 
-		  from reporteejecucion_rejp
+		  from <if test="actual!=null">reporteejecucion_rejp</if><if test="actual==null">z_rej_reporteejecucion</if>
 		  where crej_documento = #{dto.documentoPrincipal}
 	</if>
 	order by fecha desc LIMIT #{dto.paginacionRegistroFinal} OFFSET #{dto.paginacionRegistroInicial}
