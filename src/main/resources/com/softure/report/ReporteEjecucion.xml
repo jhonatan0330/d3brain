@@ -83,9 +83,64 @@
 		<include refid="whereReporteEjecucionFragment" />
 	</select>
 
-
 	<select id="insertar" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
 		insert into reporteejecucion_rejp(
+			crej_llave
+		<if test="reporte!=null">
+			,crej_reporte
+		</if>
+		<if test="documento!=null">
+			,crej_documento
+		</if>
+		<if test="fechaInicio!=null">
+			,drej_fechainicio
+		</if>
+		<if test="fechaFin!=null">
+			,drej_fechafin
+		</if>
+		<if test="error!=null">
+			,crej_error
+		</if>
+		<if test="usuario!=null">
+			,crej_usuario
+		</if>
+		<if test="url!=null">
+			,crej_url
+		</if>
+		<if test="estado!=null">
+			,crej_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="reporte!=null">
+			,#{reporte}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
+		</if>
+		<if test="error!=null">
+			,#{error}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="url!=null">
+			,#{url}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+	
+	<select id="insertarHistorico" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
+		insert into z_rej_reporteejecucion(
 			crej_llave
 		<if test="reporte!=null">
 			,crej_reporte

@@ -23,8 +23,10 @@ import com.softure.report.infrastructure.ReporteBaseMapper;
 import com.softure.upload.application.UploadSvc;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
+import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 
@@ -46,16 +48,16 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired
 	private ReporteBaseMapper reporteBaseMapper;
 	
-	// BEGIN region servicesReporteBase
 	@Autowired DataSource dataSource;
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired private PedidoVentaSvc pedidoVentaService;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private UsuarioSvc usuarioService;
-	public static final String P_KEY = "P_KEY";
 	@Autowired private ReporteEjecucionSvc ejecucionService;
 	@Autowired private UploadSvc uploadService;
-	// END region servicesReporteBase
+
+	public static final String P_KEY = "P_KEY";
 
 	@Override
 	public ReporteBaseDTO consultaXId(String llave) throws ServerException {
@@ -233,6 +235,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		}
 		String usuario = getUserFromParameters(token);
 		ejecucion.setDocumento(key);
+		PedidoVentaDTO document = pedidoVentaService.consultaXId(key);
+		Integer historic = null;
+		if(document!=null) historic = document.getHistorico();
 		ejecucion.setUsuario(usuario);
 		ReportDTO finish = new ReportDTO();
 		try {
@@ -284,7 +289,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			ejecucion.setFechaFin(new Date());
 			try {
 				if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), token, "reports"));
-				ejecucion = ejecucionService.save(ejecucion);
+				ejecucion = ejecucionService.saveWithHistoric(ejecucion, historic);
 			}catch (Exception e) {	}
 			finish.setData(ejecucion);
 			finish.setContent(resultado);
@@ -293,7 +298,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			ejecucion.setError(e.getMessage());
 			ejecucion.setFechaFin(new Date());
 			try {
-				ejecucionService.save(ejecucion);
+				ejecucionService.saveWithHistoric(ejecucion, historic);
 			}catch (Exception ex) {	}
 			throw new Exception(e.getMessage());
 		}

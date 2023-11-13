@@ -11,5 +11,6 @@ public interface ReporteEjecucionMapper extends IBasicMapper<ReporteEjecucionDTO
 	
 
 // BEGIN region aditionalMethods  
+	ReporteEjecucionDTO insertarHistorico(ReporteEjecucionDTO dto);
 // END region aditionalMethods
 }

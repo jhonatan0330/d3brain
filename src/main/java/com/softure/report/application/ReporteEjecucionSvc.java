@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -84,11 +85,31 @@ public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEj
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ReporteEjecucionDTO guardar(ReporteEjecucionDTO dto, String token) throws ServerException {
 		// BEGIN ReporteEjecucion_guardar
-		return super.guardar(dto, token);
+		throw new ServerException("No se esta usando");
 		// END ReporteEjecucion_guardar
 	}
 
-// BEGIN region aditionalMethods
+// BEGIN region aditionalMethods	
+	@Override
+	public ReporteEjecucionDTO save(ReporteEjecucionDTO dto) throws ServerException {
+		throw new ServerException("No se esta usando");
+	}
+
+	public ReporteEjecucionDTO saveWithHistoric(ReporteEjecucionDTO dto, Integer historico) throws ServerException {
+		if(historico==null || historico==0) {
+			return super.save(dto);
+		}else {
+			dto.setLlaveTabla(generarLlave());
+			try {
+				reporteEjecucionMapper.insertarHistorico(dto); 
+			}catch (BindingException ex) {
+				throw new ServerException(ex.getMessage());
+			}catch (Exception e) {
+				throw new ServerException(e.getCause().getMessage());
+			}
+			return consultaXId(dto.getLlaveTabla());
+		}
+	}
 // END region aditionalMethods
 
 }
