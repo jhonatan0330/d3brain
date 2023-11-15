@@ -71,11 +71,13 @@ public class CallDocumentListWithFilters {
 		// mucha memoria
 		if (dto.getFiltroParametro() != null)
 			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());
-		if(dto.getFiltroParametro()!=null && dto.getFiltroParametro().endsWith(" "))dto.setFiltroParametro(dto.getFiltroParametro().substring(0,dto.getFiltroParametro().length()-1));
+		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().endsWith(" "))
+			dto.setFiltroParametro(dto.getFiltroParametro().substring(0, dto.getFiltroParametro().length() - 1));
 		if (dto.getNombre() != null) {
 			dto.setNombre(dto.getNombre().replaceAll("\s", ""));
 			dto.setNombre(dto.getNombre().toUpperCase()); // En los filtros se generaba error por las minusculas
-			if (dto.getNombre().isEmpty()) dto.setNombre(null);
+			if (dto.getNombre().isEmpty())
+				dto.setNombre(null);
 		}
 		if (dto.getCampoPropiedad() != null) {
 			PropiedadDTO propiedadFuncion = propiedadService.consultaXId(dto.getCampoPropiedad());
@@ -88,9 +90,12 @@ public class CallDocumentListWithFilters {
 			DocumentoPlantillaCaracteristicaDTO campoPlantilla = documentoPlantillaCaracteristicaService
 					.consultaXId(dto.getCampoOrigen());
 			if (campoPlantilla == null) {
-				// Aqui me toco colcoar esto porque los productos tambien llaman estas propiedades
-				// la idea es algun dia unificar las caracteristicas de producto con las de plantillas
-				// por el momento excusas por este  remache, lo copie de propiedadsc identificador campo
+				// Aqui me toco colcoar esto porque los productos tambien llaman estas
+				// propiedades
+				// la idea es algun dia unificar las caracteristicas de producto con las de
+				// plantillas
+				// por el momento excusas por este remache, lo copie de propiedadsc
+				// identificador campo
 				ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
 						.consultaXId(dto.getCampoOrigen());
 				if (filtroProducto == null) {
@@ -192,15 +197,17 @@ public class CallDocumentListWithFilters {
 		filterDTO.setFiltroParametro(dtoFilter.getFiltroParametro());
 		filterDTO.setEstado(dtoFilter.getEstado());
 		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
-		if(dtoFilter.getFiltersByFields()!=null) {
+		if (dtoFilter.getFiltersByFields() != null) {
 			for (PedidoVentaCaracteristicaFilterDTO iFilterField : dtoFilter.getFiltersByFields()) {
-				if(iFilterField.getValorAuxiliar()==null || iFilterField.getValorAuxiliar().compareTo(templateFilter)==0) {
-					if(filterDTO.getFiltersByFields()==null)filterDTO.setFiltersByFields(new ArrayList<>());
+				if (iFilterField.getValorAuxiliar() == null
+						|| iFilterField.getValorAuxiliar().compareTo(templateFilter) == 0) {
+					if (filterDTO.getFiltersByFields() == null)
+						filterDTO.setFiltersByFields(new ArrayList<>());
 					filterDTO.getFiltersByFields().add(iFilterField);
 				}
 			}
 		}
-		
+
 		String secToken = null;
 		List<PropiedadDTO> propiedadesFiltro = null;
 		filterDTO.setPlantilla(templateFilter);
@@ -276,7 +283,8 @@ public class CallDocumentListWithFilters {
 			filtro.setFuncionarioNombre(dtoFilter.getFuncionarioNombre());
 			filtro.setFuncionario(filterDTO.getFuncionario()); // No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
-			if(secToken!=null || filtro.getFuncionario()!=null)filtro.setCaracteristicas(filterDTO.getCaracteristicas());
+			if (secToken != null || filtro.getFuncionario() != null)
+				filtro.setCaracteristicas(filterDTO.getCaracteristicas());
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
@@ -320,8 +328,10 @@ public class CallDocumentListWithFilters {
 						if (filterDTO.getFechaMax() == null)
 							throw new ServerException("Por favor seleccione fecha de fin para la consulta");
 					}
-					if(filterDTO.getFechaMax()!=null && filterDTO.getFechaMin()!=null) {
-						if(filterDTO.getFechaMin().compareTo(filterDTO.getFechaMax())>0)throw new ServerException("Revisa las fechas, la fecha minima no puede ser menor a la fecha maxima");
+					if (filterDTO.getFechaMax() != null && filterDTO.getFechaMin() != null) {
+						if (filterDTO.getFechaMin().compareTo(filterDTO.getFechaMax()) > 0)
+							throw new ServerException(
+									"Revisa las fechas, la fecha minima no puede ser menor a la fecha maxima");
 					}
 					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
 					if (orden.isEmpty())
@@ -337,7 +347,8 @@ public class CallDocumentListWithFilters {
 			}
 			filterDTO.setEstadoExpediente(dtoFilter.getEstadoExpediente());
 			List<String> textoFiltroComas = organizarFiltroComas(dtoFilter);
-			if(textoFiltroComas!=null) filterDTO.setFiltroParametro(null);
+			if (textoFiltroComas != null)
+				filterDTO.setFiltroParametro(null);
 			if (filterDTO.getFuncionarioNombre() == null)
 				filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
 			if (propiedadesFiltro != null)
@@ -363,10 +374,12 @@ public class CallDocumentListWithFilters {
 		}
 		if (relaciones.isEmpty())
 			relaciones = null;
-		return listadoCompleto(
-				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente,
-						textoFiltroComas, pedidoVentaService.getUserFlex(token), camposFiltro, relaciones, null),
-				token, null);
+		List<String> options = pedidoVentaMapper.optionsToFilterByField(pedidoVentaService.getUserFlex(token),
+				relaciones);
+		if (options == null || options.isEmpty())
+			return new ArrayList<>();
+		return listadoCompleto(pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden,
+				ordenAscendente, textoFiltroComas, camposFiltro, null, options), token, null);
 	}
 
 	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {
@@ -385,10 +398,12 @@ public class CallDocumentListWithFilters {
 		pedidoVentaService.paginar(dto);
 		if (funcionBusqueda != null) {// && funcionBusqueda.compareTo(ConstantesGenerales.OK)!=0) {
 			try {
-				// Todo esto se hizo porque se null el valor opcion sucede que usabamos == y tocaba choose
+				// Todo esto se hizo porque se null el valor opcion sucede que usabamos == y
+				// tocaba choose
 				List<String> filtrosEstado = generateFiltersByStateFromProcess(dto);
 				funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
-				// Yo tenia el normalize por BD pero no fue una buena practica porque consume mucha memoria
+				// Yo tenia el normalize por BD pero no fue una buena practica porque consume
+				// mucha memoria
 				if (dto.getFiltroParametro() != null)
 					dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());
 				return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda,
@@ -439,10 +454,10 @@ public class CallDocumentListWithFilters {
 			}
 		}
 		if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-			result = List.of(ConstantesGenerales.ESTADO_ACTIVO,ConstantesGenerales.ESTADO_FINALIZADO);
+			result = List.of(ConstantesGenerales.ESTADO_ACTIVO, ConstantesGenerales.ESTADO_FINALIZADO);
 		return result;
 	}
-	
+
 	public List<PedidoVentaDTO> listadoCompleto(List<PedidoVentaDTO> result, String securityToken, String campoValor)
 			throws ServerException {
 		if (result != null && !result.isEmpty()) {

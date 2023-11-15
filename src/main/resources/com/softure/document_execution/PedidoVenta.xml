@@ -303,6 +303,35 @@
 		<if test="filtroEstadoGeneralesMultiple!=null">	and a.cpdv_estado in <foreach item="item" collection="filtroEstadoGeneralesMultiple" separator="," open="(" close=")">#{item}</foreach></if>
 	</sql>
 	
+	<select id="optionsToFilterByField" resultType="java.lang.String">
+		<if test="relaciones==null">
+			select cerl_documento from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario};
+		</if>	
+		<if test="relaciones!=null">
+			select cp_rol.cpvc_valoropcion from usuariorol_erlp 
+				inner join pedidoventacaracteristica_pvcp cp_rol on (cp_rol.cpvc_documento = cerl_documento and cp_rol.cpvc_estado = 'A')
+		 	where cerl_estado = 'A' and cerl_usuario = #{usuario}
+		 		and cp_rol.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
+		 	union
+		 	select cpvc_documento from pedidoventacaracteristica_pvcp
+		 		inner join usuariorol_erlp on (cpvc_valoropcion = cerl_documento and cerl_estado = 'A')
+		 	where cpvc_estado = 'A' and cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
+		 		and cerl_usuario = #{usuario}
+		 	union
+		 	select cdex_expedientedetalle from pedidoventacaracteristica_pvcp
+		 		inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cpvc_llave and cdex_estado = 'A')
+		 		inner join usuariorol_erlp on (cpvc_valoropcion = cerl_documento and cerl_estado = 'A')
+		 	where cpvc_estado = 'A' and cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
+		 		and cerl_usuario = #{usuario}
+		 	union
+		 	select cdex_expedientedetalle from usuariorol_erlp 
+				inner join pedidoventacaracteristica_pvcp cp_rol on (cp_rol.cpvc_documento = cerl_documento and cp_rol.cpvc_estado = 'A')
+		 		inner join documentorelacionexpediente_dexp dex_rol on (dex_rol.cdex_campomaestro = cp_rol.cpvc_llave and dex_rol.cdex_estado = 'A')
+		 	where cerl_estado = 'A' and cerl_usuario = #{usuario}
+		 		and cp_rol.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
+		</if>
+	</select>
+	
 	<select id="listarPermitidosPorCampoFiltro" resultType="PedidoVentaDTO">
 		<foreach item="item" collection="camposFiltro" separator=" union " >
 		select distinct
@@ -323,23 +352,8 @@
 			,a.cpdv_transaccion as  transaccion
 			,a.cpdv_estado as estado
 		from pedidoventa_pdvp a
-			inner join usuariorol_erlp on (cerl_estado = 'A' and cerl_usuario = #{usuario})
 		 	cross join campo4id(a.cpdv_llave, #{item.valor}, a.npdv_historico) cp_campo
-		 	<if test="relaciones!=null">
-		 	inner join pedidoventacaracteristica_pvcp cp_rol on (cp_rol.cpvc_documento = cerl_documento and cp_rol.cpvc_estado = 'A')
-		 	left join documentorelacionexpediente_dexp dex_rol on (dex_rol.cdex_campomaestro = cp_rol.cpvc_llave and dex_rol.cdex_estado = 'A')
-		 	inner join pedidoventacaracteristica_pvcp cp_aux on (cp_aux.cpvc_documento = cp_campo.cpvc_valoropcion and cp_aux.cpvc_estado = 'A')
-	 		left join documentorelacionexpediente_dexp dex_aux on (dex_aux.cdex_campomaestro = cp_aux.cpvc_llave and dex_aux.cdex_estado = 'A')
-		 	</if>
-			where <if test="relaciones==null">cp_campo.cpvc_valoropcion = cerl_documento</if>
-				<if test="relaciones!=null">
-				(cp_rol.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
-					or cp_aux.cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>)
-				and (cp_campo.cpvc_valoropcion = cp_rol.cpvc_valoropcion 
-					or cp_aux.cpvc_valoropcion = cerl_documento 
-					or dex_rol.cdex_expedientedetalle = cerl_documento
-					or dex_aux.cdex_expedientedetalle = cerl_documento)
-				</if>
+		where cp_campo.cpvc_valoropcion in <foreach item="option" collection="optionsToFilter" separator="," open="(" close=")">#{option}</foreach>
 		 	<include refid="filterMainFragment" />
 		</foreach>
 		<include refid="orderMainFragment" />
