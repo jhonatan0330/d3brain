@@ -236,7 +236,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
         String usuario = getUserFromParameters(token);
         ejecucion.setDocumento(key);
         PedidoVentaDTO document = null;
-        if(key != null) documento= pedidoVentaService.consultaXId(key);
+        if(key != null) document = pedidoVentaService.consultaXId(key);
         Integer historic = null;
         if(document!=null) historic = document.getHistorico();
         ejecucion.setUsuario(usuario);
