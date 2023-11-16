@@ -59,28 +59,29 @@ public class TipoNumero {
 									+ " no se calculo correctamente, valor esperado : ("
 									+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
 									+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
-					} /*else {
-						if (!formula.isEmpty()) {
-							BigDecimal valorCalculado = calcular(pCampo, formula);
-							pCampo.setValorNumero(valorCalculado);
-						} 
-					}*/
+					} /*
+						 * else { if (!formula.isEmpty()) { BigDecimal valorCalculado = calcular(pCampo,
+						 * formula); pCampo.setValorNumero(valorCalculado); } }
+						 */
 				}
 			}
 			// Valido que se calcule bien la funcion
 			PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 					Propiedades.NUMERO_FUNCION_SQL);
 			if (bloqProperty != null && funcionCalculo != null) {
-				//Dividi el tema del depende ya que siempre tengo que calcular el valor sin necesidad del depende
-				if(Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) != null) {
-					if(pCampo.getModificado()) {
+				// Dividi el tema del depende ya que siempre tengo que calcular el valor sin
+				// necesidad del depende
+				if (Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) != null) {
+					if (pCampo.getModificado()) {
 						// Valido que del cliente este ien calculado
-						if (pCampo.getLlaveTabla() == null || (pCampo.getLlaveTabla() != null && Propiedades
-								.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
-							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
-									pCampo.getDocumento(), pCampo.getDependientes());
-							//Algunas funciones no traen el valor del cero
-							if(valorCalculado == null) valorCalculado = BigDecimal.ZERO; 
+						if (pCampo.getLlaveTabla() == null
+								|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+										Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
+							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
+									funcionCalculo.getLlaveTabla(), pCampo.getDocumento(), pCampo.getDependientes());
+							// Algunas funciones no traen el valor del cero
+							if (valorCalculado == null)
+								valorCalculado = BigDecimal.ZERO;
 							BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 							if (diferencia.abs().longValue() > 1)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
@@ -89,9 +90,10 @@ public class TipoNumero {
 										+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
 						}
 					}
-				}else {
-					//En box hay un campo que calcula el area, en guardar todo bien pero al modificar no se guardaba
-					//lo arreglo aqui para que si guarde
+				} else {
+					// En box hay un campo que calcula el area, en guardar todo bien pero al
+					// modificar no se guardaba
+					// lo arreglo aqui para que si guarde
 					pCampo.setModificado(true);
 				}
 			}
@@ -119,12 +121,13 @@ public class TipoNumero {
 									+ SoftureUtil.formatMoney(bd.getValorNumero()));
 			}
 		}
-				
+
 		try {
 			int roundInt = 0;
 			String roundNumber = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_REDONDEO);
-			if (!roundNumber.isEmpty()) roundInt = Integer.parseInt(roundNumber);
-			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));	
+			if (!roundNumber.isEmpty())
+				roundInt = Integer.parseInt(roundNumber);
+			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));
 		} catch (NumberFormatException e) {
 			throw new ServerException(e.getMessage());
 		}
@@ -171,9 +174,11 @@ public class TipoNumero {
 		// Coloque null los dependientes solo con esa condicion se calculan al final
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.NUMERO_FUNCION_SQL);
-		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
-				&& funcionCalculo != null
-				&& Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) == null) {
+		if (funcionCalculo != null
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
+				&& (Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) == null
+						|| Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
+								Propiedades.FUNCION_NUMBER_ALL_CALCULATE_SAVE) != null)) {
 			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
 					pCampo.getDocumento(), new ArrayList<PedidoVentaCaracteristicaDTO>()));
 			if (pCampo.getValorNumero() == null)
@@ -197,10 +202,11 @@ public class TipoNumero {
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
 					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-					if(bd.getValorNumero()==null) {
+					if (bd.getValorNumero() == null) {
 						pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
-					}else {
-						pCampo.getDifference().setValorNumero(pCampo.getValorNumero().add(bd.getValorNumero().negate()));	
+					} else {
+						pCampo.getDifference()
+								.setValorNumero(pCampo.getValorNumero().add(bd.getValorNumero().negate()));
 					}
 				}
 			}
@@ -208,7 +214,7 @@ public class TipoNumero {
 		if (pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0) {
 			return pCampo;
 		} else {
-			if(pCampo.getDifference()==null) {
+			if (pCampo.getDifference() == null) {
 				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
 				pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
 			}
@@ -230,7 +236,7 @@ public class TipoNumero {
 					if (iterable.getDetalles() != null && !iterable.getDetalles().isEmpty()) {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
 						for (DetallePedidoVentaDTO iDetalle : iterable.getDetalles()) {
-							// Aveces vienen  inactivos y esos  no toca tenerlos  en cuenta
+							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
 							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
 									&& (iDetalle.getEstado() == null || iDetalle.getEstado()
 											.compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0)) {
@@ -279,7 +285,7 @@ public class TipoNumero {
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
 				if (iDep.getValorOpcion() == null) {
 					if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-						iDep.setValorOpcion((iDep.getValorNumero()==null)?"0":iDep.getValorNumero().toString());
+						iDep.setValorOpcion((iDep.getValorNumero() == null) ? "0" : iDep.getValorNumero().toString());
 					}
 				}
 			}

@@ -93,6 +93,7 @@ public class Propiedades {
 	public static final String NUMERO_FUNCION_SQL = "NUMERO_FUNCION_SQL";
 	public static final String NUMERO_STEP = "NUMERO_STEP";
 	public static final String TOTAL_FUNCION = "TOTAL_FUNCION";
+	public static final String FUNCION_NUMBER_ALL_CALCULATE_SAVE = "FUNCION_NUMBER_ALL_CALCULATE_SAVE";
 
 	// public static final String CUENTA_CATALOGO_FILTRO = "CUENTA_CATALOGO_FILTRO";
 	public static final String CUENTA_MOVIMIENTO = "CUENTA_MOVIMIENTO";
