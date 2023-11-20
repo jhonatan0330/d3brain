@@ -10,7 +10,6 @@ import com.softure.api.domain.DataFieldRequest;
 import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
-import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -18,6 +17,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
+import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
@@ -35,7 +35,7 @@ public class ApiGetFieldDataService {
 	@Autowired
 	private ProductoSvc productoService;
 	@Autowired
-	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
+	private CallSearchProcessFromText searchProcessFromText;
 
 	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {
 		validateFilter(token, filter);
@@ -56,8 +56,7 @@ public class ApiGetFieldDataService {
 						iPrecondition, dependent,
 						productoService, detallePedidoVentaService);
 				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
-					dependent.setValorOpcion(ApiCommon.getValueOpctionFromText(token,
-							listDocumentFromFieldProcessFunction, iPrecondition.getValue(), fieldDependent));
+					dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,iPrecondition.getValue(), fieldDependent));
 				fieldFilter.getDependientes().add(dependent);
 			}
 		}

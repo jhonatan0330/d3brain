@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.softure.api.domain.DocumentFilterRequest;
 import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
-import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
@@ -17,6 +16,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
@@ -25,7 +25,7 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 public class ApiGetService {
 
 	@Autowired private CallDocumentListWithFilters listService;
-	@Autowired private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
+	@Autowired private CallSearchProcessFromText searchProcessFromText;
 	@Autowired private DocumentoPlantillaSvc templateService;
 	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
@@ -78,7 +78,7 @@ public class ApiGetService {
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
 				if(fieldTemplate.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0)
-					result.setValorOpcion(ApiCommon.getValueOpctionFromText(token, listDocumentFromFieldProcessFunction, fieldRequest.getValue(), fieldTemplate));
+					result.setValorOpcion(searchProcessFromText.getValueOptionFromText(token, fieldRequest.getValue(), fieldTemplate));
 				return result;
 			}
 		}

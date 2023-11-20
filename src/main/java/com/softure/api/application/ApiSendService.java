@@ -14,6 +14,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
@@ -27,6 +28,7 @@ public class ApiSendService {
 	
 	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired private ProductoSvc productoService;
+	@Autowired private CallSearchProcessFromText searchProcessFromText;
 
 	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);
@@ -35,7 +37,7 @@ public class ApiSendService {
 		// crear el documento con todos los campos vacios
 		PedidoVentaDTO document = createDocument(template);
 		// Por cada campo con el codigo del campo colocar
-		assignateValue(document, item.getFields());
+		assignateValue(document, item.getFields(), token);
 		// Envio a guardar el documento
 		document = saveDocumentService.save(document, token, null);
 		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre());
@@ -56,13 +58,22 @@ public class ApiSendService {
 		}
 	}
 
-	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields) throws ServerException {
+	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields, String token) throws ServerException {
 		if (fields == null || fields.isEmpty())
 			return;
 		for (FieldRequest fieldVO : fields) {
 			for (PedidoVentaCaracteristicaDTO iCampo : document.getCaracteristicas()) {
 				if (iCampo.getCampoDTO().getCodigo().compareTo(fieldVO.getField()) == 0) {
 					ApiCommon.chooseValueToField(fieldVO, iCampo, productoService, detallePedidoVentaService);
+					if (iCampo.getValorOpcion()==null && iCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+						if(fieldVO.getParentDocument()!=null) {
+							String keyExists =  searchProcessFromText.findOptionFromText(token, iCampo.getValorText(), iCampo.getCampoDTO());
+							if(keyExists ==null) {
+								SharedIdResponse responseId =  call(token, fieldVO.getParentDocument());
+								iCampo.setValorOpcion(responseId.getId());
+							}
+						}
+					}
 				}
 			}
 		}

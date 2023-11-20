@@ -3,9 +3,7 @@ package com.softure.process_form.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.application.field.Propiedades;
-import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoCaracteristicaSvc;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
@@ -37,14 +35,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 	@Autowired
 	private DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper;
 
-	// BEGIN region servicesDocumentoPlantillaCaracteristica
 	@Autowired
 	private PropiedadSvc parametroService;
 	@Autowired
-	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
-	@Autowired
 	private ProductoCaracteristicaSvc campoProductoService;
-	// END region servicesDocumentoPlantillaCaracteristica
+	@Autowired
+	private CallSearchProcessFromText searchProcessFromText;
 
 	@Override
 	public DocumentoPlantillaCaracteristicaDTO consultaXId(String llave) throws ServerException {
@@ -81,13 +77,13 @@ public class DocumentoPlantillaCaracteristicaSvc
 		filtro.setTexto(dto.getNombre());
 		parametroService.actualizarValorPropiedad(filtro);
 		PropiedadDTO differenceProperty = parametroService.getPropertyDifferenceField(dto.getLlaveTabla());
-		if(differenceProperty ==null) {
+		if (differenceProperty == null) {
 			PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
 			if (filtroPlantilla != null)
-				createFieldDifference(dto, filtroPlantilla.getValor(), token);	
+				createFieldDifference(dto, filtroPlantilla.getValor(), token);
 		} else {
 			DocumentoPlantillaCaracteristicaDTO fieldDifference = consultaXId(differenceProperty.getValor());
-			if(fieldDifference.getFormato().compareTo(dto.getFormato())!=0) {
+			if (fieldDifference.getFormato().compareTo(dto.getFormato()) != 0) {
 				fieldDifference.setFormato(dto.getFormato());
 				update(fieldDifference);
 			}
@@ -124,6 +120,9 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return super.listarConsulta(dto);
 	}
 
+	// Esto lo uso en APiCommon y la idea es que se mejore en las cargas masivas
+	// para que solo consulte de a uno y si es null que gestione los errores por
+	// fuera
 	public DocumentoPlantillaCaracteristicaDTO listarCarga(DocumentoPlantillaCaracteristicaFilterDTO dto)
 			throws ServerException {
 		// BEGIN region listarCarga
@@ -136,48 +135,9 @@ public class DocumentoPlantillaCaracteristicaSvc
 		// documentos a validar, en este caso estan vacios");
 		DocumentoPlantillaCaracteristicaDTO dtoCarga = cargarComplementos(consultaXId(dto.getLlaveTabla()),
 				dto.getSecurityToken());
-		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
-		filter.setCampo(dto.getLlaveTabla());
-		filter.setCampoDTO(dtoCarga);
-		filter.setSecurityToken(dto.getSecurityToken());
 		List<PedidoVentaDTO> documentAproval = new ArrayList<>();
 		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
-			filter.setFiltroParametro(iDoc.getNombre());
-			PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction.execute(filter, dtoCarga);
-			if (result == null || result.getCampoDTO() == null || result.getCampoDTO().getDocumentos() == null
-					|| result.getCampoDTO().getDocumentos().isEmpty())
-				throw new ServerException("Revisando el campo " + dtoCarga.getNombre()
-						+ " No se encuentra el documento con codigo : " + iDoc.getNombre());
-			String keyOfDocument = null;
-			if (result.getCampoDTO().getDocumentos().size() > 1) {
-				String textToCompare = null;
-				// Esto es porque el fitro trae muchos resultados ejemplo busco el 60 y me trae
-				// el 601
-				for (PedidoVentaDTO pedidoVentaDTO : result.getCampoDTO().getDocumentos()) {
-					if (pedidoVentaDTO.getNombre().compareTo(iDoc.getNombre().toUpperCase())==0) {
-						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
-						break;
-					}
-					if (pedidoVentaDTO.getTextoFiltro() == null) {
-						textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getNombre()
-								+ ConstantesGenerales.COMA;
-					} else {
-						textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getTextoFiltro();
-					}
-					if (textToCompare
-							.contains(ConstantesGenerales.COMA + iDoc.getNombre().toUpperCase() + ConstantesGenerales.COMA)) {
-						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
-						break;
-					}
-					
-				}
-			} else {
-				keyOfDocument = result.getCampoDTO().getDocumentos().get(0).getLlaveTabla();
-			}
-			if (keyOfDocument == null)
-				throw new ServerException("El campo " + dtoCarga.getNombre() + " obtiene "
-						+ result.getCampoDTO().getDocumentos().size() + " resultados que concuerdan con el criterio : "
-						+ iDoc.getNombre() + " y ninguno tiene el mismo nombre");
+			String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(), iDoc.getNombre(), dtoCarga);
 			PedidoVentaDTO addItem = new PedidoVentaDTO();
 			addItem.setLlaveTabla(keyOfDocument);
 			addItem.setNombre(iDoc.getNombre());
@@ -221,12 +181,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
 			String token) throws ServerException {
-		
+
 		DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 		newCampo.setCodigo(iCampo.getCodigo());
-		if(iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO)==0) {
+		if (iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0) {
 			newCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
-		}else {
+		} else {
 			newCampo.setFormato(iCampo.getFormato());
 		}
 		newCampo.setImagen(iCampo.getImagen());

@@ -7,6 +7,8 @@ public class FieldRequest {
 	private String field;
 	private String value;
 	private List<ProductRequest> products;
+	private DocumentRequest parentDocument;
+	
 	public String getField() {
 		return field;
 	}
@@ -25,5 +27,12 @@ public class FieldRequest {
 	public void setProducts(List<ProductRequest> products) {
 		this.products = products;
 	}
+	public DocumentRequest getParentDocument() {
+		return parentDocument;
+	}
+	public void setParentDocument(DocumentRequest parentDocument) {
+		this.parentDocument = parentDocument;
+	}
+	
 	
 }

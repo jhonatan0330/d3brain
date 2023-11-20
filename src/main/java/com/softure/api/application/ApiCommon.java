@@ -12,12 +12,10 @@ import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
 import com.softure.api.domain.FieldResponse;
 import com.softure.api.domain.ProductRequest;
-import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
@@ -126,36 +124,7 @@ public class ApiCommon {
 		return result;
 	}
 
-	public static String getValueOpctionFromText(String token,
-			CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction, String valueText,
-			DocumentoPlantillaCaracteristicaDTO fieldTemplate) throws ServerException {
-		if (isUUID(valueText))
-			return valueText;
-		// Esto se hizo para las cargas masivas en caso que llegue un valor texto
-		// intentamos consultarlo
-		// especialmente se hizo para los dependientes
-		// Esta cpopiado en varias partes miestras analizo como colocarlo en alguna
-		// funcion
-		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
-		filter.setCampo(fieldTemplate.getLlaveTabla());
-		filter.setCampoDTO(fieldTemplate);
-		filter.setSecurityToken(token);
-		// filter.setDependientes(pCampo.getDependientes());
-		filter.setFiltroParametro(valueText);
-		PedidoVentaCaracteristicaFilterDTO resultField = listDocumentFromFieldProcessFunction.execute(filter,
-				fieldTemplate);
-		if (resultField == null || resultField.getCampoDTO() == null
-				|| resultField.getCampoDTO().getDocumentos() == null
-				|| resultField.getCampoDTO().getDocumentos().isEmpty())
-			throw new ServerException("Revisando el campo " + fieldTemplate.getNombre()
-					+ " No se encuentra el documento con codigo : " + valueText
-					+ "\nRevisa que el usuario tenga permiso de visualizar el documento");
-		if (resultField.getCampoDTO().getDocumentos().size() > 1)
-			throw new ServerException("El campo " + fieldTemplate.getNombre() + " obtiene "
-					+ resultField.getCampoDTO().getDocumentos().size() + " resultados que concuerdan con el criterio : "
-					+ valueText);
-		return resultField.getCampoDTO().getDocumentos().get(0).getLlaveTabla();
-	}
+	
 
 	public static List<DocumentResponse> transformPedidoVentaToDocument(String token,
 			PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, List<PedidoVentaDTO> results,
