@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -116,7 +115,9 @@ public class ReporteServlet extends HttpServlet{
 				InputStream input = new ByteArrayInputStream(resultado.getContent());
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
-				downloadFile(response, input, reportBD.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte);
+				String name = resultado.getName();
+				if(name == null) { name = reportBD.getNombre(); }
+				downloadFile(response, input, name +"_" + SoftureUtil.formatDateMassiveFile(new Date()) + "." + tipoReporte.toLowerCase());
 			}
 		} catch (Exception e) {
 			PrintWriter out=response.getWriter();

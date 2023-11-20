@@ -138,7 +138,7 @@ public class UploadSvc {
 				throw new ServerException(showServerReply(ftpClient));
 			urlFinal = new URI(urlBase + "/" + dirToCreate + "/" + fileName).normalize().toString();
 		} catch (IOException ex) {
-			throw new ServerException(ex.getMessage() + " DIR: " + dirToCreate);
+			throw new ServerException(ex.getMessage() + "\nDetalle" + ex.getLocalizedMessage() + " DIR: " + dirToCreate);
 		} catch (URISyntaxException e) {
 			throw new ServerException(e.getMessage() + " . ERROR Creando la URL");
 		} finally {

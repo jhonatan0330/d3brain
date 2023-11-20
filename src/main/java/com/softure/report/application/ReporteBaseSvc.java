@@ -292,6 +292,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
                 if(Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE)==null) ejecucion.setUrl( uploadService.uploadFile(resultado, reporte.getNombre() +"_(" + DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), token, "reports"));
                 ejecucion = ejecucionService.saveWithHistoric(ejecucion, historic);
             }catch (Exception e) {    }
+            if(document!=null) finish.setName(document.getNombre());
             finish.setData(ejecucion);
             finish.setContent(resultado);
             return finish;

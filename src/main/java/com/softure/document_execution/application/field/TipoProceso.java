@@ -206,7 +206,7 @@ public class TipoProceso {
 									Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 							&& (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty()))
 						throw new ServerException(
-								"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+								"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 				} else {
 					PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo, token);
 					PedidoVentaCaracteristicaFilterDTO documentosFuncion = consultarDatosBase(filter);

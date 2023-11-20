@@ -154,6 +154,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 				// Esto es porque el fitro trae muchos resultados ejemplo busco el 60 y me trae
 				// el 601
 				for (PedidoVentaDTO pedidoVentaDTO : result.getCampoDTO().getDocumentos()) {
+					if (pedidoVentaDTO.getNombre().compareTo(iDoc.getNombre().toUpperCase())==0) {
+						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
+						break;
+					}
 					if (pedidoVentaDTO.getTextoFiltro() == null) {
 						textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getNombre()
 								+ ConstantesGenerales.COMA;
@@ -165,6 +169,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 						keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 						break;
 					}
+					
 				}
 			} else {
 				keyOfDocument = result.getCampoDTO().getDocumentos().get(0).getLlaveTabla();
