@@ -724,8 +724,16 @@ public class WebServiceExecuteAPI {
 						nueva.setValorText(SoftureUtil.formatDateMassiveFile(nueva.getValorFecha()));
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.NUMERO:
-						nueva.setValorNumero(new BigDecimal(matcher.group(1)));
-						nueva.setValorText(nueva.getValorNumero().toPlainString());
+						try {
+							String valueToFormat = matcher.group(1);
+							// EN universal  con TCC sucedia que enviaban decimales con comas y esto genera error
+							if(valueToFormat.contains(","))valueToFormat.replace(",", ".");
+							nueva.setValorNumero(new BigDecimal(valueToFormat));
+							nueva.setValorText(nueva.getValorNumero().toPlainString());
+						} catch (Exception e) {
+							nueva.setValorNumero(BigDecimal.ZERO);
+							nueva.setValorText(e.getMessage());
+						}
 						break;
 					case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 						nueva.setValorText(matcher.group(1));
