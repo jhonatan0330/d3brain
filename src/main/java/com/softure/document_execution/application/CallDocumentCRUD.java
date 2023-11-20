@@ -242,7 +242,7 @@ public class CallDocumentCRUD {
 		dto.setFuncionario(bd.getFuncionario());// Siempre tiene que mantenerse la funcionario de registro
 		dto.setHistorico(bd.getHistorico());
 		bd = pedidoService.update(dto);
-		bd.setDinero( saveBalance(dto, token));
+		bd.setDinero(saveBalance(dto, token));
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 			iterador.setTransaccionRegistro(transaccion);// Le quite el igual a null asumo que va a modificar los nuevos
 			iterador.setPrincipal(bd);
@@ -409,36 +409,46 @@ public class CallDocumentCRUD {
 					total);
 			if (campoValor == null)
 				throw new ServerException("Se debe colocar la caracteristica de valor TOTAL");
-			PedidoVentaDineroDTO dineroCalculado = new PedidoVentaDineroDTO();
-			dineroCalculado.setValorTotal(campoValor.getValorNumero());
-			dineroCalculado.setSaldo(BigDecimal.ZERO);
-			// Si es modificar debo actualizar el saldo, solo tienen saldo los que son de
-			// proceso
-			if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
-				PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
-						pedido.getHistorico());
-				if (anterior != null) {
-					dineroCalculado.setSaldo(anterior.getSaldo());
-					if (campoValor.getModificado() && anterior.getControlarSaldo()) {
-						BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
-						dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
-						/*
-						 * // En el proceso de facturacion se softure el saldo sube en el momento que se
-						 * // aprueba la factura y desde el inicial no es afecta saldo if (anterior !=
-						 * null) { BigDecimal diferencia =
-						 * campoValor.getValorNumero().subtract(anterior.getValorTotal());
-						 * dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
-						 * 
-						 * } else { ProcesoTransicionDTO inicial = transicionService
-						 * .consultarTransaccionInicial(pedido.getPlantilla()); if (inicial != null &&
-						 * inicial.getAfectaSaldo() != null)
-						 * dineroCalculado.setSaldo(campoValor.getValorNumero()); }
-						 */
+			// En roa me sucdeio que automaticamente modifciaban una guia y despues
+			// modficaban el recibo pero el valor quedaba mal porque tomaba el valor viejo
+			if (campoValor.getModificado()) {
+				PedidoVentaDineroDTO dineroCalculado = new PedidoVentaDineroDTO();
+				dineroCalculado.setValorTotal(campoValor.getValorNumero());
+				dineroCalculado.setSaldo(BigDecimal.ZERO);
+				// Si es modificar debo actualizar el saldo, solo tienen saldo los que son de
+				// proceso
+				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
+					PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
+							pedido.getHistorico());
+					if (anterior != null) {
+						dineroCalculado.setSaldo(anterior.getSaldo());
+						if (campoValor.getModificado() && anterior.getControlarSaldo()) {
+							BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
+							dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
+							/*
+							 * // En el proceso de facturacion se softure el saldo sube en el momento que se
+							 * // aprueba la factura y desde el inicial no es afecta saldo if (anterior !=
+							 * null) { BigDecimal diferencia =
+							 * campoValor.getValorNumero().subtract(anterior.getValorTotal());
+							 * dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
+							 * 
+							 * } else { ProcesoTransicionDTO inicial = transicionService
+							 * .consultarTransaccionInicial(pedido.getPlantilla()); if (inicial != null &&
+							 * inicial.getAfectaSaldo() != null)
+							 * dineroCalculado.setSaldo(campoValor.getValorNumero()); }
+							 */
+						}
 					}
-				}
 
+				}
+				pedido.setDinero(dineroCalculado);
+			} else {
+				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {					
+					pedido.setDinero( dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
+							pedido.getHistorico()));
+				}
 			}
-			pedido.setDinero(dineroCalculado);
+
 		} else {
 			pedido.setDinero(null);
 		}
