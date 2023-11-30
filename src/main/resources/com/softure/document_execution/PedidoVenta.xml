@@ -318,9 +318,9 @@
 		 	where cpvc_estado = 'A' and cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
 		 		and cerl_usuario = #{usuario}
 		 	union
-		 	select cdex_expedientedetalle from pedidoventacaracteristica_pvcp
+		 	select cpvc_documento from pedidoventacaracteristica_pvcp
 		 		inner join documentorelacionexpediente_dexp on (cdex_campomaestro = cpvc_llave and cdex_estado = 'A')
-		 		inner join usuariorol_erlp on (cpvc_valoropcion = cerl_documento and cerl_estado = 'A')
+		 		inner join usuariorol_erlp on (cerl_estado = 'A' and cdex_expedientedetalle = cerl_documento)
 		 	where cpvc_estado = 'A' and cpvc_campo in <foreach item="campoRelacion" collection="relaciones" separator="," open="(" close=")">#{campoRelacion}</foreach>
 		 		and cerl_usuario = #{usuario}
 		 	union
