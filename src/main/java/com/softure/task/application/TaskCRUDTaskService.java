@@ -27,7 +27,7 @@ public class TaskCRUDTaskService extends SharedCRUDService<TaskTaskDTO, TaskTask
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. Task");
 		TaskTaskFilter dto = new TaskTaskFilter();
-		dto.setId(llave);
+		dto.setKey(llave);
 		return taskMapper.selectOne(dto);
 	}
 

@@ -12,6 +12,10 @@
 			,dctg_fechainicial as initialDate
 			,dctg_fechafinal as finalDate
 			,cctg_consecutivo as consecutive
+			,dctg_creacionfecha as createdAt
+			,cctg_creacionusuario as createdUser
+			,cctg_creacionusuarionombre as createdUserName
+			,dctg_modificacionfecha as updatedAt
 			,cctg_estado as state
 		from catalogo_ctg a
 	</sql>
@@ -43,11 +47,11 @@
 	</sql>
 
 	<sql id="paginationCatalogFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -76,6 +80,7 @@
 	<select id="insert" parameterType="CatalogDTO" resultType="CatalogDTO">
 		insert into catalogo_ctg(
 			cctg_llave
+			,dctg_creacionfecha
 		<if test="name!=null">
 			,cctg_nombre
 		</if>
@@ -91,11 +96,18 @@
 		<if test="consecutive!=null">
 			,cctg_consecutivo
 		</if>
+		<if test="createdUser!=null">
+			,cctg_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,cctg_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,cctg_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="name!=null">
 			,#{name}
 		</if>
@@ -111,6 +123,12 @@
 		<if test="consecutive!=null">
 			,#{consecutive}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -120,6 +138,7 @@
 	<select id="update" parameterType="CatalogDTO" resultType="CatalogDTO">
 		update catalogo_ctg
 			set
+				dctg_modificacionfecha = now(),
 				cctg_nombre = #{name},
 				cctg_codigo = #{code},
 				dctg_fechainicial = #{initialDate},

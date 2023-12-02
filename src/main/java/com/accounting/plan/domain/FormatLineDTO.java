@@ -1,33 +1,17 @@
 package com.accounting.plan.domain;
 
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("FormatLineDTO")
-public class FormatLineDTO {
-	private String key;
-	private String state;
+public class FormatLineDTO extends SharedDataObject{
+
 	private String format;
 	private String account;
 	private String description;
 	private String positive;
 	private String negative;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public String getFormat() {
 		return format;

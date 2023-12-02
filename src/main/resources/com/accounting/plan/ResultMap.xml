@@ -28,6 +28,10 @@
 			,mrmp_negativo as negative
 			,mrmp_valor as value
 			,crmp_tipo as type
+			,drmp_creacionfecha as createdAt
+			,crmp_creacionusuario as createdUser
+			,crmp_creacionusuarionombre as createdUserName
+			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state
 		from mapa_resultados_rmp a
 	</sql>
@@ -101,11 +105,11 @@
 	</sql>
 
 	<sql id="paginationResultMapFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -135,6 +139,7 @@
 	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		insert into mapa_resultados_rmp(
 			crmp_llave
+			,drmp_creacionfecha
 		<if test="catalog!=null">
 			,crmp_catalogo
 		</if>
@@ -192,11 +197,18 @@
 		<if test="type!=null">
 			,crmp_tipo
 		</if>
+		<if test="createdUser!=null">
+			,crmp_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,crmp_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,crmp_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="catalog!=null">
 			,#{catalog}
 		</if>
@@ -254,6 +266,12 @@
 		<if test="type!=null">
 			,#{type}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -263,6 +281,7 @@
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		update mapa_resultados_rmp
 			set
+				drmp_modificacionfecha = now(),
 				crmp_catalogo = #{catalog},
 				crmp_cuenta = #{account},
 				nrmp_nivel = #{level},

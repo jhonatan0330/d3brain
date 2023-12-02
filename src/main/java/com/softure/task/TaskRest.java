@@ -1,4 +1,4 @@
-package com.softure.task.infrastructure;
+package com.softure.task;
 
 import java.util.List;
 

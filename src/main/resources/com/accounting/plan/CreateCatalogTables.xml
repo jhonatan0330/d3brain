@@ -24,6 +24,10 @@ CREATE TABLE x_${code}_temporal_rmp (
 	mrmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
+	drmp_creacionfecha timestamptz NOT NULL DEFAULT NOW(),
+	crmp_creacionusuario varchar(32),
+	crmp_creacionusuarionombre varchar(200),
+	drmp_modificacionfecha timestamptz,
 	crmp_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_x_${code}_temporal_rmp PRIMARY KEY (crmp_llave)
 );
@@ -49,6 +53,10 @@ CREATE TABLE x_${code}_puntual_rmp (
 	mrmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mrmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
+	drmp_creacionfecha timestamptz NOT NULL DEFAULT NOW(),
+	crmp_creacionusuario varchar(32),
+	crmp_creacionusuarionombre varchar(200),
+	drmp_modificacionfecha timestamptz,
 	crmp_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pkx_${code}_puntual_rmp PRIMARY KEY (crmp_llave)
 );
@@ -66,6 +74,10 @@ CREATE TABLE x_${code}_comprobante_cmp (
 	mcmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mcmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mcmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
+	dcmp_creacionfecha timestamptz NOT NULL DEFAULT NOW(),
+	ccmp_creacionusuario varchar(32),
+	ccmp_creacionusuarionombre varchar(200),
+	dcmp_modificacionfecha timestamptz,
 	ccmp_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pk_x_comprobante_${code}_cmp PRIMARY KEY (ccmp_llave)
 );
@@ -83,6 +95,10 @@ CREATE TABLE _x_${code}_registro_reg (
 	mreg_valor NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mreg_positivo NUMERIC(18,6) NOT NULL DEFAULT 0,
 	mreg_negativo NUMERIC(18,6) NOT NULL DEFAULT 0,
+	dreg_creacionfecha timestamptz NOT NULL DEFAULT NOW(),
+	creg_creacionusuario varchar(32),
+	creg_creacionusuarionombre varchar(200),
+	dreg_modificacionfecha timestamptz,
 	creg_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
 	CONSTRAINT pkx_registro_${code}_reg PRIMARY KEY (creg_llave)
 );
@@ -95,6 +111,10 @@ CREATE TABLE x_${code}_auxiliar_aux (
 	caux_dimension character varying(32) NOT NULL,
 	caux_valor character varying(200) NOT NULL,
 	caux_estado varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	daux_creacionfecha timestamptz NOT NULL DEFAULT NOW(),
+	caux_creacionusuario varchar(32),
+	caux_creacionusuarionombre varchar(200),
+	daux_modificacionfecha timestamptz,
 	CONSTRAINT pkx_auxiliar_${code}_aux PRIMARY KEY (caux_llave)
 );		
 	</select>

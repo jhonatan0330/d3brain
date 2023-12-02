@@ -26,7 +26,7 @@ public class MassiveCRUDItemService extends SharedCRUDService<MassiveItemDTO, Ma
 	public MassiveItemDTO findById(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. CargaMasivaItem");
 		MassiveItemFilter dto = new MassiveItemFilter();
-		dto.setId(llave);
+		dto.setKey(llave);
 		return cargaMasivaItemMapper.selectOne(dto);
 	}
 	

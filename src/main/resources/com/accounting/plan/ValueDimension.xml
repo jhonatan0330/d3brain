@@ -11,6 +11,10 @@
 			,cvlr_valor as value
 			,cvlr_codigo as code
 			,cvlr_plantilla as template
+			,dvlr_creacionfecha as createdAt
+			,cvlr_creacionusuario as createdUser
+			,cvlr_creacionusuarionombre as createdUserName
+			,dvlr_modificacionfecha as updatedAt
 			,cvlr_estado as state
 		from valor_vlr a
 	</sql>
@@ -39,11 +43,11 @@
 	</sql>
 
 	<sql id="paginationValueDimensionFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -72,6 +76,7 @@
 	<select id="insert" parameterType="ValueDimensionDTO" resultType="ValueDimensionDTO">
 		insert into valor_vlr(
 			cvlr_llave
+			,dvlr_creacionfecha
 		<if test="dimension!=null">
 			,cvlr_dimension
 		</if>
@@ -84,11 +89,18 @@
 		<if test="template!=null">
 			,cvlr_plantilla
 		</if>
+		<if test="createdUser!=null">
+			,cvlr_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,cvlr_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,cvlr_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="dimension!=null">
 			,#{dimension}
 		</if>
@@ -101,6 +113,12 @@
 		<if test="template!=null">
 			,#{template}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -110,6 +128,7 @@
 	<select id="update" parameterType="ValueDimensionDTO" resultType="ValueDimensionDTO">
 		update valor_vlr
 			set
+				dvlr_modificacionfecha = now(),
 				cvlr_dimension = #{dimension},
 				cvlr_valor = #{value},
 				cvlr_codigo = #{code},

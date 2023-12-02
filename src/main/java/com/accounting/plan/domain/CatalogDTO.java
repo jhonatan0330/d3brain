@@ -3,12 +3,12 @@ package com.accounting.plan.domain;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.shared.domain.SharedParamObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("CatalogDTO")
-public class CatalogDTO {
-	private String key;
-	private String state;
+public class CatalogDTO extends SharedParamObject{
+
 	private String name;
 	private String code;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -16,22 +16,6 @@ public class CatalogDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
 	private String consecutive;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public String getName() {
 		return name;

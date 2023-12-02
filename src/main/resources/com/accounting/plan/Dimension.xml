@@ -12,6 +12,10 @@
 			,cdim_codigo as code
 			,cdim_campo as field
 			,cdim_tipo as type
+			,ddim_creacionfecha as createdAt
+			,cdim_creacionusuario as createdUser
+			,cdim_creacionusuarionombre as createdUserName
+			,ddim_modificacionfecha as updatedAt
 			,cdim_estado as state
 		from dimension_dim a
 	</sql>
@@ -43,11 +47,11 @@
 	</sql>
 
 	<sql id="paginationDimensionFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -76,6 +80,7 @@
 	<select id="insert" parameterType="DimensionDTO" resultType="DimensionDTO">
 		insert into dimension_dim(
 			cdim_llave
+			,ddim_creacionfecha
 		<if test="account!=null">
 			,cdim_cuenta
 		</if>
@@ -91,11 +96,18 @@
 		<if test="type!=null">
 			,cdim_tipo
 		</if>
+		<if test="createdUser!=null">
+			,cdim_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,cdim_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,cdim_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="account!=null">
 			,#{account}
 		</if>
@@ -111,6 +123,12 @@
 		<if test="type!=null">
 			,#{type}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -120,6 +138,7 @@
 	<select id="update" parameterType="DimensionDTO" resultType="DimensionDTO">
 		update dimension_dim
 			set
+				ddim_modificacionfecha = now(),
 				cdim_cuenta = #{account},
 				cdim_nombre = #{name},
 				cdim_codigo = #{code},

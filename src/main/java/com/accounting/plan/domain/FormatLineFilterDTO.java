@@ -3,58 +3,16 @@ package com.accounting.plan.domain;
 
 import org.apache.ibatis.type.Alias;
 
+import com.shared.domain.SharedDataObjectFilter;
+
 @Alias("FormatLineFilterDTO")
-public class FormatLineFilterDTO {
-	private String key;
-	private String state;
-	private String filter;
-	private Integer indexStart;
-	private Integer indexEnd;
+public class FormatLineFilterDTO extends SharedDataObjectFilter {
+
 	private String format;
 	private String account;
 	private String description;
 	private String positive;
 	private String negative;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getFilter() {
-		return filter;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-	public Integer getIndexStart() {
-		return indexStart;
-	}
-
-	public void setIndexStart(Integer indexStart) {
-		this.indexStart = indexStart;
-	}
-
-	public Integer getIndexEnd() {
-		return indexEnd;
-	}
-
-	public void setIndexEnd(Integer indexEnd) {
-		this.indexEnd = indexEnd;
-	}
 
 	public String getFormat() {
 		return format;

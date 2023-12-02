@@ -3,12 +3,12 @@ package com.accounting.plan.domain;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("FactDTO")
-public class FactDTO {
-	private String key;
-	private String state;
+public class FactDTO extends SharedDataObject{
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date registerDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -18,22 +18,6 @@ public class FactDTO {
 	private String code;
 	private String template;
 	private String id;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public Date getRegisterDate() {
 		return registerDate;

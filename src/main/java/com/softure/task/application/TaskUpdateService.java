@@ -27,7 +27,7 @@ public class TaskUpdateService {
 		bd.setPriority(task.getPriority());
 		bd.setOrder(task.getOrder());
 		if(task.getCompleted()!=null)bd.setCompleted(new Date());
-		taskService.update(bd, user);
+		taskService.update(bd);
 		return new SharedIdResponse( task.getId() );
 	}
 

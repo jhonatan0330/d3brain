@@ -1,12 +1,12 @@
 package com.accounting.plan.domain;
 
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("AccountDTO")
-public class AccountDTO {
-	private String key;
-	private String state;
+public class AccountDTO extends SharedDataObject{
+
 	private String catalog;
 	private String wbs;
 	private String name;
@@ -18,22 +18,6 @@ public class AccountDTO {
 	private String operation;
 	private String template;
 	private String field;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public String getCatalog() {
 		return catalog;

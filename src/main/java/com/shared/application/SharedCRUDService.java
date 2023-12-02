@@ -16,19 +16,17 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 	
 	protected SharedCRUDMapperMybatis<T, TFilter> mapper;
 	
-	public void update(T dto, String updateUser) throws ServerException {
-		if(updateUser == null) throw new ServerException("Ingrese los datos del usuario que realiza los cambios");
+	public void update(T dto) throws ServerException {
 		try {
 			dto.setUpdatedAt(new Date());
-			dto.setUpdatedUser(updateUser);
 			mapper.update(dto); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
 	
-	public T updateAndFindById(T dto, String user) throws ServerException {
-		update(dto, user);
+	public T updateAndFindById(T dto) throws ServerException {
+		update(dto);
 		return findById(dto.getKey());
 	}
 

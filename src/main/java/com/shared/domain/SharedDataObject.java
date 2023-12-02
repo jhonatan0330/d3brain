@@ -7,8 +7,9 @@ public abstract class SharedDataObject {
 	private String key;
     private Date createdAt;
     private String createdUser;
+    private String createdUserName;
     private Date updatedAt;
-    private String updatedUser;
+    
     private String state;
     
 	public String getKey() {
@@ -35,17 +36,17 @@ public abstract class SharedDataObject {
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	public String getUpdatedUser() {
-		return updatedUser;
-	}
-	public void setUpdatedUser(String updatedUser) {
-		this.updatedUser = updatedUser;
-	}
 	public String getState() {
 		return state;
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	public String getCreatedUserName() {
+		return createdUserName;
+	}
+	public void setCreatedUserName(String createdUserName) {
+		this.createdUserName = createdUserName;
 	}
 	
 }

@@ -1,33 +1,17 @@
 package com.accounting.plan.domain;
 
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("DimensionDTO")
-public class DimensionDTO {
-	private String key;
-	private String state;
+public class DimensionDTO extends SharedDataObject{
+
 	private String account;
 	private String name;
 	private String code;
 	private String field;
 	private String type;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public String getAccount() {
 		return account;

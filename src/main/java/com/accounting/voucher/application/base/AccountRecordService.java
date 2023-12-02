@@ -38,10 +38,10 @@ public class AccountRecordService {
 	}
 
 	public List<AccountRecordDTO> getMany(AccountRecordFilterDTO dto) throws ServerException {
-		if (dto.getIndexStart() == null)
-			dto.setIndexStart(0);
-		if (dto.getIndexEnd() == null || dto.getIndexEnd() == 0)
-			dto.setIndexEnd(200);
+		if (dto.getStartRow() == null)
+			dto.setStartRow(0);
+		if (dto.getEndRow() == null || dto.getEndRow() == 0)
+			dto.setEndRow(200);
 		try {
 			return mapper.getMany(dto);
 		} catch (BindingException ex) {

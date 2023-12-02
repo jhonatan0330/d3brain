@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("AccountRecordDTO")
-public class AccountRecordDTO {
-	private String key;
-	private String state;
+public class AccountRecordDTO extends SharedDataObject{
+
 	private String catalogCode;
 	private String voucher;
 	private String account;
@@ -23,22 +23,6 @@ public class AccountRecordDTO {
 	private String third;
 	private String thirdId;
 	private String thirdName;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getState() {
-		return state;
-	}
 
 	public String getCatalogCode() {
 		return catalogCode;

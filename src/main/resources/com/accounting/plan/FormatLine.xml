@@ -12,6 +12,10 @@
 			,clin_description as description
 			,clin_positivo as positive
 			,clin_negativo as negative
+			,dlin_creacionfecha as createdAt
+			,clin_creacionusuario as createdUser
+			,clin_creacionusuarionombre as createdUserName
+			,dlin_modificacionfecha as updatedAt
 			,clin_estado as state
 		from linea_lin a
 	</sql>
@@ -43,11 +47,11 @@
 	</sql>
 
 	<sql id="paginationFormatLineFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -76,6 +80,7 @@
 	<select id="insert" parameterType="FormatLineDTO" resultType="FormatLineDTO">
 		insert into linea_lin(
 			clin_llave
+			,dlin_creacionfecha
 		<if test="format!=null">
 			,clin_formato
 		</if>
@@ -91,11 +96,18 @@
 		<if test="negative!=null">
 			,clin_negativo
 		</if>
+		<if test="createdUser!=null">
+			,clin_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,clin_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,clin_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="format!=null">
 			,#{format}
 		</if>
@@ -111,6 +123,12 @@
 		<if test="negative!=null">
 			,#{negative}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -120,6 +138,7 @@
 	<select id="update" parameterType="FormatLineDTO" resultType="FormatLineDTO">
 		update linea_lin
 			set
+				dlin_modificacionfecha = now(),
 				clin_formato = #{format},
 				clin_cuenta = #{account},
 				clin_description = #{description},

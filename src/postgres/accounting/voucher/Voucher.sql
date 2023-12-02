@@ -5,6 +5,12 @@ CREATE TABLE x_${catalogCode}_comprobante_cmp (
 	CONSTRAINT pk_x_${catalogCode}_comprobante_cmp PRIMARY KEY (ccmp_llave)
 );
 
+ALTER TABLE x_${catalogCode}_comprobante_cmp ADD dcmp_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_creacionusuario varchar(32);
+ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_creacionusuarionombre varchar(200);
+ALTER TABLE x_${catalogCode}_comprobante_cmp ADD dcmp_modificacionfecha timestamptz;
+
+
 ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_catalogo varchar(32) NOT NULL ;
 ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_codigo varchar(100) NOT NULL ;
 ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_concepto varchar(200);

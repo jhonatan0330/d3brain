@@ -18,6 +18,10 @@
 			,creg_tercero as third
 			,creg_terceroid as thirdId
 			,creg_terceronombre as thirdName
+			,dreg_creacionfecha as createdAt
+			,creg_creacionusuario as createdUser
+			,creg_creacionusuarionombre as createdUserName
+			,dreg_modificacionfecha as updatedAt
 			,creg_estado as state
 		from x_${catalogCode}_registro_reg a
 	</sql>
@@ -67,11 +71,11 @@
 	</sql>
 
 	<sql id="paginationAccountRecordFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -100,6 +104,7 @@
 	<select id="insert" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
 		insert into x_${catalogCode}_registro_reg(
 			creg_llave
+			,dreg_creacionfecha
 		<if test="voucher!=null">
 			,creg_comprobante
 		</if>
@@ -133,11 +138,18 @@
 		<if test="thirdName!=null">
 			,creg_terceronombre
 		</if>
+		<if test="createdUser!=null">
+			,creg_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,creg_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,creg_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="voucher!=null">
 			,#{voucher}
 		</if>
@@ -171,6 +183,12 @@
 		<if test="thirdName!=null">
 			,#{thirdName}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -180,6 +198,7 @@
 	<select id="update" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
 		update x_${catalogCode}_registro_reg
 			set
+				dreg_modificacionfecha = now(),
 				creg_comprobante = #{voucher},
 				creg_cuenta = #{account},
 				creg_codigo = #{code},

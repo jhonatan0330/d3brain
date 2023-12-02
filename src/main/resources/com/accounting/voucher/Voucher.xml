@@ -16,6 +16,10 @@
 			,mcmp_positivo as positive
 			,mcmp_negativo as negative
 			,mcmp_valor as value
+			,dcmp_creacionfecha as createdAt
+			,ccmp_creacionusuario as createdUser
+			,ccmp_creacionusuarionombre as createdUserName
+			,dcmp_modificacionfecha as updatedAt
 			,ccmp_estado as state
 		from x_${catalogCode}_comprobante_cmp a
 	</sql>
@@ -59,11 +63,11 @@
 	</sql>
 
 	<sql id="paginationVoucherFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -93,6 +97,7 @@
 	<select id="insert" parameterType="VoucherDTO" resultType="VoucherDTO">
 		insert into x_${catalogCode}_comprobante_cmp(
 			ccmp_llave
+			,dcmp_creacionfecha
 		<if test="catalog!=null">
 			,ccmp_catalogo
 		</if>
@@ -120,11 +125,18 @@
 		<if test="value!=null">
 			,mcmp_valor
 		</if>
+		<if test="createdUser!=null">
+			,ccmp_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,ccmp_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,ccmp_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="catalog!=null">
 			,#{catalog}
 		</if>
@@ -152,6 +164,12 @@
 		<if test="value!=null">
 			,#{value}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -161,6 +179,7 @@
 	<select id="update" parameterType="VoucherDTO" resultType="VoucherDTO">
 		update x_${catalogCode}_comprobante_cmp
 			set
+				dcmp_modificacionfecha = now(),
 				ccmp_catalogo = #{catalog},
 				ccmp_codigo = #{code},
 				ccmp_concepto = #{concept},

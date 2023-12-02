@@ -9,6 +9,10 @@
 			cfrm_llave as key
 			,cfrm_catalogo as catalog
 			,cfrm_plantilla as template
+			,dfrm_creacionfecha as createdAt
+			,cfrm_creacionusuario as createdUser
+			,cfrm_creacionusuarionombre as createdUserName
+			,dfrm_modificacionfecha as updatedAt
 			,cfrm_estado as state
 		from formato_frm a
 	</sql>
@@ -31,11 +35,11 @@
 	</sql>
 
 	<sql id="paginationFormatVoucherFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -64,22 +68,36 @@
 	<select id="insert" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
 		insert into formato_frm(
 			cfrm_llave
+			,dfrm_creacionfecha
 		<if test="catalog!=null">
 			,cfrm_catalogo
 		</if>
 		<if test="template!=null">
 			,cfrm_plantilla
 		</if>
+		<if test="createdUser!=null">
+			,cfrm_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,cfrm_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,cfrm_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="catalog!=null">
 			,#{catalog}
 		</if>
 		<if test="template!=null">
 			,#{template}
+		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
 		</if>
 		<if test="state!=null">
 			,#{state}
@@ -90,6 +108,7 @@
 	<select id="update" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
 		update formato_frm
 			set
+				dfrm_modificacionfecha = now(),
 				cfrm_catalogo = #{catalog},
 				cfrm_plantilla = #{template},
 				cfrm_estado =#{state}

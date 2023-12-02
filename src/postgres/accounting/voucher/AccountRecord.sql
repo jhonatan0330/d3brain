@@ -5,6 +5,12 @@ CREATE TABLE x_${catalogCode}_registro_reg (
 	CONSTRAINT pk_x_${catalogCode}_registro_reg PRIMARY KEY (creg_llave)
 );
 
+ALTER TABLE x_${catalogCode}_registro_reg ADD dreg_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE x_${catalogCode}_registro_reg ADD creg_creacionusuario varchar(32);
+ALTER TABLE x_${catalogCode}_registro_reg ADD creg_creacionusuarionombre varchar(200);
+ALTER TABLE x_${catalogCode}_registro_reg ADD dreg_modificacionfecha timestamptz;
+
+
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_comprobante varchar(32) NOT NULL ;
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_cuenta varchar(32) NOT NULL ;
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_codigo varchar(100) NOT NULL ;

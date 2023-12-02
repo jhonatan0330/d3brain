@@ -26,6 +26,10 @@
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
+			,drmp_creacionfecha as createdAt
+			,crmp_creacionusuario as createdUser
+			,crmp_creacionusuarionombre as createdUserName
+			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state
 		from x_${catalog}_${type}_rmp
 			inner join cuenta_cue on (ccue_llave = crmp_cuenta)
@@ -163,6 +167,10 @@ insert into x_${catalog}_${type}_rmp(
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
+			,drmp_creacionfecha as createdAt
+			,crmp_creacionusuario as createdUser
+			,crmp_creacionusuarionombre as createdUserName
+			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state 
 		from cuenta_cue 
 		left join x_${catalogCode}_puntual_rmp on (crmp_cuenta = ccue_llave and nrmp_nivel = 1)
@@ -206,6 +214,7 @@ insert into x_${catalog}_${type}_rmp(
 	<select id="updateItem" >
 		update x_${catalogCode}_${item.type}_rmp
 			set
+				drmp_modificacionfecha = now(),
 				nrmp_cantidad = #{item.quantity},
 				nrmp_promedio = #{item.average},
 				mrmp_positivo = #{item.positive},

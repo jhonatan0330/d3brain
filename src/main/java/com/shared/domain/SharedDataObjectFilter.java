@@ -4,24 +4,23 @@ import java.util.Date;
 
 public abstract class SharedDataObjectFilter {
 
-	private String id;
+	private String key;
 	private Date createdAtStart;
     private Date createdAtEnd;
     private String createdUser;
     private Date updatedAtStart;
     private Date updatedAtEnd;
-    private String updatedUser;
     private Integer startRow;
 	private Integer endRow;
-	private String filterText;
+	private String filter;
     private String state;
     
     
-	public String getId() {
-		return id;
+	public String getKey() {
+		return key;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setKey(String id) {
+		this.key = id;
 	}
 	public Date getCreatedAtStart() {
 		return createdAtStart;
@@ -53,12 +52,6 @@ public abstract class SharedDataObjectFilter {
 	public void setUpdatedAtEnd(Date updatedAtEnd) {
 		this.updatedAtEnd = updatedAtEnd;
 	}
-	public String getUpdatedUser() {
-		return updatedUser;
-	}
-	public void setUpdatedUser(String updatedUser) {
-		this.updatedUser = updatedUser;
-	}
 	public Integer getStartRow() {
 		return startRow;
 	}
@@ -71,11 +64,11 @@ public abstract class SharedDataObjectFilter {
 	public void setEndRow(int endRow) {
 		this.endRow = endRow;
 	}
-	public String getFilterText() {
-		return filterText;
+	public String getFilter() {
+		return filter;
 	}
-	public void setFilterText(String filterText) {
-		this.filterText = filterText;
+	public void setFilter(String filterText) {
+		this.filter = filterText;
 	}
 	public String getState() {
 		return state;

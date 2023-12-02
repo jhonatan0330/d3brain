@@ -5,6 +5,12 @@ CREATE TABLE hecho_hch (
 	CONSTRAINT pk_hecho_hch PRIMARY KEY (chch_llave)
 );
 
+ALTER TABLE hecho_hch ADD dhch_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE hecho_hch ADD chch_creacionusuario varchar(32);
+ALTER TABLE hecho_hch ADD chch_creacionusuarionombre varchar(200);
+ALTER TABLE hecho_hch ADD dhch_modificacionfecha timestamptz;
+
+
 ALTER TABLE hecho_hch ADD dhch_fecharegistro timestamp with time zone NOT NULL ;
 ALTER TABLE hecho_hch ADD dhch_fechaevento timestamp with time zone NOT NULL ;
 ALTER TABLE hecho_hch ADD chch_dimension varchar(32) NOT NULL ;

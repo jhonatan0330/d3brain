@@ -18,6 +18,10 @@
 			,ccue_naturaleza as operation
 			,ccue_plantilla as template
 			,ccue_campo as field
+			,dcue_creacionfecha as createdAt
+			,ccue_creacionusuario as createdUser
+			,ccue_creacionusuarionombre as createdUserName
+			,dcue_modificacionfecha as updatedAt
 			,ccue_estado as state
 		from cuenta_cue a
 	</sql>
@@ -67,11 +71,11 @@
 	</sql>
 
 	<sql id="paginationAccountFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -101,6 +105,7 @@
 	<select id="insert" parameterType="AccountDTO" resultType="AccountDTO">
 		insert into cuenta_cue(
 			ccue_llave
+			,dcue_creacionfecha
 		<if test="catalog!=null">
 			,ccue_catalogo
 		</if>
@@ -134,11 +139,18 @@
 		<if test="field!=null">
 			,ccue_campo
 		</if>
+		<if test="createdUser!=null">
+			,ccue_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,ccue_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,ccue_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="catalog!=null">
 			,#{catalog}
 		</if>
@@ -172,6 +184,12 @@
 		<if test="field!=null">
 			,#{field}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -181,6 +199,7 @@
 	<select id="update" parameterType="AccountDTO" resultType="AccountDTO">
 		update cuenta_cue
 			set
+				dcue_modificacionfecha = now(),
 				ccue_catalogo = #{catalog},
 				ccue_wbs = #{wbs},
 				ccue_nombre = #{name},

@@ -14,6 +14,10 @@
 			,chch_codigo as code
 			,chch_plantilla as template
 			,chch_id as id
+			,dhch_creacionfecha as createdAt
+			,chch_creacionusuario as createdUser
+			,chch_creacionusuarionombre as createdUserName
+			,dhch_modificacionfecha as updatedAt
 			,chch_estado as state
 		from hecho_hch a
 	</sql>
@@ -51,11 +55,11 @@
 	</sql>
 
 	<sql id="paginationFactFragment">
-			<if test="indexStart!=null">
-				OFFSET #{indexStart}
+			<if test="startRow!=null">
+				OFFSET #{startRow}
 			</if>
-			<if test="indexEnd!=null">
-				LIMIT #{indexEnd}
+			<if test="endRow!=null">
+				LIMIT #{endRow}
 			</if>
 	</sql>
 
@@ -84,6 +88,7 @@
 	<select id="insert" parameterType="FactDTO" resultType="FactDTO">
 		insert into hecho_hch(
 			chch_llave
+			,dhch_creacionfecha
 		<if test="registerDate!=null">
 			,dhch_fecharegistro
 		</if>
@@ -105,11 +110,18 @@
 		<if test="id!=null">
 			,chch_id
 		</if>
+		<if test="createdUser!=null">
+			,chch_creacionusuario
+		</if>
+		<if test="createdUserName!=null">
+			,chch_creacionusuarionombre
+		</if>
 		<if test="state!=null">
 			,chch_estado
 		</if>
 		) values (
 			#{key}
+			,now()
 		<if test="registerDate!=null">
 			,#{registerDate}
 		</if>
@@ -131,6 +143,12 @@
 		<if test="id!=null">
 			,#{id}
 		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="createdUserName!=null">
+			,#{createdUserName}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -140,6 +158,7 @@
 	<select id="update" parameterType="FactDTO" resultType="FactDTO">
 		update hecho_hch
 			set
+				dhch_modificacionfecha = now(),
 				dhch_fecharegistro = #{registerDate},
 				dhch_fechaevento = #{factDate},
 				chch_dimension = #{dimension},

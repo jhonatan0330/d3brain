@@ -22,7 +22,7 @@ public class PlanGetAccountService {
 		filter.setCatalog(catalogId);
 		filter.setFilter(filterText);
 		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
-		filter.setIndexEnd(3000);
+		filter.setEndRow(3000);
 		return accountService.getMany(filter);
 	}
 

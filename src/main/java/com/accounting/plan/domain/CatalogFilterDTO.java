@@ -4,58 +4,16 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
+import com.shared.domain.SharedDataObjectFilter;
+
 @Alias("CatalogFilterDTO")
-public class CatalogFilterDTO {
-	private String key;
-	private String state;
-	private String filter;
-	private Integer indexStart;
-	private Integer indexEnd;
+public class CatalogFilterDTO extends SharedDataObjectFilter {
+
 	private String name;
 	private String code;
 	private Date initialDate;
 	private Date finalDate;
 	private String consecutive;
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getFilter() {
-		return filter;
-	}
-
-	public void setFilter(String filter) {
-		this.filter = filter;
-	}
-
-	public Integer getIndexStart() {
-		return indexStart;
-	}
-
-	public void setIndexStart(Integer indexStart) {
-		this.indexStart = indexStart;
-	}
-
-	public Integer getIndexEnd() {
-		return indexEnd;
-	}
-
-	public void setIndexEnd(Integer indexEnd) {
-		this.indexEnd = indexEnd;
-	}
 
 	public String getName() {
 		return name;
