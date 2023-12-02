@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.accounting.plan.domain.AccountDTO;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 @Service("PlanUploadAccountAccountingService")
 public class PlanUploadAccountService {

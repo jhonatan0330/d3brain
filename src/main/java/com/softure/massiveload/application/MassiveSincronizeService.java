@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.massiveload.domain.MassiveMasterDTO;
 import com.softure.massiveload.domain.MassiveItemDTO;
 

@@ -3,7 +3,7 @@ package com.softure.java.services;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 public class CalculatorUtil {
 

@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.CallDocumentListBySQLFunction;
@@ -25,7 +26,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.application.MovimientoSvc;
 import com.softure.money.application.TurnoSvc;

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
 import com.softure.gps.infrastructure.GPSDispositivoMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("gPSDispositivoService")

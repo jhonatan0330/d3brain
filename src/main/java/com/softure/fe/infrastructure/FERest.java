@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
+import com.shared.domain.ServerException;
 import com.softure.fe.application.SignerService;
 import com.softure.fe.domain.FEResponse;
-import com.softure.java.dto.exception.ServerException;
 
 import xades4j.XAdES4jException;
 

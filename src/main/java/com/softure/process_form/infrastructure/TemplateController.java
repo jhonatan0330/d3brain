@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -20,7 +21,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;

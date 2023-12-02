@@ -7,13 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;

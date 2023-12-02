@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.FormatLineDTO;
 import com.accounting.plan.domain.FormatLineFilterDTO;
 import com.accounting.plan.infrastructure.FormatLineMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("FormatLineAccountingService")
 public class FormatLineService {

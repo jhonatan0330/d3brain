@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.infrastructure.CatalogMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("CatalogAccountingService")
 public class CatalogService {

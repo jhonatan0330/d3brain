@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.math.BigDecimal;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
 
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;

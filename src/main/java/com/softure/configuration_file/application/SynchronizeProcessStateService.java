@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;

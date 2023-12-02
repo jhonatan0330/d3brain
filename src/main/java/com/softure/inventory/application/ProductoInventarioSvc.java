@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Date;
 import java.math.BigDecimal;
 
+import com.shared.domain.ServerException;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("productoInventarioService")

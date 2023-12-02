@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("turnoService")

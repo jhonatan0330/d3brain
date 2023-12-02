@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.shared.domain.ServerException;
 import com.softure.api.domain.DocumentResponse;
 import com.softure.api.domain.FieldRequest;
 import com.softure.api.domain.FieldResponse;
@@ -19,7 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 

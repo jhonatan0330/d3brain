@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.authentication.infrastructure.OrganizacionMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;

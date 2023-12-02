@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.configuration_file.domain.FileVO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoSvc;

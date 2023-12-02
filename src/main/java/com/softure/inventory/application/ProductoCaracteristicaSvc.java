@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.infrastructure.ProductoCaracteristicaMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("productoCaracteristicaService")

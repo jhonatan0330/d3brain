@@ -2,6 +2,7 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
+import com.shared.domain.ServerException;
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
 // END region interImport
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.domain.PlantillaConsecutivoDTO;
 import com.softure.process_form.domain.PlantillaConsecutivoFilterDTO;

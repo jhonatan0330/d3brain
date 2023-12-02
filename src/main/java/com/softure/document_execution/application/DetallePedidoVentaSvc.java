@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
@@ -41,7 +42,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("detallePedidoVentaService")

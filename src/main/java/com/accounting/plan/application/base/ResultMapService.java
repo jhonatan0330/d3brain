@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.accounting.plan.infrastructure.ResultMapMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("ResultMapAccountingService")
 public class ResultMapService {

@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 public class CallDocumentCommons {
 

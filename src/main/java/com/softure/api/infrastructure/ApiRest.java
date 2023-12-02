@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.api.application.ApiAuthorizeService;
 import com.softure.api.application.ApiGetFieldDataService;
@@ -26,7 +27,6 @@ import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DataFieldWithLoginRequest;
 import com.softure.api.domain.LoginRequest;
 import com.softure.api.domain.ReportRequest;
-import com.softure.java.dto.exception.ServerException;
 
 @RestController
 @RequestMapping("api")

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.survey.application.EncuestaGrupoSvc;
 import com.softure.survey.application.EncuestaSvc;
 import com.softure.survey.application.PostPreguntaSvc;

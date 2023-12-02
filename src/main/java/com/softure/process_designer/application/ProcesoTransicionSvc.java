@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("procesoTransicionService")

@@ -1,8 +1,8 @@
-package com.softure.java.dto.exception;
+package com.shared.domain;
 
 import org.springframework.http.HttpStatus;
 
-public class ApiErrorResponse {
+public class SharedApiErrorResponse {
 
     private HttpStatus status;
     private String error_code;
@@ -75,8 +75,8 @@ public class ApiErrorResponse {
             return this;
         }
 
-        public ApiErrorResponse build() {
-            ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
+        public SharedApiErrorResponse build() {
+            SharedApiErrorResponse apiErrorResponse = new SharedApiErrorResponse();
             apiErrorResponse.status = this.status;
             apiErrorResponse.error_code = this.error_code;
             apiErrorResponse.detail = this.detail;

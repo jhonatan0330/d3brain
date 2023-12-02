@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -25,7 +26,6 @@ import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;

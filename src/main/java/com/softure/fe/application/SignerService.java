@@ -37,11 +37,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.shared.domain.ServerException;
 import com.softure.fe.domain.DirectPasswordProvider;
 import com.softure.fe.domain.FEResponse;
 import com.softure.fe.domain.FirstCertificateSelector;
 import com.softure.fe.domain.KeyStoreDataProvider;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.upload.application.UploadSvc;
 
 import xades4j.XAdES4jException;

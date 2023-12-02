@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;

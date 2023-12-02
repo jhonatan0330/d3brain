@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaDineroMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("pedidoVentaDineroService")

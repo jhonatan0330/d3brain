@@ -11,9 +11,9 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.property.domain.PropiedadDTO;
 

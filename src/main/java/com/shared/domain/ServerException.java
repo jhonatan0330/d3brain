@@ -1,4 +1,4 @@
-package com.softure.java.dto.exception;
+package com.shared.domain;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

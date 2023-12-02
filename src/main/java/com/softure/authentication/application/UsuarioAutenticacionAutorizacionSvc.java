@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionAutorizacionMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.mail.application.MailRecoverPasswordService;
 

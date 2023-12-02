@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service
 public class GPSGetDevicesByTokenService {

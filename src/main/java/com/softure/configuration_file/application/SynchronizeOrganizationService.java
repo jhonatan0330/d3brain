@@ -3,10 +3,10 @@ package com.softure.configuration_file.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service

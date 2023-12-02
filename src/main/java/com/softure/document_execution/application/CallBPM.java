@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
@@ -19,7 +20,6 @@ import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;

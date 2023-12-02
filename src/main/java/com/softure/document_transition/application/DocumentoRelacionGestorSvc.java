@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.document_transition.infrastructure.DocumentoRelacionGestorMapper;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("documentoRelacionGestorService")

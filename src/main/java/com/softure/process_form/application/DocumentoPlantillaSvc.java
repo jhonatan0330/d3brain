@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -36,8 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("documentoPlantillaService")
 public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO> {

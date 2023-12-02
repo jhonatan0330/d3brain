@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import com.softure.java.dto.exception.ServerException;
+
+import com.shared.domain.ServerException;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 

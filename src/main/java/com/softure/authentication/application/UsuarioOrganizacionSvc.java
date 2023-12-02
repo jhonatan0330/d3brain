@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
@@ -23,8 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("usuarioOrganizacionService")
 public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, UsuarioOrganizacionFilterDTO> {

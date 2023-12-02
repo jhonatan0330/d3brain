@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
-import com.softure.java.dto.exception.ServerException;
 
 @Service
 public class GPSReportLocationsService {

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 

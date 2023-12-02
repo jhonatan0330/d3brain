@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.application.UsuarioOrganizacionSvc;
@@ -25,7 +26,6 @@ import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.HttpUtils;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;

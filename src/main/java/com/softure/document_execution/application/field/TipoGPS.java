@@ -6,10 +6,10 @@ import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.gps.application.GPSReportLocationsService;
-import com.softure.java.dto.exception.ServerException;
 
 @Component
 public class TipoGPS {

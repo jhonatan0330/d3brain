@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 

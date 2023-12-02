@@ -10,8 +10,8 @@ import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service
 public class VoucherGetService {

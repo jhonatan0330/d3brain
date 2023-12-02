@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.ValueDimensionDTO;
 import com.accounting.plan.domain.ValueDimensionFilterDTO;
 import com.accounting.plan.infrastructure.ValueDimensionMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("ValueDimensionAccountingService")
 public class ValueDimensionService {

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.accounting.voucher.infrastructure.VoucherMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("VoucherAccountingService")
 public class VoucherService {

@@ -3,6 +3,7 @@ package com.softure.process_form.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoCaracteristicaSvc;
@@ -25,8 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc

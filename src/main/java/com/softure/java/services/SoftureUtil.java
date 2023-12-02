@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 public class SoftureUtil {
 

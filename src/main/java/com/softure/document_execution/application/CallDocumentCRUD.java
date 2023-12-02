@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
@@ -32,7 +33,6 @@ import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;

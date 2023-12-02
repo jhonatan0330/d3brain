@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.softure.configuration_file.application.ExportConfigurationFileService;
 import com.softure.configuration_file.application.ImportConfigurationFileService;
 import com.softure.configuration_file.domain.FileVO;
-import com.softure.java.dto.exception.ServerException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

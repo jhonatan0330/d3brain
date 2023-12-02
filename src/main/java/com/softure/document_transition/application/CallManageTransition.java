@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.document_execution.application.CallDocumentCommons;
@@ -19,7 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.mail.application.MailGenerateMessageService;

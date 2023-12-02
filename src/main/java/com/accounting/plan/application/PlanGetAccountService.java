@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("PlanGetAccountAccountingService")
 public class PlanGetAccountService {

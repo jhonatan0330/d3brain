@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
@@ -13,7 +14,6 @@ import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.MovimientoDTO;
 import com.softure.money.domain.MovimientoFilterDTO;

@@ -6,6 +6,7 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("trazabilidadProductoInventarioService")

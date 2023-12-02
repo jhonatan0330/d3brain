@@ -3,7 +3,7 @@ package com.softure.mail.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajeFilterDTO;
 

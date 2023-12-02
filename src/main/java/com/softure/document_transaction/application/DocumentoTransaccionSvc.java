@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.document_transaction.domain.DocumentoTransaccionDTO;
 import com.softure.document_transaction.domain.DocumentoTransaccionFilterDTO;
 import com.softure.document_transaction.infrastructure.DocumentoTransaccionMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("documentoTransaccionService")

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.domain.ResultMapDTO;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 @Service("PlanGetBalanceAccountingService")
 public class PlanGetBalanceService {

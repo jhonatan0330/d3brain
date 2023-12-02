@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
 import com.softure.document_transition.domain.PedidoVentaAjusteFilterDTO;
 import com.softure.document_transition.infrastructure.PedidoVentaAjusteMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("pedidoVentaAjusteService")

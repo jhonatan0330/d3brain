@@ -15,7 +15,7 @@ import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.ResultMapConst;
 import com.accounting.plan.domain.ResultMapDTO;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 @Service("PlanCreateMatrixAccountingService")
 public class PlanCreateMatrixService {

@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.domain.ModuloDTO;
 import com.softure.authorization.domain.ModuloFilterDTO;
 import com.softure.authorization.infrastructure.ModuloMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("moduloService")

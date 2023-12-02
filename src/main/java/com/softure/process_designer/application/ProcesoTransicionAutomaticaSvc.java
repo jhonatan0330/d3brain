@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
@@ -36,7 +37,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.CallDocumentNewFromAutomatic;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("procesoTransicionAutomaticaService")
 public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {

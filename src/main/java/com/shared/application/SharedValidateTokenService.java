@@ -5,10 +5,10 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
-import com.softure.java.dto.exception.ServerException;
 
 @Service
 public class SharedValidateTokenService {

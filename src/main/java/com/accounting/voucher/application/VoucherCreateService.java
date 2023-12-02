@@ -27,9 +27,9 @@ import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.application.SharedValidateTokenService;
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.ConsecutivoSvc;
 import com.softure.process_form.domain.ConsecutivoDTO;
 

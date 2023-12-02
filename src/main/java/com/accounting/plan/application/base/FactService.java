@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.FactDTO;
 import com.accounting.plan.domain.FactFilterDTO;
 import com.accounting.plan.infrastructure.FactMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("FactAccountingService")
 public class FactService {

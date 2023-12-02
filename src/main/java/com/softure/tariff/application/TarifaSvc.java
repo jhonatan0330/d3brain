@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -18,7 +19,6 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
 import com.softure.logisticpymes.application.BasicSvc;

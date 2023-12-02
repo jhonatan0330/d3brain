@@ -3,7 +3,7 @@ package com.softure.task.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.task.domain.TaskTaskDTO;
 import com.softure.task.domain.TaskTaskResponse;
 

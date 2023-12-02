@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
-import com.softure.java.dto.exception.ServerException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 import com.softure.gps.infrastructure.GPSLocalizacionMapper;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("gPSLocalizacionService")

@@ -7,12 +7,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.property.domain.PropiedadDTO;
 

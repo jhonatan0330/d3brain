@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.AccountDTO;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;

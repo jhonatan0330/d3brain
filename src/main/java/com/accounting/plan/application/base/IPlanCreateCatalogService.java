@@ -1,7 +1,7 @@
 package com.accounting.plan.application.base;
 
 import com.accounting.plan.domain.CatalogDTO;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 public interface IPlanCreateCatalogService {
 

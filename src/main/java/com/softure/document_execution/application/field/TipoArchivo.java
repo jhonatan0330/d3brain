@@ -3,9 +3,9 @@ package com.softure.document_execution.application.field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.java.dto.exception.ServerException;
 
 @Component
 public class TipoArchivo {

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -23,7 +24,6 @@ import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.logisticpymes.domain.CambioFilterDTO;

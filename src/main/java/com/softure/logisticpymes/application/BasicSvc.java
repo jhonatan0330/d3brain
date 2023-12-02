@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
@@ -16,7 +17,6 @@ import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.domain.BasicDTO;
 import com.softure.java.domain.BasicFilterDTO;
 import com.softure.java.domain.IBasicMapper;
-import com.softure.java.dto.exception.ServerException;
 
 public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	

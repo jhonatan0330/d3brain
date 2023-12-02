@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.ServerException;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
@@ -22,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("productoService")
 public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {

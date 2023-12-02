@@ -3,10 +3,10 @@ package com.softure.document_execution.application.field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
 @Component

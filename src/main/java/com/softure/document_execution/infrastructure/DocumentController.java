@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
@@ -28,7 +29,6 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.tariff.application.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.upload.application.UploadSvc;

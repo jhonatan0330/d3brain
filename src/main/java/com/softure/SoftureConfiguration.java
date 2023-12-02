@@ -37,8 +37,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.report.infrastructure.ReporteServlet;

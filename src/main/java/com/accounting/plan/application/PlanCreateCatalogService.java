@@ -11,7 +11,7 @@ import com.accounting.plan.application.base.IPlanCreateCatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.infrastructure.CreateCatalogTablesMapper;
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 
 @Service("PlanCreateCatalogTemplateAccountingService")
 public class PlanCreateCatalogService implements IPlanCreateCatalogService {

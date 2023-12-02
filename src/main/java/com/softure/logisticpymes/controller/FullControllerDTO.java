@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.application.UsuarioAutenticacionAutorizacionSvc;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
@@ -84,7 +85,6 @@ import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.java.dto.exception.FlexException;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.application.ServidorSvc;

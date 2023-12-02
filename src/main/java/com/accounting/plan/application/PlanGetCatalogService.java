@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("PlanGetCatalogAccountingService")
 public class PlanGetCatalogService {

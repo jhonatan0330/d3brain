@@ -6,11 +6,11 @@ import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedDataObject;
 import com.shared.domain.SharedDataObjectFilter;
 import com.shared.infrastructure.SharedCRUDMapperMybatis;
-import com.softure.java.dto.exception.ServerException;
 
 public class SharedCRUDService<T extends SharedDataObject, TFilter extends SharedDataObjectFilter> {
 	

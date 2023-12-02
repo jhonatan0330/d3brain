@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.api.domain.DocumentRequest;
 import com.softure.api.domain.FieldRequest;
@@ -14,7 +15,6 @@ import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;

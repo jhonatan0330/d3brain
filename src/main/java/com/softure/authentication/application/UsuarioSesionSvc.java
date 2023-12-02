@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("usuarioSesionService")

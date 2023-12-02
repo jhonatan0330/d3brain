@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("usuarioAutenticacionService")
 public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO> {

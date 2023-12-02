@@ -10,10 +10,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;

@@ -3,10 +3,10 @@ package com.softure.api.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.document_execution.application.field.Propiedades;
-import com.softure.java.dto.exception.ServerException;
 
 @Service
 public class ApiAuthorizeService {

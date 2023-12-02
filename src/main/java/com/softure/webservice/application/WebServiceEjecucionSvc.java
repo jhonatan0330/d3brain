@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("webServiceEjecucionService")

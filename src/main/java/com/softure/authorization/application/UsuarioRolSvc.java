@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.UsuarioRolDTO;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;

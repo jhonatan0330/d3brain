@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.softure.java.dto.exception.ServerException;
+import com.shared.domain.ServerException;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.notification.application.ActividadSvc;

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
@@ -28,7 +29,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaCaracteristicaMapper;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("pedidoVentaCaracteristicaService")
 public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO> {

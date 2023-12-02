@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.shared.domain.SharedApiErrorResponse;
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.document_execution.application.CallDocumentCRUD;
@@ -24,8 +26,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.PedidoVentaAjusteSvc;
 import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
-import com.softure.java.dto.exception.ApiErrorResponse;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
@@ -103,11 +103,11 @@ public class APIController {
 	}
 	
 	@PostMapping(value="/upload")
-    public ApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+    public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
         	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, null); 
-        	ApiErrorResponse response =new ApiErrorResponse.ApiErrorResponseBuilder()
+        	SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
      		        .withMessage(url).build();
 			return response;
 		} catch (IOException e) {

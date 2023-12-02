@@ -2,6 +2,7 @@ package com.softure.process_designer.application;
 
 import java.util.List;
 
+import com.shared.domain.ServerException;
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;

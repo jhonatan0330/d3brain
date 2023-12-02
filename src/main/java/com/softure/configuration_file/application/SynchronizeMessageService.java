@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 

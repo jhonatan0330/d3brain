@@ -1,7 +1,7 @@
 package com.softure.massiveload.infrastructure;
 
+import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.massiveload.application.MassiveItemSincronizeService;
 import com.softure.massiveload.application.MassiveSincronizeService;
 

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.DimensionDTO;
 import com.accounting.plan.domain.DimensionFilterDTO;
 import com.accounting.plan.infrastructure.DimensionMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("DimensionAccountingService")
 public class DimensionService {

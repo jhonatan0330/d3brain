@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.AccountRecordFilterDTO;
 import com.accounting.voucher.infrastructure.AccountRecordMapper;
+import com.shared.domain.ServerException;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 
 @Service("AccountRecordAccountingService")
 public class AccountRecordService {

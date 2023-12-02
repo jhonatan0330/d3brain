@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -30,7 +31,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
 import com.softure.java.cons.ConstantesGenerales;
-import com.softure.java.dto.exception.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;

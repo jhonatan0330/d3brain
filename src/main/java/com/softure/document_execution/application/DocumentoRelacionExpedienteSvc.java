@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.infrastructure.DocumentoRelacionExpedienteMapper;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("documentoRelacionExpedienteService")

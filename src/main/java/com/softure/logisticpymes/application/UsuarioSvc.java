@@ -2,6 +2,7 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
+import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
@@ -21,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.java.dto.exception.ServerException;
 
 @Service("usuarioService")
 public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {

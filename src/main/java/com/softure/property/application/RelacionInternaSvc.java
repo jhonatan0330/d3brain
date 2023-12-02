@@ -3,6 +3,7 @@ package com.softure.property.application;
 import java.util.Date;
 import java.util.List;
 
+import com.shared.domain.ServerException;
 // BEGIN region interImport
 import com.softure.java.cons.ConstantesGenerales;
 
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softure.java.dto.exception.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
