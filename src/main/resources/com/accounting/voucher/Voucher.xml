@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.voucher.infrastructure.VoucherMapper">
+
+	<sql id="selectVoucherFragment">
+		select
+			ccmp_llave as key
+			,ccmp_catalogo as catalog
+			,ccmp_codigo as code
+			,ccmp_concepto as concept
+			,dcmp_fechacomprobante as factDate
+			,dcmp_fechacreacion as registerDate
+			,ccmp_usuariocreador as registerUser
+			,mcmp_positivo as positive
+			,mcmp_negativo as negative
+			,mcmp_valor as value
+			,ccmp_estado as state
+		from x_${catalogCode}_comprobante_cmp a
+	</sql>
+
+	<sql id="whereVoucherFragment">
+		where 1=1
+			<if test="key!=null">
+				and ccmp_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and ccmp_estado = #{state}
+			</if>
+			<if test="catalog!=null">
+				and ccmp_catalogo = #{catalog}
+			</if>
+			<if test="code!=null">
+				and ccmp_codigo = #{code}
+			</if>
+			<if test="concept!=null">
+				and ccmp_concepto = #{concept}
+			</if>
+			<if test="factDate!=null">
+				and dcmp_fechacomprobante = #{factDate}
+			</if>
+			<if test="registerDate!=null">
+				and dcmp_fechacreacion = #{registerDate}
+			</if>
+			<if test="registerUser!=null">
+				and ccmp_usuariocreador = #{registerUser}
+			</if>
+			<if test="positive!=null">
+				and mcmp_positivo = #{positive}
+			</if>
+			<if test="negative!=null">
+				and mcmp_negativo = #{negative}
+			</if>
+			<if test="value!=null">
+				and mcmp_valor = #{value}
+			</if>
+
+	</sql>
+
+	<sql id="paginationVoucherFragment">
+			<if test="indexStart!=null">
+				OFFSET #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				LIMIT #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereVoucherPrimaryKeyFragment">
+		where
+			ccmp_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="VoucherFilterDTO" resultType="VoucherDTO">
+		<include refid="selectVoucherFragment" />
+		<include refid="whereVoucherFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="VoucherFilterDTO" resultType="VoucherDTO">
+		<include refid="selectVoucherFragment" />
+		<include refid="whereVoucherFragment" />
+		order by factDate desc 
+		<include refid="paginationVoucherFragment" />
+	</select>
+
+	<select id="count" parameterType="VoucherFilterDTO" resultType="int">
+		select count(*)
+		from x_${catalogCode}_comprobante_cmp
+		<include refid="whereVoucherFragment" />
+	</select>
+
+	<select id="insert" parameterType="VoucherDTO" resultType="VoucherDTO">
+		insert into x_${catalogCode}_comprobante_cmp(
+			ccmp_llave
+		<if test="catalog!=null">
+			,ccmp_catalogo
+		</if>
+		<if test="code!=null">
+			,ccmp_codigo
+		</if>
+		<if test="concept!=null">
+			,ccmp_concepto
+		</if>
+		<if test="factDate!=null">
+			,dcmp_fechacomprobante
+		</if>
+		<if test="registerDate!=null">
+			,dcmp_fechacreacion
+		</if>
+		<if test="registerUser!=null">
+			,ccmp_usuariocreador
+		</if>
+		<if test="positive!=null">
+			,mcmp_positivo
+		</if>
+		<if test="negative!=null">
+			,mcmp_negativo
+		</if>
+		<if test="value!=null">
+			,mcmp_valor
+		</if>
+		<if test="state!=null">
+			,ccmp_estado
+		</if>
+		) values (
+			#{key}
+		<if test="catalog!=null">
+			,#{catalog}
+		</if>
+		<if test="code!=null">
+			,#{code}
+		</if>
+		<if test="concept!=null">
+			,#{concept}
+		</if>
+		<if test="factDate!=null">
+			,#{factDate}
+		</if>
+		<if test="registerDate!=null">
+			,#{registerDate}
+		</if>
+		<if test="registerUser!=null">
+			,#{registerUser}
+		</if>
+		<if test="positive!=null">
+			,#{positive}
+		</if>
+		<if test="negative!=null">
+			,#{negative}
+		</if>
+		<if test="value!=null">
+			,#{value}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="VoucherDTO" resultType="VoucherDTO">
+		update x_${catalogCode}_comprobante_cmp
+			set
+				ccmp_catalogo = #{catalog},
+				ccmp_codigo = #{code},
+				ccmp_concepto = #{concept},
+				dcmp_fechacomprobante = #{factDate},
+				dcmp_fechacreacion = #{registerDate},
+				ccmp_usuariocreador = #{registerUser},
+				mcmp_positivo = #{positive},
+				mcmp_negativo = #{negative},
+				mcmp_valor = #{value},
+				ccmp_estado =#{state}
+		<include refid="whereVoucherPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

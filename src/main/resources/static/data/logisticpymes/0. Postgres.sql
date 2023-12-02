@@ -77,7 +77,6 @@ CREATE TABLE documentorelaciongestor_drgp(
         cdrg_transaccion character varying(32),
         ddrg_cierre timestamp with time zone,
         cdrg_nombre character varying(100) NOT NULL,
-        bdrg_estadorepetido bool NOT NULL DEFAULT false,
         cdrg_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentorelaciongestor_drgp PRIMARY KEY (cdrg_llave)
     );
@@ -159,7 +158,7 @@ CREATE TABLE documentoplantilla_dplp(
         cdpl_nombre character varying(100) NOT NULL,
         cdpl_consecutivo character varying(32),
         cdpl_imagen character varying(2000),
-        cdpl_codigo character varying(16) NOT NULL UNIQUE,
+        cdpl_codigo character varying(32) NOT NULL UNIQUE,
         cdpl_proceso character varying(32) NOT NULL,
         cdpl_estado character varying(1) NOT NULL DEFAULT 'A',
         CONSTRAINT PK_documentoplantilla_dplp PRIMARY KEY (cdpl_llave)

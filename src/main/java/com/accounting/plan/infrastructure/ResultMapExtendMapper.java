@@ -6,20 +6,24 @@ import org.apache.ibatis.annotations.Param;
 
 import com.accounting.AccountingConnMapper;
 import com.accounting.plan.domain.ResultMapDTO;
-import com.accounting.plan.domain.ResultMapFilterDTO;
 
 @AccountingConnMapper("ResultMapExtendAccountingMapper")
 public interface ResultMapExtendMapper {
 
-	ResultMapDTO insert(ResultMapDTO dto);
-
-	ResultMapDTO update(ResultMapDTO dto);
-
-	int count(ResultMapFilterDTO filter);
 	
-	ResultMapDTO getOne(ResultMapFilterDTO filter);
 
-	List<ResultMapDTO> getMany(ResultMapFilterDTO filter);
+	ResultMapDTO updateItem(@Param("catalogCode")String catalogCode, @Param("item")ResultMapDTO dto);
+	
+	ResultMapDTO updateBalance(ResultMapDTO dto);
+
 
 	List<ResultMapDTO> getBalance(@Param("catalogId")String catalogId, @Param("catalogCode")String catalogCode);
+
+	void insertAll(@Param("catalog")String catalogCode, @Param("type") String type, @Param("list")List<ResultMapDTO> dto);
+
+	
+	List<ResultMapDTO> getItemsAccount(@Param("catalogCode") String catalogCode, @Param("accountId") String accountId,
+			@Param("type") String type, @Param("year") int year, @Param("month") int month, @Param("day") int day,
+			@Param("hour") int hour, @Param("minute") int minute);
+	
 }

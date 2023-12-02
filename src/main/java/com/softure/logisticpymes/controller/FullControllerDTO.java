@@ -13,8 +13,6 @@ import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.application.UsuarioAutenticacionAutorizacionSvc;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.application.UsuarioOrganizacionSvc;
-import com.softure.authentication.application.UsuarioSesionErrorSvc;
-import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
@@ -23,10 +21,6 @@ import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionFilterDTO;
-import com.softure.authentication.domain.UsuarioSesionDTO;
-import com.softure.authentication.domain.UsuarioSesionErrorDTO;
-import com.softure.authentication.domain.UsuarioSesionErrorFilterDTO;
-import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.application.PermisoSvc;
 import com.softure.authorization.application.RolAccesoSvc;
@@ -49,7 +43,6 @@ import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaDineroSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.application.PedidoVentaTiempoSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
@@ -60,29 +53,9 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.document_execution.domain.PedidoVentaTiempoDTO;
-import com.softure.document_execution.domain.PedidoVentaTiempoFilterDTO;
-import com.softure.document_transaction.application.DocumentoTransaccionSvc;
-import com.softure.document_transaction.application.TransaccionErrorSvc;
-import com.softure.document_transaction.application.TransaccionLogSvc;
-import com.softure.document_transaction.domain.DocumentoTransaccionDTO;
-import com.softure.document_transaction.domain.DocumentoTransaccionFilterDTO;
-import com.softure.document_transaction.domain.TransaccionErrorDTO;
-import com.softure.document_transaction.domain.TransaccionErrorFilterDTO;
-import com.softure.document_transaction.domain.TransaccionLogDTO;
-import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
-import com.softure.document_transition.application.PedidoVentaAjusteSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
-import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
-import com.softure.document_transition.domain.PedidoVentaAjusteFilterDTO;
-import com.softure.gps.application.GPSDispositivoSvc;
-import com.softure.gps.application.GPSLocalizacionSvc;
-import com.softure.gps.domain.GPSDispositivoDTO;
-import com.softure.gps.domain.GPSDispositivoFilterDTO;
-import com.softure.gps.domain.GPSLocalizacionDTO;
-import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.DeduccionProductoSvc;
@@ -182,24 +155,9 @@ import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.report.domain.ReporteBaseFilterDTO;
 import com.softure.report.domain.ReporteEjecucionDTO;
 import com.softure.report.domain.ReporteEjecucionFilterDTO;
-import com.softure.survey.application.EncuestaGrupoSvc;
-import com.softure.survey.application.EncuestaOpcionRespuestaSvc;
-import com.softure.survey.application.EncuestaPreguntaSvc;
-import com.softure.survey.application.EncuestaRespuestaSvc;
-import com.softure.survey.application.EncuestaSvc;
 import com.softure.survey.application.PostCalificacionSvc;
 import com.softure.survey.application.PostPreguntaSvc;
 import com.softure.survey.application.PostRespuestaSvc;
-import com.softure.survey.domain.EncuestaDTO;
-import com.softure.survey.domain.EncuestaFilterDTO;
-import com.softure.survey.domain.EncuestaGrupoDTO;
-import com.softure.survey.domain.EncuestaGrupoFilterDTO;
-import com.softure.survey.domain.EncuestaOpcionRespuestaDTO;
-import com.softure.survey.domain.EncuestaOpcionRespuestaFilterDTO;
-import com.softure.survey.domain.EncuestaPreguntaDTO;
-import com.softure.survey.domain.EncuestaPreguntaFilterDTO;
-import com.softure.survey.domain.EncuestaRespuestaDTO;
-import com.softure.survey.domain.EncuestaRespuestaFilterDTO;
 import com.softure.survey.domain.PostCalificacionDTO;
 import com.softure.survey.domain.PostCalificacionFilterDTO;
 import com.softure.survey.domain.PostPreguntaDTO;
@@ -238,16 +196,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosPlantillaConsecutivo")
-	public int contarResultadosPlantillaConsecutivo(@RequestBody PlantillaConsecutivoFilterDTO dto) throws FlexException  {
-		try {
-			return plantillaConsecutivoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
+
 	@PostMapping(value="/consultaUnicaPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO consultaUnicaPlantillaConsecutivo(@RequestBody PlantillaConsecutivoFilterDTO dto) throws FlexException  {
 		try {
@@ -313,15 +262,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosProceso")
-	public int contarResultadosProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException  {
-		try {
-			return procesoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaProceso")
 	public ProcesoDTO consultaUnicaProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException  {
@@ -395,81 +336,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@Autowired private DocumentoTransaccionSvc documentoTransaccionService;
-	
-	@PostMapping(value="/consultaXIdDocumentoTransaccion")
-	public DocumentoTransaccionDTO consultaXIdDocumentoTransaccion(@RequestBody String llave) throws FlexException {
-		try {
-			return documentoTransaccionService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosDocumentoTransaccion")
-	public int contarResultadosDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
-		try {
-			return documentoTransaccionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaDocumentoTransaccion")
-	public DocumentoTransaccionDTO consultaUnicaDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
-		try {
-			return documentoTransaccionService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaDocumentoTransaccion")
-	public List<DocumentoTransaccionDTO> listarConsultaDocumentoTransaccion(@RequestBody DocumentoTransaccionFilterDTO dto) throws FlexException  {
-		try {
-			return documentoTransaccionService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarDocumentoTransaccion")
-	public DocumentoTransaccionDTO activarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoTransaccionService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarDocumentoTransaccion")
-	public DocumentoTransaccionDTO inactivarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoTransaccionService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarDocumentoTransaccion")
-	public DocumentoTransaccionDTO actualizarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoTransaccionService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarDocumentoTransaccion")
-	public DocumentoTransaccionDTO guardarDocumentoTransaccion(@RequestBody DocumentoTransaccionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoTransaccionService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
+		
 	
 	@Autowired private ProcesoEstadoSvc procesoEstadoService;
 	
@@ -481,15 +348,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosProcesoEstado")
-	public int contarResultadosProcesoEstado(@RequestBody ProcesoEstadoFilterDTO dto) throws FlexException  {
-		try {
-			return procesoEstadoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaProcesoEstado")
 	public ProcesoEstadoDTO consultaUnicaProcesoEstado(@RequestBody ProcesoEstadoFilterDTO dto) throws FlexException  {
@@ -557,14 +416,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosProcesoTransicionAutomatica")
-	public int contarResultadosProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaFilterDTO dto) throws FlexException  {
-		try {
-			return procesoTransicionAutomaticaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO consultaUnicaProcesoTransicionAutomatica(@RequestBody ProcesoTransicionAutomaticaFilterDTO dto) throws FlexException  {
@@ -649,15 +500,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosDocumentoRelacionExpediente")
-	public int contarResultadosDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteFilterDTO dto) throws FlexException  {
-		try {
-			return documentoRelacionExpedienteService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO consultaUnicaDocumentoRelacionExpediente(@RequestBody DocumentoRelacionExpedienteFilterDTO dto) throws FlexException  {
@@ -720,15 +563,6 @@ public class FullControllerDTO {
 	public DocumentoRelacionGestorDTO consultaXIdDocumentoRelacionGestor(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoRelacionGestorService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosDocumentoRelacionGestor")
-	public int contarResultadosDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
-		try {
-			return documentoRelacionGestorService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -809,15 +643,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosDocumentoPlantillaCaracteristica")
-	public int contarResultadosDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
-		try {
-			return documentoPlantillaCaracteristicaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO consultaUnicaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
@@ -889,15 +714,6 @@ public class FullControllerDTO {
 	public PedidoVentaDTO consultaXIdPedidoVenta(@RequestBody String llave) throws FlexException {
 		try {
 			return pedidoVentaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosPedidoVenta")
-	public int contarResultadosPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -991,15 +807,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPedidoVentaCaracteristica")
-	public int contarResultadosPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaCaracteristicaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO consultaUnicaPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaFilterDTO dto) throws FlexException  {
 		try {
@@ -1075,15 +882,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosProcesoTransicion")
-	public int contarResultadosProcesoTransicion(@RequestBody ProcesoTransicionFilterDTO dto) throws FlexException  {
-		try {
-			return procesoTransicionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaProcesoTransicion")
 	public ProcesoTransicionDTO consultaUnicaProcesoTransicion(@RequestBody ProcesoTransicionFilterDTO dto) throws FlexException  {
 		try {
@@ -1139,79 +937,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
-	
-	@PostMapping(value="/consultaXIdPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO consultaXIdPedidoVentaAjuste(@RequestBody String llave) throws FlexException {
-		try {
-			return pedidoVentaAjusteService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosPedidoVentaAjuste")
-	public int contarResultadosPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO consultaUnicaPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaPedidoVentaAjuste")
-	public List<PedidoVentaAjusteDTO> listarConsultaPedidoVentaAjuste(@RequestBody PedidoVentaAjusteFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO activarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO inactivarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO actualizarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarPedidoVentaAjuste")
-	public PedidoVentaAjusteDTO guardarPedidoVentaAjuste(@RequestBody PedidoVentaAjusteDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaAjusteService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired private DocumentoPlantillaSvc documentoPlantillaService;
@@ -1220,15 +945,6 @@ public class FullControllerDTO {
 	public DocumentoPlantillaDTO consultaXIdDocumentoPlantilla(@RequestBody String llave) throws FlexException {
 		try {
 			return documentoPlantillaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosDocumentoPlantilla")
-	public int contarResultadosDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException  {
-		try {
-			return documentoPlantillaService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1336,15 +1052,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosMovimiento")
-	public int contarResultadosMovimiento(@RequestBody MovimientoFilterDTO dto) throws FlexException  {
-		try {
-			return movimientoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaMovimiento")
 	public MovimientoDTO consultaUnicaMovimiento(@RequestBody MovimientoFilterDTO dto) throws FlexException  {
 		try {
@@ -1429,15 +1136,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosTurno")
-	public int contarResultadosTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
-		try {
-			return turnoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaTurno")
 	public TurnoDTO consultaUnicaTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
 		try {
@@ -1499,15 +1197,6 @@ public class FullControllerDTO {
 	public TarifaDTO consultaXIdTarifa(@RequestBody String llave) throws FlexException {
 		try {
 			return tarifaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosTarifa")
-	public int contarResultadosTarifa(@RequestBody TarifaFilterDTO dto) throws FlexException  {
-		try {
-			return tarifaService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1579,15 +1268,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPedidoVentaDinero")
-	public int contarResultadosPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaPedidoVentaDinero")
 	public PedidoVentaDineroDTO consultaUnicaPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
 		try {
@@ -1649,15 +1329,6 @@ public class FullControllerDTO {
 	public CuentaDTO consultaXIdCuenta(@RequestBody String llave) throws FlexException {
 		try {
 			return cuentaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosCuenta")
-	public int contarResultadosCuenta(@RequestBody CuentaFilterDTO dto) throws FlexException  {
-		try {
-			return cuentaService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1729,15 +1400,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosTarifario")
-	public int contarResultadosTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
-		try {
-			return tarifarioService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaTarifario")
 	public TarifarioDTO consultaUnicaTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
@@ -1803,15 +1465,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosActividad")
-	public int contarResultadosActividad(@RequestBody ActividadFilterDTO dto) throws FlexException  {
-		try {
-			return actividadService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaActividad")
 	public ActividadDTO consultaUnicaActividad(@RequestBody ActividadFilterDTO dto) throws FlexException  {
 		try {
@@ -1867,80 +1520,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private PedidoVentaTiempoSvc pedidoVentaTiempoService;
-	
-	@PostMapping(value="/consultaXIdPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO consultaXIdPedidoVentaTiempo(@RequestBody String llave) throws FlexException {
-		try {
-			return pedidoVentaTiempoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosPedidoVentaTiempo")
-	public int contarResultadosPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO consultaUnicaPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaPedidoVentaTiempo")
-	public List<PedidoVentaTiempoDTO> listarConsultaPedidoVentaTiempo(@RequestBody PedidoVentaTiempoFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO activarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO inactivarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO actualizarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarPedidoVentaTiempo")
-	public PedidoVentaTiempoDTO guardarPedidoVentaTiempo(@RequestBody PedidoVentaTiempoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaTiempoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	
 	@Autowired private PropiedadSvc propiedadService;
 	
@@ -1948,15 +1527,6 @@ public class FullControllerDTO {
 	public PropiedadDTO consultaXIdPropiedad(@RequestBody String llave) throws FlexException {
 		try {
 			return propiedadService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosPropiedad")
-	public int contarResultadosPropiedad(@RequestBody PropiedadFilterDTO dto) throws FlexException  {
-		try {
-			return propiedadService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2028,15 +1598,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosRelacionInterna")
-	public int contarResultadosRelacionInterna(@RequestBody RelacionInternaFilterDTO dto) throws FlexException  {
-		try {
-			return relacionInternaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaRelacionInterna")
 	public RelacionInternaDTO consultaUnicaRelacionInterna(@RequestBody RelacionInternaFilterDTO dto) throws FlexException  {
 		try {
@@ -2101,79 +1662,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private EncuestaRespuestaSvc encuestaRespuestaService;
-	
-	@PostMapping(value="/consultaXIdEncuestaRespuesta")
-	public EncuestaRespuestaDTO consultaXIdEncuestaRespuesta(@RequestBody String llave) throws FlexException {
-		try {
-			return encuestaRespuestaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosEncuestaRespuesta")
-	public int contarResultadosEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaRespuestaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaEncuestaRespuesta")
-	public EncuestaRespuestaDTO consultaUnicaEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaRespuestaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaEncuestaRespuesta")
-	public List<EncuestaRespuestaDTO> listarConsultaEncuestaRespuesta(@RequestBody EncuestaRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaRespuestaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarEncuestaRespuesta")
-	public EncuestaRespuestaDTO activarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaRespuestaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarEncuestaRespuesta")
-	public EncuestaRespuestaDTO inactivarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaRespuestaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarEncuestaRespuesta")
-	public EncuestaRespuestaDTO actualizarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaRespuestaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarEncuestaRespuesta")
-	public EncuestaRespuestaDTO guardarEncuestaRespuesta(@RequestBody EncuestaRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaRespuestaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired private CambioSvc cambioService;
@@ -2182,15 +1670,6 @@ public class FullControllerDTO {
 	public CambioDTO consultaXIdCambio(@RequestBody String llave) throws FlexException {
 		try {
 			return cambioService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosCambio")
-	public int contarResultadosCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
-		try {
-			return cambioService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2251,80 +1730,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private EncuestaOpcionRespuestaSvc encuestaOpcionRespuestaService;
-	
-	@PostMapping(value="/consultaXIdEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO consultaXIdEncuestaOpcionRespuesta(@RequestBody String llave) throws FlexException {
-		try {
-			return encuestaOpcionRespuestaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosEncuestaOpcionRespuesta")
-	public int contarResultadosEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO consultaUnicaEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaEncuestaOpcionRespuesta")
-	public List<EncuestaOpcionRespuestaDTO> listarConsultaEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO activarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO inactivarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO actualizarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarEncuestaOpcionRespuesta")
-	public EncuestaOpcionRespuestaDTO guardarEncuestaOpcionRespuesta(@RequestBody EncuestaOpcionRespuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaOpcionRespuestaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	
 	@Autowired private PropiedadValorDefinidoSvc propiedadValorDefinidoService;
 	
@@ -2337,14 +1742,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPropiedadValorDefinido")
-	public int contarResultadosPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException  {
-		try {
-			return propiedadValorDefinidoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO consultaUnicaPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException  {
@@ -2410,275 +1808,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private EncuestaGrupoSvc encuestaGrupoService;
-	
-	@PostMapping(value="/consultaXIdEncuestaGrupo")
-	public EncuestaGrupoDTO consultaXIdEncuestaGrupo(@RequestBody String llave) throws FlexException {
-		try {
-			return encuestaGrupoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosEncuestaGrupo")
-	public int contarResultadosEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaGrupoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaEncuestaGrupo")
-	public EncuestaGrupoDTO consultaUnicaEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaGrupoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaEncuestaGrupo")
-	public List<EncuestaGrupoDTO> listarConsultaEncuestaGrupo(@RequestBody EncuestaGrupoFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaGrupoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarEncuestaGrupo")
-	public EncuestaGrupoDTO activarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaGrupoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarEncuestaGrupo")
-	public EncuestaGrupoDTO inactivarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaGrupoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarEncuestaGrupo")
-	public EncuestaGrupoDTO actualizarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaGrupoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarEncuestaGrupo")
-	public EncuestaGrupoDTO guardarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaGrupoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	@PostMapping(value="/responderEncuestaEncuestaGrupo")
-	public EncuestaGrupoDTO responderEncuestaEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
-		try {
-			return encuestaGrupoService.responderEncuesta(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value="/copiarEncuestaGrupo")
-	public EncuestaGrupoDTO copiarEncuestaGrupo(@RequestBody EncuestaGrupoDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
-		try {
-			return encuestaGrupoService.copiar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@Autowired private EncuestaPreguntaSvc encuestaPreguntaService;
-	
-	@PostMapping(value="/consultaXIdEncuestaPregunta")
-	public EncuestaPreguntaDTO consultaXIdEncuestaPregunta(@RequestBody String llave) throws FlexException {
-		try {
-			return encuestaPreguntaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosEncuestaPregunta")
-	public int contarResultadosEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaPreguntaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaEncuestaPregunta")
-	public EncuestaPreguntaDTO consultaUnicaEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaPreguntaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaEncuestaPregunta")
-	public List<EncuestaPreguntaDTO> listarConsultaEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaPreguntaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarEncuestaPregunta")
-	public EncuestaPreguntaDTO activarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaPreguntaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarEncuestaPregunta")
-	public EncuestaPreguntaDTO inactivarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaPreguntaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarEncuestaPregunta")
-	public EncuestaPreguntaDTO actualizarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaPreguntaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarEncuestaPregunta")
-	public EncuestaPreguntaDTO guardarEncuestaPregunta(@RequestBody EncuestaPreguntaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaPreguntaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	@PostMapping(value="/listarPermitidasEncuestaPregunta")
-	public List<EncuestaPreguntaDTO> listarPermitidasEncuestaPregunta(@RequestBody EncuestaPreguntaFilterDTO dto)throws FlexException {
-		try {
-			return encuestaPreguntaService.listarPermitidas(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@Autowired private EncuestaSvc encuestaService;
-	
-	@PostMapping(value="/consultaXIdEncuesta")
-	public EncuestaDTO consultaXIdEncuesta(@RequestBody String llave) throws FlexException {
-		try {
-			return encuestaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosEncuesta")
-	public int contarResultadosEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaEncuesta")
-	public EncuestaDTO consultaUnicaEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaEncuesta")
-	public List<EncuestaDTO> listarConsultaEncuesta(@RequestBody EncuestaFilterDTO dto) throws FlexException  {
-		try {
-			return encuestaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarEncuesta")
-	public EncuestaDTO activarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarEncuesta")
-	public EncuestaDTO inactivarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarEncuesta")
-	public EncuestaDTO actualizarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarEncuesta")
-	public EncuestaDTO guardarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return encuestaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	@PostMapping(value="/copiarEncuesta")
-	public EncuestaDTO copiarEncuesta(@RequestBody EncuestaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
-		try {
-			return encuestaService.copiar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value="/listarDisponiblesEncuesta")
-	public List<EncuestaDTO> listarDisponiblesEncuesta(@RequestBody EncuestaFilterDTO dto)throws FlexException {
-		try {
-			return encuestaService.listarDisponibles(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@Autowired private UsuarioRolSvc usuarioRolService;
 	
@@ -2691,14 +1820,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuarioRol")
-	public int contarResultadosUsuarioRol(@RequestBody UsuarioRolFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioRolService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaUsuarioRol")
 	public UsuarioRolDTO consultaUnicaUsuarioRol(@RequestBody UsuarioRolFilterDTO dto) throws FlexException  {
@@ -2766,14 +1888,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPuesto")
-	public int contarResultadosPuesto(@RequestBody PuestoFilterDTO dto) throws FlexException  {
-		try {
-			return puestoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaPuesto")
 	public PuestoDTO consultaUnicaPuesto(@RequestBody PuestoFilterDTO dto) throws FlexException  {
@@ -2836,15 +1951,6 @@ public class FullControllerDTO {
 	public RolAccesoDTO consultaXIdRolAcceso(@RequestBody String llave) throws FlexException {
 		try {
 			return rolAccesoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosRolAcceso")
-	public int contarResultadosRolAcceso(@RequestBody RolAccesoFilterDTO dto) throws FlexException  {
-		try {
-			return rolAccesoService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2925,14 +2031,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuario")
-	public int contarResultadosUsuario(@RequestBody UsuarioFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaUsuario")
 	public UsuarioDTO consultaUnicaUsuario(@RequestBody UsuarioFilterDTO dto) throws FlexException  {
@@ -3008,15 +2107,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosWebService")
-	public int contarResultadosWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
-		try {
-			return webServiceService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaWebService")
 	public WebServiceDTO consultaUnicaWebService(@RequestBody WebServiceFilterDTO dto) throws FlexException  {
@@ -3084,15 +2175,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPostRespuesta")
-	public int contarResultadosPostRespuesta(@RequestBody PostRespuestaFilterDTO dto) throws FlexException  {
-		try {
-			return postRespuestaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
+
 	@PostMapping(value="/consultaUnicaPostRespuesta")
 	public PostRespuestaDTO consultaUnicaPostRespuesta(@RequestBody PostRespuestaFilterDTO dto) throws FlexException  {
 		try {
@@ -3157,79 +2240,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private GPSLocalizacionSvc gPSLocalizacionService;
-	
-	@PostMapping(value="/consultaXIdGPSLocalizacion")
-	public GPSLocalizacionDTO consultaXIdGPSLocalizacion(@RequestBody String llave) throws FlexException {
-		try {
-			return gPSLocalizacionService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosGPSLocalizacion")
-	public int contarResultadosGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
-		try {
-			return gPSLocalizacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaGPSLocalizacion")
-	public GPSLocalizacionDTO consultaUnicaGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
-		try {
-			return gPSLocalizacionService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaGPSLocalizacion")
-	public List<GPSLocalizacionDTO> listarConsultaGPSLocalizacion(@RequestBody GPSLocalizacionFilterDTO dto) throws FlexException  {
-		try {
-			return gPSLocalizacionService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarGPSLocalizacion")
-	public GPSLocalizacionDTO activarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSLocalizacionService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarGPSLocalizacion")
-	public GPSLocalizacionDTO inactivarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSLocalizacionService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarGPSLocalizacion")
-	public GPSLocalizacionDTO actualizarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSLocalizacionService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarGPSLocalizacion")
-	public GPSLocalizacionDTO guardarGPSLocalizacion(@RequestBody GPSLocalizacionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSLocalizacionService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired private MensajeSvc mensajeService;
@@ -3243,14 +2253,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosMensaje")
-	public int contarResultadosMensaje(@RequestBody MensajeFilterDTO dto) throws FlexException  {
-		try {
-			return mensajeService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaMensaje")
 	public MensajeDTO consultaUnicaMensaje(@RequestBody MensajeFilterDTO dto) throws FlexException  {
@@ -3338,14 +2341,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPostCalificacion")
-	public int contarResultadosPostCalificacion(@RequestBody PostCalificacionFilterDTO dto) throws FlexException  {
-		try {
-			return postCalificacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaPostCalificacion")
 	public PostCalificacionDTO consultaUnicaPostCalificacion(@RequestBody PostCalificacionFilterDTO dto) throws FlexException  {
@@ -3413,14 +2409,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosWebServiceEjecucion")
-	public int contarResultadosWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
-		try {
-			return webServiceEjecucionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaWebServiceEjecucion")
 	public WebServiceEjecucionDTO consultaUnicaWebServiceEjecucion(@RequestBody WebServiceEjecucionFilterDTO dto) throws FlexException  {
@@ -3497,14 +2486,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPostPregunta")
-	public int contarResultadosPostPregunta(@RequestBody PostPreguntaFilterDTO dto) throws FlexException  {
-		try {
-			return postPreguntaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaPostPregunta")
 	public PostPreguntaDTO consultaUnicaPostPregunta(@RequestBody PostPreguntaFilterDTO dto) throws FlexException  {
@@ -3590,14 +2571,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosServidor")
-	public int contarResultadosServidor(@RequestBody ServidorFilterDTO dto) throws FlexException  {
-		try {
-			return servidorService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaServidor")
 	public ServidorDTO consultaUnicaServidor(@RequestBody ServidorFilterDTO dto) throws FlexException  {
@@ -3665,14 +2638,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosMensajePlantillaCorreo")
-	public int contarResultadosMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException  {
-		try {
-			return mensajePlantillaCorreoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO consultaUnicaMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException  {
@@ -3729,80 +2694,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private GPSDispositivoSvc gPSDispositivoService;
-	
-	@PostMapping(value="/consultaXIdGPSDispositivo")
-	public GPSDispositivoDTO consultaXIdGPSDispositivo(@RequestBody String llave) throws FlexException {
-		try {
-			return gPSDispositivoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosGPSDispositivo")
-	public int contarResultadosGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
-		try {
-			return gPSDispositivoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaGPSDispositivo")
-	public GPSDispositivoDTO consultaUnicaGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
-		try {
-			return gPSDispositivoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaGPSDispositivo")
-	public List<GPSDispositivoDTO> listarConsultaGPSDispositivo(@RequestBody GPSDispositivoFilterDTO dto) throws FlexException  {
-		try {
-			return gPSDispositivoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarGPSDispositivo")
-	public GPSDispositivoDTO activarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSDispositivoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarGPSDispositivo")
-	public GPSDispositivoDTO inactivarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSDispositivoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarGPSDispositivo")
-	public GPSDispositivoDTO actualizarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSDispositivoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarGPSDispositivo")
-	public GPSDispositivoDTO guardarGPSDispositivo(@RequestBody GPSDispositivoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return gPSDispositivoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	
 	@Autowired private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
 	
@@ -3815,14 +2706,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosTrazabilidadProductoInventario")
-	public int contarResultadosTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO consultaUnicaTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
@@ -3890,14 +2774,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosDetallePedidoVenta")
-	public int contarResultadosDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
-		try {
-			return detallePedidoVentaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaDetallePedidoVenta")
 	public DetallePedidoVentaDTO consultaUnicaDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
@@ -3965,14 +2842,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosCategoriaProducto")
-	public int contarResultadosCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return categoriaProductoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaCategoriaProducto")
 	public CategoriaProductoDTO consultaUnicaCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
@@ -4040,14 +2910,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosProductoInventario")
-	public int contarResultadosProductoInventario(@RequestBody ProductoInventarioFilterDTO dto) throws FlexException  {
-		try {
-			return productoInventarioService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaProductoInventario")
 	public ProductoInventarioDTO consultaUnicaProductoInventario(@RequestBody ProductoInventarioFilterDTO dto) throws FlexException  {
@@ -4115,14 +2978,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosProductoCaracteristica")
-	public int contarResultadosProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
-		try {
-			return productoCaracteristicaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaProductoCaracteristica")
 	public ProductoCaracteristicaDTO consultaUnicaProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
@@ -4190,14 +3046,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuarioRolProducto")
-	public int contarResultadosUsuarioRolProducto(@RequestBody UsuarioRolProductoFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioRolProductoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaUsuarioRolProducto")
 	public UsuarioRolProductoDTO consultaUnicaUsuarioRolProducto(@RequestBody UsuarioRolProductoFilterDTO dto) throws FlexException  {
@@ -4265,14 +3114,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosDetalleCaracteristicaProducto")
-	public int contarResultadosDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO consultaUnicaDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
@@ -4340,14 +3181,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosBodega")
-	public int contarResultadosBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
-		try {
-			return bodegaService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaBodega")
 	public BodegaDTO consultaUnicaBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
@@ -4415,14 +3249,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosProducto")
-	public int contarResultadosProducto(@RequestBody ProductoFilterDTO dto) throws FlexException  {
-		try {
-			return productoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaProducto")
 	public ProductoDTO consultaUnicaProducto(@RequestBody ProductoFilterDTO dto) throws FlexException  {
@@ -4485,15 +3312,6 @@ public class FullControllerDTO {
 	public ProductoInventarioDescuentoDTO consultaXIdProductoInventarioDescuento(@RequestBody String llave) throws FlexException {
 		try {
 			return productoInventarioDescuentoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosProductoInventarioDescuento")
-	public int contarResultadosProductoInventarioDescuento(@RequestBody ProductoInventarioDescuentoFilterDTO dto) throws FlexException  {
-		try {
-			return productoInventarioDescuentoService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -4564,15 +3382,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/contarResultadosDeduccionProducto")
-	public int contarResultadosDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
-		try {
-			return deduccionProductoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaDeduccionProducto")
 	public DeduccionProductoDTO consultaUnicaDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
@@ -4639,14 +3449,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosModulo")
-	public int contarResultadosModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
-		try {
-			return moduloService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaModulo")
 	public ModuloDTO consultaUnicaModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
@@ -4714,14 +3516,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosReporteBase")
-	public int contarResultadosReporteBase(@RequestBody ReporteBaseFilterDTO dto) throws FlexException  {
-		try {
-			return reporteBaseService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaReporteBase")
 	public ReporteBaseDTO consultaUnicaReporteBase(@RequestBody ReporteBaseFilterDTO dto) throws FlexException  {
@@ -4789,14 +3583,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuarioOrganizacion")
-	public int contarResultadosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioOrganizacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/consultaUnicaUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO consultaUnicaUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto) throws FlexException  {
@@ -4873,14 +3660,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosPermiso")
-	public int contarResultadosPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
-		try {
-			return permisoService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaPermiso")
 	public PermisoDTO consultaUnicaPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
@@ -4948,14 +3727,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuarioAutenticacionAutorizacion")
-	public int contarResultadosUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioAutenticacionAutorizacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO consultaUnicaUsuarioAutenticacionAutorizacion(@RequestBody UsuarioAutenticacionAutorizacionFilterDTO dto) throws FlexException  {
@@ -5011,81 +3782,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	
-	@Autowired private UsuarioSesionSvc usuarioSesionService;
-	
-	@PostMapping(value="/consultaXIdUsuarioSesion")
-	public UsuarioSesionDTO consultaXIdUsuarioSesion(@RequestBody String llave) throws FlexException {
-		try {
-			return usuarioSesionService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosUsuarioSesion")
-	public int contarResultadosUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaUsuarioSesion")
-	public UsuarioSesionDTO consultaUnicaUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaUsuarioSesion")
-	public List<UsuarioSesionDTO> listarConsultaUsuarioSesion(@RequestBody UsuarioSesionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarUsuarioSesion")
-	public UsuarioSesionDTO activarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarUsuarioSesion")
-	public UsuarioSesionDTO inactivarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarUsuarioSesion")
-	public UsuarioSesionDTO actualizarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarUsuarioSesion")
-	public UsuarioSesionDTO guardarUsuarioSesion(@RequestBody UsuarioSesionDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
+
 	
 	@Autowired private CargaArchivoSvc cargaArchivoService;
 	
@@ -5093,15 +3790,6 @@ public class FullControllerDTO {
 	public CargaArchivoDTO consultaXIdCargaArchivo(@RequestBody String llave) throws FlexException {
 		try {
 			return cargaArchivoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosCargaArchivo")
-	public int contarResultadosCargaArchivo(@RequestBody CargaArchivoFilterDTO dto) throws FlexException  {
-		try {
-			return cargaArchivoService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -5173,15 +3861,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosReporteEjecucion")
-	public int contarResultadosReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
-		try {
-			return reporteEjecucionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@PostMapping(value="/consultaUnicaReporteEjecucion")
 	public ReporteEjecucionDTO consultaUnicaReporteEjecucion(@RequestBody ReporteEjecucionFilterDTO dto) throws FlexException  {
 		try {
@@ -5243,15 +3922,6 @@ public class FullControllerDTO {
 	public ConsecutivoDTO consultaXIdConsecutivo(@RequestBody String llave) throws FlexException {
 		try {
 			return consecutivoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosConsecutivo")
-	public int contarResultadosConsecutivo(@RequestBody ConsecutivoFilterDTO dto) throws FlexException  {
-		try {
-			return consecutivoService.contarResultados(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -5320,156 +3990,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@Autowired private TransaccionLogSvc transaccionLogService;
-	
-	@PostMapping(value="/consultaXIdTransaccionLog")
-	public TransaccionLogDTO consultaXIdTransaccionLog(@RequestBody String llave) throws FlexException {
-		try {
-			return transaccionLogService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosTransaccionLog")
-	public int contarResultadosTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionLogService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaTransaccionLog")
-	public TransaccionLogDTO consultaUnicaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionLogService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaTransaccionLog")
-	public List<TransaccionLogDTO> listarConsultaTransaccionLog(@RequestBody TransaccionLogFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionLogService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarTransaccionLog")
-	public TransaccionLogDTO activarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionLogService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarTransaccionLog")
-	public TransaccionLogDTO inactivarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionLogService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarTransaccionLog")
-	public TransaccionLogDTO actualizarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionLogService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarTransaccionLog")
-	public TransaccionLogDTO guardarTransaccionLog(@RequestBody TransaccionLogDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionLogService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired private UsuarioSesionErrorSvc usuarioSesionErrorService;
-	
-	@PostMapping(value="/consultaXIdUsuarioSesionError")
-	public UsuarioSesionErrorDTO consultaXIdUsuarioSesionError(@RequestBody String llave) throws FlexException {
-		try {
-			return usuarioSesionErrorService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosUsuarioSesionError")
-	public int contarResultadosUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaUsuarioSesionError")
-	public UsuarioSesionErrorDTO consultaUnicaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaUsuarioSesionError")
-	public List<UsuarioSesionErrorDTO> listarConsultaUsuarioSesionError(@RequestBody UsuarioSesionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarUsuarioSesionError")
-	public UsuarioSesionErrorDTO activarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarUsuarioSesionError")
-	public UsuarioSesionErrorDTO inactivarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarUsuarioSesionError")
-	public UsuarioSesionErrorDTO actualizarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarUsuarioSesionError")
-	public UsuarioSesionErrorDTO guardarUsuarioSesionError(@RequestBody UsuarioSesionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return usuarioSesionErrorService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
+
 	
 	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	
@@ -5482,14 +4003,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosUsuarioAutenticacion")
-	public int contarResultadosUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto) throws FlexException  {
-		try {
-			return usuarioAutenticacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO consultaUnicaUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto) throws FlexException  {
@@ -5565,80 +4078,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private TransaccionErrorSvc transaccionErrorService;
-	
-	@PostMapping(value="/consultaXIdTransaccionError")
-	public TransaccionErrorDTO consultaXIdTransaccionError(@RequestBody String llave) throws FlexException {
-		try {
-			return transaccionErrorService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/contarResultadosTransaccionError")
-	public int contarResultadosTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionErrorService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaTransaccionError")
-	public TransaccionErrorDTO consultaUnicaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionErrorService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaTransaccionError")
-	public List<TransaccionErrorDTO> listarConsultaTransaccionError(@RequestBody TransaccionErrorFilterDTO dto) throws FlexException  {
-		try {
-			return transaccionErrorService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarTransaccionError")
-	public TransaccionErrorDTO activarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionErrorService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarTransaccionError")
-	public TransaccionErrorDTO inactivarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionErrorService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarTransaccionError")
-	public TransaccionErrorDTO actualizarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionErrorService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarTransaccionError")
-	public TransaccionErrorDTO guardarTransaccionError(@RequestBody TransaccionErrorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return transaccionErrorService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	
 	@Autowired private OrganizacionSvc organizacionService;
 	
@@ -5651,14 +4090,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/contarResultadosOrganizacion")
-	public int contarResultadosOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException  {
-		try {
-			return organizacionService.contarResultados(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/consultaUnicaOrganizacion")
 	public OrganizacionDTO consultaUnicaOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException  {
@@ -5731,6 +4162,5 @@ public class FullControllerDTO {
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
-	}
-	
+	}	
 }

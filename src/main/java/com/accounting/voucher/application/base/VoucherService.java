@@ -1,4 +1,4 @@
-package com.accounting.plan.application.base;
+package com.accounting.voucher.application.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,27 +7,27 @@ import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.FormatLineDTO;
-import com.accounting.plan.domain.FormatLineFilterDTO;
-import com.accounting.plan.infrastructure.FormatLineMapper;
+import com.accounting.voucher.domain.VoucherDTO;
+import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.accounting.voucher.infrastructure.VoucherMapper;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 
-@Service("FormatLineAccountingService")
-public class FormatLineService {
+@Service("VoucherAccountingService")
+public class VoucherService {
 
 	@Autowired
-	private FormatLineMapper mapper;
+	private VoucherMapper mapper;
 
-	public FormatLineDTO getById(String id) throws ServerException {
+	public VoucherDTO getById(String id) throws ServerException {
 		if (id == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. FormatLine");
-		FormatLineFilterDTO dto = new FormatLineFilterDTO();
+			throw new ServerException("La llave del DTO se encuentra vacia. Voucher");
+		VoucherFilterDTO dto = new VoucherFilterDTO();
 		dto.setKey(id);
 		return mapper.getOne(dto);
 	}
 
-	public FormatLineDTO getOne(FormatLineFilterDTO dto) throws ServerException {
+	public VoucherDTO getOne(VoucherFilterDTO dto) throws ServerException {
 		try {
 			return mapper.getOne(dto);
 		} catch (BindingException ex) {
@@ -37,7 +37,7 @@ public class FormatLineService {
 		}
 	}
 
-	public List<FormatLineDTO> getMany(FormatLineFilterDTO dto) throws ServerException {
+	public List<VoucherDTO> getMany(VoucherFilterDTO dto) throws ServerException {
 		if (dto.getIndexStart() == null)
 			dto.setIndexStart(0);
 		if (dto.getIndexEnd() == null || dto.getIndexEnd() == 0)
@@ -51,7 +51,7 @@ public class FormatLineService {
 		}
 	}
 
-	public int count(FormatLineFilterDTO dto) throws ServerException {
+	public int count(VoucherFilterDTO dto) throws ServerException {
 		try {
 			return mapper.count(dto);
 		} catch (BindingException ex) {
@@ -61,7 +61,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void save(FormatLineDTO dto, String token) throws ServerException {
+	public void save(VoucherDTO dto, String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -74,7 +74,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void update(FormatLineDTO dto, String token) throws ServerException {
+	public void update(VoucherDTO dto, String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		try {
@@ -86,7 +86,7 @@ public class FormatLineService {
 		}
 	}
 
-	public FormatLineDTO delete(FormatLineDTO dto, String token) throws ServerException {
+	public VoucherDTO delete(VoucherDTO dto, String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		dto = getById(dto.getKey());

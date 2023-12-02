@@ -322,17 +322,20 @@ public class CallManageTransition {
 			throw new ServerException("La decision " + decisionDTO.getNombre() + " esta inactiva");
 		PropiedadDTO propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, decision,
 				Propiedades.DECISION_SQL, getUserId(token));
-		if (propiedadFuncion == null)
-			throw new ServerException("La decision " + decisionDTO.getNombre() + " no tiene definida la funcion SQL");
 		String resultado = null;
-		try {
-			resultado = procesoTransicionMapper.decision(SoftureUtil.formatFunction(propiedadFuncion.getLlaveTabla()),
-					llaveTablaDocumento, llaveModificador);
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "Decision : " + decisionDTO.getNombre());
+		if (propiedadFuncion == null) {
+			resultado = "OK";
+		} else {
+			try {
+				resultado = procesoTransicionMapper.decision(
+						SoftureUtil.formatFunction(propiedadFuncion.getLlaveTabla()), llaveTablaDocumento,
+						llaveModificador);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), "Decision : " + decisionDTO.getNombre());
+			}
+			if (resultado == null)
+				throw new ServerException("El resultado ha sido nulo\nDecision : " + decisionDTO.getNombre());
 		}
-		if (resultado == null)
-			throw new ServerException("El resultado ha sido nulo\nDecision : " + decisionDTO.getNombre());
 		ProcesoTransicionDTO solucion = getNextTransition(decisionDTO.getLlaveTabla(), resultado);
 		return solucion;
 	}

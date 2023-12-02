@@ -15,8 +15,6 @@ public interface CreateCatalogTablesMapper {
 	
 	void createRegister(@Param("code") String code);
 	
-	void createAccumulate(@Param("code") String code);
-	
 	void createAuxiliar(@Param("code") String code);
 	
 }

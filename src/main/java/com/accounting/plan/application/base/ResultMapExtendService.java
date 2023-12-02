@@ -1,5 +1,7 @@
 package com.accounting.plan.application.base;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.ResultMapDTO;
-import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.accounting.plan.infrastructure.ResultMapExtendMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 
 @Service("ResultMapExtendAccountingService")
@@ -22,91 +22,48 @@ public class ResultMapExtendService {
 	@Autowired
 	private CatalogService catalogService;
 
-	public ResultMapDTO getById(String id) throws ServerException {
-		if (id == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. ResultMap");
-		ResultMapFilterDTO dto = new ResultMapFilterDTO();
-		dto.setKey(id);
-		return mapper.getOne(dto);
-	}
+	
 
-	public ResultMapDTO getOne(ResultMapFilterDTO dto) throws ServerException {
+	public void saveAll(String catalogCode, String type, List<ResultMapDTO> maps) throws ServerException {
+		if(maps==null || maps.isEmpty()) return;
+		for (ResultMapDTO resultMapDTO : maps) {
+			resultMapDTO.setKey(UUID.randomUUID().toString().replaceAll("-", ""));	
+		}
+		int indexEnd = 0;
+		int indexStart = 0;
+		while(indexEnd < maps.size()) {
+			try {
+				indexStart = indexEnd;
+				indexEnd = indexEnd + 1000;
+				if(indexEnd > maps.size()) indexEnd = maps.size();
+				mapper.insertAll(catalogCode, type, maps.subList(indexStart, indexEnd));
+				
+			} catch (BindingException ex) {
+				throw new ServerException(ex.getMessage());
+			} catch (Exception e) {
+				throw new ServerException(e.getCause().getMessage());
+			}			
+		}
+	}
+	
+	public ResultMapDTO update(String catalogCode, ResultMapDTO dto) throws ServerException {
 		try {
-			return mapper.getOne(dto);
+			return mapper.updateItem(catalogCode, dto);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
-	public List<ResultMapDTO> getMany(ResultMapFilterDTO dto) throws ServerException {
-		if (dto.getIndexStart() == null)
-			dto.setIndexStart(0);
-		if (dto.getIndexEnd() == null || dto.getIndexEnd() == 0)
-			dto.setIndexEnd(200);
+	
+	public ResultMapDTO updateBalance(ResultMapDTO dto) throws ServerException {
 		try {
-			return mapper.getMany(dto);
+			return mapper.updateBalance(dto);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
-
-	public int count(ResultMapFilterDTO dto) throws ServerException {
-		try {
-			return mapper.count(dto);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
-
-	public ResultMapDTO save(ResultMapDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
-		try {
-			mapper.insert(dto);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-		return dto;
-	}
-
-	public ResultMapDTO update(ResultMapDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		try {
-			return mapper.update(dto);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
-
-	public ResultMapDTO delete(ResultMapDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		dto = getById(dto.getKey());
-		if (dto == null)
-			throw new ServerException("No se identifica el objeto a inactivar");
-		if (dto.getState().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0)
-			throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setState(ConstantesGenerales.ESTADO_INACTIVO);
-		try {
-			mapper.update(dto);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-		return dto;
 	}
 	
 	public List<ResultMapDTO> getBalanceByCatalog(String catalogId) throws ServerException {
@@ -115,6 +72,19 @@ public class ResultMapExtendService {
 		if(catalog ==null) throw new ServerException("No se identifico un catalogo con el identificador " + catalogId);
 		try {
 			return mapper.getBalance(catalog.getKey(), catalog.getCode());
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
+	
+	public List<ResultMapDTO> getItemsAccount(String catalogCode, String accountId, String type, Date dateFact) throws ServerException {
+		if(catalogCode ==null) throw new ServerException("Es necesario colcoar el Id del catalogo");
+		Calendar dateFactCalendar = Calendar.getInstance();
+		dateFactCalendar.setTime(dateFact);
+		try {
+			return mapper.getItemsAccount(catalogCode, accountId, type, dateFactCalendar.get(Calendar.YEAR), dateFactCalendar.get(Calendar.MONTH), dateFactCalendar.get(Calendar.DATE), dateFactCalendar.get(Calendar.HOUR_OF_DAY), (dateFactCalendar.get(Calendar.MINUTE)/10*10));
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {

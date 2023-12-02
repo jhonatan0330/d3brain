@@ -11,6 +11,7 @@
 			,cctg_codigo as code
 			,dctg_fechainicial as initialDate
 			,dctg_fechafinal as finalDate
+			,cctg_consecutivo as consecutive
 			,cctg_estado as state
 		from catalogo_ctg a
 	</sql>
@@ -34,6 +35,9 @@
 			</if>
 			<if test="finalDate!=null">
 				and dctg_fechafinal = #{finalDate}
+			</if>
+			<if test="consecutive!=null">
+				and cctg_consecutivo = #{consecutive}
 			</if>
 
 	</sql>
@@ -84,6 +88,9 @@
 		<if test="finalDate!=null">
 			,dctg_fechafinal
 		</if>
+		<if test="consecutive!=null">
+			,cctg_consecutivo
+		</if>
 		<if test="state!=null">
 			,cctg_estado
 		</if>
@@ -101,6 +108,9 @@
 		<if test="finalDate!=null">
 			,#{finalDate}
 		</if>
+		<if test="consecutive!=null">
+			,#{consecutive}
+		</if>
 		<if test="state!=null">
 			,#{state}
 		</if>
@@ -114,6 +124,7 @@
 				cctg_codigo = #{code},
 				dctg_fechainicial = #{initialDate},
 				dctg_fechafinal = #{finalDate},
+				cctg_consecutivo = #{consecutive},
 				cctg_estado =#{state}
 		<include refid="whereCatalogPrimaryKeyFragment" />
 	</select>

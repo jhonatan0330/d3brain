@@ -12,15 +12,18 @@
 			,(select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountName
 			,(select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountCode
 			,nrmp_nivel as level
-			,drmp_fecha as mapDate
+			,drmp_fechainicio as startDate
+			,drmp_fechafin as endDate
+			,crmp_periodo as period
 			,nrmp_ano as year
 			,nrmp_mes as month
 			,nrmp_dia as day
 			,nrmp_hora as hour
 			,nrmp_minuto as minute
 			,nrmp_cantidad as quantity
-			,nrmp_porcentaje as percentaje
+			,nrmp_promedio as average
 			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
@@ -46,8 +49,14 @@
 			<if test="level!=null">
 				and nrmp_nivel = #{level}
 			</if>
-			<if test="mapDate!=null">
-				and drmp_fecha = #{mapDate}
+			<if test="startDate!=null">
+				and drmp_fechainicio = #{startDate}
+			</if>
+			<if test="endDate!=null">
+				and drmp_fechafin = #{endDate}
+			</if>
+			<if test="period!=null">
+				and crmp_periodo = #{period}
 			</if>
 			<if test="year!=null">
 				and nrmp_ano = #{year}
@@ -67,11 +76,14 @@
 			<if test="quantity!=null">
 				and nrmp_cantidad = #{quantity}
 			</if>
-			<if test="percentaje!=null">
-				and nrmp_porcentaje = #{percentaje}
+			<if test="average!=null">
+				and nrmp_promedio = #{average}
 			</if>
 			<if test="lastBalance!=null">
 				and mrmp_saldoanterior = #{lastBalance}
+			</if>
+			<if test="nextBalance!=null">
+				and mrmp_saldosiguiente = #{nextBalance}
 			</if>
 			<if test="positive!=null">
 				and mrmp_positivo = #{positive}
@@ -110,6 +122,7 @@
 	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
 		<include refid="selectResultMapFragment" />
 		<include refid="whereResultMapFragment" />
+		order by startDate 
 		<include refid="paginationResultMapFragment" />
 	</select>
 
@@ -131,8 +144,14 @@
 		<if test="level!=null">
 			,nrmp_nivel
 		</if>
-		<if test="mapDate!=null">
-			,drmp_fecha
+		<if test="startDate!=null">
+			,drmp_fechainicio
+		</if>
+		<if test="endDate!=null">
+			,drmp_fechafin
+		</if>
+		<if test="period!=null">
+			,crmp_periodo
 		</if>
 		<if test="year!=null">
 			,nrmp_ano
@@ -152,11 +171,14 @@
 		<if test="quantity!=null">
 			,nrmp_cantidad
 		</if>
-		<if test="percentaje!=null">
-			,nrmp_porcentaje
+		<if test="average!=null">
+			,nrmp_promedio
 		</if>
 		<if test="lastBalance!=null">
 			,mrmp_saldoanterior
+		</if>
+		<if test="nextBalance!=null">
+			,mrmp_saldosiguiente
 		</if>
 		<if test="positive!=null">
 			,mrmp_positivo
@@ -184,8 +206,14 @@
 		<if test="level!=null">
 			,#{level}
 		</if>
-		<if test="mapDate!=null">
-			,#{mapDate}
+		<if test="startDate!=null">
+			,#{startDate}
+		</if>
+		<if test="endDate!=null">
+			,#{endDate}
+		</if>
+		<if test="period!=null">
+			,#{period}
 		</if>
 		<if test="year!=null">
 			,#{year}
@@ -205,11 +233,14 @@
 		<if test="quantity!=null">
 			,#{quantity}
 		</if>
-		<if test="percentaje!=null">
-			,#{percentaje}
+		<if test="average!=null">
+			,#{average}
 		</if>
 		<if test="lastBalance!=null">
 			,#{lastBalance}
+		</if>
+		<if test="nextBalance!=null">
+			,#{nextBalance}
 		</if>
 		<if test="positive!=null">
 			,#{positive}
@@ -235,15 +266,18 @@
 				crmp_catalogo = #{catalog},
 				crmp_cuenta = #{account},
 				nrmp_nivel = #{level},
-				drmp_fecha = #{mapDate},
+				drmp_fechainicio = #{startDate},
+				drmp_fechafin = #{endDate},
+				crmp_periodo = #{period},
 				nrmp_ano = #{year},
 				nrmp_mes = #{month},
 				nrmp_dia = #{day},
 				nrmp_hora = #{hour},
 				nrmp_minuto = #{minute},
 				nrmp_cantidad = #{quantity},
-				nrmp_porcentaje = #{percentaje},
+				nrmp_promedio = #{average},
 				mrmp_saldoanterior = #{lastBalance},
+				mrmp_saldosiguiente = #{nextBalance},
 				mrmp_positivo = #{positive},
 				mrmp_negativo = #{negative},
 				mrmp_valor = #{value},

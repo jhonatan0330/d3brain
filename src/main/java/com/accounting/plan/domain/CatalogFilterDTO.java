@@ -15,6 +15,7 @@ public class CatalogFilterDTO {
 	private String code;
 	private Date initialDate;
 	private Date finalDate;
+	private String consecutive;
 
 	public String getKey() {
 		return key;
@@ -86,6 +87,14 @@ public class CatalogFilterDTO {
 
 	public void setFinalDate(Date finalDate) {
 		this.finalDate = finalDate;
+	}
+
+	public String getConsecutive() {
+		return consecutive;
+	}
+
+	public void setConsecutive(String consecutive) {
+		this.consecutive = consecutive;
 	}
 
 }

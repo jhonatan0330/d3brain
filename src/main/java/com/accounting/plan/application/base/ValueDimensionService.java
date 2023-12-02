@@ -61,7 +61,7 @@ public class ValueDimensionService {
 		}
 	}
 
-	public ValueDimensionDTO save(ValueDimensionDTO dto, String token) throws ServerException {
+	public void save(ValueDimensionDTO dto, String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
@@ -72,14 +72,13 @@ public class ValueDimensionService {
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-		return dto;
 	}
 
-	public ValueDimensionDTO update(ValueDimensionDTO dto, String token) throws ServerException {
+	public void update(ValueDimensionDTO dto, String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		try {
-			return mapper.update(dto);
+			mapper.update(dto);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {

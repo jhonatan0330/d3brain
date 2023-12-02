@@ -15,6 +15,7 @@ public class CatalogDTO {
 	private Date initialDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
+	private String consecutive;
 
 	public String getKey() {
 		return key;
@@ -62,6 +63,14 @@ public class CatalogDTO {
 
 	public void setFinalDate(Date finalDate) {
 		this.finalDate = finalDate;
+	}
+
+	public String getConsecutive() {
+		return consecutive;
+	}
+
+	public void setConsecutive(String consecutive) {
+		this.consecutive = consecutive;
 	}
 
 }

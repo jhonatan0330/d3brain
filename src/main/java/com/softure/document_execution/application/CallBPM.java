@@ -202,14 +202,10 @@ public class CallBPM {
 						}
 						if (!validadoPreviamente) {
 							PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
-							System.out.format("\n[%s] INICIA Procesar documento anidado ( %s )", expediente.getNombre(),
-									expAnidado.getNombre());
 							documentosGestionados.add(expedienteId);
 							gestionarExpedienteDependientes(expAnidado, documento, securityToken,
 									iExpediente.getValor(), plantillasRevisadas, caminosValidados,
 									documentosGestionados, transaccion, false);
-							System.out.format("\n[%s] FIN Procesar documento anidado ( %s )", expediente.getNombre(),
-									expAnidado.getNombre());
 						}
 					}
 				}
@@ -358,9 +354,6 @@ public class CallBPM {
 			HashMap<String, String> hmap = new HashMap<String, String>();
 			String maquinaEstados;
 			for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
-				System.out.format("\n[%s (%s) - %s] INICIO Procesar expediente %s ( %s )",
-						pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-						pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
 				if (!hmap.containsKey(procesoDTO.getPlantilla())) {
 					hmap.put(procesoDTO.getPlantilla(),
 							expedienteTransicionService.consultarProceso(procesoDTO.getPlantilla()));
@@ -446,9 +439,6 @@ public class CallBPM {
 						activos.add(procesoDTO);
 					}
 				}
-				System.out.format("\n[%s (%s) - %s] FIN... Procesar expediente %s ( %s )",
-						pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-						pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), procesoDTO.getLlaveTabla());
 			}
 		}
 		return pCampo;

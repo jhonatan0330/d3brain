@@ -293,6 +293,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	// PAra el api de flex despues lo puedo quitar
 	public UsuarioAutenticacionDTO autenticar(UsuarioAutenticacionFilterDTO dto, boolean fromApi)
 			throws ServerException {
+		long diasVigencia = 0;
 		if (!fromApi) {
 			if (dto.getClaveAnterior() == null)
 				reportarError(dto, "Por favor actualice su version de software");
@@ -312,22 +313,24 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 							"Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: "
 									+ String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
 			}
+		} else {
+			String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
+			if (fechaTrial == null)
+				reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+			
+			try {
+				Date date = formatter.parse(fechaTrial);
+				diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
+				if (diasVigencia < 0)
+					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
+			} catch (ParseException e) {
+				reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
+			}	
 		}
 
-		String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
-		if (fechaTrial == null)
-			reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-		long diasVigencia = 0;
-		try {
-			Date date = formatter.parse(fechaTrial);
-			diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
-			if (diasVigencia < 0)
-				reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
-		} catch (ParseException e) {
-			reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
-		}
+		
 		UsuarioAutenticacionDTO autenticacion = null;
 
 		UsuarioSesionDTO sesion = null;

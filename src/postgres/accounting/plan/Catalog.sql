@@ -9,3 +9,4 @@ ALTER TABLE catalogo_ctg ADD cctg_nombre varchar(100) NOT NULL ;
 ALTER TABLE catalogo_ctg ADD cctg_codigo varchar(8) NOT NULL ;
 ALTER TABLE catalogo_ctg ADD dctg_fechainicial timestamp with time zone NOT NULL ;
 ALTER TABLE catalogo_ctg ADD dctg_fechafinal timestamp with time zone NOT NULL ;
+ALTER TABLE catalogo_ctg ADD cctg_consecutivo varchar(32);

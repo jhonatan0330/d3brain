@@ -16,15 +16,19 @@ public class ResultMapDTO {
 	private String accountCode;
 	private Integer level;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date mapDate;
+	private Date startDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date endDate;
+	private String period;
 	private Integer year;
 	private Integer month;
 	private Integer day;
 	private Integer hour;
 	private Integer minute;
 	private Integer quantity;
-	private Float percentaje;
+	private Float average;
 	private BigDecimal lastBalance;
+	private BigDecimal nextBalance;
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
@@ -86,12 +90,28 @@ public class ResultMapDTO {
 		this.level = level;
 	}
 
-	public Date getMapDate() {
-		return mapDate;
+	public Date getStartDate() {
+		return startDate;
 	}
 
-	public void setMapDate(Date mapDate) {
-		this.mapDate = mapDate;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 
 	public Integer getYear() {
@@ -142,12 +162,12 @@ public class ResultMapDTO {
 		this.quantity = quantity;
 	}
 
-	public Float getPercentaje() {
-		return percentaje;
+	public Float getAverage() {
+		return average;
 	}
 
-	public void setPercentaje(Float percentaje) {
-		this.percentaje = percentaje;
+	public void setAverage(Float average) {
+		this.average = average;
 	}
 
 	public BigDecimal getLastBalance() {
@@ -156,6 +176,14 @@ public class ResultMapDTO {
 
 	public void setLastBalance(BigDecimal lastBalance) {
 		this.lastBalance = lastBalance;
+	}
+
+	public BigDecimal getNextBalance() {
+		return nextBalance;
+	}
+
+	public void setNextBalance(BigDecimal nextBalance) {
+		this.nextBalance = nextBalance;
 	}
 
 	public BigDecimal getPositive() {

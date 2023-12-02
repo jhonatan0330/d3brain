@@ -10,6 +10,7 @@
 					"name": "Catalog",
 					"table": "catalogo",
 					"prefix": "ctg",
+					"props": true,
 					"attributes": [
 						{
 							"name": "name",
@@ -31,6 +32,12 @@
 							"name": "finalDate",
 							"tableName": "fechafinal",
 							"type": "DATETIME"
+						},
+						{
+							"name": "consecutive",
+							"tableName": "consecutivo",
+							"type": "CLASS",
+							"optional": true
 						}
 					]
 				},
@@ -50,7 +57,7 @@
 							"tableName": "wbs",
 							"type": "STRING",
 							"size": 50,
-							"order": true
+							"order": 1
 						},
 						{
 							"name": "name",
@@ -151,7 +158,7 @@
 						},
 						{
 							"name": "template",
-							"tableName": "plantilla",
+							"tableName"	: "plantilla",
 							"type": "CLASS"
 						}
 					]
@@ -279,12 +286,12 @@
 						{
 							"name": "accountName",
 							"type": "STRING",
-							"script" : "select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta"
+							"script": "select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta"
 						},
 						{
 							"name": "accountCode",
 							"type": "STRING",
-							"script" : "select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta"
+							"script": "select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta"
 						},
 						{
 							"name": "level",
@@ -292,9 +299,20 @@
 							"type": "INT"
 						},
 						{
-							"name": "mapDate",
-							"tableName": "fecha",
+							"name": "startDate",
+							"tableName": "fechainicio",
+							"type": "DATETIME",
+							"order": 1
+						},
+						{
+							"name": "endDate",
+							"tableName": "fechafin",
 							"type": "DATETIME"
+						},
+						{
+							"name": "period",
+							"tableName": "periodo",
+							"type": "STRING"
 						},
 						{
 							"name": "year",
@@ -332,13 +350,18 @@
 							"type": "INT"
 						},
 						{
-							"name": "percentaje",
-							"tableName": "porcentaje",
+							"name": "average",
+							"tableName": "promedio",
 							"type": "DECIMAL"
 						},
 						{
 							"name": "lastBalance",
 							"tableName": "saldoanterior",
+							"type": "NUMBER"
+						},
+						{
+							"name": "nextBalance",
+							"tableName": "saldosiguiente",
 							"type": "NUMBER"
 						},
 						{
@@ -366,6 +389,144 @@
 				}
 			],
 			"endPoints": []
+		},
+		{
+			"name": "Registro de comprobantes contables",
+			"code": "voucher",
+			"entities": [
+				{
+					"name": "Voucher",
+					"table": "x_${catalogCode}_comprobante",
+					"prefix": "cmp",
+					"attributes": [
+						{
+							"name": "catalog",
+							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
+							"name": "catalogCode",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "concept",
+							"tableName": "concepto",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						},
+						{
+							"name": "factDate",
+							"tableName": "fechacomprobante",
+							"type": "DATETIME",
+							"order": 2
+						},
+						{
+							"name": "registerDate",
+							"tableName": "fechacreacion",
+							"type": "DATETIME"
+						},
+						{
+							"name": "registerUser",
+							"tableName": "usuariocreador",
+							"type": "CLASS"
+						},
+						{
+							"name": "positive",
+							"tableName": "positivo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "negative",
+							"tableName": "negativo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "NUMBER"
+						}
+					]
+				},
+				{
+					"name": "AccountRecord",
+					"table": "x_${catalogCode}_registro",
+					"prefix": "reg",
+					"attributes": [
+						{
+							"name": "catalogCode",
+							"type": "STRING"
+						},
+						{
+							"name": "voucher",
+							"tableName": "comprobante",
+							"type": "CLASS"
+						},
+						{
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "note",
+							"tableName": "descripcion",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						},
+						{
+							"name": "factDate",
+							"tableName": "fecha",
+							"type": "DATETIME"
+						},
+						{
+							"name": "positive",
+							"tableName": "positivo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "negative",
+							"tableName": "negativo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "NUMBER"
+						},
+						{
+							"name": "third",
+							"tableName": "tercero",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "thirdId",
+							"tableName": "terceroid",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						},
+						{
+							"name": "thirdName",
+							"tableName": "terceronombre",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						}
+					]
+				}
+			]
 		}
 	]
 }

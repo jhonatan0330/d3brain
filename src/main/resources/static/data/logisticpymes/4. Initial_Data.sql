@@ -17,7 +17,7 @@ INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
 --     VALUES ('UIVotantes', 'UIVotantes', 'Configurar encuestas', 'com.softure.logisticpymes.view.ui.UIVotantes', 'A');
 
 --
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, to_char(now(), 'yyyy-MM-dd') from pg_class where relname = 'usuario_usrp';
+insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2023-07-13' from pg_class where relname = 'usuario_usrp';
 insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, to_char(CURRENT_TIMESTAMP + CAST('1 Month' AS INTERVAL),'yyyy-MM-dd') from pg_class where relname = 'usuarioautenticacion_uaup';
 
 INSERT INTO categoriaproducto_cprp (ccpr_llave, ccpr_nombre) VALUES('GENERAL', 'GENERAL');

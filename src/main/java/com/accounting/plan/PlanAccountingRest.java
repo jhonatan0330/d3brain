@@ -1,4 +1,4 @@
-package com.accounting.plan.infrastructure;
+package com.accounting.plan;
 
 import java.util.List;
 

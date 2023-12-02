@@ -1,5 +1,7 @@
 package com.softure.process_form.application;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
 @Service
@@ -40,12 +43,22 @@ public class CallSearchProcessFromText {
 				|| resultField.getCampoDTO().getDocumentos().isEmpty())
 			return null;
 
+		String keyOfDocument = getDocumentFromManyResults(valueText, resultField.getCampoDTO().getDocumentos());
+		if (keyOfDocument == null && resultField.getCampoDTO().getDocumentos().size() > 1)
+			throw new ServerException("El campo " + fieldTemplate.getNombre() + " obtiene "
+					+ resultField.getCampoDTO().getDocumentos().size() + " resultados que concuerdan con el criterio : "
+					+ valueText + " y ninguno tiene el mismo nombre");
+		return keyOfDocument;
+	}
+
+	public String getDocumentFromManyResults(String valueText, List<PedidoVentaDTO> documents) throws ServerException {
+		
 		String keyOfDocument = null;
-		if (resultField.getCampoDTO().getDocumentos().size() > 1) {
+		if (documents.size() > 1) {
 			String textToCompare = null;
 			// Esto es porque el fitro trae muchos resultados ejemplo busco el 60 y me trae
 			// el 601
-			for (PedidoVentaDTO pedidoVentaDTO : resultField.getCampoDTO().getDocumentos()) {
+			for (PedidoVentaDTO pedidoVentaDTO : documents) {
 				if (pedidoVentaDTO.getNombre().compareTo(valueText.toUpperCase()) == 0) {
 					keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 					break;
@@ -56,19 +69,15 @@ public class CallSearchProcessFromText {
 					textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getTextoFiltro();
 				}
 				if (textToCompare
-						.contains(ConstantesGenerales.COMA + valueText.toUpperCase() + ConstantesGenerales.COMA)) {
+						.contains(ConstantesGenerales.COMA + SoftureUtil.formatFunction(valueText).toUpperCase() + ConstantesGenerales.COMA)) {
 					keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 					break;
 				}
 
 			}
 		} else {
-			keyOfDocument = resultField.getCampoDTO().getDocumentos().get(0).getLlaveTabla();
+			keyOfDocument = documents.get(0).getLlaveTabla();
 		}
-		if (keyOfDocument == null && resultField.getCampoDTO().getDocumentos().size() > 1)
-			throw new ServerException("El campo " + fieldTemplate.getNombre() + " obtiene "
-					+ resultField.getCampoDTO().getDocumentos().size() + " resultados que concuerdan con el criterio : "
-					+ valueText + " y ninguno tiene el mismo nombre");
 		return keyOfDocument;
 	}
 

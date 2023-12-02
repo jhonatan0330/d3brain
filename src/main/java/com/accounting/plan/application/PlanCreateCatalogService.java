@@ -25,12 +25,13 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public CatalogDTO call(CatalogDTO catalog, String token) throws ServerException {
 		validateCatalog(catalog);
-		catalog = catalogService.save(catalog, token);
+		catalogService.save(catalog, token);
+		catalog = catalogService.getById(catalog.getKey());
 		createTemporal(catalog.getCode());
 		createPuntual(catalog.getCode());
 		createVoucher(catalog.getCode());
 		createRegister(catalog.getCode());
-		createAccumulate(catalog.getCode());
+		// createAccumulate(catalog.getCode());
 		createAuxiliar(catalog.getCode());
 		return catalog;
 	}
@@ -81,16 +82,6 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 	private void createRegister(String code) throws ServerException {
 		try {
 			mapper.createRegister(code);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
-
-	private void createAccumulate(String code) throws ServerException {
-		try {
-			mapper.createAccumulate(code);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
