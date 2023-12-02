@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -18,7 +19,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 // END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
@@ -178,7 +178,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		filtroDocumentoFilter.setFiltroParametro(filter);
 		filtroDocumentoFilter.setPlantilla(dimensionTemplate);
 		filtroDocumentoFilter.setSecurityToken(token);
-		filtroDocumentoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroDocumentoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<PedidoVentaDTO> filtroDocumento = listDocumentWithFiltersFunction.listarAvanzado(filtroDocumentoFilter);
 		if (filtroDocumento == null || filtroDocumento.isEmpty())
 			throw new ServerException("No se identifica " + dimensionName + " con el codigo : " + filter);
@@ -254,7 +254,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
 	public List<TarifaDTO> getTarifas2Product(String productId) throws ServerException {
 		TarifaFilterDTO t = new TarifaFilterDTO();
-		t.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		t.setEstado(SharedConstants.STATE_ACTIVE);
 		t.setProducto(productId);
 		return listarConsulta(t);
 	}

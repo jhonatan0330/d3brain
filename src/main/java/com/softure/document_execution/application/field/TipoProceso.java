@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
@@ -25,7 +26,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.application.MovimientoSvc;
 import com.softure.money.application.TurnoSvc;
@@ -176,7 +176,7 @@ public class TipoProceso {
 								pCampo.setValorAuxiliar(caja.getLlaveTabla());
 							}
 						} else {
-							if (caja.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+							if (caja.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 								throw new ServerException("La caja no esta activa");
 							pCampo.setValorAuxiliar(caja.getLlaveTabla());
 						}
@@ -322,14 +322,14 @@ public class TipoProceso {
 				for (PedidoVentaDTO procesoActivo : procesosActuales) {
 					if (procesoActivo.getLlaveTabla().compareTo(procesoDTO.getLlaveTabla()) == 0) {
 						procesosActuales.remove(procesoActivo);
-						procesoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 						break;
 					}
 				}
 			}
 			// Coloco estado de inactivo a los que no enviaron para borrarlos
 			for (PedidoVentaDTO procesoInactivar : procesosActuales) {
-				procesoInactivar.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+				procesoInactivar.setEstado(SharedConstants.STATE_INACTIVE);
 				pCampo.getExpedientes().add(procesoInactivar);
 			}
 		} else {
@@ -347,7 +347,7 @@ public class TipoProceso {
 			// ser el mimsmo en los reportes
 			for (PedidoVentaDTO expediente : pCampo.getExpedientes()) {
 				if (expediente.getEstado() == null
-						|| expediente.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0) {
+						|| expediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 					PedidoVentaDineroDTO valorActual = dineroService.consultaPorDocumento(expediente.getLlaveTabla(),
 							expediente.getHistorico());
 					if (valorActual == null) {
@@ -489,7 +489,7 @@ public class TipoProceso {
 		System.out.format("\n%s Inactivando", pCampo.getCampoDTO().getNombre());
 		if (pCampo.getExpedientes() != null && pCampo.getExpedientes().size() != 0) {
 			for (PedidoVentaDTO procesoInactivar : pCampo.getExpedientes()) {
-				procesoInactivar.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+				procesoInactivar.setEstado(SharedConstants.STATE_INACTIVE);
 			}
 			relacionarExpedientes(pCampo, token);
 		} else {
@@ -506,7 +506,7 @@ public class TipoProceso {
 			return;
 		for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
 			if (procesoDTO.getEstado() != null
-					&& procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) {
+					&& procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				retirarExpedienteDocumento(pCampo, procesoDTO, token);
 			} else {
 				relacionarExpedienteDocumento(pCampo, procesoDTO, token);
@@ -520,7 +520,7 @@ public class TipoProceso {
 		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
 		filtroExpFilter.setCampoMaestro(pCampo.getLlaveTabla());
 		filtroExpFilter.setExpedienteDetalle(procesoDTO.getLlaveTabla());
-		filtroExpFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroExpFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
 		if (filtroExp != null) {
 			filtroExp.setTransaccionInactivo(pCampo.getTransaccionRegistro());
@@ -541,7 +541,7 @@ public class TipoProceso {
 		DocumentoRelacionExpedienteFilterDTO docExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
 		docExpedienteFilter.setCampoMaestro(pCampo.getLlaveTabla());
 		docExpedienteFilter.setExpedienteDetalle(procesoDTO.getLlaveTabla());
-		docExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		docExpedienteFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		DocumentoRelacionExpedienteDTO docExpediente = relacionExpedienteService.consultaUnica(docExpedienteFilter);
 		if (docExpediente == null) {
 			docExpediente = new DocumentoRelacionExpedienteDTO();
@@ -647,7 +647,7 @@ public class TipoProceso {
 			return;
 		MovimientoFilterDTO movimiento = new MovimientoFilterDTO();
 		movimiento.setDocumento(pCampo.getValorOpcion());
-		movimiento.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		movimiento.setEstado(SharedConstants.STATE_ACTIVE);
 		List<MovimientoDTO> movimientos = movimientoService.listarConsulta(movimiento);
 		if (movimientos == null || movimientos.isEmpty())
 			throw new ServerException("Estas anulando un movimiento y no se encuentra en la tabla de movimientos");

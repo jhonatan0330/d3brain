@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.field.Propiedades;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
@@ -92,7 +92,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoPlantilla_inactivar
 		ProcesoTransicionFilterDTO validar = new ProcesoTransicionFilterDTO();
-		validar.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		validar.setEstado(SharedConstants.STATE_ACTIVE);
 		validar.setPlantilla(dto.getLlaveTabla());
 		List<ProcesoTransicionDTO> pUsados = transicionService.listarConsulta(validar);
 		if(pUsados == null || !pUsados.isEmpty()) {
@@ -104,7 +104,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		RolAccesoFilterDTO rolFilter = new RolAccesoFilterDTO();
 		rolFilter.setPlantilla(dto.getLlaveTabla());
-		rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		rolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		RolAccesoDTO rol = rolService.consultaUnica(rolFilter);
 		if(rol!=null){
 			rolService.inactivar(rol, token);
@@ -188,7 +188,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		// Primero las propiedades de rol para evitar duplicar
 		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
-		rolFiltroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		rolFiltroFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		rolFiltroFilter.setPlantilla(bd.getLlaveTabla());
 		RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
 		if(rolFiltro!=null) {
@@ -247,7 +247,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if(codigo==null || codigo.isEmpty()) throw new ServerException("Es obligatorio colocar la plantilla");
 		DocumentoPlantillaFilterDTO filtro = new DocumentoPlantillaFilterDTO();
 		filtro.setCodigo(codigo);
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		return consultaUnica(filtro);
 	}
 	
@@ -264,7 +264,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if(dto.getLlaveTabla()==null) throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
 		DocumentoPlantillaDTO plantilla = consultaUnica(dto);
 		if(plantilla==null) throw new ServerException("Consulta de la plantilla incorrecta");
-		if(plantilla.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) 
+		if(plantilla.getEstado().compareTo(SharedConstants.STATE_ACTIVE)!=0) 
 			throw new ServerException("La plantilla " + plantilla.getNombre() + "se encuentra inactiva");
 		//plantilla.setSecurityToken(dto.getSecurityToken());
 		if(fullPermisos) {
@@ -290,7 +290,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	public void configurarInicioPlantilla(DocumentoPlantillaDTO dto) throws ServerException {
 		//Coloco una imagen por defecto
-		if(dto.getImagen()==null) dto.setImagen(ConstantesGenerales.LOGO);
+		if(dto.getImagen()==null) dto.setImagen(SharedConstants.LOGO);
 		if(dto.getCodigo()==null) {
 			DocumentoPlantillaFilterDTO filtroCantidad = new DocumentoPlantillaFilterDTO();
 			int cantidadCampos = contarResultados(filtroCantidad) +1;
@@ -373,10 +373,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	private List<ProcesoEstadoDTO> crearEstadosBasicos() throws ServerException {
 		List<ProcesoEstadoDTO> estados;
 		ProcesoEstadoDTO activo = new ProcesoEstadoDTO();
-		activo.setEstadoDocumento(ConstantesGenerales.ESTADO_ACTIVO);
+		activo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
 		activo.setNombre("ACTIVO");
 		ProcesoEstadoDTO inactivo = new ProcesoEstadoDTO();
-		inactivo.setEstadoDocumento(ConstantesGenerales.ESTADO_INACTIVO);
+		inactivo.setEstadoDocumento(SharedConstants.STATE_INACTIVE);
 		inactivo.setNombre("INACTIVO");
 		estados = new ArrayList<ProcesoEstadoDTO>();
 		estados.add(activo);
@@ -391,7 +391,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		List<DocumentoPlantillaDTO> plantillasPermitidas = null;
 		if(todosPermisos) {
 			DocumentoPlantillaFilterDTO filtroFullFilter = new DocumentoPlantillaFilterDTO();
-			filtroFullFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroFullFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroFullFilter.setPaginacionRegistroFinal(1000);
 			plantillasPermitidas =listarConsulta(filtroFullFilter);
 		}else {
@@ -405,13 +405,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<ReporteBaseDTO> reportes = reporteService.listarMenu();
 			
 			ProcesoEstadoFilterDTO filtroEstado = new ProcesoEstadoFilterDTO();
-			filtroEstado.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroEstado.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroEstado.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
 			List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(filtroEstado);
 			
 			ProcesoTransicionFilterDTO filtroTransicion = new ProcesoTransicionFilterDTO();
 			filtroTransicion.setSecurityToken((todosPermisos)?null:dto.getSecurityToken());
-			filtroTransicion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroTransicion.setEstado(SharedConstants.STATE_ACTIVE);
 			
 			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol(filtroTransicion);
 			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null, null);
@@ -453,7 +453,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				if(nuevaPlantilla) {
 					//iplantillaPermitida.setSecurityToken(dto.getSecurityToken());
 					if(iplantillaPermitida.getLlaveTabla()==null) throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
-					if(iplantillaPermitida.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) 
+					if(iplantillaPermitida.getEstado().compareTo(SharedConstants.STATE_ACTIVE)!=0) 
 						throw new ServerException("La plantilla " + iplantillaPermitida.getNombre() + "se encuentra inactiva");
 					iplantillaPermitida.setPropiedades(new ArrayList<PropiedadDTO>());
 					for (PropiedadDTO propiedadDTO : todasPropiedadesEvitandoConsultaBD) {

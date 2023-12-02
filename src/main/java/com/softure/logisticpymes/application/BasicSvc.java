@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.domain.BasicDTO;
 import com.softure.java.domain.BasicFilterDTO;
 import com.softure.java.domain.IBasicMapper;
@@ -61,8 +61,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
 		if(dto==null) throw new ServerException("No se identifica el objeto a inactivar");
-		if(dto.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		if(dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		try {
 			mapper.actualizar(dto); 
 		}catch (Exception e) {
@@ -75,8 +75,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
 		if(dto==null) throw new ServerException("No se identifica el objeto a Activar");
-		if(dto.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) throw new ServerException("Este objeto ya se encuentra Activo");
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		if(dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) throw new ServerException("Este objeto ya se encuentra Activo");
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
 			mapper.actualizar(dto); 
 		}catch (Exception e) {
@@ -115,7 +115,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 			filter.setLlaveTabla(token);
 			UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
 			if(sesion==null) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
-			if(sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
+			if(sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
 			if(sesion.getFechaCierre()!=null && sesion.getFechaCierre().compareTo(new Date())<0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
 			return sesion.getUsuario();
 		}
@@ -139,8 +139,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	public T inactivate(T dto) throws ServerException {
 		dto = consultaXId(dto.getLlaveTabla());
 		if(dto==null) throw new ServerException("No se identifica el objeto a inactivar");
-		if(dto.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		if(dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		try {
 			mapper.actualizar(dto); 
 		}catch (Exception e) {
@@ -152,8 +152,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	public T activate(T dto) throws ServerException {
 		dto = consultaXId(dto.getLlaveTabla());
 		if(dto==null) throw new ServerException("No se identifica el objeto a Activar");
-		if(dto.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) throw new ServerException("Este objeto ya se encuentra Activo");
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		if(dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) throw new ServerException("Este objeto ya se encuentra Activo");
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
 			mapper.actualizar(dto); 
 		}catch (Exception e) {

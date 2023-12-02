@@ -2,9 +2,8 @@ package com.softure.process_designer.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -70,7 +69,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		// BEGIN ProcesoEstado_inactivar
 		ProcesoTransicionFilterDTO transicion = new ProcesoTransicionFilterDTO();
 		transicion.setEstadoLLegada(dto.getLlaveTabla());
-		transicion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		transicion.setEstado(SharedConstants.STATE_ACTIVE);
 		if(procesoTransicionService.contarResultados(transicion)!=0) throw new ServerException("Este estado es usada en varias transacciones activas");
 		return super.inactivar(dto, token);
 		// END ProcesoEstado_inactivar

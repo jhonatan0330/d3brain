@@ -6,8 +6,8 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -75,7 +75,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		// BEGIN Movimiento_inactivar
 		MovimientoDTO movimiento = super.inactivar(dto, token);		
 		if(movimiento.getTipo().compareTo(MovimientoDTO.ENTRADA_INGRESO)==0 && movimiento.getRelacionado()!=null){
-			if(consultaXId(movimiento.getRelacionado()).getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0)
+			if(consultaXId(movimiento.getRelacionado()).getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0)
 				throw new ServerException("Se debe anular el movimiento que origino la transferencia");
 		}
 			
@@ -127,7 +127,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		//Anulo los relacionados
 		MovimientoFilterDTO relacionadoFilter = new MovimientoFilterDTO();
 		relacionadoFilter.setRelacionado(movimiento.getLlaveTabla());
-		relacionadoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		relacionadoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<MovimientoDTO> relacionados = listarConsulta(relacionadoFilter);
 		if(relacionados!=null && relacionados.size()!=0){
 			for (MovimientoDTO movimientoDTO : relacionados) {
@@ -162,7 +162,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		// BEGIN region obtenerMovimientoAnteriorFecha
 		dto.setPaginacionRegistroInicial(0);
 		dto.setPaginacionRegistroFinal(1);
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		// END region obtenerMovimientoAnteriorFecha
 		paginar(dto);
 		try {
@@ -175,7 +175,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		// BEGIN region obtenerMovimientoSiguienteFecha
 		dto.setPaginacionRegistroInicial(0);
 		dto.setPaginacionRegistroFinal(1);
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		// END region obtenerMovimientoSiguienteFecha
 		paginar(dto);
 		try {
@@ -223,7 +223,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		//dto.setCuenta(permiso.getCuenta());
 		//cuenta = cuentaService.consultaXId(dto.getCuenta());
 		if(cuenta.getSaldo()==null) cuenta.setSaldo(BigDecimal.ZERO);
-		if(cuenta.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0)throw new ServerException("Esta cuenta no se encuentra disponible");
+		if(cuenta.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0)throw new ServerException("Esta cuenta no se encuentra disponible");
 		if(cuenta.getFechaConciliacion()!=null)
 			if(cuenta.getFechaConciliacion().compareTo(dto.getFechaEvento())>=0) throw new ServerException("No puede registrar un movimiento con fecha inferior a la fecha de conciliacion");
 		if(dto.getFechaEvento().compareTo(new Date())>0) throw new ServerException("No puede registrar un movimiento con fecha superior a la actual");

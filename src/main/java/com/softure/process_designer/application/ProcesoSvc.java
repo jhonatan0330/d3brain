@@ -5,9 +5,9 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.Propiedades;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
@@ -106,7 +106,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		}
 		List<ProcesoDTO> result = listarConsulta(dto);
 		for (ProcesoDTO procesoDTO : result) {
-			if(procesoDTO.getTipo().compareTo(ProcesoDTO.EJECUTOR)==0 && procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) {
+			if(procesoDTO.getTipo().compareTo(ProcesoDTO.EJECUTOR)==0 && procesoDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) {
 				procesoDTO = completarProceso(procesoDTO, dto.getSecurityToken());
 			}
 		}
@@ -152,7 +152,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	private void organizar(ProcesoDTO dto, String token) throws ServerException{
 		//Consulto todas las caracteristicas del documento
 		ProcesoFilterDTO filtro = new ProcesoFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ProcesoDTO> campos = listarConsulta(filtro);
 		if(campos!=null && !campos.isEmpty()){
 			int cont = 1;
@@ -175,7 +175,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	
 	private void crearBasico(ProcesoDTO dto, String plantillainicial, String token) throws ServerException {
 		ProcesoEstadoDTO estadoActivo = new ProcesoEstadoDTO();
-		estadoActivo.setEstadoDocumento(ConstantesGenerales.ESTADO_ACTIVO);
+		estadoActivo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
 		estadoActivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
 		estadoActivo.setProceso(dto.getLlaveTabla());
 		estadoActivo.setNombre("ACTIVO");
@@ -191,7 +191,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		propiedadService.guardar(propiedadModifcable, token);
 		
 		ProcesoEstadoDTO estadoInactivo = new ProcesoEstadoDTO();
-		estadoInactivo.setEstadoDocumento(ConstantesGenerales.ESTADO_INACTIVO);
+		estadoInactivo.setEstadoDocumento(SharedConstants.STATE_INACTIVE);
 		estadoInactivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
 		estadoInactivo.setAvance(20);
 		estadoInactivo.setProceso(dto.getLlaveTabla());
@@ -281,7 +281,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 	
 	private void preConfigurar(ProcesoDTO dto) throws ServerException {
-		if(dto.getImagen()==null) dto.setImagen(ConstantesGenerales.LOGO);
+		if(dto.getImagen()==null) dto.setImagen(SharedConstants.LOGO);
 		ProcesoFilterDTO filtroCantidad = new ProcesoFilterDTO();
 		int cantidad = contarResultados(filtroCantidad);
 		cantidad = cantidad+1;
@@ -291,7 +291,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	
 	private ProcesoDTO completarProceso(ProcesoDTO proceso, String token) throws ServerException{
 		ProcesoEstadoFilterDTO filtroEstadoDTO = new ProcesoEstadoFilterDTO();
-		filtroEstadoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroEstadoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
 		for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
@@ -299,7 +299,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		}
 		
 		ProcesoTransicionFilterDTO filtroTransicionDTO = new ProcesoTransicionFilterDTO();
-		filtroTransicionDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroTransicionDTO.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroTransicionDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
 		for (ProcesoTransicionDTO iTransicion : proceso.getTransiciones()) {

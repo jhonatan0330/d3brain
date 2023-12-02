@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
@@ -19,7 +20,6 @@ import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -133,29 +133,29 @@ public class WebServiceCallPrepare {
 								"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
 					if (iProp.getTexto().startsWith("E_FECHA_")) {
 						Date fieldDate = getDateWithTransformations(new Date(), iProp.getTexto());
-						parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-								+ ConstantesGenerales.IGUAL
+						parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+								+ SharedConstants.IGUAL
 								+ SoftureUtil.formatDatePattern(fieldDate, iProp.getValor());
 					} else {
 						switch (iProp.getTexto()) {
 						case "E_ID":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-										+ ConstantesGenerales.IGUAL + document.getLlaveTabla();
+								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ SharedConstants.IGUAL + document.getLlaveTabla();
 							break;
 						case "E_CODE":
 							if (document != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-										+ ConstantesGenerales.IGUAL + document.getNombre();
+								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ SharedConstants.IGUAL + document.getNombre();
 							break;
 						case "E_CODE_MODIFICATOR":
 							if (modificador != null)
-								parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-										+ ConstantesGenerales.IGUAL + modificador.getNombre();
+								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ SharedConstants.IGUAL + modificador.getNombre();
 							break;
 						default:
-							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-									+ ConstantesGenerales.IGUAL + iProp.getValor();
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+									+ SharedConstants.IGUAL + iProp.getValor();
 							break;
 						}
 
@@ -250,19 +250,19 @@ public class WebServiceCallPrepare {
 			if(iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
 					valueAuxToCode ="(" + iRelacion.getAuxiliar() + ")";
 		}
-		parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+		parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
 				+ valueAuxToCode
-				+ ConstantesGenerales.IGUAL + formatToReplaceAll(campo, formatToField);
+				+ SharedConstants.IGUAL + formatToReplaceAll(campo, formatToField);
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
 					+ valueAuxToCode
-					+ "_KEY" + ConstantesGenerales.IGUAL + campo.getValorOpcion();
+					+ "_KEY" + SharedConstants.IGUAL + campo.getValorOpcion();
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
-					parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+					parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
 							+ valueAuxToCode
-							+ "_ID" + ConstantesGenerales.IGUAL + iElement.getNombre();
+							+ "_ID" + SharedConstants.IGUAL + iElement.getNombre();
 				}
 			}
 		} else {
@@ -277,7 +277,7 @@ public class WebServiceCallPrepare {
 						}						
 						for (int i = 0; i < documentsInField.size(); i++) {
 							DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
-							parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + "I_" + codeReplace + valueAuxToCode + "["+String.valueOf(i+1)+"]="+ConstantesGenerales.LINEA_MEDIA_DOBLE+"L_NUM"+ConstantesGenerales.COMA_DOBLE+String.valueOf(i+1)+ConstantesGenerales.LINEA_MEDIA_DOBLE+"L_VAL"+ConstantesGenerales.COMA_DOBLE +iRelation.getValor().intValue();
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace + valueAuxToCode + "["+String.valueOf(i+1)+"]="+SharedConstants.LINEA_MEDIA_DOBLE+"L_NUM"+SharedConstants.COMA_DOBLE+String.valueOf(i+1)+SharedConstants.LINEA_MEDIA_DOBLE+"L_VAL"+SharedConstants.COMA_DOBLE +iRelation.getValor().intValue();
 							for (PropiedadDTO iProp : referidas) {
 								List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
 								if (relaciones != null && !relaciones.isEmpty()) {
@@ -299,8 +299,8 @@ public class WebServiceCallPrepare {
 												if (iCampo.getTransaccionRegistro() != null)
 													codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
 												//+ConstantesGenerales.LINEA_MEDIA_DOBLE +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
-												parameters = parameters + ConstantesGenerales.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
-														+ ConstantesGenerales.COMA_DOBLE + formatToReplaceAll(iCampo, formatToField);
+												parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
+														+ SharedConstants.COMA_DOBLE + formatToReplaceAll(iCampo, formatToField);
 												//Coloque el service en null para evitar que se generen ciclos infinitos
 											}
 										}

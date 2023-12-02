@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
@@ -19,7 +20,6 @@ import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.domain.ModuloFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -123,7 +123,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				user = consultaXId(dto.getLlaveTabla());
 				if (user == null)
 					throw new ServerException("El usuario no tiene una autenticacion");
-				if (user.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+				if (user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 					throw new ServerException(
 							"Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
 				// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new
@@ -140,7 +140,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			} else {
 				filtro.setUsuario(getUserFlex(token));
 			}
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtro.setEstado(SharedConstants.STATE_ACTIVE);
 			user = consultaUnica(filtro);
 			if (autho == null && user.getClave().compareTo(dto.getClaveAnterior()) != 0)
 				throw new ServerException("No concuerda la clave anterior");
@@ -148,7 +148,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 		if (autho != null)
 			user.setAutorizacionElimina(autho.getLlaveTabla());
-		user.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		user.setEstado(SharedConstants.STATE_INACTIVE);
 		user = update(user);
 
 		UsuarioAutenticacionDTO newAuth = new UsuarioAutenticacionDTO();
@@ -162,13 +162,13 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		newAuth = save(newAuth);
 
 		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
-		filterSesion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filterSesion.setEstado(SharedConstants.STATE_ACTIVE);
 		filterSesion.setUsuario(dto.getUsuario());
 		List<UsuarioSesionDTO> sesiones = usuarioSesionService.listarConsulta(filterSesion);
 		if (sesiones != null && !sesiones.isEmpty()) {
 			for (UsuarioSesionDTO usuarioSesionDTO : sesiones) {
 				if (token == null) {
-					usuarioSesionDTO.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+					usuarioSesionDTO.setEstado(SharedConstants.STATE_INACTIVE);
 					usuarioSesionDTO.setFechaCierre(new Date());
 					usuarioSesionService.update(usuarioSesionDTO);
 				} else {
@@ -194,7 +194,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	public void crearAutenticacion(String usuario, String token) throws ServerException {
 		UsuarioAutenticacionFilterDTO filtro1 = new UsuarioAutenticacionFilterDTO();
 		filtro1.setUsuario(usuario);
-		filtro1.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro1.setEstado(SharedConstants.STATE_ACTIVE);
 		if (consultaUnica(filtro1) == null) {
 			UsuarioDTO user = usuarioService.consultaXId(usuario);
 			UsuarioAutenticacionDTO aut = new UsuarioAutenticacionDTO();
@@ -212,7 +212,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (principal.getUsuarioSystem() == null)
 			throw new ServerException("No se tiene configurado el usuario sistem en la organizacion principal");
 		UsuarioDTO usuarioSystem = usuarioService.consultaXId(principal.getUsuarioSystem());
-		if (usuarioSystem == null || usuarioSystem.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (usuarioSystem == null || usuarioSystem.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El usuario sistema no exisste o esta inactivo");
 		return usuarioSystem;
 	}
@@ -231,7 +231,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
 		if (sesion == null)
 			throw new ServerException("Token incorrecto");
-		if (sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) == 0)
+		if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
 			throw new ServerException("Se encuentra inactiva la sesion");
 		usuarioSesionService.inactivar(sesion, null);
 	}
@@ -272,7 +272,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (usuario == null)
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. El numero de id no esta en la base de datos");
-		if (usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. El usuario se encuentra inactivo");
 		if (usuario.getCorreo() == null)
@@ -337,7 +337,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
 			if (sesion == null)
 				reportarError(dto, "Autenticacion incorrecta");
-			if (sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+			if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				reportarError(dto, "Se encuentra inactiva la sesion");
 			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
 				reportarError(dto, "Usuario perdio autenticacion.\nCODE:caud_usuario");
@@ -355,7 +355,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 					reportarError(dto, "La clave no puede estar vacia");
 				autenticacionF.setSesion(dto.getSesion());
 				autenticacionF.setClave(dto.getClave());
-				autenticacionF.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				autenticacionF.setEstado(SharedConstants.STATE_ACTIVE);
 				autenticacion = consultaUnica(autenticacionF);
 			}
 			if (autenticacion == null)
@@ -365,7 +365,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		}
 
 		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
-		if (usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			reportarError(dto, "El usuario no se encuentra activo");
 		autenticacion.setUsuarioDTO(usuario);
 
@@ -402,7 +402,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
 		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
-		if (sesion == null || sesion.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0
+		if (sesion == null || sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0
 				|| (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)) {
 			UsuarioSesionErrorDTO use = new UsuarioSesionErrorDTO();
 			use.setIp(ip);

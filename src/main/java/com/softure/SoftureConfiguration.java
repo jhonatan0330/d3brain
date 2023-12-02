@@ -37,8 +37,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.report.infrastructure.ReporteServlet;
@@ -217,12 +217,12 @@ public class SoftureConfiguration {
 	public void sendAPI() throws ServerException {
 		if(executeAPITask==null) {
 			if(apiService.hasPropertiesAsync()) {
-				executeAPITask = ConstantesGenerales.OK;
+				executeAPITask = SharedConstants.OK;
 			}else {
-				executeAPITask = ConstantesGenerales.NO_STRING;
+				executeAPITask = SharedConstants.NO_STRING;
 			}
 		}
-		if(executeAPITask.compareTo(ConstantesGenerales.OK)==0) {
+		if(executeAPITask.compareTo(SharedConstants.OK)==0) {
 			System.out.println("*******APIS ASYNC****" + new Date().toString());
 			apiService.apiToTransaction();
 		}

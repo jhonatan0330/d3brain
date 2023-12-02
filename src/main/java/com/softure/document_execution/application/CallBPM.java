@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
@@ -19,7 +20,6 @@ import com.softure.document_transition.application.CallManageTransition;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
@@ -236,7 +236,7 @@ public class CallBPM {
 		if (caminosValidados.size() == 0)
 			return;
 		DocumentoRelacionGestorFilterDTO filtroGestor = new DocumentoRelacionGestorFilterDTO();
-		filtroGestor.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroGestor.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroGestor.setEstadoFinal(procesoDTO.getEstadoExpediente());
 		filtroGestor.setDocumentoModificador(documento.getLlaveTabla());
 		filtroGestor.setDocumentoPrincipal(procesoDTO.getLlaveTabla());
@@ -327,7 +327,7 @@ public class CallBPM {
 		transicion.setPlantilla(plantilla);
 		transicion.setEstadoPartida(estadoPartida);
 		transicion.setEstadoLLegada(estadoLlegada);
-		transicion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		transicion.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ProcesoTransicionDTO> transiciones = expedienteTransicionService.listarConsulta(transicion);
 		if (transiciones.size() == 0)
 			return null;// throw new ServerException("Existen documentos sin transicion para gestionar."
@@ -406,7 +406,7 @@ public class CallBPM {
 							PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
 							if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
-								procesoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+								procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 								saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO,
 										updaterDTO, token);
 								relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
@@ -426,7 +426,7 @@ public class CallBPM {
 
 					activos.add(procesoDTO);
 				} else {
-					if (procesoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) {
+					if (procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 						// Si tenia permisos, inactivo esos permisos
 						if (maquinaEstados != null) {
 							// BigDecimal saldoDoc = null;
@@ -448,7 +448,7 @@ public class CallBPM {
 			String transaccion) throws ServerException {
 		// Se encarga de incluir el documento en los padres
 		DocumentoRelacionExpedienteFilterDTO dre = new DocumentoRelacionExpedienteFilterDTO();
-		dre.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dre.setEstado(SharedConstants.STATE_ACTIVE);
 		dre.setExpedienteDetalle(anterior.getLlaveTabla());
 		List<DocumentoRelacionExpedienteDTO> cargues = relacionExpedienteService.listarConsulta(dre);
 		if (cargues != null && !cargues.isEmpty()) {

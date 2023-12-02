@@ -5,8 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -94,7 +94,7 @@ public class EncuestaRespuestaSvc extends BasicSvc<EncuestaRespuestaDTO, Encuest
 		if(dto.getRespuestaOpcion()!=null){
 			EncuestaOpcionRespuestaDTO eor = encuestaOpcionRespuestaSvc.consultaXId(dto.getRespuestaOpcion());
 			if(eor ==null) throw new ServerException("No se encontro esta opcion de respuesta en la BD");
-			if(eor.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) ==0 ) throw new ServerException("Esta opcion de respuesta esta inactiva");
+			if(eor.getEstado().compareTo(SharedConstants.STATE_INACTIVE) ==0 ) throw new ServerException("Esta opcion de respuesta esta inactiva");
 			if(eor.getPregunta().compareTo(dto.getPregunta()) !=0 ) throw new ServerException("Esta opcion de respuesta no corresponde a la pregunta");
 		}
 		

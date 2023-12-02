@@ -2,10 +2,8 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -93,7 +91,7 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 // BEGIN region aditionalMethods
 	public ServidorDTO obtenerServidorPrincipal(String tipo) throws ServerException {
 		ServidorFilterDTO filtroFilter = new ServidorFilterDTO();
-		filtroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroFilter.setTipo(tipo);
 		List<ServidorDTO> servidores = listarConsulta(filtroFilter);
 		if(servidores==null || servidores.isEmpty()) return null;

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service("PlanGetAccountAccountingService")
 public class PlanGetAccountService {
@@ -21,7 +21,7 @@ public class PlanGetAccountService {
 		AccountFilterDTO filter = new AccountFilterDTO();
 		filter.setCatalog(catalogId);
 		filter.setFilter(filterText);
-		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setState(SharedConstants.STATE_ACTIVE);
 		filter.setEndRow(3000);
 		return accountService.getMany(filter);
 	}

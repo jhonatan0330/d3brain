@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
@@ -38,7 +38,7 @@ public class ProcessCopy {
 		ProcesoDTO process = processService.consultaXId(processId);
 		if (process == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + processId);
-		if (process.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (process.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El proceso " + process.getNombre() + " no se encuentra Activo." + processId);
 		// Obtengo propiedades del servicio
 		String userId = processService.getUserFlex(token);
@@ -67,7 +67,7 @@ public class ProcessCopy {
         
         if(proceso.getTipo().compareTo(ProcesoDTO.EJECUTOR)==0) {
 			ProcesoEstadoFilterDTO filtroEstadoDTO = new ProcesoEstadoFilterDTO();
-			filtroEstadoDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroEstadoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
 			proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
 			if(proceso.getEstados()!=null) {
@@ -77,7 +77,7 @@ public class ProcessCopy {
 	        }
 			
 			ProcesoTransicionFilterDTO filtroTransicionDTO = new ProcesoTransicionFilterDTO();
-			filtroTransicionDTO.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroTransicionDTO.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroTransicionDTO.setProceso(proceso.getLlaveTabla());
 			proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
 	        if(proceso.getTransiciones()!=null) {
@@ -89,7 +89,7 @@ public class ProcessCopy {
 		}else {
 			ProcesoFilterDTO filtroHijos = new ProcesoFilterDTO();
 			filtroHijos.setMacroproceso(proceso.getLlaveTabla());
-			filtroHijos.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroHijos.setEstado(SharedConstants.STATE_ACTIVE);
 			List<ProcesoDTO> hijos = processService.listarConsulta(filtroHijos); 
 			if(hijos!=null) {
 				if(proceso.getLlaveTabla()==null) {

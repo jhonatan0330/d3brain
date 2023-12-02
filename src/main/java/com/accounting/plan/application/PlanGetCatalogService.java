@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service("PlanGetCatalogAccountingService")
 public class PlanGetCatalogService {
@@ -19,7 +19,7 @@ public class PlanGetCatalogService {
 	
 	public List<CatalogDTO> getActive() throws ServerException{
 		CatalogFilterDTO filter = new CatalogFilterDTO();
-		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setState(SharedConstants.STATE_ACTIVE);
 		return catalogService.getMany(filter);
 	}
 

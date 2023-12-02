@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
@@ -25,7 +26,6 @@ import com.softure.inventory.domain.DetalleCaracteristicaProductoDTO;
 import com.softure.inventory.domain.DetalleCaracteristicaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -121,7 +121,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if (dto.getTransaccionInactivo() == null)
 			throw new ServerException("Ingrese la transaccion de inactivar");
 		DetallePedidoVentaDTO bd = consultaXId(dto.getLlaveTabla());
-		bd.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd.setTransaccionInactivo(dto.getTransaccionInactivo());
 		return update(bd);
 		// END DetallePedidoVenta_inactivar
@@ -360,7 +360,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				UsuarioRolProductoFilterDTO fPromocion = new UsuarioRolProductoFilterDTO();
 				fPromocion.setProducto(dto.getProducto());
 				fPromocion.setDocumento(tercero);
-				fPromocion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				fPromocion.setEstado(SharedConstants.STATE_ACTIVE);
 				UsuarioRolProductoDTO filterPromocion = usuarioRolProductoService.consultaUnica(fPromocion);
 				if (filterPromocion == null)
 					throw new ServerException("El producto en la plantilla no se encuentra configurado");
@@ -409,7 +409,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (dto.getLlaveTabla() != null) {
 				DetalleCaracteristicaProductoFilterDTO filtro = new DetalleCaracteristicaProductoFilterDTO();
 				filtro.setEntidad(dto.getLlaveTabla());
-				filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				filtro.setEstado(SharedConstants.STATE_ACTIVE);
 				dcpList = detalleCaracteristicaProductoService.listarConsulta(filtro);
 			}
 			for (ProductoCaracteristicaDTO productoCaracteristicaDTO : caracteristicas) {

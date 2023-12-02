@@ -2,13 +2,12 @@ package com.softure.authorization.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.authorization.infrastructure.RolAccesoMapper;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -63,7 +62,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		// BEGIN RolAcceso_inactivar
 		dto = super.inactivar(dto, token);
 		UsuarioRolFilterDTO filtro = new UsuarioRolFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setRolAcceso(dto.getLlaveTabla());
 		int cont = usuarioRolService.contarResultados(filtro);
 		if(cont!=0) throw new ServerException("No se puede inactivar el rol debido a que tiene usuarios activos. " + cont);

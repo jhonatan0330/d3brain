@@ -10,8 +10,8 @@ import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service
 public class VoucherGetService {
@@ -26,7 +26,7 @@ public class VoucherGetService {
 		VoucherFilterDTO filter = new VoucherFilterDTO();
 		filter.setCatalog(catalogId);
 		filter.setCatalogCode(catalog.getCode());
-		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setState(SharedConstants.STATE_ACTIVE);
 		return voucherService.getMany(filter);
 	}
 	

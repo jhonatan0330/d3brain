@@ -15,8 +15,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 public class SoftureUtil {
 
@@ -204,7 +204,7 @@ public class SoftureUtil {
 	/**
 	 * De una cadena de texto con la siguiente estructura (codigo =
 	 * valor;;codigo=valor)crea un map Tener en cuenta que el separador es @see
-	 * {@link ConstantesGenerales#PUNTO_COMA_DOBLE}
+	 * {@link SharedConstants#PUNTO_COMA_DOBLE}
 	 * 
 	 * @param str
 	 * @return regreso el mapa vacio si no hay resultados que concuerden
@@ -215,7 +215,7 @@ public class SoftureUtil {
 		Map<String, Object> result = new HashMap<String, Object>();
 		if (str == null || str.isEmpty())
 			return result;
-		String[] params = str.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
+		String[] params = str.split(SharedConstants.PUNTO_COMA_DOBLE);
 		int posIgual = -1;
 		String codigo = null;
 		String textoReemplazar = null;
@@ -226,7 +226,7 @@ public class SoftureUtil {
 				textoReemplazar = iParametro.substring(posIgual + 1, iParametro.length());
 				if (codigo.contains("[")) {
 					String newCode = codigo.substring(0, codigo.indexOf("["));
-					if(textoReemplazar.contains(ConstantesGenerales.LINEA_MEDIA_DOBLE)) {
+					if(textoReemplazar.contains(SharedConstants.LINEA_MEDIA_DOBLE)) {
 						result.put(newCode, generateItemsFromParameters((ArrayList<Object>) result.get(newCode), textoReemplazar));
 					}else {
 						ArrayList<String> arrayObjectsString = (ArrayList<String>) result.get(newCode);
@@ -243,14 +243,14 @@ public class SoftureUtil {
 	}
 	
 	private static ArrayList<Object> generateItemsFromParameters(ArrayList<Object> arrayObjects , String str){
-		String[] params = str.split(ConstantesGenerales.LINEA_MEDIA_DOBLE);
+		String[] params = str.split(SharedConstants.LINEA_MEDIA_DOBLE);
 		if (arrayObjects == null) arrayObjects = new ArrayList<>();
 		Map<String, String> parametersItem =  new HashMap<String, String>();
 		int posIgual = -1;
 		String codigo = null;
 		String textoReemplazar = null;
 		for (String iParametro : params) {
-			posIgual = iParametro.indexOf(ConstantesGenerales.COMA_DOBLE);
+			posIgual = iParametro.indexOf(SharedConstants.COMA_DOBLE);
 			if (posIgual > 0) {
 				codigo = iParametro.substring(0, posIgual);
 				textoReemplazar = iParametro.substring(posIgual + 2, iParametro.length());

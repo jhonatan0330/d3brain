@@ -3,9 +3,8 @@ package com.softure.property.application;
 import java.util.Date;
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -72,7 +71,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		// BEGIN RelacionInterna_inactivar
 		RelacionInternaDTO bd = consultaXId(dto.getLlaveTabla());
 		bd.setCambioEliminacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
-		bd.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd = super.update(bd);
 		return bd;
 		// END RelacionInterna_inactivar
@@ -116,7 +115,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		existeFilter.setPlantilla(dto.getPlantilla());
 		existeFilter.setPropiedad(dto.getPropiedad());
 		existeFilter.setAuxiliar(dto.getAuxiliar());
-		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		RelacionInternaDTO existe = consultaUnica(existeFilter);
 		if(existe!=null) return existe;
 		if (dto.getCambioCreacion()==null)dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
@@ -136,7 +135,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	public List<RelacionInternaDTO> relacionesPropiedad(String propiedad)throws ServerException {
 		RelacionInternaFilterDTO filtro = new RelacionInternaFilterDTO();
 		filtro.setPropiedad(propiedad);
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		return super.listarConsulta(filtro);
 	}
 	

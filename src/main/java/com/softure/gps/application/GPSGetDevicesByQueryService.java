@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service
 public class GPSGetDevicesByQueryService {
@@ -18,7 +18,7 @@ public class GPSGetDevicesByQueryService {
 	public List<GPSDispositivoDTO> call(String query) throws ServerException {
 		GPSDispositivoFilterDTO filter = new GPSDispositivoFilterDTO();
 		filter.setNombre(query);
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return deviceService.listarConsulta(filter);
 	}
 }

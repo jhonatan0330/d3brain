@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
@@ -30,7 +31,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -97,7 +97,7 @@ public class WebServiceExecuteAPI {
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
-		if (service.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (service.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El servicio " + service.getNombre() + " no se encuentra Activo." + serviceId);
 		// Obtengo propiedades del servicio
 		String userId = webServiceSvc.getUserFlex(token);
@@ -116,9 +116,9 @@ public class WebServiceExecuteAPI {
 			publishErrorMessage(service, apiBasic);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
 					+ ") por error de validacion previa a la ejecucion");
-			return ConstantesGenerales.ERROR;
+			return SharedConstants.ERROR;
 		}
-		String result = ConstantesGenerales.OK;
+		String result = SharedConstants.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
 			result = executeApi(service, apiBasic, token, modificador, document);
@@ -144,13 +144,13 @@ public class WebServiceExecuteAPI {
 	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
 			PedidoVentaDTO modificador, PedidoVentaDTO documentMain) throws ServerException {
 		if (callWS.getFechaEjecucion() != null)
-			return ConstantesGenerales.OK;
+			return SharedConstants.OK;
 		if (service.getPropiedades() == null) {
 			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
 					service.getLlaveTabla(), null, null));
 		}
 		// Realizo la autenticacion
-		String result = ConstantesGenerales.OK;
+		String result = SharedConstants.OK;
 		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador, documentMain);
 		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
@@ -164,7 +164,7 @@ public class WebServiceExecuteAPI {
 				publishErrorMessage(service, preconditionWS);
 				log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre()
 						+ ") por error de API precondicion ");
-				return ConstantesGenerales.ERROR;
+				return SharedConstants.ERROR;
 			}
 			if (preconditionWS.getExtracciones() != null) {
 				extractionApiPrecondition = preconditionWS.getExtracciones();
@@ -184,7 +184,7 @@ public class WebServiceExecuteAPI {
 			callWS = tryAgain(service, callWS, token, 1, headers, modificador);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
-			result = ConstantesGenerales.ERROR;
+			result = SharedConstants.ERROR;
 			publishErrorMessage(service, callWS);
 		} else {
 			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
@@ -268,8 +268,8 @@ public class WebServiceExecuteAPI {
 				if (iProp.getTexto() == null)
 					throw new ServerException(
 							"Es necesario colocar texto en la propiedad de codigo a reemplazar " + iProp.getValor());
-				parameters = parameters + ConstantesGenerales.PUNTO_COMA_DOBLE + iProp.getTexto()
-				+ ConstantesGenerales.IGUAL + iProp.getValor();
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+				+ SharedConstants.IGUAL + iProp.getValor();
 			}
 		}
 		
@@ -294,7 +294,7 @@ public class WebServiceExecuteAPI {
 						callWS.setError(resultExtraction);
 						responseApi = resultExtraction + "\n\n" + responseApi;
 						resultExtraction = resultExtraction.substring(resultExtraction.indexOf(
-								ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS) + 3);
+								SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS) + 3);
 						if (resultExtraction.length() == 0)
 							resultExtraction = null;
 					} else {
@@ -405,7 +405,7 @@ public class WebServiceExecuteAPI {
 			if (!matcher.matches()) {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
 					errorResult = errorResult  + ERROR_EXTRAYENDO
-							+ propiedadDTO.getValor() + ConstantesGenerales.PUNTO_COMA_DOBLE;
+							+ propiedadDTO.getValor() + SharedConstants.PUNTO_COMA_DOBLE;
 				}
 			} else {
 				String newValue = matcher.group(1);
@@ -413,18 +413,18 @@ public class WebServiceExecuteAPI {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 				}
-				result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla() + ConstantesGenerales.IGUAL;
+				result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL;
 				if(newValue!=null && newValue.length() > 4000) {
 					result = result + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
 				}else {
 					result = result + newValue;
 				}
 				// debo colocar oble para que se guarden en formularios
-				if(propiedadDTO.getTexto() != null) result = result + ConstantesGenerales.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + ConstantesGenerales.IGUAL + newValue;
+				if(propiedadDTO.getTexto() != null) result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue;
 			}
 		}
 		if (errorResult.length() != 0)
-			result = errorResult + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + ConstantesGenerales.DOS_PUNTOS + result;
+			result = errorResult + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + result;
 		if (result.length() == 0)
 			result = null;
 		return result;

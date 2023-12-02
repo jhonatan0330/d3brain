@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
@@ -13,7 +14,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.inventory.infrastructure.ProductoMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -71,7 +71,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 		dto = super.inactivar(dto, token);
 		UsuarioRolProductoFilterDTO filtro = new UsuarioRolProductoFilterDTO();
 		filtro.setProducto(dto.getLlaveTabla());
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		List<UsuarioRolProductoDTO> relacionados = usuarioRolProductoSvc.listarConsulta(filtro);
 		if(relacionados!=null &&!relacionados.isEmpty()) {
 			for(UsuarioRolProductoDTO iProducto : relacionados) {
@@ -135,10 +135,10 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 			categoriaSvc.organizarInventario();
 		}else {
 			if(documento.getEstado().compareTo(newProducto.getEstado())!=0){
-				if(documento.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0) {
-					newProducto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);	
+				if(documento.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) {
+					newProducto.setEstado(SharedConstants.STATE_ACTIVE);	
 				}else {
-					newProducto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+					newProducto.setEstado(SharedConstants.STATE_INACTIVE);
 				}
 				newProducto = update(newProducto);
 			}
@@ -170,7 +170,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	public ProductoDTO getProduct2Document(String document)throws ServerException{
 		ProductoFilterDTO p = new ProductoFilterDTO();
 		p.setDocumento(document);
-		p.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		p.setEstado(SharedConstants.STATE_ACTIVE);
 		ProductoDTO pr = consultaUnica(p);
 		if(pr!=null && pr.getProductoBase()!=null) {
 			ProductoDTO pb = consultaXId(pr.getProductoBase());
@@ -182,7 +182,7 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	public List<ProductoDTO> getProducts2Filter(String filter)throws ServerException{
 		ProductoFilterDTO p = new ProductoFilterDTO();
 		p.setFiltroParametro(filter);
-		p.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		p.setEstado(SharedConstants.STATE_ACTIVE);
 		return listarConsulta(p);
 	}
 	

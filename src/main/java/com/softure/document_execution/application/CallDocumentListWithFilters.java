@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.document_execution.application.field.Propiedades;
@@ -20,7 +21,6 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
 import com.softure.inventory.application.ProductoCaracteristicaSvc;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.domain.CuentaDTO;
@@ -454,7 +454,7 @@ public class CallDocumentListWithFilters {
 			}
 		}
 		if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-			result = List.of(ConstantesGenerales.ESTADO_ACTIVO, ConstantesGenerales.ESTADO_FINALIZADO);
+			result = List.of(SharedConstants.STATE_ACTIVE, SharedConstants.STATE_COMPLETE);
 		return result;
 	}
 
@@ -510,7 +510,7 @@ public class CallDocumentListWithFilters {
 							if (cuenta != null) {
 								PedidoVentaDineroDTO dinero = new PedidoVentaDineroDTO();
 								dinero.setDocumento(iterador.getLlaveTabla());
-								dinero.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+								dinero.setEstado(SharedConstants.STATE_ACTIVE);
 								dinero.setValorTotal(cuenta.getSaldo());
 								iterador.setDinero(dinero);
 							}
@@ -537,7 +537,7 @@ public class CallDocumentListWithFilters {
 								DocumentoPlantillaCaracteristicaFilterDTO campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 								campoFilter.setPlantilla(iterador.getPlantilla());
 								campoFilter.setCodigo(campoValor);
-								campoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+								campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 								campo = documentoPlantillaCaracteristicaService.consultaUnica(campoFilter);
 							}
 							if (campo == null) {
@@ -556,7 +556,7 @@ public class CallDocumentListWithFilters {
 									iterador.getHistorico()));
 						} else {
 							PedidoVentaCaracteristicaFilterDTO valorCampoFilter = new PedidoVentaCaracteristicaFilterDTO();
-							valorCampoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+							valorCampoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 							valorCampoFilter.setCampo(campoValorIterador);
 							valorCampoFilter.setDocumento(iterador.getLlaveTabla());
 							PedidoVentaCaracteristicaDTO valorCampo = pedidoVentaCaracteristicaService
@@ -564,7 +564,7 @@ public class CallDocumentListWithFilters {
 							if (valorCampo != null) {
 								PedidoVentaDineroDTO dinero = new PedidoVentaDineroDTO();
 								dinero.setDocumento(iterador.getLlaveTabla());
-								dinero.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+								dinero.setEstado(SharedConstants.STATE_ACTIVE);
 								dinero.setValorTotal(valorCampo.getValorNumero());
 								dinero.setSaldo(valorCampo.getValorNumero());
 								iterador.setDinero(dinero);

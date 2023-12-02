@@ -10,10 +10,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
@@ -26,7 +26,7 @@ public class MailRecoverPasswordService {
 	
 	public void call(String correo, String key, String code) throws ServerException {
 		ServidorFilterDTO filter = new ServidorFilterDTO();
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setTipo(ServidorDTO.MAIL);
 		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
 		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado");

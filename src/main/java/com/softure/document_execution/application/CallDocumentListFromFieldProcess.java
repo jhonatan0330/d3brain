@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.AuxiliarProcesoBodega;
 import com.softure.document_execution.application.field.Propiedades;
@@ -13,7 +14,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -79,7 +79,7 @@ public class CallDocumentListFromFieldProcess {
 				if (entityFilter.getFiltroParametro() != null && entityFilter.getFiltroParametro().endsWith(" "))
 					entityFilter.setFiltroParametro(entityFilter.getFiltroParametro().substring(0,
 							entityFilter.getFiltroParametro().length() - 1));
-				entityFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				entityFilter.setEstado(SharedConstants.STATE_ACTIVE);
 
 				if (funcionConsulta == null) {
 					List<PropiedadDTO> plantillasAuxiliares = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
@@ -87,7 +87,7 @@ public class CallDocumentListFromFieldProcess {
 					if (plantillasAuxiliares != null && !plantillasAuxiliares.isEmpty()) {
 						if (pBase != null) {// Esto aplica para autoload de los productos con ocion de seleccion
 							if (codigoDepende != null) {// Coloco las dependencias
-								if (codigoDepende.get(0).getValor().compareTo(ConstantesGenerales.USUARIO) != 0
+								if (codigoDepende.get(0).getValor().compareTo(SharedConstants.USER) != 0
 										&& Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)
 												.isEmpty()) {
 									// Valido que la cantidad de dependientes este correcta

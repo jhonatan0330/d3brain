@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
@@ -19,7 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.mail.application.MailGenerateMessageService;
@@ -223,7 +223,7 @@ public class CallManageTransition {
 	) throws ServerException {
 
 		ProcesoEstadoDTO pEstadoDTO = estadoService.consultaXId(transicionIteracion.getEstadoPartida());
-		if (pEstadoDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (pEstadoDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La iteracion " + pEstadoDTO.getNombre() + " esta inactiva");
 		PropiedadDTO propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO,
 				pEstadoDTO.getLlaveTabla(), Propiedades.ITERACION_SQL, null);
@@ -268,7 +268,7 @@ public class CallManageTransition {
 			PedidoVentaDTO documentoDTO, String token, List<PedidoVentaDTO> documentRecentCreateInTransition)
 			throws ServerException {
 		ProcesoEstadoDTO apiDTO = estadoService.consultaXId(estadoLlegada);
-		if (apiDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (apiDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El punto del api " + apiDTO.getNombre() + " esta inactivo");
 		apiDTO.setPropiedades(propiedadService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO,
 				estadoLlegada, null, getUserId(token)));
@@ -277,7 +277,7 @@ public class CallManageTransition {
 		if (propAPI == null)
 			throw new ServerException(String.format("El estado %s no tiene definido el API", apiDTO.getNombre()));
 
-		String resultAPI = ConstantesGenerales.OK;
+		String resultAPI = SharedConstants.OK;
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {
 			resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, token, null);
 		} else {
@@ -288,8 +288,8 @@ public class CallManageTransition {
 			if (propOneExecution != null) {
 				String stringToDocumentsToAPI = "";
 				for (int i = 0; i < documentRecentCreateInTransition.size(); i++) {
-					stringToDocumentsToAPI = stringToDocumentsToAPI + ConstantesGenerales.PUNTO_COMA_DOBLE
-							+ "ITERADOR_CODE[" + i + "]" + ConstantesGenerales.IGUAL
+					stringToDocumentsToAPI = stringToDocumentsToAPI + SharedConstants.PUNTO_COMA_DOBLE
+							+ "ITERADOR_CODE[" + i + "]" + SharedConstants.IGUAL
 							+ documentRecentCreateInTransition.get(i).getNombre();
 				}
 				resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, token,
@@ -301,10 +301,10 @@ public class CallManageTransition {
 				for (PedidoVentaDTO pedidoVentaDTO : documentRecentCreateInTransition) {
 					resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO,
 							token, null);
-					if (resultAPI.compareTo(ConstantesGenerales.OK) != 0) {
+					if (resultAPI.compareTo(SharedConstants.OK) != 0) {
 						documentRecentCreateInTransition = okDocumentsInAPI;
 						if (!okDocumentsInAPI.isEmpty())
-							resultAPI = ConstantesGenerales.INCOMPLETE;
+							resultAPI = SharedConstants.INCOMPLETE;
 						break;
 					}
 					okDocumentsInAPI.add(pedidoVentaDTO);
@@ -318,7 +318,7 @@ public class CallManageTransition {
 	private ProcesoTransicionDTO resolveStateDesition(String decision, String llaveTablaDocumento,
 			String llaveModificador, String token) throws ServerException {
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(decision);
-		if (decisionDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (decisionDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La decision " + decisionDTO.getNombre() + " esta inactiva");
 		PropiedadDTO propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, decision,
 				Propiedades.DECISION_SQL, getUserId(token));
@@ -345,7 +345,7 @@ public class CallManageTransition {
 		ProcesoTransicionFilterDTO solucionFilter = new ProcesoTransicionFilterDTO();
 		solucionFilter.setEstadoPartida(estadoActual);
 		solucionFilter.setNombre(nombreTransicion);
-		solucionFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		solucionFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ProcesoTransicionDTO> soluciones = transicionService.listarConsulta(solucionFilter);
 		if (soluciones != null && !soluciones.isEmpty()) {
 			if (soluciones.size() > 1)
@@ -357,7 +357,7 @@ public class CallManageTransition {
 
 		// La idea es evitar que se pierda informacion enn las apis ya que no se guarda
 		// los archivos
-		solucionFilter.setNombre(ConstantesGenerales.OK);
+		solucionFilter.setNombre(SharedConstants.OK);
 		ProcesoTransicionDTO solucion = transicionService.consultaUnica(solucionFilter);
 		if (solucion != null)
 			return solucion;

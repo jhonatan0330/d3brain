@@ -27,9 +27,9 @@ import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.application.SharedValidateTokenService;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.ConsecutivoSvc;
 import com.softure.process_form.domain.ConsecutivoDTO;
 
@@ -102,7 +102,7 @@ public class VoucherCreateService {
 			AccountDTO account = accountService.getById(item.getAccount());
 			if(account == null) throw new ServerException("La cuenta no existe en la base de datos");
 			if(account.getCatalog().compareTo(catalogDTO.getKey()) != 0) throw new ServerException("La cuenta no pertenece al catalogo. " + account.getName());
-			if(account.getState().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
+			if(account.getState().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
 			if(account.getStatus().compareTo(AccountConst.STATUS_BLOCKED)==0) throw new ServerException("La cuenta se encuentra bloqueada. " + account.getName());
 			if(account.getStatus().compareTo(AccountConst.STATUS_PLANNING)==0)
 				matrixService.call(catalogDTO, account, token);

@@ -5,9 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -85,14 +84,14 @@ public class PostPreguntaSvc extends BasicSvc<PostPreguntaDTO, PostPreguntaFilte
 	public List<PostPreguntaDTO> listarEnOrden(PostPreguntaFilterDTO dto)throws ServerException{
 		// BEGIN region listarEnOrden
 		paginar(dto);
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		return postPreguntaMapper.listarEnOrden(dto);
 		// END region listarEnOrden
 	}
 	public List<PostPreguntaDTO> listarPreguntasSinRespuesta(PostPreguntaFilterDTO dto)throws ServerException{
 		// BEGIN region listarPreguntasSinRespuesta
 		paginar(dto);
-		dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		return postPreguntaMapper.listarPreguntasSinRespuesta(dto);
 		// END region listarPreguntasSinRespuesta
 	}

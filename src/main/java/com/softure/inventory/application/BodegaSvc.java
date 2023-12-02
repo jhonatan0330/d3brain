@@ -2,13 +2,12 @@ package com.softure.inventory.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.infrastructure.BodegaMapper;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -99,15 +98,15 @@ public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {
 			newBodega.setDocumento(documento.getLlaveTabla());
 			newBodega = save(newBodega);
 		}else {
-			if(documento.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) {
-				if(newBodega.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)!=0) {
-					newBodega.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+			if(documento.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) {
+				if(newBodega.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0) {
+					newBodega.setEstado(SharedConstants.STATE_INACTIVE);
 					//newBodega.setSecurityToken(documento.getSecurityToken());
 					newBodega = update(newBodega);
 				}
 			}else {
-				if(newBodega.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) {
-					newBodega.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				if(newBodega.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) {
+					newBodega.setEstado(SharedConstants.STATE_ACTIVE);
 					//newBodega.setSecurityToken(documento.getSecurityToken());
 					newBodega = update(newBodega);
 				}

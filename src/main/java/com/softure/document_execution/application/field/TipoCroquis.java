@@ -7,13 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
@@ -41,7 +41,7 @@ public class TipoCroquis {
 			if (pCampo.getLlaveTabla() != null) {
 				PuestoFilterDTO filtro = new PuestoFilterDTO();
 				filtro.setCampo(pCampo.getLlaveTabla());
-				filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				filtro.setEstado(SharedConstants.STATE_ACTIVE);
 				componentesActuales = puestoService.listarConsulta(filtro);
 			}
 			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {
@@ -65,7 +65,7 @@ public class TipoCroquis {
 												.compareTo(componente.getDinero().getSaldo().intValue()) == 0
 										&& actual.getFila()
 												.compareTo(componente.getDinero().getValorTotal().intValue()) == 0)
-									componente.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+									componente.setEstado(SharedConstants.STATE_ACTIVE);
 								if (componente.getEstado() != null)
 									componentesActuales.remove(actual);
 								break;
@@ -78,7 +78,7 @@ public class TipoCroquis {
 				for (PuestoDTO actual : componentesActuales) {
 					PedidoVentaDTO adicionarI = new PedidoVentaDTO();
 					adicionarI.setLlaveTabla(actual.getLlaveTabla());
-					adicionarI.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+					adicionarI.setEstado(SharedConstants.STATE_INACTIVE);
 					pCampo.getExpedientes().add(adicionarI);
 				}
 			}
@@ -129,7 +129,7 @@ public class TipoCroquis {
 					nuevo.setImagen(componente.getImagen());
 					puestoService.guardar(nuevo, token);
 				} else {
-					if (componente.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) {
+					if (componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 						PuestoDTO inactivar = new PuestoDTO();
 						inactivar.setLlaveTabla(componente.getLlaveTabla());
 						puestoService.inactivar(inactivar, token);
@@ -143,7 +143,7 @@ public class TipoCroquis {
 		if (pCampo.getLlaveTabla() != null) {
 			PuestoFilterDTO filtro = new PuestoFilterDTO();
 			filtro.setCampo(pCampo.getLlaveTabla());
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtro.setEstado(SharedConstants.STATE_ACTIVE);
 			List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
 			if (componentesActuales != null && !componentesActuales.isEmpty()) {
 				pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
@@ -165,7 +165,7 @@ public class TipoCroquis {
 		if (pCampo.getLlaveTabla() != null) {
 			PuestoFilterDTO filtro = new PuestoFilterDTO();
 			filtro.setCampo(pCampo.getLlaveTabla());
-			filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtro.setEstado(SharedConstants.STATE_ACTIVE);
 			List<PuestoDTO> componentesActuales = puestoService.listarConsulta(filtro);
 			if (componentesActuales != null && !componentesActuales.isEmpty()) {
 				pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());

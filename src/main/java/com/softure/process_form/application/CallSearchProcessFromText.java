@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListFromFieldProcess;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
@@ -64,12 +64,12 @@ public class CallSearchProcessFromText {
 					break;
 				}
 				if (pedidoVentaDTO.getTextoFiltro() == null) {
-					textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getNombre() + ConstantesGenerales.COMA;
+					textToCompare = SharedConstants.COMA + pedidoVentaDTO.getNombre() + SharedConstants.COMA;
 				} else {
-					textToCompare = ConstantesGenerales.COMA + pedidoVentaDTO.getTextoFiltro();
+					textToCompare = SharedConstants.COMA + pedidoVentaDTO.getTextoFiltro();
 				}
 				if (textToCompare
-						.contains(ConstantesGenerales.COMA + SoftureUtil.formatFunction(valueText).toUpperCase() + ConstantesGenerales.COMA)) {
+						.contains(SharedConstants.COMA + SoftureUtil.formatFunction(valueText).toUpperCase() + SharedConstants.COMA)) {
 					keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 					break;
 				}

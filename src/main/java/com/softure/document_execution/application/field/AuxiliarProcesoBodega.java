@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
@@ -28,7 +29,6 @@ import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioDescuentoDTO;
 import com.softure.inventory.domain.ProductoInventarioDescuentoFilterDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
@@ -70,7 +70,7 @@ public class AuxiliarProcesoBodega {
 	public String consultarBodegaBaseFija(String bodegaFijaId) throws ServerException{
 		BodegaDTO bodegaDTO =  bodegaService.consultaXId(bodegaFijaId);
 		if(bodegaDTO==null) throw new ServerException("Revise el id de la bodega");
-		if(bodegaDTO.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La bodega "+bodegaDTO.getNombre()+" no tiene estado activo.");
+		if(bodegaDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("La bodega "+bodegaDTO.getNombre()+" no tiene estado activo.");
 		return bodegaDTO.getDocumento();
 	}
 	/*
@@ -288,7 +288,7 @@ public class AuxiliarProcesoBodega {
 		if(pCampo.getDetalles()!=null && !pCampo.getDetalles().isEmpty()){
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
 				//Si principal viene nulo viene de tipo proceso
-				if(pCampo.getPrincipal()==null ||  detalle.getLlaveTabla()==null || detalle.getEstado()==null || detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0){
+				if(pCampo.getPrincipal()==null ||  detalle.getLlaveTabla()==null || detalle.getEstado()==null || detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0){
 					boolean deducirComposicion = false;//En transformacion se hacen las 2 operaciones
 					System.out.format("\n[%s - %s] Revisando producto %s", pCampo.getCampoDTO().getPlantillaNombre(),  pCampo.getCampoDTO().getNombre(), detalle.getNombre());
 					if(!operacion.contains("C")){
@@ -311,11 +311,11 @@ public class AuxiliarProcesoBodega {
 								}
 							}
 						}
-						if(producto!=null && producto.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0 ){
+						if(producto!=null && producto.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0 ){
 							DeduccionProductoDTO salida = new DeduccionProductoDTO();
 							salida.setBodega(recursoInventario);
 							salida.setCantidad(detalle.getCantidadTotal().multiply(factor));
-							if(detalle.getEstado()!=null && detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) salida.setCantidad(salida.getCantidad().negate());
+							if(detalle.getEstado()!=null && detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) salida.setCantidad(salida.getCantidad().negate());
 							salida.setProducto(detalle.getProducto());
 							salida.setDocumento(documentoInicial);
 							result = adicionarDeduccion(result, salida);
@@ -332,7 +332,7 @@ public class AuxiliarProcesoBodega {
 					if(deducirComposicion){
 						ProductoInventarioDescuentoFilterDTO filtro = new ProductoInventarioDescuentoFilterDTO();
 						filtro.setProducto(detalle.getProducto());
-						filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						filtro.setEstado(SharedConstants.STATE_ACTIVE);
 						List<ProductoInventarioDescuentoDTO> descuentos = productoInventarioDescuentoService.listarConsulta(filtro);
 						if(descuentos==null || descuentos.size()==0){
 							ProductoDTO productoDTO = productoService.consultaXId(detalle.getProducto());
@@ -341,7 +341,7 @@ public class AuxiliarProcesoBodega {
 								descuentos = productoInventarioDescuentoService.listarConsulta(filtro);
 								if(descuentos==null || descuentos.isEmpty()){//En caso que no tenda composicion miramos que sea el mismo
 									ProductoInventarioFilterDTO inventarioPFilter = new ProductoInventarioFilterDTO();
-									inventarioPFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+									inventarioPFilter.setEstado(SharedConstants.STATE_ACTIVE);
 									inventarioPFilter.setProducto(productoDTO.getProductoBase());
 									inventarioPFilter.setBodega(recursoInventario);
 									ProductoInventarioDTO inventarioP = productoInventarioService.consultaUnica(inventarioPFilter);
@@ -376,7 +376,7 @@ public class AuxiliarProcesoBodega {
 								}
 								if(salida.getProducto()!=null){
 									salida.setCantidad(descuento.getCantidadProductoDescontar().multiply(detalle.getCantidadTotal().multiply(factor)));
-									if(detalle.getEstado()!=null && detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)==0) salida.setCantidad(salida.getCantidad().negate());
+									if(detalle.getEstado()!=null && detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) salida.setCantidad(salida.getCantidad().negate());
 									salida.setBodega(recursoInventario);
 									salida.setDocumento(documentoInicial);
 									result = adicionarDeduccion(result, salida);

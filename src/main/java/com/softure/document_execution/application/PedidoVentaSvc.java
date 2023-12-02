@@ -5,6 +5,7 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.document_execution.application.field.CampoAdaptador;
@@ -13,7 +14,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -179,7 +179,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		//Caracteristicas
 		if(pedido==null || pedido.getPlantilla()==null) throw new ServerException("Desarrollador el pedido y su plantilla no deben venir nulos");
 		DocumentoPlantillaCaracteristicaFilterDTO rcDTOFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
-		rcDTOFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		rcDTOFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		rcDTOFilter.setPlantilla(pedido.getPlantilla());
 		List<DocumentoPlantillaCaracteristicaDTO> camposBase =  documentoPlantillaCaracteristicaService.listarConsulta(rcDTOFilter);
 		if(camposBase!=null & camposBase.size()!=0){

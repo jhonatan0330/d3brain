@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
@@ -66,7 +66,7 @@ public class SynchronizeProcessService {
 			if(remote.getMacroproceso()!=null) {
 				ProcesoFilterDTO filter = new ProcesoFilterDTO();
 				filter.setCodigo(remote.getCodigo());
-				filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				filter.setEstado(SharedConstants.STATE_ACTIVE);
 				ProcesoDTO db = null;
 				try {
 					db = processService.consultaUnica(filter);

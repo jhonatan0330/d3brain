@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
@@ -32,7 +33,6 @@ import com.softure.document_transition.application.CallManageTransition;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -232,7 +232,7 @@ public class CallDocumentCRUD {
 		}
 		if (dto.getEstado() == null) {
 			if (dto.getEstadoExpediente() == null) {
-				dto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);// Viene de tipo proceso que lo coloca nulo
+				dto.setEstado(SharedConstants.STATE_ACTIVE);// Viene de tipo proceso que lo coloca nulo
 			} else {
 				dto.setEstado(estadoService.consultaXId(dto.getEstadoExpediente()).getEstadoDocumento());
 			}
@@ -621,7 +621,7 @@ public class CallDocumentCRUD {
 					PlantillaConsecutivoFilterDTO relacionConsecutivoFilter = new PlantillaConsecutivoFilterDTO();
 					relacionConsecutivoFilter.setCaracteristica(fieldFirstValueConsecutive.getCampo());
 					relacionConsecutivoFilter.setValorOpcion(fieldFirstValueConsecutive.getValorOpcion());
-					relacionConsecutivoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					relacionConsecutivoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 					PlantillaConsecutivoDTO relacionConsecutivo = plantillaConsecutivoSvc
 							.consultaUnica(relacionConsecutivoFilter);
 					if (relacionConsecutivo == null) {
@@ -707,7 +707,7 @@ public class CallDocumentCRUD {
 			for (PedidoVentaDTO igualNombre : mismoNombre) {
 				if (pedido.getLlaveTabla() == null
 						|| pedido.getLlaveTabla().compareTo(igualNombre.getLlaveTabla()) != 0) {
-					if (igualNombre.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0) {
+					if (igualNombre.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 						DocumentoPlantillaDTO plantilla = documentoPlantillaService.consultaXId(pedido.getPlantilla());
 						throw new ServerException("Ya existe un " + plantilla.getNombre() + " con el mismo codigo ("
 								+ igualNombre.getNombre() + "). Creado el "
@@ -798,12 +798,12 @@ public class CallDocumentCRUD {
 		// Valido que tenga relacion de plantilla
 		RolAccesoFilterDTO dpiRolFilter = new RolAccesoFilterDTO();
 		dpiRolFilter.setPlantilla(dto.getPlantilla());
-		dpiRolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		dpiRolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		RolAccesoDTO dpiRol = rolService.consultaUnica(dpiRolFilter);
 		if (dpiRol == null)
 			return;
 
-		if (dto.getEstado() == null || dto.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) == 0) {
+		if (dto.getEstado() == null || dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
 			// Obtengo los valores de Id y nombre
 			String usrNombre = dto.getDescripcion();
 			if (usrNombre == null)
@@ -858,7 +858,7 @@ public class CallDocumentCRUD {
 			UsuarioDTO usr = null;
 			UsuarioRolFilterDTO urFilter = new UsuarioRolFilterDTO();
 			urFilter.setDocumento(dto.getLlaveTabla());
-			urFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			urFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			UsuarioRolDTO ur = usuarioRolService.consultaUnica(urFilter);
 			// Cuando se modifica un contacto que tenia mal el id salia un errro de forgin
 			// key
@@ -877,13 +877,13 @@ public class CallDocumentCRUD {
 					usr.setNombre(usrNombre);
 					usr.setCorreo(usrMail);
 					usr.setTelefono(usrPhone);
-					usr.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					usr.setEstado(SharedConstants.STATE_ACTIVE);
 					usr = usuarioService.guardar(usr, token);
 				} else {
-					if (usr.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0) {
+					if (usr.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0) {
 						usr.setCorreo(usrMail);
 						usr.setTelefono(usrPhone);
-						usr.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						usr.setEstado(SharedConstants.STATE_ACTIVE);
 						usr = usuarioService.actualizar(usr, token);
 					}
 				}
@@ -920,7 +920,7 @@ public class CallDocumentCRUD {
 	private void inactivateRolOfDocument(String document, String token) throws ServerException {
 		UsuarioRolFilterDTO rolFilter = new UsuarioRolFilterDTO();
 		rolFilter.setDocumento(document);
-		rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		rolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		UsuarioRolDTO rol = usuarioRolService.consultaUnica(rolFilter);
 		if (rol != null) {
 			usuarioRolService.inactivar(rol, token);

@@ -2,10 +2,8 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -88,7 +86,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 		PlantillaConsecutivoFilterDTO bdFilter = new PlantillaConsecutivoFilterDTO();
 		bdFilter.setCaracteristica(dto.getCaracteristica());
 		bdFilter.setValorOpcion(dto.getValorOpcion());
-		bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		PlantillaConsecutivoDTO bd = consultaUnica(bdFilter);
 		if(bd!=null) throw new ServerException("Ya existe una relacion entre caracteristica y opcion");
 		return super.guardar(dto, token);

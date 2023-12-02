@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 
 public class CallDocumentCommons {
 
@@ -37,7 +37,7 @@ public class CallDocumentCommons {
 		}
 		boolean ValorNuevo = true;
 		for (PedidoVentaDTO expediente : pCampo.getExpedientes()) {
-			if((expediente.getEstado()==null || expediente.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO)!=0)) {
+			if((expediente.getEstado()==null || expediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0)) {
 				cantidad ++;
 				if(expediente.getDinero()!=null) {
 					ValorNuevo = true;

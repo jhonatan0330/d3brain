@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service
 public class GPSGetDevicesByTokenService {
@@ -17,7 +17,7 @@ public class GPSGetDevicesByTokenService {
 	
 	public GPSDispositivoDTO call(String token) throws ServerException {
 		GPSDispositivoFilterDTO filtro = new GPSDispositivoFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setUsuario(deviceService.getUserFlex(token));
 		List<GPSDispositivoDTO> dispositivos = deviceService.listarConsulta(filtro);
 		if(dispositivos==null || dispositivos.isEmpty()) return null;

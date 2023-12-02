@@ -5,12 +5,11 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.infrastructure.DocumentoRelacionExpedienteMapper;
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -62,7 +61,7 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionExpedienteDTO inactivar(DocumentoRelacionExpedienteDTO dto, String token) throws ServerException {
 		// BEGIN DocumentoRelacionExpediente_inactivar
-		dto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		return super.actualizar(dto, token);
 		// END DocumentoRelacionExpediente_inactivar
 	}
@@ -105,7 +104,7 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	public List<DocumentoRelacionExpedienteDTO> listByField(String field)
 			throws ServerException {
 		DocumentoRelacionExpedienteFilterDTO filter = new DocumentoRelacionExpedienteFilterDTO();
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setCampoMaestro(field);
 		filter.setPaginacionRegistroFinal(5000);
 		return listarConsulta(filter);

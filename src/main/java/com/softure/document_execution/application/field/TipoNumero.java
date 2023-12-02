@@ -11,12 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.CalculatorUtil;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -239,7 +239,7 @@ public class TipoNumero {
 							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
 							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
 									&& (iDetalle.getEstado() == null || iDetalle.getEstado()
-											.compareTo(ConstantesGenerales.ESTADO_INACTIVO) != 0)) {
+											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
 								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
 									if (iCaracteristica.getCampoDTO() == null)
 										iCaracteristica.setCampoDTO(

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
@@ -17,7 +18,6 @@ import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
@@ -36,7 +36,7 @@ public class TipoProductoLista {
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		UsuarioRolProductoFilterDTO urp = new UsuarioRolProductoFilterDTO();
 		urp.setDocumento(pCampo.getDocumento());
-		urp.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		urp.setEstado(SharedConstants.STATE_ACTIVE);
 		pCampo.setProductosExclusivos(usuarioRolProductoService.listarConsulta(urp));
 	}
 
@@ -50,7 +50,7 @@ public class TipoProductoLista {
 		if (pCampo.getDocumento() != null) {
 			UsuarioRolProductoFilterDTO filtroProductosExistentes = new UsuarioRolProductoFilterDTO();
 			filtroProductosExistentes.setDocumento(pCampo.getDocumento());
-			filtroProductosExistentes.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroProductosExistentes.setEstado(SharedConstants.STATE_ACTIVE);
 			productosActualesUsuario = usuarioRolProductoService.listarConsulta(filtroProductosExistentes);
 		}
 		if (pCampo.getProductosExclusivos() != null) {
@@ -65,7 +65,7 @@ public class TipoProductoLista {
 						}
 					}
 				} else {
-					urp.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					urp.setEstado(SharedConstants.STATE_ACTIVE);
 					// Valido que en la lista no se ingrese 2 veces el mismo producto
 					int ingresos = 0;
 					for (UsuarioRolProductoDTO iProducto : pCampo.getProductosExclusivos()) {
@@ -80,7 +80,7 @@ public class TipoProductoLista {
 		}
 		if (productosActualesUsuario != null && !productosActualesUsuario.isEmpty()) {
 			for (UsuarioRolProductoDTO urInactivar : productosActualesUsuario) {
-				urInactivar.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+				urInactivar.setEstado(SharedConstants.STATE_INACTIVE);
 				pCampo.getProductosExclusivos().add(urInactivar);
 			}
 		}
@@ -93,7 +93,7 @@ public class TipoProductoLista {
 				producto.setDocumento(pCampo.getDocumento());
 				producto = usuarioRolProductoService.guardar(producto, token);
 			} else {
-				if (producto.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) {
+				if (producto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					producto = usuarioRolProductoService.inactivar(producto, token);
 				} else {
 					producto = usuarioRolProductoService.actualizar(producto, token);
@@ -111,7 +111,7 @@ public class TipoProductoLista {
 		if (pBase == null)
 			throw new ServerException("Error en el identificador de la caracteristica");
 		ProductoFilterDTO entityFilt = new ProductoFilterDTO();
-		entityFilt.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		entityFilt.setEstado(SharedConstants.STATE_ACTIVE);
 		entityFilt.setFiltroParametro(pCampo.getFiltroParametro());
 		pBase.setProductos(productoService.listarConsulta(entityFilt));
 

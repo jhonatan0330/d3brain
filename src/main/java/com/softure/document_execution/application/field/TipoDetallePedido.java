@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
@@ -25,7 +26,6 @@ import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
@@ -132,13 +132,13 @@ public class TipoDetallePedido {
 			pCampo.setValorNumero(BigDecimal.ZERO);
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
 				if (detalle.getEstado() == null
-						|| detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) == 0) {
+						|| detalle.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
 					// Valido que el producto se pueda guardar en el tiempo
 
 					ProductoDTO pd = productoService.consultaXId(detalle.getProducto());
 					if (pd == null)
 						throw new ServerException("Revise todo el producto no existe" + detalle.getProducto());
-					if (pd.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0)
+					if (pd.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
 						throw new ServerException("El producto esta inactivo" + pd.getNombre());
 
 					// Calculo la
@@ -249,7 +249,7 @@ public class TipoDetallePedido {
 			if (tercero != null) {
 				ProductoFilterDTO entityFilter = new ProductoFilterDTO();
 				// entityFilter.setPlantilla(pBase.getPlantilla());
-				entityFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				entityFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				entityFilter.setFiltroParametro(pCampo.getFiltroParametro());
 				entityFilter.setUsuarioRol(tercero);
 				pBase.setProductos(productoService.listarProductoPlantillaResponsable(entityFilter));
@@ -514,7 +514,7 @@ public class TipoDetallePedido {
 				}
 			}
 			if (expediente.getEstado() == null)
-				expediente.setEstado(ConstantesGenerales.ESTADO_ACTIVO);// Sucede que aqui llega nulo porque previamente
+				expediente.setEstado(SharedConstants.STATE_ACTIVE);// Sucede que aqui llega nulo porque previamente
 																		// se a validado una carcateristica
 			// Cuando revise lo del documento modificador veo como arreglo esto
 			saveUpdateInactivateDocumentFunction.updateWithoutTransaction(expediente, pCampo.getDocumento(), token,

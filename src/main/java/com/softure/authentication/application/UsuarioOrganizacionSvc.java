@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
@@ -13,7 +14,6 @@ import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioOrganizacionMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -105,7 +105,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		for (UsuarioOrganizacionDTO iterador : employees) {
 			UsuarioAutenticacionFilterDTO autenticacionLocalFilter = new UsuarioAutenticacionFilterDTO();
 			autenticacionLocalFilter.setSesion(iterador.getTokenServer());
-			autenticacionLocalFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			autenticacionLocalFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			UsuarioAutenticacionDTO autenticacionLocal = autenticacionService.consultaUnica(autenticacionLocalFilter);
 			if(autenticacionLocal==null) {
 				UsuarioDTO usuarioNuevo = new UsuarioDTO();
@@ -117,7 +117,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 				UsuarioOrganizacionFilterDTO actualFilter = new UsuarioOrganizacionFilterDTO();
 				actualFilter.setOrganizacion(organizacion.getLlaveTabla());
 				actualFilter.setUsuario(autenticacionLocal.getUsuario());
-				actualFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				actualFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				UsuarioOrganizacionDTO actual = consultaUnica(actualFilter);
 				
 				if(actual ==null) {
@@ -159,7 +159,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	public UsuarioOrganizacionDTO reloadPassword(UsuarioOrganizacionDTO dto, String token)throws ServerException{
 		if(dto.getTokenServer()==null) throw new ServerException("Es necesario incluir la nueva clave");
 		UsuarioOrganizacionFilterDTO filter = new UsuarioOrganizacionFilterDTO();
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);;
+		filter.setEstado(SharedConstants.STATE_ACTIVE);;
 		filter.setOrganizacion(dto.getOrganizacion());
 		filter.setUsuario(dto.getUsuario());
 		UsuarioOrganizacionDTO unique =  consultaUnica(filter);

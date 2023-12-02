@@ -2,10 +2,8 @@ package com.softure.survey.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -93,7 +91,7 @@ public class EncuestaOpcionRespuestaSvc extends BasicSvc<EncuestaOpcionRespuesta
 	public List<EncuestaOpcionRespuestaDTO> getOptions(String id) throws ServerException {
 		EncuestaOpcionRespuestaFilterDTO filter = new EncuestaOpcionRespuestaFilterDTO();
 		filter.setPregunta(id);
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return listarConsulta(filter);
 	}
 // END region aditionalMethods

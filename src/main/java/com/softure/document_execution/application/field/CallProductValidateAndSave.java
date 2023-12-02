@@ -7,12 +7,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.property.domain.PropiedadDTO;
 
@@ -101,7 +101,7 @@ public class CallProductValidateAndSave {
 			if (products == null)
 				products = new ArrayList<DetallePedidoVentaDTO>();
 			for (DetallePedidoVentaDTO detalleEliminado : detallesActuales) {
-				detalleEliminado.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+				detalleEliminado.setEstado(SharedConstants.STATE_INACTIVE);
 				products.add(detalleEliminado);
 			}
 		}
@@ -122,13 +122,13 @@ public class CallProductValidateAndSave {
 				detalle = detallePedidoVentaService.guardar(detalle, token);
 			} else {
 				if (detalle.getEstado() != null
-						&& detalle.getEstado().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0) {
+						&& detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					detalle.setTransaccionInactivo(transaction);
 					detallePedidoVentaService.inactivar(detalle, token);
 				} else {
 					// NO he entendido porque el estado llega null
 					if (detalle.getEstado() == null)
-						detalle.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						detalle.setEstado(SharedConstants.STATE_ACTIVE);
 					// aqui seria bueno validar que el detalle si se el correcto
 
 					detallePedidoVentaService.actualizar(detalle, token);

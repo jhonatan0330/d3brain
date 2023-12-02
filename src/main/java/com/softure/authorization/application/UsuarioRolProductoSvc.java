@@ -2,13 +2,11 @@ package com.softure.authorization.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
 import com.softure.authorization.infrastructure.UsuarioRolProductoMapper;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -90,7 +88,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 		UsuarioRolProductoFilterDTO existeFilter =  new UsuarioRolProductoFilterDTO();
 		existeFilter.setProducto(dto.getProducto());
 		existeFilter.setDocumento(dto.getDocumento());
-		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		UsuarioRolProductoDTO existe = consultaUnica(existeFilter);
 		if(existe !=null) throw new ServerException("Este producto ya tiene promocion para este usuario. " + existe.getProductoNombre() );
 		if(dto.getNombre()!=null && dto.getNombre().isEmpty()) dto.setNombre(null);

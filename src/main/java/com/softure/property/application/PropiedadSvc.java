@@ -21,6 +21,7 @@ import com.accounting.plan.application.CreateAccountTemplateService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
@@ -38,7 +39,6 @@ import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.CambioSvc;
@@ -193,7 +193,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			bd.setTipo(valorDefinido.getOrigen());
 			bd.setKey(valorDefinido.getCodigo());
 		}
-		bd.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd = super.update(bd);
 		if (bd.getKey().contains("SQL")) {
 			bd.setLlaveTabla(SoftureUtil.formatFunction(bd.getLlaveTabla()));
@@ -313,7 +313,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
 			existeFilter.setCampo(dto.getCampo());
 			existeFilter.setPropiedadValor(dto.getPropiedadValor());
-			existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			existeFilter.setRol(dto.getRol());
 			existeFilter.setRolExcluyente(dto.getRolExcluyente());
 			existeFilter.setUsuario(dto.getUsuario());
@@ -420,7 +420,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				break;
 			case Propiedades.PLANTILLA_TIPO_ROL:
 				RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
-				rolFiltroFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				rolFiltroFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				rolFiltroFilter.setPlantilla(plantillaPrincipal.getLlaveTabla());
 				RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
 				if (rolFiltro == null) {// Si la propiedad ya se genero no hay que duplicar
@@ -453,7 +453,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		existeFilter.setCampo(dto.getCampo());
 		if (dto.getPropiedadValor() == null)
 			existeFilter.setPropiedadValor(consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
-		existeFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		existeFilter.setKey(dto.getKey());
 		existeFilter.setTipo(dto.getTipo());
 		PropiedadDTO existe = consultaUnica(existeFilter);
@@ -465,7 +465,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
 		valorDefinidoFilter.setCodigo(key);
 		valorDefinidoFilter.setOrigen(tipo);
-		valorDefinidoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		valorDefinidoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		PropiedadValorDefinidoDTO valorDefinido = valorDefinidoService.consultaUnica(valorDefinidoFilter);
 		if (valorDefinido == null)
 			throw new ServerException("No se encontro la propiedad " + key + " del tipo " + tipo);
@@ -478,7 +478,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			identificadorPlantilla(dto, token);
 			RolAccesoFilterDTO rolFilter = new RolAccesoFilterDTO();
 			rolFilter.setPlantilla(dto.getValor());
-			rolFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			rolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			rol = rolService.consultaUnica(rolFilter);
 			if (rol == null)
 				throw new ServerException("No se encontro rol con Id, nombre o Codigo que concuerde con el Rol");
@@ -511,12 +511,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (plantilla == null) {// Consulto por nombre
 			DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 			plantillaFilter.setNombre(valor.toUpperCase());
-			plantillaFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			plantillaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			plantilla = plantillaService.consultaUnica(plantillaFilter);
 			if (plantilla == null) {// Consulto por codigo
 				plantillaFilter = new DocumentoPlantillaFilterDTO();
 				plantillaFilter.setCodigo(valor.toUpperCase());
-				plantillaFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				plantillaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				plantilla = plantillaService.consultaUnica(plantillaFilter);
 			}
 		}
@@ -597,7 +597,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
 						filtro.setCampo(dto.getCampo());
 						filtro.setPropiedadValor("PROP_19");
-						filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						filtro.setEstado(SharedConstants.STATE_ACTIVE);
 						PropiedadDTO filtroPlantilla = consultaUnica(filtro);
 						if (filtroPlantilla == null)
 							throw new ServerException(
@@ -621,7 +621,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					throw new ServerException("ID de la plantilla configurado en el campo no es valido");
 				} else {
 					ProductoCaracteristicaFilterDTO campoProductoFilter = new ProductoCaracteristicaFilterDTO();
-					campoProductoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+					campoProductoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 					campoProductoFilter.setBase(producto.getLlaveTabla());
 					campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
 					ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService
@@ -639,13 +639,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			DocumentoPlantillaCaracteristicaFilterDTO campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 			campoFilter.setNombre(dto.getValor().toUpperCase());
 			campoFilter.setPlantilla(plantilla.getLlaveTabla());
-			campoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			campo = campoService.consultaUnica(campoFilter);
 			if (campo == null) {
 				campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 				campoFilter.setCodigo(dto.getValor().toUpperCase());
 				campoFilter.setPlantilla(plantilla.getLlaveTabla());
-				campoFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				campo = campoService.consultaUnica(campoFilter);
 				if (campo == null)
 					throw new ServerException("El campo " + dto.getTexto() + " no fue reconocido en la plantilla "
@@ -662,7 +662,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
 		filtro.setCampo(templateId);
 		filtro.setPropiedadValor("PROP_242");
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		return consultaUnica(filtro);
 	}
 	
@@ -671,7 +671,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
 		filtro.setCampo(field);
 		filtro.setPropiedadValor("PROP_243");
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		PropiedadDTO filtroPlantilla = consultaUnica(filtro);
 		return filtroPlantilla;
 	}
@@ -680,7 +680,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		BodegaDTO bodega = bodegaService.consultaXId(dto.getValor());
 		if (bodega == null) {
 			BodegaFilterDTO bodegaFilter = new BodegaFilterDTO();
-			bodegaFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			bodegaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			List<BodegaDTO> bodegas = bodegaService.listarConsulta(bodegaFilter);
 			if (bodegas == null || bodegas.isEmpty())
 				throw new ServerException("No se tienen bodegas creadas");
@@ -719,7 +719,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (catalog == null)
 				throw new ServerException("No se encontro un catalogo con nombre o Codigo que concuerde");
 		}
-		if (catalog.getState().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (catalog.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El catalogo no se encuentra ACTIVO");
 		dto.setValor(catalog.getKey());
 		dto.setTexto(catalog.getName());
@@ -738,7 +738,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (categoria == null) {
 			CategoriaProductoFilterDTO categoriaFilter = new CategoriaProductoFilterDTO();
 			categoriaFilter.setNombre(dto.getValor().toUpperCase());
-			categoriaFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			categoriaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			categoria = categoriaProductoService.consultaUnica(categoriaFilter);
 			if (categoria == null)
 				throw new ServerException("No se encontro categoria con Id, nombre o Codigo que concuerde");
@@ -754,12 +754,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (usuario == null) {
 			UsuarioFilterDTO usuarioFilter = new UsuarioFilterDTO();
 			usuarioFilter.setIdentificacion(dto.getValor());
-			usuarioFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			usuarioFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			usuario = usuarioService.consultaUnica(usuarioFilter);
 			if (usuario == null) {// Consulto por codigo
 				usuarioFilter = new UsuarioFilterDTO();
 				usuarioFilter.setNombre(dto.getValor().toUpperCase());
-				usuarioFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				usuarioFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				usuario = usuarioService.consultaUnica(usuarioFilter);
 				if (usuario == null)
 					throw new ServerException("No se encontro usuario con Id, nombre o Codigo que concuerde");
@@ -774,7 +774,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (tarifario == null) {
 			TarifarioFilterDTO tarifarioFilter = new TarifarioFilterDTO();
 			tarifarioFilter.setNombre(dto.getValor().toUpperCase());
-			tarifarioFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			tarifarioFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			tarifario = tarifarioService.consultaUnica(tarifarioFilter);
 			if (tarifario == null)
 				throw new ServerException(
@@ -790,12 +790,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
 			reporteFilter.setNombre(dto.getValor().toUpperCase());
 			// Busco los activos porque los que son subreportes no se muestran
-			reporteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			reporteFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			reporte = reporteService.consultaUnica(reporteFilter);
 			if (reporte == null) {// Consulto por codigo
 				reporteFilter = new ReporteBaseFilterDTO();
 				reporteFilter.setCodigo(dto.getValor().toUpperCase());
-				reporteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				reporteFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				reporte = reporteService.consultaUnica(reporteFilter);
 				if (reporte == null)
 					throw new ServerException("No se encontro reporte con Id, nombre o Codigo que concuerde");
@@ -818,7 +818,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			ProcesoEstadoFilterDTO estadoFiltro = new ProcesoEstadoFilterDTO();
 			estadoFiltro.setProceso(plantilla.getProceso());
 			estadoFiltro.setNombre(dto.getValor().toUpperCase());
-			estadoFiltro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			estadoFiltro.setEstado(SharedConstants.STATE_ACTIVE);
 			estado = estadoService.consultaUnica(estadoFiltro);
 			if (estado == null) {
 				ProcesoDTO proceso = procesoService.consultaXId(plantilla.getProceso());
@@ -1162,7 +1162,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			// VAlido por el nombre
 			MensajePlantillaCorreoFilterDTO bdFilter = new MensajePlantillaCorreoFilterDTO();
 			bdFilter.setNombre(dto.getValor().toUpperCase());
-			bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			bd = mensajeService.consultaUnica(bdFilter);
 			if (bd == null)
 				throw new ServerException("El mensaje no fue reconocido");
@@ -1178,12 +1178,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			// VAlido por el nombre
 			WebServiceFilterDTO bdFilter = new WebServiceFilterDTO();
 			bdFilter.setNombre(dto.getValor().toUpperCase());
-			bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			bd = apiService.consultaUnica(bdFilter);
 			if (bd == null) {// Consulto por codigo
 				bdFilter = new WebServiceFilterDTO();
 				bdFilter.setCodigo(dto.getValor().toUpperCase());
-				bdFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				bd = apiService.consultaUnica(bdFilter);
 			}
 			if (bd == null)

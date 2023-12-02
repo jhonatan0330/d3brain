@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -13,7 +14,6 @@ import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 
@@ -58,7 +58,7 @@ public class PropertyNavigateIntoRelationsToFindFieldsService {
 								&& Propiedades.obtenerValor(iField.getCampoDTO(), Propiedades.MULTIPLE) != null) {
 							DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
 							relacionExpedienteFilter.setCampoMaestro(iField.getLlaveTabla());
-							relacionExpedienteFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+							relacionExpedienteFilter.setEstado(SharedConstants.STATE_ACTIVE);
 							List<DocumentoRelacionExpedienteDTO> anidateDocuments = documentRelationService
 									.listarConsulta(relacionExpedienteFilter);
 							if (anidateDocuments != null && !anidateDocuments.isEmpty()) {

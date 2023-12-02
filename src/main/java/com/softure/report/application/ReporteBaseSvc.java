@@ -21,6 +21,7 @@ import com.softure.report.domain.ReporteEjecucionDTO;
 import com.softure.report.domain.ReporteEjecucionFilterDTO;
 import com.softure.report.infrastructure.ReporteBaseMapper;
 import com.softure.upload.application.UploadSvc;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -28,7 +29,6 @@ import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.sql.DataSource;
 import javax.annotation.PostConstruct;
@@ -123,7 +123,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 // BEGIN region aditionalMethods
     public List<ReporteBaseDTO> listarDisponiblesDocumento(String documento) throws ServerException {
         ReporteBaseFilterDTO filtro = new ReporteBaseFilterDTO();
-        filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+        filtro.setEstado(SharedConstants.STATE_ACTIVE);
         filtro.setPlantilla(documento);
         List<ReporteBaseDTO> result = listarConsulta(filtro);
         for (ReporteBaseDTO reporteBaseDTO : result) {
@@ -202,7 +202,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
         ReporteBaseFilterDTO filter = new ReporteBaseFilterDTO();
         filter.setCodigo(code);
         filter.setPlantilla(template);
-        filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+        filter.setEstado(SharedConstants.STATE_ACTIVE);
         return consultaUnica(filter);
     }
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
@@ -13,7 +14,6 @@ import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.TrazabilidadProductoInventarioMapper;
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -106,7 +106,7 @@ public class TrazabilidadProductoInventarioSvc
 			trazabilidad.setFecha(new Date());
 
 		ProductoInventarioFilterDTO inventarioFilter = new ProductoInventarioFilterDTO();
-		inventarioFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		inventarioFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		inventarioFilter.setProducto(dto.getProducto());
 		inventarioFilter.setBodega(dto.getBodega());
 		// En aprobar estimacion de softure se tiene que crear la bodega en el auxiliar
@@ -119,7 +119,7 @@ public class TrazabilidadProductoInventarioSvc
 		// LOGICA DE INVENTARIOS
 		if (inventario != null) {
 			ProductoDTO producto = productoService.consultaXId(inventario.getProducto());
-			if (producto.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+			if (producto.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("El producto no se encuentra activo: " + producto.getNombre());
 			trazabilidad.setCantidadInicial(inventario.getCantidadActual());
 			trazabilidad.setCantidadFinal(trazabilidad.getCantidadInicial().add(trazabilidad.getCantidad()));

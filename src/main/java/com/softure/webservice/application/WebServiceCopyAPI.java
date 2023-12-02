@@ -5,9 +5,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.domain.WebServiceDTO;
@@ -26,7 +26,7 @@ public class WebServiceCopyAPI {
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
-		if (service.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (service.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El servicio " + service.getNombre() + " no se encuentra Activo." + serviceId);
 		// Obtengo propiedades del servicio
 		String userId = webServiceSvc.getUserFlex(token);

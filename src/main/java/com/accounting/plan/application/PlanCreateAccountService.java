@@ -9,8 +9,8 @@ import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service("PlanCreateAccountTemplateAccountingService")
 public class PlanCreateAccountService {
@@ -44,7 +44,7 @@ public class PlanCreateAccountService {
 			filter.setParent(account.getParent());
 			AccountDTO parentAccount = accountService.getById(account.getParent());
 			if(parentAccount == null) throw new ServerException("En la cuenta " +account.getName() +" el nodo principal " +account.getParent()+ " no se encuentra en la BD por su identificador");
-			if(parentAccount.getState().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("La cuenta" +parentAccount.getName() +" no se encuentra activa");
+			if(parentAccount.getState().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("La cuenta" +parentAccount.getName() +" no se encuentra activa");
 			prefixWBS = parentAccount.getWbs() + ".";
 			account.setLevel(parentAccount.getLevel()+1);
 			if(parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL)==0) {
@@ -52,7 +52,7 @@ public class PlanCreateAccountService {
 				accountService.update(parentAccount, token);
 			}
 		}
-		filter.setState(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setState(SharedConstants.STATE_ACTIVE);
 		int countAccount = accountService.count(filter);
 		account.setWbs(prefixWBS + String.format("%1$4s", (countAccount+1)));
 		account.setStatus(AccountConst.STATUS_PLANNING);

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.math.BigDecimal;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.AuxiliarProcesoBodega;
@@ -18,7 +19,6 @@ import com.softure.inventory.domain.DeduccionProductoFilterDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.DeduccionProductoMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -160,7 +160,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 		}
 		DeduccionProductoFilterDTO filter = new DeduccionProductoFilterDTO();
 		filter.setDocumento(documento);
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<DeduccionProductoDTO> deduccionesActuales = listarConsulta(filter);
 		if(deduccionesActuales==null) deduccionesActuales = new ArrayList<DeduccionProductoDTO>();
 		for(DeduccionProductoDTO iDeduccion : deduccionesActuales) {

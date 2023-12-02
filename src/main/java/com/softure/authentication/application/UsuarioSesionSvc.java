@@ -5,12 +5,11 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -117,7 +116,7 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 	
 	public UsuarioSesionDTO checkToken(String token)throws ServerException{
 		UsuarioSesionDTO result = consultaXId(token);
-		if(result !=null && result.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0  
+		if(result !=null && result.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0  
 				&& (result.getFechaCierre()== null || result.getFechaCierre().getTime() > new Date().getTime())) {
 			return result;
 		}

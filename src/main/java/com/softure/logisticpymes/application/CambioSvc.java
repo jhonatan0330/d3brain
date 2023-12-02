@@ -5,9 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -90,7 +89,7 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 		CambioFilterDTO filtro = new CambioFilterDTO();
 		int cantidad = contarResultados(filtro);
 		filtro = new CambioFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setSesionActiva(token);
 		List<CambioDTO> activas = listarConsulta(filtro);
 		if(activas!=null && activas.size()!=0) {
@@ -111,7 +110,7 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 	
 	public CambioDTO obtenerCambioGrabando(String token) throws ServerException{
 		CambioFilterDTO filtro = new CambioFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setSesionActiva(token);
 		List<CambioDTO> cambios = listarConsulta(filtro);
 		if(cambios==null || cambios.isEmpty()) throw new ServerException("CHANGE: No se encuentra un cambio activo y grabando para registrar el cambio");

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.api.domain.DocumentFilterRequest;
 import com.softure.api.domain.DocumentResponse;
@@ -15,7 +16,6 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -40,7 +40,7 @@ public class ApiGetService {
 		if(filter.getId()==null) {
 			filterDTO.setPlantilla(templateBD.getLlaveTabla());
 			filterDTO.setNombre(filter.getCode());
-			if(filter.getActive()==null) filter.setActive(ConstantesGenerales.ESTADO_ACTIVO);
+			if(filter.getActive()==null) filter.setActive(SharedConstants.STATE_ACTIVE);
 			filterDTO.setEstado(filter.getActive());
 			filterDTO.setPaginacionRegistroInicial(filter.getPage()*filter.getSize());
 			filterDTO.setPaginacionRegistroFinal((filter.getPage()+1)*filter.getSize());

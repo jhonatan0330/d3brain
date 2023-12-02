@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.mail.application.MailGenerateMessageService;
 // END region interImport
 import com.softure.notification.domain.ActividadDTO;
@@ -78,7 +78,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ActividadDTO inactivar(ActividadDTO dto, String token) throws ServerException {
 		// BEGIN Actividad_inactivar
-		dto.setEstado(ConstantesGenerales.ESTADO_INACTIVO);
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		dto.setFechaInactivo(new Date());
 		dto.setUsuarioInactivo(getUserFlex(token));
 		return super.update(dto);
@@ -125,7 +125,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 			throw new ServerException("Al guardar el responsable no viene el documento");
 		ActividadFilterDTO anteriorFilter = new ActividadFilterDTO();
 		anteriorFilter.setDocumento(dto.getDocumento());
-		anteriorFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		anteriorFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		ActividadDTO anterior = consultaUnica(anteriorFilter);
 		if (anterior != null) {
 			if (dto.getResponsable() != null) {
@@ -151,7 +151,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		UsuarioDTO usuario = usuarioService.consultaXId(id);
 		if (usuario == null)
 			throw new ServerException("Error al consultar el usuario responsable por llave");
-		if (usuario.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El responsable que desea asignar no esta activo.\n" + usuario.getNombre());
 		return usuario;
 	}
@@ -159,7 +159,7 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	public List<ActividadDTO> listUserActivities(String token) throws ServerException {
 		ActividadFilterDTO pd = new ActividadFilterDTO();
 		pd.setResponsable(getUserFlex(token));
-		pd.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		pd.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ActividadDTO> result = listarConsulta(pd);
 		if (!result.isEmpty()) {
 			List<String> ids = new ArrayList<>();

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Date;
 import java.math.BigDecimal;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
@@ -13,8 +14,6 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.ProductoInventarioMapper;
-import com.softure.java.cons.ConstantesGenerales;
-// END region interImport
 
 import javax.annotation.PostConstruct;
 
@@ -115,7 +114,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 		unicoFilter.setProducto(dto.getProducto());
 		ProductoInventarioDTO unico = consultaUnica(unicoFilter);
 		if(unico!=null){
-			if(unico.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)==0){
+			if(unico.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0){
 				throw new ServerException("Este producto " + product.getNombre() +" ya se encuentra referenciado para controlar en esta bodega " + store.getNombre());
 			}else{
 				throw new ServerException("Este producto " + product.getNombre() +" se encuentra inactivo para manejo de inventarios en esta bodega " + store.getNombre());
@@ -141,7 +140,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	public List<ProductoInventarioDTO> getByProducto( String id)
 			throws ServerException {
 		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setProducto(id);
 		return super.listarConsulta(filter);
 	}

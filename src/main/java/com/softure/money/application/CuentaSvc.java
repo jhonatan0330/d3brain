@@ -5,9 +5,9 @@ import java.util.List;
 // BEGIN region interImport
 import java.math.BigDecimal;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 
 import javax.annotation.PostConstruct;
 
@@ -108,7 +108,7 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	public void inactivarDocumento(PedidoVentaDTO dto, String token) throws ServerException {
 		CuentaFilterDTO cuentaFilter = new CuentaFilterDTO();
 		cuentaFilter.setDocumento(dto.getLlaveTabla());
-		cuentaFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		cuentaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		CuentaDTO cuenta = consultaUnica(cuentaFilter);
 		if(cuenta!=null){
 			inactivar(cuenta, token);

@@ -5,11 +5,11 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.ArrayList;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -76,7 +76,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		ProcesoTransicionDTO bd = consultaXId(dto.getLlaveTabla());
 		if(bd.getEstadoPartida()==null) {
 			PedidoVentaFilterDTO contar = new PedidoVentaFilterDTO();
-			contar.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			contar.setEstado(SharedConstants.STATE_ACTIVE);
 			contar.setPlantilla(bd.getPlantilla());
 			int cantidad = pedidoService.contarResultados(contar);
 			if(cantidad != 0) {
@@ -182,8 +182,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			if(estado.getProceso().compareTo(dto.getProceso())!=0)throw new ServerException("La plantilla del estado de partida debe ser de la misma maquina de estados");
 			if(dto.getPlantilla()==null && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)==0) throw new ServerException("Transicion sin formulario");
 			if (estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API)==0) {
-				if(dto.getNombre().compareTo(ConstantesGenerales.OK)!=0 && dto.getNombre().compareTo(ConstantesGenerales.ERROR)!=0
-						&& dto.getNombre().compareTo(ConstantesGenerales.INCOMPLETE)!=0) {
+				if(dto.getNombre().compareTo(SharedConstants.OK)!=0 && dto.getNombre().compareTo(SharedConstants.ERROR)!=0
+						&& dto.getNombre().compareTo(SharedConstants.INCOMPLETE)!=0) {
 					throw new ServerException("Las opciones que puede tener un Iterador son OK, ERROR o INCOMPLETE");
 				}
 			}
@@ -191,7 +191,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			if(dto.getPlantilla()==null) throw new ServerException("Transicion sin formulario");
 			// Validar que la transicion de inicio no se use en 2 procesos como inicial
 			ProcesoTransicionFilterDTO filtroValidacion = new ProcesoTransicionFilterDTO();
-			filtroValidacion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroValidacion.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroValidacion.setPlantilla(dto.getPlantilla());
 			List<ProcesoTransicionDTO> filtradas = listarConsulta(filtroValidacion);
 			if(filtradas!=null &&!filtradas.isEmpty()) {
@@ -204,9 +204,9 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			}
 			//
 			if(dto.getLlaveTabla()==null) {
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_ACTIVO, dto.getEstadoLLegada());
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_INACTIVO, null);
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), ConstantesGenerales.ESTADO_FINALIZADO, null);
+				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_ACTIVE, dto.getEstadoLLegada());
+				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_INACTIVE, null);
+				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_COMPLETE, null);
 			}
 			//dto.setDocumentador(true);
 		}
@@ -223,7 +223,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			if(procesoEstado ==null) {
 				//Valido que si no tenia proceso le coloque valor a todos los documentos del proceso
 				ProcesoEstadoFilterDTO estadoFiltro = new ProcesoEstadoFilterDTO();
-				estadoFiltro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				estadoFiltro.setEstado(SharedConstants.STATE_ACTIVE);
 				estadoFiltro.setProceso(proceso);
 				estadoFiltro.setEstadoDocumento(estadoBase);
 				List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(estadoFiltro);

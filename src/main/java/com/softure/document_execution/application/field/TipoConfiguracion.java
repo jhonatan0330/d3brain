@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
@@ -23,7 +24,6 @@ import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.logisticpymes.domain.CambioFilterDTO;
@@ -112,7 +112,7 @@ public class TipoConfiguracion {
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(proceso.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(proceso.getCodigo());
 						adaptado.setDescripcion(proceso.getNombre());
 						pCampo.setPrincipal(adaptado);
@@ -164,7 +164,7 @@ public class TipoConfiguracion {
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(cambio.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(cambio.getNombre());
 						adaptado.setDescripcion(cambio.getMotivo());
 						pCampo.setPrincipal(adaptado);
@@ -177,7 +177,7 @@ public class TipoConfiguracion {
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(encuesta.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(encuesta.getNombre());
 						// adaptado.setDescripcion(encuesta.getNombre());
 						pCampo.setPrincipal(adaptado);
@@ -190,7 +190,7 @@ public class TipoConfiguracion {
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(bodega.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(bodega.getNombre());
 						adaptado.setDescripcion(bodega.getNombre());
 						pCampo.setPrincipal(adaptado);
@@ -218,7 +218,7 @@ public class TipoConfiguracion {
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(tarifario.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(tarifario.getNombre());
 						// adaptado.setDescripcion(encuesta.getNombre());
 						pCampo.setPrincipal(adaptado);
@@ -410,7 +410,7 @@ public class TipoConfiguracion {
 			case CATEGORIA_PRODUCTOS:
 				CategoriaProductoFilterDTO categoria = new CategoriaProductoFilterDTO();
 				categoria.setFiltroParametro(pCampo.getFiltroParametro());
-				categoria.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				categoria.setEstado(SharedConstants.STATE_ACTIVE);
 				List<CategoriaProductoDTO> categorias = categoriaProductoService.listarConsulta(categoria);
 				if (categorias != null && !categorias.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
@@ -427,14 +427,14 @@ public class TipoConfiguracion {
 			case PROCESO:
 				ProcesoFilterDTO proceso = new ProcesoFilterDTO();
 				proceso.setFiltroParametro(pCampo.getFiltroParametro());
-				proceso.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				proceso.setEstado(SharedConstants.STATE_ACTIVE);
 				List<ProcesoDTO> procesos = procesoService.listarConsulta(proceso);
 				if (procesos != null && !procesos.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (ProcesoDTO iProducto : procesos) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iProducto.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iProducto.getCodigo());
 						adaptado.setDescripcion(iProducto.getNombre());
 						pBase.getDocumentos().add(adaptado);
@@ -444,7 +444,7 @@ public class TipoConfiguracion {
 			case PRODUCTOS:
 				ProductoFilterDTO producto = new ProductoFilterDTO();
 				producto.setFiltroParametro(pCampo.getFiltroParametro());
-				producto.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				producto.setEstado(SharedConstants.STATE_ACTIVE);
 				List<ProductoDTO> productos = productoService.listarConsulta(producto);
 				if (productos != null && !productos.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
@@ -490,7 +490,7 @@ public class TipoConfiguracion {
 			case ROLES:
 				RolAccesoFilterDTO rolFiltro = new RolAccesoFilterDTO();
 				rolFiltro.setNombre(pCampo.getFiltroParametro());
-				rolFiltro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				rolFiltro.setEstado(SharedConstants.STATE_ACTIVE);
 				List<RolAccesoDTO> roles = rolService.listarConsulta(rolFiltro);
 				if (roles != null && !roles.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
@@ -507,14 +507,14 @@ public class TipoConfiguracion {
 			case CAMBIO:
 				CambioFilterDTO cambio = new CambioFilterDTO();
 				cambio.setNombre(pCampo.getFiltroParametro());
-				cambio.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				cambio.setEstado(SharedConstants.STATE_ACTIVE);
 				List<CambioDTO> cambios = cambioService.listarConsulta(cambio);
 				if (cambios != null && !cambios.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (CambioDTO iCambio : cambios) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iCambio.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iCambio.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
@@ -524,14 +524,14 @@ public class TipoConfiguracion {
 			case ENCUESTAS:
 				EncuestaFilterDTO encuesta = new EncuestaFilterDTO();
 				encuesta.setFiltroParametro(pCampo.getFiltroParametro());
-				encuesta.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				encuesta.setEstado(SharedConstants.STATE_ACTIVE);
 				List<EncuestaDTO> encuestas = encuestaService.listarConsulta(encuesta);
 				if (encuestas != null && !encuestas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (EncuestaDTO iEncuesta : encuestas) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iEncuesta.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iEncuesta.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
@@ -541,14 +541,14 @@ public class TipoConfiguracion {
 			case BODEGAS:
 				BodegaFilterDTO bodega = new BodegaFilterDTO();
 				bodega.setFiltroParametro(pCampo.getFiltroParametro());
-				bodega.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				bodega.setEstado(SharedConstants.STATE_ACTIVE);
 				List<BodegaDTO> bodegas = bodegaService.listarConsulta(bodega);
 				if (bodegas != null && !bodegas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (BodegaDTO iBodega : bodegas) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iBodega.getLlaveTabla());
-						adaptado.setImagen(ConstantesGenerales.LOGO);
+						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iBodega.getCodigo());
 						adaptado.setDescripcion(iBodega.getNombre());
 						pBase.getDocumentos().add(adaptado);
@@ -574,14 +574,14 @@ public class TipoConfiguracion {
 			case TARIFARIO:
 				TarifarioFilterDTO tarifario = new TarifarioFilterDTO();
 				tarifario.setFiltroParametro(pCampo.getFiltroParametro());
-				tarifario.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+				tarifario.setEstado(SharedConstants.STATE_ACTIVE);
 				List<TarifarioDTO> tarifarios = tarifarioService.listarConsulta(tarifario);
 				if (tarifarios != null && !tarifarios.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (TarifarioDTO itarifario : tarifarios) {
 						PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 						adaptadoT.setLlaveTabla(itarifario.getLlaveTabla());
-						adaptadoT.setImagen(ConstantesGenerales.LOGO);
+						adaptadoT.setImagen(SharedConstants.LOGO);
 						adaptadoT.setNombre(itarifario.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptadoT);

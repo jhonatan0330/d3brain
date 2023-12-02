@@ -9,12 +9,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -89,7 +89,7 @@ public class MailGenerateMessageService {
                 for (PropiedadDTO iPropiedad : destinatariosFijos) {
                     if (iPropiedad.getValor().compareTo("*") != 0) {
                         UsuarioDTO pUser = usuarioService.consultaXId(iPropiedad.getValor());
-                        if (pUser != null && pUser.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) == 0) {
+                        if (pUser != null && pUser.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
                             fijos.add(pUser);
                         }
                     }

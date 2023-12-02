@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.mail.domain.MensajeDTO;
@@ -63,7 +63,7 @@ public class MailSendMessageService {
 			}
 			if (servidor == null)
 				throw new ServerException("No se encuentra el servidor de correo configurado");
-			if (servidor.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO) != 0)
+			if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
 			JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidor);
 			MimeMessage mimeMessage = mailSender.createMimeMessage();

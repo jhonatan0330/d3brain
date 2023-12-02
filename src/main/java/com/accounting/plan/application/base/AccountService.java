@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
 import com.accounting.plan.infrastructure.AccountMapper;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service("AccountAccountingService")
 public class AccountService {
@@ -92,9 +92,9 @@ public class AccountService {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
-		if (dto.getState().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0)
+		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)
 			throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setState(ConstantesGenerales.ESTADO_INACTIVO);
+		dto.setState(SharedConstants.STATE_INACTIVE);
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {

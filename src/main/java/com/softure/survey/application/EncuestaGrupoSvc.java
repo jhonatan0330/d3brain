@@ -5,8 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -143,7 +143,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 		
 		filtroPregunta = new EncuestaPreguntaFilterDTO();
 		filtroPregunta.setGrupo(grupoBase);
-		filtroPregunta.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroPregunta.setEstado(SharedConstants.STATE_ACTIVE);
 		List<EncuestaPreguntaDTO> preguntas = encuestaPreguntaSvc.listarConsulta(filtroPregunta);
 		for (EncuestaPreguntaDTO encuestaPreguntaDTO : preguntas) {
 			preguntaBase = encuestaPreguntaDTO.getLlaveTabla();
@@ -153,7 +153,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 
 			filtroOpcion = new EncuestaOpcionRespuestaFilterDTO();
 			filtroOpcion.setPregunta(preguntaBase);
-			filtroOpcion.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filtroOpcion.setEstado(SharedConstants.STATE_ACTIVE);
 			List<EncuestaOpcionRespuestaDTO> opciones = encuestaOpcionRespuestaSvc.listarConsulta(filtroOpcion);
 			for (EncuestaOpcionRespuestaDTO encuestaOpcionRespuestaDTO : opciones) {
 				encuestaOpcionRespuestaDTO.setLlaveTabla(null);
@@ -178,7 +178,7 @@ public class EncuestaGrupoSvc extends BasicSvc<EncuestaGrupoDTO, EncuestaGrupoFi
 	public List<EncuestaGrupoDTO> getGroups(String surveyId, String token) throws ServerException {
 		EncuestaGrupoFilterDTO filtroGrupo = new EncuestaGrupoFilterDTO();
 		filtroGrupo.setEncuesta(surveyId);
-		filtroGrupo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroGrupo.setEstado(SharedConstants.STATE_ACTIVE);
 		List<EncuestaGrupoDTO> grupos = listarConsulta(filtroGrupo);
 		for (EncuestaGrupoDTO encuestaGrupoDTO : grupos) {
 			encuestaGrupoDTO.setPreguntas(encuestaPreguntaSvc.getQuestions(encuestaGrupoDTO.getLlaveTabla(), token));

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.accounting.voucher.infrastructure.VoucherMapper;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 
 @Service("VoucherAccountingService")
 public class VoucherService {
@@ -92,9 +92,9 @@ public class VoucherService {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
-		if (dto.getState().compareTo(ConstantesGenerales.ESTADO_INACTIVO) == 0)
+		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)
 			throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setState(ConstantesGenerales.ESTADO_INACTIVO);
+		dto.setState(SharedConstants.STATE_INACTIVE);
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {

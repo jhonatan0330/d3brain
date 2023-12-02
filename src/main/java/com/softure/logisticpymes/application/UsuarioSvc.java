@@ -2,14 +2,13 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 import com.softure.logisticpymes.infrastructure.UsuarioMapper;
@@ -64,7 +63,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		if(bd.getIdentificacion().compareTo(dto.getIdentificacion())!=0){
 			UsuarioAutenticacionFilterDTO autenticacionFilter = new UsuarioAutenticacionFilterDTO();
 			autenticacionFilter.setUsuario(dto.getLlaveTabla());
-			autenticacionFilter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			autenticacionFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			UsuarioAutenticacionDTO autenticacion = usuarioAutenticacionSvc.consultaUnica(autenticacionFilter);
 			if(autenticacion!=null){
 				if(autenticacion.getClave().compareTo(autenticacion.getSesion())==0)autenticacion.setClave(dto.getIdentificacion());
@@ -83,7 +82,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		// BEGIN Usuario_inactivar
 		dto = super.inactivar(dto, token);
 		ActividadFilterDTO filtro = new ActividadFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setResponsable(dto.getLlaveTabla());
 		int cont = actividadSvc.contarResultados(filtro);
 		if(cont!=0) {
@@ -136,9 +135,9 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		// BEGIN Usuario_guardar
 		UsuarioFilterDTO filtro  = new UsuarioFilterDTO();
 		filtro.setIdentificacion(dto.getIdentificacion());
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		if(contarResultados(filtro)!=0) throw new ServerException("Ya existe ese ID en la BD y esta activo.\n Id : " + dto.getIdentificacion());
-		if(dto.getImagen()==null) dto.setImagen(ConstantesGenerales.AVATAR);
+		if(dto.getImagen()==null) dto.setImagen(SharedConstants.AVATAR);
 		if(dto.getCorreo()!=null) dto.setCorreo(dto.getCorreo().toLowerCase());
 		return super.guardar(dto, token);
 		// END Usuario_guardar

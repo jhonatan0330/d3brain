@@ -2,9 +2,8 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -89,7 +88,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		// BEGIN region asignarConsecutivo
 		if(dto.getLlaveTabla()==null) throw new ServerException("Para asignar el consecutivo se debe enviar la clave del consecutivo");
 		ConsecutivoDTO consecutivoBD = consultaXId(dto.getLlaveTabla());
-		if(consecutivoBD.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("Este consecutivo no se encuentra activo." + consecutivoBD.getNombre());
+		if(consecutivoBD.getEstado().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("Este consecutivo no se encuentra activo." + consecutivoBD.getNombre());
 		if(consecutivoBD.getManual()){
 			if(dto.getNumeroActual().compareTo(BigDecimal.ZERO)==0)throw new ServerException("El numero no puede ser cero");
 			consecutivoBD.setNumeroActual(dto.getNumeroActual());
@@ -142,7 +141,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	public ConsecutivoDTO crear2Opcion(String consecutivo, String campo, String opcion, String token) throws ServerException {
 		ConsecutivoDTO actual = consultaXId(consecutivo);
 		if(actual==null) throw new ServerException("Revisa el id del consecutivo");
-		if(actual.getEstado().compareTo(ConstantesGenerales.ESTADO_ACTIVO)!=0) throw new ServerException("Consecutivo inactivo " + actual.getNombre());
+		if(actual.getEstado().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("Consecutivo inactivo " + actual.getNombre());
 		
 		
 		ConsecutivoDTO nuevo = new ConsecutivoDTO();
@@ -170,7 +169,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	
 	public ConsecutivoDTO consultarConsecutivoManual() throws ServerException {
 		ConsecutivoFilterDTO filtro = new ConsecutivoFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setManualFilter(true);
 		List<ConsecutivoDTO> manuales = listarConsulta(filtro);
 		if(manuales==null || manuales.isEmpty()) throw new ServerException("No se tiene configurados consecutivos manuales activos para las personas");

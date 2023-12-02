@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -48,7 +48,7 @@ public class CallUpdateInformativeField {
 					if(dependiente.getExpedientes()==null || dependiente.getExpedientes().isEmpty()) {
 						PedidoVentaFilterDTO filter = new PedidoVentaFilterDTO();
 						filter.setCampoOrigen(dependiente.getCampo());
-						filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+						filter.setEstado(SharedConstants.STATE_ACTIVE);
 						filter.setTextoFiltro(dependiente.getDocumento());
 						filter.setSecurityToken(token);
 						dependiente.setCampoDTO(fieldService.cargarComplementos(dependiente.getCampoDTO(), token));

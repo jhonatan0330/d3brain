@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.document_transition.infrastructure.DocumentoRelacionGestorMapper;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("documentoRelacionGestorService")
@@ -149,7 +149,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		if (actual !=null) {
 			DocumentoRelacionGestorFilterDTO filter = new DocumentoRelacionGestorFilterDTO();
 			filter.setEstadorepetidoFilter(false);
-			filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+			filter.setEstado(SharedConstants.STATE_ACTIVE);
 			filter.setDocumentoPrincipal(principal);
 			filter.setEstadoFinal(estadoFinal);
 			List<DocumentoRelacionGestorDTO> actuales = listarConsulta(filter);

@@ -13,10 +13,10 @@ import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
@@ -65,12 +65,12 @@ public class PlanCreateCatalogOrganizationService {
 			
 
 		DocumentoPlantillaFilterDTO filterTemplate = new DocumentoPlantillaFilterDTO();
-		filterTemplate.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filterTemplate.setEstado(SharedConstants.STATE_ACTIVE);
 		filterTemplate.setPaginacionRegistroFinal(2000);
 		List<DocumentoPlantillaDTO> templates = templateService.listarConsulta(filterTemplate);
 
 		ProcesoFilterDTO filter = new ProcesoFilterDTO();
-		filter.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ProcesoDTO> procesos = processService.consultarArbol(filter);
 		for (ProcesoDTO procesoDTO : procesos) {
 			createAccountProcess(procesoDTO, catalog.getKey(), null, templates, token);

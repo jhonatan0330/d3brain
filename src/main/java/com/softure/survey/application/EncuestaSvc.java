@@ -5,8 +5,8 @@ import java.util.List;
 // BEGIN region interImport
 import java.util.Date;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
@@ -98,7 +98,7 @@ public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 		//Consultar los grupos,
 		EncuestaGrupoFilterDTO filtroGrupo = new EncuestaGrupoFilterDTO();
 		filtroGrupo.setEncuesta(encuestaBase);
-		filtroGrupo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroGrupo.setEstado(SharedConstants.STATE_ACTIVE);
 		List<EncuestaGrupoDTO> grupos = encuestaGrupoSvc.listarConsulta(filtroGrupo);
 		for (EncuestaGrupoDTO encuestaGrupoDTO : grupos) {
 			encuestaGrupoDTO.setEncuesta(dto.getLlaveTabla());

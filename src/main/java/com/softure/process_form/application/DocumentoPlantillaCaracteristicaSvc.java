@@ -3,13 +3,12 @@ package com.softure.process_form.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoCaracteristicaSvc;
 import com.softure.inventory.domain.ProductoCaracteristicaDTO;
-// BEGIN region interImport
-import com.softure.java.cons.ConstantesGenerales;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.infrastructure.DocumentoPlantillaCaracteristicaMapper;
@@ -252,7 +251,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		if (plantilla == null)
 			throw new ServerException("Para consultar los datos de una plantilla debes enviar el id de la plantilla");
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
-		filtroCampo.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtroCampo.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroCampo.setSecurityToken(token);
 		filtroCampo.setPlantilla(plantilla);
 		// Aumentar a 500 la cantidad de campos de un formulario, de preguntas
@@ -273,7 +272,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 	private void organizar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
 		// Consulto todas las caracteristicas del documento
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
-		filtro.setEstado(ConstantesGenerales.ESTADO_ACTIVO);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setPlantilla(dto.getPlantilla());
 		filtro.setPaginacionRegistroFinal(500);
 		List<DocumentoPlantillaCaracteristicaDTO> campos = listarConsulta(filtro);
