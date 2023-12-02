@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shared.domain.SharedIdResponse;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.massiveload.domain.MassiveMasterDTO;
 import com.softure.massiveload.domain.MassiveItemDTO;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class MassiveSincronizeService {
@@ -35,10 +35,10 @@ public class MassiveSincronizeService {
 			newLoadMassive = cargaMasivaService.saveAndFindById(newLoadMassive);	
 		}else {
 			newLoadMassive = cargaMasivaService.saveAndFindById(newLoadMassive);
-			saveItems(token, newLoadMassive.getId(), documents);
+			saveItems(token, newLoadMassive.getKey(), documents);
 			newLoadMassive.setState(MassiveMasterDTO.SERIALIZADA);
 		}
-		return new SharedIdResponse(newLoadMassive.getId());
+		return new SharedIdResponse(newLoadMassive.getKey());
 	}
 
 	private List<PedidoVentaDTO> generateDocuments(String fileUrl, String template) {

@@ -1,9 +1,9 @@
 package com.softure.massiveload.infrastructure;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.massiveload.application.MassiveItemSincronizeService;
 import com.softure.massiveload.application.MassiveSincronizeService;
-import com.softure.shared.domain.SharedIdResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,9 +1,9 @@
-package com.softure.shared.infrastructure;
+package com.shared.infrastructure;
 
 import java.util.List;
 
-import com.softure.shared.domain.SharedDataObject;
-import com.softure.shared.domain.SharedDataObjectFilter;
+import com.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObjectFilter;
 
 
 public interface SharedCRUDMapperMybatis<T extends SharedDataObject, TFilter extends SharedDataObjectFilter> {

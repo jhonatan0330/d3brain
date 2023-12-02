@@ -1,4 +1,4 @@
-package com.softure.shared.domain;
+package com.shared.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

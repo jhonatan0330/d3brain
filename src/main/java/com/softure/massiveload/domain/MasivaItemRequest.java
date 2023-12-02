@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-import com.softure.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObject;
 
 public class MasivaItemRequest extends SharedDataObject {
 	
@@ -124,7 +124,7 @@ public class MasivaItemRequest extends SharedDataObject {
 
 	public MassiveItemDTO toModel() {
 		var cargaMasivaItemModel = new MassiveItemDTO();
-		cargaMasivaItemModel.setId(this.getId());
+		cargaMasivaItemModel.setKey(this.getKey());
 		cargaMasivaItemModel.setCarga(this.carga);
 		cargaMasivaItemModel.setModelo(this.modelo);
 		cargaMasivaItemModel.setProgreso(this.progreso);

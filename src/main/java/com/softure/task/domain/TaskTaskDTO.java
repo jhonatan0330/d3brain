@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
-import com.softure.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObject;
 
 
 
@@ -21,7 +21,7 @@ public class TaskTaskDTO extends SharedDataObject
 
     public TaskTaskResponse toResponse() {
     	TaskTaskResponse result = new TaskTaskResponse();
-    	result.setId(getId());
+    	result.setId(getKey());
     	result.setUser(user);
     	result.setTitle(title);
     	result.setNotes(notes);

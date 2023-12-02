@@ -3,11 +3,11 @@ package com.softure.api.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.api.domain.LoginRequest;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiLoginService {

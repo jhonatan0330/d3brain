@@ -2,7 +2,7 @@ package com.softure.massiveload.domain;
 
 import java.util.Date;
 
-import com.softure.shared.domain.SharedDataObjectFilter;
+import com.shared.domain.SharedDataObjectFilter;
 
 
 public class MassiveItemFilter extends SharedDataObjectFilter

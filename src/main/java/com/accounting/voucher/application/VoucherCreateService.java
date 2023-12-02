@@ -26,12 +26,12 @@ import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.shared.application.SharedValidateTokenService;
+import com.shared.domain.SharedIdResponse;
 import com.softure.java.cons.ConstantesGenerales;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.process_form.application.ConsecutivoSvc;
 import com.softure.process_form.domain.ConsecutivoDTO;
-import com.softure.shared.application.SharedValidateTokenService;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class VoucherCreateService {

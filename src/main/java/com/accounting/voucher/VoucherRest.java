@@ -15,8 +15,8 @@ import com.accounting.voucher.application.VoucherCreateService;
 import com.accounting.voucher.application.VoucherGetService;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
+import com.shared.domain.SharedIdResponse;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedIdResponse;
 
 @RestController
 @RequestMapping("acc/voucher")

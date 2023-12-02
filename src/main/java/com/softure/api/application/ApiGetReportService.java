@@ -3,6 +3,7 @@ package com.softure.api.application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.api.domain.ReportRequest;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -12,7 +13,6 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiGetReportService {

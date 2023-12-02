@@ -5,9 +5,9 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class GPSEnrollDeviceService {

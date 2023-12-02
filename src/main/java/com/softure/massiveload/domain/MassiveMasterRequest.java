@@ -22,7 +22,7 @@ public class MassiveMasterRequest {
 	
 	public MassiveMasterDTO toModel() {
 		var cargaMasivaModel = new MassiveMasterDTO();
-		cargaMasivaModel.setId(this.cargaMasivaId);
+		cargaMasivaModel.setKey(this.cargaMasivaId);
 		cargaMasivaModel.setFecha(this.fecha);
 		cargaMasivaModel.setUsuario(this.usuario);
 		cargaMasivaModel.setArchivo(this.archivo);

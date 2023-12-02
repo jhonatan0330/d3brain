@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
-import com.softure.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObject;
 
 @Alias("CargaMasivaDTO")
 public class MassiveMasterDTO extends SharedDataObject
@@ -24,7 +24,7 @@ public class MassiveMasterDTO extends SharedDataObject
     
 	public MassiveMasterRequest toValueObject() {
 		var cargaMasiva = new MassiveMasterRequest();
-		cargaMasiva.setCargaMasivaId(this.getId());
+		cargaMasiva.setCargaMasivaId(this.getKey());
 		cargaMasiva.setFecha(this.fecha);
 		cargaMasiva.setUsuario(this.usuario);
 		cargaMasiva.setArchivo(this.archivo);

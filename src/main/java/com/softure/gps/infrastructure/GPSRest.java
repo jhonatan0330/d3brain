@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.gps.application.GPSEnrollDeviceService;
 import com.softure.gps.application.GPSGetDevicesByQueryService;
 import com.softure.gps.application.GPSGetDevicesByTokenService;
@@ -23,7 +24,6 @@ import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedIdResponse;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")

@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.java.dto.exception.ServerException;
 import com.softure.massiveload.application.MassiveCRUDMasterService;
 import com.softure.massiveload.domain.MassiveMasterRequest;
 import com.softure.massiveload.domain.MassiveMasterFilter;
-import com.softure.shared.domain.SharedIdResponse;
 
 
 @RestController

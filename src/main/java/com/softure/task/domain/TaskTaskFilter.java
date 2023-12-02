@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
-import com.softure.shared.domain.SharedDataObjectFilter;
+import com.shared.domain.SharedDataObjectFilter;
 
 @Alias("TaskTaskFilter")
 public class TaskTaskFilter extends SharedDataObjectFilter

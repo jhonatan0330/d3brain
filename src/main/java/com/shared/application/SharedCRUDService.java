@@ -1,4 +1,4 @@
-package com.softure.shared.application;
+package com.shared.application;
 
 import java.util.Date;
 import java.util.List;
@@ -6,11 +6,11 @@ import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 
+import com.shared.domain.SharedConstants;
+import com.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObjectFilter;
+import com.shared.infrastructure.SharedCRUDMapperMybatis;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedConstants;
-import com.softure.shared.domain.SharedDataObject;
-import com.softure.shared.domain.SharedDataObjectFilter;
-import com.softure.shared.infrastructure.SharedCRUDMapperMybatis;
 
 public class SharedCRUDService<T extends SharedDataObject, TFilter extends SharedDataObjectFilter> {
 	
@@ -29,7 +29,7 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 	
 	public T updateAndFindById(T dto, String user) throws ServerException {
 		update(dto, user);
-		return findById(dto.getId());
+		return findById(dto.getKey());
 	}
 
 	public T findOne(TFilter dto) throws ServerException {
@@ -83,18 +83,18 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 	public String save(T dto) throws ServerException {
 		if(dto.getCreatedUser() == null) throw new ServerException("Ingrese los datos del usuario que realiza el ingreso del registro");
 		dto.setCreatedAt(new Date());
-		dto.setId(generateIdUUID());
+		dto.setKey(generateIdUUID());
 		try {
 			mapper.insert(dto); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-		return dto.getId();
+		return dto.getKey();
 	}
 	
 	public T saveAndFindById(T dto) throws ServerException {
 		save(dto);
-		return findById(dto.getId());
+		return findById(dto.getKey());
 	}
 	
 	public List<T> findMany(TFilter dto) throws ServerException {

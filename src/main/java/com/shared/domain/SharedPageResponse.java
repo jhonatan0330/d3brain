@@ -1,4 +1,4 @@
-package com.softure.shared.domain;
+package com.shared.domain;
 
 import java.util.List;
 

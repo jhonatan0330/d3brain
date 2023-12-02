@@ -25,7 +25,7 @@ public class TaskTaskRequest
 
     public TaskTaskDTO toModel() {
     	TaskTaskDTO result = new TaskTaskDTO();
-    	result.setId(getId());
+    	result.setKey(getId());
     	result.setUser(user);
     	result.setTitle(title);
     	result.setNotes(notes);

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
-import com.softure.shared.domain.SharedDataObject;
+import com.shared.domain.SharedDataObject;
 
 @Alias("CargaMasivaItemDTO")
 public class MassiveItemDTO extends SharedDataObject
@@ -97,7 +97,7 @@ public class MassiveItemDTO extends SharedDataObject
 
 	public MasivaItemRequest toValueObject() {
 		var cargaMasivaItem = new MasivaItemRequest();
-		cargaMasivaItem.setId(this.getId());
+		cargaMasivaItem.setKey(this.getKey());
 		cargaMasivaItem.setCarga(this.carga);
 		cargaMasivaItem.setModelo(this.modelo);
 		cargaMasivaItem.setProgreso(this.progreso);

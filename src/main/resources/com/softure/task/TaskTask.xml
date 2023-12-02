@@ -6,7 +6,7 @@
 
 	<sql id="selectTaskTaskFragment">
 		select
-			ctsk_llave as  id
+			ctsk_llave as  key
 			,ctsk_user as user
 			,ctsk_title as title
 			,ctsk_notes as notes
@@ -24,8 +24,8 @@
 
 	<sql id="whereTaskTaskFragment">
 		where 1=1
-			<if test="id!=null">
-				and ctsk_llave = #{id}
+			<if test="key!=null">
+				and ctsk_llave = #{key}
 			</if>
 			<if test="state!=null">
 				and ctsk_state = #{state}
@@ -47,7 +47,7 @@
 
 	<sql id="whereTaskTaskPrimaryKeyFragment">
 		where
-			ctsk_llave	=#{id}
+			ctsk_llave	=#{key}
 	</sql>
 
 	<select id="selectOne" parameterType="TaskTaskDTO" resultType="TaskTaskDTO">
@@ -103,7 +103,7 @@
 			,ctsk_state
 		</if>
 		) values (
-			#{id}
+			#{key}
 		<if test="user!=null">
 			,#{user}
 		</if>

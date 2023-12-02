@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.SharedIdResponse;
 import com.softure.java.dto.exception.ServerException;
-import com.softure.shared.domain.SharedIdResponse;
 
 @Service
 public class TaskDeleteService {

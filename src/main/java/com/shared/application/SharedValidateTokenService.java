@@ -1,4 +1,4 @@
-package com.softure.shared.application;
+package com.shared.application;
 
 import java.util.Date;
 

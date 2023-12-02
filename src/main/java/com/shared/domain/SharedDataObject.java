@@ -1,21 +1,21 @@
-package com.softure.shared.domain;
+package com.shared.domain;
 
 import java.util.Date;
 
 public abstract class SharedDataObject {
 
-	private String id;
+	private String key;
     private Date createdAt;
     private String createdUser;
     private Date updatedAt;
     private String updatedUser;
     private String state;
     
-	public String getId() {
-		return id;
+	public String getKey() {
+		return key;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setKey(String key) {
+		this.key = key;
 	}
 	public Date getCreatedAt() {
 		return createdAt;
