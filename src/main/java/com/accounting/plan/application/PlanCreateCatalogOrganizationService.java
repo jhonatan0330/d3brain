@@ -41,7 +41,7 @@ public class PlanCreateCatalogOrganizationService {
 	private PlanCreateAccountService createAccountService;
 
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void call(String token) throws ServerException {
+	public void call() throws ServerException {
 		OrganizacionDTO organization = organizationService.obtenerPrincipal();
 		if (organization.getCodigo() == null)
 			throw new ServerException("No codigo organizacion");
@@ -60,7 +60,7 @@ public class PlanCreateCatalogOrganizationService {
 			dates.add(Calendar.SECOND, -1);
 			catalog.setFinalDate(dates.getTime());
 			catalog.setName(organization.getNombre());
-			catalog = createCatalogService.call(catalog, token);
+			catalog = createCatalogService.call(catalog);
 		}
 			
 
@@ -73,12 +73,12 @@ public class PlanCreateCatalogOrganizationService {
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<ProcesoDTO> procesos = processService.consultarArbol(filter);
 		for (ProcesoDTO procesoDTO : procesos) {
-			createAccountProcess(procesoDTO, catalog.getKey(), null, templates, token);
+			createAccountProcess(procesoDTO, catalog.getKey(), null, templates);
 		}
 	}
 
 	private void createAccountProcess(ProcesoDTO procesoDTO, String catalogId, String accountParentId,
-			List<DocumentoPlantillaDTO> templates, String token) throws ServerException {
+			List<DocumentoPlantillaDTO> templates) throws ServerException {
 		AccountDTO account = new AccountDTO();
 		account.setCatalog(catalogId);
 		account.setCode(procesoDTO.getCodigo());
@@ -87,26 +87,26 @@ public class PlanCreateCatalogOrganizationService {
 		account.setParent(accountParentId);
 		account.setType(AccountConst.TYPE_GROUP);
 		account.setOperation(AccountConst.OPERATION_ADD);
-		account = createAccountService.call(account, token);
+		account = createAccountService.call(account);
 		
 		for (DocumentoPlantillaDTO itemplate : templates) {
 			if(itemplate.getProceso()==null) {
 				if(itemplate.getProceso().compareTo("NODO1476")==0)
-					createAccountTemplate(itemplate, catalogId, account.getKey(), token);
+					createAccountTemplate(itemplate, catalogId, account.getKey());
 			}else {
 				if(itemplate.getProceso().compareTo(procesoDTO.getLlaveTabla())==0) 
-					createAccountTemplate(itemplate, catalogId, account.getKey(), token);
+					createAccountTemplate(itemplate, catalogId, account.getKey());
 			}
 		}
 		
 		if (procesoDTO.getHijos() == null)
 			return;
 		for (ProcesoDTO iProcess : procesoDTO.getHijos()) {
-			createAccountProcess(iProcess, catalogId, account.getKey(), templates, token);
+			createAccountProcess(iProcess, catalogId, account.getKey(), templates);
 		}	
 	}
 
-	private void createAccountTemplate(DocumentoPlantillaDTO itemplate, String catalogId, String accountParentId, String token) throws ServerException {
+	private void createAccountTemplate(DocumentoPlantillaDTO itemplate, String catalogId, String accountParentId) throws ServerException {
 		AccountDTO account = new AccountDTO();
 		account.setCatalog(catalogId);
 		account.setCode(itemplate.getCodigo());
@@ -115,7 +115,7 @@ public class PlanCreateCatalogOrganizationService {
 		account.setParent(accountParentId);
 		account.setType(AccountConst.TYPE_OPERATIONAL);
 		account.setOperation(AccountConst.OPERATION_ADD);
-		account = createAccountService.call(account, token);
+		account = createAccountService.call(account);
 	}
 
 }

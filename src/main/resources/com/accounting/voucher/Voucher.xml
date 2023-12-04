@@ -9,10 +9,10 @@
 			ccmp_llave as key
 			,ccmp_catalogo as catalog
 			,ccmp_codigo as code
+			,ccmp_tipo as type
+			,ccmp_tiponombre as typeName
 			,ccmp_concepto as concept
 			,dcmp_fechacomprobante as factDate
-			,dcmp_fechacreacion as registerDate
-			,ccmp_usuariocreador as registerUser
 			,mcmp_positivo as positive
 			,mcmp_negativo as negative
 			,mcmp_valor as value
@@ -38,17 +38,17 @@
 			<if test="code!=null">
 				and ccmp_codigo = #{code}
 			</if>
+			<if test="type!=null">
+				and ccmp_tipo = #{type}
+			</if>
+			<if test="typeName!=null">
+				and ccmp_tiponombre = #{typeName}
+			</if>
 			<if test="concept!=null">
 				and ccmp_concepto = #{concept}
 			</if>
 			<if test="factDate!=null">
 				and dcmp_fechacomprobante = #{factDate}
-			</if>
-			<if test="registerDate!=null">
-				and dcmp_fechacreacion = #{registerDate}
-			</if>
-			<if test="registerUser!=null">
-				and ccmp_usuariocreador = #{registerUser}
 			</if>
 			<if test="positive!=null">
 				and mcmp_positivo = #{positive}
@@ -104,17 +104,17 @@
 		<if test="code!=null">
 			,ccmp_codigo
 		</if>
+		<if test="type!=null">
+			,ccmp_tipo
+		</if>
+		<if test="typeName!=null">
+			,ccmp_tiponombre
+		</if>
 		<if test="concept!=null">
 			,ccmp_concepto
 		</if>
 		<if test="factDate!=null">
 			,dcmp_fechacomprobante
-		</if>
-		<if test="registerDate!=null">
-			,dcmp_fechacreacion
-		</if>
-		<if test="registerUser!=null">
-			,ccmp_usuariocreador
 		</if>
 		<if test="positive!=null">
 			,mcmp_positivo
@@ -143,17 +143,17 @@
 		<if test="code!=null">
 			,#{code}
 		</if>
+		<if test="type!=null">
+			,#{type}
+		</if>
+		<if test="typeName!=null">
+			,#{typeName}
+		</if>
 		<if test="concept!=null">
 			,#{concept}
 		</if>
 		<if test="factDate!=null">
 			,#{factDate}
-		</if>
-		<if test="registerDate!=null">
-			,#{registerDate}
-		</if>
-		<if test="registerUser!=null">
-			,#{registerUser}
 		</if>
 		<if test="positive!=null">
 			,#{positive}
@@ -182,10 +182,10 @@
 				dcmp_modificacionfecha = now(),
 				ccmp_catalogo = #{catalog},
 				ccmp_codigo = #{code},
+				ccmp_tipo = #{type},
+				ccmp_tiponombre = #{typeName},
 				ccmp_concepto = #{concept},
 				dcmp_fechacomprobante = #{factDate},
-				dcmp_fechacreacion = #{registerDate},
-				ccmp_usuariocreador = #{registerUser},
 				mcmp_positivo = #{positive},
 				mcmp_negativo = #{negative},
 				mcmp_valor = #{value},

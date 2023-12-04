@@ -49,12 +49,12 @@ public class PlanAccountingRest {
 	
 	@PostMapping("/upload/{catalog}")
 	public void uploadAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, MultipartFile file) throws ServerException {
-		uploadAccountService.call(catalog, token, file);
+		uploadAccountService.call(catalog, file);
 	}
 	
 	@PostMapping("/account")
 	public AccountDTO createAccount(@RequestBody AccountDTO account, @RequestHeader("Authorization") String token) throws ServerException {
-		return createAccountService.call(account, token);
+		return createAccountService.call(account);
 	}
 	
 	@GetMapping("/account/{catalog}")
@@ -69,7 +69,7 @@ public class PlanAccountingRest {
 	
 	@PostMapping("/catalog")
 	public CatalogDTO createCatalog(@RequestBody CatalogDTO catalog, @RequestHeader("Authorization") String token) throws ServerException {
-		return createCatalogService.call(catalog, token);
+		return createCatalogService.call(catalog);
 	}
 	
 	@GetMapping(value="/catalog/{id}")

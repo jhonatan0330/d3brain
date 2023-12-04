@@ -23,17 +23,17 @@ public class PlanCreateAccountService {
 	//private FormatLineService lineService;
 
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public AccountDTO call(AccountDTO account, String token) throws ServerException {
+	public AccountDTO call(AccountDTO account) throws ServerException {
 		if(account.getCatalog()==null) throw new ServerException("Es importatne asignar la cuenta a un catalogo");
 		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
 		if(account.getCode()!=null && account.getCode().isEmpty()) account.setCode(null);
-		assignWBSNumber(account, token);
+		assignWBSNumber(account);
 		if(account.getCode()==null) account.setCode(account.getWbs());
-		accountService.save(account, token);
+		accountService.save(account);
 		return accountService.getById(account.getKey());
 	}
 	
-	private void assignWBSNumber(AccountDTO account, String token) throws ServerException {
+	private void assignWBSNumber(AccountDTO account) throws ServerException {
 		
 		AccountFilterDTO filter = new AccountFilterDTO();
 		String prefixWBS = "";
@@ -49,7 +49,7 @@ public class PlanCreateAccountService {
 			account.setLevel(parentAccount.getLevel()+1);
 			if(parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL)==0) {
 				parentAccount.setType(AccountConst.TYPE_GROUP);
-				accountService.update(parentAccount, token);
+				accountService.update(parentAccount);
 			}
 		}
 		filter.setState(SharedConstants.STATE_ACTIVE);

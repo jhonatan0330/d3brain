@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.shared.domain.SharedConstants;
+import com.shared.domain.SharedToken;
+import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
@@ -20,12 +22,14 @@ import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.domain.ModuloFilterDTO;
+import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +37,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service("usuarioAutenticacionService")
-public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO> {
+public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>
+		implements SharedAuthenticateService {
 
 	@Autowired
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
@@ -318,7 +323,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-			
 			try {
 				Date date = formatter.parse(fechaTrial);
 				diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
@@ -326,10 +330,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 			} catch (ParseException e) {
 				reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
-			}	
+			}
 		}
 
-		
 		UsuarioAutenticacionDTO autenticacion = null;
 
 		UsuarioSesionDTO sesion = null;
@@ -387,7 +390,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		autenticacion.setToken(sesion.getLlaveTabla());
 
 		if (!fromApi) {
-			if (diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0)
+			if (diasVigencia > 0 && diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0)
 				autenticacion.setMensaje(
 						"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
 			autenticacion
@@ -408,13 +411,14 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			use.setIp(ip);
 			use.setFecha(new Date());
 			use.setSesion(token);
-			use.setError("Erro validando Token");
+			use.setError("Error validando Token");
 			errorService.save(use);
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 
 		UsuarioAutenticacionDTO autenticacion = new UsuarioAutenticacionDTO();
 		autenticacion.setToken(sesion.getLlaveTabla());
+		autenticacion.setUsuario(sesion.getUsuario());
 		return autenticacion;
 	}
 
@@ -422,6 +426,34 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		Calendar newDate = Calendar.getInstance();
 		newDate.add(Calendar.MONTH, 2);
 		return newDate.getTime();
+	}
+
+	@Override
+	public SharedToken validate(String token, HttpServletRequest request) throws ServerException {
+		if (token != null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (request == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		UsuarioAutenticacionDTO auth = checkToken(token, HttpUtils.getRequestIP(request));
+		UsuarioDTO user = usuarioService.consultaXId(auth.getUsuario());
+		if (user == null || user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		SharedToken st = new SharedToken();
+		st.setToken(token);
+		st.setUser(user.getLlaveTabla());
+		st.setUserId(user.getIdentificacion());
+		st.setUserName(user.getNombre());
+		return st;
+	}
+
+	@Override
+	public String getUser(String token, HttpServletRequest request) throws ServerException {
+		if (token == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (request == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		return checkToken(token, HttpUtils.getRequestIP(request)).getUsuario();
+
 	}
 // END region aditionalMethods
 

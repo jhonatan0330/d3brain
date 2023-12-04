@@ -22,6 +22,9 @@ public class PropiedadValorDefinidoDTO extends BasicDTO
 	public static final String ORGANIZACION = "O";
 	public static final String API_SERVICE = "W";
 	public static final String SERVIDOR = "S";
+	
+	public static final String CATALOG= "G";
+	public static final String ACCOUNT= "K";
 
 	private String origen;
 	private String origenCategoria;

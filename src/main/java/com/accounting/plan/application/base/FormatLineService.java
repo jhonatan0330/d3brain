@@ -61,9 +61,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void save(FormatLineDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void save(FormatLineDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -74,9 +72,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void update(FormatLineDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void update(FormatLineDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -86,9 +82,7 @@ public class FormatLineService {
 		}
 	}
 
-	public FormatLineDTO delete(FormatLineDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public FormatLineDTO delete(FormatLineDTO dto) throws ServerException {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");

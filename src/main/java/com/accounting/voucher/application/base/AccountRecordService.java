@@ -61,9 +61,7 @@ public class AccountRecordService {
 		}
 	}
 
-	public void save(AccountRecordDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void save(AccountRecordDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -74,9 +72,7 @@ public class AccountRecordService {
 		}
 	}
 
-	public void update(AccountRecordDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void update(AccountRecordDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -86,9 +82,7 @@ public class AccountRecordService {
 		}
 	}
 
-	public AccountRecordDTO delete(AccountRecordDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public AccountRecordDTO delete(AccountRecordDTO dto) throws ServerException {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");

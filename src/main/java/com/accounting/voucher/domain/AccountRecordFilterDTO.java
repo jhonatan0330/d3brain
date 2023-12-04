@@ -22,6 +22,9 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 	private String third;
 	private String thirdId;
 	private String thirdName;
+	private String center;
+	private String centerId;
+	private String centerName;
 
 	public String getCatalogCode() {
 		return catalogCode;
@@ -117,6 +120,30 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 
 	public void setThirdName(String thirdName) {
 		this.thirdName = thirdName;
+	}
+
+	public String getCenter() {
+		return center;
+	}
+
+	public void setCenter(String center) {
+		this.center = center;
+	}
+
+	public String getCenterId() {
+		return centerId;
+	}
+
+	public void setCenterId(String centerId) {
+		this.centerId = centerId;
+	}
+
+	public String getCenterName() {
+		return centerName;
+	}
+
+	public void setCenterName(String centerName) {
+		this.centerName = centerName;
 	}
 
 }

@@ -7,27 +7,27 @@ import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.ResultMapDTO;
-import com.accounting.plan.domain.ResultMapFilterDTO;
-import com.accounting.plan.infrastructure.ResultMapMapper;
+import com.accounting.plan.domain.TypeDTO;
+import com.accounting.plan.domain.TypeFilterDTO;
+import com.accounting.plan.infrastructure.TypeMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-@Service("ResultMapAccountingService")
-public class ResultMapService {
+@Service("TypeAccountingService")
+public class TypeService {
 
 	@Autowired
-	private ResultMapMapper mapper;
+	private TypeMapper mapper;
 
-	public ResultMapDTO getById(String id) throws ServerException {
+	public TypeDTO getById(String id) throws ServerException {
 		if (id == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. ResultMap");
-		ResultMapFilterDTO dto = new ResultMapFilterDTO();
+			throw new ServerException("La llave del DTO se encuentra vacia. Type");
+		TypeFilterDTO dto = new TypeFilterDTO();
 		dto.setKey(id);
 		return mapper.getOne(dto);
 	}
 
-	public ResultMapDTO getOne(ResultMapFilterDTO dto) throws ServerException {
+	public TypeDTO getOne(TypeFilterDTO dto) throws ServerException {
 		try {
 			return mapper.getOne(dto);
 		} catch (BindingException ex) {
@@ -37,7 +37,7 @@ public class ResultMapService {
 		}
 	}
 
-	public List<ResultMapDTO> getMany(ResultMapFilterDTO dto) throws ServerException {
+	public List<TypeDTO> getMany(TypeFilterDTO dto) throws ServerException {
 		if (dto.getStartRow() == null)
 			dto.setStartRow(0);
 		if (dto.getEndRow() == null || dto.getEndRow() == 0)
@@ -51,7 +51,7 @@ public class ResultMapService {
 		}
 	}
 
-	public int count(ResultMapFilterDTO dto) throws ServerException {
+	public int count(TypeFilterDTO dto) throws ServerException {
 		try {
 			return mapper.count(dto);
 		} catch (BindingException ex) {
@@ -61,7 +61,7 @@ public class ResultMapService {
 		}
 	}
 
-	public void save(ResultMapDTO dto) throws ServerException {
+	public void save(TypeDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -72,7 +72,7 @@ public class ResultMapService {
 		}
 	}
 
-	public void update(ResultMapDTO dto) throws ServerException {
+	public void update(TypeDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -82,7 +82,7 @@ public class ResultMapService {
 		}
 	}
 
-	public ResultMapDTO delete(ResultMapDTO dto) throws ServerException {
+	public TypeDTO delete(TypeDTO dto) throws ServerException {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");

@@ -1,10 +1,10 @@
-package com.accounting.plan.infrastructure;
+package com.accounting.fact.infrastructure;
 
 import java.util.List;
 
 import com.accounting.AccountingConnMapper;
-import com.accounting.plan.domain.FactDTO;
-import com.accounting.plan.domain.FactFilterDTO;
+import com.accounting.fact.domain.FactDTO;
+import com.accounting.fact.domain.FactFilterDTO;
 
 @AccountingConnMapper("FactAccountingMapper")
 public interface FactMapper {

@@ -24,7 +24,7 @@ public class PlanUploadAccountService {
 
 	private static String TYPE = "text/csv";
 
-	public void call(String catalogId, String token, MultipartFile file) throws ServerException {
+	public void call(String catalogId, MultipartFile file) throws ServerException {
 		if (catalogId == null)
 			throw new ServerException("No se reconoce el Id del catalogo");
 		if (!TYPE.equals(file.getContentType()))
@@ -33,7 +33,7 @@ public class PlanUploadAccountService {
 			List<AccountDTO> accounts = csvToAccounts(file.getInputStream());
 			for (AccountDTO accountDTO : accounts) {
 				accountDTO.setCatalog(catalogId);
-				accountDTO = createAccountService.call(accountDTO, token);
+				accountDTO = createAccountService.call(accountDTO);
 				if(accountDTO.getCode()!=null) {
 					for (AccountDTO iAccount : accounts) {
 						if(iAccount.getParent()!=null && iAccount.getParent().compareTo(accountDTO.getCode())==0) {

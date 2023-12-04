@@ -5,6 +5,6 @@ import com.shared.domain.ServerException;
 
 public interface IPlanCreateCatalogService {
 
-	CatalogDTO call(CatalogDTO catalog, String token) throws ServerException;
+	CatalogDTO call(CatalogDTO catalog) throws ServerException;
 
 }

@@ -1,15 +1,17 @@
-package com.accounting.plan.domain;
+package com.accounting.fact.domain;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
+import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
-import com.shared.domain.SharedDataObjectFilter;
+@Alias("FactDTO")
+public class FactDTO extends SharedDataObject{
 
-@Alias("FactFilterDTO")
-public class FactFilterDTO extends SharedDataObjectFilter {
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date registerDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date factDate;
 	private String dimension;
 	private String value;

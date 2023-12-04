@@ -26,10 +26,10 @@ import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
-import com.shared.application.SharedValidateTokenService;
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
+import com.shared.domain.SharedToken;
 import com.softure.process_form.application.ConsecutivoSvc;
 import com.softure.process_form.domain.ConsecutivoDTO;
 
@@ -45,8 +45,6 @@ public class VoucherCreateService {
 	@Autowired
 	private AccountRecordService recordService;
 	@Autowired
-	private SharedValidateTokenService tokenService;
-	@Autowired
 	private ConsecutivoSvc consecutiveService;
 	@Autowired
 	private PlanCreateMatrixService matrixService;
@@ -54,20 +52,20 @@ public class VoucherCreateService {
 	private ResultMapExtendService mapService;
 
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(Voucher _voucher, String token) throws ServerException {
+	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
 		validateInfoHeaderAndRecords(_voucher, token);
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
-		configureAccounts(_voucher, catalogDTO, token);
-		voucherService.save(_voucher.getHeader(), token);
+		configureAccounts(_voucher, catalogDTO);
+		voucherService.save(_voucher.getHeader());
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
-		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey(), token);
-		calculateBalance(catalogDTO, _voucher, headerDTO, token);
+		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
+		calculateBalance(catalogDTO, _voucher, headerDTO);
 		//el codigo al final para evitar errores en transaccionalidad
-		getCodeVoucher(catalogDTO, headerDTO, token);
+		getCodeVoucher(catalogDTO, headerDTO, token.getToken());
 		return new SharedIdResponse(headerDTO.getKey(), headerDTO.getCode());
 	}
 
-	private void calculateBalance(CatalogDTO catalogDTO, Voucher _voucher, VoucherDTO headerDTO, String token) throws ServerException {
+	private void calculateBalance(CatalogDTO catalogDTO, Voucher _voucher, VoucherDTO headerDTO) throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {
 			saveMap(catalogDTO, item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
 		}
@@ -97,7 +95,7 @@ public class VoucherCreateService {
 		if (account.getParent()!=null ) saveMap(catalogDTO, account.getParent(), factDate, positive, negative, value);
 	}
 
-	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO, String token) throws ServerException {
+	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO) throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {
 			AccountDTO account = accountService.getById(item.getAccount());
 			if(account == null) throw new ServerException("La cuenta no existe en la base de datos");
@@ -105,21 +103,21 @@ public class VoucherCreateService {
 			if(account.getState().compareTo(SharedConstants.STATE_ACTIVE)!=0) throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
 			if(account.getStatus().compareTo(AccountConst.STATUS_BLOCKED)==0) throw new ServerException("La cuenta se encuentra bloqueada. " + account.getName());
 			if(account.getStatus().compareTo(AccountConst.STATUS_PLANNING)==0)
-				matrixService.call(catalogDTO, account, token);
+				matrixService.call(catalogDTO, account);
 		}
 	}
 	
-	private void saveRecords(String catalogCode, Voucher _voucher, String headerId, String token) throws ServerException {
+	private void saveRecords(String catalogCode, Voucher _voucher, String headerId) throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {
 			if(item.getAccount()!=null) {
 				item.setVoucher(headerId);
 				item.setCatalogCode(catalogCode);
-				recordService.save(item, token);
+				recordService.save(item);
 			}
 		}
 	}
 
-	private void validateInfoHeaderAndRecords(Voucher _voucher, String token) throws ServerException {
+	private void validateInfoHeaderAndRecords(Voucher _voucher, SharedToken token) throws ServerException {
 		if (_voucher == null)
 			throw new ServerException("Es en serio no enviaste informacion");
 		if (_voucher.getHeader() == null)
@@ -157,8 +155,8 @@ public class VoucherCreateService {
 		if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
 			throw new ServerException(
 					"El valor total del comprobante ("+_voucher.getHeader().getValue() +") no concuerda con los valores positivos de los registros (" +valueAllRecords + ")");
-		_voucher.getHeader().setRegisterDate(new Date());
-		_voucher.getHeader().setRegisterUser(tokenService.getUserFlex(token));
+		_voucher.getHeader().setCreatedUser(token.getUser());
+		_voucher.getHeader().setCreatedUserName(token.getUserName());
 		_voucher.getHeader().setPositive(positiveValueHeader);
 		_voucher.getHeader().setNegative(negativeValueHeader);
 		// Desde Angular viene una ultima linea vacia
@@ -195,7 +193,7 @@ public class VoucherCreateService {
 			newConsecutive.setNumeroActual(new BigDecimal(1000));
 			consecutive = consecutiveService.guardar(newConsecutive, token);
 			catalogDTO.setConsecutive(newConsecutive.getLlaveTabla());
-			catalogService.update(catalogDTO, token);
+			catalogService.update(catalogDTO);
 		} else {
 			consecutive = new ConsecutivoDTO();
 			consecutive.setLlaveTabla(catalogDTO.getConsecutive());
@@ -205,7 +203,7 @@ public class VoucherCreateService {
 		voucher = getVoucherById(catalogDTO.getCode(), voucher.getKey());
 		voucher.setCatalogCode(catalogDTO.getCode());
 		voucher.setCode(consecutive.getConsecutivoActual());
-		voucherService.update(voucher, token);
+		voucherService.update(voucher);
 	}
 
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {

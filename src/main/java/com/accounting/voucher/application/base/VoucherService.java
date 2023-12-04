@@ -61,9 +61,7 @@ public class VoucherService {
 		}
 	}
 
-	public void save(VoucherDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void save(VoucherDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -74,9 +72,7 @@ public class VoucherService {
 		}
 	}
 
-	public void update(VoucherDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void update(VoucherDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -86,9 +82,7 @@ public class VoucherService {
 		}
 	}
 
-	public VoucherDTO delete(VoucherDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public VoucherDTO delete(VoucherDTO dto) throws ServerException {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");

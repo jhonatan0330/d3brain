@@ -2,6 +2,8 @@ package com.softure.task;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.shared.application.SharedValidateTokenService;
+import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.task.application.TaskCreateService;
@@ -29,7 +31,7 @@ import com.softure.task.domain.TaskTaskResponse;
 @RequestMapping("/task")
 public class TaskRest {
 
-	@Autowired private SharedValidateTokenService tokenService;
+	@Autowired private SharedAuthenticateService tokenService;
 	
 	@Autowired private TaskGetByUserService taskGetByUserService;
 	@Autowired private TaskGetByIdService taskGetByIdService;
@@ -38,28 +40,28 @@ public class TaskRest {
 	@Autowired private TaskDeleteService taskDeleteService;
 	
 	@GetMapping(value="/")
-	public List<TaskTaskResponse> getFromUser(@RequestHeader("Authorization") String token)  throws ServerException  {
-		return taskGetByUserService.call(tokenService.getUserFlex(token));
+	public List<TaskTaskResponse> getFromUser(HttpServletRequest request, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return taskGetByUserService.call(tokenService.getUser(token, request));
 	}
 	
 	@GetMapping(value="/{id}")
-	public TaskTaskResponse getById(@RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
-		tokenService.getUserFlex(token);
+	public TaskTaskResponse getById(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
+		tokenService.getUser(token, request);
 		return taskGetByIdService.call(id);
 	}
 	
 	@PostMapping(value="/create")
-	public SharedIdResponse save(@RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
-		return taskCreateService.call(task, tokenService.getUserFlex(token));
+	public SharedIdResponse save(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
+		return taskCreateService.call(task, tokenService.getUser(token, request));
 	}
 	
 	@PostMapping(value="/update")
-	public SharedIdResponse update(@RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
-		return taskUpdateService.call(task, tokenService.getUserFlex(token));
+	public SharedIdResponse update(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
+		return taskUpdateService.call(task, tokenService.getUser(token, request));
 	}
 
 	@PostMapping(value="/delete/{id}")
-	public SharedIdResponse delete(@RequestHeader("Authorization") String token, @PathVariable("id") String id)  throws ServerException  {
-		return taskDeleteService.call(id, tokenService.getUserFlex(token));
+	public SharedIdResponse delete(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable("id") String id)  throws ServerException  {
+		return taskDeleteService.call(id, tokenService.getUser(token, request));
 	}
 }

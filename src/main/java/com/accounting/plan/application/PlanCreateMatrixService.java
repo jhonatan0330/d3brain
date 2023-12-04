@@ -25,7 +25,7 @@ public class PlanCreateMatrixService {
 	@Autowired
 	private AccountService accountService;
 	
-	public void call(CatalogDTO catalog, AccountDTO account, String token) throws ServerException {
+	public void call(CatalogDTO catalog, AccountDTO account) throws ServerException {
 
 		createLevel1(catalog.getInitialDate(), catalog.getFinalDate(), account.getKey(), catalog.getCode(),
 				ResultMapConst.TYPE_PUNTUAL);
@@ -50,11 +50,11 @@ public class PlanCreateMatrixService {
 		System.out.println(account.getName());
 		account = accountService.getById(account.getKey());
 		account.setStatus(AccountConst.STATUS_OPERATING);
-		accountService.update(account, token);
+		accountService.update(account);
 		if(account.getParent()!=null) {
 			AccountDTO parent = accountService.getById(account.getParent());
 			if(parent.getStatus().compareTo(AccountConst.STATUS_PLANNING)==0)
-				call(catalog, parent, token);
+				call(catalog, parent);
 		}
 	}
 

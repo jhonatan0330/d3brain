@@ -23,9 +23,9 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 
 	@Override
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public CatalogDTO call(CatalogDTO catalog, String token) throws ServerException {
+	public CatalogDTO call(CatalogDTO catalog) throws ServerException {
 		validateCatalog(catalog);
-		catalogService.save(catalog, token);
+		catalogService.save(catalog);
 		catalog = catalogService.getById(catalog.getKey());
 		createTemporal(catalog.getCode());
 		createPuntual(catalog.getCode());

@@ -380,7 +380,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (dto.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0)
 				propiedadMapper.crearFuncionFiltros(dto);
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_MONITOR) == 0)
-				createAccountService.call(dto.getValor(), dto.getCampo(), null, token);
+				createAccountService.call(dto.getValor(), dto.getCampo(), null);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de SQL : " + dto.getMotivo());
 		}

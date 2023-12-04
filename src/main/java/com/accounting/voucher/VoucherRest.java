@@ -2,6 +2,8 @@ package com.accounting.voucher;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,7 @@ import com.accounting.voucher.application.VoucherCreateService;
 import com.accounting.voucher.application.VoucherGetService;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
+import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 
@@ -23,17 +26,21 @@ import com.shared.domain.SharedIdResponse;
 public class VoucherRest {
 
 	@Autowired
+	private SharedAuthenticateService tokenService;
+	@Autowired
 	private VoucherCreateService createService;
 	@Autowired
 	private VoucherGetService getVoucherService;
-	
+
 	@GetMapping("/{catalog}")
-	public List<VoucherDTO> getVouchers(@RequestHeader("Authorization") String token, @PathVariable String catalog) throws ServerException {
+	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@PathVariable String catalog) throws ServerException {
 		return getVoucherService.call(catalog);
 	}
-	
+
 	@PostMapping("/manual")
-	public SharedIdResponse createManualVoucher(@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
-		return createService.call(voucher, token);
+	public SharedIdResponse createManualVoucher(HttpServletRequest request,
+			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
+		return createService.call(voucher, tokenService.validate(token, null));
 	}
 }

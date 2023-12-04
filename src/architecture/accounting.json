@@ -227,43 +227,23 @@
 					]
 				},
 				{
-					"name": "Fact",
-					"table": "hecho",
-					"prefix": "hch",
+					"name": "Type",
+					"table": "tipocomprobante",
+					"prefix": "tcm",
 					"attributes": [
 						{
-							"name": "registerDate",
-							"tableName": "fecharegistro",
-							"type": "DATETIME"
-						},
-						{
-							"name": "factDate",
-							"tableName": "fechaevento",
-							"type": "DATETIME"
-						},
-						{
-							"name": "dimension",
-							"tableName": "dimension",
+							"name": "catalog",
+							"tableName": "catalogo",
 							"type": "CLASS"
 						},
 						{
-							"name": "value",
-							"tableName": "valor",
+							"name": "name",
+							"tableName": "nombre",
 							"type": "STRING"
 						},
 						{
 							"name": "code",
 							"tableName": "codigo",
-							"type": "STRING"
-						},
-						{
-							"name": "template",
-							"tableName": "plantilla",
-							"type": "CLASS"
-						},
-						{
-							"name": "id",
-							"tableName": "id",
 							"type": "STRING"
 						}
 					]
@@ -414,6 +394,18 @@
 							"type": "STRING"
 						},
 						{
+							"name": "type",
+							"tableName": "tipo",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "typeName",
+							"tableName": "tiponombre",
+							"type": "STRING",
+							"optional": true
+						},
+						{
 							"name": "concept",
 							"tableName": "concepto",
 							"type": "STRING",
@@ -425,16 +417,6 @@
 							"tableName": "fechacomprobante",
 							"type": "DATETIME",
 							"order": 2
-						},
-						{
-							"name": "registerDate",
-							"tableName": "fechacreacion",
-							"type": "DATETIME"
-						},
-						{
-							"name": "registerUser",
-							"tableName": "usuariocreador",
-							"type": "CLASS"
 						},
 						{
 							"name": "positive",
@@ -523,6 +505,74 @@
 							"type": "STRING",
 							"size": 200,
 							"optional": true
+						},
+						{
+							"name": "center",
+							"tableName": "centrocosto",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "centerId",
+							"tableName": "centrocostoid",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						},
+						{
+							"name": "centerName",
+							"tableName": "centrocostonombre",
+							"type": "STRING",
+							"size": 200,
+							"optional": true
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Hechos contables",
+			"code": "fact",
+			"entities": [
+				{
+					"name": "Fact",
+					"table": "hecho",
+					"prefix": "hch",
+					"attributes": [
+						{
+							"name": "registerDate",
+							"tableName": "fecharegistro",
+							"type": "DATETIME"
+						},
+						{
+							"name": "factDate",
+							"tableName": "fechaevento",
+							"type": "DATETIME"
+						},
+						{
+							"name": "dimension",
+							"tableName": "dimension",
+							"type": "CLASS"
+						},
+						{
+							"name": "value",
+							"tableName": "valor",
+							"type": "STRING"
+						},
+						{
+							"name": "code",
+							"tableName": "codigo",
+							"type": "STRING"
+						},
+						{
+							"name": "template",
+							"tableName": "plantilla",
+							"type": "CLASS"
+						},
+						{
+							"name": "id",
+							"tableName": "id",
+							"type": "STRING"
 						}
 					]
 				}

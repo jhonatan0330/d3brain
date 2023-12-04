@@ -1,4 +1,4 @@
-package com.accounting.plan.application.base;
+package com.accounting.fact.application.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,9 +7,9 @@ import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.FactDTO;
-import com.accounting.plan.domain.FactFilterDTO;
-import com.accounting.plan.infrastructure.FactMapper;
+import com.accounting.fact.domain.FactDTO;
+import com.accounting.fact.domain.FactFilterDTO;
+import com.accounting.fact.infrastructure.FactMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
@@ -61,9 +61,7 @@ public class FactService {
 		}
 	}
 
-	public void save(FactDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void save(FactDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -74,9 +72,7 @@ public class FactService {
 		}
 	}
 
-	public void update(FactDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public void update(FactDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -86,9 +82,7 @@ public class FactService {
 		}
 	}
 
-	public FactDTO delete(FactDTO dto, String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+	public FactDTO delete(FactDTO dto) throws ServerException {
 		dto = getById(dto.getKey());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");

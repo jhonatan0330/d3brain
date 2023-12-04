@@ -22,3 +22,6 @@ ALTER TABLE x_${catalogCode}_registro_reg ADD mreg_valor NUMERIC(18,6) NOT NULL 
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_tercero varchar(32);
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_terceroid varchar(200);
 ALTER TABLE x_${catalogCode}_registro_reg ADD creg_terceronombre varchar(200);
+ALTER TABLE x_${catalogCode}_registro_reg ADD creg_centrocosto varchar(32);
+ALTER TABLE x_${catalogCode}_registro_reg ADD creg_centrocostoid varchar(200);
+ALTER TABLE x_${catalogCode}_registro_reg ADD creg_centrocostonombre varchar(200);

@@ -20,7 +20,7 @@ public class CreateAccountTemplateService {
 	@Autowired
 	private PlanCreateAccountService createAccountService;
 
-	public void call(String catalogId, String templateId, String fieldId,  String token)
+	public void call(String catalogId, String templateId, String fieldId)
 			throws ServerException {
 		AccountDTO account = new AccountDTO();
 		if (fieldId != null) {
@@ -41,7 +41,7 @@ public class CreateAccountTemplateService {
 		} else {
 			account.setCode(account.getCode() + "." + template.getCodigo());
 		}
-		createAccountService.call(account, token);
+		createAccountService.call(account);
 	}
 
 }

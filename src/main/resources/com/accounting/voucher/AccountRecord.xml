@@ -18,6 +18,9 @@
 			,creg_tercero as third
 			,creg_terceroid as thirdId
 			,creg_terceronombre as thirdName
+			,creg_centrocosto as center
+			,creg_centrocostoid as centerId
+			,creg_centrocostonombre as centerName
 			,dreg_creacionfecha as createdAt
 			,creg_creacionusuario as createdUser
 			,creg_creacionusuarionombre as createdUserName
@@ -66,6 +69,15 @@
 			</if>
 			<if test="thirdName!=null">
 				and creg_terceronombre = #{thirdName}
+			</if>
+			<if test="center!=null">
+				and creg_centrocosto = #{center}
+			</if>
+			<if test="centerId!=null">
+				and creg_centrocostoid = #{centerId}
+			</if>
+			<if test="centerName!=null">
+				and creg_centrocostonombre = #{centerName}
 			</if>
 
 	</sql>
@@ -138,6 +150,15 @@
 		<if test="thirdName!=null">
 			,creg_terceronombre
 		</if>
+		<if test="center!=null">
+			,creg_centrocosto
+		</if>
+		<if test="centerId!=null">
+			,creg_centrocostoid
+		</if>
+		<if test="centerName!=null">
+			,creg_centrocostonombre
+		</if>
 		<if test="createdUser!=null">
 			,creg_creacionusuario
 		</if>
@@ -183,6 +204,15 @@
 		<if test="thirdName!=null">
 			,#{thirdName}
 		</if>
+		<if test="center!=null">
+			,#{center}
+		</if>
+		<if test="centerId!=null">
+			,#{centerId}
+		</if>
+		<if test="centerName!=null">
+			,#{centerName}
+		</if>
 		<if test="createdUser!=null">
 			,#{createdUser}
 		</if>
@@ -210,6 +240,9 @@
 				creg_tercero = #{third},
 				creg_terceroid = #{thirdId},
 				creg_terceronombre = #{thirdName},
+				creg_centrocosto = #{center},
+				creg_centrocostoid = #{centerId},
+				creg_centrocostonombre = #{centerName},
 				creg_estado =#{state}
 		<include refid="whereAccountRecordPrimaryKeyFragment" />
 	</select>
