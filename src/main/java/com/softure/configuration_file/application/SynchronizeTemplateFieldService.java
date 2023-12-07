@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import com.softure.property.domain.RelacionInternaDTO;
 
 @Service
 public class SynchronizeTemplateFieldService {
@@ -18,15 +20,18 @@ public class SynchronizeTemplateFieldService {
 	@Autowired DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 	
-	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate) throws ServerException {
-		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(fieldService.getFullToSynchronize(), localTemplate) ;
+	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate, LogConfigurationDTO log) throws ServerException {
+		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(fieldService.getFullToSynchronize(null), localTemplate) ;
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(), remoteTemplate);
 		if (remoteList != null && !remoteList.isEmpty()) {
+			String templateRoot = log.getRoot();
 			for (DocumentoPlantillaCaracteristicaDTO remote : remoteList) {
+				log.setRoot(templateRoot + "...."  + remote.getNombre());
 				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
+					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
 				}
 				else
 				{
@@ -38,26 +43,36 @@ public class SynchronizeTemplateFieldService {
 					newField.setNombre(remote.getNombre());
 					newField.setObjetivo(remote.getObjetivo());
 					newField.setOrden(remote.getOrden());
-					newField = fieldService.save(newField);
-					
+					local = fieldService.save(newField);
+					log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
 				}
+				changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
 			}
 		}
-		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate);
+		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate, log);
 	}
 	
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate) throws ServerException {
-		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(fieldService.getFullToSynchronize(), localTemplate) ;
+	private void changeTemplateInRelations(List<RelacionInternaDTO> array, String remote, String local) {
+		for (RelacionInternaDTO remoteRelations : array) {
+			if(remoteRelations.getCampo()!=null && remoteRelations.getCampo().compareTo(remote)==0) {
+				remoteRelations.setCampo(local);
+			}
+		}	
+	}
+	
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate, LogConfigurationDTO log) throws ServerException {
+		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(fieldService.getFullToSynchronize(null), localTemplate) ;
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(), remoteTemplate);
 		if (remoteList != null && !remoteList.isEmpty()) {
+			String templateRoot = log.getRoot();
 			for (DocumentoPlantillaCaracteristicaDTO remote : remoteList) {
 				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
-					System.out.println( " -- " + local.getNombre());
+					log.setRoot(templateRoot + "...."  + local.getNombre());
 					localListToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token);
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+						PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log);	
 				}
 			}
 		}

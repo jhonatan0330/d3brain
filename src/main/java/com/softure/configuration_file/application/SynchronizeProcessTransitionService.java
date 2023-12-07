@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -17,15 +18,18 @@ public class SynchronizeProcessTransitionService {
 	@Autowired private ProcesoTransicionSvc processTransitionService;
 	@Autowired private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize();
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
+		if (remoteTocompare == null || localToErase ==null) return;
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
+			log.setRoot("SynchronizeProcessTransitionService");
 			for (ProcesoTransicionDTO remote : remoteTocompare) {
 				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
 				// Creo el nuevo proceso
 				if (local!=null){
 					localToErase.remove(local);
+					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
 				}
 				else
 				{
@@ -39,24 +43,29 @@ public class SynchronizeProcessTransitionService {
 					newState.setEstadoPartida(remote.getEstadoPartida());
 					newState.setNombre(remote.getNombre());
 					newState.setRapida(remote.getRapida());
-					newState = processTransitionService.save(newState);
+					try {
+						newState = processTransitionService.save(newState);						
+						log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
+					} catch (Exception e) {
+						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					}
 				}
 			}
 		}
-		callAfterCreateAll(token, hierarchy);
+		callAfterCreateAll(token, hierarchy, log);
 	}
 	
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy)throws ServerException {
-		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize();
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)throws ServerException {
+		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			for (ProcesoTransicionDTO remote : remoteTocompare) {
-				System.out.println("Transicion : " + remote.getNombre() + "  --  " + remote.getProcesoNombre());
 				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
 				if (local!=null){
 					localToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token);
+					log.setRoot("SynchronizeProcessTransitionService " + local.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token, log);
 				}
 			}
 		}
@@ -64,6 +73,7 @@ public class SynchronizeProcessTransitionService {
 
 
 	private ProcesoTransicionDTO findProcessInList(List<ProcesoTransicionDTO> array, ProcesoTransicionDTO remote) {
+		if (array == null) return null;
 		for (ProcesoTransicionDTO localProcess : array) {
 			if (remote.getNombre().compareTo(localProcess.getNombre()) == 0 && remote.getProceso().compareTo(localProcess.getProceso())==0) {
 				return localProcess;

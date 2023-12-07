@@ -19,17 +19,18 @@ import com.softure.java.domain.BasicFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
 public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
-	
+
 	protected IBasicMapper<T, TFilter> mapper;
-	
-	@Autowired private UsuarioSesionMapper usuarioSesionMapper;
-	
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+
+	@Autowired
+	private UsuarioSesionMapper usuarioSesionMapper;
+
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T actualizar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
@@ -38,8 +39,10 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	public T consultaUnica(TFilter dto) throws ServerException {
 		T result = null;
 		try {
-			result = mapper.consultar(dto); 
-		}catch (Exception e) {
+			result = mapper.consultar(dto);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return result;
@@ -51,47 +54,51 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	public int contarResultados(TFilter dto) throws ServerException {
 		try {
-			return mapper.cantidadRegistros(dto); 
-		}catch (Exception e) {
+			return mapper.cantidadRegistros(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-	
+
 	public T inactivar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
-		if(dto==null) throw new ServerException("No se identifica el objeto a inactivar");
-		if(dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
+		if (dto == null)
+			throw new ServerException("No se identifica el objeto a inactivar");
+		if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+			throw new ServerException("Este objeto ya se encuentra inactivo");
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
 	}
-	
+
 	public T activar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
-		if(dto==null) throw new ServerException("No se identifica el objeto a Activar");
-		if(dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) throw new ServerException("Este objeto ya se encuentra Activo");
+		if (dto == null)
+			throw new ServerException("No se identifica el objeto a Activar");
+		if (dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
+			throw new ServerException("Este objeto ya se encuentra Activo");
 		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
 	}
-	
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T guardar(T dto, String token) throws ServerException {
 		getUserFlex(token);
 		dto.setLlaveTabla(generarLlave());
 		try {
-			mapper.insertar( dto); 
-		}catch (Exception e) {
+			mapper.insertar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		dto = consultaXId(dto.getLlaveTabla());
@@ -101,84 +108,93 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	public List<T> listarConsulta(TFilter dto) throws ServerException {
 		paginar(dto);
 		try {
-			return mapper.listar(dto); 
-		}catch (BindingException ex) {
+			return mapper.listar(dto);
+		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-	
-	public String getUserFlex(String token) throws ServerException{
-		if(token!=null){
+
+	public String getUserFlex(String token) throws ServerException {
+		if (token != null) {
 			UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
 			filter.setLlaveTabla(token);
 			UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
-			if(sesion==null) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
-			if(sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
-			if(sesion.getFechaCierre()!=null && sesion.getFechaCierre().compareTo(new Date())<0) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
+			if (sesion == null)
+				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+			if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+			if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
+				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 			return sesion.getUsuario();
 		}
-		throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario" );
+		throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 	}
-	
-	public void paginar(TFilter dto){
-		if(dto.getPaginacionRegistroInicial()==null) dto.setPaginacionRegistroInicial(0);
-		if(dto.getPaginacionRegistroFinal()==null || dto.getPaginacionRegistroFinal()==0) dto.setPaginacionRegistroFinal(200);
+
+	public void paginar(TFilter dto) {
+		if (dto.getPaginacionRegistroInicial() == null)
+			dto.setPaginacionRegistroInicial(0);
+		if (dto.getPaginacionRegistroFinal() == null || dto.getPaginacionRegistroFinal() == 0)
+			dto.setPaginacionRegistroFinal(200);
 	}
-	
-	public String generarLlave(){
+
+	public String generarLlave() {
 		UUID uuid = UUID.randomUUID();
 		String gen = uuid.toString();
 		gen = gen.replaceAll("-", "");
 		return gen;
 	}
-	
-	
-	
+
 	public T inactivate(T dto) throws ServerException {
 		dto = consultaXId(dto.getLlaveTabla());
-		if(dto==null) throw new ServerException("No se identifica el objeto a inactivar");
-		if(dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("Este objeto ya se encuentra inactivo");
+		if (dto == null)
+			throw new ServerException("No se identifica el objeto a inactivar");
+		if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+			throw new ServerException("Este objeto ya se encuentra inactivo");
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
 	}
-	
+
 	public T activate(T dto) throws ServerException {
 		dto = consultaXId(dto.getLlaveTabla());
-		if(dto==null) throw new ServerException("No se identifica el objeto a Activar");
-		if(dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) throw new ServerException("Este objeto ya se encuentra Activo");
+		if (dto == null)
+			throw new ServerException("No se identifica el objeto a Activar");
+		if (dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
+			throw new ServerException("Este objeto ya se encuentra Activo");
 		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
 	}
-	
-	// @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+
+	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
+	// propagation=Propagation.REQUIRED)
 	public T save(T dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
 		try {
-			mapper.insertar(dto); 
-		}catch (Exception e) {
+			mapper.insertar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		dto = consultaXId(dto.getLlaveTabla());
 		return dto;
 	}
-	
-	// @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+
+	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
+	// propagation=Propagation.REQUIRED)
 	public T update(T dto) throws ServerException {
 		try {
-			mapper.actualizar(dto); 
-		}catch (Exception e) {
+			mapper.actualizar(dto);
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;

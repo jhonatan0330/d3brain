@@ -152,13 +152,14 @@ and cerl_usuario = (select cuss_usuario from usuariosesion_ussp  where cuss_llav
 		select
 			crac_llave as  llaveTabla
 			,crac_plantilla as  plantilla
-			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  codigo
+			,cdpl_codigo as  codigo
 			,brac_permisoscompletos as  permisosCompletos
 			,nrac_minutossesion as  minutosSesion
 			,crac_estado as estado
-		from rolacceso_racp a
-		
-		where crac_estado ='A'
+		from rolacceso_racp
+			inner join documentoplantilla_dplp dd on (cdpl_llave = crac_plantilla)
+		where crac_estado ='A' and dd.cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 	</select>
 <!--// END region script-->
 

@@ -198,7 +198,9 @@
 		select
 			crit_propiedad as  propiedad
 			,crit_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
 			,crit_campo as  campo
+			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
 			,crit_auxiliar as  auxiliar
 		from relacioninterna_ritp a
 		where crit_estado = 'A'

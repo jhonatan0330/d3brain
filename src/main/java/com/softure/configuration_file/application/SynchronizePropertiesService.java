@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
+import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 
@@ -16,11 +18,10 @@ public class SynchronizePropertiesService {
 	@Autowired
 	private PropiedadSvc propertiesService;
 
-	public void call(List<PropiedadDTO> propertiesFull, String entityRemote, String type, String entityLocal, String token)
+	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal, String token, LogConfigurationDTO log)
 			throws ServerException {
-
 		List<PropiedadDTO> localPropertiesToErase = propertiesService.obtenerPropiedades(type, entityLocal, null, null);
-		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(propertiesFull, type, entityRemote);
+		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type, entityRemote);
 		// Saco un listado de las propiedades nuevas
 		// Saco un listado de las propiedades a borrar
 		if (propertiesRemote != null && !propertiesRemote.isEmpty()) {
@@ -29,6 +30,9 @@ public class SynchronizePropertiesService {
 				//Creo la nueva propiedad
 				if(findProperty!= null) {
 					localPropertiesToErase.remove(findProperty);
+					log.info("EXIST " + remoteProperty.getPropiedadValor());
+					remoteProperty.setCambioEliminacion("YA");
+					remoteProperty.setCambioCreacion(findProperty.getLlaveTabla());
 				} else {
 					PropiedadDTO newProperty = new PropiedadDTO();
 					newProperty.setCampo(entityLocal);
@@ -42,6 +46,7 @@ public class SynchronizePropertiesService {
 						switch (remoteProperty.getPropiedadValor()) {
 						case "PROP_29":
 						case "PROP_41":
+						case "PROP_51":
 						case "PROP_54":
 						case "PROP_58":
 						case "PROP_59":
@@ -52,20 +57,24 @@ public class SynchronizePropertiesService {
 						case "PROP_122":
 						case "PROP_125":
 						case "PROP_139":
+						case "PROP_140":
 						case "PROP_146":
 						case "PROP_147":
 						case "PROP_156":
 						case "PROP_159":
 						case "PROP_160":
 						case "PROP_164":
+						case "PROP_175":
 						case "PROP_182":
 						case "PROP_187":
-						case "PROP_224":
-						case "PROP_140":
-						case "PROP_51":
 						case "PROP_189":
 						case "PROP_185":
-						case "PROP_212": {
+						case "PROP_192":
+						case "PROP_212": 
+						case "PROP_235":
+						case "PROP_237":
+						case "PROP_224":
+						{
 							newProperty.setValor(remoteProperty.getValor());
 							newProperty.setTexto(remoteProperty.getTexto());	
 							break;
@@ -74,8 +83,16 @@ public class SynchronizePropertiesService {
 							newProperty.setValor(remoteProperty.getTexto());
 						}	
 					}
-					propertiesService.guardar(newProperty, token);
+					try {
+						findProperty = propertiesService.guardar(newProperty, token);
+						log.info("NEW " + remoteProperty.getPropiedadValor());
+						remoteProperty.setCambioEliminacion("YA");
+						remoteProperty.setCambioCreacion(findProperty.getLlaveTabla());
+					} catch (Exception e) {
+						log.error(remoteProperty.getPropiedadValor() + " - " + remoteProperty.getValor() + " : " + e.getMessage());
+					}
 				}
+				
 			}
 		}
 		// elimino las propiedades que no estaban en la sincronizacion y no tenian
@@ -106,5 +123,5 @@ public class SynchronizePropertiesService {
 		}
 		return null;
 	}
-
+	
 }

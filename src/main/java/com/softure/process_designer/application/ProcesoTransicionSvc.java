@@ -260,8 +260,8 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return super.guardar(dto, token);
 	}
 
-	public List<ProcesoTransicionDTO> getFullToSynchronize() {
-		return procesoTransicionMapper.getFullToSynchronize();
+	public List<ProcesoTransicionDTO> getFullToSynchronize(List<String> process) {
+		return procesoTransicionMapper.getFullToSynchronize(process);
 	}	
 	
 // END region aditionalMethods

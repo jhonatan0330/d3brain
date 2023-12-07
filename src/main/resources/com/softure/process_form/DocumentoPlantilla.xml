@@ -203,6 +203,7 @@
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
 		<include refid="selectSimpleDocumentoPlantillaFragment" />
 		where cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpl_nombre
 	</select>
 <!--// END region script-->

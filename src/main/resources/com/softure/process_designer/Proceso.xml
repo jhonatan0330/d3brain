@@ -190,6 +190,7 @@
 			,cprc_codigo as  codigo
 		from proceso_prcp a
 		where cprc_estado = 'A'
+		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by nprc_prioridad, cprc_nombre 
 	</select>
 <!--// END region script-->

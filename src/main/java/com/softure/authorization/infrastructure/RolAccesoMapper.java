@@ -2,6 +2,8 @@ package com.softure.authorization.infrastructure;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.softure.SoftureSqlConnMapper;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -15,7 +17,7 @@ public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFil
 
 // BEGIN region aditionalMethods  
 	int permisosCompletos(String user);
-	List<RolAccesoDTO> getFullToSynchronize();
+	List<RolAccesoDTO> getFullToSynchronize(@Param("process") List<String> process);
 // END region aditionalMethods
 
 }

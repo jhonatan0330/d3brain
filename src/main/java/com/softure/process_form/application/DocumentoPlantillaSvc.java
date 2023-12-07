@@ -79,10 +79,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		// BEGIN DocumentoPlantilla_actualizar
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.actualizar(dto, token);
-		PropiedadDTO filtro = new PropiedadDTO();
-		filtro.setValor(dto.getLlaveTabla());
-		filtro.setTexto(dto.getNombre());
-		configuracionSvc.actualizarValorPropiedad(filtro);
+		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;
 		// END DocumentoPlantilla_actualizar
 	}
@@ -540,8 +537,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 	}
 
-	public List<DocumentoPlantillaDTO> getFullToSynchronize() {
-		return documentoPlantillaMapper.getFullToSynchronize();
+	public List<DocumentoPlantillaDTO> getFullToSynchronize(List<String> process) {
+		return documentoPlantillaMapper.getFullToSynchronize(process);
 	}
 	
 // END region aditionalMethods

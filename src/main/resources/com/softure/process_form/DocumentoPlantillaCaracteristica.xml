@@ -186,7 +186,9 @@
 	
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
 		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
-		where cdpc_estado = 'A'
+			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)
+		where cdpc_estado = 'A' and cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpc_plantilla, ndpc_orden 
 	</select>
 <!--// END region script-->

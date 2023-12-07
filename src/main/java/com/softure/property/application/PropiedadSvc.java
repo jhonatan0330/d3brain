@@ -510,14 +510,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(valor);
 		if (plantilla == null) {// Consulto por nombre
 			DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
-			plantillaFilter.setNombre(valor.toUpperCase());
+			plantillaFilter.setCodigo(valor.toUpperCase());
 			plantillaFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			plantilla = plantillaService.consultaUnica(plantillaFilter);
 			if (plantilla == null) {// Consulto por codigo
 				plantillaFilter = new DocumentoPlantillaFilterDTO();
-				plantillaFilter.setCodigo(valor.toUpperCase());
 				plantillaFilter.setEstado(SharedConstants.STATE_ACTIVE);
-				plantilla = plantillaService.consultaUnica(plantillaFilter);
+				plantillaFilter.setNombre(valor.toUpperCase());
+				try {
+					plantilla = plantillaService.consultaUnica(plantillaFilter);
+				} catch (Exception e) {
+					throw new ServerException("Existen varias plantillas con el nombre " + valor.toUpperCase() + ". " + e.getMessage());
+				}			
 			}
 		}
 		return plantilla;
@@ -788,17 +792,22 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		ReporteBaseDTO reporte = reporteService.consultaXId(dto.getValor());
 		if (reporte == null) {
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
-			reporteFilter.setNombre(dto.getValor().toUpperCase());
+			reporteFilter.setCodigo(dto.getValor().toUpperCase());
 			// Busco los activos porque los que son subreportes no se muestran
 			reporteFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			reporte = reporteService.consultaUnica(reporteFilter);
+			
 			if (reporte == null) {// Consulto por codigo
 				reporteFilter = new ReporteBaseFilterDTO();
-				reporteFilter.setCodigo(dto.getValor().toUpperCase());
+				reporteFilter.setNombre(dto.getValor().toUpperCase());
 				reporteFilter.setEstado(SharedConstants.STATE_ACTIVE);
-				reporte = reporteService.consultaUnica(reporteFilter);
+				try {
+					reporte = reporteService.consultaUnica(reporteFilter);	
+				} catch (Exception e) {
+					throw new ServerException("Existen varios reportes con nombre " + dto.getValor().toUpperCase() + ". " + e.getMessage());
+				}
 				if (reporte == null)
-					throw new ServerException("No se encontro reporte con Id, nombre o Codigo que concuerde");
+					throw new ServerException("No se encontro reporte con Id, nombre o Codigo que concuerde " + dto.getValor().toUpperCase());
 			}
 		}
 		dto.setValor(reporte.getLlaveTabla());
@@ -1187,7 +1196,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				bd = apiService.consultaUnica(bdFilter);
 			}
 			if (bd == null)
-				throw new ServerException("El api no fue reconocido");
+				throw new ServerException("El api "+ dto.getValor().toUpperCase() +"no fue reconocido para la propiedad " + dto.getKey());
 		}
 		dto.setValor(bd.getLlaveTabla());
 		dto.setTexto(bd.getNombre());
@@ -1362,8 +1371,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("No olvides colocar el nombre del parametro");
 	}
 
-	public void actualizarValorPropiedad(PropiedadDTO dto) throws ServerException {
-		propiedadMapper.actualizarValorPropiedad(dto);
+	public void actualizarValorPropiedad(String key, String name) throws ServerException {
+		PropiedadDTO filter = new PropiedadDTO();
+		filter.setValor(key);
+		filter.setTexto(name);
+		propiedadMapper.actualizarValorPropiedad(filter);
 	}
 
 	/*

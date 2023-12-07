@@ -15,5 +15,3 @@ ALTER TABLE tipocomprobante_tcm ADD dtcm_modificacionfecha timestamptz;
 ALTER TABLE tipocomprobante_tcm ADD ctcm_catalogo varchar(32) NOT NULL ;
 ALTER TABLE tipocomprobante_tcm ADD ctcm_nombre varchar(100) NOT NULL ;
 ALTER TABLE tipocomprobante_tcm ADD ctcm_codigo varchar(100) NOT NULL ;
-
-ALTER TABLE x_${catalogCode}_comprobante_cmp ADD ccmp_tipo varchar(32) NOT NULL ;

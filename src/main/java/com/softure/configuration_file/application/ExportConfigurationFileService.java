@@ -1,19 +1,26 @@
 package com.softure.configuration_file.application;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authorization.application.RolAccesoSvc;
+import com.softure.configuration_file.domain.ExportListRequest;
 import com.softure.configuration_file.domain.FileVO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
+import com.softure.process_designer.domain.ProcesoDTO;
+import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.property.application.PropiedadSvc;
@@ -44,19 +51,54 @@ public class ExportConfigurationFileService {
 	public FileVO call(String token) throws ServerException {
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
-		hierarchy.setMessages(messageService.getFullToSynchronize());
-		hierarchy.setApis(apiService.getFullToSynchronize());
+		hierarchy.setMessages(messageService.getFullToSynchronize(null));
+		hierarchy.setApis(apiService.getFullToSynchronize(null));
 		hierarchy.setOrganization(organizationService.obtenerPrincipal());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
-		hierarchy.setProcess(procesoService.getFullToSynchronize());
-		hierarchy.setStates(stateService.getFullToSynchronize());
-		hierarchy.setTransitions(transitionService.getFullToSynchronize());
-		hierarchy.setTemplates(templateService.getFullToSynchronize());
-		hierarchy.setRoles(rolService.getFullToSynchronize());
-		hierarchy.setReports(reportService.getFullToSynchronize());
-		hierarchy.setFields(fieldService.getFullToSynchronize());
+		hierarchy.setProcess(procesoService.getFullToSynchronize(null));
+		hierarchy.setStates(stateService.getFullToSynchronize(null));
+		hierarchy.setTransitions(transitionService.getFullToSynchronize(null));
+		hierarchy.setTemplates(templateService.getFullToSynchronize(null));
+		hierarchy.setRoles(rolService.getFullToSynchronize(null));
+		hierarchy.setReports(reportService.getFullToSynchronize(null));
+		hierarchy.setFields(fieldService.getFullToSynchronize(null));
 		
+		return uploadFile(token, hierarchy);
+	}
+	
+	public FileVO call(String token, ExportListRequest modules) throws ServerException {
+		
+		if(modules ==null || modules.getModulesCode()==null || modules.getModulesCode().isEmpty()) throw new ServerException("No hay modulos"); 
+		List<String> processToInclude = new ArrayList<>();
+		
+		for (String iModule : modules.getModulesCode()) {
+			ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
+			filterProcess.setEstado(SharedConstants.STATE_ACTIVE);
+			filterProcess.setCodigo(iModule);
+			List<ProcesoDTO> processModule = procesoService.listarConsulta(filterProcess);
+			if(processModule!=null && !processModule.isEmpty())
+				processToInclude.addAll(getProcessFromMacro(processModule.get(0).getLlaveTabla()));	
+		}
+		if(processToInclude.isEmpty())
+			throw new ServerException("No se identifica un modulo con el codigos elegidos ");
+		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
+		hierarchy.setMessages(messageService.getFullToSynchronize(processToInclude));
+		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
+		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
+		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
+		hierarchy.setProcess(procesoService.getFullToSynchronize(processToInclude));
+		hierarchy.setStates(stateService.getFullToSynchronize(processToInclude));
+		hierarchy.setTransitions(transitionService.getFullToSynchronize(processToInclude));
+		hierarchy.setTemplates(templateService.getFullToSynchronize(processToInclude));
+		hierarchy.setRoles(rolService.getFullToSynchronize(processToInclude));
+		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
+		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
+		
+		return uploadFile(token, hierarchy);
+	}
+
+	private FileVO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		FileVO result = new FileVO();
 		result.setUrl( uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "webservice"));
 		return result;
@@ -69,7 +111,23 @@ public class ExportConfigurationFileService {
 		} catch (JsonProcessingException e) {
 			throw new ServerException(e.getMessage());
 		}
-		
+	}
+	
+
+	private List<String> getProcessFromMacro(String parentProcess) throws ServerException {
+		List<String> processToInclude = new ArrayList<>();
+		ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
+		filterProcess.setEstado(SharedConstants.STATE_ACTIVE);
+		filterProcess.setMacroproceso(parentProcess);
+		List<ProcesoDTO> processModule = procesoService.listarConsulta(filterProcess);
+		if(processModule!=null && !processModule.isEmpty()) {
+			for (ProcesoDTO procesoDTO : processModule) {
+				processToInclude.addAll(getProcessFromMacro(procesoDTO.getLlaveTabla()));
+				processToInclude.add(parentProcess);
+			}
+		}
+		processToInclude.add(parentProcess);
+		return processToInclude;
 	}
 
 }

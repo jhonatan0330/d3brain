@@ -10,6 +10,7 @@ import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
@@ -19,18 +20,20 @@ public class SynchronizeRolService {
 	@Autowired RolAccesoSvc rolService;
 	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 	
-	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties) throws ServerException {
-		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize();
+	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties, LogConfigurationDTO log) throws ServerException {
+		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize(null);
 		List<RolAccesoDTO> remoteList = hierarchy.getRoles();
 		List<PropiedadDTO> propertiesWithReplaceRol = new ArrayList<>();
 		if (remoteList != null && !remoteList.isEmpty()) {
+			log.setRoot("SynchronizeRolService");
 			for (RolAccesoDTO remote : remoteList) {
 				RolAccesoDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ROL, local.getLlaveTabla(), token);
+					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.ROL, local.getLlaveTabla(), token, log);
 					boolean isToMigrate = false;
 					for (PropiedadDTO iProperty : propierties) {
 						isToMigrate = false;
@@ -56,6 +59,7 @@ public class SynchronizeRolService {
 	}
 
 	private RolAccesoDTO findTemplateInList(List<RolAccesoDTO> array, String code) {
+		if (array == null) return null;
 		for (RolAccesoDTO localProcess : array) {
 			if (code.compareTo(localProcess.getCodigo()) == 0) {
 				return localProcess;

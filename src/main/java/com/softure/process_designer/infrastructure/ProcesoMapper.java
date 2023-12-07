@@ -2,6 +2,8 @@ package com.softure.process_designer.infrastructure;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoDTO;
@@ -13,6 +15,6 @@ public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO
 
 // BEGIN region aditionalMethods  
 	List<ProcesoDTO> noUsoSoloQuitoErrorList();
-	List<ProcesoDTO> getFullToSynchronize();
+	List<ProcesoDTO> getFullToSynchronize(@Param("process")List<String> process);
 // END region aditionalMethods
 }

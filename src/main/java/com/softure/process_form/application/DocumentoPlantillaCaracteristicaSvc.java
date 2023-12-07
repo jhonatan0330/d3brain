@@ -70,10 +70,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.actualizar(dto, token);
 		organizar(dto, token);
-		PropiedadDTO filtro = new PropiedadDTO();
-		filtro.setValor(dto.getLlaveTabla());
-		filtro.setTexto(dto.getNombre());
-		parametroService.actualizarValorPropiedad(filtro);
+		parametroService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		PropiedadDTO differenceProperty = parametroService.getPropertyDifferenceField(dto.getLlaveTabla());
 		if (differenceProperty == null) {
 			PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
@@ -466,8 +463,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 	}
 // END region aditionalMethods
 
-	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize() {
-		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize();
+	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(List<String> process) {
+		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize(process);
 	}
 
 }

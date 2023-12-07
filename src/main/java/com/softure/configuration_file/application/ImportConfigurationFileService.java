@@ -15,23 +15,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.FileVO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.property.domain.PropiedadDTO;
+import com.softure.upload.application.UploadSvc;
 
 @Service
 public class ImportConfigurationFileService {
 	
-	@Autowired CambioSvc changeService;
-	@Autowired SynchronizeTypePropertiesService sincronizeTypeService;
-	@Autowired SynchronizeMessageService sincronizeMessageService;
-	@Autowired SynchronizeApiService sincronizeApiService;
-	@Autowired SynchronizeOrganizationService sincronizeOrganizationService;
-	@Autowired SynchronizeProcessService sincronizeProcessService;
-	@Autowired SynchronizeProcessStateService sincronizeProcessStateService;
-	@Autowired SynchronizeProcessTransitionService sincronizeProcessTransitionService;
-	@Autowired SynchronizeTemplateService sincronizeTemplateService;
-	@Autowired SynchronizeRolService sincronizeRolService;
+	@Autowired private CambioSvc changeService;
+	@Autowired private SynchronizeTypePropertiesService sincronizeTypeService;
+	@Autowired private SynchronizeMessageService sincronizeMessageService;
+	@Autowired private SynchronizeApiService sincronizeApiService;
+	@Autowired private SynchronizeOrganizationService sincronizeOrganizationService;
+	@Autowired private SynchronizeProcessService sincronizeProcessService;
+	@Autowired private SynchronizeProcessStateService sincronizeProcessStateService;
+	@Autowired private SynchronizeProcessTransitionService sincronizeProcessTransitionService;
+	@Autowired private SynchronizeTemplateService sincronizeTemplateService;
+	@Autowired private SynchronizeRelationService sincronizeRelationService;
+	@Autowired private SynchronizeRolService sincronizeRolService;
+	@Autowired private UploadSvc uploadService;
 	
 	public FileVO call(String token, FileVO file) throws ServerException{
 		
@@ -40,8 +44,7 @@ public class ImportConfigurationFileService {
 		//JSON from file to Object
 		try {
 			HierarchyExporterDTO hierarchy = mapper.readValue( new URL(file.getUrl()), HierarchyExporterDTO.class);
-			sincronize(token, hierarchy);
-			System.out.println(hierarchy.getOrganization().getNombre());
+			return uploadFile(token, sincronize(token, hierarchy).getLogs());
 		} catch (StreamReadException e) {
 			throw new ServerException(e.getMessage());
 		} catch (DatabindException e) {
@@ -51,10 +54,9 @@ public class ImportConfigurationFileService {
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
-		return file;
 	}
 
-	private void sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException{
+	private LogConfigurationDTO sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException{
 		CambioDTO changeRequest = new CambioDTO();
 		changeRequest.setMotivo("Importacion");
 		changeService.guardar(changeRequest, token);
@@ -75,26 +77,36 @@ public class ImportConfigurationFileService {
 			      .filter(property -> (property.getRol()==null && property.getRolExcluyente()==null))
 			      .collect(Collectors.toList()));
 		
-		sincronizeTypeService.call(token, hierarchy);
-		sincronizeMessageService.call(token, hierarchy);
-		sincronizeApiService.call(token, hierarchy);
-		sincronizeOrganizationService.call(token, hierarchy);
-		sincronizeProcessService.call(token, hierarchy);
-		sincronizeTemplateService.call(token, hierarchy);
-		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles);
-		sincronizeProcessStateService.call(token, hierarchy);
-		sincronizeProcessTransitionService.call(token, hierarchy);
-		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties);
+		LogConfigurationDTO logs = new LogConfigurationDTO();
+		sincronizeTypeService.call(token, hierarchy, logs);
+		sincronizeMessageService.call(token, hierarchy, logs);
+		sincronizeApiService.call(token, hierarchy, logs);
+		sincronizeOrganizationService.call(token, hierarchy, logs);
+		sincronizeProcessService.call(token, hierarchy, logs);
+		sincronizeTemplateService.call(token, hierarchy, logs);
+		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs);
+		sincronizeProcessStateService.call(token, hierarchy, logs);
+		sincronizeProcessTransitionService.call(token, hierarchy, logs);
+		sincronizeRelationService.call(token, hierarchy, logs);
+		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs);
 		hierarchy.setProperties(rolInProperties);
-		sincronizeApiService.call(token, hierarchy);
-		sincronizeOrganizationService.call(token, hierarchy);
-		sincronizeProcessService.call(token, hierarchy);
-		sincronizeTemplateService.call(token, hierarchy);
-		sincronizeProcessStateService.call(token, hierarchy);
-		sincronizeProcessTransitionService.call(token, hierarchy);;
+		sincronizeApiService.call(token, hierarchy, logs);
+		sincronizeOrganizationService.call(token, hierarchy, logs);
+		sincronizeProcessService.call(token, hierarchy, logs);
+		sincronizeTemplateService.call(token, hierarchy, logs);
+		sincronizeProcessStateService.call(token, hierarchy, logs);
+		sincronizeProcessTransitionService.call(token, hierarchy, logs);
+		sincronizeRelationService.call(token, hierarchy, logs);
 		//No sincornizamos propiedades de rol
 		//sincronizeMessageService.call(token, hierarchy);
 		//sincronizeRolService.callAfterRol(token, hierarchy);
+		return logs;
+	}
+	
+	private FileVO uploadFile(String token, String logs) throws ServerException {
+		FileVO result = new FileVO();
+		result.setUrl( uploadService.uploadFile(logs.getBytes() , "Entrada.txt", token, "webservice"));
+		return result;
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
@@ -21,19 +22,20 @@ public class SynchronizeProcessService {
 	@Autowired private ProcesoSvc processService;
 	@Autowired private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize();
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize(null);
 
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
 		if (processRemote != null && !processRemote.isEmpty()) {
+			log.setRoot("SynchronizeProcessService");
 			for (ProcesoDTO remoteProcess : processRemote) {
-				System.out.println("Proceso : " + remoteProcess.getNombre());
 				ProcesoDTO localProcess = findProcessInList(localProcessToErase, remoteProcess.getCodigo());
 				// Creo el nuevo proceso
 				if (localProcess!=null){
 					localProcessToErase.remove(localProcess);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, localProcess.getLlaveTabla(), token);
+					log.info("EXIST " +localProcess.getCodigo() + " - " + localProcess.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.PROCESO, localProcess.getLlaveTabla(), token, log);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
 					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), localProcess.getLlaveTabla());
@@ -49,8 +51,9 @@ public class SynchronizeProcessService {
 					newProcess.setPrioridad(remoteProcess.getPrioridad());
 					newProcess.setTipo(remoteProcess.getTipo());
 					newProcess = processService.save(newProcess);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, newProcess.getLlaveTabla(), token);
+					log.info("new " +newProcess.getCodigo() + " - " + newProcess.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.PROCESO, newProcess.getLlaveTabla(), token, log);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
@@ -88,6 +91,7 @@ public class SynchronizeProcessService {
 	}
 	
 	private void changeProcessInStates(List<ProcesoEstadoDTO> array, String remote, String local) {
+		if(array ==null) return;
 		for (ProcesoEstadoDTO remoteProcess : array) {
 			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
 				remoteProcess.setProceso(local);
@@ -96,6 +100,7 @@ public class SynchronizeProcessService {
 	}
 	
 	private void changeProcessInTransition(List<ProcesoTransicionDTO> array, String remote, String local) {
+		if(array ==null) return;
 		for (ProcesoTransicionDTO remoteProcess : array) {
 			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
 				remoteProcess.setProceso(local);

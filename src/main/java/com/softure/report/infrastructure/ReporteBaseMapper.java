@@ -4,6 +4,8 @@ package com.softure.report.infrastructure;
 // BEGIN region interImport  
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.softure.SoftureSqlConnMapper;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.report.domain.ReporteBaseDTO;
@@ -15,7 +17,7 @@ public interface ReporteBaseMapper extends IBasicMapper<ReporteBaseDTO, ReporteB
 
 // BEGIN region aditionalMethods  
 	List<ReporteBaseDTO> listarMenu();
-	List<ReporteBaseDTO> getFullToSynchronize();
+	List<ReporteBaseDTO> getFullToSynchronize(@Param("process") List<String> process);
 // END region aditionalMethods
 
 	

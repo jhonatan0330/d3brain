@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -18,17 +19,18 @@ public class SynchronizeProcessStateService {
 	@Autowired private ProcesoEstadoSvc processStateService;
 	@Autowired private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize();
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
+			log.setRoot("SynchronizeProcessStateService");
 			for (ProcesoEstadoDTO remote : remoteTocompare) {
-				System.out.println("Estado :" + remote.getNombre()  + "  --  " + remote.getProcesoNombre());
 				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
 				if (local!=null){
 					localToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), token);
+					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), token, log);
 					changeStatesInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), local.getLlaveTabla());
 				}
 				else
@@ -41,8 +43,9 @@ public class SynchronizeProcessStateService {
 					newState.setTipo(remote.getTipo());
 					newState.setNombre(remote.getNombre());
 					newState = processStateService.save(newState);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ESTADO, newState.getLlaveTabla(), token);
+					log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.ESTADO, newState.getLlaveTabla(), token, log);
 					changeStatesInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), newState.getLlaveTabla());
 				}
 			}
@@ -61,6 +64,7 @@ public class SynchronizeProcessStateService {
 	}
 
 	private ProcesoEstadoDTO findProcessInList(List<ProcesoEstadoDTO> array, ProcesoEstadoDTO remote) {
+		if (array == null) return null;
 		for (ProcesoEstadoDTO localProcess : array) {
 			if (remote.getProceso().compareTo(localProcess.getProceso()) == 0 && remote.getNombre().compareTo(localProcess.getNombre()) == 0 ) {
 				return localProcess;

@@ -638,6 +638,7 @@ COST 100;
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
 		from propiedad_ppdp a
 			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
 			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
@@ -657,6 +658,7 @@ union
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
 		from propiedad_ppdp a
 			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
 			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
@@ -676,6 +678,7 @@ union
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
 		from propiedad_ppdp a
 			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
 			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)

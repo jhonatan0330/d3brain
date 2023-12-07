@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 
@@ -16,16 +17,18 @@ public class SynchronizeMessageService {
 	@Autowired private MensajePlantillaCorreoSvc messagesService;
 	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		List<MensajePlantillaCorreoDTO> localListToErase = messagesService.getFullToSynchronize();
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+		List<MensajePlantillaCorreoDTO> localListToErase = messagesService.getFullToSynchronize(null);
 		List<MensajePlantillaCorreoDTO> remoteList = hierarchy.getMessages();
 		if (remoteList != null && !remoteList.isEmpty()) {
+			log.setRoot("SynchronizeMessage");
 			for (MensajePlantillaCorreoDTO remote : remoteList) {
 				MensajePlantillaCorreoDTO local = findTemplateInList(localListToErase, remote.getNombre());
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
 					//changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), local.getLlaveTabla());
+					log.info("EXIST " + remote.getNombre());
 				}
 				else
 				{
@@ -35,6 +38,7 @@ public class SynchronizeMessageService {
 					newMessage.setTexto(remote.getTexto());
 					newMessage = messagesService.save(newMessage);
 					//changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), newType.getLlaveTabla());
+					log.info("NEW " + remote.getNombre());
 				}
 			}
 		}

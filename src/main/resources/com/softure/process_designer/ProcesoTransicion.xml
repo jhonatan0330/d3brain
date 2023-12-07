@@ -294,6 +294,7 @@
 			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null) 
 			and (pe_inicial.cpes_estado = 'A' or pe_inicial.cpes_estado is null) 
 			and (pe_final.cpes_estado = 'A' or pe_final.cpes_estado is null) 
+			<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by procesoNombre
 	</select>
 <!--// END region script-->

@@ -137,8 +137,22 @@
 	</select>
 	
 	<select id="getFullToSynchronize" resultType="MensajePlantillaCorreoDTO">
-		<include refid="selectSimpleMensajePlantillaCorreoFragment" />
+		select distinct
+			cmpl_llave as  llaveTabla
+			,cmpl_nombre as  nombre
+			,cmpl_titulo as  titulo
+			,cmpl_texto as  texto
+			,cmpl_servidor as  servidor
+			,cmpl_estado as estado
+		from mensajeplantillacorreo_mplp a
+		<if test="process!=null">
+		inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = cmpl_llave)
+		left join procesoestado_pesp pes on (pes.cpes_llave = pp.cppd_campo and pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
+		left join procesotransicion_ptrp tra on (tra.cptr_llave = pp.cppd_campo and tra.cptr_estado = 'A' and tra.cptr_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
+		left join documentoplantilla_dplp dd on (dd.cdpl_llave = pp.cppd_campo and dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
+		</if>
 		where cmpl_estado = 'A'
+		<if test="process!=null">and (pes.cpes_llave is not null or tra.cptr_llave is not null or dd.cdpl_llave is not null)</if>
 	</select>
 
 <!--// BEGIN region script-->

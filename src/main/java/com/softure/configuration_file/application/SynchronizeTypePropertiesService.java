@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
+import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.application.PropiedadValorDefinidoSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -16,16 +17,17 @@ public class SynchronizeTypePropertiesService {
 
 	@Autowired private PropiedadValorDefinidoSvc typesService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
 		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();
 		List<PropiedadValorDefinidoDTO> remoteList = hierarchy.getPropertyTypes();
 		if (remoteList != null && !remoteList.isEmpty()) {
+			log.setRoot("SynchronizeTypeProperties");
 			for (PropiedadValorDefinidoDTO remote : remoteList) {
 				PropiedadValorDefinidoDTO local = findTemplateInList(localListToErase, remote.getCodigo());
-				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
 					changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), local.getLlaveTabla());
+					log.info("EXIST " + remote.getCodigo());
 				}
 				else
 				{
@@ -47,6 +49,7 @@ public class SynchronizeTypePropertiesService {
 					newType.setTextOculto(remote.getTextOculto());
 					newType = typesService.save(newType);
 					changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), newType.getLlaveTabla());
+					log.info("NEW " + remote.getCodigo());
 				}
 			}
 		}

@@ -12,6 +12,7 @@ public class SharedConstants {
 	public static final String COMA_DOBLE = ",,";
 	public static final String IGUAL = "=";
 	public static final String BARRA_INCLINADA_DERECHA = "/";
+	public static final String NEW_LINE = "\n";
 	public static final String FORMATO_FECHA = "dd/MM/yyyy";
 	public static final String CONSTANTE_NO = "N";
 	public static final String CONSTANTE_SI = "S";

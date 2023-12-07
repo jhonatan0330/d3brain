@@ -19,5 +19,5 @@ public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionD
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
 	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
 	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento, @Param("expediente") String expediente);
-	List<ProcesoTransicionDTO> getFullToSynchronize();
+	List<ProcesoTransicionDTO> getFullToSynchronize(@Param("process") List<String> process);
 }

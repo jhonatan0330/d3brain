@@ -141,14 +141,23 @@
 	
 
 	<select id="getFullToSynchronize" resultType="WebServiceDTO">
-		select
+		select distinct
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
 			,cwbs_template as  template
 			,cwbs_url as  url
 		from webservice_wbsp a
+		<if test="process!=null">
+		inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = cwbs_llave)
+		left join procesoestado_pesp pes on (pes.cpes_llave = pp.cppd_campo and pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
+		left join documentoplantilla_dplp dd on (dd.cdpl_llave = pp.cppd_campo and dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
+		</if>
 		where cwbs_estado = 'A'
+		<if test="process!=null">and (
+			pes.cpes_llave is not null or dd.cdpl_llave is not null
+			or (cppd_propiedadvalor= 'PROP_195') --Creo que falta un filtro mas pero funciona por el momento
+		)</if>
 	</select>
 
 <!--// BEGIN region script-->

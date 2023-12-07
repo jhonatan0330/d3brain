@@ -83,6 +83,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
     @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
     public ReporteBaseDTO actualizar( ReporteBaseDTO dto, String token) throws ServerException {
         // BEGIN ReporteBase_actualizar
+    	validateUnique(dto);
+    	propiedadService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
         return super.update(dto);
         // END ReporteBase_actualizar
     }
@@ -116,8 +118,23 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
     @Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
     public ReporteBaseDTO guardar(ReporteBaseDTO dto, String token) throws ServerException {
         // BEGIN ReporteBase_guardar
+    	validateUnique(dto);
         return super.save(dto);
         // END ReporteBase_guardar
+    }
+    
+    private void validateUnique(ReporteBaseDTO dto) throws ServerException {
+    	ReporteBaseFilterDTO filter = new ReporteBaseFilterDTO();
+    	filter.setCodigo(dto.getCodigo());
+    	filter.setEstado(SharedConstants.STATE_ACTIVE);
+    	ReporteBaseDTO current = consultaUnica(filter);
+    	if(current!=null && dto.getLlaveTabla()!=null && dto.getLlaveTabla().compareTo(current.getLlaveTabla())!= 0)
+    		throw new ServerException("Existe un reporte con el mismo codigo");
+    	filter.setCodigo(null);
+    	filter.setNombre(dto.getNombre());
+    	current = consultaUnica(filter);
+    	if(current!=null && dto.getLlaveTabla()!=null && dto.getLlaveTabla().compareTo(current.getLlaveTabla())!= 0)
+    		throw new ServerException("Existe un reporte con el mismo nombre");
     }
 
 // BEGIN region aditionalMethods
@@ -307,8 +324,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
     }
 
-    public List<ReporteBaseDTO> getFullToSynchronize() {
-        return reporteBaseMapper.getFullToSynchronize();
+    public List<ReporteBaseDTO> getFullToSynchronize(List<String> process) {
+        return reporteBaseMapper.getFullToSynchronize(process);
     }
 
 // END region aditionalMethods

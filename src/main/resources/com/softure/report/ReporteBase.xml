@@ -234,6 +234,7 @@
 		from reportebase_rpbp a 
 			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = a.crpb_plantilla) 
 		where crpb_estado = 'A' and dd.cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 	</select>
 <!--// END region script-->
 

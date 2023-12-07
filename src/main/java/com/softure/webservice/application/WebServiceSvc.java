@@ -14,22 +14,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.property.application.PropiedadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 import com.softure.webservice.infrastructure.WebServiceMapper;
 
 @Service("webServiceService")
 public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> {
-	
+
 	@Autowired
 	private WebServiceMapper webServiceMapper;
-	
-	// BEGIN region servicesWebService
-	// END region servicesWebService
+
+	@Autowired
+	private PropiedadSvc paramService;
 
 	@Override
 	public WebServiceDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. WebService");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. WebService");
 		WebServiceFilterDTO dto = new WebServiceFilterDTO();
 		dto.setLlaveTabla(llave);
 		return webServiceMapper.consultar(dto);
@@ -37,59 +39,58 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = webServiceMapper;
+		this.mapper = webServiceMapper;
 	}
-	
+
 	@Override
 	public WebServiceDTO activar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_activar
 		return super.activar(dto, token);
 		// END WebService_activar
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public WebServiceDTO actualizar( WebServiceDTO dto, String token) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public WebServiceDTO actualizar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_actualizar
+		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return super.actualizar(dto, token);
 		// END WebService_actualizar
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO inactivar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_inactivar
 		return super.inactivar(dto, token);
 		// END WebService_inactivar
 	}
-	
+
 	@Override
 	public WebServiceDTO consultaUnica(WebServiceFilterDTO dto) throws ServerException {
 		return super.consultaUnica(dto);
 	}
-	
+
 	@Override
 	public int contarResultados(WebServiceFilterDTO dto) throws ServerException {
 		return super.contarResultados(dto);
 	}
-	
-	@Override
-	public List<WebServiceDTO> listarConsulta(WebServiceFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public List<WebServiceDTO> listarConsulta(WebServiceFilterDTO dto) throws ServerException {
+		return super.listarConsulta(dto);
+	}
+
+	@Override
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO guardar(WebServiceDTO dto, String token) throws ServerException {
 		// BEGIN WebService_guardar
 		return super.guardar(dto, token);
 		// END WebService_guardar
 	}
 
-	public List<WebServiceDTO> getFullToSynchronize() {
-		return webServiceMapper.getFullToSynchronize();
+	public List<WebServiceDTO> getFullToSynchronize(List<String> process) {
+		return webServiceMapper.getFullToSynchronize(process);
 	}
 
 // BEGIN region aditionalMethods
