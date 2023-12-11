@@ -81,7 +81,7 @@ public class SynchronizeRelationService {
 				RelacionInternaDTO findRelation = findRelationInList(localRelationsToErase, remoteRelation.getPlantilla(), remoteRelation.getCampo());
 				if(findRelation!= null) {
 					localRelationsToErase.remove(findRelation);
-					log.info("EXIST " + remoteRelation.getPropiedadNombre());
+					log.info("EXIST " + remoteRelation.getPlantillaNombre() + ".." +  remoteRelation.getCampoNombre());
 				} else {
 					RelacionInternaDTO newRelation = new RelacionInternaDTO();
 					newRelation.setAuxiliar(remoteRelation.getAuxiliar());

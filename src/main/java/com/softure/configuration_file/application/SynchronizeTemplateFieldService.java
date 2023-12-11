@@ -31,7 +31,7 @@ public class SynchronizeTemplateFieldService {
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
-					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
+					log.info("EXIST " + remote.getNombre() + " (Cod: " + remote.getNombre() + ")");
 				}
 				else
 				{
@@ -44,10 +44,11 @@ public class SynchronizeTemplateFieldService {
 					newField.setObjetivo(remote.getObjetivo());
 					newField.setOrden(remote.getOrden());
 					local = fieldService.save(newField);
-					log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
+					log.info("NEW " +  remote.getNombre() + " (Cod: " + remote.getNombre() + ")");
 				}
 				changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
 			}
+			log.setRoot(templateRoot);
 		}
 		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate, log);
 	}
@@ -69,7 +70,7 @@ public class SynchronizeTemplateFieldService {
 				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local!=null){
-					log.setRoot(templateRoot + "...."  + local.getNombre());
+					log.setRoot(templateRoot);
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 						PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log);	
@@ -78,21 +79,6 @@ public class SynchronizeTemplateFieldService {
 		}
 	}
 
-	public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		/*List<DocumentoPlantillaCaracteristicaDTO> localToErase = fieldService.getFullToSynchronize();
-		List<DocumentoPlantillaCaracteristicaDTO> remoteList = hierarchy.getTemplates();
-		if (remoteList != null && !remoteList.isEmpty()) {
-			for (DocumentoPlantillaCaracteristicaDTO remote : remoteList) {
-				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localToErase, remote.getCodigo());
-				// Creo el nuevo proceso
-				if (local!=null){
-					localToErase.remove(local);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token);
-				}
-			}
-		}*/
-	}
 
 	private DocumentoPlantillaCaracteristicaDTO findTemplateInList(List<DocumentoPlantillaCaracteristicaDTO> array, String code) {
 		for (DocumentoPlantillaCaracteristicaDTO localProcess : array) {
