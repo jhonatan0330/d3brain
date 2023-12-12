@@ -14,6 +14,7 @@ import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service
@@ -57,6 +58,7 @@ public class SynchronizeProcessService {
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
+					changeProcessInTemplates(hierarchy.getTemplates(), remoteProcess.getLlaveTabla(), newProcess.getLlaveTabla());
 				}
 			}
 		}
@@ -82,6 +84,14 @@ public class SynchronizeProcessService {
 		}
 	}
 
+	private void changeProcessInTemplates(List<DocumentoPlantillaDTO> array, String remote, String local) {
+		for (DocumentoPlantillaDTO item : array) {
+			if(item.getProceso()!=null && item.getProceso().compareTo(remote)==0) {
+				item.setProceso(local);
+			}
+		}
+	}
+	
 	private void changeMacroProcesoField(List<ProcesoDTO> processRemote, String remote, String local) {
 		for (ProcesoDTO remoteProcess : processRemote) {
 			if(remoteProcess.getMacroproceso()!=null && remoteProcess.getMacroproceso().compareTo(remote)==0) {

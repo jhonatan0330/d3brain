@@ -66,7 +66,7 @@ public class SynchronizeApiService {
 	private WebServiceDTO findTemplateInList(List<WebServiceDTO> array, String code) {
 		if (array == null) return null;
 		for (WebServiceDTO localProcess : array) {
-			if (code.compareTo(localProcess.getCodigo()) == 0) {
+			if (localProcess != null && code.compareTo(localProcess.getCodigo()) == 0) {
 				return localProcess;
 			}
 		}
