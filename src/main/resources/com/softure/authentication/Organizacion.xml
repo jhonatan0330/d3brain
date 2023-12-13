@@ -13,11 +13,8 @@
 			,corg_usuariosystem as  usuarioSystem
 			,corg_imagen as  imagen
 			,corg_slogan as  slogan
-			,borg_sincronizacion as  sincronizacion
 			,corg_mensajeingreso as  mensajeIngreso
 			,corg_codigo as  codigo
-			,(select cser_url from servidor_serp where cser_llave  = corg_servidor) as  servidorUrl
-			,corg_servidorcorreo as  servidorCorreo
 			,corg_estado as estado
 		from organizacion_orgp a
 	</sql>
@@ -42,14 +39,8 @@
 			<if test="usuarioSystem!=null">
 				and corg_usuariosystem = #{usuarioSystem}
 			</if>
-			<if test="sincronizacionFilter!=null">
-				and borg_sincronizacion = #{sincronizacionFilter}
-			</if>
 			<if test="codigo!=null">
 				and corg_codigo = #{codigo}
-			</if>
-			<if test="servidorCorreo!=null">
-				and corg_servidorcorreo = #{servidorCorreo}
 			</if>
 			<if test="filtroParametro!=null">
 				and (corg_nombre like ('%' || #{filtroParametro} || '%') or corg_codigo like ('%' || #{filtroParametro} || '%'))
@@ -110,17 +101,11 @@
 		<if test="slogan!=null">
 			,corg_slogan
 		</if>
-		<if test="sincronizacion!=null">
-			,borg_sincronizacion
-		</if>
 		<if test="mensajeIngreso!=null">
 			,corg_mensajeingreso
 		</if>
 		<if test="codigo!=null">
 			,corg_codigo
-		</if>
-		<if test="servidorCorreo!=null">
-			,corg_servidorcorreo
 		</if>
 		<if test="estado!=null">
 			,corg_estado
@@ -145,17 +130,11 @@
 		<if test="slogan!=null">
 			,#{slogan}
 		</if>
-		<if test="sincronizacion!=null">
-			,#{sincronizacion}
-		</if>
 		<if test="mensajeIngreso!=null">
 			,#{mensajeIngreso}
 		</if>
 		<if test="codigo!=null">
 			,#{codigo}
-		</if>
-		<if test="servidorCorreo!=null">
-			,#{servidorCorreo}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -172,10 +151,8 @@
 				corg_usuariosystem = #{usuarioSystem},
 				corg_imagen = #{imagen},
 				corg_slogan = #{slogan},
-				borg_sincronizacion = #{sincronizacion},
 				corg_mensajeingreso = #{mensajeIngreso},
 				corg_codigo = #{codigo},
-				corg_servidorcorreo = #{servidorCorreo},
 				corg_estado =#{estado}
 		<include refid="whereOrganizacionPrimaryKeyFragment" />
 	</select>
@@ -189,10 +166,8 @@
 			,corg_usuariosystem as  usuarioSystem
 			,corg_imagen as  imagen
 			,corg_slogan as  slogan
-			,borg_sincronizacion as  sincronizacion
 			,corg_mensajeingreso as  mensajeIngreso
 			,corg_codigo as  codigo
-			,corg_servidorcorreo as  servidorCorreo
 			,corg_estado as estado
 		from organizacion_orgp a
 	</sql>
@@ -221,10 +196,8 @@
 			,cuor_tokenserver as  usuarioSystem
 			,corg_imagen as  imagen
 			,corg_slogan as  slogan
-			,borg_sincronizacion as  sincronizacion
 			,corg_mensajeingreso as  mensajeIngreso
 			,corg_codigo as  codigo
-			,(select cser_url from servidor_serp where cser_llave  = corg_servidor) as  servidorUrl
 			,corg_estado as estado
 		from organizacion_orgp , usuarioorganizacion_uorp
 		where corg_estado = 'A' and cuor_organizacion = corg_llave and cuor_estado = 'A' and cuor_usuario = #{usuario}
@@ -232,7 +205,7 @@
 	
 	<select id="obtenerPrincipal" resultType="OrganizacionDTO">
 		<include refid="selectOrganizacionFragment" />
-		where corg_principal is null and borg_sincronizacion = false and corg_estado = 'A'
+		where corg_principal is null and corg_estado = 'A'
 		<include refid="paginationOrganizacionFragment" />
 	</select>
 <!--// END region script-->

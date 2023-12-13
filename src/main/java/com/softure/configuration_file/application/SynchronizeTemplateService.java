@@ -46,12 +46,18 @@ public class SynchronizeTemplateService {
 					newProcess.setProceso(remote.getProceso());
 					newProcess.setNombre(remote.getNombre());
 					newProcess.setObjetivo(remote.getObjetivo());
-					local = templateService.save(newProcess);
-					log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
+					try {
+						local = templateService.save(newProcess);
+						log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
+					} catch (Exception e) {
+						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					}
 				}
-				changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
-				changeTemplateInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), local.getLlaveTabla());
-				changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
+				if(local!=null) {
+					changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
+					changeTemplateInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), local.getLlaveTabla());
+					changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());	
+				}
 			}
 		}
 		callAfterCreateAllTemplate(token, hierarchy, log);
@@ -99,6 +105,8 @@ public class SynchronizeTemplateService {
 							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log);
 					// synchronizeFieldReport(token, hierarchy, remote.getLlaveTabla(),
 					// local.getLlaveTabla(), log);
+				} else {
+					log.error("NOT FIND " + remote.getCodigo() + "  - " + remote.getProceso());
 				}
 			}
 		}
@@ -119,6 +127,8 @@ public class SynchronizeTemplateService {
 				if ((localProcess.getProceso() == null && process == null) || (localProcess.getProceso() != null
 						&& process != null && localProcess.getProceso().compareTo(process) == 0)) {
 					return localProcess;
+				} else {
+					return null;
 				}
 			}
 		}
@@ -139,11 +149,16 @@ public class SynchronizeTemplateService {
 			for (DocumentoPlantillaDTO remote : remoteList) {
 				if (remote.getLlaveTabla().compareTo(propertyRole.getCampo()) == 0) {
 					DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getProceso());
-					HierarchyExporterDTO hierarchyRole = new HierarchyExporterDTO();
-					hierarchyRole.setRelations(hierarchy.getRelations());
-					hierarchyRole.setProperties(propertiesToCreateRole);
-					propertiesSynchronizeService.call(hierarchyRole, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log);
+					if(local!=null) {
+						HierarchyExporterDTO hierarchyRole = new HierarchyExporterDTO();
+						hierarchyRole.setRelations(hierarchy.getRelations());
+						hierarchyRole.setProperties(propertiesToCreateRole);
+						propertiesSynchronizeService.call(hierarchyRole, remote.getLlaveTabla(),
+								PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log);	
+					}else {
+						log.error("NOT FIND TO ROLE" + remote.getCodigo() + "  - " + remote.getProceso());
+					}
+					
 				}
 			}
 		}

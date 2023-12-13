@@ -90,6 +90,9 @@ public class SynchronizePropertiesService {
 						remoteProperty.setCambioCreacion(findProperty.getLlaveTabla());
 					} catch (Exception e) {
 						log.error(remoteProperty.getPropiedadValor() + " - " + remoteProperty.getValor() + " : " + e.getMessage());
+						if(remoteProperty.getPropiedadValor().compareTo("PROP_242")==0) {
+							log.error("NUL");
+						}
 					}
 				}
 				

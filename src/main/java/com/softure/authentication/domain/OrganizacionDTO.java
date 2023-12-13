@@ -1,7 +1,5 @@
 package com.softure.authentication.domain;
 
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 
@@ -19,11 +17,8 @@ public class OrganizacionDTO extends BasicParamDTO
 	private String usuarioSystem;
 	private String imagen;
 	private String slogan;
-	private boolean sincronizacion;
 	private String mensajeIngreso;
 	private String codigo;
-	private String servidorUrl;
-	private String servidorCorreo;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -67,13 +62,7 @@ public class OrganizacionDTO extends BasicParamDTO
 	public String getSlogan() {
 		return slogan;
 	}
-	public void setSincronizacion(boolean sincronizacion) {
-		this.sincronizacion = sincronizacion;
-	}
-	
-	public boolean getSincronizacion() {
-		return sincronizacion;
-	}
+
 	public void setMensajeIngreso(String mensajeIngreso) {
 		this.mensajeIngreso = mensajeIngreso;
 	}
@@ -88,20 +77,7 @@ public class OrganizacionDTO extends BasicParamDTO
 	public String getCodigo() {
 		return codigo;
 	}
-	public void setServidorUrl(String servidorUrl) {
-		this.servidorUrl = servidorUrl;
-	}
-	
-	public String getServidorUrl() {
-		return servidorUrl;
-	}
-	public void setServidorCorreo(String servidorCorreo) {
-		this.servidorCorreo = servidorCorreo;
-	}
-	
-	public String getServidorCorreo() {
-		return servidorCorreo;
-	}
+
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
 

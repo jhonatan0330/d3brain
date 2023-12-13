@@ -98,7 +98,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<UsuarioOrganizacionDTO[]> response =
 				  restTemplate.getForEntity(
-						  organizacion.getServidorUrl() + "/externos/connection/sincronizarUsuarios",
+						  organizacion.getServidor() + "/externos/connection/sincronizarUsuarios",
 						  UsuarioOrganizacionDTO[].class);
 		UsuarioOrganizacionDTO[] employees = response.getBody();
 		if(employees==null) return null;

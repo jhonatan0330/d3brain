@@ -28,6 +28,7 @@ public class SynchronizeReportService {
 				// Creo el nuevo proceso
 				if (local!=null){
 					localListToErase.remove(local);
+					log.info("EXIST REPORT" + remote.getCodigo() + " - " + remote.getNombre());
 				}
 				else
 				{
@@ -38,7 +39,12 @@ public class SynchronizeReportService {
 					newReport.setSoloExistente(remote.getSoloExistente());
 					newReport.setNombre(remote.getNombre());
 					newReport.setVariables(remote.getVariables());
-					newReport = reportService.save(newReport);
+					try {
+						newReport = reportService.save(newReport);
+						log.info("NEW REPORT" + remote.getCodigo() + " - " + remote.getNombre());
+					} catch (Exception e) {
+						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					}
 				}
 			}
 		}
