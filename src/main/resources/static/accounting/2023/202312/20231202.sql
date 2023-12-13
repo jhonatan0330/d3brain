@@ -1,4 +1,4 @@
-COMMENT ON TABLE catalogo_ctg IS '2023-12-01';
+COMMENT ON TABLE catalogo_ctg IS '2023-12-02';
 
 CREATE TABLE tipocomprobante_tcm (
 	ctcm_llave varchar(32) NOT NULL,
