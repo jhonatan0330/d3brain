@@ -53,6 +53,7 @@ public class SynchronizePropertiesService {
 						case "PROP_69":
 						case "PROP_74":
 						case "PROP_90":
+						case "PROP_118":
 						case "PROP_120":
 						case "PROP_122":
 						case "PROP_125":

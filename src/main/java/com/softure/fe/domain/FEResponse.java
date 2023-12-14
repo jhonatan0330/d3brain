@@ -12,6 +12,9 @@ public class FEResponse {
 	private String cufe;
 	private String zipUrl;
 	private String zipBase64;
+	private String digestValue;
+	private String signatureValue;
+	private String x509Certificate;
 	
 	public String getError() {
 		return error;
@@ -48,5 +51,23 @@ public class FEResponse {
 	}
 	public void setZipBase64(String zipBase64) {
 		this.zipBase64 = zipBase64;
+	}
+	public String getDigestValue() {
+		return digestValue;
+	}
+	public void setDigestValue(String digestValue) {
+		this.digestValue = digestValue;
+	}
+	public String getSignatureValue() {
+		return signatureValue;
+	}
+	public void setSignatureValue(String signatureValue) {
+		this.signatureValue = signatureValue;
+	}
+	public String getX509Certificate() {
+		return x509Certificate;
+	}
+	public void setX509Certificate(String x509Certificate) {
+		this.x509Certificate = x509Certificate;
 	}
 }

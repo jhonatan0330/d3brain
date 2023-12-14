@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -70,7 +71,8 @@ public class SignerService {
 	private XadesSigner signer;
 	private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
 
-	private void initialize(byte[] keyByte, String password) throws KeyStoreException, XadesProfileResolutionException {
+	private void initialize(String certificate, String password)
+			throws KeyStoreException, XadesProfileResolutionException {
 
 		SignaturePolicyInfoProvider policyInfoProvider = new SignaturePolicyInfoProvider() {
 			public SignaturePolicyBase getSignaturePolicy() {
@@ -84,22 +86,33 @@ public class SignerService {
 				}
 			}
 		};
-		File file = null;
-		try {
-			file = File.createTempFile("FE_DIAN_", ".pfx");
-			// FileUtils.writeByteArrayToFile(file, keyByte);
-			try (FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
-				fos.write(keyByte);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		File file = getFile(certificate);
 		KeyingDataProvider kp = KeyStoreDataProvider.builder("pkcs12", file, new FirstCertificateSelector())
 				.storePassword(new DirectPasswordProvider(password)).entryPassword(new DirectPasswordProvider(password))
 				.build();
 
 		XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
 		signer = p.newSigner();
+	}
+
+	private File getFile(String certificate) {
+
+		try {
+			File file = File.createTempFile("FE_DIAN_", ".pfx");
+			if (certificate.startsWith("http")) {
+				FileUtils.copyURLToFile(new URL(certificate), file);
+			} else {
+				byte[] keyByte = Base64.getDecoder().decode(certificate);
+				// FileUtils.writeByteArrayToFile(file, keyByte);
+				try (FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
+					fos.write(keyByte);
+				}
+			}
+			return file;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	private Document loadDocument(String xmlInPath) throws IOException, SAXException, ParserConfigurationException {
@@ -181,8 +194,22 @@ public class SignerService {
 		doc = processCUFE(doc, responseFe);
 		doc = processSoftwareSecurityCode(doc);
 		doc = processExtensionContent(doc);
+		getSignatureValue(doc, responseFe);
 		doc = decriptFilesBase64(doc);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
+	}
+
+	private void getSignatureValue(Document doc, FEResponse responseFe) {
+		// Para facilitar el envio a la DIAn extrayendo estos datos
+		NodeList tags = doc.getElementsByTagName("ds:X509Certificate");
+		if (tags.getLength() > 0)
+			responseFe.setX509Certificate( tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
+		tags = doc.getElementsByTagName("ds:SignatureValue");
+		if (tags.getLength() > 0)
+			responseFe.setSignatureValue(tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
+		tags = doc.getElementsByTagName("ds:DigestValue");
+		if (tags.getLength() > 0)
+			responseFe.setDigestValue(tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
 	}
 
 	private String getName(Document doc) {
@@ -198,7 +225,7 @@ public class SignerService {
 		Node elemToSign = selectNode(doc);
 		String certificate = getValueInNode(elemToSign, "ext:Certificate");
 		String password = getValueInNode(elemToSign, "ext:Password");
-		initialize(Base64.getDecoder().decode(certificate), password);
+		initialize(certificate, password);
 		DataObjectDesc DataObjectRef = createDataObjectToSign();
 		elemToSign.setTextContent("");
 		sign(DataObjectRef, elemToSign);
@@ -243,6 +270,7 @@ public class SignerService {
 		return doc;
 	}
 
+	// Esto lo uso para el attachment
 	private Document decriptFilesBase64(Document doc) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("cbc:Description");
 		if (tags.getLength() == 0)
@@ -256,10 +284,10 @@ public class SignerService {
 				if (plain.matches("^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$")) {
 					plain = new String(Base64.getDecoder().decode(plain.getBytes()));
 					Node cdata = doc.createCDATASection(plain);
-					tags.item(i).setTextContent("");	
+					tags.item(i).setTextContent("");
 					tags.item(i).appendChild(cdata);
-				}else {
-					tags.item(i).setTextContent(plain);	
+				} else {
+					tags.item(i).setTextContent(plain);
 				}
 			}
 		}
