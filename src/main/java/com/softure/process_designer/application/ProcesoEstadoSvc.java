@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
-import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_designer.infrastructure.ProcesoEstadoMapper;
 import com.softure.property.domain.PropiedadDTO;
@@ -100,21 +99,23 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		// BEGIN ProcesoEstado_guardar
 		colocarSignoPregunta(dto);
 		ProcesoEstadoDTO result = super.guardar(dto, token);
-		if (dto.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API) == 0) {
+		//Esto hace fallar el sincronizador 
+		/*if (dto.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API) == 0) {
 			createTransicionAPI(result, SharedConstants.OK, token);
 			createTransicionAPI(result, SharedConstants.ERROR, token);
-		}
+		}*/
 		return result;
 		// END ProcesoEstado_guardar
 	}
 
+	/*
 	private void createTransicionAPI(ProcesoEstadoDTO result, String name, String token) throws ServerException {
 		ProcesoTransicionDTO transition = new ProcesoTransicionDTO();
 		transition.setEstadoPartida(result.getLlaveTabla());
 		transition.setNombre(name);
 		transition.setProceso(result.getProceso());
 		procesoTransicionService.guardar(transition, token);
-	}
+	}*/
 
 	private void colocarSignoPregunta(ProcesoEstadoDTO estado) throws ServerException {
 		if (estado == null)
