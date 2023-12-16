@@ -443,9 +443,8 @@ public class CallDocumentCRUD {
 				}
 				pedido.setDinero(dineroCalculado);
 			} else {
-				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {					
-					pedido.setDinero( dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
-							pedido.getHistorico()));
+				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
+					pedido.setDinero(dineroService.consultaPorDocumento(pedido.getLlaveTabla(), pedido.getHistorico()));
 				}
 			}
 
@@ -906,8 +905,16 @@ public class CallDocumentCRUD {
 				usrActualizar.setEstado(usr.getEstado());
 				usrActualizar.setIdentificacion(usrId);
 				usrActualizar.setNombre(usrNombre);
-				usrActualizar.setCorreo(usrMail);
-				usrActualizar.setTelefono(usrPhone);
+				if (usrMail != null) {
+					usrActualizar.setCorreo(usrMail);
+				} else {
+					usrActualizar.setCorreo(usr.getCorreo());
+				}
+				if (usrPhone != null){
+					usrActualizar.setTelefono(usrPhone);
+				} else {
+					usrActualizar.setTelefono(usr.getTelefono());
+				}
 				usrActualizar.setLlaveTabla(usr.getLlaveTabla());
 				usrActualizar.setImagen(usr.getImagen());
 				usuarioService.actualizar(usrActualizar, token);

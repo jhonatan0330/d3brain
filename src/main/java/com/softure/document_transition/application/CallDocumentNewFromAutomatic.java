@@ -126,10 +126,15 @@ public class CallDocumentNewFromAutomatic {
 				}
 				break;
 			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
-				PedidoVentaCaracteristicaDTO campoGenerado = pedidoVentaCaracteristicaService
-						.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
-								(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
-								(documento != null) ? documento.getLlaveTabla() : null);
+				PedidoVentaCaracteristicaDTO campoGenerado = null;
+				try {
+					campoGenerado = pedidoVentaCaracteristicaService
+							.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
+									(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
+									(documento != null) ? documento.getLlaveTabla() : null);	
+				}catch (Exception ex) {
+					throw new ServerException("Se presento un error en la consulta de la transicion " + transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(), ex.getMessage());
+				}
 				if (campoGenerado !=null) {
 					List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
 					if (relations == null || relations.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");

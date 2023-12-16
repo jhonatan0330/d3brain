@@ -8,9 +8,10 @@ public class FEResponse {
 	
 	private String result;
 	private String error;
-	private String xml;
 	private String cufe;
+	private String xmlUrl;
 	private String zipUrl;
+	private String xml;
 	private String zipBase64;
 	private String digestValue;
 	private String signatureValue;
@@ -69,5 +70,11 @@ public class FEResponse {
 	}
 	public void setX509Certificate(String x509Certificate) {
 		this.x509Certificate = x509Certificate;
+	}
+	public String getXmlUrl() {
+		return xmlUrl;
+	}
+	public void setXmlUrl(String xmlUrl) {
+		this.xmlUrl = xmlUrl;
 	}
 }

@@ -151,7 +151,8 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador, documentMain);
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador,
+				documentMain);
 		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -168,15 +169,22 @@ public class WebServiceExecuteAPI {
 			}
 			if (preconditionWS.getExtracciones() != null) {
 				extractionApiPrecondition = preconditionWS.getExtracciones();
-				if(callWS.getParametros()==null) {
+				if (callWS.getParametros() == null) {
 					callWS.setParametros(extractionApiPrecondition);
 				} else {
-					callWS.setParametros(callWS.getParametros() +  extractionApiPrecondition);
+					callWS.setParametros(callWS.getParametros() + extractionApiPrecondition);
 				}
 			}
-				
+
 		}
-		Map<String, String> headers = getHeaderProperties(service, extractionApiPrecondition);
+		// No se porque coloco solo CallWSPArametros y falla
+		String paramToHeader = extractionApiPrecondition;
+		if (paramToHeader == null) {
+			paramToHeader = callWS.getParametros();
+		} else {
+			paramToHeader = paramToHeader.concat(callWS.getParametros());
+		}
+		Map<String, String> headers = getHeaderProperties(service, paramToHeader);
 		// Execution
 		callWS = launchWebService(service, callWS, token, headers, modificador);
 		// Primero intento de nuevo ejecutarlo
@@ -234,13 +242,14 @@ public class WebServiceExecuteAPI {
 				previousEndPoint.getLlaveTabla(), null, callWS.getUsuario()));
 		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
-		if(documentMain == null){
+		if (documentMain == null) {
 			documentMain = new PedidoVentaDTO();
-			documentMain.setLlaveTabla(callWS.getDocumento());	
+			documentMain.setLlaveTabla(callWS.getDocumento());
 		}
-		if(updater!=null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla())==0) documentMain.setNombre(updater.getNombre());
-		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater,
-				token, callWS.getUsuario(), null);
+		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
+			documentMain.setNombre(updater.getNombre());
+		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, token,
+				callWS.getUsuario(), null);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}
 
@@ -261,18 +270,10 @@ public class WebServiceExecuteAPI {
 
 		String parameters = callWS.getParametros();
 		// Reemplazos
-		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_REPLACE);
-		if (replaceProperties != null && !replaceProperties.isEmpty()) {
-			if(parameters==null) parameters = "";
-			for (PropiedadDTO iProp : replaceProperties) {
-				if (iProp.getTexto() == null)
-					throw new ServerException(
-							"Es necesario colocar texto en la propiedad de codigo a reemplazar " + iProp.getValor());
-				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
-				+ SharedConstants.IGUAL + iProp.getValor();
-			}
-		}
-		
+		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
+				Propiedades.API_CODE_REPLACE);
+		parameters = prepareParameterFromProperties(parameters, replaceProperties);
+
 		String template = generateOutputFile(service.getTemplate(), parameters);
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
@@ -294,7 +295,8 @@ public class WebServiceExecuteAPI {
 						callWS.setError(resultExtraction);
 						responseApi = resultExtraction + "\n\n" + responseApi;
 						resultExtraction = resultExtraction.substring(resultExtraction.indexOf(
-								SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS) + 3);
+								SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS)
+								+ 3);
 						if (resultExtraction.length() == 0)
 							resultExtraction = null;
 					} else {
@@ -321,20 +323,40 @@ public class WebServiceExecuteAPI {
 		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice"));
 		callWS.setFechaEjecucion(new Date());
 		String extractionHelperToLong = null;
-		if(callWS.getExtracciones()!=null && callWS.getExtracciones().length() >4000) {
+		if (callWS.getExtracciones() != null && callWS.getExtracciones().length() > 4000) {
 			extractionHelperToLong = callWS.getExtracciones();
-			callWS.setExtracciones(uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
+			callWS.setExtracciones(
+					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
 		}
 		String parameterHelperToLong = null;
-		if(callWS.getParametros()!=null && callWS.getParametros().length() >4000) {
+		if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
 			parameterHelperToLong = callWS.getParametros();
-			callWS.setParametros(uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
+			callWS.setParametros(
+					uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
 		}
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
-		if(extractionHelperToLong!=null) callWS.setExtracciones(extractionHelperToLong);
-		if(parameterHelperToLong!=null) callWS.setParametros(parameterHelperToLong);
+		if (extractionHelperToLong != null)
+			callWS.setExtracciones(extractionHelperToLong);
+		if (parameterHelperToLong != null)
+			callWS.setParametros(parameterHelperToLong);
 		return callWS;
+	}
+
+	public String prepareParameterFromProperties(String parameters, List<PropiedadDTO> replaceProperties)
+			throws ServerException {
+		if (replaceProperties != null && !replaceProperties.isEmpty()) {
+			if (parameters == null)
+				parameters = "";
+			for (PropiedadDTO iProp : replaceProperties) {
+				if (iProp.getTexto() == null)
+					throw new ServerException(
+							"Es necesario colocar texto en la propiedad de codigo a reemplazar " + iProp.getValor());
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + SharedConstants.IGUAL
+						+ iProp.getValor();
+			}
+		}
+		return parameters;
 	}
 
 	/**
@@ -404,8 +426,8 @@ public class WebServiceExecuteAPI {
 			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
 			if (!matcher.matches()) {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
-					errorResult = errorResult  + ERROR_EXTRAYENDO
-							+ propiedadDTO.getValor() + SharedConstants.PUNTO_COMA_DOBLE;
+					errorResult = errorResult + ERROR_EXTRAYENDO + propiedadDTO.getValor()
+							+ SharedConstants.PUNTO_COMA_DOBLE;
 				}
 			} else {
 				String newValue = matcher.group(1);
@@ -413,18 +435,23 @@ public class WebServiceExecuteAPI {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 				}
-				result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL;
-				if(newValue!=null && newValue.length() > 4000) {
-					result = result + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
-				}else {
+				result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
+						+ SharedConstants.IGUAL;
+				if (newValue != null && newValue.length() > 4000) {
+					result = result
+							+ uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
+				} else {
 					result = result + newValue;
 				}
 				// debo colocar oble para que se guarden en formularios
-				if(propiedadDTO.getTexto() != null) result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue;
+				if (propiedadDTO.getTexto() != null)
+					result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL
+							+ newValue;
 			}
 		}
 		if (errorResult.length() != 0)
-			result = errorResult + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + result;
+			result = errorResult + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS
+					+ result;
 		if (result.length() == 0)
 			result = null;
 		return result;
@@ -515,10 +542,11 @@ public class WebServiceExecuteAPI {
 			con.connect();
 
 			String standarEncoding = Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR);
-			if(standarEncoding.isEmpty()) standarEncoding = StandardCharsets.UTF_8.toString();
+			if (standarEncoding.isEmpty())
+				standarEncoding = StandardCharsets.UTF_8.toString();
 			// Send request
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			//log.info("[" + con.getURL().toString() + "] Body API\n" + body);
+			// log.info("[" + con.getURL().toString() + "] Body API\n" + body);
 			// LA codificaion ISO_8859_1 es para soportar DIAn con tildes
 			wr.write(body.getBytes(standarEncoding));
 			wr.close();
@@ -726,8 +754,10 @@ public class WebServiceExecuteAPI {
 					case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 						try {
 							String valueToFormat = matcher.group(1);
-							// EN universal  con TCC sucedia que enviaban decimales con comas y esto genera error
-							if(valueToFormat.contains(","))valueToFormat.replace(",", ".");
+							// EN universal con TCC sucedia que enviaban decimales con comas y esto genera
+							// error
+							if (valueToFormat.contains(","))
+								valueToFormat.replace(",", ".");
 							nueva.setValorNumero(new BigDecimal(valueToFormat));
 							nueva.setValorText(nueva.getValorNumero().toPlainString());
 						} catch (Exception e) {
@@ -761,22 +791,10 @@ public class WebServiceExecuteAPI {
 			result = new HashMap<>();
 			for (PropiedadDTO iProp : service.getPropiedades()) {
 				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
-					result.put(iProp.getValor(), generateOutputFile(iProp.getMotivo(), tokenAuthentication) );
+					result.put(iProp.getValor(), generateOutputFile(iProp.getMotivo(), tokenAuthentication));
 				}
 			}
 		}
-		/*
-		if (tokenAuthentication != null) {
-			if (result == null)
-				result = new HashMap<>();
-			String[] extractionToHeader = tokenAuthentication.split(ConstantesGenerales.PUNTO_COMA_DOBLE);
-			for (String iExtraction : extractionToHeader) {
-				int indexEqual = iExtraction.lastIndexOf(ConstantesGenerales.IGUAL);
-				if (indexEqual > 0) {
-					result.put(iExtraction.substring(0, indexEqual), iExtraction.substring(indexEqual + 1));
-				}
-			}
-		}*/
 		return result;
 	}
 

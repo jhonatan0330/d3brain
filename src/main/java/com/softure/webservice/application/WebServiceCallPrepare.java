@@ -52,7 +52,7 @@ public class WebServiceCallPrepare {
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
-		String parameters = getParameters(service, document, modificador);
+		String parameters = getParameters(service, document, modificador, token);
 		if (initialPameters != null) {
 			parameters = parameters + initialPameters;
 		}
@@ -87,7 +87,7 @@ public class WebServiceCallPrepare {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador)
+	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, String token)
 			throws ServerException {
 		String parameters = "";
 		if (service.getPropiedades() != null && !service.getPropiedades().isEmpty()) {
@@ -152,6 +152,11 @@ public class WebServiceCallPrepare {
 							if (modificador != null)
 								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
 										+ SharedConstants.IGUAL + modificador.getNombre();
+							break;
+						case "E_TOKEN":
+							if (token != null)
+								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+										+ SharedConstants.IGUAL + token;
 							break;
 						default:
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()

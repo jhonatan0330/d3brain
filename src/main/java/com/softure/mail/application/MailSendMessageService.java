@@ -1,18 +1,21 @@
 package com.softure.mail.application;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,8 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.mail.domain.MensajeDTO;
@@ -91,26 +94,47 @@ public class MailSendMessageService {
 				}
 			}
 			if (dto.getAdjuntoURL() != null) {
-				URL attachURL = new URL(dto.getAdjuntoURL());
-				String urlName = dto.getAdjuntoURL().substring(dto.getAdjuntoURL().lastIndexOf('/') + 1);
-				URLConnection conn = attachURL.openConnection();
-				String type = conn.getContentType();
-				try {
-					InputStream in = conn.getInputStream();
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					byte[] b = new byte[1024];
-					int count;
-					while ((count = in.read(b)) >= 0) {
-						out.write(b, 0, count);
+				String[] attachments = dto.getAdjuntoURL().split(SharedConstants.PUNTO_COMA_DOBLE);
+				List<File> filesToAttach = null;
+				String urlName = "attach";
+				for (String string : attachments) {
+					if (!string.isEmpty()) {
+						try {
+							urlName = string.substring(string.lastIndexOf('/') + 1);
+							File file = File.createTempFile("file_", urlName);
+							FileUtils.copyURLToFile(new URL(string), file);
+							if (filesToAttach == null)
+								filesToAttach = new ArrayList<>();
+							filesToAttach.add(file);
+						} catch (IOException e) {
+							dto.setCorreoError(e.getLocalizedMessage());
+							sendToAdminService.call("Error enviando correos electronicos (Adjunto)" + dto.getTitulo(),
+									e.getMessage());
+						}
 					}
-					out.flush();
-					out.close();
-					in.close();
-					mailMsg.addAttachment(urlName, new ByteArrayDataSource(out.toByteArray(), type));
-				} catch (IOException e) {
-					dto.setCorreoError(e.getLocalizedMessage());
-					sendToAdminService.call("Error enviando correos electronicos (Adjunto)" + dto.getTitulo(),
-							e.getMessage());
+				}
+				if (filesToAttach != null && filesToAttach.size() > 0) {
+					if (filesToAttach.size() != 1) {
+						final ByteArrayOutputStream fos = new ByteArrayOutputStream();
+						ZipOutputStream zipOut = new ZipOutputStream(fos);
+						for (File fileToZip : filesToAttach) {
+							FileInputStream fis = new FileInputStream(fileToZip);
+							ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+							zipOut.putNextEntry(zipEntry);
+							byte[] bytes = new byte[1024];
+							int length;
+							while ((length = fis.read(bytes)) >= 0) {
+								zipOut.write(bytes, 0, length);
+							}
+							fis.close();
+						}
+						zipOut.close();
+						fos.close();
+						mailMsg.addAttachment(urlName + ".zip",
+								new ByteArrayDataSource(fos.toByteArray(), "application/octet-stream"));
+					} else {
+						mailMsg.addAttachment(urlName, filesToAttach.get(0));
+					}
 				}
 			}
 			mailSender.send(mimeMessage);

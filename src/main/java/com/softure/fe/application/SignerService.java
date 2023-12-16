@@ -164,7 +164,9 @@ public class SignerService {
 
 	public void zipFileWithoutSaveLocal(String data, FEResponse responseFe, String fileNameInZip)
 			throws IOException, ServerException {
-
+		
+		//Hay algo similar en mailsendmessage
+		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try (ZipOutputStream zos = new ZipOutputStream(baos)) {

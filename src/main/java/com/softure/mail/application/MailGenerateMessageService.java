@@ -200,9 +200,12 @@ public class MailGenerateMessageService {
         if (mensajeAdjuntoURL!=null) {
         	List<PedidoVentaCaracteristicaDTO> fieldsEmailToSend = findFieldService.call(mensajeAdjuntoURL.getLlaveTabla(), modificador.getCaracteristicas());
             if(fieldsEmailToSend!=null && !fieldsEmailToSend.isEmpty()) {
-            	attachLink = "";
                 for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
-                    attachLink = iFieldsEmailToSend.getValorText();
+                	if(attachLink==null) {
+                		attachLink = iFieldsEmailToSend.getValorText();	
+                	} else {
+                		attachLink = attachLink + SharedConstants.PUNTO_COMA_DOBLE + iFieldsEmailToSend.getValorText();
+                	}
                 }
             }
         }
