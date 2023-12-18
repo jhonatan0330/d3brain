@@ -88,6 +88,7 @@ public class TipoProductoLista {
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
+		if(pCampo.getProductosExclusivos()==null) return pCampo;
 		for (UsuarioRolProductoDTO producto : pCampo.getProductosExclusivos()) {
 			if (producto.getLlaveTabla() == null) {
 				producto.setDocumento(pCampo.getDocumento());
