@@ -284,7 +284,7 @@
 	</select>
 	
 	<sql id="orderMainFragment">
-		order by <choose><when test="ordenNombre eq 'N'.toString()">nombre </when><when test="ordenNombre eq 'D'.toString()">descripcion </when><otherwise>fecha </otherwise></choose><if test="ordenDescendente!=null">desc</if>
+		order by <choose><when test="ordenNombre eq 'N'.toString()">nombre <if test="ordenDescendente!=null">desc</if></when><when test="ordenNombre eq 'D'.toString()">descripcion <if test="ordenDescendente!=null">desc</if>, nombre <if test="ordenDescendente!=null">desc</if></when><otherwise>fecha <if test="ordenDescendente!=null">desc</if>, nombre <if test="ordenDescendente!=null">desc</if></otherwise></choose>
   		<if test="dto.paginacionRegistroFinal!=null">LIMIT #{dto.paginacionRegistroFinal}</if>
 		<if test="dto.paginacionRegistroInicial!=null">OFFSET #{dto.paginacionRegistroInicial}</if>
 	</sql>
