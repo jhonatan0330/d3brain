@@ -34,7 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 @Configuration
 @EnableTransactionManagement
-@MapperScan(basePackages = "com.accounting.*.infrastructure", annotationClass= AccountingConnMapper.class, sqlSessionFactoryRef = "accountingSqlSessionFactory")
+@MapperScan(basePackages = "com.accounting.*.infrastructure", annotationClass= AccountingSqlConnMapper.class, sqlSessionFactoryRef = "accountingSqlSessionFactory")
 public class AccountingConfiguration {
 
 	@EventListener(ApplicationReadyEvent.class)

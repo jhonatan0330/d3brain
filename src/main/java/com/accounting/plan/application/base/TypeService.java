@@ -82,8 +82,8 @@ public class TypeService {
 		}
 	}
 
-	public TypeDTO delete(TypeDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public TypeDTO delete(String id) throws ServerException {
+		TypeDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

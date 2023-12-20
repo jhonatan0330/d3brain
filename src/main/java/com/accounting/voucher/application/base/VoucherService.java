@@ -82,8 +82,8 @@ public class VoucherService {
 		}
 	}
 
-	public VoucherDTO delete(VoucherDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public VoucherDTO delete(String id) throws ServerException {
+		VoucherDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

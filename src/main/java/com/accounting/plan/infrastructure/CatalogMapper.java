@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 
-@AccountingConnMapper("CatalogAccountingMapper")
+@AccountingSqlConnMapper("CatalogAccountingMapper")
 public interface CatalogMapper {
 
 	CatalogDTO insert(CatalogDTO dto);

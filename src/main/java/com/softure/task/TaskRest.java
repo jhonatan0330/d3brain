@@ -20,11 +20,11 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.task.application.TaskCreateService;
 import com.softure.task.application.TaskDeleteService;
-import com.softure.task.application.TaskGetByIdService;
 import com.softure.task.application.TaskGetByUserService;
 import com.softure.task.application.TaskUpdateService;
-import com.softure.task.domain.TaskTaskRequest;
-import com.softure.task.domain.TaskTaskResponse;
+import com.softure.task.application.base.TaskService;
+import com.softure.task.domain.TaskDTO;
+import com.softure.task.domain.TaskRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -34,29 +34,30 @@ public class TaskRest {
 	@Autowired private SharedAuthenticateService tokenService;
 	
 	@Autowired private TaskGetByUserService taskGetByUserService;
-	@Autowired private TaskGetByIdService taskGetByIdService;
 	@Autowired private TaskCreateService taskCreateService;
 	@Autowired private TaskUpdateService taskUpdateService;
 	@Autowired private TaskDeleteService taskDeleteService;
 	
+	@Autowired private TaskService taskService;
+	
 	@GetMapping(value="/")
-	public List<TaskTaskResponse> getFromUser(HttpServletRequest request, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public List<TaskDTO> getFromUser(HttpServletRequest request, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return taskGetByUserService.call(tokenService.getUser(token, request));
 	}
 	
 	@GetMapping(value="/{id}")
-	public TaskTaskResponse getById(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
+	public TaskDTO getById(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
 		tokenService.getUser(token, request);
-		return taskGetByIdService.call(id);
+		return taskService.getById(id);
 	}
 	
 	@PostMapping(value="/create")
-	public SharedIdResponse save(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
+	public SharedIdResponse save(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskRequest task)  throws ServerException  {
 		return taskCreateService.call(task, tokenService.getUser(token, request));
 	}
 	
 	@PostMapping(value="/update")
-	public SharedIdResponse update(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskTaskRequest task)  throws ServerException  {
+	public SharedIdResponse update(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestBody TaskRequest task)  throws ServerException  {
 		return taskUpdateService.call(task, tokenService.getUser(token, request));
 	}
 

@@ -1,4 +1,4 @@
-package com.accounting.plan.application.base;
+package com.softure.task.application.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -7,27 +7,27 @@ import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.FormatLineDTO;
-import com.accounting.plan.domain.FormatLineFilterDTO;
-import com.accounting.plan.infrastructure.FormatLineMapper;
+import com.softure.task.domain.TaskDTO;
+import com.softure.task.domain.TaskFilterDTO;
+import com.softure.task.infrastructure.TaskMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-@Service("FormatLineAccountingService")
-public class FormatLineService {
+@Service("TaskSoftureService")
+public class TaskService {
 
 	@Autowired
-	private FormatLineMapper mapper;
+	private TaskMapper mapper;
 
-	public FormatLineDTO getById(String id) throws ServerException {
+	public TaskDTO getById(String id) throws ServerException {
 		if (id == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. FormatLine");
-		FormatLineFilterDTO dto = new FormatLineFilterDTO();
+			throw new ServerException("La llave del DTO se encuentra vacia. Task");
+		TaskFilterDTO dto = new TaskFilterDTO();
 		dto.setKey(id);
 		return mapper.getOne(dto);
 	}
 
-	public FormatLineDTO getOne(FormatLineFilterDTO dto) throws ServerException {
+	public TaskDTO getOne(TaskFilterDTO dto) throws ServerException {
 		try {
 			return mapper.getOne(dto);
 		} catch (BindingException ex) {
@@ -37,7 +37,7 @@ public class FormatLineService {
 		}
 	}
 
-	public List<FormatLineDTO> getMany(FormatLineFilterDTO dto) throws ServerException {
+	public List<TaskDTO> getMany(TaskFilterDTO dto) throws ServerException {
 		if (dto.getStartRow() == null)
 			dto.setStartRow(0);
 		if (dto.getEndRow() == null || dto.getEndRow() == 0)
@@ -51,7 +51,7 @@ public class FormatLineService {
 		}
 	}
 
-	public int count(FormatLineFilterDTO dto) throws ServerException {
+	public int count(TaskFilterDTO dto) throws ServerException {
 		try {
 			return mapper.count(dto);
 		} catch (BindingException ex) {
@@ -61,7 +61,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void save(FormatLineDTO dto) throws ServerException {
+	public void save(TaskDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -72,7 +72,7 @@ public class FormatLineService {
 		}
 	}
 
-	public void update(FormatLineDTO dto) throws ServerException {
+	public void update(TaskDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -82,8 +82,8 @@ public class FormatLineService {
 		}
 	}
 
-	public FormatLineDTO delete(String id) throws ServerException {
-		FormatLineDTO dto = getById(id);
+	public TaskDTO delete(String id) throws ServerException {
+		TaskDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

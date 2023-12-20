@@ -1,27 +1,25 @@
 package com.softure.task.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
-import com.softure.task.domain.TaskTaskDTO;
-import com.softure.task.domain.TaskTaskFilter;
-import com.softure.task.domain.TaskTaskResponse;
+import com.softure.task.application.base.TaskService;
+import com.softure.task.domain.TaskDTO;
+import com.softure.task.domain.TaskFilterDTO;
 
 @Service
 public class TaskGetByUserService {
 
-	@Autowired private TaskCRUDTaskService taskService;
+	@Autowired private TaskService taskService;
 	
-	public List<TaskTaskResponse> call(String user) throws ServerException{
-		TaskTaskFilter filter = new TaskTaskFilter();
+	public List<TaskDTO> call(String user) throws ServerException{
+		TaskFilterDTO filter = new TaskFilterDTO();
 		filter.setUser(user);
 		filter.setState(SharedConstants.STATE_ACTIVE);
-		List<TaskTaskDTO> tasks = taskService.findMany(filter);
-		return tasks.stream().map(TaskTaskDTO::toResponse).collect(Collectors.toList());
+		return taskService.getMany(filter);
 	}
 }

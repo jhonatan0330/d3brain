@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.ResultMapDTO;
 
-@AccountingConnMapper("ResultMapExtendAccountingMapper")
+@AccountingSqlConnMapper("ResultMapExtendAccountingMapper")
 public interface ResultMapExtendMapper {
 
 	

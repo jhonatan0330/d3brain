@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.DimensionDTO;
 import com.accounting.plan.domain.DimensionFilterDTO;
 
-@AccountingConnMapper("DimensionAccountingMapper")
+@AccountingSqlConnMapper("DimensionAccountingMapper")
 public interface DimensionMapper {
 
 	DimensionDTO insert(DimensionDTO dto);

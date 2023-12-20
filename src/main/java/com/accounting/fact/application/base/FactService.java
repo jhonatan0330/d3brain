@@ -82,8 +82,8 @@ public class FactService {
 		}
 	}
 
-	public FactDTO delete(FactDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public FactDTO delete(String id) throws ServerException {
+		FactDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

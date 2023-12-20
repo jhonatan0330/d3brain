@@ -82,8 +82,8 @@ public class ResultMapService {
 		}
 	}
 
-	public ResultMapDTO delete(ResultMapDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public ResultMapDTO delete(String id) throws ServerException {
+		ResultMapDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

@@ -9,26 +9,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.task.domain.TaskTaskDTO;
-import com.softure.task.domain.TaskTaskRequest;
+import com.softure.task.application.base.TaskService;
+import com.softure.task.domain.TaskDTO;
+import com.softure.task.domain.TaskRequest;
 
 @Service
 public class TaskUpdateService {
 
-	@Autowired private TaskCRUDTaskService taskService;
+	@Autowired private TaskService taskService;
 	
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public SharedIdResponse call(TaskTaskRequest task, String user) throws ServerException {
+	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
 		if (task==null) throw new ServerException("Es importante enviar los datos de la tarea");
-		if (task.getId()==null || task.getId().isEmpty()) throw new ServerException("Falta la llave de la tarea");
-		TaskTaskDTO bd = taskService.findById(task.getId());
+		if (task.getKey()==null || task.getKey().isEmpty()) throw new ServerException("Falta la llave de la tarea");
+		TaskDTO bd = taskService.getById(task.getKey());
 		bd.setTitle(task.getTitle());
 		bd.setNotes(task.getNotes());
 		bd.setPriority(task.getPriority());
 		bd.setOrder(task.getOrder());
 		if(task.getCompleted()!=null)bd.setCompleted(new Date());
 		taskService.update(bd);
-		return new SharedIdResponse( task.getId() );
+		return new SharedIdResponse( task.getKey() );
 	}
 
 }

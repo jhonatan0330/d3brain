@@ -2,11 +2,11 @@ package com.accounting.fact.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.fact.domain.FactDTO;
 import com.accounting.fact.domain.FactFilterDTO;
 
-@AccountingConnMapper("FactAccountingMapper")
+@AccountingSqlConnMapper("FactAccountingMapper")
 public interface FactMapper {
 
 	FactDTO insert(FactDTO dto);

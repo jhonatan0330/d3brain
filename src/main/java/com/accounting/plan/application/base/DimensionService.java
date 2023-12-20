@@ -82,8 +82,8 @@ public class DimensionService {
 		}
 	}
 
-	public DimensionDTO delete(DimensionDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public DimensionDTO delete(String id) throws ServerException {
+		DimensionDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

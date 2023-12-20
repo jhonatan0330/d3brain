@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.FormatLineDTO;
 import com.accounting.plan.domain.FormatLineFilterDTO;
 
-@AccountingConnMapper("FormatLineAccountingMapper")
+@AccountingSqlConnMapper("FormatLineAccountingMapper")
 public interface FormatLineMapper {
 
 	FormatLineDTO insert(FormatLineDTO dto);

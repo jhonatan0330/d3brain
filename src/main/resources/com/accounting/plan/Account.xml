@@ -92,7 +92,7 @@
 	<select id="getMany" parameterType="AccountFilterDTO" resultType="AccountDTO">
 		<include refid="selectAccountFragment" />
 		<include refid="whereAccountFragment" />
-		order by wbs 
+		order by ccue_wbs 
 		<include refid="paginationAccountFragment" />
 	</select>
 

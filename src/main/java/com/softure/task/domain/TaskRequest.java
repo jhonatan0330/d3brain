@@ -5,9 +5,9 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
-public class TaskTaskRequest
+public class TaskRequest
 {
-	private String id;
+	private String key;
 	
 	private String user;
 	
@@ -23,9 +23,9 @@ public class TaskTaskRequest
 	
 	private Integer order;
 
-    public TaskTaskDTO toModel() {
-    	TaskTaskDTO result = new TaskTaskDTO();
-    	result.setKey(getId());
+    public TaskDTO toModel() {
+    	TaskDTO result = new TaskDTO();
+    	result.setKey(getKey());
     	result.setUser(user);
     	result.setTitle(title);
     	result.setNotes(notes);
@@ -36,12 +36,12 @@ public class TaskTaskRequest
     	return result;
     }
 
-	public String getId() {
-		return id;
+	public String getKey() {
+		return key;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 	public String getUser() {

@@ -82,8 +82,8 @@ public class CatalogService {
 		}
 	}
 
-	public CatalogDTO delete(CatalogDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public CatalogDTO delete(String id) throws ServerException {
+		CatalogDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

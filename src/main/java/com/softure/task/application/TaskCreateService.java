@@ -7,20 +7,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
-import com.softure.task.domain.TaskTaskDTO;
-import com.softure.task.domain.TaskTaskRequest;
+import com.softure.task.application.base.TaskService;
+import com.softure.task.domain.TaskDTO;
+import com.softure.task.domain.TaskRequest;
 
 @Service
 public class TaskCreateService {
 
-	@Autowired private TaskCRUDTaskService taskService;
+	@Autowired private TaskService taskService;
 	
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public SharedIdResponse call(TaskTaskRequest task, String user) throws ServerException {
-		TaskTaskDTO dto = task.toModel();
+	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
+		TaskDTO dto = task.toModel();
 		dto.setUser(user);
 		dto.setCreatedUser(user);
-		return new SharedIdResponse(taskService.save(dto));
+		taskService.save(dto);
+		return new SharedIdResponse(dto.getKey());
 	}
 
 }

@@ -82,8 +82,8 @@ public class AccountService {
 		}
 	}
 
-	public AccountDTO delete(AccountDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public AccountDTO delete(String id) throws ServerException {
+		AccountDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

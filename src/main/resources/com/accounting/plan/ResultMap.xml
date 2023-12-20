@@ -126,7 +126,7 @@
 	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
 		<include refid="selectResultMapFragment" />
 		<include refid="whereResultMapFragment" />
-		order by startDate 
+		order by drmp_fechainicio 
 		<include refid="paginationResultMapFragment" />
 	</select>
 

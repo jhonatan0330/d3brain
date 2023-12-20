@@ -2,11 +2,11 @@ package com.accounting.voucher.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.AccountRecordFilterDTO;
 
-@AccountingConnMapper("AccountRecordAccountingMapper")
+@AccountingSqlConnMapper("AccountRecordAccountingMapper")
 public interface AccountRecordMapper {
 
 	AccountRecordDTO insert(AccountRecordDTO dto);

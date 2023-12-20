@@ -1,36 +1,23 @@
 package com.softure.task.domain;
 
 import java.util.Date;
-
-import org.apache.ibatis.type.Alias;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.shared.domain.SharedDataObject;
+import org.apache.ibatis.type.Alias;
 
+@Alias("TaskDTO")
+public class TaskDTO extends SharedDataObject{
 
-
-@Alias("TaskTaskDTO")
-public class TaskTaskDTO extends SharedDataObject
-{
 	private String user;
 	private String title;
 	private String notes;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date completed;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date dueDate;
 	private Integer priority;
 	private Integer order;
-
-    public TaskTaskResponse toResponse() {
-    	TaskTaskResponse result = new TaskTaskResponse();
-    	result.setId(getKey());
-    	result.setUser(user);
-    	result.setTitle(title);
-    	result.setNotes(notes);
-    	result.setCompleted(completed);
-    	result.setDueDate(dueDate);
-    	result.setPriority(priority);
-    	result.setOrder(order);
-    	return result;
-    }
 
 	public String getUser() {
 		return user;
@@ -87,5 +74,5 @@ public class TaskTaskDTO extends SharedDataObject
 	public void setOrder(Integer order) {
 		this.order = order;
 	}
-    
+
 }

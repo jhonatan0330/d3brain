@@ -82,8 +82,8 @@ public class ValueDimensionService {
 		}
 	}
 
-	public ValueDimensionDTO delete(ValueDimensionDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public ValueDimensionDTO delete(String id) throws ServerException {
+		ValueDimensionDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

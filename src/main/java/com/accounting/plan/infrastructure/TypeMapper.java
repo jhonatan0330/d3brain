@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingConnMapper;
+import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.TypeDTO;
 import com.accounting.plan.domain.TypeFilterDTO;
 
-@AccountingConnMapper("TypeAccountingMapper")
+@AccountingSqlConnMapper("TypeAccountingMapper")
 public interface TypeMapper {
 
 	TypeDTO insert(TypeDTO dto);

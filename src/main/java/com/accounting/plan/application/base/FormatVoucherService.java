@@ -82,8 +82,8 @@ public class FormatVoucherService {
 		}
 	}
 
-	public FormatVoucherDTO delete(FormatVoucherDTO dto) throws ServerException {
-		dto = getById(dto.getKey());
+	public FormatVoucherDTO delete(String id) throws ServerException {
+		FormatVoucherDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)
