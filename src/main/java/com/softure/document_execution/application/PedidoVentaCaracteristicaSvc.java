@@ -341,13 +341,6 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
-	public String valueFieldProcessMultipleToPartialDivideDocument(String field) throws ServerException {
-		try {
-			return pedidoVentaCaracteristicaMapper.valueFieldProcessMultipleToPartialDivideDocument(field);
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage());
-		}	
-	}
 	
 // END region aditionalMethods
 

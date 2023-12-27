@@ -420,14 +420,10 @@ public class TipoDetallePedido {
 			PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(documentoPrincipal, token);
 			List<DetallePedidoVentaDTO> detallesExpediente = detallePedidoVentaService
 					.listar2Documento(expediente.getLlaveTabla());
-
-			List<DetallePedidoVentaDTO> detallesFinalExpediente = new ArrayList<DetallePedidoVentaDTO>();// Expediente:
-																											// Como
-																											// queda el
-																											// expediente
-			List<DetallePedidoVentaDTO> detallesFinalNuevo = new ArrayList<DetallePedidoVentaDTO>();// Nuevo : Como
-																									// queda el
-																									// expediente actual
+			// Expediente: Como queda el expediente
+			List<DetallePedidoVentaDTO> detallesFinalExpediente = new ArrayList<DetallePedidoVentaDTO>();
+			// Nuevo : Como queda el expediente actual
+			List<DetallePedidoVentaDTO> detallesFinalNuevo = new ArrayList<DetallePedidoVentaDTO>();
 
 			for (DetallePedidoVentaDTO detalleDocumento : detallesDocumento) {
 				for (DetallePedidoVentaDTO detalleExpediente : detallesExpediente) {
@@ -459,18 +455,12 @@ public class TipoDetallePedido {
 							detalleDocumento.setValorSubtotal(
 									detalleDocumento.getValorUnitario().multiply(detalleDocumento.getCantidad()));
 							detalleDocumento.setValorTotal(detalleDocumento.getValorSubtotal());
-							detallePedidoVentaService.actualizarCamposNovedadParcial(detalleDocumento);// Con el tema de
-																										// campos
-																										// basicos toca
-																										// es actualizar
-																										// los campos
-																										// basicos
+							// Con el tema de campos basicos toca es actualizar los campos basicos
+							detallePedidoVentaService.actualizarCamposNovedadParcial(detalleDocumento);
 							detallesFinalNuevo.add(detalleDocumento);
 							detalleExpediente.setCantidad(detalleExpediente.getCantidad().add(nuevoTotal.negate()));
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente);// Aqui porque antes no me
-																								// actualiza la cantidad
-																								// en las novedades
-																								// parciales
+							// Aqui porque antes no me actualiza la cantidad en las novedades parciales
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente);
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
 						}

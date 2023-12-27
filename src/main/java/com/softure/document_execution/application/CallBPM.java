@@ -457,7 +457,8 @@ public class CallBPM {
 				relacionCargueNuevo.setCampoMaestro(relacion.getCampoMaestro());
 				relacionCargueNuevo.setExpedienteDetalle(nuevo.getLlaveTabla());
 				relacionCargueNuevo.setTransaccionRegistro(transaccion);
-				String valorTomar = campoService
+				//Esto lo borre en las devoluciones parciales de bbx
+				/*String valorTomar = campoService
 						.valueFieldProcessMultipleToPartialDivideDocument(relacion.getCampoMaestro());
 				if (valorTomar != null) {
 					if (valorTomar.compareTo("2") == 0) {
@@ -475,8 +476,13 @@ public class CallBPM {
 							relacionExpedienteService.update(relacion);
 						}
 					}
+				}*/
+				if (nuevo.getDinero() != null) {
+					relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
+					relacion.setValor(anterior.getDinero().getValorTotal().subtract(nuevo.getDinero().getValorTotal()));
+					relacionExpedienteService.update(relacion);
+					relacionExpedienteService.guardar(relacionCargueNuevo, securityToken);
 				}
-				relacionExpedienteService.guardar(relacionCargueNuevo, securityToken);
 			}
 		}
 	}
