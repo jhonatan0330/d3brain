@@ -317,20 +317,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 							"Por favor actualice su version de software (Limpie cache o descargue una nueva app).\nCliente: "
 									+ String.valueOf(cliente) + "\nServidor:" + String.valueOf(servidor));
 			}
-		} else {
-			String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
-			if (fechaTrial == null)
-				reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-			try {
-				Date date = formatter.parse(fechaTrial);
-				diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
-				if (diasVigencia < 0)
-					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
-			} catch (ParseException e) {
-				reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
-			}
 		}
 
 		UsuarioAutenticacionDTO autenticacion = null;
@@ -343,7 +329,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				reportarError(dto, "Se encuentra inactiva la sesion");
 			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
-				reportarError(dto, "Usuario perdio autenticacion.\nCODE:caud_usuario");
+				reportarError(dto, "Usuario perdio autenticacion.");
 			autenticacion = new UsuarioAutenticacionDTO();
 			autenticacion.setUsuario(sesion.getUsuario());
 		} else {
@@ -390,7 +376,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		autenticacion.setToken(sesion.getLlaveTabla());
 
 		if (!fromApi) {
-			if (diasVigencia > 0 && diasVigencia <= 5 && usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0)
+			if (diasVigencia > 0 && diasVigencia <= 5
+					&& usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0)
 				autenticacion.setMensaje(
 						"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
 			autenticacion
@@ -400,6 +387,24 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			filterMod.setSecurityToken(sesion.getLlaveTabla());
 			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));
 		}
+
+
+		if (!fromApi) {
+			String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
+			if (fechaTrial == null)
+				reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
+
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				Date date = formatter.parse(fechaTrial);
+				diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
+				if (diasVigencia < 0)
+					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
+			} catch (ParseException e) {
+				reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
+			}
+		}
+
 		return autenticacion;
 	}
 
