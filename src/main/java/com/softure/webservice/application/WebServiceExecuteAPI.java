@@ -478,6 +478,18 @@ public class WebServiceExecuteAPI {
 			}
 			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
 			if (plantilla.contains("$")) {
+				Map<String, Object> newMap = new HashMap<String, Object>();
+				// En fremarker sale error con los parentesis
+				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
+			        if(entry.getKey().contains("(")) {
+			        	newMap.put(entry.getKey().replace("(", "_").replace(")", ""), entry.getValue());
+			        	//mapParams.remove(entry.getKey());
+			        	//Por el momento no borro las entradas para una proxima
+			        }
+			    }
+				
+				mapParams.putAll(newMap);
+				
 				StringWriter out = new StringWriter();
 				try {
 					Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
