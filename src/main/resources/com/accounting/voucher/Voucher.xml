@@ -21,7 +21,7 @@
 			,ccmp_creacionusuarionombre as createdUserName
 			,dcmp_modificacionfecha as updatedAt
 			,ccmp_estado as state
-		from x_${catalogCode}_comprobante_cmp a
+		from account.comprobante_cmp a
 	</sql>
 
 	<sql id="whereVoucherFragment">
@@ -90,12 +90,12 @@
 
 	<select id="count" parameterType="VoucherFilterDTO" resultType="int">
 		select count(*)
-		from x_${catalogCode}_comprobante_cmp
+		from account.comprobante_cmp
 		<include refid="whereVoucherFragment" />
 	</select>
 
 	<select id="insert" parameterType="VoucherDTO" resultType="VoucherDTO">
-		insert into x_${catalogCode}_comprobante_cmp(
+		insert into account.comprobante_cmp(
 			ccmp_llave
 			,dcmp_creacionfecha
 		<if test="catalog!=null">
@@ -177,7 +177,7 @@
 	</select>
 
 	<select id="update" parameterType="VoucherDTO" resultType="VoucherDTO">
-		update x_${catalogCode}_comprobante_cmp
+		update account.comprobante_cmp
 			set
 				dcmp_modificacionfecha = now(),
 				ccmp_catalogo = #{catalog},

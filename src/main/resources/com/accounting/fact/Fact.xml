@@ -19,7 +19,7 @@
 			,chch_creacionusuarionombre as createdUserName
 			,dhch_modificacionfecha as updatedAt
 			,chch_estado as state
-		from hecho_hch a
+		from account.hecho_hch a
 	</sql>
 
 	<sql id="whereFactFragment">
@@ -81,12 +81,12 @@
 
 	<select id="count" parameterType="FactFilterDTO" resultType="int">
 		select count(*)
-		from hecho_hch
+		from account.hecho_hch
 		<include refid="whereFactFragment" />
 	</select>
 
 	<select id="insert" parameterType="FactDTO" resultType="FactDTO">
-		insert into hecho_hch(
+		insert into account.hecho_hch(
 			chch_llave
 			,dhch_creacionfecha
 		<if test="registerDate!=null">
@@ -156,7 +156,7 @@
 	</select>
 
 	<select id="update" parameterType="FactDTO" resultType="FactDTO">
-		update hecho_hch
+		update account.hecho_hch
 			set
 				dhch_modificacionfecha = now(),
 				dhch_fecharegistro = #{registerDate},

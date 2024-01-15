@@ -33,7 +33,7 @@
 			,crmp_creacionusuarionombre as createdUserName
 			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state
-		from mapa_resultados_rmp a
+		from account.mapa_resultados_rmp a
 	</sql>
 
 	<sql id="whereResultMapFragment">
@@ -132,12 +132,12 @@
 
 	<select id="count" parameterType="ResultMapFilterDTO" resultType="int">
 		select count(*)
-		from mapa_resultados_rmp
+		from account.mapa_resultados_rmp
 		<include refid="whereResultMapFragment" />
 	</select>
 
 	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
-		insert into mapa_resultados_rmp(
+		insert into account.mapa_resultados_rmp(
 			crmp_llave
 			,drmp_creacionfecha
 		<if test="catalog!=null">
@@ -279,7 +279,7 @@
 	</select>
 
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
-		update mapa_resultados_rmp
+		update account.mapa_resultados_rmp
 			set
 				drmp_modificacionfecha = now(),
 				crmp_catalogo = #{catalog},

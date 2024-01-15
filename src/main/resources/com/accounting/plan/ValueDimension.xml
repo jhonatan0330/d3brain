@@ -16,7 +16,7 @@
 			,cvlr_creacionusuarionombre as createdUserName
 			,dvlr_modificacionfecha as updatedAt
 			,cvlr_estado as state
-		from valor_vlr a
+		from account.valor_vlr a
 	</sql>
 
 	<sql id="whereValueDimensionFragment">
@@ -69,12 +69,12 @@
 
 	<select id="count" parameterType="ValueDimensionFilterDTO" resultType="int">
 		select count(*)
-		from valor_vlr
+		from account.valor_vlr
 		<include refid="whereValueDimensionFragment" />
 	</select>
 
 	<select id="insert" parameterType="ValueDimensionDTO" resultType="ValueDimensionDTO">
-		insert into valor_vlr(
+		insert into account.valor_vlr(
 			cvlr_llave
 			,dvlr_creacionfecha
 		<if test="dimension!=null">
@@ -126,7 +126,7 @@
 	</select>
 
 	<select id="update" parameterType="ValueDimensionDTO" resultType="ValueDimensionDTO">
-		update valor_vlr
+		update account.valor_vlr
 			set
 				dvlr_modificacionfecha = now(),
 				cvlr_dimension = #{dimension},

@@ -5,6 +5,7 @@
 		{
 			"name": "Planeacion de indicadores por catalogos",
 			"code": "plan",
+			"schema": "account",
 			"entities": [
 				{
 					"name": "Catalog",
@@ -373,10 +374,11 @@
 		{
 			"name": "Registro de comprobantes contables",
 			"code": "voucher",
+			"schema": "account",
 			"entities": [
 				{
 					"name": "Voucher",
-					"table": "x_${catalogCode}_comprobante",
+					"table": "comprobante",
 					"prefix": "cmp",
 					"attributes": [
 						{
@@ -437,7 +439,7 @@
 				},
 				{
 					"name": "AccountRecord",
-					"table": "x_${catalogCode}_registro",
+					"table": "registro",
 					"prefix": "reg",
 					"attributes": [
 						{
@@ -533,6 +535,7 @@
 		{
 			"name": "Hechos contables",
 			"code": "fact",
+			"schema": "account",
 			"entities": [
 				{
 					"name": "Fact",

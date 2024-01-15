@@ -26,7 +26,7 @@
 			,creg_creacionusuarionombre as createdUserName
 			,dreg_modificacionfecha as updatedAt
 			,creg_estado as state
-		from x_${catalogCode}_registro_reg a
+		from account.registro_reg a
 	</sql>
 
 	<sql id="whereAccountRecordFragment">
@@ -109,12 +109,12 @@
 
 	<select id="count" parameterType="AccountRecordFilterDTO" resultType="int">
 		select count(*)
-		from x_${catalogCode}_registro_reg
+		from account.registro_reg
 		<include refid="whereAccountRecordFragment" />
 	</select>
 
 	<select id="insert" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
-		insert into x_${catalogCode}_registro_reg(
+		insert into account.registro_reg(
 			creg_llave
 			,dreg_creacionfecha
 		<if test="voucher!=null">
@@ -226,7 +226,7 @@
 	</select>
 
 	<select id="update" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
-		update x_${catalogCode}_registro_reg
+		update account.registro_reg
 			set
 				dreg_modificacionfecha = now(),
 				creg_comprobante = #{voucher},

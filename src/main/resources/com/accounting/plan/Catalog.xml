@@ -17,7 +17,7 @@
 			,cctg_creacionusuarionombre as createdUserName
 			,dctg_modificacionfecha as updatedAt
 			,cctg_estado as state
-		from catalogo_ctg a
+		from account.catalogo_ctg a
 	</sql>
 
 	<sql id="whereCatalogFragment">
@@ -73,12 +73,12 @@
 
 	<select id="count" parameterType="CatalogFilterDTO" resultType="int">
 		select count(*)
-		from catalogo_ctg
+		from account.catalogo_ctg
 		<include refid="whereCatalogFragment" />
 	</select>
 
 	<select id="insert" parameterType="CatalogDTO" resultType="CatalogDTO">
-		insert into catalogo_ctg(
+		insert into account.catalogo_ctg(
 			cctg_llave
 			,dctg_creacionfecha
 		<if test="name!=null">
@@ -136,7 +136,7 @@
 	</select>
 
 	<select id="update" parameterType="CatalogDTO" resultType="CatalogDTO">
-		update catalogo_ctg
+		update account.catalogo_ctg
 			set
 				dctg_modificacionfecha = now(),
 				cctg_nombre = #{name},

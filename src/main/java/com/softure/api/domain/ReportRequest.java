@@ -1,10 +1,13 @@
 package com.softure.api.domain;
 
+import java.util.List;
+
 public class ReportRequest {
 
 	private String template;
 	private String code;
 	private String documentId;
+	private List<ReportParameterRequest> parameters;
 	
 	public String getTemplate() {
 		return template;
@@ -23,6 +26,12 @@ public class ReportRequest {
 	}
 	public void setDocumentId(String documentId) {
 		this.documentId = documentId;
+	}
+	public List<ReportParameterRequest> getParameters() {
+		return parameters;
+	}
+	public void setParameters(List<ReportParameterRequest> parameters) {
+		this.parameters = parameters;
 	}
 	
 }

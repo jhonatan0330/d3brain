@@ -15,7 +15,7 @@
 			,ctcm_creacionusuarionombre as createdUserName
 			,dtcm_modificacionfecha as updatedAt
 			,ctcm_estado as state
-		from tipocomprobante_tcm a
+		from account.tipocomprobante_tcm a
 	</sql>
 
 	<sql id="whereTypeFragment">
@@ -65,12 +65,12 @@
 
 	<select id="count" parameterType="TypeFilterDTO" resultType="int">
 		select count(*)
-		from tipocomprobante_tcm
+		from account.tipocomprobante_tcm
 		<include refid="whereTypeFragment" />
 	</select>
 
 	<select id="insert" parameterType="TypeDTO" resultType="TypeDTO">
-		insert into tipocomprobante_tcm(
+		insert into account.tipocomprobante_tcm(
 			ctcm_llave
 			,dtcm_creacionfecha
 		<if test="catalog!=null">
@@ -116,7 +116,7 @@
 	</select>
 
 	<select id="update" parameterType="TypeDTO" resultType="TypeDTO">
-		update tipocomprobante_tcm
+		update account.tipocomprobante_tcm
 			set
 				dtcm_modificacionfecha = now(),
 				ctcm_catalogo = #{catalog},

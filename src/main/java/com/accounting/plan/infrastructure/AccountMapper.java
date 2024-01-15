@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
+import com.softure.SoftureSqlConnMapper;
 
-@AccountingSqlConnMapper("AccountAccountingMapper")
+@SoftureSqlConnMapper("AccountAccountingMapper")
 public interface AccountMapper {
 
 	AccountDTO insert(AccountDTO dto);

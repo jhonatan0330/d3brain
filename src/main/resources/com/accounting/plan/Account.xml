@@ -23,7 +23,7 @@
 			,ccue_creacionusuarionombre as createdUserName
 			,dcue_modificacionfecha as updatedAt
 			,ccue_estado as state
-		from cuenta_cue a
+		from account.cuenta_cue a
 	</sql>
 
 	<sql id="whereAccountFragment">
@@ -98,12 +98,12 @@
 
 	<select id="count" parameterType="AccountFilterDTO" resultType="int">
 		select count(*)
-		from cuenta_cue
+		from account.cuenta_cue
 		<include refid="whereAccountFragment" />
 	</select>
 
 	<select id="insert" parameterType="AccountDTO" resultType="AccountDTO">
-		insert into cuenta_cue(
+		insert into account.cuenta_cue(
 			ccue_llave
 			,dcue_creacionfecha
 		<if test="catalog!=null">
@@ -197,7 +197,7 @@
 	</select>
 
 	<select id="update" parameterType="AccountDTO" resultType="AccountDTO">
-		update cuenta_cue
+		update account.cuenta_cue
 			set
 				dcue_modificacionfecha = now(),
 				ccue_catalogo = #{catalog},

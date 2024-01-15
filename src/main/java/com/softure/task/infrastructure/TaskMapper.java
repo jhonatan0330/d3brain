@@ -2,9 +2,9 @@ package com.softure.task.infrastructure;
 
 import java.util.List;
 
-import com.softure.SoftureSqlConnMapper;
 import com.softure.task.domain.TaskDTO;
 import com.softure.task.domain.TaskFilterDTO;
+import com.softure.SoftureSqlConnMapper;
 
 @SoftureSqlConnMapper("TaskSoftureMapper")
 public interface TaskMapper {

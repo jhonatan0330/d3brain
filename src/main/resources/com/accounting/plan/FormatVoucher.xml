@@ -14,7 +14,7 @@
 			,cfrm_creacionusuarionombre as createdUserName
 			,dfrm_modificacionfecha as updatedAt
 			,cfrm_estado as state
-		from formato_frm a
+		from account.formato_frm a
 	</sql>
 
 	<sql id="whereFormatVoucherFragment">
@@ -61,12 +61,12 @@
 
 	<select id="count" parameterType="FormatVoucherFilterDTO" resultType="int">
 		select count(*)
-		from formato_frm
+		from account.formato_frm
 		<include refid="whereFormatVoucherFragment" />
 	</select>
 
 	<select id="insert" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
-		insert into formato_frm(
+		insert into account.formato_frm(
 			cfrm_llave
 			,dfrm_creacionfecha
 		<if test="catalog!=null">
@@ -106,7 +106,7 @@
 	</select>
 
 	<select id="update" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
-		update formato_frm
+		update account.formato_frm
 			set
 				dfrm_modificacionfecha = now(),
 				cfrm_catalogo = #{catalog},

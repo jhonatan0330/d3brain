@@ -2,9 +2,9 @@ package com.accounting.plan.infrastructure;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.accounting.AccountingSqlConnMapper;
+import com.softure.SoftureSqlConnMapper;
 
-@AccountingSqlConnMapper("CreateCatalogoTablesAccountingMapper")
+@SoftureSqlConnMapper("CreateCatalogoTablesAccountingMapper")
 public interface CreateCatalogTablesMapper {
 
 	void createTemporal(@Param("code") String code);

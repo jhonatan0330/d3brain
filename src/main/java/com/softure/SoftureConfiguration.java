@@ -50,7 +50,7 @@ import com.softure.webservice.application.WebServiceEjecucionSvc;
 @Configuration
 @EnableTransactionManagement
 @EnableScheduling
-@MapperScan(basePackages = "com.softure.*.infrastructure", annotationClass= SoftureSqlConnMapper.class, sqlSessionFactoryRef="sqlSessionFactory")
+@MapperScan(basePackages = {"com.softure.*.infrastructure","com.accounting.*.infrastructure"}, annotationClass= SoftureSqlConnMapper.class, sqlSessionFactoryRef="sqlSessionFactory")
 public class SoftureConfiguration {
 
 	@Autowired private Environment env;
@@ -189,8 +189,8 @@ public class SoftureConfiguration {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 		factoryBean.setDataSource(dataSource);// Specify the data source (this must exist, otherwise an error will occur)
 		// The next two sentences are for *.xml files only, if the XML file is not needed for the entire persistence layer operation (only annotations will do), they are not added
-		factoryBean.setTypeAliasesPackage("com.softure.*.domain");//Specify base package
-		factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/com/softure/*/*.xml"));//
+		factoryBean.setTypeAliasesPackage("com.*.*.domain");//Specify base package
+		factoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath*:/com/*/*/*.xml"));//
 		return factoryBean.getObject();
 	}
 

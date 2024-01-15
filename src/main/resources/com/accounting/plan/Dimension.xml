@@ -17,7 +17,7 @@
 			,cdim_creacionusuarionombre as createdUserName
 			,ddim_modificacionfecha as updatedAt
 			,cdim_estado as state
-		from dimension_dim a
+		from account.dimension_dim a
 	</sql>
 
 	<sql id="whereDimensionFragment">
@@ -73,12 +73,12 @@
 
 	<select id="count" parameterType="DimensionFilterDTO" resultType="int">
 		select count(*)
-		from dimension_dim
+		from account.dimension_dim
 		<include refid="whereDimensionFragment" />
 	</select>
 
 	<select id="insert" parameterType="DimensionDTO" resultType="DimensionDTO">
-		insert into dimension_dim(
+		insert into account.dimension_dim(
 			cdim_llave
 			,ddim_creacionfecha
 		<if test="account!=null">
@@ -136,7 +136,7 @@
 	</select>
 
 	<select id="update" parameterType="DimensionDTO" resultType="DimensionDTO">
-		update dimension_dim
+		update account.dimension_dim
 			set
 				ddim_modificacionfecha = now(),
 				cdim_cuenta = #{account},

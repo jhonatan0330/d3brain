@@ -2,11 +2,11 @@ package com.accounting.plan.infrastructure;
 
 import java.util.List;
 
-import com.accounting.AccountingSqlConnMapper;
 import com.accounting.plan.domain.FormatVoucherDTO;
 import com.accounting.plan.domain.FormatVoucherFilterDTO;
+import com.softure.SoftureSqlConnMapper;
 
-@AccountingSqlConnMapper("FormatVoucherAccountingMapper")
+@SoftureSqlConnMapper("FormatVoucherAccountingMapper")
 public interface FormatVoucherMapper {
 
 	FormatVoucherDTO insert(FormatVoucherDTO dto);

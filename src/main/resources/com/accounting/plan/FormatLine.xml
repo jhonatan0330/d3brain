@@ -17,7 +17,7 @@
 			,clin_creacionusuarionombre as createdUserName
 			,dlin_modificacionfecha as updatedAt
 			,clin_estado as state
-		from linea_lin a
+		from account.linea_lin a
 	</sql>
 
 	<sql id="whereFormatLineFragment">
@@ -73,12 +73,12 @@
 
 	<select id="count" parameterType="FormatLineFilterDTO" resultType="int">
 		select count(*)
-		from linea_lin
+		from account.linea_lin
 		<include refid="whereFormatLineFragment" />
 	</select>
 
 	<select id="insert" parameterType="FormatLineDTO" resultType="FormatLineDTO">
-		insert into linea_lin(
+		insert into account.linea_lin(
 			clin_llave
 			,dlin_creacionfecha
 		<if test="format!=null">
@@ -136,7 +136,7 @@
 	</select>
 
 	<select id="update" parameterType="FormatLineDTO" resultType="FormatLineDTO">
-		update linea_lin
+		update account.linea_lin
 			set
 				dlin_modificacionfecha = now(),
 				clin_formato = #{format},

@@ -1,10 +1,14 @@
 package com.softure.api.application;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
+import com.softure.api.domain.ReportParameterRequest;
 import com.softure.api.domain.ReportRequest;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -39,7 +43,14 @@ public class ApiGetReportService {
 		
 		ReportDTO resultado;
 		try {
-			resultado = reportService.generarReporte(reportBD, filter.getDocumentId(), null, token);
+			Map<String, Object> jasperParameters = null;
+			if(filter.getParameters()!=null && !filter.getParameters().isEmpty()) {
+				jasperParameters =  new HashMap<String, Object>();
+				for (ReportParameterRequest element : filter.getParameters()) {
+					jasperParameters.put(element.getParameter(), element.getValue());
+				}
+			}
+			resultado = reportService.generarReporte(reportBD, filter.getDocumentId(), jasperParameters, token);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
