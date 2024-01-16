@@ -64,7 +64,6 @@ public class SoftureConfiguration {
 	public void doSomethingAfterStartup() {
 		System.out.println("*********************************************************");
 		System.out.println("BD = " + env.getProperty("db.url"));
-		System.out.println("BD IND = " + env.getProperty("db.accounting.jdbc-url"));
 		System.out.println("Correos Activos = " + env.getProperty("cron.enabled"));
 		System.out.println("Tareas Activas = " + env.getProperty("cron.task"));
 		System.out.println("*********************************************************");

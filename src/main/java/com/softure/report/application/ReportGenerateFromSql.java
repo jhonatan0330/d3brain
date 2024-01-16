@@ -33,9 +33,9 @@ public class ReportGenerateFromSql {
 	        String headerLine = "";
 	         
 	        // exclude the first column which is the ID field
-	        for (int i = 2; i <= numberOfColumns; i++) {
+	        for (int i = 1; i <= numberOfColumns; i++) {
 	            String columnName = metaData.getColumnName(i);
-	            headerLine = headerLine.concat(columnName.toUpperCase()).concat(",");
+	            headerLine = headerLine.concat(columnName.toUpperCase()).concat(";");
 	        }
 	         
 	        resultCSV = headerLine.substring(0, headerLine.length() - 1);
@@ -43,7 +43,7 @@ public class ReportGenerateFromSql {
 	        while (result.next()) {
 	            String line = "";
 	             
-	            for (int i = 2; i <= numberOfColumns; i++) {
+	            for (int i = 1; i <= numberOfColumns; i++) {
 	                Object valueObject = result.getObject(i);
 	                String valueString = "";
 	                if (valueObject != null) valueString = valueObject.toString();
@@ -55,14 +55,21 @@ public class ReportGenerateFromSql {
 	                line = line.concat(valueString);
 	                 
 	                if (i != numberOfColumns) {
-	                    line = line.concat(",");
+	                    line = line.concat(";");
 	                }
 	            }
 	            resultCSV = resultCSV + SharedConstants.NEW_LINE + line;
-	            //System.out.println("Rows: " + result.getRow());
+	            //System.out.println("Rows: " + result.getRow() + "  " + line);
 	        }
 	         
 	        statement.close();
+	     
+	        
+	        headerLine = "";
+	        for (int i = 1; i <= numberOfColumns; i++) {
+	            headerLine = headerLine.concat("").concat(";");
+	        }
+	        resultCSV = resultCSV + SharedConstants.NEW_LINE + headerLine;
 	        
 		} catch (SQLException e) {
 			throw new ServerException(e.getMessage());

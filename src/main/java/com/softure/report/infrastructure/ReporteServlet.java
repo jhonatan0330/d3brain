@@ -1,8 +1,6 @@
 package com.softure.report.infrastructure;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -27,7 +25,7 @@ public class ReporteServlet extends HttpServlet{
 	
 	@Autowired private ReporteBaseSvc reporteBaseService;
 
-	public void downloadFile(HttpServletResponse response, InputStream pInputStream, String fileName) {
+	public void downloadFile(HttpServletResponse response, byte[] pInputStream, String fileName) {
 		try {
 			response.setHeader("Pragma", "No-cache");
 			response.setHeader("Cache-Control", "no-cache");
@@ -77,12 +75,13 @@ public class ReporteServlet extends HttpServlet{
 				response.setContentType("application/msword");
 			}
 			ServletOutputStream out = response.getOutputStream();
-			byte[] buffer = new byte[1024];
+			out.write(pInputStream);
+			/*byte[] buffer = new byte[1024];
 			while (pInputStream.read(buffer) > 0) {
 				out.write(buffer);
 			}
 			out.flush();
-			pInputStream.close();
+			pInputStream.close();*/
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -115,12 +114,13 @@ public class ReporteServlet extends HttpServlet{
 			
 			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper, request.getParameter("P_TOKEN"));
 			if(resultado!=null && resultado.getContent()!=null){
-				InputStream input = new ByteArrayInputStream(resultado.getContent());
+				//InputStream input = new ByteArrayInputStream(resultado.getContent());
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
 				String name = resultado.getName();
 				if(name == null) { name = reportBD.getNombre(); }
-				downloadFile(response, input, name +"_" + SoftureUtil.formatDateMassiveFile(new Date()).replaceAll("\\\\", "_") + "." + tipoReporte.toLowerCase());
+				//downloadFile(response, input, name +"_" + SoftureUtil.formatDateMassiveFile(new Date()).replaceAll("\\\\", "_") + "." + tipoReporte.toLowerCase());
+				downloadFile(response, resultado.getContent(), name +"_" + SoftureUtil.formatDateMassiveFile(new Date()).replaceAll("\\\\", "_") + "." + tipoReporte.toLowerCase());
 			}
 		} catch (Exception e) {
 			PrintWriter out=response.getWriter();
