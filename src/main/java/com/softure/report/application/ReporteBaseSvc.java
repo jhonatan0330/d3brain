@@ -279,8 +279,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
             if (tipoReporte==null) {
                 tipoReporte = Propiedades.obtenerValor(reporte, Propiedades.REP_TYPE_EXPORT);
                 if(tipoReporte.isEmpty()) {
-                	String queryCSV = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY);
-                	if(queryCSV==null) {
+                	if(Propiedades.obtenerParametro(reporte, Propiedades.REPORT_QUERY)==null) {
                 		tipoReporte = "pdf";
                         parametrosJasper.put("P_JASPERTIPO", "PDF");	
                 	}else {
