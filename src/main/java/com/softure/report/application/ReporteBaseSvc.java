@@ -272,8 +272,6 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
             if(key!=null)parametrosJasper.putAll(llenarParametros(key));
             parametrosJasper.putAll(parametrosPropiedades(reporte, usuario));
             String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
-            String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
-            if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
             Object propiedadExcel = null;
             //Seccion del reporte
             GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
@@ -281,8 +279,15 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
             if (tipoReporte==null) {
                 tipoReporte = Propiedades.obtenerValor(reporte, Propiedades.REP_TYPE_EXPORT);
                 if(tipoReporte.isEmpty()) {
-                    tipoReporte = "pdf";
-                    parametrosJasper.put("P_JASPERTIPO", "PDF");
+                	String queryCSV = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY);
+                	if(queryCSV==null) {
+                		tipoReporte = "pdf";
+                        parametrosJasper.put("P_JASPERTIPO", "PDF");	
+                	}else {
+                		tipoReporte = "csv";
+                        parametrosJasper.put("P_JASPERTIPO", "CSV");
+                	}
+                    
                 }else {
                     parametrosJasper.put("P_JASPERTIPO", tipoReporte);
                 }
@@ -293,16 +298,27 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
                     if(propiedadExcel!=null && !propiedadExcel.toString().isEmpty()) {
                         resultado = generadorReporte.generarReporteExcel(propiedadExcel.toString(), parametrosJasper);
                     }else {
+                    	String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
+                        if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
                         resultado = generadorReporte.generarReporteExcel(jrxmlReporte, parametrosJasper);
                     }
                     break;
                 }
                 case "HTML": {
+                	String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
+                    if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
                     resultado = generadorReporte.generarReporteHTML(jrxmlReporte, parametrosJasper);
                     break;
                 }
-                default:
+                case "CSV": {
+                    resultado = ReportGenerateFromSql.call(Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY), parametrosJasper, dataSource.getConnection());
+                    break;
+                }
+                default:{
+                	String jrxmlReporte = (String) parametrosJasper.get(Propiedades.REPORTE_JRXML);
+                    if(jrxmlReporte==null) throw new ServerException("No se a definido el cuerpo del reporte JRXML");
                     resultado = generadorReporte.generarReportePDF(jrxmlReporte, parametrosJasper);
+                }
             }
             ejecucion.setFechaFin(new Date());
             try {

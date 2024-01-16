@@ -486,3 +486,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, cpvd_origencategoria) 
 	VALUES('PROP_249' , 'A', 'PARAMETROS PARA EL API', 'API_PARAMETER', 'REQUISITO', true, 'P');
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_250' , 'E', 'QUERY REPORTE', 'REPORT_QUERY', 'REQUISITO', true);
+	

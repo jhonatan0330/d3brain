@@ -40,6 +40,9 @@ public class ReporteServlet extends HttpServlet{
 			else if (fileName.toLowerCase().contains(".xls")) {
 				response.setContentType("application/vnd.ms-excel");
 			}
+			else if (fileName.toLowerCase().contains(".csv")){
+				response.setContentType("text/csv");
+			}
 			else if (fileName.toLowerCase().contains(".html")){
 				response.setContentType("text/html");
 			}
@@ -117,7 +120,7 @@ public class ReporteServlet extends HttpServlet{
 				if(tipoReporte==null) tipoReporte = "pdf";//Corrige que los reportes se guarden como .null
 				String name = resultado.getName();
 				if(name == null) { name = reportBD.getNombre(); }
-				downloadFile(response, input, name +"_" + SoftureUtil.formatDateMassiveFile(new Date()) + "." + tipoReporte.toLowerCase());
+				downloadFile(response, input, name +"_" + SoftureUtil.formatDateMassiveFile(new Date()).replaceAll("\\\\", "_") + "." + tipoReporte.toLowerCase());
 			}
 		} catch (Exception e) {
 			PrintWriter out=response.getWriter();

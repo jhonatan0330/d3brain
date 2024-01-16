@@ -226,6 +226,7 @@ public class Propiedades {
 	public static final String OCULTAR_REPORTE = "OCULTAR_REPORTE";
 	public static final String REP_AUTOPRINT = "REP_AUTOPRINT";
 	public static final String REP_TYPE_EXPORT = "REP_TYPE_EXPORT";
+	public static final String REPORT_QUERY = "REPORT_QUERY";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";
@@ -1103,6 +1104,10 @@ public class Propiedades {
 		}
 		case REPORTE_JRXML: {
 			ruleProperty = "Se coloca el texto del jrxml.\n\nLas imagenes deben estar como parametros o como campos de la consulta el valida el texto del source de la imagen sea un parametro para base64 o un campo($)\nimageExpression><![CDATA[$ \nimageExpression><![CDATA[new ByteArrayInputStream";
+			break;
+		}
+		case REPORT_QUERY: {
+			ruleProperty = "Genera un reporte en archivo plano (csv), con un query";
 			break;
 		}
 		case SAVE_TO_SELECT: {
