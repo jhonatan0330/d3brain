@@ -404,6 +404,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			ProcesoEstadoFilterDTO filtroEstado = new ProcesoEstadoFilterDTO();
 			filtroEstado.setEstado(SharedConstants.STATE_ACTIVE);
 			filtroEstado.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
+			filtroEstado.setPaginacionRegistroFinal(5000);
 			List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(filtroEstado);
 			
 			ProcesoTransicionFilterDTO filtroTransicion = new ProcesoTransicionFilterDTO();
