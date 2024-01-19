@@ -3,6 +3,7 @@ package com.softure.mail.application;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,30 @@ public class MailSendMessageToAdminService {
 		filter.setTipo(ServidorDTO.MAIL);
 		List<ServidorDTO> servidores = servidorService.listarConsulta(filter);
 		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado para enviar mensaje al administrador.\n " + messageTitle + "\n" +messageText);
-		JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidores.get(0));
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		SimpleMailMessage message = new SimpleMailMessage();  
         message.setFrom(servidores.get(0).getUsuario());
 	    message.setTo(userAdmin.getCorreo());
 	    message.setSubject(messageTitle);  
-	    message.setText(principal.getNombre() + " " + messageText);  
-	    mailSender.send(message);
+	    message.setText(principal.getNombre() + " " + messageText);
+	    try {
+	    	JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidores.get(0));
+	    	mailSender.send(message);
+		} catch (MailException e) {
+			if(servidores.size()>1) {
+				SimpleMailMessage messageBackup = new SimpleMailMessage();  
+		        messageBackup.setFrom(servidores.get(1).getUsuario());
+			    messageBackup.setTo(userAdmin.getCorreo());
+			    messageBackup.setSubject(messageTitle);  
+			    messageBackup.setText(principal.getNombre() + " " + messageText);
+			    try {
+			    	JavaMailSenderImpl mailSenderBackup = MailUtils.getMailSender(servidores.get(1));
+			    	mailSenderBackup.send(messageBackup);			    	
+			    } catch (MailException eBackup) {
+			    	System.out.println(eBackup.getMessage());
+			    }
+			}
+		}
+	    
 	}
 }

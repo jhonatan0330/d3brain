@@ -8,15 +8,20 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -68,31 +73,33 @@ public class MailSendMessageService {
 				throw new ServerException("No se encuentra el servidor de correo configurado");
 			if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
-			JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidor);
-			MimeMessage mimeMessage = mailSender.createMimeMessage();
-			MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage,
-					(dto.getReporte() != null || dto.getAdjuntoURL() != null));
-			mailMsg.setFrom(servidor.getUsuario());
+			String mailFrom = servidor.getUsuario();
+			String mailTo = null;
+			String[] mailCc = null;
 			if (dto.getCorreo().contains(";")) {
 				String[] toMails = dto.getCorreo().split(";");
-				mailMsg.setTo(toMails[0]);
+				mailTo = toMails[0];
 				List<String> list = new ArrayList<String>(Arrays.asList(toMails));
 				list.remove(toMails[0]);
-				mailMsg.setCc(list.toArray(new String[0]));
+				mailCc = list.toArray(new String[0]);
 			} else {
-				mailMsg.setTo(dto.getCorreo());
+				mailTo = dto.getCorreo();
 			}
-			mailMsg.setSubject(dto.getTitulo());
-			mailMsg.setText(MailUtils.replaceParameterInBodyMessage(plantilla.getTexto(), dto.getParametros()), true);
+			String mailSubject = dto.getTitulo();
+			String mailText = MailUtils.replaceParameterInBodyMessage(plantilla.getTexto(), dto.getParametros());
+			Map<String, DataSource> attachmentsFiles = null;
 			if (dto.getReporte() != null) {
 				ReportDTO reporte = reporteBaseService.generarReporte(
 						reporteBaseService.validateReport(dto.getReporte(), token), dto.getDocumento(), null, token);
 				if (reporte != null) {
 					ReporteBaseDTO base = reporteBaseService.consultaXId(dto.getReporte());
-					mailMsg.addAttachment(base.getNombre() + ".pdf",
+					if (attachmentsFiles == null)
+						attachmentsFiles = new HashMap<String, DataSource>();
+					attachmentsFiles.put(base.getNombre() + ".pdf",
 							new ByteArrayDataSource(reporte.getContent(), "application/pdf"));
 				}
 			}
+
 			if (dto.getAdjuntoURL() != null) {
 				String[] attachments = dto.getAdjuntoURL().split(SharedConstants.PUNTO_COMA_DOBLE);
 				List<File> filesToAttach = null;
@@ -114,6 +121,8 @@ public class MailSendMessageService {
 					}
 				}
 				if (filesToAttach != null && filesToAttach.size() > 0) {
+					if (attachmentsFiles == null)
+						attachmentsFiles = new HashMap<String, DataSource>();
 					if (filesToAttach.size() != 1) {
 						final ByteArrayOutputStream fos = new ByteArrayOutputStream();
 						ZipOutputStream zipOut = new ZipOutputStream(fos);
@@ -130,14 +139,60 @@ public class MailSendMessageService {
 						}
 						zipOut.close();
 						fos.close();
-						mailMsg.addAttachment(urlName + ".zip",
+						attachmentsFiles.put(urlName + ".zip",
 								new ByteArrayDataSource(fos.toByteArray(), "application/octet-stream"));
 					} else {
-						mailMsg.addAttachment(urlName, filesToAttach.get(0));
+						attachmentsFiles.put(urlName, new FileDataSource(filesToAttach.get(0)));
 					}
 				}
 			}
-			mailSender.send(mimeMessage);
+			try {
+				JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidor);
+				MimeMessage mimeMessage = mailSender.createMimeMessage();
+				MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage, (attachmentsFiles != null));
+				mailMsg.setFrom(mailFrom);
+				mailMsg.setSubject(mailSubject);
+				mailMsg.setText(mailText, true);
+				mailMsg.setTo(mailTo);
+				if (mailCc != null)
+					mailMsg.setCc(mailCc);
+				if (attachmentsFiles != null) {
+					for (Map.Entry<String, DataSource> entry : attachmentsFiles.entrySet()) {
+						mailMsg.addAttachment(entry.getKey(), entry.getValue());
+					}
+				}
+				mailSender.send(mimeMessage);
+			} catch (MailException e) {
+				if (servidor != null && servidor.getServidorRespaldo() != null) {
+					sendToAdminService.call("Error enviando correo principal pasa a backup " + dto.getTitulo(),
+							e.getMessage());
+					servidor = servidorService.consultaXId(servidor.getServidorRespaldo());
+					if (servidor == null)
+						throw new ServerException("No se encuentra el servidor de correo backup configurado");
+					if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+						throw new ServerException(
+								"El servidor de correo backup no se encuentra activo. " + servidor.getNombre());
+					
+					JavaMailSenderImpl mailSenderBackup = MailUtils.getMailSender(servidor);
+					MimeMessage mimeMessageBackup = mailSenderBackup.createMimeMessage();
+					MimeMessageHelper mailMsgBackup = new MimeMessageHelper(mimeMessageBackup, (attachmentsFiles != null));
+					mailMsgBackup.setFrom(mailFrom);
+					mailMsgBackup.setSubject(mailSubject);
+					mailMsgBackup.setText(mailText, true);
+					mailMsgBackup.setTo(mailTo);
+					if (mailCc != null)
+						mailMsgBackup.setCc(mailCc);
+					if (attachmentsFiles != null) {
+						for (Map.Entry<String, DataSource> entry : attachmentsFiles.entrySet()) {
+							mailMsgBackup.addAttachment(entry.getKey(), entry.getValue());
+						}
+					}
+					mailSenderBackup.send(mimeMessageBackup);
+				} else {
+					dto.setCorreoError(e.getMessage());
+					sendToAdminService.call("Error enviando correos electronicos " + dto.getTitulo(), e.getMessage());
+				}
+			}
 		} catch (Exception e) {
 			dto.setCorreoError(e.getMessage());
 			sendToAdminService.call("Error enviando correos electronicos " + dto.getTitulo(), e.getMessage());
