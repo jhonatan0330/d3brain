@@ -15,7 +15,7 @@
 			,cdrg_usuario as  usuario
 			,cdrg_ubicacion as  ubicacion
 			,cdrg_valores as  valores
-			,(select mpvd_saldo from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  saldo
+			,coalesce((select mpvd_saldo from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores),0) as  saldo
 			,(select mpvd_valortotal from pedidoventadinero_pvdp where cpvd_llave = cdrg_valores) as  total
 			,cdrg_transaccion as  transaccion
 			,ddrg_cierre as  cierre
@@ -362,7 +362,7 @@
 	            END
 	    	END as nombre
 	    	,null as  transaccion
-	    	,null as adjunto 
+	    	,cmsj_adjuntourl as adjunto 
 		  from mensaje_msjp
 		  where cmsj_documento = #{dto.documentoPrincipal}
 	</if>
