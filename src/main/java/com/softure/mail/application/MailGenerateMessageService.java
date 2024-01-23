@@ -3,6 +3,7 @@ package com.softure.mail.application;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -99,7 +100,11 @@ public class MailGenerateMessageService {
                     correosFijos = new ArrayList<String>();
                     if(fieldsEmailToSend!=null && !fieldsEmailToSend.isEmpty()) {
                         for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
-                            correosFijos.add(formatEmail(iFieldsEmailToSend.getValorText()));
+                        	String[] externalMail = iFieldsEmailToSend.getValorText().split(SharedConstants.PUNTO_COMA);
+                            for (String iMail : externalMail) {
+                				if (!iMail.isEmpty())
+                					correosFijos.add(formatEmail(iMail));
+                            }
                         }
                     }
                 }
@@ -155,7 +160,11 @@ public class MailGenerateMessageService {
                     if (iDestinatario.getCorreo() != null) {
                         if (destinatariosExternos == null)
                             destinatariosExternos = new ArrayList<String>();
-                        destinatariosExternos.add(formatEmail(iDestinatario.getCorreo()));
+                        String[] externalMail = iDestinatario.getCorreo().split(SharedConstants.PUNTO_COMA);
+                        for (String iMail : externalMail) {
+            				if (!iMail.isEmpty())
+            					destinatariosExternos.add(formatEmail(iMail));
+                        }
                     }
                 } else {
                     if (usuarioGenerador == null || iDestinatario.getUsuario().compareTo(usuarioGenerador) != 0)
@@ -210,60 +219,53 @@ public class MailGenerateMessageService {
             }
         }
 
+        String destinyMails= "";
         for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
-            MensajeDTO mensaje = new MensajeDTO();
-            mensaje.setFecha(new Date());
-            mensaje.setTemplate(plantillaCorreo.getValor());
-            // Sucedio que al asignar sin transaccion salia un error porque no hay
-            // modificador
-            if (modificador == null || modificador.getLlaveTabla() == null) {
-                mensaje.setDocumento(documento.getLlaveTabla());
-            } else {
-                mensaje.setDocumento(modificador.getLlaveTabla());
-            }
-            mensaje.setTitulo(mensajeTitulo);
-            mensaje.setUsuario(entry.getKey());
-            mensaje.setCorreo(entry.getValue());
-            mensaje.setAdjuntoURL(attachLink);
-            if (mensajeReporte != null)
-                mensaje.setReporte(mensajeReporte.getValor());
-            mensaje.setParametros(parametros);
-            messageService.save(mensaje);
-            System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) con correo (%s)", documento.getNombre(),
-                    formatosPlantilla.getNombre(), entry.getKey(), entry.getValue());
+            destinyMails = destinyMails + SharedConstants.PUNTO_COMA + entry.getValue();
         }
-
         if (destinatariosExternos != null) {
+        	List<String> externalWithoutDuplicates = new ArrayList<>(new HashSet<>(destinatariosExternos));
             // Para evitar duplicados quito los destinatarios externos que ya se les envia
             // correo
             for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
-                for (String iDestinatario : destinatariosExternos) {
+                for (String iDestinatario : externalWithoutDuplicates) {
                     if (entry.getValue() != null && entry.getValue().compareTo(iDestinatario) == 0) {
-                        destinatariosExternos.remove(iDestinatario);
+                    	externalWithoutDuplicates.remove(iDestinatario);
                         break;
                     }
                 }
             }
-            for (String iDestinatario : destinatariosExternos) {
-                MensajeDTO mensaje = new MensajeDTO();
-                mensaje.setFecha(new Date());
-                mensaje.setTemplate(plantillaCorreo.getValor());
-                if (modificador == null) {
-                    mensaje.setDocumento(documento.getLlaveTabla());
-                } else {
-                    mensaje.setDocumento(modificador.getLlaveTabla());
-                }
-                mensaje.setTitulo(mensajeTitulo);
-                mensaje.setCorreo(iDestinatario);
-                if (mensajeReporte != null)
-                    mensaje.setReporte(mensajeReporte.getValor());
-                mensaje.setAdjuntoURL(attachLink);
-                mensaje.setParametros(parametros);
-                messageService.save(mensaje);
-                System.out.format("\n[%s] Mensaje ( %s ) asignado a correo externo (%s)", documento.getNombre(),
-                        formatosPlantilla.getNombre(), iDestinatario);
+            for (String iDestinatario : externalWithoutDuplicates) {
+            	destinyMails = destinyMails + SharedConstants.PUNTO_COMA + iDestinatario;
             }
         }
+        
+        MensajeDTO mensaje = new MensajeDTO();
+        mensaje.setFecha(new Date());
+        mensaje.setTemplate(plantillaCorreo.getValor());
+        // Sucedio que al asignar sin transaccion salia un error porque no hay
+        // modificador
+        if (modificador == null || modificador.getLlaveTabla() == null) {
+            mensaje.setDocumento(documento.getLlaveTabla());
+        } else {
+            mensaje.setDocumento(modificador.getLlaveTabla());
+        }
+        mensaje.setTitulo(mensajeTitulo);
+        //mensaje.setUsuario(entry.getKey());
+        
+        if(destinyMails.isEmpty()) {
+        	mensaje.setCorreoEnviado(new Date());
+        	mensaje.setCorreoError("Mensaje sin destinatarios");
+        }else {
+        	mensaje.setCorreo(destinyMails);        	
+        }
+        mensaje.setAdjuntoURL(attachLink);
+        if (mensajeReporte != null)
+            mensaje.setReporte(mensajeReporte.getValor());
+        mensaje.setParametros(parametros);
+        
+        messageService.save(mensaje);
+        System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) ", documento.getNombre(),  formatosPlantilla.getNombre(), destinyMails);
     }
 
     private String generarParametros(PedidoVentaDTO documento, String prefijo) throws ServerException {
