@@ -1,6 +1,5 @@
 package com.accounting.plan.application;
 
-import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -10,7 +9,6 @@ import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.IPlanCreateCatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
-import com.accounting.plan.infrastructure.CreateCatalogTablesMapper;
 import com.shared.domain.ServerException;
 
 @Service("PlanCreateCatalogTemplateAccountingService")
@@ -18,8 +16,8 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 
 	@Autowired
 	private CatalogService catalogService;
-	@Autowired
-	private CreateCatalogTablesMapper mapper;
+	//@Autowired
+	//private CreateCatalogTablesMapper mapper;
 
 	@Override
 	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -27,12 +25,12 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 		validateCatalog(catalog);
 		catalogService.save(catalog);
 		catalog = catalogService.getById(catalog.getKey());
-		createTemporal(catalog.getCode());
+		/*createTemporal(catalog.getCode());
 		createPuntual(catalog.getCode());
 		createVoucher(catalog.getCode());
 		createRegister(catalog.getCode());
 		// createAccumulate(catalog.getCode());
-		createAuxiliar(catalog.getCode());
+		createAuxiliar(catalog.getCode());*/
 		return catalog;
 	}
 
@@ -48,7 +46,7 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 		if(catalogService.count(filter)!=0) throw new ServerException("Ya existe un catalogo con este codigo");
 		
 	}
-
+/*
 	private void createTemporal(String code) throws ServerException {
 		try {
 			mapper.createTemporal(code);
@@ -97,6 +95,6 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
+	}*/
 
 }

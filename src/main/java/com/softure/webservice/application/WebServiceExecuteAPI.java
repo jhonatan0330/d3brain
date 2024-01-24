@@ -215,7 +215,12 @@ public class WebServiceExecuteAPI {
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date())
 					+ "]";
-			mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);
+			PropiedadDTO mailNotification = Propiedades.obtenerParametro(service, Propiedades.API_MAIL_NOTIFICATION);
+			if(mailNotification==null) {
+				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);	
+			}else {
+				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError, mailNotification.getValor());
+			}
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
 		}

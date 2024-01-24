@@ -33,6 +33,7 @@ public class Propiedades {
 	public static final String API_MAX_TRY = "API_MAX_TRY";
 	public static final String API_ASYNCHRONOUS = "API_ASYNCHRONOUS";
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
+	public static final String API_MAIL_NOTIFICATION = "API_MAIL_NOTIFICATION";
 
 	public static final String API_EXTRACTION = "API_EXTRACTION";
 	public static final String API_EXTRACTION_NO_ERROR = "API_EXTRACTION_NO_ERROR";
@@ -581,6 +582,10 @@ public class Propiedades {
 		}
 		case API_ENCODE_STANDAR: {
 			ruleProperty = "Algunos APIs necesitan una codificacion especial para manejar el tema de las tildes y las Ñ, el valor a escribir es una o";
+			break;
+		}
+		case API_MAIL_NOTIFICATION: {
+			ruleProperty = "Permite informar a un correo electronico diferente al del administrador de la plataforma";
 			break;
 		}
 		case API_PARAMETER: {

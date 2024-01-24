@@ -490,3 +490,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_250' , 'E', 'QUERY REPORTE', 'REPORT_QUERY', 'REQUISITO', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_251' , 'W', 'API CORREO NOTIFICACION ERRORES', 'API_MAIL_NOTIFICATION', 'REQUISITO', true);
+	

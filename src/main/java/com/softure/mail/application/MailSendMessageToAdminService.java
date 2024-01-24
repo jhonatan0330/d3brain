@@ -26,9 +26,14 @@ public class MailSendMessageToAdminService {
 	@Autowired private OrganizacionSvc organizacionService;
 	
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	
 	public void call(String messageTitle, String messageText) throws ServerException {
 		UsuarioDTO userAdmin = autenticacionService.getUserSystem();
 		if(userAdmin==null || userAdmin.getCorreo()==null ) return;
+		call(messageTitle, messageText, userAdmin.getCorreo());
+	}
+	
+	public void call(String messageTitle, String messageText, String adminMail) throws ServerException {
 		ServidorFilterDTO filter = new ServidorFilterDTO();
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setTipo(ServidorDTO.MAIL);
@@ -37,7 +42,7 @@ public class MailSendMessageToAdminService {
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		SimpleMailMessage message = new SimpleMailMessage();  
         message.setFrom(servidores.get(0).getUsuario());
-	    message.setTo(userAdmin.getCorreo());
+	    message.setTo(adminMail);
 	    message.setSubject(messageTitle);  
 	    message.setText(principal.getNombre() + " " + messageText);
 	    try {
@@ -47,7 +52,7 @@ public class MailSendMessageToAdminService {
 			if(servidores.size()>1) {
 				SimpleMailMessage messageBackup = new SimpleMailMessage();  
 		        messageBackup.setFrom(servidores.get(1).getUsuario());
-			    messageBackup.setTo(userAdmin.getCorreo());
+			    messageBackup.setTo(adminMail);
 			    messageBackup.setSubject(messageTitle);  
 			    messageBackup.setText(principal.getNombre() + " " + messageText);
 			    try {
@@ -57,7 +62,6 @@ public class MailSendMessageToAdminService {
 			    	System.out.println(eBackup.getMessage());
 			    }
 			}
-		}
-	    
+		}   
 	}
 }
