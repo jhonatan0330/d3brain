@@ -164,8 +164,8 @@ public class SignerService {
 
 	public void zipFileWithoutSaveLocal(String data, FEResponse responseFe, String fileNameInZip)
 			throws IOException, ServerException {
-		
-		//Hay algo similar en mailsendmessage
+
+		// Hay algo similar en mailsendmessage
 		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -201,11 +201,23 @@ public class SignerService {
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
 
+	public void signNE(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
+			ParserConfigurationException, TransformerException, SAXException, ServerException {
+		Document doc = loadDocument(xmlIn);
+		removeEmptyNodes(doc);
+		doc = processCUNE(doc, responseFe);
+		doc = processSoftwareSecurityCodeNE(doc);
+		doc = processExtensionContent(doc);
+		getSignatureValue(doc, responseFe);
+		doc = decriptFilesBase64(doc);
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
+	}
+
 	private void getSignatureValue(Document doc, FEResponse responseFe) {
 		// Para facilitar el envio a la DIAn extrayendo estos datos
 		NodeList tags = doc.getElementsByTagName("ds:X509Certificate");
 		if (tags.getLength() > 0)
-			responseFe.setX509Certificate( tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
+			responseFe.setX509Certificate(tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
 		tags = doc.getElementsByTagName("ds:SignatureValue");
 		if (tags.getLength() > 0)
 			responseFe.setSignatureValue(tags.item(0).getTextContent().replace("\n", "").replace("\r", ""));
@@ -246,6 +258,30 @@ public class SignerService {
 		responseFe.setCufe(CUFEencrypt);
 		return processQR(doc, CUFEencrypt);
 	}
+	
+	private Document processCUNE(Document doc, FEResponse responseFe) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("InformacionGeneral");
+		if (tags.getLength() == 0)
+			throw new ServerException("No se identifico el tag del CUNE InformacionGeneral");
+		String CUFEplain = tags.item(0).getAttributes().getNamedItem("CUNE").getNodeValue();
+		if (CUFEplain == null || CUFEplain.isEmpty())
+			throw new ServerException("El texto del CUFE esta vacio");
+		String CUFEencrypt = encryptThisString(CUFEplain);
+		tags.item(0).getAttributes().getNamedItem("CUNE").setTextContent(CUFEencrypt);
+		responseFe.setCufe(CUFEencrypt);
+		return processQRNE(doc, CUFEencrypt);
+	}
+	
+	private Document processQRNE(Document doc, String cufe) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("CodigoQR");
+		if (tags.getLength() == 0)
+			return doc;// throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
+		String plain = tags.item(0).getTextContent();
+		if (plain == null || plain.isEmpty())
+			return doc; // throw new ServerException("El texto del sts:QRCode esta vacio");
+		tags.item(0).setTextContent(plain.replace("REPLACE_CUFE_CODE", cufe));
+		return doc;
+	}
 
 	private Document processQR(Document doc, String cufe) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("sts:QRCode");
@@ -269,6 +305,18 @@ public class SignerService {
 						// vacio");
 		String encrypt = encryptThisString(plain);
 		tags.item(0).setTextContent(encrypt);
+		return doc;
+	}
+	
+	private Document processSoftwareSecurityCodeNE(Document doc) throws ServerException {
+		NodeList tags = doc.getElementsByTagName("ProveedorXML");
+		if (tags.getLength() == 0)
+			return doc; 
+		String plain = tags.item(0).getAttributes().getNamedItem("SoftwareSC").getNodeValue();
+		if (plain == null || plain.isEmpty())
+			return doc; 
+		String encrypt = encryptThisString(plain);
+		tags.item(0).getAttributes().getNamedItem("SoftwareSC").setTextContent(encrypt);
 		return doc;
 	}
 
@@ -319,7 +367,7 @@ public class SignerService {
 		NodeList nodeList = node.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
-			if (childNode.getTextContent().equals("")) {
+			if (childNode.getTextContent().equals("") && childNode.getAttributes().getLength()==0) {
 				childNode.getParentNode().removeChild(childNode);
 				i--;
 			}

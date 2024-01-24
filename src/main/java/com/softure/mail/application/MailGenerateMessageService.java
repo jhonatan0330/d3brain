@@ -214,9 +214,7 @@ public class MailGenerateMessageService {
         }
 
         String destinyMails= "";
-        for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
-            destinyMails = destinyMails + SharedConstants.PUNTO_COMA + entry.getValue();
-        }
+        
         if (destinatariosExternos != null) {
         	List<String> externalWithoutDuplicates = new ArrayList<>(new HashSet<>(destinatariosExternos));
             // Para evitar duplicados quito los destinatarios externos que ya se les envia
@@ -232,6 +230,9 @@ public class MailGenerateMessageService {
             for (String iDestinatario : externalWithoutDuplicates) {
             	destinyMails = destinyMails + SharedConstants.PUNTO_COMA + iDestinatario;
             }
+        }
+        for (Map.Entry<String, String> entry : destinatarios.entrySet()) {
+            destinyMails = destinyMails + SharedConstants.PUNTO_COMA + entry.getValue();
         }
         
         MensajeDTO mensaje = new MensajeDTO();
@@ -251,6 +252,7 @@ public class MailGenerateMessageService {
         	mensaje.setCorreoEnviado(new Date());
         	mensaje.setCorreoError("Mensaje sin destinatarios");
         }else {
+        	if(destinyMails.startsWith(SharedConstants.PUNTO_COMA))destinyMails = destinyMails.substring(1);
         	mensaje.setCorreo(destinyMails);        	
         }
         mensaje.setAdjuntoURL(attachLink);

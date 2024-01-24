@@ -53,4 +53,32 @@ public class FERest {
 		}
 		return responseFe;
 	}
+	
+	@PostMapping("/signNE")
+	public FEResponse transformXMLNE(@RequestBody String xml) throws ServerException {	
+		FEResponse responseFe = new FEResponse();
+		try {
+			signerService.signNE(xml, responseFe);
+			responseFe.setResult("200");
+		} catch (KeyStoreException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (IOException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (XAdES4jException e) {
+			responseFe.setError(e.getMessage() + " :" + e.getCause().getCause().toString());
+			responseFe.setResult("400");
+		} catch (ParserConfigurationException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (TransformerException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (SAXException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		}
+		return responseFe;
+	}
 }
