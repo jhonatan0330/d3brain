@@ -16,6 +16,8 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.java.services.MailUtils;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -42,6 +44,8 @@ public class MailGenerateMessageService {
     private MensajePlantillaCorreoSvc mailTemplateService;
     @Autowired
     private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
+    @Autowired
+    private ProcessTemplate templatesService;
 
     public void call(PedidoVentaDTO pedido, ProcesoTransicionDTO transicionDTO, UsuarioDTO responsable,
             PedidoVentaDTO modificador, String token) throws ServerException {
@@ -184,26 +188,16 @@ public class MailGenerateMessageService {
                     formatosPlantilla.getNombre());
             return;
         }
-        String parametros = generarParametros(documento, "D_");
-        if (responsable != null)
-            parametros = parametros + MailUtils.SEPARADOR + "D_RESPONSABLE=" + responsable.getNombre();
-        if (modificador != null)
-            parametros = parametros + MailUtils.SEPARADOR + generarParametros(modificador, "M_");
         List<PedidoVentaCaracteristicaDTO> camposMensaje = campoService.listarParaMensaje(documento.getLlaveTabla(),
                 documento.getPlantilla(), plantillaCorreo.getLlaveTabla(),
                 (modificador == null) ? null : modificador.getLlaveTabla());
-        if (camposMensaje != null && !camposMensaje.isEmpty()) {
-            for (PedidoVentaCaracteristicaDTO iCampo : camposMensaje) {
-                if (iCampo.getValorText() != null) {
-                    parametros = parametros + MailUtils.SEPARADOR + "C_"
-                            + SoftureUtil.formatFunction(iCampo.getCampo()).toUpperCase() + "="
-                            + SoftureUtil.recortar(iCampo.getValorText(), MailUtils.LONGITUD_MAXIMA_DESCRIPCION);
-                }
-            }
-        }
-        String mensajeTitulo = SoftureUtil.recortar(
-                MailUtils.replaceParameterInBodyMessage(formatosPlantilla.getTitulo(), parametros),
-                MailUtils.LONGITUD_MAXIMA_DESCRIPCION);
+        
+        String parametros = MailUtils.generateParameters(plantillaCorreo, documento, responsable, modificador, camposMensaje);
+        parametros = templatesService.extractParameterTypeR(null, documento, modificador, parametros, plantillaCorreo);
+        
+        String mensajeTitulo = templatesService.generateOutputFile(formatosPlantilla.getTitulo(), parametros);
+        mensajeTitulo = MailUtils.replaceParameterInBodyMessage(mensajeTitulo, parametros);
+        mensajeTitulo = SoftureUtil.recortar(mensajeTitulo, MailUtils.LONGITUD_MAXIMA_DESCRIPCION);
         
         String attachLink = null;
         if (mensajeAdjuntoURL!=null) {
@@ -266,25 +260,6 @@ public class MailGenerateMessageService {
         
         messageService.save(mensaje);
         System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) ", documento.getNombre(),  formatosPlantilla.getNombre(), destinyMails);
-    }
-
-    private String generarParametros(PedidoVentaDTO documento, String prefijo) throws ServerException {
-        String parametros = prefijo + "CODE=" + documento.getNombre();
-        if (documento.getDescripcion() != null)
-            parametros = parametros + MailUtils.SEPARADOR + prefijo + "DESC="
-                    + SoftureUtil.recortar(documento.getDescripcion(), MailUtils.LONGITUD_MAXIMA_DESCRIPCION);
-        if (documento.getEstadoNombre() != null)
-            parametros = parametros + MailUtils.SEPARADOR + prefijo + "ESTADO=" + documento.getEstadoNombre();
-        if (documento.getFecha() != null)
-            parametros = parametros + MailUtils.SEPARADOR + prefijo + "FECHA="
-                    + SoftureUtil.formatDateTime(documento.getFecha());
-        if (documento.getDinero() != null) {
-            parametros = parametros + MailUtils.SEPARADOR + prefijo + "VALOR="
-                    + SoftureUtil.formatMoney(documento.getDinero().getValorTotal());
-            parametros = parametros + MailUtils.SEPARADOR + prefijo + "SALDO="
-                    + SoftureUtil.formatMoney(documento.getDinero().getSaldo());
-        }
-        return parametros;
     }
   
     private String formatEmail(String email) {

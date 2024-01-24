@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -31,6 +30,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -45,9 +45,6 @@ import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
-
-import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 @Component
 public class WebServiceExecuteAPI {
@@ -78,6 +75,8 @@ public class WebServiceExecuteAPI {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
+	@Autowired
+    private ProcessTemplate templatesService;
 
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la
@@ -274,7 +273,7 @@ public class WebServiceExecuteAPI {
 				Propiedades.API_CODE_REPLACE);
 		parameters = prepareParameterFromProperties(parameters, replaceProperties);
 
-		String template = generateOutputFile(service.getTemplate(), parameters);
+		String template = templatesService.generateOutputFile(service.getTemplate(), parameters);
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
@@ -457,52 +456,7 @@ public class WebServiceExecuteAPI {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param plantilla
-	 * @param parametros
-	 * @return
-	 */
-	private String generateOutputFile(String plantilla, String parametros) {
-		if (parametros != null && !parametros.isEmpty()) {
-			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
-			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-				if (entry.getValue() != null
-						&& entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
-					// Esto lo hago porque el replace all no me funciona con parentesis
-					String codeToEvaluate = "{{" + entry.getKey() + "}}";
-					while (plantilla.contains(codeToEvaluate)) {
-						plantilla = plantilla.replace(codeToEvaluate, (String) entry.getValue());
-					}
-				}
-			}
-			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
-			if (plantilla.contains("$")) {
-				Map<String, Object> newMap = new HashMap<String, Object>();
-				// En fremarker sale error con los parentesis
-				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-			        if(entry.getKey().contains("(")) {
-			        	newMap.put(entry.getKey().replace("(", "_").replace(")", ""), entry.getValue());
-			        	//mapParams.remove(entry.getKey());
-			        	//Por el momento no borro las entradas para una proxima
-			        }
-			    }
-				
-				mapParams.putAll(newMap);
-				
-				StringWriter out = new StringWriter();
-				try {
-					Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-					Template t = new Template("templateName", plantilla, cfg);
-					t.process(mapParams, out);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return out.toString();
-			}
-		}
-		return plantilla;
-	}
+	
 
 	/**
 	 * 
@@ -803,7 +757,7 @@ public class WebServiceExecuteAPI {
 			result = new HashMap<>();
 			for (PropiedadDTO iProp : service.getPropiedades()) {
 				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
-					result.put(iProp.getValor(), generateOutputFile(iProp.getMotivo(), tokenAuthentication));
+					result.put(iProp.getValor(), templatesService.generateOutputFile(iProp.getMotivo(), tokenAuthentication));
 				}
 			}
 		}

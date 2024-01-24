@@ -512,7 +512,7 @@ COST 100;
             and (dppd_fechafinal is null or dppd_fechafinal > #{fecha})
         </if>
         <if test="dto.filtroParametro!=null">and (upper(cppd_codigo) like upper('%' || #{dto.filtroParametro} || '%'))</if>
-        order by nombre, key, fechainicial, dppd_fechafinal , usuario, rol
+        order by nombre, key, fechainicial, dppd_fechafinal , usuario, rol, valor
     </select>
 
     <select id="consultarPermisosFullPlantilla" parameterType="PropiedadDTO" resultType="PropiedadDTO">

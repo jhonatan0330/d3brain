@@ -30,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.java.services.MailUtils;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.mail.domain.MensajeDTO;
@@ -52,6 +54,8 @@ public class MailSendMessageService {
 	private MensajePlantillaCorreoSvc mailTemplateService;
 	@Autowired
 	private ServidorSvc servidorService;
+	@Autowired
+	private ProcessTemplate templatesService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MensajeDTO call(MensajeDTO dto, String usuario, String token) throws ServerException {
@@ -86,7 +90,8 @@ public class MailSendMessageService {
 				mailTo = dto.getCorreo();
 			}
 			String mailSubject = dto.getTitulo();
-			String mailText = MailUtils.replaceParameterInBodyMessage(plantilla.getTexto(), dto.getParametros());
+			String mailText = templatesService.generateOutputFile(plantilla.getTexto(), dto.getParametros());
+			mailText = MailUtils.replaceParameterInBodyMessage(mailText, dto.getParametros());
 			Map<String, DataSource> attachmentsFiles = null;
 			if (dto.getReporte() != null) {
 				ReportDTO reporte = reporteBaseService.generarReporte(
