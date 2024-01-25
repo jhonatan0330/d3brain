@@ -40,7 +40,7 @@ public class PlanCreateCatalogOrganizationService {
 	@Autowired
 	private PlanCreateAccountService createAccountService;
 
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void call() throws ServerException {
 		OrganizacionDTO organization = organizationService.obtenerPrincipal();
 		if (organization.getCodigo() == null)

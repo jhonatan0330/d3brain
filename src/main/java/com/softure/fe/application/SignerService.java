@@ -204,7 +204,7 @@ public class SignerService {
 	public void signNE(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
 			ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
-		removeEmptyNodes(doc);
+		//removeEmptyNodes(doc);
 		doc = processCUNE(doc, responseFe);
 		doc = processSoftwareSecurityCodeNE(doc);
 		doc = processExtensionContent(doc);

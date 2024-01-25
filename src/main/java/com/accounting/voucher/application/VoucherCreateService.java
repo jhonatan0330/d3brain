@@ -51,7 +51,7 @@ public class VoucherCreateService {
 	@Autowired
 	private ResultMapExtendService mapService;
 
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
 		validateInfoHeaderAndRecords(_voucher, token);
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());

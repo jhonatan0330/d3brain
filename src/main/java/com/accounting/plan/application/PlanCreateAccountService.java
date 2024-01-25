@@ -22,7 +22,7 @@ public class PlanCreateAccountService {
 	//@Autowired
 	//private FormatLineService lineService;
 
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account) throws ServerException {
 		if(account.getCatalog()==null) throw new ServerException("Es importatne asignar la cuenta a un catalogo");
 		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
@@ -60,7 +60,7 @@ public class PlanCreateAccountService {
 		account.setOperation(AccountConst.OPERATION_ADD);
 	}
 /*
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO configurate(AccountDTO account, String token) throws ServerException {
 		if (account.getType() != null && account.getType().compareTo(AccountConst.TYPE_GROUP) != 0
 				&& account.getTemplate() != null) {

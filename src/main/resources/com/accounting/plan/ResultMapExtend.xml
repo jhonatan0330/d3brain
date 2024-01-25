@@ -145,7 +145,7 @@ insert into x_${catalog}_${type}_rmp(
 </select>
 
 	
-	<select id="getBalance" resultType="ResultMapDTO">
+	<!--select id="getBalance" resultType="ResultMapDTO">
 		select 
 			crmp_llave as key
 			,crmp_cuenta as account
@@ -174,6 +174,39 @@ insert into x_${catalog}_${type}_rmp(
 			,crmp_estado as state 
 		from cuenta_cue 
 		left join x_${catalogCode}_puntual_rmp on (crmp_cuenta = ccue_llave and nrmp_nivel = 1)
+		where ccue_catalogo = '${catalogId}' and ncue_nivel = 1 and ccue_estado = 'A'
+		order by ccue_wbs
+	</select-->
+	
+	<select id="getBalance" resultType="ResultMapDTO">
+		select 
+			crmp_llave as key
+			,crmp_cuenta as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
+			,nrmp_nivel as level
+			,drmp_fechainicio as startDate
+			,drmp_fechafin as endDate
+			,crmp_periodo as period
+			,nrmp_ano as year
+			,nrmp_mes as month
+			,nrmp_dia as day
+			,nrmp_hora as hour
+			,nrmp_minuto as minute
+			,nrmp_cantidad as quantity
+			,nrmp_promedio as average
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,drmp_creacionfecha as createdAt
+			,crmp_creacionusuario as createdUser
+			,crmp_creacionusuarionombre as createdUserName
+			,drmp_modificacionfecha as updatedAt
+			,crmp_estado as state 
+		from account.cuenta_cue 
+		left join account.mapa_resultados_rmp on (crmp_cuenta = ccue_llave and nrmp_nivel = 1)
 		where ccue_catalogo = '${catalogId}' and ncue_nivel = 1 and ccue_estado = 'A'
 		order by ccue_wbs
 	</select>

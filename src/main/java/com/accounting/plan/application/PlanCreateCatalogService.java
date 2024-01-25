@@ -20,7 +20,7 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 	//private CreateCatalogTablesMapper mapper;
 
 	@Override
-	@Transactional(value = "accountingTransactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public CatalogDTO call(CatalogDTO catalog) throws ServerException {
 		validateCatalog(catalog);
 		catalogService.save(catalog);
