@@ -181,28 +181,29 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO filterField = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filterField.setCodigo(iCampo.getCodigo());
 		filterField.setPlantilla(templateDifferenceId);
-		if(consultaUnica(filterField)!=null) return;
-		
-		
-		DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
-		newCampo.setCodigo(iCampo.getCodigo());
-		if (iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0) {
-			newCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
-		} else {
-			newCampo.setFormato(iCampo.getFormato());
-		}
-		newCampo.setImagen(iCampo.getImagen());
-		newCampo.setNombre(iCampo.getNombre());
-		newCampo.setObjetivo(".");
-		newCampo.setOrden(iCampo.getOrden());
-		newCampo.setPlantilla(templateDifferenceId);
-		newCampo = guardar(newCampo, token);
+		DocumentoPlantillaCaracteristicaDTO newCampo = consultaUnica(filterField);
+		if(newCampo==null) {
+			
+			newCampo = new DocumentoPlantillaCaracteristicaDTO();
+			newCampo.setCodigo(iCampo.getCodigo());
+			if (iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0) {
+				newCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+			} else {
+				newCampo.setFormato(iCampo.getFormato());
+			}
+			newCampo.setImagen(iCampo.getImagen());
+			newCampo.setNombre(iCampo.getNombre());
+			newCampo.setObjetivo(".");
+			newCampo.setOrden(iCampo.getOrden());
+			newCampo.setPlantilla(templateDifferenceId);
+			newCampo = guardar(newCampo, token);
+	
+			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
+					Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
+			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
+					Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 
-		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
-				Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
-		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-
+		}	
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, iCampo.getLlaveTabla(),
 				Propiedades.CAMPO_DIFERENCIAS, newCampo.getLlaveTabla(), token), token);
 
