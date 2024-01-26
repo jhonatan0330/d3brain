@@ -177,6 +177,13 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
 			String token) throws ServerException {
 
+		//Primero valido que no exista el campo
+		DocumentoPlantillaCaracteristicaFilterDTO filterField = new DocumentoPlantillaCaracteristicaFilterDTO();
+		filterField.setCodigo(iCampo.getCodigo());
+		filterField.setPlantilla(templateDifferenceId);
+		if(consultaUnica(filterField)!=null) return;
+		
+		
 		DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 		newCampo.setCodigo(iCampo.getCodigo());
 		if (iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0) {

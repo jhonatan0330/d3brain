@@ -78,7 +78,7 @@ public class SynchronizeProcessService {
 				try {
 					db = processService.consultaUnica(filter);
 				} catch (Exception e) {
-					throw new ServerException("Corrige los codigos de los procesos no pueden ser duplicados");
+					throw new ServerException("Corrige los codigos de los procesos no pueden ser duplicados, el codigo " +remote.getCodigo() + " esta duplicado");
 				}	
 				db.setMacroproceso(remote.getMacroproceso());
 				processService.update(db);
