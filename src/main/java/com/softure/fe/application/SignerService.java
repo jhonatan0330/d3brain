@@ -267,7 +267,9 @@ public class SignerService {
 		if (CUFEplain == null || CUFEplain.isEmpty())
 			throw new ServerException("El texto del CUFE esta vacio");
 		String CUFEencrypt = encryptThisString(CUFEplain);
-		tags.item(0).getAttributes().getNamedItem("CUNE").setTextContent(CUFEencrypt);
+		for (int i = 0; i < tags.getLength(); i++) {
+			tags.item(i).getAttributes().getNamedItem("CUNE").setTextContent(CUFEencrypt);	
+		}
 		responseFe.setCufe(CUFEencrypt);
 		return processQRNE(doc, CUFEencrypt);
 	}

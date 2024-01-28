@@ -1014,3 +1014,23 @@ ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorgani
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionautorizacionCrea FOREIGN KEY (cuau_autorizacionCrea) REFERENCES UsuarioAutenticacionAutorizacion_uaap(cuaa_llave);
 
 insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.11.29.00' from pg_class where relname = 'usuariosesion_ussp';
+
+CREATE SCHEMA task AUTHORIZATION postgres;
+
+CREATE TABLE task.task_tsk (
+	ctsk_llave varchar(32) NOT NULL,
+	ctsk_user varchar(32) NOT NULL,
+	ctsk_title varchar(200) NOT NULL,
+	ctsk_notes varchar(4000) NULL,
+	dtsk_completed timestamptz NULL,
+	dtsk_duedate timestamptz NULL,
+	ntsk_priority int4 NOT NULL DEFAULT 0,
+	ntsk_order int4 NOT NULL DEFAULT 0,
+	dtsk_createdat timestamptz NOT NULL,
+	ctsk_createduser varchar(32) NOT NULL,
+	dtsk_updatedat timestamptz NULL,
+	ctsk_updateduser varchar(32) NULL,
+	ctsk_state varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	CONSTRAINT pk_task_task_tsk PRIMARY KEY (ctsk_llave)
+);
+

@@ -1,4 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2023-08-04';
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple) 
-	VALUES('PROP_231' , 'C', 'ACTUALIZAR CAMPO INFORMATIVO', 'UPDATE_INFORMATIVE_FIELD', 'REQUISITO', 'Z', true);
+	select 'PROP_231' , 'C', 'ACTUALIZAR CAMPO INFORMATIVO', 'UPDATE_INFORMATIVE_FIELD', 'REQUISITO', 'Z', true 
+	where not exists (select 1 from propiedadvalordefinido_pvdp where cpvd_llave  = 'PROP_231');
+	

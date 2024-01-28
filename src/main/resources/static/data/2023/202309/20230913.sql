@@ -1,7 +1,9 @@
 COMMENT ON TABLE usuario_usrp IS '2023-09-13';
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
-	VALUES('PROP_237' , 'W', 'CODIGOS PARA REEMPLAZAR', 'API_CODE_REPLACE', 'REQUISITO', true);
+	select
+	'PROP_237' , 'W', 'CODIGOS PARA REEMPLAZAR', 'API_CODE_REPLACE', 'REQUISITO', true
+	where not exists (select 1 from propiedadvalordefinido_pvdp where cpvd_llave  = 'PROP_237');
 	
 INSERT INTO propiedad_ppdp(cppd_llave, cppd_campo, cppd_valor, cppd_propiedadvalor,
 dppd_fechadefinicion, dppd_fechaimplementacion, cppd_motivo, cppd_cambiocreacion, cppd_tipo)
