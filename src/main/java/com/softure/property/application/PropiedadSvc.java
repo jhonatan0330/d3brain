@@ -504,6 +504,16 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					"No se encontro plantilla con Id, nombre o Codigo que concuerde." + dto.getValor());
 		dto.setValor(plantilla.getLlaveTabla());
 		dto.setTexto(plantilla.getNombre());
+		
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
+			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantillaConComplementos(dto.getCampo(), null);
+			for (DocumentoPlantillaCaracteristicaDTO iCampo : fields) {
+				if (Propiedades.obtenerParametro(plantilla, Propiedades.CAMPO_DIFERENCIAS) == null)
+					campoService.createFieldDifference(iCampo, plantilla.getLlaveTabla(), token);
+				//newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
+			}	
+		}
+		
 	}
 
 	private DocumentoPlantillaDTO buscarPlantilla(String valor) throws ServerException {

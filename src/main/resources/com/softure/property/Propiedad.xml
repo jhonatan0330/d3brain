@@ -628,7 +628,7 @@ COST 100;
     </select>
     
     <select id="getFullPropertiesToConfiguration" resultType="PropiedadDTO">
-        		select
+        select
 			cppd_propiedadvalor as  propiedadValor
 			,cppd_tipo as  tipo
 			,cppd_campo as  campo
@@ -643,7 +643,11 @@ COST 100;
 			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
 			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
         where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
-        	and cppd_propiedadvalor != 'PROP_117' and cppd_propiedadvalor != 'PROP_136' 
+        	and cppd_propiedadvalor != 'PROP_117'--MENSAJE DESTINATARIO
+        	and cppd_propiedadvalor != 'PROP_136'--ESTADO ASIGNAR
+        	and cppd_propiedadvalor != 'PROP_243'--CAMPOS DIFERENCIAS --Estos se sincronizan con la propiedad de la plantilla
+        	and cppd_propiedadvalor != 'PROP_219'--API KEY --No copio el api key para generar la necesidad de una nueva API
+        	and cppd_propiedadvalor != 'PROP_220'--COVERAGE IMAGEN --Es para no copiar las imagenes
         	and (rr.crac_estado = 'A' or rr.crac_estado is null)
         	and (rr.brac_permisoscompletos = false or rr.brac_permisoscompletos is null)
         	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)

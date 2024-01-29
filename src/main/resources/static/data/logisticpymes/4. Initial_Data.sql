@@ -82,13 +82,18 @@ INSERT INTO usuariorol_erlp(cerl_llave, cerl_usuario, cerl_rolacceso, cerl_docum
     VALUES ('ADMINISTRADOR', 'SYSTEM', 'ADMINISTRADOR', 'SYSTEM', current_timestamp);
     
 INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_imagen, corg_slogan,  corg_mensajeingreso, corg_codigo, corg_usuariosystem) 
-VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'http://golyat.cloud/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
+VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'https://fs.softwareparati.com/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
 
 ----------
 -- INSERTS for public.mensajeplantillacorreo_mplp
 -- -------------------
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
-	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'contacto@colombiansofture.com', '$ofture123***',  'E', 1, 'A'
+	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'notificaciones@colombiansofture.com', '$ofture123',  'E', 1, 'A'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
+	
+
+INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado, cser_puerto, cser_base, cser_urlconexion)
+	select 'ftp', 'FILE SERVER', '192.168.2.121',  'softure', 'softure123',  'F', 2, 'A', '21', 'pruebas', 'https://fs3.softwareparati.com/'
+	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='ftp');
 

@@ -275,6 +275,9 @@ public class CallDocumentCRUD {
 			if (iField.getDifference() != null) {
 				PropiedadDTO fieldDifference = Propiedades.obtenerParametro(iField.getCampoDTO(),
 						Propiedades.CAMPO_DIFERENCIAS);
+				// Esto no se puede hacer porque pide un cambio autorizado
+				//if (fieldDifference == null) 
+				//	 fieldDifference = documentoPlantillaCaracteristicaService.createFieldDifference(iField.getCampoDTO(), propertyDiference.getValor(), token);
 				if (fieldDifference == null)
 					throw new ServerException("El campo " + iField.getCampoDTO().getNombre()
 							+ " no tiene la propiedad de campo diferencia");
