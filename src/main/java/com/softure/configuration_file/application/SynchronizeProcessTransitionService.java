@@ -52,10 +52,9 @@ public class SynchronizeProcessTransitionService {
 				}
 			}
 		}
-		callAfterCreateAll(token, hierarchy, log);
 	}
 	
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)throws ServerException {
+	public void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)throws ServerException {
 		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {

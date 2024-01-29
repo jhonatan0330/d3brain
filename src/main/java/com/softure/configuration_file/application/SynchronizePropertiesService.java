@@ -45,6 +45,7 @@ public class SynchronizePropertiesService {
 					}else {
 						switch (remoteProperty.getPropiedadValor()) {
 						case "PROP_29":
+						case "PROP_37":
 						case "PROP_41":
 						case "PROP_51":
 						case "PROP_54":

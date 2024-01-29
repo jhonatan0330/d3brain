@@ -91,7 +91,7 @@ public class SynchronizeRelationService {
 					try {
 						newRelation = relationsService.guardar(newRelation, token);
 						if(newRelation == null) {
-							log.error("RELACION NO CREADA " + remoteRelation.getPlantillaNombre() + ".." +  remoteRelation.getCampoNombre());
+							log.error("RELACION NO CREADA -"+ remoteRelation.getPropiedad() + " - " + remoteRelation.getPlantillaNombre() + ".." +  remoteRelation.getCampoNombre());
 						}else {
 							log.info("NEW " + newRelation.getPlantillaNombre() + ".." +  newRelation.getCampoNombre());	
 						}

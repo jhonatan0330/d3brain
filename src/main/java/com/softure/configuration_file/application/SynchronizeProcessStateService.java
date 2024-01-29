@@ -29,8 +29,6 @@ public class SynchronizeProcessStateService {
 				if (local!=null){
 					localToErase.remove(local);
 					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
-					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), token, log);
 					changeStatesInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), local.getLlaveTabla());
 				}
 				else
@@ -44,9 +42,23 @@ public class SynchronizeProcessStateService {
 					newState.setNombre(remote.getNombre());
 					newState = processStateService.save(newState);
 					log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
-					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ESTADO, newState.getLlaveTabla(), token, log);
 					changeStatesInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), newState.getLlaveTabla());
+				}
+			}
+		}
+	}
+	
+	public void callAfter(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
+		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
+		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
+			log.setRoot("SynchronizeProcessStateService");
+			for (ProcesoEstadoDTO remote : remoteTocompare) {
+				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
+				if (local!=null){
+					localToErase.remove(local);
+					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), token, log);
 				}
 			}
 		}
