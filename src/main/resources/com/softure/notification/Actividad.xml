@@ -19,10 +19,6 @@
 			,dact_fechainactivo as  fechaInactivo
 			,cact_usuarioinactivo as  usuarioInactivo
 			,(select cp.dpvc_valorfecha from  pedidoventa_pdvp
-				inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_propiedadvalor = 'PROP_252' and cppd_estado = 'A')
-				inner join campo_documento cp on (cdrc_documento = cpdv_llave and cpvc_campo = cppd_valor )
-			where cpdv_llave = a.cact_documento) as  fechaLimite
-			,(select cp.dpvc_valorfecha from  pedidoventa_pdvp
 				inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_propiedadvalor = 'PROP_254' and cppd_estado = 'A')
 				inner join campo_documento cp on (cdrc_documento = cpdv_llave and cpvc_campo = cppd_valor )
 			where cpdv_llave = a.cact_documento)  as  fechaTerminar

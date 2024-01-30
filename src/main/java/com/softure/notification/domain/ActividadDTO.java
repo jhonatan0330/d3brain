@@ -29,8 +29,6 @@ public class ActividadDTO extends BasicDTO
 	private Date fechaInactivo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaTerminar;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaLimite;
 	private String usuarioInactivo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaLeido;
@@ -118,13 +116,6 @@ public class ActividadDTO extends BasicDTO
 	
 	public Date getFechaTerminar() {
 		return fechaTerminar;
-	}
-	public void setFechaLimite(Date fechaLimite) {
-		this.fechaLimite = fechaLimite;
-	}
-	
-	public Date getFechaLimite() {
-		return fechaLimite;
 	}
 	public void setUsuarioInactivo(String usuarioInactivo) {
 		this.usuarioInactivo = usuarioInactivo;

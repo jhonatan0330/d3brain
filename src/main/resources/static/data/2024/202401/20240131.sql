@@ -1,9 +1,5 @@
 COMMENT ON TABLE usuario_usrp IS '2024-01-31';
 
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
-	select
-	'PROP_252' , 'L', 'FECHA LIMITE', 'PLANTILLA_FECHA_LIMITE', 'REQUISITO'
-	where not exists (select 1 from propiedadvalordefinido_pvdp where cpvd_llave  = 'PROP_252');
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
 	select
@@ -12,7 +8,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
 	select
-	'PROP_254' , 'L', 'FECHA PLANEADA A TERMINAR', 'PLANTILLA_FECHA_FINAL', 'REQUISITO'
+	'PROP_254' , 'L', 'FECHA PLANEADA A FINALIZAR', 'PLANTILLA_FECHA_FINAL', 'REQUISITO'
 	where not exists (select 1 from propiedadvalordefinido_pvdp where cpvd_llave  = 'PROP_254');
 
 ALTER TABLE public.actividad_actp DROP COLUMN dact_fechalimite;
