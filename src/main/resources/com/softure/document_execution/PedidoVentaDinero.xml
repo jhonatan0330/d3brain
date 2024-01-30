@@ -159,7 +159,7 @@
 			,mpvd_saldo as  saldo
 			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
-		from <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+		from <if test="historico!=null">historic.z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
 		where cpvd_estado ='A' and cpvd_documento = #{idCampo}
 	</select>
 	
@@ -186,13 +186,13 @@
 			,mpvd_saldo as  saldo
 			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
-		from z_pvd_pedidoventadinero
+		from historic.z_pvd_pedidoventadinero
 			where cpvd_estado ='A' and cpvd_documento in (<foreach item="item" collection="historicos" separator="," >#{item.llaveTabla}</foreach>)
 		</if>
 	</select>
 	
 	<select id="insertarHistorico" parameterType="PedidoVentaDineroDTO" resultType="PedidoVentaDineroDTO">
-		insert into z_pvd_pedidoventadinero(
+		insert into historic.z_pvd_pedidoventadinero(
 			cpvd_llave
 		<if test="documento!=null">
 			,cpvd_documento
@@ -236,7 +236,7 @@
 	</select>
 	
 	<select id="inactivarHistorico" resultType="PedidoVentaCaracteristicaDTO">
-		update <if test="historico!=null">z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
+		update <if test="historico!=null">historic.z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
 			set	cpvd_estado = 'I'
 		where cpvd_llave = #{idCampo}
 	</select>

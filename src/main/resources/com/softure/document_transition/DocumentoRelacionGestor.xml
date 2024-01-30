@@ -265,8 +265,8 @@
 			,descripcion(modifica.cpdv_llave) as comentario
 			,modifica.cpdv_plantilla as plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = modifica.cpdv_plantilla) as plantillaNombre
-			,(select mpvd_saldo from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  saldo
-			,(select mpvd_valortotal from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  total
+			,(select mpvd_saldo from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">historic.z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  saldo
+			,(select mpvd_valortotal from <if test="actual!=null">pedidoventadinero_pvdp</if><if test="actual==null">historic.z_pvd_pedidoventadinero</if> where cpvd_llave = cdrg_valores) as  total
 			,cdrg_ubicacion as ubicacion
 			,descripcion(cdrg_ubicacion) as ubicacionNombre
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_ubicacion)) as ubicacionPlantilla
@@ -274,7 +274,7 @@
 			,cdrg_transaccion as  transaccion
 			,(select cpvc_valortext from campo4id ( cdrg_documentomodificador , (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_178' and cppd_estado = 'A' and cppd_tipo = 'L'
 					and cppd_campo = (select cpdv_plantilla from pedidoventa_pdvp where cpdv_llave = cdrg_documentomodificador)), modifica.npdv_historico)) as adjunto 
-		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">z_drg_documentorelaciongestor</if>
+		  from <if test="actual!=null">documentorelaciongestor_drgp</if><if test="actual==null">historic.z_drg_documentorelaciongestor</if>
 		  	left join pedidoventa_pdvp modifica on (cpdv_llave = cdrg_documentomodificador)
 		  where cdrg_documentoprincipal = #{dto.documentoPrincipal}
 		  <if test="usuarioAutomatico!=null">and cdrg_usuario != #{usuarioAutomatico}</if>
@@ -454,7 +454,7 @@
 			,(select crpb_nombre from reportebase_rpbp where crpb_llave = crej_reporte) as nombre
 			,null as  transaccion
 			,crej_url as adjunto 
-		  from <if test="actual!=null">reporteejecucion_rejp</if><if test="actual==null">z_rej_reporteejecucion</if>
+		  from <if test="actual!=null">reporteejecucion_rejp</if><if test="actual==null">historic.z_rej_reporteejecucion</if>
 		  where crej_documento = #{dto.documentoPrincipal}
 	</if>
 	order by fecha desc LIMIT #{dto.paginacionRegistroFinal} OFFSET #{dto.paginacionRegistroInicial}
@@ -475,7 +475,7 @@
 			,ddrg_cierre as  cierre
 			,cdrg_nombre as  nombre
 			,cdrg_estado as estado
-		<if test="historico==null">from documentorelaciongestor_drgp</if><if test="historico!=null">from z_drg_documentorelaciongestor</if>
+		<if test="historico==null">from documentorelaciongestor_drgp</if><if test="historico!=null">from historic.z_drg_documentorelaciongestor</if>
 		where ddrg_cierre is null and cdrg_estado = 'A' and cdrg_documentoprincipal = #{documentoPrincipal}
 		order by ddrg_fecha desc limit 1
 	</select>
@@ -489,7 +489,7 @@
 	</select>
 	
 	<select id="insertHistoricTable" parameterType="DocumentoRelacionGestorDTO" resultType="DocumentoRelacionGestorDTO">
-		insert into z_drg_documentorelaciongestor(
+		insert into historic.z_drg_documentorelaciongestor(
 			cdrg_llave
 		<if test="documentoPrincipal!=null">
 			,cdrg_documentoprincipal

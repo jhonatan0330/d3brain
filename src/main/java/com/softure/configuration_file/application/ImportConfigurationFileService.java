@@ -84,8 +84,9 @@ public class ImportConfigurationFileService {
 		sincronizeOrganizationService.call(token, hierarchy, logs);
 		sincronizeProcessService.call(token, hierarchy, logs);
 		sincronizeProcessStateService.call(token, hierarchy, logs);
-		sincronizeProcessTransitionService.call(token, hierarchy, logs);
 		sincronizeTemplateService.call(token, hierarchy, logs);
+		sincronizeProcessTransitionService.call(token, hierarchy, logs);
+		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs);
 		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs);
 		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs);
@@ -96,8 +97,9 @@ public class ImportConfigurationFileService {
 		sincronizeOrganizationService.call(token, hierarchy, logs);
 		sincronizeProcessService.call(token, hierarchy, logs);
 		sincronizeProcessStateService.call(token, hierarchy, logs);
+		sincronizeTemplateService.call(token, hierarchy, logs);
 		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs);
-		sincronizeTemplateService.call(token, hierarchy, logs);		
+		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs);
 		sincronizeTemplateService.call(token, hierarchy, logs);
 		sincronizeRelationService.call(token, hierarchy, logs);

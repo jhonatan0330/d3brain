@@ -140,7 +140,7 @@
 	</select>
 	
 	<select id="insertarHistorico" parameterType="ReporteEjecucionDTO" resultType="ReporteEjecucionDTO">
-		insert into z_rej_reporteejecucion(
+		insert into historic.z_rej_reporteejecucion(
 			crej_llave
 		<if test="reporte!=null">
 			,crej_reporte

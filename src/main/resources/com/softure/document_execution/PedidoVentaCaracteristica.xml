@@ -222,7 +222,7 @@
 			,cpvc_transaccionregistro as  transaccionRegistro
 			,cpvc_transaccioninactivo as  transaccionInactivo
 			,cpvc_estado as estado
-		from z_pvc_pedidoventacaracteristica
+		from historic.z_pvc_pedidoventacaracteristica
 		where cpvc_documento = #{documento} and cpvc_estado ='A'
 		<if test="campo!=null">and cpvc_campo = #{campo}</if>
 	</select>
@@ -261,7 +261,7 @@
 			,cpvc_valorauxiliar as  valorAuxiliar
 			,cdpc_formato as estado
 			,ndpc_orden as orden
-		from z_pvc_pedidoventacaracteristica
+		from historic.z_pvc_pedidoventacaracteristica
 			inner join documentoplantillacaracteristica_dpcp on (cpvc_campo = cdpc_llave and cdpc_estado = 'A') 
 			inner join propiedad_ppdp on (cppd_campo = cdpc_llave and cppd_propiedadvalor = 'PROP_104' and cppd_estado = 'A')
 		where cpvc_estado ='A' 
@@ -430,14 +430,14 @@
 	</select>
 	
 	<select id="inactivarCampoHistorico" resultType="PedidoVentaCaracteristicaDTO">
-		update <if test="historico!=null">z_pvc_pedidoventacaracteristica</if><if test="historico==null">pedidoventacaracteristica_pvcp</if>
+		update <if test="historico!=null">historic.z_pvc_pedidoventacaracteristica</if><if test="historico==null">pedidoventacaracteristica_pvcp</if>
 			set	cpvc_transaccioninactivo = #{transaccion},
 				cpvc_estado = 'I'
 		where cpvc_llave = #{idCampo}
 	</select>
 	
 	<select id="insertarHistorico" parameterType="PedidoVentaCaracteristicaDTO" resultType="PedidoVentaCaracteristicaDTO">
-		insert into z_pvc_pedidoventacaracteristica(
+		insert into historic.z_pvc_pedidoventacaracteristica(
 			cpvc_llave
 		<if test="documento!=null">
 			,cpvc_documento

@@ -62,7 +62,7 @@ public class SynchronizeProcessTransitionService {
 				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
 				if (local!=null){
 					localToErase.remove(local);
-					log.setRoot("SynchronizeProcessTransitionService " + local.getProcesoNombre() + "..." + local.getNombre());
+					log.setRoot("SynchronizeProcessTransitionAfterService " + local.getProcesoNombre() + "..." + local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token, log);
 				}

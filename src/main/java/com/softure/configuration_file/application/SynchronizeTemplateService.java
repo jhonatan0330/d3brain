@@ -60,7 +60,8 @@ public class SynchronizeTemplateService {
 				}
 			}
 		}
-		callAfterCreateAllTemplate(token, hierarchy, log);
+		//Esto es para que se creen las transiciones
+		//callAfterCreateAllTemplate(token, hierarchy, log);
 	}
 
 	private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote, String local) {
@@ -87,7 +88,7 @@ public class SynchronizeTemplateService {
 		}
 	}
 
-	private void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)
+	public void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)
 			throws ServerException {
 		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
