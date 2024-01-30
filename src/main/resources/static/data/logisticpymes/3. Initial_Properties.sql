@@ -493,3 +493,10 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_251' , 'W', 'API CORREO NOTIFICACION ERRORES', 'API_MAIL_NOTIFICATION', 'REQUISITO', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_252' , 'L', 'FECHA LIMITE', 'PLANTILLA_FECHA_LIMITE', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_253' , 'L', 'FECHA PLANEADA DE INICIO', 'PLANTILLA_FECHA_INICIO', 'REQUISITO');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_254' , 'L', 'FECHA PLANEADA A TERMINAR', 'PLANTILLA_FECHA_FINAL', 'REQUISITO');
+	

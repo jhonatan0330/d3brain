@@ -13,17 +13,23 @@
 			,cact_documento as  documento
 			,(select cusr_imagen from usuario_usrp where cusr_llave=cact_responsable) as  responsableFoto
 			,cact_comentario as  comentario
-			,dact_fechaarrancar as  fechaArrancar
+			,dact_fechaleido as  fechaLeido
 			,dact_fecharegistro as  fechaRegistro
 			,cact_usuarioregistro as  usuarioRegistro
 			,dact_fechainactivo as  fechaInactivo
-			,dact_fechaterminar as  fechaTerminar
-			,dact_fechalimite as  fechaLimite
 			,cact_usuarioinactivo as  usuarioInactivo
-			,nact_duracion as  duracion
-			,cact_actividadprevia as  actividadPrevia
-			,cact_actividadsiguiente as  actividadSiguiente
-			,dact_fechaleido as  fechaLeido
+			,(select cp.dpvc_valorfecha from  pedidoventa_pdvp
+				inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_propiedadvalor = 'PROP_252' and cppd_estado = 'A')
+				inner join campo_documento cp on (cdrc_documento = cpdv_llave and cpvc_campo = cppd_valor )
+			where cpdv_llave = a.cact_documento) as  fechaLimite
+			,(select cp.dpvc_valorfecha from  pedidoventa_pdvp
+				inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_propiedadvalor = 'PROP_254' and cppd_estado = 'A')
+				inner join campo_documento cp on (cdrc_documento = cpdv_llave and cpvc_campo = cppd_valor )
+			where cpdv_llave = a.cact_documento)  as  fechaTerminar
+			,(select cp.dpvc_valorfecha from  pedidoventa_pdvp
+				inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_propiedadvalor = 'PROP_253' and cppd_estado = 'A')
+				inner join campo_documento cp on (cdrc_documento = cpdv_llave and cpvc_campo = cppd_valor )
+			where cpdv_llave = a.cact_documento)  as  fechaArrancar
 			,cact_estado as estado
 		from actividad_actp a
 	</sql>
@@ -42,12 +48,6 @@
 			<if test="documento!=null">
 				and cact_documento = #{documento}
 			</if>
-			<if test="fechaArrancarMin!=null">
-				and dact_fechaarrancar >= #{fechaArrancarMin}
-			</if>
-			<if test="fechaArrancarMax!=null">
-				and dact_fechaarrancar <![CDATA[ < ]]>  #{fechaArrancarMax}
-			</if>
 			<if test="fechaRegistroMin!=null">
 				and dact_fecharegistro >= #{fechaRegistroMin}
 			</if>
@@ -63,26 +63,8 @@
 			<if test="fechaInactivoMax!=null">
 				and dact_fechainactivo <![CDATA[ < ]]>  #{fechaInactivoMax}
 			</if>
-			<if test="fechaTerminarMin!=null">
-				and dact_fechaterminar >= #{fechaTerminarMin}
-			</if>
-			<if test="fechaTerminarMax!=null">
-				and dact_fechaterminar <![CDATA[ < ]]>  #{fechaTerminarMax}
-			</if>
-			<if test="fechaLimiteMin!=null">
-				and dact_fechalimite >= #{fechaLimiteMin}
-			</if>
-			<if test="fechaLimiteMax!=null">
-				and dact_fechalimite <![CDATA[ < ]]>  #{fechaLimiteMax}
-			</if>
 			<if test="usuarioInactivo!=null">
 				and cact_usuarioinactivo = #{usuarioInactivo}
-			</if>
-			<if test="actividadPrevia!=null">
-				and cact_actividadprevia = #{actividadPrevia}
-			</if>
-			<if test="actividadSiguiente!=null">
-				and cact_actividadsiguiente = #{actividadSiguiente}
 			</if>
 			<if test="fechaLeidoMin!=null">
 				and dact_fechaleido >= #{fechaLeidoMin}
@@ -115,7 +97,7 @@
 		<include refid="selectActividadFragment" />
 		<include refid="whereActividadFragment" />
 		order by cact_responsable 
-		, dact_fechaarrancar 
+		, fechaArrancar 
 		, dact_fecharegistro 
 		<include refid="paginationActividadFragment" />
 	</select>
@@ -139,9 +121,6 @@
 		<if test="comentario!=null">
 			,cact_comentario
 		</if>
-		<if test="fechaArrancar!=null">
-			,dact_fechaarrancar
-		</if>
 		<if test="fechaRegistro!=null">
 			,dact_fecharegistro
 		</if>
@@ -151,23 +130,8 @@
 		<if test="fechaInactivo!=null">
 			,dact_fechainactivo
 		</if>
-		<if test="fechaTerminar!=null">
-			,dact_fechaterminar
-		</if>
-		<if test="fechaLimite!=null">
-			,dact_fechalimite
-		</if>
 		<if test="usuarioInactivo!=null">
 			,cact_usuarioinactivo
-		</if>
-		<if test="duracion!=null">
-			,nact_duracion
-		</if>
-		<if test="actividadPrevia!=null">
-			,cact_actividadprevia
-		</if>
-		<if test="actividadSiguiente!=null">
-			,cact_actividadsiguiente
 		</if>
 		<if test="fechaLeido!=null">
 			,dact_fechaleido
@@ -186,9 +150,6 @@
 		<if test="comentario!=null">
 			,#{comentario}
 		</if>
-		<if test="fechaArrancar!=null">
-			,#{fechaArrancar}
-		</if>
 		<if test="fechaRegistro!=null">
 			,#{fechaRegistro}
 		</if>
@@ -198,23 +159,8 @@
 		<if test="fechaInactivo!=null">
 			,#{fechaInactivo}
 		</if>
-		<if test="fechaTerminar!=null">
-			,#{fechaTerminar}
-		</if>
-		<if test="fechaLimite!=null">
-			,#{fechaLimite}
-		</if>
 		<if test="usuarioInactivo!=null">
 			,#{usuarioInactivo}
-		</if>
-		<if test="duracion!=null">
-			,#{duracion}
-		</if>
-		<if test="actividadPrevia!=null">
-			,#{actividadPrevia}
-		</if>
-		<if test="actividadSiguiente!=null">
-			,#{actividadSiguiente}
 		</if>
 		<if test="fechaLeido!=null">
 			,#{fechaLeido}
@@ -231,16 +177,10 @@
 				cact_responsable = #{responsable},
 				cact_documento = #{documento},
 				cact_comentario = #{comentario},
-				dact_fechaarrancar = #{fechaArrancar},
 				dact_fecharegistro = #{fechaRegistro},
 				cact_usuarioregistro = #{usuarioRegistro},
 				dact_fechainactivo = #{fechaInactivo},
-				dact_fechaterminar = #{fechaTerminar},
-				dact_fechalimite = #{fechaLimite},
 				cact_usuarioinactivo = #{usuarioInactivo},
-				nact_duracion = #{duracion},
-				cact_actividadprevia = #{actividadPrevia},
-				cact_actividadsiguiente = #{actividadSiguiente},
 				dact_fechaleido = #{fechaLeido},
 				cact_estado =#{estado}
 		<include refid="whereActividadPrimaryKeyFragment" />
@@ -252,16 +192,10 @@
 			,cact_responsable as  responsable
 			,cact_documento as  documento
 			,cact_comentario as  comentario
-			,dact_fechaarrancar as  fechaArrancar
 			,dact_fecharegistro as  fechaRegistro
 			,cact_usuarioregistro as  usuarioRegistro
 			,dact_fechainactivo as  fechaInactivo
-			,dact_fechaterminar as  fechaTerminar
-			,dact_fechalimite as  fechaLimite
 			,cact_usuarioinactivo as  usuarioInactivo
-			,nact_duracion as  duracion
-			,cact_actividadprevia as  actividadPrevia
-			,cact_actividadsiguiente as  actividadSiguiente
 			,dact_fechaleido as  fechaLeido
 			,cact_estado as estado
 		from actividad_actp a
@@ -276,8 +210,8 @@
 		<include refid="selectSimpleActividadFragment" />
 		<include refid="whereActividadFragment" />
 		order by cact_responsable 
-		, dact_fechaarrancar 
-		, dact_fecharegistro 
+		, fechaArrancar
+		, fechaRegistro
 		<include refid="paginationActividadFragment" />
 	</select>
 	

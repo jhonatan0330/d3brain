@@ -32,9 +32,6 @@ public class ActividadDTO extends BasicDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaLimite;
 	private String usuarioInactivo;
-	private Integer duracion;
-	private String actividadPrevia;
-	private String actividadSiguiente;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaLeido;
 
@@ -135,27 +132,6 @@ public class ActividadDTO extends BasicDTO
 	
 	public String getUsuarioInactivo() {
 		return usuarioInactivo;
-	}
-	public void setDuracion(Integer duracion) {
-		this.duracion = duracion;
-	}
-	
-	public Integer getDuracion() {
-		return duracion;
-	}
-	public void setActividadPrevia(String actividadPrevia) {
-		this.actividadPrevia = actividadPrevia;
-	}
-	
-	public String getActividadPrevia() {
-		return actividadPrevia;
-	}
-	public void setActividadSiguiente(String actividadSiguiente) {
-		this.actividadSiguiente = actividadSiguiente;
-	}
-	
-	public String getActividadSiguiente() {
-		return actividadSiguiente;
 	}
 	public void setFechaLeido(Date fechaLeido) {
 		this.fechaLeido = fechaLeido;

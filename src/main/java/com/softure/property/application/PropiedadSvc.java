@@ -944,6 +944,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.TOTAL:
 		case Propiedades.CONSECUTIVO:
 		case Propiedades.FECHA:
+		case Propiedades.PLANTILLA_FECHA_FINAL:
+		case Propiedades.PLANTILLA_FECHA_INICIO:
+		case Propiedades.PLANTILLA_FECHA_LIMITE:
 		case Propiedades.RESPONSABLE: {
 			return identificadorCampo(dto, token);
 		}
