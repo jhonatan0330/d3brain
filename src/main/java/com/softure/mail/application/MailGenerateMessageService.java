@@ -94,7 +94,7 @@ public class MailGenerateMessageService {
                 for (PropiedadDTO iPropiedad : destinatariosFijos) {
                     if (iPropiedad.getValor().compareTo("*") != 0) {
                         UsuarioDTO pUser = usuarioService.consultaXId(iPropiedad.getValor());
-                        if (pUser != null && pUser.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
+                        if (pUser != null && pUser.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0 &&pUser.getCorreo() !=null) {
                             fijos.add(pUser);
                         }
                     }
