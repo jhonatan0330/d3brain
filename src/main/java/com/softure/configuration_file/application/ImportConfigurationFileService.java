@@ -62,11 +62,11 @@ public class ImportConfigurationFileService {
 		changeService.guardar(changeRequest, token);
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")==0))
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")==0 ))
 			      .collect(Collectors.toList());
 		
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")!=0))
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_141")!=0 ))
 			      .collect(Collectors.toList()));
 		
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -75,6 +75,14 @@ public class ImportConfigurationFileService {
 		
 		hierarchy.setProperties(hierarchy.getProperties().stream()
 			      .filter(property -> (property.getRol()==null && property.getRolExcluyente()==null))
+			      .collect(Collectors.toList()));
+		
+		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_78")==0))
+			      .collect(Collectors.toList());
+		
+		hierarchy.setProperties(hierarchy.getProperties().stream()
+			      .filter(property -> (property.getPropiedadValor().compareTo("PROP_78")!=0))
 			      .collect(Collectors.toList()));
 		
 		LogConfigurationDTO logs = new LogConfigurationDTO();
@@ -92,6 +100,7 @@ public class ImportConfigurationFileService {
 		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs);
 		sincronizeRelationService.call(token, hierarchy, logs);
 		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs);
+		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
 		sincronizeApiService.call(token, hierarchy, logs);
 		sincronizeOrganizationService.call(token, hierarchy, logs);

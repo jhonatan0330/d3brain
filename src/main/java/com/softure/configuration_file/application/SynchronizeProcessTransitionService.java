@@ -74,7 +74,7 @@ public class SynchronizeProcessTransitionService {
 	private ProcesoTransicionDTO findProcessInList(List<ProcesoTransicionDTO> array, ProcesoTransicionDTO remote) {
 		if (array == null) return null;
 		for (ProcesoTransicionDTO localProcess : array) {
-			if (remote.getNombre().compareTo(localProcess.getNombre()) == 0 && remote.getProceso().compareTo(localProcess.getProceso())==0) {
+			if (remote.getCodigo().compareTo(localProcess.getCodigo()) == 0 && remote.getProceso().compareTo(localProcess.getProceso())==0 ) {
 				return localProcess;
 			}
 		}
