@@ -14,7 +14,7 @@
 			,cpdv_plantilla as  plantilla
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
-			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
+			,imagen(cpdv_llave, cpdv_plantilla, npdv_historico) as  imagen
 			,descripcion(cpdv_llave) as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,cpdv_textofiltro as  textoFiltro

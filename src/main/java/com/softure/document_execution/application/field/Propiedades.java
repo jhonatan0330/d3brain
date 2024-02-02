@@ -161,7 +161,7 @@ public class Propiedades {
 	public static final String CELULAR_ROL = "CELULAR_ROL";
 
 	public static final String FECHA = "FECHA";
-	public static final String PLANTILLA_FECHA_LIMITE = "PLANTILLA_FECHA_LIMITE";
+	public static final String PLANTILLA_IMAGEN= "PLANTILLA_IMAGEN";
 	public static final String PLANTILLA_FECHA_INICIO = "PLANTILLA_FECHA_INICIO";
 	public static final String PLANTILLA_FECHA_FINAL = "PLANTILLA_FECHA_FINAL";
 	public static final String RESPONSABLE = "RESPONSABLE";

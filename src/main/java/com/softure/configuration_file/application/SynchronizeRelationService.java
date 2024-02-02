@@ -78,7 +78,7 @@ public class SynchronizeRelationService {
 		List<RelacionInternaDTO> relationsRemote = findRelationsInList(hierarchy.getRelations(), remoteProperty.getLlaveTabla());
 		if (relationsRemote != null && !relationsRemote.isEmpty()) {
 			for (RelacionInternaDTO remoteRelation : relationsRemote) {
-				RelacionInternaDTO findRelation = findRelationInList(localRelationsToErase, remoteRelation.getPlantilla(), remoteRelation.getCampo());
+				RelacionInternaDTO findRelation = findRelationInList(localRelationsToErase, remoteRelation.getPlantilla(), remoteRelation.getCampo(), remoteRelation.getAuxiliar());
 				if(findRelation!= null) {
 					localRelationsToErase.remove(findRelation);
 					log.info("EXIST " + remoteRelation.getPlantillaNombre() + ".." +  remoteRelation.getCampoNombre());
@@ -111,11 +111,13 @@ public class SynchronizeRelationService {
 			      .collect(Collectors.toList());
 	}
 
-	private RelacionInternaDTO findRelationInList(List<RelacionInternaDTO> array, String template, String field) {
+	private RelacionInternaDTO findRelationInList(List<RelacionInternaDTO> array, String template, String field, String auxiliar) {
 		for (RelacionInternaDTO relation : array) {
 			if (template.compareTo(relation.getPlantilla()) == 0) {
-				if(relation.getCampo().compareTo(field)==0)
+				if(relation.getCampo().compareTo(field)==0) {
+					if((relation.getAuxiliar()==null && auxiliar==null)|| (auxiliar!=null && relation.getAuxiliar()!=null && auxiliar.compareTo(relation.getAuxiliar())==0))
 					return relation;
+				}
 			}	
 		}
 		return null;
