@@ -2,10 +2,12 @@ package com.softure.document_execution.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.softure.document_execution.domain.DocumentMessage;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
@@ -63,5 +65,15 @@ public class CallDocumentCommons {
 		pCampo.setValorText(String.valueOf(cantidad));
 		pCampo.setValorNumeroMax(valor);
 		return pCampo;
+	}
+	
+	public static void addMessageError(PedidoVentaDTO document, String message) {
+		if(document==null) return;
+		if(document.getMessages()==null) document.setMessages(new ArrayList<>());
+		DocumentMessage msg = new DocumentMessage();
+		msg.setDate(new Date());
+		msg.setType("ERROR");
+		msg.setMessage(message);
+		document.getMessages().add(msg);
 	}
 }

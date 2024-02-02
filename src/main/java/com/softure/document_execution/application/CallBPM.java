@@ -63,6 +63,10 @@ public class CallBPM {
 		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
 				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token);
+				if (iField.getDocumentsToBPM().getMessages()!=null) {
+					if(document.getMessages()==null) document.setMessages(new ArrayList<>());
+					document.getMessages().addAll(iField.getDocumentsToBPM().getMessages());
+				}
 			}
 		}
 	}

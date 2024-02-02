@@ -11,12 +11,12 @@ update propiedadvalordefinido_pvdp set bpvd_multiple =true where cpvd_llave = 'P
 CREATE OR REPLACE FUNCTION public.imagen(id_documento character varying, id_plantilla character varying, historico integer)
  RETURNS character varying
  LANGUAGE plpgsql
-AS $function$
+AS '
 	declare plantilla_campo_imagen character varying;
 	declare imagen character varying;
 begin
     if id_documento is null then return  null; end if;
-    select  cppd_valor into  plantilla_campo_imagen from propiedad_ppdp where cppd_campo = id_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_252';
+    select  cppd_valor into  plantilla_campo_imagen from propiedad_ppdp where cppd_campo = id_plantilla and cppd_estado = ''A'' and cppd_propiedadvalor = ''PROP_252'';
     if plantilla_campo_imagen is null then
 		return (select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = id_plantilla);
     else
@@ -27,5 +27,4 @@ begin
 			return imagen;
 		end if;
     end if;
-end;
-$function$;
+end;';

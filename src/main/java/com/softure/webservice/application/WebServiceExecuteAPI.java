@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -112,7 +113,7 @@ public class WebServiceExecuteAPI {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
 			webServiceEjecucionSvc.update(apiBasic);
-			publishErrorMessage(service, apiBasic);
+			publishErrorMessage(service, apiBasic, modificador);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
 					+ ") por error de validacion previa a la ejecucion");
 			return SharedConstants.ERROR;
@@ -161,7 +162,7 @@ public class WebServiceExecuteAPI {
 				callWS.setFechaEjecucion(new Date());
 				callWS.setError(preconditionWS.getError());
 				webServiceEjecucionSvc.update(callWS);
-				publishErrorMessage(service, preconditionWS);
+				publishErrorMessage(service, preconditionWS, modificador);
 				log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre()
 						+ ") por error de API precondicion ");
 				return SharedConstants.ERROR;
@@ -192,7 +193,7 @@ public class WebServiceExecuteAPI {
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = SharedConstants.ERROR;
-			publishErrorMessage(service, callWS);
+			publishErrorMessage(service, callWS, modificador);
 		} else {
 			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
 			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("") != 0) {
@@ -203,7 +204,8 @@ public class WebServiceExecuteAPI {
 		return result;
 	}
 
-	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS) {
+	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS, PedidoVentaDTO document) {
+		
 		try {
 			String infoError = callWS.getError();
 			infoError = infoError + "\nDocumento Principal: "
@@ -215,12 +217,14 @@ public class WebServiceExecuteAPI {
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date())
 					+ "]";
+			CallDocumentCommons.addMessageError(document, callWS.getError());
 			PropiedadDTO mailNotification = Propiedades.obtenerParametro(service, Propiedades.API_MAIL_NOTIFICATION);
 			if(mailNotification==null) {
 				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);	
 			}else {
 				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError, mailNotification.getValor());
 			}
+			
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
 		}

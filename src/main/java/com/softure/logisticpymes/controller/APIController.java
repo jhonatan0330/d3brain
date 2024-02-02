@@ -75,6 +75,7 @@ public class APIController {
 		result.setEstadoExpediente(documento.getEstadoExpediente());
 		result.setEstadoNombre(documento.getEstadoNombre());
 		result.setDescripcion(documento.getDescripcion());
+		result.setMessages(documento.getMessages());
 		return result;
 	}
 	

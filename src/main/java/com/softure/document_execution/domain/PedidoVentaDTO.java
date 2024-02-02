@@ -14,8 +14,6 @@ import org.apache.ibatis.type.Alias;
 @Alias("PedidoVentaDTO")
 @JsonInclude(Include.NON_NULL)
 public class PedidoVentaDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 	public static final String ESTADO_ACTIVO = "A";
 	public static final String ESTADO_INACTIVO = "I";
@@ -41,6 +39,7 @@ public class PedidoVentaDTO extends BasicDTO
 	private List<PedidoVentaCaracteristicaDTO> caracteristicas;
 	private String campoOrigen;
 	private String campoPropiedad;
+	private List<DocumentMessage> messages;
 
 	public void setFechaRegistro(Date fechaRegistro) {
 		this.fechaRegistro = fechaRegistro;
@@ -168,7 +167,13 @@ public class PedidoVentaDTO extends BasicDTO
 	public String getCampoPropiedad() {
 		return campoPropiedad;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+
+	public List<DocumentMessage> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<DocumentMessage> messages) {
+		this.messages = messages;
+	}
 
 }
