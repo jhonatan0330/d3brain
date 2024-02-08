@@ -9,28 +9,46 @@ import com.shared.domain.SharedDataObjectFilter;
 @Alias("FactFilterDTO")
 public class FactFilterDTO extends SharedDataObjectFilter {
 
-	private Date registerDate;
-	private Date factDate;
+	private Date registerDateMin;
+	private Date registerDateMax;
+	private Date factDateMin;
+	private Date factDateMax;
 	private String dimension;
 	private String value;
 	private String code;
 	private String template;
 	private String id;
 
-	public Date getRegisterDate() {
-		return registerDate;
+	public Date getRegisterDateMin() {
+		return registerDateMin;
 	}
 
-	public void setRegisterDate(Date registerDate) {
-		this.registerDate = registerDate;
+	public void setRegisterDateMin(Date registerDateMin) {
+		this.registerDateMin = registerDateMin;
 	}
 
-	public Date getFactDate() {
-		return factDate;
+	public Date getRegisterDateMax() {
+		return registerDateMax;
 	}
 
-	public void setFactDate(Date factDate) {
-		this.factDate = factDate;
+	public void setRegisterDateMax(Date registerDateMax) {
+		this.registerDateMax = registerDateMax;
+	}
+
+	public Date getFactDateMin() {
+		return factDateMin;
+	}
+
+	public void setFactDateMin(Date factDateMin) {
+		this.factDateMin = factDateMin;
+	}
+
+	public Date getFactDateMax() {
+		return factDateMax;
+	}
+
+	public void setFactDateMax(Date factDateMax) {
+		this.factDateMax = factDateMax;
 	}
 
 	public String getDimension() {

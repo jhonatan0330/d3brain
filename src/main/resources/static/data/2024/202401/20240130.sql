@@ -77,5 +77,4 @@ begin
 	update pedidoventa_pdvp set npdv_historico = 3 where cpdv_llave = any(documentos);
 	GET DIAGNOSTICS v_cnt = ROW_COUNT;
 	return v_cnt;
-END;'
-;
+END;';

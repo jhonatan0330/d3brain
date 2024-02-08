@@ -15,8 +15,10 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 	private String accountName;
 	private String accountCode;
 	private Integer level;
-	private Date startDate;
-	private Date endDate;
+	private Date startDateMin;
+	private Date startDateMax;
+	private Date endDateMin;
+	private Date endDateMax;
 	private String period;
 	private Integer year;
 	private Integer month;
@@ -72,20 +74,36 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 		this.level = level;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public Date getStartDateMin() {
+		return startDateMin;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setStartDateMin(Date startDateMin) {
+		this.startDateMin = startDateMin;
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public Date getStartDateMax() {
+		return startDateMax;
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setStartDateMax(Date startDateMax) {
+		this.startDateMax = startDateMax;
+	}
+
+	public Date getEndDateMin() {
+		return endDateMin;
+	}
+
+	public void setEndDateMin(Date endDateMin) {
+		this.endDateMin = endDateMin;
+	}
+
+	public Date getEndDateMax() {
+		return endDateMax;
+	}
+
+	public void setEndDateMax(Date endDateMax) {
+		this.endDateMax = endDateMax;
 	}
 
 	public String getPeriod() {

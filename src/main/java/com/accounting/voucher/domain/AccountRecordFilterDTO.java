@@ -15,7 +15,8 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 	private String account;
 	private String code;
 	private String note;
-	private Date factDate;
+	private Date factDateMin;
+	private Date factDateMax;
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
@@ -66,12 +67,20 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 		this.note = note;
 	}
 
-	public Date getFactDate() {
-		return factDate;
+	public Date getFactDateMin() {
+		return factDateMin;
 	}
 
-	public void setFactDate(Date factDate) {
-		this.factDate = factDate;
+	public void setFactDateMin(Date factDateMin) {
+		this.factDateMin = factDateMin;
+	}
+
+	public Date getFactDateMax() {
+		return factDateMax;
+	}
+
+	public void setFactDateMax(Date factDateMax) {
+		this.factDateMax = factDateMax;
 	}
 
 	public BigDecimal getPositive() {

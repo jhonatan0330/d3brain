@@ -53,12 +53,18 @@
 			<if test="level!=null">
 				and nrmp_nivel = #{level}
 			</if>
-			<if test="startDate!=null">
-				and drmp_fechainicio = #{startDate}
-			</if>
-			<if test="endDate!=null">
-				and drmp_fechafin = #{endDate}
-			</if>
+			<if test="startDateMin!=null">
+				and drmp_fechainicio > #{startDateMin}
+			</if>  
+			<if test="startDateMax!=null">
+				and drmp_fechainicio <![CDATA[ < ]]> #{startDateMax}
+			</if>  
+			<if test="endDateMin!=null">
+				and drmp_fechafin > #{endDateMin}
+			</if>  
+			<if test="endDateMax!=null">
+				and drmp_fechafin <![CDATA[ < ]]> #{endDateMax}
+			</if>  
 			<if test="period!=null">
 				and crmp_periodo = #{period}
 			</if>

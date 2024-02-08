@@ -17,7 +17,4 @@ public interface IBasicMapper<T extends BasicDTO, TFilter extends BasicFilterDTO
 	
 	List<T> listar(TFilter dto);
 	
-	T consultarSimple(TFilter dto);
-	
-	List<T> listarSimple(TFilter dto);
 }

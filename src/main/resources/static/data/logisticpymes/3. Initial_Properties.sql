@@ -178,10 +178,10 @@ INSERT INTO propiedadvalordefinido_pvdp(cpvd_llave,  cpvd_origen,  cpvd_codigo, 
 	VALUES('PROP_99',  'L',  'CUENTA_SOBREGIRO',  'CUENTA SOBREGIRO',  'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_100' , 'E', 'PIE DE PAGINA', 'REPORTE_PIE_PAGINA', 'REQUISITO');
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_multiple) 
-	VALUES('PROP_101' , 'L', 'IMAGEN DOCUMENTACION', 'IMAGEN', 'IMAGEN', true, true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo) 
-	VALUES('PROP_102' , 'E', 'REQUERIMIENTO', 'REQUERIMIENTO', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_multiple, cpvd_estado) 
+	VALUES('PROP_101' , 'L', 'IMAGEN DOCUMENTACION', 'IMAGEN', 'IMAGEN', true, true, 'I');
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_necesitadesarrollo, cpvd_estado) 
+	VALUES('PROP_102' , 'E', 'REQUERIMIENTO', 'REQUERIMIENTO', 'REQUISITO', true, 'I');
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_104' , 'C', 'VISIBLE EN EL RENDER', 'PERMISO_CAMPO_RENDER', 'PERMISOS', true);
@@ -499,4 +499,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_253' , 'L', 'FECHA PLANEADA DE INICIO', 'PLANTILLA_FECHA_INICIO', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_254' , 'L', 'FECHA PLANEADA A FINALIZAR', 'PLANTILLA_FECHA_FINAL', 'REQUISITO');
-	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_255' , 'L', 'TIPO CONFIGURACION HOMOLOGADA', 'PLANTILLA_TIPO_CONFIGURATION', 'REQUISITO', true);

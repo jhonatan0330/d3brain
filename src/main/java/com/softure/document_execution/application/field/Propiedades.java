@@ -204,6 +204,7 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_CUENTA = "PLANTILLA_TIPO_CUENTA";
 	public static final String PLANTILLA_TIPO_PRODUCTO = "PLANTILLA_TIPO_PRODUCTO";
 	public static final String PLANTILLA_TIPO_BODEGA = "PLANTILLA_TIPO_BODEGA";
+	public static final String PLANTILLA_TIPO_CONFIGURATION = "PLANTILLA_TIPO_CONFIGURATION";
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
@@ -999,6 +1000,10 @@ public class Propiedades {
 		}
 		case PLANTILLA_TIPO_BODEGA: {
 			ruleProperty = "Los documentos de esta plantilla van a crear bodegas\n";
+			break;
+		}
+		case PLANTILLA_TIPO_CONFIGURATION: {
+			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\n";
 			break;
 		}
 		case PLANTILLA_RENDER_ESPECIAL_SQL: {

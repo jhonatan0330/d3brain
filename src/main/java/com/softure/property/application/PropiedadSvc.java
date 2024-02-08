@@ -21,8 +21,9 @@ import com.accounting.plan.application.CreateAccountTemplateService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
-import com.shared.domain.SharedConstants;
+import com.configuration.homologate.application.HomologatePrepareService;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -72,7 +73,7 @@ import com.softure.property.infrastructure.PropiedadMapper;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.report.domain.ReporteBaseFilterDTO;
-import com.softure.tariff.application.TarifarioSvc;
+import com.softure.tariff.application.base.TarifarioService;
 import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.domain.TarifarioFilterDTO;
 import com.softure.webservice.application.WebServiceSvc;
@@ -117,7 +118,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired
 	private PropiedadValorDefinidoSvc valorDefinidoService;
 	@Autowired
-	private TarifarioSvc tarifarioService;
+	private TarifarioService tarifarioService;
 	@Autowired
 	private ReporteBaseSvc reporteService;
 	@Autowired
@@ -129,6 +130,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired
 	private WebServiceSvc apiService;
 
+	@Autowired
+	private HomologatePrepareService homologateService;
 	@Autowired
 	private CreateAccountTemplateService createAccountService;
 	// END region servicesPropiedad
@@ -329,6 +332,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		if (validar(dto, token))
 			return null;
+		// Esto tuve que hacerlo para evitar un ciclo infinito al sincronizar los datos
+		// actuales y crear los documentos nuevos que se homologan
+		if (dto.getKey().contains("PLANTILLA_TIPO")) {
+			homologateService.call(dto, token);
+		}
 		dto.setFechaDefinicion(new Date());
 		dto = super.guardar(dto, token);
 		try {
@@ -386,82 +394,14 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		if (dto.getKey().compareTo(Propiedades.FILTRO) == 0)
 			campoService.actualizarFiltros(dto.getCampo());
-		if (dto.getKey().contains("PLANTILLA_TIPO")) {
-			DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
-			switch (dto.getKey()) {
-			case Propiedades.PLANTILLA_TIPO_BODEGA:
-				break;
-			case Propiedades.PLANTILLA_TIPO_CUENTA:
-				break;
-			case Propiedades.PLANTILLA_TIPO_PRODUCTO:
-				break;
-			case Propiedades.PLANTILLA_TIPO_REPORTE:
-				ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
-				reporteFilter.setPlantilla(plantillaPrincipal.getLlaveTabla());
-				if (reporteService.contarResultados(reporteFilter) == 0) {
-					ReporteBaseDTO reporte = new ReporteBaseDTO();
-					reporte.setCodigo(plantillaPrincipal.getCodigo());
-					reporte.setDescripcion("PENDIENTE");
-					reporte.setNombre(plantillaPrincipal.getNombre());
-					reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
-					reporte = reporteService.guardar(reporte, token);
-					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE, reporte.getLlaveTabla(),
-							Propiedades.REP_AUTOPRINT, "1", token), token);
-					campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
-					PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
-					historico.setFechaInicial(new Date());
-					historico.setMotivo("Pasar a tabla historico");
-					historico.setTexto("00:00:07:00:00");
-					guardar(historico, token);
-					guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
-				}
-				break;
-			case Propiedades.PLANTILLA_TIPO_ROL:
-				RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
-				rolFiltroFilter.setEstado(SharedConstants.STATE_ACTIVE);
-				rolFiltroFilter.setPlantilla(plantillaPrincipal.getLlaveTabla());
-				RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
-				if (rolFiltro == null) {// Si la propiedad ya se genero no hay que duplicar
-					RolAccesoDTO nuevo = new RolAccesoDTO();
-					nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
-					nuevo = rolService.guardar(nuevo, token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*", token), token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.CONSECUTIVO, "*", token), token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.CORREO_ROL, "*", token), token);
-					guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-							plantillaPrincipal.getLlaveTabla(), Propiedades.CELULAR_ROL, "*", token), token);
-				}
-				break;
-			}
-		}
 		// relacionarCampo(dto, token);
 		return dto;
 		// END Propiedad_guardar
 	}
 
 // BEGIN region aditionalMethods
-	private void guardarEnCasoQueNoExista(PropiedadDTO dto, String token) throws ServerException {
-		// Lo copie de guardar depronto lo puedo refacorizar
-		PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
-		existeFilter.setCampo(dto.getCampo());
-		if (dto.getPropiedadValor() == null)
-			existeFilter.setPropiedadValor(consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
-		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
-		existeFilter.setKey(dto.getKey());
-		existeFilter.setTipo(dto.getTipo());
-		PropiedadDTO existe = consultaUnica(existeFilter);
-		if (existe == null)
-			guardar(dto, token);
-	}
 
-	private PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
+	public PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
 		PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
 		valorDefinidoFilter.setCodigo(key);
 		valorDefinidoFilter.setOrigen(tipo);
@@ -488,6 +428,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	private void identificadorPlantilla(PropiedadDTO dto, String token) throws ServerException {
+		boolean createDocument = false;// Es una ayudita porque se creaban 2 veces los campos diferencias
 		if (dto.getValor().compareTo("*") == 0) {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token);
@@ -496,6 +437,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createUpdateTemplate(dto.getCampo(), token);
 				dto.setValor(plantilla.getLlaveTabla());
+				createDocument = true;
 			}
 		}
 		DocumentoPlantillaDTO plantilla = buscarPlantilla(dto.getValor());
@@ -504,16 +446,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					"No se encontro plantilla con Id, nombre o Codigo que concuerde." + dto.getValor());
 		dto.setValor(plantilla.getLlaveTabla());
 		dto.setTexto(plantilla.getNombre());
-		
-		if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
-			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantillaConComplementos(dto.getCampo(), null);
+
+		if (!createDocument && dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
+			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService
+					.listarCamposPlantillaConComplementos(dto.getCampo(), null);
 			for (DocumentoPlantillaCaracteristicaDTO iCampo : fields) {
 				if (Propiedades.obtenerParametro(plantilla, Propiedades.CAMPO_DIFERENCIAS) == null)
 					campoService.createFieldDifference(iCampo, plantilla.getLlaveTabla(), token);
-				//newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
-			}	
+				// newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(),
+				// newCampo.getLlaveTabla(), token));
+			}
 		}
-		
+
 	}
 
 	private DocumentoPlantillaDTO buscarPlantilla(String valor) throws ServerException {
@@ -786,17 +730,17 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	private void identificadorTarifario(PropiedadDTO dto) throws ServerException {
-		TarifarioDTO tarifario = tarifarioService.consultaXId(dto.getValor());
+		TarifarioDTO tarifario = tarifarioService.getById(dto.getValor());
 		if (tarifario == null) {
 			TarifarioFilterDTO tarifarioFilter = new TarifarioFilterDTO();
 			tarifarioFilter.setNombre(dto.getValor().toUpperCase());
-			tarifarioFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			tarifario = tarifarioService.consultaUnica(tarifarioFilter);
+			tarifarioFilter.setState(SharedConstants.STATE_ACTIVE);
+			tarifario = tarifarioService.getOne(tarifarioFilter);
 			if (tarifario == null)
 				throw new ServerException(
 						"No se encontro catalogo con Id, nombre o Codigo que concuerde cone el tarifario");
 		}
-		dto.setValor(tarifario.getLlaveTabla());
+		dto.setValor(tarifario.getKey());
 		dto.setTexto(tarifario.getNombre());
 	}
 

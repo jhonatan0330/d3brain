@@ -93,7 +93,8 @@
 		<include refid="selectActividadFragment" />
 		<include refid="whereActividadFragment" />
 		order by cact_responsable 
-		, fechaArrancar 
+		, fechaArrancar
+		, fechaTerminar
 		, dact_fecharegistro 
 		<include refid="paginationActividadFragment" />
 	</select>
@@ -103,7 +104,6 @@
 		from actividad_actp
 		<include refid="whereActividadFragment" />
 	</select>
-
 
 	<select id="insertar" parameterType="ActividadDTO" resultType="ActividadDTO">
 		insert into actividad_actp(
@@ -182,38 +182,4 @@
 		<include refid="whereActividadPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleActividadFragment">
-		select
-			cact_llave as  llaveTabla
-			,cact_responsable as  responsable
-			,cact_documento as  documento
-			,cact_comentario as  comentario
-			,dact_fecharegistro as  fechaRegistro
-			,cact_usuarioregistro as  usuarioRegistro
-			,dact_fechainactivo as  fechaInactivo
-			,cact_usuarioinactivo as  usuarioInactivo
-			,dact_fechaleido as  fechaLeido
-			,cact_estado as estado
-		from actividad_actp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ActividadDTO">
-		<include refid="selectSimpleActividadFragment" />
-		<include refid="whereActividadFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ActividadDTO">
-		<include refid="selectSimpleActividadFragment" />
-		<include refid="whereActividadFragment" />
-		order by cact_responsable 
-		, fechaArrancar
-		, fechaRegistro
-		<include refid="paginationActividadFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
-
 </mapper>

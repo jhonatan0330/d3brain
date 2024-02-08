@@ -1,0 +1,105 @@
+{
+	"name": "Tarifarios del sistema",
+	"code": "softure",
+	"packages": [
+		{
+			"name": "General",
+			"code": "tariff",
+			"entities": [
+				{
+					"name": "Tarifario",
+					"table": "tarifario",
+					"prefix": "trf",
+					"attributes": [
+						{
+							"name": "nombre",
+							"tableName": "nombre",
+							"type": "String",
+							"order": 1
+						},
+						{
+							"name": "tipoRecurso",
+							"tableName": "tiporecurso",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "tipoRecursoNombre",
+							"tableName": "tiporecursonombre",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension2",
+							"tableName": "tipodimension2",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension2Nombre",
+							"tableName": "tipodimension2nombre",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension3",
+							"tableName": "tipodimension3",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension3Nombre",
+							"tableName": "tipodimension3nombre",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension4",
+							"tableName": "tipodimension4",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "tipoDimension4Nombre",
+							"tableName": "tipodimension4nombre",
+							"type": "STRING",
+							"optional": true
+						},
+						{
+							"name": "productoOpcional",
+							"tableName": "productoopcional",
+							"type": "BOOLEAN"
+						},
+						{
+							"name": "rangoValores",
+							"tableName": "rangovalores",
+							"type": "BOOLEAN"
+						},
+						{
+							"name": "rangoCantidad",
+							"tableName": "rangocantidad",
+							"type": "BOOLEAN"
+						},
+						{
+							"name": "fechaInicial",
+							"tableName": "fechainicial",
+							"type": "DATETIME"
+						},
+						{
+							"name": "fechaFinal",
+							"tableName": "fechafinal",
+							"type": "DATETIME",
+							"optional": true
+						},
+						{
+							"name": "documento",
+							"tableName": "documento",
+							"type": "CLASS"
+						}
+					]
+				}
+			],
+			"endPoints": []
+		}
+	]
+}

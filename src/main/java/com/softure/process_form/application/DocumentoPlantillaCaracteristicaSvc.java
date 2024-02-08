@@ -153,7 +153,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCantidad = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCantidad.setPlantilla(dto.getPlantilla());
 		int cantidadCampos = contarResultados(filtroCantidad);
-		if (cantidadCampos == 0 && dto.getOrden().compareTo(0) != 0) {
+		if (dto.getOrden()!=null && cantidadCampos == 0 && dto.getOrden().compareTo(0) != 0) {
 			// Esto es porque cuando se crean las plantillas automaticas no cuenta
 			// correctametne la cantidad de campos
 			cantidadCampos = dto.getOrden();
@@ -171,8 +171,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return dto;
 		// END DocumentoPlantillaCaracteristica_guardar
 	}
-
-// BEGIN region aditionalMethods
 
 	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
 			String token) throws ServerException {
@@ -193,7 +191,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			}
 			newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
-			newCampo.setObjetivo(".");
+			//newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(templateDifferenceId);
 			newCampo = guardar(newCampo, token);
@@ -223,7 +221,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campo.setImagen(campoProducto.getImagen());
 			campo.setNombre(campoProducto.getNombre());
 			campo.setOrden(campoProducto.getOrden());
-			campo.setObjetivo(campoProducto.getObjetivo());
+			//campo.setObjetivo(campoProducto.getObjetivo());
 			campo.setPlantilla(campoProducto.getBase());
 			campo.setPlantillaNombre(campoProducto.getBaseNombre());
 			campo.setLlaveTabla(id);
@@ -321,10 +319,27 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoNombre.setOrden(1);
 			campoNombre.setPlantilla(plantilla);
-			campoNombre.setObjetivo("Almacenar el nombre");
+			//campoNombre.setObjetivo("Almacenar el nombre");
 			campoNombre = guardar(campoNombre, token);
 		}
 		return campoNombre.getLlaveTabla();
+	}
+	
+	public String createField(String template, String fieldCode, String type, Integer order, String token) throws ServerException {
+		DocumentoPlantillaCaracteristicaFilterDTO filter = new DocumentoPlantillaCaracteristicaFilterDTO();
+		filter.setCodigo(fieldCode);
+		filter.setPlantilla(template);
+		DocumentoPlantillaCaracteristicaDTO field = consultaUnica(filter);
+		if (field == null) {
+			field = new DocumentoPlantillaCaracteristicaDTO();
+			field.setCodigo(fieldCode);
+			field.setNombre(fieldCode);
+			field.setFormato(type);
+			field.setPlantilla(template);
+			field.setOrden(order);
+			field = guardar(field, token);
+		}
+		return field.getLlaveTabla();
 	}
 
 	public String crearCampoIdentificacion(String plantilla, String token) throws ServerException {
@@ -341,7 +356,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			campoNombre.setOrden(2);
 			campoNombre.setPlantilla(plantilla);
-			campoNombre.setObjetivo("Almacenar el id");
+			//campoNombre.setObjetivo("Almacenar el id");
 			campoNombre = guardar(campoNombre, token);
 		}
 		return campoNombre.getLlaveTabla();
@@ -361,7 +376,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoTelefono.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoTelefono.setOrden(4);
 			campoTelefono.setPlantilla(plantilla);
-			campoTelefono.setObjetivo(".");
+			//campoTelefono.setObjetivo(".");
 			campoTelefono = guardar(campoTelefono, token);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -386,7 +401,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoCorreo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoCorreo.setOrden(3);
 			campoCorreo.setPlantilla(plantilla);
-			campoCorreo.setObjetivo(".");
+			//campoCorreo.setObjetivo(".");
 			campoCorreo = guardar(campoCorreo, token);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoCorreo.getLlaveTabla(),
@@ -411,7 +426,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoTiempo.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);
-		campoTiempo.setObjetivo("Contiene las fechas del reporte");
+		//campoTiempo.setObjetivo("Contiene las fechas del reporte");
 		campoTiempo = guardar(campoTiempo, token);
 
 		if (rango) {
@@ -429,7 +444,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
 		campoProceso.setOrden(1);
 		campoProceso.setPlantilla(plantilla);
-		campoProceso.setObjetivo(".");
+		//campoProceso.setObjetivo(".");
 		campoProceso = guardar(campoProceso, token);
 
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -445,7 +460,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoValor.setNombre("VALOR");
 		campoValor.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 		campoValor.setPlantilla(plantilla);
-		campoValor.setObjetivo("Define el valor total del documento");
+		//campoValor.setObjetivo("Define el valor total del documento");
 		campoValor = guardar(campoValor, token);
 
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoValor.getLlaveTabla(),
@@ -469,7 +484,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		}
 		return newP;
 	}
-// END region aditionalMethods
 
 	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(List<String> process) {
 		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize(process);

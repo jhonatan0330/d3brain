@@ -30,8 +30,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-// END region interImport
-import com.softure.tariff.application.TarifaSvc;
+import com.softure.tariff.application.base.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 

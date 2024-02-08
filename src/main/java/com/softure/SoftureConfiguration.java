@@ -50,7 +50,7 @@ import com.softure.webservice.application.WebServiceEjecucionSvc;
 @Configuration
 @EnableTransactionManagement
 @EnableScheduling
-@MapperScan(basePackages = {"com.softure.*.infrastructure","com.accounting.*.infrastructure"}, annotationClass= SoftureSqlConnMapper.class, sqlSessionFactoryRef="sqlSessionFactory")
+@MapperScan(basePackages = {"com.*.*.infrastructure"}, annotationClass= SoftureSqlConnMapper.class, sqlSessionFactoryRef="sqlSessionFactory")
 public class SoftureConfiguration {
 
 	@Autowired private Environment env;

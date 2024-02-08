@@ -164,8 +164,8 @@ import com.softure.survey.domain.PostPreguntaDTO;
 import com.softure.survey.domain.PostPreguntaFilterDTO;
 import com.softure.survey.domain.PostRespuestaDTO;
 import com.softure.survey.domain.PostRespuestaFilterDTO;
-import com.softure.tariff.application.TarifaSvc;
-import com.softure.tariff.application.TarifarioSvc;
+import com.softure.tariff.application.base.TarifaSvc;
+import com.softure.tariff.application.base.TarifarioService;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TarifarioDTO;
@@ -1389,12 +1389,12 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private TarifarioSvc tarifarioService;
+	@Autowired private TarifarioService tarifarioService;
 	
 	@PostMapping(value="/consultaXIdTarifario")
 	public TarifarioDTO consultaXIdTarifario(@RequestBody String llave) throws FlexException {
 		try {
-			return tarifarioService.consultaXId(llave);
+			return tarifarioService.getById(llave);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1403,7 +1403,7 @@ public class FullControllerDTO {
 	@PostMapping(value="/consultaUnicaTarifario")
 	public TarifarioDTO consultaUnicaTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
-			return tarifarioService.consultaUnica(dto);
+			return tarifarioService.getOne(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1412,47 +1412,12 @@ public class FullControllerDTO {
 	@PostMapping(value="/listarConsultaTarifario")
 	public List<TarifarioDTO> listarConsultaTarifario(@RequestBody TarifarioFilterDTO dto) throws FlexException  {
 		try {
-			return tarifarioService.listarConsulta(dto);
+			return tarifarioService.getMany(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 	
-	@PostMapping(value="/activarTarifario")
-	public TarifarioDTO activarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return tarifarioService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarTarifario")
-	public TarifarioDTO inactivarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return tarifarioService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarTarifario")
-	public TarifarioDTO actualizarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return tarifarioService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarTarifario")
-	public TarifarioDTO guardarTarifario(@RequestBody TarifarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return tarifarioService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@Autowired private ActividadSvc actividadService;
 	

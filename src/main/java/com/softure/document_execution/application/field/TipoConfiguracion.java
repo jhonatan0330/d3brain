@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -39,7 +39,7 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.survey.application.EncuestaSvc;
 import com.softure.survey.domain.EncuestaDTO;
 import com.softure.survey.domain.EncuestaFilterDTO;
-import com.softure.tariff.application.TarifarioSvc;
+import com.softure.tariff.application.base.TarifarioService;
 import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.domain.TarifarioFilterDTO;
 
@@ -67,7 +67,7 @@ public class TipoConfiguracion {
 	@Autowired
 	private RolAccesoSvc rolService;
 	@Autowired
-	private TarifarioSvc tarifarioService;
+	private TarifarioService tarifarioService;
 
 	public static final String CATEGORIA_PRODUCTOS = "CATEGORIA_PRODUCTOS";
 	public static final String PROCESO = "PROCESO";
@@ -212,12 +212,12 @@ public class TipoConfiguracion {
 					pCampo.setPrincipal(adaptadoXLS);
 					break;
 				case TARIFARIO:
-					TarifarioDTO tarifario = tarifarioService.consultaXId(pCampo.getValorOpcion());
+					TarifarioDTO tarifario = tarifarioService.getById(pCampo.getValorOpcion());
 					if (tarifario == null) {
 						throw new ServerException("No se identifica tarifario");
 					} else {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(tarifario.getLlaveTabla());
+						adaptado.setLlaveTabla(tarifario.getKey());
 						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(tarifario.getNombre());
 						// adaptado.setDescripcion(encuesta.getNombre());
@@ -346,7 +346,7 @@ public class TipoConfiguracion {
 					pCampo.setValorText(pCampo.getValorOpcion());
 					break;
 				case TARIFARIO:
-					TarifarioDTO tarifario = tarifarioService.consultaXId(pCampo.getValorOpcion());
+					TarifarioDTO tarifario = tarifarioService.getById(pCampo.getValorOpcion());
 					if (tarifario == null) {
 						throw new ServerException("No se identifica el tarifario");
 					} else {
@@ -573,14 +573,14 @@ public class TipoConfiguracion {
 				break;
 			case TARIFARIO:
 				TarifarioFilterDTO tarifario = new TarifarioFilterDTO();
-				tarifario.setFiltroParametro(pCampo.getFiltroParametro());
-				tarifario.setEstado(SharedConstants.STATE_ACTIVE);
-				List<TarifarioDTO> tarifarios = tarifarioService.listarConsulta(tarifario);
+				tarifario.setFilter(pCampo.getFiltroParametro());
+				tarifario.setState(SharedConstants.STATE_ACTIVE);
+				List<TarifarioDTO> tarifarios = tarifarioService.getMany(tarifario);
 				if (tarifarios != null && !tarifarios.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (TarifarioDTO itarifario : tarifarios) {
 						PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
-						adaptadoT.setLlaveTabla(itarifario.getLlaveTabla());
+						adaptadoT.setLlaveTabla(itarifario.getKey());
 						adaptadoT.setImagen(SharedConstants.LOGO);
 						adaptadoT.setNombre(itarifario.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());

@@ -10,10 +10,7 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("PropiedadDTO")
 @JsonInclude(Include.NON_NULL)
-public class PropiedadDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
-{
+public class PropiedadDTO extends BasicDTO{
 
 	private String propiedadValor;
 	private String tipo;
@@ -204,7 +201,5 @@ public class PropiedadDTO extends BasicDTO
 	public String getBloqueo() {
 		return bloqueo;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

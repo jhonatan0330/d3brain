@@ -146,7 +146,5 @@ public class ProductoDTO extends BasicParamDTO
 	public List<ProductoCaracteristicaDTO> getCampos() {
 		return campos;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

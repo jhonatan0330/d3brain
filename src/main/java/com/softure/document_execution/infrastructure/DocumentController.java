@@ -29,7 +29,7 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
-import com.softure.tariff.application.TarifaSvc;
+import com.softure.tariff.application.base.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.upload.application.UploadSvc;
 

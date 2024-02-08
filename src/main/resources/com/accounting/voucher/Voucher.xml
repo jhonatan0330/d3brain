@@ -47,9 +47,12 @@
 			<if test="concept!=null">
 				and ccmp_concepto = #{concept}
 			</if>
-			<if test="factDate!=null">
-				and dcmp_fechacomprobante = #{factDate}
-			</if>
+			<if test="factDateMin!=null">
+				and dcmp_fechacomprobante > #{factDateMin}
+			</if>  
+			<if test="factDateMax!=null">
+				and dcmp_fechacomprobante <![CDATA[ < ]]> #{factDateMax}
+			</if>  
 			<if test="positive!=null">
 				and mcmp_positivo = #{positive}
 			</if>

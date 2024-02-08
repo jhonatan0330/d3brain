@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.SharedConstants;
+import com.configuration.homologate.application.HomologatePrepareService;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
@@ -107,6 +108,8 @@ public class CallDocumentCRUD {
 	private PedidoVentaDineroSvc dineroService;
 	@Autowired
 	private CallBPM bpmService;
+	@Autowired
+	private HomologatePrepareService homologateService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
@@ -468,7 +471,7 @@ public class CallDocumentCRUD {
 				boolean campoEncontrado = false;
 				// 1 Coloco los campos DTO
 				for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-					if (campoDocumento.getCampo().compareTo(campoPlantilla.getLlaveTabla()) == 0) {
+					if (campoDocumento.getCampo()!=null && campoDocumento.getCampo().compareTo(campoPlantilla.getLlaveTabla()) == 0) {
 						campoDocumento.setCampoDTO(campoPlantilla);
 						campoDocumento.setCampo(campoPlantilla.getLlaveTabla());
 						campoDocumento.setDocumento(dto.getLlaveTabla());
@@ -794,6 +797,8 @@ public class CallDocumentCRUD {
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_BODEGA) != null)
 			bodegaService.crearDesdeDocumento(dto);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
+		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
+			homologateService.createFromDocument(dto, Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor());
 	}
 
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
