@@ -131,8 +131,7 @@ public class TipoDetallePedido {
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 			pCampo.setValorNumero(BigDecimal.ZERO);
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
-				if (detalle.getEstado() == null
-						|| detalle.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
+				if (detalle.getEstado() == null || detalle.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
 					// Valido que el producto se pueda guardar en el tiempo
 
 					ProductoDTO pd = productoService.consultaXId(detalle.getProducto());
@@ -397,7 +396,7 @@ public class TipoDetallePedido {
 		return productos;
 	}
 
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
@@ -496,16 +495,44 @@ public class TipoDetallePedido {
 				pCampo.setDetalles(detallesFinalNuevo);
 			}
 
+			String fieldWithDetails = null;
 			for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
 				if (iCampoExpediente.getCampoDTO().getCodigo().compareTo(pCampo.getCampoDTO().getCodigo()) == 0) {
 					iCampoExpediente.setDetalles(detallesFinalExpediente);
 					iCampoExpediente.setModificado(true);
+					fieldWithDetails = iCampoExpediente.getCampo();
 					break;
 				}
+
 			}
+			//Esto e hizo por nuestro querido brandingo box, formulario pedidos y valor total
+			if (fieldWithDetails != null) {
+				for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
+					if (iCampoExpediente.getCampoDTO().getFormato()
+							.compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+						iCampoExpediente.setCampoDTO(
+								caracteristicaService.cargarComplementos(iCampoExpediente.getCampoDTO(), token));
+						List<PropiedadDTO> propsDependent = Propiedades
+								.obtenerVariosParametro(iCampoExpediente.getCampoDTO(), Propiedades.DEPENDE);
+						if (propsDependent != null && !propsDependent.isEmpty()
+								&& Propiedades.obtenerValor(iCampoExpediente.getCampoDTO(),
+										Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
+							for (PropiedadDTO iDep : propsDependent) {
+								if (iDep.getValor().compareTo(fieldWithDetails) == 0) {
+									iCampoExpediente.setValorNumero(null);
+									iCampoExpediente.setModificado(true);
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// Sucede que aqui llega nulo porque previamente se a validado una
+			// carcateristica
 			if (expediente.getEstado() == null)
-				expediente.setEstado(SharedConstants.STATE_ACTIVE);// Sucede que aqui llega nulo porque previamente
-																		// se a validado una carcateristica
+				expediente.setEstado(SharedConstants.STATE_ACTIVE);
 			// Cuando revise lo del documento modificador veo como arreglo esto
 			saveUpdateInactivateDocumentFunction.updateWithoutTransaction(expediente, pCampo.getDocumento(), token,
 					true);

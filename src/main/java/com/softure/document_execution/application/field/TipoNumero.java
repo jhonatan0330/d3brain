@@ -55,7 +55,7 @@ public class TipoNumero {
 						BigDecimal valorCalculado = calcular(pCampo, formula);
 						BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 						if (diferencia.abs().longValue() > 1)
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " no se calculo correctamente, valor esperado : ("
 									+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
 									+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
