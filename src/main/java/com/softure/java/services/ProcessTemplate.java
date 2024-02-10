@@ -59,7 +59,11 @@ public class ProcessTemplate {
 				// En fremarker sale error con los parentesis
 				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 			        if(entry.getKey().contains("(")) {
-			        	newMap.put(entry.getKey().replace("(", "_").replace(")", ""), entry.getValue());
+			        	String newKey = entry.getKey();
+			        	while (plantilla.contains("(")) {
+							newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_").replace("-", "_");
+						}
+			        	newMap.put(newKey, entry.getValue());
 			        	//mapParams.remove(entry.getKey());
 			        	//Por el momento no borro las entradas para una proxima
 			        }
