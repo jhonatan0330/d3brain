@@ -91,6 +91,7 @@ public class TipoProceso {
 		if (campoHeredado1.isEmpty()) {// Los heredados trabajan solos
 			System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 					pCampo.getCampoDTO().getNombre());
+			if(pCampo.getValorText()!=null && pCampo.getValorText().isEmpty())pCampo.setValorText(null);
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			autosave(multiple, pCampo, token);
 			if (!multiple.isEmpty()) {
@@ -132,7 +133,7 @@ public class TipoProceso {
 								pCampo.setValorOpcion(result.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
 							}
 							if (pCampo.getValorOpcion() == null)
-								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " obtiene "
+								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " obtiene "
 										+ result.getCampoDTO().getDocumentos().size()
 										+ " resultados que concuerdan con el criterio : " + pCampo.getValorText());
 
