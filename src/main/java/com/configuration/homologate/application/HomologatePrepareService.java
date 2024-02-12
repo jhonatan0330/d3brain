@@ -313,13 +313,13 @@ public class HomologatePrepareService {
 
 					PedidoVentaCaracteristicaDTO fieldValueRange = new PedidoVentaCaracteristicaDTO();
 					fieldValueRange.setCampo(fieldsTemplate.get(12));
-					if (iTariff.getRangoCantidad())
+					if (iTariff.getRangoValores())
 						fieldValueRange.setValorNumero(BigDecimal.ONE);
 					document.getCaracteristicas().add(fieldValueRange);
 
 					PedidoVentaCaracteristicaDTO fieldValueQuantity = new PedidoVentaCaracteristicaDTO();
 					fieldValueQuantity.setCampo(fieldsTemplate.get(13));
-					if (iTariff.getRangoValores())
+					if (iTariff.getRangoCantidad())
 						fieldValueQuantity.setValorNumero(BigDecimal.ONE);
 					document.getCaracteristicas().add(fieldValueQuantity);
 

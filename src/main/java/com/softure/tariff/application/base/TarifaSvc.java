@@ -1,6 +1,5 @@
 package com.softure.tariff.application.base;
 
-// BEGIN region interImport
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -21,7 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.services.SoftureUtil;
-// END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.tariff.domain.TarifaDTO;
@@ -69,6 +67,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TarifaDTO actualizar(TarifaDTO dto, String token) throws ServerException {
 		// BEGIN Tarifa_actualizar
+		if(dto.getLlaveTabla()==null) throw new ServerException("No podemos actualizar una tarifa sin su id");
 		TarifaDTO existe = validarTarifa(dto);
 		if (existe != null && existe.getLlaveTabla().compareTo(dto.getLlaveTabla()) != 0)
 			throw new ServerException(

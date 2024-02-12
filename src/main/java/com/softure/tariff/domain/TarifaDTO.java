@@ -13,6 +13,7 @@ public class TarifaDTO extends BasicDTO {
 
 	private String tarifario;
 	private String tarifarioNombre;
+	private String documento;
 	private String producto;
 	private String productoNombre;
 	private String recurso;
@@ -219,6 +220,14 @@ public class TarifaDTO extends BasicDTO {
 
 	public void setUpdatedUser(String createdUser) {
 		this.updatedUser = createdUser;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.softure.tariff.domain;
 
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 
@@ -12,6 +10,7 @@ public class TarifaFilterDTO extends BasicFilterDTO
 
 	private String tarifario;
 	private String tarifarioNombre;
+	private String documento;
 	private String producto;
 	private String productoNombre;
 	private String recurso;
@@ -159,6 +158,14 @@ public class TarifaFilterDTO extends BasicFilterDTO
 	
 	public String getDimension4Nombre() {
 		return dimension4Nombre;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
 	}
 	
 
