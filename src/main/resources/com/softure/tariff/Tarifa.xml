@@ -230,7 +230,7 @@
 	</select>
 
 
-<!--// BEGIN region script-->
+
 	<select id="obtenerTarifa" parameterType="TarifaDTO" resultType="TarifaDTO">
 	  <include refid="selectTarifaFragment" />
 	  <include refid="whereTarifaFragment" />
@@ -268,6 +268,29 @@
 			,ctar_estado as estado
 		from propiedad_${propiedad} (#{producto}, #{productoBase}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
 	</select>
-<!--// END region script-->
+
+	<!--// Esto despues lo voy a reubicar -->
+	<select id="getDimentionOptions" resultType="TariffOptionDTO">
+		select
+			cpdv_llave as key,
+			cpdv_nombre as code,
+			<if test="template==null">(select cpro_llave from producto_prop where cpro_documento = cpdv_llave) as productId,</if>
+			cpdv_plantilla as template,
+			descripcion(cpdv_llave) as name
+		from pedidoventa_pdvp 
+		where cpdv_estado = 'A'
+		and (cpdv_nombre like upper('%' || #{filter} || '%') or cpdv_textofiltro like '%' || #{filter} || '%') 
+		<choose>
+		<when test="template!=null">
+		and cpdv_plantilla = #{template}
+		</when>
+		<otherwise>
+		and cpdv_plantilla in (select cppd_campo from propiedad_ppdp 
+		inner join documentoplantilla_dplp on (cdpl_llave = cppd_campo)
+		where cppd_propiedadvalor = 'PROP_144' and cppd_estado = 'A'
+		and cdpl_estado = 'A')
+		</otherwise>
+		</choose>
+	</select>
 
 </mapper>

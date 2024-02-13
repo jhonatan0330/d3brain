@@ -19,6 +19,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
+import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.application.CallSearchProcessFromText;
@@ -66,7 +67,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TarifaDTO actualizar(TarifaDTO dto, String token) throws ServerException {
-		// BEGIN Tarifa_actualizar
+		clean(dto);
 		if(dto.getLlaveTabla()==null) throw new ServerException("No podemos actualizar una tarifa sin su id");
 		TarifaDTO existe = validarTarifa(dto);
 		if (existe != null && existe.getLlaveTabla().compareTo(dto.getLlaveTabla()) != 0)
@@ -98,7 +99,6 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		dto.setLlaveTabla(null);
 		dto.setCreatedUser(getUserFlex(token));
 		return super.guardar(dto, token);
-		// END Tarifa_actualizar
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TarifaDTO guardar(TarifaDTO dto, String token) throws ServerException {
-		// BEGIN Tarifa_guardar
+		clean(dto);
 		TarifarioDTO tarifario = tarifarioService.getById(dto.getTarifario());
 		// Para las cargas valido los codigos y el recurso
 		if (dto.getProducto() == null && dto.getProductoNombre() != null) {
@@ -133,6 +133,16 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			if (filtroProducto == null)
 				throw new ServerException("No se identifica producto con el codigo : " + dto.getProductoNombre());
 			dto.setProducto(filtroProducto.getLlaveTabla());
+		} else {
+			if(dto.getProducto()!=null) {
+				ProductoDTO productoById = productoService.consultaXId(dto.getProducto());
+				if(productoById==null) {
+					ProductoFilterDTO filterOne = new ProductoFilterDTO();
+					filterOne.setDocumento(dto.getProducto());
+					productoById = productoService.consultaUnica(filterOne);
+					if(productoById!=null) dto.setProducto(productoById.getLlaveTabla());
+				}
+			}
 		}
 		if (tarifario.getTipoRecurso() != null && dto.getRecurso() == null && dto.getRecursoNombre() != null)
 			dto.setRecurso(getDocumentToDimension(dto.getRecursoNombre(), tarifario.getTipoRecurso(),
@@ -174,7 +184,26 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			 */
 		dto.setCreatedUser(getUserFlex(token));
 		return super.guardar(dto, token);
-		// END Tarifa_guardar
+
+	}
+
+	private void clean(TarifaDTO dto) {
+		if(dto.getCantidadMaxima()==null) dto.setCantidadMaxima(0);
+		if(dto.getCantidadMinima()==null) dto.setCantidadMinima(0);
+		if(dto.getValorMaximo()==null) dto.setValorMaximo(BigDecimal.ZERO);
+		if(dto.getValorMinimo()==null) dto.setValorMinimo(BigDecimal.ZERO);
+		if(dto.getValor()==null) dto.setValor(BigDecimal.ZERO);
+		if(dto.getTotalMinimo()==null) dto.setTotalMinimo(BigDecimal.ZERO);
+		if(dto.getProducto()!=null && dto.getProducto().isEmpty()) dto.setProducto(null);
+		if(dto.getRecurso()!=null && dto.getRecurso().isEmpty()) dto.setRecurso(null);
+		if(dto.getDimension2()!=null && dto.getDimension2().isEmpty()) dto.setDimension2(null);
+		if(dto.getDimension3()!=null && dto.getDimension3().isEmpty()) dto.setDimension3(null);
+		if(dto.getDimension4()!=null && dto.getDimension4().isEmpty()) dto.setDimension4(null);
+		if(dto.getProductoNombre()!=null && dto.getProductoNombre().isEmpty()) dto.setProductoNombre(null);
+		if(dto.getRecursoNombre()!=null && dto.getRecursoNombre().isEmpty()) dto.setRecursoNombre(null);
+		if(dto.getDimension2Nombre()!=null && dto.getDimension2Nombre().isEmpty()) dto.setDimension2Nombre(null);
+		if(dto.getDimension3Nombre()!=null && dto.getDimension3Nombre().isEmpty()) dto.setDimension3Nombre(null);
+		if(dto.getDimension4Nombre()!=null && dto.getDimension4Nombre().isEmpty()) dto.setDimension4Nombre(null);
 	}
 
 	private String getDocumentToDimension(String filter, String dimensionTemplate, String dimensionName, String token)
@@ -234,11 +263,13 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 				existe.setCantidadMinima(0);
 				existe.setCantidadMaxima(0);
 			}
+			if(existe.getCantidadMaxima().compareTo(0)==0) existe.setCantidadMaxima(Integer.MAX_VALUE);
 		}
 		existe.setRecurso(dto.getRecurso());
 		existe.setDimension2(dto.getDimension2());
 		existe.setDimension3(dto.getDimension3());
 		existe.setDimension4(dto.getDimension4());
+		existe.setEstado(SharedConstants.STATE_ACTIVE);
 		List<TarifaDTO> tarifa = tarifaMapper.obtenerTarifa(existe);
 		if (tarifa == null || tarifa.isEmpty())
 			return null;
