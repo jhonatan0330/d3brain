@@ -60,7 +60,7 @@ public class ProcessTemplate {
 				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 			        if(entry.getKey().contains("(")) {
 			        	String newKey = entry.getKey();
-			        	while (plantilla.contains("(")) {
+			        	while (newKey.contains("(")) {
 							newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_").replace("-", "_");
 						}
 			        	newMap.put(newKey, entry.getValue());
