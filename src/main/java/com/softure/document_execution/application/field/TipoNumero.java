@@ -179,8 +179,9 @@ public class TipoNumero {
 				&& (Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) == null
 						|| Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 								Propiedades.FUNCION_NUMBER_ALL_CALCULATE_SAVE) != null)) {
+			if(pCampo.getDependientes()==null) pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo.getLlaveTabla(),
-					pCampo.getDocumento(), new ArrayList<PedidoVentaCaracteristicaDTO>()));
+					pCampo.getDocumento(), pCampo.getDependientes()));
 			if (pCampo.getValorNumero() == null)
 				pCampo.setValorNumero(BigDecimal.ZERO);
 			formatText(pCampo);

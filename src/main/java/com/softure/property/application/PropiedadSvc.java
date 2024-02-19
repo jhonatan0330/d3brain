@@ -1255,6 +1255,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
 			if (propiedadDTO.getKey().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO) == 0)
 				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
+			if (propiedadDTO.getKey().compareTo(Propiedades.CAMPO_DIFERENCIAS) == 0)
+				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
 			if (agregar) {
 				PropiedadDTO newPropiedad = new PropiedadDTO();
 				newPropiedad.setCampo(entidad);

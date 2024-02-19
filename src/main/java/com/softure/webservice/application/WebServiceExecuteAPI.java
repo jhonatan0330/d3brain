@@ -283,14 +283,15 @@ public class WebServiceExecuteAPI {
 		parameters = prepareParameterFromProperties(parameters, replaceProperties);
 
 		String template = templatesService.generateOutputFile(service.getTemplate(), parameters);
+		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), parameters);
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
-		String fullOutput = writeHeadersAndUrl(headerProperties, service.getUrl(), callWS.getParametros(),
+		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametros(),
 				callWS.getExtracciones(), service.getNombre()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice"));
 		String responseApi = null;
 		try {
-			responseApi = callApi(service, template, headerProperties);
+			responseApi = callApi(service, urlWithParameters, template, headerProperties);
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			if (callWS.getError() == null) {
@@ -475,12 +476,12 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String callApi(WebServiceDTO apiService, String body, Map<String, String> headerProperties)
+	private String callApi(WebServiceDTO apiService, String url, String body, Map<String, String> headerProperties)
 			throws ServerException {
-		URL url;
+		URL urlApi;
 		try {
-			url = new URL(apiService.getUrl());
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			urlApi = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) urlApi.openConnection();
 			con.setRequestMethod("POST");
 			con.setDoOutput(true);
 
