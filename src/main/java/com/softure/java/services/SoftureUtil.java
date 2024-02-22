@@ -255,6 +255,16 @@ public class SoftureUtil {
 				codigo = iParametro.substring(0, posIgual);
 				textoReemplazar = iParametro.substring(posIgual + 2, iParametro.length());
 				parametersItem.put(codigo, textoReemplazar);
+				//Esto casi lo copie de process template
+				if(codigo.contains("(")) {
+		        	String newKey = codigo;
+		        	while (newKey.contains("(")) {
+						newKey = codigo.replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_").replace("-", "_");
+					}
+		        	parametersItem.put(newKey, textoReemplazar);
+		        	//mapParams.remove(entry.getKey());
+		        	//Por el momento no borro las entradas para una proxima
+		        }
 			}
 		}
 		if(!parametersItem.isEmpty()) arrayObjects.add(parametersItem);

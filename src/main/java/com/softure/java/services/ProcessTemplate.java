@@ -16,6 +16,7 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
+import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -39,6 +40,8 @@ public class ProcessTemplate {
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired
 	private RelacionInternaSvc relacionService;
+	@Autowired
+	private PedidoVentaSvc documentService;
 	
 	public String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
@@ -157,6 +160,10 @@ public class ProcessTemplate {
 							DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace + valueAuxToCode + "["+String.valueOf(i+1)+"]="+SharedConstants.LINEA_MEDIA_DOBLE+"L_NUM"+SharedConstants.COMA_DOBLE+String.valueOf(i+1)+SharedConstants.LINEA_MEDIA_DOBLE+"L_VAL"+SharedConstants.COMA_DOBLE +iRelation.getValor().intValue();
 							for (PropiedadDTO iProp : referidas) {
+								if(iProp.getMotivo()!=null) {
+									parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + iProp.getMotivo()
+											+ SharedConstants.COMA_DOBLE + documentService.consultaXId(iRelation.getExpedienteDetalle()).getNombre();
+								}
 								List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
 								if (relaciones != null && !relaciones.isEmpty()) {
 									// Todo esto practimanete lo copie de la funcion de arriba de referidos 
@@ -178,7 +185,7 @@ public class ProcessTemplate {
 													codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
 												//+ConstantesGenerales.LINEA_MEDIA_DOBLE +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
 												parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
-														+ SharedConstants.COMA_DOBLE + formatToReplaceAll(iCampo, formatToField);
+														+ SharedConstants.COMA_DOBLE + formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
 												//Coloque el service en null para evitar que se generen ciclos infinitos
 											}
 										}
