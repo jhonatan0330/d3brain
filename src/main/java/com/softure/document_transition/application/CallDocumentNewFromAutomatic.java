@@ -75,8 +75,9 @@ public class CallDocumentNewFromAutomatic {
 		transicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
-				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR
-				, Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION};
+				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE,
+				Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR,
+				Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION };
 		List<PropiedadDTO> camposGenerar = Propiedades.obtenerVariosParametro(transicion, cars);
 		if (camposGenerar == null || camposGenerar.isEmpty())
 			return null;
@@ -101,23 +102,31 @@ public class CallDocumentNewFromAutomatic {
 						campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());
 					campoPrincipal.setPrincipal(expedienteDTO);
 					camposNuevos.add(campoPrincipal);
-					break;	
+					break;
 				}
 			case Propiedades.GENERA_DOCUMENTO_CAMPO:
-				List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
-				if (relaciones == null || relaciones.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
+				List<RelacionInternaDTO> relaciones = relacionService
+						.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+				if (relaciones == null || relaciones.isEmpty()) {
+					throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + " de la transicion "
+							+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre()
+							+ " con estado inicial " + transicion.getEstadoPartidaNombre()
+							+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
+				}
 				for (RelacionInternaDTO iRelacion : relaciones) {
-					if (documento != null && documento.getPlantilla()!=null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
-						camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(
-								documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+					if (documento != null && documento.getPlantilla() != null
+							&& iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
+						camposNuevos.add(copyFieldDocument(
+								CallDocumentCommons.obtenerValor(documento.getCaracteristicas(), iRelacion.getCampo()),
+								iPropiedadDTO.getValor()));
 					} else {
 						if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
 								&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
 							// Solo consulto el documento cuando en realidad lo necesito, en general no
 							// veien las caracteristicas
 							if (expedienteDTO.getCaracteristicas() == null)
-								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
-										expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
+								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService
+										.listar2Documento(expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
 							camposNuevos.add(copyFieldDocument(CallDocumentCommons
 									.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),
 									iPropiedadDTO.getValor()));
@@ -128,22 +137,27 @@ public class CallDocumentNewFromAutomatic {
 			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
 				PedidoVentaCaracteristicaDTO campoGenerado = null;
 				try {
-					campoGenerado = pedidoVentaCaracteristicaService
-							.consultarSQLCampoGenerarDocumento(iPropiedadDTO.getLlaveTabla(),
-									(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
-									(documento != null) ? documento.getLlaveTabla() : null);	
-				}catch (Exception ex) {
-					throw new ServerException("Se presento un error en la consulta de la transicion " + transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(), ex.getMessage());
+					campoGenerado = pedidoVentaCaracteristicaService.consultarSQLCampoGenerarDocumento(
+							iPropiedadDTO.getLlaveTabla(),
+							(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
+							(documento != null) ? documento.getLlaveTabla() : null);
+				} catch (Exception ex) {
+					throw new ServerException("Se presento un error en la consulta de la transicion "
+							+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(),
+							ex.getMessage());
 				}
-				if (campoGenerado !=null) {
-					List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
-					if (relations == null || relations.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
+				if (campoGenerado != null) {
+					List<RelacionInternaDTO> relations = relacionService
+							.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+					if (relations == null || relations.isEmpty())
+						throw new ServerException("La propiedad " + iPropiedadDTO.getNombre()
+								+ "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 					for (RelacionInternaDTO iRelacion : relations) {
 						if (documento != null && iRelacion.getPlantilla().compareTo(transicion.getPlantilla()) == 0) {
 							camposNuevos.add(copyFieldDocument(campoGenerado, iRelacion.getCampo()));
 							break;
 						}
-					}					
+					}
 				}
 				break;
 			case Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION:
@@ -156,9 +170,12 @@ public class CallDocumentNewFromAutomatic {
 				break;
 			case Propiedades.GENERA_DOCUMENTO_TEXTO:
 				String textValueToNewField = iPropiedadDTO.getValor();
-				
-				List<RelacionInternaDTO> relacionesNumber = relacionService.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
-				if (relacionesNumber == null || relacionesNumber.isEmpty()) throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + "No tiene relaciones, usa las relaciones para identificar que campo deseas que contenga el consecutivo");
+
+				List<RelacionInternaDTO> relacionesNumber = relacionService
+						.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
+				if (relacionesNumber == null || relacionesNumber.isEmpty())
+					throw new ServerException("La propiedad " + iPropiedadDTO.getNombre()
+							+ "No tiene relaciones, usa las relaciones para identificar que campo deseas que contenga el consecutivo");
 				PedidoVentaCaracteristicaDTO fieldNew = copyFieldDocument(null, relacionesNumber.get(0).getCampo());
 				if (textValueToNewField.compareTo("#NUMBER") == 0) {
 					fieldNew.setValorNumero(new BigDecimal(iterationNumber));
@@ -179,7 +196,8 @@ public class CallDocumentNewFromAutomatic {
 			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
 			UsuarioDTO userAdmin = autenticacionService.getUserSystem();
-			if(userAdmin==null ) throw new ServerException("Es indispensable configurar el usuario administrador");
+			if (userAdmin == null)
+				throw new ServerException("Es indispensable configurar el usuario administrador");
 			PedidoVentaDTO nuevo = new PedidoVentaDTO();
 			nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			nuevo.setPlantilla(transicion.getPlantilla());

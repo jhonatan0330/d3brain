@@ -95,7 +95,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		}else{
 			//Aumento en 1 el valor del actual
 			consecutivoBD.setNumeroActual(consecutivoBD.getNumeroActual().add(BigDecimal.ONE));
-			consecutivoBD = actualizar(consecutivoBD, token);
+			consecutivoBD = update(consecutivoBD);
 		}
 		if(consecutivoBD.getNumeroActual().compareTo(consecutivoBD.getNumeroInicial())<0)throw new ServerException("El numero no puede ser menor a " +SoftureUtil.formatNumber(consecutivoBD.getNumeroInicial()) + "\n" + consecutivoBD.getNombre());
 		if(consecutivoBD.getNumeroFinal().compareTo(BigDecimal.ZERO)!=0){

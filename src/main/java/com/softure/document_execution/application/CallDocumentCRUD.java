@@ -279,8 +279,10 @@ public class CallDocumentCRUD {
 				PropiedadDTO fieldDifference = Propiedades.obtenerParametro(iField.getCampoDTO(),
 						Propiedades.CAMPO_DIFERENCIAS);
 				// Esto no se puede hacer porque pide un cambio autorizado
-				//if (fieldDifference == null) 
-				//	 fieldDifference = documentoPlantillaCaracteristicaService.createFieldDifference(iField.getCampoDTO(), propertyDiference.getValor(), token);
+				// if (fieldDifference == null)
+				// fieldDifference =
+				// documentoPlantillaCaracteristicaService.createFieldDifference(iField.getCampoDTO(),
+				// propertyDiference.getValor(), token);
 				if (fieldDifference == null)
 					throw new ServerException("El campo " + iField.getCampoDTO().getNombre()
 							+ " no tiene la propiedad de campo diferencia");
@@ -471,7 +473,8 @@ public class CallDocumentCRUD {
 				boolean campoEncontrado = false;
 				// 1 Coloco los campos DTO
 				for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-					if (campoDocumento.getCampo()!=null && campoDocumento.getCampo().compareTo(campoPlantilla.getLlaveTabla()) == 0) {
+					if (campoDocumento.getCampo() != null
+							&& campoDocumento.getCampo().compareTo(campoPlantilla.getLlaveTabla()) == 0) {
 						campoDocumento.setCampoDTO(campoPlantilla);
 						campoDocumento.setCampo(campoPlantilla.getLlaveTabla());
 						campoDocumento.setDocumento(dto.getLlaveTabla());
@@ -668,21 +671,15 @@ public class CallDocumentCRUD {
 
 		}
 
+		ConsecutivoDTO consecutivoManual = null;
 		if (codigoNuevo == null) {// Lo hace para los automaticos y manuales de numero
 
 			if (plantilla.getConsecutivo() == null)
 				throw new ServerException("La plantilla no tiene consecutivo asignado");
 
-			ConsecutivoDTO consecutivoManual = consecutivoService.consultaXId(plantilla.getConsecutivo());
+			consecutivoManual = consecutivoService.consultaXId(plantilla.getConsecutivo());
 			if (consecutivoManual.getManual() || (!consecutivoManual.getManual() && pedido.getLlaveTabla() == null)) {
-				ConsecutivoDTO consecutivo = new ConsecutivoDTO();
-				consecutivo.setLlaveTabla(plantilla.getConsecutivo());
-				consecutivo.setNumeroActual(pedido.getConsecutivo());
-				consecutivo = consecutivoService.asignarConsecutivo(consecutivo, token);
-				pedido.setConsecutivo(consecutivo.getNumeroActual());
-				if (pedido.getConsecutivo().compareTo(new BigDecimal(9999999999999999.0)) > 0)
-					throw new ServerException("Se excedio del numero maximo para el consecutivo 1exp16");
-				codigoNuevo = consecutivo.getConsecutivoActual();
+				codigoNuevo = asignateConsecutive(pedido, plantilla.getConsecutivo(), token);
 			} else {
 				codigoNuevo = pedido.getNombre();
 			}
@@ -696,23 +693,41 @@ public class CallDocumentCRUD {
 				throw new ServerException("Se debe colocar el nombre del documento");
 		}
 
-		if (pedido.getLlaveTabla() == null || pedido.getNombre().compareTo(codigoNuevo) != 0) {
-			validateDoubleCodeIdActive(pedido, codigoNuevo);
-			pedido.setNombre(codigoNuevo);
-		}
+		if (pedido.getLlaveTabla() == null || pedido.getNombre().compareTo(codigoNuevo) != 0)
+			pedido.setNombre(validateDoubleCodeIdActive(pedido, codigoNuevo, consecutivoManual));
+
 	}
 
-	private void validateDoubleCodeIdActive(PedidoVentaDTO pedido, String codigoNuevo) throws ServerException {
+	private String asignateConsecutive(PedidoVentaDTO pedido, String consecutiveId, String token)
+			throws ServerException {
+
+		ConsecutivoDTO consecutivo = new ConsecutivoDTO();
+		consecutivo.setLlaveTabla(consecutiveId);
+		consecutivo.setNumeroActual(pedido.getConsecutivo());
+		consecutivo = consecutivoService.asignarConsecutivo(consecutivo, token);
+		pedido.setConsecutivo(consecutivo.getNumeroActual());
+		if (pedido.getConsecutivo().compareTo(new BigDecimal(9999999999999999.0)) > 0)
+			throw new ServerException("Se excedio del numero maximo para el consecutivo 1exp16");
+		return consecutivo.getConsecutivoActual();
+	}
+
+	private String validateDoubleCodeIdActive(PedidoVentaDTO pedido, String codigoNuevo, ConsecutivoDTO consecutive)
+			throws ServerException {
 		PedidoVentaFilterDTO filtroNombreFilter = new PedidoVentaFilterDTO();
 		// Valido que no existan documentos con el mismo nombre ni cerrados ni activos
 		filtroNombreFilter.setNombre(codigoNuevo);
 		filtroNombreFilter.setPlantilla(pedido.getPlantilla());
 		List<PedidoVentaDTO> mismoNombre = pedidoService.listarConsulta(filtroNombreFilter);
-		if (mismoNombre != null && !mismoNombre.isEmpty()) {
-			for (PedidoVentaDTO igualNombre : mismoNombre) {
-				if (pedido.getLlaveTabla() == null
-						|| pedido.getLlaveTabla().compareTo(igualNombre.getLlaveTabla()) != 0) {
-					if (igualNombre.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
+		if (mismoNombre == null || mismoNombre.isEmpty())
+			return codigoNuevo;
+		for (PedidoVentaDTO igualNombre : mismoNombre) {
+			if (pedido.getLlaveTabla() == null || pedido.getLlaveTabla().compareTo(igualNombre.getLlaveTabla()) != 0) {
+				if (igualNombre.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
+					// Se hace para evitar el error de concurrencia con los consecutivos automaticos
+					if (consecutive != null && !consecutive.getManual()) {
+						codigoNuevo = asignateConsecutive(pedido, consecutive.getLlaveTabla(), null);
+						return validateDoubleCodeIdActive(pedido, codigoNuevo, consecutive);
+					} else {
 						DocumentoPlantillaDTO plantilla = documentoPlantillaService.consultaXId(pedido.getPlantilla());
 						throw new ServerException("Ya existe un " + plantilla.getNombre() + " con el mismo codigo ("
 								+ igualNombre.getNombre() + "). Creado el "
@@ -722,6 +737,7 @@ public class CallDocumentCRUD {
 				}
 			}
 		}
+		return codigoNuevo;
 	}
 
 	private List<PedidoVentaCaracteristicaDTO> saveInternalFields(PedidoVentaDTO dto, String token)
@@ -798,7 +814,8 @@ public class CallDocumentCRUD {
 			bodegaService.crearDesdeDocumento(dto);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
-			homologateService.createFromDocument(dto, Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor());
+			homologateService.createFromDocument(dto,
+					Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor());
 	}
 
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
@@ -918,7 +935,7 @@ public class CallDocumentCRUD {
 				} else {
 					usrActualizar.setCorreo(usr.getCorreo());
 				}
-				if (usrPhone != null){
+				if (usrPhone != null) {
 					usrActualizar.setTelefono(usrPhone);
 				} else {
 					usrActualizar.setTelefono(usr.getTelefono());

@@ -192,12 +192,17 @@ public class CallManageTransition {
 		case ProcesoEstadoDTO.TIPO_API:
 			respuesta = executeAPI(dto.getEstadoLLegada(), expedienteDTO, documentoDTO, token,
 					documentRecentCreateInTransition);
-			// Por si siguen decisiones
-			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
-					relacionAnterior, token, transaccion,
-					(previousStep == null) ? dto.getEstadoLlegadaNombre()
-							: previousStep + "->" + dto.getEstadoLlegadaNombre(),
-					userID, documentRecentCreateInTransition, locationTransition);
+			try {
+				// Por si siguen decisiones
+				respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
+						relacionAnterior, token, transaccion,
+						(previousStep == null) ? dto.getEstadoLlegadaNombre()
+								: previousStep + "->" + dto.getEstadoLlegadaNombre(),
+						userID, documentRecentCreateInTransition, locationTransition);	
+			} catch (Exception e) {
+				CallDocumentCommons.addMessageError(documentoDTO, e.getMessage());
+			}
+			
 			break;
 		default:
 			// No entiendo el motivo pero este update se tiene que dejar aqui

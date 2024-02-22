@@ -63,8 +63,9 @@ public class CallBPM {
 		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
 				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token);
-				if (iField.getDocumentsToBPM().getMessages()!=null) {
-					if(document.getMessages()==null) document.setMessages(new ArrayList<>());
+				if (iField.getDocumentsToBPM()!=null && iField.getDocumentsToBPM().getMessages() != null) {
+					if (document.getMessages() == null)
+						document.setMessages(new ArrayList<>());
 					document.getMessages().addAll(iField.getDocumentsToBPM().getMessages());
 				}
 			}
@@ -324,8 +325,8 @@ public class CallBPM {
 		return caminosValidados;
 	}
 
-	private ProcesoTransicionDTO consultarTransicion(String plantilla, String estadoPartida, String estadoLlegada, String documentName)
-			throws ServerException {
+	private ProcesoTransicionDTO consultarTransicion(String plantilla, String estadoPartida, String estadoLlegada,
+			String documentName) throws ServerException {
 		// Consulto la transicion del documento
 		ProcesoTransicionFilterDTO transicion = new ProcesoTransicionFilterDTO();
 		transicion.setPlantilla(plantilla);
@@ -337,7 +338,8 @@ public class CallBPM {
 			return null;// throw new ServerException("Existen documentos sin transicion para gestionar."
 						// + procesoDTO.getNombre());
 		if (transiciones.size() > 1) {
-			String message = "Existen muchas transiciones que cumplen con las condiciones del expediente "+documentName+".\n";
+			String message = "Existen muchas transiciones que cumplen con las condiciones del expediente "
+					+ documentName + ".\n";
 			message = message.concat("Plantilla : " + transiciones.get(0).getPlantillaNombre() + "\n");
 			if (estadoPartida == null) {
 				message = message.concat("Estado Partida : NULL");
@@ -353,98 +355,105 @@ public class CallBPM {
 
 	private PedidoVentaCaracteristicaDTO administrarExpedientes(PedidoVentaCaracteristicaDTO pCampo,
 			PedidoVentaDTO updaterDTO, boolean modificacion, String token) throws ServerException {
-		if (pCampo.getExpedientes() != null && !pCampo.getExpedientes().isEmpty()) {
-			List<PedidoVentaDTO> activos = new ArrayList<PedidoVentaDTO>();
-			HashMap<String, String> hmap = new HashMap<String, String>();
-			String maquinaEstados;
-			for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
-				if (!hmap.containsKey(procesoDTO.getPlantilla())) {
-					hmap.put(procesoDTO.getPlantilla(),
-							expedienteTransicionService.consultarProceso(procesoDTO.getPlantilla()));
-				}
-				maquinaEstados = hmap.get(procesoDTO.getPlantilla());
-				if (procesoDTO.getEstado() == null) {
-					// Lo empece en documentos con maquina de estados y sin maquina de estados
-					// La idea es que no toque hacer bpm para que modifique otro documento
-					// Esto lo tuve que hacer en logimax para un cilo que se generaba de
-					modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
-					if (maquinaEstados != null) {
-						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-								Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
-							System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
-									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
-							List<String> caminosGestionar = getCaminos(pCampo);
-							List<String> documentosGestionados = new ArrayList<String>();
-							documentosGestionados.add(pCampo.getDocumento());
-							BigDecimal saldoDoc = null;
-							// Me sucedio el probelma de validar lso saldos de un documento cuando son
-							// multiples
-							if (pCampo.getExpedientes().size() > 1) {
-								if (procesoDTO.getDinero() != null)
-									saldoDoc = procesoDTO.getDinero().getSaldo();
-							} else {
-								if (updaterDTO.getDinero() != null)
-									saldoDoc = updaterDTO.getDinero().getValorTotal();
-							}
 
-							gestionarExpedienteDependientes(procesoDTO, updaterDTO, token, saldoDoc,
-									new ArrayList<String>(), caminosGestionar, documentosGestionados,
-									pCampo.getTransaccionRegistro(), !modificacion);
-						} else {
-							// Esto algun día lo voy a unir con el modificar
-							if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-									Propiedades.PROCESO_DIVISION) != null) {
-								System.out.format("\n[%s (%s) - %s] Dividir documento...... %s",
-										pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-										pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
-								dividirDocumento(procesoDTO, updaterDTO, token, pCampo.getTransaccionRegistro());
-								// Lo coloco aqui porque se relacionaba todo
-								relacionarGestor(procesoDTO, updaterDTO, "Dividir documento", token);
-							}
-						}
-					} else {
-						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-								Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
-							String usuarioToken = (token == null) ? null : propiedadService.getUserFlex(token);
-							PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
-									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
-							if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
-								procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
-								saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO,
-										updaterDTO, token);
-								relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
-							}
-						}
-					}
+		if (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty())
+			return pCampo;
+
+		List<PedidoVentaDTO> activos = new ArrayList<PedidoVentaDTO>();
+		HashMap<String, String> hmap = new HashMap<String, String>();
+		String maquinaEstados;
+		for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
+			if (!hmap.containsKey(procesoDTO.getPlantilla())) {
+				hmap.put(procesoDTO.getPlantilla(),
+						expedienteTransicionService.consultarProceso(procesoDTO.getPlantilla()));
+			}
+			maquinaEstados = hmap.get(procesoDTO.getPlantilla());
+			if (procesoDTO.getEstado() == null) {
+				// Lo empece en documentos con maquina de estados y sin maquina de estados
+				// La idea es que no toque hacer bpm para que modifique otro documento
+				// Esto lo tuve que hacer en logimax para un cilo que se generaba de
+				modificacion = modificarDocumentoPrincipal(pCampo, procesoDTO, token);
+				if (maquinaEstados != null) {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-							Propiedades.PROCESO_GESTIONAR_ESTADOS) == null) {
-						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-								Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL) != null) {
-							System.out.format("\n[%s (%s) - %s] Incluir traza..... %s",
+							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
+						System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
+								pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
+						List<String> caminosGestionar = getCaminos(pCampo);
+						List<String> documentosGestionados = new ArrayList<String>();
+						documentosGestionados.add(pCampo.getDocumento());
+						BigDecimal saldoDoc = null;
+						// Me sucedio el probelma de validar lso saldos de un documento cuando son
+						// multiples
+						if (pCampo.getExpedientes().size() > 1) {
+							if (procesoDTO.getDinero() != null)
+								saldoDoc = procesoDTO.getDinero().getSaldo();
+						} else {
+							if (updaterDTO.getDinero() != null)
+								saldoDoc = updaterDTO.getDinero().getValorTotal();
+						}
+
+						gestionarExpedienteDependientes(procesoDTO, updaterDTO, token, saldoDoc,
+								new ArrayList<String>(), caminosGestionar, documentosGestionados,
+								pCampo.getTransaccionRegistro(), !modificacion);
+					} else {
+						// Esto algun día lo voy a unir con el modificar
+						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION) != null) {
+							System.out.format("\n[%s (%s) - %s] Dividir documento...... %s",
 									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
 									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
-							relacionarGestor(procesoDTO, updaterDTO, null, token);
+							dividirDocumento(procesoDTO, updaterDTO, token, pCampo.getTransaccionRegistro());
+							// Lo coloco aqui porque se relacionaba todo
+							relacionarGestor(procesoDTO, updaterDTO, "Dividir documento", token);
+						} else {
+							// Ya que gestionando bpm no se hizo nada lo quito
+							pCampo.setDocumentsToBPM(null);
 						}
 					}
-
-					activos.add(procesoDTO);
 				} else {
-					if (procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-						// Si tenia permisos, inactivo esos permisos
-						if (maquinaEstados != null) {
-							// BigDecimal saldoDoc = null;
-							// if(updaterDTO.getDinero()!=null) saldoDoc =
-							// updaterDTO.getDinero().getSaldo();
-							List<String> caminosGestionar = getCaminos(pCampo);
-							revertirExpedienteDependiente(procesoDTO, updaterDTO, token, caminosGestionar, true);
+					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
+						String usuarioToken = (token == null) ? null : propiedadService.getUserFlex(token);
+						PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+								procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
+						if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
+							procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
+							saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO, updaterDTO,
+									token);
+							relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
 						}
-					} else {
-						activos.add(procesoDTO);
+					}else {
+						// Ya que gestionando bpm no se hizo nada lo quito
+						pCampo.setDocumentsToBPM(null);
 					}
+				}
+				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS) == null) {
+					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+							Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL) != null) {
+						System.out.format("\n[%s (%s) - %s] Incluir traza..... %s",
+								pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
+						relacionarGestor(procesoDTO, updaterDTO, null, token);
+					}
+				}
+
+				activos.add(procesoDTO);
+			} else {
+				if (procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
+					// Si tenia permisos, inactivo esos permisos
+					if (maquinaEstados != null) {
+						// BigDecimal saldoDoc = null;
+						// if(updaterDTO.getDinero()!=null) saldoDoc =
+						// updaterDTO.getDinero().getSaldo();
+						List<String> caminosGestionar = getCaminos(pCampo);
+						revertirExpedienteDependiente(procesoDTO, updaterDTO, token, caminosGestionar, true);
+					}
+				} else {
+					activos.add(procesoDTO);
 				}
 			}
 		}
+
 		return pCampo;
 	}
 
@@ -461,26 +470,22 @@ public class CallBPM {
 				relacionCargueNuevo.setCampoMaestro(relacion.getCampoMaestro());
 				relacionCargueNuevo.setExpedienteDetalle(nuevo.getLlaveTabla());
 				relacionCargueNuevo.setTransaccionRegistro(transaccion);
-				//Esto lo borre en las devoluciones parciales de bbx
-				/*String valorTomar = campoService
-						.valueFieldProcessMultipleToPartialDivideDocument(relacion.getCampoMaestro());
-				if (valorTomar != null) {
-					if (valorTomar.compareTo("2") == 0) {
-						if (nuevo.getDinero() != null)
-							relacionCargueNuevo.setValor(nuevo.getDinero().getSaldo());
-						if (nuevo.getDinero() != null) {
-							relacion.setValor(anterior.getDinero().getSaldo());
-							relacionExpedienteService.update(relacion);
-						}
-					} else {// Aqui falta que lo tome de la caracteristica
-						if (nuevo.getDinero() != null)
-							relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
-						if (nuevo.getDinero() != null) {
-							relacion.setValor(anterior.getDinero().getValorTotal());
-							relacionExpedienteService.update(relacion);
-						}
-					}
-				}*/
+				// Esto lo borre en las devoluciones parciales de bbx
+				/*
+				 * String valorTomar = campoService
+				 * .valueFieldProcessMultipleToPartialDivideDocument(relacion.getCampoMaestro())
+				 * ; if (valorTomar != null) { if (valorTomar.compareTo("2") == 0) { if
+				 * (nuevo.getDinero() != null)
+				 * relacionCargueNuevo.setValor(nuevo.getDinero().getSaldo()); if
+				 * (nuevo.getDinero() != null) {
+				 * relacion.setValor(anterior.getDinero().getSaldo());
+				 * relacionExpedienteService.update(relacion); } } else {// Aqui falta que lo
+				 * tome de la caracteristica if (nuevo.getDinero() != null)
+				 * relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal()); if
+				 * (nuevo.getDinero() != null) {
+				 * relacion.setValor(anterior.getDinero().getValorTotal());
+				 * relacionExpedienteService.update(relacion); } } }
+				 */
 				if (nuevo.getDinero() != null) {
 					relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
 					relacion.setValor(anterior.getDinero().getValorTotal().subtract(nuevo.getDinero().getValorTotal()));
