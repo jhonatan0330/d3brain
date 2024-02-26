@@ -699,15 +699,6 @@ public class FullControllerDTO {
 	}
 	
 
-	@PostMapping(value="/listarCargaDocumentoPlantillaCaracteristica")
-	public DocumentoPlantillaCaracteristicaDTO listarCargaDocumentoPlantillaCaracteristica(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO dto)throws FlexException {
-		try {
-			return documentoPlantillaCaracteristicaService.listarCarga(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	@Autowired private PedidoVentaSvc pedidoVentaService;
 	
 	@PostMapping(value="/consultaXIdPedidoVenta")

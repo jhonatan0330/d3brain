@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoCaracteristicaSvc;
@@ -132,9 +133,13 @@ public class DocumentoPlantillaCaracteristicaSvc
 				dto.getSecurityToken());
 		List<PedidoVentaDTO> documentAproval = new ArrayList<>();
 		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
-			String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(), iDoc.getNombre(), dtoCarga);
 			PedidoVentaDTO addItem = new PedidoVentaDTO();
-			addItem.setLlaveTabla(keyOfDocument);
+			try {
+				String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(), iDoc.getNombre(), dtoCarga);
+				addItem.setLlaveTabla(keyOfDocument);
+			} catch (Exception e) {
+				CallDocumentCommons.addMessageError(addItem, e.getMessage());
+			}
 			addItem.setNombre(iDoc.getNombre());
 			documentAproval.add(addItem);
 		}
