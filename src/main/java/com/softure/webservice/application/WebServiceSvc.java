@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
@@ -89,7 +90,12 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		// END WebService_guardar
 	}
 
-	public List<WebServiceDTO> getFullToSynchronize(List<String> process) {
+	public List<WebServiceDTO> getFullToSynchronize(List<String> process) throws ServerException {
+		if(process ==null || process.isEmpty()) {
+			WebServiceFilterDTO filter  = new WebServiceFilterDTO();
+			filter.setEstado(SharedConstants.STATE_ACTIVE);
+			return listarConsulta(filter);
+		} 
 		return webServiceMapper.getFullToSynchronize(process);
 	}
 

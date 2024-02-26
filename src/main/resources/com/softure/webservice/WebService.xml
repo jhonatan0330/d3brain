@@ -116,51 +116,51 @@
 		<include refid="whereWebServicePrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleWebServiceFragment">
-		select
-			cwbs_llave as  llaveTabla
-			,cwbs_nombre as  nombre
-			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
-			,cwbs_estado as estado
-		from webservice_wbsp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="WebServiceDTO">
-		<include refid="selectSimpleWebServiceFragment" />
-		<include refid="whereWebServiceFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="WebServiceDTO">
-		<include refid="selectSimpleWebServiceFragment" />
-		<include refid="whereWebServiceFragment" />
-		order by cwbs_nombre 
-		<include refid="paginationWebServiceFragment" />
-	</select>
-	
-
 	<select id="getFullToSynchronize" resultType="WebServiceDTO">
-		select distinct
+		select -- APIs Estados
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
 			,cwbs_template as  template
 			,cwbs_url as  url
-		from webservice_wbsp a
-		<if test="process!=null">
-		inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = cwbs_llave)
-		left join procesoestado_pesp pes on (pes.cpes_llave = pp.cppd_campo and pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
-		left join documentoplantilla_dplp dd on (dd.cdpl_llave = pp.cppd_campo and dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>))
-		</if>
-		where cwbs_estado = 'A'
-		<if test="process!=null">and (
-			pes.cpes_llave is not null or dd.cdpl_llave is not null
-			or (cppd_propiedadvalor= 'PROP_195') --Creo que falta un filtro mas pero funciona por el momento
-		)</if>
+		from procesoestado_pesp pes 
+			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
+			inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
+		where pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>) 
+		union
+		select -- APIs PLantillas
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
+			,cwbs_template as  template
+			,cwbs_url as  url
+		from documentoplantilla_dplp dd
+			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
+			inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
+		where dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+		union
+		select -- APIs Estados
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
+			,cwbs_template as  template
+			,cwbs_url as  url
+		from procesoestado_pesp pes 
+			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
+			inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
+			inner join webservice_wbsp on (cwbs_llave = pp2.cppd_valor and  cwbs_estado = 'A')
+		where pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+		union
+		select -- APIs PLantillas
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
+			,cwbs_template as  template
+			,cwbs_url as  url
+		from documentoplantilla_dplp dd
+			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
+			inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
+			inner join webservice_wbsp on (cwbs_llave = pp2.cppd_valor and  cwbs_estado = 'A')
+		where dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
 	</select>
-
-<!--// BEGIN region script-->
-<!--// END region script-->
-
 </mapper>
