@@ -37,4 +37,9 @@ public class ConfigurationController {
 	private FileVO loadConfiguration(@RequestHeader("Authorization") String token,@RequestBody FileVO file)throws ServerException  {
 		return importService.call(token, file);
 	}
+	
+	@PostMapping("compare")
+	private FileVO compare(@RequestHeader("Authorization") String token,@RequestBody FileVO file)throws ServerException  {
+		return importService.compare(token, file);
+	}
 }

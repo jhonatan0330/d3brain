@@ -20,10 +20,13 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class SynchronizeProcessService {
 
-	@Autowired private ProcesoSvc processService;
-	@Autowired private SynchronizePropertiesService propertiesSynchronizeService;
+	@Autowired
+	private ProcesoSvc processService;
+	@Autowired
+	private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize(null);
 
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
@@ -32,35 +35,41 @@ public class SynchronizeProcessService {
 			for (ProcesoDTO remoteProcess : processRemote) {
 				ProcesoDTO local = findProcessInList(localProcessToErase, remoteProcess.getCodigo());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					localProcessToErase.remove(local);
-					log.info("EXIST " +local.getCodigo() + " - " + local.getNombre());
+					log.info("EXIST PROCESS " + local.getCodigo() + " - " + local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log, compare);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), local.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());
-					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());
-				}
-				else
-				{
-					ProcesoDTO newProcess = new ProcesoDTO();
-					newProcess.setCodigo(remoteProcess.getCodigo());
-					newProcess.setImagen(remoteProcess.getImagen());
-					//newProcess.setMacroproceso(remoteProcess.getMacroproceso());
-					newProcess.setNombre(remoteProcess.getNombre());
-					newProcess.setObjetivo(remoteProcess.getObjetivo());
-					newProcess.setPrioridad(remoteProcess.getPrioridad());
-					newProcess.setTipo(remoteProcess.getTipo());
-					local = processService.save(newProcess);
-					log.info("new " + local.getCodigo() + " - " + local.getNombre());
-					propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log);
+					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(),
+							local.getLlaveTabla());
+				} else {
+					if (compare) {
+						log.error("COMPARE NOT EXIST PROCESS " + remoteProcess.getCodigo() + " - " + remoteProcess.getNombre());
+					} else {
+						ProcesoDTO newProcess = new ProcesoDTO();
+						newProcess.setCodigo(remoteProcess.getCodigo());
+						newProcess.setImagen(remoteProcess.getImagen());
+						// newProcess.setMacroproceso(remoteProcess.getMacroproceso());
+						newProcess.setNombre(remoteProcess.getNombre());
+						newProcess.setObjetivo(remoteProcess.getObjetivo());
+						newProcess.setPrioridad(remoteProcess.getPrioridad());
+						newProcess.setTipo(remoteProcess.getTipo());
+						local = processService.save(newProcess);
+						log.info("new process" + local.getCodigo() + " - " + local.getNombre());
+						propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
+								PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log, compare);
+					}
+
 				}
 				if (local != null) {
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), local.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());
-					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());
-					changeProcessInTemplates(hierarchy.getTemplates(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());	
+					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(),
+							local.getLlaveTabla());
+					changeProcessInTemplates(hierarchy.getTemplates(), remoteProcess.getLlaveTabla(),
+							local.getLlaveTabla());
 				}
 			}
 		}
@@ -70,7 +79,7 @@ public class SynchronizeProcessService {
 
 	private void synchronizeMacroprocessField(List<ProcesoDTO> processRemote) throws ServerException {
 		for (ProcesoDTO remote : processRemote) {
-			if(remote.getMacroproceso()!=null) {
+			if (remote.getMacroproceso() != null) {
 				ProcesoFilterDTO filter = new ProcesoFilterDTO();
 				filter.setCodigo(remote.getCodigo());
 				filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -78,63 +87,66 @@ public class SynchronizeProcessService {
 				try {
 					db = processService.consultaUnica(filter);
 				} catch (Exception e) {
-					throw new ServerException("Corrige los codigos de los procesos no pueden ser duplicados, el codigo " +remote.getCodigo() + " esta duplicado");
-				}	
-				db.setMacroproceso(remote.getMacroproceso());
-				processService.update(db);
+					throw new ServerException("Corrige los codigos de los procesos no pueden ser duplicados, el codigo "
+							+ remote.getCodigo() + " esta duplicado");
+				}
+				if(db!=null) {
+					db.setMacroproceso(remote.getMacroproceso());
+					processService.update(db);	
+				}
 			}
 		}
 	}
 
 	private void changeProcessInTemplates(List<DocumentoPlantillaDTO> array, String remote, String local) {
 		for (DocumentoPlantillaDTO item : array) {
-			if(item.getProceso()!=null && item.getProceso().compareTo(remote)==0) {
+			if (item.getProceso() != null && item.getProceso().compareTo(remote) == 0) {
 				item.setProceso(local);
 			}
 		}
 	}
-	
+
 	private void changeMacroProcesoField(List<ProcesoDTO> processRemote, String remote, String local) {
 		for (ProcesoDTO remoteProcess : processRemote) {
-			if(remoteProcess.getMacroproceso()!=null && remoteProcess.getMacroproceso().compareTo(remote)==0) {
+			if (remoteProcess.getMacroproceso() != null && remoteProcess.getMacroproceso().compareTo(remote) == 0) {
 				remoteProcess.setMacroproceso(local);
 			}
 		}
 	}
-	
+
 	private void changeProcessInStates(List<ProcesoEstadoDTO> array, String remote, String local) {
-		if(array ==null) return;
+		if (array == null)
+			return;
 		for (ProcesoEstadoDTO remoteProcess : array) {
-			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
-				remoteProcess.setProceso(local);
-			}
-		}
-	}
-	
-	private void changeProcessInTransition(List<ProcesoTransicionDTO> array, String remote, String local) {
-		if(array ==null) return;
-		for (ProcesoTransicionDTO remoteProcess : array) {
-			if(remoteProcess.getProceso()!=null && remoteProcess.getProceso().compareTo(remote)==0) {
+			if (remoteProcess.getProceso() != null && remoteProcess.getProceso().compareTo(remote) == 0) {
 				remoteProcess.setProceso(local);
 			}
 		}
 	}
 
-	/*public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize();
-		List<ProcesoDTO> processRemote = hierarchy.getProcess();
-		if (processRemote != null && !processRemote.isEmpty()) {
-			for (ProcesoDTO remoteProcess : processRemote) {
-				ProcesoDTO localProcess = findProcessInList(localProcessToErase, remoteProcess.getCodigo());
-				// Creo el nuevo proceso
-				if (localProcess!=null){
-					localProcessToErase.remove(localProcess);
-					propertiesSynchronizeService.call(hierarchy.getProperties(), remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, localProcess.getLlaveTabla(), token);
-				}
+	private void changeProcessInTransition(List<ProcesoTransicionDTO> array, String remote, String local) {
+		if (array == null)
+			return;
+		for (ProcesoTransicionDTO remoteProcess : array) {
+			if (remoteProcess.getProceso() != null && remoteProcess.getProceso().compareTo(remote) == 0) {
+				remoteProcess.setProceso(local);
 			}
 		}
-	}*/
+	}
+
+	/*
+	 * public void callAfterRol(String token, HierarchyExporterDTO hierarchy) throws
+	 * ServerException { List<ProcesoDTO> localProcessToErase =
+	 * processService.getFullToSynchronize(); List<ProcesoDTO> processRemote =
+	 * hierarchy.getProcess(); if (processRemote != null &&
+	 * !processRemote.isEmpty()) { for (ProcesoDTO remoteProcess : processRemote) {
+	 * ProcesoDTO localProcess = findProcessInList(localProcessToErase,
+	 * remoteProcess.getCodigo()); // Creo el nuevo proceso if (localProcess!=null){
+	 * localProcessToErase.remove(localProcess);
+	 * propertiesSynchronizeService.call(hierarchy.getProperties(),
+	 * remoteProcess.getLlaveTabla(), PropiedadValorDefinidoDTO.PROCESO,
+	 * localProcess.getLlaveTabla(), token); } } } }
+	 */
 
 	private ProcesoDTO findProcessInList(List<ProcesoDTO> array, String code) {
 		for (ProcesoDTO localProcess : array) {

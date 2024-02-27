@@ -135,7 +135,7 @@ public class TipoProceso {
 							if (pCampo.getValorOpcion() == null)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " obtiene "
 										+ result.getCampoDTO().getDocumentos().size()
-										+ " resultados que concuerdan con el criterio : " + pCampo.getValorText());
+										+ " resultados que concuerdan con el criterio : " + pCampo.getValorText() + ", tu campo de busqueda debe ser la descripcion o el nombre");
 
 						}
 					}

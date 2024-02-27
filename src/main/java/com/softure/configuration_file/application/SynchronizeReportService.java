@@ -15,77 +15,86 @@ import com.softure.report.domain.ReporteBaseDTO;
 @Service
 public class SynchronizeReportService {
 
-	@Autowired ReporteBaseSvc reportService;
-	@Autowired SynchronizePropertiesService propertiesSynchronizeService;
-	
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	@Autowired
+	ReporteBaseSvc reportService;
+	@Autowired
+	SynchronizePropertiesService propertiesSynchronizeService;
+
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
-		
+
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
+				log.setRoot("SynchronizeReport " + remote.getNombre());
 				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					localListToErase.remove(local);
-					log.info("EXIST REPORT" + remote.getCodigo() + " - " + remote.getNombre());
-				}
-				else
-				{
-					ReporteBaseDTO newReport = new ReporteBaseDTO();
-					newReport.setPlantilla(remote.getPlantilla());
-					newReport.setCodigo(remote.getCodigo());
-					newReport.setDescripcion(remote.getDescripcion());
-					newReport.setSoloExistente(remote.getSoloExistente());
-					newReport.setNombre(remote.getNombre());
-					newReport.setVariables(remote.getVariables());
-					try {
-						newReport = reportService.save(newReport);
-						log.info("NEW REPORT" + remote.getCodigo() + " - " + remote.getNombre());
-					} catch (Exception e) {
-						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					log.info("EXIST REPORT " + remote.getCodigo() + " - " + remote.getNombre());
+				} else {
+					if (compare) {
+						log.error("COMPARE NOT EXIST REPORT " + remote.getCodigo() + " - " + remote.getNombre());
+					} else {
+						ReporteBaseDTO newReport = new ReporteBaseDTO();
+						newReport.setPlantilla(remote.getPlantilla());
+						newReport.setCodigo(remote.getCodigo());
+						newReport.setDescripcion(remote.getDescripcion());
+						newReport.setSoloExistente(remote.getSoloExistente());
+						newReport.setNombre(remote.getNombre());
+						newReport.setVariables(remote.getVariables());
+						try {
+							newReport = reportService.save(newReport);
+							log.info("NEW REPORT " + remote.getCodigo() + " - " + remote.getNombre());
+						} catch (Exception e) {
+							log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+						}
 					}
+
 				}
 			}
 		}
-		callAfterCreateAll(token, hierarchy, log);
+		callAfterCreateAll(token, hierarchy, log, compare);
 	}
-	
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+
+	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
+			boolean compare) throws ServerException {
 		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
 				ReporteBaseDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log, compare);
 				}
 			}
 		}
 	}
 
 	/*
-	private List<ReporteBaseDTO> getReportsFromTemplate(List<ReporteBaseDTO> fullToSynchronize, String template) {
-		if(fullToSynchronize ==null || fullToSynchronize.isEmpty())	return null;
-		return fullToSynchronize.stream()
-			      .filter(report -> (report.getPlantilla().compareTo(template)==0))
-			      .collect(Collectors.toList());
-	}*/
+	 * private List<ReporteBaseDTO> getReportsFromTemplate(List<ReporteBaseDTO>
+	 * fullToSynchronize, String template) { if(fullToSynchronize ==null ||
+	 * fullToSynchronize.isEmpty()) return null; return fullToSynchronize.stream()
+	 * .filter(report -> (report.getPlantilla().compareTo(template)==0))
+	 * .collect(Collectors.toList()); }
+	 */
 
-	public void callAfterRol(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	public void callAfterRol(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<ReporteBaseDTO> localToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
 				ReporteBaseDTO local = findTemplateInList(localToErase, remote.getCodigo(), remote.getNombre());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					localToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log, compare);
 				}
 			}
 		}

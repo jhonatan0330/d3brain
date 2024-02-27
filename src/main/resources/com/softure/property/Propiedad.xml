@@ -99,6 +99,12 @@
 			<if test="bloqueo!=null">
 				and cppd_bloqueo = #{bloqueo}
 			</if>
+			<if test="motivo!=null">
+				and cppd_motivo = #{motivo}
+			</if>
+			<if test="valor!=null">
+				and cppd_valor = #{valor}
+			</if>
 			<if test="filtroParametro!=null">
 				and ((select upper(cpvd_nombre) from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) like upper('%' || #{filtroParametro} || '%'))
 			</if>

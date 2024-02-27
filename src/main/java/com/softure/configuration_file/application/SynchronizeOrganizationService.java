@@ -18,14 +18,16 @@ public class SynchronizeOrganizationService {
 	@Autowired
 	SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
-		if(hierarchy.getOrganization()== null) return;
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
+		if (hierarchy.getOrganization() == null)
+			return;
 		log.setRoot("SynchronizeOrganization");
 		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipalPropiedades(null);
 		// hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
 		propertiesSynchronizeService.call(hierarchy, mainOrganization.getLlaveTabla(),
-				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), token, log);
+				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), token, log,
+				compare);
 	}
-
 
 }

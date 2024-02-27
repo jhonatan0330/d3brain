@@ -33,20 +33,34 @@ import com.softure.webservice.application.WebServiceSvc;
 @Service
 public class ExportConfigurationFileService {
 
-	@Autowired	private PropiedadValorDefinidoSvc typePropertiesService;
-	@Autowired	private OrganizacionSvc organizationService;
-	@Autowired	private UploadSvc uploadService;
-	@Autowired	private PropiedadSvc propertyService;
-	@Autowired	private RelacionInternaSvc relationService;
-	@Autowired  private RolAccesoSvc rolService;
-	@Autowired	private ProcesoSvc procesoService;
-	@Autowired	private ProcesoEstadoSvc stateService;
-	@Autowired	private ProcesoTransicionSvc transitionService;
-	@Autowired	private DocumentoPlantillaSvc templateService;
-	@Autowired	private ReporteBaseSvc reportService;
-	@Autowired	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired	private MensajePlantillaCorreoSvc messageService;
-	@Autowired	private WebServiceSvc apiService;
+	@Autowired
+	private PropiedadValorDefinidoSvc typePropertiesService;
+	@Autowired
+	private OrganizacionSvc organizationService;
+	@Autowired
+	private UploadSvc uploadService;
+	@Autowired
+	private PropiedadSvc propertyService;
+	@Autowired
+	private RelacionInternaSvc relationService;
+	@Autowired
+	private RolAccesoSvc rolService;
+	@Autowired
+	private ProcesoSvc procesoService;
+	@Autowired
+	private ProcesoEstadoSvc stateService;
+	@Autowired
+	private ProcesoTransicionSvc transitionService;
+	@Autowired
+	private DocumentoPlantillaSvc templateService;
+	@Autowired
+	private ReporteBaseSvc reportService;
+	@Autowired
+	private DocumentoPlantillaCaracteristicaSvc fieldService;
+	@Autowired
+	private MensajePlantillaCorreoSvc messageService;
+	@Autowired
+	private WebServiceSvc apiService;
 
 	public FileVO call(String token) throws ServerException {
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
@@ -63,24 +77,25 @@ public class ExportConfigurationFileService {
 		hierarchy.setRoles(rolService.getFullToSynchronize(null));
 		hierarchy.setReports(reportService.getFullToSynchronize(null));
 		hierarchy.setFields(fieldService.getFullToSynchronize(null));
-		
+
 		return uploadFile(token, hierarchy);
 	}
-	
+
 	public FileVO call(String token, ExportListRequest modules) throws ServerException {
-		
-		if(modules ==null || modules.getModulesCode()==null || modules.getModulesCode().isEmpty()) throw new ServerException("No hay modulos"); 
+
+		if (modules == null || modules.getModulesCode() == null || modules.getModulesCode().isEmpty())
+			throw new ServerException("No hay modulos");
 		List<String> processToInclude = new ArrayList<>();
-		
+
 		for (String iModule : modules.getModulesCode()) {
 			ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
 			filterProcess.setEstado(SharedConstants.STATE_ACTIVE);
 			filterProcess.setCodigo(iModule);
 			List<ProcesoDTO> processModule = procesoService.listarConsulta(filterProcess);
-			if(processModule!=null && !processModule.isEmpty())
-				processToInclude.addAll(getProcessFromMacro(processModule.get(0).getLlaveTabla()));	
+			if (processModule != null && !processModule.isEmpty())
+				processToInclude.addAll(getProcessFromMacro(processModule.get(0).getLlaveTabla()));
 		}
-		if(processToInclude.isEmpty())
+		if (processToInclude.isEmpty())
 			throw new ServerException("No se identifica un modulo con el codigos elegidos ");
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setMessages(messageService.getFullToSynchronize(processToInclude));
@@ -94,13 +109,13 @@ public class ExportConfigurationFileService {
 		hierarchy.setRoles(rolService.getFullToSynchronize(processToInclude));
 		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
 		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
-		
+
 		return uploadFile(token, hierarchy);
 	}
 
 	private FileVO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		FileVO result = new FileVO();
-		result.setUrl( uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "webservice"));
+		result.setUrl(uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "webservice"));
 		return result;
 	}
 
@@ -112,7 +127,6 @@ public class ExportConfigurationFileService {
 			throw new ServerException(e.getMessage());
 		}
 	}
-	
 
 	private List<String> getProcessFromMacro(String parentProcess) throws ServerException {
 		List<String> processToInclude = new ArrayList<>();
@@ -120,7 +134,7 @@ public class ExportConfigurationFileService {
 		filterProcess.setEstado(SharedConstants.STATE_ACTIVE);
 		filterProcess.setMacroproceso(parentProcess);
 		List<ProcesoDTO> processModule = procesoService.listarConsulta(filterProcess);
-		if(processModule!=null && !processModule.isEmpty()) {
+		if (processModule != null && !processModule.isEmpty()) {
 			for (ProcesoDTO procesoDTO : processModule) {
 				processToInclude.addAll(getProcessFromMacro(procesoDTO.getLlaveTabla()));
 				processToInclude.add(parentProcess);

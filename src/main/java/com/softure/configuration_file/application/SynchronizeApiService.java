@@ -15,10 +15,13 @@ import com.softure.webservice.domain.WebServiceDTO;
 @Service
 public class SynchronizeApiService {
 
-	@Autowired private WebServiceSvc apisService;
-	@Autowired private SynchronizePropertiesService propertiesSynchronizeService;
+	@Autowired
+	private WebServiceSvc apisService;
+	@Autowired
+	private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
 		if (remoteList != null && !remoteList.isEmpty()) {
@@ -26,45 +29,49 @@ public class SynchronizeApiService {
 			for (WebServiceDTO remote : remoteList) {
 				WebServiceDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					localListToErase.remove(local);
-					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
-				}
-				else
-				{
-					WebServiceDTO newType = new WebServiceDTO();
-					newType.setCodigo(remote.getCodigo());
-					newType.setNombre(remote.getNombre());
-					newType.setTemplate(remote.getTemplate());
-					newType.setUrl(remote.getUrl());
-					newType = apisService.save(newType);
-					log.info("NEW " +remote.getCodigo() + " - " + remote.getNombre());
+					log.info("EXIST API " + remote.getCodigo() + " - " + remote.getNombre());
+				} else {
+					if (compare) {
+						log.error("COMPARE NOT EXIST API " + remote.getCodigo() + " - " + remote.getNombre());
+					} else {
+						WebServiceDTO newType = new WebServiceDTO();
+						newType.setCodigo(remote.getCodigo());
+						newType.setNombre(remote.getNombre());
+						newType.setTemplate(remote.getTemplate());
+						newType.setUrl(remote.getUrl());
+						newType = apisService.save(newType);
+						log.info("NEW API " + remote.getCodigo() + " - " + remote.getNombre());
+					}
+
 				}
 			}
 		}
-		callAfterCreateAllTemplate(token, hierarchy, log);
+		callAfterCreateAllTemplate(token, hierarchy, log, compare);
 	}
-	
-	private void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+
+	private void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
+			boolean compare) throws ServerException {
 		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (WebServiceDTO remote : remoteList) {
 				WebServiceDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
-				if (local!=null){
+				if (local != null) {
 					log.setRoot("SynchronizeApi " + local.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.API_SERVICE, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.API_SERVICE, local.getLlaveTabla(), token, log, compare);
 				}
 			}
 		}
 	}
 
-
 	private WebServiceDTO findTemplateInList(List<WebServiceDTO> array, String code) {
-		if (array == null) return null;
+		if (array == null)
+			return null;
 		for (WebServiceDTO localProcess : array) {
 			if (localProcess != null && code.compareTo(localProcess.getCodigo()) == 0) {
 				return localProcess;
@@ -73,14 +80,13 @@ public class SynchronizeApiService {
 		return null;
 	}
 
-
 	/*
-	private void changePropertiesIdCode(List<PropiedadDTO> processRemote, String remote, String local) {
-		for (PropiedadDTO remoteProcess : processRemote) {
-			if(remoteProcess.getPropiedadValor()!=null && remoteProcess.getPropiedadValor().compareTo(remote)==0) {
-				remoteProcess.setPropiedadValor(local);
-			}
-		}
-		
-	}*/
+	 * private void changePropertiesIdCode(List<PropiedadDTO> processRemote, String
+	 * remote, String local) { for (PropiedadDTO remoteProcess : processRemote) {
+	 * if(remoteProcess.getPropiedadValor()!=null &&
+	 * remoteProcess.getPropiedadValor().compareTo(remote)==0) {
+	 * remoteProcess.setPropiedadValor(local); } }
+	 * 
+	 * }
+	 */
 }

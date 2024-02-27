@@ -15,41 +15,47 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class SynchronizeTypePropertiesService {
 
-	@Autowired private PropiedadValorDefinidoSvc typesService;
+	@Autowired
+	private PropiedadValorDefinidoSvc typesService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();
 		List<PropiedadValorDefinidoDTO> remoteList = hierarchy.getPropertyTypes();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeTypeProperties");
 			for (PropiedadValorDefinidoDTO remote : remoteList) {
 				PropiedadValorDefinidoDTO local = findTemplateInList(localListToErase, remote.getCodigo());
-				if (local!=null){
+				if (local != null) {
 					localListToErase.remove(local);
 					changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), local.getLlaveTabla());
 					log.info("EXIST " + remote.getCodigo());
-				}
-				else
-				{
-					PropiedadValorDefinidoDTO newType = new PropiedadValorDefinidoDTO();
-					newType.setCodigo(remote.getCodigo());
-					newType.setGrupo(remote.getGrupo());
-					newType.setIncluirPreloadOrigen(remote.getIncluirPreloadOrigen());
-					newType.setMultiple(remote.getMultiple());
-					newType.setNombre(remote.getNombre());
-					newType.setNecesitaDesarrollo(remote.getNecesitaDesarrollo());
-					newType.setOrigen(remote.getOrigen());
-					newType.setOrigenCategoria(remote.getOrigenCategoria());
-					newType.setPideFechas(remote.getPideFechas());
-					newType.setPideRol(remote.getPideRol());
-					newType.setPideTiempoBloqueo(remote.getPideTiempoBloqueo());
-					newType.setPideUsuario(remote.getPideUsuario());
-					newType.setPropiedadBoolean(remote.getPropiedadBoolean());
-					newType.setSolicitaMotivo(remote.getSolicitaMotivo());
-					newType.setTextOculto(remote.getTextOculto());
-					newType = typesService.save(newType);
-					changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(), newType.getLlaveTabla());
-					log.info("NEW " + remote.getCodigo());
+				} else {
+					if (compare) {
+						log.error("COMPARE NOT EXIST " + remote.getCodigo());
+					} else {
+						PropiedadValorDefinidoDTO newType = new PropiedadValorDefinidoDTO();
+						newType.setCodigo(remote.getCodigo());
+						newType.setGrupo(remote.getGrupo());
+						newType.setIncluirPreloadOrigen(remote.getIncluirPreloadOrigen());
+						newType.setMultiple(remote.getMultiple());
+						newType.setNombre(remote.getNombre());
+						newType.setNecesitaDesarrollo(remote.getNecesitaDesarrollo());
+						newType.setOrigen(remote.getOrigen());
+						newType.setOrigenCategoria(remote.getOrigenCategoria());
+						newType.setPideFechas(remote.getPideFechas());
+						newType.setPideRol(remote.getPideRol());
+						newType.setPideTiempoBloqueo(remote.getPideTiempoBloqueo());
+						newType.setPideUsuario(remote.getPideUsuario());
+						newType.setPropiedadBoolean(remote.getPropiedadBoolean());
+						newType.setSolicitaMotivo(remote.getSolicitaMotivo());
+						newType.setTextOculto(remote.getTextOculto());
+						newType = typesService.save(newType);
+						changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(),
+								newType.getLlaveTabla());
+						log.info("NEW " + remote.getCodigo());
+					}
+
 				}
 			}
 		}
@@ -66,10 +72,10 @@ public class SynchronizeTypePropertiesService {
 
 	private void changePropertiesIdCode(List<PropiedadDTO> processRemote, String remote, String local) {
 		for (PropiedadDTO remoteProcess : processRemote) {
-			if(remoteProcess.getPropiedadValor()!=null && remoteProcess.getPropiedadValor().compareTo(remote)==0) {
+			if (remoteProcess.getPropiedadValor() != null && remoteProcess.getPropiedadValor().compareTo(remote) == 0) {
 				remoteProcess.setPropiedadValor(local);
 			}
 		}
-		
+
 	}
 }

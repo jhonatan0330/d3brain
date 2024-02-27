@@ -41,6 +41,8 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private String usuarioNombre;
 	private String usuarioExcluyente;
 	private String usuarioExcluyenteNombre;
+	private String motivo;
+	private String valor;
 	private String bloqueo;
 
 	
@@ -262,6 +264,22 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	
 	public String getBloqueo() {
 		return bloqueo;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getValor() {
+		return valor;
+	}
+
+	public void setValor(String valor) {
+		this.valor = valor;
 	}
 	
 

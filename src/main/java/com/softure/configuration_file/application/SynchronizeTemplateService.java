@@ -28,40 +28,48 @@ public class SynchronizeTemplateService {
 	@Autowired
 	private SynchronizePropertiesService propertiesSynchronizeService;
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log) throws ServerException {
+	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeTemplateService");
 			for (DocumentoPlantillaDTO remote : remoteList) {
-				DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getProceso());
+				DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(),
+						remote.getProceso());
 				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
-					log.info("EXIST " + remote.getCodigo() + " - " + remote.getNombre());
+					log.info("EXIST TEMPLATE " + remote.getCodigo() + " - " + remote.getNombre());
 				} else {
-					DocumentoPlantillaDTO newProcess = new DocumentoPlantillaDTO();
-					newProcess.setCodigo(remote.getCodigo());
-					newProcess.setImagen(remote.getImagen());
-					newProcess.setProceso(remote.getProceso());
-					newProcess.setNombre(remote.getNombre());
-					newProcess.setObjetivo(remote.getObjetivo());
-					try {
-						local = templateService.save(newProcess);
-						log.info("NEW " + remote.getCodigo() + " - " + remote.getNombre());
-					} catch (Exception e) {
-						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					if (compare) {
+						log.error("COMPARE NOT EXIST TEMPLATE " + remote.getCodigo() + " - " + remote.getNombre());
+					} else {
+						DocumentoPlantillaDTO newProcess = new DocumentoPlantillaDTO();
+						newProcess.setCodigo(remote.getCodigo());
+						newProcess.setImagen(remote.getImagen());
+						newProcess.setProceso(remote.getProceso());
+						newProcess.setNombre(remote.getNombre());
+						newProcess.setObjetivo(remote.getObjetivo());
+						try {
+							local = templateService.save(newProcess);
+							log.info("NEW TEMPLATE " + remote.getCodigo() + " - " + remote.getNombre());
+						} catch (Exception e) {
+							log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+						}
 					}
+
 				}
-				if(local!=null) {
+				if (local != null) {
 					changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
-					changeTemplateInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(), local.getLlaveTabla());
-					changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());	
+					changeTemplateInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(),
+							local.getLlaveTabla());
+					changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
 				}
 			}
 		}
-		//Esto es para que se creen las transiciones
-		//callAfterCreateAllTemplate(token, hierarchy, log);
+		// Esto es para que se creen las transiciones
+		// callAfterCreateAllTemplate(token, hierarchy, log);
 	}
 
 	private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote, String local) {
@@ -88,22 +96,24 @@ public class SynchronizeTemplateService {
 		}
 	}
 
-	public void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log)
-			throws ServerException {
+	public void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
+			boolean compare) throws ServerException {
 		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
 		if (remoteList != null && !remoteList.isEmpty()) {
-			reportSynchronizeService.call(token, hierarchy, log);
+			reportSynchronizeService.call(token, hierarchy, log, compare);
 			for (DocumentoPlantillaDTO remote : remoteList) {
-				DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getProceso());
+				DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(),
+						remote.getProceso());
 				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
 					log.setRoot("SynchronizeTemplateServiceAfter " + local.getNombre());
-					fieldSynchronizeService.call(token, hierarchy, remote.getLlaveTabla(), local.getLlaveTabla(), log);
+					fieldSynchronizeService.call(token, hierarchy, remote.getLlaveTabla(), local.getLlaveTabla(), log,
+							compare);
 					log.setRoot("SynchronizeTemplateServiceAfter " + local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log, compare);
 					// synchronizeFieldReport(token, hierarchy, remote.getLlaveTabla(),
 					// local.getLlaveTabla(), log);
 				} else {
@@ -137,7 +147,7 @@ public class SynchronizeTemplateService {
 	}
 
 	public void callCreateRol(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propertiesToCreateRole,
-			LogConfigurationDTO log) throws ServerException {
+			LogConfigurationDTO log, boolean compare) throws ServerException {
 
 		if (propertiesToCreateRole == null || propertiesToCreateRole.isEmpty())
 			return;
@@ -149,17 +159,18 @@ public class SynchronizeTemplateService {
 		for (PropiedadDTO propertyRole : propertiesToCreateRole) {
 			for (DocumentoPlantillaDTO remote : remoteList) {
 				if (remote.getLlaveTabla().compareTo(propertyRole.getCampo()) == 0) {
-					DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(), remote.getProceso());
-					if(local!=null) {
+					DocumentoPlantillaDTO local = findTemplateInList(localListToErase, remote.getCodigo(),
+							remote.getProceso());
+					if (local != null) {
 						HierarchyExporterDTO hierarchyRole = new HierarchyExporterDTO();
 						hierarchyRole.setRelations(hierarchy.getRelations());
 						hierarchyRole.setProperties(propertiesToCreateRole);
 						propertiesSynchronizeService.call(hierarchyRole, remote.getLlaveTabla(),
-								PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log);	
-					}else {
+								PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log, compare);
+					} else {
 						log.error("NOT FIND TO ROLE" + remote.getCodigo() + "  - " + remote.getProceso());
 					}
-					
+
 				}
 			}
 		}

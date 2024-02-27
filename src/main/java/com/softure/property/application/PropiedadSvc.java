@@ -309,6 +309,23 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (!valorDefinido.getNecesitaDesarrollo())
 			dto.setFechaImplementacion(new Date());
+		if (valorDefinido.getMultiple()) {
+			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
+			existeFilter.setCampo(dto.getCampo());
+			existeFilter.setPropiedadValor(dto.getPropiedadValor());
+			existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
+			existeFilter.setRol(dto.getRol());
+			existeFilter.setValor(dto.getValor());
+			existeFilter.setRolExcluyente(dto.getRolExcluyente());
+			existeFilter.setUsuario(dto.getUsuario());
+			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
+			existeFilter.setMotivo(dto.getMotivo());
+			List<PropiedadDTO> existe = listarConsulta(existeFilter);
+			if (existe != null && existe.size()>1)
+				throw new ServerException(
+						"Cuando se repiten propiedades multiples se necesita tener un motivo que la describa "
+								+ existe.get(0).getNombre() + getLocationError(existe.get(0).getTipo(), existe.get(0).getCampo()));
+		}
 		if (valorDefinido.getSolicitaMotivo() && dto.getMotivo() == null)
 			throw new ServerException("La propiedad necesita tener motivo. \n" + valorDefinido.getNombre()
 					+ getLocationError(dto.getTipo(), dto.getCampo()));

@@ -23,7 +23,7 @@ public class SynchronizeTemplateFieldService {
 	SynchronizePropertiesService propertiesSynchronizeService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
-			LogConfigurationDTO log) throws ServerException {
+			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
 				fieldService.getFullToSynchronize(null), localTemplate);
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(),
@@ -36,29 +36,34 @@ public class SynchronizeTemplateFieldService {
 				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
-					log.info("EXIST " + remote.getNombre() + " (Cod: " + remote.getNombre() + ")");
+					log.info("EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
 				} else {
-					DocumentoPlantillaCaracteristicaDTO newField = new DocumentoPlantillaCaracteristicaDTO();
-					newField.setPlantilla(localTemplate);
-					newField.setCodigo(remote.getCodigo());
-					newField.setImagen(remote.getImagen());
-					newField.setFormato(remote.getFormato());
-					newField.setNombre(remote.getNombre());
-					newField.setObjetivo(remote.getObjetivo());
-					newField.setOrden(remote.getOrden());
-					try {
-						local = fieldService.save(newField);
-						log.info("NEW " + remote.getNombre() + " (Cod: " + remote.getNombre() + ")");
-					} catch (Exception e) {
-						log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+					if (compare) {
+						log.error("COMPARE NOT EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
+					} else {
+						DocumentoPlantillaCaracteristicaDTO newField = new DocumentoPlantillaCaracteristicaDTO();
+						newField.setPlantilla(localTemplate);
+						newField.setCodigo(remote.getCodigo());
+						newField.setImagen(remote.getImagen());
+						newField.setFormato(remote.getFormato());
+						newField.setNombre(remote.getNombre());
+						newField.setObjetivo(remote.getObjetivo());
+						newField.setOrden(remote.getOrden());
+						try {
+							local = fieldService.save(newField);
+							log.info("NEW FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
+						} catch (Exception e) {
+							log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+						}
 					}
+
 				}
 				if (local != null)
 					changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
 			}
 			log.setRoot(templateRoot);
 		}
-		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate, log);
+		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate, log, compare);
 	}
 
 	private void changeTemplateInRelations(List<RelacionInternaDTO> array, String remote, String local) {
@@ -70,7 +75,7 @@ public class SynchronizeTemplateFieldService {
 	}
 
 	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate,
-			String localTemplate, LogConfigurationDTO log) throws ServerException {
+			String localTemplate, LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
 				fieldService.getFullToSynchronize(null), localTemplate);
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(),
@@ -84,7 +89,7 @@ public class SynchronizeTemplateFieldService {
 					log.setRoot(templateRoot);
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log);
+							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log, compare);
 				}
 			}
 		}
