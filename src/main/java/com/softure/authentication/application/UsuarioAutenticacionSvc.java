@@ -390,7 +390,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
 			}
 
-			if (diasVigencia > 0 && diasVigencia <= 5
+			if (diasVigencia >= 0 && diasVigencia <= 5
 					&& usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0)
 				autenticacion.setMensaje(
 						"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
