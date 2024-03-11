@@ -859,6 +859,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.API_NEW_DOCUMENT:
 		case Propiedades.API_SECONDARY_DOCUMENT:
 		case Propiedades.PLANTILLA_DIFERENCIAS:
+		case Propiedades.COVERAGE_TEMPLATE:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;
