@@ -8,6 +8,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.configuration.homologate.domain.ConfigEnum;
+import com.learning.helpcenter.application.base.ArticleService;
+import com.learning.helpcenter.domain.ArticleDTO;
+import com.learning.helpcenter.domain.ArticleFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
@@ -49,6 +53,8 @@ public class HomologatePrepareService {
 	private TarifarioService tariffService;
 	@Autowired
 	private CallDocumentCRUD crudService;
+	@Autowired
+	private ArticleService articleService;
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
@@ -128,8 +134,16 @@ public class HomologatePrepareService {
 		if (propValue == null)
 			return;
 		switch (propValue) {
-		case "TARIFARIO": {
+		case ConfigEnum.TARIFARIO: {
 			createTariffFields(templateId, token);
+			break;
+		}
+		case ConfigEnum.ARTICLE: {
+			createArticleFields(templateId, token);
+			break;
+		}
+		case ConfigEnum.FAQ: {
+			createFaqFields(templateId, token);
 			break;
 		}
 		default:
@@ -274,7 +288,7 @@ public class HomologatePrepareService {
 					fieldDimension1Name.setCampo(fieldsTemplate.get(4));
 					fieldDimension1Name.setValorText(iTariff.getTipoRecursoNombre());
 					document.getCaracteristicas().add(fieldDimension1Name);
-					
+
 					PedidoVentaCaracteristicaDTO fieldDimension2 = new PedidoVentaCaracteristicaDTO();
 					fieldDimension2.setCampo(fieldsTemplate.get(5));
 					fieldDimension2.setValorOpcion(iTariff.getTipoDimension2());
@@ -284,7 +298,7 @@ public class HomologatePrepareService {
 					fieldDimension2Name.setCampo(fieldsTemplate.get(6));
 					fieldDimension2Name.setValorText(iTariff.getTipoDimension2Nombre());
 					document.getCaracteristicas().add(fieldDimension2Name);
-					
+
 					PedidoVentaCaracteristicaDTO fieldDimension3 = new PedidoVentaCaracteristicaDTO();
 					fieldDimension3.setCampo(fieldsTemplate.get(7));
 					fieldDimension3.setValorOpcion(iTariff.getTipoDimension3());
@@ -294,7 +308,7 @@ public class HomologatePrepareService {
 					fieldDimension3Name.setCampo(fieldsTemplate.get(8));
 					fieldDimension3Name.setValorText(iTariff.getTipoDimension3Nombre());
 					document.getCaracteristicas().add(fieldDimension3Name);
-					
+
 					PedidoVentaCaracteristicaDTO fieldDimension4 = new PedidoVentaCaracteristicaDTO();
 					fieldDimension4.setCampo(fieldsTemplate.get(9));
 					fieldDimension4.setValorOpcion(iTariff.getTipoDimension4());
@@ -304,7 +318,7 @@ public class HomologatePrepareService {
 					fieldDimension4Name.setCampo(fieldsTemplate.get(10));
 					fieldDimension4Name.setValorText(iTariff.getTipoDimension4Nombre());
 					document.getCaracteristicas().add(fieldDimension4Name);
-					
+
 					PedidoVentaCaracteristicaDTO fieldBoolProduct = new PedidoVentaCaracteristicaDTO();
 					fieldBoolProduct.setCampo(fieldsTemplate.get(11));
 					if (iTariff.getProductoOpcional())
@@ -334,14 +348,29 @@ public class HomologatePrepareService {
 
 	public void createFromDocument(PedidoVentaDTO document, String propValue) throws ServerException {
 		switch (propValue) {
-		case "TARIFARIO": {
+		case ConfigEnum.TARIFARIO: {
 			createTariff(document);
+			break;
+		}
+		case ConfigEnum.ARTICLE: {
+			updateArticle(document);
 			break;
 		}
 		default:
 			throw new ServerException("Unexpected value: " + propValue);
 		}
 
+	}
+
+	private void updateArticle(PedidoVentaDTO document) throws ServerException {
+		ArticleFilterDTO filter = new ArticleFilterDTO();
+		filter.setDocument(document.getLlaveTabla());
+		ArticleDTO updateArticle = articleService.getOne(filter);
+		if (updateArticle == null) return;
+		updateArticle.setIntroduction(getValueText(document, "INTRODUCCION"));
+		updateArticle.setHelp(getValueText(document, "AYUDA_EXTRA"));
+		updateArticle.setImage(getValueText(document, "IMAGEN"));
+		articleService.update(updateArticle);
 	}
 
 	private void createTariff(PedidoVentaDTO document) throws ServerException {
@@ -433,6 +462,62 @@ public class HomologatePrepareService {
 				return iField;
 		}
 		return null;
+	}
+
+	private void createFaqFields(String templateId, String token) throws ServerException {
+		List<String> fieldsTemplate = new ArrayList<>();
+		// Crear el campo Introduccion
+		fieldsTemplate.add(
+				campoService.createField(templateId, "PREGUNTA", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateId,
+				Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+
+		// Crear el campo Ayudas
+		fieldsTemplate.add(campoService.createField(templateId, "IMAGEN",
+				DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 2, token));
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+	}
+
+	private void createArticleFields(String templateId, String token) throws ServerException {
+		List<String> fieldsTemplate = new ArrayList<>();
+
+		// Crear el campo Introduccion
+		fieldsTemplate.add(campoService.createField(templateId, "INTRODUCCION",
+				DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateId,
+				Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
+				Propiedades.TEXTO_LARGO, "1", token), token);
+
+		// Crear el campo Ayudas
+		fieldsTemplate.add(campoService.createField(templateId, "AYUDA EXTRA",
+				DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
+				Propiedades.TEXTO_LARGO, "1", token), token);
+		
+		// Crear el campo Ayudas
+				fieldsTemplate.add(campoService.createField(templateId, "IMAGEN",
+						DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 3, token));
+				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+						Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+						Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+						Propiedades.CAMPO_EVIDENCIA, fieldsTemplate.get(2), token), token);
+
 	}
 
 }

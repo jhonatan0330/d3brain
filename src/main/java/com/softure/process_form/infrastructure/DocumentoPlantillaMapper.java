@@ -16,6 +16,7 @@ public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantill
 // BEGIN region aditionalMethods  
 	List<DocumentoPlantillaDTO> listarMenu(DocumentoPlantillaFilterDTO dto);
 	List<DocumentoPlantillaDTO> getFullToSynchronize(@Param("process") List<String> process);
+	DocumentoPlantillaDTO getTemplateConfiguration(String configuration);
 // END region aditionalMethods
 
 }

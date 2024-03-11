@@ -106,6 +106,7 @@
 		insert into account.cuenta_cue(
 			ccue_llave
 			,dcue_creacionfecha
+			,dcue_modificacionfecha
 		<if test="catalog!=null">
 			,ccue_catalogo
 		</if>
@@ -150,6 +151,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="catalog!=null">
 			,#{catalog}

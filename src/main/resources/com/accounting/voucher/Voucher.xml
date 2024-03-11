@@ -47,12 +47,9 @@
 			<if test="concept!=null">
 				and ccmp_concepto = #{concept}
 			</if>
-			<if test="factDateMin!=null">
-				and dcmp_fechacomprobante > #{factDateMin}
-			</if>  
-			<if test="factDateMax!=null">
-				and dcmp_fechacomprobante <![CDATA[ < ]]> #{factDateMax}
-			</if>  
+			<if test="factDate!=null">
+				and dcmp_fechacomprobante = #{factDate}
+			</if>
 			<if test="positive!=null">
 				and mcmp_positivo = #{positive}
 			</if>
@@ -101,6 +98,7 @@
 		insert into account.comprobante_cmp(
 			ccmp_llave
 			,dcmp_creacionfecha
+			,dcmp_modificacionfecha
 		<if test="catalog!=null">
 			,ccmp_catalogo
 		</if>
@@ -139,6 +137,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="catalog!=null">
 			,#{catalog}

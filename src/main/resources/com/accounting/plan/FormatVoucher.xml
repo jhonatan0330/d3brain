@@ -69,6 +69,7 @@
 		insert into account.formato_frm(
 			cfrm_llave
 			,dfrm_creacionfecha
+			,dfrm_modificacionfecha
 		<if test="catalog!=null">
 			,cfrm_catalogo
 		</if>
@@ -86,6 +87,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="catalog!=null">
 			,#{catalog}

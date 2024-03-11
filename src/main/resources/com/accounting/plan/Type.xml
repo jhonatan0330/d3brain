@@ -73,6 +73,7 @@
 		insert into account.tipocomprobante_tcm(
 			ctcm_llave
 			,dtcm_creacionfecha
+			,dtcm_modificacionfecha
 		<if test="catalog!=null">
 			,ctcm_catalogo
 		</if>
@@ -93,6 +94,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="catalog!=null">
 			,#{catalog}

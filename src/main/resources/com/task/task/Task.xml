@@ -39,18 +39,12 @@
 			<if test="notes!=null">
 				and ctsk_notes = #{notes}
 			</if>
-			<if test="completedMin!=null">
-				and dtsk_completed > #{completedMin}
-			</if>  
-			<if test="completedMax!=null">
-				and dtsk_completed <![CDATA[ < ]]> #{completedMax}
-			</if>  
-			<if test="dueDateMin!=null">
-				and dtsk_dueDate > #{dueDateMin}
-			</if>  
-			<if test="dueDateMax!=null">
-				and dtsk_dueDate <![CDATA[ < ]]> #{dueDateMax}
-			</if>  
+			<if test="completed!=null">
+				and dtsk_completed = #{completed}
+			</if>
+			<if test="dueDate!=null">
+				and dtsk_dueDate = #{dueDate}
+			</if>
 			<if test="priority!=null">
 				and ntsk_priority = #{priority}
 			</if>
@@ -96,6 +90,7 @@
 		insert into task.task_tsk(
 			ctsk_llave
 			,dtsk_creacionfecha
+			,dtsk_modificacionfecha
 		<if test="user!=null">
 			,ctsk_user
 		</if>
@@ -128,6 +123,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="user!=null">
 			,#{user}

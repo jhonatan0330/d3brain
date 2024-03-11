@@ -77,6 +77,7 @@
 		insert into account.valor_vlr(
 			cvlr_llave
 			,dvlr_creacionfecha
+			,dvlr_modificacionfecha
 		<if test="dimension!=null">
 			,cvlr_dimension
 		</if>
@@ -100,6 +101,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="dimension!=null">
 			,#{dimension}

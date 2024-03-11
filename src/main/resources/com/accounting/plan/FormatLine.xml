@@ -81,6 +81,7 @@
 		insert into account.linea_lin(
 			clin_llave
 			,dlin_creacionfecha
+			,dlin_modificacionfecha
 		<if test="format!=null">
 			,clin_formato
 		</if>
@@ -107,6 +108,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="format!=null">
 			,#{format}

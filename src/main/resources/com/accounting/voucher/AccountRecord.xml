@@ -49,12 +49,9 @@
 			<if test="note!=null">
 				and creg_descripcion = #{note}
 			</if>
-			<if test="factDateMin!=null">
-				and dreg_fecha > #{factDateMin}
-			</if>  
-			<if test="factDateMax!=null">
-				and dreg_fecha <![CDATA[ < ]]> #{factDateMax}
-			</if>  
+			<if test="factDate!=null">
+				and dreg_fecha = #{factDate}
+			</if>
 			<if test="positive!=null">
 				and mreg_positivo = #{positive}
 			</if>
@@ -120,6 +117,7 @@
 		insert into account.registro_reg(
 			creg_llave
 			,dreg_creacionfecha
+			,dreg_modificacionfecha
 		<if test="voucher!=null">
 			,creg_comprobante
 		</if>
@@ -173,6 +171,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="voucher!=null">
 			,#{voucher}

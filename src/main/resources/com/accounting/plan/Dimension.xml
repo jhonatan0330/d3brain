@@ -81,6 +81,7 @@
 		insert into account.dimension_dim(
 			cdim_llave
 			,ddim_creacionfecha
+			,ddim_modificacionfecha
 		<if test="account!=null">
 			,cdim_cuenta
 		</if>
@@ -107,6 +108,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="account!=null">
 			,#{account}

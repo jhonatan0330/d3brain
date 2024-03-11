@@ -30,18 +30,12 @@
 			<if test="state!=null">
 				and chch_estado = #{state}
 			</if>
-			<if test="registerDateMin!=null">
-				and dhch_fecharegistro > #{registerDateMin}
-			</if>  
-			<if test="registerDateMax!=null">
-				and dhch_fecharegistro <![CDATA[ < ]]> #{registerDateMax}
-			</if>  
-			<if test="factDateMin!=null">
-				and dhch_fechaevento > #{factDateMin}
-			</if>  
-			<if test="factDateMax!=null">
-				and dhch_fechaevento <![CDATA[ < ]]> #{factDateMax}
-			</if>  
+			<if test="registerDate!=null">
+				and dhch_fecharegistro = #{registerDate}
+			</if>
+			<if test="factDate!=null">
+				and dhch_fechaevento = #{factDate}
+			</if>
 			<if test="dimension!=null">
 				and chch_dimension = #{dimension}
 			</if>
@@ -95,6 +89,7 @@
 		insert into account.hecho_hch(
 			chch_llave
 			,dhch_creacionfecha
+			,dhch_modificacionfecha
 		<if test="registerDate!=null">
 			,dhch_fecharegistro
 		</if>
@@ -127,6 +122,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="registerDate!=null">
 			,#{registerDate}

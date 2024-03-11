@@ -502,3 +502,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_255' , 'L', 'TIPO CONFIGURACION HOMOLOGADA', 'PLANTILLA_TIPO_CONFIGURATION', 'REQUISITO', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
+	VALUES('PROP_256' , 'O', 'PLANTILLA IMAGENES CARROUSEL', 'COVERAGE_TEMPLATE', 'REQUISITO');
+	

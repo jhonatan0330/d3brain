@@ -259,6 +259,7 @@ public class Propiedades {
 	// Organizacion
 	public static final String API_KEY = "API_KEY";
 	public static final String COVERAGE_IMAGE = "COVERAGE_IMAGE";
+	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
 		PropiedadDTO parametroTipo = new PropiedadDTO();
@@ -673,6 +674,10 @@ public class Propiedades {
 		}
 		case COVERAGE_IMAGE: {
 			ruleProperty = " Coloca toda la url de laimagen de fondo que deseas ver en el perfil principal.\n";
+			break;
+		}
+		case COVERAGE_TEMPLATE: {
+			ruleProperty = "Relacionas una plantilla que va a tener las imagenes con los registros en la propiedad imagen.\n";
 			break;
 		}
 		case CORREO_ROL: {

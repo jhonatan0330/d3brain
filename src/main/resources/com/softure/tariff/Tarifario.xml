@@ -74,18 +74,12 @@
 			<if test="rangoCantidadFilter!=null">
 				and btrf_rangocantidad = #{rangoCantidadFilter}
 			</if>  
-			<if test="fechaInicialMin!=null">
-				and dtrf_fechainicial > #{fechaInicialMin}
-			</if>  
-			<if test="fechaInicialMax!=null">
-				and dtrf_fechainicial <![CDATA[ < ]]> #{fechaInicialMax}
-			</if>  
-			<if test="fechaFinalMin!=null">
-				and dtrf_fechafinal > #{fechaFinalMin}
-			</if>  
-			<if test="fechaFinalMax!=null">
-				and dtrf_fechafinal <![CDATA[ < ]]> #{fechaFinalMax}
-			</if>  
+			<if test="fechaInicial!=null">
+				and dtrf_fechainicial = #{fechaInicial}
+			</if>
+			<if test="fechaFinal!=null">
+				and dtrf_fechafinal = #{fechaFinal}
+			</if>
 			<if test="documento!=null">
 				and ctrf_documento = #{documento}
 			</if>
@@ -128,6 +122,7 @@
 		insert into tarifario_trfp(
 			ctrf_llave
 			,dtrf_creacionfecha
+			,dtrf_modificacionfecha
 		<if test="nombre!=null">
 			,ctrf_nombre
 		</if>
@@ -184,6 +179,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="nombre!=null">
 			,#{nombre}

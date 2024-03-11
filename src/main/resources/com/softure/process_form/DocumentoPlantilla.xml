@@ -137,33 +137,6 @@
 				cdpl_estado =#{estado}
 		<include refid="whereDocumentoPlantillaPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleDocumentoPlantillaFragment">
-		select
-			cdpl_llave as  llaveTabla
-			,cdpl_objetivo as  objetivo
-			,cdpl_nombre as  nombre
-			,cdpl_consecutivo as  consecutivo
-			,cdpl_imagen as  imagen
-			,cdpl_codigo as  codigo
-			,cdpl_proceso as  proceso
-			,cdpl_estado as estado
-		from documentoplantilla_dplp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="DocumentoPlantillaDTO">
-		<include refid="selectSimpleDocumentoPlantillaFragment" />
-		<include refid="whereDocumentoPlantillaFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="DocumentoPlantillaDTO">
-		<include refid="selectSimpleDocumentoPlantillaFragment" />
-		<include refid="whereDocumentoPlantillaFragment" />
-		order by cdpl_nombre 
-		<include refid="paginationDocumentoPlantillaFragment" />
-	</select>
-	
-
 
 <!--// BEGIN region script-->
 	<select id="listarMenu" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
@@ -201,10 +174,36 @@
 	</select>
 	
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
-		<include refid="selectSimpleDocumentoPlantillaFragment" />
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_objetivo as  objetivo
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
 		where cdpl_estado = 'A'
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpl_nombre
+	</select>
+	
+	<select id="getTemplateConfiguration" resultType="DocumentoPlantillaDTO">
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_objetivo as  objetivo
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from propiedad_ppdp pp 
+			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = pp.cppd_campo and dd.cdpl_estado= 'A')
+		where pp.cppd_valor = #{configuration}
+			and pp.cppd_propiedadvalor = 'PROP_255'
+			and cppd_estado  ='A'
 	</select>
 <!--// END region script-->
 

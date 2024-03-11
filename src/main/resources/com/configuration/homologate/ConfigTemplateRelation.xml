@@ -77,6 +77,7 @@
 		insert into config.configtemplaterelation_ctr(
 			cctr_llave
 			,dctr_creacionfecha
+			,dctr_modificacionfecha
 		<if test="entity!=null">
 			,cctr_entity
 		</if>
@@ -100,6 +101,7 @@
 		</if>
 		) values (
 			#{key}
+			,now()
 			,now()
 		<if test="entity!=null">
 			,#{entity}

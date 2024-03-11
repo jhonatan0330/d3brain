@@ -542,6 +542,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return documentoPlantillaMapper.getFullToSynchronize(process);
 	}
 	
+	public DocumentoPlantillaDTO getTemplateConfiguration(String configuration, String token) throws ServerException {
+		return obtenerCampos(documentoPlantillaMapper.getTemplateConfiguration(configuration), token);
+	}
+	
 // END region aditionalMethods
 
 }
