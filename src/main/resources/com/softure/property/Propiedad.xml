@@ -335,7 +335,7 @@ COST 100;
     </select>
 
     <select id="crearFuncionProductos" parameterType="PropiedadDTO" >
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, filtro character varying, token character varying)
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, filtro character varying, token character varying, parametros character varying[])
 RETURNS SETOF producto_prop AS
 $BODY$
 ${valor}
@@ -345,7 +345,7 @@ COST 100;
     </select>
 
     <select id="eliminarFuncionProductos" parameterType="PropiedadDTO" >
-        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar,varchar,varchar);
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar,varchar,varchar, character varying[]);
     </select>
 
     <select id="eliminarFuncionFiltros" parameterType="PropiedadDTO" >

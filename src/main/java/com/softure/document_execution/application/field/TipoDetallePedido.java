@@ -269,12 +269,15 @@ public class TipoDetallePedido {
 						break;
 					}
 				}
+			}else {
+				throw new ServerException("Revise la configuracion se debe incluir una propiedad PRODUCTOS_FUNCION_CAMPO "
+						+ pCampo.getCampoDTO().getNombre());
 			}
 			if (valorCampo == null)
 				throw new ServerException("Revise la configuracion debe tener un campo relacionado para la funcion"
 						+ pCampoFuncion.getTexto());
 			pBase.setProductos(productoService.listarProductoFuncion(funcionProductos.getLlaveTabla(), valorCampo,
-					pCampo.getFiltroParametro(), pCampo.getSecurityToken()));
+					pCampo.getFiltroParametro(), pCampo.getSecurityToken(), pCampo.getDependientes()));
 		}
 		if (pBase.getProductos() != null && !pBase.getProductos().isEmpty()) {
 

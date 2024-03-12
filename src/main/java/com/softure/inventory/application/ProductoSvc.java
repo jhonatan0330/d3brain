@@ -1,21 +1,8 @@
 package com.softure.inventory.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.ArrayList;
-
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.authorization.application.UsuarioRolProductoSvc;
-import com.softure.authorization.domain.UsuarioRolProductoDTO;
-import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.domain.ProductoDTO;
-import com.softure.inventory.domain.ProductoFilterDTO;
-import com.softure.inventory.infrastructure.ProductoMapper;
-import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.application.BasicSvc;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -24,17 +11,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.authorization.application.UsuarioRolProductoSvc;
+import com.softure.authorization.domain.UsuarioRolProductoDTO;
+import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.inventory.domain.ProductoDTO;
+import com.softure.inventory.domain.ProductoFilterDTO;
+import com.softure.inventory.infrastructure.ProductoMapper;
+import com.softure.java.services.SoftureUtil;
+import com.softure.logisticpymes.application.BasicSvc;
+
 @Service("productoService")
 public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	
 	@Autowired
 	private ProductoMapper productoMapper;
 	
-	// BEGIN region servicesProducto
 	@Autowired private UsuarioRolProductoSvc usuarioRolProductoSvc;
 	@Autowired private CategoriaProductoSvc categoriaSvc;
-	//@Autowired private PropiedadSvc propiedadService;
-	// END region servicesProducto
 
 	@Override
 	public ProductoDTO consultaXId(String llave) throws ServerException {
@@ -67,7 +64,6 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoDTO inactivar(ProductoDTO dto, String token) throws ServerException {
-		// BEGIN Producto_inactivar
 		dto = super.inactivar(dto, token);
 		UsuarioRolProductoFilterDTO filtro = new UsuarioRolProductoFilterDTO();
 		filtro.setProducto(dto.getLlaveTabla());
@@ -79,7 +75,6 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 			}
 		}
 		return dto;
-		// END Producto_inactivar
 	}
 	
 	@Override
@@ -102,11 +97,9 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoDTO guardar(ProductoDTO dto, String token) throws ServerException {
-		// BEGIN Producto_guardar
 		dto = super.guardar(dto, token);
 		categoriaSvc.organizarInventario();
 		return dto;
-		// END Producto_guardar
 	}
 
 // BEGIN region aditionalMethods
@@ -153,8 +146,8 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 		return productoMapper.listarProductoPlantillaResponsable(dto);
 	}
 	
-	public List<ProductoDTO> listarProductoFuncion(String funcion, String documento, String filtro, String token)throws ServerException{
-		return productoMapper.listarProductoFuncion(funcion, documento, filtro, token);
+	public List<ProductoDTO> listarProductoFuncion(String funcion, String documento, String filtro, String token ,List<PedidoVentaCaracteristicaDTO> parametros)throws ServerException{
+		return productoMapper.listarProductoFuncion(funcion, documento, filtro, token, parametros);
 	} 
 	
 	public List<ProductoDTO> listarProductoCampo(String campo, String filtro)throws ServerException{
@@ -189,6 +182,5 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 	public ProductoDTO filtrarPorCodigo(String codigo)throws ServerException{
 		return productoMapper.filtrarPorCodigo(codigo);
 	}
-// END region aditionalMethods
 
 }

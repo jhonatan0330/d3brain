@@ -202,7 +202,8 @@
 			,(select ccpr_nombre from categoriaproducto_cprp where ccpr_llave = cpro_categoria) as  categoriaNombre
 			,cpro_productobase as  productoBase
 			,cpro_estado as estado
-		from propiedad_${funcion} (#{documento}, #{filtro}, #{token})
+		from propiedad_${funcion} (#{documento}, #{filtro}, #{token}
+		,<choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
 		order by codigo
 	</select>
 	
@@ -212,11 +213,11 @@
 		order by codigo
 	</select>
 	
-	<select id="" resultType="ProductoDTO">
+	<!--select id="" resultType="ProductoDTO">
 		<include refid="selectProductoFragment" /> 
 		where cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
 		order by codigo
-	</select>
+	<select-->
 	
 	<select id="filtrarPorCodigo" resultType="ProductoDTO">
 		<include refid="selectProductoFragment" />
