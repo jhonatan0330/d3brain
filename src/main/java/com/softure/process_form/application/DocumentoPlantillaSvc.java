@@ -135,6 +135,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token)throws ServerException{
 		// BEGIN region obtenerCampos
+		if(dto==null) return null;
 		dto.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token));
 		int order = 0;
 		boolean modificar = !Propiedades.obtenerValor(dto, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty();
