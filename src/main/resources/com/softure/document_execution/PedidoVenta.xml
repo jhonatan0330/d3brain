@@ -353,7 +353,8 @@
 		from actividad_actp
 			inner join pedidoventa_pdvp a on (cact_documento = cpdv_llave)
 		where cact_estado = 'A' and cact_responsable = #{funcionario}
-		order by dact_fechaarrancar
+		order by cact_responsable 
+		, dact_fecharegistro 
 		<include refid="paginationPedidoVentaFragment" />
 	</select>
 	

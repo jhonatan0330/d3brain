@@ -74,11 +74,17 @@
 			<if test="rangoCantidadFilter!=null">
 				and btrf_rangocantidad = #{rangoCantidadFilter}
 			</if>  
-			<if test="fechaInicial!=null">
-				and dtrf_fechainicial = #{fechaInicial}
+			<if test="fechaInicialMin!=null">
+				and dtrf_fechainicial >= #{fechaInicialMin}
 			</if>
-			<if test="fechaFinal!=null">
-				and dtrf_fechafinal = #{fechaFinal}
+			<if test="fechaInicialMax!=null">
+				and dtrf_fechainicial <![CDATA[ < ]]> #{fechaInicialMax}
+			</if>
+			<if test="fechaFinalMin!=null">
+				and dtrf_fechafinal >= #{fechaFinalMin}
+			</if>
+			<if test="fechaFinalMax!=null">
+				and dtrf_fechafinal <![CDATA[ < ]]> #{fechaFinalMax}
 			</if>
 			<if test="documento!=null">
 				and ctrf_documento = #{documento}

@@ -34,11 +34,17 @@
 			<if test="code!=null">
 				and cctg_codigo = #{code}
 			</if>
-			<if test="initialDate!=null">
-				and dctg_fechainicial = #{initialDate}
+			<if test="initialDateMin!=null">
+				and dctg_fechainicial >= #{initialDateMin}
 			</if>
-			<if test="finalDate!=null">
-				and dctg_fechafinal = #{finalDate}
+			<if test="initialDateMax!=null">
+				and dctg_fechainicial <![CDATA[ < ]]> #{initialDateMax}
+			</if>
+			<if test="finalDateMin!=null">
+				and dctg_fechafinal >= #{finalDateMin}
+			</if>
+			<if test="finalDateMax!=null">
+				and dctg_fechafinal <![CDATA[ < ]]> #{finalDateMax}
 			</if>
 			<if test="consecutive!=null">
 				and cctg_consecutivo = #{consecutive}

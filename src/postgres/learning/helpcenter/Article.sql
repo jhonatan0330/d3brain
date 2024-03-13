@@ -18,4 +18,4 @@ ALTER TABLE learning.article_art ADD cart_entidadId varchar(32) NOT NULL ;
 ALTER TABLE learning.article_art ADD cart_documento varchar(32) NOT NULL ;
 ALTER TABLE learning.article_art ADD cart_imagen varchar(100);
 ALTER TABLE learning.article_art ADD cart_introduccion varchar(100);
-ALTER TABLE learning.article_art ADD cart_ayuda varchar(4000);
+ALTER TABLE learning.article_art ADD cart_ayuda varchar(4.000);

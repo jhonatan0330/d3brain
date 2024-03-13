@@ -39,11 +39,17 @@
 			<if test="notes!=null">
 				and ctsk_notes = #{notes}
 			</if>
-			<if test="completed!=null">
-				and dtsk_completed = #{completed}
+			<if test="completedMin!=null">
+				and dtsk_completed >= #{completedMin}
 			</if>
-			<if test="dueDate!=null">
-				and dtsk_dueDate = #{dueDate}
+			<if test="completedMax!=null">
+				and dtsk_completed <![CDATA[ < ]]> #{completedMax}
+			</if>
+			<if test="dueDateMin!=null">
+				and dtsk_dueDate >= #{dueDateMin}
+			</if>
+			<if test="dueDateMax!=null">
+				and dtsk_dueDate <![CDATA[ < ]]> #{dueDateMax}
 			</if>
 			<if test="priority!=null">
 				and ntsk_priority = #{priority}

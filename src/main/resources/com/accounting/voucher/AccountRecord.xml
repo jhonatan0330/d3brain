@@ -49,8 +49,11 @@
 			<if test="note!=null">
 				and creg_descripcion = #{note}
 			</if>
-			<if test="factDate!=null">
-				and dreg_fecha = #{factDate}
+			<if test="factDateMin!=null">
+				and dreg_fecha >= #{factDateMin}
+			</if>
+			<if test="factDateMax!=null">
+				and dreg_fecha <![CDATA[ < ]]> #{factDateMax}
 			</if>
 			<if test="positive!=null">
 				and mreg_positivo = #{positive}
