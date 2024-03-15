@@ -245,8 +245,9 @@ public class CallDocumentListWithFilters {
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(filterDTO,
 								propiedadFuncion.getLlaveTabla(), null), token, null);
 					}
-					propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla,
-							Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
+					if (dtoFilter.getCampoOrigen() == null)
+						propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla,
+								Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
 				}
 			}
 
@@ -319,9 +320,11 @@ public class CallDocumentListWithFilters {
 								.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 										templateFilter, null, pedidoVentaService.getUserFlex(token)));
 					}
-					// Quito los filtros para las consultas campos que vienen de un campo tipo proceso
-					if(filterDTO.getCampoOrigen()==null) {
-						PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla, Propiedades.SOLICITAR_FECHAS);
+					// Quito los filtros para las consultas campos que vienen de un campo tipo
+					// proceso
+					if (filterDTO.getCampoOrigen() == null) {
+						PropiedadDTO filtroFechas = Propiedades.obtenerParametro(plantilla,
+								Propiedades.SOLICITAR_FECHAS);
 						filterDTO.setFechaMax(dtoFilter.getFechaMax());
 						filterDTO.setFechaMin(dtoFilter.getFechaMin());
 						if (filtroFechas != null) {
@@ -334,7 +337,7 @@ public class CallDocumentListWithFilters {
 							if (filterDTO.getFechaMin().compareTo(filterDTO.getFechaMax()) > 0)
 								throw new ServerException(
 										"Revisa las fechas, la fecha minima no puede ser menor a la fecha maxima");
-						}	
+						}
 					}
 					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
 					if (orden.isEmpty())
