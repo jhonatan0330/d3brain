@@ -276,6 +276,7 @@ public class TipoDetallePedido {
 			if (valorCampo == null)
 				throw new ServerException("Revise la configuracion debe tener un campo relacionado para la funcion"
 						+ pCampoFuncion.getTexto());
+			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty())pCampo.setDependientes(campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			pBase.setProductos(productoService.listarProductoFuncion(funcionProductos.getLlaveTabla(), valorCampo,
 					pCampo.getFiltroParametro(), pCampo.getSecurityToken(), pCampo.getDependientes()));
 		}
