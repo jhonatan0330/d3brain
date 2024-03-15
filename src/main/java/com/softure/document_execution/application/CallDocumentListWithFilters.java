@@ -245,7 +245,7 @@ public class CallDocumentListWithFilters {
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(filterDTO,
 								propiedadFuncion.getLlaveTabla(), null), token, null);
 					}
-					if (dtoFilter.getCampoOrigen() == null)
+					if (dtoFilter.getCampoOrigen() == null || dtoFilter.getCaracteristicas()==null)
 						propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla,
 								Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
 				}
