@@ -165,7 +165,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		DocumentoPlantillaDTO copy = new DocumentoPlantillaDTO();
 		copy.setProceso(bd.getProceso());
 		copy.setNombre("COPY_" + bd.getNombre());
-		copy.setImagen(bd.getImagen());
+		//copy.setImagen(bd.getImagen());
 		copy.setObjetivo(".");
 		
 		configurarInicioPlantilla(copy);
@@ -176,9 +176,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
 			newCampo.setFormato(iCampo.getFormato());
-			newCampo.setImagen(iCampo.getImagen());
+			//newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
-			newCampo.setObjetivo(".");
+			//newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(copy.getLlaveTabla());
 			newCampo = caracteristicaService.guardar(newCampo, token);
