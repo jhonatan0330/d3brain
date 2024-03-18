@@ -158,9 +158,11 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCantidad = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCantidad.setPlantilla(dto.getPlantilla());
 		int cantidadCampos = contarResultados(filtroCantidad);
-		if (dto.getOrden()!=null && cantidadCampos == 0 && dto.getOrden().compareTo(0) != 0) {
+		if (dto.getOrden()!=null && dto.getOrden().compareTo(0) != 0) {
+			// 2024-3 retire cantidadCampos == 0 &&
+			//Porque al duplicar algunas no aparecian correctamente quinber guias
 			// Esto es porque cuando se crean las plantillas automaticas no cuenta
-			// correctametne la cantidad de campos
+			// correctametne la cantidad de campos ?? cuales no se si lo dane
 			cantidadCampos = dto.getOrden();
 		} else {
 			cantidadCampos = cantidadCampos + 1;

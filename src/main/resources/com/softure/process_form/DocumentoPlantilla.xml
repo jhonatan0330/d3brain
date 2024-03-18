@@ -38,7 +38,7 @@
 				and cdpl_proceso = #{proceso}
 			</if>
 			<if test="filtroParametro!=null">
-				and (upper(cdpl_nombre) like upper('%' || #{filtroParametro} || '%'))
+				and (upper(cdpl_nombre) like upper('%' || #{filtroParametro} || '%') or cdpl_codigo =  #{filtroParametro})
 			</if>
 	</sql>
 
