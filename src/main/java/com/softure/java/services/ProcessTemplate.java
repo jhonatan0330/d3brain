@@ -330,6 +330,7 @@ public class ProcessTemplate {
 			return null;
 		List<PedidoVentaCaracteristicaDTO> camposEscogidos = null;
 		List<PedidoVentaCaracteristicaDTO> fieldsInternal = null; // Campos que van cumpliendo con lo que queremos
+		List<PedidoVentaCaracteristicaDTO> camposIntermedios = null;
 		List<RelacionInternaDTO> relacionesValidadas = new ArrayList<RelacionInternaDTO>();
 
 		// Filtro los campos que recibo y tienen que ver con una relacion
@@ -375,6 +376,10 @@ public class ProcessTemplate {
 						if (iInternal.getValorOpcion() != null
 								&& iInternal.getValorOpcion().compareTo(iFRelation.getDocumento()) == 0) {
 							fieldsInternal.remove(iInternal);
+							if(iInternal.getTransaccionRegistro()!=null) {
+								if(camposIntermedios==null) camposIntermedios = new ArrayList<>();
+								camposIntermedios.add(iInternal);
+							}
 							break;
 						}
 					}
@@ -384,9 +389,9 @@ public class ProcessTemplate {
 			camposEscogidos.addAll(fieldsInternal);
 			List<PedidoVentaCaracteristicaDTO> mailInternal = getFieldsFromOtherDocument(relacionesSinRepetir,
 					fieldsRelation);
-			if (mailInternal != null) {
-				camposEscogidos.addAll(mailInternal);
-			}
+			if (mailInternal != null)camposEscogidos.addAll(mailInternal);
+			if (camposIntermedios != null)camposEscogidos.addAll(camposIntermedios);
+			
 		}
 		return camposEscogidos;
 	}
