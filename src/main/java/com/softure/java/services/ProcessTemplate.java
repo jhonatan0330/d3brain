@@ -14,9 +14,11 @@ import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -42,7 +44,9 @@ public class ProcessTemplate {
 	private RelacionInternaSvc relacionService;
 	@Autowired
 	private PedidoVentaSvc documentService;
-	
+	@Autowired
+	private DetallePedidoVentaSvc detallePedidoVentaService;
+
 	public String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
 			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
@@ -61,16 +65,17 @@ public class ProcessTemplate {
 				Map<String, Object> newMap = new HashMap<String, Object>();
 				// En fremarker sale error con los parentesis
 				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-			        if(entry.getKey().contains("(")) {
-			        	String newKey = entry.getKey();
-			        	while (newKey.contains("(")) {
-							newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_").replace("-", "_");
+					if (entry.getKey().contains("(")) {
+						String newKey = entry.getKey();
+						while (newKey.contains("(")) {
+							newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_")
+									.replace("/", "_").replace("-", "_");
 						}
-			        	newMap.put(newKey, entry.getValue());
-			        	//mapParams.remove(entry.getKey());
-			        	//Por el momento no borro las entradas para una proxima
-			        }
-			    }
+						newMap.put(newKey, entry.getValue());
+						// mapParams.remove(entry.getKey());
+						// Por el momento no borro las entradas para una proxima
+					}
+				}
 				mapParams.putAll(newMap);
 				StringWriter out = new StringWriter();
 				try {
@@ -85,9 +90,9 @@ public class ProcessTemplate {
 		}
 		return plantilla;
 	}
-	
-	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			String parameters, PropiedadDTO iProp) throws ServerException {
+
+	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
+			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp) throws ServerException {
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 		if (relaciones != null && !relaciones.isEmpty()) {
 			List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
@@ -116,8 +121,8 @@ public class ProcessTemplate {
 						String codeReplace = iCampo.getCampoDTO().getCodigo();
 						if (iCampo.getTransaccionRegistro() != null)
 							codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
-						parameters = addParameterString(parameters, null, iCampo,
-								codeReplace, "R", iCampo.getTransaccionRegistro(), referidas);
+						parameters = addParameterString(parameters, null, iCampo, codeReplace, "R",
+								iCampo.getTransaccionRegistro(), referidas);
 					}
 				}
 			}
@@ -126,72 +131,145 @@ public class ProcessTemplate {
 	}
 
 	public String addParameterString(String parameters, RelacionInternaDTO iRelacion,
-			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField, List<PropiedadDTO> referidas) throws ServerException {
-		String valueAuxToCode ="";
-		if(iRelacion!=null) {
-			if(iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
-					valueAuxToCode ="(" + iRelacion.getAuxiliar() + ")";
+			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField,
+			List<PropiedadDTO> referidas) throws ServerException {
+		String valueAuxToCode = "";
+		if (iRelacion != null) {
+			if (iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
+				valueAuxToCode = "(" + iRelacion.getAuxiliar() + ")";
 		}
-		parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-				+ valueAuxToCode
+		parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
 				+ SharedConstants.IGUAL + formatToReplaceAll(campo, formatToField);
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-					+ valueAuxToCode
+			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
 					+ "_KEY" + SharedConstants.IGUAL + campo.getValorOpcion();
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
 					parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-							+ valueAuxToCode
-							+ "_ID" + SharedConstants.IGUAL + iElement.getNombre();
+							+ valueAuxToCode + "_ID" + SharedConstants.IGUAL + iElement.getNombre();
 				}
 			}
 		} else {
-			if(campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)==0 && referidas!=null && !referidas.isEmpty()) {
-				if(campo.getExpedientes()==null ) {
-					List<DocumentoRelacionExpedienteDTO> documentsInField = documentsInFieldService.listByField(campo.getLlaveTabla());
-					if(documentsInField!=null && !documentsInField.isEmpty()) {
-						Map<String, List<RelacionInternaDTO>> relations = new HashMap<String, List<RelacionInternaDTO>>();
-						for (PropiedadDTO iProp : referidas) {
-							relations.put(iProp.getLlaveTabla(), relacionService.relacionesPropiedad(iProp.getLlaveTabla()));
-						}						
-						for (int i = 0; i < documentsInField.size(); i++) {
-							DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace + valueAuxToCode + "["+String.valueOf(i+1)+"]="+SharedConstants.LINEA_MEDIA_DOBLE+"L_NUM"+SharedConstants.COMA_DOBLE+String.valueOf(i+1)+SharedConstants.LINEA_MEDIA_DOBLE+"L_VAL"+SharedConstants.COMA_DOBLE +iRelation.getValor().intValue();
-							for (PropiedadDTO iProp : referidas) {
-								if(iProp.getMotivo()!=null) {
-									parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + iProp.getMotivo()
-											+ SharedConstants.COMA_DOBLE + documentService.consultaXId(iRelation.getExpedienteDetalle()).getNombre();
-								}
-								List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
-								if (relaciones != null && !relaciones.isEmpty()) {
-									// Todo esto practimanete lo copie de la funcion de arriba de referidos 
-									List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
-									PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
-									aux.setValorOpcion(iRelation.getExpedienteDetalle());
-									List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
-									listAux.add(aux);
-									camposOpcionReferidos.addAll(campoService.listar2getApiCode(listAux, relaciones));
-									List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(relaciones,
-											camposOpcionReferidos);
-									if (camposReferidos != null) {
-										for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
-											if (iCampo.getValorText() != null) {
-												if (iCampo.getCampoDTO() == null)
-													iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-												String codeReplaceList = iCampo.getCampoDTO().getCodigo();
-												if (iCampo.getTransaccionRegistro() != null)
-													codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
-												//+ConstantesGenerales.LINEA_MEDIA_DOBLE +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
-												parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
-														+ SharedConstants.COMA_DOBLE + formatToReplaceAll(iCampo, iCampo.getTransaccionRegistro());
-												//Coloque el service en null para evitar que se generen ciclos infinitos
+			if (referidas != null && !referidas.isEmpty()) {
+				Map<String, List<RelacionInternaDTO>> relations = null;
+				if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+					if (campo.getExpedientes() == null) {
+						List<DocumentoRelacionExpedienteDTO> documentsInField = documentsInFieldService
+								.listByField(campo.getLlaveTabla());
+						if (documentsInField != null && !documentsInField.isEmpty()) {
+							relations = getRealationsRelatedWithList(referidas, relations);
+							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas, relations);
+							if(propertiesWithRelationField!=null && !propertiesWithRelationField.isEmpty()) {
+								for (int i = 0; i < documentsInField.size(); i++) {
+									DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
+									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
+											+ valueAuxToCode + "[" + String.valueOf(i + 1) + "]="
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_NUM" + SharedConstants.COMA_DOBLE
+											+ String.valueOf(i + 1) + SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
+											+ SharedConstants.COMA_DOBLE + iRelation.getValor().intValue();
+									for (PropiedadDTO iProp : propertiesWithRelationField) {
+										if (iProp.getMotivo() != null) {
+											parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_"
+													+ iProp.getMotivo() + SharedConstants.COMA_DOBLE + documentService
+															.consultaXId(iRelation.getExpedienteDetalle()).getNombre();
+										}
+										List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
+										if (relaciones != null && !relaciones.isEmpty()) {
+											// Todo esto practimanete lo copie de la funcion de arriba de referidos
+											List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
+											PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
+											aux.setValorOpcion(iRelation.getExpedienteDetalle());
+											List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
+											listAux.add(aux);
+											camposOpcionReferidos
+													.addAll(campoService.listar2getApiCode(listAux, relaciones));
+											List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(
+													relaciones, camposOpcionReferidos);
+											if (camposReferidos != null) {
+												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
+													if (iCampo.getValorText() != null) {
+														if (iCampo.getCampoDTO() == null)
+															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
+														if (iCampo.getTransaccionRegistro() != null)
+															codeReplaceList = codeReplaceList + "("
+																	+ iCampo.getTransaccionRegistro() + ")";
+														// +ConstantesGenerales.LINEA_MEDIA_DOBLE
+														// +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
+														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L"
+																+ "_" + codeReplaceList + SharedConstants.COMA_DOBLE
+																+ formatToReplaceAll(iCampo,
+																		iCampo.getTransaccionRegistro());
+														// Coloque el service en null para evitar que se generen ciclos
+														// infinitos
+													}
+												}
 											}
 										}
 									}
-								}
+								}	
 							}
+						}
+					}
+				} else {
+					if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
+						//Aqui deberia ser obtener por campo
+						List<DetallePedidoVentaDTO> detalleFromDocument = detallePedidoVentaService.listar2Documento(campo.getDocumento());
+						if (detalleFromDocument != null && !detalleFromDocument.isEmpty()) {
+							relations = getRealationsRelatedWithList(referidas, relations);
+							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas, relations);
+							if(propertiesWithRelationField!=null && !propertiesWithRelationField.isEmpty()) {
+								for (int i = 0; i < detalleFromDocument.size(); i++) {
+									DetallePedidoVentaDTO iRelation = detalleFromDocument.get(i);
+									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
+											+ valueAuxToCode + "[" + String.valueOf(i + 1) + "]="
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_NUM" + SharedConstants.COMA_DOBLE
+											+ String.valueOf(i + 1) + SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
+											+ SharedConstants.COMA_DOBLE + iRelation.getValorTotal().intValue();
+									for (PropiedadDTO iProp : propertiesWithRelationField) {
+										if (iProp.getMotivo() != null) {
+											parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_"
+													+ iProp.getMotivo() + SharedConstants.COMA_DOBLE + documentService
+															.consultaXId(iRelation.getProductoDocumento()).getNombre();
+										}
+										List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
+										if (relaciones != null && !relaciones.isEmpty()) {
+											// Todo esto practimanete lo copie de la funcion de arriba de referidos
+											List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
+											PedidoVentaCaracteristicaDTO aux = new PedidoVentaCaracteristicaDTO();
+											aux.setValorOpcion(iRelation.getProductoDocumento());
+											List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
+											listAux.add(aux);
+											camposOpcionReferidos
+													.addAll(campoService.listar2getApiCode(listAux, relaciones));
+											List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(
+													relaciones, camposOpcionReferidos);
+											if (camposReferidos != null) {
+												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
+													if (iCampo.getValorText() != null) {
+														if (iCampo.getCampoDTO() == null)
+															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
+														if (iCampo.getTransaccionRegistro() != null)
+															codeReplaceList = codeReplaceList + "("
+																	+ iCampo.getTransaccionRegistro() + ")";
+														// +ConstantesGenerales.LINEA_MEDIA_DOBLE
+														// +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
+														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L"
+																+ "_" + codeReplaceList + SharedConstants.COMA_DOBLE
+																+ formatToReplaceAll(iCampo,
+																		iCampo.getTransaccionRegistro());
+														// Coloque el service en null para evitar que se generen ciclos
+														// infinitos
+													}
+												}
+											}
+										}
+									}
+								}	
+							}
+							
 						}
 					}
 				}
@@ -200,7 +278,38 @@ public class ProcessTemplate {
 		///////
 		return parameters;
 	}
-	
+
+	private List<PropiedadDTO> getPropertiesWithRelation(PedidoVentaCaracteristicaDTO campo,
+			List<PropiedadDTO> listOfProperties, Map<String, List<RelacionInternaDTO>> relations) {
+		if(listOfProperties==null) return null;
+		List<PropiedadDTO> resultOfProperties = null;
+		for (PropiedadDTO iProp : listOfProperties) {
+			List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
+			if (relaciones != null && !relaciones.isEmpty()) {
+				for (RelacionInternaDTO iRelation : relaciones) {
+					if(iRelation.getCampo().compareTo(campo.getCampo())==0) {
+						if(resultOfProperties==null) resultOfProperties = new ArrayList<>();
+						resultOfProperties.add(iProp);
+						break;
+					}
+				}
+			}
+		}
+		return resultOfProperties;
+	}
+
+	private Map<String, List<RelacionInternaDTO>> getRealationsRelatedWithList(List<PropiedadDTO> referidas,
+			Map<String, List<RelacionInternaDTO>> relations) throws ServerException {
+		if (relations ==null) {
+			relations= new HashMap<String, List<RelacionInternaDTO>>();
+			for (PropiedadDTO iProp : referidas) {
+				relations.put(iProp.getLlaveTabla(),
+						relacionService.relacionesPropiedad(iProp.getLlaveTabla()));
+			}	
+		}
+		return relations;
+	}
+
 	/**
 	 * Recibo unos campos y una relaciones, valido que campos cumplen con las
 	 * relaciones (con el atributo campo), selecciono los campos que cumplen con
@@ -238,7 +347,7 @@ public class ProcessTemplate {
 					// Quite el filtro por los auxiliares cuando son 2 de un mismo campo
 					relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
 					iField.setTransaccionRegistro(iRelacion.getAuxiliar());
-					//Necesito el id del campo para consultar los expedientes de multiples
+					// Necesito el id del campo para consultar los expedientes de multiples
 					PedidoVentaCaracteristicaDTO fieldNew = iField.clone();
 					fieldNew.setLlaveTabla(iField.getLlaveTabla());
 					fieldsInternal.add(fieldNew);
@@ -295,8 +404,8 @@ public class ProcessTemplate {
 			if (auxiliarFormat == null)
 				return iCampo.getValorText();
 			iCampo.setValorFecha(getDateWithTransformations(iCampo.getValorFecha(), auxiliarFormat));
-			if(auxiliarFormat.contains("(")) 
-				auxiliarFormat = auxiliarFormat.substring(0,auxiliarFormat.indexOf("("));
+			if (auxiliarFormat.contains("("))
+				auxiliarFormat = auxiliarFormat.substring(0, auxiliarFormat.indexOf("("));
 			return SoftureUtil.formatWithParameter(iCampo.getValorFecha(), auxiliarFormat);
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 			/*
@@ -307,7 +416,8 @@ public class ProcessTemplate {
 			 * decimales text = text.replace(",", ""); // Para logimax los numero no debian
 			 * ir con decimales
 			 */
-			if(iCampo.getValorNumero()==null) return iCampo.getValorText();
+			if (iCampo.getValorNumero() == null)
+				return iCampo.getValorText();
 			return new DecimalFormat("#.######").format(iCampo.getValorNumero().doubleValue());
 		// Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare
 		// despues
@@ -318,7 +428,7 @@ public class ProcessTemplate {
 			return iCampo.getValorText();
 		}
 	}
-	
+
 	public Date getDateWithTransformations(Date result, String texto) {
 		if (!texto.contains("("))
 			return result;

@@ -1,6 +1,5 @@
 package com.softure.document_execution.infrastructure;
 
-// BEGIN region interImport  
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,21 +13,6 @@ import com.softure.property.domain.PropiedadDTO;
 @SoftureSqlConnMapper("PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
-// BEGIN region aditionalMethods  
-	/**
-	 * 
-	 * @param dto
-	 * @param filtroEstados
-	 * @param campoFiltro
-	 * @param valorFiltro
-	 * @param ordenNombre
-	 * @param ordenDescendente
-	 * @param filtroTexto
-	 * @param filtroEstadosGeneralesMultiple Esto lo cree para que en los campos
-	 *                                       multiples de herencia se visualicen
-	 *                                       todos menos los inactivos
-	 * @return
-	 */
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("campoFiltro") List<String> campoFiltro,
 			@Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
@@ -36,7 +20,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple);
 
 	List<String> optionsToFilterByField(@Param("usuario") String usuario, @Param("relaciones") List<String> relaciones);
-	
+
 	List<PedidoVentaDTO> listarPermitidosPorCampoFiltro(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("ordenNombre") String ordenNombre,
 			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
@@ -60,15 +44,10 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 
 	List<PedidoVentaDTO> listar2Ids(@Param("Ids") List<String> Ids);
 
-	List<PedidoVentaDTO> listarVisibleRenderNivel2(@Param("documentos") List<PedidoVentaDTO> documentos);// Lo items
-																											// hijos de
-																											// los
-																											// principales
-																											// que son
-																											// visibles
+	// Lo items hijos de los principales que son visibles
+	List<PedidoVentaDTO> listarVisibleRenderNivel2(@Param("documentos") List<PedidoVentaDTO> documentos);
 
 	List<PedidoVentaDTO> iteracion(@Param("sqlFuncionDecision") String sqlFuncionDecision,
 			@Param("llaveTablaDocumento") String llaveTablaDocumento,
 			@Param("llaveTablaModificador") String llaveTablaModificador);// PAra las decisiones tipo iteracion
-// END region aditionalMethods
 }

@@ -147,15 +147,16 @@ public class CallDocumentListWithFilters {
 						String campoValor = Propiedades.obtenerValor(campoPlantilla, Propiedades.PROCESO_VALOR);
 						if (campoValor.isEmpty() || campoValor.compareTo("1") == 0 || campoValor.compareTo("2") == 0)
 							campoValor = null;
-						List<PedidoVentaCaracteristicaDTO> parametros = null;
+						// En Roa recibo de caja no llegaban parametros de un nueov documenot espero que vengan en orden
+						/*List<PedidoVentaCaracteristicaDTO> parametros = null;
 						if (dto.getLlaveTabla() != null) { // asumo que viene el dependiente relacionado
 							PedidoVentaCaracteristicaDTO param = new PedidoVentaCaracteristicaDTO();
 							param.setValorOpcion(dto.getLlaveTabla());
 							parametros = new ArrayList<PedidoVentaCaracteristicaDTO>();
 							parametros.add(param);
-						}
+						}*/
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto,
-								(propiedadFuncion == null) ? null : propiedadFuncion.getLlaveTabla(), parametros),
+								(propiedadFuncion == null) ? null : propiedadFuncion.getLlaveTabla(), dto.getCaracteristicas()),
 								dto.getSecurityToken(), campoValor);
 					} else {// hay casos que quiero que filtre solo por la fuente de datos
 						if (dto.getLlaveTabla() != null) { // el filtro viene en la llave tabla
