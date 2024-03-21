@@ -36,7 +36,8 @@ public class ApiGetReportService {
 		
 		PedidoVentaDTO document = documentService.consultaXId(filter.getDocumentId());
 		if(document==null) throw new ServerException("No se encontro un documento con el id " + filter.getDocumentId());
-		if(document.getPlantilla().compareTo(templateBD.getLlaveTabla())!=0) throw new ServerException("El documento seleccionado no concuerda con la plantilla seleccionada");
+		//Para la factura electronica de ROA se imprime el reporte de otro
+		//if(document.getPlantilla().compareTo(templateBD.getLlaveTabla())!=0) throw new ServerException("El documento seleccionado no concuerda con la plantilla seleccionada");
 		
 		
 		reportBD = reportService.validateReport(reportBD.getLlaveTabla(), token);

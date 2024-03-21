@@ -147,8 +147,10 @@ public class TipoFecha {
 					if (Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR).isEmpty()) {
 						pCampo.setValorFecha(hora.getTime());
 						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));
+						// Le coloque el campo modificado para las facturas roa que modifican el cufe
+						//creo que esto del modificado aplica para varios lados
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
+								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 							hora.setTime(new Date());
 							if (Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime()) > 900000)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
