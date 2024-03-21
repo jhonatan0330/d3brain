@@ -26,10 +26,18 @@ public class TipoFecha {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 				pCampo.getCampoDTO().getNombre());
-		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
-				&& pCampo.getValorFecha() == null)
-			throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
-					+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
+		if (pCampo.getValorFecha() == null) {
+			//PAra factura electronica de roa debo colcoar la fecha actual automaticamente viene vacio
+			if(pCampo.getDocumento()==null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
+				pCampo.setValorFecha(new Date());
+			}else {
+				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
+					throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
+							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());	
+			}
+			
+		}
+		
 		if (pCampo.getValorFecha() != null) {
 			String rango = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO);
 			if (!rango.isEmpty()) {

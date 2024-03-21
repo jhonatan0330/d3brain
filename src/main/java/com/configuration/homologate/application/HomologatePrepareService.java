@@ -366,7 +366,8 @@ public class HomologatePrepareService {
 		ArticleFilterDTO filter = new ArticleFilterDTO();
 		filter.setDocument(document.getLlaveTabla());
 		ArticleDTO updateArticle = articleService.getOne(filter);
-		if (updateArticle == null) return;
+		if (updateArticle == null)
+			return;
 		updateArticle.setIntroduction(getValueText(document, "INTRODUCCION"));
 		updateArticle.setHelp(getValueText(document, "AYUDA_EXTRA"));
 		updateArticle.setImage(getValueText(document, "IMAGEN"));
@@ -475,8 +476,8 @@ public class HomologatePrepareService {
 				Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
 
 		// Crear el campo Ayudas
-		fieldsTemplate.add(campoService.createField(templateId, "IMAGEN",
-				DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 2, token));
+		fieldsTemplate.add(
+				campoService.createField(templateId, "IMAGEN", DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 2, token));
 		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
@@ -507,16 +508,16 @@ public class HomologatePrepareService {
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
 				Propiedades.TEXTO_LARGO, "1", token), token);
-		
+
 		// Crear el campo Ayudas
-				fieldsTemplate.add(campoService.createField(templateId, "IMAGEN",
-						DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 3, token));
-				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-						Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-						Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-						Propiedades.CAMPO_EVIDENCIA, fieldsTemplate.get(2), token), token);
+		fieldsTemplate.add(
+				campoService.createField(templateId, "IMAGEN", DocumentoPlantillaCaracteristicaDTO.ARCHIVO, 3, token));
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateId,
+				Propiedades.CAMPO_EVIDENCIA, fieldsTemplate.get(2), token), token);
 
 	}
 
