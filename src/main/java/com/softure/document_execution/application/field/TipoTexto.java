@@ -44,7 +44,21 @@ public class TipoTexto {
 							+ ") el texto que sobra es el siguiente: " + pCampo.getValorText().substring(maxSize));
 			} catch (NumberFormatException e) {
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
-						+ pCampo.getCampoDTO().getNombre() + " tiene mal configurado el valor debe ser un numero");
+						+ pCampo.getCampoDTO().getNombre() + " tiene mal configurado el valor de la propiedad TEXTO LONGITUD, debe ser un numero");
+			}
+		}
+		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD_MINIMA) != null) {
+			try {
+				int minSize = Integer
+						.valueOf(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD_MINIMA));
+				if (pCampo.getValorText().length() < minSize)
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							+ " el campo " + pCampo.getCampoDTO().getNombre()
+							+ " debe contener mas de " + minSize
+							+ " caracteres");
+			} catch (NumberFormatException e) {
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
+						+ pCampo.getCampoDTO().getNombre() + " tiene mal configurado el valor de la propiedad TEXTO LONGITUD, debe ser un numero");
 			}
 		}
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);

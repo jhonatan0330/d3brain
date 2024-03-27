@@ -86,6 +86,7 @@ public class Propiedades {
 
 	public static final String TEXTO_FORMULA = "TEXTO_FORMULA";
 	public static final String TEXTO_LONGITUD = "TEXTO_LONGITUD";
+	public static final String TEXTO_LONGITUD_MINIMA = "TEXTO_LONGITUD_MINIMA";
 
 	public static final String NUMERO_REDONDEO = "NUMERO_REDONDEO";
 	public static final String NUMERO_MONEDA = "NUMERO_MONEDA";
@@ -1158,6 +1159,10 @@ public class Propiedades {
 			break;
 		}
 		case TEXTO_LONGITUD: {
+			ruleProperty = "Coloca un numero que va a limitar la cantidad de caracteres que puedes escribir.";
+			break;
+		}
+		case TEXTO_LONGITUD_MINIMA: {
 			ruleProperty = "Coloca un numero que va a limitar la cantidad de caracteres que puedes escribir.";
 			break;
 		}
