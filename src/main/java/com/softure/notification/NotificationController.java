@@ -1,4 +1,4 @@
-package com.softure.notification.infrastructure;
+package com.softure.notification;
 
 import java.util.List;
 
