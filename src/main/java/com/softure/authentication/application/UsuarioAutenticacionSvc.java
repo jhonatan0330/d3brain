@@ -156,6 +156,15 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		user.setEstado(SharedConstants.STATE_INACTIVE);
 		user = update(user);
 
+		UsuarioAutenticacionFilterDTO filterPassword = new UsuarioAutenticacionFilterDTO();
+		filterPassword.setUsuario(user.getUsuario());
+		filterPassword.setClave(dto.getClave());
+		
+		List<UsuarioAutenticacionDTO> repeatPassword = listarConsulta(filterPassword);
+		
+		if(repeatPassword!=null && !repeatPassword.isEmpty())
+			throw new ServerException("La clave que estas usando ya la habias usado y la cambiaste. Por seguridad no vuelvas a usar las mismas claves");
+		
 		UsuarioAutenticacionDTO newAuth = new UsuarioAutenticacionDTO();
 		newAuth.setUsuario(user.getUsuario());
 		newAuth.setClave(dto.getClave());
