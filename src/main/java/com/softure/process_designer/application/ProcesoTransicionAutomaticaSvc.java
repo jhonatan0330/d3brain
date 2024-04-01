@@ -44,14 +44,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	@Autowired
 	private ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
 	
-	// BEGIN region servicesProcesoTransicionAutomatica
 	@Autowired private MailSendMessageToAdminService sendMessageToAdminSvc;
 	@Autowired private PropiedadSvc propiedadService;
 	@Autowired private CallDocumentNewFromAutomatic createDocumentSinceProperties;
 	@Autowired private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired private RelacionInternaSvc relacionService;
 	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	// END region servicesProcesoTransicionAutomatica
 
 	@Override
 	public ProcesoTransicionAutomaticaDTO consultaXId(String llave) throws ServerException {
@@ -68,9 +66,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	
 	@Override
 	public ProcesoTransicionAutomaticaDTO activar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
-		// BEGIN ProcesoTransicionAutomatica_activar
 		return super.activar(dto, token);
-		// END ProcesoTransicionAutomatica_activar
 	}
 	
 	@Override
@@ -269,7 +265,15 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				List<PedidoVentaDTO> documentos = null;
 				documentos = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
 				if(documentos ==null || documentos.isEmpty()) {
+					//Este mensaje va unido a el query de validacion, tener cuidado
 					dto.setMensaje("Sin documentos a gestionar");
+					if (procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getLlaveTabla())==0) {
+						try {
+							sendMessageToAdminSvc.call("Proceso automatico que no se genera desde hace un mes " + dto.getPlantillaNombre(),
+									"Proceso automatico que no se genera desde hace un mes" + "\n\n(" +dto.getLlaveTabla() + ")");
+						} catch (ServerException e1) {
+						}
+					}
 				}else {
 					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
 					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
