@@ -38,3 +38,15 @@ and p.proname like 'propiedad_%'
 
 --
 SELECT replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-','')
+
+
+SELECT pid, age(clock_timestamp(), query_start), usename, query, state
+FROM pg_stat_activity
+WHERE state != 'idle' AND query NOT ILIKE '%pg_stat_activity%'
+ORDER BY query_start desc;
+
+
+-- kill running query
+SELECT pg_cancel_backend(186394);
+
+SELECT pg_terminate_backend(186394);
