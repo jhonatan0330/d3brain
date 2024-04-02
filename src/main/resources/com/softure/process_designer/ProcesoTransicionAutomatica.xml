@@ -164,7 +164,7 @@
 	<select id="countExecutionInLastMonth" resultType="int">
 		select count(*)
 		from procesotransicionautomatica_ptap 
-		where cpta_transicion = #{transition}
+		where cpta_transicion = #{transition} and cpta_propiedad = '#{property}
 			and dpta_ejecucion > now() - interval '1 month' 
 			and cpta_mensaje != 'Sin documentos a gestionar'
 	</select>

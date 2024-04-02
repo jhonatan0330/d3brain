@@ -291,7 +291,7 @@
 		where cmsj_estado = 'A' 
 			and dmsj_fecha >= now() - INTERVAL '90 minutes' 
 			and dmsj_correoenviado is null and cmsj_transaccion = #{transaccion}
-			and dmsj_fecha <![CDATA[ < ]]>= now()
+			and dmsj_fecha <![CDATA[ < ]]> now()
 	</select>
 	
 <!--// END region script-->

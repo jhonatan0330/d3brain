@@ -267,10 +267,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				if(documentos ==null || documentos.isEmpty()) {
 					//Este mensaje va unido a el query de validacion, tener cuidado
 					dto.setMensaje("Sin documentos a gestionar");
-					if (dto.getTransicion()!=null && procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getTransicion())==0) {
+					if (dto.getTransicion()!=null && procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getTransicion(), dto.getPropiedad())==0) {
 						try {
 							sendMessageToAdminSvc.call("Proceso automatico que no se genera desde hace un mes " + dto.getPlantillaNombre(),
-									"Proceso automatico que no se genera desde hace un mes" + "\n\n(" +dto.getLlaveTabla() + ")");
+									"Proceso automatico que no se genera desde hace un mes" + "\n\n(" +dto.getLlaveTabla() + ")."
+									+ " En caso de estar correcto te recomiendo que actualices la propiedad puede ser el motivo para que se vuelva a validar en un mes"
+									+ "(Ubicacion: "+propiedadService.ubicarPropiedad(pTemporizador) +")");
 						} catch (ServerException e1) {
 						}
 					}
@@ -333,6 +335,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		dto.setEjecucion(new Date());
 		return update(dto);
 	}
+	
 // END region aditionalMethods
 
 }

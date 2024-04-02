@@ -22,6 +22,6 @@ public interface ProcesoTransicionAutomaticaMapper extends IBasicMapper<ProcesoT
 	Date obtenerFechaUltimaEjecucion(String transicion);
 	void inactivarPropiedad(String propiedad);
 	int funcionPasarTablaHistoricos(@Param("plantilla") String plantilla, @Param("fechaCorte") Date fechaCorte);
-	int countExecutionInLastMonth(@Param("transition") String transition);
+	int countExecutionInLastMonth(@Param("transition") String transition, @Param("property") String property);
 // END region aditionalMethods
 }
