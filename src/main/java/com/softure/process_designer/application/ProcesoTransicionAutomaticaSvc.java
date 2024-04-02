@@ -275,6 +275,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 									+ "(Ubicacion: "+propiedadService.ubicarPropiedad(pTemporizador) +")");
 						} catch (ServerException e1) {
 						}
+						dto.setMensaje("Sin documentos a gestionar y avisado al administrador por tiempo sin generar documentos");
 					}
 				}else {
 					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
