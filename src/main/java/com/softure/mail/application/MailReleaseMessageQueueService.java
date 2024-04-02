@@ -14,19 +14,24 @@ import com.softure.mail.infrastructure.MensajeMapper;
 @Service
 public class MailReleaseMessageQueueService {
 
-	@Autowired private MensajeMapper mensajeMapper;
-	@Autowired private MailSendMessageService sendMessage;
-	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	
-	public void call()throws ServerException{
-	 	List<MensajeDTO> tareasPendientes = mensajeMapper.mensajesDisponibles();
-	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
-	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
-	 		for (MensajeDTO tareaProgramadaDTO : tareasPendientes) {
-	 			if(tareaProgramadaDTO.getCorreo()!=null) {
-	 				tareaProgramadaDTO = sendMessage.call(tareaProgramadaDTO, sessionAdmin.getUsuario(), sessionAdmin.getLlaveTabla());
-	 			}
+	@Autowired
+	private MensajeMapper mensajeMapper;
+	@Autowired
+	private MailSendMessageService sendMessage;
+	@Autowired
+	private UsuarioAutenticacionSvc autenticacionService;
+
+	public String call() throws ServerException {
+		List<MensajeDTO> messageToSend = mensajeMapper.mensajesDisponibles();
+		if (messageToSend == null || messageToSend.size() <= 0)
+			return "0";
+		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
+		for (MensajeDTO iMessage : messageToSend) {
+			if (iMessage.getCorreo() != null) {
+				iMessage = sendMessage.call(iMessage, sessionAdmin.getUsuario(), sessionAdmin.getLlaveTabla());
 			}
-	 	}
+		}
+		return String.valueOf(messageToSend.size());
+
 	}
 }

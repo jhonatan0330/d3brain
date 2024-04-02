@@ -11,16 +11,14 @@ import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajeFilterDTO;
 
 @SoftureSqlConnMapper("MensajeMapper")
-public interface MensajeMapper extends IBasicMapper<MensajeDTO, MensajeFilterDTO>{
-	
+public interface MensajeMapper extends IBasicMapper<MensajeDTO, MensajeFilterDTO> {
 
-// BEGIN region aditionalMethods  
 	List<MensajeDTO> mensajesUsuario(MensajeFilterDTO dto);
-	
+
 	List<MensajeDTO> mensajesDisponibles();
-	
-	List<MensajeDTO> correosMensaje(@Param("llavePropiedad") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
-	
-	List<MensajeDTO> mensajesTransaccion(@Param("transaccion") String transaccion);
-// END region aditionalMethods
+
+	List<MensajeDTO> correosMensaje(@Param("llavePropiedad") String estado, @Param("documento") String documento,
+			@Param("modificador") String modificador, @Param("token") String token);
+
+	//List<MensajeDTO> mensajesTransaccion(@Param("transaccion") String transaccion);
 }

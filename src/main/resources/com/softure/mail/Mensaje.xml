@@ -255,8 +255,11 @@
 <!--// BEGIN region script-->
 	<select id="mensajesDisponibles" resultType="MensajeDTO">
 		<include refid="selectMensajeFragment" />
-		where cmsj_estado = 'A' and dmsj_fecha >= NOW() - INTERVAL '30 minutes' and dmsj_correoenviado is null
-		LIMIT 30
+		where cmsj_estado = 'A' 
+			and dmsj_fecha >= NOW() - INTERVAL '90 minutes' 
+			and dmsj_correoenviado is null
+			and dmsj_fecha <![CDATA[ < ]]> now()
+		limit 30
 	</select>
 	
 	<select id="mensajesUsuario" parameterType="MensajeDTO" resultType="MensajeDTO">
@@ -286,13 +289,13 @@
 		from propiedad_${llavePropiedad} ( #{documento}, #{modificador}, #{token})
 	</select>
 	
-	<select id="mensajesTransaccion" resultType="MensajeDTO">
+	<!--select id="mensajesTransaccion" resultType="MensajeDTO">
 		<include refid="selectMensajeFragment" />
 		where cmsj_estado = 'A' 
 			and dmsj_fecha >= now() - INTERVAL '90 minutes' 
 			and dmsj_correoenviado is null and cmsj_transaccion = #{transaccion}
 			and dmsj_fecha <![CDATA[ < ]]> now()
-	</select>
+	</select-->
 	
 <!--// END region script-->
 
