@@ -267,7 +267,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				if(documentos ==null || documentos.isEmpty()) {
 					//Este mensaje va unido a el query de validacion, tener cuidado
 					dto.setMensaje("Sin documentos a gestionar");
-					if (procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getTransicion())==0) {
+					if (dto.getTransicion()!=null && procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getTransicion())==0) {
 						try {
 							sendMessageToAdminSvc.call("Proceso automatico que no se genera desde hace un mes " + dto.getPlantillaNombre(),
 									"Proceso automatico que no se genera desde hace un mes" + "\n\n(" +dto.getLlaveTabla() + ")");
