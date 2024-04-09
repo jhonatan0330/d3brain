@@ -27,17 +27,19 @@ public class TipoFecha {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 				pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorFecha() == null) {
-			//PAra factura electronica de roa debo colcoar la fecha actual automaticamente viene vacio
-			if(pCampo.getDocumento()==null && Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
+			// PAra factura electronica de roa debo colcoar la fecha actual automaticamente
+			// viene vacio
+			if (pCampo.getDocumento() == null
+					&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
 				pCampo.setValorFecha(new Date());
-			}else {
+			} else {
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 					throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
-							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());	
+							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
 			}
-			
+
 		}
-		
+
 		if (pCampo.getValorFecha() != null) {
 			String rango = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_RANGO);
 			if (!rango.isEmpty()) {
@@ -45,8 +47,9 @@ public class TipoFecha {
 					throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
 							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
 				if (pCampo.getValorNumero() == null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
-					throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre()
-							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre() + " Debe colocar el numero de tiempo de la fecha final");
+					throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " del formulario "
+							+ pCampo.getCampoDTO().getPlantillaNombre()
+							+ " Debe colocar el numero de tiempo de la fecha final");
 
 				// long rangoSeleccionadoLong = pCampo.getValorFecha().getTime() -
 				// pCampo.getValorNumero().longValue();
@@ -150,7 +153,7 @@ public class TipoFecha {
 						pCampo.setValorFecha(hora.getTime());
 						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));
 						// Le coloque el campo modificado para las facturas roa que modifican el cufe
-						//creo que esto del modificado aplica para varios lados
+						// creo que esto del modificado aplica para varios lados
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 							hora.setTime(new Date());
@@ -208,8 +211,41 @@ public class TipoFecha {
 
 					}
 				}
-				if (pCampo.getModificado()) {// en algunos casos se modifican datos de documentos viejos en donde se
-												// deja la misma fecha
+				// en algunos casos se modifican datos de documentos viejos en donde se deja la
+				// misma fecha
+				if (pCampo.getModificado()) {
+					String maximumField = Propiedades.obtenerValor(pCampo.getCampoDTO(),
+							Propiedades.FECHA_MAXIMA_CAMPO);
+					if (!maximumField.isEmpty()) {
+						PedidoVentaCaracteristicaDTO maxField = campoService.getDependent(maximumField,
+								pCampo.getDependientes());
+						if (maxField == null)
+							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " el campo " + pCampo.getCampoDTO().getNombre()
+									+ " no esta consultando el dependiente fecha maxima");
+						if (maxField.getValorFecha() != null) {
+							if (pCampo.getValorFecha().compareTo(maxField.getValorFecha()) > 0)
+								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
+										+ " debe ser menor a " + maxField.getCampoDTO().getNombre() + " : "
+										+ SoftureUtil.formatDateTime(maxField.getValorFecha()));
+						}
+					}
+					String minimumField = Propiedades.obtenerValor(pCampo.getCampoDTO(),
+							Propiedades.FECHA_MINIMA_CAMPO);
+					if (!minimumField.isEmpty()) {
+						PedidoVentaCaracteristicaDTO minField = campoService.getDependent(minimumField,
+								pCampo.getDependientes());
+						if (minField == null)
+							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " el campo " + pCampo.getCampoDTO().getNombre()
+									+ " no esta consultando el dependiente fecha minima");
+						if (minField.getValorFecha() != null) {
+							if (pCampo.getValorFecha().compareTo(minField.getValorFecha()) < 0)
+								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
+										+ " debe ser mayor a " + minField.getCampoDTO().getNombre() + " : "
+										+ SoftureUtil.formatDateTime(minField.getValorFecha()));
+						}
+					}
 					String maximo = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_MAXIMA);
 					if (!maximo.isEmpty()) {
 						try {
@@ -227,7 +263,6 @@ public class TipoFecha {
 					}
 					String minimo = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_MINIMA);
 					if (!minimo.isEmpty()) {
-
 						try {
 							long tiempoAdicional = Long.valueOf(minimo);
 							Calendar fechaMinimaCalendar = Calendar.getInstance();
@@ -256,7 +291,6 @@ public class TipoFecha {
 									+ " contiene un valor que no puede convertirse en numero como fecha minima. "
 									+ exNumber.getMessage());
 						}
-
 					}
 				}
 			}

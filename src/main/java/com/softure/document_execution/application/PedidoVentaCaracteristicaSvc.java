@@ -263,8 +263,19 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
+	public PedidoVentaCaracteristicaDTO getDependent(String field, List<PedidoVentaCaracteristicaDTO> dependents) throws ServerException{
+		if(field==null) throw new ServerException("No se identifica el campo dependiente");
+		if(dependents==null) return null;
+		for (PedidoVentaCaracteristicaDTO iField : dependents) {
+			if(iField.getCampo().compareTo(field)==0)
+				return iField;
+		}
+		return null;
+	}
+	
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
-		String[] cars = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO};
+		String[] cars = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
+				Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, cars);
 		if(codigoDepende==null || codigoDepende.isEmpty()) return;
 		//Valido que la cantidad de dependientes este correcta

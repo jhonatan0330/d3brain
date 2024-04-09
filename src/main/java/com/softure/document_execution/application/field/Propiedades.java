@@ -80,6 +80,8 @@ public class Propiedades {
 	public static final String FECHA_SIN_CALENDAR = "FECHA_SIN_CALENDAR";
 	public static final String FECHA_MAXIMA = "FECHA_MAXIMA";
 	public static final String FECHA_MINIMA = "FECHA_MINIMA";
+	public static final String FECHA_MAXIMA_CAMPO = "FECHA_MAXIMA_CAMPO";
+	public static final String FECHA_MINIMA_CAMPO = "FECHA_MINIMA_CAMPO";
 	public static final String FECHA_RANGO = "FECHA_RANGO";
 	public static final String FECHA_RANGO_MAXIMO = "FECHA_RANGO_MAXIMO";
 	public static final String FECHA_TIMER_BACK = "FECHA_TIMER_BACK";
@@ -776,6 +778,14 @@ public class Propiedades {
 			break;
 		}
 		case FECHA_MINIMA: {
+			ruleProperty = " Coloca un numero del tiempo minimo (actual - num), el tiempo es en milisegundos.\n";
+			break;
+		}
+		case FECHA_MAXIMA_CAMPO: {
+			ruleProperty = " Coloca un numero del tiempo maximo (actual + num), el tiempo es en milisegundos.\n";
+			break;
+		}
+		case FECHA_MINIMA_CAMPO: {
 			ruleProperty = " Coloca un numero del tiempo minimo (actual - num), el tiempo es en milisegundos.\n";
 			break;
 		}

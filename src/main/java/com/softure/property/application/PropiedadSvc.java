@@ -545,6 +545,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| dto.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0
 						|| dto.getKey().compareTo(Propiedades.DISPONIBILIDAD_CROQUIS) == 0
 						|| dto.getKey().compareTo(Propiedades.UPDATE_INFORMATIVE_FIELD) == 0
+						|| dto.getKey().compareTo(Propiedades.FECHA_MAXIMA_CAMPO) == 0
+						|| dto.getKey().compareTo(Propiedades.FECHA_MINIMA_CAMPO) == 0
 						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS) == 0) {
 					DocumentoPlantillaCaracteristicaDTO filtro = campoService.consultaXId(dto.getCampo());
 					if (filtro == null) {
@@ -883,6 +885,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.MODIFICAR_CAMPO: {
 			return identificadorCampo(dto, token);
 		}
+		case Propiedades.FECHA_MAXIMA_CAMPO:
+		case Propiedades.FECHA_MINIMA_CAMPO:
 		case Propiedades.INFORMATIVE_DATA: {
 			return identificadorCampo(dto, token);
 		}

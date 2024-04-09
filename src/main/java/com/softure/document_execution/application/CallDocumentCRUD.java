@@ -521,7 +521,7 @@ public class CallDocumentCRUD {
 			// que queden completas asi el campo este despues en orden
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
 				String[] props = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
-						Propiedades.UPDATE_INFORMATIVE_FIELD };
+						Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
 				List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
 						props);
 				if (codigoDepende != null) {
