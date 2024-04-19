@@ -262,12 +262,14 @@ public class TipoConfiguracion {
 			if (valorConfiguracion.isEmpty()) {
 				List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
 				PropiedadDTO option =  null;
-				for (PropiedadDTO propiedadDTO : options) {
-					if(propiedadDTO.getValor().compareTo(pCampo.getValorOpcion())==0) {
-						option = propiedadDTO;
-						pCampo.setValorText(option.getTexto());
-						break;
-					}
+				if(options!=null) {
+					for (PropiedadDTO propiedadDTO : options) {
+						if(propiedadDTO.getValor().compareTo(pCampo.getValorOpcion())==0) {
+							option = propiedadDTO;
+							pCampo.setValorText(option.getTexto());
+							break;
+						}
+					}	
 				}
 				if(option ==null) throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +  " No se identifico la opcion a seleccionar "+ pCampo.getValorOpcion());
 				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos

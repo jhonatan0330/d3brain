@@ -316,6 +316,7 @@ public class CallDocumentCRUD {
 			if (newField == null) {
 				newField = new PedidoVentaCaracteristicaDTO();
 				newField.setCampo(iField.getLlaveTabla());
+				//Esto es para que la plantilla update tenga el id del documento debe ser el primer campo
 				if (documentId != null) {
 					newField.setValorOpcion(dto.getLlaveTabla());
 					documentId = null;
