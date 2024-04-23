@@ -13,7 +13,6 @@ public class AccountRecordDTO extends SharedDataObject{
 	private String catalogCode;
 	private String voucher;
 	private String account;
-	private String code;
 	private String note;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date factDate;
@@ -49,14 +48,6 @@ public class AccountRecordDTO extends SharedDataObject{
 
 	public void setAccount(String account) {
 		this.account = account;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
 	}
 
 	public String getNote() {

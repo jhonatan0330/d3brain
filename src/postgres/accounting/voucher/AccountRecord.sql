@@ -13,7 +13,6 @@ ALTER TABLE account.registro_reg ADD dreg_modificacionfecha timestamptz;
 
 ALTER TABLE account.registro_reg ADD creg_comprobante varchar(32) NOT NULL ;
 ALTER TABLE account.registro_reg ADD creg_cuenta varchar(32) NOT NULL ;
-ALTER TABLE account.registro_reg ADD creg_codigo varchar(100) NOT NULL ;
 ALTER TABLE account.registro_reg ADD creg_descripcion varchar(200);
 ALTER TABLE account.registro_reg ADD dreg_fecha timestamp with time zone NOT NULL ;
 ALTER TABLE account.registro_reg ADD mreg_positivo NUMERIC(18,6) NOT NULL DEFAULT 0;

@@ -9,7 +9,6 @@
 			creg_llave as key
 			,creg_comprobante as voucher
 			,creg_cuenta as account
-			,creg_codigo as code
 			,creg_descripcion as note
 			,dreg_fecha as factDate
 			,mreg_positivo as positive
@@ -42,9 +41,6 @@
 			</if>
 			<if test="account!=null">
 				and creg_cuenta = #{account}
-			</if>
-			<if test="code!=null">
-				and creg_codigo = #{code}
 			</if>
 			<if test="note!=null">
 				and creg_descripcion = #{note}
@@ -127,9 +123,6 @@
 		<if test="account!=null">
 			,creg_cuenta
 		</if>
-		<if test="code!=null">
-			,creg_codigo
-		</if>
 		<if test="note!=null">
 			,creg_descripcion
 		</if>
@@ -182,9 +175,6 @@
 		<if test="account!=null">
 			,#{account}
 		</if>
-		<if test="code!=null">
-			,#{code}
-		</if>
 		<if test="note!=null">
 			,#{note}
 		</if>
@@ -236,7 +226,6 @@
 				dreg_modificacionfecha = now(),
 				creg_comprobante = #{voucher},
 				creg_cuenta = #{account},
-				creg_codigo = #{code},
 				creg_descripcion = #{note},
 				dreg_fecha = #{factDate},
 				mreg_positivo = #{positive},

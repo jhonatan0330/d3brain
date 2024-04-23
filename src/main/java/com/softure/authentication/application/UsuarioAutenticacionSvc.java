@@ -442,7 +442,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	@Override
 	public SharedToken validate(String token, HttpServletRequest request) throws ServerException {
-		if (token != null)
+		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		if (request == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");

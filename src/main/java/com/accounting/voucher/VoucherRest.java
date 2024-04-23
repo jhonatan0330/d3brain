@@ -41,6 +41,6 @@ public class VoucherRest {
 	@PostMapping("/manual")
 	public SharedIdResponse createManualVoucher(HttpServletRequest request,
 			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
-		return createService.call(voucher, tokenService.validate(token, null));
+		return createService.call(voucher, tokenService.validate(token, request));
 	}
 }

@@ -457,11 +457,6 @@
 							"type": "CLASS"
 						},
 						{
-							"name": "code",
-							"tableName": "codigo",
-							"type": "STRING"
-						},
-						{
 							"name": "note",
 							"tableName": "descripcion",
 							"type": "STRING",

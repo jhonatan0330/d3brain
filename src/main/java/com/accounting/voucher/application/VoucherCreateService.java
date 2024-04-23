@@ -56,12 +56,13 @@ public class VoucherCreateService {
 		validateInfoHeaderAndRecords(_voucher, token);
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
 		configureAccounts(_voucher, catalogDTO);
+		_voucher.getHeader().setCode( getCodeVoucher(catalogDTO, _voucher.getHeader(), token.getToken()));
 		voucherService.save(_voucher.getHeader());
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
 		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
 		calculateBalance(catalogDTO, _voucher, headerDTO);
-		//el codigo al final para evitar errores en transaccionalidad
-		getCodeVoucher(catalogDTO, headerDTO, token.getToken());
+		//Esto lo retiro por el momenot miestras esten junto //el codigo al final para evitar errores en transaccionalidad
+		//getCodeVoucher(catalogDTO, headerDTO, token.getToken());
 		return new SharedIdResponse(headerDTO.getKey(), headerDTO.getCode());
 	}
 
@@ -74,7 +75,7 @@ public class VoucherCreateService {
 	private void saveMap(CatalogDTO catalogDTO, String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value) throws ServerException {
 		// Obtener la fila de la cuenta en todos los niveles
 		List<ResultMapDTO> mapItems = mapService.getItemsAccount(catalogDTO.getCode(), accountId, ResultMapConst.TYPE_PUNTUAL, factDate);
-		mapItems.addAll( mapService.getItemsAccount(catalogDTO.getCode(), accountId, ResultMapConst.TYPE_TEMPORAL, factDate));
+		//mapItems.addAll( mapService.getItemsAccount(catalogDTO.getCode(), accountId, ResultMapConst.TYPE_TEMPORAL, factDate));
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
 			if(positive.compareTo(BigDecimal.ZERO)!=0) {
@@ -183,6 +184,27 @@ public class VoucherCreateService {
 		return catalogDTO;
 	}
 
+	private String getCodeVoucher(CatalogDTO catalogDTO, VoucherDTO voucher, String token) throws ServerException {
+		ConsecutivoDTO consecutive = null;
+		if (catalogDTO.getConsecutive() == null) {
+			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
+			newConsecutive.setNombre(catalogDTO.getName());
+			newConsecutive.setPrefijo(catalogDTO.getCode() + "-");
+			newConsecutive.setNumeroInicial(new BigDecimal(1000));
+			newConsecutive.setNumeroActual(new BigDecimal(1000));
+			consecutive = consecutiveService.guardar(newConsecutive, token);
+			catalogDTO.setConsecutive(newConsecutive.getLlaveTabla());
+			catalogService.update(catalogDTO);
+		} else {
+			consecutive = new ConsecutivoDTO();
+			consecutive.setLlaveTabla(catalogDTO.getConsecutive());
+		}
+		consecutive = consecutiveService.asignarConsecutivo(consecutive, token);
+		
+		return consecutive.getConsecutivoActual();
+	}
+	
+	/*
 	private void getCodeVoucher(CatalogDTO catalogDTO, VoucherDTO voucher, String token) throws ServerException {
 		ConsecutivoDTO consecutive = null;
 		if (catalogDTO.getConsecutive() == null) {
@@ -204,7 +226,7 @@ public class VoucherCreateService {
 		voucher.setCatalogCode(catalogDTO.getCode());
 		voucher.setCode(consecutive.getConsecutivoActual());
 		voucherService.update(voucher);
-	}
+	}*/
 
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {
 		//Como no funciona el cnosultar por id toca el getOne

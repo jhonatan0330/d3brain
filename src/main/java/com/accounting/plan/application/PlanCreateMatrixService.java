@@ -65,7 +65,7 @@ public class PlanCreateMatrixService {
 		map0.setLevel(0);
 		map0.setStartDate(initialDate);
 		map0.setEndDate(endDate);
-		map0.setPeriod("Full");
+		map0.setPeriod("0");
 		items.add(map0);
 		Calendar date = Calendar.getInstance();
 		date.setTime(initialDate);
