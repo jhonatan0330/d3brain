@@ -23,7 +23,11 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public CatalogDTO call(CatalogDTO catalog) throws ServerException {
 		validateCatalog(catalog);
-		catalogService.save(catalog);
+		if(catalog.getKey()!=null) {
+			catalogService.update(catalog);
+		} else {
+			catalogService.save(catalog);	
+		}
 		catalog = catalogService.getById(catalog.getKey());
 		/*createTemporal(catalog.getCode());
 		createPuntual(catalog.getCode());
@@ -96,5 +100,10 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}*/
+
+	@Override
+	public CatalogDTO callDelete(CatalogDTO catalog) throws ServerException {
+		return catalogService.delete(catalog.getKey());
+	}
 
 }

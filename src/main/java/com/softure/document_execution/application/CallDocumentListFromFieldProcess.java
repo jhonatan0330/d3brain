@@ -160,9 +160,15 @@ public class CallDocumentListFromFieldProcess {
 					}
 
 				} else {
-					resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getCampoDTO(),
-							pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor,
-							pCampo.getSecurityToken());
+					try {
+						resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getCampoDTO(),
+								pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor,
+								pCampo.getSecurityToken());	
+					}catch(ServerException ex) {
+						throw new ServerException("En el campo " + pBase.getNombre() + " se muestra este mensaje: "
+						+ ex.getMessage());
+					}
+					
 				}
 			}
 			if (pBase != null) {

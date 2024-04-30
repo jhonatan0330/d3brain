@@ -3,9 +3,11 @@ package com.accounting.plan;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,6 +82,16 @@ public class PlanAccountingRest {
 	@GetMapping("/catalog")
 	public List<CatalogDTO> getCatalog(@RequestHeader("Authorization") String token) throws ServerException {
 		return getCatalogService.getActive();
+	}
+	
+	@PutMapping("/catalog")
+	public CatalogDTO updateCatalog(@RequestBody CatalogDTO catalog, @RequestHeader("Authorization") String token) throws ServerException {
+		return createCatalogService.call(catalog);
+	}
+	
+	@DeleteMapping("/catalog")
+	public CatalogDTO inactivateCatalog(@RequestBody CatalogDTO catalog, @RequestHeader("Authorization") String token) throws ServerException {
+		return createCatalogService.callDelete(catalog);
 	}
 
 }
