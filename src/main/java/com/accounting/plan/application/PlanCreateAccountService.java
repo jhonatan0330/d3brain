@@ -24,13 +24,29 @@ public class PlanCreateAccountService {
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account) throws ServerException {
-		if(account.getCatalog()==null) throw new ServerException("Es importatne asignar la cuenta a un catalogo");
+		if(account.getCatalog()==null) throw new ServerException("Es importante asignar la cuenta a un catalogo");
 		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
 		if(account.getCode()!=null && account.getCode().isEmpty()) account.setCode(null);
 		assignWBSNumber(account);
 		if(account.getCode()==null) account.setCode(account.getWbs());
 		accountService.save(account);
 		return accountService.getById(account.getKey());
+	}
+	
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public AccountDTO callUpdate(AccountDTO account) throws ServerException {
+		AccountDTO bd = accountService.getById(account.getKey());
+		if(bd==null) throw new ServerException("No se identifica la cuenta");
+		if(bd.getCatalog().compareTo(account.getCatalog())!=0) throw new ServerException("No se puede modificar el catalogo");
+		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
+		if(account.getCode()!=null && account.getCode().isEmpty()) account.setCode(null);
+		accountService.update(account);
+		return accountService.getById(account.getKey());
+	}
+	
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public AccountDTO callDelete(AccountDTO account) throws ServerException {
+		return accountService.delete(account.getKey());
 	}
 	
 	private void assignWBSNumber(AccountDTO account) throws ServerException {
