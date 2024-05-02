@@ -21,6 +21,9 @@ import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.inventory.application.BodegaSvc;
+import com.softure.inventory.application.ProductoSvc;
+import com.softure.money.application.CuentaSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -55,6 +58,12 @@ public class HomologatePrepareService {
 	private CallDocumentCRUD crudService;
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private BodegaSvc bodegaService;
+	@Autowired
+	private ProductoSvc productoService;
+	@Autowired
+	private CuentaSvc cuentaService;
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
@@ -521,4 +530,16 @@ public class HomologatePrepareService {
 
 	}
 
+	public void crearProducto(PedidoVentaDTO documento, String categoria, String token) throws ServerException{
+		productoService.crearDesdeDocumento(documento, categoria, token);		
+	}
+
+	public void crearBodega(PedidoVentaDTO documento) throws ServerException{
+		bodegaService.crearDesdeDocumento(documento);
+	}
+
+	//Este metodo habia desaparecido pero es necesario para poder abrir los turnos de una caja
+	public void crearCuenta(PedidoVentaDTO dto, String propValue, String token) throws ServerException {
+		cuentaService.crearCuenta(dto, propValue, token);
+	}
 }

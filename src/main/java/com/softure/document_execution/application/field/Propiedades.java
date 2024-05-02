@@ -1007,7 +1007,7 @@ public class Propiedades {
 			break;
 		}
 		case PLANTILLA_TIPO_CUENTA: {
-			ruleProperty = " Define que esta plantilla relaciona los documentos creados con una cuenta\n";
+			ruleProperty = " Define que esta plantilla relaciona los documentos creados con una cuenta\n, coloca un valor de cero (0) para que no solicite turno al momento de crear";
 			break;
 		}
 		case PLANTILLA_TIPO_PRODUCTO: {

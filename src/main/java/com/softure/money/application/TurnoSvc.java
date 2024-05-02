@@ -97,6 +97,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	public TurnoDTO consultarTurnoActual(TurnoDTO dto)throws ServerException{
 		TurnoFilterDTO turnoDTO = new TurnoFilterDTO();
 		turnoDTO.setUsuario(dto.getUsuario());
+		turnoDTO.setCuenta(dto.getCuenta());
 		turnoDTO.setDocumento(dto.getDocumento());
 		turnoDTO.setEstado(TurnoDTO.ESTADO_EJECUCION);
 		List<TurnoDTO> turnos = listarConsulta(turnoDTO);

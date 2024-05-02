@@ -32,8 +32,6 @@ import com.softure.document_transaction.domain.DocumentoTransaccionDTO;
 import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.document_transition.application.CallManageTransition;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
-import com.softure.inventory.application.BodegaSvc;
-import com.softure.inventory.application.ProductoSvc;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -86,10 +84,6 @@ public class CallDocumentCRUD {
 	private PlantillaConsecutivoSvc plantillaConsecutivoSvc;
 	@Autowired
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
-	private BodegaSvc bodegaService;
-	@Autowired
-	private ProductoSvc productoService;
 	@Autowired
 	private DocumentoPlantillaSvc documentoPlantillaService;
 	@Autowired
@@ -810,9 +804,11 @@ public class CallDocumentCRUD {
 
 		PropiedadDTO categoria = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO);
 		if (categoria != null)
-			productoService.crearDesdeDocumento(dto, categoria.getValor(), token);
+			homologateService.crearProducto(dto, categoria.getValor(), token);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_BODEGA) != null)
-			bodegaService.crearDesdeDocumento(dto);
+			homologateService.crearBodega(dto);
+		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA) != null)
+			homologateService.crearCuenta(dto, Propiedades.obtenerValor(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA), token);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
 			homologateService.createFromDocument(dto,

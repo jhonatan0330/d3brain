@@ -173,7 +173,7 @@ public class TipoProceso {
 										+ " es de la plantilla " + plantillaError.getNombre()
 										+ " y esta plantilla no tiene propiedad configurada la propiedad cuenta que le permite manejar un seguimiento a los movimientos");
 							} else {
-								caja = cuentaService.crearCuenta(cuentaDocumento, token);
+								caja = cuentaService.crearCuenta(cuentaDocumento, propiedadCuenta.getValor(), token);
 								pCampo.setValorAuxiliar(caja.getLlaveTabla());
 							}
 						} else {
@@ -436,8 +436,6 @@ public class TipoProceso {
 					addDocumentToBPM(pCampo, pCampo.getPrincipal(), modificacion);
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.CUENTA_ABRIR_CAJA) != null) {
 						TurnoDTO turno = new TurnoDTO();
-						// CuentaPermisoUsuarioDTO cuenta =
-						// cuentaPermisoUsuarioService.consultaXId(pCampo.getValorOpcion());
 						turno.setCuenta(pCampo.getValorOpcion());
 						turno.setUsuario(campoService.getUserFlex(token));
 						turno.setDocumento(pCampo.getDocumento());
@@ -620,7 +618,7 @@ public class TipoProceso {
 		if (!catalogoMovimiento.isEmpty()) {
 			PedidoVentaDTO documento = pCampo.getPrincipal();
 			if (documento.getDinero() == null)
-				throw new ServerException("Los formularios con campos tipo cuenta deben tener el valor");
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +" reporta Los formularios con campos tipo cuenta deben tener el valor");
 			/*
 			 * if(documento.getDinero()==null){
 			 * if(plantillaService.consultaXId(documento.getPlantilla()).getTipo().compareTo

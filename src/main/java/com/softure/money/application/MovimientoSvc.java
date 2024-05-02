@@ -1,15 +1,9 @@
 package com.softure.money.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.math.BigDecimal;
 import java.util.Date;
-
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.application.BasicSvc;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -18,11 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.authorization.application.RolAccesoSvc;
+import com.softure.java.services.SoftureUtil;
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.MovimientoDTO;
 import com.softure.money.domain.MovimientoFilterDTO;
 import com.softure.money.domain.TurnoDTO;
-import com.softure.money.domain.TurnoFilterDTO;
 import com.softure.money.infrastructure.MovimientoMapper;
 
 @Service("movimientoService")
@@ -34,6 +32,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	// BEGIN region servicesMovimiento
 	@Autowired private TurnoSvc turnoService;
 	@Autowired private CuentaSvc cuentaService;
+	@Autowired
+	private RolAccesoSvc rolService;
 	// END region servicesMovimiento
 
 	@Override
@@ -198,13 +198,14 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		BigDecimal sobregiro = BigDecimal.ZERO;
 		if(cuenta.getValidarTurno()){
 			//Consultar turno
-			TurnoFilterDTO turnoFilter = new TurnoFilterDTO();
+			// retiro el usuario para poder identificar quien tiene activa la caja
+			TurnoDTO turnoFilter = new TurnoDTO();
 			turnoFilter.setCuenta(cuenta.getLlaveTabla());
-			turnoFilter.setUsuario(getUserFlex(token));
 			turnoFilter.setEstado(TurnoDTO.ESTADO_EJECUCION);
-			TurnoDTO turno = turnoService.consultaUnica(turnoFilter);
+			TurnoDTO turno = turnoService.consultarTurnoActual(turnoFilter);
 			if(turno!=null){
-				if(turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta se encuentra ocupada por "+ turno.getUsuarioNombre());
+				// hay un usuario automatico que debo dejar que haga el registro del turno
+				if(!rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta se encuentra ocupada por "+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
 				if(dto.getFechaEvento().compareTo(turno.getFechaApertura())<0) throw new ServerException("No se pueden registrar movimientos con fechas menores al inicio del turno." + SoftureUtil.formatDateTime(turno.getFechaApertura()));
 			}else{

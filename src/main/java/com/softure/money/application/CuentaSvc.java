@@ -97,11 +97,12 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	}
 
 // BEGIN region aditionalMethods
-	public CuentaDTO crearCuenta(PedidoVentaDTO dto, String token) throws ServerException {
+	public CuentaDTO crearCuenta(PedidoVentaDTO dto, String propValue,  String token) throws ServerException {
 		CuentaDTO cuentaNueva = new CuentaDTO();
 		cuentaNueva.setCodigo(dto.getNombre());
 		cuentaNueva.setNombre(dto.getDescripcion());
 		cuentaNueva.setDocumento(dto.getLlaveTabla());
+		if(propValue!=null)	cuentaNueva.setValidarTurno(propValue.compareTo("0")!=0);
 		return guardar(cuentaNueva, token);
 	}
 	
