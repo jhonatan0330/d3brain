@@ -120,6 +120,8 @@ public class CallProductValidateAndSave {
 			detalle.setTransaccionRegistro(transaction);
 			if (detalle.getLlaveTabla() == null) {
 				detalle = detallePedidoVentaService.guardar(detalle, token);
+				// En inventario se debe tener primero el campo bodega y evitar agregar
+				//result.add(detalle);
 			} else {
 				if (detalle.getEstado() != null
 						&& detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
