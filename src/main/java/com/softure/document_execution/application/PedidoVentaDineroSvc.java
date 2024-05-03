@@ -8,6 +8,7 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -91,8 +92,14 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	}
 
 // BEGIN region aditionalMethods
-	public PedidoVentaDineroDTO consultaPorDocumento(String documento, Integer historico) throws ServerException {
-		return pedidoVentaDineroMapper.consultaPorDocumento(documento, (historico==null)?null:"Historico");
+	public PedidoVentaDineroDTO consultaPorDocumento(String documento, Integer historico, String name) throws ServerException {
+		try {
+			return pedidoVentaDineroMapper.consultaPorDocumento(documento, (historico==null)?null:"Historico");	
+		} catch (BindingException ex) {
+			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + e.getMessage());
+		}
 	}
 	
 	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)

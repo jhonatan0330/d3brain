@@ -422,7 +422,7 @@ public class CallDocumentCRUD {
 				// proceso
 				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
 					PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(pedido.getLlaveTabla(),
-							pedido.getHistorico());
+							pedido.getHistorico(), pedido.getNombre());
 					if (anterior != null) {
 						dineroCalculado.setSaldo(anterior.getSaldo());
 						if (campoValor.getModificado() && anterior.getControlarSaldo()) {
@@ -447,7 +447,7 @@ public class CallDocumentCRUD {
 				pedido.setDinero(dineroCalculado);
 			} else {
 				if (pedido.getLlaveTabla() != null && pedido.getEstadoExpediente() != null) {
-					pedido.setDinero(dineroService.consultaPorDocumento(pedido.getLlaveTabla(), pedido.getHistorico()));
+					pedido.setDinero(dineroService.consultaPorDocumento(pedido.getLlaveTabla(), pedido.getHistorico(), pedido.getNombre()));
 				}
 			}
 
@@ -774,7 +774,7 @@ public class CallDocumentCRUD {
 	private PedidoVentaDineroDTO saveBalance(PedidoVentaDTO documento, String token) throws ServerException {
 		if (documento != null && documento.getDinero() != null) {
 			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla(),
-					documento.getHistorico());
+					documento.getHistorico(), documento.getNombre());
 			if (anterior != null) {
 				// En box sucedia que se guardaba y se hacia una tercera modificacion y el saldo
 				// no se controlaba

@@ -434,7 +434,7 @@ public class CallManageTransition {
 		PedidoVentaDineroDTO dinero = dineroDocumentoInicial;
 		PedidoVentaDTO pExpediente = pedidoService.consultaXId(expediente);
 		if (dinero == null) {
-			dinero = dineroService.consultaPorDocumento(expediente, pExpediente.getHistorico());
+			dinero = dineroService.consultaPorDocumento(expediente, pExpediente.getHistorico(), pExpediente.getNombre());
 		}
 
 		if (transicion.getAfectaSaldo() == null)
