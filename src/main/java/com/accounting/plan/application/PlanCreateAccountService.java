@@ -40,6 +40,7 @@ public class PlanCreateAccountService {
 		if(bd.getCatalog().compareTo(account.getCatalog())!=0) throw new ServerException("No se puede modificar el catalogo");
 		if(account.getParent()!=null && account.getParent().isEmpty()) account.setParent(null);
 		if(account.getCode()!=null && account.getCode().isEmpty()) account.setCode(null);
+		account.setState(bd.getState());
 		accountService.update(account);
 		return accountService.getById(account.getKey());
 	}
