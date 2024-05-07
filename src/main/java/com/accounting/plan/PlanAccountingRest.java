@@ -29,7 +29,7 @@ import com.shared.domain.ServerException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("acc/plan")
+@RequestMapping("/acc/plan")
 public class PlanAccountingRest {
 	
 	@Autowired
@@ -62,7 +62,7 @@ public class PlanAccountingRest {
 	}
 	
 	@PutMapping("/account")
-	public AccountDTO updateAccount(@RequestBody AccountDTO account, @RequestHeader("Authorization") String token) throws ServerException {
+	public AccountDTO updateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDTO account) throws ServerException {
 		return createAccountService.callUpdate(account);
 	}
 	
@@ -97,12 +97,12 @@ public class PlanAccountingRest {
 	}
 	
 	@PutMapping("/catalog")
-	public CatalogDTO updateCatalog(@RequestBody CatalogDTO catalog, @RequestHeader("Authorization") String token) throws ServerException {
+	public CatalogDTO updateCatalog(@RequestHeader("Authorization") String token, @RequestBody CatalogDTO catalog) throws ServerException {
 		return createCatalogService.call(catalog);
 	}
 	
 	@DeleteMapping("/catalog/{catalogId}")
-	public CatalogDTO inactivateCatalog(@PathVariable String catalogId, @RequestHeader("Authorization") String token) throws ServerException {
+	public CatalogDTO inactivateCatalog(@RequestHeader("Authorization") String token, @PathVariable String catalogId) throws ServerException {
 		return createCatalogService.callDelete(catalogId);
 	}
 
