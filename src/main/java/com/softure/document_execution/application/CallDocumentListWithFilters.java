@@ -560,7 +560,7 @@ public class CallDocumentListWithFilters {
 					if (!campoValorIterador.isEmpty()) {
 						if (campoValor.compareTo("1") == 0 || campoValor.compareTo("2") == 0) {
 							iterador.setDinero(dineroService.consultaPorDocumento(iterador.getLlaveTabla(),
-									iterador.getHistorico()));
+									iterador.getHistorico(), iterador.getNombre()));
 						} else {
 							PedidoVentaCaracteristicaFilterDTO valorCampoFilter = new PedidoVentaCaracteristicaFilterDTO();
 							valorCampoFilter.setEstado(SharedConstants.STATE_ACTIVE);

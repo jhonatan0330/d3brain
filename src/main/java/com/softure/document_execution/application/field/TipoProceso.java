@@ -350,7 +350,7 @@ public class TipoProceso {
 				if (expediente.getEstado() == null
 						|| expediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 					PedidoVentaDineroDTO valorActual = dineroService.consultaPorDocumento(expediente.getLlaveTabla(),
-							expediente.getHistorico());
+							expediente.getHistorico(), expediente.getNombre());
 					if (valorActual == null) {
 						if (expediente.getDinero() != null)
 							throw new ServerException(

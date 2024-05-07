@@ -170,7 +170,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	public PedidoVentaDTO consultaXIdConDinero(String llave) throws ServerException {
 		PedidoVentaDTO result = consultaXId(llave);
 		if(result!=null){
-			result.setDinero(dineroService.consultaPorDocumento(llave,  result.getHistorico()));
+			result.setDinero(dineroService.consultaPorDocumento(llave,  result.getHistorico(), result.getNombre()));
 		}
 		return result;
 	}
