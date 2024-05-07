@@ -29,7 +29,7 @@ import com.shared.domain.ServerException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/acc/plan")
+@RequestMapping("/acc_plan")
 public class PlanAccountingRest {
 	
 	@Autowired
