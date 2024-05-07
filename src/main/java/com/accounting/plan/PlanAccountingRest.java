@@ -64,9 +64,9 @@ public class PlanAccountingRest {
 		return createAccountService.callUpdate(account);
 	}
 	
-	@DeleteMapping("/account")
-	public AccountDTO deleteAccount(@RequestBody AccountDTO account, @RequestHeader("Authorization") String token) throws ServerException {
-		return createAccountService.callDelete(account);
+	@DeleteMapping("/account/{accountId}")
+	public AccountDTO deleteAccount(@PathVariable String accountId, @RequestHeader("Authorization") String token) throws ServerException {
+		return createAccountService.callDelete(accountId);
 	}
 	
 	@GetMapping("/account/{catalog}")
@@ -99,9 +99,9 @@ public class PlanAccountingRest {
 		return createCatalogService.call(catalog);
 	}
 	
-	@DeleteMapping("/catalog")
-	public CatalogDTO inactivateCatalog(@RequestBody CatalogDTO catalog, @RequestHeader("Authorization") String token) throws ServerException {
-		return createCatalogService.callDelete(catalog);
+	@DeleteMapping("/catalog/{catalogId}")
+	public CatalogDTO inactivateCatalog(@PathVariable String catalogId, @RequestHeader("Authorization") String token) throws ServerException {
+		return createCatalogService.callDelete(catalogId);
 	}
 
 }

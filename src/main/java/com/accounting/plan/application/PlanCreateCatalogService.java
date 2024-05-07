@@ -102,8 +102,8 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 	}*/
 
 	@Override
-	public CatalogDTO callDelete(CatalogDTO catalog) throws ServerException {
-		return catalogService.delete(catalog.getKey());
+	public CatalogDTO callDelete(String catalogId) throws ServerException {
+		return catalogService.delete(catalogId);
 	}
 
 }

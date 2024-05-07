@@ -45,8 +45,8 @@ public class PlanCreateAccountService {
 	}
 	
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public AccountDTO callDelete(AccountDTO account) throws ServerException {
-		return accountService.delete(account.getKey());
+	public AccountDTO callDelete(String accountId) throws ServerException {
+		return accountService.delete(accountId);
 	}
 	
 	private void assignWBSNumber(AccountDTO account) throws ServerException {
