@@ -72,12 +72,6 @@
 							"optional": true
 						},
 						{
-							"name": "status",
-							"tableName": "situacion",
-							"type": "STRING",
-							"size": 10
-						},
-						{
 							"name": "parent",
 							"tableName": "padre",
 							"type": "CLASS",
@@ -110,6 +104,18 @@
 							"name": "field",
 							"tableName": "campo",
 							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "initialDate",
+							"tableName": "fechainicial",
+							"type": "DATETIME",
+							"optional": true
+						},
+						{
+							"name": "finalDate",
+							"tableName": "fechafinal",
+							"type": "DATETIME",
 							"optional": true
 						}
 					]
@@ -267,12 +273,12 @@
 						{
 							"name": "accountName",
 							"type": "STRING",
-							"script": "select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta"
+							"script": "select ccue_nombre from account.cuenta_cue where ccue_llave = crmp_cuenta"
 						},
 						{
 							"name": "accountCode",
 							"type": "STRING",
-							"script": "select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta"
+							"script": "select ccue_codigo from account.cuenta_cue where ccue_llave = crmp_cuenta"
 						},
 						{
 							"name": "level",

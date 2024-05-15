@@ -129,7 +129,9 @@ insert into account.mapa_resultados_rmp(
 	,nrmp_mes
 	,nrmp_dia
 	,nrmp_hora
-	,nrmp_minuto)
+	,nrmp_minuto
+	,mrmp_saldoanterior
+	,mrmp_saldosiguiente)
 	VALUES
     <foreach collection="list" item="element" index="index" open="(" separator="),("  close=")">
         #{element.key},
@@ -144,7 +146,9 @@ insert into account.mapa_resultados_rmp(
         #{element.month},
         #{element.day},
         #{element.hour},
-        #{element.minute}
+        #{element.minute},
+        #{element.lastBalance},
+		#{element.nextBalance}
     </foreach>
 </select>
 
@@ -270,4 +274,24 @@ insert into account.mapa_resultados_rmp(
 		where
 			 nrmp_nivel = #{level} and drmp_fechainicio > #{startDate} and crmp_cuenta = #{account}
 	</select>
+	
+	<select id="selectAccountExtendTime" resultType="AccountDTO">
+		select 
+			cuenta.ccue_llave as key
+			,cuenta.ccue_catalogo as catalog
+			,cuenta.dcue_fechainicial as initialDate
+			,cuenta.dcue_fechafinal as finalDate
+			,ccue_nombre as name
+		from account.cuenta_cue cuenta
+			inner join account.catalogo_ctg catalogo on (catalogo.cctg_llave = cuenta.ccue_catalogo and catalogo.cctg_estado= 'A')
+		where cuenta.ccue_estado = 'A'
+		and (
+			cuenta.dcue_fechainicial is null 
+			or cuenta.dcue_fechafinal is null
+			or cuenta.dcue_fechainicial > catalogo.dctg_fechainicial 
+			or cuenta.dcue_fechafinal <![CDATA[ < ]]>  catalogo.dctg_fechafinal
+		)
+		order by cuenta.ccue_wbs limit 500;
+	</select>
+	
 </mapper>

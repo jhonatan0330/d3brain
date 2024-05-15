@@ -9,8 +9,8 @@
 			crmp_llave as key
 			,crmp_catalogo as catalog
 			,crmp_cuenta as account
-			,(select ccue_nombre from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountName
-			,(select ccue_codigo from cuenta_ccuep where ccue_llave = crmp_cuenta) as accountCode
+			,(select ccue_nombre from account.cuenta_cue where ccue_llave = crmp_cuenta) as accountName
+			,(select ccue_codigo from account.cuenta_cue where ccue_llave = crmp_cuenta) as accountCode
 			,nrmp_nivel as level
 			,drmp_fechainicio as startDate
 			,drmp_fechafin as endDate

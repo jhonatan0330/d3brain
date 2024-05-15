@@ -11,13 +11,14 @@
 			,ccue_wbs as wbs
 			,ccue_nombre as name
 			,ccue_codigo as code
-			,ccue_situacion as status
 			,ccue_padre as parent
 			,ncue_nivel as level
 			,ccue_tipo as type
 			,ccue_naturaleza as operation
 			,ccue_plantilla as template
 			,ccue_campo as field
+			,dcue_fechainicial as initialDate
+			,dcue_fechafinal as finalDate
 			,dcue_creacionfecha as createdAt
 			,ccue_creacionusuario as createdUser
 			,ccue_creacionusuarionombre as createdUserName
@@ -46,9 +47,6 @@
 			<if test="code!=null">
 				and ccue_codigo = #{code}
 			</if>
-			<if test="status!=null">
-				and ccue_situacion = #{status}
-			</if>
 			<if test="parent!=null">
 				and ccue_padre = #{parent}
 			</if>
@@ -66,6 +64,18 @@
 			</if>
 			<if test="field!=null">
 				and ccue_campo = #{field}
+			</if>
+			<if test="initialDateMin!=null">
+				and dcue_fechainicial >= #{initialDateMin}
+			</if>
+			<if test="initialDateMax!=null">
+				and dcue_fechainicial <![CDATA[ < ]]> #{initialDateMax}
+			</if>
+			<if test="finalDateMin!=null">
+				and dcue_fechafinal >= #{finalDateMin}
+			</if>
+			<if test="finalDateMax!=null">
+				and dcue_fechafinal <![CDATA[ < ]]> #{finalDateMax}
 			</if>
 			<if test="filter!=null">and (upper(ccue_nombre) like upper('%' || #{filter} || '%') or upper(ccue_codigo) like upper('%' || #{filter} || '%'))</if>
 	</sql>
@@ -119,9 +129,6 @@
 		<if test="code!=null">
 			,ccue_codigo
 		</if>
-		<if test="status!=null">
-			,ccue_situacion
-		</if>
 		<if test="parent!=null">
 			,ccue_padre
 		</if>
@@ -139,6 +146,12 @@
 		</if>
 		<if test="field!=null">
 			,ccue_campo
+		</if>
+		<if test="initialDate!=null">
+			,dcue_fechainicial
+		</if>
+		<if test="finalDate!=null">
+			,dcue_fechafinal
 		</if>
 		<if test="createdUser!=null">
 			,ccue_creacionusuario
@@ -165,9 +178,6 @@
 		<if test="code!=null">
 			,#{code}
 		</if>
-		<if test="status!=null">
-			,#{status}
-		</if>
 		<if test="parent!=null">
 			,#{parent}
 		</if>
@@ -185,6 +195,12 @@
 		</if>
 		<if test="field!=null">
 			,#{field}
+		</if>
+		<if test="initialDate!=null">
+			,#{initialDate}
+		</if>
+		<if test="finalDate!=null">
+			,#{finalDate}
 		</if>
 		<if test="createdUser!=null">
 			,#{createdUser}
@@ -206,13 +222,14 @@
 				ccue_wbs = #{wbs},
 				ccue_nombre = #{name},
 				ccue_codigo = #{code},
-				ccue_situacion = #{status},
 				ccue_padre = #{parent},
 				ncue_nivel = #{level},
 				ccue_tipo = #{type},
 				ccue_naturaleza = #{operation},
 				ccue_plantilla = #{template},
 				ccue_campo = #{field},
+				dcue_fechainicial = #{initialDate},
+				dcue_fechafinal = #{finalDate},
 				ccue_estado =#{state}
 		<include refid="whereAccountPrimaryKeyFragment" />
 	</select>

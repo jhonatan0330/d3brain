@@ -72,7 +72,6 @@ public class PlanCreateAccountService {
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		int countAccount = accountService.count(filter);
 		account.setWbs(prefixWBS + String.format("%1$4s", (countAccount+1)));
-		account.setStatus(AccountConst.STATUS_PLANNING);
 		account.setType(AccountConst.TYPE_OPERATIONAL);
 		account.setOperation(AccountConst.OPERATION_ADD);
 	}

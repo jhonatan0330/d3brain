@@ -1,5 +1,7 @@
 package com.accounting.plan.domain;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
@@ -11,13 +13,16 @@ public class AccountDTO extends SharedDataObject{
 	private String wbs;
 	private String name;
 	private String code;
-	private String status;
 	private String parent;
 	private Integer level;
 	private String type;
 	private String operation;
 	private String template;
 	private String field;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date initialDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date finalDate;
 
 	public String getCatalog() {
 		return catalog;
@@ -49,14 +54,6 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getParent() {
@@ -105,6 +102,22 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setField(String field) {
 		this.field = field;
+	}
+
+	public Date getInitialDate() {
+		return initialDate;
+	}
+
+	public void setInitialDate(Date initialDate) {
+		this.initialDate = initialDate;
+	}
+
+	public Date getFinalDate() {
+		return finalDate;
+	}
+
+	public void setFinalDate(Date finalDate) {
+		this.finalDate = finalDate;
 	}
 
 }

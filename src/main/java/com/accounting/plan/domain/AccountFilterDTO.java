@@ -1,5 +1,6 @@
 package com.accounting.plan.domain;
 
+import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
@@ -12,13 +13,16 @@ public class AccountFilterDTO extends SharedDataObjectFilter {
 	private String wbs;
 	private String name;
 	private String code;
-	private String status;
 	private String parent;
 	private Integer level;
 	private String type;
 	private String operation;
 	private String template;
 	private String field;
+	private Date initialDateMin;
+	private Date initialDateMax;
+	private Date finalDateMin;
+	private Date finalDateMax;
 
 	public String getCatalog() {
 		return catalog;
@@ -50,14 +54,6 @@ public class AccountFilterDTO extends SharedDataObjectFilter {
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 	public String getParent() {
@@ -106,6 +102,38 @@ public class AccountFilterDTO extends SharedDataObjectFilter {
 
 	public void setField(String field) {
 		this.field = field;
+	}
+
+	public Date getInitialDateMin() {
+		return initialDateMin;
+	}
+
+	public void setInitialDateMin(Date initialDateMin) {
+		this.initialDateMin = initialDateMin;
+	}
+
+	public Date getInitialDateMax() {
+		return initialDateMax;
+	}
+
+	public void setInitialDateMax(Date initialDateMax) {
+		this.initialDateMax = initialDateMax;
+	}
+
+	public Date getFinalDateMin() {
+		return finalDateMin;
+	}
+
+	public void setFinalDateMin(Date finalDateMin) {
+		this.finalDateMin = finalDateMin;
+	}
+
+	public Date getFinalDateMax() {
+		return finalDateMax;
+	}
+
+	public void setFinalDateMax(Date finalDateMax) {
+		this.finalDateMax = finalDateMax;
 	}
 
 }
