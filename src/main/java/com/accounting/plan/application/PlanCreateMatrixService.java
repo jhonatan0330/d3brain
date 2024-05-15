@@ -1,5 +1,6 @@
 package com.accounting.plan.application;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -295,6 +296,10 @@ public class PlanCreateMatrixService {
 		if (mapCurrent != null) {
 			map.setNextBalance(mapCurrent.getNextBalance());
 			map.setLastBalance(mapCurrent.getLastBalance());
+		} else {
+			// Si no le coloco los ceros va a fallar el insert all
+			map.setNextBalance(BigDecimal.ZERO);
+			map.setLastBalance(BigDecimal.ZERO);
 		}
 		return map;
 	}
