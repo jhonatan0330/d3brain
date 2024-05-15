@@ -260,6 +260,8 @@
 		<if test="filtroEstadoGeneralesMultiple==null"><if test="dto.estado!=null">and a.cpdv_estado = #{dto.estado}</if></if>
 		<if test="dto.fechaMin!=null">and a.dpdv_fecha >= #{dto.fechaMin}</if>
 		<if test="dto.fechaMax!=null">and a.dpdv_fecha <![CDATA[ < ]]>  #{dto.fechaMax}</if>
+		<if test="dto.fechaRegistroMin!=null">and a.dpdv_fecharegistro >= #{dto.fechaRegistroMin}</if>
+		<if test="dto.fechaRegistroMax!=null">and a.dpdv_fecharegistro <![CDATA[ < ]]>  #{dto.fechaRegistroMax}</if>
 		<if test="dto.plantilla!=null">and a.cpdv_plantilla = #{dto.plantilla}</if>
 		<if test="dto.nombre!=null">and a.cpdv_nombre = #{dto.nombre}</if>
 		<if test="dto.filtroParametro!=null">and (a.cpdv_nombre like upper('%' || #{dto.filtroParametro} || '%') or a.cpdv_textofiltro like '%' || #{dto.filtroParametro} || '%')</if>

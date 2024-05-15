@@ -5,9 +5,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,7 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("acc/voucher")
 public class VoucherRest {
 
@@ -42,5 +46,17 @@ public class VoucherRest {
 	public SharedIdResponse createManualVoucher(HttpServletRequest request,
 			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
 		return createService.call(voucher, tokenService.validate(token, request));
+	}
+	
+	@PutMapping("/manual")
+	public SharedIdResponse updateManualVoucher(HttpServletRequest request,
+			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
+		return createService.update(voucher, tokenService.validate(token, request));
+	}
+	
+	@DeleteMapping("/manual/{voucherId}")
+	public VoucherDTO deleteManualVoucher(HttpServletRequest request,
+			@RequestHeader("Authorization") String token, @PathVariable String voucherId) throws ServerException {
+		return createService.delete(voucherId);
 	}
 }

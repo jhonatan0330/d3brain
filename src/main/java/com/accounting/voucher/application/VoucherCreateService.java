@@ -241,11 +241,19 @@ public class VoucherCreateService {
 	 */
 
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {
-		// Como no funciona el cnosultar por id toca el getOne
+		// Como no funciona el cosultar por id toca el getOne
 		VoucherFilterDTO filterVoucher = new VoucherFilterDTO();
 		filterVoucher.setKey(voucherId);
 		filterVoucher.setCatalogCode(catalogCode);
 		return voucherService.getOne(filterVoucher);
 	}
 
+	public SharedIdResponse update(Voucher _voucher, SharedToken token) throws ServerException {
+		voucherService.update(_voucher.getHeader());
+		return new SharedIdResponse(_voucher.getHeader().getKey(), _voucher.getHeader().getCode());
+	}
+	
+	public VoucherDTO delete(String voucherId) throws ServerException{
+		return voucherService.delete(voucherId);
+	}
 }

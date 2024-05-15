@@ -195,6 +195,8 @@ public class CallDocumentListWithFilters {
 	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter)
 			throws ServerException {
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
+		filterDTO.setFechaRegistroMax(dtoFilter.getFechaRegistroMax());
+		filterDTO.setFechaRegistroMin(dtoFilter.getFechaRegistroMin());
 		filterDTO.setFiltroParametro(dtoFilter.getFiltroParametro());
 		filterDTO.setEstado(dtoFilter.getEstado());
 		filterDTO.setCampoOrigen(dtoFilter.getCampoOrigen());
