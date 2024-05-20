@@ -21,59 +21,36 @@
 	</sql>
 
 	<sql id="whereCatalogFragment">
-		where 1=1
-			<if test="key!=null">
-				and cctg_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and cctg_estado = #{state}
-			</if>
-			<if test="name!=null">
-				and cctg_nombre = #{name}
-			</if>
-			<if test="code!=null">
-				and cctg_codigo = #{code}
-			</if>
-			<if test="initialDateMin!=null">
-				and dctg_fechainicial >= #{initialDateMin}
-			</if>
-			<if test="initialDateMax!=null">
-				and dctg_fechainicial <![CDATA[ < ]]> #{initialDateMax}
-			</if>
-			<if test="finalDateMin!=null">
-				and dctg_fechafinal >= #{finalDateMin}
-			</if>
-			<if test="finalDateMax!=null">
-				and dctg_fechafinal <![CDATA[ < ]]> #{finalDateMax}
-			</if>
-			<if test="consecutive!=null">
-				and cctg_consecutivo = #{consecutive}
-			</if>
+		where 1=1<if test="key!=null">
+		and cctg_llave = #{key}</if><if test="state!=null">
+		and cctg_estado = #{state}</if>
+<if test="name!=null">		and cctg_nombre = #{name}</if>
+<if test="code!=null">		and cctg_codigo = #{code}</if>
+<if test="initialDateMin!=null">		and dctg_fechainicial >= #{initialDateMin}</if><if test="initialDateMax!=null">		and dctg_fechainicial <![CDATA[ < ]]> #{initialDateMax}</if>
+<if test="finalDateMin!=null">		and dctg_fechafinal >= #{finalDateMin}</if><if test="finalDateMax!=null">		and dctg_fechafinal <![CDATA[ < ]]> #{finalDateMax}</if>
+<if test="consecutive!=null">		and cctg_consecutivo = #{consecutive}</if>
 
 	</sql>
 
 	<sql id="paginationCatalogFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereCatalogPrimaryKeyFragment">
-		where
-			cctg_llave =#{key}
+		where cctg_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="CatalogFilterDTO" resultType="CatalogDTO">
 		<include refid="selectCatalogFragment" />
 		<include refid="whereCatalogFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="CatalogFilterDTO" resultType="CatalogDTO">
 		<include refid="selectCatalogFragment" />
 		<include refid="whereCatalogFragment" />
+		
 		<include refid="paginationCatalogFragment" />
 	</select>
 
@@ -84,75 +61,36 @@
 	</select>
 
 	<select id="insert" parameterType="CatalogDTO" resultType="CatalogDTO">
-		insert into account.catalogo_ctg(
-			cctg_llave
-			,dctg_creacionfecha
-			,dctg_modificacionfecha
-		<if test="name!=null">
-			,cctg_nombre
-		</if>
-		<if test="code!=null">
-			,cctg_codigo
-		</if>
-		<if test="initialDate!=null">
-			,dctg_fechainicial
-		</if>
-		<if test="finalDate!=null">
-			,dctg_fechafinal
-		</if>
-		<if test="consecutive!=null">
-			,cctg_consecutivo
-		</if>
-		<if test="createdUser!=null">
-			,cctg_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,cctg_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,cctg_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="name!=null">
-			,#{name}
-		</if>
-		<if test="code!=null">
-			,#{code}
-		</if>
-		<if test="initialDate!=null">
-			,#{initialDate}
-		</if>
-		<if test="finalDate!=null">
-			,#{finalDate}
-		</if>
-		<if test="consecutive!=null">
-			,#{consecutive}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.catalogo_ctg(cctg_llave, dctg_creacionfecha, dctg_modificacionfecha
+		<if test="name!=null">,cctg_nombre</if>
+		<if test="code!=null">,cctg_codigo</if>
+		<if test="initialDate!=null">,dctg_fechainicial</if>
+		<if test="finalDate!=null">,dctg_fechafinal</if>
+		<if test="consecutive!=null">,cctg_consecutivo</if>
+		<if test="createdUser!=null">,cctg_creacionusuario</if>
+		<if test="createdUserName!=null">,cctg_creacionusuarionombre</if>
+		<if test="state!=null">,cctg_estado</if>
+		) values (#{key}, now(), now()
+		<if test="name!=null">,#{name}</if>
+		<if test="code!=null">,#{code}</if>
+		<if test="initialDate!=null">,#{initialDate}</if>
+		<if test="finalDate!=null">,#{finalDate}</if>
+		<if test="consecutive!=null">,#{consecutive}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="CatalogDTO" resultType="CatalogDTO">
 		update account.catalogo_ctg
-			set
-				dctg_modificacionfecha = now(),
-				cctg_nombre = #{name},
-				cctg_codigo = #{code},
-				dctg_fechainicial = #{initialDate},
-				dctg_fechafinal = #{finalDate},
-				cctg_consecutivo = #{consecutive},
-				cctg_estado =#{state}
+		set dctg_modificacionfecha = now(),
+		cctg_nombre = #{name},
+		cctg_codigo = #{code},
+		dctg_fechainicial = #{initialDate},
+		dctg_fechafinal = #{finalDate},
+		cctg_consecutivo = #{consecutive},
+		cctg_estado =#{state}
 		<include refid="whereCatalogPrimaryKeyFragment" />
 	</select>
 	

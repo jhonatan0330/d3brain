@@ -23,60 +23,32 @@
 	</sql>
 
 	<sql id="whereTaskFragment">
-		where 1=1
-			<if test="key!=null">
-				and ctsk_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and ctsk_estado = #{state}
-			</if>
-			<if test="user!=null">
-				and ctsk_user = #{user}
-			</if>
-			<if test="title!=null">
-				and ctsk_title = #{title}
-			</if>
-			<if test="notes!=null">
-				and ctsk_notes = #{notes}
-			</if>
-			<if test="completedMin!=null">
-				and dtsk_completed >= #{completedMin}
-			</if>
-			<if test="completedMax!=null">
-				and dtsk_completed <![CDATA[ < ]]> #{completedMax}
-			</if>
-			<if test="dueDateMin!=null">
-				and dtsk_dueDate >= #{dueDateMin}
-			</if>
-			<if test="dueDateMax!=null">
-				and dtsk_dueDate <![CDATA[ < ]]> #{dueDateMax}
-			</if>
-			<if test="priority!=null">
-				and ntsk_priority = #{priority}
-			</if>
-			<if test="order!=null">
-				and ntsk_order = #{order}
-			</if>
+		where 1=1<if test="key!=null">
+		and ctsk_llave = #{key}</if><if test="state!=null">
+		and ctsk_estado = #{state}</if>
+<if test="user!=null">		and ctsk_user = #{user}</if>
+<if test="title!=null">		and ctsk_title = #{title}</if>
+<if test="notes!=null">		and ctsk_notes = #{notes}</if>
+<if test="completedMin!=null">		and dtsk_completed >= #{completedMin}</if><if test="completedMax!=null">		and dtsk_completed <![CDATA[ < ]]> #{completedMax}</if>
+<if test="dueDateMin!=null">		and dtsk_dueDate >= #{dueDateMin}</if><if test="dueDateMax!=null">		and dtsk_dueDate <![CDATA[ < ]]> #{dueDateMax}</if>
+<if test="priority!=null">		and ntsk_priority = #{priority}</if>
+<if test="order!=null">		and ntsk_order = #{order}</if>
 
 	</sql>
 
 	<sql id="paginationTaskFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereTaskPrimaryKeyFragment">
-		where
-			ctsk_llave =#{key}
+		where ctsk_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="TaskFilterDTO" resultType="TaskDTO">
 		<include refid="selectTaskFragment" />
 		<include refid="whereTaskFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="TaskFilterDTO" resultType="TaskDTO">
@@ -93,89 +65,42 @@
 	</select>
 
 	<select id="insert" parameterType="TaskDTO" resultType="TaskDTO">
-		insert into task.task_tsk(
-			ctsk_llave
-			,dtsk_creacionfecha
-			,dtsk_modificacionfecha
-		<if test="user!=null">
-			,ctsk_user
-		</if>
-		<if test="title!=null">
-			,ctsk_title
-		</if>
-		<if test="notes!=null">
-			,ctsk_notes
-		</if>
-		<if test="completed!=null">
-			,dtsk_completed
-		</if>
-		<if test="dueDate!=null">
-			,dtsk_dueDate
-		</if>
-		<if test="priority!=null">
-			,ntsk_priority
-		</if>
-		<if test="order!=null">
-			,ntsk_order
-		</if>
-		<if test="createdUser!=null">
-			,ctsk_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,ctsk_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,ctsk_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="user!=null">
-			,#{user}
-		</if>
-		<if test="title!=null">
-			,#{title}
-		</if>
-		<if test="notes!=null">
-			,#{notes}
-		</if>
-		<if test="completed!=null">
-			,#{completed}
-		</if>
-		<if test="dueDate!=null">
-			,#{dueDate}
-		</if>
-		<if test="priority!=null">
-			,#{priority}
-		</if>
-		<if test="order!=null">
-			,#{order}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into task.task_tsk(ctsk_llave, dtsk_creacionfecha, dtsk_modificacionfecha
+		<if test="user!=null">,ctsk_user</if>
+		<if test="title!=null">,ctsk_title</if>
+		<if test="notes!=null">,ctsk_notes</if>
+		<if test="completed!=null">,dtsk_completed</if>
+		<if test="dueDate!=null">,dtsk_dueDate</if>
+		<if test="priority!=null">,ntsk_priority</if>
+		<if test="order!=null">,ntsk_order</if>
+		<if test="createdUser!=null">,ctsk_creacionusuario</if>
+		<if test="createdUserName!=null">,ctsk_creacionusuarionombre</if>
+		<if test="state!=null">,ctsk_estado</if>
+		) values (#{key}, now(), now()
+		<if test="user!=null">,#{user}</if>
+		<if test="title!=null">,#{title}</if>
+		<if test="notes!=null">,#{notes}</if>
+		<if test="completed!=null">,#{completed}</if>
+		<if test="dueDate!=null">,#{dueDate}</if>
+		<if test="priority!=null">,#{priority}</if>
+		<if test="order!=null">,#{order}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TaskDTO" resultType="TaskDTO">
 		update task.task_tsk
-			set
-				dtsk_modificacionfecha = now(),
-				ctsk_user = #{user},
-				ctsk_title = #{title},
-				ctsk_notes = #{notes},
-				dtsk_completed = #{completed},
-				dtsk_dueDate = #{dueDate},
-				ntsk_priority = #{priority},
-				ntsk_order = #{order},
-				ctsk_estado =#{state}
+		set dtsk_modificacionfecha = now(),
+		ctsk_user = #{user},
+		ctsk_title = #{title},
+		ctsk_notes = #{notes},
+		dtsk_completed = #{completed},
+		dtsk_dueDate = #{dueDate},
+		ntsk_priority = #{priority},
+		ntsk_order = #{order},
+		ctsk_estado =#{state}
 		<include refid="whereTaskPrimaryKeyFragment" />
 	</select>
 	

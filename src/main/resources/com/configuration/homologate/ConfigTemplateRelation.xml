@@ -20,50 +20,35 @@
 	</sql>
 
 	<sql id="whereConfigTemplateRelationFragment">
-		where 1=1
-			<if test="key!=null">
-				and cctr_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and cctr_estado = #{state}
-			</if>
-			<if test="entity!=null">
-				and cctr_entity = #{entity}
-			</if>
-			<if test="entityField!=null">
-				and cctr_entityfield = #{entityField}
-			</if>
-			<if test="template!=null">
-				and cctr_template = #{template}
-			</if>
-			<if test="templateField!=null">
-				and cctr_templatefield = #{templateField}
-			</if>
+		where 1=1<if test="key!=null">
+		and cctr_llave = #{key}</if><if test="state!=null">
+		and cctr_estado = #{state}</if>
+<if test="entity!=null">		and cctr_entity = #{entity}</if>
+<if test="entityField!=null">		and cctr_entityfield = #{entityField}</if>
+<if test="template!=null">		and cctr_template = #{template}</if>
+<if test="templateField!=null">		and cctr_templatefield = #{templateField}</if>
 
 	</sql>
 
 	<sql id="paginationConfigTemplateRelationFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereConfigTemplateRelationPrimaryKeyFragment">
-		where
-			cctr_llave =#{key}
+		where cctr_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="ConfigTemplateRelationFilterDTO" resultType="ConfigTemplateRelationDTO">
 		<include refid="selectConfigTemplateRelationFragment" />
 		<include refid="whereConfigTemplateRelationFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="ConfigTemplateRelationFilterDTO" resultType="ConfigTemplateRelationDTO">
 		<include refid="selectConfigTemplateRelationFragment" />
 		<include refid="whereConfigTemplateRelationFragment" />
+		
 		<include refid="paginationConfigTemplateRelationFragment" />
 	</select>
 
@@ -74,68 +59,33 @@
 	</select>
 
 	<select id="insert" parameterType="ConfigTemplateRelationDTO" resultType="ConfigTemplateRelationDTO">
-		insert into config.configtemplaterelation_ctr(
-			cctr_llave
-			,dctr_creacionfecha
-			,dctr_modificacionfecha
-		<if test="entity!=null">
-			,cctr_entity
-		</if>
-		<if test="entityField!=null">
-			,cctr_entityfield
-		</if>
-		<if test="template!=null">
-			,cctr_template
-		</if>
-		<if test="templateField!=null">
-			,cctr_templatefield
-		</if>
-		<if test="createdUser!=null">
-			,cctr_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,cctr_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,cctr_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="entity!=null">
-			,#{entity}
-		</if>
-		<if test="entityField!=null">
-			,#{entityField}
-		</if>
-		<if test="template!=null">
-			,#{template}
-		</if>
-		<if test="templateField!=null">
-			,#{templateField}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into config.configtemplaterelation_ctr(cctr_llave, dctr_creacionfecha, dctr_modificacionfecha
+		<if test="entity!=null">,cctr_entity</if>
+		<if test="entityField!=null">,cctr_entityfield</if>
+		<if test="template!=null">,cctr_template</if>
+		<if test="templateField!=null">,cctr_templatefield</if>
+		<if test="createdUser!=null">,cctr_creacionusuario</if>
+		<if test="createdUserName!=null">,cctr_creacionusuarionombre</if>
+		<if test="state!=null">,cctr_estado</if>
+		) values (#{key}, now(), now()
+		<if test="entity!=null">,#{entity}</if>
+		<if test="entityField!=null">,#{entityField}</if>
+		<if test="template!=null">,#{template}</if>
+		<if test="templateField!=null">,#{templateField}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="ConfigTemplateRelationDTO" resultType="ConfigTemplateRelationDTO">
 		update config.configtemplaterelation_ctr
-			set
-				dctr_modificacionfecha = now(),
-				cctr_entity = #{entity},
-				cctr_entityfield = #{entityField},
-				cctr_template = #{template},
-				cctr_templatefield = #{templateField},
-				cctr_estado =#{state}
+		set dctr_modificacionfecha = now(),
+		cctr_entity = #{entity},
+		cctr_entityfield = #{entityField},
+		cctr_template = #{template},
+		cctr_templatefield = #{templateField},
+		cctr_estado =#{state}
 		<include refid="whereConfigTemplateRelationPrimaryKeyFragment" />
 	</select>
 	

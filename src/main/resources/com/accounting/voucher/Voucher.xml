@@ -25,63 +25,34 @@
 	</sql>
 
 	<sql id="whereVoucherFragment">
-		where 1=1
-			<if test="key!=null">
-				and ccmp_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and ccmp_estado = #{state}
-			</if>
-			<if test="catalog!=null">
-				and ccmp_catalogo = #{catalog}
-			</if>
-			<if test="code!=null">
-				and ccmp_codigo = #{code}
-			</if>
-			<if test="type!=null">
-				and ccmp_tipo = #{type}
-			</if>
-			<if test="typeName!=null">
-				and ccmp_tiponombre = #{typeName}
-			</if>
-			<if test="concept!=null">
-				and ccmp_concepto = #{concept}
-			</if>
-			<if test="factDateMin!=null">
-				and dcmp_fechacomprobante >= #{factDateMin}
-			</if>
-			<if test="factDateMax!=null">
-				and dcmp_fechacomprobante <![CDATA[ < ]]> #{factDateMax}
-			</if>
-			<if test="positive!=null">
-				and mcmp_positivo = #{positive}
-			</if>
-			<if test="negative!=null">
-				and mcmp_negativo = #{negative}
-			</if>
-			<if test="value!=null">
-				and mcmp_valor = #{value}
-			</if>
+		where 1=1<if test="key!=null">
+		and ccmp_llave = #{key}</if><if test="state!=null">
+		and ccmp_estado = #{state}</if>
+<if test="catalog!=null">		and ccmp_catalogo = #{catalog}</if>
+<if test="code!=null">		and ccmp_codigo = #{code}</if>
+<if test="type!=null">		and ccmp_tipo = #{type}</if>
+<if test="typeName!=null">		and ccmp_tiponombre = #{typeName}</if>
+<if test="concept!=null">		and ccmp_concepto = #{concept}</if>
+<if test="factDateMin!=null">		and dcmp_fechacomprobante >= #{factDateMin}</if><if test="factDateMax!=null">		and dcmp_fechacomprobante <![CDATA[ < ]]> #{factDateMax}</if>
+<if test="positive!=null">		and mcmp_positivo = #{positive}</if>
+<if test="negative!=null">		and mcmp_negativo = #{negative}</if>
+<if test="value!=null">		and mcmp_valor = #{value}</if>
 
 	</sql>
 
 	<sql id="paginationVoucherFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereVoucherPrimaryKeyFragment">
-		where
-			ccmp_llave =#{key}
+		where ccmp_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="VoucherFilterDTO" resultType="VoucherDTO">
 		<include refid="selectVoucherFragment" />
 		<include refid="whereVoucherFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="VoucherFilterDTO" resultType="VoucherDTO">
@@ -98,103 +69,48 @@
 	</select>
 
 	<select id="insert" parameterType="VoucherDTO" resultType="VoucherDTO">
-		insert into account.comprobante_cmp(
-			ccmp_llave
-			,dcmp_creacionfecha
-			,dcmp_modificacionfecha
-		<if test="catalog!=null">
-			,ccmp_catalogo
-		</if>
-		<if test="code!=null">
-			,ccmp_codigo
-		</if>
-		<if test="type!=null">
-			,ccmp_tipo
-		</if>
-		<if test="typeName!=null">
-			,ccmp_tiponombre
-		</if>
-		<if test="concept!=null">
-			,ccmp_concepto
-		</if>
-		<if test="factDate!=null">
-			,dcmp_fechacomprobante
-		</if>
-		<if test="positive!=null">
-			,mcmp_positivo
-		</if>
-		<if test="negative!=null">
-			,mcmp_negativo
-		</if>
-		<if test="value!=null">
-			,mcmp_valor
-		</if>
-		<if test="createdUser!=null">
-			,ccmp_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,ccmp_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,ccmp_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="catalog!=null">
-			,#{catalog}
-		</if>
-		<if test="code!=null">
-			,#{code}
-		</if>
-		<if test="type!=null">
-			,#{type}
-		</if>
-		<if test="typeName!=null">
-			,#{typeName}
-		</if>
-		<if test="concept!=null">
-			,#{concept}
-		</if>
-		<if test="factDate!=null">
-			,#{factDate}
-		</if>
-		<if test="positive!=null">
-			,#{positive}
-		</if>
-		<if test="negative!=null">
-			,#{negative}
-		</if>
-		<if test="value!=null">
-			,#{value}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.comprobante_cmp(ccmp_llave, dcmp_creacionfecha, dcmp_modificacionfecha
+		<if test="catalog!=null">,ccmp_catalogo</if>
+		<if test="code!=null">,ccmp_codigo</if>
+		<if test="type!=null">,ccmp_tipo</if>
+		<if test="typeName!=null">,ccmp_tiponombre</if>
+		<if test="concept!=null">,ccmp_concepto</if>
+		<if test="factDate!=null">,dcmp_fechacomprobante</if>
+		<if test="positive!=null">,mcmp_positivo</if>
+		<if test="negative!=null">,mcmp_negativo</if>
+		<if test="value!=null">,mcmp_valor</if>
+		<if test="createdUser!=null">,ccmp_creacionusuario</if>
+		<if test="createdUserName!=null">,ccmp_creacionusuarionombre</if>
+		<if test="state!=null">,ccmp_estado</if>
+		) values (#{key}, now(), now()
+		<if test="catalog!=null">,#{catalog}</if>
+		<if test="code!=null">,#{code}</if>
+		<if test="type!=null">,#{type}</if>
+		<if test="typeName!=null">,#{typeName}</if>
+		<if test="concept!=null">,#{concept}</if>
+		<if test="factDate!=null">,#{factDate}</if>
+		<if test="positive!=null">,#{positive}</if>
+		<if test="negative!=null">,#{negative}</if>
+		<if test="value!=null">,#{value}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="VoucherDTO" resultType="VoucherDTO">
 		update account.comprobante_cmp
-			set
-				dcmp_modificacionfecha = now(),
-				ccmp_catalogo = #{catalog},
-				ccmp_codigo = #{code},
-				ccmp_tipo = #{type},
-				ccmp_tiponombre = #{typeName},
-				ccmp_concepto = #{concept},
-				dcmp_fechacomprobante = #{factDate},
-				mcmp_positivo = #{positive},
-				mcmp_negativo = #{negative},
-				mcmp_valor = #{value},
-				ccmp_estado =#{state}
+		set dcmp_modificacionfecha = now(),
+		ccmp_catalogo = #{catalog},
+		ccmp_codigo = #{code},
+		ccmp_tipo = #{type},
+		ccmp_tiponombre = #{typeName},
+		ccmp_concepto = #{concept},
+		dcmp_fechacomprobante = #{factDate},
+		mcmp_positivo = #{positive},
+		mcmp_negativo = #{negative},
+		mcmp_valor = #{value},
+		ccmp_estado =#{state}
 		<include refid="whereVoucherPrimaryKeyFragment" />
 	</select>
 	

@@ -19,47 +19,34 @@
 	</sql>
 
 	<sql id="whereTypeFragment">
-		where 1=1
-			<if test="key!=null">
-				and ctcm_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and ctcm_estado = #{state}
-			</if>
-			<if test="catalog!=null">
-				and ctcm_catalogo = #{catalog}
-			</if>
-			<if test="name!=null">
-				and ctcm_nombre = #{name}
-			</if>
-			<if test="code!=null">
-				and ctcm_codigo = #{code}
-			</if>
+		where 1=1<if test="key!=null">
+		and ctcm_llave = #{key}</if><if test="state!=null">
+		and ctcm_estado = #{state}</if>
+<if test="catalog!=null">		and ctcm_catalogo = #{catalog}</if>
+<if test="name!=null">		and ctcm_nombre = #{name}</if>
+<if test="code!=null">		and ctcm_codigo = #{code}</if>
 
 	</sql>
 
 	<sql id="paginationTypeFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereTypePrimaryKeyFragment">
-		where
-			ctcm_llave =#{key}
+		where ctcm_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="TypeFilterDTO" resultType="TypeDTO">
 		<include refid="selectTypeFragment" />
 		<include refid="whereTypeFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="TypeFilterDTO" resultType="TypeDTO">
 		<include refid="selectTypeFragment" />
 		<include refid="whereTypeFragment" />
+		
 		<include refid="paginationTypeFragment" />
 	</select>
 
@@ -70,61 +57,30 @@
 	</select>
 
 	<select id="insert" parameterType="TypeDTO" resultType="TypeDTO">
-		insert into account.tipocomprobante_tcm(
-			ctcm_llave
-			,dtcm_creacionfecha
-			,dtcm_modificacionfecha
-		<if test="catalog!=null">
-			,ctcm_catalogo
-		</if>
-		<if test="name!=null">
-			,ctcm_nombre
-		</if>
-		<if test="code!=null">
-			,ctcm_codigo
-		</if>
-		<if test="createdUser!=null">
-			,ctcm_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,ctcm_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,ctcm_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="catalog!=null">
-			,#{catalog}
-		</if>
-		<if test="name!=null">
-			,#{name}
-		</if>
-		<if test="code!=null">
-			,#{code}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.tipocomprobante_tcm(ctcm_llave, dtcm_creacionfecha, dtcm_modificacionfecha
+		<if test="catalog!=null">,ctcm_catalogo</if>
+		<if test="name!=null">,ctcm_nombre</if>
+		<if test="code!=null">,ctcm_codigo</if>
+		<if test="createdUser!=null">,ctcm_creacionusuario</if>
+		<if test="createdUserName!=null">,ctcm_creacionusuarionombre</if>
+		<if test="state!=null">,ctcm_estado</if>
+		) values (#{key}, now(), now()
+		<if test="catalog!=null">,#{catalog}</if>
+		<if test="name!=null">,#{name}</if>
+		<if test="code!=null">,#{code}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TypeDTO" resultType="TypeDTO">
 		update account.tipocomprobante_tcm
-			set
-				dtcm_modificacionfecha = now(),
-				ctcm_catalogo = #{catalog},
-				ctcm_nombre = #{name},
-				ctcm_codigo = #{code},
-				ctcm_estado =#{state}
+		set dtcm_modificacionfecha = now(),
+		ctcm_catalogo = #{catalog},
+		ctcm_nombre = #{name},
+		ctcm_codigo = #{code},
+		ctcm_estado =#{state}
 		<include refid="whereTypePrimaryKeyFragment" />
 	</select>
 	

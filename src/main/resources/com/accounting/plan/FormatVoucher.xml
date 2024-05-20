@@ -18,44 +18,33 @@
 	</sql>
 
 	<sql id="whereFormatVoucherFragment">
-		where 1=1
-			<if test="key!=null">
-				and cfrm_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and cfrm_estado = #{state}
-			</if>
-			<if test="catalog!=null">
-				and cfrm_catalogo = #{catalog}
-			</if>
-			<if test="template!=null">
-				and cfrm_plantilla = #{template}
-			</if>
+		where 1=1<if test="key!=null">
+		and cfrm_llave = #{key}</if><if test="state!=null">
+		and cfrm_estado = #{state}</if>
+<if test="catalog!=null">		and cfrm_catalogo = #{catalog}</if>
+<if test="template!=null">		and cfrm_plantilla = #{template}</if>
 
 	</sql>
 
 	<sql id="paginationFormatVoucherFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereFormatVoucherPrimaryKeyFragment">
-		where
-			cfrm_llave =#{key}
+		where cfrm_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="FormatVoucherFilterDTO" resultType="FormatVoucherDTO">
 		<include refid="selectFormatVoucherFragment" />
 		<include refid="whereFormatVoucherFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="FormatVoucherFilterDTO" resultType="FormatVoucherDTO">
 		<include refid="selectFormatVoucherFragment" />
 		<include refid="whereFormatVoucherFragment" />
+		
 		<include refid="paginationFormatVoucherFragment" />
 	</select>
 
@@ -66,54 +55,27 @@
 	</select>
 
 	<select id="insert" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
-		insert into account.formato_frm(
-			cfrm_llave
-			,dfrm_creacionfecha
-			,dfrm_modificacionfecha
-		<if test="catalog!=null">
-			,cfrm_catalogo
-		</if>
-		<if test="template!=null">
-			,cfrm_plantilla
-		</if>
-		<if test="createdUser!=null">
-			,cfrm_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,cfrm_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,cfrm_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="catalog!=null">
-			,#{catalog}
-		</if>
-		<if test="template!=null">
-			,#{template}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.formato_frm(cfrm_llave, dfrm_creacionfecha, dfrm_modificacionfecha
+		<if test="catalog!=null">,cfrm_catalogo</if>
+		<if test="template!=null">,cfrm_plantilla</if>
+		<if test="createdUser!=null">,cfrm_creacionusuario</if>
+		<if test="createdUserName!=null">,cfrm_creacionusuarionombre</if>
+		<if test="state!=null">,cfrm_estado</if>
+		) values (#{key}, now(), now()
+		<if test="catalog!=null">,#{catalog}</if>
+		<if test="template!=null">,#{template}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="FormatVoucherDTO" resultType="FormatVoucherDTO">
 		update account.formato_frm
-			set
-				dfrm_modificacionfecha = now(),
-				cfrm_catalogo = #{catalog},
-				cfrm_plantilla = #{template},
-				cfrm_estado =#{state}
+		set dfrm_modificacionfecha = now(),
+		cfrm_catalogo = #{catalog},
+		cfrm_plantilla = #{template},
+		cfrm_estado =#{state}
 		<include refid="whereFormatVoucherPrimaryKeyFragment" />
 	</select>
 	

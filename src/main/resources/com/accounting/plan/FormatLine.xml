@@ -21,53 +21,36 @@
 	</sql>
 
 	<sql id="whereFormatLineFragment">
-		where 1=1
-			<if test="key!=null">
-				and clin_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and clin_estado = #{state}
-			</if>
-			<if test="format!=null">
-				and clin_formato = #{format}
-			</if>
-			<if test="account!=null">
-				and clin_cuenta = #{account}
-			</if>
-			<if test="description!=null">
-				and clin_description = #{description}
-			</if>
-			<if test="positive!=null">
-				and clin_positivo = #{positive}
-			</if>
-			<if test="negative!=null">
-				and clin_negativo = #{negative}
-			</if>
+		where 1=1<if test="key!=null">
+		and clin_llave = #{key}</if><if test="state!=null">
+		and clin_estado = #{state}</if>
+<if test="format!=null">		and clin_formato = #{format}</if>
+<if test="account!=null">		and clin_cuenta = #{account}</if>
+<if test="description!=null">		and clin_description = #{description}</if>
+<if test="positive!=null">		and clin_positivo = #{positive}</if>
+<if test="negative!=null">		and clin_negativo = #{negative}</if>
 
 	</sql>
 
 	<sql id="paginationFormatLineFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereFormatLinePrimaryKeyFragment">
-		where
-			clin_llave =#{key}
+		where clin_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="FormatLineFilterDTO" resultType="FormatLineDTO">
 		<include refid="selectFormatLineFragment" />
 		<include refid="whereFormatLineFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="FormatLineFilterDTO" resultType="FormatLineDTO">
 		<include refid="selectFormatLineFragment" />
 		<include refid="whereFormatLineFragment" />
+		
 		<include refid="paginationFormatLineFragment" />
 	</select>
 
@@ -78,75 +61,36 @@
 	</select>
 
 	<select id="insert" parameterType="FormatLineDTO" resultType="FormatLineDTO">
-		insert into account.linea_lin(
-			clin_llave
-			,dlin_creacionfecha
-			,dlin_modificacionfecha
-		<if test="format!=null">
-			,clin_formato
-		</if>
-		<if test="account!=null">
-			,clin_cuenta
-		</if>
-		<if test="description!=null">
-			,clin_description
-		</if>
-		<if test="positive!=null">
-			,clin_positivo
-		</if>
-		<if test="negative!=null">
-			,clin_negativo
-		</if>
-		<if test="createdUser!=null">
-			,clin_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,clin_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,clin_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="format!=null">
-			,#{format}
-		</if>
-		<if test="account!=null">
-			,#{account}
-		</if>
-		<if test="description!=null">
-			,#{description}
-		</if>
-		<if test="positive!=null">
-			,#{positive}
-		</if>
-		<if test="negative!=null">
-			,#{negative}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.linea_lin(clin_llave, dlin_creacionfecha, dlin_modificacionfecha
+		<if test="format!=null">,clin_formato</if>
+		<if test="account!=null">,clin_cuenta</if>
+		<if test="description!=null">,clin_description</if>
+		<if test="positive!=null">,clin_positivo</if>
+		<if test="negative!=null">,clin_negativo</if>
+		<if test="createdUser!=null">,clin_creacionusuario</if>
+		<if test="createdUserName!=null">,clin_creacionusuarionombre</if>
+		<if test="state!=null">,clin_estado</if>
+		) values (#{key}, now(), now()
+		<if test="format!=null">,#{format}</if>
+		<if test="account!=null">,#{account}</if>
+		<if test="description!=null">,#{description}</if>
+		<if test="positive!=null">,#{positive}</if>
+		<if test="negative!=null">,#{negative}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="FormatLineDTO" resultType="FormatLineDTO">
 		update account.linea_lin
-			set
-				dlin_modificacionfecha = now(),
-				clin_formato = #{format},
-				clin_cuenta = #{account},
-				clin_description = #{description},
-				clin_positivo = #{positive},
-				clin_negativo = #{negative},
-				clin_estado =#{state}
+		set dlin_modificacionfecha = now(),
+		clin_formato = #{format},
+		clin_cuenta = #{account},
+		clin_description = #{description},
+		clin_positivo = #{positive},
+		clin_negativo = #{negative},
+		clin_estado =#{state}
 		<include refid="whereFormatLinePrimaryKeyFragment" />
 	</select>
 	

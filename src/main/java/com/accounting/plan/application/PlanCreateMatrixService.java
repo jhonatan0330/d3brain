@@ -221,6 +221,7 @@ public class PlanCreateMatrixService {
 		filter.setMinute(minute);
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		return resultMapService.getOne(filter);
+		//return null;
 	}
 
 	private List<ResultMapDTO> createLevel4(Date initialDate, Date endDate, String accountId, String catalogId,

@@ -37,96 +37,44 @@
 	</sql>
 
 	<sql id="whereResultMapFragment">
-		where 1=1
-			<if test="key!=null">
-				and crmp_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and crmp_estado = #{state}
-			</if>
-			<if test="catalog!=null">
-				and crmp_catalogo = #{catalog}
-			</if>
-			<if test="account!=null">
-				and crmp_cuenta = #{account}
-			</if>
-			<if test="level!=null">
-				and nrmp_nivel = #{level}
-			</if>
-			<if test="startDateMin!=null">
-				and drmp_fechainicio >= #{startDateMin}
-			</if>
-			<if test="startDateMax!=null">
-				and drmp_fechainicio <![CDATA[ < ]]> #{startDateMax}
-			</if>
-			<if test="endDateMin!=null">
-				and drmp_fechafin >= #{endDateMin}
-			</if>
-			<if test="endDateMax!=null">
-				and drmp_fechafin <![CDATA[ < ]]> #{endDateMax}
-			</if>
-			<if test="period!=null">
-				and crmp_periodo = #{period}
-			</if>
-			<if test="year!=null">
-				and nrmp_ano = #{year}
-			</if>
-			<if test="month!=null">
-				and nrmp_mes = #{month}
-			</if>
-			<if test="day!=null">
-				and nrmp_dia = #{day}
-			</if>
-			<if test="hour!=null">
-				and nrmp_hora = #{hour}
-			</if>
-			<if test="minute!=null">
-				and nrmp_minuto = #{minute}
-			</if>
-			<if test="quantity!=null">
-				and nrmp_cantidad = #{quantity}
-			</if>
-			<if test="average!=null">
-				and nrmp_promedio = #{average}
-			</if>
-			<if test="lastBalance!=null">
-				and mrmp_saldoanterior = #{lastBalance}
-			</if>
-			<if test="nextBalance!=null">
-				and mrmp_saldosiguiente = #{nextBalance}
-			</if>
-			<if test="positive!=null">
-				and mrmp_positivo = #{positive}
-			</if>
-			<if test="negative!=null">
-				and mrmp_negativo = #{negative}
-			</if>
-			<if test="value!=null">
-				and mrmp_valor = #{value}
-			</if>
-			<if test="type!=null">
-				and crmp_tipo = #{type}
-			</if>
+		where 1=1<if test="key!=null">
+		and crmp_llave = #{key}</if><if test="state!=null">
+		and crmp_estado = #{state}</if>
+<if test="catalog!=null">		and crmp_catalogo = #{catalog}</if>
+<if test="account!=null">		and crmp_cuenta = #{account}</if>
+<if test="level!=null">		and nrmp_nivel = #{level}</if>
+<if test="startDateMin!=null">		and drmp_fechainicio >= #{startDateMin}</if><if test="startDateMax!=null">		and drmp_fechainicio <![CDATA[ < ]]> #{startDateMax}</if>
+<if test="endDateMin!=null">		and drmp_fechafin >= #{endDateMin}</if><if test="endDateMax!=null">		and drmp_fechafin <![CDATA[ < ]]> #{endDateMax}</if>
+<if test="period!=null">		and crmp_periodo = #{period}</if>
+<if test="year!=null">		and nrmp_ano = #{year}</if>
+<if test="month!=null">		and nrmp_mes = #{month}</if>
+<if test="day!=null">		and nrmp_dia = #{day}</if>
+<if test="hour!=null">		and nrmp_hora = #{hour}</if>
+<if test="minute!=null">		and nrmp_minuto = #{minute}</if>
+<if test="quantity!=null">		and nrmp_cantidad = #{quantity}</if>
+<if test="average!=null">		and nrmp_promedio = #{average}</if>
+<if test="lastBalance!=null">		and mrmp_saldoanterior = #{lastBalance}</if>
+<if test="nextBalance!=null">		and mrmp_saldosiguiente = #{nextBalance}</if>
+<if test="positive!=null">		and mrmp_positivo = #{positive}</if>
+<if test="negative!=null">		and mrmp_negativo = #{negative}</if>
+<if test="value!=null">		and mrmp_valor = #{value}</if>
+<if test="type!=null">		and crmp_tipo = #{type}</if>
 
 	</sql>
 
 	<sql id="paginationResultMapFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereResultMapPrimaryKeyFragment">
-		where
-			crmp_llave =#{key}
+		where crmp_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
 		<include refid="selectResultMapFragment" />
 		<include refid="whereResultMapFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
@@ -143,173 +91,78 @@
 	</select>
 
 	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
-		insert into account.mapa_resultados_rmp(
-			crmp_llave
-			,drmp_creacionfecha
-			,drmp_modificacionfecha
-		<if test="catalog!=null">
-			,crmp_catalogo
-		</if>
-		<if test="account!=null">
-			,crmp_cuenta
-		</if>
-		<if test="level!=null">
-			,nrmp_nivel
-		</if>
-		<if test="startDate!=null">
-			,drmp_fechainicio
-		</if>
-		<if test="endDate!=null">
-			,drmp_fechafin
-		</if>
-		<if test="period!=null">
-			,crmp_periodo
-		</if>
-		<if test="year!=null">
-			,nrmp_ano
-		</if>
-		<if test="month!=null">
-			,nrmp_mes
-		</if>
-		<if test="day!=null">
-			,nrmp_dia
-		</if>
-		<if test="hour!=null">
-			,nrmp_hora
-		</if>
-		<if test="minute!=null">
-			,nrmp_minuto
-		</if>
-		<if test="quantity!=null">
-			,nrmp_cantidad
-		</if>
-		<if test="average!=null">
-			,nrmp_promedio
-		</if>
-		<if test="lastBalance!=null">
-			,mrmp_saldoanterior
-		</if>
-		<if test="nextBalance!=null">
-			,mrmp_saldosiguiente
-		</if>
-		<if test="positive!=null">
-			,mrmp_positivo
-		</if>
-		<if test="negative!=null">
-			,mrmp_negativo
-		</if>
-		<if test="value!=null">
-			,mrmp_valor
-		</if>
-		<if test="type!=null">
-			,crmp_tipo
-		</if>
-		<if test="createdUser!=null">
-			,crmp_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,crmp_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,crmp_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="catalog!=null">
-			,#{catalog}
-		</if>
-		<if test="account!=null">
-			,#{account}
-		</if>
-		<if test="level!=null">
-			,#{level}
-		</if>
-		<if test="startDate!=null">
-			,#{startDate}
-		</if>
-		<if test="endDate!=null">
-			,#{endDate}
-		</if>
-		<if test="period!=null">
-			,#{period}
-		</if>
-		<if test="year!=null">
-			,#{year}
-		</if>
-		<if test="month!=null">
-			,#{month}
-		</if>
-		<if test="day!=null">
-			,#{day}
-		</if>
-		<if test="hour!=null">
-			,#{hour}
-		</if>
-		<if test="minute!=null">
-			,#{minute}
-		</if>
-		<if test="quantity!=null">
-			,#{quantity}
-		</if>
-		<if test="average!=null">
-			,#{average}
-		</if>
-		<if test="lastBalance!=null">
-			,#{lastBalance}
-		</if>
-		<if test="nextBalance!=null">
-			,#{nextBalance}
-		</if>
-		<if test="positive!=null">
-			,#{positive}
-		</if>
-		<if test="negative!=null">
-			,#{negative}
-		</if>
-		<if test="value!=null">
-			,#{value}
-		</if>
-		<if test="type!=null">
-			,#{type}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into account.mapa_resultados_rmp(crmp_llave, drmp_creacionfecha, drmp_modificacionfecha
+		<if test="catalog!=null">,crmp_catalogo</if>
+		<if test="account!=null">,crmp_cuenta</if>
+		<if test="level!=null">,nrmp_nivel</if>
+		<if test="startDate!=null">,drmp_fechainicio</if>
+		<if test="endDate!=null">,drmp_fechafin</if>
+		<if test="period!=null">,crmp_periodo</if>
+		<if test="year!=null">,nrmp_ano</if>
+		<if test="month!=null">,nrmp_mes</if>
+		<if test="day!=null">,nrmp_dia</if>
+		<if test="hour!=null">,nrmp_hora</if>
+		<if test="minute!=null">,nrmp_minuto</if>
+		<if test="quantity!=null">,nrmp_cantidad</if>
+		<if test="average!=null">,nrmp_promedio</if>
+		<if test="lastBalance!=null">,mrmp_saldoanterior</if>
+		<if test="nextBalance!=null">,mrmp_saldosiguiente</if>
+		<if test="positive!=null">,mrmp_positivo</if>
+		<if test="negative!=null">,mrmp_negativo</if>
+		<if test="value!=null">,mrmp_valor</if>
+		<if test="type!=null">,crmp_tipo</if>
+		<if test="createdUser!=null">,crmp_creacionusuario</if>
+		<if test="createdUserName!=null">,crmp_creacionusuarionombre</if>
+		<if test="state!=null">,crmp_estado</if>
+		) values (#{key}, now(), now()
+		<if test="catalog!=null">,#{catalog}</if>
+		<if test="account!=null">,#{account}</if>
+		<if test="level!=null">,#{level}</if>
+		<if test="startDate!=null">,#{startDate}</if>
+		<if test="endDate!=null">,#{endDate}</if>
+		<if test="period!=null">,#{period}</if>
+		<if test="year!=null">,#{year}</if>
+		<if test="month!=null">,#{month}</if>
+		<if test="day!=null">,#{day}</if>
+		<if test="hour!=null">,#{hour}</if>
+		<if test="minute!=null">,#{minute}</if>
+		<if test="quantity!=null">,#{quantity}</if>
+		<if test="average!=null">,#{average}</if>
+		<if test="lastBalance!=null">,#{lastBalance}</if>
+		<if test="nextBalance!=null">,#{nextBalance}</if>
+		<if test="positive!=null">,#{positive}</if>
+		<if test="negative!=null">,#{negative}</if>
+		<if test="value!=null">,#{value}</if>
+		<if test="type!=null">,#{type}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		update account.mapa_resultados_rmp
-			set
-				drmp_modificacionfecha = now(),
-				crmp_catalogo = #{catalog},
-				crmp_cuenta = #{account},
-				nrmp_nivel = #{level},
-				drmp_fechainicio = #{startDate},
-				drmp_fechafin = #{endDate},
-				crmp_periodo = #{period},
-				nrmp_ano = #{year},
-				nrmp_mes = #{month},
-				nrmp_dia = #{day},
-				nrmp_hora = #{hour},
-				nrmp_minuto = #{minute},
-				nrmp_cantidad = #{quantity},
-				nrmp_promedio = #{average},
-				mrmp_saldoanterior = #{lastBalance},
-				mrmp_saldosiguiente = #{nextBalance},
-				mrmp_positivo = #{positive},
-				mrmp_negativo = #{negative},
-				mrmp_valor = #{value},
-				crmp_tipo = #{type},
-				crmp_estado =#{state}
+		set drmp_modificacionfecha = now(),
+		crmp_catalogo = #{catalog},
+		crmp_cuenta = #{account},
+		nrmp_nivel = #{level},
+		drmp_fechainicio = #{startDate},
+		drmp_fechafin = #{endDate},
+		crmp_periodo = #{period},
+		nrmp_ano = #{year},
+		nrmp_mes = #{month},
+		nrmp_dia = #{day},
+		nrmp_hora = #{hour},
+		nrmp_minuto = #{minute},
+		nrmp_cantidad = #{quantity},
+		nrmp_promedio = #{average},
+		mrmp_saldoanterior = #{lastBalance},
+		mrmp_saldosiguiente = #{nextBalance},
+		mrmp_positivo = #{positive},
+		mrmp_negativo = #{negative},
+		mrmp_valor = #{value},
+		crmp_tipo = #{type},
+		crmp_estado =#{state}
 		<include refid="whereResultMapPrimaryKeyFragment" />
 	</select>
 	

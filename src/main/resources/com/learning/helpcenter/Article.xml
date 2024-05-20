@@ -24,62 +24,39 @@
 	</sql>
 
 	<sql id="whereArticleFragment">
-		where 1=1
-			<if test="key!=null">
-				and cart_llave = #{key}
-			</if>
-			<if test="state!=null">
-				and cart_estado = #{state}
-			</if>
-			<if test="title!=null">
-				and cart_titulo = #{title}
-			</if>
-			<if test="automatic!=null">
-				and cart_automatica = #{automatic}
-			</if>
-			<if test="entityType!=null">
-				and cart_entidadTipo = #{entityType}
-			</if>
-			<if test="entity!=null">
-				and cart_entidadId = #{entity}
-			</if>
-			<if test="document!=null">
-				and cart_documento = #{document}
-			</if>
-			<if test="image!=null">
-				and cart_imagen = #{image}
-			</if>
-			<if test="introduction!=null">
-				and cart_introduccion = #{introduction}
-			</if>
-			<if test="help!=null">
-				and cart_ayuda = #{help}
-			</if>
+		where 1=1<if test="key!=null">
+		and cart_llave = #{key}</if><if test="state!=null">
+		and cart_estado = #{state}</if>
+<if test="title!=null">		and cart_titulo = #{title}</if>
+<if test="automatic!=null">		and cart_automatica = #{automatic}</if>
+<if test="entityType!=null">		and cart_entidadTipo = #{entityType}</if>
+<if test="entity!=null">		and cart_entidadId = #{entity}</if>
+<if test="document!=null">		and cart_documento = #{document}</if>
+<if test="image!=null">		and cart_imagen = #{image}</if>
+<if test="introduction!=null">		and cart_introduccion = #{introduction}</if>
+<if test="help!=null">		and cart_ayuda = #{help}</if>
 
 	</sql>
 
 	<sql id="paginationArticleFragment">
-			<if test="startRow!=null">
-				OFFSET #{startRow}
-			</if>
-			<if test="endRow!=null">
-				LIMIT #{endRow}
-			</if>
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
 	</sql>
 
 	<sql id="whereArticlePrimaryKeyFragment">
-		where
-			cart_llave =#{key}
+		where cart_llave =#{key}
 	</sql>
 
 	<select id="getOne" parameterType="ArticleFilterDTO" resultType="ArticleDTO">
 		<include refid="selectArticleFragment" />
 		<include refid="whereArticleFragment" />
+		LIMIT 2
 	</select>
 	
 	<select id="getMany" parameterType="ArticleFilterDTO" resultType="ArticleDTO">
 		<include refid="selectArticleFragment" />
 		<include refid="whereArticleFragment" />
+		
 		<include refid="paginationArticleFragment" />
 	</select>
 
@@ -90,96 +67,45 @@
 	</select>
 
 	<select id="insert" parameterType="ArticleDTO" resultType="ArticleDTO">
-		insert into learning.article_art(
-			cart_llave
-			,dart_creacionfecha
-			,dart_modificacionfecha
-		<if test="title!=null">
-			,cart_titulo
-		</if>
-		<if test="automatic!=null">
-			,cart_automatica
-		</if>
-		<if test="entityType!=null">
-			,cart_entidadTipo
-		</if>
-		<if test="entity!=null">
-			,cart_entidadId
-		</if>
-		<if test="document!=null">
-			,cart_documento
-		</if>
-		<if test="image!=null">
-			,cart_imagen
-		</if>
-		<if test="introduction!=null">
-			,cart_introduccion
-		</if>
-		<if test="help!=null">
-			,cart_ayuda
-		</if>
-		<if test="createdUser!=null">
-			,cart_creacionusuario
-		</if>
-		<if test="createdUserName!=null">
-			,cart_creacionusuarionombre
-		</if>
-		<if test="state!=null">
-			,cart_estado
-		</if>
-		) values (
-			#{key}
-			,now()
-			,now()
-		<if test="title!=null">
-			,#{title}
-		</if>
-		<if test="automatic!=null">
-			,#{automatic}
-		</if>
-		<if test="entityType!=null">
-			,#{entityType}
-		</if>
-		<if test="entity!=null">
-			,#{entity}
-		</if>
-		<if test="document!=null">
-			,#{document}
-		</if>
-		<if test="image!=null">
-			,#{image}
-		</if>
-		<if test="introduction!=null">
-			,#{introduction}
-		</if>
-		<if test="help!=null">
-			,#{help}
-		</if>
-		<if test="createdUser!=null">
-			,#{createdUser}
-		</if>
-		<if test="createdUserName!=null">
-			,#{createdUserName}
-		</if>
-		<if test="state!=null">
-			,#{state}
-		</if>
+		insert into learning.article_art(cart_llave, dart_creacionfecha, dart_modificacionfecha
+		<if test="title!=null">,cart_titulo</if>
+		<if test="automatic!=null">,cart_automatica</if>
+		<if test="entityType!=null">,cart_entidadTipo</if>
+		<if test="entity!=null">,cart_entidadId</if>
+		<if test="document!=null">,cart_documento</if>
+		<if test="image!=null">,cart_imagen</if>
+		<if test="introduction!=null">,cart_introduccion</if>
+		<if test="help!=null">,cart_ayuda</if>
+		<if test="createdUser!=null">,cart_creacionusuario</if>
+		<if test="createdUserName!=null">,cart_creacionusuarionombre</if>
+		<if test="state!=null">,cart_estado</if>
+		) values (#{key}, now(), now()
+		<if test="title!=null">,#{title}</if>
+		<if test="automatic!=null">,#{automatic}</if>
+		<if test="entityType!=null">,#{entityType}</if>
+		<if test="entity!=null">,#{entity}</if>
+		<if test="document!=null">,#{document}</if>
+		<if test="image!=null">,#{image}</if>
+		<if test="introduction!=null">,#{introduction}</if>
+		<if test="help!=null">,#{help}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="ArticleDTO" resultType="ArticleDTO">
 		update learning.article_art
-			set
-				dart_modificacionfecha = now(),
-				cart_titulo = #{title},
-				cart_automatica = #{automatic},
-				cart_entidadTipo = #{entityType},
-				cart_entidadId = #{entity},
-				cart_documento = #{document},
-				cart_imagen = #{image},
-				cart_introduccion = #{introduction},
-				cart_ayuda = #{help},
-				cart_estado =#{state}
+		set dart_modificacionfecha = now(),
+		cart_titulo = #{title},
+		cart_automatica = #{automatic},
+		cart_entidadTipo = #{entityType},
+		cart_entidadId = #{entity},
+		cart_documento = #{document},
+		cart_imagen = #{image},
+		cart_introduccion = #{introduction},
+		cart_ayuda = #{help},
+		cart_estado =#{state}
 		<include refid="whereArticlePrimaryKeyFragment" />
 	</select>
 	
