@@ -41,6 +41,12 @@ public class VoucherRest {
 			@PathVariable String catalog) throws ServerException {
 		return getVoucherService.call(catalog);
 	}
+	
+	@GetMapping("/{catalog}/{voucherId}")
+	public Voucher getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@PathVariable String catalog, @PathVariable String voucherId) throws ServerException {
+		return getVoucherService.getById(catalog, voucherId);
+	}
 
 	@PostMapping("/manual")
 	public SharedIdResponse createManualVoucher(HttpServletRequest request,
