@@ -106,8 +106,8 @@ public class MailGenerateMessageService {
                         for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
                         	String[] externalMail = iFieldsEmailToSend.getValorText().split(SharedConstants.PUNTO_COMA);
                             for (String iMail : externalMail) {
-                				if (!iMail.isEmpty())
-                					correosFijos.add(formatEmail(iMail));
+                				if (iMail!= null && !iMail.isEmpty())
+                					correosFijos.add(iMail.toLowerCase());
                             }
                         }
                     }
@@ -139,7 +139,7 @@ public class MailGenerateMessageService {
         if (responsable != null
                 && (usuarioGenerador == null || responsable.getLlaveTabla().compareTo(usuarioGenerador) != 0)) {
             // Evitar enviar correo al mismo que lo creo
-            destinatarios.put(responsable.getLlaveTabla(), formatEmail(responsable.getCorreo()));
+            formatEmail(destinatarios, responsable.getLlaveTabla(), responsable.getCorreo());
         }
         // Debo dejarla fuera de la exception porque me la bloquea la transaccionalidad
         if (mensajeFuncion != null) {
@@ -166,13 +166,13 @@ public class MailGenerateMessageService {
                             destinatariosExternos = new ArrayList<String>();
                         String[] externalMail = iDestinatario.getCorreo().split(SharedConstants.PUNTO_COMA);
                         for (String iMail : externalMail) {
-            				if (!iMail.isEmpty())
-            					destinatariosExternos.add(formatEmail(iMail));
+            				if (iMail!=null &&!iMail.isEmpty())
+            					destinatariosExternos.add(iMail.toLowerCase());
                         }
                     }
                 } else {
                     if (usuarioGenerador == null || iDestinatario.getUsuario().compareTo(usuarioGenerador) != 0)
-                        destinatarios.put(iDestinatario.getUsuario(), formatEmail(iDestinatario.getCorreo()));
+                        formatEmail(destinatarios, iDestinatario.getUsuario(), iDestinatario.getCorreo());
                 }
             }
         }
@@ -180,7 +180,7 @@ public class MailGenerateMessageService {
         if (destinosFijos != null) {
             for (UsuarioDTO iFijo : destinosFijos) {
                 if (usuarioGenerador == null || iFijo.getLlaveTabla().compareTo(usuarioGenerador) != 0)
-                    destinatarios.put(iFijo.getLlaveTabla(), formatEmail(iFijo.getCorreo()));
+                    formatEmail(destinatarios, iFijo.getLlaveTabla(), iFijo.getCorreo());
             }
         }
         if (destinatarios.isEmpty() && destinatariosExternos == null) {
@@ -264,9 +264,9 @@ public class MailGenerateMessageService {
         System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) ", documento.getNombre(),  formatosPlantilla.getNombre(), destinyMails);
     }
   
-    private String formatEmail(String email) {
-       if (email == null) return null;
-       return email.toLowerCase();
+    private void formatEmail(Map<String, String> map, String key, String email) {
+       if (email == null) return;
+       map.put(key, email.toLowerCase());
     }
 
 }
