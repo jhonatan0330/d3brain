@@ -77,7 +77,8 @@ public class MailSendMessageService {
 				throw new ServerException("No se encuentra el servidor de correo configurado");
 			if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
-			String mailFrom = servidor.getUsuario();
+			String mailFrom = (servidor.getBase() != null && !servidor.getBase().isEmpty()) ? servidor.getBase()
+					: servidor.getUsuario();
 			String mailTo = null;
 			String[] mailCc = null;
 			if (dto.getCorreo().contains(";")) {
@@ -177,10 +178,11 @@ public class MailSendMessageService {
 					if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 						throw new ServerException(
 								"El servidor de correo backup no se encuentra activo. " + servidor.getNombre());
-					
+
 					JavaMailSenderImpl mailSenderBackup = MailUtils.getMailSender(servidor);
 					MimeMessage mimeMessageBackup = mailSenderBackup.createMimeMessage();
-					MimeMessageHelper mailMsgBackup = new MimeMessageHelper(mimeMessageBackup, (attachmentsFiles != null));
+					MimeMessageHelper mailMsgBackup = new MimeMessageHelper(mimeMessageBackup,
+							(attachmentsFiles != null));
 					mailMsgBackup.setFrom(mailFrom);
 					mailMsgBackup.setSubject(mailSubject);
 					mailMsgBackup.setText(mailText, true);
