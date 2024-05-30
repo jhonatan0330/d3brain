@@ -1,7 +1,6 @@
 package com.accounting.plan.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
@@ -10,21 +9,11 @@ import com.shared.domain.SharedDataObjectFilter;
 @Alias("ResultMapFilterDTO")
 public class ResultMapFilterDTO extends SharedDataObjectFilter {
 
-	private String catalog;
 	private String account;
 	private String accountName;
 	private String accountCode;
-	private Integer level;
-	private Date startDateMin;
-	private Date startDateMax;
-	private Date endDateMin;
-	private Date endDateMax;
-	private String period;
-	private Integer year;
-	private Integer month;
-	private Integer day;
-	private Integer hour;
-	private Integer minute;
+	private String timeFrame;
+	private String timeFrameName;
 	private Integer quantity;
 	private Float average;
 	private BigDecimal lastBalance;
@@ -32,15 +21,6 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
-	private String type;
-
-	public String getCatalog() {
-		return catalog;
-	}
-
-	public void setCatalog(String catalog) {
-		this.catalog = catalog;
-	}
 
 	public String getAccount() {
 		return account;
@@ -66,92 +46,20 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 		this.accountCode = accountCode;
 	}
 
-	public Integer getLevel() {
-		return level;
+	public String getTimeFrame() {
+		return timeFrame;
 	}
 
-	public void setLevel(Integer level) {
-		this.level = level;
+	public void setTimeFrame(String timeFrame) {
+		this.timeFrame = timeFrame;
 	}
 
-	public Date getStartDateMin() {
-		return startDateMin;
+	public String getTimeFrameName() {
+		return timeFrameName;
 	}
 
-	public void setStartDateMin(Date startDateMin) {
-		this.startDateMin = startDateMin;
-	}
-
-	public Date getStartDateMax() {
-		return startDateMax;
-	}
-
-	public void setStartDateMax(Date startDateMax) {
-		this.startDateMax = startDateMax;
-	}
-
-	public Date getEndDateMin() {
-		return endDateMin;
-	}
-
-	public void setEndDateMin(Date endDateMin) {
-		this.endDateMin = endDateMin;
-	}
-
-	public Date getEndDateMax() {
-		return endDateMax;
-	}
-
-	public void setEndDateMax(Date endDateMax) {
-		this.endDateMax = endDateMax;
-	}
-
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
-
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-
-	public Integer getMonth() {
-		return month;
-	}
-
-	public void setMonth(Integer month) {
-		this.month = month;
-	}
-
-	public Integer getDay() {
-		return day;
-	}
-
-	public void setDay(Integer day) {
-		this.day = day;
-	}
-
-	public Integer getHour() {
-		return hour;
-	}
-
-	public void setHour(Integer hour) {
-		this.hour = hour;
-	}
-
-	public Integer getMinute() {
-		return minute;
-	}
-
-	public void setMinute(Integer minute) {
-		this.minute = minute;
+	public void setTimeFrameName(String timeFrameName) {
+		this.timeFrameName = timeFrameName;
 	}
 
 	public Integer getQuantity() {
@@ -208,14 +116,6 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 }

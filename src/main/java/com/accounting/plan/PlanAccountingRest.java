@@ -21,7 +21,7 @@ import com.accounting.plan.application.PlanGetAccountService;
 import com.accounting.plan.application.PlanGetBalanceService;
 import com.accounting.plan.application.PlanGetCatalogService;
 import com.accounting.plan.application.PlanUploadAccountService;
-import com.accounting.plan.application.base.IPlanCreateCatalogService;
+import com.accounting.plan.application.PlanCreateCatalogService;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.ResultMapDTO;
@@ -33,7 +33,7 @@ import com.shared.domain.ServerException;
 public class PlanAccountingRest {
 	
 	@Autowired
-	private IPlanCreateCatalogService createCatalogService;
+	private PlanCreateCatalogService createCatalogService;
 	@Autowired
 	private PlanGetCatalogService getCatalogService;
 	@Autowired

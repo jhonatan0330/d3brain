@@ -14,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.ResultMapExtendService;
+import com.accounting.plan.application.base.TimeFrameService;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
-import com.accounting.plan.domain.ResultMapConst;
 import com.accounting.plan.domain.ResultMapDTO;
+import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.voucher.application.base.AccountRecordService;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.AccountRecordDTO;
@@ -46,6 +47,8 @@ public class VoucherCreateService {
 	private ConsecutivoSvc consecutiveService;
 	@Autowired
 	private ResultMapExtendService mapService;
+	@Autowired
+	private TimeFrameService timeFrameService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
@@ -56,28 +59,25 @@ public class VoucherCreateService {
 		voucherService.save(_voucher.getHeader());
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
 		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
-		calculateBalance(catalogDTO, _voucher, headerDTO);
+		calculateBalance(_voucher, headerDTO);
 		// Esto lo retiro por el momenot miestras esten junto //el codigo al final para
 		// evitar errores en transaccionalidad
 		// getCodeVoucher(catalogDTO, headerDTO, token.getToken());
 		return new SharedIdResponse(headerDTO.getKey(), headerDTO.getCode());
 	}
 
-	private void calculateBalance(CatalogDTO catalogDTO, Voucher _voucher, VoucherDTO headerDTO)
+	private void calculateBalance(Voucher _voucher, VoucherDTO headerDTO)
 			throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {
-			saveMap(catalogDTO, item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(),
+			saveMap( item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(),
 					item.getValue());
 		}
 	}
 
-	private void saveMap(CatalogDTO catalogDTO, String accountId, Date factDate, BigDecimal positive,
+	private void saveMap(String accountId, Date factDate, BigDecimal positive,
 			BigDecimal negative, BigDecimal value) throws ServerException {
 		// Obtener la fila de la cuenta en todos los niveles
-		List<ResultMapDTO> mapItems = mapService.getItemsAccount(catalogDTO.getCode(), accountId,
-				ResultMapConst.TYPE_PUNTUAL, factDate);
-		// mapItems.addAll( mapService.getItemsAccount(catalogDTO.getCode(), accountId,
-		// ResultMapConst.TYPE_TEMPORAL, factDate));
+		List<ResultMapDTO> mapItems = mapService.getItemsAccount(accountId, factDate);
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
 			if (positive.compareTo(BigDecimal.ZERO) != 0) {
@@ -91,13 +91,14 @@ public class VoucherCreateService {
 					.divide(new BigDecimal(resultMapDTO.getQuantity()), 2, RoundingMode.CEILING).floatValue());
 			resultMapDTO.setLastBalance(value);
 			// guardar las modificaciones
-			mapService.update(catalogDTO.getCode(), resultMapDTO);
-			mapService.updateBalance(resultMapDTO);
+			mapService.update(resultMapDTO);
+			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());
+			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
 		}
 
 		AccountDTO account = accountService.getById(accountId);
 		if (account.getParent() != null)
-			saveMap(catalogDTO, account.getParent(), factDate, positive, negative, value);
+			saveMap(account.getParent(), factDate, positive, negative, value);
 	}
 
 	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO) throws ServerException {
@@ -109,18 +110,29 @@ public class VoucherCreateService {
 				throw new ServerException("La cuenta no pertenece al catalogo. " + account.getName());
 			if (account.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
+			createMapLine(catalogDTO, account);
+		}
+	}
 
-			if (account.getInitialDate() == null || account.getFinalDate() == null)
-				throw new ServerException(
-						"La cuenta no ha generado el esquema de valores, comunicate con tu desarrollador.");
-			if (account.getInitialDate().compareTo(_voucher.getHeader().getFactDate()) > 0)
+	private void createMapLine(CatalogDTO catalogDTO, AccountDTO account) throws ServerException {
+		if (account.getInitialDate() == null || account.getFinalDate() == null) {
+			mapService.insertMapAccount(account.getKey(), catalogDTO.getInitialDate(), catalogDTO.getFinalDate());
+			account.setInitialDate(catalogDTO.getInitialDate());
+			account.setFinalDate(catalogDTO.getFinalDate());
+			accountService.update(account);
+			if(account.getParent()!=null) createMapLine(catalogDTO, accountService.getById(account.getParent()));	
+		}else {
+			/*if (account.getInitialDate().compareTo(_voucher.getHeader().getFactDate()) > 0)
 				throw new ServerException(
 						"La cuenta no ha generado el esquema de valores, la fecha inicial de la cuenta es mayor a la fecha del voucher.");
 			if (account.getFinalDate().compareTo(_voucher.getHeader().getFactDate()) < 0)
 				throw new ServerException(
-						"La cuenta no ha generado el esquema de valores, la fecha final de la cuenta es menor a la fecha del voucher.");
+						"La cuenta no ha generado el esquema de valores, la fecha final de la cuenta es menor a la fecha del voucher.");*/	
 		}
+		
 	}
+	
+
 
 	private void saveRecords(String catalogCode, Voucher _voucher, String headerId) throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {

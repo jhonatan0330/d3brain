@@ -9,6 +9,8 @@
 			creg_llave as key
 			,creg_comprobante as voucher
 			,creg_cuenta as account
+			,(select ccue_nombre from account.cuenta_cue where ccue_llave = creg_cuenta) as accountName
+			,(select ccue_codigo from account.cuenta_cue where ccue_llave = creg_cuenta) as accountCode
 			,creg_descripcion as note
 			,dreg_fecha as factDate
 			,mreg_positivo as positive

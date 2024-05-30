@@ -1,8 +1,6 @@
 package com.accounting.plan.domain;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
@@ -10,21 +8,11 @@ import org.apache.ibatis.type.Alias;
 @Alias("ResultMapDTO")
 public class ResultMapDTO extends SharedDataObject{
 
-	private String catalog;
 	private String account;
 	private String accountName;
 	private String accountCode;
-	private Integer level;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date startDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date endDate;
-	private String period;
-	private Integer year;
-	private Integer month;
-	private Integer day;
-	private Integer hour;
-	private Integer minute;
+	private String timeFrame;
+	private String timeFrameName;
 	private Integer quantity;
 	private Float average;
 	private BigDecimal lastBalance;
@@ -32,15 +20,6 @@ public class ResultMapDTO extends SharedDataObject{
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
-	private String type;
-
-	public String getCatalog() {
-		return catalog;
-	}
-
-	public void setCatalog(String catalog) {
-		this.catalog = catalog;
-	}
 
 	public String getAccount() {
 		return account;
@@ -66,76 +45,20 @@ public class ResultMapDTO extends SharedDataObject{
 		this.accountCode = accountCode;
 	}
 
-	public Integer getLevel() {
-		return level;
+	public String getTimeFrame() {
+		return timeFrame;
 	}
 
-	public void setLevel(Integer level) {
-		this.level = level;
+	public void setTimeFrame(String timeFrame) {
+		this.timeFrame = timeFrame;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public String getTimeFrameName() {
+		return timeFrameName;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getPeriod() {
-		return period;
-	}
-
-	public void setPeriod(String period) {
-		this.period = period;
-	}
-
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-
-	public Integer getMonth() {
-		return month;
-	}
-
-	public void setMonth(Integer month) {
-		this.month = month;
-	}
-
-	public Integer getDay() {
-		return day;
-	}
-
-	public void setDay(Integer day) {
-		this.day = day;
-	}
-
-	public Integer getHour() {
-		return hour;
-	}
-
-	public void setHour(Integer hour) {
-		this.hour = hour;
-	}
-
-	public Integer getMinute() {
-		return minute;
-	}
-
-	public void setMinute(Integer minute) {
-		this.minute = minute;
+	public void setTimeFrameName(String timeFrameName) {
+		this.timeFrameName = timeFrameName;
 	}
 
 	public Integer getQuantity() {
@@ -192,14 +115,6 @@ public class ResultMapDTO extends SharedDataObject{
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 }

@@ -14,7 +14,6 @@ import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.application.base.ResultMapService;
 import com.accounting.plan.domain.AccountDTO;
-import com.accounting.plan.domain.ResultMapConst;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.shared.domain.ServerException;
@@ -41,23 +40,11 @@ public class PlanCreateMatrixService {
 		Calendar finalDate = new GregorianCalendar();
 		finalDate.setTime(initialDate);
 		finalDate.add(Calendar.DAY_OF_MONTH, 1);
-		createLevel0(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_PUNTUAL);
-		createLevel1(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_PUNTUAL);
-		createLevel2(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_PUNTUAL);
-		createLevel3(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_PUNTUAL);
-		createLevel0(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_TEMPORAL);
-		createLevel1(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_TEMPORAL);
-		createLevel2(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_TEMPORAL);
-		createLevel3(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog(),
-				ResultMapConst.TYPE_TEMPORAL);
-		System.out.println(date.getTime().toString() + " -  " + account.getName());
+		/*createLevel0(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog());
+		createLevel1(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog());
+		createLevel2(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog());
+		createLevel3(date.getTime(), finalDate.getTime(), account.getKey(), account.getCatalog());
+		*/System.out.println(date.getTime().toString() + " -  " + account.getName());
 		account = accountService.getById(account.getKey());
 		if (account.getInitialDate() == null) {
 			account.setInitialDate(date.getTime());
@@ -74,7 +61,7 @@ public class PlanCreateMatrixService {
 		accountService.update(account);
 	}
 
-	private void createLevel0(Date initialDate, Date endDate, String accountId, String catalogId, String type)
+	/*private void createLevel0(Date initialDate, Date endDate, String accountId, String catalogId)
 			throws ServerException {
 		ResultMapDTO mapCurrent = getCurrentMap(accountId, 0, null, null, null, type);
 		if (mapCurrent != null) {
@@ -96,7 +83,7 @@ public class PlanCreateMatrixService {
 		resultMapService.save(map0);
 	}
 
-	private void createLevel1(Date initialDate, Date endDate, String accountId, String catalogId, String type)
+	private void createLevel1(Date initialDate, Date endDate, String accountId, String catalogId)
 			throws ServerException {
 		Calendar date = Calendar.getInstance();
 		date.setTime(initialDate);
@@ -129,7 +116,7 @@ public class PlanCreateMatrixService {
 		resultMapService.save(map);
 	}
 
-	private void createLevel2(Date initialDate, Date endDate, String accountId, String catalogId, String type)
+	private void createLevel2(Date initialDate, Date endDate, String accountId, String catalogId)
 			throws ServerException {
 		Calendar date = Calendar.getInstance();
 		date.setTime(initialDate);
@@ -165,7 +152,7 @@ public class PlanCreateMatrixService {
 		resultMapService.save(map);
 	}
 
-	private void createLevel3(Date initialDate, Date endDate, String accountId, String catalogId, String type)
+	private void createLevel3(Date initialDate, Date endDate, String accountId, String catalogId)
 			throws ServerException {
 		Calendar date = Calendar.getInstance();
 		date.setTime(initialDate);
@@ -209,7 +196,7 @@ public class PlanCreateMatrixService {
 	}
 
 	private ResultMapDTO getCurrentMap(String accountId, Integer level, Integer year, Integer mont, Integer day,
-			Integer hour, Integer minute, String type) throws ServerException {
+			Integer hour, Integer minute) throws ServerException {
 		ResultMapFilterDTO filter = new ResultMapFilterDTO();
 		filter.setAccount(accountId);
 		filter.setLevel(level);
@@ -303,6 +290,6 @@ public class PlanCreateMatrixService {
 			map.setLastBalance(BigDecimal.ZERO);
 		}
 		return map;
-	}
+	}*/
 
 }

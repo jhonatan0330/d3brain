@@ -1,25 +1,33 @@
 package com.accounting.plan.application;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accounting.plan.application.base.CatalogService;
-import com.accounting.plan.application.base.IPlanCreateCatalogService;
+import com.accounting.plan.application.base.ResultMapExtendService;
+import com.accounting.plan.application.base.TimeFrameService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
+import com.accounting.plan.domain.TimeFrameDTO;
 import com.shared.domain.ServerException;
 
 @Service("PlanCreateCatalogTemplateAccountingService")
-public class PlanCreateCatalogService implements IPlanCreateCatalogService {
+public class PlanCreateCatalogService {
 
 	@Autowired
 	private CatalogService catalogService;
-	// @Autowired
-	// private CreateCatalogTablesMapper mapper;
+	@Autowired
+	private ResultMapExtendService mapService;
+	@Autowired
+	private TimeFrameService timeFrameService;
 
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public CatalogDTO call(CatalogDTO catalog) throws ServerException {
 		validateCatalog(catalog);
@@ -28,13 +36,8 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 		} else {
 			catalogService.save(catalog);
 		}
-		catalog = catalogService.getById(catalog.getKey());
-		/*
-		 * createTemporal(catalog.getCode()); createPuntual(catalog.getCode());
-		 * createVoucher(catalog.getCode()); createRegister(catalog.getCode()); //
-		 * createAccumulate(catalog.getCode()); createAuxiliar(catalog.getCode());
-		 */
-		return catalog;
+		createTemporalFrame(catalog.getInitialDate(), catalog.getFinalDate());
+		return catalogService.getById(catalog.getKey());
 	}
 
 	private void validateCatalog(CatalogDTO catalog) throws ServerException {
@@ -56,38 +59,215 @@ public class PlanCreateCatalogService implements IPlanCreateCatalogService {
 		CatalogDTO catalogDB = catalogService.getOne(filter);
 		if (catalogDB != null && (catalog.getKey() == null || catalog.getKey().compareTo(catalogDB.getKey()) != 0))
 			throw new ServerException("Ya existe un catalogo con este codigo");
-
 	}
-	/*
-	 * private void createTemporal(String code) throws ServerException { try {
-	 * mapper.createTemporal(code); } catch (BindingException ex) { throw new
-	 * ServerException(ex.getMessage()); } catch (Exception e) { throw new
-	 * ServerException(e.getCause().getMessage()); } }
-	 * 
-	 * private void createPuntual(String code) throws ServerException { try {
-	 * mapper.createPuntual(code); } catch (BindingException ex) { throw new
-	 * ServerException(ex.getMessage()); } catch (Exception e) { throw new
-	 * ServerException(e.getCause().getMessage()); } }
-	 * 
-	 * private void createVoucher(String code) throws ServerException { try {
-	 * mapper.createVoucher(code); } catch (BindingException ex) { throw new
-	 * ServerException(ex.getMessage()); } catch (Exception e) { throw new
-	 * ServerException(e.getCause().getMessage()); } }
-	 * 
-	 * private void createRegister(String code) throws ServerException { try {
-	 * mapper.createRegister(code); } catch (BindingException ex) { throw new
-	 * ServerException(ex.getMessage()); } catch (Exception e) { throw new
-	 * ServerException(e.getCause().getMessage()); } }
-	 * 
-	 * private void createAuxiliar(String code) throws ServerException { try {
-	 * mapper.createAuxiliar(code); } catch (BindingException ex) { throw new
-	 * ServerException(ex.getMessage()); } catch (Exception e) { throw new
-	 * ServerException(e.getCause().getMessage()); } }
-	 */
 
-	@Override
 	public CatalogDTO callDelete(String catalogId) throws ServerException {
 		return catalogService.delete(catalogId);
 	}
 
+	private void createTemporalFrame(Date initialDate, Date finalDate) throws ServerException {
+
+		//Esta pensado para tener 5 niveles de detalle sino que los niveles 4 y 5 traen muchos registros
+		// La idea es colocar una propiedad que permita aumentar o reducir los niveles
+		int maxLevel = 3;
+
+		TimeFrameDTO timeFrame = mapService.getTimeFrameLevel(0);
+		if (timeFrame.getStartDate() == null) {			
+			createLevel0(initialDate, finalDate);
+		} else {
+			boolean updateFlag = false;
+			if(initialDate.getTime()< timeFrame.getStartDate().getTime()) {
+				timeFrame.setStartDate(initialDate);
+				updateFlag = true;
+			}
+			Calendar date = Calendar.getInstance();
+			date.setTime(timeFrame.getEndDate());
+			date.add(Calendar.DATE, 1);
+			if(finalDate.getTime()< date.getTime().getTime()) {
+				timeFrame.setEndDate(date.getTime());
+				updateFlag = true;
+			}
+			if(updateFlag) timeFrameService.update(timeFrame);
+		}
+		if (maxLevel >= 1)
+			getDateToCreateLevel(initialDate, finalDate, 1);
+		if (maxLevel >= 2)
+			getDateToCreateLevel(initialDate, finalDate, 2);
+		if (maxLevel >= 3)
+			getDateToCreateLevel(initialDate, finalDate, 3);
+		if (maxLevel >= 4)
+			getDateToCreateLevel(initialDate, finalDate, 4);
+		if (maxLevel >= 5)
+			getDateToCreateLevel(initialDate, finalDate, 5);
+	}
+
+	private void getDateToCreateLevel(Date initialDate, Date finalDate, int level) throws ServerException {
+
+		TimeFrameDTO timeFrame = mapService.getTimeFrameLevel(level);
+		if (timeFrame.getStartDate() == null || initialDate.getTime() < timeFrame.getStartDate().getTime()) {
+			if (timeFrame.getStartDate() != null) {
+				if (level == 1)
+					createLevel1(initialDate, timeFrame.getStartDate());
+				if (level == 2)
+					createLevel2(initialDate, timeFrame.getStartDate());
+				if (level == 3)
+					createLevel3(initialDate, timeFrame.getStartDate());
+				if (level == 4)
+					createLevel4(initialDate, timeFrame.getStartDate());
+				if (level == 5)
+					createLevel5(initialDate, timeFrame.getStartDate());
+			} else {
+				if (level == 1)
+					createLevel1(initialDate, finalDate);
+				if (level == 2)
+					createLevel2(initialDate, finalDate);
+				if (level == 3)
+					createLevel3(initialDate, finalDate);
+				if (level == 4)
+					createLevel4(initialDate, finalDate);
+				if (level == 5)
+					createLevel5(initialDate, finalDate);
+				return;
+			}
+		}
+
+		if (timeFrame.getEndDate() == null || finalDate.getTime() > timeFrame.getEndDate().getTime()) {
+			if (level == 1)
+				createLevel1(timeFrame.getEndDate(), finalDate);
+			if (level == 2)
+				createLevel2(timeFrame.getEndDate(), finalDate);
+			if (level == 3)
+				createLevel3(timeFrame.getEndDate(), finalDate);
+			if (level == 4)
+				createLevel4(timeFrame.getEndDate(), finalDate);
+			if (level == 5)
+				createLevel5(timeFrame.getEndDate(), finalDate);
+		}
+	}
+
+	private void createLevel0(Date initialDate, Date endDate) throws ServerException {
+		TimeFrameDTO map0 = new TimeFrameDTO();// getBaseMap(accountId, catalogId, type, null);
+		map0.setLevel(0);
+		map0.setStartDate(initialDate);
+		Calendar date = Calendar.getInstance();
+		date.setTime(endDate);
+		date.add(Calendar.DATE, 1);
+		map0.setEndDate(date.getTime());
+		map0.setCode("0");
+		timeFrameService.save(map0);
+	}
+
+	private void createLevel1(Date initialDate, Date endDate) throws ServerException {
+		Calendar date = Calendar.getInstance();
+		date.setTime(initialDate);
+		date.set(Calendar.MONTH, 0);
+		date.set(Calendar.DAY_OF_MONTH, 1);
+		while (date.getTime().compareTo(endDate) < 0) {
+			TimeFrameDTO map = new TimeFrameDTO();
+			map.setLevel(1);
+			map.setStartDate(date.getTime());
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)));
+			map.setYear(date.get(Calendar.YEAR));
+
+			date.add(Calendar.YEAR, 1);
+			date.set(Calendar.MONTH, 0);
+			date.set(Calendar.DAY_OF_MONTH, 1);
+			map.setEndDate(date.getTime());
+			timeFrameService.save(map);	
+		}
+		
+	}
+
+	private void createLevel2(Date initialDate, Date endDate) throws ServerException {
+		Calendar date = Calendar.getInstance();
+		date.setTime(initialDate);
+		date.set(Calendar.DAY_OF_MONTH, 1);
+		while (date.getTime().compareTo(endDate) < 0) {
+			TimeFrameDTO map = new TimeFrameDTO();
+			map.setLevel(2);
+			map.setStartDate(date.getTime());
+			map.setYear(date.get(Calendar.YEAR));
+			map.setMonth(date.get(Calendar.MONTH));
+			map.setCode(
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1));
+			date.add(Calendar.MONTH, 1);
+			date.set(Calendar.DAY_OF_MONTH, 1);
+			map.setEndDate(date.getTime());
+			timeFrameService.save(map);	
+		}
+		
+	}
+
+	private void createLevel3(Date initialDate, Date endDate) throws ServerException {
+		Calendar date = Calendar.getInstance();
+		date.setTime(initialDate);
+
+		List<TimeFrameDTO> items = new ArrayList<>();
+
+		while (date.getTime().compareTo(endDate) <= 0) {
+			TimeFrameDTO map = new TimeFrameDTO();// getBaseMap(accountId, catalogId, type, mapCurrent);
+			map.setLevel(3);
+			map.setStartDate(date.getTime());
+			map.setYear(date.get(Calendar.YEAR));
+			map.setMonth(date.get(Calendar.MONTH));
+			map.setDay(date.get(Calendar.DATE));
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
+					+ "-" + String.format("%02d", date.get(Calendar.DATE)));
+			date.add(Calendar.DATE, 1);
+			map.setEndDate(date.getTime());
+			items.add(map);	
+		}
+		mapService.saveAll(items);
+	}
+
+	private void createLevel4(Date initialDate, Date endDate) throws ServerException {
+		List<TimeFrameDTO> items = new ArrayList<>();
+		Calendar date = Calendar.getInstance();
+		date.setTime(initialDate);
+		while (date.getTime().compareTo(endDate) < 0) {
+			TimeFrameDTO map = new TimeFrameDTO();// getBaseMap(accountId, catalogId, type, mapCurrent);
+			map.setLevel(4);
+			map.setStartDate(date.getTime());
+			map.setYear(date.get(Calendar.YEAR));
+			map.setMonth(date.get(Calendar.MONTH));
+			map.setDay(date.get(Calendar.DATE));
+			map.setHour(date.get(Calendar.HOUR_OF_DAY));
+			map.setCode(
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
+							+ "-" + String.format("%02d", date.get(Calendar.DATE)) + " "
+							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":00 - "
+							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":59");
+			date.add(Calendar.HOUR, 1);
+			map.setEndDate(date.getTime());
+			items.add(map);
+		}
+		mapService.saveAll(items);
+	}
+
+	private void createLevel5(Date initialDate, Date endDate) throws ServerException {
+		List<TimeFrameDTO> items = new ArrayList<>();
+		Calendar date = Calendar.getInstance();
+		date.setTime(initialDate);
+		while (date.getTime().compareTo(endDate) < 0) {
+			TimeFrameDTO map = new TimeFrameDTO();// getBaseMap(accountId, catalogId, type, mapCurrent);
+			map.setLevel(5);
+			map.setStartDate(date.getTime());
+			map.setYear(date.get(Calendar.YEAR));
+			map.setMonth(date.get(Calendar.MONTH));
+			map.setDay(date.get(Calendar.DATE));
+			map.setHour(date.get(Calendar.HOUR_OF_DAY));
+			map.setMinute(date.get(Calendar.MINUTE));
+			map.setCode(
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
+							+ "-" + String.format("%02d", date.get(Calendar.DATE)) + " "
+							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":"
+							+ String.format("%02d", date.get(Calendar.MINUTE)) + " - "
+							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":"
+							+ String.format("%02d", date.get(Calendar.MINUTE) + 9));
+			date.add(Calendar.MINUTE, 10);
+			map.setEndDate(date.getTime());
+			items.add(map);
+		}
+		mapService.saveAll(items);
+	}
 }

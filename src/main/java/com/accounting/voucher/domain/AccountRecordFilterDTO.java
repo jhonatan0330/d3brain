@@ -13,6 +13,8 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 	private String catalogCode;
 	private String voucher;
 	private String account;
+	private String accountName;
+	private String accountCode;
 	private String note;
 	private Date factDateMin;
 	private Date factDateMax;
@@ -48,6 +50,22 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 
 	public void setAccount(String account) {
 		this.account = account;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
 	}
 
 	public String getNote() {

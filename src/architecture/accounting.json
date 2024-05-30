@@ -256,30 +256,10 @@
 					]
 				},
 				{
-					"name": "ResultMap",
-					"table": "mapa_resultados",
-					"prefix": "rmp",
+					"name": "TimeFrame",
+					"table": "periodotiempo",
+					"prefix": "ptm",
 					"attributes": [
-						{
-							"name": "catalog",
-							"tableName": "catalogo",
-							"type": "CLASS"
-						},
-						{
-							"name": "account",
-							"tableName": "cuenta",
-							"type": "CLASS"
-						},
-						{
-							"name": "accountName",
-							"type": "STRING",
-							"script": "select ccue_nombre from account.cuenta_cue where ccue_llave = crmp_cuenta"
-						},
-						{
-							"name": "accountCode",
-							"type": "STRING",
-							"script": "select ccue_codigo from account.cuenta_cue where ccue_llave = crmp_cuenta"
-						},
 						{
 							"name": "level",
 							"tableName": "nivel",
@@ -297,8 +277,8 @@
 							"type": "DATETIME"
 						},
 						{
-							"name": "period",
-							"tableName": "periodo",
+							"name": "code",
+							"tableName": "codigo",
 							"type": "STRING"
 						},
 						{
@@ -330,6 +310,38 @@
 							"tableName": "minuto",
 							"type": "INT",
 							"optional": true
+						}
+					]
+				},
+				{
+					"name": "ResultMap",
+					"table": "maparesultados",
+					"prefix": "rmp",
+					"attributes": [
+						{
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "accountName",
+							"type": "STRING",
+							"script": "select ccue_nombre from account.cuenta_cue where ccue_llave = crmp_cuenta"
+						},
+						{
+							"name": "accountCode",
+							"type": "STRING",
+							"script": "select ccue_codigo from account.cuenta_cue where ccue_llave = crmp_cuenta"
+						},
+						{
+							"name": "timeFrame",
+							"tableName": "periodo",
+							"type": "CLASS"
+						},
+						{
+							"name": "timeFrameName",
+							"type": "STRING",
+							"script": "select cptm_codigo from account.periodotiempo_ptm where cptm_llave = crmp_periodo"
 						},
 						{
 							"name": "quantity",
@@ -365,12 +377,6 @@
 							"name": "value",
 							"tableName": "valor",
 							"type": "NUMBER"
-						},
-						{
-							"name": "type",
-							"tableName": "tipo",
-							"type": "STRING",
-							"size": 1
 						}
 					]
 				}
@@ -461,6 +467,16 @@
 							"name": "account",
 							"tableName": "cuenta",
 							"type": "CLASS"
+						},
+						{
+							"name": "accountName",
+							"type": "STRING",
+							"script": "select ccue_nombre from account.cuenta_cue where ccue_llave = creg_cuenta"
+						},
+						{
+							"name": "accountCode",
+							"type": "STRING",
+							"script": "select ccue_codigo from account.cuenta_cue where ccue_llave = creg_cuenta"
 						},
 						{
 							"name": "note",

@@ -1,22 +1,18 @@
 package com.accounting.plan.application.base;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.accounting.plan.application.PlanCreateMatrixService;
 import com.accounting.plan.domain.AccountDTO;
-import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.ResultMapDTO;
+import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.plan.infrastructure.ResultMapExtendMapper;
 import com.shared.domain.ServerException;
 
@@ -25,15 +21,11 @@ public class ResultMapExtendService {
 
 	@Autowired
 	private ResultMapExtendMapper mapper;
-	@Autowired
-	private CatalogService catalogService;
-	@Autowired
-	private PlanCreateMatrixService matrixService;
 
-	public void saveAll(String catalogCode, String type, List<ResultMapDTO> maps) throws ServerException {
+	public void saveAll(List<TimeFrameDTO> maps) throws ServerException {
 		if (maps == null || maps.isEmpty())
 			return;
-		for (ResultMapDTO resultMapDTO : maps) {
+		for (TimeFrameDTO resultMapDTO : maps) {
 			resultMapDTO.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		}
 		int indexEnd = 0;
@@ -44,7 +36,7 @@ public class ResultMapExtendService {
 				indexEnd = indexEnd + 1000;
 				if (indexEnd > maps.size())
 					indexEnd = maps.size();
-				mapper.insertAll(catalogCode, type, maps.subList(indexStart, indexEnd));
+				mapper.insertAll( maps.subList(indexStart, indexEnd));
 
 			} catch (BindingException ex) {
 				throw new ServerException(ex.getMessage());
@@ -54,19 +46,33 @@ public class ResultMapExtendService {
 		}
 	}
 
-	public ResultMapDTO update(String catalogCode, ResultMapDTO dto) throws ServerException {
+	public ResultMapDTO update(ResultMapDTO dto) throws ServerException {
 		try {
-			return mapper.updateItem(catalogCode, dto);
+			return mapper.updateItem(dto);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
-	public ResultMapDTO updateBalance(ResultMapDTO dto) throws ServerException {
+	public void insertMapAccount(String accountId, Date startDate, Date endDate) throws ServerException {
 		try {
-			return mapper.updateBalance(dto);
+			Calendar date = Calendar.getInstance();
+			date.setTime(endDate);
+			date.add(Calendar.DATE, 1);
+			mapper.insertMapAccount(accountId, startDate, date.getTime());
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
+	
+	
+
+	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value) throws ServerException {
+		try {
+			return mapper.updateBalance(accountId, startDate, level, value);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
@@ -75,9 +81,9 @@ public class ResultMapExtendService {
 	}
 
 	public List<ResultMapDTO> getBalanceByCatalog(String catalogId) throws ServerException {
-		CatalogDTO catalog = getCatalog(catalogId);
+		//CatalogDTO catalog = getCatalog(catalogId);
 		try {
-			return mapper.getBalance(catalog.getKey(), catalog.getCode());
+			return mapper.getBalance(catalogId);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
@@ -85,23 +91,21 @@ public class ResultMapExtendService {
 		}
 	}
 
-	private CatalogDTO getCatalog(String catalogId) throws ServerException {
+	/*private CatalogDTO getCatalog(String catalogId) throws ServerException {
 		if (catalogId == null)
 			throw new ServerException("Es necesario colcoar el Id del catalogo");
 		CatalogDTO catalog = catalogService.getById(catalogId);
 		if (catalog == null)
 			throw new ServerException("No se identifico un catalogo con el identificador " + catalogId);
 		return catalog;
-	}
+	}*/
 
-	public List<ResultMapDTO> getItemsAccount(String catalogCode, String accountId, String type, Date dateFact)
+	public List<ResultMapDTO> getItemsAccount(String accountId, Date dateFact)
 			throws ServerException {
-		if (catalogCode == null)
-			throw new ServerException("Es necesario colcoar el Id del catalogo");
 		Calendar dateFactCalendar = Calendar.getInstance();
 		dateFactCalendar.setTime(dateFact);
 		try {
-			return mapper.getItemsAccount(catalogCode, accountId, type, dateFactCalendar.get(Calendar.YEAR),
+			return mapper.getItemsAccount(accountId, dateFactCalendar.get(Calendar.YEAR),
 					dateFactCalendar.get(Calendar.MONTH), dateFactCalendar.get(Calendar.DATE),
 					dateFactCalendar.get(Calendar.HOUR_OF_DAY), (dateFactCalendar.get(Calendar.MINUTE) / 10 * 10));
 		} catch (BindingException ex) {
@@ -120,7 +124,17 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+	public TimeFrameDTO getTimeFrameLevel(int level) throws ServerException {
+		try {
+			return mapper.selectTimeFrameLevel(level);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
 
+	/*
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void configureAccount() throws ServerException {
 		List<AccountDTO> accounts = getAccountWithTimeToExtend();
@@ -148,6 +162,6 @@ public class ResultMapExtendService {
 				}
 			}
 		}
-	}
+	}*/
 
 }
