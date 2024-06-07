@@ -133,14 +133,14 @@ public class TipoFecha {
 					pCampo.setValorFecha(fecha.getTime());
 					pCampo.setValorText(SoftureUtil.formatDate(pCampo.getValorFecha()));
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-							Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
+							Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 						fecha.setTime(new Date());
 						fecha.set(Calendar.HOUR_OF_DAY, 0);
 						fecha.set(Calendar.MINUTE, 0);
 						fecha.set(Calendar.SECOND, 0);
 						fecha.set(Calendar.MILLISECOND, 0);
 						if (pCampo.getValorFecha().getTime() != fecha.getTime().getTime())
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() +  " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " permite la fecha " + SoftureUtil.formatDate(fecha.getTime())
 									+ ". Y la fecha recibida es " + SoftureUtil.formatDate(pCampo.getValorFecha()));
 					}
@@ -158,7 +158,7 @@ public class TipoFecha {
 								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 							hora.setTime(new Date());
 							if (Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime()) > 900000)
-								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " permite la fecha " + SoftureUtil.formatDateTime(hora.getTime())
 										+ ". Y la fecha recibida es "
 										+ SoftureUtil.formatDateTime(pCampo.getValorFecha()));
@@ -225,7 +225,7 @@ public class TipoFecha {
 									+ " no esta consultando el dependiente fecha maxima");
 						if (maxField.getValorFecha() != null) {
 							if (pCampo.getValorFecha().compareTo(maxField.getValorFecha()) > 0)
-								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
+								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " debe ser menor a " + maxField.getCampoDTO().getNombre() + " : "
 										+ SoftureUtil.formatDateTime(maxField.getValorFecha()));
 						}
@@ -241,7 +241,7 @@ public class TipoFecha {
 									+ " no esta consultando el dependiente fecha minima");
 						if (minField.getValorFecha() != null) {
 							if (pCampo.getValorFecha().compareTo(minField.getValorFecha()) < 0)
-								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
+								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " debe ser mayor a " + minField.getCampoDTO().getNombre() + " : "
 										+ SoftureUtil.formatDateTime(minField.getValorFecha()));
 						}
@@ -252,10 +252,10 @@ public class TipoFecha {
 							long tiempoAdicional = Long.valueOf(maximo);
 							Date fechaMaxima = new Date(new Date().getTime() + tiempoAdicional);
 							if (pCampo.getValorFecha().compareTo(fechaMaxima) > 0)
-								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
+								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " debe ser menor a " + SoftureUtil.formatDateTime(fechaMaxima));
 						} catch (NumberFormatException exNumber) {
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " contiene un valor que no puede convertirse en numero como fecha maxima. "
 									+ exNumber.getMessage());
 						}
@@ -284,10 +284,10 @@ public class TipoFecha {
 							}
 							if (pCampo.getValorFecha().compareTo(fechaMinimaCalendar.getTime()) < 0)
 								throw new ServerException(
-										"La fecha " + pCampo.getCampoDTO().getNombre() + " debe ser mayor a "
+										"La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " debe ser mayor a "
 												+ SoftureUtil.formatDateTime(fechaMinimaCalendar.getTime()));
 						} catch (NumberFormatException exNumber) {
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " contiene un valor que no puede convertirse en numero como fecha minima. "
 									+ exNumber.getMessage());
 						}

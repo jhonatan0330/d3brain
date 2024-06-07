@@ -218,7 +218,7 @@ public class TipoProceso {
 						if (pCampo.getModificado() && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 								Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 							throw new ServerException(
-									"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+									"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 					}
 				}
 
@@ -273,7 +273,7 @@ public class TipoProceso {
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getExpedientes().isEmpty()
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE) == null)
-			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 
 		List<PedidoVentaDTO> procesosActuales = null;
 		// Consulto los procesos que estan en BD

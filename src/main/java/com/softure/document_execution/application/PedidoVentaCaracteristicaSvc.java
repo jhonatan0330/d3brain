@@ -285,21 +285,33 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 	
 	public List<PedidoVentaCaracteristicaDTO> ordenarAlfabeticaDepende(List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
-		List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario = new ArrayList<PedidoVentaCaracteristicaDTO>();
+		List<PedidoVentaCaracteristicaDTO> dependentOrderList = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		if(dependientes==null) throw new ServerException("Por favor cierra y vuelve a cargar la pagina"); 
 		for (int i = 0; i <dependientes.size(); i++) {
 			PedidoVentaCaracteristicaDTO iDepende = dependientes.get(i);
 			if(i == 0) {
-				parametrosFuncionTarifario.add(iDepende);
+				dependentOrderList.add(iDepende);
 			}else {
 				int j = 0;
-				while(j <parametrosFuncionTarifario.size() && parametrosFuncionTarifario.get(j).getCampoDTO().getCodigo().compareTo(iDepende.getCampoDTO().getCodigo())<0) {
+				while(j <dependentOrderList.size() && dependentOrderList.get(j).getCampoDTO().getCodigo().compareTo(iDepende.getCampoDTO().getCodigo())<=0) {
 					j++;
 				}
-				parametrosFuncionTarifario.add(j, iDepende);
+				dependentOrderList.add(j, iDepende);
 			}
 		}
-		return parametrosFuncionTarifario;
+		return dependentOrderList;
+	}
+	
+	public List<PedidoVentaCaracteristicaDTO> removeDuplicateDepends(List<PedidoVentaCaracteristicaDTO> dependents) throws ServerException{
+		for (int i = dependents.size()-1; i >= 0; i--) {
+			for (int j = i-1; j >= 0; j--) {
+				if(dependents.get(i).getCampoDTO().getCodigo().compareTo(dependents.get(j).getCampoDTO().getCodigo())==0) {
+					dependents.remove(i);
+					break;
+				}
+			}
+		}
+		return dependents;
 	}
 	
 	public PedidoVentaCaracteristicaDTO transformFilter2VO(PedidoVentaCaracteristicaFilterDTO filter) {

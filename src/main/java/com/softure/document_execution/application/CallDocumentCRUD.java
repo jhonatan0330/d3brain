@@ -533,6 +533,8 @@ public class CallDocumentCRUD {
 							}
 						}
 					}
+				//Esto es muy riesgoso hacerlo toca despues con calma hacer pruebas
+				//campoDocumento.setDependientes(pedidoVentaCaracteristicaService.ordenarAlfabeticaDepende(campoDocumento.getDependientes()));
 				}
 			}
 			// 3. valido cada campo

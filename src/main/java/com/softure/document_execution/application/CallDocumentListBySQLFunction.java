@@ -35,6 +35,7 @@ public class CallDocumentListBySQLFunction {
 		if(codigoDepende!=null){//Coloco las dependencias
 			campoService.validarDependientes(campo, dependientes);
 			dependientes = campoService.ordenarAlfabeticaDepende(dependientes);
+			dependientes = campoService.removeDuplicateDepends(dependientes);
 			if(dependientes.get(0).getValorOpcion()!=null)//Se me perdia la referencia y no se porque
 				entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
 			List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
