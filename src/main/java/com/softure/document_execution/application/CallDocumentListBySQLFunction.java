@@ -30,7 +30,10 @@ public class CallDocumentListBySQLFunction {
 			String campoValor,
 			String token) throws ServerException{
 		//En caso que sea funcion y tenga una dependencia va a aenviar ese valor como llave tabla
-		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, Propiedades.DEPENDE);
+		String[] cars = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
+				Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
+				Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
+		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, cars);
 		if(entityFilter==null) entityFilter = new PedidoVentaFilterDTO(); // en tipo proceos autoload no sabia que filtrar
 		if(codigoDepende!=null){//Coloco las dependencias
 			campoService.validarDependientes(campo, dependientes);
