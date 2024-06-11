@@ -539,7 +539,7 @@ public class HomologatePrepareService {
 	}
 
 	//Este metodo habia desaparecido pero es necesario para poder abrir los turnos de una caja
-	public void crearCuenta(PedidoVentaDTO dto, String propValue, String token) throws ServerException {
-		cuentaService.crearCuenta(dto, propValue, token);
+	public void crearCuenta(PedidoVentaDTO dto, String token) throws ServerException {
+		cuentaService.crearCuenta(dto, token);
 	}
 }

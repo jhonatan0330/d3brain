@@ -205,7 +205,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 			TurnoDTO turno = turnoService.consultarTurnoActual(turnoFilter);
 			if(turno!=null){
 				// hay un usuario automatico que debo dejar que haga el registro del turno
-				if(!rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta se encuentra ocupada por "+ turno.getUsuarioNombre());
+				if(!rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta "+ cuenta.getNombre() +" se encuentra ocupada por "+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
 				if(dto.getFechaEvento().compareTo(turno.getFechaApertura())<0) throw new ServerException("No se pueden registrar movimientos con fechas menores al inicio del turno." + SoftureUtil.formatDateTime(turno.getFechaApertura()));
 			}else{
@@ -226,7 +226,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		if(cuenta.getSaldo()==null) cuenta.setSaldo(BigDecimal.ZERO);
 		if(cuenta.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0)throw new ServerException("Esta cuenta no se encuentra disponible");
 		if(cuenta.getFechaConciliacion()!=null)
-			if(cuenta.getFechaConciliacion().compareTo(dto.getFechaEvento())>=0) throw new ServerException("No puede registrar un movimiento con fecha inferior a la fecha de conciliacion");
+			if(cuenta.getFechaConciliacion().compareTo(dto.getFechaEvento())>=0) throw new ServerException("No puede registrar un movimiento con fecha inferior a la fecha de conciliacion. " + cuenta.getFechaConciliacion().toString());
 		if(dto.getFechaEvento().compareTo(new Date())>0) throw new ServerException("No puede registrar un movimiento con fecha superior a la actual");
 		//if(dto.getCategoria()==null && permiso.getCatalogo()!=null) dto.setCategoria(permiso.getCatalogo());
 		//CatalogoDTO tipo = catalogoService.consultaXId(dto.getCategoria());

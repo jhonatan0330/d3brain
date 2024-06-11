@@ -173,7 +173,7 @@ public class TipoProceso {
 										+ " es de la plantilla " + plantillaError.getNombre()
 										+ " y esta plantilla no tiene propiedad configurada la propiedad cuenta que le permite manejar un seguimiento a los movimientos");
 							} else {
-								caja = cuentaService.crearCuenta(cuentaDocumento, propiedadCuenta.getValor(), token);
+								caja = cuentaService.crearCuenta(cuentaDocumento, token);
 								pCampo.setValorAuxiliar(caja.getLlaveTabla());
 							}
 						} else {

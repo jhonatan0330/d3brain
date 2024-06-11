@@ -811,7 +811,7 @@ public class CallDocumentCRUD {
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_BODEGA) != null)
 			homologateService.crearBodega(dto);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA) != null)
-			homologateService.crearCuenta(dto, Propiedades.obtenerValor(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA), token);
+			homologateService.crearCuenta(dto, token);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
 			homologateService.createFromDocument(dto,
