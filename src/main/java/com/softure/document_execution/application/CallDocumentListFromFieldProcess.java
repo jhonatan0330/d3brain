@@ -43,10 +43,7 @@ public class CallDocumentListFromFieldProcess {
 		String campoValor = Propiedades.obtenerValor(pBase, Propiedades.PROCESO_VALOR);// Principalmente para los
 																						// formularios que tengan valor
 		PropiedadDTO funcionConsulta = Propiedades.obtenerParametro(pBase, Propiedades.PROCESO_FUNCION_SQL);
-		String[] cars = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
-				Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
-				Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
-		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, cars);
+		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, Propiedades.DEPENDENT_PROPS);
 		List<PedidoVentaDTO> resultados = null;
 		if (multiple.isEmpty() && campoHeredado1.isEmpty()) {// Consulto opciones de combo
 			// Esto es de los tipo bodega

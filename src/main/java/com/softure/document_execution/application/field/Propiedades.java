@@ -263,6 +263,10 @@ public class Propiedades {
 	public static final String API_KEY = "API_KEY";
 	public static final String COVERAGE_IMAGE = "COVERAGE_IMAGE";
 	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
+	
+	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
+			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
+			Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
 		PropiedadDTO parametroTipo = new PropiedadDTO();

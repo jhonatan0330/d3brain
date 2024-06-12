@@ -515,11 +515,9 @@ public class CallDocumentCRUD {
 			// 2. Coloco los dependientes//Actualizar dependencias despues de los camps para
 			// que queden completas asi el campo este despues en orden
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-				String[] props = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
-						Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
-						Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
+				
 				List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
-						props);
+						Propiedades.DEPENDENT_PROPS);
 				if (codigoDepende != null) {
 					for (PropiedadDTO codigo : codigoDepende) {
 						for (PedidoVentaCaracteristicaDTO fieldExpediente : dto.getCaracteristicas()) {
