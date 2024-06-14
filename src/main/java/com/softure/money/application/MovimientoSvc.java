@@ -196,7 +196,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 
 		CuentaDTO cuenta = cuentaService.consultaXId(dto.getCuenta());
 		BigDecimal sobregiro = BigDecimal.ZERO;
-		if(cuenta.getValidarTurno()){
+		if(dto.getTurno()==null) {
 			//Consultar turno
 			// retiro el usuario para poder identificar quien tiene activa la caja
 			TurnoDTO turnoFilter = new TurnoDTO();
@@ -205,19 +205,22 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 			TurnoDTO turno = turnoService.consultarTurnoActual(turnoFilter);
 			if(turno!=null){
 				// hay un usuario automatico que debo dejar que haga el registro del turno
-				if(!rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta "+ cuenta.getNombre() +" se encuentra ocupada por "+ turno.getUsuarioNombre());
+				if(cuenta.getValidarTurno() && !rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta "+ cuenta.getNombre() +" se encuentra ocupada por "+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
 				if(dto.getFechaEvento().compareTo(turno.getFechaApertura())<0) throw new ServerException("No se pueden registrar movimientos con fechas menores al inicio del turno." + SoftureUtil.formatDateTime(turno.getFechaApertura()));
 			}else{
-				throw new ServerException("Es necesario tener un turno activo en esta caja para registrar un movimiento de dinero");
+				if(cuenta.getValidarTurno())throw new ServerException("Es necesario tener un turno activo en esta caja para registrar un movimiento de dinero");
 			}
-		}else{
-			//En los escenarios en donde se hacen pagos de otras cajas que no necesitan tener turno activo
-			TurnoDTO turno = new TurnoDTO();
-			turno.setUsuario(getUserFlex(token));
-			turno = turnoService.consultarTurnoActual(turno);
-			if(turno!=null)dto.setTurno(turno.getLlaveTabla());
 		}
+		/*}else{
+			if(dto.getTurno()==null) {
+				//En los escenarios en donde se hacen pagos de otras cajas que no necesitan tener turno activo
+				TurnoDTO turno = new TurnoDTO();
+				turno.setUsuario(getUserFlex(token));
+				turno = turnoService.consultarTurnoActual(turno);
+				if(turno!=null)dto.setTurno(turno.getLlaveTabla());	
+			}
+		}*/
 
 		//if(permiso.getValidarTurno()==true && dto.getTipo().compareTo(MovimientoDTO.TRANSFERENCIA)!=0 && turno==null) throw new ServerException("Este cuenta solicita que se generen movimientos dentro de un turno");
 		//Validar que ningun otro usuario tenga esa cuenta en un turno

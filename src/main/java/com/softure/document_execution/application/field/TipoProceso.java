@@ -593,6 +593,7 @@ public class TipoProceso {
 				movimiento.setMonto(pCampo.getPrincipal().getDinero().getValorTotal());
 				// movimiento.setCuentaPermisoUsuario(turno.getCuentaPermiso());
 				movimiento.setDocumento(pCampo.getDocumento());
+				movimiento.setTurno(turno.getLlaveTabla());
 				movimiento = movimientoService.guardar(movimiento, token);
 				saldo = saldo.add(movimiento.getMontoAplicado());
 			}

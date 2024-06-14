@@ -115,7 +115,8 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		cajaFilter.setDocumento(dto.getCuenta());
 		CuentaDTO caja = cuentaService.consultaUnica(cajaFilter);
 		if(caja == null)throw new ServerException("No se identifica la caja que relaciona el turno");
-		if(!caja.getValidarTurno())throw new ServerException("Esta cuenta no permite iniciar turnos");
+		// Esto lo quite en autollanos
+		//if(!caja.getValidarTurno())throw new ServerException("Esta cuenta no permite iniciar turnos");
 
 		TurnoFilterDTO turnoFilterDTO = new TurnoFilterDTO();
 		turnoFilterDTO.setCuenta(caja.getLlaveTabla());

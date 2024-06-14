@@ -274,7 +274,6 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	}
 	
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
-		
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, Propiedades.DEPENDENT_PROPS);
 		if(codigoDepende==null || codigoDepende.isEmpty()) return;
 		//Valido que la cantidad de dependientes este correcta

@@ -823,26 +823,32 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private boolean identificadorPlantillasGestion(PropiedadDTO dto) throws ServerException {
 		if (dto.getValor().compareTo("TODOS") == 0)
 			dto.setValor("*");// Esto es para evitar error al copiar
+		if (dto.getValor().compareTo("PUENTE") == 0)
+			dto.setValor("+");// Esto es para evitar error al copiar
 		if (dto.getValor().compareTo("*") == 0) {
 			dto.setTexto("TODOS");
 		} else {
-			dto.setTexto(null);
-			String[] plantillas = dto.getValor().split(";");
-			String valorFinal = null;
-			for (String iPlantilla : plantillas) {
-				DocumentoPlantillaDTO filtro = buscarPlantilla(iPlantilla);
-				if (filtro == null)
-					throw new ServerException("Codigo de la plantilla configurado en el campo no es valido.\nNombre : "
-							+ iPlantilla + "\nPropiedad : " + dto.getKey());
-				if (dto.getTexto() == null) {
-					dto.setTexto(filtro.getNombre());
-					valorFinal = filtro.getCodigo();
-				} else {
-					dto.setTexto(dto.getTexto() + ";" + filtro.getNombre());
-					valorFinal = valorFinal + ";" + filtro.getCodigo();
+			if (dto.getValor().compareTo("+") == 0) {
+				dto.setTexto("PUENTE");
+			}else {
+				dto.setTexto(null);
+				String[] plantillas = dto.getValor().split(";");
+				String valorFinal = null;
+				for (String iPlantilla : plantillas) {
+					DocumentoPlantillaDTO filtro = buscarPlantilla(iPlantilla);
+					if (filtro == null)
+						throw new ServerException("Codigo de la plantilla configurado en el campo no es valido.\nNombre : "
+								+ iPlantilla + "\nPropiedad : " + dto.getKey());
+					if (dto.getTexto() == null) {
+						dto.setTexto(filtro.getNombre());
+						valorFinal = filtro.getCodigo();
+					} else {
+						dto.setTexto(dto.getTexto() + ";" + filtro.getNombre());
+						valorFinal = valorFinal + ";" + filtro.getCodigo();
+					}
 				}
-			}
-			dto.setValor(valorFinal);
+				dto.setValor(valorFinal);	
+			}			
 		}
 		return false;
 	}

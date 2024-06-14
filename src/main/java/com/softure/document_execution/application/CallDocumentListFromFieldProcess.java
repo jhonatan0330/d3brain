@@ -40,10 +40,10 @@ public class CallDocumentListFromFieldProcess {
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pBase, Propiedades.CAMPO_HEREDADO_1);
 		String multiple = Propiedades.obtenerValor(pBase, Propiedades.MULTIPLE);
-		String campoValor = Propiedades.obtenerValor(pBase, Propiedades.PROCESO_VALOR);// Principalmente para los
-																						// formularios que tengan valor
+		// Principalmente para los formularios que tengan valor
+		String campoValor = Propiedades.obtenerValor(pBase, Propiedades.PROCESO_VALOR);
 		PropiedadDTO funcionConsulta = Propiedades.obtenerParametro(pBase, Propiedades.PROCESO_FUNCION_SQL);
-		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, Propiedades.DEPENDENT_PROPS);
+		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pBase, Propiedades.DEPENDE);
 		List<PedidoVentaDTO> resultados = null;
 		if (multiple.isEmpty() && campoHeredado1.isEmpty()) {// Consulto opciones de combo
 			// Esto es de los tipo bodega
@@ -94,7 +94,7 @@ public class CallDocumentListFromFieldProcess {
 									if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
 										throw new ServerException("En el campo " + pBase.getNombre()
 												+ " Revise los dependientes.\n " + pCampo.getCampoDTO().getNombre());
-									if (pCampo.getDependientes().size() != codigoDepende.size())
+									if (pCampo.getDependientes().size() < codigoDepende.size())
 										throw new ServerException("En el campo " + pBase.getNombre()
 												+ "El numero de dependientes no concuerda. Tipo Expediente"
 												+ codigoDepende.size());
