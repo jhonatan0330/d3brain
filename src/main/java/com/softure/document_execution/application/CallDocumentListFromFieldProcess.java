@@ -111,6 +111,7 @@ public class CallDocumentListFromFieldProcess {
 														if (entityFilter.getCaracteristicas() == null)
 															entityFilter.setCaracteristicas(
 																	new ArrayList<PedidoVentaCaracteristicaDTO>());
+														if(pCampo.getDependientes().get(0).getValorOpcion()==null) return null;
 														entityFilter.getCaracteristicas()
 																.add(colocarFiltroDocumentoAuxiliar(pCampo
 																		.getDependientes().get(0).getValorOpcion()));

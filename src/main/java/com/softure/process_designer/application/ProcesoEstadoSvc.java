@@ -128,8 +128,9 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 			if (!estado.getNombre().endsWith("?"))
 				estado.setNombre(estado.getNombre() + "?");
 		}
-		if (estado.getCodigo() == null)
-			estado.setCodigo(generarLlave());
+		if (estado.getCodigo() == null) 
+			estado.setCodigo((estado.getNombre().length()>50)?estado.getNombre().substring(0,49):estado.getNombre());
+		estado.setCodigo(SoftureUtil.formatFunction(estado.getCodigo()).toUpperCase());
 	}
 
 	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador, String token)

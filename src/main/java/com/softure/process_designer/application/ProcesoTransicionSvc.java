@@ -10,6 +10,7 @@ import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -210,7 +211,9 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			}
 			//dto.setDocumentador(true);
 		}
-		if(dto.getCodigo()==null) dto.setCodigo(generarLlave());
+		if (dto.getCodigo() == null) 
+			dto.setCodigo((dto.getNombre().length()>50)?dto.getNombre().substring(0,49):dto.getNombre());
+		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 	}
 	
 	
