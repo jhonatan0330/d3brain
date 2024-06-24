@@ -77,8 +77,7 @@ public class MailSendMessageService {
 				throw new ServerException("No se encuentra el servidor de correo configurado");
 			if (servidor.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("El servidor de correo no se encuentra activo. " + servidor.getNombre());
-			String mailFrom = (servidor.getBase() != null && !servidor.getBase().isEmpty()) ? servidor.getBase()
-					: servidor.getUsuario();
+			String mailFrom = servidorService.getFromMail(servidor);
 			String mailTo = null;
 			String[] mailCc = null;
 			if (dto.getCorreo().contains(";")) {

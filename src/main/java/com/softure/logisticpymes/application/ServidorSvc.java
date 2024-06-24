@@ -107,6 +107,13 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 			}
 		}
 	}
+	
+	public String getFromMail(ServidorDTO server) {
+		if(server.getBase() != null && !server.getBase().isEmpty()) {
+			return server.getBase();
+		}
+		return server.getUsuario();
+	}
 // END region aditionalMethods
 
 }

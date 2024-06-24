@@ -41,7 +41,7 @@ public class MailSendMessageToAdminService {
 		if(servidores == null || servidores.isEmpty()) throw new ServerException("No se encuentra el servidor de correo configurado para enviar mensaje al administrador.\n " + messageTitle + "\n" +messageText);
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		SimpleMailMessage message = new SimpleMailMessage();  
-        message.setFrom(servidores.get(0).getUsuario());
+        message.setFrom(servidorService.getFromMail(servidores.get(0)));
 	    message.setTo(adminMail);
 	    message.setSubject(messageTitle);  
 	    message.setText(principal.getNombre() + " " + messageText);

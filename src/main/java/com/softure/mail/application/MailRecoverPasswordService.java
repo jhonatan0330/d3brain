@@ -38,7 +38,7 @@ public class MailRecoverPasswordService {
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
 		if (principal.getServidor()==null) throw new ServerException("Se debe configurar la url del servidor principal para la organizacion " + principal.getNombre());
 		try {
-			mailMsg.setFrom(servidores.get(0).getUsuario());
+			mailMsg.setFrom(servidorService.getFromMail(servidores.get(0)));
 			mailMsg.setTo(correo);
 			mailMsg.setSubject(principal.getNombre() +  " Recuperacion de clave de acceso");  
 			mailMsg.setText("<table style=\"height: 164px;\" width=\"600\" bgcolor=\"#0d47a1\"><tbody><tr style=\"height: 18px;\"><td style=\"height: 18px; width: 590px;\" bgcolor=\"#0d47a1\">&nbsp;</td></tr><tr style=\"text-align: center;\"><td style=\"height: 132px; width: 590px; text-align: center;\" bgcolor=\"#E4E4E4\"><a style=\"border-radius: 4px; display: inline-block; font-weight: bold; padding: 12px 24px; !important; color: #ffffff !important; background-color: #80bf2e;\" href=\"" + principal.getServidor() + "/sessions/new/"+key+"\" target=\"_blank\">PRESIONA PARA NUEVA CLAVE</a>"
