@@ -263,6 +263,7 @@ public class Propiedades {
 	public static final String API_KEY = "API_KEY";
 	public static final String COVERAGE_IMAGE = "COVERAGE_IMAGE";
 	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
+	public static final String LAYOUT_APP = "LAYOUT_APP";
 	
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
 			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
@@ -882,6 +883,23 @@ public class Propiedades {
 		case ITERACION_SQL: {
 			ruleProperty = "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
 					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";
+			break;
+		}
+		case LAYOUT_APP: {
+			ruleProperty = "Cambias el layout de la aplicación escoge alguna de las siguientes opciones si esocges otra opción no te mostrar información"
+					+ "     empty\n"
+					+ "	    // Horizontal\n"
+					+ "	    | centered\n"
+					+ "	    | enterprise\n"
+					+ "	    | material\n"
+					+ "	    | modern\n"
+					+ "	    // Vertical\n"
+					+ "	    | classic\n"
+					+ "	    | classy\n"
+					+ "	    | compact\n"
+					+ "	    | dense\n"
+					+ "	    | futuristic\n"
+					+ "	    | thin";
 			break;
 		}
 		case MENSAJE: {
