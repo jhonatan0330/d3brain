@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("TransaccionErrorDTO")
 public class TransaccionErrorDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -18,6 +16,7 @@ public class TransaccionErrorDTO extends BasicDTO
 	private Date fechaFin;
 	private String error;
 	private String usuario;
+	private String entrada;
 
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
@@ -47,7 +46,12 @@ public class TransaccionErrorDTO extends BasicDTO
 	public String getUsuario() {
 		return usuario;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+	public void setEntrada(String entrada) {
+		this.entrada = entrada;
+	}
+	
+	public String getEntrada() {
+		return entrada;
+	}
 
 }

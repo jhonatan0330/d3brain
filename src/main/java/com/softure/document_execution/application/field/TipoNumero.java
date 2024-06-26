@@ -17,6 +17,7 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.services.CalculatorUtil;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -263,6 +264,42 @@ public class TipoNumero {
 						}
 					}
 					formula = formula.replaceAll(iterable.getCampoDTO().getCodigo() + "_[A-Z]*", "0");
+				}
+				if (iterable.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+					if (iterable.getExpedientes() != null && !iterable.getExpedientes().isEmpty()) {
+						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
+						for (PedidoVentaDTO iDetalle : iterable.getExpedientes()) {
+							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
+							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
+									&&iDetalle.getDinero()!=null && (iDetalle.getEstado() == null || iDetalle.getEstado()
+											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
+								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
+									if (iCaracteristica.getCampoDTO() == null)
+										iCaracteristica.setCampoDTO(
+												caracteristicaService.consultaXId(iCaracteristica.getCampo()));
+									String code = iterable.getCampoDTO().getCodigo() + "_";
+									if (iCaracteristica.getCampoDTO().getCodigo()==null) {
+										code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampo()) + "_";	
+									}else {
+										code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_" ;
+									}
+									code = code	+ SoftureUtil.formatFunction( iCaracteristica.getValorText()).toUpperCase();
+									BigDecimal acumulado = valoresDetallesCampo.get(code);
+									if (acumulado == null) {
+										valoresDetallesCampo.put(code, iDetalle.getDinero().getValorTotal());
+									} else {
+										valoresDetallesCampo.put(code, acumulado.add(iDetalle.getDinero().getValorTotal()));
+									}
+								}
+							}
+						}
+						for (Map.Entry<String, BigDecimal> entry : valoresDetallesCampo.entrySet()) {
+							if (entry.getValue() == null)
+								entry.setValue(BigDecimal.ZERO);
+							formula = StringUtils.replace(formula, entry.getKey(), entry.getValue().toPlainString());
+						}
+						formula = formula.replaceAll(iterable.getCampoDTO().getCodigo() + "_[A-Z\\_]*", "0");
+					}
 				}
 				formula = StringUtils.replace(formula, iterable.getCampoDTO().getCodigo(),
 						iterable.getValorNumero().toPlainString());

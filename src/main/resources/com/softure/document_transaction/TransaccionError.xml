@@ -11,6 +11,7 @@
 			,dter_fechafin as  fechaFin
 			,cter_error as  error
 			,cter_usuario as  usuario
+			,cter_entrada as  entrada
 			,cter_estado as estado
 		from transaccionerror_terp a
 	</sql>
@@ -87,6 +88,9 @@
 		<if test="usuario!=null">
 			,cter_usuario
 		</if>
+		<if test="entrada!=null">
+			,cter_entrada
+		</if>
 		<if test="estado!=null">
 			,cter_estado
 		</if>
@@ -104,6 +108,9 @@
 		<if test="usuario!=null">
 			,#{usuario}
 		</if>
+		<if test="entrada!=null">
+			,#{entrada}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -117,35 +124,8 @@
 				dter_fechafin = #{fechaFin},
 				cter_error = #{error},
 				cter_usuario = #{usuario},
+				cter_entrada = #{entrada},
 				cter_estado =#{estado}
 		<include refid="whereTransaccionErrorPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleTransaccionErrorFragment">
-		select
-			cter_llave as  llaveTabla
-			,dter_fechainicio as  fechaInicio
-			,dter_fechafin as  fechaFin
-			,cter_error as  error
-			,cter_usuario as  usuario
-			,cter_estado as estado
-		from transaccionerror_terp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="TransaccionErrorDTO">
-		<include refid="selectSimpleTransaccionErrorFragment" />
-		<include refid="whereTransaccionErrorFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="TransaccionErrorDTO">
-		<include refid="selectSimpleTransaccionErrorFragment" />
-		<include refid="whereTransaccionErrorFragment" />
-		<include refid="paginationTransaccionErrorFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
-
 </mapper>

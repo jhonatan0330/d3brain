@@ -203,8 +203,9 @@ public class DocumentoPlantillaCaracteristicaSvc
 			newCampo.setPlantilla(templateDifferenceId);
 			newCampo = guardar(newCampo, token);
 	
-			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
-					Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
+			//Esto lo quite por el tipo fecha pero no se exactamente porque lo tenia
+			//parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
+			//		Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
 			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
 					Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 

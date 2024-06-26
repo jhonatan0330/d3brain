@@ -18,6 +18,7 @@ import com.softure.document_transaction.domain.TransaccionErrorDTO;
 import com.softure.document_transaction.domain.TransaccionErrorFilterDTO;
 import com.softure.document_transaction.infrastructure.TransaccionErrorMapper;
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.upload.application.UploadSvc;
 
 @Service("transaccionErrorService")
 public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, TransaccionErrorFilterDTO> {
@@ -25,8 +26,8 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	@Autowired
 	private TransaccionErrorMapper transaccionErrorMapper;
 	
-	// BEGIN region servicesTransaccionError
-	// END region servicesTransaccionError
+	@Autowired
+	private UploadSvc uploadService;
 
 	@Override
 	public TransaccionErrorDTO consultaXId(String llave) throws ServerException {
@@ -91,12 +92,14 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 
 // BEGIN region aditionalMethods
 	@Transactional(value = "transactionManager", propagation = Propagation.NOT_SUPPORTED)
-	public TransaccionErrorDTO finalizar(Date startDate, String error, String userId) throws ServerException {
+	public TransaccionErrorDTO finalizar(Date startDate, String error, String userId, String dto, String token) throws ServerException {
 		TransaccionErrorDTO newLog = new TransaccionErrorDTO();
 		newLog.setFechaInicio(startDate);
 		newLog.setFechaFin(new Date());
 		newLog.setError(error);
 		newLog.setUsuario(userId);
+		if(dto!=null) newLog.setEntrada(
+				uploadService.uploadFile(dto.getBytes(), "Parameter.txt", token, "logs"));
 		return save(newLog);
 	}
 // END region aditionalMethods

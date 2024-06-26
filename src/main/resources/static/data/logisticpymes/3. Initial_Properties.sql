@@ -519,3 +519,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
 	VALUES('PROP_260' , 'O', 'LAYOUT APPLICATION', 'LAYOUT_APP', 'REQUISITO');
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_261' , 'L', 'HISTORICO_VISTA', 'VISTA ANTERIO DE TRAZABILIDAD', 'REQUISITO', true);
+	

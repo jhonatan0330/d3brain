@@ -1,3 +1,4 @@
+
 package com.softure.document_execution.application;
 
 import java.math.BigDecimal;
@@ -12,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.SharedConstants;
 import com.configuration.homologate.application.HomologatePrepareService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
@@ -118,12 +122,18 @@ public class CallDocumentCRUD {
 		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
 		dto.setTransaccion(tran.getLlaveTabla());
 		dto.setFuncionario(userId);
+		String dtoToJson = null;
+		try {
+			ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+			dtoToJson = ow.writeValueAsString(dto);	
+		} catch (JsonProcessingException e1) {
+		}
 		try {
 			PedidoVentaDTO result = saveWithoutTransaction(dto, token, false);
 			logSvc.finalizar(tran.getFecha(), dto.getTransaccion(), session + "-" + userId);
 			return result;
 		} catch (Exception e) {
-			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario());
+			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(), dtoToJson, token);
 			throw new ServerException(e.getMessage());
 		}
 	}

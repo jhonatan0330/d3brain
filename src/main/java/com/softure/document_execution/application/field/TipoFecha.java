@@ -305,6 +305,8 @@ public class TipoFecha {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
 				campoService.inactivar(bd, token);
+				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+				pCampo.getDifference().setValorFecha(bd.getValorFecha());
 				return pCampo;
 			} else {
 				if (pCampo.getValorFecha().compareTo(bd.getValorFecha()) == 0 && (pCampo.getValorNumero() == null
@@ -314,6 +316,8 @@ public class TipoFecha {
 					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 					bd.setPrincipal(pCampo.getPrincipal());
 					campoService.inactivar(bd, token);
+					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+					pCampo.getDifference().setValorFecha(bd.getValorFecha());
 				}
 			}
 		}
