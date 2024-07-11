@@ -521,4 +521,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_261' , 'L', 'HISTORICO_VISTA', 'VISTA ANTERIO DE TRAZABILIDAD', 'REQUISITO', true);
-	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo) 
+	VALUES('PROP_262' , 'W', 'API_BASE', 'PARAMETROS BASE DEL API', 'REQUISITO');
+		

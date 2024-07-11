@@ -982,6 +982,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.API_AUTHENTICATION:
+		case Propiedades.API_BASE:
 		case Propiedades.API_TRANSACCION:
 		case Propiedades.API: {
 			identificadorApi(dto);

@@ -34,6 +34,7 @@ public class Propiedades {
 	public static final String API_ASYNCHRONOUS = "API_ASYNCHRONOUS";
 	public static final String API_AUTHENTICATION = "API_AUTHENTICATION";
 	public static final String API_MAIL_NOTIFICATION = "API_MAIL_NOTIFICATION";
+	public static final String API_BASE = "API_BASE";
 
 	public static final String API_EXTRACTION = "API_EXTRACTION";
 	public static final String API_EXTRACTION_NO_ERROR = "API_EXTRACTION_NO_ERROR";
@@ -518,6 +519,15 @@ public class Propiedades {
 			return "Sin instrucciones por formato no enviado";
 		String ruleProperty = null;
 		switch (formato) {
+		case API_AUTHENTICATION: {
+			ruleProperty = "Referencia un api que va a ser ejecutado antes del api enviado, los parametros van a obtenerse para enviarlos en la nueva petición.\n";
+			break;
+		}
+		case API_BASE: {
+			ruleProperty = "Coloca el nombre de un api que va a contener principalmente los parametros, que s enecesitan sireve para no tener que copiar los mismo parametros en varios apis.\n"
+					+ "Ten en cuenta que este api no se ejecuta (para eso esta API EJECUTAR APRA AUTENTICAR)";
+			break;
+		}
 		case ALERTAR_CAMPO_PROCESO: {
 			ruleProperty = "Muestra un mensaje en la creacion del documento en el momento que se seleccion un objeto de un campo proceso.\n"
 					+ "En la propiedad se debe relacionar el campo que se va a mostrar del objeto seleccionado"
@@ -559,6 +569,10 @@ public class Propiedades {
 		}
 		case API_CODE_MODIFICADOR: {
 			ruleProperty = "Se encarga de reemplazar un valor en el template, tomando como base el documento que genero la accion (Solo en transiciones).\n\nEn el template debes tener la estructura => {{M_XXXXXXX}} , donde XXXXXX es el codigo del campo, el valor auxiliar corresponde a formatos de fecha";
+			break;
+		}
+		case API_CODE_REPLACE: {
+			ruleProperty = "Coloca en el api un parametro fijo en el valor colcoar el valor que va a ir en el API y en texto coloca el nombre del parametro que vas a reemplazar";
 			break;
 		}
 		case API_ITERATION_ONE_EXECUTION: {

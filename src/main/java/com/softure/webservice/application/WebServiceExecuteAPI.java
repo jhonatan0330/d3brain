@@ -77,7 +77,7 @@ public class WebServiceExecuteAPI {
 	@Autowired
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired
-    private ProcessTemplate templatesService;
+	private ProcessTemplate templatesService;
 
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la
@@ -205,7 +205,7 @@ public class WebServiceExecuteAPI {
 	}
 
 	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS, PedidoVentaDTO document) {
-		
+
 		try {
 			String infoError = callWS.getError();
 			infoError = infoError + "\nDocumento Principal: "
@@ -219,12 +219,13 @@ public class WebServiceExecuteAPI {
 					+ "]";
 			CallDocumentCommons.addMessageError(document, callWS.getError());
 			PropiedadDTO mailNotification = Propiedades.obtenerParametro(service, Propiedades.API_MAIL_NOTIFICATION);
-			if(mailNotification==null) {
-				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);	
-			}else {
-				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError, mailNotification.getValor());
+			if (mailNotification == null) {
+				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError);
+			} else {
+				mensajeToAdminService.call("Error en ejecucion de un API " + service.getNombre(), infoError,
+						mailNotification.getValor());
 			}
-			
+
 		} catch (Exception e) {
 			callWS.setError(callWS.getError() + " \n\nError al notificar a administrador:  " + e.getMessage());
 		}
@@ -281,6 +282,15 @@ public class WebServiceExecuteAPI {
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_CODE_REPLACE);
 		parameters = prepareParameterFromProperties(parameters, replaceProperties);
+		// Esto lo puedo unir con prepare, lo que sucede es que no quiero copiar en bd
+		// los parametros fijos
+		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
+		if (properties != null && !properties.isEmpty()) {
+			for (PropiedadDTO iProp : properties) {
+				parameters = prepareParameterFromProperties(parameters, propiedadesSvc.obtenerPropiedades(
+						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null));
+			}
+		}
 
 		String template = templatesService.generateOutputFile(service.getTemplate(), parameters);
 		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), parameters);
@@ -465,8 +475,6 @@ public class WebServiceExecuteAPI {
 			result = null;
 		return result;
 	}
-
-	
 
 	/**
 	 * 
@@ -767,7 +775,8 @@ public class WebServiceExecuteAPI {
 			result = new HashMap<>();
 			for (PropiedadDTO iProp : service.getPropiedades()) {
 				if (iProp.getKey().compareTo(Propiedades.API_HEADER) == 0) {
-					result.put(iProp.getValor(), templatesService.generateOutputFile(iProp.getMotivo(), tokenAuthentication));
+					result.put(iProp.getValor(),
+							templatesService.generateOutputFile(iProp.getMotivo(), tokenAuthentication));
 				}
 			}
 		}
