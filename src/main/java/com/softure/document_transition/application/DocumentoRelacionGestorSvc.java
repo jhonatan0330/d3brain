@@ -131,7 +131,8 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			String token, 
 			DocumentoRelacionGestorDTO anterior,
 			Integer historico,
-			String transaccion) throws ServerException {
+			String transaccion,
+			boolean isUpdateDocument) throws ServerException {
 		DocumentoRelacionGestorDTO actual;
 		if(anterior==null) {
 			actual = documentoRelacionGestorMapper.ultimoRegistro(principal, (historico==null)?null:"historico");
@@ -183,7 +184,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			// Esto no es necesario en universal generaba un error que las guias no cambiaban de ubicacion
 			// toca en cada estado colocar la ubicacion
 			// lo volvi a activar para las transacciones que no tienen modificador asi no me borra al modificar el documento
-			if(modificador ==null && gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
+			if((modificador == null || isUpdateDocument) && gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
 		if(historico ==null) {

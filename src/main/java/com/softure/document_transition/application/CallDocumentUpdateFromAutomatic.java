@@ -257,7 +257,7 @@ public class CallDocumentUpdateFromAutomatic {
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), updaterDocumentId, "Modificar Campos",
 				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null,
-				anterior.getHistorico(), transaction);
+				anterior.getHistorico(), transaction, true);
 	}
 
 	private boolean hasChanges(List<PedidoVentaCaracteristicaDTO> caracteristicasActuales,

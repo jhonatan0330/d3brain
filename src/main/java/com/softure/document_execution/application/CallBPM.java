@@ -229,7 +229,7 @@ public class CallBPM {
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo,
 				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null,
-				anterior.getHistorico(), nuevo.getTransaccion());
+				anterior.getHistorico(), nuevo.getTransaccion(), false);
 	}
 
 	private void revertirExpedienteDependiente(PedidoVentaDTO procesoDTO, PedidoVentaDTO documento,

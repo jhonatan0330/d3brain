@@ -160,7 +160,7 @@ public class CallManageTransition {
 			relacionAnterior = relacionGestorService.trazar(expedienteDTO.getLlaveTabla(), modificadorId, nameTrace,
 					dto.getEstadoPartida(), dto.getEstadoLLegada(),
 					(afectado == null) ? null : afectado.getLlaveTabla(), locationTransition, token, relacionAnterior,
-					expedienteDTO.getHistorico(), transaccion);
+					expedienteDTO.getHistorico(), transaccion, false);
 		}
 		// Se actualiza pedido
 		// si son los mismo creo que no necesito update ???????????
@@ -258,7 +258,7 @@ public class CallManageTransition {
 				relacionGestorService.trazar(expediente.getLlaveTabla(),
 						(acabdoCrear == null) ? null : acabdoCrear.getLlaveTabla(), transicionIteracion.getNombre(),
 						transicionIteracion.getEstadoPartida(), transicionIteracion.getEstadoLLegada(), null, null,
-						token, relacionAnterior, expediente.getHistorico(), null);
+						token, relacionAnterior, expediente.getHistorico(), null, false);
 				if (acabdoCrear != null)
 					result.add(acabdoCrear);
 			}
@@ -545,7 +545,7 @@ public class CallManageTransition {
 		relacionGestorService.trazar(anterior.getLlaveTabla(), documento.getLlaveTabla(), dto.getNombre(),
 				dto.getEstadoLLegada(), dto.getEstadoPartida(),
 				(nuevoValor == null) ? null : nuevoValor.getLlaveTabla(), ubicacion, token, null,
-				anterior.getHistorico(), documento.getTransaccion());
+				anterior.getHistorico(), documento.getTransaccion(), false);
 		// Se actualiza pedido
 		System.out.println(
 				anterior.getNombre() + " : " + filtroEstado.getNombre() + "(" + anterior.getEstadoNombre() + ")");

@@ -266,7 +266,7 @@ public class CallDocumentCRUD {
 					(updateDocument == null) ? null : updateDocument.getLlaveTabla(), plantilla.getNombre(),
 					dto.getEstadoExpediente(), dto.getEstadoExpediente(),
 					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null, token, null,
-					dto.getHistorico(), transaccion);
+					dto.getHistorico(), transaccion, true);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return dto;
 	}
@@ -410,7 +410,7 @@ public class CallDocumentCRUD {
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null,
 					pedido.getEstadoExpediente(),
 					(pedido.getDinero() == null) ? null : pedido.getDinero().getLlaveTabla(), null, token, null,
-					pedido.getHistorico(), transaccion);
+					pedido.getHistorico(), transaccion, false);
 		}
 		// return inicial;
 	}
