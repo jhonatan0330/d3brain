@@ -274,21 +274,23 @@ public class TipoNumero {
 									&&iDetalle.getDinero()!=null && (iDetalle.getEstado() == null || iDetalle.getEstado()
 											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
 								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
-									if (iCaracteristica.getCampoDTO() == null)
-										iCaracteristica.setCampoDTO(
-												caracteristicaService.consultaXId(iCaracteristica.getCampo()));
-									String code = iterable.getCampoDTO().getCodigo() + "_";
-									if (iCaracteristica.getCampoDTO().getCodigo()==null) {
-										code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampo()) + "_";	
-									}else {
-										code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_" ;
-									}
-									code = code	+ SoftureUtil.formatFunction( iCaracteristica.getValorText()).toUpperCase();
-									BigDecimal acumulado = valoresDetallesCampo.get(code);
-									if (acumulado == null) {
-										valoresDetallesCampo.put(code, iDetalle.getDinero().getValorTotal());
-									} else {
-										valoresDetallesCampo.put(code, acumulado.add(iDetalle.getDinero().getValorTotal()));
+									if(iCaracteristica.getValorText()!=null) {
+										if (iCaracteristica.getCampoDTO() == null)
+											iCaracteristica.setCampoDTO(
+													caracteristicaService.consultaXId(iCaracteristica.getCampo()));
+										String code = iterable.getCampoDTO().getCodigo() + "_";
+										if (iCaracteristica.getCampoDTO().getCodigo()==null) {
+											code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampo()) + "_";	
+										}else {
+											code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_" ;
+										}
+										code = code	+ SoftureUtil.formatFunction( iCaracteristica.getValorText()).toUpperCase();
+										BigDecimal acumulado = valoresDetallesCampo.get(code);
+										if (acumulado == null) {
+											valoresDetallesCampo.put(code, iDetalle.getDinero().getValorTotal());
+										} else {
+											valoresDetallesCampo.put(code, acumulado.add(iDetalle.getDinero().getValorTotal()));
+										}	
 									}
 								}
 							}
