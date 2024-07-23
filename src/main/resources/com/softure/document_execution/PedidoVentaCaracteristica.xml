@@ -395,8 +395,9 @@
 					,cpvc_valorauxiliar as  valorAuxiliar
 					,mpvc_valornumero as  valorNumero
 					,#{itemA.llaveTabla} as estado
-				from pedidoventacaracteristica_pvcp a
-				where cpvc_documento = #{itemA.valorOpcion}
+				from pedidoventa_pdvp pv
+					cross join campo4documento(pv.cpdv_llave, pv.npdv_historico) a
+				where pv.cpdv_llave = #{itemA.valorOpcion}
 					and cpvc_estado ='A'
 					and cpvc_campo in (<foreach item="itemB" collection="campoIds" separator="," >#{itemB.campo}</foreach>)
 			</if>
