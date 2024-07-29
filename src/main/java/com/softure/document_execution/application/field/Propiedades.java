@@ -266,6 +266,9 @@ public class Propiedades {
 	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
 	public static final String LAYOUT_APP = "LAYOUT_APP";
 	
+	//ol
+	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
+	
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
 			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
 			Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
@@ -1210,6 +1213,10 @@ public class Propiedades {
 		}
 		case TEXTO_LONGITUD_MINIMA: {
 			ruleProperty = "Coloca un numero que va a limitar la cantidad de caracteres que puedes escribir.";
+			break;
+		}
+		case TIEMPO_NUEVA_CLAVE: {
+			ruleProperty = "Coloca un numero dias que vas a pedir al usuario que cambie de clave, por defecto son 2 meses y si colocas cero no va a volver a pedir cambio de clave.";
 			break;
 		}
 		case TOTAL: {

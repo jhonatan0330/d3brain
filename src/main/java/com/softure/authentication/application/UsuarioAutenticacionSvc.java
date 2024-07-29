@@ -172,7 +172,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (autho != null)
 			newAuth.setAutorizacionCrea(autho.getLlaveTabla());
 		newAuth.setIp(dto.getIp());
-		newAuth.setFechaMaxima(getNewMaximunDate());
+		newAuth.setFechaMaxima(getNewMaximunDate(user.getUsuario()));
 		newAuth = save(newAuth);
 
 		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
@@ -199,7 +199,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
 		// BEGIN UsuarioAutenticacion_guardar
-		dto.setFechaMaxima(getNewMaximunDate());
+		dto.setFechaMaxima(getNewMaximunDate(dto.getUsuario()));
 		return super.guardar(dto, token);
 		// END UsuarioAutenticacion_guardar
 	}
@@ -434,10 +434,28 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return autenticacion;
 	}
 
-	private Date getNewMaximunDate() {
-		Calendar newDate = Calendar.getInstance();
-		newDate.add(Calendar.MONTH, 2);
-		return newDate.getTime();
+	private Date getNewMaximunDate(String user) throws ServerException {
+		if(user ==null) throw new ServerException("No se identifica el usuario para calcular el tiempo de recuperacion de clave");
+		
+		String timeToNewPassword = usuarioAutenticacionMapper.timeToNewPassword(user);
+		if (timeToNewPassword==null) {
+			Calendar newDate = Calendar.getInstance();
+			newDate.add(Calendar.MONTH, 2);
+			return newDate.getTime();	
+		} else {
+			try {
+				int days = Integer.parseInt(timeToNewPassword);
+				if(days == 0) {
+					return null;
+				}
+				Calendar newDate = Calendar.getInstance();
+				newDate.add(Calendar.DAY_OF_MONTH, days);
+				return newDate.getTime();
+			} catch (NumberFormatException e) {
+				throw new ServerException("Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : " + timeToNewPassword);
+			}
+		}
+		
 	}
 
 	@Override

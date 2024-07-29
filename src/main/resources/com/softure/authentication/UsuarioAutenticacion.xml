@@ -143,31 +143,6 @@
 				cuau_estado =#{estado}
 		<include refid="whereUsuarioAutenticacionPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleUsuarioAutenticacionFragment">
-		select
-			cuau_llave as  llaveTabla
-			,cuau_usuario as  usuario
-			,cuau_sesion as  sesion
-			,cuau_clave as  clave
-			,duau_fechamaxima as  fechaMaxima
-			,cuau_autorizacioncrea as  autorizacionCrea
-			,cuau_autorizacionelimina as  autorizacionElimina
-			,cuau_estado as estado
-		from usuarioautenticacion_uaup a
-	</sql>
-	
-	<select id="consultarSimple" resultType="UsuarioAutenticacionDTO">
-		<include refid="selectSimpleUsuarioAutenticacionFragment" />
-		<include refid="whereUsuarioAutenticacionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="UsuarioAutenticacionDTO">
-		<include refid="selectSimpleUsuarioAutenticacionFragment" />
-		<include refid="whereUsuarioAutenticacionFragment" />
-		<include refid="paginationUsuarioAutenticacionFragment" />
-	</select>
-	
 
 
 <!--// BEGIN region script-->
@@ -181,6 +156,16 @@
 	
 	<select id="versionActual" resultType="java.lang.String">
 		select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'usuario_usrp';
+	</select>
+	
+	<select id="timeToNewPassword" resultType="java.lang.String">
+		select pp.cppd_valor from usuariorol_erlp ue 
+			inner join propiedad_ppdp pp on (pp.cppd_campo = ue.cerl_rolacceso and pp.cppd_estado = 'A')
+		where ue.cerl_usuario = #{user}
+			and ue.cerl_estado = 'A'
+			and pp.cppd_propiedadvalor = 'PROP_263'
+		order by pp.cppd_valor desc
+		limit 1;
 	</select>
 	
 	<select id="cantidadAsignaciones" parameterType="java.lang.String" resultType="int">

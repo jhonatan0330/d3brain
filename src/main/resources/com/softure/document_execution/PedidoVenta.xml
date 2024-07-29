@@ -219,7 +219,13 @@
 		<include refid="selectPedidoVentaFragment" />
 		where 1=1
 		<include refid="filterMainFragment" />
-		<if test="campoFiltro!=null">and cpdv_llave in (select cdrc_documento from campo_documento where cpvc_valoropcion = #{valorFiltro} and cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach>)</if>
+		<if test="campoFiltro!=null">
+			and cpdv_llave in (
+				select pvc.cpvc_documento from pedidoventacaracteristica_pvcp pvc where pvc.cpvc_valoropcion = #{valorFiltro} and pvc.cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach> and pvc.cpvc_estado = 'A'
+				union
+				select zpp.cpvc_documento from historic.z_pvc_pedidoventacaracteristica zpp where zpp.cpvc_valoropcion = #{valorFiltro} and zpp.cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach> and zpp.cpvc_estado = 'A'
+			)
+		</if>
 		<if test="dto.caracteristicas!=null">
 			<foreach item="item"  index="index" collection="dto.caracteristicas" >
 				and ((

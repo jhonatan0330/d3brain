@@ -10,13 +10,12 @@ import com.softure.java.domain.IBasicMapper;
 public interface UsuarioAutenticacionMapper extends IBasicMapper<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>{
 	
 
-// BEGIN region aditionalMethods  
 	String consultarValidez();
 	String versionActual();
 	String fechaMinima();
+	String timeToNewPassword(String user);
 	
 	int cantidadAsignaciones(String usuario);
 	int ocultarLicencia(String usuario);
 
-// END region aditionalMethods
 }

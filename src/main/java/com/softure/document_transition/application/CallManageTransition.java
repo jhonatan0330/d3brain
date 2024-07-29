@@ -212,10 +212,18 @@ public class CallManageTransition {
 			UsuarioDTO responsable = assignResponsibleToActivity(expediente, filtroEstado.getLlaveTabla(),
 					filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
 			generateMessageService.call(expedienteDTO, dto, responsable, documentoDTO, token);
+			activateHistoric(expedienteDTO);
 			break;
 		}
 
 		return respuesta;
+	}
+
+	private void activateHistoric(PedidoVentaDTO expedienteDTO) {
+		if(expedienteDTO==null) return;
+		if (expedienteDTO.getHistorico()!=null && expedienteDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) {
+			procesoTransicionMapper.funcionRegresarTablaHistoricos(expedienteDTO.getLlaveTabla());
+		}
 	}
 
 	private List<PedidoVentaDTO> iterateInState(ProcesoTransicionDTO transicionIteracion, // Estado que contine la

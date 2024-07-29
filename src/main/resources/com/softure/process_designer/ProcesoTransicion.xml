@@ -297,6 +297,10 @@
 			<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by procesoNombre
 	</select>
+	
+	<select id="funcionRegresarTablaHistoricos" resultType="int">
+		select * from regresar_campos(#{documentId})
+	</select>
 <!--// END region script-->
 
 </mapper>
