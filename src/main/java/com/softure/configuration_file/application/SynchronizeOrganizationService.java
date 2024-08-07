@@ -23,7 +23,7 @@ public class SynchronizeOrganizationService {
 		if (hierarchy.getOrganization() == null)
 			return;
 		log.setRoot("SynchronizeOrganization");
-		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipalPropiedades(null);
+		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipal();
 		// hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
 		propertiesSynchronizeService.call(hierarchy, mainOrganization.getLlaveTabla(),
 				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), token, log,

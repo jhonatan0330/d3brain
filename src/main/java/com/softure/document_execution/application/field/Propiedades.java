@@ -265,6 +265,7 @@ public class Propiedades {
 	public static final String COVERAGE_IMAGE = "COVERAGE_IMAGE";
 	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
 	public static final String LAYOUT_APP = "LAYOUT_APP";
+	public static final String LANDING_PAGE = "LANDING_PAGE";
 	
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
@@ -900,6 +901,10 @@ public class Propiedades {
 		case ITERACION_SQL: {
 			ruleProperty = "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
 					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";
+			break;
+		}
+		case LANDING_PAGE: {
+			ruleProperty = "Coloca como HTML lo que deseas que sea el fondo del login";
 			break;
 		}
 		case LAYOUT_APP: {

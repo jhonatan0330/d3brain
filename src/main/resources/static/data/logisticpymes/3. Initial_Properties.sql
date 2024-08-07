@@ -528,4 +528,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_263' , 'R', 'TIEMPO DE SOLICITAR NUEVA CLAVE', 'TIEMPO_NUEVA_CLAVE', 'REQUISITO', true);
 
-	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
+	VALUES('PROP_264' , 'O', 'LANDING PAGE', 'LANDING_PAGE', 'REQUISITO', true);
+		

@@ -34,7 +34,7 @@ public class AuthenticationController {
 	@GetMapping(value="/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
 		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
-		return organizationSvc.obtenerPrincipal();
+		return organizationSvc.obtenerPrincipalPublic();
 	}
 	
 	@GetMapping(value="/properties/{type}/{field}")

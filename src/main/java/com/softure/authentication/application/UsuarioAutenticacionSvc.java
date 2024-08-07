@@ -292,7 +292,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (usuario.getCorreo() == null)
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"No tienes correo registrado para enviarte la nueva clave");
-		if (usuario.getCorreo().compareTo(dto.getUsuarioDTO().getCorreo()) != 0)
+		if (usuario.getCorreo().toLowerCase().compareTo(dto.getUsuarioDTO().getCorreo().toLowerCase()) != 0)
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {

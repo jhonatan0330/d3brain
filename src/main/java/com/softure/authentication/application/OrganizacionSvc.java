@@ -13,6 +13,7 @@ import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.authentication.infrastructure.OrganizacionMapper;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -79,9 +80,19 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return super.listarConsulta(dto);
 	}
 	
+	public OrganizacionDTO obtenerPrincipalPublic()throws ServerException{
+		try {
+			OrganizacionDTO result = organizacionMapper.obtenerPrincipal();
+			result.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION, result.getLlaveTabla(), Propiedades.LANDING_PAGE, null));
+			return result; 
+		}catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
+	
 	public OrganizacionDTO obtenerPrincipal()throws ServerException{
 		try {
-			return organizacionMapper.obtenerPrincipal(); 
+			return organizacionMapper.obtenerPrincipal();
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
