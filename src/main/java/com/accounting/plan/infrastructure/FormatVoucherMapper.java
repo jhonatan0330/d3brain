@@ -6,7 +6,7 @@ import com.accounting.plan.domain.FormatVoucherDTO;
 import com.accounting.plan.domain.FormatVoucherFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("FormatVoucherAccountingMapper")
+@SoftureSqlConnMapper(value = "FormatVoucherAccountingMapper")
 public interface FormatVoucherMapper {
 
 	FormatVoucherDTO insert(FormatVoucherDTO dto);

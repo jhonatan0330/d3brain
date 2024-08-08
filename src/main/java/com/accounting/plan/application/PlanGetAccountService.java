@@ -2,7 +2,7 @@ package com.accounting.plan.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.application.base.AccountService;
@@ -14,7 +14,7 @@ import com.shared.domain.ServerException;
 @Service("PlanGetAccountAccountingService")
 public class PlanGetAccountService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private AccountService accountService;
 	
 	public List<AccountDTO> getActive(String catalogId, String filterText) throws ServerException{

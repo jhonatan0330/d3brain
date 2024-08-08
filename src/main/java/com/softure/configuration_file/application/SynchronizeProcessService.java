@@ -2,7 +2,7 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -20,9 +20,9 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class SynchronizeProcessService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoSvc processService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizePropertiesService propertiesSynchronizeService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)

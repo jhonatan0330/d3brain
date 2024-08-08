@@ -9,9 +9,7 @@ import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +19,12 @@ import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
 import com.softure.money.infrastructure.CuentaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("cuentaService")
 public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private CuentaMapper cuentaMapper;
 	
 	// BEGIN region servicesCuenta

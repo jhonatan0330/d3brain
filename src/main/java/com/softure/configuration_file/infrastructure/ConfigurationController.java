@@ -1,6 +1,6 @@
 package com.softure.configuration_file.infrastructure;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +20,8 @@ import com.softure.configuration_file.domain.FileVO;
 @RequestMapping("/configuration")
 public class ConfigurationController {
 
-	@Autowired private ExportConfigurationFileService exportService;
-	@Autowired private ImportConfigurationFileService importService;
+	@Autowired @Lazy  private ExportConfigurationFileService exportService;
+	@Autowired @Lazy  private ImportConfigurationFileService importService;
 	
 	@GetMapping("export")
 	private FileVO generateFileWithConfiguration(@RequestHeader("Authorization") String token)throws ServerException  {

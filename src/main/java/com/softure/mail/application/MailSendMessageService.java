@@ -14,13 +14,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.internet.MimeMessage;
-import javax.mail.util.ByteArrayDataSource;
-
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -41,20 +36,25 @@ import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.util.ByteArrayDataSource;
+
 @Service
 public class MailSendMessageService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MensajeMapper mensajeMapper;
-	@Autowired
+	@Autowired @Lazy 
 	private ReporteBaseSvc reporteBaseService;
-	@Autowired
+	@Autowired @Lazy 
 	private MailSendMessageToAdminService sendToAdminService;
-	@Autowired
+	@Autowired @Lazy 
 	private MensajePlantillaCorreoSvc mailTemplateService;
-	@Autowired
+	@Autowired @Lazy 
 	private ServidorSvc servidorService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

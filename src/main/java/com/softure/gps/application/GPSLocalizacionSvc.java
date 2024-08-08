@@ -4,9 +4,7 @@ package com.softure.gps.application;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +16,16 @@ import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 import com.softure.gps.infrastructure.GPSLocalizacionMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("gPSLocalizacionService")
 public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocalizacionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private GPSLocalizacionMapper gPSLocalizacionMapper;
 	
 	// BEGIN region servicesGPSLocalizacion
-	@Autowired private GPSDispositivoSvc gpsDispositivoService;
+	@Autowired @Lazy  private GPSDispositivoSvc gpsDispositivoService;
 	// END region servicesGPSLocalizacion
 
 	@Override

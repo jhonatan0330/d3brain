@@ -5,9 +5,7 @@ import java.util.List;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +15,12 @@ import com.softure.process_form.domain.PlantillaConsecutivoDTO;
 import com.softure.process_form.domain.PlantillaConsecutivoFilterDTO;
 import com.softure.process_form.infrastructure.PlantillaConsecutivoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("plantillaConsecutivoService")
 public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, PlantillaConsecutivoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PlantillaConsecutivoMapper plantillaConsecutivoMapper;
 	
 	// BEGIN region servicesPlantillaConsecutivo

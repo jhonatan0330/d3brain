@@ -6,7 +6,7 @@ import com.accounting.plan.domain.ValueDimensionDTO;
 import com.accounting.plan.domain.ValueDimensionFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("ValueDimensionAccountingMapper")
+@SoftureSqlConnMapper(value = "ValueDimensionAccountingMapper")
 public interface ValueDimensionMapper {
 
 	ValueDimensionDTO insert(ValueDimensionDTO dto);

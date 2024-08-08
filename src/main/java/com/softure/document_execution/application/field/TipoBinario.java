@@ -2,7 +2,7 @@ package com.softure.document_execution.application.field;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -12,7 +12,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 @Component
 public class TipoBinario {
 	
-	@Autowired private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc campoService;
 	
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		if(pCampo.getValorNumero()==null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0){

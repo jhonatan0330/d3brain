@@ -5,9 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,16 +21,18 @@ import com.softure.money.domain.MovimientoFilterDTO;
 import com.softure.money.domain.TurnoDTO;
 import com.softure.money.infrastructure.MovimientoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("movimientoService")
 public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private MovimientoMapper movimientoMapper;
 	
 	// BEGIN region servicesMovimiento
-	@Autowired private TurnoSvc turnoService;
-	@Autowired private CuentaSvc cuentaService;
-	@Autowired
+	@Autowired @Lazy  private TurnoSvc turnoService;
+	@Autowired @Lazy  private CuentaSvc cuentaService;
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
 	// END region servicesMovimiento
 

@@ -7,7 +7,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.property.domain.RelacionInternaFilterDTO;
 
-@SoftureSqlConnMapper("RelacionInternaMapper")
+@SoftureSqlConnMapper(value = "RelacionInternaMapper")
 public interface RelacionInternaMapper extends IBasicMapper<RelacionInternaDTO, RelacionInternaFilterDTO>{
 	
 

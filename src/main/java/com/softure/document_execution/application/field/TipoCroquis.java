@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -23,11 +23,11 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 @Component
 public class TipoCroquis {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PuestoSvc puestoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {

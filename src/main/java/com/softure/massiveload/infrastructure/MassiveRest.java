@@ -5,7 +5,7 @@ import com.shared.domain.SharedIdResponse;
 import com.softure.massiveload.application.MassiveItemSincronizeService;
 import com.softure.massiveload.application.MassiveSincronizeService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MassiveRest {
 
 
-	@Autowired
+	@Autowired @Lazy 
 	private MassiveItemSincronizeService cargaMasivaItemsincronizeService;
 
 	@PostMapping("/sincronizeCargaMasivaItem")
@@ -28,7 +28,7 @@ public class MassiveRest {
 		return cargaMasivaItemsincronizeService.call(token, itemId);
 	}
 
-	@Autowired
+	@Autowired @Lazy 
 	private MassiveSincronizeService cargaMasivasincronizeService;
 
 	@PostMapping("/sincronizeCargaMasiva")

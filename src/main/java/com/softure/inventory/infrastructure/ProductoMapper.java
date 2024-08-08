@@ -11,7 +11,7 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("ProductoMapper")
+@SoftureSqlConnMapper(value = "ProductoMapper")
 public interface ProductoMapper extends IBasicMapper<ProductoDTO, ProductoFilterDTO>{
 	
 	List<ProductoDTO> listarProductoCampo(@Param("campo")String campo, @Param("filtro") String filtro);

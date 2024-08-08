@@ -18,9 +18,9 @@ import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +28,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("usuarioOrganizacionService")
 public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, UsuarioOrganizacionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioOrganizacionMapper usuarioOrganizacionMapper;
 	
 	// BEGIN region servicesUsuarioOrganizacion
-	@Autowired private OrganizacionSvc organizacionService;
-	@Autowired private UsuarioSvc usuarioService;
-	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private OrganizacionSvc organizacionService;
+	@Autowired @Lazy  private UsuarioSvc usuarioService;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
 	// END region servicesUsuarioOrganizacion
 
 	@Override

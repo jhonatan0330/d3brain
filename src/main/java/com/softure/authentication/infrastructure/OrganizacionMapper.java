@@ -9,7 +9,7 @@ import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("OrganizacionMapper")
+@SoftureSqlConnMapper(value = "OrganizacionMapper")
 public interface OrganizacionMapper extends IBasicMapper<OrganizacionDTO, OrganizacionFilterDTO>{
 	
 

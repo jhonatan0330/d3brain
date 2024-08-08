@@ -2,7 +2,7 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -22,10 +22,10 @@ import com.softure.logisticpymes.domain.UsuarioDTO;
 @Service
 public class MailSendMessageToAdminService {
 
-	@Autowired private ServidorSvc servidorService;
-	@Autowired private OrganizacionSvc organizacionService;
+	@Autowired @Lazy  private ServidorSvc servidorService;
+	@Autowired @Lazy  private OrganizacionSvc organizacionService;
 	
-	@Autowired private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
 	
 	public void call(String messageTitle, String messageText) throws ServerException {
 		UsuarioDTO userAdmin = autenticacionService.getUserSystem();

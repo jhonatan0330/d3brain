@@ -8,23 +8,26 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.softure.java.services.SoftureUtil;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReportDTO;
 import com.softure.report.domain.ReporteBaseDTO;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 public class ReporteServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	
-	@Autowired private ReporteBaseSvc reporteBaseService;
+	//@Autowired @Lazy  
+	private ReporteBaseSvc reporteBaseService;
 
+	public ReporteServlet(ReporteBaseSvc reportingSvc){
+		this.reporteBaseService = reportingSvc;
+	}
+	
 	public void downloadFile(HttpServletResponse response, byte[] pInputStream, String fileName) {
 		try {
 			response.setHeader("Pragma", "No-cache");

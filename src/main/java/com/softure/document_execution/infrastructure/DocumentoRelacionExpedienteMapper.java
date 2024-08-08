@@ -11,7 +11,7 @@ import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("DocumentoRelacionExpedienteMapper")
+@SoftureSqlConnMapper(value = "DocumentoRelacionExpedienteMapper")
 public interface DocumentoRelacionExpedienteMapper extends IBasicMapper<DocumentoRelacionExpedienteDTO, DocumentoRelacionExpedienteFilterDTO>{
 	
 

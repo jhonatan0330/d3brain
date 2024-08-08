@@ -3,7 +3,7 @@ package com.softure.document_execution.infrastructure;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,15 +38,15 @@ import com.softure.upload.application.UploadSvc;
 @RequestMapping("/document")
 public class DocumentController {
 
-	@Autowired private PedidoVentaSvc pedidoVentaService;
-	@Autowired private UploadSvc uploadService;
-	@Autowired private ProductoSvc productService;
-	@Autowired private TarifaSvc tarifaService;
-	@Autowired private ProductoInventarioSvc inventoryService;
-	@Autowired private DeduccionProductoSvc deduccionService;
-	@Autowired private CallDocumentCRUD saveUpdateDocumentFunction;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired private ActividadSvc actividadService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
+	@Autowired @Lazy  private UploadSvc uploadService;
+	@Autowired @Lazy  private ProductoSvc productService;
+	@Autowired @Lazy  private TarifaSvc tarifaService;
+	@Autowired @Lazy  private ProductoInventarioSvc inventoryService;
+	@Autowired @Lazy  private DeduccionProductoSvc deduccionService;
+	@Autowired @Lazy  private CallDocumentCRUD saveUpdateDocumentFunction;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private ActividadSvc actividadService;
 	
 	@PostMapping(value="/getDocument")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -78,7 +78,7 @@ public class DocumentController {
 	
 	
 	@PostMapping(value="/upload")
-    public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+    public @ResponseBody String handleFileUpload(@RequestParam MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
 			return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, null);

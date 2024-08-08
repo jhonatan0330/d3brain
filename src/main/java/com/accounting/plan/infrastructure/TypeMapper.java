@@ -6,7 +6,7 @@ import com.accounting.plan.domain.TypeDTO;
 import com.accounting.plan.domain.TypeFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("TypeAccountingMapper")
+@SoftureSqlConnMapper(value = "TypeAccountingMapper")
 public interface TypeMapper {
 
 	TypeDTO insert(TypeDTO dto);

@@ -2,7 +2,7 @@ package com.accounting.voucher.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.application.base.CatalogService;
@@ -20,11 +20,11 @@ import com.shared.domain.ServerException;
 @Service
 public class VoucherGetService {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private VoucherService voucherService;
-	@Autowired
+	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private AccountRecordService recordService;
 
 	public List<VoucherDTO> call(String catalogId) throws ServerException {

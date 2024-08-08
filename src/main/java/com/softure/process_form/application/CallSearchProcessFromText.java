@@ -2,7 +2,7 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -16,7 +16,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 @Service
 public class CallSearchProcessFromText {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
 
 	public String getValueOptionFromText(String token, String valueText,

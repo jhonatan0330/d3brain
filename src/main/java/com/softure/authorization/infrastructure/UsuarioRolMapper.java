@@ -6,7 +6,7 @@ import com.softure.authorization.domain.UsuarioRolDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("UsuarioRolMapper")
+@SoftureSqlConnMapper(value = "UsuarioRolMapper")
 public interface UsuarioRolMapper extends IBasicMapper<UsuarioRolDTO, UsuarioRolFilterDTO>{
 	
 

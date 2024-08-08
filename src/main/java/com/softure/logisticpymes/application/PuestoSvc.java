@@ -2,12 +2,7 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +12,12 @@ import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.logisticpymes.infrastructure.PuestoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("puestoService")
 public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PuestoMapper puestoMapper;
 	
 	// BEGIN region servicesPuesto

@@ -2,12 +2,7 @@ package com.softure.authorization.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +13,12 @@ import com.softure.authorization.domain.PermisoFilterDTO;
 import com.softure.authorization.infrastructure.PermisoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("permisoService")
 public class PermisoSvc extends BasicSvc<PermisoDTO, PermisoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PermisoMapper permisoMapper;
 	
 	// BEGIN region servicesPermiso

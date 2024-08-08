@@ -2,12 +2,7 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +14,14 @@ import com.softure.mail.domain.MensajePlantillaCorreoFilterDTO;
 import com.softure.mail.infrastructure.MensajePlantillaCorreoMapper;
 import com.softure.property.application.PropiedadSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("mensajePlantillaCorreoService")
 public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDTO, MensajePlantillaCorreoFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MensajePlantillaCorreoMapper mensajePlantillaCorreoMapper;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc paramService;
 
 	@Override

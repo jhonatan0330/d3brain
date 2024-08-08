@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -40,33 +40,33 @@ import com.softure.webservice.application.WebServiceExecuteAPI;
 @Component
 public class CallManageTransition {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc documentoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired
+	@Autowired @Lazy 
 	private MailGenerateMessageService generateMessageService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentNewFromAutomatic createDocumentSinceProperties;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceExecuteAPI apiService;
-	@Autowired
+	@Autowired @Lazy 
 	private ActividadSvc actividadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionMapper procesoTransicionMapper;
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
@@ -288,7 +288,7 @@ public class CallManageTransition {
 
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
 		if (propAPI == null)
-			throw new ServerException(String.format("El estado %s no tiene definido el API", apiDTO.getNombre()));
+			throw new ServerException("El estado %s no tiene definido el API".formatted(apiDTO.getNombre()));
 
 		String resultAPI = SharedConstants.OK;
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {

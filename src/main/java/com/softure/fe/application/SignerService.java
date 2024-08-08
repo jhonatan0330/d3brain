@@ -29,7 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -65,7 +65,7 @@ import xades4j.utils.XadesProfileResolutionException;
 @Service
 public class SignerService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private UploadSvc uploadService;
 
 	private XadesSigner signer;
@@ -130,8 +130,7 @@ public class SignerService {
 	}
 
 	private String getValueInNode(Node node, String tag) throws ServerException {
-		if (node instanceof Element) {
-			Element docElement = (Element) node;
+		if (node instanceof Element docElement) {
 			NodeList tags = docElement.getElementsByTagName(tag);
 			if (tags.getLength() == 1) {
 				return tags.item(0).getTextContent();

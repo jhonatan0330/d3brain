@@ -2,7 +2,7 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -19,13 +19,13 @@ import com.softure.report.domain.ReporteBaseDTO;
 @Service
 public class SynchronizeTemplateService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeReportService reportSynchronizeService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeTemplateFieldService fieldSynchronizeService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizePropertiesService propertiesSynchronizeService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)

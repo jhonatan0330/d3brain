@@ -7,7 +7,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.PropiedadValorDefinidoFilterDTO;
 
-@SoftureSqlConnMapper("PropiedadValorDefinidoMapper")
+@SoftureSqlConnMapper(value = "PropiedadValorDefinidoMapper")
 public interface PropiedadValorDefinidoMapper extends IBasicMapper<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO>{
 	
 

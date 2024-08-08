@@ -15,25 +15,25 @@ import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.ProductoInventarioMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("productoInventarioService")
 public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, ProductoInventarioFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoInventarioMapper productoInventarioMapper;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productService;
-	@Autowired
+	@Autowired @Lazy 
 	private BodegaSvc storeService;
-	@Autowired
+	@Autowired @Lazy 
 	private CategoriaProductoSvc categoryService;
 	
 	@Override

@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.math.BigDecimal;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +16,12 @@ import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.infrastructure.CategoriaProductoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("categoriaProductoService")
 public class CategoriaProductoSvc extends BasicSvc<CategoriaProductoDTO, CategoriaProductoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private CategoriaProductoMapper categoriaProductoMapper;
 	
 	// BEGIN region servicesCategoriaProducto

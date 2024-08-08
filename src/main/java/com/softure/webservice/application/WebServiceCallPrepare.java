@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -29,21 +29,21 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 @Component
 public class WebServiceCallPrepare {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
+	@Autowired @Lazy 
 	private UploadSvc uploadService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc webServiceSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadesSvc;
 
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,

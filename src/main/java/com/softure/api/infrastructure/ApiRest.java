@@ -2,7 +2,7 @@ package com.softure.api.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,12 +32,12 @@ import com.softure.api.domain.ReportRequest;
 @RequestMapping("api")
 public class ApiRest {
 
-	@Autowired ApiAuthorizeService apiAuthorizeService;
-	@Autowired ApiGetService apiGetService;
-	@Autowired ApiGetReportService apiGetReportService;
-	@Autowired ApiGetFieldDataService apiGetFieldDataService;
-	@Autowired ApiLoginService apiLoginService;
-	@Autowired ApiSendService apiSendService;
+	@Autowired @Lazy  ApiAuthorizeService apiAuthorizeService;
+	@Autowired @Lazy  ApiGetService apiGetService;
+	@Autowired @Lazy  ApiGetReportService apiGetReportService;
+	@Autowired @Lazy  ApiGetFieldDataService apiGetFieldDataService;
+	@Autowired @Lazy  ApiLoginService apiLoginService;
+	@Autowired @Lazy  ApiSendService apiSendService;
 	
 	@PostMapping("/get")
 	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey

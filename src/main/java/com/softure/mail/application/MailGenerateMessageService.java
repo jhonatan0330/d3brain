@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -32,19 +32,19 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class MailGenerateMessageService {
 
-    @Autowired
+    @Autowired @Lazy 
     private MensajeSvc messageService;
-    @Autowired
+    @Autowired @Lazy 
     private PropiedadSvc propiedadService;
-    @Autowired
+    @Autowired @Lazy 
     private UsuarioSvc usuarioService;
-    @Autowired
+    @Autowired @Lazy 
     private PedidoVentaCaracteristicaSvc campoService;
-    @Autowired
+    @Autowired @Lazy 
     private MensajePlantillaCorreoSvc mailTemplateService;
-    @Autowired
+    @Autowired @Lazy 
     private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
-    @Autowired
+    @Autowired @Lazy 
     private ProcessTemplate templatesService;
 
     public void call(PedidoVentaDTO pedido, ProcesoTransicionDTO transicionDTO, UsuarioDTO responsable,

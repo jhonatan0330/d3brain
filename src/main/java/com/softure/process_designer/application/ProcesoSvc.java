@@ -19,9 +19,9 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +31,17 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("procesoService")
 public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoMapper procesoMapper;
 
 	// BEGIN region servicesProceso
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc paramService;
 	// END region servicesProceso
 

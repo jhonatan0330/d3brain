@@ -2,7 +2,7 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -14,11 +14,11 @@ import com.softure.mail.infrastructure.MensajeMapper;
 @Service
 public class MailReleaseMessageQueueService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MensajeMapper mensajeMapper;
-	@Autowired
+	@Autowired @Lazy 
 	private MailSendMessageService sendMessage;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionSvc autenticacionService;
 
 	public String call() throws ServerException {

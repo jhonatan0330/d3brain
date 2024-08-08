@@ -11,12 +11,12 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.java.services.SoftureUtil;
+
+import jakarta.annotation.PostConstruct;
 // END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +33,13 @@ import com.softure.document_execution.infrastructure.PedidoVentaCaracteristicaMa
 @Service("pedidoVentaCaracteristicaService")
 public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper;
 	
 	// BEGIN region servicesPedidoVentaCaracteristica
-	@Autowired private CampoAdaptador adaptador;
-	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired private DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
+	@Autowired @Lazy  private CampoAdaptador adaptador;
+	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
 	// END region servicesPedidoVentaCaracteristica
 
 	@Override

@@ -21,9 +21,9 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,15 +41,15 @@ import com.softure.document_transition.application.CallDocumentNewFromAutomatic;
 @Service("procesoTransicionAutomaticaService")
 public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
 	
-	@Autowired private MailSendMessageToAdminService sendMessageToAdminSvc;
-	@Autowired private PropiedadSvc propiedadService;
-	@Autowired private CallDocumentNewFromAutomatic createDocumentSinceProperties;
-	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired private RelacionInternaSvc relacionService;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private MailSendMessageToAdminService sendMessageToAdminSvc;
+	@Autowired @Lazy  private PropiedadSvc propiedadService;
+	@Autowired @Lazy  private CallDocumentNewFromAutomatic createDocumentSinceProperties;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private RelacionInternaSvc relacionService;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 
 	@Override
 	public ProcesoTransicionAutomaticaDTO consultaXId(String llave) throws ServerException {

@@ -2,7 +2,7 @@ package com.softure.gps.application;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -12,8 +12,8 @@ import com.softure.gps.domain.GPSDispositivoDTO;
 @Service
 public class GPSEnrollDeviceService {
 
-	@Autowired private GPSDispositivoSvc deviceService;
-	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
+	@Autowired @Lazy  private GPSDispositivoSvc deviceService;
+	@Autowired @Lazy  private GPSGetDevicesByTokenService getDevicesByTokenService;
 	
 	public SharedIdResponse call(String token) throws ServerException {
 		GPSDispositivoDTO newDTO = getDevicesByTokenService.call(token);

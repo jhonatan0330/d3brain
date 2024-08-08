@@ -9,9 +9,7 @@ import com.softure.logisticpymes.application.BasicSvc;
 
 import java.math.BigDecimal;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +19,16 @@ import com.softure.process_form.domain.ConsecutivoFilterDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.infrastructure.ConsecutivoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("consecutivoService")
 public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ConsecutivoMapper consecutivoMapper;
 
 	// BEGIN region servicesConsecutivo
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
 	// END region servicesConsecutivo
 
@@ -121,8 +121,8 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			if (!consecutivoBD.getPadding().contains("%"))
 				throw new ServerException("El padding del consecutivo " + consecutivoBD.getNombre()
 						+ " no es correcto sigue este ejemplo : %07d (rellena con ceros en 7 espacios)");
-			cons = cons + String.format(consecutivoBD.getPadding().toLowerCase(),
-					consecutivoBD.getNumeroActual().toBigInteger());
+			cons = cons + consecutivoBD.getPadding().toLowerCase().formatted(
+				consecutivoBD.getNumeroActual().toBigInteger());
 		}
 		if (consecutivoBD.getSufijo() != null)
 			cons = cons + consecutivoBD.getSufijo();

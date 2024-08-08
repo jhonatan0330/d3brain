@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +16,12 @@ import com.softure.survey.domain.PostCalificacionDTO;
 import com.softure.survey.domain.PostCalificacionFilterDTO;
 import com.softure.survey.infrastructure.PostCalificacionMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("postCalificacionService")
 public class PostCalificacionSvc extends BasicSvc<PostCalificacionDTO, PostCalificacionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PostCalificacionMapper postCalificacionMapper;
 	
 	// BEGIN region servicesPostCalificacion

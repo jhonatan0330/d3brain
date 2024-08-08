@@ -2,7 +2,7 @@ package com.learning.helpcenter.application;
 
 import java.util.ArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.learning.helpcenter.application.base.ArticleService;
@@ -21,10 +21,10 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service("GetArticleLearningService")
 public class GetArticleService {
 
-	@Autowired ArticleService articleService;
-	@Autowired
+	@Autowired @Lazy  ArticleService articleService;
+	@Autowired @Lazy 
 	private CallDocumentCRUD crudService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
 	
 	public ArticleDTO call(String entityId, String entityType, String token)

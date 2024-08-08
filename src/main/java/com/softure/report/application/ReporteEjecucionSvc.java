@@ -2,13 +2,8 @@ package com.softure.report.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +14,12 @@ import com.softure.report.domain.ReporteEjecucionDTO;
 import com.softure.report.domain.ReporteEjecucionFilterDTO;
 import com.softure.report.infrastructure.ReporteEjecucionMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("reporteEjecucionService")
 public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEjecucionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ReporteEjecucionMapper reporteEjecucionMapper;
 	
 	// BEGIN region servicesReporteEjecucion

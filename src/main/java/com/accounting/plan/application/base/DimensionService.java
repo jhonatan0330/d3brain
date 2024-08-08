@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.DimensionDTO;
@@ -16,7 +16,7 @@ import com.shared.domain.ServerException;
 @Service("DimensionAccountingService")
 public class DimensionService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DimensionMapper mapper;
 
 	public DimensionDTO getById(String id) throws ServerException {

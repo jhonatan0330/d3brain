@@ -2,7 +2,7 @@ package com.softure.tariff.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -13,7 +13,7 @@ import com.softure.tariff.infrastructure.TarifaMapper;
 @Service
 public class TariffGetDimensionService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private TarifaMapper tarifaMapper;
 
 	public List<TariffOptionDTO> call(TarifarioDTO tariff, String dimension, String filter) throws ServerException {

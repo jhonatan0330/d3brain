@@ -3,7 +3,7 @@ package com.softure.document_execution.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -22,17 +22,17 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class CallDocumentListFromFieldProcess {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListBySQLFunction listDocumentBySQLFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private AuxiliarProcesoBodega tipoBodega;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relationService;
 
 	// Es muy importante que venga el campo con todas las propiedadses

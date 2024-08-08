@@ -1,8 +1,10 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.18'
-	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.6'
 	id 'java'
 }
+
+
 
 group = 'com.softure'
 version = '2.0.3'
@@ -22,12 +24,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
-	implementation 'net.sf.jasperreports:jasperreports:6.20.0'
-	implementation 'net.sf.jasperreports:jasperreports-chart-themes:6.20.0'
-	implementation 'net.sf.jasperreports:jasperreports-fonts:6.20.0'
+	implementation 'net.sf.jasperreports:jasperreports:6.21.3'
+	implementation 'net.sf.jasperreports:jasperreports-chart-themes:6.21.3'
+	implementation 'net.sf.jasperreports:jasperreports-fonts:6.21.3'
 	
 	implementation 'net.sf.barcode4j:barcode4j:2.1'
 	implementation ('org.apache.xmlgraphics:batik-bridge:1.17')
@@ -36,7 +38,12 @@ dependencies {
     }
 	implementation 'com.google.zxing:core:3.4.1'
 	implementation 'commons-net:commons-net:3.9.0'
-	implementation 'commons-fileupload:commons-fileupload:1.5'
+	//implementation 'commons-fileupload:commons-fileupload:1.5'
+	
+	implementation 'org.apache.commons:commons-fileupload2:2.0.0-M2'
+	//Esta la debo borrar y cambiar en algun momento con la nueva forma de subir archivos
+	//implementation 'org.apache.commons:commons-fileupload2-jakarta:2.0.0-M1'
+	
 	implementation 'org.apache.commons:commons-lang3:3.13.0'
 	implementation 'org.apache.commons:commons-csv:1.10.0'
 	implementation 'org.apache.poi:poi:5.2.3'
@@ -50,10 +57,9 @@ dependencies {
 
 	implementation 'com.googlecode.xades4j:xades4j:2.2.1'
 	
-	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
-	implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 	implementation 'com.sun.activation:jakarta.activation:2.0.1'
-	
 	
 }
 

@@ -28,12 +28,12 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.java.services.SoftureUtil;
+
+import jakarta.annotation.PostConstruct;
 // END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +41,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("documentoPlantillaService")
 public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaMapper documentoPlantillaMapper;
 	
 	// BEGIN region servicesDocumentoPlantilla
-	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired private PropiedadSvc configuracionSvc;
-	@Autowired private ProcesoEstadoSvc estadoService;
-	@Autowired private RolAccesoSvc rolService;
-	@Autowired private ReporteBaseSvc reporteService;
-	@Autowired private ProcesoTransicionSvc transicionService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	@Autowired @Lazy  private PropiedadSvc configuracionSvc;
+	@Autowired @Lazy  private ProcesoEstadoSvc estadoService;
+	@Autowired @Lazy  private RolAccesoSvc rolService;
+	@Autowired @Lazy  private ReporteBaseSvc reporteService;
+	@Autowired @Lazy  private ProcesoTransicionSvc transicionService;
 	// END region servicesDocumentoPlantilla
 
 	@Override

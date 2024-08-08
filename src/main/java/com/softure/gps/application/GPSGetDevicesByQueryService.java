@@ -2,7 +2,7 @@ package com.softure.gps.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -13,7 +13,7 @@ import com.softure.gps.domain.GPSDispositivoFilterDTO;
 @Service
 public class GPSGetDevicesByQueryService {
 
-	@Autowired private GPSDispositivoSvc deviceService;
+	@Autowired @Lazy  private GPSDispositivoSvc deviceService;
 	
 	public List<GPSDispositivoDTO> call(String query) throws ServerException {
 		GPSDispositivoFilterDTO filter = new GPSDispositivoFilterDTO();

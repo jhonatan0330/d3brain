@@ -6,7 +6,7 @@ import com.softure.authentication.domain.UsuarioSesionErrorDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("UsuarioSesionErrorMapper")
+@SoftureSqlConnMapper(value = "UsuarioSesionErrorMapper")
 public interface UsuarioSesionErrorMapper extends IBasicMapper<UsuarioSesionErrorDTO, UsuarioSesionErrorFilterDTO>{
 	
 

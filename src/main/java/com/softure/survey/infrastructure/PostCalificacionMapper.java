@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.survey.domain.PostCalificacionDTO;
 import com.softure.survey.domain.PostCalificacionFilterDTO;
 
-@SoftureSqlConnMapper("PostCalificacionMapper")
+@SoftureSqlConnMapper(value = "PostCalificacionMapper")
 public interface PostCalificacionMapper extends IBasicMapper<PostCalificacionDTO, PostCalificacionFilterDTO>{
 	
 

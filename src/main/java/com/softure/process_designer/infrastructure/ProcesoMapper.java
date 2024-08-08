@@ -9,7 +9,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
 
-@SoftureSqlConnMapper("ProcesoMapper")
+@SoftureSqlConnMapper(value = "ProcesoMapper")
 public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO>{
 	
 

@@ -5,7 +5,7 @@ package com.softure.massiveload.application;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,8 +19,8 @@ import com.softure.massiveload.domain.MassiveItemDTO;
 @Service
 public class MassiveSincronizeService {
 
-	@Autowired private MassiveCRUDMasterService cargaMasivaService;
-	@Autowired private MassiveCRUDItemService cargaMasivaItemService;
+	@Autowired @Lazy  private MassiveCRUDMasterService cargaMasivaService;
+	@Autowired @Lazy  private MassiveCRUDItemService cargaMasivaItemService;
 	
 	public SharedIdResponse call(String token, String fileUrl, String template) throws ServerException {
 		MassiveMasterDTO newLoadMassive = new MassiveMasterDTO();

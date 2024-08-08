@@ -11,7 +11,7 @@ import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("ProductoCaracteristicaMapper")
+@SoftureSqlConnMapper(value = "ProductoCaracteristicaMapper")
 public interface ProductoCaracteristicaMapper extends IBasicMapper<ProductoCaracteristicaDTO, ProductoCaracteristicaFilterDTO>{
 	
 

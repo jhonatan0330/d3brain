@@ -6,7 +6,7 @@ import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
 import com.softure.document_transition.domain.PedidoVentaAjusteFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("PedidoVentaAjusteMapper")
+@SoftureSqlConnMapper(value = "PedidoVentaAjusteMapper")
 public interface PedidoVentaAjusteMapper extends IBasicMapper<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO>{
 	
 

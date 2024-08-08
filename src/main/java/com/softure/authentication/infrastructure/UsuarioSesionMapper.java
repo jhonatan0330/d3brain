@@ -6,7 +6,7 @@ import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("UsuarioSesionMapper")
+@SoftureSqlConnMapper(value = "UsuarioSesionMapper")
 public interface UsuarioSesionMapper extends IBasicMapper<UsuarioSesionDTO, UsuarioSesionFilterDTO>{
 
 // BEGIN region aditionalMethods  

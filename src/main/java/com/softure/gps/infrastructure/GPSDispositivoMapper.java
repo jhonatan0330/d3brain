@@ -6,7 +6,7 @@ import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSDispositivoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("GPSDispositivoMapper")
+@SoftureSqlConnMapper(value = "GPSDispositivoMapper")
 public interface GPSDispositivoMapper extends IBasicMapper<GPSDispositivoDTO, GPSDispositivoFilterDTO>{
 	
 

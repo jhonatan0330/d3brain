@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -46,39 +46,39 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class TipoProceso {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CuentaSvc cuentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListBySQLFunction listDocumentBySQLFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired
+	@Autowired @Lazy 
 	private MovimientoSvc movimientoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private TurnoSvc turnoService;
-	@Autowired
+	@Autowired @Lazy 
 	private AuxiliarProcesoBodega tipoBodega;
-	@Autowired
+	@Autowired @Lazy 
 	private CallUpdateInformativeField updateInformativeService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD crudService;
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {

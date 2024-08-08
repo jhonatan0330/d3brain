@@ -102,27 +102,33 @@ public class ReportesUtil {
 	
 	private static String replaceFooter(String report) throws Exception {
 		
-		report = report.replace("<queryString", "<parameter name=\"P_TOKEN\" class=\"java.lang.String\"/>\r\n" +
-				"	<parameter name=\"REPORTE_PIE_PAGINA\" class=\"net.sf.jasperreports.engine.JasperReport\"/>\r\n "+
-				"   <queryString");
+		report = report.replace("<queryString", """
+				<parameter name="P_TOKEN" class="java.lang.String"/>
+					<parameter name="REPORTE_PIE_PAGINA" class="net.sf.jasperreports.engine.JasperReport"/>
+				 \
+				   <queryString\
+				""");
 		int inicio = report.indexOf("<pageFooter>");
 		if(inicio<0) throw new Exception("No se encuentra el inicio del tag <pageFooter> ");
 		int fin = report.substring(inicio+1).indexOf("</pageFooter>");
 		if(fin<0) throw new Exception("No se encuentra el fin del tag </pageFooter> ");
-		report = report.replace(report.substring(inicio, inicio + fin), "<pageFooter>\r\n"+ 
-				"		<band height=\"20\" splitType=\"Stretch\">\r\n" + 
-				"			<subreport>\r\n" + 
-				"				<reportElement x=\"0\" y=\"0\" width=\"572\" height=\"20\" uuid=\"05fdcc2b-1e35-49dc-8aea-6e9edde5f626\"/>\r\n" + 
-				"				<subreportParameter name=\"P_NUMBER_PAGE\">\r\n" + 
-				"					<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>\r\n" + 
-				"				</subreportParameter>\r\n" + 
-				"				<subreportParameter name=\"P_TOKEN\">\r\n" + 
-				"					<subreportParameterExpression><![CDATA[$P{P_TOKEN}]]></subreportParameterExpression>\r\n" + 
-				"				</subreportParameter>\r\n" + 
-				"				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>\r\n" + 
-				"				<subreportExpression><![CDATA[$P{REPORTE_PIE_PAGINA}]]></subreportExpression>\r\n" + 
-				"			</subreport>\r\n" + 
-				"		</band>\r\n	");
+		report = report.replace(report.substring(inicio, inicio + fin), """
+				<pageFooter>
+						<band height="20" splitType="Stretch">
+							<subreport>
+								<reportElement x="0" y="0" width="572" height="20" uuid="05fdcc2b-1e35-49dc-8aea-6e9edde5f626"/>
+								<subreportParameter name="P_NUMBER_PAGE">
+									<subreportParameterExpression><![CDATA[$V{PAGE_NUMBER}]]></subreportParameterExpression>
+								</subreportParameter>
+								<subreportParameter name="P_TOKEN">
+									<subreportParameterExpression><![CDATA[$P{P_TOKEN}]]></subreportParameterExpression>
+								</subreportParameter>
+								<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+								<subreportExpression><![CDATA[$P{REPORTE_PIE_PAGINA}]]></subreportExpression>
+							</subreport>
+						</band>
+					\
+				""");
 		return report;
 	}
 	

@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +19,7 @@ import com.shared.domain.ServerException;
 @Service("PlanUploadAccountAccountingService")
 public class PlanUploadAccountService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PlanCreateAccountService createAccountService;
 
 	private static String TYPE = "text/csv";

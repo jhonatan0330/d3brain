@@ -10,7 +10,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 
-@SoftureSqlConnMapper("UsuarioMapper")
+@SoftureSqlConnMapper(value = "UsuarioMapper")
 public interface UsuarioMapper extends IBasicMapper<UsuarioDTO, UsuarioFilterDTO>{
 	
 

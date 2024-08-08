@@ -9,19 +9,19 @@ import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.infrastructure.BodegaMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("bodegaService")
 public class BodegaSvc extends BasicSvc<BodegaDTO, BodegaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private BodegaMapper bodegaMapper;
 	
 	// BEGIN region servicesBodega

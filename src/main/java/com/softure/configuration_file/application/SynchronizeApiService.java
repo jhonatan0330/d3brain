@@ -2,7 +2,7 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -15,9 +15,9 @@ import com.softure.webservice.domain.WebServiceDTO;
 @Service
 public class SynchronizeApiService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc apisService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizePropertiesService propertiesSynchronizeService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)

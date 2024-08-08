@@ -1,6 +1,6 @@
 package com.softure.process_designer.infrastructure;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,7 +17,7 @@ import com.softure.process_designer.application.ProcessCopy;
 @RequestMapping("/process_designer")
 public class ProcessDesignerController {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ProcessCopy copyService;
 	
 	@PostMapping(value="/copy")

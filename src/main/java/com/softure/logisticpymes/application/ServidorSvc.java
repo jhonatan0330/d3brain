@@ -5,9 +5,7 @@ import java.util.List;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +14,12 @@ import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
 import com.softure.logisticpymes.infrastructure.ServidorMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("servidorService")
 public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ServidorMapper servidorMapper;
 	
 	// BEGIN region servicesServidor

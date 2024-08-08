@@ -4,17 +4,16 @@ import java.util.Date;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = SqlInitializationAutoConfiguration.class)
 public class Sw42WebApplication  extends SpringBootServletInitializer implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
@@ -45,11 +44,4 @@ public class Sw42WebApplication  extends SpringBootServletInitializer implements
                 });
     }
 	
-    @Bean(name = "multipartResolver")
-    CommonsMultipartResolver createMultipartResolver() {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(268435456);
-        resolver.setDefaultEncoding("utf-8");
-        return resolver;
-    }
 }

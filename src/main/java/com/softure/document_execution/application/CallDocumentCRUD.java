@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,51 +62,51 @@ import com.softure.webservice.application.WebServiceExecuteAPI;
 @Component
 public class CallDocumentCRUD {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CampoAdaptador adaptador;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoTransaccionSvc transaccionSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private TransaccionLogSvc logSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private TransaccionErrorSvc errorSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired
+	@Autowired @Lazy 
 	private MailGenerateMessageService generateMessageService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallManageTransition manageTransitionFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceExecuteAPI apiService;
-	@Autowired
+	@Autowired @Lazy 
 	private ConsecutivoSvc consecutivoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlantillaConsecutivoSvc plantillaConsecutivoSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc documentoPlantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSvc usuarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioRolSvc usuarioRolService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallBPM bpmService;
-	@Autowired
+	@Autowired @Lazy 
 	private HomologatePrepareService homologateService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

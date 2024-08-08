@@ -3,7 +3,7 @@ package com.softure.document_execution.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -18,8 +18,8 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class CallDocumentListBySQLFunction {
 	
-	@Autowired private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	
 	public List<PedidoVentaDTO> execute(
 			DocumentoPlantillaCaracteristicaDTO pBase, 

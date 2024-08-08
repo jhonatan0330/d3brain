@@ -6,7 +6,7 @@ import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("CatalogAccountingMapper")
+@SoftureSqlConnMapper(value = "CatalogAccountingMapper")
 public interface CatalogMapper {
 
 	CatalogDTO insert(CatalogDTO dto);

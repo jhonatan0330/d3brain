@@ -24,11 +24,9 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-// END region interImport
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,14 +36,14 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private DeduccionProductoMapper deduccionProductoMapper;
 	
 	// BEGIN region servicesDeduccionProducto
-	@Autowired private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
-	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private AuxiliarProcesoBodega tipoBodega;
-	@Autowired private PropiedadSvc propiedadService;
+	@Autowired @Lazy  private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy  private AuxiliarProcesoBodega tipoBodega;
+	@Autowired @Lazy  private PropiedadSvc propiedadService;
 	// END region servicesDeduccionProducto
 
 	@Override

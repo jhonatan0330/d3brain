@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -34,17 +34,17 @@ import freemarker.template.Template;
 @Component
 public class ProcessTemplate {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc documentsInFieldService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc documentService;
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
 
 	public String generateOutputFile(String plantilla, String parametros) {

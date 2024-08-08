@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.configuration.homologate.domain.ConfigEnum;
@@ -42,27 +42,27 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 @Service("HomologatePrepareService")
 public class HomologatePrepareService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ReporteBaseSvc reporteService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propertyService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private TarifarioService tariffService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD crudService;
-	@Autowired
+	@Autowired @Lazy 
 	private ArticleService articleService;
-	@Autowired
+	@Autowired @Lazy 
 	private BodegaSvc bodegaService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CuentaSvc cuentaService;
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {

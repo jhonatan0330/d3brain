@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -27,19 +27,19 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoDisponibilidad {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc baseService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc inventoryService;
-	@Autowired
+	@Autowired @Lazy 
 	private PuestoSvc puestoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallProductValidateAndSave validateAndSave;
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)

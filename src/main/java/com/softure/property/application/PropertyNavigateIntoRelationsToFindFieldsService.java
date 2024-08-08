@@ -3,7 +3,7 @@ package com.softure.property.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -20,11 +20,11 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Service
 public class PropertyNavigateIntoRelationsToFindFieldsService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc documentRelationService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relationService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc fieldService;
 	
 	public List<PedidoVentaCaracteristicaDTO> call(String propertyId, List<PedidoVentaCaracteristicaDTO> fields)

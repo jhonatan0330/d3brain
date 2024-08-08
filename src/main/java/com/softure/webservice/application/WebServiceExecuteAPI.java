@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -54,29 +54,29 @@ public class WebServiceExecuteAPI {
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadesSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc documentSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private UploadSvc uploadService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc webServiceSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private MailSendMessageToAdminService mensajeToAdminService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceCallPrepare prepareDataService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
 
 	/**

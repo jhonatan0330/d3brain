@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
 
-@SoftureSqlConnMapper("CuentaMapper")
+@SoftureSqlConnMapper(value = "CuentaMapper")
 public interface CuentaMapper extends IBasicMapper<CuentaDTO, CuentaFilterDTO>{
 	
 

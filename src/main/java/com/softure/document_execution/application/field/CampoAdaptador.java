@@ -1,6 +1,6 @@
 package com.softure.document_execution.application.field;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -12,19 +12,19 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 @Component
 public class CampoAdaptador {
 
-	@Autowired private TipoArchivo tipoArchivo;
-	@Autowired private TipoBinario tipoBinario;
-	@Autowired private TipoConfiguracion tipoConfiguracion;
-	@Autowired private TipoCroquis tipoCroquis;
-	@Autowired private TipoDetallePedido tipoDetallePedido;
-	@Autowired private TipoDisponibilidad tipoDisponibilidad;
-	@Autowired private TipoFecha tipoFecha;
-	@Autowired private TipoInformativo tipoInformativo;
-	@Autowired private TipoGPS tipoGPS;
-	@Autowired private TipoNumero tipoNumero;
-	@Autowired private TipoProceso tipoProceso;
-	@Autowired private TipoProductoLista tipoProductoLista;
-	@Autowired private TipoTexto tipoTexto;
+	@Autowired @Lazy  private TipoArchivo tipoArchivo;
+	@Autowired @Lazy  private TipoBinario tipoBinario;
+	@Autowired @Lazy  private TipoConfiguracion tipoConfiguracion;
+	@Autowired @Lazy  private TipoCroquis tipoCroquis;
+	@Autowired @Lazy  private TipoDetallePedido tipoDetallePedido;
+	@Autowired @Lazy  private TipoDisponibilidad tipoDisponibilidad;
+	@Autowired @Lazy  private TipoFecha tipoFecha;
+	@Autowired @Lazy  private TipoInformativo tipoInformativo;
+	@Autowired @Lazy  private TipoGPS tipoGPS;
+	@Autowired @Lazy  private TipoNumero tipoNumero;
+	@Autowired @Lazy  private TipoProceso tipoProceso;
+	@Autowired @Lazy  private TipoProductoLista tipoProductoLista;
+	@Autowired @Lazy  private TipoTexto tipoTexto;
 	
 	/**
 	 * Este metodo consulta una caracteristica de un documento, segun las condiciones del campo

@@ -10,7 +10,7 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.PropiedadDTO;
 
-@SoftureSqlConnMapper("PedidoVentaMapper")
+@SoftureSqlConnMapper(value = "PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,

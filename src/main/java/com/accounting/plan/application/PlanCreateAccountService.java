@@ -1,6 +1,6 @@
 package com.accounting.plan.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +15,11 @@ import com.shared.domain.ServerException;
 @Service("PlanCreateAccountTemplateAccountingService")
 public class PlanCreateAccountService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private AccountService accountService;
-	//@Autowired
+	//@Autowired @Lazy 
 	//private FormatVoucherService formatService;
-	//@Autowired
+	//@Autowired @Lazy 
 	//private FormatLineService lineService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -71,7 +71,7 @@ public class PlanCreateAccountService {
 		}
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		int countAccount = accountService.count(filter);
-		account.setWbs(prefixWBS + String.format("%1$4s", (countAccount+1)));
+		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
 		account.setType(AccountConst.TYPE_OPERATIONAL);
 		account.setOperation(AccountConst.OPERATION_ADD);
 	}

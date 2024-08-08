@@ -1,0 +1,44 @@
+package com.softure.property.application;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.logisticpymes.application.CambioSvc;
+import com.softure.logisticpymes.domain.CambioDTO;
+import com.softure.property.domain.PropiedadDTO;
+import com.softure.property.domain.PropiedadFilterDTO;
+
+@Service
+public class PropertyCRUDSvc {
+
+	@Autowired @Lazy 
+	private CambioSvc changeService;
+	
+	@Autowired @Lazy 
+	private PropiedadSvc propertyService;
+	
+	public void inactivateAllPropertiesOfUser(String userId, String token) throws ServerException {
+		
+		PropiedadFilterDTO filter = new PropiedadFilterDTO();
+		filter.setUsuario(userId);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
+		
+		List<PropiedadDTO> propertiesToInactivate = propertyService.listarConsulta(filter);
+		
+		if (propertiesToInactivate==null || propertiesToInactivate.size()==0)
+			return;
+		
+		CambioDTO changeRequest = new CambioDTO();
+		changeRequest.setMotivo("Eliminar permisos de un usuario");
+		changeService.guardar(changeRequest, token);
+		
+		
+		for(PropiedadDTO iProperty: propertiesToInactivate) {
+			propertyService.inactivar(iProperty, token);	
+		}
+	}
+}

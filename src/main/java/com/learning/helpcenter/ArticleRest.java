@@ -1,6 +1,6 @@
 package com.learning.helpcenter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,7 +17,7 @@ import com.shared.domain.ServerException;
 @RequestMapping("/help")
 public class ArticleRest {
 	
-	@Autowired GetArticleService getArticleService;
+	@Autowired @Lazy  GetArticleService getArticleService;
 	
 	@GetMapping(value = "/article")
 	public ArticleDTO getArticle(@RequestHeader("Authorization") String token, @RequestParam String type, @RequestParam String id)

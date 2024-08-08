@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -23,17 +23,17 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class CallDocumentUpdateFromAutomatic {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 
 	/*

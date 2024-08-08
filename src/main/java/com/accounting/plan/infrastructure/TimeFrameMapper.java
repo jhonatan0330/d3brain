@@ -6,7 +6,7 @@ import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.plan.domain.TimeFrameFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("TimeFrameAccountingMapper")
+@SoftureSqlConnMapper(value = "TimeFrameAccountingMapper")
 public interface TimeFrameMapper {
 
 	TimeFrameDTO insert(TimeFrameDTO dto);

@@ -7,9 +7,7 @@ import com.shared.domain.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +18,16 @@ import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_designer.infrastructure.ProcesoEstadoMapper;
 import com.softure.property.domain.PropiedadDTO;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("procesoEstadoService")
 public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoMapper procesoEstadoMapper;
 
 	// BEGIN region servicesProcesoEstado
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc procesoTransicionService;
 	// END region servicesProcesoEstado
 

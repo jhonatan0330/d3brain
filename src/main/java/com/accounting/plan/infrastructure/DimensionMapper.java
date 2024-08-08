@@ -6,7 +6,7 @@ import com.accounting.plan.domain.DimensionDTO;
 import com.accounting.plan.domain.DimensionFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("DimensionAccountingMapper")
+@SoftureSqlConnMapper(value = "DimensionAccountingMapper")
 public interface DimensionMapper {
 
 	DimensionDTO insert(DimensionDTO dto);

@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
 
-@SoftureSqlConnMapper("ServidorMapper")
+@SoftureSqlConnMapper(value = "ServidorMapper")
 public interface ServidorMapper extends IBasicMapper<ServidorDTO, ServidorFilterDTO>{
 	
 

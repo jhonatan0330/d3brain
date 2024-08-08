@@ -3,7 +3,7 @@ package com.softure.configuration_file.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -17,9 +17,9 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Service
 public class SynchronizeRelationService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propertiesService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relationsService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)

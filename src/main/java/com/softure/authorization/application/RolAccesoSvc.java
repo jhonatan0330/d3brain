@@ -9,23 +9,23 @@ import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.authorization.infrastructure.RolAccesoMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("rolAccesoService")
 public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoMapper rolAccesoMapper;
 	
 	// BEGIN region servicesRolAcceso
-	@Autowired private UsuarioRolSvc usuarioRolService;
+	@Autowired @Lazy  private UsuarioRolSvc usuarioRolService;
 	// END region servicesRolAcceso
 
 	@Override

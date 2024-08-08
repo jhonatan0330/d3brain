@@ -10,7 +10,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
-@SoftureSqlConnMapper("WebServiceMapper")
+@SoftureSqlConnMapper(value = "WebServiceMapper")
 public interface WebServiceMapper extends IBasicMapper<WebServiceDTO, WebServiceFilterDTO>{
 
 	List<WebServiceDTO> getFullToSynchronize(@Param("process")List<String> process);

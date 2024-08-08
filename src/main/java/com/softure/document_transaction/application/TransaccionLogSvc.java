@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +16,12 @@ import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.document_transaction.infrastructure.TransaccionLogMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("transaccionLogService")
 public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLogFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private TransaccionLogMapper transaccionLogMapper;
 	
 	// BEGIN region servicesTransaccionLog

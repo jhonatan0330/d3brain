@@ -1,8 +1,6 @@
 package com.softure.massiveload.application;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.application.SharedCRUDService;
@@ -11,10 +9,12 @@ import com.softure.massiveload.domain.MassiveMasterDTO;
 import com.softure.massiveload.domain.MassiveMasterFilter;
 import com.softure.massiveload.infrastructure.MassiveMasterMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("CargaMasivaService")
 public class MassiveCRUDMasterService extends SharedCRUDService<MassiveMasterDTO, MassiveMasterFilter> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MassiveMasterMapper taskMapper;
 
 	@PostConstruct

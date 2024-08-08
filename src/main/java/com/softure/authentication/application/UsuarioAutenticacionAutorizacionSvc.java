@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +17,16 @@ import com.softure.authentication.infrastructure.UsuarioAutenticacionAutorizacio
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.mail.application.MailRecoverPasswordService;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("usuarioAutenticacionAutorizacionService")
 public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenticacionAutorizacionDTO, UsuarioAutenticacionAutorizacionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionAutorizacionMapper usuarioAutenticacionAutorizacionMapper;
 	
 	// BEGIN region servicesUsuarioAutenticacionAutorizacion
-	@Autowired private MailRecoverPasswordService mailRecoverPasswordService;
+	@Autowired @Lazy  private MailRecoverPasswordService mailRecoverPasswordService;
 	// END region servicesUsuarioAutenticacionAutorizacion
 
 	@Override

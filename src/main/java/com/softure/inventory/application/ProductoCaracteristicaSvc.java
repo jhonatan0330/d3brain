@@ -2,9 +2,7 @@ package com.softure.inventory.application;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +14,12 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.infrastructure.ProductoCaracteristicaMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("productoCaracteristicaService")
 public class ProductoCaracteristicaSvc extends BasicSvc<ProductoCaracteristicaDTO, ProductoCaracteristicaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoCaracteristicaMapper productoCaracteristicaMapper;
 	
 	// BEGIN region servicesProductoCaracteristica

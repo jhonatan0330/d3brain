@@ -9,7 +9,7 @@ import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("DetallePedidoVentaMapper")
+@SoftureSqlConnMapper(value = "DetallePedidoVentaMapper")
 public interface DetallePedidoVentaMapper extends IBasicMapper<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO>{
 	
 

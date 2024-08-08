@@ -3,7 +3,7 @@ package com.softure.document_execution.application.field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -46,27 +46,27 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 @Component
 public class TipoConfiguracion {
 
-	@Autowired
+	@Autowired @Lazy 
 	private BodegaSvc bodegaService;
-	@Autowired
+	@Autowired @Lazy 
 	private CambioSvc cambioService;
-	@Autowired
+	@Autowired @Lazy 
 	private CategoriaProductoSvc categoriaProductoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaSvc encuestaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoSvc procesoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private TarifarioService tarifarioService;
 
 	public static final String CATEGORIA_PRODUCTOS = "CATEGORIA_PRODUCTOS";

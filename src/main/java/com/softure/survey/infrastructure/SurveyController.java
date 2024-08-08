@@ -2,7 +2,7 @@ package com.softure.survey.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +30,10 @@ import com.softure.survey.domain.PostRespuestaFilterDTO;
 @RequestMapping("/survey")
 public class SurveyController {
 	
-	@Autowired private EncuestaSvc encuestaService;
-	@Autowired private EncuestaGrupoSvc groupService;
-	@Autowired private PostPreguntaSvc preguntaService;
-	@Autowired private PostRespuestaSvc respuestaService;
+	@Autowired @Lazy  private EncuestaSvc encuestaService;
+	@Autowired @Lazy  private EncuestaGrupoSvc groupService;
+	@Autowired @Lazy  private PostPreguntaSvc preguntaService;
+	@Autowired @Lazy  private PostRespuestaSvc respuestaService;
 	
 	@GetMapping(value="/getAvailable")
 	public List<EncuestaDTO> obtenerCampos(@RequestHeader("Authorization") String token) throws ServerException {

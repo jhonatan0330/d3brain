@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,9 +18,9 @@ import com.softure.gps.domain.GPSLocalizacionDTO;
 @Service
 public class GPSReportLocationsService {
 	
-	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
-	@Autowired private GPSLocalizacionSvc locationService;
-	@Autowired private GPSEnrollDeviceService enrollDeviceService;
+	@Autowired @Lazy  private GPSGetDevicesByTokenService getDevicesByTokenService;
+	@Autowired @Lazy  private GPSLocalizacionSvc locationService;
+	@Autowired @Lazy  private GPSEnrollDeviceService enrollDeviceService;
 
 	@Transactional
 	public SharedIdResponse call(String token, List<GPSLocalizacionDTO> locations) throws ServerException {

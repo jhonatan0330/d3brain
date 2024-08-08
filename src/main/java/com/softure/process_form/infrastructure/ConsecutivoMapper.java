@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.process_form.domain.ConsecutivoDTO;
 import com.softure.process_form.domain.ConsecutivoFilterDTO;
 
-@SoftureSqlConnMapper("ConsecutivoMapper")
+@SoftureSqlConnMapper(value = "ConsecutivoMapper")
 public interface ConsecutivoMapper extends IBasicMapper<ConsecutivoDTO, ConsecutivoFilterDTO>{
 	
 

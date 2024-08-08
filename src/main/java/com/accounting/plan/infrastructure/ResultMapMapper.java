@@ -6,7 +6,7 @@ import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("ResultMapAccountingMapper")
+@SoftureSqlConnMapper(value = "ResultMapAccountingMapper")
 public interface ResultMapMapper {
 
 	ResultMapDTO insert(ResultMapDTO dto);

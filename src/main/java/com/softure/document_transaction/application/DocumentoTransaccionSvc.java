@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,14 +17,16 @@ import com.softure.document_transaction.domain.DocumentoTransaccionFilterDTO;
 import com.softure.document_transaction.infrastructure.DocumentoTransaccionMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("documentoTransaccionService")
 public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, DocumentoTransaccionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoTransaccionMapper documentoTransaccionMapper;
 	
 	// BEGIN region servicesDocumentoTransaccion
-	@Autowired private UsuarioSesionSvc sesionSvc;
+	@Autowired @Lazy  private UsuarioSesionSvc sesionSvc;
 
 	
 	public static final String API_ASYNC = "A";

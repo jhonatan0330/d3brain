@@ -10,9 +10,7 @@ import com.shared.domain.ServerException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +21,16 @@ import com.softure.survey.domain.EncuestaGrupoDTO;
 import com.softure.survey.domain.EncuestaGrupoFilterDTO;
 import com.softure.survey.infrastructure.EncuestaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("encuestaService")
 public class EncuestaSvc extends BasicSvc<EncuestaDTO, EncuestaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaMapper encuestaMapper;
 	
 	// BEGIN region servicesEncuesta
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaGrupoSvc encuestaGrupoSvc;
 
 	// END region servicesEncuesta

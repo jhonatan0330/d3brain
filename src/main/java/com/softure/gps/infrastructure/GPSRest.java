@@ -2,9 +2,7 @@ package com.softure.gps.infrastructure;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,17 +23,19 @@ import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 
+import jakarta.websocket.server.PathParam;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/gps")
 public class GPSRest {
 	
 	
-	@Autowired private GPSLocalizacionSvc localizacionGPS;
-	@Autowired private GPSGetDevicesByQueryService getDevicesByQueryService;
-	@Autowired private GPSGetDevicesByTokenService getDevicesByTokenService;
-	@Autowired private GPSEnrollDeviceService enrollDeviceService;
-	@Autowired private GPSReportLocationsService reportLocationsService;
+	@Autowired @Lazy  private GPSLocalizacionSvc localizacionGPS;
+	@Autowired @Lazy  private GPSGetDevicesByQueryService getDevicesByQueryService;
+	@Autowired @Lazy  private GPSGetDevicesByTokenService getDevicesByTokenService;
+	@Autowired @Lazy  private GPSEnrollDeviceService enrollDeviceService;
+	@Autowired @Lazy  private GPSReportLocationsService reportLocationsService;
 	
 	@PostMapping(value="/enroll-device")
 	public SharedIdResponse enroll(@RequestHeader("Authorization") String token, @RequestBody DeviceVO device)  throws ServerException  {

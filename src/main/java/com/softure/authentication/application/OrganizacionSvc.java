@@ -2,9 +2,7 @@ package com.softure.authentication.application;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +16,16 @@ import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("organizacionService")
 public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private OrganizacionMapper organizacionMapper;
 	
 	// BEGIN region servicesOrganizacion
-	@Autowired private PropiedadSvc configuracionSvc;
+	@Autowired @Lazy  private PropiedadSvc configuracionSvc;
 	// END region servicesOrganizacion
 
 	@Override

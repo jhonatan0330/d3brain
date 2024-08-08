@@ -3,7 +3,7 @@ package com.softure.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -25,16 +25,16 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service
 public class ApiGetFieldDataService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc fieldService;
 
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallSearchProcessFromText searchProcessFromText;
 
 	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {

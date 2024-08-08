@@ -5,7 +5,7 @@ import com.softure.SoftureSqlConnMapper;
 import com.softure.massiveload.domain.MassiveItemDTO;
 import com.softure.massiveload.domain.MassiveItemFilter;
 
-@SoftureSqlConnMapper("MassiveItemMapper")
+@SoftureSqlConnMapper(value = "MassiveItemMapper")
 public interface MassiveItemMapper extends SharedCRUDMapperMybatis<MassiveItemDTO, MassiveItemFilter>{
 	
 }

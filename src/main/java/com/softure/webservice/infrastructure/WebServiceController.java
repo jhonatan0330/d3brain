@@ -1,6 +1,6 @@
 package com.softure.webservice.infrastructure;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -17,7 +17,7 @@ import com.softure.webservice.application.WebServiceCopyAPI;
 @RequestMapping("/webservice")
 public class WebServiceController {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceCopyAPI copyService;
 	
 	@PostMapping(value="/copy")

@@ -16,7 +16,7 @@ import java.util.UUID;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -28,9 +28,9 @@ import com.softure.upload.domain.CargaArchivoDTO;
 @Service("uploadService")
 public class UploadSvc {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CargaArchivoSvc cargaService;
-	@Autowired
+	@Autowired @Lazy 
 	private ServidorSvc servidorService;
 
 	public String uploadFile(byte[] bytes, String name, String token, String typeFile) throws ServerException {

@@ -6,7 +6,7 @@ import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("CategoriaProductoMapper")
+@SoftureSqlConnMapper(value = "CategoriaProductoMapper")
 public interface CategoriaProductoMapper extends IBasicMapper<CategoriaProductoDTO, CategoriaProductoFilterDTO>{
 	
 

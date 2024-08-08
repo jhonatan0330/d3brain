@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +21,11 @@ import com.shared.domain.ServerException;
 @Service("PlanCreateCatalogTemplateAccountingService")
 public class PlanCreateCatalogService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private ResultMapExtendService mapService;
-	@Autowired
+	@Autowired @Lazy 
 	private TimeFrameService timeFrameService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -189,7 +189,7 @@ public class PlanCreateCatalogService {
 			map.setYear(date.get(Calendar.YEAR));
 			map.setMonth(date.get(Calendar.MONTH));
 			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1));
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1));
 			date.add(Calendar.MONTH, 1);
 			date.set(Calendar.DAY_OF_MONTH, 1);
 			map.setEndDate(date.getTime());
@@ -211,8 +211,8 @@ public class PlanCreateCatalogService {
 			map.setYear(date.get(Calendar.YEAR));
 			map.setMonth(date.get(Calendar.MONTH));
 			map.setDay(date.get(Calendar.DATE));
-			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
-					+ "-" + String.format("%02d", date.get(Calendar.DATE)));
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
+					+ "-" + "%02d".formatted(date.get(Calendar.DATE)));
 			date.add(Calendar.DATE, 1);
 			map.setEndDate(date.getTime());
 			items.add(map);	
@@ -233,10 +233,10 @@ public class PlanCreateCatalogService {
 			map.setDay(date.get(Calendar.DATE));
 			map.setHour(date.get(Calendar.HOUR_OF_DAY));
 			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
-							+ "-" + String.format("%02d", date.get(Calendar.DATE)) + " "
-							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":00 - "
-							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":59");
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
+							+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
+							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":00 - "
+							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":59");
 			date.add(Calendar.HOUR, 1);
 			map.setEndDate(date.getTime());
 			items.add(map);
@@ -258,12 +258,12 @@ public class PlanCreateCatalogService {
 			map.setHour(date.get(Calendar.HOUR_OF_DAY));
 			map.setMinute(date.get(Calendar.MINUTE));
 			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + String.format("%02d", date.get(Calendar.MONTH) + 1)
-							+ "-" + String.format("%02d", date.get(Calendar.DATE)) + " "
-							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":"
-							+ String.format("%02d", date.get(Calendar.MINUTE)) + " - "
-							+ String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":"
-							+ String.format("%02d", date.get(Calendar.MINUTE) + 9));
+					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
+							+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
+							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
+							+ "%02d".formatted(date.get(Calendar.MINUTE)) + " - "
+							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
+							+ "%02d".formatted(date.get(Calendar.MINUTE) + 9));
 			date.add(Calendar.MINUTE, 10);
 			map.setEndDate(date.getTime());
 			items.add(map);

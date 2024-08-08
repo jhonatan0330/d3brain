@@ -7,9 +7,9 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 import com.softure.webservice.infrastructure.WebServiceEjecucionMapper;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +22,13 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("webServiceEjecucionService")
 public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceEjecucionMapper webServiceEjecucionMapper;
 	
 	// BEGIN region servicesWebServiceEjecucion
-	@Autowired private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired private WebServiceExecuteAPI executeAPIFunction;
-	@Autowired private WebServiceSvc webServiceSvc;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private WebServiceExecuteAPI executeAPIFunction;
+	@Autowired @Lazy  private WebServiceSvc webServiceSvc;
 	// END region servicesWebServiceEjecucion
 
 	@Override

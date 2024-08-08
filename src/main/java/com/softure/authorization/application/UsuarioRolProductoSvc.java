@@ -8,19 +8,19 @@ import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
 import com.softure.authorization.infrastructure.UsuarioRolProductoMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("usuarioRolProductoService")
 public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, UsuarioRolProductoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioRolProductoMapper usuarioRolProductoMapper;
 	
 	// BEGIN region servicesUsuarioRolProducto

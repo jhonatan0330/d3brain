@@ -2,9 +2,8 @@ package com.accounting.voucher;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,16 +23,18 @@ import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("acc/voucher")
 public class VoucherRest {
 
-	@Autowired
+	@Autowired @Lazy 
 	private SharedAuthenticateService tokenService;
-	@Autowired
+	@Autowired @Lazy 
 	private VoucherCreateService createService;
-	@Autowired
+	@Autowired @Lazy 
 	private VoucherGetService getVoucherService;
 
 	@GetMapping("/{catalog}")

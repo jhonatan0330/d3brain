@@ -11,7 +11,7 @@ import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TariffOptionDTO;
 
-@SoftureSqlConnMapper("TarifaMapper")
+@SoftureSqlConnMapper(value = "TarifaMapper")
 public interface TarifaMapper extends IBasicMapper<TarifaDTO, TarifaFilterDTO>{
 	
 	List<TarifaDTO> obtenerTarifa(TarifaFilterDTO dto);

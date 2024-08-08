@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.notification.domain.ActividadFilterDTO;
 
-@SoftureSqlConnMapper("ActividadMapper")
+@SoftureSqlConnMapper(value = "ActividadMapper")
 public interface ActividadMapper extends IBasicMapper<ActividadDTO, ActividadFilterDTO>{
 	
 

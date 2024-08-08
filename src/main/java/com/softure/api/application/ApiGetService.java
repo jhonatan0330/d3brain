@@ -3,7 +3,7 @@ package com.softure.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -24,10 +24,10 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service
 public class ApiGetService {
 
-	@Autowired private CallDocumentListWithFilters listService;
-	@Autowired private CallSearchProcessFromText searchProcessFromText;
-	@Autowired private DocumentoPlantillaSvc templateService;
-	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired @Lazy  private CallDocumentListWithFilters listService;
+	@Autowired @Lazy  private CallSearchProcessFromText searchProcessFromText;
+	@Autowired @Lazy  private DocumentoPlantillaSvc templateService;
+	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
 	public List<DocumentResponse> call(String token, DocumentFilterRequest filter) throws ServerException {
 		

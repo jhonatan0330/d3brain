@@ -6,9 +6,7 @@ import java.util.List;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +19,17 @@ import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.property.domain.RelacionInternaFilterDTO;
 import com.softure.property.infrastructure.RelacionInternaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("relacionInternaService")
 public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInternaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaMapper relacionInternaMapper;
 	
 	// BEGIN region servicesRelacionInterna
-	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired private CambioSvc cambioService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoService;
+	@Autowired @Lazy  private CambioSvc cambioService;
 	// END region servicesRelacionInterna
 
 	@Override

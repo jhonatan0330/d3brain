@@ -2,9 +2,7 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +13,12 @@ import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajeFilterDTO;
 import com.softure.mail.infrastructure.MensajeMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("mensajeService")
 public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MensajeMapper mensajeMapper;
 
 	// BEGIN region servicesMensaje

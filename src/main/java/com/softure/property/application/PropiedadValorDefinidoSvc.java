@@ -2,12 +2,7 @@ package com.softure.property.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +13,12 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.PropiedadValorDefinidoFilterDTO;
 import com.softure.property.infrastructure.PropiedadValorDefinidoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("propiedadValorDefinidoService")
 public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadValorDefinidoMapper propiedadValorDefinidoMapper;
 	
 	// BEGIN region servicesPropiedadValorDefinido

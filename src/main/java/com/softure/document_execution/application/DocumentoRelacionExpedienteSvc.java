@@ -11,19 +11,19 @@ import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.infrastructure.DocumentoRelacionExpedienteMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("documentoRelacionExpedienteService")
 public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionExpedienteDTO, DocumentoRelacionExpedienteFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteMapper documentoRelacionExpedienteMapper;
 	
 	// BEGIN region servicesDocumentoRelacionExpediente

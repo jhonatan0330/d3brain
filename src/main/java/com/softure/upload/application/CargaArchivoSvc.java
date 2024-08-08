@@ -4,11 +4,8 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.Date;
-// END region interImport
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +16,12 @@ import com.softure.upload.domain.CargaArchivoDTO;
 import com.softure.upload.domain.CargaArchivoFilterDTO;
 import com.softure.upload.infrastructure.CargaArchivoMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("cargaArchivoService")
 public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private CargaArchivoMapper cargaArchivoMapper;
 	
 	// BEGIN region servicesCargaArchivo

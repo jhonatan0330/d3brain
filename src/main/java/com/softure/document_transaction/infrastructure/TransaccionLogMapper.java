@@ -6,7 +6,7 @@ import com.softure.document_transaction.domain.TransaccionLogDTO;
 import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("TransaccionLogMapper")
+@SoftureSqlConnMapper(value = "TransaccionLogMapper")
 public interface TransaccionLogMapper extends IBasicMapper<TransaccionLogDTO, TransaccionLogFilterDTO>{
 	
 

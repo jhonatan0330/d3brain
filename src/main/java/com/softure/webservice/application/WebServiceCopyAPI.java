@@ -1,6 +1,6 @@
 package com.softure.webservice.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +15,9 @@ import com.softure.webservice.domain.WebServiceDTO;
 @Component
 public class WebServiceCopyAPI {
 
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc webServiceSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadesSvc;
 	
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)

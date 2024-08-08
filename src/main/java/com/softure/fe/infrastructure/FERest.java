@@ -6,7 +6,7 @@ import java.security.KeyStoreException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ import xades4j.XAdES4jException;
 @RequestMapping("fe")
 public class FERest {
 
-	@Autowired
+	@Autowired @Lazy 
 	SignerService signerService;
 
 	@PostMapping("/sign")

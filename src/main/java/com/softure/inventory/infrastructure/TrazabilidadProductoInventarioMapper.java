@@ -6,7 +6,7 @@ import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("TrazabilidadProductoInventarioMapper")
+@SoftureSqlConnMapper(value = "TrazabilidadProductoInventarioMapper")
 public interface TrazabilidadProductoInventarioMapper extends IBasicMapper<TrazabilidadProductoInventarioDTO, TrazabilidadProductoInventarioFilterDTO>{
 	
 

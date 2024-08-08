@@ -1,6 +1,6 @@
 package com.softure.document_execution.application.field;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -10,7 +10,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 @Component
 public class TipoArchivo {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {

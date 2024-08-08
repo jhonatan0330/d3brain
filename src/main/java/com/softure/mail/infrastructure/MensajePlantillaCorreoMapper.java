@@ -10,7 +10,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoFilterDTO;
 
-@SoftureSqlConnMapper("MensajePlantillaCorreoMapper")
+@SoftureSqlConnMapper(value = "MensajePlantillaCorreoMapper")
 public interface MensajePlantillaCorreoMapper extends IBasicMapper<MensajePlantillaCorreoDTO, MensajePlantillaCorreoFilterDTO>{
 
 	List<MensajePlantillaCorreoDTO> getFullToSynchronize(@Param("process")List<String> process);

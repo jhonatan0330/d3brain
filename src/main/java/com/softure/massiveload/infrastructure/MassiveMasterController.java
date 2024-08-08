@@ -5,7 +5,7 @@ import java.util.Date;
 // End of user code
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +29,7 @@ import com.softure.massiveload.domain.MassiveMasterFilter;
 @RequestMapping("massiveload/cargaMasiva")
 public class MassiveMasterController {
 
-	@Autowired
+	@Autowired @Lazy 
 	private MassiveCRUDMasterService cargaMasivaService;
 
 	@GetMapping("")
@@ -67,7 +67,7 @@ public class MassiveMasterController {
 
 	@GetMapping("/{id}")
 	public MassiveMasterRequest findById(@RequestHeader(name = "Authorization") String token
-			, @PathVariable("id") String id) throws ServerException {
+			, @PathVariable String id) throws ServerException {
 		// return cargaMasivaService.findById(id);
 		return null;
 	}
@@ -83,7 +83,7 @@ public class MassiveMasterController {
 	@PutMapping("/{id}")
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse update(@RequestHeader(name = "Authorization") String token
-			, @RequestBody MassiveMasterRequest body, @PathVariable("id") String id) throws ServerException {
+			, @RequestBody MassiveMasterRequest body, @PathVariable String id) throws ServerException {
 		// return new SharedIdResponse(cargaMasivaService.update(token, body, id).getCargaMasivaId());
 		return null;
 	}
@@ -91,14 +91,14 @@ public class MassiveMasterController {
 	@PutMapping("/activate/{id}")
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void activate(@RequestHeader(name = "Authorization") String token
-		, @PathVariable("id") String id) throws ServerException {
+		, @PathVariable String id) throws ServerException {
 		cargaMasivaService.restore(id, token);
 	}
 
 	@PutMapping("/inactivate/{id}")
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public void inactivate(@RequestHeader(name = "Authorization") String token
-		, @PathVariable("id") String id) throws ServerException {
+		, @PathVariable String id) throws ServerException {
 		cargaMasivaService.delete(id, token);
 	}
 

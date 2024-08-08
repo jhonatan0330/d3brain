@@ -2,12 +2,7 @@ package com.softure.survey.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +13,16 @@ import com.softure.survey.domain.EncuestaPreguntaDTO;
 import com.softure.survey.domain.EncuestaPreguntaFilterDTO;
 import com.softure.survey.infrastructure.EncuestaPreguntaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("encuestaPreguntaService")
 public class EncuestaPreguntaSvc extends BasicSvc<EncuestaPreguntaDTO, EncuestaPreguntaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaPreguntaMapper encuestaPreguntaMapper;
 	
 	// BEGIN region servicesEncuestaPregunta
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaOpcionRespuestaSvc opcionesSvc;
 	// END region servicesEncuestaPregunta
 

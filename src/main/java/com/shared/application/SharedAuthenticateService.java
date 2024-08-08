@@ -1,9 +1,10 @@
 package com.shared.application;
 
-import javax.servlet.http.HttpServletRequest;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedToken;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface SharedAuthenticateService {
 

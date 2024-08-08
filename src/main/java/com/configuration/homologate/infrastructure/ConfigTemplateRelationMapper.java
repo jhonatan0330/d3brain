@@ -6,7 +6,7 @@ import com.configuration.homologate.domain.ConfigTemplateRelationDTO;
 import com.configuration.homologate.domain.ConfigTemplateRelationFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("ConfigTemplateRelationConfigurationMapper")
+@SoftureSqlConnMapper(value = "ConfigTemplateRelationConfigurationMapper")
 public interface ConfigTemplateRelationMapper {
 
 	ConfigTemplateRelationDTO insert(ConfigTemplateRelationDTO dto);

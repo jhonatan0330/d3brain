@@ -2,12 +2,7 @@ package com.softure.document_execution.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +13,12 @@ import com.softure.document_execution.domain.PedidoVentaTiempoFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaTiempoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("pedidoVentaTiempoService")
 public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoVentaTiempoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaTiempoMapper pedidoVentaTiempoMapper;
 	
 	// BEGIN region servicesPedidoVentaTiempo

@@ -14,7 +14,7 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadFilterDTO;
 
-@SoftureSqlConnMapper("PropiedadMapper")
+@SoftureSqlConnMapper(value = "PropiedadMapper")
 public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFilterDTO>{
 	
 

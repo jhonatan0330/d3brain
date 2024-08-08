@@ -2,9 +2,7 @@ package com.task.task;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,19 +24,21 @@ import com.task.task.application.base.TaskService;
 import com.task.task.domain.TaskDTO;
 import com.task.task.domain.TaskRequest;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/task")
 public class TaskRest {
 
-	@Autowired private SharedAuthenticateService tokenService;
+	@Autowired @Lazy  private SharedAuthenticateService tokenService;
 	
-	@Autowired private TaskGetByUserService taskGetByUserService;
-	@Autowired private TaskCreateService taskCreateService;
-	@Autowired private TaskUpdateService taskUpdateService;
-	@Autowired private TaskDeleteService taskDeleteService;
+	@Autowired @Lazy  private TaskGetByUserService taskGetByUserService;
+	@Autowired @Lazy  private TaskCreateService taskCreateService;
+	@Autowired @Lazy  private TaskUpdateService taskUpdateService;
+	@Autowired @Lazy  private TaskDeleteService taskDeleteService;
 	
-	@Autowired private TaskService taskService;
+	@Autowired @Lazy  private TaskService taskService;
 	
 	@GetMapping(value="/")
 	public List<TaskDTO> getFromUser(HttpServletRequest request, @RequestHeader("Authorization") String token)  throws ServerException  {

@@ -5,9 +5,7 @@ import java.util.List;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +15,12 @@ import com.softure.survey.domain.EncuestaOpcionRespuestaDTO;
 import com.softure.survey.domain.EncuestaOpcionRespuestaFilterDTO;
 import com.softure.survey.infrastructure.EncuestaOpcionRespuestaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("encuestaOpcionRespuestaService")
 public class EncuestaOpcionRespuestaSvc extends BasicSvc<EncuestaOpcionRespuestaDTO, EncuestaOpcionRespuestaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private EncuestaOpcionRespuestaMapper encuestaOpcionRespuestaMapper;
 	
 	// BEGIN region servicesEncuestaOpcionRespuesta

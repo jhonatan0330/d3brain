@@ -7,7 +7,7 @@ import com.softure.authentication.domain.UsuarioOrganizacionDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("UsuarioOrganizacionMapper")
+@SoftureSqlConnMapper(value = "UsuarioOrganizacionMapper")
 public interface UsuarioOrganizacionMapper extends IBasicMapper<UsuarioOrganizacionDTO, UsuarioOrganizacionFilterDTO>{
 	
 

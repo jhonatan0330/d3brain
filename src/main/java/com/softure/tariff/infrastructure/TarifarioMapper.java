@@ -6,7 +6,7 @@ import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.domain.TarifarioFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("TarifarioSoftureMapper")
+@SoftureSqlConnMapper(value = "TarifarioSoftureMapper")
 public interface TarifarioMapper {
 
 	TarifarioDTO insert(TarifarioDTO dto);

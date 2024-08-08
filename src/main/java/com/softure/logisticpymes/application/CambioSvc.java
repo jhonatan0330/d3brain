@@ -8,9 +8,7 @@ import java.util.Date;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +17,12 @@ import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.logisticpymes.domain.CambioFilterDTO;
 import com.softure.logisticpymes.infrastructure.CambioMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("cambioService")
 public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private CambioMapper cambioMapper;
 	
 	// BEGIN region servicesCambio
@@ -113,7 +113,12 @@ public class CambioSvc extends BasicSvc<CambioDTO, CambioFilterDTO> {
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setSesionActiva(token);
 		List<CambioDTO> cambios = listarConsulta(filtro);
-		if(cambios==null || cambios.isEmpty()) throw new ServerException("CHANGE: No se encuentra un cambio activo y grabando para registrar el cambio");
+		if(cambios==null || cambios.isEmpty()) {
+			//Esto lo hago proqque en la misma transaccion no me cogia el cambio por consultar una lista
+			CambioDTO other = consultaUnica(filtro);
+			if(other!=null) return other;
+			throw new ServerException("CHANGE: No se encuentra un cambio activo y grabando para registrar el cambio");
+		}
 		if(cambios.size()>1) throw new ServerException("Existen varios cambios grabando, solo puede estar uno al mismo tiempo. Cant. " + cambios.size());
 		return cambios.get(0);
 	}

@@ -15,26 +15,26 @@ import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.TrazabilidadProductoInventarioMapper;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("trazabilidadProductoInventarioService")
 public class TrazabilidadProductoInventarioSvc
 		extends BasicSvc<TrazabilidadProductoInventarioDTO, TrazabilidadProductoInventarioFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private TrazabilidadProductoInventarioMapper trazabilidadProductoInventarioMapper;
 
 	// BEGIN region servicesTrazabilidadProductoInventario
-	@Autowired
+	@Autowired @Lazy 
 	ProductoInventarioSvc productoInventarioService;
-	@Autowired
+	@Autowired @Lazy 
 	ProductoSvc productoService;
 	// END region servicesTrazabilidadProductoInventario
 

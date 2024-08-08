@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("CreateCatalogoTablesAccountingMapper")
+@SoftureSqlConnMapper(value = "CreateCatalogoTablesAccountingMapper")
 public interface CreateCatalogTablesMapper {
 
 	void createTemporal(@Param("code") String code);

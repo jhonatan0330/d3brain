@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +26,21 @@ import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.infrastructure.TarifaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("tarifaService")
 public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private TarifaMapper tarifaMapper;
 
-	@Autowired
+	@Autowired @Lazy 
 	private TarifarioService tarifarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private CallSearchProcessFromText searchDocumentService;
 
 	@Override

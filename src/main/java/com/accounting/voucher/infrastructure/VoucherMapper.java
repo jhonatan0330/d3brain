@@ -6,7 +6,7 @@ import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("VoucherAccountingMapper")
+@SoftureSqlConnMapper(value = "VoucherAccountingMapper")
 public interface VoucherMapper {
 
 	VoucherDTO insert(VoucherDTO dto);

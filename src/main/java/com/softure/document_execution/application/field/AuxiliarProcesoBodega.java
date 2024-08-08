@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -38,16 +38,16 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class AuxiliarProcesoBodega {
 
-	@Autowired private BodegaSvc bodegaService;
-	@Autowired private DeduccionProductoSvc deduccionProductoService;
-	@Autowired private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired private ProductoSvc productoService;
-	@Autowired private ProductoInventarioSvc productoInventarioService;
-	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
-	@Autowired private RelacionInternaSvc relacionService;
-	@Autowired private CategoriaProductoSvc categoriaSvc;
+	@Autowired @Lazy  private BodegaSvc bodegaService;
+	@Autowired @Lazy  private DeduccionProductoSvc deduccionProductoService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private ProductoSvc productoService;
+	@Autowired @Lazy  private ProductoInventarioSvc productoInventarioService;
+	@Autowired @Lazy  private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
+	@Autowired @Lazy  private RelacionInternaSvc relacionService;
+	@Autowired @Lazy  private CategoriaProductoSvc categoriaSvc;
 		
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String bodega) throws ServerException{
 		BodegaDTO bodegaDTO =  bodegaService.consultaXId(bodega);

@@ -2,7 +2,7 @@ package com.softure.process_form.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,12 +36,12 @@ import com.softure.property.domain.RelacionInternaFilterDTO;
 @RequestMapping("/template")
 public class TemplateController {
 
-	@Autowired private CampoAdaptador adaptador;
-	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
-	@Autowired private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired private DocumentoRelacionGestorSvc gestionService;
-	@Autowired private RelacionInternaSvc relacionesService;
-	@Autowired private PedidoVentaCaracteristicaSvc fieldsService;
+	@Autowired @Lazy  private CampoAdaptador adaptador;
+	@Autowired @Lazy  private DocumentoPlantillaSvc documentoplantillaService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoService;
+	@Autowired @Lazy  private DocumentoRelacionGestorSvc gestionService;
+	@Autowired @Lazy  private RelacionInternaSvc relacionesService;
+	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc fieldsService;
 	
 	
 	@GetMapping(value="/getTemplates")

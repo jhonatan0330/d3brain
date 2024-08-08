@@ -528,14 +528,18 @@ public class Propiedades {
 			break;
 		}
 		case API_BASE: {
-			ruleProperty = "Coloca el nombre de un api que va a contener principalmente los parametros, que s enecesitan sireve para no tener que copiar los mismo parametros en varios apis.\n"
-					+ "Ten en cuenta que este api no se ejecuta (para eso esta API EJECUTAR APRA AUTENTICAR)";
+			ruleProperty = """
+					Coloca el nombre de un api que va a contener principalmente los parametros, que s enecesitan sireve para no tener que copiar los mismo parametros en varios apis.
+					Ten en cuenta que este api no se ejecuta (para eso esta API EJECUTAR APRA AUTENTICAR)\
+					""";
 			break;
 		}
 		case ALERTAR_CAMPO_PROCESO: {
-			ruleProperty = "Muestra un mensaje en la creacion del documento en el momento que se seleccion un objeto de un campo proceso.\n"
-					+ "En la propiedad se debe relacionar el campo que se va a mostrar del objeto seleccionado"
-					+ "Si el documento no viene con ese campo no se muestra ningun mensaje";
+			ruleProperty = """
+					Muestra un mensaje en la creacion del documento en el momento que se seleccion un objeto de un campo proceso.
+					En la propiedad se debe relacionar el campo que se va a mostrar del objeto seleccionado\
+					Si el documento no viene con ese campo no se muestra ningun mensaje\
+					""";
 			break;
 		}
 		case API_TRANSACCION:
@@ -664,16 +668,25 @@ public class Propiedades {
 			break;
 		}
 		case BODEGA_MOVIMIENTO: {
-			ruleProperty = " (E,S,T,ED,SD,EC,SC).\nEntrada(E) Salida(S) Transformacion(T) D=Directo(solo toma el producto), C=Composicion(Solo toma la composicion del producto)"
-					+ "En caso de ser varios dependientes se crean varios parametros\n\n"
-					+ "Tener en cuenta que este campo debe ir primero que los dependientes de los productos"
-					+ "Debes colocar en las relaciones el camino para profundizar los documentos que van a mover inventario\n\n";
+			ruleProperty = """
+					 (E,S,T,ED,SD,EC,SC).
+					Entrada(E) Salida(S) Transformacion(T) D=Directo(solo toma el producto), C=Composicion(Solo toma la composicion del producto)\
+					En caso de ser varios dependientes se crean varios parametros
+					
+					Tener en cuenta que este campo debe ir primero que los dependientes de los productos\
+					Debes colocar en las relaciones el camino para profundizar los documentos que van a mover inventario
+					
+					""";
 			break;
 		}
 		case CAMPO_HEREDADO_1: {
-			ruleProperty = "Esta propiedad indica que los(el) documentos(s) que se visualizan o crean tienen un campo que referencian el documento actual.\n\n"
-					+ "En los links de la propiedad se debe referenciar el campo de la plantilla que contiene la referencia al documento actual\n\n"
-					+ "Ejemplo un documento CLIENTE con un campo CONTACTOS, este campo se le coloca la propiedad HEREDADO, para que puedas crear los contactos de ese cliente. El contacto debe tener un campo proceso que va a guardar el dato del cliente";
+			ruleProperty = """
+					Esta propiedad indica que los(el) documentos(s) que se visualizan o crean tienen un campo que referencian el documento actual.
+					
+					En los links de la propiedad se debe referenciar el campo de la plantilla que contiene la referencia al documento actual
+					
+					Ejemplo un documento CLIENTE con un campo CONTACTOS, este campo se le coloca la propiedad HEREDADO, para que puedas crear los contactos de ese cliente. El contacto debe tener un campo proceso que va a guardar el dato del cliente\
+					""";
 			break;
 		}
 		case CELULAR_ROL: {
@@ -685,9 +698,18 @@ public class Propiedades {
 			break;
 		}
 		case CONFIGURACION_ENTIDAD: {
-			ruleProperty = " Carga diferentes parametros de configuracion.\n" + "CATEGORIA_PRODUCTOS\n" + "PROCESO\n"
-					+ "PRODUCTOS\n" + "PLANTILLAS\n" + "ROLES\n" + "ENCUESTAS\n" + "TARIFARIO\n" + "BODEGAS\n"
-					+ "FORMATO_EXPORTAR\n";
+			ruleProperty = """
+					 Carga diferentes parametros de configuracion.
+					CATEGORIA_PRODUCTOS
+					PROCESO
+					PRODUCTOS
+					PLANTILLAS
+					ROLES
+					ENCUESTAS
+					TARIFARIO
+					BODEGAS
+					FORMATO_EXPORTAR
+					""";
 			break;
 		}
 		case CONSECUTIVO: {
@@ -727,8 +749,10 @@ public class Propiedades {
 			break;
 		}
 		case DECISION_SQL: {
-			ruleProperty = "Genera una funcion que devuelve una cadena de texto, para que las transacciones siguientes lo tomen por el nombre.\n"
-					+ "CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";
+			ruleProperty = """
+					Genera una funcion que devuelve una cadena de texto, para que las transacciones siguientes lo tomen por el nombre.
+					CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS\
+					""";
 			break;
 		}
 		case DEFAULT: {
@@ -764,8 +788,10 @@ public class Propiedades {
 			break;
 		}
 		case DETALLE_TARIFARIO_SQL: {
-			ruleProperty = "Se crea una funcion para traer las tarifas, los campos depende se envian como parametros. Tener cuidado en el orden de los parametros es en orden ALFABETICO del codigo.\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[])  RETURNS SETOF tarifa_tarp AS";
+			ruleProperty = """
+					Se crea una funcion para traer las tarifas, los campos depende se envian como parametros. Tener cuidado en el orden de los parametros es en orden ALFABETICO del codigo.
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[])  RETURNS SETOF tarifa_tarp AS\
+					""";
 			break;
 		}
 		case DETALLE_FORMULA: {
@@ -829,32 +855,44 @@ public class Propiedades {
 			break;
 		}
 		case FUNCION_SQL_VALIDAR_ANTES: {
-			ruleProperty = " Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( documento character varying, token character varying, parametros character varying[]) RETURNS void AS";
+			ruleProperty = """
+					 Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}( documento character varying, token character varying, parametros character varying[]) RETURNS void AS\
+					""";
 			break;
 		}
 		case FUNCION_SQL_VALIDAR: {
-			ruleProperty = " Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.\n\n"
-					+ "Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS";
+			ruleProperty = """
+					 Al momento de ejecutar la transicion se va a ejecutar esta funcion de BD con resultados S y N.
+					
+					Cuando solo es un formulario al guardar y desea validar el campo documento tiene la llave del documento y modificador es null
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS\
+					""";
 			break;
 		}
 		case FUNCION_SQL_PREVALIDATE_API: {
-			ruleProperty = "En algunos casos es necesario realizar unas validaciones previas al API que eviten que enviemos errores al endpoint, lo hacemos con una funcion de base de datos "
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying[]) RETURNS void AS\n\n"
-					+ "Esta funcion sirve para obtener un parametro en el texto de parametros que extrae el api SELECT SUBSTRING (parametros,'CODE=([\\d\\w\\s,]*)') as texto_extrae_parametros"
-					+ "\n\n si necesita que salga algun error utiliza raise exception"
-					+ "\n\nEste es un ejemplo de validar un telefono"
-					+ "\ndeclare\n"
-					+ "  numero_telefono character varying;\n"
-					+ "begin\r\n"
-					+ "  SELECT SUBSTRING (parametros,'TELEFONO=([\\d]*)') into numero_telefono;\r\n"
-					+ "  if ( SELECT REGEXP_MATCHES(numero_telefono,'^\\d{10}$') is not null ) then\r\n"
-					+ "  	-- todo OK\r\n"
-					+ "  else\r\n"
-					+ "    raise exception 'El telefono recibido debe contener 10 numeros. Enviaste el numero %', numero_telefono;    \r\n"
-					+ "  end if;\r\n"
-					+ "end";
+			ruleProperty = """
+					En algunos casos es necesario realizar unas validaciones previas al API que eviten que enviemos errores al endpoint, lo hacemos con una funcion de base de datos \
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying[]) RETURNS void AS
+					
+					Esta funcion sirve para obtener un parametro en el texto de parametros que extrae el api SELECT SUBSTRING (parametros,'CODE=([\\d\\w\\s,]*)') as texto_extrae_parametros
+					
+					 si necesita que salga algun error utiliza raise exception
+					
+					Este es un ejemplo de validar un telefono
+					declare
+					  numero_telefono character varying;
+					begin
+					  SELECT SUBSTRING (parametros,'TELEFONO=([\\d]*)') into numero_telefono;
+					  if ( SELECT REGEXP_MATCHES(numero_telefono,'^\\d{10}$') is not null ) then
+					  	-- todo OK
+					  else
+					    raise exception 'El telefono recibido debe contener 10 numeros. Enviaste el numero %', numero_telefono;    
+					  end if;
+					end\
+					""";
 			break;
 		}
 		case GENERA_DOCUMENTO_CAMPO: {
@@ -870,11 +908,20 @@ public class Propiedades {
 			break;
 		}
 		case GENERA_DOCUMENTO_FUNCION_SQL: {
-			ruleProperty = "Crea un campo para agregar a un documento.\nDebes crear una funcion para obtener los datos del campo.\nEn las relaciones debes colocar una relacion al campo que deseas llenar\n"
-					+ "\n\nAyuda para generar el campo\n"
-					+ "\nbegin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end\n"
-					+ "\n\nEstructura de la funcion\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";
+			ruleProperty = """
+					Crea un campo para agregar a un documento.
+					Debes crear una funcion para obtener los datos del campo.
+					En las relaciones debes colocar una relacion al campo que deseas llenar
+					
+					
+					Ayuda para generar el campo
+					
+					begin return next(SELECT ROW(null, null, null, null, null, null, null, null, null, null, null)::pedidoventacaracteristica_pvcp); end
+					
+					
+					Estructura de la funcion
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS\
+					""";
 			break;
 		}
 		case INVENTARIO_OPCIONAL: {
@@ -890,8 +937,11 @@ public class Propiedades {
 			break;
 		}
 		case FUNCION_SQL_ESTADO_ASIGNAR: {
-			ruleProperty = "Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.\nEl documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS";
+			ruleProperty = """
+					Cuando un documento llegue a este estado sera asignado al usuario que devuelva la funcion.
+					El documento que envia es el id del expediente, para el modificador necesitamos unsc para mejorar la funcion
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS\
+					""";
 			break;
 		}
 		case INVISIBLE: {
@@ -899,8 +949,10 @@ public class Propiedades {
 			break;
 		}
 		case ITERACION_SQL: {
-			ruleProperty = "Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.\n"
-					+ "CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS";
+			ruleProperty = """
+					Genera una funcion que devuelve varios documentos, para que se ejecute una transaccion sobre ellos.
+					CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS\
+					""";
 			break;
 		}
 		case LANDING_PAGE: {
@@ -908,20 +960,22 @@ public class Propiedades {
 			break;
 		}
 		case LAYOUT_APP: {
-			ruleProperty = "Cambias el layout de la aplicación escoge alguna de las siguientes opciones si esocges otra opción no te mostrar información"
-					+ "     empty\n"
-					+ "	    // Horizontal\n"
-					+ "	    | centered\n"
-					+ "	    | enterprise\n"
-					+ "	    | material\n"
-					+ "	    | modern\n"
-					+ "	    // Vertical\n"
-					+ "	    | classic\n"
-					+ "	    | classy\n"
-					+ "	    | compact\n"
-					+ "	    | dense\n"
-					+ "	    | futuristic\n"
-					+ "	    | thin";
+			ruleProperty = """
+					Cambias el layout de la aplicación escoge alguna de las siguientes opciones si esocges otra opción no te mostrar información\
+					     empty
+						    // Horizontal
+						    | centered
+						    | enterprise
+						    | material
+						    | modern
+						    // Vertical
+						    | classic
+						    | classy
+						    | compact
+						    | dense
+						    | futuristic
+						    | thin\
+					""";
 			break;
 		}
 		case MENSAJE: {
@@ -937,11 +991,14 @@ public class Propiedades {
 			break;
 		}
 		case MENSAJE_DESTINATARIOS_SQL: {
-			ruleProperty = "Funcion de BD que trae usuarios o solo correos a los que se les debe enviar el mensaje"
-					+ "\n(documento): la funcion tiene una variable que el es id del documento."
-					+ "\n para la funcion puedes usar : return query (select null::character varying, 'correo@cambiame.com') "
-					+ "\n\nEstructura de la funcion\n"
-					+ " CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS TABLE (usuario character varying, correo character varying)";
+			ruleProperty = """
+					Funcion de BD que trae usuarios o solo correos a los que se les debe enviar el mensaje
+					(documento): la funcion tiene una variable que el es id del documento.
+					 para la funcion puedes usar : return query (select null::character varying, 'correo@cambiame.com')\s
+					
+					Estructura de la funcion
+					 CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS TABLE (usuario character varying, correo character varying)\
+					""";
 			break;
 		}
 		case MODIFICAR_CAMPO: {
@@ -973,8 +1030,13 @@ public class Propiedades {
 			break;
 		}
 		case NUMERO_FUNCION_SQL: {
-			ruleProperty = " Funcion que calcula un numero \n Se envia el id del documento actual y los depende el valoropcion\nCuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS";
+			ruleProperty = """
+					 Funcion que calcula un numero\s
+					 Se envia el id del documento actual y los depende el valoropcion
+					Cuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS\
+					""";
 			break;
 		}
 		case NUMERO_STEP: {
@@ -1023,11 +1085,23 @@ public class Propiedades {
 			break;
 		}
 		case PERIODO_LIMPIEZA_HISTORICO: {
-			ruleProperty = "Cantidad de dias que van a tenerse en cuenta para pasar los registros a las tablas de historicos (los documentos que pasen la fecha de creacion mayor se van a migrar)"
-					+ "\n\n Si la plantilla hace parte del inicio de un proceso solo se va a migrar a la tabla historico los documentos inactivos o finalizados"
-					+ "\n\n Si la plantilla NO hace parte del inicio de un proceso se van a pasar todos los documentos esto es muy util para los reportes"
-					+ "\n\n VALOR: Coloca el numero de dias que se van mantener en la tabla principal el registro de ese tipo de plantilla"
-					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";
+			ruleProperty = """
+					Cantidad de dias que van a tenerse en cuenta para pasar los registros a las tablas de historicos (los documentos que pasen la fecha de creacion mayor se van a migrar)
+					
+					 Si la plantilla hace parte del inicio de un proceso solo se va a migrar a la tabla historico los documentos inactivos o finalizados
+					
+					 Si la plantilla NO hace parte del inicio de un proceso se van a pasar todos los documentos esto es muy util para los reportes
+					
+					 VALOR: Coloca el numero de dias que se van mantener en la tabla principal el registro de ese tipo de plantilla\
+					TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).
+					 Ej 1 Cada 3 dias = 00:00:03:00:00
+					 Ej 2 Cada 1 hora = 00:00:00:01:00
+					 Ej 2 Cada mes y medio = 00:01:15:00:00
+					
+					Coloca la fecha inicial para que ese sea el punto de partida del temporizador
+					
+					crae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos\
+					""";
 			break;
 		}
 		case PLANTILLA_CARGA_MASIVA_MULTIPLE: {
@@ -1067,9 +1141,14 @@ public class Propiedades {
 			break;
 		}
 		case PLANTILLA_RENDER_ESPECIAL_SQL: {
-			ruleProperty = "Cuando una plantilla debe tener un campo que no pertenece a ella se utiliza una funcion para traer los campos deseados\n"
-					+ "\n\nSe recibe el id del documento y a partir de el se debe generar la consulta"
-					+ "\n\nCREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS";
+			ruleProperty = """
+					Cuando una plantilla debe tener un campo que no pertenece a ella se utiliza una funcion para traer los campos deseados
+					
+					
+					Se recibe el id del documento y a partir de el se debe generar la consulta
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS\
+					""";
 			break;
 		}
 		case PROCESO_POP: {
@@ -1093,10 +1172,15 @@ public class Propiedades {
 			break;
 		}
 		case PROCESO_FUNCION_SQL: {
-			ruleProperty = "Coloca el SQL de los datos que quieres obtener.\n\nSi tienes un dependiente ese va ubicado en el campo documento\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])\r\n"
-					+ "RETURNS SETOF pedidoventa_pdvp AS\n"
-					+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";
+			ruleProperty = """
+					Coloca el SQL de los datos que quieres obtener.
+					
+					Si tienes un dependiente ese va ubicado en el campo documento
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])
+					RETURNS SETOF pedidoventa_pdvp AS
+					select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina\
+					""";
 			break;
 		}
 		case PRODUCTO_CAMPO_VALOR_MINIMO: {
@@ -1192,20 +1276,34 @@ public class Propiedades {
 			break;
 		}
 		case TABLERO_CONTROL_SQL: {
-			ruleProperty = "Muestra un item en el menu que traera una serie de objetos que se definen en un query.\n"
-					+ "En el campo TEXTO va el nombre del tablero\n"
-					+ "En el campo MOTIVO va la url de la imagen del tablero\n"
-					+ "\nEsta consulta no tiene dependientes ya que viene solo del menu, el unico dato considerable es el TOKEN y los filtros de fecha y cantidad\n\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])\r\n"
-					+ "RETURNS SETOF pedidoventa_pdvp AS\n\n"
-					+ "select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina";
+			ruleProperty = """
+					Muestra un item en el menu que traera una serie de objetos que se definen en un query.
+					En el campo TEXTO va el nombre del tablero
+					En el campo MOTIVO va la url de la imagen del tablero
+					
+					Esta consulta no tiene dependientes ya que viene solo del menu, el unico dato considerable es el TOKEN y los filtros de fecha y cantidad
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])
+					RETURNS SETOF pedidoventa_pdvp AS
+					
+					select * from pedidoventa_pdvp where cpdv_plantilla = '' and (codigo_exacto is null or cpdv_nombre = codigo_exacto) and (fechaminima is null or dpdv_fecha >=fechaminima) and (fechamaxima is null or dpdv_fecha < fechamaxima) and (filtro is null or (cpdv_nombre like upper('%' ||filtro|| '%') or upper(cpdv_textofiltro) like upper('%' || filtro || '%'))) order by cpdv_nombre desc limit cant offset pagina\
+					""";
 			break;
 		}
 		case TEMPORIZADOR: {
-			ruleProperty = " VALOR: funcion sql que consulta datos\n"
-					+ "CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying)\n"
-					+ "RETURNS SETOF pedidoventa_pdvp AS"
-					+ "TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).\n Ej 1 Cada 3 dias = 00:00:03:00:00\n Ej 2 Cada 1 hora = 00:00:00:01:00\n Ej 2 Cada mes y medio = 00:01:15:00:00\n\nColoca la fecha inicial para que ese sea el punto de partida del temporizador\n\ncrae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos";
+			ruleProperty = """
+					 VALOR: funcion sql que consulta datos
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying)
+					RETURNS SETOF pedidoventa_pdvp AS\
+					TEXTO: Coloca la frecuencia con la que se va a repetir esta transicion (YY:MM:DD:HH:MM).
+					 Ej 1 Cada 3 dias = 00:00:03:00:00
+					 Ej 2 Cada 1 hora = 00:00:00:01:00
+					 Ej 2 Cada mes y medio = 00:01:15:00:00
+					
+					Coloca la fecha inicial para que ese sea el punto de partida del temporizador
+					
+					crae una relacion con la MISMA plantilla de la transicion y el campo para saber en que campo coloca los documentos\
+					""";
 			break;
 		}
 		case TEXTO_FORMULA: {
@@ -1233,14 +1331,21 @@ public class Propiedades {
 			break;
 		}
 		case UBICACION: {
-			ruleProperty = "Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado"
-					+ "\n\n No se puede asignar a una transicion que termine en una decision";
+			ruleProperty = """
+					Esta propiedad referencia el campo del documento que al que se la a asignar que tiene ese documento, Ej una VENTA en una trnsicion de enviar con un formulario con campo VEHICULO en esta propiedad, despues de esta transición en la trazabilidad va a decir que quedo en el vehiculo seleccionado
+					
+					 No se puede asignar a una transicion que termine en una decision\
+					""";
 			break;
 		}		
 		case UPDATE_INFORMATIVE_FIELD: {
-			ruleProperty = "Esta propiedad referencia los campos del documento que tienen campos informativos que tienen que ser actualizados"
-					+ "\n\nEn las relaciones debes referenciar el campo informativo de la plantilla destino"
-					+ "\n\nTen en cuenta que solo se actualizaran documentos en estado activo, los inactivos y cerrados no se actualizan";
+			ruleProperty = """
+					Esta propiedad referencia los campos del documento que tienen campos informativos que tienen que ser actualizados
+					
+					En las relaciones debes referenciar el campo informativo de la plantilla destino
+					
+					Ten en cuenta que solo se actualizaran documentos en estado activo, los inactivos y cerrados no se actualizan\
+					""";
 			break;
 		}
 		case UNICO_PRODUCTO: {

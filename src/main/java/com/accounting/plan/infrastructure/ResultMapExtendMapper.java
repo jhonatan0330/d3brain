@@ -11,7 +11,7 @@ import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.TimeFrameDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("ResultMapExtendAccountingMapper")
+@SoftureSqlConnMapper(value = "ResultMapExtendAccountingMapper")
 public interface ResultMapExtendMapper {
 
 	ResultMapDTO updateItem(@Param("item") ResultMapDTO dto);

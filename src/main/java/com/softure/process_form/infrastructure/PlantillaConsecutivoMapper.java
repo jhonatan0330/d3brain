@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.process_form.domain.PlantillaConsecutivoDTO;
 import com.softure.process_form.domain.PlantillaConsecutivoFilterDTO;
 
-@SoftureSqlConnMapper("PlantillaConsecutivoMapper")
+@SoftureSqlConnMapper(value = "PlantillaConsecutivoMapper")
 public interface PlantillaConsecutivoMapper extends IBasicMapper<PlantillaConsecutivoDTO, PlantillaConsecutivoFilterDTO>{
 	
 

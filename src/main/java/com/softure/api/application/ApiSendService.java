@@ -3,7 +3,7 @@ package com.softure.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -23,12 +23,12 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service
 public class ApiSendService {
 
-	@Autowired DocumentoPlantillaSvc plantillaService;
-	@Autowired CallDocumentCRUD saveDocumentService;
+	@Autowired @Lazy  DocumentoPlantillaSvc plantillaService;
+	@Autowired @Lazy  CallDocumentCRUD saveDocumentService;
 	
-	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired private ProductoSvc productoService;
-	@Autowired private CallSearchProcessFromText searchProcessFromText;
+	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired @Lazy  private ProductoSvc productoService;
+	@Autowired @Lazy  private CallSearchProcessFromText searchProcessFromText;
 
 	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);

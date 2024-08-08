@@ -8,7 +8,7 @@ import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("GPSLocalizacionMapper")
+@SoftureSqlConnMapper(value = "GPSLocalizacionMapper")
 public interface GPSLocalizacionMapper extends IBasicMapper<GPSLocalizacionDTO, GPSLocalizacionFilterDTO>{
 	
 

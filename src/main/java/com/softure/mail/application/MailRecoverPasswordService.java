@@ -2,10 +2,7 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,11 +16,14 @@ import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
 @Service
 public class MailRecoverPasswordService {
 
-	@Autowired private ServidorSvc servidorService;
-	@Autowired private OrganizacionSvc organizacionService;
+	@Autowired @Lazy  private ServidorSvc servidorService;
+	@Autowired @Lazy  private OrganizacionSvc organizacionService;
 	
 	public void call(String correo, String key, String code) throws ServerException {
 		ServidorFilterDTO filter = new ServidorFilterDTO();

@@ -9,7 +9,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
-@SoftureSqlConnMapper("DocumentoPlantillaMapper")
+@SoftureSqlConnMapper(value = "DocumentoPlantillaMapper")
 public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO>{
 	
 

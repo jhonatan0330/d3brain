@@ -10,7 +10,7 @@ import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("DocumentoRelacionGestorMapper")
+@SoftureSqlConnMapper(value = "DocumentoRelacionGestorMapper")
 public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRelacionGestorDTO, DocumentoRelacionGestorFilterDTO>{
 	
 

@@ -3,7 +3,7 @@ package com.softure.api.application;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -21,9 +21,9 @@ import com.softure.report.domain.ReporteBaseDTO;
 @Service
 public class ApiGetReportService {
 
-	@Autowired private DocumentoPlantillaSvc templateService;
-	@Autowired private ReporteBaseSvc reportService;
-	@Autowired private PedidoVentaSvc documentService;
+	@Autowired @Lazy  private DocumentoPlantillaSvc templateService;
+	@Autowired @Lazy  private ReporteBaseSvc reportService;
+	@Autowired @Lazy  private PedidoVentaSvc documentService;
 	
 	public SharedIdResponse call(String token, ReportRequest filter) throws ServerException {
 		

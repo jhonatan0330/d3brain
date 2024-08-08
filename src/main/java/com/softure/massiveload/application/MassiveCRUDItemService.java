@@ -1,8 +1,6 @@
 package com.softure.massiveload.application;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.application.SharedCRUDService;
@@ -11,10 +9,12 @@ import com.softure.massiveload.domain.MassiveItemDTO;
 import com.softure.massiveload.domain.MassiveItemFilter;
 import com.softure.massiveload.infrastructure.MassiveItemMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("cargaMasivaItemService")
 public class MassiveCRUDItemService extends SharedCRUDService<MassiveItemDTO, MassiveItemFilter> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private MassiveItemMapper cargaMasivaItemMapper;
 
 	@PostConstruct

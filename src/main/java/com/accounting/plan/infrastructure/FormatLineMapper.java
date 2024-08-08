@@ -6,7 +6,7 @@ import com.accounting.plan.domain.FormatLineDTO;
 import com.accounting.plan.domain.FormatLineFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("FormatLineAccountingMapper")
+@SoftureSqlConnMapper(value = "FormatLineAccountingMapper")
 public interface FormatLineMapper {
 
 	FormatLineDTO insert(FormatLineDTO dto);

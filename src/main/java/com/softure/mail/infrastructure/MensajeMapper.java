@@ -10,7 +10,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajeFilterDTO;
 
-@SoftureSqlConnMapper("MensajeMapper")
+@SoftureSqlConnMapper(value = "MensajeMapper")
 public interface MensajeMapper extends IBasicMapper<MensajeDTO, MensajeFilterDTO> {
 
 	List<MensajeDTO> mensajesUsuario(MensajeFilterDTO dto);

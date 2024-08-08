@@ -1,6 +1,7 @@
 package com.accounting.plan.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.AccountDTO;
@@ -13,11 +14,11 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service("CreateAccountTemplateAccountingService")
 public class CreateAccountTemplateService {
 
-	@Autowired
+	@Autowired @Lazy  
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy  
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
+	@Autowired @Lazy  
 	private PlanCreateAccountService createAccountService;
 
 	public void call(String catalogId, String templateId, String fieldId)

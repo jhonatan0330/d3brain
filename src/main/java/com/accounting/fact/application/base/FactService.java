@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.fact.domain.FactDTO;
@@ -16,8 +17,13 @@ import com.shared.domain.ServerException;
 @Service("FactAccountingService")
 public class FactService {
 
-	@Autowired
+	
 	private FactMapper mapper;
+	
+	@Autowired @Lazy 
+	public void setMapper(@Lazy FactMapper _mapper) {
+		this.mapper = _mapper;
+	}
 
 	public FactDTO getById(String id) throws ServerException {
 		if (id == null)

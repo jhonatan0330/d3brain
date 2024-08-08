@@ -8,9 +8,7 @@ import java.util.Date;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +18,12 @@ import com.softure.survey.domain.PostRespuestaDTO;
 import com.softure.survey.domain.PostRespuestaFilterDTO;
 import com.softure.survey.infrastructure.PostRespuestaMapper;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("postRespuestaService")
 public class PostRespuestaSvc extends BasicSvc<PostRespuestaDTO, PostRespuestaFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PostRespuestaMapper postRespuestaMapper;
 	
 	// BEGIN region servicesPostRespuesta

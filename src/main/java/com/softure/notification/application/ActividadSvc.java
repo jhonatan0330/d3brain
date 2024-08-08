@@ -17,9 +17,10 @@ import com.softure.notification.domain.ActividadDTO;
 import com.softure.notification.domain.ActividadFilterDTO;
 import com.softure.notification.infrastructure.ActividadMapper;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,17 +32,17 @@ import com.softure.logisticpymes.domain.UsuarioDTO;
 @Service("actividadService")
 public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ActividadMapper actividadMapper;
 
 	// BEGIN region servicesActividad
-	@Autowired
+	@Autowired @Lazy 
 	private MailGenerateMessageService generateMessageService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSvc usuarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	// END region servicesActividad
 
@@ -188,6 +189,25 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		bd = update(bd);
 		bd.setDocumentoDTO(pedidoService.consultaXId(bd.getDocumento()));
 		return bd;
+	}
+	
+	public void validateActivitiesToInactivateUser(String userId) throws ServerException {
+		ActividadFilterDTO filtro = new ActividadFilterDTO();
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		filtro.setResponsable(userId);
+		int cont = contarResultados(filtro);
+		if(cont!=0) {
+			List<PedidoVentaDTO> tareasActuales = pedidoService.listarTareasOtroUsuario(userId);
+			String mensaje = "No se puede inactivar debido a que tiene asignaciones. " + cont ;
+			for (PedidoVentaDTO iTarea : tareasActuales) {
+				if(iTarea.getDescripcion()!=null) {
+					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") " + iTarea.getDescripcion();
+				}else {
+					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") ";
+				}
+			}
+			throw new ServerException(mensaje);
+		}
 	}
 // END region aditionalMethods
 

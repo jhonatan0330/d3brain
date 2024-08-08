@@ -20,9 +20,9 @@ import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,13 +32,13 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("procesoTransicionService")
 public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, ProcesoTransicionFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionMapper procesoTransicionMapper;
 	
 	// BEGIN region servicesProcesoTransicion
-	@Autowired private PedidoVentaSvc pedidoService;
-	@Autowired private ProcesoEstadoSvc estadoService;
-	@Autowired private DocumentoPlantillaSvc plantillaService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy  private ProcesoEstadoSvc estadoService;
+	@Autowired @Lazy  private DocumentoPlantillaSvc plantillaService;
 	// END region servicesProcesoTransicion
 
 	@Override
@@ -153,7 +153,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return null;
 	}
 	/*
-	@Autowired ManageTransitionFunction manageTransition;
+	@Autowired @Lazy  ManageTransitionFunction manageTransition;
 	
 	public ProcesoTransicionDTO gestionarTransicion(
 			ProcesoTransicionDTO dto, 

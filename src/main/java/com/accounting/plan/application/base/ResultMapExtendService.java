@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.AccountDTO;
@@ -19,7 +19,7 @@ import com.shared.domain.ServerException;
 @Service("ResultMapExtendAccountingService")
 public class ResultMapExtendService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ResultMapExtendMapper mapper;
 
 	public void saveAll(List<TimeFrameDTO> maps) throws ServerException {

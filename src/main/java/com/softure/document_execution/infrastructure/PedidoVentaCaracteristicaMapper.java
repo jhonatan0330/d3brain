@@ -14,7 +14,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.RelacionInternaDTO;
 
-@SoftureSqlConnMapper("PedidoVentaCaracteristicaMapper")
+@SoftureSqlConnMapper(value = "PedidoVentaCaracteristicaMapper")
 public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO>{
 	
 

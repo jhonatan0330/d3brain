@@ -6,7 +6,7 @@ import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("AccountAccountingMapper")
+@SoftureSqlConnMapper(value = "AccountAccountingMapper")
 public interface AccountMapper {
 
 	AccountDTO insert(AccountDTO dto);

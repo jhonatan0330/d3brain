@@ -11,7 +11,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.report.domain.ReporteBaseFilterDTO;
 
-@SoftureSqlConnMapper("ReporteBaseMapper")
+@SoftureSqlConnMapper(value = "ReporteBaseMapper")
 public interface ReporteBaseMapper extends IBasicMapper<ReporteBaseDTO, ReporteBaseFilterDTO>{
 	
 

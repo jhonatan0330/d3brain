@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -29,17 +29,17 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class CallDocumentNewFromAutomatic {
 
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionSvc autenticacionService;
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,

@@ -2,7 +2,7 @@ package com.softure.logisticpymes.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -185,8 +185,8 @@ import com.softure.webservice.domain.WebServiceFilterDTO;
 public class FullControllerDTO {
 	
 	
-	@Autowired private PlantillaConsecutivoSvc plantillaConsecutivoService;
-	@Autowired private CallDocumentCRUD crudService;
+	@Autowired @Lazy  private PlantillaConsecutivoSvc plantillaConsecutivoService;
+	@Autowired @Lazy  private CallDocumentCRUD crudService;
 	
 	@PostMapping(value="/consultaXIdPlantillaConsecutivo")
 	public PlantillaConsecutivoDTO consultaXIdPlantillaConsecutivo(@RequestBody String llave) throws FlexException {
@@ -252,7 +252,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProcesoSvc procesoService;
+	@Autowired @Lazy  private ProcesoSvc procesoService;
 	
 	@PostMapping(value="/consultaXIdProceso")
 	public ProcesoDTO consultaXIdProceso(@RequestBody String llave) throws FlexException {
@@ -338,7 +338,7 @@ public class FullControllerDTO {
 	}
 		
 	
-	@Autowired private ProcesoEstadoSvc procesoEstadoService;
+	@Autowired @Lazy  private ProcesoEstadoSvc procesoEstadoService;
 	
 	@PostMapping(value="/consultaXIdProcesoEstado")
 	public ProcesoEstadoDTO consultaXIdProcesoEstado(@RequestBody String llave) throws FlexException {
@@ -405,7 +405,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService;
+	@Autowired @Lazy  private ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService;
 	
 	@PostMapping(value="/consultaXIdProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO consultaXIdProcesoTransicionAutomatica(@RequestBody String llave) throws FlexException {
@@ -490,7 +490,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private DocumentoRelacionExpedienteSvc documentoRelacionExpedienteService;
+	@Autowired @Lazy  private DocumentoRelacionExpedienteSvc documentoRelacionExpedienteService;
 	
 	@PostMapping(value="/consultaXIdDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO consultaXIdDocumentoRelacionExpediente(@RequestBody String llave) throws FlexException {
@@ -557,7 +557,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private DocumentoRelacionGestorSvc documentoRelacionGestorService;
+	@Autowired @Lazy  private DocumentoRelacionGestorSvc documentoRelacionGestorService;
 	
 	@PostMapping(value="/consultaXIdDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO consultaXIdDocumentoRelacionGestor(@RequestBody String llave) throws FlexException {
@@ -632,7 +632,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
 	
 	@PostMapping(value="/consultaXIdDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO consultaXIdDocumentoPlantillaCaracteristica(@RequestBody String llave) throws FlexException {
@@ -699,7 +699,7 @@ public class FullControllerDTO {
 	}
 	
 
-	@Autowired private PedidoVentaSvc pedidoVentaService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
 	
 	@PostMapping(value="/consultaXIdPedidoVenta")
 	public PedidoVentaDTO consultaXIdPedidoVenta(@RequestBody String llave) throws FlexException {
@@ -774,7 +774,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private CallDocumentListWithFilters documentListWithFiltersFunction;
+	@Autowired @Lazy  private CallDocumentListWithFilters documentListWithFiltersFunction;
 	
 	@PostMapping(value="/listarAvanzadoPedidoVenta")
 	public List<PedidoVentaDTO> listarAvanzadoPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)throws FlexException {
@@ -787,7 +787,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	
 	@PostMapping(value="/consultaXIdPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO consultaXIdPedidoVentaCaracteristica(@RequestBody String llave) throws FlexException {
@@ -862,7 +862,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private ProcesoTransicionSvc procesoTransicionService;
+	@Autowired @Lazy  private ProcesoTransicionSvc procesoTransicionService;
 	
 	@PostMapping(value="/consultaXIdProcesoTransicion")
 	public ProcesoTransicionDTO consultaXIdProcesoTransicion(@RequestBody String llave) throws FlexException {
@@ -930,7 +930,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private DocumentoPlantillaSvc documentoPlantillaService;
+	@Autowired @Lazy  private DocumentoPlantillaSvc documentoPlantillaService;
 	
 	@PostMapping(value="/consultaXIdDocumentoPlantilla")
 	public DocumentoPlantillaDTO consultaXIdDocumentoPlantilla(@RequestBody String llave) throws FlexException {
@@ -1032,7 +1032,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private MovimientoSvc movimientoService;
+	@Autowired @Lazy  private MovimientoSvc movimientoService;
 	
 	@PostMapping(value="/consultaXIdMovimiento")
 	public MovimientoDTO consultaXIdMovimiento(@RequestBody String llave) throws FlexException {
@@ -1116,7 +1116,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private TurnoSvc turnoService;
+	@Autowired @Lazy  private TurnoSvc turnoService;
 	
 	@PostMapping(value="/consultaXIdTurno")
 	public TurnoDTO consultaXIdTurno(@RequestBody String llave) throws FlexException {
@@ -1182,7 +1182,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private TarifaSvc tarifaService;
+	@Autowired @Lazy  private TarifaSvc tarifaService;
 	
 	@PostMapping(value="/consultaXIdTarifa")
 	public TarifaDTO consultaXIdTarifa(@RequestBody String llave) throws FlexException {
@@ -1248,7 +1248,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private PedidoVentaDineroSvc pedidoVentaDineroService;
+	@Autowired @Lazy  private PedidoVentaDineroSvc pedidoVentaDineroService;
 	
 	@PostMapping(value="/consultaXIdPedidoVentaDinero")
 	public PedidoVentaDineroDTO consultaXIdPedidoVentaDinero(@RequestBody String llave) throws FlexException {
@@ -1314,7 +1314,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private CuentaSvc cuentaService;
+	@Autowired @Lazy  private CuentaSvc cuentaService;
 	
 	@PostMapping(value="/consultaXIdCuenta")
 	public CuentaDTO consultaXIdCuenta(@RequestBody String llave) throws FlexException {
@@ -1380,7 +1380,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private TarifarioService tarifarioService;
+	@Autowired @Lazy  private TarifarioService tarifarioService;
 	
 	@PostMapping(value="/consultaXIdTarifario")
 	public TarifarioDTO consultaXIdTarifario(@RequestBody String llave) throws FlexException {
@@ -1410,7 +1410,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ActividadSvc actividadService;
+	@Autowired @Lazy  private ActividadSvc actividadService;
 	
 	@PostMapping(value="/consultaXIdActividad")
 	public ActividadDTO consultaXIdActividad(@RequestBody String llave) throws FlexException {
@@ -1477,7 +1477,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private PropiedadSvc propiedadService;
+	@Autowired @Lazy  private PropiedadSvc propiedadService;
 	
 	@PostMapping(value="/consultaXIdPropiedad")
 	public PropiedadDTO consultaXIdPropiedad(@RequestBody String llave) throws FlexException {
@@ -1543,7 +1543,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private RelacionInternaSvc relacionInternaService;
+	@Autowired @Lazy  private RelacionInternaSvc relacionInternaService;
 	
 	@PostMapping(value="/consultaXIdRelacionInterna")
 	public RelacionInternaDTO consultaXIdRelacionInterna(@RequestBody String llave) throws FlexException {
@@ -1620,7 +1620,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private CambioSvc cambioService;
+	@Autowired @Lazy  private CambioSvc cambioService;
 	
 	@PostMapping(value="/consultaXIdCambio")
 	public CambioDTO consultaXIdCambio(@RequestBody String llave) throws FlexException {
@@ -1687,7 +1687,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private PropiedadValorDefinidoSvc propiedadValorDefinidoService;
+	@Autowired @Lazy  private PropiedadValorDefinidoSvc propiedadValorDefinidoService;
 	
 	@PostMapping(value="/consultaXIdPropiedadValorDefinido")
 	public PropiedadValorDefinidoDTO consultaXIdPropiedadValorDefinido(@RequestBody String llave) throws FlexException {
@@ -1765,7 +1765,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private UsuarioRolSvc usuarioRolService;
+	@Autowired @Lazy  private UsuarioRolSvc usuarioRolService;
 	
 	@PostMapping(value="/consultaXIdUsuarioRol")
 	public UsuarioRolDTO consultaXIdUsuarioRol(@RequestBody String llave) throws FlexException {
@@ -1833,7 +1833,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private PuestoSvc puestoService;
+	@Autowired @Lazy  private PuestoSvc puestoService;
 	
 	@PostMapping(value="/consultaXIdPuesto")
 	public PuestoDTO consultaXIdPuesto(@RequestBody String llave) throws FlexException {
@@ -1901,7 +1901,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private RolAccesoSvc rolAccesoService;
+	@Autowired @Lazy  private RolAccesoSvc rolAccesoService;
 	
 	@PostMapping(value="/consultaXIdRolAcceso")
 	public RolAccesoDTO consultaXIdRolAcceso(@RequestBody String llave) throws FlexException {
@@ -1976,7 +1976,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private UsuarioSvc usuarioService;
+	@Autowired @Lazy  private UsuarioSvc usuarioService;
 	
 	@PostMapping(value="/consultaXIdUsuario")
 	public UsuarioDTO consultaXIdUsuario(@RequestBody String llave) throws FlexException {
@@ -2053,7 +2053,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private WebServiceSvc webServiceService;
+	@Autowired @Lazy  private WebServiceSvc webServiceService;
 	
 	@PostMapping(value="/consultaXIdWebService")
 	public WebServiceDTO consultaXIdWebService(@RequestBody String llave) throws FlexException {
@@ -2120,7 +2120,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private PostRespuestaSvc postRespuestaService;
+	@Autowired @Lazy  private PostRespuestaSvc postRespuestaService;
 	
 	@PostMapping(value="/consultaXIdPostRespuesta")
 	public PostRespuestaDTO consultaXIdPostRespuesta(@RequestBody String llave) throws FlexException {
@@ -2198,7 +2198,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private MensajeSvc mensajeService;
+	@Autowired @Lazy  private MensajeSvc mensajeService;
 	
 	@PostMapping(value="/consultaXIdMensaje")
 	public MensajeDTO consultaXIdMensaje(@RequestBody String llave) throws FlexException {
@@ -2275,7 +2275,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private MailUserSendMessage userSendMessage;
+	@Autowired @Lazy  private MailUserSendMessage userSendMessage;
 
 	@PostMapping(value="/enviarMensajeMensaje")
 	public MensajeDTO enviarMensajeMensaje(@RequestBody MensajeFilterDTO dto)throws FlexException {
@@ -2286,7 +2286,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private PostCalificacionSvc postCalificacionService;
+	@Autowired @Lazy  private PostCalificacionSvc postCalificacionService;
 	
 	@PostMapping(value="/consultaXIdPostCalificacion")
 	public PostCalificacionDTO consultaXIdPostCalificacion(@RequestBody String llave) throws FlexException {
@@ -2354,7 +2354,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private WebServiceEjecucionSvc webServiceEjecucionService;
+	@Autowired @Lazy  private WebServiceEjecucionSvc webServiceEjecucionService;
 	
 	@PostMapping(value="/consultaXIdWebServiceEjecucion")
 	public WebServiceEjecucionDTO consultaXIdWebServiceEjecucion(@RequestBody String llave) throws FlexException {
@@ -2431,7 +2431,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private PostPreguntaSvc postPreguntaService;
+	@Autowired @Lazy  private PostPreguntaSvc postPreguntaService;
 	
 	@PostMapping(value="/consultaXIdPostPregunta")
 	public PostPreguntaDTO consultaXIdPostPregunta(@RequestBody String llave) throws FlexException {
@@ -2516,7 +2516,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private ServidorSvc servidorService;
+	@Autowired @Lazy  private ServidorSvc servidorService;
 	
 	@PostMapping(value="/consultaXIdServidor")
 	public ServidorDTO consultaXIdServidor(@RequestBody String llave) throws FlexException {
@@ -2583,7 +2583,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
+	@Autowired @Lazy  private MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
 	
 	@PostMapping(value="/consultaXIdMensajePlantillaCorreo")
 	public MensajePlantillaCorreoDTO consultaXIdMensajePlantillaCorreo(@RequestBody String llave) throws FlexException {
@@ -2651,7 +2651,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
+	@Autowired @Lazy  private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
 	
 	@PostMapping(value="/consultaXIdTrazabilidadProductoInventario")
 	public TrazabilidadProductoInventarioDTO consultaXIdTrazabilidadProductoInventario(@RequestBody String llave) throws FlexException {
@@ -2719,7 +2719,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
 	
 	@PostMapping(value="/consultaXIdDetallePedidoVenta")
 	public DetallePedidoVentaDTO consultaXIdDetallePedidoVenta(@RequestBody String llave) throws FlexException {
@@ -2787,7 +2787,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private CategoriaProductoSvc categoriaProductoService;
+	@Autowired @Lazy  private CategoriaProductoSvc categoriaProductoService;
 	
 	@PostMapping(value="/consultaXIdCategoriaProducto")
 	public CategoriaProductoDTO consultaXIdCategoriaProducto(@RequestBody String llave) throws FlexException {
@@ -2855,7 +2855,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProductoInventarioSvc productoInventarioService;
+	@Autowired @Lazy  private ProductoInventarioSvc productoInventarioService;
 	
 	@PostMapping(value="/consultaXIdProductoInventario")
 	public ProductoInventarioDTO consultaXIdProductoInventario(@RequestBody String llave) throws FlexException {
@@ -2923,7 +2923,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProductoCaracteristicaSvc productoCaracteristicaService;
+	@Autowired @Lazy  private ProductoCaracteristicaSvc productoCaracteristicaService;
 	
 	@PostMapping(value="/consultaXIdProductoCaracteristica")
 	public ProductoCaracteristicaDTO consultaXIdProductoCaracteristica(@RequestBody String llave) throws FlexException {
@@ -2991,7 +2991,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private UsuarioRolProductoSvc usuarioRolProductoService;
+	@Autowired @Lazy  private UsuarioRolProductoSvc usuarioRolProductoService;
 	
 	@PostMapping(value="/consultaXIdUsuarioRolProducto")
 	public UsuarioRolProductoDTO consultaXIdUsuarioRolProducto(@RequestBody String llave) throws FlexException {
@@ -3059,7 +3059,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
+	@Autowired @Lazy  private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
 	
 	@PostMapping(value="/consultaXIdDetalleCaracteristicaProducto")
 	public DetalleCaracteristicaProductoDTO consultaXIdDetalleCaracteristicaProducto(@RequestBody String llave) throws FlexException {
@@ -3126,7 +3126,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private BodegaSvc bodegaService;
+	@Autowired @Lazy  private BodegaSvc bodegaService;
 	
 	@PostMapping(value="/consultaXIdBodega")
 	public BodegaDTO consultaXIdBodega(@RequestBody String llave) throws FlexException {
@@ -3194,7 +3194,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProductoSvc productoService;
+	@Autowired @Lazy  private ProductoSvc productoService;
 	
 	@PostMapping(value="/consultaXIdProducto")
 	public ProductoDTO consultaXIdProducto(@RequestBody String llave) throws FlexException {
@@ -3262,7 +3262,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
+	@Autowired @Lazy  private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;
 	
 	@PostMapping(value="/consultaXIdProductoInventarioDescuento")
 	public ProductoInventarioDescuentoDTO consultaXIdProductoInventarioDescuento(@RequestBody String llave) throws FlexException {
@@ -3328,7 +3328,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private DeduccionProductoSvc deduccionProductoService;
+	@Autowired @Lazy  private DeduccionProductoSvc deduccionProductoService;
 	
 	@PostMapping(value="/consultaXIdDeduccionProducto")
 	public DeduccionProductoDTO consultaXIdDeduccionProducto(@RequestBody String llave) throws FlexException {
@@ -3394,7 +3394,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private ModuloSvc moduloService;
+	@Autowired @Lazy  private ModuloSvc moduloService;
 	
 	@PostMapping(value="/consultaXIdModulo")
 	public ModuloDTO consultaXIdModulo(@RequestBody String llave) throws FlexException {
@@ -3461,7 +3461,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ReporteBaseSvc reporteBaseService;
+	@Autowired @Lazy  private ReporteBaseSvc reporteBaseService;
 	
 	@PostMapping(value="/consultaXIdReporteBase")
 	public ReporteBaseDTO consultaXIdReporteBase(@RequestBody String llave) throws FlexException {
@@ -3528,7 +3528,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private UsuarioOrganizacionSvc usuarioOrganizacionService;
+	@Autowired @Lazy  private UsuarioOrganizacionSvc usuarioOrganizacionService;
 	
 	@PostMapping(value="/consultaXIdUsuarioOrganizacion")
 	public UsuarioOrganizacionDTO consultaXIdUsuarioOrganizacion(@RequestBody String llave) throws FlexException {
@@ -3605,7 +3605,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired private PermisoSvc permisoService;
+	@Autowired @Lazy  private PermisoSvc permisoService;
 	
 	@PostMapping(value="/consultaXIdPermiso")
 	public PermisoDTO consultaXIdPermiso(@RequestBody String llave) throws FlexException {
@@ -3672,7 +3672,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService;
+	@Autowired @Lazy  private UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService;
 	
 	@PostMapping(value="/consultaXIdUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO consultaXIdUsuarioAutenticacionAutorizacion(@RequestBody String llave) throws FlexException {
@@ -3740,7 +3740,7 @@ public class FullControllerDTO {
 	
 
 	
-	@Autowired private CargaArchivoSvc cargaArchivoService;
+	@Autowired @Lazy  private CargaArchivoSvc cargaArchivoService;
 	
 	@PostMapping(value="/consultaXIdCargaArchivo")
 	public CargaArchivoDTO consultaXIdCargaArchivo(@RequestBody String llave) throws FlexException {
@@ -3806,7 +3806,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ReporteEjecucionSvc reporteEjecucionService;
+	@Autowired @Lazy  private ReporteEjecucionSvc reporteEjecucionService;
 	
 	@PostMapping(value="/consultaXIdReporteEjecucion")
 	public ReporteEjecucionDTO consultaXIdReporteEjecucion(@RequestBody String llave) throws FlexException {
@@ -3872,7 +3872,7 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired private ConsecutivoSvc consecutivoService;
+	@Autowired @Lazy  private ConsecutivoSvc consecutivoService;
 	
 	@PostMapping(value="/consultaXIdConsecutivo")
 	public ConsecutivoDTO consultaXIdConsecutivo(@RequestBody String llave) throws FlexException {
@@ -3948,7 +3948,7 @@ public class FullControllerDTO {
 	}
 
 	
-	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	
 	@PostMapping(value="/consultaXIdUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO consultaXIdUsuarioAutenticacion(@RequestBody String llave) throws FlexException {
@@ -4035,7 +4035,7 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired private OrganizacionSvc organizacionService;
+	@Autowired @Lazy  private OrganizacionSvc organizacionService;
 	
 	@PostMapping(value="/consultaXIdOrganizacion")
 	public OrganizacionDTO consultaXIdOrganizacion(@RequestBody String llave) throws FlexException {

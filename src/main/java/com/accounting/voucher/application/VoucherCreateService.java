@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,19 +35,19 @@ import com.softure.process_form.domain.ConsecutivoDTO;
 @Service
 public class VoucherCreateService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private AccountService accountService;
-	@Autowired
+	@Autowired @Lazy 
 	private VoucherService voucherService;
-	@Autowired
+	@Autowired @Lazy 
 	private AccountRecordService recordService;
-	@Autowired
+	@Autowired @Lazy 
 	private ConsecutivoSvc consecutiveService;
-	@Autowired
+	@Autowired @Lazy 
 	private ResultMapExtendService mapService;
-	@Autowired
+	@Autowired @Lazy 
 	private TimeFrameService timeFrameService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.servlet.http.HttpServlet;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
@@ -20,9 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -37,14 +38,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
+import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.infrastructure.ReporteServlet;
-import com.softure.upload.infrastructure.DownloaderServlet;
-import com.softure.upload.infrastructure.UploaderServlet;
 import com.softure.webservice.application.WebServiceEjecucionSvc;
+
+import jakarta.servlet.http.HttpServlet;
 
 @Configuration
 @EnableTransactionManagement
@@ -53,18 +55,35 @@ import com.softure.webservice.application.WebServiceEjecucionSvc;
 		"com.*.*.infrastructure" }, annotationClass = SoftureSqlConnMapper.class, sqlSessionFactoryRef = "sqlSessionFactory")
 public class SoftureConfiguration {
 
-	@Autowired
+	@Autowired 
 	private Environment env;
-	@Autowired
+	//@Autowired @Lazy 
 	private MailReleaseMessageQueueService releaseQueueService;
-	@Autowired
+	//@Autowired @Lazy 
 	private ProcesoTransicionAutomaticaSvc transicionservice;
-	@Autowired
+	//@Autowired @Lazy 
 	private WebServiceEjecucionSvc apiService;
+	
+	private ReporteBaseSvc reporteBaseService;
+	
+	//private ServidorSvc servidorService;
+	
+	//private UploadSvc uploadService;
 
-	@Autowired
+	@Autowired 
 	private AutowireCapableBeanFactory beanFactory;
 
+	public SoftureConfiguration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto, @Lazy WebServiceEjecucionSvc apis
+			,@Lazy ReporteBaseSvc report) {
+		this.releaseQueueService = mail;
+		this.transicionservice = auto;
+		this.apiService = apis;
+		this.reporteBaseService = report;
+		//this.servidorService = _servidorService;
+		//this.uploadService = _uploadService;
+	}
+	
+	
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
 		System.out.println("*********************************************************");
@@ -179,6 +198,7 @@ public class SoftureConfiguration {
 	}
 
 	@Bean(name = "dataSource")
+	@DependsOnDatabaseInitialization
 	PooledDataSource dynamicDataSource() {
 		PooledDataSource dataSource = new PooledDataSource();
 		dataSource.setDriver(env.getProperty("db.driver"));
@@ -189,6 +209,7 @@ public class SoftureConfiguration {
 	}
 
 	@Bean(name = "transactionManager")
+	@DependsOnDatabaseInitialization
 	DataSourceTransactionManager transactionManager(PooledDataSource dataSource) {
 		return new DataSourceTransactionManager(dataSource);
 	}
@@ -261,18 +282,18 @@ public class SoftureConfiguration {
 	@Bean
 	ServletRegistrationBean<HttpServlet> reporteServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
-		final ReporteServlet servlet = new ReporteServlet();
+		final ReporteServlet servlet = new ReporteServlet(reporteBaseService);
 		beanFactory.autowireBean(servlet);
 		servRegBean.setServlet(servlet);
 		servRegBean.addUrlMappings("/reporte/*", "/r/*");
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}
-
+/*
 	@Bean
 	ServletRegistrationBean<HttpServlet> uploadServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
-		final UploaderServlet servlet = new UploaderServlet();
+		final UploaderServlet servlet = new UploaderServlet(uploadService);
 		beanFactory.autowireBean(servlet);
 		servRegBean.setServlet(servlet);
 		servRegBean.addUrlMappings("/loader/*");
@@ -283,12 +304,12 @@ public class SoftureConfiguration {
 	@Bean
 	ServletRegistrationBean<HttpServlet> downloadServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
-		final DownloaderServlet servlet = new DownloaderServlet();
+		final DownloaderServlet servlet = new DownloaderServlet(servidorService);
 		beanFactory.autowireBean(servlet);
 		servRegBean.setServlet(servlet);
 		servRegBean.addUrlMappings("/resource/*");
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}
-
+*/
 }

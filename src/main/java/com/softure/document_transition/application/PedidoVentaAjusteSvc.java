@@ -8,9 +8,9 @@ import java.util.Date;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,13 +26,13 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("pedidoVentaAjusteService")
 public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaAjusteMapper pedidoVentaAjusteMapper;
 	
 	// BEGIN region servicesPedidoVentaAjuste
-	@Autowired private PedidoVentaSvc documentoService;
-	@Autowired private ProcesoEstadoSvc procesoEstadoService;
-	@Autowired private CallManageTransition manageTransitionFunction;
+	@Autowired @Lazy  private PedidoVentaSvc documentoService;
+	@Autowired @Lazy  private ProcesoEstadoSvc procesoEstadoService;
+	@Autowired @Lazy  private CallManageTransition manageTransitionFunction;
 	// END region servicesPedidoVentaAjuste
 
 	@Override

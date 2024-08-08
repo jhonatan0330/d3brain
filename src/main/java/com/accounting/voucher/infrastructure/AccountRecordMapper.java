@@ -6,7 +6,7 @@ import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.AccountRecordFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("AccountRecordAccountingMapper")
+@SoftureSqlConnMapper(value = "AccountRecordAccountingMapper")
 public interface AccountRecordMapper {
 
 	AccountRecordDTO insert(AccountRecordDTO dto);

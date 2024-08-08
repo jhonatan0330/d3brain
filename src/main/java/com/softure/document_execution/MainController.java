@@ -2,9 +2,7 @@ package com.softure.document_execution;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,17 +29,19 @@ import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/main")
 public class MainController {
 
-	@Autowired private DocumentoPlantillaSvc plantillaService;
-	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
-	@Autowired private UsuarioSesionSvc usuarioSessionService;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired private OrganizacionSvc organizacionService;
-	@Autowired private UsuarioOrganizacionSvc organizacionUsuarioService;
+	@Autowired @Lazy  private DocumentoPlantillaSvc plantillaService;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
+	@Autowired @Lazy  private UsuarioSesionSvc usuarioSessionService;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private OrganizacionSvc organizacionService;
+	@Autowired @Lazy  private UsuarioOrganizacionSvc organizacionUsuarioService;
 	
 	@GetMapping(value="/test")
 	public String test() {

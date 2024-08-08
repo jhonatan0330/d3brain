@@ -3,6 +3,7 @@ package com.accounting.plan;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,19 +33,18 @@ import com.shared.domain.ServerException;
 @RequestMapping("/acc/plan")
 public class PlanAccountingRest {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PlanCreateCatalogService createCatalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanGetCatalogService getCatalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanCreateAccountService createAccountService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanUploadAccountService uploadAccountService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanGetAccountService getAccountService;
-	@Autowired
+	@Autowired @Lazy
 	private PlanGetBalanceService getBalanceService;
-	
 	
 	@GetMapping("/balance/{catalog}")
 	public List<ResultMapDTO> getBalance(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {

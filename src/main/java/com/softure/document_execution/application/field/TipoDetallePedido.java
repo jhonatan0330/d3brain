@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,23 +35,23 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class TipoDetallePedido {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private CategoriaProductoSvc categoriaProductoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc configuracionSvc;
-	@Autowired
+	@Autowired @Lazy 
 	private CallProductValidateAndSave validateAndSave;
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {

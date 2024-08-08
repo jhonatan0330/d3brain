@@ -1,6 +1,6 @@
 package com.softure.api.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -12,7 +12,7 @@ import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 @Service
 public class ApiLoginService {
 
-	@Autowired UsuarioAutenticacionSvc authenticationService;
+	@Autowired @Lazy  UsuarioAutenticacionSvc authenticationService;
 	
 	public SharedIdResponse call(LoginRequest login) throws ServerException {
 		if(login == null) throw new ServerException("No se enviaron datos");

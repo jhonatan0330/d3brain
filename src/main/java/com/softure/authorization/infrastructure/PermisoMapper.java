@@ -6,7 +6,7 @@ import com.softure.authorization.domain.PermisoDTO;
 import com.softure.authorization.domain.PermisoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("PermisoMapper")
+@SoftureSqlConnMapper(value = "PermisoMapper")
 public interface PermisoMapper extends IBasicMapper<PermisoDTO, PermisoFilterDTO>{
 	
 

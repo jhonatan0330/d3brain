@@ -24,9 +24,9 @@ import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,23 +36,23 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaMapper pedidoVentaMapper;
 
 	// BEGIN region servicesPedidoVenta
-	@Autowired
+	@Autowired @Lazy 
 	private CampoAdaptador adaptador;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc documentoPlantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
 	// END region servicesPedidoVenta
 

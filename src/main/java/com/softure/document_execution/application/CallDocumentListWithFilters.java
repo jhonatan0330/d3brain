@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -38,25 +38,25 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class CallDocumentListWithFilters {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaMapper pedidoVentaMapper;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoVentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private CuentaSvc cuentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoCaracteristicaSvc productoCaracteristicaService;
 
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {

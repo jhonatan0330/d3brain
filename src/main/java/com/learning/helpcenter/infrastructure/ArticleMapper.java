@@ -6,7 +6,7 @@ import com.learning.helpcenter.domain.ArticleDTO;
 import com.learning.helpcenter.domain.ArticleFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("ArticleLearningMapper")
+@SoftureSqlConnMapper(value = "ArticleLearningMapper")
 public interface ArticleMapper {
 
 	ArticleDTO insert(ArticleDTO dto);

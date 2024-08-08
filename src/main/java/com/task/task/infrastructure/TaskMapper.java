@@ -6,7 +6,7 @@ import com.task.task.domain.TaskDTO;
 import com.task.task.domain.TaskFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("TaskTaskMapper")
+@SoftureSqlConnMapper(value = "TaskTaskMapper")
 public interface TaskMapper {
 
 	TaskDTO insert(TaskDTO dto);

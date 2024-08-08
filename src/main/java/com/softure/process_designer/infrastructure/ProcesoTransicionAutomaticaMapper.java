@@ -12,7 +12,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.process_designer.domain.ProcesoTransicionAutomaticaDTO;
 import com.softure.process_designer.domain.ProcesoTransicionAutomaticaFilterDTO;
 
-@SoftureSqlConnMapper("ProcesoTransicionAutomaticaMapper")
+@SoftureSqlConnMapper(value = "ProcesoTransicionAutomaticaMapper")
 public interface ProcesoTransicionAutomaticaMapper extends IBasicMapper<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO>{
 	
 

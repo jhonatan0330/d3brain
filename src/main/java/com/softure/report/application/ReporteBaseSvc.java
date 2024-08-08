@@ -22,6 +22,8 @@ import com.softure.report.domain.ReporteEjecucionFilterDTO;
 import com.softure.report.infrastructure.ReporteBaseMapper;
 import com.softure.upload.application.UploadSvc;
 import com.shared.domain.SharedConstants;
+
+import jakarta.annotation.PostConstruct;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -31,9 +33,9 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 
 import javax.sql.DataSource;
-import javax.annotation.PostConstruct;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,20 +44,21 @@ import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 
+@DependsOnDatabaseInitialization
 @Service("reporteBaseService")
 public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDTO> {
 
-    @Autowired
+    @Autowired @Lazy 
     private ReporteBaseMapper reporteBaseMapper;
 
-    @Autowired DataSource dataSource;
-    @Autowired private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-    @Autowired private PedidoVentaSvc pedidoVentaService;
-    @Autowired private PropiedadSvc propiedadService;
-    @Autowired private UsuarioAutenticacionSvc autenticacionService;
-    @Autowired private UsuarioSvc usuarioService;
-    @Autowired private ReporteEjecucionSvc ejecucionService;
-    @Autowired private UploadSvc uploadService;
+    @Autowired @Lazy  DataSource dataSource;
+    @Autowired @Lazy  private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+    @Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
+    @Autowired @Lazy  private PropiedadSvc propiedadService;
+    @Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+    @Autowired @Lazy  private UsuarioSvc usuarioService;
+    @Autowired @Lazy  private ReporteEjecucionSvc ejecucionService;
+    @Autowired @Lazy  private UploadSvc uploadService;
 
     public static final String P_KEY = "P_KEY";
 

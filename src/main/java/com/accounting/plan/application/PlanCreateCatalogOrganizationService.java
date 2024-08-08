@@ -3,7 +3,7 @@ package com.accounting.plan.application;
 import java.util.Calendar;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,17 +27,17 @@ import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 @Service("CreateCatalogOrganizationAccountingService")
 public class PlanCreateCatalogOrganizationService {
 
-	@Autowired
+	@Autowired @Lazy 
 	OrganizacionSvc organizationService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoSvc processService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanCreateCatalogService createCatalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private PlanCreateAccountService createAccountService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

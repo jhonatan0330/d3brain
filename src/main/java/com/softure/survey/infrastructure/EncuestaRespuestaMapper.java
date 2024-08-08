@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.survey.domain.EncuestaRespuestaDTO;
 import com.softure.survey.domain.EncuestaRespuestaFilterDTO;
 
-@SoftureSqlConnMapper("EncuestaRespuestaMapper")
+@SoftureSqlConnMapper(value = "EncuestaRespuestaMapper")
 public interface EncuestaRespuestaMapper extends IBasicMapper<EncuestaRespuestaDTO, EncuestaRespuestaFilterDTO>{
 	
 

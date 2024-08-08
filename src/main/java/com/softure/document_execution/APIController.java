@@ -3,7 +3,7 @@ package com.softure.document_execution;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,15 +38,15 @@ import com.softure.upload.application.UploadSvc;
 @RequestMapping("/rest")
 public class APIController {
 
-	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionService;
-	@Autowired private DocumentoPlantillaSvc documentoplantillaService;
-	@Autowired private PedidoVentaSvc pedidoVentaService;
-	@Autowired private CallDocumentCRUD saveUpdateDocumentFunction;
-	@Autowired private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired private PedidoVentaAjusteSvc pedidoVentaAjusteService;
-	@Autowired private UsuarioSvc usuarioService;
-	@Autowired private UploadSvc uploadService;
-	@Autowired private CampoAdaptador adaptador;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
+	@Autowired @Lazy  private DocumentoPlantillaSvc documentoplantillaService;
+	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
+	@Autowired @Lazy  private CallDocumentCRUD saveUpdateDocumentFunction;
+	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private PedidoVentaAjusteSvc pedidoVentaAjusteService;
+	@Autowired @Lazy  private UsuarioSvc usuarioService;
+	@Autowired @Lazy  private UploadSvc uploadService;
+	@Autowired @Lazy  private CampoAdaptador adaptador;
 	
 	@PostMapping(value="/logOut")
 	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion, @RequestHeader("Authorization") String token) throws ServerException {
@@ -129,7 +129,7 @@ public class APIController {
     }
 	
 	@PostMapping(value="/changePicture")
-    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
+    public UsuarioDTO cambiarImagen(@RequestParam MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
         	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, "config");

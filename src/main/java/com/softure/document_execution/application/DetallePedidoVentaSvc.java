@@ -34,9 +34,9 @@ import com.softure.tariff.application.base.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,23 +46,23 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("detallePedidoVentaService")
 public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO> {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaMapper detallePedidoVentaMapper;
 
 	// BEGIN region servicesDetallePedidoVenta
-	@Autowired
+	@Autowired @Lazy 
 	private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoCaracteristicaSvc productoCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc documentoService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioRolProductoSvc usuarioRolProductoService;
-	@Autowired
+	@Autowired @Lazy 
 	private TarifaSvc tarifaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc configuracionSvc;
 
 	// END region servicesDetallePedidoVenta

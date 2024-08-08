@@ -9,7 +9,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 
-@SoftureSqlConnMapper("WebServiceEjecucionMapper")
+@SoftureSqlConnMapper(value = "WebServiceEjecucionMapper")
 public interface WebServiceEjecucionMapper extends IBasicMapper<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO>{
 	
 

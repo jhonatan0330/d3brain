@@ -11,9 +11,9 @@ import com.softure.money.domain.TurnoDTO;
 import com.softure.money.domain.TurnoFilterDTO;
 import com.softure.money.infrastructure.TurnoMapper;
 
-import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,11 +24,11 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("turnoService")
 public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private TurnoMapper turnoMapper;
 	
 	// BEGIN region servicesTurno
-	@Autowired private CuentaSvc cuentaService;
+	@Autowired @Lazy  private CuentaSvc cuentaService;
 	// END region servicesTurno
 
 	@Override

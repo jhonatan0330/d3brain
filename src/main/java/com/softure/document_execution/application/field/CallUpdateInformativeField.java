@@ -2,7 +2,7 @@ package com.softure.document_execution.application.field;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -19,13 +19,13 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class CallUpdateInformativeField {
 
-	@Autowired
+	@Autowired @Lazy 
 	private TipoInformativo informativeField;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired 
+	@Autowired @Lazy  
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired 
+	@Autowired @Lazy  
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
 	
 	

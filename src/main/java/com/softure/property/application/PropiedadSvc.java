@@ -5,14 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.BindingException;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 // END region interImport
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,54 +84,54 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
 
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadMapper propiedadMapper;
 
 	// BEGIN region servicesPropiedad
-	@Autowired
+	@Autowired @Lazy 
 	private BodegaSvc bodegaService;
-	@Autowired
+	@Autowired @Lazy 
 	private CambioSvc cambioService;
-	@Autowired
+	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired
+	@Autowired @Lazy 
 	private CategoriaProductoSvc categoriaProductoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private MensajePlantillaCorreoSvc mensajeService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoSvc procesoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionAutomaticaSvc automatizadorService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProductoCaracteristicaSvc productoCaracteristicaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadValorDefinidoSvc valorDefinidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private TarifarioService tarifarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private ReporteBaseSvc reporteService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSvc usuarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc apiService;
 
-	@Autowired
+	@Autowired @Lazy 
 	private HomologatePrepareService homologateService;
-	@Autowired
+	@Autowired @Lazy 
 	private CreateAccountTemplateService createAccountService;
 	// END region servicesPropiedad
 

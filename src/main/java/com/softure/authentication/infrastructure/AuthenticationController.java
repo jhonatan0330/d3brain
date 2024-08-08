@@ -2,7 +2,7 @@ package com.softure.authentication.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +23,8 @@ import com.softure.property.domain.PropiedadFilterDTO;
 @RequestMapping("/authentication")
 public class AuthenticationController {
 	
-	@Autowired private OrganizacionSvc organizationSvc;
-	@Autowired private PropiedadSvc propertiesService;
+	@Autowired @Lazy  private OrganizacionSvc organizationSvc;
+	@Autowired @Lazy  private PropiedadSvc propertiesService;
 	
 	@GetMapping(value = "getLinkedOrganizations")
 	public List<OrganizacionDTO> getLinkedOrganizations(@RequestHeader("Authorization") String token)throws ServerException  {

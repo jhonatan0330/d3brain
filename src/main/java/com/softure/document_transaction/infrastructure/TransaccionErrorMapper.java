@@ -6,7 +6,7 @@ import com.softure.document_transaction.domain.TransaccionErrorDTO;
 import com.softure.document_transaction.domain.TransaccionErrorFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("TransaccionErrorMapper")
+@SoftureSqlConnMapper(value = "TransaccionErrorMapper")
 public interface TransaccionErrorMapper extends IBasicMapper<TransaccionErrorDTO, TransaccionErrorFilterDTO>{
 	
 

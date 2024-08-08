@@ -2,37 +2,31 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
-import com.softure.authentication.domain.UsuarioAutenticacionDTO;
-import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
-import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.logisticpymes.domain.UsuarioDTO;
-import com.softure.logisticpymes.domain.UsuarioFilterDTO;
-import com.softure.logisticpymes.infrastructure.UsuarioMapper;
-import com.softure.notification.application.ActividadSvc;
-import com.softure.notification.domain.ActividadFilterDTO;
+import jakarta.annotation.PostConstruct;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.domain.UsuarioAutenticacionDTO;
+import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+import com.softure.logisticpymes.domain.UsuarioFilterDTO;
+import com.softure.logisticpymes.infrastructure.UsuarioMapper;
+import com.softure.notification.application.ActividadSvc;
+import com.softure.property.application.PropertyCRUDSvc;
+
 @Service("usuarioService")
 public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	
-	@Autowired
-	private UsuarioMapper usuarioMapper;
-	
-	// BEGIN region servicesUsuario
-	@Autowired private ActividadSvc actividadSvc;
-	@Autowired private PedidoVentaSvc documentoService;
-	@Autowired private UsuarioAutenticacionSvc usuarioAutenticacionSvc;
-	// END region servicesUsuario
+	@Autowired @Lazy  private UsuarioMapper usuarioMapper;
+	@Autowired @Lazy  private ActividadSvc actividadSvc;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionSvc;
+	@Autowired @Lazy  private PropertyCRUDSvc propertySvc;
 
 	@Override
 	public UsuarioDTO consultaXId(String llave) throws ServerException {
@@ -81,22 +75,8 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	public UsuarioDTO inactivar(UsuarioDTO dto, String token) throws ServerException {
 		// BEGIN Usuario_inactivar
 		dto = super.inactivar(dto, token);
-		ActividadFilterDTO filtro = new ActividadFilterDTO();
-		filtro.setEstado(SharedConstants.STATE_ACTIVE);
-		filtro.setResponsable(dto.getLlaveTabla());
-		int cont = actividadSvc.contarResultados(filtro);
-		if(cont!=0) {
-			List<PedidoVentaDTO> tareasActuales = documentoService.listarTareasOtroUsuario(dto.getLlaveTabla());
-			String mensaje = "No se puede inactivar debido a que tiene asignaciones. " + cont ;
-			for (PedidoVentaDTO iTarea : tareasActuales) {
-				if(iTarea.getDescripcion()!=null) {
-					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") " + iTarea.getDescripcion();
-				}else {
-					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") ";
-				}
-			}
-			throw new ServerException(mensaje);
-		}
+		actividadSvc.validateActivitiesToInactivateUser(dto.getLlaveTabla());
+		propertySvc.inactivateAllPropertiesOfUser(dto.getLlaveTabla(), token);
 		return dto;
 		// END Usuario_inactivar
 	}
@@ -143,7 +123,6 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		// END Usuario_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public List<UsuarioDTO> getUsersState(String document)throws ServerException{
 		return usuarioMapper.getUsersState(document);
 	}
@@ -153,6 +132,5 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		bd.setImagen(url);
 		return update(bd);
 	}
-// END region aditionalMethods
 
 }

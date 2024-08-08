@@ -2,7 +2,7 @@ package com.softure.notification;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +22,8 @@ import com.softure.notification.domain.ActividadDTO;
 @RequestMapping("/notification")
 public class NotificationController {
 
-	@Autowired private ActividadSvc actividadService;
-	@Autowired private UsuarioSvc usuarioService;
+	@Autowired @Lazy  private ActividadSvc actividadService;
+	@Autowired @Lazy  private UsuarioSvc usuarioService;
 
 	@GetMapping(value="/getNotifications")
 	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {

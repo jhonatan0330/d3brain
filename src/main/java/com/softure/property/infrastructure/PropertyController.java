@@ -2,7 +2,7 @@ package com.softure.property.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +26,8 @@ import com.softure.property.domain.PropiedadValorDefinidoFilterDTO;
 @RequestMapping("/property")
 public class PropertyController {
 	
-	@Autowired private PropiedadSvc propertyService;
-	@Autowired private PropiedadValorDefinidoSvc propertyTypeService;
+	@Autowired @Lazy  private PropiedadSvc propertyService;
+	@Autowired @Lazy  private PropiedadValorDefinidoSvc propertyTypeService;
 	
 	@GetMapping(value="/{type}/{field}")
 	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token, @PathVariable String type, @PathVariable String field) throws ServerException {

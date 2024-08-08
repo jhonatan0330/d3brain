@@ -3,7 +3,7 @@ package com.softure.configuration_file.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -17,9 +17,9 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class SynchronizeRolService {
 
-	@Autowired
+	@Autowired @Lazy 
 	RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	SynchronizePropertiesService propertiesSynchronizeService;
 
 	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties,

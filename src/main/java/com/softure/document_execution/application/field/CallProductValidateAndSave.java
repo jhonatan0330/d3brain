@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -19,9 +19,9 @@ import com.softure.property.domain.PropiedadDTO;
 @Service
 public class CallProductValidateAndSave {
 
-	@Autowired
+	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public List<DetallePedidoVentaDTO> orderToValidate(List<DetallePedidoVentaDTO> products) throws ServerException {

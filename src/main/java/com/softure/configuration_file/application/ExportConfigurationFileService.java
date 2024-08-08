@@ -3,7 +3,7 @@ package com.softure.configuration_file.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,33 +33,33 @@ import com.softure.webservice.application.WebServiceSvc;
 @Service
 public class ExportConfigurationFileService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadValorDefinidoSvc typePropertiesService;
-	@Autowired
+	@Autowired @Lazy 
 	private OrganizacionSvc organizationService;
-	@Autowired
+	@Autowired @Lazy 
 	private UploadSvc uploadService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propertyService;
-	@Autowired
+	@Autowired @Lazy 
 	private RelacionInternaSvc relationService;
-	@Autowired
+	@Autowired @Lazy 
 	private RolAccesoSvc rolService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoSvc procesoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc stateService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc transitionService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc templateService;
-	@Autowired
+	@Autowired @Lazy 
 	private ReporteBaseSvc reportService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
+	@Autowired @Lazy 
 	private MensajePlantillaCorreoSvc messageService;
-	@Autowired
+	@Autowired @Lazy 
 	private WebServiceSvc apiService;
 
 	public FileVO call(String token) throws ServerException {

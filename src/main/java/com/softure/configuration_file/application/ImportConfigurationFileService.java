@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
@@ -24,29 +24,29 @@ import com.softure.upload.application.UploadSvc;
 @Service
 public class ImportConfigurationFileService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CambioSvc changeService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeTypePropertiesService sincronizeTypeService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeMessageService sincronizeMessageService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeApiService sincronizeApiService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeOrganizationService sincronizeOrganizationService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeProcessService sincronizeProcessService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeProcessStateService sincronizeProcessStateService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeProcessTransitionService sincronizeProcessTransitionService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeTemplateService sincronizeTemplateService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeRelationService sincronizeRelationService;
-	@Autowired
+	@Autowired @Lazy 
 	private SynchronizeRolService sincronizeRolService;
-	@Autowired
+	@Autowired @Lazy 
 	private UploadSvc uploadService;
 
 	public FileVO call(String token, FileVO file) throws ServerException {

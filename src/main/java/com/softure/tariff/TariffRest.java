@@ -2,7 +2,7 @@ package com.softure.tariff;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +28,11 @@ import com.softure.tariff.domain.TariffOptionDTO;
 @RequestMapping("/tariff")
 public class TariffRest {
 
-	@Autowired
+	@Autowired @Lazy 
 	private TarifaSvc tarifaService;
-	@Autowired
+	@Autowired @Lazy 
 	private TariffGetByDocumentService tariffGetByDocumentService;
-	@Autowired
+	@Autowired @Lazy 
 	private TariffGetDimensionService tariffGetDimensionService;
 	
 	@PostMapping(value = "/fees")

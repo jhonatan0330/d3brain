@@ -2,12 +2,7 @@ package com.softure.gps.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +13,12 @@ import com.softure.gps.domain.GPSDispositivoFilterDTO;
 import com.softure.gps.infrastructure.GPSDispositivoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("gPSDispositivoService")
 public class GPSDispositivoSvc extends BasicSvc<GPSDispositivoDTO, GPSDispositivoFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private GPSDispositivoMapper gPSDispositivoMapper;
 	
 	// BEGIN region servicesGPSDispositivo

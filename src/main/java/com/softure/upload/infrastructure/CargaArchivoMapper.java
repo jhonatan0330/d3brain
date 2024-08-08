@@ -6,7 +6,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.upload.domain.CargaArchivoDTO;
 import com.softure.upload.domain.CargaArchivoFilterDTO;
 
-@SoftureSqlConnMapper("CargaArchivoMapper")
+@SoftureSqlConnMapper(value = "CargaArchivoMapper")
 public interface CargaArchivoMapper extends IBasicMapper<CargaArchivoDTO, CargaArchivoFilterDTO>{
 	
 

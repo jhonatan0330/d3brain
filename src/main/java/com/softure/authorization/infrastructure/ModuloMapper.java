@@ -8,7 +8,7 @@ import com.softure.authorization.domain.ModuloDTO;
 import com.softure.authorization.domain.ModuloFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
-@SoftureSqlConnMapper("ModuloMapper")
+@SoftureSqlConnMapper(value = "ModuloMapper")
 public interface ModuloMapper extends IBasicMapper<ModuloDTO, ModuloFilterDTO>{
 	
 	List<ModuloDTO> modulosUsuario(ModuloFilterDTO dto);

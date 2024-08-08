@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -34,27 +34,27 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class CallBPM {
 
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
-	@Autowired
+	@Autowired @Lazy 
 	private ProcesoTransicionSvc expedienteTransicionService;
-	@Autowired
+	@Autowired @Lazy 
 	private CallManageTransition manageTransitionFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private CallDocumentUpdateFromAutomatic updateDocumentFunction;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoService;
-	@Autowired
+	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
+	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
 
 	public void execute(PedidoVentaDTO document, String token) throws ServerException {

@@ -7,7 +7,7 @@ import com.softure.java.domain.IBasicMapper;
 import com.softure.money.domain.MovimientoDTO;
 import com.softure.money.domain.MovimientoFilterDTO;
 
-@SoftureSqlConnMapper("MovimientoMapper")
+@SoftureSqlConnMapper(value = "MovimientoMapper")
 public interface MovimientoMapper extends IBasicMapper<MovimientoDTO, MovimientoFilterDTO>{
 	
 

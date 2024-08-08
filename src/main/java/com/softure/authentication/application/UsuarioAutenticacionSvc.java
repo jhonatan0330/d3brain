@@ -28,10 +28,11 @@ import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,22 +41,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>
 		implements SharedAuthenticateService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 
 	// BEGIN region servicesUsuarioAutenticacion
 
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioAutenticacionAutorizacionSvc authorizationService;
-	@Autowired
+	@Autowired @Lazy 
 	private ModuloSvc modulosService;
-	@Autowired
+	@Autowired @Lazy 
 	private OrganizacionSvc organizacionService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSesionSvc usuarioSesionService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSvc usuarioService;
-	@Autowired
+	@Autowired @Lazy 
 	private UsuarioSesionErrorSvc errorService;
 	// END region servicesUsuarioAutenticacion
 

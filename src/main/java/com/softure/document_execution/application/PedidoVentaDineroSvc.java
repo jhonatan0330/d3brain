@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +19,12 @@ import com.softure.document_execution.domain.PedidoVentaDineroFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaDineroMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("pedidoVentaDineroService")
 public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoVentaDineroFilterDTO> {
 	
-	@Autowired
+	@Autowired @Lazy 
 	private PedidoVentaDineroMapper pedidoVentaDineroMapper;
 	
 	// BEGIN region servicesPedidoVentaDinero

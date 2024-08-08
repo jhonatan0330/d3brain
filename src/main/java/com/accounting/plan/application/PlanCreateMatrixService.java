@@ -1,32 +1,27 @@
 package com.accounting.plan.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.application.base.ResultMapService;
 import com.accounting.plan.domain.AccountDTO;
-import com.accounting.plan.domain.ResultMapDTO;
-import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.shared.domain.ServerException;
-import com.shared.domain.SharedConstants;
 
 @Service("PlanCreateMatrixAccountingService")
 public class PlanCreateMatrixService {
 
-	@Autowired
+	@Autowired @Lazy 
 	private ResultMapExtendService mapService;
-	@Autowired
+	@Autowired @Lazy 
 	private ResultMapService resultMapService;
-	@Autowired
+	@Autowired @Lazy 
 	private AccountService accountService;
 
 	public void call(AccountDTO account, Date initialDate) throws ServerException {

@@ -2,7 +2,7 @@ package com.task.task.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -14,7 +14,7 @@ import com.task.task.domain.TaskFilterDTO;
 @Service
 public class TaskGetByUserService {
 
-	@Autowired private TaskService taskService;
+	@Autowired @Lazy  private TaskService taskService;
 	
 	public List<TaskDTO> call(String user) throws ServerException{
 		TaskFilterDTO filter = new TaskFilterDTO();
