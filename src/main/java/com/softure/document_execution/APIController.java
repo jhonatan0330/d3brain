@@ -129,7 +129,7 @@ public class APIController {
     }
 	
 	@PostMapping(value="/changePicture")
-    public UsuarioDTO cambiarImagen(@RequestParam MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
+    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
         if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
         	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, "config");

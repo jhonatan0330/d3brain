@@ -72,7 +72,7 @@ public class PlanAccountingRest {
 	}
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
+	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(value="filter", required = false) String filter) throws ServerException {
 		return getAccountService.getActive(catalog, filter);
 	}
 	

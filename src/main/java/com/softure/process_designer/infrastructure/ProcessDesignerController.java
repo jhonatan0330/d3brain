@@ -21,7 +21,7 @@ public class ProcessDesignerController {
 	private ProcessCopy copyService;
 	
 	@PostMapping(value="/copy")
-	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam String processId) throws ServerException {
+	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam("processId") String processId) throws ServerException {
 		return copyService.call(processId, token);
 	}
 	

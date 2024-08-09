@@ -34,9 +34,9 @@ public class MassiveMasterController {
 
 	@GetMapping("")
 	public List<MassiveMasterRequest> find(@RequestHeader(name = "Authorization") String token, String archivoFilter, Date fechaMin, Date fechaMax, String mensajeFilter, String plantillaFilter, String progresoFilter, String usuarioFilter, 
-			@RequestParam(defaultValue = "A") String state, 
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "30") int size) throws ServerException {
+			@RequestParam(value="state",defaultValue = "A") String state, 
+			@RequestParam(value="page",defaultValue = "0") int page,
+			@RequestParam(value="size",defaultValue = "30") int size) throws ServerException {
 		var filter = new MassiveMasterFilter(state, page, size);
 		filter.setArchivo(archivoFilter); 
 		filter.setFechaMax(fechaMax);

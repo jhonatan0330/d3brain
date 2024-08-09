@@ -52,7 +52,7 @@ public class TariffRest {
 	}
 
 	@GetMapping(value = "/fee")
-	public TarifaDTO getFee(@RequestHeader("Authorization") String token, @RequestParam String id)
+	public TarifaDTO getFee(@RequestHeader("Authorization") String token, @RequestParam("id") String id)
 			throws ServerException {
 		return tarifaService.consultaXId(id);
 	}
@@ -65,13 +65,14 @@ public class TariffRest {
 	}
 
 	@GetMapping(value = "/dimension")
-	public List<TariffOptionDTO> getDimensionToTariff(@RequestHeader("Authorization") String token, @RequestParam String tariff, @RequestParam String dimension, @RequestParam String filter)
+	public List<TariffOptionDTO> getDimensionToTariff(@RequestHeader("Authorization") String token, @RequestParam("tariff") String tariff, 
+			@RequestParam("dimension") String dimension, @RequestParam("filter") String filter)
 			throws ServerException {
 		return tariffGetDimensionService.call(tariffGetByDocumentService.call(tariff), dimension, filter);
 	}
 	
 	@DeleteMapping(value = "/fee")
-	public void deleteFee(@RequestHeader("Authorization") String token, @RequestParam String id)
+	public void deleteFee(@RequestHeader("Authorization") String token, @RequestParam("id") String id)
 			throws ServerException {
 		tarifaService.inactivar(tarifaService.consultaXId(id), token);
 	}
