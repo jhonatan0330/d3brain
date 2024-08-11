@@ -530,4 +530,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
 	VALUES('PROP_264' , 'O', 'LANDING PAGE', 'LANDING_PAGE', 'REQUISITO', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
+	VALUES('PROP_265' , 'L', 'REPORTE DE MODULO', 'REPORT_MODULE', 'REQUISITO', true);	
+	
 		

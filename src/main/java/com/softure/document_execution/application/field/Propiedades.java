@@ -212,6 +212,7 @@ public class Propiedades {
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
+	public static final String REPORT_MODULE_REFERENCE = "REPORT_MODULE_REFERENCE";
 
 	public static final String GPS = "GPS";
 	public static final String RELACIONAR_DOCUMENTOS = "RELACIONAR_DOCUMENTOS";
@@ -1137,7 +1138,7 @@ public class Propiedades {
 			break;
 		}
 		case PLANTILLA_TIPO_CONFIGURATION: {
-			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nARTICLE\n";
+			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nTARIFA\nARTICLE\n";
 			break;
 		}
 		case PLANTILLA_RENDER_ESPECIAL_SQL: {
@@ -1233,6 +1234,10 @@ public class Propiedades {
 		}
 		case REPORTE_EXCEL: {
 			ruleProperty = "Nombre del reporte que se va a ejecutar cuando sea en excel, puede estar inactivo.\n";
+			break;
+		}
+		case REPORT_MODULE_REFERENCE: {
+			ruleProperty = "Coloca el nombre del reporte que quieres que se abra desde ese modulo.\n";
 			break;
 		}
 		case REP_AUTOPRINT: {

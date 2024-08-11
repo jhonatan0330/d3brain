@@ -9,9 +9,11 @@
 			ctar_llave as  llaveTabla
 			,ctar_tarifario as  tarifario
 			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
-			,(select ctrf_documento from tarifario_trfp where ctrf_llave = ctar_tarifario) as  documento
+			,(select ctrf_documento from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioDocumento
+			,ctar_documento as  documento
 			,ctar_producto as  producto
-			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
+			,ctar_productodocumento as productoDocumento
+			,descripcion(ctar_productodocumento) as  productoNombre
 			,ctar_recurso as  recurso
 			,descripcion(ctar_recurso) as  recursoNombre
 			,btar_rangoprecios as  rangoPrecios
@@ -45,8 +47,14 @@
 			<if test="tarifario!=null">
 				and ctar_tarifario = #{tarifario}
 			</if>
+			<if test="documento!=null">
+				and ctar_documento = #{documento}
+			</if>
 			<if test="producto!=null">
 				and ctar_producto = #{producto}
+			</if>
+			<if test="productoDocumento!=null">
+				and ctar_productodocumento = #{productoDocumento}
 			</if>
 			<if test="recurso!=null">
 				and ctar_recurso = #{recurso}
@@ -116,8 +124,14 @@
 		<if test="tarifario!=null">
 			,ctar_tarifario
 		</if>
+		<if test="documento!=null">
+			,ctar_documento
+		</if>
 		<if test="producto!=null">
 			,ctar_producto
+		</if>
+		<if test="productoDocumento!=null">
+			,ctar_productodocumento
 		</if>
 		<if test="recurso!=null">
 			,ctar_recurso
@@ -163,8 +177,14 @@
 		<if test="tarifario!=null">
 			,#{tarifario}
 		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
 		<if test="producto!=null">
 			,#{producto}
+		</if>
+		<if test="productoDocumento!=null">
+			,#{productoDocumento}
 		</if>
 		<if test="recurso!=null">
 			,#{recurso}
@@ -212,7 +232,9 @@
 		update tarifa_tarp
 			set
 				ctar_tarifario = #{tarifario},
+				ctar_documento = #{documento},
 				ctar_producto = #{producto},
+				ctar_productodocumento = #{productoDocumento},
 				ctar_recurso = #{recurso},
 				btar_rangoprecios = #{rangoPrecios},
 				mtar_valorminimo = #{valorMinimo},
@@ -248,8 +270,10 @@
 			ctar_llave as  llaveTabla
 			,ctar_tarifario as  tarifario
 			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
+			,ctar_documento as  documento
 			,ctar_producto as  producto
-			,(select descripcion(cpro_documento) from producto_prop where cpro_llave = ctar_producto) as  productoNombre
+			,ctar_productodocumento as  productoDocumento
+			,descripcion(cpro_productodocumento)  as  productoNombre
 			,ctar_recurso as  recurso
 			,descripcion(ctar_recurso) as  recursoNombre
 			,ctar_dimension2 as  dimension2

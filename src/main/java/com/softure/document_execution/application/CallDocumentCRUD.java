@@ -823,7 +823,7 @@ public class CallDocumentCRUD {
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
 			homologateService.createFromDocument(dto,
-					Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor());
+					Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor(), token);
 	}
 
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {

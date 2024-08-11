@@ -5,5 +5,6 @@ public class ConfigEnum {
 	public static final String ARTICLE = "ARTICLE";
 	public static final String FAQ = "FAQ";
 	public static final String TARIFARIO = "TARIFARIO";
+	public static final String TARIFA = "TARIFA";
 		
 }

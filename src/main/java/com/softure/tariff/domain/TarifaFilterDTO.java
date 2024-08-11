@@ -12,6 +12,7 @@ public class TarifaFilterDTO extends BasicFilterDTO
 	private String tarifarioNombre;
 	private String documento;
 	private String producto;
+	private String productoDocumento;
 	private String productoNombre;
 	private String recurso;
 	private String recursoNombre;
@@ -166,6 +167,14 @@ public class TarifaFilterDTO extends BasicFilterDTO
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
+	}
+
+	public String getProductoDocumento() {
+		return productoDocumento;
+	}
+
+	public void setProductoDocumento(String productoDocumento) {
+		this.productoDocumento = productoDocumento;
 	}
 	
 

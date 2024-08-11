@@ -450,6 +450,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token);
 				dto.setValor(plantilla.getLlaveTabla());
 			}
+			if (dto.getKey().compareTo(Propiedades.REPORT_MODULE_REFERENCE) == 0) {
+				DocumentoPlantillaDTO plantilla = plantillaService.createReportTemplate(dto.getCampo(), token);
+				dto.setValor(plantilla.getLlaveTabla());
+			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createUpdateTemplate(dto.getCampo(), token);
 				dto.setValor(plantilla.getLlaveTabla());
@@ -866,6 +870,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.API_NEW_DOCUMENT:
 		case Propiedades.API_SECONDARY_DOCUMENT:
 		case Propiedades.PLANTILLA_DIFERENCIAS:
+		case Propiedades.REPORT_MODULE_REFERENCE:
 		case Propiedades.COVERAGE_TEMPLATE:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);

@@ -24,6 +24,7 @@ import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TarifarioDTO;
+import com.softure.tariff.domain.TarifarioFilterDTO;
 import com.softure.tariff.infrastructure.TarifaMapper;
 
 import jakarta.annotation.PostConstruct;
@@ -126,6 +127,9 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TarifaDTO guardar(TarifaDTO dto, String token) throws ServerException {
 		clean(dto);
+		if(dto.getTarifario()==null)
+			dto.setTarifario(getByDocumentService(dto.getTarifarioDocumento()).getKey());
+		
 		TarifarioDTO tarifario = tarifarioService.getById(dto.getTarifario());
 		// Para las cargas valido los codigos y el recurso
 		if (dto.getProducto() == null && dto.getProductoNombre() != null) {
@@ -295,6 +299,17 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		return listarConsulta(t);
 	}
 
+	// Esto lo copie de TarrifGetByDocument, la idea es unificarlo y posiblemten quitar todo lo de fees
+	public TarifarioDTO getByDocumentService(String documentId) throws ServerException {
+		if (documentId == null)
+			throw new ServerException("Se debe seleccionar un tarifario");
+		TarifarioFilterDTO tariffFilter = new TarifarioFilterDTO();
+		tariffFilter.setDocumento(documentId);
+		TarifarioDTO tariffDTO = tarifarioService.getOne(tariffFilter);
+		if (tariffDTO == null)
+			throw new ServerException("El tarifario no existe con ese identificador");
+		return tariffDTO;
+	}
 // END region aditionalMethods
 
 }

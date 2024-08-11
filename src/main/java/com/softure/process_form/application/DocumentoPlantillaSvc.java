@@ -313,6 +313,20 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return templateDelete;
 	}
 	
+	public DocumentoPlantillaDTO createReportTemplate(String templateReferenceId, String token) throws ServerException {
+		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
+		DocumentoPlantillaDTO templateNew = new DocumentoPlantillaDTO();
+		templateNew.setProceso(principalTemplate.getProceso());
+		templateNew.setNombre(principalTemplate.getNombre() + " - INFORME");
+		//templateDelete.setObjetivo(".");
+		templateNew = guardar(templateNew, token);
+		PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateNew.getLlaveTabla(),
+				Propiedades.PLANTILLA_TIPO_REPORTE, templateReferenceId, token);
+		prop.setUsuarioExcluyenteNombre(principalTemplate.getLlaveTabla());
+		configuracionSvc.guardar(prop, token);
+		return templateNew;
+	}
+	
 	public DocumentoPlantillaDTO createUpdateTemplate(String templateReferenceId, String token) throws ServerException {
 		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
 		DocumentoPlantillaDTO templateUpdate = new DocumentoPlantillaDTO();
