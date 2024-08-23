@@ -117,7 +117,7 @@ public class HomologatePrepareService {
 				//Quedo pendiente
 				if(dto.getUsuarioExcluyenteNombre()!=null) {
 					propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
-							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY, "1", token), token);
+							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY, generateScriptToTemplate(dto.getUsuarioExcluyenteNombre()), token), token);
 				}
 			}
 			break;
@@ -146,6 +146,29 @@ public class HomologatePrepareService {
 			adapterConfiguration(plantillaPrincipal.getLlaveTabla(), dto.getValor(), token);
 			break;
 		}
+	}
+
+	private String generateScriptToTemplate(String templateId) throws ServerException {
+		DocumentoPlantillaDTO dp = plantillaService.consultaXId(templateId);
+		String result = "select d.cpdv_nombre as \"CODIGO\"";
+		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId, null);
+		for (DocumentoPlantillaCaracteristicaDTO iField : fields) {
+			String textToQuery = "cpvc_valortext";
+			switch (iField.getFormato()) {
+				case DocumentoPlantillaCaracteristicaDTO.FECHA: {
+					textToQuery = "dpvc_valorfecha";
+					break;
+				}
+				case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
+					textToQuery = "mpvc_valornumero";
+					break;
+				}
+			}
+			result = result + "\n	,(select cp."+textToQuery+" from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";	
+		}
+		result = result + "\n	,(select cpes_nombre from procesoestado_pesp where cpes_llave = d.cpdv_estadoexpediente) as \"ESTADO\"";
+		result = result + "\nfrom d_" + dp.getCodigo().toLowerCase() + " d \nwhere d.cpdv_estado = 'A' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
+		return result;
 	}
 
 	private void guardarEnCasoQueNoExista(PropiedadDTO dto, String token) throws ServerException {
