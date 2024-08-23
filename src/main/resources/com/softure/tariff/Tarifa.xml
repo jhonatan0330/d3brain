@@ -273,7 +273,7 @@
 			,ctar_documento as  documento
 			,ctar_producto as  producto
 			,ctar_productodocumento as  productoDocumento
-			,descripcion(cpro_productodocumento)  as  productoNombre
+			,descripcion(ctar_productodocumento)  as  productoNombre
 			,ctar_recurso as  recurso
 			,descripcion(ctar_recurso) as  recursoNombre
 			,ctar_dimension2 as  dimension2
