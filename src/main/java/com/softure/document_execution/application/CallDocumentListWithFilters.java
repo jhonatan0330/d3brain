@@ -186,6 +186,8 @@ public class CallDocumentListWithFilters {
 				for (ProcesoTransicionDTO iTransition : transitionToStartProcess) {
 					resultManyTemplates.addAll(readResultByTemplate(dto, iTransition.getPlantilla()));
 				}
+			} else {
+				return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto, dto.getProceso(), null), dto.getSecurityToken(), null);
 			}
 			return resultManyTemplates;
 		}

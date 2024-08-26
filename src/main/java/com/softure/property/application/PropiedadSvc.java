@@ -337,10 +337,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setRolExcluyente(dto.getRolExcluyente());
 			existeFilter.setUsuario(dto.getUsuario());
 			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
-			PropiedadDTO existe = consultaUnica(existeFilter);
-			if (existe != null)
-				throw new ServerException("Esta propiedad ya fue definida " + existe.getNombre()
-						+ getLocationError(existe.getTipo(), existe.getCampo()));
+			List<PropiedadDTO> existe = listarConsulta(existeFilter);
+			if (existe != null && !existe.isEmpty())
+				throw new ServerException("Esta propiedad ya fue definida " + existe.get(0).getNombre()
+						+ getLocationError(existe.get(0).getTipo(), existe.get(0).getCampo()));
 
 		} else {
 			dto.setLlaveTabla(null);

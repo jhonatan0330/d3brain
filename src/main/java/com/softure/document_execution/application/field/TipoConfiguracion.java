@@ -476,7 +476,7 @@ public class TipoConfiguracion {
 				 * plantilla.setTipo(Propiedades.obtenerValor(pBase,
 				 * Propiedades.CONFIGURACION_PLANTILLA_TIPO)); }
 				 */
-				List<DocumentoPlantillaDTO> plantillas = plantillaService.listarPlantillaRol(plantilla);
+				List<DocumentoPlantillaDTO> plantillas = plantillaService.listarPlantillaRol(plantilla, false);
 				if (plantillas != null && !plantillas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (DocumentoPlantillaDTO iPlantilla : plantillas) {

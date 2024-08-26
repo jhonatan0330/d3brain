@@ -249,10 +249,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return consultaUnica(filtro);
 	}
 	
-	public List<DocumentoPlantillaDTO> listarPlantillaRol(DocumentoPlantillaFilterDTO dto)throws ServerException{
+	public List<DocumentoPlantillaDTO> listarPlantillaRol(DocumentoPlantillaFilterDTO dto, boolean todosPermisos)throws ServerException{
 		if(dto==null || dto.getSecurityToken()==null) throw new ServerException("Revise la configuracion del dto filtro");
 		try {
-			return documentoPlantillaMapper.listarMenu(dto); 
+			if(todosPermisos) {
+				return documentoPlantillaMapper.getProcessBoardsToMenu(dto);
+			} else {
+				return documentoPlantillaMapper.listarMenu(dto);	
+			}
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
@@ -400,15 +404,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		//boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
 		String usuario = null;
 		if(dto.getSecurityToken() !=null) usuario = getUserFlex(dto.getSecurityToken());
-		List<DocumentoPlantillaDTO> plantillasPermitidas = null;
-		if(todosPermisos) {
-			DocumentoPlantillaFilterDTO filtroFullFilter = new DocumentoPlantillaFilterDTO();
-			filtroFullFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			filtroFullFilter.setPaginacionRegistroFinal(1000);
-			plantillasPermitidas =listarConsulta(filtroFullFilter);
-		}else {
-			plantillasPermitidas = listarPlantillaRol(dto);
-		}
+		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(dto, todosPermisos);
 		List<DocumentoPlantillaDTO> result = new ArrayList<DocumentoPlantillaDTO>();
 		boolean nuevaPlantilla = true;
 		if(plantillasPermitidas!=null && plantillasPermitidas.size()!=0){
@@ -529,6 +525,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	private void statesFromProcess(List<ProcesoEstadoDTO> estados, List<ProcesoTransicionDTO> transiciones,
 			List<PropiedadDTO> todasPropiedadesEstados, DocumentoPlantillaDTO iplantillaPermitida,
 			String procesoInicial) {
+		// Los tableros de control por el momento no tienen estado
+		if(procesoInicial==null) return;
 		for (ProcesoEstadoDTO procesoEstadoDTO : estados) {
 			if(procesoEstadoDTO.getProceso().compareTo(procesoInicial)==0) {
 				if(iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(new ArrayList<ProcesoEstadoDTO>());
