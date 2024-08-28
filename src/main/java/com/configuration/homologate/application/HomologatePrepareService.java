@@ -105,12 +105,12 @@ public class HomologatePrepareService {
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
 						reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1", token), token);
 				campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
-				/*PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 						plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
 				historico.setFechaInicial(new Date());
 				historico.setMotivo("Pasar a tabla historico");
 				historico.setTexto("00:00:07:00:00");
-				propertyService.guardar(historico, token);*/
+				propertyService.guardar(historico, token);
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 				//Esto es un truco para crear un query report de una plantilla
@@ -153,21 +153,23 @@ public class HomologatePrepareService {
 		String result = "select d.cpdv_nombre as \"CODIGO\"";
 		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId, null);
 		for (DocumentoPlantillaCaracteristicaDTO iField : fields) {
-			String textToQuery = "cpvc_valortext";
+			
 			switch (iField.getFormato()) {
 				case DocumentoPlantillaCaracteristicaDTO.FECHA: {
-					textToQuery = "dpvc_valorfecha";
+					result = result + "\n	,(select cp.dpvc_valorfecha from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";
 					break;
 				}
 				case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
-					textToQuery = "mpvc_valornumero";
+					result = result + "\n	,coalesce((select cp.mpvc_valornumero::numeric from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"'), 0) as \""+iField.getNombre()+"\"";
 					break;
 				}
+				default:{
+					result = result + "\n	,(select cp.cpvc_valortext from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";
+				}
 			}
-			result = result + "\n	,(select cp."+textToQuery+" from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";	
 		}
 		result = result + "\n	,(select cpes_nombre from procesoestado_pesp where cpes_llave = d.cpdv_estadoexpediente) as \"ESTADO\"";
-		result = result + "\nfrom d_" + dp.getCodigo().toLowerCase() + " d \nwhere d.cpdv_estado = 'A' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
+		result = result + "\nfrom documentoplantilla_dplp inner join pedidoventa_pdvp d on (cdpl_llave = d.cpdv_plantilla) \nwhere cdpl_codigo = " + dp.getCodigo() + " and d.cpdv_estado = 'A' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
 		return result;
 	}
 
@@ -719,9 +721,12 @@ public class HomologatePrepareService {
 				newFee.setCantidadMinima(getValueNumberInt(document, "CANTIDAD_MINIMA"));
 				newFee.setCantidadMaxima(getValueNumberInt(document, "CANTIDAD_MAXIMA"));
 				newFee.setTotalMinimo(getValueNumber(document, "TOTAL_MINIMO"));
+				
+				//if(newFee.getValorMinimo()==null) newFee.setValorMinimo(newFee.getValor());
+				//if(newFee.getValor()==null) newFee.setValor(BigDecimal.ZERO);
 
 				newFee.setEstado(SharedConstants.STATE_ACTIVE);
-				feeService.update(newFee);
+				feeService.actualizar(newFee, token);
 			}
 		}
 	}
