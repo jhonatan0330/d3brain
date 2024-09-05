@@ -30,14 +30,12 @@ import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
-import com.softure.inventory.application.ProductoCaracteristicaSvc;
+
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
-import com.softure.inventory.domain.ProductoCaracteristicaDTO;
-import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
@@ -112,8 +110,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private ProcesoTransicionAutomaticaSvc automatizadorService;
 	@Autowired @Lazy 
 	private ProductoSvc productoService;
-	@Autowired @Lazy 
-	private ProductoCaracteristicaSvc productoCaracteristicaService;
 	@Autowired @Lazy 
 	private PropiedadValorDefinidoSvc valorDefinidoService;
 	@Autowired @Lazy 
@@ -553,13 +549,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS) == 0) {
 					DocumentoPlantillaCaracteristicaDTO filtro = campoService.consultaXId(dto.getCampo());
 					if (filtro == null) {
-						ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
-								.consultaXId(dto.getCampo());
-						if (filtroProducto == null) {
-							throw new ServerException("Este campo no tiene configurada la plantilla");
-						} else {
-							plantillaId = filtroProducto.getBase();
-						}
+						throw new ServerException("Este campo no tiene configurada la plantilla");
 					} else {
 						plantillaId = filtro.getPlantilla();
 					}
@@ -602,19 +592,19 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				if (producto == null) {
 					throw new ServerException("ID de la plantilla configurado en el campo no es valido");
 				} else {
-					ProductoCaracteristicaFilterDTO campoProductoFilter = new ProductoCaracteristicaFilterDTO();
-					campoProductoFilter.setEstado(SharedConstants.STATE_ACTIVE);
-					campoProductoFilter.setBase(producto.getLlaveTabla());
-					campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
-					ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService
-							.consultaUnica(campoProductoFilter);
-					if (campoProducto == null)
+					//ProductoCaracteristicaFilterDTO campoProductoFilter = new ProductoCaracteristicaFilterDTO();
+					//campoProductoFilter.setEstado(SharedConstants.STATE_ACTIVE);
+					//campoProductoFilter.setBase(producto.getLlaveTabla());
+					//campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
+					//ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService
+					//		.consultaUnica(campoProductoFilter);
+					//if (campoProducto == null)
 						throw new ServerException("El campo " + dto.getTexto() + " no fue reconocido en el producto "
 								+ producto.getNombre() + "\nKey : " + dto.getKey() + "\nValue Code : "
 								+ dto.getValor());
-					dto.setValor(campoProducto.getLlaveTabla());
-					dto.setTexto(campoProducto.getNombre());
-					return false;
+						//dto.setValor(campoProducto.getLlaveTabla());
+						//dto.setTexto(campoProducto.getNombre());
+						//return false;
 				}
 			}
 			// VAlido por el nombre
@@ -872,6 +862,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PLANTILLA_DIFERENCIAS:
 		case Propiedades.REPORT_MODULE_REFERENCE:
 		case Propiedades.COVERAGE_TEMPLATE:
+		case Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;

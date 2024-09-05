@@ -12,9 +12,9 @@
 			,mcpr_cantidadmaxima as  cantidadMaxima
 			,ccpr_nodosuperior as  nodoSuperior
 			,bcpr_inventarios as  inventarios
-			,bcpr_camposadicionales as  camposAdicionales
 			,bcpr_composicion as  composicion
 			,ncpr_promocionbase as  promocionBase
+			,ccpr_plantilla as  plantilla
 			,ccpr_estado as estado
 		from categoriaproducto_cprp a
 	</sql>
@@ -35,9 +35,6 @@
 			</if>
 			<if test="inventariosFilter!=null">
 				and bcpr_inventarios = #{inventariosFilter}
-			</if>
-			<if test="camposAdicionalesFilter!=null">
-				and bcpr_camposadicionales = #{camposAdicionalesFilter}
 			</if>
 			<if test="composicionFilter!=null">
 				and bcpr_composicion = #{composicionFilter}
@@ -98,8 +95,8 @@
 		<if test="inventarios!=null">
 			,bcpr_inventarios
 		</if>
-		<if test="camposAdicionales!=null">
-			,bcpr_camposadicionales
+		<if test="plantilla!=null">
+			,ccpr_plantilla
 		</if>
 		<if test="composicion!=null">
 			,bcpr_composicion
@@ -127,8 +124,8 @@
 		<if test="inventarios!=null">
 			,#{inventarios}
 		</if>
-		<if test="camposAdicionales!=null">
-			,#{camposAdicionales}
+		<if test="plantilla!=null">
+			,#{plantilla}
 		</if>
 		<if test="composicion!=null">
 			,#{composicion}
@@ -150,7 +147,7 @@
 				mcpr_cantidadmaxima = #{cantidadMaxima},
 				ccpr_nodosuperior = #{nodoSuperior},
 				bcpr_inventarios = #{inventarios},
-				bcpr_camposadicionales = #{camposAdicionales},
+				ccpr_plantilla = #{plantilla},
 				bcpr_composicion = #{composicion},
 				ncpr_promocionbase = #{promocionBase},
 				ccpr_estado =#{estado}
@@ -165,7 +162,7 @@
 			,mcpr_cantidadmaxima as  cantidadMaxima
 			,ccpr_nodosuperior as  nodoSuperior
 			,bcpr_inventarios as  inventarios
-			,bcpr_camposadicionales as  camposAdicionales
+			,ccpr_plantilla as plantilla
 			,bcpr_composicion as  composicion
 			,ncpr_promocionbase as  promocionBase
 			,ccpr_estado as estado

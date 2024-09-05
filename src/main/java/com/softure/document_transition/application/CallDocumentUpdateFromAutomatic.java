@@ -138,7 +138,7 @@ public class CallDocumentUpdateFromAutomatic {
 				.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token);
 
 		List<PedidoVentaCaracteristicaDTO> currentFields = campoService.readCompleteFields(procesoDTO.getLlaveTabla(),
-				camposPlantilla, procesoDTO.getHistorico());
+				camposPlantilla, procesoDTO.getHistorico(), token);
 
 		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToIncludeActiveModify, procesoDTO,
 				propertiesToSearchFieldDestiny, camposPlantilla, currentFields);

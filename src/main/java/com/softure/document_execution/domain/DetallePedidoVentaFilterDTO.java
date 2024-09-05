@@ -25,6 +25,8 @@ public class DetallePedidoVentaFilterDTO extends BasicFilterDTO
 	private String transaccionRegistro;
 	private String transaccionInactivo;
 	private String campo;
+	private String detalleId;
+	
 	public String getDocumento() {
 		return documento;
 	}
@@ -104,5 +106,12 @@ public class DetallePedidoVentaFilterDTO extends BasicFilterDTO
 		this.campo = campo;
 	}
 
+	public String getDetalleId() {
+		return detalleId;
+	}
+
+	public void setDetalleId(String detalleId) {
+		this.detalleId = detalleId;
+	}
 
 }

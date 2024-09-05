@@ -2,23 +2,18 @@ package com.softure.process_form.domain;
 
 import java.util.List;
 
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
 @Alias("DocumentoPlantillaCaracteristicaDTO")
 @JsonInclude(Include.NON_NULL)
 public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 	public static final String TEXTO = "T";
 	public static final String FECHA = "F";
@@ -43,7 +38,7 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	private String codigo;
 	private Integer orden;
 	private String imagen;
-	private List<CategoriaProductoDTO> categorias;
+	//private List<CategoriaProductoDTO> categorias;
 	private List<ProductoDTO> productos;
 	private List<PedidoVentaDTO> documentos;
 
@@ -103,13 +98,7 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	public String getImagen() {
 		return imagen;
 	}
-	public void setCategorias(List<CategoriaProductoDTO> categorias) {
-		this.categorias = categorias;
-	}
-	
-	public List<CategoriaProductoDTO> getCategorias() {
-		return categorias;
-	}
+
 	public void setProductos(List<ProductoDTO> productos) {
 		this.productos = productos;
 	}
@@ -124,7 +113,5 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	public List<PedidoVentaDTO> getDocumentos() {
 		return documentos;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

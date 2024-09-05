@@ -19,8 +19,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
-import com.softure.inventory.application.ProductoCaracteristicaSvc;
-import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.domain.CuentaDTO;
@@ -56,8 +54,6 @@ public class CallDocumentListWithFilters {
 	private PedidoVentaDineroSvc dineroService;
 	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
-	@Autowired @Lazy 
-	private ProductoCaracteristicaSvc productoCaracteristicaService;
 
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto == null)
@@ -96,15 +92,15 @@ public class CallDocumentListWithFilters {
 				// plantillas
 				// por el momento excusas por este remache, lo copie de propiedadsc
 				// identificador campo
-				ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
-						.consultaXId(dto.getCampoOrigen());
-				if (filtroProducto == null) {
+				//ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
+					//	.consultaXId(dto.getCampoOrigen());
+				//if (filtroProducto == null) {
 					throw new ServerException("Revise porque el campo enviado de filtro no es correcto");
-				} else {
-					campoPlantilla = new DocumentoPlantillaCaracteristicaDTO();
-					campoPlantilla.setLlaveTabla(filtroProducto.getLlaveTabla());
-					campoPlantilla.setCodigo(filtroProducto.getCodigo());
-				}
+				//} else {
+					//campoPlantilla = new DocumentoPlantillaCaracteristicaDTO();
+					//campoPlantilla.setLlaveTabla(filtroProducto.getLlaveTabla());
+					//campoPlantilla.setCodigo(filtroProducto.getCodigo());
+				//}
 			}
 			campoPlantilla = documentoPlantillaCaracteristicaService.cargarComplementos(campoPlantilla,
 					dto.getSecurityToken());

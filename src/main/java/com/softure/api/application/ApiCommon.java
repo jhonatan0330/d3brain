@@ -44,7 +44,7 @@ public class ApiCommon {
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
 			iCampo.setDetalles(
-					assignateValueToProducts(fieldVO.getProducts(), productoService, detallePedidoVentaService));
+					assignateValueToProducts(fieldVO.getProducts(), productoService, detallePedidoVentaService, null));
 			break;
 		}
 		default: {
@@ -83,7 +83,7 @@ public class ApiCommon {
 	}
 
 	private static List<DetallePedidoVentaDTO> assignateValueToProducts(List<ProductRequest> products,
-			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService) throws ServerException {
+			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService, String token) throws ServerException {
 		if (products == null || products.isEmpty())
 			return null;
 		List<DetallePedidoVentaDTO> result = new ArrayList<>();
@@ -115,10 +115,11 @@ public class ApiCommon {
 			for (ProductoDTO iProducto : productos) {
 				if (iProducto.getLlaveTabla().compareTo(detalle.getProducto()) == 0) {
 					detalle.setPropiedades(iProducto.getPropiedades());
+					detalle.setPlantillaDetalle(iProducto.getTemplateFields());
 					break;
 				}
 			}
-			detallePedidoVentaService.createFieldsProduct(detalle);
+			detallePedidoVentaService.createFieldsProduct(detalle, token);
 		}
 
 		return result;

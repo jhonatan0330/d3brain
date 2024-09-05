@@ -39,13 +39,10 @@ import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
-import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaDineroSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.domain.DetallePedidoVentaDTO;
-import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -60,8 +57,6 @@ import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.DeduccionProductoSvc;
-import com.softure.inventory.application.DetalleCaracteristicaProductoSvc;
-import com.softure.inventory.application.ProductoCaracteristicaSvc;
 import com.softure.inventory.application.ProductoInventarioDescuentoSvc;
 import com.softure.inventory.application.ProductoInventarioSvc;
 import com.softure.inventory.application.ProductoSvc;
@@ -72,10 +67,6 @@ import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.DeduccionProductoDTO;
 import com.softure.inventory.domain.DeduccionProductoFilterDTO;
-import com.softure.inventory.domain.DetalleCaracteristicaProductoDTO;
-import com.softure.inventory.domain.DetalleCaracteristicaProductoFilterDTO;
-import com.softure.inventory.domain.ProductoCaracteristicaDTO;
-import com.softure.inventory.domain.ProductoCaracteristicaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
@@ -2719,72 +2710,6 @@ public class FullControllerDTO {
 	}
 	
 	
-	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
-	
-	@PostMapping(value="/consultaXIdDetallePedidoVenta")
-	public DetallePedidoVentaDTO consultaXIdDetallePedidoVenta(@RequestBody String llave) throws FlexException {
-		try {
-			return detallePedidoVentaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	
-	@PostMapping(value="/consultaUnicaDetallePedidoVenta")
-	public DetallePedidoVentaDTO consultaUnicaDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
-		try {
-			return detallePedidoVentaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaDetallePedidoVenta")
-	public List<DetallePedidoVentaDTO> listarConsultaDetallePedidoVenta(@RequestBody DetallePedidoVentaFilterDTO dto) throws FlexException  {
-		try {
-			return detallePedidoVentaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarDetallePedidoVenta")
-	public DetallePedidoVentaDTO activarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detallePedidoVentaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarDetallePedidoVenta")
-	public DetallePedidoVentaDTO inactivarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detallePedidoVentaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarDetallePedidoVenta")
-	public DetallePedidoVentaDTO actualizarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detallePedidoVentaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarDetallePedidoVenta")
-	public DetallePedidoVentaDTO guardarDetallePedidoVenta(@RequestBody DetallePedidoVentaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detallePedidoVentaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired @Lazy  private CategoriaProductoSvc categoriaProductoService;
@@ -2922,75 +2847,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	
-	@Autowired @Lazy  private ProductoCaracteristicaSvc productoCaracteristicaService;
-	
-	@PostMapping(value="/consultaXIdProductoCaracteristica")
-	public ProductoCaracteristicaDTO consultaXIdProductoCaracteristica(@RequestBody String llave) throws FlexException {
-		try {
-			return productoCaracteristicaService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	
-	@PostMapping(value="/consultaUnicaProductoCaracteristica")
-	public ProductoCaracteristicaDTO consultaUnicaProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
-		try {
-			return productoCaracteristicaService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaProductoCaracteristica")
-	public List<ProductoCaracteristicaDTO> listarConsultaProductoCaracteristica(@RequestBody ProductoCaracteristicaFilterDTO dto) throws FlexException  {
-		try {
-			return productoCaracteristicaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarProductoCaracteristica")
-	public ProductoCaracteristicaDTO activarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoCaracteristicaService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarProductoCaracteristica")
-	public ProductoCaracteristicaDTO inactivarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoCaracteristicaService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarProductoCaracteristica")
-	public ProductoCaracteristicaDTO actualizarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoCaracteristicaService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarProductoCaracteristica")
-	public ProductoCaracteristicaDTO guardarProductoCaracteristica(@RequestBody ProductoCaracteristicaDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoCaracteristicaService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
 	@Autowired @Lazy  private UsuarioRolProductoSvc usuarioRolProductoService;
 	
 	@PostMapping(value="/consultaXIdUsuarioRolProducto")
@@ -3053,73 +2909,6 @@ public class FullControllerDTO {
 	public UsuarioRolProductoDTO guardarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired @Lazy  private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
-	
-	@PostMapping(value="/consultaXIdDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO consultaXIdDetalleCaracteristicaProducto(@RequestBody String llave) throws FlexException {
-		try {
-			return detalleCaracteristicaProductoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@PostMapping(value="/consultaUnicaDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO consultaUnicaDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaDetalleCaracteristicaProducto")
-	public List<DetalleCaracteristicaProductoDTO> listarConsultaDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO activarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO inactivarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO actualizarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarDetalleCaracteristicaProducto")
-	public DetalleCaracteristicaProductoDTO guardarDetalleCaracteristicaProducto(@RequestBody DetalleCaracteristicaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return detalleCaracteristicaProductoService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

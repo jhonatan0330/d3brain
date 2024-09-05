@@ -22,10 +22,10 @@ public class CategoriaProductoDTO extends BasicParamDTO
 	private String nodoSuperior;
 	private List<CategoriaProductoDTO> hijos;
 	private boolean inventarios;
-	private boolean camposAdicionales;
 	private boolean composicion;
 	private Integer promocionBase;
-
+	private String plantilla;
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
@@ -68,13 +68,14 @@ public class CategoriaProductoDTO extends BasicParamDTO
 	public boolean getInventarios() {
 		return inventarios;
 	}
-	public void setCamposAdicionales(boolean camposAdicionales) {
-		this.camposAdicionales = camposAdicionales;
+	public void setPlantilla(String plantilla) {
+		this.plantilla = plantilla;
 	}
 	
-	public boolean getCamposAdicionales() {
-		return camposAdicionales;
+	public String getPlantilla() {
+		return plantilla;
 	}
+	
 	public void setComposicion(boolean composicion) {
 		this.composicion = composicion;
 	}

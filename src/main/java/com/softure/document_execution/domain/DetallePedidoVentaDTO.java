@@ -29,7 +29,6 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	private BigDecimal valorMinimo;
 	private BigDecimal valorTotal;
 	private BigDecimal valorUnitario;
-	private List<PedidoVentaCaracteristicaDTO> caracteristicas;
 	private BigDecimal valorMaximo;
 	private String plantilla;
 	private BigDecimal valorSubtotal;
@@ -37,6 +36,9 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	private String transaccionRegistro;
 	private String transaccionInactivo;
 	private String campo;
+	private String plantillaDetalle;
+	private PedidoVentaDTO documentoDetalle;
+	private String detalleId;
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
@@ -136,13 +138,7 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	public BigDecimal getValorUnitario() {
 		return valorUnitario;
 	}
-	public void setCaracteristicas(List<PedidoVentaCaracteristicaDTO> caracteristicas) {
-		this.caracteristicas = caracteristicas;
-	}
-	
-	public List<PedidoVentaCaracteristicaDTO> getCaracteristicas() {
-		return caracteristicas;
-	}
+
 	public void setValorMaximo(BigDecimal valorMaximo) {
 		this.valorMaximo = valorMaximo;
 	}
@@ -193,5 +189,27 @@ public class DetallePedidoVentaDTO extends BasicParamDTO
 	public void setCampo(String campo) {
 		this.campo = campo;
 	}
+	
+	public PedidoVentaDTO getDocumentoDetalle() {
+		return documentoDetalle;
+	}
 
+	public void setDocumentoDetalle(PedidoVentaDTO documentoDetalle) {
+		this.documentoDetalle = documentoDetalle;
+	}
+
+	public String getDetalleId() {
+		return detalleId;
+	}
+
+	public void setDetalleId(String detalleId) {
+		this.detalleId = detalleId;
+	}
+	public String getPlantillaDetalle() {
+		return plantillaDetalle;
+	}
+
+	public void setPlantillaDetalle(String plantillaDetalle) {
+		this.plantillaDetalle = plantillaDetalle;
+	}
 }

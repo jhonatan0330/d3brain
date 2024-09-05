@@ -2,8 +2,6 @@ package com.softure.document_execution.application;
 
 import java.util.List;
 
-// BEGIN region interImport
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,12 +17,7 @@ import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.infrastructure.DetallePedidoVentaMapper;
-import com.softure.inventory.application.DetalleCaracteristicaProductoSvc;
-import com.softure.inventory.application.ProductoCaracteristicaSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.DetalleCaracteristicaProductoDTO;
-import com.softure.inventory.domain.DetalleCaracteristicaProductoFilterDTO;
-import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
@@ -48,12 +41,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 
 	@Autowired @Lazy 
 	private DetallePedidoVentaMapper detallePedidoVentaMapper;
-
-	// BEGIN region servicesDetallePedidoVenta
-	@Autowired @Lazy 
-	private DetalleCaracteristicaProductoSvc detalleCaracteristicaProductoService;
-	@Autowired @Lazy 
-	private ProductoCaracteristicaSvc productoCaracteristicaService;
 	@Autowired @Lazy 
 	private ProductoSvc productoService;
 	@Autowired @Lazy 
@@ -64,8 +51,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	private TarifaSvc tarifaService;
 	@Autowired @Lazy 
 	private PropiedadSvc configuracionSvc;
-
-	// END region servicesDetallePedidoVenta
+	@Autowired @Lazy 
+	private CallDocumentCRUD crudservice;
 
 	@Override
 	public DetallePedidoVentaDTO consultaXId(String llave) throws ServerException {
@@ -91,26 +78,11 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO actualizar(DetallePedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN DetallePedidoVenta_actualizar
-		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {
-			for (PedidoVentaCaracteristicaDTO pvc : dto.getCaracteristicas()) {
-				formatValidarCampo(pvc, dto);
-				DetalleCaracteristicaProductoDTO caracteristica = new DetalleCaracteristicaProductoDTO();
-				caracteristica.setCampo(pvc.getCampo());
-				caracteristica.setEntidad(dto.getLlaveTabla());
-				caracteristica.setEstado(pvc.getEstado());
-				caracteristica.setTransaccionRegistro(pvc.getTransaccionRegistro());
-				caracteristica.setValorFecha(pvc.getValorFecha());
-				caracteristica.setValorNumero(pvc.getValorNumero());
-				caracteristica.setLlaveTabla(pvc.getLlaveTabla());
-				caracteristica.setValorOpcion(pvc.getValorOpcion());
-				caracteristica.setValorText(pvc.getValorText());
-				detalleCaracteristicaProductoService.actualizar(caracteristica, token);
-			}
+		if(dto.getPlantillaDetalle()!=null) {
+			crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false);
 		}
 		dto = update(dto);
 		return dto;
-		// END DetallePedidoVenta_actualizar
 	}
 
 	@Override
@@ -144,8 +116,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN DetallePedidoVenta_guardar
-		List<PedidoVentaCaracteristicaDTO> caracteristicas = dto.getCaracteristicas();
+		
 		// if(dto.getCantidad().multiply(dto.getValorUnitario()).add(dto.getValorTotal().negate()).abs().longValue()
 		// > 1)
 		// throw new ServerException("El valor total (" +
@@ -153,7 +124,14 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		// (" + SoftureUtil.formatNumber(dto.getCantidad()) +") x valor unitario (" +
 		// SoftureUtil.formatMoney(dto.getValorUnitario()) +") =" +
 		// SoftureUtil.formatMoney(dto.getCantidad().multiply(dto.getValorUnitario())));
+		if(dto.getPlantillaDetalle()!=null) {
+			dto.getDocumentoDetalle().setFuncionario(getUserFlex(token));
+			dto.getDocumentoDetalle().setPlantilla(dto.getPlantillaDetalle());
+			dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false));
+			dto.setDetalleId(dto.getDocumentoDetalle().getLlaveTabla());
+		}
 		dto = save(dto);
+		/*
 		dto.setCaracteristicas(caracteristicas);
 		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {
 			for (int i = 0; i < dto.getCaracteristicas().size(); i++) {
@@ -178,7 +156,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 					caracteristica = detalleCaracteristicaProductoService.guardar(caracteristica, token);
 				}
 			}
-		}
+		}*/
 		return dto;
 		// END DetallePedidoVenta_guardar
 	}
@@ -210,50 +188,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		return detallePedidoVentaMapper.listar2Documento(documento);
 	}
 
-	private void formatValidarCampo(PedidoVentaCaracteristicaDTO dto, DetallePedidoVentaDTO campo)
-			throws ServerException {
-		switch (dto.getCampoDTO().getFormato()) {
-		case DocumentoPlantillaCaracteristicaDTO.FECHA:
-			if (dto.getValorFecha() != null) {
-				SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				dto.setValorText(format.format(dto.getValorFecha()));
-			} else {
-				if (Propiedades.obtenerParametro(dto.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
-					throw new ServerException("Falta la opcion " + dto.getCampoDTO().getNombre() + " del producto "
-							+ campo.getNombre() + ". Cant: " + campo.getCantidad());
-			}
-			break;
-		case DocumentoPlantillaCaracteristicaDTO.NUMERO:
-			if (dto.getValorNumero() != null)
-				dto.setValorText(dto.getValorNumero().toPlainString());// Se presentaba un error al modificar una guia
-																		// en universal
-			break;
-		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
-			if (dto.getValorOpcion() != null) {
-				PedidoVentaDTO documento = documentoService.consultaXId(dto.getValorOpcion());
-				if (documento == null)
-					throw new ServerException("La opcion escogida no esta correctamente configurada." + dto.getCampo());
-
-				if (documento.getDescripcion() != null) {
-					dto.setValorText(documento.getDescripcion());
-				} else {
-					dto.setValorText(documento.getNombre());
-				}
-			} else {
-				if (Propiedades.obtenerParametro(dto.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
-					throw new ServerException("Falta la opcion " + dto.getCampoDTO().getNombre() + " del producto "
-							+ campo.getNombre() + ". Cant: " + campo.getCantidad());
-			}
-			break;
-		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:
-		case DocumentoPlantillaCaracteristicaDTO.TEXTO:
-			/*if (dto.getValorText() != null) {
-				if (Propiedades.obtenerParametro(dto.getCampoDTO(), Propiedades.TEXTO_LARGO) == null)
-					dto.setValorText(dto.getValorText().toUpperCase());
-			}*/
-			break;
-		}
-	}
 
 	public List<ProductoDTO> simplificarConsultaBDProductos(List<ProductoDTO> productos) throws ServerException {
 		List<ProductoDTO> result = productoService.listarProductoSimplificar(productos);
@@ -262,50 +196,54 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (productoDTO.getProductoBase() != null) {
 				ProductoDTO iBase = new ProductoDTO();
 				iBase.setLlaveTabla(productoDTO.getProductoBase());
+				iBase.setCategoriaPlantilla(productoDTO.getCategoriaPlantilla());
 				bases.add(iBase);
 			}
 		}
 		if (bases != null && bases.size() != 0) {
 			List<PropiedadDTO> propiedadesBases = configuracionSvc.listarProductoSimplificar(bases);
-			List<ProductoCaracteristicaDTO> camposBases = productoCaracteristicaService
-					.listarProductoSimplificar(bases);
+			//List<ProductoCaracteristicaDTO> camposBases = productoCaracteristicaService
+			//		.listarProductoSimplificar(bases);
 			for (ProductoDTO iProductoDTO : bases) {
 				iProductoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
 				if (propiedadesBases != null && !propiedadesBases.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : propiedadesBases) {
-						if (propiedadDTO.getCampo().compareTo(iProductoDTO.getLlaveTabla()) == 0)
+						if (propiedadDTO.getCampo().compareTo(iProductoDTO.getCategoriaPlantilla()) == 0)
 							iProductoDTO.getPropiedades().add(propiedadDTO);
 					}
 				}
-				iProductoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
+				/*iProductoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
 				if (camposBases != null && !camposBases.isEmpty()) {
 					for (ProductoCaracteristicaDTO campoDTO : camposBases) {
 						if (campoDTO.getBase().compareTo(iProductoDTO.getLlaveTabla()) == 0)
 							iProductoDTO.getCampos().add(campoDTO);
 					}
-				}
+				}*/
 			}
 		}
 		List<PropiedadDTO> propiedadesProducto = configuracionSvc.listarProductoSimplificar(productos);
-		List<ProductoCaracteristicaDTO> camposProducto = productoCaracteristicaService
-				.listarProductoSimplificar(productos);
+		//List<ProductoCaracteristicaDTO> camposProducto = productoCaracteristicaService
+		//		.listarProductoSimplificar(productos);
 		for (ProductoDTO productoDTO : result) {
 			productoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
 			if (propiedadesProducto != null && !propiedadesProducto.isEmpty()) {
 				for (PropiedadDTO propiedadDTO : propiedadesProducto) {
-					if (propiedadDTO.getCampo().compareTo(productoDTO.getLlaveTabla()) == 0)
+					if (propiedadDTO.getCampo().compareTo(productoDTO.getCategoriaPlantilla()) == 0)
 						productoDTO.getPropiedades().add(propiedadDTO);
 				}
 			}
 			if (productoDTO.getPropiedades().isEmpty() && productoDTO.getProductoBase() != null) {
 				for (ProductoDTO iBase : bases) {
-					if (productoDTO.getProductoBase().compareTo(iBase.getLlaveTabla()) == 0) {
+					if (productoDTO.getProductoBase().compareTo(iBase.getCategoriaPlantilla()) == 0) {
 						productoDTO.setPropiedades(iBase.getPropiedades());
 						break;
 					}
 				}
 			}
-			productoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
+			productoDTO.setTemplateFields(Propiedades.obtenerValor(productoDTO, Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO));
+			if(productoDTO.getTemplateFields().isEmpty())
+				productoDTO.setTemplateFields(null);
+			/*productoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
 			if (camposProducto != null && !camposProducto.isEmpty()) {
 				for (ProductoCaracteristicaDTO campoDTO : camposProducto) {
 					if (campoDTO.getBase().compareTo(productoDTO.getLlaveTabla()) == 0)
@@ -319,7 +257,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 						break;
 					}
 				}
-			}
+			}*/
 		}
 		return result;
 	}
@@ -371,6 +309,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				result.setCantidadPromocionBase(filterPromocion.getCantidadPromocionBase());
 			}
 		}
+		result.setPlantillaDetalle(producto.getTemplateFields());
 		result.setPropiedades(producto.getPropiedades());
 		if (propiedadFuncionTarifario != null) {
 			result.setTarifas(tarifaService.obtenerTarifaFuncion(propiedadFuncionTarifario, producto,
@@ -399,7 +338,11 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			result.setCantidad(BigDecimal.ZERO);
 		if (result.getValorUnitario() == null)
 			result.setValorUnitario(BigDecimal.ZERO);
-		result.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+		if(result.getDetalleId()!=null) {
+			result.setDocumentoDetalle(documentoService.consultaCompleta(result.getDetalleId(), token));
+		}
+		createFieldsProduct(result, token);
+		/*result.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		// Consulto las caracteristicas
 		List<ProductoCaracteristicaDTO> caracteristicas = producto.getCampos();
 		if (caracteristicas != null && !caracteristicas.isEmpty()) {
@@ -465,13 +408,28 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				result.getCaracteristicas().add(nueva);
 			}
 		}
-		createFieldsProduct(result);
+		*/
+		
 		return result;
 	}
 
-	public void createFieldsProduct(DetallePedidoVentaDTO field) throws ServerException {
-		if (field.getCaracteristicas() == null)
-			field.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+	
+	public void createFieldsProduct(DetallePedidoVentaDTO field, String token) throws ServerException {
+		if(field.getDocumentoDetalle() ==null) {
+			field.setDocumentoDetalle(new PedidoVentaDTO());
+			if(field.getPlantillaDetalle()!=null) {
+				field.getDocumentoDetalle().setPlantilla(field.getPlantillaDetalle());
+				documentoService.obtenerCamposCompletos(field.getDocumentoDetalle(), null);
+				String usuario = null; //copia de ocumeto plantillapara no hacer una refecia circular
+				if (token != null)
+					usuario = getUserFlex(token);
+				for (PedidoVentaCaracteristicaDTO iField : field.getDocumentoDetalle().getCaracteristicas()) {
+					iField.getCampoDTO().setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+							iField.getCampoDTO().getLlaveTabla(), null, usuario));
+				}
+			}
+		}
+		if(field.getDocumentoDetalle().getCaracteristicas()==null)field.getDocumentoDetalle().setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		if (field.getPropiedades() == null)
 			field.setPropiedades(new ArrayList<PropiedadDTO>());
 		DocumentoPlantillaCaracteristicaDTO baseValorUnitario = null;
@@ -506,11 +464,11 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				cpValorUnitario.setValorText(cpValorUnitario.getValorNumero().toString());
 				cpValorUnitario.setCampoDTO(baseValorUnitario);
 				cpValorUnitario.setCampo("***UNIDAD");
-				field.getCaracteristicas().add(0, cpValorUnitario);
+				field.getDocumentoDetalle().getCaracteristicas().add(0, cpValorUnitario);
 				field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO, baseValorUnitario.getLlaveTabla(), null));
 			} else {
-				for (PedidoVentaCaracteristicaDTO iFieldValorUnitario : field.getCaracteristicas()) {
+				for (PedidoVentaCaracteristicaDTO iFieldValorUnitario : field.getDocumentoDetalle().getCaracteristicas()) {
 					if (iFieldValorUnitario.getCampo().compareTo(pCampoUnitario.getValor()) == 0) {
 						baseValorUnitario = iFieldValorUnitario.getCampoDTO();
 						iFieldValorUnitario.setValorNumero(valorUnitario);
@@ -547,12 +505,12 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (field.getCantidad() != null)
 				cpCantidad.setValorText(field.getCantidad().toString());
 			cpCantidad.setCampo("***CANTIDAD");
-			field.getCaracteristicas().add(0, cpCantidad);
+			field.getDocumentoDetalle().getCaracteristicas().add(0, cpCantidad);
 			field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 					Propiedades.PRODUCTO_CAMPO_CANTIDAD, baseCantidad.getLlaveTabla(), null));
 			//
 		} else {
-			for (PedidoVentaCaracteristicaDTO iFieldCantidad : field.getCaracteristicas()) {
+			for (PedidoVentaCaracteristicaDTO iFieldCantidad : field.getDocumentoDetalle().getCaracteristicas()) {
 				if (iFieldCantidad.getCampo().compareTo(pCampoCantidad.getValor()) == 0) {
 					baseCantidad = iFieldCantidad.getCampoDTO();
 					break;
@@ -572,7 +530,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if (field.getProductoDocumento() != null)
 			cpProducto.setPrincipal(documentoService.consultaXId(field.getProductoDocumento()));
 		cpProducto.setCampo("***PRODUCTO");
-		field.getCaracteristicas().add(0, cpProducto);
+		field.getDocumentoDetalle().getCaracteristicas().add(0, cpProducto);
 
 		if (field.getTarifas() != null && !field.getTarifas().isEmpty()) {
 			// Creo un campo con el valor subtotal
@@ -610,14 +568,17 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 					cpTotal.setValorText(cpTotal.getValorNumero().toString());
 				cpTotal.setCampoDTO(baseTotal);
 				cpTotal.setCampo("***TOTAL");
-				field.getCaracteristicas().add(cpTotal);
+				field.getDocumentoDetalle().getCaracteristicas().add(cpTotal);
 				field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.PRODUCTO_CAMPO_TOTAL, baseTotal.getLlaveTabla(), null));
 				//
 			} else {
-				for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getCaracteristicas()) {
+				for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getDocumentoDetalle().getCaracteristicas()) {
 					if (iFieldTotal.getCampo().compareTo(pCampoTotal.getValor()) == 0) {
 						baseTotal = iFieldTotal.getCampoDTO();
+						if(baseTotal.getPropiedades()==null) {
+							baseTotal.setPropiedades(new ArrayList<>());
+						}
 						baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 								Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
 						baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
@@ -669,7 +630,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	public void definirPropiedad2Caracteristicas(DetallePedidoVentaDTO detail) throws ServerException {
-		if (detail.getCaracteristicas() == null || detail.getCaracteristicas().isEmpty())
+		if (detail.getDocumentoDetalle() == null || detail.getDocumentoDetalle().getCaracteristicas() == null || detail.getDocumentoDetalle().getCaracteristicas().isEmpty())
 			throw new ServerException("Ahora debes traer los campos basicos");
 		if (detail.getPropiedades() == null)
 			throw new ServerException("Por favor envia las propiedades");
@@ -678,7 +639,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoCantidad = "***CANTIDAD";
 		if (pCampoCantidad != null)
 			keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoCantidad);
 		if (cpCantidad != null && cpCantidad.getValorNumero() != null)
 			detail.setCantidad(cpCantidad.getValorNumero());// Al modificar no se actualizan estos campos
@@ -687,7 +648,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoUnitario = "***UNIDAD";
 		if (pCampoUnitario != null)
 			keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoUnitario);
 		if (cpUnitario != null && cpUnitario.getValorNumero() != null)
 			detail.setValorUnitario(cpUnitario.getValorNumero());// Cuando no tiene tarifario no van estos campos,
@@ -697,7 +658,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoTotal = "***TOTAL";
 		if (pCampoTotal != null)
 			keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoTotal);
 		// Sucede que en Universal el total no es igual al producto normal se hace pro
 		// otra formula
@@ -726,7 +687,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoCantidad = "***CANTIDAD";
 		if (pCampoCantidad != null)
 			keyCampoCantidad = pCampoCantidad.getValor();
-		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpCantidad = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoCantidad);
 		cpCantidad.setValorNumero(detail.getCantidad());
 
@@ -734,7 +695,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoUnitario = "***UNIDAD";
 		if (pCampoUnitario != null)
 			keyCampoUnitario = pCampoUnitario.getValor();
-		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpUnitario = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoUnitario);
 		if (cpUnitario != null)
 			cpUnitario.setValorNumero(detail.getValorUnitario());// Cuando no tiene tarifario no van estos campos,
@@ -744,7 +705,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		String keyCampoTotal = "***TOTAL";
 		if (pCampoTotal != null)
 			keyCampoTotal = pCampoTotal.getValor();
-		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getCaracteristicas(),
+		PedidoVentaCaracteristicaDTO cpTotal = CallDocumentCommons.obtenerValor(detail.getDocumentoDetalle().getCaracteristicas(),
 				keyCampoTotal);
 		if (cpTotal != null)
 			cpTotal.setValorNumero(detail.getValorTotal());// Cuando no tiene tarifario no van estos campos, deberia

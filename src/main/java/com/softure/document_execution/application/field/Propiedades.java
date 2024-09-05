@@ -207,6 +207,7 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_REPORTE = "PLANTILLA_TIPO_REPORTE";
 	public static final String PLANTILLA_TIPO_CUENTA = "PLANTILLA_TIPO_CUENTA";
 	public static final String PLANTILLA_TIPO_PRODUCTO = "PLANTILLA_TIPO_PRODUCTO";
+	public static final String TIPO_PRODUCTO_FORMULARIO_DETALLADO = "TIPO_PRODUCTO_FORMULARIO_DETALLADO";
 	public static final String PLANTILLA_TIPO_BODEGA = "PLANTILLA_TIPO_BODEGA";
 	public static final String PLANTILLA_TIPO_CONFIGURATION = "PLANTILLA_TIPO_CONFIGURATION";
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
@@ -1133,6 +1134,11 @@ public class Propiedades {
 			ruleProperty = " Define que esta plantilla va a crear un producto\nSe debe llenar con una categoria de producto";
 			break;
 		}
+		case TIPO_PRODUCTO_FORMULARIO_DETALLADO: {
+			ruleProperty = " Los productos de esta plantilla van a mostrar un formulario para llenar";
+			break;
+		}
+		
 		case PLANTILLA_TIPO_BODEGA: {
 			ruleProperty = "Los documentos de esta plantilla van a crear bodegas\n";
 			break;

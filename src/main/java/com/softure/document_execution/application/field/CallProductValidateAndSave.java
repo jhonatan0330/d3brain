@@ -41,6 +41,7 @@ public class CallProductValidateAndSave {
 				if (iProducto.getLlaveTabla().compareTo(detalle.getProducto()) == 0) {
 					detalle.setPropiedades(iProducto.getPropiedades());
 					if(detalle.getNombre()==null) detalle.setNombre(iProducto.getNombre());
+					detalle.setPlantillaDetalle(iProducto.getTemplateFields());
 					break;
 				}
 			}
@@ -144,18 +145,21 @@ public class CallProductValidateAndSave {
 	private boolean sonCaracteristicasIguales(DetallePedidoVentaDTO detalleAgrupado, DetallePedidoVentaDTO detalle)
 			throws ServerException {
 		// Valido qus las caracteristicas del proeudcto sean iguales para sumarlas
-		if (detalleAgrupado.getCaracteristicas() != null && !detalleAgrupado.getCaracteristicas().isEmpty()) {
-			if (detalle.getCaracteristicas() == null)
+		if (detalleAgrupado.getDocumentoDetalle()!=null && detalleAgrupado.getDocumentoDetalle().getCaracteristicas() != null 
+				&& !detalleAgrupado.getDocumentoDetalle().getCaracteristicas().isEmpty()) {
+			if (detalle.getDocumentoDetalle().getCaracteristicas() == null)
 				return true;
-			if (detalle.getCaracteristicas().isEmpty())
+			if (detalle.getDocumentoDetalle().getCaracteristicas() == null)
 				return true;
-			if (detalle.getCaracteristicas().size() != detalleAgrupado.getCaracteristicas().size())
+			if (detalle.getDocumentoDetalle().getCaracteristicas().isEmpty())
+				return true;
+			if (detalle.getDocumentoDetalle().getCaracteristicas().size() != detalleAgrupado.getDocumentoDetalle().getCaracteristicas().size())
 				return true;
 
-			for (PedidoVentaCaracteristicaDTO dcp : detalle.getCaracteristicas()) {
+			for (PedidoVentaCaracteristicaDTO dcp : detalle.getDocumentoDetalle().getCaracteristicas()) {
 				if (dcp.getCampoDTO() == null)
 					dcp.setCampoDTO(caracteristicaService.consultaXIdProducto(dcp.getCampo()));
-				for (PedidoVentaCaracteristicaDTO dcpa : detalleAgrupado.getCaracteristicas()) {
+				for (PedidoVentaCaracteristicaDTO dcpa : detalleAgrupado.getDocumentoDetalle().getCaracteristicas()) {
 					if (dcpa.getCampoDTO() == null)
 						dcpa.setCampoDTO(caracteristicaService.consultaXIdProducto(dcpa.getCampo()));
 					if (dcp.getCampoDTO().getCodigo().compareTo(dcpa.getCampoDTO().getCodigo()) == 0) {

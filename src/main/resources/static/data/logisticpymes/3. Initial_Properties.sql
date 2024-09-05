@@ -534,4 +534,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple) 
 	VALUES('PROP_265' , 'L', 'REPORTE DE MODULO', 'REPORT_MODULE', 'REQUISITO', true);	
 	
-		
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_266' , 'L', 'TIPO PRODUCTO FORMULARIO DETALLADO', 'TIPO_PRODUCTO_FORMULARIO_DETALLADO', 'REQUISITO');

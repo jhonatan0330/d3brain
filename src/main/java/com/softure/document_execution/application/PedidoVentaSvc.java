@@ -205,6 +205,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(pedido.getLlaveTabla(), pedido.getHistorico());
 			pedido.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+			if(caracteristicasActuales==null) caracteristicasActuales = new ArrayList<>();
 			PedidoVentaCaracteristicaDTO uc = null;
 			for (DocumentoPlantillaCaracteristicaDTO documentoCaracteristicaDTO : camposBase) {
 				uc = null;

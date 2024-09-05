@@ -14,7 +14,6 @@ public class CategoriaProductoFilterDTO extends BasicFilterDTO
 	private String imagen;
 	private String nodoSuperior;
  	private Boolean inventariosFilter = null;
- 	private Boolean camposAdicionalesFilter = null;
  	private Boolean composicionFilter = null;
 	private Integer promocionBase;
 
@@ -54,16 +53,6 @@ public class CategoriaProductoFilterDTO extends BasicFilterDTO
 	public Boolean getInventariosFilter() {
 		return inventariosFilter;
 	}
-	
- 	
- 	public void setCamposAdicionalesFilter(Boolean camposAdicionalesFilter) {
-		this.camposAdicionalesFilter = camposAdicionalesFilter;
-	}
-	
-	public Boolean getCamposAdicionalesFilter() {
-		return camposAdicionalesFilter;
-	}
-	
  	
  	public void setComposicionFilter(Boolean composicionFilter) {
 		this.composicionFilter = composicionFilter;

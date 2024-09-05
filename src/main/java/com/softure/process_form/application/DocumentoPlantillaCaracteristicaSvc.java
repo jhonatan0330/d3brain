@@ -8,8 +8,6 @@ import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.ProductoCaracteristicaSvc;
-import com.softure.inventory.domain.ProductoCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.infrastructure.DocumentoPlantillaCaracteristicaMapper;
@@ -36,8 +34,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	@Autowired @Lazy 
 	private PropiedadSvc parametroService;
-	@Autowired @Lazy 
-	private ProductoCaracteristicaSvc campoProductoService;
+	//@Autowired @Lazy 
+	//private ProductoCaracteristicaSvc campoProductoService;
 	@Autowired @Lazy 
 	private CallSearchProcessFromText searchProcessFromText;
 
@@ -215,7 +213,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	}
 
-	private DocumentoPlantillaCaracteristicaDTO consultaUnicaProducto(String id) throws ServerException {
+	/*private DocumentoPlantillaCaracteristicaDTO consultaUnicaProducto(String id) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campo = consultaXId(id);
 		if (campo == null) {
 			// Seguramente viende de un producto
@@ -235,14 +233,14 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campo.setLlaveTabla(id);
 		}
 		return campo;
-	}
+	}*/
 
 	public DocumentoPlantillaCaracteristicaDTO consultaUnicaConComplementos(String id, String token)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campo = consultaXId(id);
-		if (campo == null) {// Seguramente viende de un producto
-			campo = consultaUnicaProducto(id);
-		}
+		//if (campo == null) {// Seguramente viende de un producto
+		//	campo = consultaUnicaProducto(id);
+		//}
 		return cargarComplementos(campo, token);
 	}
 
@@ -480,7 +478,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public DocumentoPlantillaCaracteristicaDTO consultaXIdProducto(String llave) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO newP = null;
 		if (!llave.startsWith("***")) {
-			newP = consultaUnicaProducto(llave);
+			//newP = consultaUnicaProducto(llave);
+			newP = consultaXId(llave);
 		} else {
 			newP = new DocumentoPlantillaCaracteristicaDTO();
 			newP.setCodigo(llave.replace("***", ""));

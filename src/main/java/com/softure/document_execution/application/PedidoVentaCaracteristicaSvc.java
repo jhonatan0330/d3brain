@@ -141,7 +141,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
-	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId, List<DocumentoPlantillaCaracteristicaDTO> templateFields, Integer historico)
+	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId, List<DocumentoPlantillaCaracteristicaDTO> templateFields, Integer historico, String token)
 			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> result = listar2Documento(documentId, historico, null);
 		if(result==null || result.isEmpty()) return result;
@@ -152,7 +152,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 					if(iFieldTemplateDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO)==0) {
 						iCurrentField.setDetalles(detallePedidoVentaService.listar2Documento(documentId));
 						for (DetallePedidoVentaDTO detalleDocumento : iCurrentField.getDetalles()) {
-							detallePedidoVentaService.createFieldsProduct(detalleDocumento);	
+							detallePedidoVentaService.createFieldsProduct(detalleDocumento, token);	
 						}
 					}
 						

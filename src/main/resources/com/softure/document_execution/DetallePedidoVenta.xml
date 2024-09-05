@@ -27,6 +27,7 @@
 			,cdpv_transaccioninactivo as  transaccionInactivo
 			,cdpv_nombre as  nombre
 			,cdpv_campo as  campo
+			,cdpv_detalleid as  detalleId
 			,cdpv_estado as estado
 		from detallepedidoventa_dpvp a
 	</sql>
@@ -62,6 +63,9 @@
 			</if>
 			<if test="nombre!=null">
 				and cdpv_nombre = #{nombre}
+			</if>
+			<if test="detalleId!=null">
+				and cdpv_detalleid = #{detalleId}
 			</if>
 			<if test="filtroParametro!=null">
 				and ((select upper(descripcion(cpro_documento)) from producto_prop where cpro_llave=cdpv_producto) like upper('%'||#{filtroParametro}||'%'))
@@ -154,6 +158,9 @@
 		<if test="nombre!=null">
 			,cdpv_nombre
 		</if>
+		<if test="detalleId!=null">
+			,cdpv_detalleid
+		</if>
 		<if test="estado!=null">
 			,cdpv_estado
 		</if>
@@ -210,6 +217,9 @@
 		<if test="nombre!=null">
 			,#{nombre}
 		</if>
+		<if test="detalleId!=null">
+			,#{detalleId}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -236,46 +246,10 @@
 				cdpv_transaccioninactivo = #{transaccionInactivo},
 				cdpv_campo = #{campo},
 				cdpv_nombre = #{nombre},
+				cdpv_detalleid = #{detalleId},
 				cdpv_estado =#{estado}
 		<include refid="whereDetallePedidoVentaPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleDetallePedidoVentaFragment">
-		select
-			cdpv_llave as  llaveTabla
-			,cdpv_documento as  documento
-			,cdpv_producto as  producto
-			,cdpv_productotercero as  productoTercero
-			,mdpv_cantidad as  cantidad
-			,ndpv_cantidadpromocion as  cantidadPromocion
-			,ndpv_cantidadpromocionbase as  cantidadPromocionBase
-			,mdpv_cantidadtotal as  cantidadTotal
-			,mdpv_valorminimo as  valorMinimo
-			,mdpv_valortotal as  valorTotal
-			,mdpv_valorunitario as  valorUnitario
-			,mdpv_valormaximo as  valorMaximo
-			,cdpv_plantilla as  plantilla
-			,mdpv_valorsubtotal as  valorSubtotal
-			,cdpv_transaccionregistro as  transaccionRegistro
-			,cdpv_transaccioninactivo as  transaccionInactivo
-			,cdpv_nombre as  nombre
-			,cdpv_campo as  campo
-			,cdpv_estado as estado
-		from detallepedidoventa_dpvp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="DetallePedidoVentaDTO">
-		<include refid="selectSimpleDetallePedidoVentaFragment" />
-		<include refid="whereDetallePedidoVentaFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="DetallePedidoVentaDTO">
-		<include refid="selectSimpleDetallePedidoVentaFragment" />
-		<include refid="whereDetallePedidoVentaFragment" />
-		<include refid="paginationDetallePedidoVentaFragment" />
-	</select>
-	
-
 
 <!--// BEGIN region script-->
 	<select id="listar2Documento" parameterType="String" resultType="DetallePedidoVentaDTO">

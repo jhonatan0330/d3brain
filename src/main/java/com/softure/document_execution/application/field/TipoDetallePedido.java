@@ -21,7 +21,6 @@ import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
@@ -30,15 +29,14 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
-import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Component
 public class TipoDetallePedido {
 
 	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy 
-	private CategoriaProductoSvc categoriaProductoService;
+	//@Autowired @Lazy 
+	//private CategoriaProductoSvc categoriaProductoService;
 	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired @Lazy 
@@ -168,13 +166,14 @@ public class TipoDetallePedido {
 					if (campoTotal == null) {
 						detalle.setValorSubtotal(detalle.getValorUnitario().multiply(detalle.getCantidad()));
 					} else {
-						for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getCaracteristicas()) {
-							if (iFieldCantidad.getCampo().compareTo(campoTotal.getValor()) == 0) {
-								detalle.setValorSubtotal(iFieldCantidad.getValorNumero());
-								break;
+						if(detalle.getDocumentoDetalle()!=null) {
+							for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getDocumentoDetalle().getCaracteristicas()) {
+								if (iFieldCantidad.getCampo().compareTo(campoTotal.getValor()) == 0) {
+									detalle.setValorSubtotal(iFieldCantidad.getValorNumero());
+									break;
+								}
 							}
 						}
-
 					}
 					detalle.setValorTotal(detalle.getValorSubtotal().setScale(0, RoundingMode.CEILING));
 					pCampo.setValorNumero(pCampo.getValorNumero().add(detalle.getValorTotal()));
@@ -187,7 +186,7 @@ public class TipoDetallePedido {
 			throws ServerException {
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
-
+		
 			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
 					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
@@ -290,7 +289,7 @@ public class TipoDetallePedido {
 			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), null, tercero,
 					(tarifarioFuncion != null) ? tarifarioFuncion.getLlaveTabla() : null, pCampo.getDependientes(),
 					pCampo.getSecurityToken()));
-			List<CategoriaProductoDTO> categorias = new ArrayList<CategoriaProductoDTO>();
+			/*List<CategoriaProductoDTO> categorias = new ArrayList<CategoriaProductoDTO>();
 			for (ProductoDTO productoDTO : pBase.getProductos()) {
 				boolean existeCategoria = false;
 				for (CategoriaProductoDTO catPlantilla : categorias) {
@@ -308,13 +307,14 @@ public class TipoDetallePedido {
 					categorias.add(categoria);
 				}
 			}
-			pBase.setCategorias(ordenar(categorias).getHijos());
+			pBase.setCategorias(ordenar(categorias).getHijos());*/
 		}
 		pCampo.setCampoDTO(pBase);
 		System.out.println("Consulta DB Detalle FIN :" + new Date());
 		return pCampo;
 	}
 
+	/*
 	private CategoriaProductoDTO ordenar(List<CategoriaProductoDTO> categorias) throws ServerException {
 		if (categorias == null)
 			categorias = new ArrayList<CategoriaProductoDTO>();
@@ -365,7 +365,7 @@ public class TipoDetallePedido {
 		}
 		return null;
 	}
-
+*/
 	private List<ProductoDTO> detallarProductos2Plantilla(List<ProductoDTO> productos,
 			DocumentoPlantillaCaracteristicaDTO pCampo, CategoriaProductoDTO categoria, String tercero,
 			String propiedadFuncionTarifario, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario,
@@ -433,7 +433,7 @@ public class TipoDetallePedido {
 
 					if (detalleDocumento.getProducto().compareTo(detalleExpediente.getProducto()) == 0) {
 						if (detalleDocumento.getCantidad().compareTo(detalleExpediente.getCantidad()) == 0) {
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente);
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token);
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
 						} else {
@@ -463,7 +463,7 @@ public class TipoDetallePedido {
 							detallesFinalNuevo.add(detalleDocumento);
 							detalleExpediente.setCantidad(detalleExpediente.getCantidad().add(nuevoTotal.negate()));
 							// Aqui porque antes no me actualiza la cantidad en las novedades parciales
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente);
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token);
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
 						}
@@ -489,7 +489,7 @@ public class TipoDetallePedido {
 					detalleDocumento.setValorMinimo(detalleExpediente.getValorMinimo());
 					detalleDocumento.setValorTotal(detalleExpediente.getValorMinimo());
 					detalleDocumento.setPlantilla(detalleExpediente.getPlantilla());
-					detallePedidoVentaService.createFieldsProduct(detalleDocumento);
+					detallePedidoVentaService.createFieldsProduct(detalleDocumento, token);
 					detallesFinalNuevo.add(detalleDocumento);
 				}
 			}

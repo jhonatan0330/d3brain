@@ -1,7 +1,5 @@
 package com.softure.inventory.domain;
 
-import java.util.List;
-
 import java.math.BigDecimal;
 // BEGIN region interImport
 // END region interImport
@@ -24,6 +22,7 @@ public class ProductoDTO extends BasicParamDTO
 	private String descripcion;
 	private String categoria;
 	private String categoriaNombre;
+	private String categoriaPlantilla;
 	private String usuarioRol;
 	private BigDecimal valorMinimoPromocion;
 	private Integer cantidadPromocion;
@@ -32,7 +31,7 @@ public class ProductoDTO extends BasicParamDTO
 	private String documento;
 	private String productoBase;
 	private String baseNombre;
-	private List<ProductoCaracteristicaDTO> campos;
+	private String templateFields;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -83,6 +82,15 @@ public class ProductoDTO extends BasicParamDTO
 	public String getCategoriaNombre() {
 		return categoriaNombre;
 	}
+	
+	public String getCategoriaPlantilla() {
+		return categoriaPlantilla;
+	}
+	public void setCategoriaPlantilla(String categoriaPlantilla) {
+		this.categoriaPlantilla = categoriaPlantilla;
+	}
+
+	
 	public void setUsuarioRol(String usuarioRol) {
 		this.usuarioRol = usuarioRol;
 	}
@@ -139,12 +147,19 @@ public class ProductoDTO extends BasicParamDTO
 	public String getBaseNombre() {
 		return baseNombre;
 	}
-	public void setCampos(List<ProductoCaracteristicaDTO> campos) {
+	/*public void setCampos(List<ProductoCaracteristicaDTO> campos) {
 		this.campos = campos;
 	}
 	
 	public List<ProductoCaracteristicaDTO> getCampos() {
 		return campos;
+	}*/
+	public void setTemplateFields(String templateFields) {
+		this.templateFields = templateFields;
+	}
+	
+	public String getTemplateFields() {
+		return templateFields;
 	}
 
 }

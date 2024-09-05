@@ -88,7 +88,7 @@ public class DocumentController {
     }
 	
 	@GetMapping(value="/getInventory/{id}")
-	public List<ProductoInventarioDTO> getInventory(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return inventoryService.getByProducto(id);
 	}
 	

@@ -239,10 +239,10 @@ public class TipoNumero {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
 						for (DetallePedidoVentaDTO iDetalle : iterable.getDetalles()) {
 							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
-							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
+							if (iDetalle.getDocumentoDetalle() !=null && iDetalle.getDocumentoDetalle().getCaracteristicas() != null && !iDetalle.getDocumentoDetalle().getCaracteristicas().isEmpty()
 									&& (iDetalle.getEstado() == null || iDetalle.getEstado()
 											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
-								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
+								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getDocumentoDetalle().getCaracteristicas()) {
 									if (iCaracteristica.getCampoDTO() == null)
 										iCaracteristica.setCampoDTO(
 												caracteristicaService.consultaXIdProducto(iCaracteristica.getCampo()));

@@ -363,8 +363,9 @@ public class AuxiliarProcesoBodega {
 								salida.setProducto(descuento.getProductoDescontar());
 								if(descuento.getCaracteristica()!=null){
 									salida.setProducto(null);
-									if(detalle.getCaracteristicas()!=null && !detalle.getCaracteristicas().isEmpty()){
-										for(PedidoVentaCaracteristicaDTO iterador: detalle.getCaracteristicas()){
+									if(detalle.getDocumentoDetalle()!=null && detalle.getDocumentoDetalle().getCaracteristicas() != null 
+											&& !detalle.getDocumentoDetalle().getCaracteristicas().isEmpty()){
+										for(PedidoVentaCaracteristicaDTO iterador: detalle.getDocumentoDetalle().getCaracteristicas()){
 											if(iterador.getValorOpcion()!=null ){
 												if(iterador.getValorOpcion().compareTo(descuento.getCaracteristica())==0){
 													salida.setProducto(descuento.getProductoDescontar());
