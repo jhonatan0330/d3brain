@@ -80,6 +80,12 @@ public class CallProductValidateAndSave {
 					if (detallesActuales != null && !detallesActuales.isEmpty()) {
 						for (DetallePedidoVentaDTO actual : detallesActuales) {
 							if (detalle.getLlaveTabla().compareTo(actual.getLlaveTabla()) == 0) {
+								//Coloco estos valores que debeiran venir de forn pero para evitar errores
+								detalle.setDetalleId(actual.getDetalleId());
+								detalle.setDocumento(actual.getDocumento());
+								detalle.setPlantilla(actual.getPlantilla());
+								detalle.setPlantillaDetalle(actual.getPlantillaDetalle());
+								//
 								BigDecimal diferencia = actual.getCantidad().subtract(detalle.getCantidad());
 								if (diferencia.compareTo(BigDecimal.ZERO) != 0) {
 									detalle.setLlaveTabla(null);

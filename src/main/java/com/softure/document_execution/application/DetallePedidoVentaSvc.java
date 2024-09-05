@@ -127,8 +127,14 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(dto.getPlantillaDetalle()!=null) {
 			dto.getDocumentoDetalle().setFuncionario(getUserFlex(token));
 			dto.getDocumentoDetalle().setPlantilla(dto.getPlantillaDetalle());
-			dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false));
-			dto.setDetalleId(dto.getDocumentoDetalle().getLlaveTabla());
+			if(dto.getDetalleId()==null) {
+				dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false));
+				dto.setDetalleId(dto.getDocumentoDetalle().getLlaveTabla());	
+			} else {
+				dto.getDocumentoDetalle().setLlaveTabla(dto.getDetalleId());
+				dto.setDocumentoDetalle(crudservice.updateWithoutTransaction(dto.getDocumentoDetalle(), dto.getDetalleId(), token, false));
+			}
+			
 		}
 		dto = save(dto);
 		/*
