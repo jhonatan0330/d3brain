@@ -54,7 +54,8 @@ INSERT INTO public.pedidoventacaracteristica_pvcp
 (cpvc_llave, cpvc_documento, cpvc_campo, cpvc_valortext, dpvc_valorfecha, cpvc_valoropcion, mpvc_valornumero, cpvc_estado, cpvc_transaccionregistro, cpvc_transaccioninactivo)
 select dd.cdcp_llave , dd.cdcp_entidad , dd.cdcp_campo , dd.cdcp_valortext , dd.ddcp_valorfecha , dd.cdcp_valoropcion , dd.mdcp_valornumero, dd.cdcp_estado , dd.cdcp_transaccionregistro, dd.cdcp_transaccioninactivo 
 from detallecaracteristicaproducto_dcpp dd 
-where dd.cdcp_estado = 'A'  and (cdcp_valortext is not null);
+inner join documentoplantillacaracteristica_dpcp dpc on (dpc.cdpc_llave = dd.cdcp_campo)
+where dd.cdcp_estado = 'A'  and (cdcp_valortext is not null) and cdcp_valortext != '0';
 
 ALTER TABLE detallepedidoventa_dpvp ADD cdpv_detalleid varchar(32) NULL;
 
@@ -63,6 +64,7 @@ update detallepedidoventa_dpvp
 		where cdpv_llave in (
 		select dd2.cdpv_llave
 			from detallecaracteristicaproducto_dcpp dd 
+			inner join documentoplantillacaracteristica_dpcp dpc on (dpc.cdpc_llave = dd.cdcp_campo)
 			inner join detallepedidoventa_dpvp dd2 on (dd2.cdpv_llave = dd.cdcp_entidad)
 			inner join documentotransaccion_trap dt on (dt.ctra_llave = dd2.cdpv_transaccionregistro)
 			inner join producto_prop pp2 on ( pp2.cpro_llave = dd2.cdpv_producto)
