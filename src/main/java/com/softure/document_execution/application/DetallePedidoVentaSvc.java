@@ -288,6 +288,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		// producto base se toma los valores y carcteristicas del base
 		if (dto.getLlaveTabla() != null) {
 			result = consultaXId(dto.getLlaveTabla());
+			if (result.getProductoImagen() == null)result.setProductoImagen(producto.getImagen());
 			if (result.getNombre() == null || result.getNombre().isEmpty())
 				result.setNombre(producto.getNombre());
 		} else {

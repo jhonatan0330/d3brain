@@ -169,7 +169,7 @@ public class HomologatePrepareService {
 			}
 		}
 		result = result + "\n	,(select cpes_nombre from procesoestado_pesp where cpes_llave = d.cpdv_estadoexpediente) as \"ESTADO\"";
-		result = result + "\nfrom documentoplantilla_dplp inner join pedidoventa_pdvp d on (cdpl_llave = d.cpdv_plantilla) \nwhere cdpl_codigo = " + dp.getCodigo() + " and d.cpdv_estado = 'A' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
+		result = result + "\nfrom documentoplantilla_dplp inner join pedidoventa_pdvp d on (cdpl_llave = d.cpdv_plantilla) \nwhere cdpl_codigo = '" + dp.getCodigo() + "' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
 		return result;
 	}
 
