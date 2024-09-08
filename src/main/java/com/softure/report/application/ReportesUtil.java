@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.util.Map;
 
+import com.shared.domain.ServerException;
+
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -59,6 +61,8 @@ public class ReportesUtil {
 			vXlsExporter.exportReport();
 			vByteOutputStream.close();	
 			return vByteOutputStream.toByteArray();
+		} catch (OutOfMemoryError oom) {
+			 throw new ServerException("OOM ERROR XLS EXPORT: " + oom.getMessage() + ". Este reporte esta degradando el sistema el administrador esta siendo informado por favor consulta menos datos.");
 		} catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
@@ -180,7 +184,9 @@ public class ReportesUtil {
 			vXlsExporter.exportReport();		
 			vByteOutputStream.close();	
 			return vByteOutputStream.toByteArray();
-		} catch (Exception e) {
+		} catch (OutOfMemoryError oom) {
+		 throw new ServerException("OOM ERROR PDF EXPORT: " + oom.getMessage() + ". Este reporte esta degradando el sistema el administrador esta siendo informado por favor consulta menos datos.");
+		}catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
 	}
@@ -207,6 +213,8 @@ public class ReportesUtil {
 			vHTMLExporter.exportReport();
 			vByteOutputStream.close();	
 			return vByteOutputStream.toByteArray();
+		} catch (OutOfMemoryError oom) {
+			 throw new ServerException("OOM ERROR HTML EXPORT: " + oom.getMessage() + ". Este reporte esta degradando el sistema el administrador esta siendo informado por favor consulta menos datos.");
 		} catch (Exception e) {
 			throw new Exception(e.getMessage());
 		}
