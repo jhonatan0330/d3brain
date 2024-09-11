@@ -79,6 +79,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DetallePedidoVentaDTO actualizar(DetallePedidoVentaDTO dto, String token) throws ServerException {
 		if(dto.getPlantillaDetalle()!=null) {
+			dto.getDocumentoDetalle().setFuncionario(getUserFlex(token));
+			dto.getDocumentoDetalle().setPlantilla(dto.getPlantillaDetalle());
 			crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false);
 		}
 		dto = update(dto);
@@ -131,8 +133,18 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false));
 				dto.setDetalleId(dto.getDocumentoDetalle().getLlaveTabla());	
 			} else {
-				dto.getDocumentoDetalle().setLlaveTabla(dto.getDetalleId());
-				dto.setDocumentoDetalle(crudservice.updateWithoutTransaction(dto.getDocumentoDetalle(), dto.getDetalleId(), token, false));
+				//aqui debo mejorar para que no se hagan procesos si no tuvieron modificaciones
+					boolean iContadorModificadas = false;
+					for (PedidoVentaCaracteristicaDTO iCampoDocumento : dto.getDocumentoDetalle().getCaracteristicas()) {
+						if (iCampoDocumento.getModificado()) {
+							iContadorModificadas = true;
+							break;
+						}
+					}
+					if (iContadorModificadas) {
+						dto.getDocumentoDetalle().setLlaveTabla(dto.getDetalleId());
+						dto.setDocumentoDetalle(crudservice.updateWithoutTransaction(dto.getDocumentoDetalle(), dto.getDetalleId(), token, false));		
+					}
 			}
 			
 		}
