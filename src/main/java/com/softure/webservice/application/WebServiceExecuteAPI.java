@@ -304,31 +304,48 @@ public class WebServiceExecuteAPI {
 			responseApi = callApi(service, urlWithParameters, template, headerProperties);
 			callWS.setError(validateResultAPI(responseApi,
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
+			List<PropiedadDTO> extractionProperties = null;
 			if (callWS.getError() == null) {
-				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_NO_ERROR,
-						Propiedades.API_EXTRACTION_TO_BASE_64 };
-				List<PropiedadDTO> extractionProperties = Propiedades.obtenerVariosParametro(service, props);
-				String resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
-				if (resultExtraction != null) {
-					if (resultExtraction.startsWith(ERROR_EXTRAYENDO)) {
-						callWS.setError(resultExtraction);
-						responseApi = resultExtraction + "\n\n" + responseApi;
-						resultExtraction = resultExtraction.substring(resultExtraction.indexOf(
-								SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS)
-								+ 3);
-						if (resultExtraction.length() == 0)
-							resultExtraction = null;
-					} else {
-						callWS.setExtracciones(resultExtraction);
-					}
-					// Esto lo puedo quitar con lso apis locales
-					if (modificador != null && resultExtraction != null)
-						documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
-								token, resultExtraction);
-				}
+				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_NO_ERROR, Propiedades.API_EXTRACTION_TO_BASE_64 };
+				extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 			} else {
-				responseApi = callWS.getError() + "\n\n" + responseApi;
+				String[] props = { Propiedades.API_EXTRACTION_NO_ERROR };
+				extractionProperties = Propiedades.obtenerVariosParametro(service,  props );
 			}
+				 
+			List<String> resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
+			String extractionString = "";
+			for(String iExtraction: resultExtraction) {
+				if (iExtraction.startsWith("ERROR")) {
+					if(callWS.getError() == null) {
+						callWS.setError(iExtraction);
+					}else {
+						callWS.setError(callWS.getError()+ "\n\n"  + iExtraction);
+					}
+				} else {
+					if(extractionString.isEmpty()) {
+						extractionString =  iExtraction;
+					}else {
+						if(iExtraction.startsWith("INFO_")) {
+							if(modificador!=null)CallDocumentCommons.addMessageError(modificador, iExtraction.substring(5));
+						} else {
+							extractionString = extractionString + SharedConstants.PUNTO_COMA_DOBLE+ iExtraction;							
+						}
+					}
+				}
+			}
+			if (!extractionString.isEmpty()){
+				callWS.setExtracciones(SharedConstants.PUNTO_COMA_DOBLE+ extractionString);
+				// Esto lo puedo quitar con lso apis locales
+				if (modificador != null )
+					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
+							token, extractionString);
+				
+			}
+			
+			if (callWS.getError() != null) 
+				responseApi = callWS.getError() + "\n\n" + responseApi;
+			
 		} catch (Exception e) {
 			if (responseApi == null)
 				responseApi = "";
@@ -419,8 +436,12 @@ public class WebServiceExecuteAPI {
 			return null;
 		for (PropiedadDTO propiedadDTO : validationProperties) {
 			if (!response.matches(propiedadDTO.getValor())) {
-				return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
-						+ propiedadDTO.getValor();
+				if(propiedadDTO.getMotivo()==null) {
+					return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
+							+ propiedadDTO.getValor();					
+				} else {
+					return "Error : "+ propiedadDTO.getMotivo();
+				}
 			}
 		}
 		return null;
@@ -435,18 +456,21 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token)
+	private List<String> extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token)
 			throws ServerException {
 		if (extractionList == null || extractionList.isEmpty())
-			return null;
-		String result = "";
-		String errorResult = "";
+			return new ArrayList<>();
+		List<String> result = new ArrayList<>();
 		for (PropiedadDTO propiedadDTO : extractionList) {
 			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
 			if (!matcher.matches()) {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
-					errorResult = errorResult + ERROR_EXTRAYENDO + propiedadDTO.getValor()
-							+ SharedConstants.PUNTO_COMA_DOBLE;
+					if(propiedadDTO.getMotivo()==null) {
+						result.add( ERROR_EXTRAYENDO + propiedadDTO.getValor() );						
+					} else {
+						result.add( "ERROR: " + propiedadDTO.getMotivo() );
+					}
+//					errorResult = errorResult + ERROR_EXTRAYENDO + propiedadDTO.getValor()	+ SharedConstants.PUNTO_COMA_DOBLE;
 				}
 			} else {
 				String newValue = matcher.group(1);
@@ -454,25 +478,37 @@ public class WebServiceExecuteAPI {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 				}
-				result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
+				/*result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
 						+ SharedConstants.IGUAL;
 				if (newValue != null && newValue.length() > 4000) {
 					result = result
 							+ uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
 				} else {
 					result = result + newValue;
+				}*/
+				if (newValue != null && newValue.length() > 4000) {
+					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice"));
+				} else {
+					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + newValue);
 				}
+				
+				
 				// debo colocar oble para que se guarden en formularios
 				if (propiedadDTO.getTexto() != null)
-					result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL
-							+ newValue;
+					result.add( propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue);
+				
+				//Estas no van en el calculo de las modificaciones
+				if(propiedadDTO.getMotivo()!=null)
+					result.add( "INFO_" + propiedadDTO.getMotivo() + SharedConstants.IGUAL + newValue);
+					
+				//result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue;
 			}
 		}
-		if (errorResult.length() != 0)
+		/*if (errorResult.length() != 0)
 			result = errorResult + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS
 					+ result;
 		if (result.length() == 0)
-			result = null;
+			result = null;*/
 		return result;
 	}
 

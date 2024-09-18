@@ -4,6 +4,7 @@ import java.util.List;
 
 // BEGIN region interImport
 import java.util.ArrayList;
+import java.util.Date;
 import java.math.BigDecimal;
 
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -247,6 +248,17 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 			throw new ServerException(e.getMessage(), "");
 		}
 	}
+	
+	public Date calcularFechaFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+		try {
+			List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+			if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
+			return  pedidoVentaCaracteristicaMapper.calcularFechaFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, dependientesOrdenados);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), "");
+		}
+	}
+	
 	
 	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId)
 			throws ServerException {

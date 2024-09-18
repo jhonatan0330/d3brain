@@ -6,6 +6,7 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Component;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.java.services.SoftureUtil;
+import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 
 @Component
@@ -22,6 +26,8 @@ public class TipoFecha {
 
 	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired @Lazy 
+	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
@@ -134,7 +140,7 @@ public class TipoFecha {
 					pCampo.setValorText(SoftureUtil.formatDate(pCampo.getValorFecha()));
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
-						fecha.setTime(new Date());
+						fecha.setTime(getTimeBlock(pCampo));
 						fecha.set(Calendar.HOUR_OF_DAY, 0);
 						fecha.set(Calendar.MINUTE, 0);
 						fecha.set(Calendar.SECOND, 0);
@@ -156,7 +162,7 @@ public class TipoFecha {
 						// creo que esto del modificado aplica para varios lados
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
-							hora.setTime(new Date());
+							hora.setTime(getTimeBlock(pCampo));
 							if (Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime()) > 900000)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " permite la fecha " + SoftureUtil.formatDateTime(hora.getTime())
@@ -297,6 +303,20 @@ public class TipoFecha {
 		}
 	}
 
+	private Date getTimeBlock(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
+		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),Propiedades.FECHA_FUNCION_SQL);
+		if (funcionCalculo != null) {
+			PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
+			filter.setDependientes(pCampo.getDependientes());
+			filter.setCampo(pCampo.getCampo());
+			filter.setDocumento(pCampo.getDocumento());
+			filter = consultarDatosBase(filter);
+			if(filter !=null && filter.getValorFechaMax()!=null)
+				return filter.getValorFechaMax();
+		}
+		return new Date();
+	}
+
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
@@ -326,5 +346,32 @@ public class TipoFecha {
 		} else {
 			return campoService.guardar(pCampo, token);
 		}
+	}
+	
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
+			throws ServerException {
+		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
+				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.FECHA_FUNCION_SQL);
+		if (funcionCalculo != null) {
+			campoService.validarDependientes(pBase, pCampo.getDependientes());
+			List<PedidoVentaCaracteristicaDTO> newDependientes = campoService
+					.ordenarAlfabeticaDepende(pCampo.getDependientes());
+			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
+				if (iDep.getValorOpcion() == null) {
+					if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+						iDep.setValorOpcion((iDep.getValorNumero() == null) ? "0" : iDep.getValorNumero().toString());
+					}
+				}
+			}
+			try {
+				pCampo.setValorFechaMax(campoService.calcularFechaFuncion(funcionCalculo.getLlaveTabla(),
+						pCampo.getDocumento(), newDependientes));
+			} catch (ServerException e) {
+				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
+			}
+		}
+		pCampo.setCampoDTO(pBase);
+		return pCampo;
 	}
 }

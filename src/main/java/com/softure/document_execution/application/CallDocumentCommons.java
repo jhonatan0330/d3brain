@@ -68,11 +68,15 @@ public class CallDocumentCommons {
 	}
 	
 	public static void addMessageError(PedidoVentaDTO document, String message) {
-		if(document==null) return;
+		if(document==null || message == null) return;
 		if(document.getMessages()==null) document.setMessages(new ArrayList<>());
 		DocumentMessage msg = new DocumentMessage();
 		msg.setDate(new Date());
-		msg.setType("ERROR");
+		if(message.toUpperCase().startsWith("ERROR")) {
+			msg.setType("ERROR");
+		}else {
+			msg.setType("INFO");
+		}
 		msg.setMessage(message);
 		document.getMessages().add(msg);
 	}

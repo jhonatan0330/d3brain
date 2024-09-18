@@ -114,6 +114,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{vResultado = tipoInformativo.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.consultarDatosBase(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.consultarDatosBase(pCampo);break;}
 			default:{break;}

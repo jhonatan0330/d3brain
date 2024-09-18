@@ -3,6 +3,7 @@ package com.softure.document_execution.infrastructure;
 
 // BEGIN region interImport  
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -29,6 +30,7 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	List<PedidoVentaCaracteristicaDTO> listarParaMensaje(@Param("documento") String documento, @Param("plantilla") String plantilla, @Param("propiedad") String propiedad, @Param("modificador") String modificador);
 	List<PedidoVentaCaracteristicaDTO> listarParaGestor(@Param("documento") String documento, @Param("transaccion") String transaccion);
 	BigDecimal calcularNumeroFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+	Date calcularFechaFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	PedidoVentaCaracteristicaDTO consultarCampoCroquis(String nombreDocumento);
 	List<PedidoVentaCaracteristicaDTO> consultarCamposOcupados(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("campoId")String campoId, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	String getTemplate(String documento);

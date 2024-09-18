@@ -203,15 +203,15 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PRODUCTOS_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionProductos(dto);
 				break;
-			case Propiedades.DECISION_SQL:
-				propiedadMapper.eliminarFuncionDecision(dto);
-				break;
 			case Propiedades.ITERACION_SQL:
+			case Propiedades.DECISION_SQL:
 				propiedadMapper.eliminarFuncionDecision(dto);
 				break;
 			case Propiedades.DETALLE_TARIFARIO_SQL:
 				propiedadMapper.eliminarFuncionTarifas(dto);
 				break;
+			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
+			case Propiedades.FECHA_FUNCION_SQL:
 			case Propiedades.NUMERO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionNumerica(dto);
 				break;
@@ -221,14 +221,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL:
 				propiedadMapper.eliminarFuncionCamposEspecialesPlantilla(dto);
 				break;
-			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
-				propiedadMapper.eliminarFuncionNumerica(dto);
-				break;
-			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
-				propiedadMapper.eliminarFuncionPrevalidacion(dto);
-				break;
 			case Propiedades.FUNCION_SQL_PREVALIDATE_API:
-				propiedadMapper.eliminarFuncionPrevalidateAPI(dto);
+				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
+				propiedadMapper.eliminarFuncionPrevalidacion(dto);
 				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
@@ -304,6 +299,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (!valorDefinido.getNecesitaDesarrollo())
 			dto.setFechaImplementacion(new Date());
+		if(dto.getMotivo()!=null && dto.getMotivo().isEmpty()) dto.setMotivo(null);
 		if (valorDefinido.getMultiple()) {
 			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
 			existeFilter.setCampo(dto.getCampo());
@@ -376,6 +372,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.NUMERO_FUNCION_SQL:
 					propiedadMapper.crearFuncionNumerica(dto);
+					break;
+				case Propiedades.FECHA_FUNCION_SQL:
+					propiedadMapper.crearFuncionFecha(dto);
 					break;
 				case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
 					propiedadMapper.crearFuncionCampoGenerar(dto);

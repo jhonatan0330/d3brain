@@ -86,6 +86,7 @@ public class Propiedades {
 	public static final String FECHA_RANGO = "FECHA_RANGO";
 	public static final String FECHA_RANGO_MAXIMO = "FECHA_RANGO_MAXIMO";
 	public static final String FECHA_TIMER_BACK = "FECHA_TIMER_BACK";
+	public static final String FECHA_FUNCION_SQL = "FECHA_FUNCION_SQL";
 
 	public static final String TEXTO_FORMULA = "TEXTO_FORMULA";
 	public static final String TEXTO_LONGITUD = "TEXTO_LONGITUD";
@@ -932,6 +933,16 @@ public class Propiedades {
 		}
 		case INFORMATIVE_DATA: {
 			ruleProperty = "Seleccionar el campo que tiene el documento del cual vamos a obtener la informacion y en las refencias colocas el campo del cual vamos a traer la informacion del documento";
+			break;
+		}
+		case FECHA_FUNCION_SQL: {
+			ruleProperty = """
+					 Funcion que calcula una fecha\s
+					 Se envia el id del documento actual y los depende el valoropcion
+					Cuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF timestamp AS\
+					""";
 			break;
 		}
 		case FORCE_NOTIFICATION: {
