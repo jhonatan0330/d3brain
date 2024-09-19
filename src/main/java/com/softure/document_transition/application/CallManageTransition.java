@@ -376,6 +376,11 @@ public class CallManageTransition {
 		ProcesoTransicionDTO solucion = transicionService.consultaUnica(solucionFilter);
 		if (solucion != null)
 			return solucion;
+		// Como primero lo hice con OK la idea es cambiar a default
+		solucionFilter.setNombre(SharedConstants.DEFAULT);
+		solucion = transicionService.consultaUnica(solucionFilter);
+		if (solucion != null)
+			return solucion;
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
 		String msgException = "La decision " + decisionDTO.getNombre() + " del proceso "
 				+ decisionDTO.getProcesoNombre() + " esta intentando buscar un camino para la respuesta ( "

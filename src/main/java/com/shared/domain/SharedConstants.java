@@ -26,6 +26,7 @@ public class SharedConstants {
 	public static final String STATE_INACTIVE = "I";
 
 	public static final String OK = "OK";
+	public static final String DEFAULT = "DEFAULT";
 	public static final String FILTROINFORMACION = "FILTRO";
 	public static final String ERROR = "ERROR";
 	public static final String INCOMPLETE = "INCOMPLETE";
