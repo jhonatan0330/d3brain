@@ -316,7 +316,7 @@ public class WebServiceExecuteAPI {
 			List<String> resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
 			String extractionString = "";
 			for(String iExtraction: resultExtraction) {
-				if (iExtraction.startsWith("ERROR")) {
+				if (iExtraction.toUpperCase().startsWith("ERROR")) {
 					if(callWS.getError() == null) {
 						callWS.setError(iExtraction);
 					}else {
