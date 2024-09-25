@@ -135,7 +135,7 @@ public class CallDocumentUpdateFromAutomatic {
 		updateDocument.setEstadoExpediente(procesoDTO.getEstadoExpediente());
 
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = caracteristicaService
-				.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token);
+				.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token, false);
 
 		List<PedidoVentaCaracteristicaDTO> currentFields = campoService.readCompleteFields(procesoDTO.getLlaveTabla(),
 				camposPlantilla, procesoDTO.getHistorico(), token);

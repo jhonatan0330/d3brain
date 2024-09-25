@@ -999,7 +999,7 @@ public class FullControllerDTO {
 	@PostMapping(value="/obtenerCamposDocumentoPlantilla")
 	public DocumentoPlantillaDTO obtenerCamposDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto, @RequestHeader("Authorization") String token)throws FlexException {
 		try {
-			return documentoPlantillaService.obtenerCampos(dto, token);
+			return documentoPlantillaService.obtenerCampos(dto, token, true);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

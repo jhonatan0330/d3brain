@@ -55,7 +55,7 @@ public class TemplateController {
 	public DocumentoPlantillaDTO obtenerCampos(@RequestParam("id") String id, @RequestHeader("Authorization") String token) throws ServerException {
 		DocumentoPlantillaDTO filterTemplate = new DocumentoPlantillaDTO();
 		filterTemplate.setLlaveTabla(id);
-		return documentoplantillaService.obtenerCampos(filterTemplate, token);
+		return documentoplantillaService.obtenerCampos(filterTemplate, token, true);
 	}
 	
 	@PostMapping(value="/getFieldData")

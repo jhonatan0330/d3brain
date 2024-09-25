@@ -538,4 +538,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_266' , 'L', 'TIPO PRODUCTO FORMULARIO DETALLADO', 'TIPO_PRODUCTO_FORMULARIO_DETALLADO', 'REQUISITO');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
 	VALUES('PROP_267' , 'C', 'FECHA_FUNCION', 'FECHA_FUNCION_SQL', 'REQUISITO', 'F', true, true);
-	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_268' , 'L', 'DUPLICAR', 'PERMISO_PLANTILLA_DUPLICAR', 'PERMISOS', true);	

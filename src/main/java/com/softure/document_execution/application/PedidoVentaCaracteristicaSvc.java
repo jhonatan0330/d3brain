@@ -2,7 +2,6 @@ package com.softure.document_execution.application;
 
 import java.util.List;
 
-// BEGIN region interImport
 import java.util.ArrayList;
 import java.util.Date;
 import java.math.BigDecimal;
@@ -11,10 +10,10 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 
 import jakarta.annotation.PostConstruct;
-// END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -23,6 +22,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
@@ -36,6 +36,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	
 	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper;
+	@Autowired @Lazy 
+	private ProcessTemplate templatesService;
 	
 	// BEGIN region servicesPedidoVentaCaracteristica
 	@Autowired @Lazy  private CampoAdaptador adaptador;
@@ -237,15 +239,35 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return null;
 	}
 	
-	public BigDecimal calcularNumeroFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
-		try {
-			// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
-			// al final se carga pero en ibatis falla por el arrray vacio
-			List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
-			if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
-			return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, dependientesOrdenados);
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "");
+	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+		if(propFunction ==null)	return BigDecimal.ZERO;
+		if(Propiedades.isFunctionNotFreeMarker(propFunction.getValor())) {
+			try {
+				// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
+				// al final se carga pero en ibatis falla por el arrray vacio
+				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+				if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
+				return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, dependientesOrdenados);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), "");
+			}	
+		}else {
+			String parameters = "";
+			for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo() + SharedConstants.IGUAL;
+				
+				if(iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+					parameters = parameters + ((iProp.getValorNumero()==null)?"0":iProp.getValorNumero().toString());
+				}else {
+					parameters = parameters + ((iProp.getValorText()==null)?"0":iProp.getValorText());
+				}
+			}
+			try {
+				return new BigDecimal(templatesService.generateOutputFile(propFunction.getValor(), parameters));	
+			}catch(NumberFormatException nf) {
+				return BigDecimal.ZERO;	
+			}
+			
 		}
 	}
 	
@@ -291,6 +313,12 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		//Valido que la cantidad de dependientes este correcta
 		if(dependientes==null || dependientes.isEmpty())throw new ServerException("Revise los dependientes.\n " + campo.getNombre());
 		//if(dependientes.size()!=codigoDepende.size()) throw new ServerException("El numero de dependientes no concuerda. Tipo Expediente" + codigoDepende.size());
+		for (int i = 0; i <dependientes.size(); i++) {
+			PedidoVentaCaracteristicaDTO iDepende = dependientes.get(i);
+			if(iDepende.getCampoDTO()==null) 
+				iDepende.setCampoDTO(campoDocumentoService.consultaXId(iDepende.getCampo()));
+			
+		}
 	}
 	
 	public List<PedidoVentaCaracteristicaDTO> ordenarAlfabeticaDepende(List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{

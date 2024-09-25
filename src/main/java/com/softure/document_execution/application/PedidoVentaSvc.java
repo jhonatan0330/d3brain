@@ -139,7 +139,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		plantillaFilter.setSecurityToken(securityToken);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(securityToken));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, securityToken);
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, securityToken, false);
 		if (plantilla.getCaracteristicas() != null & plantilla.getCaracteristicas().size() != 0) {
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(bd.getLlaveTabla(), bd.getHistorico());

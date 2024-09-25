@@ -476,7 +476,28 @@ COST 100;
     </select>
 
     <select id="consultarRol" resultType="PropiedadDTO">
-        <include refid="selectPropiedadFragment" />
+        select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
+			,cppd_motivo as  motivo
+			,cppd_estado as estado
+		from propiedad_ppdp a
         where cppd_estado = 'A' and cppd_tipo = #{dto.tipo}
         <if test="dto.campo!=null">and cppd_campo = #{dto.campo}</if>
         <if test="dto.propiedadValor!=null">and cppd_propiedadvalor = #{dto.propiedadValor}</if>

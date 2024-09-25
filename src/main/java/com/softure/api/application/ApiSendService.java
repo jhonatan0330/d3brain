@@ -98,7 +98,7 @@ public class ApiSendService {
 		DocumentoPlantillaDTO templateDTO = plantillaService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return plantillaService.obtenerCampos(templateDTO, token);
+		return plantillaService.obtenerCampos(templateDTO, token, true);
 	}
 
 }

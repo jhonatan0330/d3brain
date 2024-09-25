@@ -131,12 +131,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return listarPlantillasUsuario(dto, false);
 		// END region consultaUsuario
 	}
+
 	
 	
-	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token)throws ServerException{
+	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token, boolean external)throws ServerException{
 		// BEGIN region obtenerCampos
 		if(dto==null) return null;
-		dto.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token));
+		dto.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token, external));
 		int order = 0;
 		boolean modificar = !Propiedades.obtenerValor(dto, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty();
 		//En caso que busca desde la interfaz
@@ -171,7 +172,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		configurarInicioPlantilla(copy);
 		copy = super.save(copy);
 		// Copio campos
-		bd.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null));
+		bd.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null, false));
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : bd.getCaracteristicas()) {
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
@@ -556,8 +557,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	public DocumentoPlantillaDTO getTemplateConfiguration(String configuration, String token) throws ServerException {
-		return obtenerCampos(documentoPlantillaMapper.getTemplateConfiguration(configuration), token);
+		return obtenerCampos(documentoPlantillaMapper.getTemplateConfiguration(configuration), token, true);
 	}
+
 	
 // END region aditionalMethods
 

@@ -213,7 +213,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
 			case Propiedades.FECHA_FUNCION_SQL:
 			case Propiedades.NUMERO_FUNCION_SQL:
-				propiedadMapper.eliminarFuncionNumerica(dto);
+				if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+					propiedadMapper.eliminarFuncionNumerica(dto);					
+				}
 				break;
 			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionCampoGenerar(dto);
@@ -294,8 +296,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("No se encuentra la propiedad con Id " + dto.getPropiedadValor());
 		dto.setTipo(valorDefinido.getOrigen());
 		dto.setKey(valorDefinido.getCodigo());
-		if (dto.getValor() != null && dto.getValor().compareTo("-help") == 0)
-			throw new ServerException("Ayuda de " + dto.getKey() + "\n\n\n" + Propiedades.instrucciones(dto.getKey()));
+		if (dto.getValor() != null) {
+			dto.setValor(SoftureUtil.cleanStartEndSpaces(dto.getValor()));
+			if (dto.getValor().compareTo("-help") == 0)
+				throw new ServerException("Ayuda de " + dto.getKey() + "\n\n\n" + Propiedades.instrucciones(dto.getKey()));
+		}
 		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (!valorDefinido.getNecesitaDesarrollo())
 			dto.setFechaImplementacion(new Date());
@@ -371,7 +376,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					propiedadMapper.crearFuncionTarifas(dto);
 					break;
 				case Propiedades.NUMERO_FUNCION_SQL:
-					propiedadMapper.crearFuncionNumerica(dto);
+					if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+						propiedadMapper.crearFuncionNumerica(dto);	
+					}
 					break;
 				case Propiedades.FECHA_FUNCION_SQL:
 					propiedadMapper.crearFuncionFecha(dto);
@@ -464,7 +471,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 		if (!createDocument && dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
 			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService
-					.listarCamposPlantillaConComplementos(dto.getCampo(), null);
+					.listarCamposPlantillaConComplementos(dto.getCampo(), null, false);
 			for (DocumentoPlantillaCaracteristicaDTO iCampo : fields) {
 				if (Propiedades.obtenerParametro(plantilla, Propiedades.CAMPO_DIFERENCIAS) == null)
 					campoService.createFieldDifference(iCampo, plantilla.getLlaveTabla(), token);

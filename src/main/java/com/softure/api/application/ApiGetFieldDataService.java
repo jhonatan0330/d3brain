@@ -73,7 +73,7 @@ public class ApiGetFieldDataService {
 			DocumentoPlantillaDTO templateList = null;
 			if(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla()!=null) {
 				templateList = templateService.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
-				templateList = templateService.obtenerCampos(templateList, token);	
+				templateList = templateService.obtenerCampos(templateList, token, true);	
 			}
 			docs = ApiCommon
 			.transformPedidoVentaToDocument(token, fieldService, fieldData.getCampoDTO().getDocumentos(), templateList);
@@ -110,7 +110,7 @@ public class ApiGetFieldDataService {
 		DocumentoPlantillaDTO templateDTO = templateService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return templateService.obtenerCampos(templateDTO, token);
+		return templateService.obtenerCampos(templateDTO, token, true);
 	}
 
 }

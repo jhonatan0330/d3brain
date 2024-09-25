@@ -34,7 +34,7 @@ public class ApiGetService {
 		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
 		DocumentoPlantillaDTO templateBD = templateService.consultarPorCodigo(filter.getTemplate());
 		if(templateBD==null) throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
-		templateBD = templateService.obtenerCampos(templateBD, token);
+		templateBD = templateService.obtenerCampos(templateBD, token, true);
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setSecurityToken(token);
 		if(filter.getId()==null) {

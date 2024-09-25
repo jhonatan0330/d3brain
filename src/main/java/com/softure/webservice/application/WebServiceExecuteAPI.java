@@ -712,7 +712,7 @@ public class WebServiceExecuteAPI {
 		// optimizando la consulta de campos de una plantilla
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = hmapTemplate.get(templateId);
 		if (camposPlantilla == null) {
-			camposPlantilla = fieldService.listarCamposPlantillaConComplementos(templateId, token);
+			camposPlantilla = fieldService.listarCamposPlantillaConComplementos(templateId, token, false);
 			hmapTemplate.put(templateId, camposPlantilla);
 		}
 		// optimizando la consulta de relaciones de propiedades

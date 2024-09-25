@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.java.services.SoftureUtil;
 
 @Component
 public class TipoTexto {
@@ -19,8 +20,11 @@ public class TipoTexto {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 				pCampo.getCampoDTO().getNombre());
-		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
-			pCampo.setValorText(null);
+		if (pCampo.getValorText() != null) {
+			pCampo.setValorText(SoftureUtil.cleanStartEndSpaces(pCampo.getValorText()));
+			if( pCampo.getValorText().isEmpty()) pCampo.setValorText(null);
+		}
+			
 		if (pCampo.getLlaveTabla() == null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA) != null) {

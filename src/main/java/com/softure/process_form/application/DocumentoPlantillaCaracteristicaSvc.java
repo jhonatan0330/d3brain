@@ -269,10 +269,11 @@ public class DocumentoPlantillaCaracteristicaSvc
 	}
 
 	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantillaConComplementos(String plantilla,
-			String token) throws ServerException {
+			String token, boolean external) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> campos = listarCamposPlantilla(plantilla, token);
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : campos) {
 			iCampo = cargarComplementos(iCampo, token);
+			if(external) Propiedades.clearPropertiesToOut(iCampo.getPropiedades());
 		}
 		return campos;
 	}

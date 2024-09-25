@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
@@ -520,7 +521,34 @@ public class Propiedades {
 		}
 		return pCampo.getPropiedades();
 	}
+	
+	public static boolean isFunctionNotFreeMarker(String value) {
+		if (value == null) return true;
+		value = SoftureUtil.cleanStartEndSpaces(value);
+		return (value.toLowerCase().startsWith("declare") || value.toLowerCase().startsWith("begin"));
+	}
 
+	public static void clearPropertiesToOut(List<PropiedadDTO> props) {
+		if(props==null) return;
+		for(PropiedadDTO iProp : props) {
+			iProp.setBloqueo(null);
+			iProp.setCambioCreacion(null);
+			iProp.setCambioEliminacion(null);
+			iProp.setRol(null);
+			iProp.setFechaDefinicion(null);
+			iProp.setFechaFinal(null);
+			iProp.setFechaInicial(null);
+			iProp.setRolExcluyente(null);
+			iProp.setRolExcluyenteNombre(null);
+			iProp.setRolNombre(null);
+			iProp.setUsuario(null);
+			iProp.setUsuarioExcluyenteNombre(null);
+			iProp.setUsuarioNombre(null);
+			if(iProp.getKey().contains("SQL"))iProp.setValor("OK");		
+		}
+	}
+	
+	
 	public static String instrucciones(String formato) {
 		if (formato == null)
 			return "Sin instrucciones por formato no enviado";
@@ -1043,13 +1071,7 @@ public class Propiedades {
 			break;
 		}
 		case NUMERO_FUNCION_SQL: {
-			ruleProperty = """
-					 Funcion que calcula un numero\s
-					 Se envia el id del documento actual y los depende el valoropcion
-					Cuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.
-					
-					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS\
-					""";
+			ruleProperty = "Funcion que calcula un numero\n\n Se envia el id del documento actual y los depende el valoropcion Cuando el campo es numero, bloqueado y tiene esta propiedad se calcula al guardar, pero debe estar de ultima en el orden del formulario.CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, parametros character varying[])  RETURNS SETOF numeric AS\n\nTambien puedes calcular con Freemarker tomando en cuenta los dependientes \n\n SI el valor empieza por begin o declare va  ser una fucnion sql sino se va a clacular por freemarker";
 			break;
 		}
 		case NUMERO_STEP: {

@@ -185,7 +185,7 @@ public class CallDocumentCRUD {
 		plantillaFilter.setSecurityToken(token);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 		if (!isUpdateAutomatic
 				&& Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
@@ -342,7 +342,7 @@ public class CallDocumentCRUD {
 		plantillaFilter.setSecurityToken(token);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				(isAutomatic) ? true : rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token);
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
 

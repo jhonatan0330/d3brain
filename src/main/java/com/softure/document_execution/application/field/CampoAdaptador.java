@@ -7,11 +7,13 @@ import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
 @Component
 public class CampoAdaptador {
 
+	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc fieldService;
 	@Autowired @Lazy  private TipoArchivo tipoArchivo;
 	@Autowired @Lazy  private TipoBinario tipoBinario;
 	@Autowired @Lazy  private TipoConfiguracion tipoConfiguracion;
@@ -105,7 +107,9 @@ public class CampoAdaptador {
 	 * @throws ServerException
 	 */
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException{
-		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
+		if(pCampo.getCampo()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
+		pCampo.setCampoDTO(fieldService.consultaXId(pCampo.getCampo()));
+		pCampo.setCampoDTO(fieldService.cargarComplementos(pCampo.getCampoDTO(), pCampo.getSecurityToken()));
 		PedidoVentaCaracteristicaFilterDTO vResultado =null;
 		switch(pCampo.getCampoDTO().getFormato()){
 			case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION:{vResultado = tipoConfiguracion.consultarDatosBase(pCampo);break;}

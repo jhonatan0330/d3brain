@@ -203,7 +203,7 @@ public class CallDocumentNewFromAutomatic {
 			nuevo.setPlantilla(transicion.getPlantilla());
 			DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
 			pPlantilla.setLlaveTabla(transicion.getPlantilla());
-			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token);
+			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token, false);
 			if (documento != null)
 				nuevo.setTransaccion(documento.getTransaccion());
 			for (DocumentoPlantillaCaracteristicaDTO iCampo : pPlantilla.getCaracteristicas()) {

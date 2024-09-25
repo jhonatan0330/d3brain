@@ -100,7 +100,7 @@ public class APIController {
 	
 	@PostMapping(value="/obtenerCampos")
 	public DocumentoPlantillaDTO obtenerCampos(@RequestBody DocumentoPlantillaDTO documentoFiltro,  @RequestHeader("Authorization") String token) throws ServerException {
-		return documentoplantillaService.obtenerCampos(documentoFiltro, token);
+		return documentoplantillaService.obtenerCampos(documentoFiltro, token, true);
 	}
 	
 	@PostMapping(value="/upload")

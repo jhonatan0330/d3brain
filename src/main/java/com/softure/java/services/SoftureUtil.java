@@ -195,7 +195,7 @@ public class SoftureUtil {
 		return currentFunction;
 	}
 
-	public static String cleanStartEndSpaces(String str) throws ServerException {
+	public static String cleanStartEndSpaces(String str){
 		if (str == null)
 			return null;
 		return str.replaceAll("^\\s*", "").replaceAll("\\s*$", "");

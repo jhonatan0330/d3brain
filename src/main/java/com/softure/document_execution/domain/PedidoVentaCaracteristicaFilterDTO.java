@@ -2,6 +2,8 @@ package com.softure.document_execution.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.java.domain.BasicFilterDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 
@@ -13,6 +15,7 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 @Alias("PedidoVentaCaracteristicaFilterDTO")
+@JsonInclude(Include.NON_NULL)
 public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 {
 
