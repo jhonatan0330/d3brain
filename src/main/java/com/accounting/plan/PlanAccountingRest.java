@@ -47,12 +47,12 @@ public class PlanAccountingRest {
 	private PlanGetBalanceService getBalanceService;
 	
 	@GetMapping("/balance/{catalog}")
-	public List<ResultMapDTO> getBalance(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {
+	public List<ResultMapDTO> getBalance(@PathVariable("catalog") String catalog, @RequestHeader("Authorization") String token) throws ServerException {
 		return getBalanceService.getBalance(catalog);
 	}
 	
 	@PostMapping("/upload/{catalog}")
-	public void uploadAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, MultipartFile file) throws ServerException {
+	public void uploadAccount(@PathVariable("catalog") String catalog, @RequestHeader("Authorization") String token, MultipartFile file) throws ServerException {
 		uploadAccountService.call(catalog, file);
 	}
 	
@@ -67,17 +67,17 @@ public class PlanAccountingRest {
 	}
 	
 	@DeleteMapping("/account/{accountId}")
-	public AccountDTO deleteAccount(@PathVariable String accountId, @RequestHeader("Authorization") String token) throws ServerException {
+	public AccountDTO deleteAccount(@PathVariable("acountId") String accountId, @RequestHeader("Authorization") String token) throws ServerException {
 		return createAccountService.callDelete(accountId);
 	}
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(value="filter", required = false) String filter) throws ServerException {
+	public List<AccountDTO> getAccount(@PathVariable("catalog") String catalog, @RequestHeader("Authorization") String token, @RequestParam(value="filter", required = false) String filter) throws ServerException {
 		return getAccountService.getActive(catalog, filter);
 	}
 	
 	@GetMapping(value="/account/{catalog}/{id}")
-	public AccountDTO getAccountById(@PathVariable String catalog, @PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public AccountDTO getAccountById(@PathVariable("catalog") String catalog, @PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return getAccountService.getById(catalog, id);
 	}
 	
@@ -87,7 +87,7 @@ public class PlanAccountingRest {
 	}
 	
 	@GetMapping(value="/catalog/{id}")
-	public CatalogDTO getCatalogById(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public CatalogDTO getCatalogById(@PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return getCatalogService.getById(id);
 	}
 	
@@ -102,7 +102,7 @@ public class PlanAccountingRest {
 	}
 	
 	@DeleteMapping("/catalog/{catalogId}")
-	public CatalogDTO inactivateCatalog(@RequestHeader("Authorization") String token, @PathVariable String catalogId) throws ServerException {
+	public CatalogDTO inactivateCatalog(@RequestHeader("Authorization") String token, @PathVariable("catalogId") String catalogId) throws ServerException {
 		return createCatalogService.callDelete(catalogId);
 	}
 

@@ -39,13 +39,13 @@ public class VoucherRest {
 
 	@GetMapping("/{catalog}")
 	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@PathVariable String catalog) throws ServerException {
+			@PathVariable("catalog") String catalog) throws ServerException {
 		return getVoucherService.call(catalog);
 	}
 	
 	@GetMapping("/{catalog}/{voucherId}")
 	public Voucher getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@PathVariable String catalog, @PathVariable String voucherId) throws ServerException {
+			@PathVariable("catalog") String catalog, @PathVariable("voucherId") String voucherId) throws ServerException {
 		return getVoucherService.getById(catalog, voucherId);
 	}
 
@@ -63,7 +63,7 @@ public class VoucherRest {
 	
 	@DeleteMapping("/manual/{voucherId}")
 	public VoucherDTO deleteManualVoucher(HttpServletRequest request,
-			@RequestHeader("Authorization") String token, @PathVariable String voucherId) throws ServerException {
+			@RequestHeader("Authorization") String token, @PathVariable("voucherId") String voucherId) throws ServerException {
 		return createService.delete(voucherId);
 	}
 }

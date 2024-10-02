@@ -2,14 +2,20 @@ package com.softure.java.services;
 
 import java.io.StringWriter;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -34,17 +40,23 @@ import freemarker.template.Template;
 @Component
 public class ProcessTemplate {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoRelacionExpedienteSvc documentsInFieldService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaSvc documentService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DetallePedidoVentaSvc detallePedidoVentaService;
 
 	public String generateOutputFile(String plantilla, String parametros) {
@@ -159,8 +171,9 @@ public class ProcessTemplate {
 								.listByField(campo.getLlaveTabla());
 						if (documentsInField != null && !documentsInField.isEmpty()) {
 							relations = getRealationsRelatedWithList(referidas, relations);
-							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas, relations);
-							if(propertiesWithRelationField!=null && !propertiesWithRelationField.isEmpty()) {
+							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas,
+									relations);
+							if (propertiesWithRelationField != null && !propertiesWithRelationField.isEmpty()) {
 								for (int i = 0; i < documentsInField.size(); i++) {
 									DocumentoRelacionExpedienteDTO iRelation = documentsInField.get(i);
 									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
@@ -190,17 +203,18 @@ public class ProcessTemplate {
 												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 													if (iCampo.getValorText() != null) {
 														if (iCampo.getCampoDTO() == null)
-															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+															iCampo.setCampoDTO(
+																	fieldService.consultaXId(iCampo.getCampo()));
 														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
 														if (iCampo.getTransaccionRegistro() != null)
 															codeReplaceList = codeReplaceList + "("
 																	+ iCampo.getTransaccionRegistro() + ")";
 														// +ConstantesGenerales.LINEA_MEDIA_DOBLE
 														// +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
-														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L"
-																+ "_" + codeReplaceList + SharedConstants.COMA_DOBLE
-																+ formatToReplaceAll(iCampo,
-																		iCampo.getTransaccionRegistro());
+														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE
+																+ "L" + "_" + codeReplaceList
+																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
+																		iCampo, iCampo.getTransaccionRegistro());
 														// Coloque el service en null para evitar que se generen ciclos
 														// infinitos
 													}
@@ -208,18 +222,20 @@ public class ProcessTemplate {
 											}
 										}
 									}
-								}	
+								}
 							}
 						}
 					}
 				} else {
 					if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
-						//Aqui deberia ser obtener por campo
-						List<DetallePedidoVentaDTO> detalleFromDocument = detallePedidoVentaService.listar2Documento(campo.getDocumento());
+						// Aqui deberia ser obtener por campo
+						List<DetallePedidoVentaDTO> detalleFromDocument = detallePedidoVentaService
+								.listar2Documento(campo.getDocumento());
 						if (detalleFromDocument != null && !detalleFromDocument.isEmpty()) {
 							relations = getRealationsRelatedWithList(referidas, relations);
-							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas, relations);
-							if(propertiesWithRelationField!=null && !propertiesWithRelationField.isEmpty()) {
+							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas,
+									relations);
+							if (propertiesWithRelationField != null && !propertiesWithRelationField.isEmpty()) {
 								for (int i = 0; i < detalleFromDocument.size(); i++) {
 									DetallePedidoVentaDTO iRelation = detalleFromDocument.get(i);
 									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
@@ -249,17 +265,18 @@ public class ProcessTemplate {
 												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 													if (iCampo.getValorText() != null) {
 														if (iCampo.getCampoDTO() == null)
-															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+															iCampo.setCampoDTO(
+																	fieldService.consultaXId(iCampo.getCampo()));
 														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
 														if (iCampo.getTransaccionRegistro() != null)
 															codeReplaceList = codeReplaceList + "("
 																	+ iCampo.getTransaccionRegistro() + ")";
 														// +ConstantesGenerales.LINEA_MEDIA_DOBLE
 														// +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
-														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L"
-																+ "_" + codeReplaceList + SharedConstants.COMA_DOBLE
-																+ formatToReplaceAll(iCampo,
-																		iCampo.getTransaccionRegistro());
+														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE
+																+ "L" + "_" + codeReplaceList
+																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
+																		iCampo, iCampo.getTransaccionRegistro());
 														// Coloque el service en null para evitar que se generen ciclos
 														// infinitos
 													}
@@ -267,9 +284,9 @@ public class ProcessTemplate {
 											}
 										}
 									}
-								}	
+								}
 							}
-							
+
 						}
 					}
 				}
@@ -281,14 +298,16 @@ public class ProcessTemplate {
 
 	private List<PropiedadDTO> getPropertiesWithRelation(PedidoVentaCaracteristicaDTO campo,
 			List<PropiedadDTO> listOfProperties, Map<String, List<RelacionInternaDTO>> relations) {
-		if(listOfProperties==null) return null;
+		if (listOfProperties == null)
+			return null;
 		List<PropiedadDTO> resultOfProperties = null;
 		for (PropiedadDTO iProp : listOfProperties) {
 			List<RelacionInternaDTO> relaciones = relations.get(iProp.getLlaveTabla());
 			if (relaciones != null && !relaciones.isEmpty()) {
 				for (RelacionInternaDTO iRelation : relaciones) {
-					if(iRelation.getCampo().compareTo(campo.getCampo())==0) {
-						if(resultOfProperties==null) resultOfProperties = new ArrayList<>();
+					if (iRelation.getCampo().compareTo(campo.getCampo()) == 0) {
+						if (resultOfProperties == null)
+							resultOfProperties = new ArrayList<>();
 						resultOfProperties.add(iProp);
 						break;
 					}
@@ -300,12 +319,11 @@ public class ProcessTemplate {
 
 	private Map<String, List<RelacionInternaDTO>> getRealationsRelatedWithList(List<PropiedadDTO> referidas,
 			Map<String, List<RelacionInternaDTO>> relations) throws ServerException {
-		if (relations ==null) {
-			relations= new HashMap<String, List<RelacionInternaDTO>>();
+		if (relations == null) {
+			relations = new HashMap<String, List<RelacionInternaDTO>>();
 			for (PropiedadDTO iProp : referidas) {
-				relations.put(iProp.getLlaveTabla(),
-						relacionService.relacionesPropiedad(iProp.getLlaveTabla()));
-			}	
+				relations.put(iProp.getLlaveTabla(), relacionService.relacionesPropiedad(iProp.getLlaveTabla()));
+			}
 		}
 		return relations;
 	}
@@ -376,8 +394,9 @@ public class ProcessTemplate {
 						if (iInternal.getValorOpcion() != null
 								&& iInternal.getValorOpcion().compareTo(iFRelation.getDocumento()) == 0) {
 							fieldsInternal.remove(iInternal);
-							if(iInternal.getTransaccionRegistro()!=null) {
-								if(camposIntermedios==null) camposIntermedios = new ArrayList<>();
+							if (iInternal.getTransaccionRegistro() != null) {
+								if (camposIntermedios == null)
+									camposIntermedios = new ArrayList<>();
 								camposIntermedios.add(iInternal);
 							}
 							break;
@@ -389,9 +408,11 @@ public class ProcessTemplate {
 			camposEscogidos.addAll(fieldsInternal);
 			List<PedidoVentaCaracteristicaDTO> mailInternal = getFieldsFromOtherDocument(relacionesSinRepetir,
 					fieldsRelation);
-			if (mailInternal != null)camposEscogidos.addAll(mailInternal);
-			if (camposIntermedios != null)camposEscogidos.addAll(camposIntermedios);
-			
+			if (mailInternal != null)
+				camposEscogidos.addAll(mailInternal);
+			if (camposIntermedios != null)
+				camposEscogidos.addAll(camposIntermedios);
+
 		}
 		return camposEscogidos;
 	}
@@ -400,8 +421,9 @@ public class ProcessTemplate {
 	 * 
 	 * @param iCampo
 	 * @return
+	 * @throws ServerException 
 	 */
-	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo, String auxiliarFormat) {
+	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo, String auxiliarFormat) throws ServerException {
 		if (iCampo == null || iCampo.getCampoDTO() == null || iCampo.getValorText() == null)
 			return "";
 		switch (iCampo.getCampoDTO().getFormato()) {
@@ -434,27 +456,63 @@ public class ProcessTemplate {
 		}
 	}
 
-	public Date getDateWithTransformations(Date result, String texto) {
+	public Date getDateWithTransformations(Date result, String texto) throws ServerException {
 		if (!texto.contains("("))
 			return result;
 		// Tengo que uitar esto y dejar todo por milisegundos
 		// Ejemplo E_FECHA_XXX[-15D]
-		String lastCharToForm = texto.substring(texto.length() - 2, texto.length() - 1);
-		int lastCharacter = 2;
-		if (lastCharToForm.compareTo("D") != 0)
-			lastCharacter = 1;
-		String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - lastCharacter);
-		long timeToAdd = 0;
-		try {
-			timeToAdd = Long.parseLong(formulaTime.substring(1));
-		} catch (Exception e) {
-			timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
-		}
-		if (formulaTime.contains("-"))
-			timeToAdd = timeToAdd * -1; // Si es negativo
-		if (lastCharToForm.compareTo("D") == 0)
-			timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
-		return new Date(result.getTime() + timeToAdd);
+		
+		
+		String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - 1);
+		if (formulaTime.startsWith("P")) {
+			try {
+				Calendar fechaInicial = new GregorianCalendar();
+				fechaInicial.setTime(result);
+				String[] periodos = formulaTime.split("T");
+				if (periodos[0].length() > 1) {
+					Period pr = Period.parse(periodos[0]);
+					if (pr.getYears() != 0) {
+						fechaInicial.add(Calendar.YEAR, pr.getYears());
+					}
+					if (pr.getMonths() != 0) {
+						fechaInicial.add(Calendar.MONTH, pr.getMonths());
+					}
+					if (pr.getDays() != 0) {
+						fechaInicial.add(Calendar.DATE, pr.getDays());
+					}
+				}
+				if (periodos.length > 1) {
+					Duration lt = Duration.parse("PT" + periodos[1]);
+					if (lt.toHoursPart() != 0) {
+						fechaInicial.add(Calendar.HOUR, lt.toHoursPart());
+					}
 
+					if (lt.toMinutesPart() != 0) {
+						fechaInicial.add(Calendar.MINUTE, (int) lt.toMinutesPart());
+					}
+					if (lt.toSecondsPart() != 0) {
+						fechaInicial.add(Calendar.SECOND, (int) lt.toSecondsPart());
+					}
+				}
+				return fechaInicial.getTime();
+			} catch (DateTimeParseException e) {
+				throw new ServerException("La fecha " + texto + " nose configura correctamente. e = " + e.getMessage());
+			}
+		} else {
+			
+			if (formulaTime.endsWith("D") )
+				formulaTime = formulaTime.substring(0, formulaTime.length()-1);
+			long timeToAdd = 0;
+			try {
+				timeToAdd = Long.parseLong(formulaTime.substring(1));
+			} catch (Exception e) {
+				timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
+			}
+			if (formulaTime.contains("-"))
+				timeToAdd = timeToAdd * -1; // Si es negativo
+			timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
+			return new Date(result.getTime() + timeToAdd);
+
+		}
 	}
 }

@@ -38,13 +38,22 @@ public class TipoNumero {
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
-		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico
+		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+				Propiedades.NUMERO_FUNCION_SQL);
+		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico o carga masiva
 			if (!formula.isEmpty()) {
 				BigDecimal valorCalculado = calcular(pCampo, formula);
 				pCampo.setValorNumero(valorCalculado);
 			} else {
-				pCampo.setValorNumero(BigDecimal.ZERO);
+				if (funcionCalculo!= null) {
+					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
+							funcionCalculo, pCampo.getDocumento(), pCampo.getDependientes());
+					pCampo.setValorNumero(valorCalculado);
+				} else {
+					pCampo.setValorNumero(BigDecimal.ZERO);
+				}
 			}
+			
 		} else {
 			if (!formula.isEmpty()) {
 				if (pCampo.getModificado()) {
@@ -67,8 +76,7 @@ public class TipoNumero {
 				}
 			}
 			// Valido que se calcule bien la funcion
-			PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-					Propiedades.NUMERO_FUNCION_SQL);
+			
 			if (bloqProperty != null && funcionCalculo != null) {
 				// Dividi el tema del depende ya que siempre tengo que calcular el valor sin
 				// necesidad del depende

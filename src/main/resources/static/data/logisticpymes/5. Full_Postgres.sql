@@ -2334,7 +2334,7 @@ INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser
 	
 
 INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado, cser_puerto, cser_base, cser_urlconexion)
-	select 'ftp', 'FILE SERVER', '192.168.2.121',  'softure', 'softure123',  'F', 2, 'A', '21', 'pruebas', 'https://fs3.softwareparati.com/'
+	select 'ftp', 'FILE SERVER', '192.168.2.203',  'softure', 'softure123',  'F', 2, 'A', '21', 'pruebas', 'https://fs5.softwareparati.com/'
 	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='ftp');
 
 
