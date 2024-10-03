@@ -510,7 +510,8 @@ public class ProcessTemplate {
 			}
 			if (formulaTime.contains("-"))
 				timeToAdd = timeToAdd * -1; // Si es negativo
-			timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
+			if (texto.substring(texto.indexOf("(") + 1, texto.length() - 1).endsWith("D"))//Esto es para ese calculo de dias
+				timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
 			return new Date(result.getTime() + timeToAdd);
 
 		}
