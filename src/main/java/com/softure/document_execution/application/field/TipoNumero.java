@@ -345,7 +345,9 @@ public class TipoNumero {
 			}
 
 		}
-		pCampo.setCampoDTO(pBase);
+		//pCampo.setCampoDTO(pBase);
+		pCampo.setCampoDTO(null);
+		pCampo.setDependientes(null);
 		return pCampo;
 	}
 }
