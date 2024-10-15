@@ -45,6 +45,7 @@ public class Propiedades {
 	public static final String API_CONNECT_TIMEOUT = "API_CONNECT_TIMEOUT";
 	public static final String API_ENCODE_STANDAR = "API_ENCODE_STANDAR";
 	public static final String API_PARAMETER = "API_PARAMETER";
+	public static final String HTTP_METHOD = "HTTP_METHOD";
 
 	public static final String API_SCHEDULE_TIME_BLOCK = "API_SCHEDULE_TIME_BLOCK";
 	public static final String FUNCION_SQL_PREVALIDATE_API = "FUNCION_SQL_PREVALIDATE_API";

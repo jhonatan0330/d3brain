@@ -62,7 +62,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_32' , 'C', 'MULTIPLE', 'MULTIPLE', 'REQUISITO', 'Z', true);
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_33' , 'C', 'CAMPO_HEREDADO', 'CAMPO_HEREDADO', 'REQUISITO', 'Z', true);
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_no4mbre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria) 
 	VALUES('PROP_34' , 'C', 'FORMATO', 'FORMATO', 'REQUISITO', 'Z');
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
 	VALUES('PROP_35' , 'C', 'MOSTRAR EN POP UP', 'PROCESO_POP', 'REQUISITO', 'Z', TRUE);
@@ -485,7 +485,7 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	VALUES('PROP_248' , 'C', 'NUMERO FUNCION SIEMPRE CALCULAR AL GUARDAR', 'FUNCION_NUMBER_ALL_CALCULATE_SAVE', 'REQUISITO', 'N', true);
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_multiple, cpvd_origencategoria) 
-	VALUES('PROP_249' , 'A', 'PARAMETROS PARA EL API', 'API_PARAMETER', 'REQUISITO', true, 'P');
+	VALUES('PROP_249' , 'W', 'PARAMETROS PARA EL API', 'API_PARAMETER', 'REQUISITO', true, 'P');
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_250' , 'E', 'QUERY REPORTE', 'REPORT_QUERY', 'REQUISITO', true);
@@ -541,3 +541,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_268' , 'L', 'DUPLICAR', 'PERMISO_PLANTILLA_DUPLICAR', 'PERMISOS', true);	
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_269' , 'W', 'HTTP METODO PETICION', 'HTTP_METHOD', 'PERMISOS', true);

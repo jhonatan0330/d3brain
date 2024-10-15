@@ -348,8 +348,10 @@ public class CallManageTransition {
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(), "Decision : " + decisionDTO.getNombre());
 			}
+			//Antes tenia esto como una excepcion pero para los apis asincronos eso no iporta tanto
 			if (resultado == null)
-				throw new ServerException("El resultado ha sido nulo\nDecision : " + decisionDTO.getNombre());
+				resultado = "ERROR";
+				//throw new ServerException("El resultado ha sido nulo\nDecision : " + decisionDTO.getNombre());
 		}
 		ProcesoTransicionDTO solucion = getNextTransition(decisionDTO.getLlaveTabla(), resultado);
 		return solucion;

@@ -526,8 +526,15 @@ public class WebServiceExecuteAPI {
 		try {
 			urlApi = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) urlApi.openConnection();
-			con.setRequestMethod("POST");
-			con.setDoOutput(true);
+			PropiedadDTO httpMethodValue = Propiedades.obtenerParametro(apiService,
+					Propiedades.HTTP_METHOD);
+			if (httpMethodValue != null) {
+				con.setRequestMethod(httpMethodValue.getValor());
+			}else {
+				con.setRequestMethod("POST");
+				con.setDoOutput(true);
+			}
+			
 
 			if (headerProperties != null && headerProperties.size() != 0) {
 				for (Entry<String, String> jugador : headerProperties.entrySet()) {
@@ -564,12 +571,14 @@ public class WebServiceExecuteAPI {
 			String standarEncoding = Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR);
 			if (standarEncoding.isEmpty())
 				standarEncoding = StandardCharsets.UTF_8.toString();
-			// Send request
-			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			// log.info("[" + con.getURL().toString() + "] Body API\n" + body);
-			// LA codificaion ISO_8859_1 es para soportar DIAn con tildes
-			wr.write(body.getBytes(standarEncoding));
-			wr.close();
+			if(con.getRequestMethod().compareTo("GET")!=0) {
+				// Send request
+				DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+				// log.info("[" + con.getURL().toString() + "] Body API\n" + body);
+				// LA codificaion ISO_8859_1 es para soportar DIAn con tildes
+				wr.write(body.getBytes(standarEncoding));
+				wr.close();	
+			}
 
 			log.info("[" + con.getURL().toString() + "] Procesando API status (" + con.getResponseCode() + ")");
 			BufferedReader in = null;
