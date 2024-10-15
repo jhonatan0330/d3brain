@@ -164,10 +164,19 @@ public class CallBPM {
 			}
 		}
 		plantillasRevisadas.add(procesoDTO.getPlantilla());
-		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(expediente.getLlaveTabla());
+		doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), documento, securityToken, saldoDocumento, plantillasRevisadas,
+				documentosGestionados, transaccion, caminosValidados, expediente.getNombre());
+	}
+
+	//Va a existir algun problema en el futuro en casos que los documentos no hagan parte de procesos cya arregle cuando 
+	// es al inciiar pero cuando es por la mitad de una transicion larga no se como se comporte
+	private void doBpmInInnerDocuments(String currentDocumentId , PedidoVentaDTO startDocument, String securityToken,
+			BigDecimal saldoDocumento, List<String> plantillasRevisadas, List<String> documentosGestionados,
+			String transaccion, List<String> caminosValidados, String currentDocumentName) throws ServerException {
+		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(currentDocumentId);
 		if (gestionables != null && !gestionables.isEmpty()) {
-			System.out.format("\n[%s] Gestionando documentos que esten relacionados", expediente.getNombre(),
-					documento.getNombre());
+			System.out.format("\n[%s] Gestionando documentos que esten relacionados", currentDocumentName,
+					startDocument.getNombre());
 			for (PedidoVentaCaracteristicaDTO campo : gestionables) {
 				System.out.format("\n[] Relacion %s ( %s )", campo.getCampo(), campo.getValorText());
 				List<DocumentoRelacionExpedienteDTO> expedientesAnidados = null;
@@ -176,7 +185,7 @@ public class CallBPM {
 					if (campo.getLlaveTabla().compareTo(Propiedades.CAMPO_HEREDADO_1) == 0) {
 						// Consulto los campos que se relacionan y gestiono el estado de esos procesos
 						expedientesAnidados = relacionExpedienteService.listarHeredados(campo.getValorAuxiliar(),
-								campo.getValorText(), procesoDTO.getLlaveTabla(), documento.getPlantilla(),
+								campo.getValorText(), currentDocumentId, startDocument.getPlantilla(),
 								plantillasRevisadas);
 					} else {
 						// Esto creo que se podria optimizar algun día y solo ahce un llamado por todos
@@ -208,7 +217,7 @@ public class CallBPM {
 						if (!validadoPreviamente) {
 							PedidoVentaDTO expAnidado = pedidoService.consultaXId(expedienteId);
 							documentosGestionados.add(expedienteId);
-							gestionarExpedienteDependientes(expAnidado, documento, securityToken,
+							gestionarExpedienteDependientes(expAnidado, startDocument, securityToken,
 									iExpediente.getValor(), plantillasRevisadas, caminosValidados,
 									documentosGestionados, transaccion, false);
 						}
@@ -359,7 +368,6 @@ public class CallBPM {
 		if (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty())
 			return pCampo;
 
-		List<PedidoVentaDTO> activos = new ArrayList<PedidoVentaDTO>();
 		HashMap<String, String> hmap = new HashMap<String, String>();
 		String maquinaEstados;
 		for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
@@ -421,6 +429,32 @@ public class CallBPM {
 							saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO, updaterDTO,
 									token);
 							relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
+							// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
+							// Estas lineas las copie de la opcion maquina de estados con gestionar estados
+						
+							List<String> caminosGestionar = getCaminos(pCampo);
+							if (caminosGestionar != null && !caminosGestionar.isEmpty()) {
+								List<String> caminosValidados = validarCamino(caminosGestionar, procesoDTO.getPlantilla());
+								if (caminosValidados.size() != 0) {
+									List<String> documentosGestionados = new ArrayList<String>();
+									documentosGestionados.add(pCampo.getDocumento());
+									BigDecimal saldoDoc = null;
+									// Me sucedio el probelma de validar lso saldos de un documento cuando son
+									// multiples
+									if (pCampo.getExpedientes().size() > 1) {
+										if (procesoDTO.getDinero() != null)
+											saldoDoc = procesoDTO.getDinero().getSaldo();
+									} else {
+										if (updaterDTO.getDinero() != null)
+											saldoDoc = updaterDTO.getDinero().getValorTotal();
+									}
+									doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, token, saldoDoc, 
+											caminosGestionar, documentosGestionados, 
+											pCampo.getTransaccionRegistro(),
+											caminosValidados,
+											procesoDTO.getNombre());	
+								}
+							}
 						}
 					}else {
 						// Ya que gestionando bpm no se hizo nada lo quito
@@ -437,7 +471,6 @@ public class CallBPM {
 					}
 				}
 
-				activos.add(procesoDTO);
 			} else {
 				if (procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					// Si tenia permisos, inactivo esos permisos
@@ -449,7 +482,7 @@ public class CallBPM {
 						revertirExpedienteDependiente(procesoDTO, updaterDTO, token, caminosGestionar, true);
 					}
 				} else {
-					activos.add(procesoDTO);
+					// No se que viene en este camino y acabo de quitar algo de activos
 				}
 			}
 		}
