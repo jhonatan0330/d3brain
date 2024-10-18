@@ -28,6 +28,7 @@ import com.softure.document_execution.domain.DetallePedidoVentaDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
@@ -58,6 +59,8 @@ public class ProcessTemplate {
 	@Autowired
 	@Lazy
 	private DetallePedidoVentaSvc detallePedidoVentaService;
+	@Autowired @Lazy 
+	private MailSendMessageToAdminService sendToAdminService;
 
 	public String generateOutputFile(String plantilla, String parametros) {
 		if (parametros != null && !parametros.isEmpty()) {
@@ -95,7 +98,13 @@ public class ProcessTemplate {
 					Template t = new Template("templateName", plantilla, cfg);
 					t.process(mapParams, out);
 				} catch (Exception e) {
-					e.printStackTrace();
+					try {
+						sendToAdminService.call("Error procesando una pantilla",
+								e.getMessage() + SharedConstants.NEW_LINE +plantilla  );
+					} catch (ServerException e1) {
+						e.printStackTrace();
+						e1.printStackTrace();
+					}
 				}
 				return out.toString();
 			}
