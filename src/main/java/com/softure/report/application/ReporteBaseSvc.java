@@ -389,9 +389,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 					ejecucion.setUrl(uploadService.uploadFile(resultado, reporte.getNombre() + "_("
 							+ DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), token,
 							"reports"));
-				ejecucion = ejecucionService.saveWithHistoric(ejecucion, historic);
 			} catch (Exception e) {
 			}
+			ejecucion = ejecucionService.saveWithHistoric(ejecucion, historic);
 			if (document != null)
 				finish.setName(document.getNombre());
 			finish.setData(ejecucion);
