@@ -533,7 +533,7 @@ public class TipoProceso {
 			String token) throws ServerException {
 		if (procesoDTO.getLlaveTabla() == null)
 			throw new ServerException(
-					"Por favor valida el motivo por el cual no s eidentifica la llave del expediente en el campo "
+					"Por favor valida el motivo por el cual no se identifica la llave del expediente en el campo "
 							+ pCampo.getCampoDTO().getNombre());
 		// Creo una relacion entre el campo y los pedidos detalles, primero reviso si
 		// existe

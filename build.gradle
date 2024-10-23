@@ -55,7 +55,7 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation 'com.googlecode.xades4j:xades4j:2.2.1'
+	implementation 'com.googlecode.xades4j:xades4j:2.3.0'
 	
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'

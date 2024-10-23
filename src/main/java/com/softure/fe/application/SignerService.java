@@ -29,7 +29,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,9 +48,12 @@ import com.softure.upload.application.UploadSvc;
 
 import xades4j.XAdES4jException;
 import xades4j.algorithms.EnvelopedSignatureTransform;
+import xades4j.production.BasicSignatureOptions;
 import xades4j.production.DataObjectReference;
+import xades4j.production.SignatureAlgorithms;
 import xades4j.production.SignatureAppendingStrategies;
 import xades4j.production.SignedDataObjects;
+import xades4j.production.SigningCertificateMode;
 import xades4j.production.XadesEpesSigningProfile;
 import xades4j.production.XadesSigner;
 import xades4j.production.XadesSigningProfile;
@@ -58,8 +62,12 @@ import xades4j.properties.ObjectIdentifier;
 import xades4j.properties.SignaturePolicyBase;
 import xades4j.properties.SignaturePolicyIdentifierProperty;
 import xades4j.properties.SignaturePolicyImpliedProperty;
+import xades4j.properties.SignerRoleProperty;
+import xades4j.properties.SigningTimeProperty;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.SignaturePolicyInfoProvider;
+import xades4j.providers.SignaturePropertiesCollector;
+import xades4j.providers.SignaturePropertiesProvider;
 import xades4j.utils.XadesProfileResolutionException;
 
 @Service
@@ -91,7 +99,25 @@ public class SignerService {
 				.storePassword(new DirectPasswordProvider(password)).entryPassword(new DirectPasswordProvider(password))
 				.build();
 
-		XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
+		//sobreescribe las propiedades de signer para agregar "supplier" como rol para cumplir con la DIAN
+		XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider)
+	    	.withSignaturePropertiesProvider(new SignaturePropertiesProvider() {
+	        @Override
+	        public void provideProperties(SignaturePropertiesCollector arg0) {
+                SigningTimeProperty sigTime = new SigningTimeProperty();
+                arg0.setSignerRole(new SignerRoleProperty().withClaimedRole("supplier"));
+                arg0.setSigningTime(sigTime);
+            }
+	      })
+	    	.withBasicSignatureOptions(
+                  new BasicSignatureOptions()
+                  .includePublicKey(true)
+                  .includeSubjectName(false)
+                  //.signKeyInfo(true)
+                  .includeSigningCertificate(SigningCertificateMode.SIGNING_CERTIFICATE)
+          ).withSignatureAlgorithms(new SignatureAlgorithms().withSignatureAlgorithm("RSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));
+	    //
+		//XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
 		signer = p.newSigner();
 	}
 
@@ -191,12 +217,12 @@ public class SignerService {
 	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
 			ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
-		removeEmptyNodes(doc);
+		//removeEmptyNodes(doc);
 		doc = processCUFE(doc, responseFe);
 		doc = processSoftwareSecurityCode(doc);
 		doc = processExtensionContent(doc);
-		getSignatureValue(doc, responseFe);
 		doc = decriptFilesBase64(doc);
+		getSignatureValue(doc, responseFe);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
 
@@ -207,8 +233,8 @@ public class SignerService {
 		doc = processCUNE(doc, responseFe);
 		doc = processSoftwareSecurityCodeNE(doc);
 		doc = processExtensionContent(doc);
-		getSignatureValue(doc, responseFe);
 		doc = decriptFilesBase64(doc);
+		getSignatureValue(doc, responseFe);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
 
@@ -364,7 +390,7 @@ public class SignerService {
 		}
 	}
 
-	private void removeEmptyNodes(Node node) {
+/*	private void removeEmptyNodes(Node node) {
 		NodeList nodeList = node.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node childNode = nodeList.item(i);
@@ -374,7 +400,7 @@ public class SignerService {
 			}
 			removeEmptyNodes(childNode);
 		}
-	}
+	}*/
 
 	private String getHtmlContent(String _url) {
 		// Instantiating the URL class
