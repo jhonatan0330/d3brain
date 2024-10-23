@@ -208,35 +208,5 @@
 				crej_estado =#{estado}
 		<include refid="whereReporteEjecucionPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleReporteEjecucionFragment">
-		select
-			crej_llave as  llaveTabla
-			,crej_reporte as  reporte
-			,crej_documento as  documento
-			,drej_fechainicio as  fechaInicio
-			,drej_fechafin as  fechaFin
-			,crej_error as  error
-			,crej_usuario as  usuario
-			,crej_url as  url
-			,crej_estado as estado
-		from reporteejecucion_rejp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ReporteEjecucionDTO">
-		<include refid="selectSimpleReporteEjecucionFragment" />
-		<include refid="whereReporteEjecucionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ReporteEjecucionDTO">
-		<include refid="selectSimpleReporteEjecucionFragment" />
-		<include refid="whereReporteEjecucionFragment" />
-		<include refid="paginationReporteEjecucionFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
 
 </mapper>

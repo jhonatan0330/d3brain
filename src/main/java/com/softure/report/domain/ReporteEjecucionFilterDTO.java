@@ -20,6 +20,7 @@ public class ReporteEjecucionFilterDTO extends BasicFilterDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaFinMax;
 	private String usuario;
+	private String url;
 
 	
 	public void setReporte(String reporte) {
@@ -82,5 +83,13 @@ public class ReporteEjecucionFilterDTO extends BasicFilterDTO
 		return usuario;
 	}
 	
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
 
 }
