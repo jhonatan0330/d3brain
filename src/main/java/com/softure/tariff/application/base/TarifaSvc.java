@@ -131,6 +131,12 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			dto.setTarifario(getByDocumentService(dto.getTarifarioDocumento()).getKey());
 		
 		TarifarioDTO tarifario = tarifarioService.getById(dto.getTarifario());
+		if (dto.getProducto() == null && dto.getProductoDocumento() != null) {
+			ProductoFilterDTO filterOne = new ProductoFilterDTO();
+			filterOne.setDocumento(dto.getProductoDocumento());
+			ProductoDTO productoById = productoService.consultaUnica(filterOne);
+			if(productoById!=null) dto.setProducto(productoById.getLlaveTabla());
+		}
 		// Para las cargas valido los codigos y el recurso
 		if (dto.getProducto() == null && dto.getProductoNombre() != null) {
 			ProductoDTO filtroProducto = productoService.filtrarPorCodigo(dto.getProductoNombre());
