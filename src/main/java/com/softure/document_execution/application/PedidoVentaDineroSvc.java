@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.ibatis.binding.BindingException;
+import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -97,6 +98,8 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 			return pedidoVentaDineroMapper.consultaPorDocumento(documento, (historico==null)?null:"Historico");	
 		} catch (BindingException ex) {
 			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + ex.getMessage());
+		} catch (MyBatisSystemException msex) {
+			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + msex.getCause().getMessage());
 		} catch (Exception e) {
 			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + e.getMessage());
 		}

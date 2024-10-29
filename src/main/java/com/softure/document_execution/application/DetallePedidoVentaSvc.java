@@ -682,8 +682,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		// Sucede que en Universal el total no es igual al producto normal se hace pro
 		// otra formula
 		if (cpTotal != null && cpUnitario.getValorNumero() != null) {
-			detail.setValorTotal(cpTotal.getValorNumero());// Cuando no tiene tarifario no van estos campos, deberia
-															// validar que si sean ciertos
+			// Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
+			detail.setValorTotal(cpTotal.getValorNumero());
+			if(detail.getValorTotal()==null) detail.setValorTotal(BigDecimal.ZERO);
 			if (detail.getCantidad() != null && detail.getCantidad().multiply(detail.getValorUnitario())
 					.add(detail.getValorTotal().negate()).abs().longValue() > 1) {
 				if (Propiedades.obtenerParametro(cpTotal.getCampoDTO(), Propiedades.NUMERO_FORMULA) == null) {

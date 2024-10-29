@@ -170,6 +170,7 @@ public class TipoDetallePedido {
 							for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getDocumentoDetalle().getCaracteristicas()) {
 								if (iFieldCantidad.getCampo().compareTo(campoTotal.getValor()) == 0) {
 									detalle.setValorSubtotal(iFieldCantidad.getValorNumero());
+									if(detalle.getValorSubtotal()==null) detalle.setValorSubtotal(BigDecimal.ZERO);
 									break;
 								}
 							}
