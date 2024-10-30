@@ -1178,7 +1178,7 @@ public class Propiedades {
 			break;
 		}
 		case PLANTILLA_TIPO_CONFIGURATION: {
-			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nTARIFA\nARTICLE\n";
+			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nTARIFA\nARTICULO\nCATALOGO\nCUENTA\n";
 			break;
 		}
 		case PLANTILLA_RENDER_ESPECIAL_SQL: {

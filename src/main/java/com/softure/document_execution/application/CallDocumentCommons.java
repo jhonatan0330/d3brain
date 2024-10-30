@@ -80,4 +80,61 @@ public class CallDocumentCommons {
 		msg.setMessage(message);
 		document.getMessages().add(msg);
 	}
+	
+
+	public static Date getValueDate(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return null;
+		return field.getValorFecha();
+	}
+
+	public static String getValueText(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return null;
+		return field.getValorText();
+	}
+
+	public static String getValueOption(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return null;
+		return field.getValorOpcion();
+	}
+
+	public static boolean getValueBool(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return false;
+		if (field.getValorNumero() == null)
+			return false;
+		return field.getValorNumero().compareTo(BigDecimal.ONE) == 0;
+	}
+	
+	public static BigDecimal getValueNumber(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return null;
+		return field.getValorNumero();
+	}
+	
+	public static Integer getValueNumberInt(PedidoVentaDTO document, String code) {
+		PedidoVentaCaracteristicaDTO field = getField(document, code);
+		if (field == null)
+			return null;
+		return field.getValorNumero().intValue();
+	}
+
+	public static PedidoVentaCaracteristicaDTO getField(PedidoVentaDTO document, String code) {
+		if (document == null)
+			return null;
+		if (document.getCaracteristicas() == null || document.getCaracteristicas().isEmpty())
+			return null;
+		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
+			if (iField.getCampoDTO() != null && iField.getCampoDTO().getCodigo().compareTo(code) == 0)
+				return iField;
+		}
+		return null;
+	}
 }

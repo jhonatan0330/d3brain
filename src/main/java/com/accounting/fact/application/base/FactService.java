@@ -17,13 +17,8 @@ import com.shared.domain.ServerException;
 @Service("FactAccountingService")
 public class FactService {
 
-	
+	@Autowired @Lazy
 	private FactMapper mapper;
-	
-	@Autowired @Lazy 
-	public void setMapper(@Lazy FactMapper _mapper) {
-		this.mapper = _mapper;
-	}
 
 	public FactDTO getById(String id) throws ServerException {
 		if (id == null)

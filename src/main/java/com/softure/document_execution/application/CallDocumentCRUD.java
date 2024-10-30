@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.SharedConstants;
-import com.configuration.homologate.application.HomologatePrepareService;
+import com.configuration.homologate.application.HomologateAdapterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -107,7 +107,7 @@ public class CallDocumentCRUD {
 	@Autowired @Lazy 
 	private CallBPM bpmService;
 	@Autowired @Lazy 
-	private HomologatePrepareService homologateService;
+	private HomologateAdapterService homologateService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {

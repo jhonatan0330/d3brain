@@ -5,12 +5,6 @@ CREATE TABLE account.registro_reg (
 	CONSTRAINT pk_registro_reg PRIMARY KEY (creg_llave)
 );
 
-ALTER TABLE account.registro_reg ADD dreg_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.registro_reg ADD creg_creacionusuario varchar(32);
-ALTER TABLE account.registro_reg ADD creg_creacionusuarionombre varchar(200);
-ALTER TABLE account.registro_reg ADD dreg_modificacionfecha timestamptz;
-
-
 ALTER TABLE account.registro_reg ADD creg_comprobante varchar(32) NOT NULL ;
 ALTER TABLE account.registro_reg ADD creg_cuenta varchar(32) NOT NULL ;
 ALTER TABLE account.registro_reg ADD creg_descripcion varchar(200);
@@ -24,3 +18,8 @@ ALTER TABLE account.registro_reg ADD creg_terceronombre varchar(200);
 ALTER TABLE account.registro_reg ADD creg_centrocosto varchar(32);
 ALTER TABLE account.registro_reg ADD creg_centrocostoid varchar(200);
 ALTER TABLE account.registro_reg ADD creg_centrocostonombre varchar(200);
+
+ALTER TABLE account.registro_reg ADD dreg_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE account.registro_reg ADD creg_creacionusuario varchar(32);
+ALTER TABLE account.registro_reg ADD creg_creacionusuarionombre varchar(200);
+ALTER TABLE account.registro_reg ADD dreg_modificacionfecha timestamptz;

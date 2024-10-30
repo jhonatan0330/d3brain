@@ -6,7 +6,7 @@ import com.accounting.fact.domain.FactDTO;
 import com.accounting.fact.domain.FactFilterDTO;
 import com.softure.SoftureSqlConnMapper;
 
-@SoftureSqlConnMapper("FactAccountingMapper")
+@SoftureSqlConnMapper(value = "FactAccountingMapper")
 public interface FactMapper {
 
 	FactDTO insert(FactDTO dto);

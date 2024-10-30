@@ -16,6 +16,7 @@ public class CatalogDTO extends SharedParamObject{
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
 	private String consecutive;
+	private String document;
 
 	public String getName() {
 		return name;
@@ -55,6 +56,14 @@ public class CatalogDTO extends SharedParamObject{
 
 	public void setConsecutive(String consecutive) {
 		this.consecutive = consecutive;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }

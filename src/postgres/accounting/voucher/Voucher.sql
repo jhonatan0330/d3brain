@@ -5,12 +5,6 @@ CREATE TABLE account.comprobante_cmp (
 	CONSTRAINT pk_comprobante_cmp PRIMARY KEY (ccmp_llave)
 );
 
-ALTER TABLE account.comprobante_cmp ADD dcmp_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.comprobante_cmp ADD ccmp_creacionusuario varchar(32);
-ALTER TABLE account.comprobante_cmp ADD ccmp_creacionusuarionombre varchar(200);
-ALTER TABLE account.comprobante_cmp ADD dcmp_modificacionfecha timestamptz;
-
-
 ALTER TABLE account.comprobante_cmp ADD ccmp_catalogo varchar(32) NOT NULL ;
 ALTER TABLE account.comprobante_cmp ADD ccmp_codigo varchar(100) NOT NULL ;
 ALTER TABLE account.comprobante_cmp ADD ccmp_tipo varchar(32);
@@ -20,3 +14,8 @@ ALTER TABLE account.comprobante_cmp ADD dcmp_fechacomprobante timestamp with tim
 ALTER TABLE account.comprobante_cmp ADD mcmp_positivo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.comprobante_cmp ADD mcmp_negativo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.comprobante_cmp ADD mcmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0;
+
+ALTER TABLE account.comprobante_cmp ADD dcmp_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE account.comprobante_cmp ADD ccmp_creacionusuario varchar(32);
+ALTER TABLE account.comprobante_cmp ADD ccmp_creacionusuarionombre varchar(200);
+ALTER TABLE account.comprobante_cmp ADD dcmp_modificacionfecha timestamptz;

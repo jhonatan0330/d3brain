@@ -10,10 +10,12 @@ import org.apache.ibatis.type.Alias;
 public class AccountDTO extends SharedDataObject{
 
 	private String catalog;
+	private String catalogDocument;
 	private String wbs;
 	private String name;
 	private String code;
 	private String parent;
+	private String parentDocument;
 	private Integer level;
 	private String type;
 	private String operation;
@@ -23,6 +25,7 @@ public class AccountDTO extends SharedDataObject{
 	private Date initialDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
+	private String document;
 
 	public String getCatalog() {
 		return catalog;
@@ -30,6 +33,14 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setCatalog(String catalog) {
 		this.catalog = catalog;
+	}
+
+	public String getCatalogDocument() {
+		return catalogDocument;
+	}
+
+	public void setCatalogDocument(String catalogDocument) {
+		this.catalogDocument = catalogDocument;
 	}
 
 	public String getWbs() {
@@ -62,6 +73,14 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setParent(String parent) {
 		this.parent = parent;
+	}
+
+	public String getParentDocument() {
+		return parentDocument;
+	}
+
+	public void setParentDocument(String parentDocument) {
+		this.parentDocument = parentDocument;
 	}
 
 	public Integer getLevel() {
@@ -118,6 +137,14 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setFinalDate(Date finalDate) {
 		this.finalDate = finalDate;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }

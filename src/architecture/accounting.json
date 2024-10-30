@@ -39,6 +39,11 @@
 							"tableName": "consecutivo",
 							"type": "CLASS",
 							"optional": true
+						},
+						{
+							"name": "document",
+							"tableName": "documento",
+							"type": "CLASS"
 						}
 					]
 				},
@@ -51,6 +56,10 @@
 						{
 							"name": "catalog",
 							"tableName": "catalogo",
+							"type": "CLASS"
+						},
+						{
+							"name": "catalogDocument",
 							"type": "CLASS"
 						},
 						{
@@ -76,6 +85,10 @@
 							"tableName": "padre",
 							"type": "CLASS",
 							"optional": true
+						},
+						{
+							"name": "parentDocument",
+							"type": "CLASS"
 						},
 						{
 							"name": "level",
@@ -117,6 +130,11 @@
 							"tableName": "fechafinal",
 							"type": "DATETIME",
 							"optional": true
+						},
+						{
+							"name": "document",
+							"tableName": "documento",
+							"type": "CLASS"
 						}
 					]
 				},

@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.configuration.homologate.domain.ConfigTemplateRelationDTO;
@@ -16,7 +17,7 @@ import com.shared.domain.ServerException;
 @Service("ConfigTemplateRelationConfigurationService")
 public class ConfigTemplateRelationService {
 
-	@Autowired @Lazy 
+	@Autowired @Lazy
 	private ConfigTemplateRelationMapper mapper;
 
 	public ConfigTemplateRelationDTO getById(String id) throws ServerException {

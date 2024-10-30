@@ -20,7 +20,7 @@ import com.accounting.plan.application.CreateAccountTemplateService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
-import com.configuration.homologate.application.HomologatePrepareService;
+import com.configuration.homologate.application.HomologateAdapterService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
@@ -126,7 +126,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private WebServiceSvc apiService;
 
 	@Autowired @Lazy 
-	private HomologatePrepareService homologateService;
+	private HomologateAdapterService homologateService;
 	@Autowired @Lazy 
 	private CreateAccountTemplateService createAccountService;
 	// END region servicesPropiedad
@@ -1481,6 +1481,20 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		return pProperties;
 	}
-// END region aditionalMethods
+
+	public void guardarEnCasoQueNoExista(PropiedadDTO dto, String token) throws ServerException {
+		// Lo copie de guardar depronto lo puedo refacorizar
+		PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
+		existeFilter.setCampo(dto.getCampo());
+		if (dto.getPropiedadValor() == null)
+			existeFilter.setPropiedadValor(
+					consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
+		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
+		existeFilter.setKey(dto.getKey());
+		existeFilter.setTipo(dto.getTipo());
+		PropiedadDTO existe = consultaUnica(existeFilter);
+		if (existe == null)
+			guardar(dto, token);
+	}
 
 }

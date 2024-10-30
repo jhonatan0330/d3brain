@@ -16,6 +16,7 @@ public class CatalogFilterDTO extends SharedDataObjectFilter {
 	private Date finalDateMin;
 	private Date finalDateMax;
 	private String consecutive;
+	private String document;
 
 	public String getName() {
 		return name;
@@ -71,6 +72,14 @@ public class CatalogFilterDTO extends SharedDataObjectFilter {
 
 	public void setConsecutive(String consecutive) {
 		this.consecutive = consecutive;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }

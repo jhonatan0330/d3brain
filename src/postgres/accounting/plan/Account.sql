@@ -5,12 +5,6 @@ CREATE TABLE account.cuenta_cue (
 	CONSTRAINT pk_cuenta_cue PRIMARY KEY (ccue_llave)
 );
 
-ALTER TABLE account.cuenta_cue ADD dcue_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.cuenta_cue ADD ccue_creacionusuario varchar(32);
-ALTER TABLE account.cuenta_cue ADD ccue_creacionusuarionombre varchar(200);
-ALTER TABLE account.cuenta_cue ADD dcue_modificacionfecha timestamptz;
-
-
 ALTER TABLE account.cuenta_cue ADD ccue_catalogo varchar(32) NOT NULL ;
 ALTER TABLE account.cuenta_cue ADD ccue_wbs varchar(50) NOT NULL ;
 ALTER TABLE account.cuenta_cue ADD ccue_nombre varchar(100) NOT NULL ;
@@ -23,3 +17,9 @@ ALTER TABLE account.cuenta_cue ADD ccue_plantilla varchar(32);
 ALTER TABLE account.cuenta_cue ADD ccue_campo varchar(32);
 ALTER TABLE account.cuenta_cue ADD dcue_fechainicial timestamp with time zone;
 ALTER TABLE account.cuenta_cue ADD dcue_fechafinal timestamp with time zone;
+ALTER TABLE account.cuenta_cue ADD ccue_documento varchar(32) NOT NULL ;
+
+ALTER TABLE account.cuenta_cue ADD dcue_creacionfecha timestamptz NOT NULL DEFAULT NOW();
+ALTER TABLE account.cuenta_cue ADD ccue_creacionusuario varchar(32);
+ALTER TABLE account.cuenta_cue ADD ccue_creacionusuarionombre varchar(200);
+ALTER TABLE account.cuenta_cue ADD dcue_modificacionfecha timestamptz;
