@@ -23,6 +23,7 @@ public class CampoAdaptador {
 	@Autowired @Lazy  private TipoFecha tipoFecha;
 	@Autowired @Lazy  private TipoInformativo tipoInformativo;
 	@Autowired @Lazy  private TipoGPS tipoGPS;
+	@Autowired @Lazy  private TipoGPSMap tipoGPSMap;
 	@Autowired @Lazy  private TipoNumero tipoNumero;
 	@Autowired @Lazy  private TipoProceso tipoProceso;
 	@Autowired @Lazy  private TipoProductoLista tipoProductoLista;
@@ -87,6 +88,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.GPS:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
+			//case DocumentoPlantillaCaracteristicaDTO.GPS_MAP:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{vResultado = tipoInformativo.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.guardarCampo(pCampo, token);break;}
@@ -121,6 +123,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.consultarDatosBase(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.GPS_MAP:{vResultado = tipoGPSMap.consultarDatosBase(pCampo);break;}
 			default:{break;}
 		}
 		//if(vResultado!=null) vResultado.setCampoDTO(pCampo.getCampoDTO());

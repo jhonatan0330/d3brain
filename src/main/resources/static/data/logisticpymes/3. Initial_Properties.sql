@@ -544,3 +544,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_269' , 'W', 'HTTP METODO PETICION', 'HTTP_METHOD', 'PERMISOS', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_270' , 'C', 'CROQUIS DISPONIBILIDAD', 'DISPONIBILIDAD_FUNCION_SQL', 'REQUISITO', 'M',true);
