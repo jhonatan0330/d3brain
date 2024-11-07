@@ -78,6 +78,7 @@ public class Propiedades {
 	public static final String ARCHIVO_TIPO = "BASICA";
 	public static final String MULTIPLE_FILE = "MULTIPLE_FILE";
 	public static final String VALIDATE_ORIENTATION = "VALIDATE_ORIENTATION";
+	public static final String PORCENTAJE_CALIDAD = "PORCENTAJE_CALIDAD";
 
 	public static final String FECHA_CON_HORA = "FECHA_CON_HORA";
 	public static final String FECHA_SIN_CALENDAR = "FECHA_SIN_CALENDAR";
@@ -1192,6 +1193,11 @@ public class Propiedades {
 					""";
 			break;
 		}
+		case PORCENTAJE_CALIDAD: {
+			ruleProperty = " Cada imagen va a comprimirse en el cliente para que transporte menos información y sea mas rapida su carag al servidor.\n PAra mas información del porcentaje de calidad mira esta pagina https://fotoforensics.com/tutorial-estq.php";
+			break;
+		}
+		
 		case PROCESO_POP: {
 			ruleProperty = " Para las listas autoload muestra el pop up y deja para escoger en el formulario.\n";
 			break;
