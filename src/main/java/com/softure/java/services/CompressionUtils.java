@@ -128,6 +128,8 @@ public class CompressionUtils {
 		}
 	}
 	
+	// Esto lo usaba en UploadSvc por ftp, pero deno cuadrarlo para que sirva con una propiedad
+	// por el momento lo pase a angular
 	public static byte[] compress(byte[] data) throws IOException {
 		ByteArrayInputStream bais = new ByteArrayInputStream(data);
 		BufferedImage bufferedImage = ImageIO.read(bais);

@@ -16,11 +16,11 @@ import java.util.UUID;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
-import com.softure.java.services.CompressionUtils;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.upload.domain.CargaArchivoDTO;
@@ -128,8 +128,9 @@ public class UploadSvc {
 			dirToCreate = dirToCreate + "/" + dayFolder;
 			createInFolder(ftpClient, dayFolder);
 
-			if (extension.toLowerCase().compareTo(".jpg") == 0 || extension.toLowerCase().compareTo(".jpeg") == 0)
-				bytes = CompressionUtils.compress(bytes);
+			// La compresion la hago en el cliente y evito cargar el servidor
+			//if (extension.toLowerCase().compareTo(".jpg") == 0 || extension.toLowerCase().compareTo(".jpeg") == 0)
+			//	bytes = CompressionUtils.compress(bytes);
 
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
