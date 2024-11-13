@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.xml.security.utils.XMLUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,7 @@ import xades4j.production.XadesEpesSigningProfile;
 import xades4j.production.XadesSigner;
 import xades4j.production.XadesSigningProfile;
 import xades4j.properties.DataObjectDesc;
+import xades4j.properties.DataObjectFormatProperty;
 import xades4j.properties.ObjectIdentifier;
 import xades4j.properties.SignaturePolicyBase;
 import xades4j.properties.SignaturePolicyIdentifierProperty;
@@ -142,6 +145,23 @@ public class SignerService {
 	}
 
 	private Document loadDocument(String xmlInPath) throws IOException, SAXException, ParserConfigurationException {
+		try {
+			Field f = XMLUtils.class.getDeclaredField("ignoreLineBreaks");
+			f.setAccessible(true);
+			f.set(null, Boolean.TRUE);
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// en las FE varios no mbre tiene & ej:J&G, estos nombres mostraban error
 		xmlInPath = xmlInPath.replaceAll("\\&", "\\<\\!\\[CDATA\\[\\&\\]\\]\\>");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -168,7 +188,9 @@ public class SignerService {
 	}
 
 	private DataObjectDesc createDataObjectToSign() {
-		return new DataObjectReference("").withTransform(new EnvelopedSignatureTransform());
+		return new DataObjectReference("")
+				.withTransform(new EnvelopedSignatureTransform())
+				.withDataObjectFormat(new DataObjectFormatProperty("text/xml"));
 	}
 
 	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException {
@@ -216,12 +238,16 @@ public class SignerService {
 
 	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
 			ParserConfigurationException, TransformerException, SAXException, ServerException {
+		
+	
+		
 		Document doc = loadDocument(xmlIn);
 		//removeEmptyNodes(doc);
 		doc = processCUFE(doc, responseFe);
 		doc = processSoftwareSecurityCode(doc);
-		doc = processExtensionContent(doc);
+		//Primero tomo la informacion de los archivos adjuntos
 		doc = decriptFilesBase64(doc);
+		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
@@ -232,8 +258,9 @@ public class SignerService {
 		//removeEmptyNodes(doc);
 		doc = processCUNE(doc, responseFe);
 		doc = processSoftwareSecurityCodeNE(doc);
-		doc = processExtensionContent(doc);
+		//Primero tomo la informacion de los archivos adjuntos
 		doc = decriptFilesBase64(doc);
+		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
@@ -364,7 +391,9 @@ public class SignerService {
 					tags.item(i).setTextContent("");
 					tags.item(i).appendChild(cdata);
 				} else {
-					tags.item(i).setTextContent(plain);
+					//Node cdata = doc.createCDATASection(plain);
+					//tags.item(i).setTextContent("");
+					//tags.item(i).appendChild(plain);
 				}
 			}
 		}
