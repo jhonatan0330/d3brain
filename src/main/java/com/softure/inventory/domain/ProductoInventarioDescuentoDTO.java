@@ -20,6 +20,7 @@ public class ProductoInventarioDescuentoDTO extends BasicDTO
 	private BigDecimal cantidadProductoDescontar;
 	private String caracteristica;
 	private String caracteristicaNombre;
+	private String documento;
 
 	public void setProducto(String producto) {
 		this.producto = producto;
@@ -63,7 +64,12 @@ public class ProductoInventarioDescuentoDTO extends BasicDTO
 	public String getCaracteristicaNombre() {
 		return caracteristicaNombre;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+	
+	public String getDocumento() {
+		return documento;
+	}
 
 }

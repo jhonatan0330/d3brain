@@ -1179,7 +1179,7 @@ public class Propiedades {
 			break;
 		}
 		case PLANTILLA_TIPO_CONFIGURATION: {
-			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nTARIFA\nARTICULO\nCATALOGO\nCUENTA\n";
+			ruleProperty = "Es la homologacion de plantillas a elemntos de configuracion, puedes usar los siguientes valores:\nTARIFARIO\nTARIFA\nARTICULO\nCATALOGO\nCUENTA\nPRODUCTO_COMPOSICION\nPRODUCTO_INVENTARIO\n";
 			break;
 		}
 		case PLANTILLA_RENDER_ESPECIAL_SQL: {
@@ -1194,7 +1194,7 @@ public class Propiedades {
 			break;
 		}
 		case PORCENTAJE_CALIDAD: {
-			ruleProperty = " Cada imagen va a comprimirse en el cliente para que transporte menos información y sea mas rapida su carag al servidor.\n PAra mas información del porcentaje de calidad mira esta pagina https://fotoforensics.com/tutorial-estq.php";
+			ruleProperty = " Cada imagen va a comprimirse en el cliente para que transporte menos información y sea mas rapida su carag al servidor.\n Para mas información del porcentaje de calidad mira esta pagina https://fotoforensics.com/tutorial-estq.php";
 			break;
 		}
 		

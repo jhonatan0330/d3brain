@@ -16,6 +16,7 @@
 			,mpin_cantidadminima as  cantidadMinima
 			,mpin_cantidadmaxima as  cantidadMaxima
 			,dpin_fechainicial as  fechaInicial
+			,cpin_documento as  documento
 			,cpin_estado as estado
 		from productoinventario_pinp a
 	</sql>
@@ -39,6 +40,9 @@
 			</if>
 			<if test="fechaInicialMax!=null">
 				and dpin_fechainicial <![CDATA[ < ]]>  #{fechaInicialMax}
+			</if>
+			<if test="documento!=null">
+				and cpin_documento = #{documento}
 			</if>
 			<if test="filtroParametro!=null">
 				and ((select upper(descripcion(cpro_documento)) from producto_prop where cpro_llave = cpin_producto) like upper('%'||#{filtroParametro}||'%'))
@@ -100,6 +104,9 @@
 		<if test="fechaInicial!=null">
 			,dpin_fechainicial
 		</if>
+		<if test="documento!=null">
+			,cpin_documento
+		</if>
 		<if test="estado!=null">
 			,cpin_estado
 		</if>
@@ -123,6 +130,9 @@
 		<if test="fechaInicial!=null">
 			,#{fechaInicial}
 		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -138,39 +148,10 @@
 				mpin_cantidadminima = #{cantidadMinima},
 				mpin_cantidadmaxima = #{cantidadMaxima},
 				dpin_fechainicial = #{fechaInicial},
+				cpin_documento = #{documento},
 				cpin_estado =#{estado}
 		<include refid="whereProductoInventarioPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleProductoInventarioFragment">
-		select
-			cpin_llave as  llaveTabla
-			,cpin_producto as  producto
-			,cpin_bodega as  bodega
-			,mpin_cantidadactual as  cantidadActual
-			,mpin_cantidadminima as  cantidadMinima
-			,mpin_cantidadmaxima as  cantidadMaxima
-			,dpin_fechainicial as  fechaInicial
-			,cpin_estado as estado
-		from productoinventario_pinp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ProductoInventarioDTO">
-		<include refid="selectSimpleProductoInventarioFragment" />
-		<include refid="whereProductoInventarioFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ProductoInventarioDTO">
-		<include refid="selectSimpleProductoInventarioFragment" />
-		<include refid="whereProductoInventarioFragment" />
-		order by nombre 
-		, nombrebodega 
-		<include refid="paginationProductoInventarioFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
 
 </mapper>

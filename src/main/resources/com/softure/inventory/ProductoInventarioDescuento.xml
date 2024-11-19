@@ -13,6 +13,7 @@
 			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
 			,cpid_caracteristica as  caracteristica
 			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpid_caracteristica) as  caracteristicaNombre
+			,cpid_documento as  documento
 			,cpid_estado as estado
 		from productoinventariodescuento_pidp a
 	</sql>
@@ -33,6 +34,9 @@
 			</if>
 			<if test="caracteristica!=null">
 				and cpid_caracteristica = #{caracteristica}
+			</if>
+			<if test="documento!=null">
+				and cpid_documento = #{documento}
 			</if>
 	</sql>
 
@@ -85,6 +89,9 @@
 		<if test="caracteristica!=null">
 			,cpid_caracteristica
 		</if>
+		<if test="documento!=null">
+			,cpid_documento
+		</if>
 		<if test="estado!=null">
 			,cpid_estado
 		</if>
@@ -102,6 +109,9 @@
 		<if test="caracteristica!=null">
 			,#{caracteristica}
 		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -115,37 +125,9 @@
 				cpid_productodescontar = #{productoDescontar},
 				mpid_cantidadproductodescontar = #{cantidadProductoDescontar},
 				cpid_caracteristica = #{caracteristica},
+				cpid_documento = #{documento},
 				cpid_estado =#{estado}
 		<include refid="whereProductoInventarioDescuentoPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleProductoInventarioDescuentoFragment">
-		select
-			cpid_llave as  llaveTabla
-			,cpid_producto as  producto
-			,cpid_productodescontar as  productoDescontar
-			,mpid_cantidadproductodescontar as  cantidadProductoDescontar
-			,cpid_caracteristica as  caracteristica
-			,cpid_estado as estado
-		from productoinventariodescuento_pidp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ProductoInventarioDescuentoDTO">
-		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
-		<include refid="whereProductoInventarioDescuentoFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ProductoInventarioDescuentoDTO">
-		<include refid="selectSimpleProductoInventarioDescuentoFragment" />
-		<include refid="whereProductoInventarioDescuentoFragment" />
-		order by cpid_producto 
-		, productodescontarnombre 
-		<include refid="paginationProductoInventarioDescuentoFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
 
 </mapper>

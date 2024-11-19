@@ -51,6 +51,9 @@ public class HomologateAdapterService {
 	@Autowired @Lazy  private HomologateFaq faqHomologate;
 	@Autowired @Lazy  private HomologateCatalog catalogHomologate;
 	@Autowired @Lazy  private HomologateAccount accountHomologate;
+	@Autowired @Lazy  private HomologateProduct productHomologate;
+	@Autowired @Lazy  private HomologateProductStock productStockHomologate;
+	@Autowired @Lazy  private HomologateProductStockDeduction productStockDeductionHomologate;
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
@@ -60,6 +63,7 @@ public class HomologateAdapterService {
 		case Propiedades.PLANTILLA_TIPO_CUENTA:
 			break;
 		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
+			productHomologate.createProductFields(plantillaPrincipal.getLlaveTabla(), token, campoService, propertyService);
 			break;
 		case Propiedades.PLANTILLA_TIPO_REPORTE:
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
@@ -172,6 +176,14 @@ public class HomologateAdapterService {
 			accountHomologate.createAccountFields(templateId, token, campoService, propertyService);
 			break;
 		}
+		case ConfigEnum.PRODUCTO_COMPOSICION: {
+			productStockDeductionHomologate.createFields(templateId, token, campoService, propertyService, crudService);
+			break;
+		}
+		case ConfigEnum.PRODUCTO_INVENTARIO: {
+			productStockHomologate.createFields(templateId, token, campoService, propertyService, crudService);
+			break;
+		}
 		default:
 			throw new ServerException("Unexpected value: " + propValue);
 		}
@@ -199,6 +211,14 @@ public class HomologateAdapterService {
 			accountHomologate.createAccount(document);
 			break;
 		}
+		case ConfigEnum.PRODUCTO_COMPOSICION: {
+			productStockDeductionHomologate.create(document);
+			break;
+		}
+		case ConfigEnum.PRODUCTO_INVENTARIO: {
+			productStockHomologate.create(document, token);
+			break;
+		}
 		default:
 			throw new ServerException("Unexpected value: " + propValue);
 		}
@@ -206,7 +226,7 @@ public class HomologateAdapterService {
 	}
 
 	public void crearProducto(PedidoVentaDTO documento, String categoria, String token) throws ServerException {
-		productoService.crearDesdeDocumento(documento, categoria, token);
+		productHomologate.crearDesdeDocumento(documento, categoria, token);
 	}
 
 	public void crearBodega(PedidoVentaDTO documento) throws ServerException {

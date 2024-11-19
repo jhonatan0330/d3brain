@@ -3014,41 +3014,7 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/activarProducto")
-	public ProductoDTO activarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
-	@PostMapping(value="/inactivarProducto")
-	public ProductoDTO inactivarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarProducto")
-	public ProductoDTO actualizarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarProducto")
-	public ProductoDTO guardarProducto(@RequestBody ProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return productoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired @Lazy  private ProductoInventarioDescuentoSvc productoInventarioDescuentoService;

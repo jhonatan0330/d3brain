@@ -350,6 +350,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (dto.getKey().contains("PLANTILLA_TIPO")) {
 			homologateService.call(dto, token);
 		}
+		if (dto.getKey().contains(Propiedades.PLANTILLA_TIPO_PRODUCTO)) {
+			homologateService.call(dto, token);
+		}
 		dto.setFechaDefinicion(new Date());
 		dto = super.guardar(dto, token);
 		try {
@@ -560,7 +563,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						plantillaId = filtro.getPlantilla();
 					}
 				} else {
-					if (dto.getKey().compareTo(Propiedades.CAMPO_DIFERENCIAS) == 0) {
+					
+					switch(dto.getKey()) {
+					case Propiedades.CAMPO_DIFERENCIAS: {
 						// Obtengo la plantilla para que la busqueda sea correcta
 						PropiedadDTO filtroPlantilla = getPropertyDifferenceTemplate(
 								campoService.consultaXId(dto.getCampo()).getPlantilla());
@@ -569,7 +574,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 									"Este campo no tiene una plantilla de diferencias y validar el campo.\nValor : "
 											+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
 						plantillaId = filtroPlantilla.getValor();
-					} else {
+						break;
+					}
+					default: {
 						// Obtengo la plantilla para que la busqueda sea correcta
 						PropiedadFilterDTO filtro = new PropiedadFilterDTO();
 						filtro.setTipo(PropiedadValorDefinidoDTO.CAMPO);
@@ -583,11 +590,32 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 											+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
 						plantillaId = filtroPlantilla.getValor();
 					}
+					}
 				}
 
 			}
-			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.PLANTILLA) == 0)
-				plantillaId = dto.getCampo();
+			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.PLANTILLA) == 0) {
+				switch(dto.getKey()) {
+				case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO:
+				case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO:
+				case Propiedades.PRODUCTO_CAMPO_CANTIDAD:
+				case Propiedades.PRODUCTO_CAMPO_TOTAL: {
+					// Obtengo la plantilla para que la busqueda sea correcta
+					PropiedadDTO filtroPlantilla = getProductTemplate(dto.getCampo());
+					if (filtroPlantilla == null)
+						throw new ServerException(
+								"Este campo no tiene una plantilla de TIPO PRODCTO FORMULARIO DETALLADO.\nValor : "
+										+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
+					plantillaId = filtroPlantilla.getValor();
+					break;
+				}
+				default: {
+					plantillaId = dto.getCampo();
+					break;
+				}
+				}
+			}
+				
 			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION) == 0)
 				plantillaId = transicionService.consultaXId(dto.getCampo()).getPlantilla();
 			if (plantillaId == null)
@@ -640,6 +668,15 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
 		filtro.setCampo(templateId);
 		filtro.setPropiedadValor("PROP_242");
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		return consultaUnica(filtro);
+	}
+	
+	public PropiedadDTO getProductTemplate(String templateId) throws ServerException {
+		PropiedadFilterDTO filtro = new PropiedadFilterDTO();
+		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
+		filtro.setCampo(templateId);
+		filtro.setPropiedadValor("PROP_266");
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		return consultaUnica(filtro);
 	}

@@ -79,9 +79,9 @@ public class MailUtils {
                     + SoftureUtil.formatDateTime(documento.getFecha());
         if (documento.getDinero() != null) {
             parametros = parametros + MailUtils.SEPARADOR + prefijo + "VALOR="
-                    + SoftureUtil.formatMoney(documento.getDinero().getValorTotal());
+                    + SoftureUtil.formatNumber(documento.getDinero().getValorTotal());
             parametros = parametros + MailUtils.SEPARADOR + prefijo + "SALDO="
-                    + SoftureUtil.formatMoney(documento.getDinero().getSaldo());
+                    + SoftureUtil.formatNumber(documento.getDinero().getSaldo());
         }
         return parametros;
     }
