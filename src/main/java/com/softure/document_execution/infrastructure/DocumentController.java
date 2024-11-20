@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +23,8 @@ import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.inventory.application.ProductoInventarioSvc;
+import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.upload.application.UploadSvc;
@@ -35,6 +39,7 @@ public class DocumentController {
 	@Autowired @Lazy  private CallDocumentCRUD saveUpdateDocumentFunction;
 	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired @Lazy  private ActividadSvc actividadService;
+	@Autowired @Lazy  private ProductoInventarioSvc inventoryService;
 	
 	@PostMapping(value="/getDocument")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -79,4 +84,10 @@ public class DocumentController {
 	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token) throws ServerException {
 		return actividadService.readActivity(activity.getLlaveTabla(), token);
 	}
+	
+	@GetMapping(value="/getInventory/{id}")
+	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return inventoryService.getByProducto(id);
+	}
+	
 }
