@@ -228,6 +228,8 @@ public class HomologateFee {
 	public void createFee(PedidoVentaDTO document, String token, CallDocumentCRUD crudService) throws ServerException {
 		TarifaFilterDTO filter = new TarifaFilterDTO();
 		filter.setDocumento(document.getLlaveTabla());
+		//Sucede que el actualizar crea una nueva tarifa asi que toca filtrar por activo
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		TarifaDTO newFee = feeService.consultaUnica(filter);
 		if (newFee == null) {
 			newFee = new TarifaDTO();
