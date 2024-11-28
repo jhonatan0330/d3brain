@@ -1,16 +1,16 @@
 package com.softure.authentication.domain;
 
 
+import java.util.List;
+
 import org.apache.ibatis.type.Alias;
 
 import com.softure.logisticpymes.domain.BasicParamDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 
 @Alias("OrganizacionDTO")
 public class OrganizacionDTO extends BasicParamDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
-
 	private String nombre;
 	private String principal;
 	private String servidor;
@@ -19,6 +19,8 @@ public class OrganizacionDTO extends BasicParamDTO
 	private String slogan;
 	private String mensajeIngreso;
 	private String codigo;
+	private List<DocumentoPlantillaDTO> templates;
+	private String publicToken;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -78,7 +80,20 @@ public class OrganizacionDTO extends BasicParamDTO
 		return codigo;
 	}
 
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+	public List<DocumentoPlantillaDTO> getTemplates() {
+		return templates;
+	}
+
+	public void setTemplates(List<DocumentoPlantillaDTO> templates) {
+		this.templates = templates;
+	}
+
+	public String getPublicToken() {
+		return publicToken;
+	}
+
+	public void setPublicToken(String publicToken) {
+		this.publicToken = publicToken;
+	}
 
 }

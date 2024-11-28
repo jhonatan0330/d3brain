@@ -22,6 +22,7 @@
 			,bpvd_pideusuario as  pideUsuario
 			,bpvd_solicitamotivo as  solicitaMotivo
 			,bpvd_pidefechas as  pideFechas
+			,bpvd_privada as  privada
 			,cpvd_estado as estado
 		from propiedadvalordefinido_pvdp a
 	</sql>
@@ -79,6 +80,9 @@
 			<if test="pideFechasFilter!=null">
 				and bpvd_pidefechas = #{pideFechasFilter}
 			</if>
+			<if test="privadaFilter!=null">
+				and bpvd_privada = #{privadaFilter}
+			</if>
 			<if test="filtroParametro!=null">
 				and (upper(cpvd_nombre) like upper('%' || #{filtroParametro} || '%'))
 			</if>
@@ -106,8 +110,7 @@
 	<select id="listar" parameterType="PropiedadValorDefinidoDTO" resultType="PropiedadValorDefinidoDTO">
 		<include refid="selectPropiedadValorDefinidoFragment" />
 		<include refid="wherePropiedadValorDefinidoFragment" />
-		order by cpvd_origen 
-		, cpvd_nombre 
+		order by cpvd_origen , cpvd_nombre 
 		<include refid="paginationPropiedadValorDefinidoFragment" />
 	</select>
 
@@ -166,6 +169,9 @@
 		<if test="pideFechas!=null">
 			,bpvd_pidefechas
 		</if>
+		<if test="privada!=null">
+			,bpvd_privada
+		</if>
 		<if test="estado!=null">
 			,cpvd_estado
 		</if>
@@ -216,6 +222,9 @@
 		<if test="pideFechas!=null">
 			,#{pideFechas}
 		</if>
+		<if test="privada!=null">
+			,#{privada}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -240,46 +249,11 @@
 				bpvd_pideusuario = #{pideUsuario},
 				bpvd_solicitamotivo = #{solicitaMotivo},
 				bpvd_pidefechas = #{pideFechas},
+				bpvd_privada = #{privada},
 				cpvd_estado =#{estado}
 		<include refid="wherePropiedadValorDefinidoPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimplePropiedadValorDefinidoFragment">
-		select
-			cpvd_llave as  llaveTabla
-			,cpvd_origen as  origen
-			,cpvd_origencategoria as  origenCategoria
-			,cpvd_codigo as  codigo
-			,cpvd_nombre as  nombre
-			,cpvd_grupo as  grupo
-			,bpvd_textoculto as  textOculto
-			,bpvd_necesitadesarrollo as  necesitaDesarrollo
-			,bpvd_incluirpreloadorigen as  incluirPreloadOrigen
-			,bpvd_multiple as  multiple
-			,bpvd_piderol as  pideRol
-			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
-			,bpvd_propiedadboolean as  propiedadBoolean
-			,bpvd_pideusuario as  pideUsuario
-			,bpvd_solicitamotivo as  solicitaMotivo
-			,bpvd_pidefechas as  pideFechas
-			,cpvd_estado as estado
-		from propiedadvalordefinido_pvdp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="PropiedadValorDefinidoDTO">
-		<include refid="selectSimplePropiedadValorDefinidoFragment" />
-		<include refid="wherePropiedadValorDefinidoFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="PropiedadValorDefinidoDTO">
-		<include refid="selectSimplePropiedadValorDefinidoFragment" />
-		<include refid="wherePropiedadValorDefinidoFragment" />
-		order by cpvd_origen 
-		, cpvd_nombre 
-		<include refid="paginationPropiedadValorDefinidoFragment" />
-	</select>
-	
-
 
 <!--// BEGIN region script-->
 	<select id="listarPorOrigen" parameterType="PropiedadValorDefinidoDTO" resultType="PropiedadValorDefinidoDTO">
@@ -311,7 +285,25 @@
 	</select>
 	
 	<select id="getFullToSynchronize" resultType="PropiedadValorDefinidoDTO">
-		<include refid="selectSimplePropiedadValorDefinidoFragment" />
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_origen as  origen
+			,cpvd_origencategoria as  origenCategoria
+			,cpvd_codigo as  codigo
+			,cpvd_nombre as  nombre
+			,cpvd_grupo as  grupo
+			,bpvd_textoculto as  textOculto
+			,bpvd_necesitadesarrollo as  necesitaDesarrollo
+			,bpvd_incluirpreloadorigen as  incluirPreloadOrigen
+			,bpvd_multiple as  multiple
+			,bpvd_piderol as  pideRol
+			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
+			,bpvd_propiedadboolean as  propiedadBoolean
+			,bpvd_pideusuario as  pideUsuario
+			,bpvd_solicitamotivo as  solicitaMotivo
+			,bpvd_pidefechas as  pideFechas
+			,cpvd_estado as estado
+		from propiedadvalordefinido_pvdp a
 		where cpvd_estado = 'A' and cpvd_llave not like 'PROP_%'
 	</select>
 <!--// END region script-->

@@ -272,6 +272,8 @@ public class Propiedades {
 	public static final String COVERAGE_TEMPLATE = "COVERAGE_TEMPLATE";
 	public static final String LAYOUT_APP = "LAYOUT_APP";
 	public static final String LANDING_PAGE = "LANDING_PAGE";
+	public static final String HEADER_PAGE = "HEADER_PAGE";
+	public static final String PUBLIC_USER = "PUBLIC_USER";
 	
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
@@ -999,6 +1001,10 @@ public class Propiedades {
 			break;
 		}
 		case LANDING_PAGE: {
+			ruleProperty = "Coloca como HTML lo que deseas que sea el footer de la pagina";
+			break;
+		}
+		case HEADER_PAGE: {
 			ruleProperty = "Coloca como HTML lo que deseas que sea el fondo del login";
 			break;
 		}
@@ -1256,6 +1262,10 @@ public class Propiedades {
 		}
 		case P_SUBREPORT_: {
 			ruleProperty = " Coloque los diferentes subreportes que se necesitan.\n";
+			break;
+		}
+		case PUBLIC_USER: {
+			ruleProperty = "Colcoa la identificacion de un usuario que configuraste para que sea el usaurio publico, de este usuario se van a tomar todos los permisos.\n";
 			break;
 		}
 		case READ_QR: {

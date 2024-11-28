@@ -25,6 +25,7 @@ public class PropiedadValorDefinidoFilterDTO extends BasicFilterDTO
  	private Boolean pideUsuarioFilter = null;
  	private Boolean solicitaMotivoFilter = null;
  	private Boolean pideFechasFilter = null;
+ 	private Boolean privadaFilter = null;
 
 	
 	public void setOrigen(String origen) {
@@ -159,6 +160,14 @@ public class PropiedadValorDefinidoFilterDTO extends BasicFilterDTO
 	
 	public Boolean getPideFechasFilter() {
 		return pideFechasFilter;
+	}
+
+	public Boolean getPrivadaFilter() {
+		return privadaFilter;
+	}
+
+	public void setPrivadaFilter(Boolean privadaFilter) {
+		this.privadaFilter = privadaFilter;
 	}
 	
 

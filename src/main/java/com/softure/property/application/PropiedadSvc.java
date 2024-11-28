@@ -1027,6 +1027,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 		case Propiedades.MENSAJE_DESTINATARIO:
+		case Propiedades.PUBLIC_USER:
 		case Propiedades.ESTADO_ASIGNAR: {
 			identificadorUsuario(dto);
 			break;
@@ -1128,14 +1129,24 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	public List<PropiedadDTO> obtenerPropiedades(String tipo, String entidad, String key, String usuario)
 			throws ServerException {
+		return obtenerPropiedades(tipo, entidad, key, usuario, null);
+	}
+	
+	public List<PropiedadDTO> obtenerPropiedades(String tipo, String entidad, String key, String usuario, Boolean privada)
+			throws ServerException {
 		if (entidad == null)
 			throw new ServerException("El campo esta nulo");
-		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario);
+		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario, privada);
 	}
 
+	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario)
+			throws ServerException {
+		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario, null);
+	}
+	
 	// Los dividi oara optimizar el menu de usuario y asi consultar los estados
 	// todas las propiedades
-	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario)
+	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario, Boolean privada)
 			throws ServerException {
 		PropiedadFilterDTO filtroOrden = new PropiedadFilterDTO();
 		filtroOrden.setTipo(tipo);
@@ -1144,7 +1155,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			PropiedadValorDefinidoDTO valorDefinido = consultarValorDefinido(tipo, key);
 			filtroOrden.setPropiedadValor(valorDefinido.getLlaveTabla());
 		}
-		List<PropiedadDTO> consultadas = propiedadMapper.consultarRol(filtroOrden, usuario, new Date());
+		List<PropiedadDTO> consultadas = propiedadMapper.consultarRol(filtroOrden, usuario, new Date(), privada);
 		if (usuario != null) {
 			return cleanPropertiesFromTimeAndExclusion(consultadas);
 		}

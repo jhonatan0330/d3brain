@@ -48,7 +48,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	void eliminarFuncionFiltros(PropiedadDTO dto);
 	void eliminarFuncionProductos(PropiedadDTO dto);
 	void actualizarValorPropiedad(PropiedadDTO dto);
-	List<PropiedadDTO> consultarRol(@Param("dto")PropiedadFilterDTO dto, @Param("usuario")String usuario, @Param("fecha") Date fecha);
+	List<PropiedadDTO> consultarRol(@Param("dto")PropiedadFilterDTO dto, @Param("usuario")String usuario, @Param("fecha") Date fecha, @Param("privada") Boolean privada);
 	List<PropiedadDTO> consultarPermisosFullPlantilla(PropiedadDTO dto);
 	List<PropiedadDTO> consultarTemporizadoresPendientes();
 	List<PropiedadDTO> listarProductoSimplificado(@Param("productos") List<ProductoDTO> productos);

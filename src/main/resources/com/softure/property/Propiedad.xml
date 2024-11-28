@@ -480,10 +480,10 @@ COST 100;
 			cppd_llave as  llaveTabla
 			,cppd_propiedadvalor as  propiedadValor
 			,cppd_tipo as  tipo
-			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
-			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,cpvd_nombre as  nombre
+			,cpvd_codigo as  key
 			,cppd_campo as  campo
-			,cppd_valor as  valor
+			,<if test="privada!=null">case when bpvd_privada = true then 'private' else cppd_valor end</if><if test="privada == null">cppd_valor</if> as valor
 			,cppd_texto as  texto
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
@@ -498,6 +498,7 @@ COST 100;
 			,cppd_motivo as  motivo
 			,cppd_estado as estado
 		from propiedad_ppdp a
+			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
         where cppd_estado = 'A' and cppd_tipo = #{dto.tipo}
         <if test="dto.campo!=null">and cppd_campo = #{dto.campo}</if>
         <if test="dto.propiedadValor!=null">and cppd_propiedadvalor = #{dto.propiedadValor}</if>
@@ -509,8 +510,9 @@ COST 100;
             and (dppd_fechainicial is null or dppd_fechainicial <![CDATA[ < ]]> #{fecha})
             and (dppd_fechafinal is null or dppd_fechafinal > #{fecha})
         </if>
+        
         <if test="dto.filtroParametro!=null">and (upper(cppd_codigo) like upper('%' || #{dto.filtroParametro} || '%'))</if>
-        order by nombre, key, fechainicial, dppd_fechafinal , usuario, rol, valor
+        order by nombre, key, fechainicial, dppd_fechafinal , usuario, rol, texto, valor
     </select>
 
     <select id="consultarPermisosFullPlantilla" parameterType="PropiedadDTO" resultType="PropiedadDTO">

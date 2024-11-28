@@ -416,6 +416,16 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return autenticacion;
 	}
 
+	public String getTokenPublic(String userId, String ip) throws ServerException{
+		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
+		sesion.setFecha(new Date());
+		sesion.setFechaCierre(usuarioSesionService.getFechaCierre(userId));
+		sesion.setUsuario(userId);
+		sesion.setIp(ip);
+		sesion = usuarioSesionService.save(sesion);
+		return sesion.getLlaveTabla();
+	}
+	
 	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
 		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
 		if (sesion == null || sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0

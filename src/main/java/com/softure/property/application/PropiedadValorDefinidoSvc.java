@@ -2,7 +2,8 @@ package com.softure.property.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,12 +93,10 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 		// END PropiedadValorDefinido_guardar
 	}
 
-// BEGIN region aditionalMethods
 	private PropiedadValorDefinidoDTO validarPropiedad(PropiedadValorDefinidoDTO dto) {
 		if(dto.getOrigenCategoria()!=null && dto.getOrigenCategoria().isEmpty())dto.setOrigenCategoria(null);
 		return dto;
 	}
-// END region aditionalMethods
 
 	public List<PropiedadValorDefinidoDTO> getFullToSynchronize() {
 		return propiedadValorDefinidoMapper.getFullToSynchronize();

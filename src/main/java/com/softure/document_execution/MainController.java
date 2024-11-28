@@ -49,9 +49,9 @@ public class MainController {
 	}
 	
 	@GetMapping(value="/obtenerPrincipalOrganizacion")
-	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
+	public OrganizacionDTO obtenerPrincipalOrganizacion(HttpServletRequest request) throws ServerException {
 		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
-		return organizacionService.obtenerPrincipalPublic();
+		return organizacionService.obtenerPrincipalPublic(HttpUtils.getRequestIP(request));
 	}
 	
 	@PostMapping(value="/autenticarUsuarioAutenticacion")

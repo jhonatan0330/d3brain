@@ -41,6 +41,7 @@ public class PropiedadValorDefinidoDTO extends BasicDTO
 	private boolean pideUsuario;
 	private boolean solicitaMotivo;
 	private boolean pideFechas;
+	private boolean privada;
 
 	public void setOrigen(String origen) {
 		this.origen = origen;
@@ -147,7 +148,13 @@ public class PropiedadValorDefinidoDTO extends BasicDTO
 	public boolean getPideFechas() {
 		return pideFechas;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+
+	public boolean getPrivada() {
+		return privada;
+	}
+
+	public void setPrivada(boolean privada) {
+		this.privada = privada;
+	}
 
 }

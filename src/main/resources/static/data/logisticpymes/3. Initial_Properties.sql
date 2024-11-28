@@ -550,5 +550,12 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
 	VALUES('PROP_271' , 'C', 'PORCENTAJE CALIDAD IMAGEN', 'PORCENTAJE_CALIDAD', 'REQUISITO', 'A', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo)
+	VALUES('PROP_272' , 'O', 'USUARIO PUBLICO', 'PUBLIC_USER', 'REQUISITO');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
+	VALUES('PROP_273' , 'O', 'HEADER PAGE', 'HEADER_PAGE', 'REQUISITO', true);
 	
-	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol, bpvd_propiedadboolean) 
+	VALUES('PROP_274' , 'L', 'ACCESO RAPIDO', 'PLANTILLA_ACCESO_RAPIDO', 'PERMISOS', true, true);

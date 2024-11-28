@@ -97,8 +97,14 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 		newLog.setFechaFin(new Date());
 		newLog.setError(error);
 		newLog.setUsuario(userId);
-		if(dto!=null) newLog.setEntrada(
-				uploadService.uploadFile(dto.getBytes(), "Parameter.txt", token, "logs"));
+		if(dto!=null) {
+			try {
+				newLog.setEntrada(uploadService.uploadFile(dto.getBytes(), "Parameter.txt", token, "logs"));	
+			}catch(Exception e) {
+				
+			}			
+		}
+				
 		return save(newLog);
 	}
 // END region aditionalMethods

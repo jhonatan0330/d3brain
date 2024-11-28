@@ -14,9 +14,12 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
+import com.softure.java.services.HttpUtils;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadFilterDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -32,9 +35,9 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping(value="/obtenerPrincipalOrganizacion")
-	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
+	public OrganizacionDTO obtenerPrincipalOrganizacion(HttpServletRequest request) throws ServerException {
 		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
-		return organizationSvc.obtenerPrincipalPublic();
+		return organizationSvc.obtenerPrincipalPublic( HttpUtils.getRequestIP(request));
 	}
 	
 	@GetMapping(value="/properties/{type}/{field}")
