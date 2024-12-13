@@ -48,6 +48,7 @@ public class TipoNumero {
 				if (funcionCalculo!= null) {
 					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
 							funcionCalculo, pCampo.getDocumento(), pCampo.getDependientes());
+					if(valorCalculado==null) valorCalculado = BigDecimal.ZERO;
 					pCampo.setValorNumero(valorCalculado);
 				} else {
 					pCampo.setValorNumero(BigDecimal.ZERO);
