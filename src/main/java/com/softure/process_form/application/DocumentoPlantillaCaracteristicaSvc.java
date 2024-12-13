@@ -418,6 +418,30 @@ public class DocumentoPlantillaCaracteristicaSvc
 		}
 		return campoCorreo.getLlaveTabla();
 	}
+	
+	public String crearCampoMotivo(String plantilla, String token) throws ServerException {
+		// Primero filtro si existe el campo nombre, eso evita un error al copiar
+		// plantilla
+		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtro.setCodigo("MOTIVO");
+		filtro.setPlantilla(plantilla);
+		DocumentoPlantillaCaracteristicaDTO campoNombre = consultaUnica(filtro);
+		if (campoNombre == null) {
+			campoNombre = new DocumentoPlantillaCaracteristicaDTO();
+			campoNombre.setCodigo("MOTIVO");
+			campoNombre.setNombre("MOTIVO");
+			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
+			campoNombre.setOrden(2);
+			campoNombre.setPlantilla(plantilla);;
+			campoNombre = guardar(campoNombre, token);
+			
+			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoNombre.getLlaveTabla(),
+					Propiedades.FORMATO, "E", token);
+			prop.setPropiedadValor("PROP_01");
+			parametroService.guardar(prop, token);
+		}
+		return campoNombre.getLlaveTabla();
+	}
 
 	public String crearCampoTiempoReporte(String plantilla, String token, boolean rango) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO campoTiempoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();

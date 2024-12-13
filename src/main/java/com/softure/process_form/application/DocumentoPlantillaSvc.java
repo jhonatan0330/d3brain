@@ -315,6 +315,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		templateDelete.setObjetivo(".");
 		templateDelete = guardar(templateDelete, token);
 		crearCampoProcesos(templateDelete.getLlaveTabla(), token);
+		crearCampoNombre(templateDelete.getLlaveTabla(), token);
 		return templateDelete;
 	}
 	
@@ -385,6 +386,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	public String crearCampoProcesos(String plantilla, String token) throws ServerException {
 		return caracteristicaService.crearCampoProcesos(plantilla, token);
+	}
+	
+	private String crearCampoNombre(String plantilla, String token) throws ServerException {
+		return caracteristicaService.crearCampoMotivo(plantilla, token);
 	}
 	
 	private List<ProcesoEstadoDTO> crearEstadosBasicos() throws ServerException {
