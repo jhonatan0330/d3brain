@@ -11,6 +11,7 @@
 			,duss_fecha as  fecha
 			,duss_fechacierre as  fechaCierre
 			,cuss_ip as  ip
+			,buss_privada as  privada
 			,cuss_estado as estado
 		from usuariosesion_ussp a
 	</sql>
@@ -40,6 +41,9 @@
 			</if>
 			<if test="ip!=null">
 				and cuss_ip = #{ip}
+			</if>
+			<if test="privadaFilter!=null">
+				and buss_privada = #{privadaFilter}
 			</if>
 	</sql>
 
@@ -90,6 +94,9 @@
 		<if test="ip!=null">
 			,cuss_ip
 		</if>
+		<if test="privada!=null">
+			,buss_privada
+		</if>
 		<if test="estado!=null">
 			,cuss_estado
 		</if>
@@ -107,6 +114,9 @@
 		<if test="ip!=null">
 			,#{ip}
 		</if>
+		<if test="privada!=null">
+			,#{privada}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -120,33 +130,10 @@
 				duss_fecha = #{fecha},
 				duss_fechacierre = #{fechaCierre},
 				cuss_ip = #{ip},
+				buss_privada = #{privada},
 				cuss_estado =#{estado}
 		<include refid="whereUsuarioSesionPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleUsuarioSesionFragment">
-		select
-			cuss_llave as  llaveTabla
-			,cuss_usuario as  usuario
-			,duss_fecha as  fecha
-			,duss_fechacierre as  fechaCierre
-			,cuss_ip as  ip
-			,cuss_estado as estado
-		from usuariosesion_ussp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="UsuarioSesionDTO">
-		<include refid="selectSimpleUsuarioSesionFragment" />
-		<include refid="whereUsuarioSesionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="UsuarioSesionDTO">
-		<include refid="selectSimpleUsuarioSesionFragment" />
-		<include refid="whereUsuarioSesionFragment" />
-		<include refid="paginationUsuarioSesionFragment" />
-	</select>
-	
-
 
 <!--// BEGIN region script-->
 	<select id="tiempoSesion" parameterType="java.lang.String" resultType="int">

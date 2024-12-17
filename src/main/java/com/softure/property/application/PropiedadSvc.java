@@ -906,6 +906,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.REPORT_MODULE_REFERENCE:
 		case Propiedades.COVERAGE_TEMPLATE:
 		case Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO:
+		case Propiedades.PLANTILLA_NUEVO_USUARIO:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;

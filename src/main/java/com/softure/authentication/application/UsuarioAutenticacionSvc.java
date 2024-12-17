@@ -381,6 +381,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				sesion.setFechaCierre(autenticacion.getFechaMaxima());
 			sesion.setUsuario(autenticacion.getUsuario());
 			sesion.setIp(dto.getIp());
+			sesion.setPrivada(true);
 			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());

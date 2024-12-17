@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +23,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	protected IBasicMapper<T, TFilter> mapper;
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private UsuarioSesionMapper usuarioSesionMapper;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -117,19 +119,41 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	}
 
 	public String getUserFlex(String token) throws ServerException {
-		if (token != null) {
-			UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
-			filter.setLlaveTabla(token);
-			UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
-			if (sesion == null)
-				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-			if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
-				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-			if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
-				throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-			return sesion.getUsuario();
+		if (token == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
+		filter.setLlaveTabla(token);
+		UsuarioSesionDTO sesion = null;
+		try {
+			sesion = usuarioSesionMapper.consultar(filter);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
 		}
-		throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (sesion == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		return sesion.getUsuario();
+
+	}
+
+	public boolean isPublicToken(String token) throws ServerException {
+		if (token == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
+		filter.setLlaveTabla(token);
+		UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
+		if (sesion == null)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		return !sesion.getPrivada();
 	}
 
 	public void paginar(TFilter dto) {

@@ -342,10 +342,14 @@ public class CallDocumentCRUD {
 		plantillaFilter.setSecurityToken(token);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				(isAutomatic) ? true : rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
 
+		//Hay que optimizar el tema de los token para que no se consulte tantas veces la base de datos
+		if(pedidoService.isPublicToken(token) && Propiedades.obtenerValor(plantilla, Propiedades.PLANTILLA_PERMISO_PUBLICO).isEmpty())
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:private_user");
+		
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 		validateFields(dto, plantilla, token, false);
 
 		propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), null, token);

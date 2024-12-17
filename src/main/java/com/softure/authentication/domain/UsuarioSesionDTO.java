@@ -18,6 +18,7 @@ public class UsuarioSesionDTO extends BasicDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaCierre;
 	private String ip;
+	private Boolean privada = null;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -47,7 +48,14 @@ public class UsuarioSesionDTO extends BasicDTO
 	public String getIp() {
 		return ip;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
+
+	public void setPrivada(Boolean privada) {
+		this.privada = privada;
+	}
+	
+	public Boolean getPrivada() {
+		return privada;
+	}
+
 
 }

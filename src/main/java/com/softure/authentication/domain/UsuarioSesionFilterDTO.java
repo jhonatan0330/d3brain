@@ -19,6 +19,7 @@ public class UsuarioSesionFilterDTO extends BasicFilterDTO
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaCierreMax;
 	private String ip;
+	private Boolean privadaFilter = null;
 
 	
 	public void setUsuario(String usuario) {
@@ -63,7 +64,6 @@ public class UsuarioSesionFilterDTO extends BasicFilterDTO
 		return fechaCierreMax;
 	}
 	
-	
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
@@ -72,5 +72,12 @@ public class UsuarioSesionFilterDTO extends BasicFilterDTO
 		return ip;
 	}
 	
-
+	public void setPrivadaFilter(Boolean privadaFilter) {
+		this.privadaFilter = privadaFilter;
+	}
+	
+	public Boolean getPrivadaFilter() {
+		return privadaFilter;
+	}
+	
 }

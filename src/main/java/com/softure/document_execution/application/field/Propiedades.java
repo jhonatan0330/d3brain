@@ -274,6 +274,9 @@ public class Propiedades {
 	public static final String LANDING_PAGE = "LANDING_PAGE";
 	public static final String HEADER_PAGE = "HEADER_PAGE";
 	public static final String PUBLIC_USER = "PUBLIC_USER";
+	public static final String PLANTILLA_NUEVO_USUARIO = "PLANTILLA_NUEVO_USUARIO";
+	public static final String PLANTILLA_PERMISO_PUBLICO = "PLANTILLA_PERMISO_PUBLICO";
+	
 	
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
