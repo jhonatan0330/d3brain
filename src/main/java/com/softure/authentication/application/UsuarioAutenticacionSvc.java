@@ -238,6 +238,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		sesion.setFecha(new Date());
 		// sesion.setFechaCierre(usuarioSesionService.getFechaCierre(usuarioSystem.getLlaveTabla()));
 		sesion.setUsuario(usuarioSystem.getLlaveTabla());
+		sesion.setPrivada(true);
 		sesion = usuarioSesionService.save(sesion);
 		return sesion;
 	}
