@@ -193,9 +193,14 @@ public class SignerService {
 				.withDataObjectFormat(new DataObjectFormatProperty("text/xml"));
 	}
 
-	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException {
+	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException, ServerException {
 
-		signer.sign(new SignedDataObjects(dataObjRef), elemToSign, SignatureAppendingStrategies.AsFirstChild);
+		try {
+			
+			signer.sign(new SignedDataObjects(dataObjRef), elemToSign, SignatureAppendingStrategies.AsFirstChild);
+		}catch(Exception ex) {
+			throw new ServerException("Certificado vencido");
+		}
 	}
 
 	private String saveDocument(Document doc) throws TransformerException {
