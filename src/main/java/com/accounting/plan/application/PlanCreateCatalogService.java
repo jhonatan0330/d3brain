@@ -47,7 +47,10 @@ public class PlanCreateCatalogService {
 			throw new ServerException("El codigo del catalogo es obligatorio");
 		if (!catalog.getCode().matches("[0-9A-Za-z]+") || catalog.getCode().length() < 5)
 			throw new ServerException(
-					"El codigo solo puede tener letras y numeros y no puede tener espacios. Ademas debe tener mas de 4 digitos");
+					"El codigo solo puede tener letras y numeros y no puede tener espacios. Ademas debe tener mas de 4 digitos y menos de 20 digitos");
+		if (catalog.getCode().length() >20)
+			throw new ServerException(
+					"El codigo menos de 20 digitos");
 		if (catalog.getName() == null)
 			throw new ServerException("El nombre del catalogo es obligatorio");
 		if (catalog.getInitialDate() == null || catalog.getFinalDate() == null)

@@ -22,7 +22,7 @@
 							"name": "code",
 							"tableName": "codigo",
 							"type": "STRING",
-							"size": 8
+							"size": 20
 						},
 						{
 							"name": "initialDate",

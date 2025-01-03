@@ -445,15 +445,15 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	public String crearCampoTiempoReporte(String plantilla, String token, boolean rango) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO campoTiempoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
-		campoTiempoFilter.setCodigo("FECHA");
+		campoTiempoFilter.setCodigo("FECHA_INICIO");
 		campoTiempoFilter.setPlantilla(plantilla);
 		DocumentoPlantillaCaracteristicaDTO campoTiempo = consultaUnica(campoTiempoFilter);
 		if (campoTiempo != null)
 			return campoTiempo.getLlaveTabla();
 
 		campoTiempo = new DocumentoPlantillaCaracteristicaDTO();
-		campoTiempo.setCodigo("FECHA");
-		campoTiempo.setNombre("FECHA");
+		campoTiempo.setCodigo("FECHA_INICIO");
+		campoTiempo.setNombre("FECHA INICIAL");
 		campoTiempo.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);
@@ -461,8 +461,22 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoTiempo = guardar(campoTiempo, token);
 
 		if (rango) {
-			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-					campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
+			//parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+			//		campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
+			campoTiempoFilter.setCodigo("FECHA_FIN");
+			campoTiempoFilter.setPlantilla(plantilla);
+			DocumentoPlantillaCaracteristicaDTO campoTiempoFinal = consultaUnica(campoTiempoFilter);
+			if (campoTiempoFinal != null)
+				return campoTiempo.getLlaveTabla();
+
+			campoTiempoFinal = new DocumentoPlantillaCaracteristicaDTO();
+			campoTiempoFinal.setCodigo("FECHA_FIN");
+			campoTiempoFinal.setNombre("FECHA FINAL");
+			campoTiempoFinal.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
+			campoTiempoFinal.setOrden(2);
+			campoTiempoFinal.setPlantilla(plantilla);
+			//campoTiempo.setObjetivo("Contiene las fechas del reporte");
+			campoTiempoFinal = guardar(campoTiempoFinal, token);
 		}
 
 		return campoTiempo.getLlaveTabla();
