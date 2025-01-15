@@ -41,16 +41,16 @@ public class HomologateAccount {
 				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
 
 		fieldsTemplate.add(
-				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+				campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(1), token), token);
 
 		fieldsTemplate.add(
-				campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 3, token));
+				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 3, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(2), token), token);
 
 		fieldsTemplate.add(campoService.createField(templateId, "PARENT",
 				DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
@@ -71,8 +71,8 @@ public class HomologateAccount {
 			newAccount = new AccountDTO();
 			newAccount.setDocument(document.getLlaveTabla());
 			newAccount.setCatalogDocument(CallDocumentCommons.getValueOption(document, "CATALOGO"));
-			newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 			newAccount.setCode(CallDocumentCommons.getValueText(document, "CODIGO"));
+			newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 			newAccount.setParentDocument(CallDocumentCommons.getValueOption(document, "PARENT"));
 			createAccountService.call(newAccount);
 		} else {
@@ -83,8 +83,8 @@ public class HomologateAccount {
 				}
 			} else {
 				newAccount.setCatalogDocument(CallDocumentCommons.getValueOption(document, "CATALOGO"));
-				newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 				newAccount.setCode(CallDocumentCommons.getValueText(document, "CODIGO"));
+				newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 				newAccount.setParentDocument(CallDocumentCommons.getValueOption(document, "PARENT"));
 				newAccount.setState(SharedConstants.STATE_ACTIVE);
 				createAccountService.callUpdate(newAccount);

@@ -49,8 +49,8 @@ public class HomologateCatalog {
 		// fecha final
 		fieldsTemplate.add(campoService.createField(templateId, "FECHA_FINAL",
 				DocumentoPlantillaCaracteristicaDTO.FECHA, 4, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		//propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
+				//Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 	}
