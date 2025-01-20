@@ -48,6 +48,7 @@ public class HomologateTariff {
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		/*
 		// Crear el campo tipo recurso
 		fieldsTemplate.add(campoService.createField(templateId, "DIMENSION_1",
 				DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 4, token));
@@ -112,20 +113,21 @@ public class HomologateTariff {
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(10),
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				*/
 		// bool producto opcional
 		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO_OPCIONAL",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 12, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(11),
+				DocumentoPlantillaCaracteristicaDTO.BINARIO, 4, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		// bool rango valores
 		fieldsTemplate.add(campoService.createField(templateId, "RANGO_VALORES",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 13, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(12),
+				DocumentoPlantillaCaracteristicaDTO.BINARIO, 5, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		// bool rango valores
 		fieldsTemplate.add(campoService.createField(templateId, "RANGO_CANTIDADES",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 14, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(13),
+				DocumentoPlantillaCaracteristicaDTO.BINARIO, 6, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		sincronizeTariff(templateId, fieldsTemplate, token, crudService, funcionario);
 	}
@@ -156,7 +158,7 @@ public class HomologateTariff {
 					fieldFinalDate.setCampo(fieldsTemplate.get(2));
 					fieldFinalDate.setValorFecha(iTariff.getFechaFinal());
 					document.getCaracteristicas().add(fieldFinalDate);
-
+/*
 					PedidoVentaCaracteristicaDTO fieldDimension1 = new PedidoVentaCaracteristicaDTO();
 					fieldDimension1.setCampo(fieldsTemplate.get(3));
 					fieldDimension1.setValorOpcion(iTariff.getTipoRecurso());
@@ -196,7 +198,7 @@ public class HomologateTariff {
 					fieldDimension4Name.setCampo(fieldsTemplate.get(10));
 					fieldDimension4Name.setValorText(iTariff.getTipoDimension4Nombre());
 					document.getCaracteristicas().add(fieldDimension4Name);
-
+*/
 					PedidoVentaCaracteristicaDTO fieldBoolProduct = new PedidoVentaCaracteristicaDTO();
 					fieldBoolProduct.setCampo(fieldsTemplate.get(11));
 					if (iTariff.getProductoOpcional())
@@ -238,14 +240,14 @@ public class HomologateTariff {
 			newTariff.setProductoOpcional(CallDocumentCommons.getValueBool(document, "PRODUCTO_OPCIONAL"));
 			newTariff.setRangoCantidad(CallDocumentCommons.getValueBool(document, "RANGO_CANTIDADES"));
 			newTariff.setRangoValores(CallDocumentCommons.getValueBool(document, "RANGO_VALORES"));
-			newTariff.setTipoRecurso(CallDocumentCommons.getValueOption(document, "DIMENSION_1"));
+			/*newTariff.setTipoRecurso(CallDocumentCommons.getValueOption(document, "DIMENSION_1"));
 			newTariff.setTipoDimension2(CallDocumentCommons.getValueOption(document, "DIMENSION_2"));
 			newTariff.setTipoDimension3(CallDocumentCommons.getValueOption(document, "DIMENSION_3"));
 			newTariff.setTipoDimension4(CallDocumentCommons.getValueOption(document, "DIMENSION_4"));
 			newTariff.setTipoRecursoNombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_1"));
 			newTariff.setTipoDimension2Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_2"));
 			newTariff.setTipoDimension3Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_3"));
-			newTariff.setTipoDimension4Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_4"));
+			newTariff.setTipoDimension4Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_4"));*/
 			tariffService.save(newTariff);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
@@ -260,14 +262,14 @@ public class HomologateTariff {
 				newTariff.setProductoOpcional(CallDocumentCommons.getValueBool(document, "PRODUCTO_OPCIONAL"));
 				newTariff.setRangoCantidad(CallDocumentCommons.getValueBool(document, "RANGO_CANTIDADES"));
 				newTariff.setRangoValores(CallDocumentCommons.getValueBool(document, "RANGO_VALORES"));
-				newTariff.setTipoRecurso(CallDocumentCommons.getValueOption(document, "DIMENSION_1"));
+				/*newTariff.setTipoRecurso(CallDocumentCommons.getValueOption(document, "DIMENSION_1"));
 				newTariff.setTipoDimension2(CallDocumentCommons.getValueOption(document, "DIMENSION_2"));
 				newTariff.setTipoDimension3(CallDocumentCommons.getValueOption(document, "DIMENSION_3"));
 				newTariff.setTipoDimension4(CallDocumentCommons.getValueOption(document, "DIMENSION_4"));
 				newTariff.setTipoRecursoNombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_1"));
 				newTariff.setTipoDimension2Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_2"));
 				newTariff.setTipoDimension3Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_3"));
-				newTariff.setTipoDimension4Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_4"));
+				newTariff.setTipoDimension4Nombre(CallDocumentCommons.getValueText(document, "NOMBRE_DIM_4"));*/
 				newTariff.setState(SharedConstants.STATE_ACTIVE);
 				tariffService.update(newTariff);
 			}
