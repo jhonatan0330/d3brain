@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,7 +24,6 @@ import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
 import com.softure.gps.domain.GPSLocalizacionFilterDTO;
 
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -47,8 +47,13 @@ public class GPSRest {
 		return getDevicesByTokenService.call(token);
 	}
 	
+	@GetMapping(value="/get-device")
+	public List<GPSDispositivoDTO> getdevicesByQuery(@RequestHeader("Authorization") String token)  throws ServerException  {
+		return getDevicesByQueryService.call(null);
+	}
+	
 	@GetMapping(value="/get-device/{query}")
-	public List<GPSDispositivoDTO> getdevicesByQuery(@RequestHeader("Authorization") String token, @PathParam("query")String query)  throws ServerException  {
+	public List<GPSDispositivoDTO> getdevicesByQuery(@RequestHeader("Authorization") String token, @PathVariable(name="query", required = false)String query)  throws ServerException  {
 		return getDevicesByQueryService.call(query);
 	}
 	
