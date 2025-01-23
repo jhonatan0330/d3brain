@@ -388,7 +388,8 @@ public class CallDocumentCRUD {
 		bpmService.execute(pedido, token);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		manageTemplateTypes(dto, plantilla, token);
-		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
+		String[] props = { Propiedades.API, Propiedades.TEMPLATE_VOUCHER };
+		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, props);
 		if (apis != null && !apis.isEmpty()) {
 			for (PropiedadDTO api : apis) {
 				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);

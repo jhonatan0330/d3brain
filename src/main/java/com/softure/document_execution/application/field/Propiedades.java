@@ -19,7 +19,7 @@ public class Propiedades {
 	public static final String MENSAJE_ADJUNTO_URL = "MENSAJE_ADJUNTO_URL";
 	public static final String MENSAJE_DESTINATARIOS_SQL = "MENSAJE_DESTINATARIOS_SQL";
 	public static final String MENSAJE_DESTINATARIO = "MENSAJE_DESTINATARIO";
-	public static final String API = "API";
+	public static final String API = "API";	
 	public static final String API_TRANSACCION = "API_TRANSACCION";
 	public static final String API_HEADER = "API_HEADER";
 	public static final String API_NEW_DOCUMENT = "API_NEW_DOCUMENT";
@@ -276,9 +276,11 @@ public class Propiedades {
 	public static final String PLANTILLA_NUEVO_USUARIO = "PLANTILLA_NUEVO_USUARIO";
 	public static final String PLANTILLA_PERMISO_PUBLICO = "PLANTILLA_PERMISO_PUBLICO";
 	
-	
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
+	
+	//Contabilidad
+	public static final String TEMPLATE_VOUCHER = "TEMPLATE_VOUCHER";
 	
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
 			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
@@ -579,6 +581,7 @@ public class Propiedades {
 					""";
 			break;
 		}
+		case TEMPLATE_VOUCHER:
 		case API_TRANSACCION:
 		case API: {
 			ruleProperty = "Identifica el API que se va a ejecutar al guardar el documento o realizar la transicion (en el caso de la transicion simpre va el documento gque genero la accion ).\n";

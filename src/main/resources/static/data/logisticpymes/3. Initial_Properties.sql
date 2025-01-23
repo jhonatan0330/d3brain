@@ -568,3 +568,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 		
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol, bpvd_pideusuario, bpvd_textoculto) 
 	VALUES('PROP_277' , 'L', 'INFORMACION AL USUARIO AL GUARDAR PLANTILLA', 'PLANTILLA_SUCCESS_INFORMATION', 'PERMISOS', true, true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_278' , 'L', 'TEMPLATE COMPROBANTE CONTABLE', 'TEMPLATE_VOUCHER', 'PERMISOS', true, true);
