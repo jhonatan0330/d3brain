@@ -451,6 +451,16 @@
 							"order": 2
 						},
 						{
+							"name": "positive",
+							"tableName": "positivo",
+							"type": "NUMBER"
+						},
+						{
+							"name": "negative",
+							"tableName": "negativo",
+							"type": "NUMBER"
+						},
+						{
 							"name": "value",
 							"tableName": "valor",
 							"type": "NUMBER"

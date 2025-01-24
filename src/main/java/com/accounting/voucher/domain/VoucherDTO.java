@@ -21,6 +21,7 @@ public class VoucherDTO extends SharedDataObject{
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
+	private String document;
 
 	public String getCatalog() {
 		return catalog;
@@ -100,6 +101,14 @@ public class VoucherDTO extends SharedDataObject{
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }

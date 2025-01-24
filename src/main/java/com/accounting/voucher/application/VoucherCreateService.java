@@ -204,10 +204,10 @@ public class VoucherCreateService {
 			throw new ServerException("No se encontro un catalogo con ese identificador");
 		_voucher.setCatalogCode(catalogDTO.getCode());
 		if (_voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
-			throw new ServerException("La fecha del comprobane debe ser mayor al periodo del catalogo. Fecha inicial "
+			throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
 					+ catalogDTO.getInitialDate().toString());
 		if (_voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
-			throw new ServerException("La fecha del comprobane debe ser menor al periodo del catalogo. Fecha final "
+			throw new ServerException("La fecha del comprobatne debe ser menor al periodo del catalogo. Fecha final "
 					+ catalogDTO.getFinalDate().toString());
 		return catalogDTO;
 	}

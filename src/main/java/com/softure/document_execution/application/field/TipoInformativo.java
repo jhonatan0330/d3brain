@@ -97,12 +97,13 @@ public class TipoInformativo {
 			return pCampo;
 		}
 		
+		/*
 		if(fieldToGetInformation.getCampoDTO()==null) throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 				+ " En el campo " + pCampo.getCampoDTO().getNombre() + " no se envio la información del campoDTO");
 		
 		if(fieldToGetInformation.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO)!=0) throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 				+ " En el campo " + pCampo.getCampoDTO().getNombre() + " solo se puede relacionar campos proceso");
-		
+		*/
 		
 		PedidoVentaDTO documentToGet = documentService.consultaXId(fieldToGetInformation.getValorOpcion());
 		

@@ -16,6 +16,7 @@
 			,mcmp_positivo as positive
 			,mcmp_negativo as negative
 			,mcmp_valor as value
+			,ccmp_documento as document
 			,dcmp_creacionfecha as createdAt
 			,ccmp_creacionusuario as createdUser
 			,ccmp_creacionusuarionombre as createdUserName
@@ -37,6 +38,7 @@
 <if test="positive!=null">		and mcmp_positivo = #{positive}</if>
 <if test="negative!=null">		and mcmp_negativo = #{negative}</if>
 <if test="value!=null">		and mcmp_valor = #{value}</if>
+<if test="document!=null">		and ccmp_documento = #{document}</if>
 
 	</sql>
 
@@ -79,6 +81,7 @@
 		<if test="positive!=null">,mcmp_positivo</if>
 		<if test="negative!=null">,mcmp_negativo</if>
 		<if test="value!=null">,mcmp_valor</if>
+		<if test="document!=null">,ccmp_documento</if>
 		<if test="createdUser!=null">,ccmp_creacionusuario</if>
 		<if test="createdUserName!=null">,ccmp_creacionusuarionombre</if>
 		<if test="state!=null">,ccmp_estado</if>
@@ -92,6 +95,7 @@
 		<if test="positive!=null">,#{positive}</if>
 		<if test="negative!=null">,#{negative}</if>
 		<if test="value!=null">,#{value}</if>
+		<if test="document!=null">,#{document}</if>
 		<if test="createdUser!=null">,#{createdUser}</if>
 		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
@@ -110,6 +114,7 @@
 		mcmp_positivo = #{positive},
 		mcmp_negativo = #{negative},
 		mcmp_valor = #{value},
+		ccmp_documento = #{document},
 		ccmp_estado =#{state}
 		<include refid="whereVoucherPrimaryKeyFragment" />
 	</select>

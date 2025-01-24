@@ -45,15 +45,10 @@ public class VoucherGetService {
 		return catalogDTO;
 	}
 	
-	public Voucher getById(String catalogId, String voucherId) throws ServerException {
-		CatalogDTO catalog = getCatalog(catalogId);
-		VoucherFilterDTO filter = new VoucherFilterDTO();
-		filter.setCatalog(catalogId);
-		filter.setCatalogCode(catalog.getCode());
-		filter.setState(SharedConstants.STATE_ACTIVE);
-		filter.setKey(voucherId);
+	public Voucher getById(String voucherId) throws ServerException {
+
 		Voucher voucher = new Voucher();
-		voucher.setHeader(voucherService.getOne(filter));
+		voucher.setHeader(voucherService.getById(voucherId));
 		voucher.setRecords(getRecords(voucherId));
 		return voucher;
 	}

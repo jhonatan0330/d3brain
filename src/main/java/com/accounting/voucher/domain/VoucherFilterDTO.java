@@ -21,6 +21,7 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
+	private String document;
 
 	public String getCatalog() {
 		return catalog;
@@ -108,6 +109,14 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public String getDocument() {
+		return document;
+	}
+
+	public void setDocument(String document) {
+		this.document = document;
 	}
 
 }
