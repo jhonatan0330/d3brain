@@ -41,6 +41,7 @@ public class ApiAccountVoucherService {
 		header.setCatalog(_item.getCatalog());
 		header.setConcept(_item.getConcept());
 		header.setFactDate(_item.getFactDate());
+		header.setDocument(_item.getDocument());
 		header.setValue(_item.getValue());
 		voucher.setHeader(header);
 		
@@ -50,6 +51,7 @@ public class ApiAccountVoucherService {
 			line.setAccount(accountRecordDTO.getAccount());
 			line.setNegative(accountRecordDTO.getCredit());
 			line.setPositive(accountRecordDTO.getDebit());
+			line.setNote(accountRecordDTO.getNote());
 			lines.add(line);
 		}
 		voucher.setRecords(lines);

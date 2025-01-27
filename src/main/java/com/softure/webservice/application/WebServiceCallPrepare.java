@@ -206,7 +206,8 @@ public class WebServiceCallPrepare {
 					case "E_CODE_MODIFICATOR":
 						if (modificador != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
-									+ SharedConstants.IGUAL + modificador.getNombre();
+									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
 						break;
 					case "E_TOKEN":
 						if (token != null)

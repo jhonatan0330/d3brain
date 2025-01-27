@@ -15,6 +15,7 @@ import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.domain.SharedConstants;
+import com.shared.domain.SharedIdResponse;
 import com.shared.domain.ServerException;
 
 @Service
@@ -51,6 +52,17 @@ public class VoucherGetService {
 		voucher.setHeader(voucherService.getById(voucherId));
 		voucher.setRecords(getRecords(voucherId));
 		return voucher;
+	}
+	
+	public SharedIdResponse getByDocument(String documentId) throws ServerException {
+
+		VoucherFilterDTO filter = new VoucherFilterDTO();
+		filter.setDocument(documentId);
+		filter.setState(SharedConstants.STATE_ACTIVE);
+		VoucherDTO header = voucherService.getOne(filter);
+		if (header == null)
+			throw new ServerException("No se encontro un catalogo con ese identificador");
+		return new SharedIdResponse(header.getKey(), header.getCode());
 	}
 
 	private List<AccountRecordDTO> getRecords(String voucherId) throws ServerException {

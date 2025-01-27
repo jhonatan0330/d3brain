@@ -43,10 +43,16 @@ public class VoucherRest {
 		return getVoucherService.call(catalog);
 	}
 	
-	@GetMapping("/{voucherId}")
+	@GetMapping("/one/{voucherId}")
 	public Voucher getVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
 			 @PathVariable("voucherId") String voucherId) throws ServerException {
 		return getVoucherService.getById( voucherId);
+	}
+
+	@GetMapping("/document/{documentId}")
+	public SharedIdResponse getVoucherId(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			 @PathVariable("documentId") String documentId) throws ServerException {
+		return getVoucherService.getByDocument( documentId);
 	}
 
 	@PostMapping("/manual")

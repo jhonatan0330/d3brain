@@ -11,6 +11,7 @@ public class VoucherRequest {
 	private String concept;
 	private Date factDate;
 	private BigDecimal value;
+	private String document;
 	private List<VoucherLineRequest> lines;
 	
 	public String getCatalog() {
@@ -42,6 +43,12 @@ public class VoucherRequest {
 	}
 	public void setLines(List<VoucherLineRequest> lines) {
 		this.lines = lines;
+	}
+	public String getDocument() {
+		return document;
+	}
+	public void setDocument(String document) {
+		this.document = document;
 	}
 	
 	
