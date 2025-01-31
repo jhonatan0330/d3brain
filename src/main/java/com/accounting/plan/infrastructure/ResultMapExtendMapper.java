@@ -18,7 +18,8 @@ public interface ResultMapExtendMapper {
 
 	ResultMapDTO updateBalance(@Param("accountId") String accountId, @Param("startDate") Date startDate, @Param("level") int level, @Param("value")BigDecimal value);
 
-	void insertMapAccount(@Param("accountId") String accountId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+	void insertMapAccount(@Param("accountId") String accountId, @Param("startDateYear") Date startDateYear, @Param("endDateYear") Date endDateYear
+			, @Param("startDateMonth") Date startDateMont, @Param("endDateMonth") Date endDateMonth, @Param("startDateDay") Date startDateDay, @Param("endDateDay") Date endDateDay);
 	
 	List<ResultMapDTO> getBalance(@Param("catalogId") String catalogId);
 

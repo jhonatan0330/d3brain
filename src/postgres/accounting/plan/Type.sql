@@ -8,6 +8,9 @@ CREATE TABLE account.tipocomprobante_tcm (
 ALTER TABLE account.tipocomprobante_tcm ADD ctcm_catalogo varchar(32) NOT NULL ;
 ALTER TABLE account.tipocomprobante_tcm ADD ctcm_nombre varchar(100) NOT NULL ;
 ALTER TABLE account.tipocomprobante_tcm ADD ctcm_codigo varchar(100) NOT NULL ;
+ALTER TABLE account.tipocomprobante_tcm ADD btcm_automatico bool NOT NULL DEFAULT false;
+ALTER TABLE account.tipocomprobante_tcm ADD ctcm_patron varchar(1) NOT NULL ;
+ALTER TABLE account.tipocomprobante_tcm ADD ctcm_consecutivo varchar(32) NOT NULL ;
 
 ALTER TABLE account.tipocomprobante_tcm ADD dtcm_creacionfecha timestamptz NOT NULL DEFAULT NOW();
 ALTER TABLE account.tipocomprobante_tcm ADD ctcm_creacionusuario varchar(32);

@@ -1,12 +1,11 @@
 package com.accounting.voucher.application;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,11 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.ResultMapExtendService;
+import com.accounting.plan.application.base.StackVoucherService;
 import com.accounting.plan.application.base.TimeFrameService;
+import com.accounting.plan.application.base.TypeService;
+import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
-import com.accounting.plan.domain.ResultMapDTO;
-import com.accounting.plan.domain.TimeFrameDTO;
+import com.accounting.plan.domain.StackVoucherDTO;
+import com.accounting.plan.domain.TypeDTO;
 import com.accounting.voucher.application.base.AccountRecordService;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.AccountRecordDTO;
@@ -49,56 +51,31 @@ public class VoucherCreateService {
 	private ResultMapExtendService mapService;
 	@Autowired @Lazy 
 	private TimeFrameService timeFrameService;
+	@Autowired @Lazy 
+	private StackVoucherService stackBasicService;
+	@Autowired @Lazy 
+	private TypeService typeService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
-		validateInfoHeaderAndRecords(_voucher, token);
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
+		validateInfoHeaderAndRecords(_voucher, token);
+		
 		configureAccounts(_voucher, catalogDTO);
-		_voucher.getHeader().setCode(getCodeVoucher(catalogDTO, _voucher.getHeader(), token.getToken()));
 		voucherService.save(_voucher.getHeader());
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
 		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
-		calculateBalance(_voucher, headerDTO);
+		stackVoucher(headerDTO.getKey());
 		// Esto lo retiro por el momenot miestras esten junto //el codigo al final para
 		// evitar errores en transaccionalidad
 		// getCodeVoucher(catalogDTO, headerDTO, token.getToken());
 		return new SharedIdResponse(headerDTO.getKey(), headerDTO.getCode());
 	}
 
-	private void calculateBalance(Voucher _voucher, VoucherDTO headerDTO)
-			throws ServerException {
-		for (AccountRecordDTO item : _voucher.getRecords()) {
-			saveMap( item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(),
-					item.getValue());
-		}
-	}
-
-	private void saveMap(String accountId, Date factDate, BigDecimal positive,
-			BigDecimal negative, BigDecimal value) throws ServerException {
-		// Obtener la fila de la cuenta en todos los niveles
-		List<ResultMapDTO> mapItems = mapService.getItemsAccount(accountId, factDate);
-		// sumarle el valor a cada nivel
-		for (ResultMapDTO resultMapDTO : mapItems) {
-			if (positive.compareTo(BigDecimal.ZERO) != 0) {
-				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive));
-			} else {
-				resultMapDTO.setNegative(resultMapDTO.getPositive().add(negative));
-			}
-			resultMapDTO.setValue(resultMapDTO.getValue().add(value));
-			resultMapDTO.setQuantity(resultMapDTO.getQuantity() + 1);
-			resultMapDTO.setAverage(resultMapDTO.getValue()
-					.divide(new BigDecimal(resultMapDTO.getQuantity()), 2, RoundingMode.CEILING).floatValue());
-			resultMapDTO.setLastBalance(value);
-			// guardar las modificaciones
-			mapService.update(resultMapDTO);
-			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());
-			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
-		}
-
-		AccountDTO account = accountService.getById(accountId);
-		if (account.getParent() != null)
-			saveMap(account.getParent(), factDate, positive, negative, value);
+	private void stackVoucher(String voucherId) throws ServerException {
+		StackVoucherDTO stack = new StackVoucherDTO();
+		stack.setVoucher(voucherId);
+		stackBasicService.save(stack);
 	}
 
 	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO) throws ServerException {
@@ -154,8 +131,6 @@ public class VoucherCreateService {
 		if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
 			throw new ServerException("El valor total del comprobante no esta diligenciado");
 		BigDecimal valueAllRecords = BigDecimal.ZERO;
-		BigDecimal positiveValueHeader = BigDecimal.ZERO;
-		BigDecimal negativeValueHeader = BigDecimal.ZERO;
 		List<AccountRecordDTO> toRemove = new ArrayList<>();
 		for (AccountRecordDTO recordAccount : _voucher.getRecords()) {
 			if (recordAccount.getAccount() != null && recordAccount.getAccount().isEmpty())
@@ -177,17 +152,37 @@ public class VoucherCreateService {
 				if (recordAccount.getNote() != null && recordAccount.getNote().isEmpty())
 					recordAccount.setNote(null);
 				recordAccount.setFactDate(_voucher.getHeader().getFactDate());
-				positiveValueHeader.add(recordAccount.getPositive());
-				negativeValueHeader.add(recordAccount.getNegative());
 			}
 		}
-		if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
+		
+		TypeDTO type = typeService.getById(_voucher.getHeader().getType());
+		if (type == null)
+			throw new ServerException("No se reconoce el tipo de documento");
+		if (type.getAutomatic() && _voucher.getHeader().getDocument() == null)
+			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
+		
+		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE)==0 && _voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
 			throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
 					+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords + ")");
+		
+		ConsecutivoDTO consecutive = null;
+		if (type.getConsecutive() == null) {
+			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
+			newConsecutive.setNombre(type.getName());
+			newConsecutive.setPrefijo(type.getCode() + "-");
+			newConsecutive.setNumeroInicial(new BigDecimal(1000));
+			newConsecutive.setNumeroActual(new BigDecimal(1000));
+			consecutive = consecutiveService.guardar(newConsecutive, token.getToken());
+			type.setConsecutive(newConsecutive.getLlaveTabla());
+			typeService.update(type);
+		} else {
+			consecutive = consecutiveService.consultaXId(type.getConsecutive());
+		}
+		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
+		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
+		
 		_voucher.getHeader().setCreatedUser(token.getUser());
 		_voucher.getHeader().setCreatedUserName(token.getUserName());
-		_voucher.getHeader().setPositive(positiveValueHeader);
-		_voucher.getHeader().setNegative(negativeValueHeader);
 		// Desde Angular viene una ultima linea vacia
 		for (AccountRecordDTO item : toRemove) {
 			_voucher.getRecords().remove(item);
@@ -207,50 +202,12 @@ public class VoucherCreateService {
 			throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
 					+ catalogDTO.getInitialDate().toString());
 		if (_voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
-			throw new ServerException("La fecha del comprobatne debe ser menor al periodo del catalogo. Fecha final "
+			throw new ServerException("La fecha del comprobante debe ser menor al periodo del catalogo. Fecha final "
 					+ catalogDTO.getFinalDate().toString());
 		return catalogDTO;
 	}
 
-	private String getCodeVoucher(CatalogDTO catalogDTO, VoucherDTO voucher, String token) throws ServerException {
-		ConsecutivoDTO consecutive = null;
-		if (catalogDTO.getConsecutive() == null) {
-			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
-			newConsecutive.setNombre(catalogDTO.getName());
-			newConsecutive.setPrefijo(catalogDTO.getCode() + "-");
-			newConsecutive.setNumeroInicial(new BigDecimal(1000));
-			newConsecutive.setNumeroActual(new BigDecimal(1000));
-			consecutive = consecutiveService.guardar(newConsecutive, token);
-			catalogDTO.setConsecutive(newConsecutive.getLlaveTabla());
-			catalogService.update(catalogDTO);
-		} else {
-			consecutive = new ConsecutivoDTO();
-			consecutive.setLlaveTabla(catalogDTO.getConsecutive());
-		}
-		consecutive = consecutiveService.asignarConsecutivo(consecutive, token);
 
-		return consecutive.getConsecutivoActual();
-	}
-
-	/*
-	 * private void getCodeVoucher(CatalogDTO catalogDTO, VoucherDTO voucher, String
-	 * token) throws ServerException { ConsecutivoDTO consecutive = null; if
-	 * (catalogDTO.getConsecutive() == null) { ConsecutivoDTO newConsecutive = new
-	 * ConsecutivoDTO(); newConsecutive.setNombre(catalogDTO.getName());
-	 * newConsecutive.setPrefijo(catalogDTO.getCode() + "-");
-	 * newConsecutive.setNumeroInicial(new BigDecimal(1000));
-	 * newConsecutive.setNumeroActual(new BigDecimal(1000)); consecutive =
-	 * consecutiveService.guardar(newConsecutive, token);
-	 * catalogDTO.setConsecutive(newConsecutive.getLlaveTabla());
-	 * catalogService.update(catalogDTO); } else { consecutive = new
-	 * ConsecutivoDTO(); consecutive.setLlaveTabla(catalogDTO.getConsecutive()); }
-	 * consecutive = consecutiveService.asignarConsecutivo(consecutive, token);
-	 * 
-	 * voucher = getVoucherById(catalogDTO.getCode(), voucher.getKey());
-	 * voucher.setCatalogCode(catalogDTO.getCode());
-	 * voucher.setCode(consecutive.getConsecutivoActual());
-	 * voucherService.update(voucher); }
-	 */
 
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {
 		// Como no funciona el cosultar por id toca el getOne

@@ -11,6 +11,9 @@ public class TypeFilterDTO extends SharedDataObjectFilter {
 	private String catalog;
 	private String name;
 	private String code;
+	private Boolean automaticFilter;
+	private String pattern;
+	private String consecutive;
 
 	public String getCatalog() {
 		return catalog;
@@ -34,6 +37,30 @@ public class TypeFilterDTO extends SharedDataObjectFilter {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public Boolean getAutomaticFilter() {
+		return automaticFilter;
+	}
+
+	public void setAutomaticFilter(Boolean automaticFilter) {
+		this.automaticFilter = automaticFilter;
+	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
+	}
+
+	public String getConsecutive() {
+		return consecutive;
+	}
+
+	public void setConsecutive(String consecutive) {
+		this.consecutive = consecutive;
 	}
 
 }

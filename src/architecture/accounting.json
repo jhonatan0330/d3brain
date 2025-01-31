@@ -35,12 +35,6 @@
 							"type": "DATETIME"
 						},
 						{
-							"name": "consecutive",
-							"tableName": "consecutivo",
-							"type": "CLASS",
-							"optional": true
-						},
-						{
 							"name": "document",
 							"tableName": "documento",
 							"type": "CLASS"
@@ -183,7 +177,7 @@
 						},
 						{
 							"name": "template",
-							"tableName"	: "plantilla",
+							"tableName": "plantilla",
 							"type": "CLASS"
 						}
 					]
@@ -270,6 +264,22 @@
 							"name": "code",
 							"tableName": "codigo",
 							"type": "STRING"
+						},
+						{
+							"name": "automatic",
+							"tableName": "automatico",
+							"type": "BOOLEAN"
+						},
+						{
+							"name": "pattern",
+							"tableName": "patron",
+							"type": "STRING",
+							"size": 1
+						},
+						{
+							"name": "consecutive",
+							"tableName": "consecutivo",
+							"type": "CLASS"
 						}
 					]
 				},
@@ -328,6 +338,18 @@
 							"tableName": "minuto",
 							"type": "INT",
 							"optional": true
+						}
+					]
+				},
+				{
+					"name": "StackVoucher",
+					"table": "pila",
+					"prefix": "stk",
+					"attributes": [
+						{
+							"name": "voucher",
+							"tableName": "comprobante",
+							"type": "CLASS"
 						}
 					]
 				},
@@ -428,14 +450,7 @@
 						{
 							"name": "type",
 							"tableName": "tipo",
-							"type": "CLASS",
-							"optional": true
-						},
-						{
-							"name": "typeName",
-							"tableName": "tiponombre",
-							"type": "STRING",
-							"optional": true
+							"type": "CLASS"
 						},
 						{
 							"name": "concept",
@@ -451,21 +466,10 @@
 							"order": 2
 						},
 						{
-							"name": "positive",
-							"tableName": "positivo",
-							"type": "NUMBER"
-						},
-						{
-							"name": "negative",
-							"tableName": "negativo",
-							"type": "NUMBER"
-						},
-						{
 							"name": "value",
 							"tableName": "valor",
 							"type": "NUMBER"
-						}
-						,
+						},
 						{
 							"name": "document",
 							"tableName": "documento",

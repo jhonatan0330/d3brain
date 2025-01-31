@@ -61,6 +61,16 @@ public class HomologateAccount {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 
+		fieldsTemplate.add(
+				campoService.createField(templateId, "NATURALEZA", DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 5, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.OPCIONES, "C", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.OPCIONES, "D", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 	}
 
 	public void createAccount(PedidoVentaDTO document) throws ServerException {
@@ -74,6 +84,7 @@ public class HomologateAccount {
 			newAccount.setCode(CallDocumentCommons.getValueText(document, "CODIGO"));
 			newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 			newAccount.setParentDocument(CallDocumentCommons.getValueOption(document, "PARENT"));
+			newAccount.setOperation(CallDocumentCommons.getValueOption(document, "NATURALEZA"));
 			createAccountService.call(newAccount);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
@@ -86,6 +97,7 @@ public class HomologateAccount {
 				newAccount.setCode(CallDocumentCommons.getValueText(document, "CODIGO"));
 				newAccount.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));
 				newAccount.setParentDocument(CallDocumentCommons.getValueOption(document, "PARENT"));
+				newAccount.setOperation(CallDocumentCommons.getValueOption(document, "NATURALEZA"));
 				newAccount.setState(SharedConstants.STATE_ACTIVE);
 				createAccountService.callUpdate(newAccount);
 			}

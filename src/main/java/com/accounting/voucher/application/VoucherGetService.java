@@ -47,7 +47,6 @@ public class VoucherGetService {
 	}
 	
 	public Voucher getById(String voucherId) throws ServerException {
-
 		Voucher voucher = new Voucher();
 		voucher.setHeader(voucherService.getById(voucherId));
 		voucher.setRecords(getRecords(voucherId));

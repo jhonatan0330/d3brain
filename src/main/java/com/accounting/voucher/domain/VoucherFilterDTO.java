@@ -14,12 +14,9 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 	private String catalogCode;
 	private String code;
 	private String type;
-	private String typeName;
 	private String concept;
 	private Date factDateMin;
 	private Date factDateMax;
-	private BigDecimal positive;
-	private BigDecimal negative;
 	private BigDecimal value;
 	private String document;
 
@@ -55,14 +52,6 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 		this.type = type;
 	}
 
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
 	public String getConcept() {
 		return concept;
 	}
@@ -85,22 +74,6 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setFactDateMax(Date factDateMax) {
 		this.factDateMax = factDateMax;
-	}
-
-	public BigDecimal getPositive() {
-		return positive;
-	}
-
-	public void setPositive(BigDecimal positive) {
-		this.positive = positive;
-	}
-
-	public BigDecimal getNegative() {
-		return negative;
-	}
-
-	public void setNegative(BigDecimal negative) {
-		this.negative = negative;
 	}
 
 	public BigDecimal getValue() {

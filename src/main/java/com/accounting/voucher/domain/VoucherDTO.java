@@ -14,12 +14,9 @@ public class VoucherDTO extends SharedDataObject{
 	private String catalogCode;
 	private String code;
 	private String type;
-	private String typeName;
 	private String concept;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date factDate;
-	private BigDecimal positive;
-	private BigDecimal negative;
 	private BigDecimal value;
 	private String document;
 
@@ -55,14 +52,6 @@ public class VoucherDTO extends SharedDataObject{
 		this.type = type;
 	}
 
-	public String getTypeName() {
-		return typeName;
-	}
-
-	public void setTypeName(String typeName) {
-		this.typeName = typeName;
-	}
-
 	public String getConcept() {
 		return concept;
 	}
@@ -77,22 +66,6 @@ public class VoucherDTO extends SharedDataObject{
 
 	public void setFactDate(Date factDate) {
 		this.factDate = factDate;
-	}
-
-	public BigDecimal getPositive() {
-		return positive;
-	}
-
-	public void setPositive(BigDecimal positive) {
-		this.positive = positive;
-	}
-
-	public BigDecimal getNegative() {
-		return negative;
-	}
-
-	public void setNegative(BigDecimal negative) {
-		this.negative = negative;
 	}
 
 	public BigDecimal getValue() {

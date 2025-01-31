@@ -180,7 +180,8 @@
 				nrmp_promedio = #{item.average},
 				mrmp_positivo = #{item.positive},
 				mrmp_negativo = #{item.negative},
-				mrmp_valor = #{item.value}
+				mrmp_valor = #{item.value},
+				mrmp_saldosiguiente = #{item.nextBalance}
 		where
 			crmp_llave =#{item.key}
 	</select>
@@ -190,9 +191,10 @@
 			(crmp_llave, crmp_cuenta, crmp_periodo)
 		select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''), #{accountId}, cptm_llave 
 		from account.periodotiempo_ptm 
-		where 
-			(dptm_fechainicio <![CDATA[ <= ]]> #{startDate} and dptm_fechafin >= #{endDate})
-			or (dptm_fechainicio >= #{startDate} and dptm_fechafin <![CDATA[ <= ]]> #{endDate}) 
+		where nptm_nivel = 0
+				or (nptm_nivel = 1 and dptm_fechainicio >= #{startDateYear} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateYear})
+				or (nptm_nivel = 2 and dptm_fechainicio >= #{startDateMonth} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateMonth})
+				or (nptm_nivel = 3 and dptm_fechainicio >= #{startDateDay} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateDay})
 	</select>
 	
 	<select id="updateBalance" >

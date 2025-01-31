@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accounting.plan.infrastructure.StackVoucherMapper">
+
+	<sql id="selectStackVoucherFragment">
+		select
+			cstk_llave as key
+			,cstk_comprobante as voucher
+			,dstk_creacionfecha as createdAt
+			,cstk_creacionusuario as createdUser
+			,cstk_creacionusuarionombre as createdUserName
+			,dstk_modificacionfecha as updatedAt
+			,cstk_estado as state
+		from account.pila_stk a
+	</sql>
+
+	<sql id="whereStackVoucherFragment">
+		where 1=1<if test="key!=null">
+		and cstk_llave = #{key}</if><if test="state!=null">
+		and cstk_estado = #{state}</if>
+<if test="voucher!=null">		and cstk_comprobante = #{voucher}</if>
+
+	</sql>
+
+	<sql id="paginationStackVoucherFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereStackVoucherPrimaryKeyFragment">
+		where cstk_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="StackVoucherFilterDTO" resultType="StackVoucherDTO">
+		<include refid="selectStackVoucherFragment" />
+		<include refid="whereStackVoucherFragment" />
+		LIMIT 2
+	</select>
+	
+	<select id="getMany" parameterType="StackVoucherFilterDTO" resultType="StackVoucherDTO">
+		<include refid="selectStackVoucherFragment" />
+		<include refid="whereStackVoucherFragment" />
+		
+		<include refid="paginationStackVoucherFragment" />
+	</select>
+
+	<select id="count" parameterType="StackVoucherFilterDTO" resultType="int">
+		select count(*)
+		from account.pila_stk
+		<include refid="whereStackVoucherFragment" />
+	</select>
+
+	<select id="insert" parameterType="StackVoucherDTO" resultType="StackVoucherDTO">
+		insert into account.pila_stk(cstk_llave, dstk_creacionfecha, dstk_modificacionfecha
+		<if test="voucher!=null">,cstk_comprobante</if>
+		<if test="createdUser!=null">,cstk_creacionusuario</if>
+		<if test="createdUserName!=null">,cstk_creacionusuarionombre</if>
+		<if test="state!=null">,cstk_estado</if>
+		) values (#{key}, now(), now()
+		<if test="voucher!=null">,#{voucher}</if>
+		<if test="createdUser!=null">,#{createdUser}</if>
+		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="StackVoucherDTO" resultType="StackVoucherDTO">
+		update account.pila_stk
+		set dstk_modificacionfecha = now(),
+		cstk_comprobante = #{voucher},
+		cstk_estado =#{state}
+		<include refid="whereStackVoucherPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

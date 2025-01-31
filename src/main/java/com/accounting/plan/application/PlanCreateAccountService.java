@@ -64,6 +64,7 @@ public class PlanCreateAccountService {
 		if (account.getCode() != null && account.getCode().isEmpty())
 			account.setCode(null);
 		account.setState(bd.getState());
+		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
 		accountService.update(account);
 		return accountService.getById(account.getKey());
 	}
@@ -99,23 +100,7 @@ public class PlanCreateAccountService {
 		int countAccount = accountService.count(filter);
 		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
 		account.setType(AccountConst.TYPE_OPERATIONAL);
-		account.setOperation(AccountConst.OPERATION_ADD);
+		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
 	}
-	/*
-	 * @Transactional(value = "transactionManager", rollbackFor = Exception.class,
-	 * propagation = Propagation.REQUIRED) public AccountDTO configurate(AccountDTO
-	 * account, String token) throws ServerException { if (account.getType() != null
-	 * && account.getType().compareTo(AccountConst.TYPE_GROUP) != 0 &&
-	 * account.getTemplate() != null) { FormatVoucherDTO format = new
-	 * FormatVoucherDTO(); format.setCatalog(account.getCatalog());
-	 * format.setTemplate(account.getTemplate()); format =
-	 * formatService.save(format, token); FormatLineDTO line = new FormatLineDTO();
-	 * line.setAccount(account.getKey()); line.setFormat(format.getKey()); if
-	 * (account.getOperation() != null &&
-	 * account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) {
-	 * line.setNegative("1"); } else { line.setPositive("1"); }
-	 * lineService.save(line, token); } //createMatrix(account, token); return
-	 * account; }
-	 */
 
 }

@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.AccountDTO;
@@ -19,7 +20,8 @@ import com.shared.domain.ServerException;
 @Service("ResultMapExtendAccountingService")
 public class ResultMapExtendService {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ResultMapExtendMapper mapper;
 
 	public void saveAll(List<TimeFrameDTO> maps) throws ServerException {
@@ -36,7 +38,7 @@ public class ResultMapExtendService {
 				indexEnd = indexEnd + 1000;
 				if (indexEnd > maps.size())
 					indexEnd = maps.size();
-				mapper.insertAll( maps.subList(indexStart, indexEnd));
+				mapper.insertAll(maps.subList(indexStart, indexEnd));
 
 			} catch (BindingException ex) {
 				throw new ServerException(ex.getMessage());
@@ -55,22 +57,33 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+
+	@SuppressWarnings("deprecation")
 	public void insertMapAccount(String accountId, Date startDate, Date endDate) throws ServerException {
 		try {
-			Calendar date = Calendar.getInstance();
-			date.setTime(endDate);
-			date.add(Calendar.DATE, 1);
-			mapper.insertMapAccount(accountId, startDate, date.getTime());
+
+			Date dateYearStart = new Date(startDate.getYear(), 0, 1);
+			Date dateMonthStart = new Date(startDate.getYear(), startDate.getMonth(), 1);
+			Date dateDayStart = new Date(startDate.getYear(), startDate.getMonth(), startDate.getDate());
+			
+			Date dateYearEnd = new Date(endDate.getYear(), 0, 1);
+			Date dateMonthEnd = new Date(endDate.getYear(), endDate.getMonth(), 1);
+			Date dateDayEnd = new Date(endDate.getYear(), endDate.getMonth(), endDate.getDate());
+			
+			mapper.insertMapAccount(accountId, 
+					dateYearStart, dateYearEnd,
+					dateMonthStart, dateMonthEnd,
+					dateDayStart, dateDayEnd 
+					);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-	
-	
 
-	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value) throws ServerException {
+	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value)
+			throws ServerException {
 		try {
 			return mapper.updateBalance(accountId, startDate, level, value);
 		} catch (BindingException ex) {
@@ -81,7 +94,7 @@ public class ResultMapExtendService {
 	}
 
 	public List<ResultMapDTO> getBalanceByCatalog(String catalogId) throws ServerException {
-		//CatalogDTO catalog = getCatalog(catalogId);
+		// CatalogDTO catalog = getCatalog(catalogId);
 		try {
 			return mapper.getBalance(catalogId);
 		} catch (BindingException ex) {
@@ -91,17 +104,16 @@ public class ResultMapExtendService {
 		}
 	}
 
-	/*private CatalogDTO getCatalog(String catalogId) throws ServerException {
-		if (catalogId == null)
-			throw new ServerException("Es necesario colcoar el Id del catalogo");
-		CatalogDTO catalog = catalogService.getById(catalogId);
-		if (catalog == null)
-			throw new ServerException("No se identifico un catalogo con el identificador " + catalogId);
-		return catalog;
-	}*/
+	/*
+	 * private CatalogDTO getCatalog(String catalogId) throws ServerException { if
+	 * (catalogId == null) throw new
+	 * ServerException("Es necesario colcoar el Id del catalogo"); CatalogDTO
+	 * catalog = catalogService.getById(catalogId); if (catalog == null) throw new
+	 * ServerException("No se identifico un catalogo con el identificador " +
+	 * catalogId); return catalog; }
+	 */
 
-	public List<ResultMapDTO> getItemsAccount(String accountId, Date dateFact)
-			throws ServerException {
+	public List<ResultMapDTO> getItemsAccount(String accountId, Date dateFact) throws ServerException {
 		Calendar dateFactCalendar = Calendar.getInstance();
 		dateFactCalendar.setTime(dateFact);
 		try {
@@ -124,6 +136,7 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+
 	public TimeFrameDTO getTimeFrameLevel(int level) throws ServerException {
 		try {
 			return mapper.selectTimeFrameLevel(level);
@@ -135,33 +148,30 @@ public class ResultMapExtendService {
 	}
 
 	/*
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void configureAccount() throws ServerException {
-		List<AccountDTO> accounts = getAccountWithTimeToExtend();
-		if (accounts != null && !accounts.isEmpty()) {
-			HashMap<String, CatalogDTO> hmap = new HashMap<String, CatalogDTO>();
-
-			for (AccountDTO accountDTO : accounts) {
-				if (!hmap.containsKey(accountDTO.getCatalog()))
-					hmap.put(accountDTO.getCatalog(), getCatalog(accountDTO.getCatalog()));
-				CatalogDTO catalog = hmap.get(accountDTO.getCatalog());
-				if (accountDTO.getInitialDate() == null) {
-					matrixService.call(accountDTO, catalog.getInitialDate());
-				} else if (accountDTO.getFinalDate() == null) {
-					throw new ServerException("Uy no deberia pasar esto en una cuenta que tenga fecha de inicio pero no de fin");
-				} else if (accountDTO.getInitialDate().compareTo(catalog.getInitialDate()) > 0) {
-					Calendar calculateDate = new GregorianCalendar();
-					calculateDate.setTime(accountDTO.getInitialDate());
-					calculateDate.add(Calendar.DAY_OF_MONTH, -1);
-					matrixService.call(accountDTO, calculateDate.getTime());
-				} else if (accountDTO.getFinalDate().compareTo(catalog.getFinalDate()) < 0) {
-					Calendar calculateDate = new GregorianCalendar();
-					calculateDate.setTime(accountDTO.getFinalDate());
-					calculateDate.add(Calendar.DAY_OF_MONTH, 1);
-					matrixService.call(accountDTO, calculateDate.getTime());
-				}
-			}
-		}
-	}*/
+	 * @Transactional(value = "transactionManager", rollbackFor = Exception.class,
+	 * propagation = Propagation.REQUIRED) public void configureAccount() throws
+	 * ServerException { List<AccountDTO> accounts = getAccountWithTimeToExtend();
+	 * if (accounts != null && !accounts.isEmpty()) { HashMap<String, CatalogDTO>
+	 * hmap = new HashMap<String, CatalogDTO>();
+	 * 
+	 * for (AccountDTO accountDTO : accounts) { if
+	 * (!hmap.containsKey(accountDTO.getCatalog()))
+	 * hmap.put(accountDTO.getCatalog(), getCatalog(accountDTO.getCatalog()));
+	 * CatalogDTO catalog = hmap.get(accountDTO.getCatalog()); if
+	 * (accountDTO.getInitialDate() == null) { matrixService.call(accountDTO,
+	 * catalog.getInitialDate()); } else if (accountDTO.getFinalDate() == null) {
+	 * throw new
+	 * ServerException("Uy no deberia pasar esto en una cuenta que tenga fecha de inicio pero no de fin"
+	 * ); } else if (accountDTO.getInitialDate().compareTo(catalog.getInitialDate())
+	 * > 0) { Calendar calculateDate = new GregorianCalendar();
+	 * calculateDate.setTime(accountDTO.getInitialDate());
+	 * calculateDate.add(Calendar.DAY_OF_MONTH, -1); matrixService.call(accountDTO,
+	 * calculateDate.getTime()); } else if
+	 * (accountDTO.getFinalDate().compareTo(catalog.getFinalDate()) < 0) { Calendar
+	 * calculateDate = new GregorianCalendar();
+	 * calculateDate.setTime(accountDTO.getFinalDate());
+	 * calculateDate.add(Calendar.DAY_OF_MONTH, 1); matrixService.call(accountDTO,
+	 * calculateDate.getTime()); } } } }
+	 */
 
 }

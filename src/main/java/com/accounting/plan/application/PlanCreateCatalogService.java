@@ -5,7 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,13 @@ public class PlanCreateCatalogService {
 			throw new ServerException("La fecha de inicio y de fin del catalogo es obligatorio");
 		if (catalog.getInitialDate().compareTo(catalog.getFinalDate()) > 0)
 			throw new ServerException("La fecha de inicio debe ser menor a la fecha de fin del catalogo");
+		
+		Calendar fecha = Calendar.getInstance();
+	    fecha.setTime(catalog.getFinalDate());
+		int ultimoDiaDelMes = fecha.getActualMaximum(Calendar.DAY_OF_MONTH);
+        if(fecha.get(Calendar.DAY_OF_MONTH) != ultimoDiaDelMes)
+        	throw new ServerException("La fecha de fin del catalogo debe ser el último día del mes");
+               
 		CatalogFilterDTO filter = new CatalogFilterDTO();
 		filter.setCode(catalog.getCode());
 		CatalogDTO catalogDB = catalogService.getOne(filter);

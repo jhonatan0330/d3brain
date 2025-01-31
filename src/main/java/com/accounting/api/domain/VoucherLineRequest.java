@@ -9,6 +9,10 @@ public class VoucherLineRequest {
 	private BigDecimal credit;
 	private String note;
 	
+	private String accountParent;
+	private String accountName;
+	private String accountDocument;
+	
 	public String getAccount() {
 		return account;
 	}
@@ -32,6 +36,25 @@ public class VoucherLineRequest {
 	}
 	public void setNote(String note) {
 		this.note = note;
+	}
+	
+	public String getAccountParent() {
+		return accountParent;
+	}
+	public void setAccountParent(String accountParent) {
+		this.accountParent = accountParent;
+	}
+	public String getAccountName() {
+		return accountName;
+	}
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+	public String getAccountDocument() {
+		return accountDocument;
+	}
+	public void setAccountDocument(String accountDocument) {
+		this.accountDocument = accountDocument;
 	}
 	
 }

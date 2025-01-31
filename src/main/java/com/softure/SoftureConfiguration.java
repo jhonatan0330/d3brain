@@ -38,6 +38,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.accounting.plan.application.StackAccountProccessService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.mail.application.MailReleaseMessageQueueService;
@@ -57,30 +58,22 @@ public class SoftureConfiguration {
 
 	@Autowired 
 	private Environment env;
-	//@Autowired @Lazy 
 	private MailReleaseMessageQueueService releaseQueueService;
-	//@Autowired @Lazy 
 	private ProcesoTransicionAutomaticaSvc transicionservice;
-	//@Autowired @Lazy 
 	private WebServiceEjecucionSvc apiService;
-	
+	private StackAccountProccessService accountService;
 	private ReporteBaseSvc reporteBaseService;
-	
-	//private ServidorSvc servidorService;
-	
-	//private UploadSvc uploadService;
 
 	@Autowired 
 	private AutowireCapableBeanFactory beanFactory;
 
 	public SoftureConfiguration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto, @Lazy WebServiceEjecucionSvc apis
-			,@Lazy ReporteBaseSvc report) {
+			,@Lazy ReporteBaseSvc report, @Lazy StackAccountProccessService stack) {
 		this.releaseQueueService = mail;
 		this.transicionservice = auto;
 		this.apiService = apis;
 		this.reporteBaseService = report;
-		//this.servidorService = _servidorService;
-		//this.uploadService = _uploadService;
+		this.accountService = stack;
 	}
 	
 	
@@ -259,6 +252,12 @@ public class SoftureConfiguration {
 			apiService.apiToTransaction();
 		}
 	}
+	
+	@Scheduled(fixedDelayString = "${fixedDelayAccount.in.milliseconds}")
+	public void sendAccount() throws ServerException {
+		if (env.getProperty("cron.account").compareTo("true") == 0)
+			System.out.println("******* ACUMULADOR (" + accountService.call() + ") ***" + new Date().toString());
+	}
 
 	private String getActualDate(DataSource ds) {
 		String result = null;
@@ -289,27 +288,5 @@ public class SoftureConfiguration {
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}
-/*
-	@Bean
-	ServletRegistrationBean<HttpServlet> uploadServlet() {
-		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
-		final UploaderServlet servlet = new UploaderServlet(uploadService);
-		beanFactory.autowireBean(servlet);
-		servRegBean.setServlet(servlet);
-		servRegBean.addUrlMappings("/loader/*");
-		servRegBean.setLoadOnStartup(1);
-		return servRegBean;
-	}
 
-	@Bean
-	ServletRegistrationBean<HttpServlet> downloadServlet() {
-		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
-		final DownloaderServlet servlet = new DownloaderServlet(servidorService);
-		beanFactory.autowireBean(servlet);
-		servRegBean.setServlet(servlet);
-		servRegBean.addUrlMappings("/resource/*");
-		servRegBean.setLoadOnStartup(1);
-		return servRegBean;
-	}
-*/
 }
