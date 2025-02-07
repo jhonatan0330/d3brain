@@ -1,4 +1,4 @@
-select relname, reltuples , , pg_size_pretty(pg_total_relation_size((nspname || '.' ||relname)::text)), pg_total_relation_size((nspname || '.' ||relname)::text)
+select relname, reltuples , pg_size_pretty(pg_total_relation_size((nspname || '.' ||relname)::text)), pg_total_relation_size((nspname || '.' ||relname)::text)
 from pg_class c, pg_namespace n
 where relnamespace = n.oid and nspname in ('public', 'account', 'config', 'historic', 'learning', 'report', 'task') 
 and relname not like 'pk_%'  and relname not like '%_key' and relname not like 'uk_%' 
