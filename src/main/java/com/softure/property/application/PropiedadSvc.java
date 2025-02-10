@@ -350,9 +350,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (dto.getKey().contains("PLANTILLA_TIPO")) {
 			homologateService.call(dto, token);
 		}
-		if (dto.getKey().contains(Propiedades.PLANTILLA_TIPO_PRODUCTO)) {
-			homologateService.call(dto, token);
-		}
 		dto.setFechaDefinicion(new Date());
 		dto = super.guardar(dto, token);
 		try {

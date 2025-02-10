@@ -217,8 +217,11 @@
 				cwse_estado =#{estado}
 		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleWebServiceEjecucionFragment">
+
+
+<!--// BEGIN region script-->
+
+	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
 		select
 			cwse_llave as  llaveTabla
 			,cwse_servicio as  servicio
@@ -237,32 +240,12 @@
 			,cwse_sincrona as  sincrona
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
-	</sql>
-	
-	<select id="consultarSimple" resultType="WebServiceEjecucionDTO">
-		<include refid="selectSimpleWebServiceEjecucionFragment" />
-		<include refid="whereWebServiceEjecucionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="WebServiceEjecucionDTO">
-		<include refid="selectSimpleWebServiceEjecucionFragment" />
-		<include refid="whereWebServiceEjecucionFragment" />
-		order by dwse_fecha desc
-		, dwse_fechaejecucion desc
-		<include refid="paginationWebServiceEjecucionFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-
-	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
-		<include refid="selectSimpleWebServiceEjecucionFragment" />
 		where cwse_estado = 'A' 
 			and dwse_fecha >= now() - interval '1200 minutes'
 			and dwse_fecha <![CDATA[ < ]]> now()
 			and dwse_fechaejecucion is null 
 			and cwse_sincrona is not null
+		order by dwse_fecha
 		limit 100
 	</select>
 	

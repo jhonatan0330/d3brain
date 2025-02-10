@@ -681,7 +681,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				keyCampoTotal);
 		// Sucede que en Universal el total no es igual al producto normal se hace pro
 		// otra formula
-		if (cpTotal != null && cpUnitario.getValorNumero() != null) {
+		if (cpTotal != null && cpUnitario != null && cpUnitario.getValorNumero() != null) {
 			// Cuando no tiene tarifario no van estos campos, deberia validar que si sean ciertos
 			detail.setValorTotal(cpTotal.getValorNumero());
 			if(detail.getValorTotal()==null) detail.setValorTotal(BigDecimal.ZERO);

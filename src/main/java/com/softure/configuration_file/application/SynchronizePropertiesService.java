@@ -94,7 +94,8 @@ public class SynchronizePropertiesService {
 							case "PROP_212":
 							case "PROP_235":
 							case "PROP_237":
-							case "PROP_224": {
+							case "PROP_224":
+							case "PROP_249":{
 								newProperty.setValor(remoteProperty.getValor());
 								newProperty.setTexto(remoteProperty.getTexto());
 								break;

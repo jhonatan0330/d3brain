@@ -59,7 +59,7 @@ public class VoucherCreateService {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
-		validateInfoHeaderAndRecords(_voucher, token);
+		validateInfoHeaderAndRecords(_voucher, token, catalogDTO.getCode());
 		
 		configureAccounts(_voucher, catalogDTO);
 		voucherService.save(_voucher.getHeader());
@@ -121,7 +121,7 @@ public class VoucherCreateService {
 		}
 	}
 
-	private void validateInfoHeaderAndRecords(Voucher _voucher, SharedToken token) throws ServerException {
+	private void validateInfoHeaderAndRecords(Voucher _voucher, SharedToken token, String catalogoCode) throws ServerException {
 		if (_voucher == null)
 			throw new ServerException("Es en serio no enviaste informacion");
 		if (_voucher.getHeader() == null)
@@ -169,7 +169,7 @@ public class VoucherCreateService {
 		if (type.getConsecutive() == null) {
 			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
 			newConsecutive.setNombre(type.getName());
-			newConsecutive.setPrefijo(type.getCode() + "-");
+			newConsecutive.setPrefijo(catalogoCode +"-"+type.getCode() + "-");
 			newConsecutive.setNumeroInicial(new BigDecimal(1000));
 			newConsecutive.setNumeroActual(new BigDecimal(1000));
 			consecutive = consecutiveService.guardar(newConsecutive, token.getToken());

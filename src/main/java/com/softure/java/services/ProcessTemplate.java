@@ -266,6 +266,12 @@ public class ProcessTemplate {
 											aux.setValorOpcion(iRelation.getProductoDocumento());
 											List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
 											listAux.add(aux);
+											//2025-02-09 Como hice que se guardar en formularios los detalles entonces vamos a buscar relaciones ene sos formularios
+											if(iRelation.getDetalleId()!=null) {
+												PedidoVentaCaracteristicaDTO auxForm = new PedidoVentaCaracteristicaDTO();
+												auxForm.setValorOpcion(iRelation.getDetalleId());
+												listAux.add(auxForm);
+											}
 											camposOpcionReferidos
 													.addAll(campoService.listar2getApiCode(listAux, relaciones));
 											List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(
