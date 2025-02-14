@@ -68,12 +68,11 @@ public class CallSearchProcessFromText {
 				} else {
 					textToCompare = SharedConstants.COMA + pedidoVentaDTO.getTextoFiltro();
 				}
-				if (textToCompare
+				if (SoftureUtil.formatFunction(textToCompare).toUpperCase()
 						.contains(SharedConstants.COMA + SoftureUtil.formatFunction(valueText).toUpperCase() + SharedConstants.COMA)) {
 					keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 					break;
 				}
-
 			}
 		} else {
 			keyOfDocument = documents.get(0).getLlaveTabla();

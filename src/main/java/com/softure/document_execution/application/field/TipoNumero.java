@@ -344,7 +344,9 @@ public class TipoNumero {
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}
-
+			if(pCampo.getValorNumeroMax()==null) pCampo.setValorNumeroMax(BigDecimal.ZERO);
+			
+			
 		}
 		//pCampo.setCampoDTO(pBase);
 		pCampo.setCampoDTO(null);

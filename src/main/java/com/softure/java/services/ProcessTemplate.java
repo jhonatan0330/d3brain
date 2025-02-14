@@ -1,11 +1,15 @@
 package com.softure.java.services;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -59,7 +64,8 @@ public class ProcessTemplate {
 	@Autowired
 	@Lazy
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private MailSendMessageToAdminService sendToAdminService;
 
 	public String generateOutputFile(String plantilla, String parametros) {
@@ -100,7 +106,7 @@ public class ProcessTemplate {
 				} catch (Exception e) {
 					try {
 						sendToAdminService.call("Error procesando una pantilla",
-								e.getMessage() + SharedConstants.NEW_LINE +plantilla  );
+								e.getMessage() + SharedConstants.NEW_LINE + plantilla);
 					} catch (ServerException e1) {
 						e.printStackTrace();
 						e1.printStackTrace();
@@ -266,8 +272,9 @@ public class ProcessTemplate {
 											aux.setValorOpcion(iRelation.getProductoDocumento());
 											List<PedidoVentaCaracteristicaDTO> listAux = new ArrayList<PedidoVentaCaracteristicaDTO>();
 											listAux.add(aux);
-											//2025-02-09 Como hice que se guardar en formularios los detalles entonces vamos a buscar relaciones ene sos formularios
-											if(iRelation.getDetalleId()!=null) {
+											// 2025-02-09 Como hice que se guardar en formularios los detalles entonces
+											// vamos a buscar relaciones ene sos formularios
+											if (iRelation.getDetalleId() != null) {
 												PedidoVentaCaracteristicaDTO auxForm = new PedidoVentaCaracteristicaDTO();
 												auxForm.setValorOpcion(iRelation.getDetalleId());
 												listAux.add(auxForm);
@@ -436,12 +443,19 @@ public class ProcessTemplate {
 	 * 
 	 * @param iCampo
 	 * @return
-	 * @throws ServerException 
+	 * @throws ServerException
 	 */
-	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo, String auxiliarFormat) throws ServerException {
+	private String formatToReplaceAll(PedidoVentaCaracteristicaDTO iCampo, String auxiliarFormat)
+			throws ServerException {
 		if (iCampo == null || iCampo.getCampoDTO() == null || iCampo.getValorText() == null)
 			return "";
 		switch (iCampo.getCampoDTO().getFormato()) {
+		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO:
+			if (auxiliarFormat == null)
+				return iCampo.getValorText();
+			if (auxiliarFormat.contains("("))
+				auxiliarFormat = auxiliarFormat.substring(0, auxiliarFormat.indexOf("("));
+			return getFileTransformation(iCampo.getValorText(), auxiliarFormat);
 		case DocumentoPlantillaCaracteristicaDTO.FECHA:
 			if (auxiliarFormat == null)
 				return iCampo.getValorText();
@@ -476,8 +490,7 @@ public class ProcessTemplate {
 			return result;
 		// Tengo que uitar esto y dejar todo por milisegundos
 		// Ejemplo E_FECHA_XXX[-15D]
-		
-		
+
 		String formulaTime = texto.substring(texto.indexOf("(") + 1, texto.length() - 1);
 		if (formulaTime.startsWith("P")) {
 			try {
@@ -514,9 +527,9 @@ public class ProcessTemplate {
 				throw new ServerException("La fecha " + texto + " nose configura correctamente. e = " + e.getMessage());
 			}
 		} else {
-			
-			if (formulaTime.endsWith("D") )
-				formulaTime = formulaTime.substring(0, formulaTime.length()-1);
+
+			if (formulaTime.endsWith("D"))
+				formulaTime = formulaTime.substring(0, formulaTime.length() - 1);
 			long timeToAdd = 0;
 			try {
 				timeToAdd = Long.parseLong(formulaTime.substring(1));
@@ -525,10 +538,30 @@ public class ProcessTemplate {
 			}
 			if (formulaTime.contains("-"))
 				timeToAdd = timeToAdd * -1; // Si es negativo
-			if (texto.substring(texto.indexOf("(") + 1, texto.length() - 1).endsWith("D"))//Esto es para ese calculo de dias
+			if (texto.substring(texto.indexOf("(") + 1, texto.length() - 1).endsWith("D"))// Esto es para ese calculo de
+																							// dias
 				timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
 			return new Date(result.getTime() + timeToAdd);
 
 		}
+	}
+
+	private String getFileTransformation(String textField, String nameTransformation) {
+		if (nameTransformation == null || nameTransformation.isEmpty() || textField == null || textField.isEmpty())
+			return textField;
+		if (nameTransformation.compareTo("B64") == 0) {
+			if (textField.startsWith("http")) {
+				try {
+					File file = File.createTempFile("FILE_BASE64_", ".tmp");
+					FileUtils.copyURLToFile(new URL(textField), file);
+					return Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				return Base64.getEncoder().encodeToString(textField.getBytes());
+			}
+		}
+		return textField;
 	}
 }
