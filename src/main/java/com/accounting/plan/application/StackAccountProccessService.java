@@ -29,7 +29,7 @@ public class StackAccountProccessService {
 			return "0";
 		for (StackVoucherDTO stackVoucherDTO : stack) {
 			calculateService.call(stackVoucherDTO.getVoucher());
-			stackVoucherDTO.setState(SharedConstants.STATE_INACTIVE);
+			stackVoucherDTO.setState(SharedConstants.STATE_COMPLETE);
 			stackBasicMapper.update(stackVoucherDTO);
 		}
 		return String.valueOf(stack.size());

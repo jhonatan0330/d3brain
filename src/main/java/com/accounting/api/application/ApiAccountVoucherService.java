@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.accounting.api.domain.VoucherLineDimensionRequest;
 import com.accounting.api.domain.VoucherLineRequest;
 import com.accounting.api.domain.VoucherRequest;
 import com.accounting.plan.application.PlanCreateAccountService;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.TypeService;
+import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
 import com.accounting.plan.domain.CatalogDTO;
@@ -69,6 +71,18 @@ public class ApiAccountVoucherService {
 			line.setNegative(accountRecordDTO.getCredit());
 			line.setPositive(accountRecordDTO.getDebit());
 			line.setNote(accountRecordDTO.getNote());
+			
+			//Esto toca mejorarlo
+			if (accountRecordDTO.getReferences() != null && !accountRecordDTO.getReferences().isEmpty()) {
+				line.setThird(accountRecordDTO.getReferences().get(0).getCode());
+				line.setThirdId(accountRecordDTO.getReferences().get(0).getDocumentId());
+				line.setThirdName(accountRecordDTO.getReferences().get(0).getName());
+				if(accountRecordDTO.getReferences().size() > 1) {
+                    line.setCenter(accountRecordDTO.getReferences().get(1).getCode());
+                    line.setCenterId(accountRecordDTO.getReferences().get(1).getDocumentId());
+                    line.setCenterName(accountRecordDTO.getReferences().get(1).getName());
+				}
+			}
 			lines.add(line);
 		}
 		voucher.setRecords(lines);
@@ -119,44 +133,43 @@ public class ApiAccountVoucherService {
 	}
 
 	private AccountDTO getAccount(CatalogDTO catalog, VoucherLineRequest lineVO) throws ServerException {
-		AccountDTO accountParent = null;
-		if (lineVO.getAccountParent() != null && !lineVO.getAccountParent().isEmpty()) {
-			AccountFilterDTO filterA = new AccountFilterDTO();
-			filterA.setCatalog(catalog.getKey());
-			filterA.setCode(lineVO.getAccountParent().toUpperCase());
-			filterA.setState(SharedConstants.STATE_ACTIVE);
-			accountParent = accountService.getOne(filterA);
-			if (accountParent == null)
-				throw new ServerException("No se reconoce la cuenta padre con el codigo " + lineVO.getAccountParent().toUpperCase());
-		}
-		AccountFilterDTO filterA = new AccountFilterDTO();
-		filterA.setCatalog(catalog.getKey());
-		filterA.setParent(accountParent != null ? accountParent.getKey() : null);
-		filterA.setCode(lineVO.getAccount().toUpperCase());
-		filterA.setState(SharedConstants.STATE_ACTIVE);
-
-		AccountDTO account = accountService.getOne(filterA);
-		if (account == null) {
-			if (accountParent == null)
-				throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
-			
-			if (lineVO.getAccountName() == null)
-				throw new ServerException("Necesitamos el nombre de la cuenta para crearla");
-			
-			if (lineVO.getAccountDocument() == null)
-				throw new ServerException("Necesitamos un id de documento para relacionar la cuenta, gracias");
-
-			AccountDTO newAccount = new AccountDTO();
-			newAccount.setDocument(lineVO.getAccountDocument());
-			newAccount.setCatalogDocument(catalog.getDocument());
-			newAccount.setCode(lineVO.getAccount().toUpperCase());
-			newAccount.setName(lineVO.getAccountName());
-			newAccount.setParent(accountParent.getKey());
-			newAccount.setOperation(accountParent.getOperation());
-			account = createAccountService.call(newAccount);
-
+		
+		AccountDTO account = findAccount(catalog.getKey(), lineVO.getAccount(), null);
+		if (account == null)
+			throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
+		if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
+            throw new ServerException("La cuenta " + account.getName() + " no es operativa, revisa que la cuenta no sea un auxiliar o un grupo");
+		
+		if (lineVO.getReferences() != null && !lineVO.getReferences().isEmpty()) {
+			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {
+				AccountDTO accountReference = findAccount(catalog.getKey(), reference.getCode(), account.getKey());
+				if (accountReference == null) {
+					if (reference.getName() == null)
+						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
+					if (reference.getDocumentId() == null)
+						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
+					accountReference = new AccountDTO();
+					accountReference.setDocument(reference.getDocumentId());
+					accountReference.setCatalogDocument(catalog.getDocument());
+					accountReference.setCode(reference.getCode().toUpperCase());
+					accountReference.setName(reference.getName());
+					accountReference.setParent(account.getKey());
+					accountReference.setType(AccountConst.TYPE_AUXILIAR);
+					accountReference = createAccountService.call(accountReference);
+				}
+				reference.setCode(accountReference.getKey());
+			}
 		}
 		return account;
+	}
+
+	private AccountDTO findAccount(String catalogId, String accountCode, String parentId) throws ServerException {
+		AccountFilterDTO filterA = new AccountFilterDTO();
+		filterA.setCatalog(catalogId);
+		filterA.setParent(parentId);
+		filterA.setCode(accountCode.toUpperCase());
+		filterA.setState(SharedConstants.STATE_ACTIVE);
+		return  accountService.getOne(filterA);
 	}
 
 }

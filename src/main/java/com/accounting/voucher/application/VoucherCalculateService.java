@@ -59,13 +59,19 @@ public class VoucherCalculateService {
 	private void calculateBalance(Voucher _voucher) throws ServerException {
 		for (AccountRecordDTO item : _voucher.getRecords()) {
 			saveMap(item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
+			// Para mejorar el tema de las dimensiones
+			if (item.getThird() != null) {
+				saveMap(item.getThird(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
+			}
+			if (item.getCenter() != null) {
+				saveMap(item.getCenter(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
+			}
 		}
 	}
 
 	private void saveMap(String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value)
 			throws ServerException {
 		AccountDTO account = accountService.getById(accountId);
-		
 		// Obtener la fila de la cuenta en todos los niveles
 		List<ResultMapDTO> mapItems = mapService.getItemsAccount(accountId, factDate);
 		// sumarle el valor a cada nivel
@@ -92,8 +98,13 @@ public class VoucherCalculateService {
 			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
 		}
 
-		if (account.getParent() != null)
-			saveMap(account.getParent(), factDate, positive, negative, value);
+		if (account.getParent() != null) {
+			AccountDTO accountParent = accountService.getById(account.getParent());
+			// Las cuentas auxilires de terceros y centros no agrupan no deban acumular
+			if (accountParent!=null && accountParent.getType().compareTo(AccountConst.TYPE_GROUP) == 0) {
+				saveMap(account.getParent(), factDate, positive, negative, value);
+			}
+		}
 	}
 
 }

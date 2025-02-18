@@ -99,7 +99,7 @@ public class PlanCreateAccountService {
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		int countAccount = accountService.count(filter);
 		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
-		account.setType(AccountConst.TYPE_OPERATIONAL);
+		if(account.getType()==null)account.setType(AccountConst.TYPE_OPERATIONAL);
 		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
 	}
 

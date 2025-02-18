@@ -88,6 +88,29 @@ public class VoucherCreateService {
 			if (account.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
 			createMapLine(catalogDTO, account);
+
+			// Para Mejorar
+			if (item.getThird()!=null) {
+				AccountDTO third = accountService.getById(item.getThird());
+				if (third == null)
+					throw new ServerException("El tercero no existe en la base de datos");
+				if (third.getCatalog().compareTo(catalogDTO.getKey()) != 0)
+					throw new ServerException("El tercero no pertenece al catalogo. " + third.getName());
+				if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+					throw new ServerException("El tercero no se encuentra activo. " + third.getName());
+				createMapLine(catalogDTO, third);
+			}
+			
+			if (item.getCenter()!=null) {
+				AccountDTO center = accountService.getById(item.getCenter());
+				if (center == null)
+					throw new ServerException("El centro de costo no existe en la base de datos");
+				if (center.getCatalog().compareTo(catalogDTO.getKey()) != 0)
+					throw new ServerException("El centro de costo no pertenece al catalogo. " + center.getName());
+				if (center.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+					throw new ServerException("El centro de costo no se encuentra activo. " + center.getName());
+				createMapLine(catalogDTO, center);
+			}
 		}
 	}
 
