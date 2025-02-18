@@ -283,7 +283,6 @@
 		<include refid="wherePropiedadPrimaryKeyFragment" />
 	</select>
 
-
 <!--// BEGIN region script-->
     <select id="crearFuncion" parameterType="PropiedadDTO" >
 CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS
@@ -298,6 +297,15 @@ COST 100;
         DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, varchar);
     </select>
     
+    <select id="crearFuncionPrevalidacionReturnString" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS character varying AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+        
     <select id="crearFuncionPrevalidacion" parameterType="PropiedadDTO" >
 CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS void AS
 $BODY$
@@ -463,6 +471,10 @@ COST 100;
     </select>
     
     <select id="funcionPrevalidacionPlantilla" resultType="java.lang.String">
+        select propiedad_${funcion} (#{documento}, #{token}, <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+    </select>
+    
+     <select id="funcionPrevalidacionPlantillaReturnString" resultType="java.lang.String">
         select propiedad_${funcion} (#{documento}, #{token}, <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
     </select>
     

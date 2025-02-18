@@ -225,6 +225,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				break;
 			case Propiedades.FUNCION_SQL_PREVALIDATE_API:
 				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
+				case Propiedades.FUNCION_SQL_NEW_ANTES:
 				propiedadMapper.eliminarFuncionPrevalidacion(dto);
 				break;
 			default:
@@ -394,6 +395,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 					propiedadMapper.crearFuncionPrevalidacion(dto);
+					break;
+				case Propiedades.FUNCION_SQL_NEW_ANTES:
+					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
 					break;
 				case Propiedades.FUNCION_SQL_PREVALIDATE_API:
 					propiedadMapper.crearFuncionPrevalidateAPI(dto);
@@ -1321,6 +1325,18 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("El resultado ha sido nulo de la validacion\nDecision : " + dto.getMotivo());
 		if (respuestaValidacion.compareTo("S") != 0)
 			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo());
+	}
+	
+	public String validarFuncionSQL2(PropiedadDTO dto, String template, String token)throws ServerException {
+		String respuestaValidacion = null;
+		try {
+			respuestaValidacion = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(dto.getLlaveTabla()),
+					template, token, null);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
+		}
+		return respuestaValidacion;		
+		
 	}
 
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token)

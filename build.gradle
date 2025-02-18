@@ -53,6 +53,9 @@ dependencies {
 	implementation 'org.freemarker:freemarker:2.3.32'
 	
 	implementation 'org.postgresql:postgresql'
+	implementation 'com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11'
+	
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'com.googlecode.xades4j:xades4j:2.3.0'

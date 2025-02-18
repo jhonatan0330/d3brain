@@ -10,6 +10,7 @@ import com.shared.domain.ServerException;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.domain.DocumentMessage;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
@@ -22,6 +23,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.property.application.PropiedadSvc;
+import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -169,6 +171,24 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 		return bd;
 		// END region consultaCompleta
+	}
+	
+	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
+		PedidoVentaDTO result = new PedidoVentaDTO();
+		List<PropiedadDTO> prop = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, filter.getPlantilla(),
+                Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
+		if(prop.isEmpty() || prop.size() != 1) return result;
+		for (PropiedadDTO propiedadDTO : prop) {
+			String resultString = propiedadService.validarFuncionSQL2(propiedadDTO, filter.getPlantilla(), filter.getSecurityToken());
+			if (resultString != null && resultString.compareTo(SharedConstants.OK) != 0) {
+				if(result.getMessages() == null) result.setMessages(new ArrayList<>());
+				DocumentMessage message = new DocumentMessage();
+				message.setType(SharedConstants.ERROR);
+				message.setMessage(resultString);
+				result.getMessages().add(message);
+			}
+		}
+		return result;
 	}
 
 	@Override

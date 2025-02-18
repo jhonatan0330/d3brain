@@ -180,6 +180,7 @@ public class Propiedades {
 	public static final String AYUDA = "AYUDA";
 	public static final String UBICACION = "UBICACION";
 	public static final String FUNCION_SQL_VALIDAR_ANTES = "FUNCION_SQL_VALIDAR_ANTES";
+	public static final String FUNCION_SQL_NEW_ANTES = "FUNCION_SQL_NEW_ANTES";
 
 	public static final String CUENTA_SOBREGIRO = "CUENTA_SOBREGIRO";
 
@@ -241,6 +242,7 @@ public class Propiedades {
 	public static final String REP_AUTOPRINT = "REP_AUTOPRINT";
 	public static final String REP_TYPE_EXPORT = "REP_TYPE_EXPORT";
 	public static final String REPORT_QUERY = "REPORT_QUERY";
+	public static final String CONNECTION_STRING_DB = "CONNECTION_STRING_DB";
 
 	// ESTADO PROCESO
 	public static final String ROL = "ROL";

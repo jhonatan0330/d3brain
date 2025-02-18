@@ -21,6 +21,8 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 // BEGIN region aditionalMethods  
 	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento, @Param("modificador") String modificador, @Param("token") String token);
 	void funcionPrevalidacionPlantilla(@Param("funcion") String funcion, @Param("documento") String documento, @Param("token") String token, @Param("campos") List<PedidoVentaCaracteristicaDTO> campos);
+	//La idea es cambiar las funciones a que respondan string y no se muestre en bd
+	String funcionPrevalidacionPlantillaReturnString(@Param("funcion") String funcion, @Param("documento") String documento, @Param("token") String token, @Param("campos") List<PedidoVentaCaracteristicaDTO> campos);
 	void funcionPrevalidateAPI(@Param("funcion") String funcion,@Param("documento") String documento, @Param("modificador") String modificador, @Param("extracciones") String extracciones);
 	void crearFuncion(PropiedadDTO dto);
 	void crearFuncionMail(PropiedadDTO dto);
@@ -34,7 +36,10 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	void crearFuncionParametros(PropiedadDTO dto);
 	void crearFuncionCampoGenerar(PropiedadDTO dto);
 	void crearFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
+	void crearFuncionAutorizacion(PropiedadDTO dto);
 	void crearFuncionPrevalidacion(PropiedadDTO dto);
+	// Para mejorar los errores en BD
+	void crearFuncionPrevalidacionReturnString(PropiedadDTO dto);
 	void crearFuncionPrevalidateAPI(PropiedadDTO dto);
 	void eliminarFuncionPrevalidateAPI(PropiedadDTO dto);
 	void eliminarFuncionPrevalidacion(PropiedadDTO dto);

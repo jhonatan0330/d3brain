@@ -60,6 +60,12 @@ public class APIController {
 		documentoFiltro.setSecurityToken(token);
 		return pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
 	}
+	
+	@PostMapping(value="/validateBeforeNew")
+	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
+		documentoFiltro.setSecurityToken(token);
+		return pedidoVentaService.validateBeforeNew(documentoFiltro);
+	}
 
 	@PostMapping(value="/guardarDocumento")
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {

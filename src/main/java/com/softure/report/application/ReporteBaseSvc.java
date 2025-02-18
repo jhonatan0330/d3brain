@@ -334,7 +334,12 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 			Object propiedadExcel = null;
 			// Seccion del reporte
-			GeneradorReportes generadorReporte = new GeneradorReportes(dataSource.getConnection());
+			GeneradorReportes generadorReporte = null;
+			if (Propiedades.obtenerParametro(reporte, Propiedades.CONNECTION_STRING_DB) != null) {
+				generadorReporte = new GeneradorReportes(Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB));
+			}else {
+				generadorReporte = new GeneradorReportes(dataSource.getConnection());
+			}
 			byte[] resultado = null;
 			if (tipoReporte == null) {
 				tipoReporte = Propiedades.obtenerValor(reporte, Propiedades.REP_TYPE_EXPORT);
@@ -373,7 +378,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			}
 			case "CSV": {
 				resultado = ReportGenerateFromSql.call(Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY),
-						parametrosJasper, dataSource.getConnection());
+						parametrosJasper, generadorReporte.getConexion());
+				generadorReporte.closeConnection();
 				break;
 			}
 			default: {
