@@ -445,15 +445,15 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	public String crearCampoTiempoReporte(String plantilla, String token, boolean rango) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO campoTiempoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
-		campoTiempoFilter.setCodigo("FECHA_INICIO");
+		campoTiempoFilter.setCodigo("FECHA");
 		campoTiempoFilter.setPlantilla(plantilla);
 		DocumentoPlantillaCaracteristicaDTO campoTiempo = consultaUnica(campoTiempoFilter);
 		if (campoTiempo != null)
 			return campoTiempo.getLlaveTabla();
 
 		campoTiempo = new DocumentoPlantillaCaracteristicaDTO();
-		campoTiempo.setCodigo("FECHA_INICIO");
-		campoTiempo.setNombre("FECHA INICIAL");
+		campoTiempo.setCodigo("FECHA");
+		campoTiempo.setNombre("RANGO DE FECHAS");
 		campoTiempo.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);
@@ -461,9 +461,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoTiempo = guardar(campoTiempo, token);
 
 		if (rango) {
-			//parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-			//		campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
-			campoTiempoFilter.setCodigo("FECHA_FIN");
+			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+					campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
+			// Esto lo quite porque al final para el usuario es mejor el rango que los campos separados
+			/*campoTiempoFilter.setCodigo("FECHA_FIN");
 			campoTiempoFilter.setPlantilla(plantilla);
 			DocumentoPlantillaCaracteristicaDTO campoTiempoFinal = consultaUnica(campoTiempoFilter);
 			if (campoTiempoFinal != null)
@@ -476,7 +477,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoTiempoFinal.setOrden(2);
 			campoTiempoFinal.setPlantilla(plantilla);
 			//campoTiempo.setObjetivo("Contiene las fechas del reporte");
-			campoTiempoFinal = guardar(campoTiempoFinal, token);
+			campoTiempoFinal = guardar(campoTiempoFinal, token);*/
 		}
 
 		return campoTiempo.getLlaveTabla();
