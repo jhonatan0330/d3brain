@@ -144,10 +144,14 @@ public class ApiAccountVoucherService {
 			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {
 				AccountDTO accountReference = findAccount(catalog.getKey(), reference.getCode(), account.getKey());
 				if (accountReference == null) {
+					if (reference.getCode() == null)
+						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos un codigo para relacionar la cuenta, gracias");
 					if (reference.getName() == null)
-						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
+						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
 					if (reference.getDocumentId() == null)
-						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
+						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
+					if (reference.getDocumentId().length() > 32 )
+						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
 					accountReference = new AccountDTO();
 					accountReference.setDocument(reference.getDocumentId());
 					accountReference.setCatalogDocument(catalog.getDocument());

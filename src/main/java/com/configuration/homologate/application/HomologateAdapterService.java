@@ -133,7 +133,7 @@ public class HomologateAdapterService {
 					break;
 				}
 				case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
-					result = result + "\n	,coalesce((select cp.mpvc_valornumero::numeric from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"'), 0) as \""+iField.getNombre()+"\"";
+					result = result + "\n	,coalesce((select cp.mpvc_valornumero::int from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"'), 0) as \""+iField.getNombre()+"\"";
 					break;
 				}
 				default:{

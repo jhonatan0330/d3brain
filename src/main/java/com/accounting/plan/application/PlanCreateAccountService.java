@@ -43,7 +43,33 @@ public class PlanCreateAccountService {
 			account.setParent(null);
 		if (account.getCode() != null && account.getCode().isEmpty())
 			account.setCode(null);
-		assignWBSNumber(account);
+		if(account.getType()==null)account.setType(AccountConst.TYPE_OPERATIONAL);
+		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
+		
+		AccountFilterDTO filter = new AccountFilterDTO();
+		String prefixWBS = "";
+		if (account.getParent() == null) {
+			filter.setLevel(1);
+			account.setLevel(1);
+		} else {
+			filter.setParent(account.getParent());
+			AccountDTO parentAccount = accountService.getById(account.getParent());
+			if (parentAccount == null)
+				throw new ServerException("En la cuenta " + account.getName() + " el nodo principal "
+						+ account.getParent() + " no se encuentra en la BD por su identificador");
+			if (parentAccount.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+				throw new ServerException("La cuenta" + parentAccount.getName() + " no se encuentra activa");
+			prefixWBS = parentAccount.getWbs() + ".";
+			account.setLevel(parentAccount.getLevel() + 1);
+			if (parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL) == 0 && account.getType().compareTo(AccountConst.TYPE_AUXILIAR)!= 0) {
+				parentAccount.setType(AccountConst.TYPE_GROUP);
+				accountService.update(parentAccount);
+			}
+		}
+		filter.setState(SharedConstants.STATE_ACTIVE);
+		int countAccount = accountService.count(filter);
+		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
+		
 		if (account.getCode() == null)
 			account.setCode(account.getWbs());
 		accountService.save(account);
@@ -74,33 +100,5 @@ public class PlanCreateAccountService {
 		return accountService.delete(accountId);
 	}
 
-	private void assignWBSNumber(AccountDTO account) throws ServerException {
-
-		AccountFilterDTO filter = new AccountFilterDTO();
-		String prefixWBS = "";
-		if (account.getParent() == null) {
-			filter.setLevel(1);
-			account.setLevel(1);
-		} else {
-			filter.setParent(account.getParent());
-			AccountDTO parentAccount = accountService.getById(account.getParent());
-			if (parentAccount == null)
-				throw new ServerException("En la cuenta " + account.getName() + " el nodo principal "
-						+ account.getParent() + " no se encuentra en la BD por su identificador");
-			if (parentAccount.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-				throw new ServerException("La cuenta" + parentAccount.getName() + " no se encuentra activa");
-			prefixWBS = parentAccount.getWbs() + ".";
-			account.setLevel(parentAccount.getLevel() + 1);
-			if (parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL) == 0) {
-				parentAccount.setType(AccountConst.TYPE_GROUP);
-				accountService.update(parentAccount);
-			}
-		}
-		filter.setState(SharedConstants.STATE_ACTIVE);
-		int countAccount = accountService.count(filter);
-		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
-		if(account.getType()==null)account.setType(AccountConst.TYPE_OPERATIONAL);
-		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
-	}
 
 }
