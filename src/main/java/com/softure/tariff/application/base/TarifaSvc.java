@@ -75,8 +75,8 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			throw new ServerException(
 					"Existe una tarifa con las mimsas condiciones de tarifario, origen y destino activa, por favor revise su configuracion");
 		TarifarioDTO tarifario = tarifarioService.getById(dto.getTarifario());
-		if (!tarifario.getRangoValores())
-			dto.setRangoPrecios(false);
+		dto.setRangoPrecios(tarifario.getRangoValores());
+
 		if (!dto.getRangoPrecios()) {
 			dto.setValorMinimo(dto.getValor());
 			dto.setValorMaximo(dto.getValor());
@@ -177,8 +177,8 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 					"Existe una tarifa con las mismas condiciones de tarifario, origen y destino activa, por favor revise su configuracion");
 		// if(tarifario.getDeducciones() && dto.getDeduccion()!=null) throw new
 		// ServerException("El tarifario no recibe deducciones");
-		if (!tarifario.getRangoValores())
-			dto.setRangoPrecios(false);
+		dto.setRangoPrecios(tarifario.getRangoValores());
+		
 		if (!dto.getRangoPrecios()) {
 			dto.setValorMinimo(dto.getValor());
 			dto.setValorMaximo(dto.getValor());
