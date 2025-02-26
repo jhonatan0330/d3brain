@@ -197,7 +197,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 			newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
 			//newCampo.setObjetivo(".");
-			newCampo.setOrden(iCampo.getOrden());
+			newCampo.setOrden(iCampo.getOrden()+1);
 			newCampo.setPlantilla(templateDifferenceId);
 			newCampo = guardar(newCampo, token);
 	

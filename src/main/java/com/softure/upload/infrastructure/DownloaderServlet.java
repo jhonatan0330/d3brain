@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+
 import com.shared.domain.ServerException;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
@@ -18,11 +21,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class DownloaderServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	//@Autowired @Lazy  
+	@Autowired @Lazy  
 	private ServidorSvc servidorService;
 	
-	public DownloaderServlet(ServidorSvc _servidorService) {
-		this.servidorService =_servidorService;
+	public DownloaderServlet() {
 	}
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)throws IOException {

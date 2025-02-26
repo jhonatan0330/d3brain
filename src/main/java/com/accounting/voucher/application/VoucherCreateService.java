@@ -192,7 +192,7 @@ public class VoucherCreateService {
 		if (type.getConsecutive() == null) {
 			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
 			newConsecutive.setNombre(type.getName());
-			newConsecutive.setPrefijo(catalogoCode +"-"+type.getCode() + "-");
+			newConsecutive.setPrefijo(catalogoCode +"_"+type.getCode() + "_");
 			newConsecutive.setNumeroInicial(new BigDecimal(1000));
 			newConsecutive.setNumeroActual(new BigDecimal(1000));
 			consecutive = consecutiveService.guardar(newConsecutive, token.getToken());

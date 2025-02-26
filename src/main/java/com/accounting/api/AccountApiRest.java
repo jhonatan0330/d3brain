@@ -1,6 +1,7 @@
 package com.accounting.api;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.accounting.api.application.ApiAccountVoucherService;
 import com.accounting.api.domain.VoucherRequest;
 import com.accounting.plan.application.StackAccountProccessService;
+import com.accounting.voucher.application.VoucherReCreateService;
 import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
@@ -31,6 +33,7 @@ public class AccountApiRest {
 	@Autowired @Lazy private ApiAccountVoucherService voucherService;
 	@Autowired @Lazy private StackAccountProccessService accountService;
 	@Autowired @Lazy private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy private VoucherReCreateService recreateService;
 	
 	@PostMapping("/voucher")
 	public SharedIdResponse send(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
@@ -39,6 +42,15 @@ public class AccountApiRest {
 		String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 		apiAuthorizeService.call(apiKey,token);
 		return voucherService.call(tokenService.validate(token, request), item);
+	}
+	
+	@PostMapping("/generate-voucher")
+	public List<SharedIdResponse> generateVoucher(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
+			,@RequestBody VoucherRequest item
+		) throws ServerException {
+		String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+		apiAuthorizeService.call(apiKey,token);
+		return recreateService.call(item.getDocument(), tokenService.validate(token, request));
 	}
 	
 	@GetMapping("/ok")

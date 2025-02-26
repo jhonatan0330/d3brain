@@ -60,7 +60,7 @@ public class VoucherGetService {
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		VoucherDTO header = voucherService.getOne(filter);
 		if (header == null)
-			throw new ServerException("No se encontro un catalogo con ese identificador");
+			throw new ServerException("No se encontro un comprobante para este documento");
 		return new SharedIdResponse(header.getKey(), header.getCode());
 	}
 
@@ -71,6 +71,4 @@ public class VoucherGetService {
 		return recordService.getMany(filter);
 	}
 	
-	
-
 }

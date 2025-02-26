@@ -45,6 +45,7 @@ import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.infrastructure.ReporteServlet;
+import com.softure.upload.infrastructure.DownloaderServlet;
 import com.softure.webservice.application.WebServiceEjecucionSvc;
 
 import jakarta.servlet.http.HttpServlet;
@@ -63,6 +64,7 @@ public class SoftureConfiguration {
 	private WebServiceEjecucionSvc apiService;
 	private StackAccountProccessService accountService;
 	private ReporteBaseSvc reporteBaseService;
+	
 
 	@Autowired 
 	private AutowireCapableBeanFactory beanFactory;
@@ -285,6 +287,17 @@ public class SoftureConfiguration {
 		beanFactory.autowireBean(servlet);
 		servRegBean.setServlet(servlet);
 		servRegBean.addUrlMappings("/reporte/*", "/r/*");
+		servRegBean.setLoadOnStartup(1);
+		return servRegBean;
+	}
+	
+	@Bean
+	ServletRegistrationBean<HttpServlet> downloadServlet() {
+		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();
+		final DownloaderServlet servlet = new DownloaderServlet();
+		beanFactory.autowireBean(servlet);
+		servRegBean.setServlet(servlet);
+		servRegBean.addUrlMappings("/resource/*");
 		servRegBean.setLoadOnStartup(1);
 		return servRegBean;
 	}
