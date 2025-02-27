@@ -16,6 +16,7 @@ public interface DocumentoPlantillaCaracteristicaMapper extends IBasicMapper<Doc
 
 // BEGIN region aditionalMethods 
 	void actualizarFiltros(String llaveTabla);
+	void actualizarDescripcion(@Param("pTemplate")String pTemplate, @Param("pField")String pField);
 	List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(@Param("process") List<String> process);
 // END region aditionalMethods
 }

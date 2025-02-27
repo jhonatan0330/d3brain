@@ -11,9 +11,14 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
@@ -270,5 +275,13 @@ public class SoftureUtil {
 		if(!parametersItem.isEmpty()) arrayObjects.add(parametersItem);
 		return arrayObjects;
 	}
+	
+    public static String encrypt(String data, String secretKey) throws Exception {
+        SecretKey key = new SecretKeySpec(secretKey.getBytes(), "AES");
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        byte[] encryptedBytes = cipher.doFinal(data.getBytes());
+        return Base64.getEncoder().encodeToString(encryptedBytes);
+    }
 
 }

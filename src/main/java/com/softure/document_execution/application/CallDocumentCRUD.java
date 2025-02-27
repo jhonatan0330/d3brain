@@ -475,6 +475,7 @@ public class CallDocumentCRUD {
 			boolean isUpdateAutomatic) throws ServerException {
 		if (plantilla != null && plantilla.getCaracteristicas() != null && !plantilla.getCaracteristicas().isEmpty()) {
 			String filtroTexto = "";
+			String propDescription = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);
 			if (dto.getCaracteristicas() == null)
 				throw new ServerException("Es necesesario registrar informacion adicional.");
 			// En casos como generacion automatica vienen en desorden
@@ -569,6 +570,9 @@ public class CallDocumentCRUD {
 									+ "\nFecha: " + coincidenciaDTO.getFecha());
 						}
 					}
+				}
+				if (!propDescription.isEmpty() && propDescription.compareTo(campoDocumento.getCampo())==0) {
+					dto.setDescripcion(campoDocumento.getValorText());
 				}
 			}
 			if (filtroTexto.compareTo("") != 0) {

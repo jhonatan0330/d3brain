@@ -15,7 +15,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,imagen(cpdv_llave, cpdv_plantilla, npdv_historico) as  imagen
-			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_descripcion as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,cpdv_textofiltro as  textoFiltro
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
@@ -59,6 +59,9 @@
 			</if>
 			<if test="textoFiltro!=null">
 				and cpdv_textofiltro = #{textoFiltro}
+			</if>
+			<if test="descripcion!=null">
+				and cpdv_descripcion = #{descripcion}
 			</if>
 			<if test="transaccion!=null">
 				and cpdv_transaccion = #{transaccion}
@@ -129,6 +132,9 @@
 		<if test="textoFiltro!=null">
 			,cpdv_textofiltro
 		</if>
+		<if test="descripcion!=null">
+			,cpdv_descripcion
+		</if>
 		<if test="historico!=null">
 			,npdv_historico
 		</if>
@@ -164,6 +170,9 @@
 		<if test="textoFiltro!=null">
 			,#{textoFiltro}
 		</if>
+		<if test="descripcion!=null">
+			,#{descripcion}
+		</if>
 		<if test="historico!=null">
 			,#{historico}
 		</if>
@@ -187,6 +196,7 @@
 				cpdv_nombre = #{nombre},
 				cpdv_estadoexpediente = #{estadoExpediente},
 				cpdv_textofiltro = #{textoFiltro},
+				cpdv_descripcion = #{descripcion},
 				npdv_historico = #{historico},
 				cpdv_transaccion = #{transaccion},
 				cpdv_estado =#{estado}
@@ -319,7 +329,7 @@
 			,a.mpdv_consecutivo as  consecutivo
 			,a.cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = a.cpdv_plantilla) as  imagen
-			,descripcion(a.cpdv_llave) as  descripcion
+			,a.descripcion as  descripcion
 			,a.cpdv_estadoexpediente as  estadoExpediente
 			,a.cpdv_textofiltro as  textoFiltro
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = a.cpdv_estadoexpediente) as  estadoNombre
@@ -354,7 +364,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
-			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_descripcion as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
 			,cpdv_estado as estado
@@ -378,7 +388,7 @@
 			,mpdv_consecutivo as  consecutivo
 			,cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpdv_plantilla) as  imagen
-			,descripcion(cpdv_llave) as  descripcion
+			,cpdv_descripcion as  descripcion
 			,cpdv_estadoexpediente as  estadoExpediente
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
 			,cpdv_estado as estado

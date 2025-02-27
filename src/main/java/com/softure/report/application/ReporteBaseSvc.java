@@ -31,6 +31,7 @@ import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.java.services.SoftureUtil;
 
 import javax.sql.DataSource;
 
@@ -331,6 +332,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			if (key != null)
 				parametrosJasper.putAll(llenarParametros(key));
 			parametrosJasper.putAll(parametrosPropiedades(reporte, usuario));
+			parametrosJasper.put("P_AUTHENTICITY_CODE", SoftureUtil.encrypt(reporte.getLlaveTabla() + ejecucion.getFechaInicio().toString(), "SW42"));
 			String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 			Object propiedadExcel = null;
 			// Seccion del reporte

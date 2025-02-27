@@ -184,6 +184,12 @@
 	where cpdv_plantilla = (select cdpc_plantilla from documentoplantillacaracteristica_dpcp  where cdpc_llave = #{llaveTabla})
 	</update >
 	
+	<update id="actualizarDescripcion"  >
+	update pedidoventa_pdvp 
+	set cpdv_descripcion = <choose><when test="pField!=null">(select cpvc_valortext from pedidoventacaracteristica_pvcp where cpvc_documento = cpdv_llave and cpvc_estado = 'A' and cpvc_campo = #{pField} limit 1)</when><otherwise>null</otherwise></choose>
+	where cpdv_plantilla = #{pTemplate}
+	</update >
+	
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
 		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
 			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)

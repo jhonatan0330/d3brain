@@ -311,6 +311,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public void actualizarFiltros(String llaveTabla) throws ServerException {
 		documentoPlantillaCaracteristicaMapper.actualizarFiltros(llaveTabla);
 	}
+	
+	public void actualizarDescripcion(String pTemplate, String pField) throws ServerException {
+		documentoPlantillaCaracteristicaMapper.actualizarDescripcion(pTemplate, pField);
+	}
 
 	public String crearCampoNombre(String plantilla, String token) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
