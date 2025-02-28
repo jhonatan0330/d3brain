@@ -250,7 +250,6 @@ public class SoftureConfiguration {
 			}
 		}
 		if (executeAPITask.compareTo(SharedConstants.OK) == 0) {
-			System.out.println("*******APIS ASYNC****" + new Date().toString());
 			apiService.apiToTransaction();
 		}
 	}

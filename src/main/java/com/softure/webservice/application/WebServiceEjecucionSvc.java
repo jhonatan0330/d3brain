@@ -1,5 +1,6 @@
 package com.softure.webservice.application;
 
+import java.util.Date;
 import java.util.List;
 
 import com.softure.webservice.domain.WebServiceDTO;
@@ -105,6 +106,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 // BEGIN region aditionalMethods
 	public void apiToTransaction() throws ServerException {
 		List<WebServiceEjecucionDTO> tareasPendientes = webServiceEjecucionMapper.apisTransaccion();
+		System.out.println("*******APIS ASYNC ("+tareasPendientes.size()+") ****" + new Date().toString());
 	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
 	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
 	 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {

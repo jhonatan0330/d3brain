@@ -2,11 +2,14 @@ package com.softure.webservice.application;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -125,6 +129,14 @@ public class WebServiceExecuteAPI {
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			applyScheduleToExecute(apiBasic, service);
+			//Cuando los parametros son muy grandes
+			String parameterHelperToLong = null;
+			if (apiBasic.getParametros() != null && apiBasic.getParametros().length() > 4000) {
+				parameterHelperToLong = apiBasic.getParametros();
+				apiBasic.setParametros(
+						uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
+			}
+			
 			webServiceEjecucionSvc.update(apiBasic);
 			// transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(),
 			// DocumentoTransaccionSvc.API_ASYNC);
@@ -151,9 +163,9 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS, token, modificador,
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(), callWS.getDocumento(), token, modificador,
 				documentMain);
-		String extractionApiPrecondition = null;
+		String extractionApiPrecondition = null;		
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
 				if (callWS.getSincrona() != null) {
@@ -172,13 +184,14 @@ public class WebServiceExecuteAPI {
 				if (callWS.getParametros() == null) {
 					callWS.setParametros(extractionApiPrecondition);
 				} else {
-					callWS.setParametros(callWS.getParametros() + extractionApiPrecondition);
+					callWS.setParametros(getParametersWithHttp(callWS.getParametros()) + extractionApiPrecondition);
 				}
 			}
 
 		}
 		// No se porque coloco solo CallWSPArametros y falla
 		String paramToHeader = extractionApiPrecondition;
+		callWS.setParametros(getParametersWithHttp(callWS.getParametros()));
 		if (paramToHeader == null) {
 			paramToHeader = callWS.getParametros();
 		} else {
@@ -202,6 +215,21 @@ public class WebServiceExecuteAPI {
 		}
 		log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre() + ")");
 		return result;
+	}
+	
+	private String getParametersWithHttp(String pParameters) {
+		// Cuando los parametros son muy grandes y estan con http
+		if (pParameters != null && pParameters.startsWith("http")) {
+			try {
+				File file = File.createTempFile("PARAMETER_", ".txt");
+				FileUtils.copyURLToFile(new URL(pParameters), file);
+				pParameters=  FileUtils.readFileToString(file, Charset.defaultCharset());
+			} catch (IOException e) {
+				e.printStackTrace();
+				pParameters = pParameters + e.getMessage();
+			}
+		}
+		return pParameters;
 	}
 
 	private void publishErrorMessage(WebServiceDTO service, WebServiceEjecucionDTO callWS, PedidoVentaDTO document) {
@@ -239,7 +267,7 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
+	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser, String callWSDocument,
 			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
@@ -248,17 +276,17 @@ public class WebServiceExecuteAPI {
 		if (previousEndPoint == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + previousProp.getValor());
 		previousEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
-				previousEndPoint.getLlaveTabla(), null, callWS.getUsuario()));
+				previousEndPoint.getLlaveTabla(), null, callWSUser));
 		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
 		if (documentMain == null) {
 			documentMain = new PedidoVentaDTO();
-			documentMain.setLlaveTabla(callWS.getDocumento());
+			documentMain.setLlaveTabla(callWSDocument);
 		}
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, token,
-				callWS.getUsuario(), null);
+				callWSUser, null);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}
 
@@ -364,18 +392,20 @@ public class WebServiceExecuteAPI {
 			callWS.setExtracciones(
 					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
 		}
-		String parameterHelperToLong = null;
-		if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
+		
+		callWS.setParametros(null);
+		//String parameterHelperToLong = null;
+		/*if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
 			parameterHelperToLong = callWS.getParametros();
 			callWS.setParametros(
 					uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
-		}
+		}*/
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
 		if (extractionHelperToLong != null)
 			callWS.setExtracciones(extractionHelperToLong);
-		if (parameterHelperToLong != null)
-			callWS.setParametros(parameterHelperToLong);
+		//if (parameterHelperToLong != null)
+		//	callWS.setParametros(parameterHelperToLong);
 		return callWS;
 	}
 
@@ -522,10 +552,12 @@ public class WebServiceExecuteAPI {
 	 */
 	private String callApi(WebServiceDTO apiService, String url, String body, Map<String, String> headerProperties)
 			throws ServerException {
+		StringBuffer content = new StringBuffer();
 		URL urlApi;
+		HttpURLConnection con = null;
 		try {
 			urlApi = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) urlApi.openConnection();
+			con = (HttpURLConnection) urlApi.openConnection();
 			PropiedadDTO httpMethodValue = Propiedades.obtenerParametro(apiService,
 					Propiedades.HTTP_METHOD);
 			if (httpMethodValue != null) {
@@ -555,7 +587,7 @@ public class WebServiceExecuteAPI {
 				}
 			}
 
-			int readTimeOut = 120000;
+			int readTimeOut = 60000;
 			PropiedadDTO readTimeOutValue = Propiedades.obtenerParametro(apiService, Propiedades.API_READ_TIMEOUT);
 			if (readTimeOutValue != null) {
 				try {
@@ -587,18 +619,20 @@ public class WebServiceExecuteAPI {
 			} else {
 				in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
 			}
-
 			String inputLine;
-			StringBuffer content = new StringBuffer();
 			while ((inputLine = in.readLine()) != null) {
 				content.append(inputLine);
 			}
 			in.close();
-			con.disconnect();
-			return content.toString();
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
+		}  catch (SocketTimeoutException stoe) {
+			throw new ServerException(stoe.getMessage());
 		}
+		catch (IOException e) {
+			throw new ServerException(e.getMessage());
+		}finally {
+		    if(con != null) con.disconnect();
+		}
+		return content.toString();
 	}
 
 	/**
