@@ -329,7 +329,7 @@
 			,a.mpdv_consecutivo as  consecutivo
 			,a.cpdv_nombre as  nombre
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = a.cpdv_plantilla) as  imagen
-			,a.descripcion as  descripcion
+			,a.cpdv_descripcion as  descripcion
 			,a.cpdv_estadoexpediente as  estadoExpediente
 			,a.cpdv_textofiltro as  textoFiltro
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = a.cpdv_estadoexpediente) as  estadoNombre
