@@ -173,6 +173,7 @@ public class WebServiceExecuteAPI {
 				}
 				callWS.setFechaEjecucion(new Date());
 				callWS.setError(preconditionWS.getError());
+				callWS.setParametros(getParametersWithHttp(callWS.getParametros()));
 				webServiceEjecucionSvc.update(callWS);
 				publishErrorMessage(service, preconditionWS, modificador);
 				log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre()
