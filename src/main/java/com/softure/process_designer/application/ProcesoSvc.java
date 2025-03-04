@@ -213,6 +213,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		ProcesoTransicionDTO inicial = new ProcesoTransicionDTO();
 		inicial.setEstadoLLegada(estadoActivo.getLlaveTabla());
 		inicial.setNombre(dto.getNombre());
+		inicial.setDocumentador(true);
 		inicial.setProceso(dto.getLlaveTabla());
 		transicionService.guardarConCodigo(inicial, dto.getCodigo(), plantillainicial, token);
 

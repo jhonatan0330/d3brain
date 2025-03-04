@@ -2,16 +2,16 @@ package com.softure.process_designer.application;
 
 import java.util.List;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.application.BasicSvc;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.java.services.SoftureUtil;
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
@@ -61,7 +61,9 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		if (bd.getEstadoDocumento().compareTo(dto.getEstadoDocumento()) != 0) {
 			procesoEstadoMapper.actualizarEstados(dto);
 		}
-		return super.actualizar(dto, token);
+		dto = super.actualizar(dto, token);
+		organizar(dto, token);
+		return dto;
 		// END ProcesoEstado_actualizar
 	}
 
@@ -74,7 +76,9 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		transicion.setEstado(SharedConstants.STATE_ACTIVE);
 		if (procesoTransicionService.contarResultados(transicion) != 0)
 			throw new ServerException("Este estado es usada en varias transacciones activas");
-		return super.inactivar(dto, token);
+		dto = super.inactivar(dto, token);
+		organizar(dto, token);
+		return dto;
 		// END ProcesoEstado_inactivar
 	}
 
@@ -98,6 +102,15 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	public ProcesoEstadoDTO guardar(ProcesoEstadoDTO dto, String token) throws ServerException {
 		// BEGIN ProcesoEstado_guardar
 		colocarSignoPregunta(dto);
+		ProcesoEstadoFilterDTO filtroCantidad = new ProcesoEstadoFilterDTO();
+		filtroCantidad.setProceso(dto.getProceso());
+		int cantidadCampos = contarResultados(filtroCantidad);
+		if (dto.getAvance()!=null && dto.getAvance().compareTo(0) != 0) {
+			cantidadCampos = dto.getAvance();
+		} else {
+			cantidadCampos = cantidadCampos + 1;
+		}
+		dto.setAvance(cantidadCampos);
 		ProcesoEstadoDTO result = super.guardar(dto, token);
 		//Esto hace fallar el sincronizador 
 		/*if (dto.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API) == 0) {
@@ -106,6 +119,34 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		}*/
 		return result;
 		// END ProcesoEstado_guardar
+	}
+	private void organizar(ProcesoEstadoDTO pDTO, String pToken) throws ServerException {
+		// Consulto todas las caracteristicas del documento
+		ProcesoEstadoFilterDTO _filtro = new ProcesoEstadoFilterDTO();
+		_filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		_filtro.setProceso(pDTO.getProceso());
+		_filtro.setPaginacionRegistroFinal(500);
+		List<ProcesoEstadoDTO> _estados = listarConsulta(_filtro);
+		if (_estados != null && !_estados.isEmpty()) {
+			int cont = 1;
+			for (ProcesoEstadoDTO _iEstado : _estados) {
+				if (_iEstado.getLlaveTabla().compareTo(pDTO.getLlaveTabla()) != 0) {
+					// asumo que hay dos iguales entonces debo saltar un espacio y el que modifique
+					// lo dejo quieto
+					if (_iEstado.getAvance().compareTo(pDTO.getAvance()) == 0)
+						cont++;
+					if (_iEstado.getAvance() != cont) {
+						_iEstado.setAvance(cont);
+						super.actualizar(_iEstado, pToken);
+					}
+					cont++;
+				} else {
+					if (cont == pDTO.getAvance())
+						cont++;
+				}
+			}
+		}
+		// Debo validar que las dependencias si se puedan
 	}
 
 	/*

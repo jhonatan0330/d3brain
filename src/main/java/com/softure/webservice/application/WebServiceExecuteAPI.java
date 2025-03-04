@@ -628,7 +628,7 @@ public class WebServiceExecuteAPI {
 			}
 			in.close();
 		}  catch (SocketTimeoutException stoe) {
-			throw new ServerException(stoe.getMessage());
+			throw new ServerException(stoe.getMessage() +".  RTO=" + con.getReadTimeout() + " CTO=" + con.getConnectTimeout());
 		}
 		catch (IOException e) {
 			throw new ServerException(e.getMessage());

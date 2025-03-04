@@ -278,7 +278,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return campos;
 	}
 
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	private void organizar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
 		// Consulto todas las caracteristicas del documento
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
