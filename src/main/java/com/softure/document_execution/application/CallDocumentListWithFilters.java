@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -621,9 +622,12 @@ public class CallDocumentListWithFilters {
 			return null;
 		try {
 			return listadoCompleto(pedidoVentaMapper.listarExpedientesPertenecenCampo(dto), token, campoValor);
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
+		} catch (ServerException ex) {
+			throw new ServerException(ex.getMessage());
 		}
+		catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		} 
 	}
 
 	public List<PedidoVentaDTO> listar2Activity(List<String> ids, String token) throws ServerException {

@@ -272,7 +272,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			String llaveTablaModificador) throws ServerException {
 		List<PedidoVentaDTO> result = null;
 		try {
-			result = pedidoVentaMapper.iteracion(sqlFuncionDecision, llaveTablaDocumento, llaveTablaModificador);
+			//ramdom por problemas del framework se repetia la respuesta cuando iteraba
+			result = pedidoVentaMapper.iteracion(sqlFuncionDecision, llaveTablaDocumento, llaveTablaModificador, generarLlave());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de Iteracion con errores: ");
 		}

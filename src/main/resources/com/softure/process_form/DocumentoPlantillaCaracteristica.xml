@@ -146,33 +146,6 @@
 				cdpc_estado =#{estado}
 		<include refid="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleDocumentoPlantillaCaracteristicaFragment">
-		select
-			cdpc_llave as  llaveTabla
-			,cdpc_objetivo as  objetivo
-			,cdpc_plantilla as  plantilla
-			,cdpc_formato as  formato
-			,cdpc_nombre as  nombre
-			,cdpc_codigo as  codigo
-			,ndpc_orden as  orden
-			,cdpc_imagen as  imagen
-			,cdpc_estado as estado
-		from documentoplantillacaracteristica_dpcp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="DocumentoPlantillaCaracteristicaDTO">
-		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
-		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="DocumentoPlantillaCaracteristicaDTO">
-		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
-		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
-		order by ndpc_orden 
-		<include refid="paginationDocumentoPlantillaCaracteristicaFragment" />
-	</select>
-	
 
 
 <!--// BEGIN region script-->
@@ -191,7 +164,17 @@
 	</update >
 	
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
-		<include refid="selectSimpleDocumentoPlantillaCaracteristicaFragment" />
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_objetivo as  objetivo
+			,cdpc_plantilla as  plantilla
+			,cdpc_formato as  formato
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  orden
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
 			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)
 		where cdpc_estado = 'A' and cdpl_estado = 'A'
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>

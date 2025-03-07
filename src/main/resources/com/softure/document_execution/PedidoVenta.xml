@@ -424,7 +424,7 @@
 			,cpdv_nombre as  nombre
 			,cpdv_estadoexpediente as  estadoExpediente
 			,cpdv_estado as estado 
-		from iteracion_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
+		from iteracion_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador}, #{ramdom})
 	</select>
 	
 	<select id="listar2Ids" resultType="PedidoVentaDTO">

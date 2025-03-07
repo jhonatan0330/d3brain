@@ -49,5 +49,6 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 
 	List<PedidoVentaDTO> iteracion(@Param("sqlFuncionDecision") String sqlFuncionDecision,
 			@Param("llaveTablaDocumento") String llaveTablaDocumento,
-			@Param("llaveTablaModificador") String llaveTablaModificador);// PAra las decisiones tipo iteracion
+			@Param("llaveTablaModificador") String llaveTablaModificador,
+			@Param("ramdom") String ramdom);// PAra las decisiones tipo iteracion
 }

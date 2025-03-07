@@ -123,29 +123,6 @@
 		<include refid="wherePedidoVentaDineroPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimplePedidoVentaDineroFragment">
-		select
-			cpvd_llave as  llaveTabla
-			,cpvd_documento as  documento
-			,dpvd_fecha as  fecha
-			,mpvd_valortotal as  valorTotal
-			,mpvd_saldo as  saldo
-			,bpvd_controlarsaldo as  controlarSaldo
-			,cpvd_estado as estado
-		from pedidoventadinero_pvdp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="PedidoVentaDineroDTO">
-		<include refid="selectSimplePedidoVentaDineroFragment" />
-		<include refid="wherePedidoVentaDineroFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="PedidoVentaDineroDTO">
-		<include refid="selectSimplePedidoVentaDineroFragment" />
-		<include refid="wherePedidoVentaDineroFragment" />
-		<include refid="paginationPedidoVentaDineroFragment" />
-	</select>
-	
 
 
 <!--// BEGIN region script-->
@@ -159,8 +136,7 @@
 			,mpvd_saldo as  saldo
 			,bpvd_controlarsaldo as  controlarSaldo
 			,cpvd_estado as estado
-		from <if test="historico!=null">historic.z_pvd_pedidoventadinero</if><if test="historico==null">pedidoventadinero_pvdp</if>
-		where cpvd_estado ='A' and cpvd_documento = #{idCampo}
+		from saldo4documento( #{idCampo}, #{historico}, #{ramdom} )
 	</select>
 	
 	<select id="listar2DocumentoVisible" resultType="PedidoVentaDineroDTO">

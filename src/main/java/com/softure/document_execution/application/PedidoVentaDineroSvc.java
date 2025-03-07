@@ -95,7 +95,7 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 // BEGIN region aditionalMethods
 	public PedidoVentaDineroDTO consultaPorDocumento(String documento, Integer historico, String name) throws ServerException {
 		try {
-			return pedidoVentaDineroMapper.consultaPorDocumento(documento, (historico==null)?null:"Historico");	
+			return pedidoVentaDineroMapper.consultaPorDocumento(documento, historico, generarLlave());	
 		} catch (BindingException ex) {
 			throw new ServerException("El documento " + name + " tiene la siguiente novedad al consultar el valor : "  + ex.getMessage());
 		} catch (MyBatisSystemException msex) {

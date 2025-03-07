@@ -370,7 +370,7 @@ COST 100;
     </select>
     
     <select id="crearFuncionDecision">
-CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying) RETURNS character varying AS
+CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying, ramdom character varying) RETURNS character varying AS
 $BODY$
 ${valor}
 $BODY$ 
@@ -379,7 +379,7 @@ COST 100;
 	</select>
 	
 	<select id="crearFuncionIteracion">
-CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying) RETURNS SETOF pedidoventa_pdvp AS
+CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying, ramdom character varying) RETURNS SETOF pedidoventa_pdvp AS
 $BODY$
 ${valor}
 $BODY$ 
@@ -445,11 +445,11 @@ COST 100;
 	</select>
 	
 	<select id="eliminarFuncionDecision" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
-		DROP FUNCTION IF EXISTS decision_${llaveTabla}(varchar, varchar);
+		DROP FUNCTION IF EXISTS decision_${llaveTabla}(varchar, varchar, varchar);
 	</select>
 	
 	<select id="eliminarFuncionIteracion" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
-		DROP FUNCTION IF EXISTS iteracion_${llaveTabla}(varchar, varchar);
+		DROP FUNCTION IF EXISTS iteracion_${llaveTabla}(varchar, varchar, varchar);
 	</select>
 	
 		<select id="crearFuncionCamposEspecialesPlantilla">

@@ -190,8 +190,8 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		estadoActivo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
 		estadoActivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
 		estadoActivo.setProceso(dto.getLlaveTabla());
-		estadoActivo.setNombre("ACTIVO");
-		estadoActivo.setAvance(10);
+		estadoActivo.setNombre(dto.getNombre() + " ACTIVO");
+		estadoActivo.setAvance(1);
 		estadoActivo = estadoService.guardar(estadoActivo, token);
 
 		PropiedadDTO propiedadModifcable = new PropiedadDTO();
@@ -205,9 +205,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		ProcesoEstadoDTO estadoInactivo = new ProcesoEstadoDTO();
 		estadoInactivo.setEstadoDocumento(SharedConstants.STATE_INACTIVE);
 		estadoInactivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
-		estadoInactivo.setAvance(20);
+		estadoInactivo.setAvance(2);
 		estadoInactivo.setProceso(dto.getLlaveTabla());
-		estadoInactivo.setNombre("INACTIVO");
+		estadoInactivo.setNombre(dto.getNombre() + "INACTIVO");
 		estadoInactivo = estadoService.guardar(estadoInactivo, token);
 
 		ProcesoTransicionDTO inicial = new ProcesoTransicionDTO();

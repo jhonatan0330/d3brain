@@ -175,9 +175,19 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		//YA no necesito estoi porque la llegada es obligatoria
 		//if(dto.getEstadoPartida()==null && dto.getEstadoLLegada()==null && dto.getDecision()==null) throw new ServerException("Revise los estados de inicio o fin");
 		//if(dto.getEstadoLLegada()==null && dto.getDecision()==null) dto.setEstadoLLegada(dto.getEstadoPartida());//Esto es para evitar un error que no encuentra estado de llegada
-		ProcesoEstadoDTO estado;
-		estado = estadoService.consultaXId(dto.getEstadoLLegada());
+		ProcesoEstadoDTO estado = estadoService.consultaXId(dto.getEstadoLLegada());
 		if(estado.getProceso().compareTo(dto.getProceso())!=0)throw new ServerException("La plantilla del estado de llegada debe ser de la misma maquina de estados");
+		if(estado.getTipo()==null) throw new ServerException("La transicion no tiene tipo");
+		if(estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API)!=0 && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION)!=0 
+				&& estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO)!=0 && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR)!=0) 
+			throw new ServerException("La transicion tiene un tipo no valido = "+ estado.getTipo());
+		if(estado.getEstadoDocumento()==null) {
+			estado.setEstadoDocumento(ProcesoEstadoDTO.ACTIVO);
+		} else {
+			if(estado.getEstadoDocumento().compareTo(ProcesoEstadoDTO.ACTIVO)!=0 && estado.getEstadoDocumento().compareTo(ProcesoEstadoDTO.INACTIVO)!=0 
+					&& estado.getEstadoDocumento().compareTo(ProcesoEstadoDTO.FINALIZADO)!=0 ) 
+				throw new ServerException("La transicion tiene un estado de documento no valido = "+ estado.getEstadoDocumento());	
+		}
 		if(dto.getEstadoPartida()!=null){
 			estado = estadoService.consultaXId(dto.getEstadoPartida());
 			if(estado.getProceso().compareTo(dto.getProceso())!=0)throw new ServerException("La plantilla del estado de partida debe ser de la misma maquina de estados");

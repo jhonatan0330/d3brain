@@ -42,7 +42,7 @@ public class TipoNumero {
 				Propiedades.NUMERO_FUNCION_SQL);
 		if (pCampo.getValorNumero() == null) {// Asumo que viene de automatico o carga masiva
 			if (!formula.isEmpty()) {
-				BigDecimal valorCalculado = calcular(pCampo, formula);
+				BigDecimal valorCalculado = calcular(pCampo, formula.toUpperCase());
 				pCampo.setValorNumero(valorCalculado);
 			} else {
 				if (funcionCalculo!= null) {

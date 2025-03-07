@@ -3,6 +3,7 @@ package com.softure.document_transition.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
+import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
@@ -41,6 +43,8 @@ public class CallDocumentNewFromAutomatic {
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired @Lazy 
 	private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  
+	private DocumentoPlantillaCaracteristicaSvc fieldsOfTemplateService;
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token,
@@ -64,7 +68,7 @@ public class CallDocumentNewFromAutomatic {
 	 * @throws ServerException
 	 */
 	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
-			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber)
+			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber, Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction)
 			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		// Por aqui voy cuando viene en una iteracion pero no se que otros caso pueda
@@ -79,8 +83,13 @@ public class CallDocumentNewFromAutomatic {
 				Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR,
 				Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION };
 		List<PropiedadDTO> camposGenerar = Propiedades.obtenerVariosParametro(transicion, cars);
-		if (camposGenerar == null || camposGenerar.isEmpty())
+				
+		if ((camposGenerar == null || camposGenerar.isEmpty()) && (stackDocumentsCreateInTransaction == null || stackDocumentsCreateInTransaction.isEmpty()))
 			return null;
+		
+		if(camposGenerar !=null) {
+			
+		
 		for (PropiedadDTO iPropiedadDTO : camposGenerar) {
 			switch (iPropiedadDTO.getKey()) {
 			case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR:
@@ -189,6 +198,21 @@ public class CallDocumentNewFromAutomatic {
 				break;
 			}
 		}
+		}
+		if(stackDocumentsCreateInTransaction != null && stackDocumentsCreateInTransaction.size() > 0) {
+			List<DocumentoPlantillaCaracteristicaDTO> _fieldsOfTemplate = this.fieldsOfTemplateService.listarCamposPlantilla(transicion.getPlantilla(), token);
+			for (Map.Entry<String, List<PedidoVentaDTO>> _entry : stackDocumentsCreateInTransaction.entrySet()) {
+				for(DocumentoPlantillaCaracteristicaDTO _iCampo : _fieldsOfTemplate) {
+					if (_entry.getKey().compareTo(_iCampo.getLlaveTabla()) == 0) {
+						PedidoVentaCaracteristicaDTO _fieldNew = copyFieldDocument(null, _iCampo.getLlaveTabla());
+						_fieldNew.setExpedientes(_entry.getValue());
+						camposNuevos.add(_fieldNew);
+						break;
+		            }
+				}
+			}
+		}
+		
 		return processNewFields(transicion, documento, transaccion, token, camposNuevos);
 	}
 

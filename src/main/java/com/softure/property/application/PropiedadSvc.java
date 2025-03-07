@@ -235,7 +235,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		if (bd.getKey().compareTo(Propiedades.FILTRO) == 0)
 			campoService.actualizarFiltros(dto.getCampo());
-		if (bd.getKey().compareTo(Propiedades.FILTRO) == 0)
+		if (bd.getKey().compareTo(Propiedades.DESCRIPCION) == 0)
 			campoService.actualizarDescripcion(dto.getCampo(), null);
 		if (bd.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0) {
 			automatizadorService.inactivarPropiedad(bd.getLlaveTabla());

@@ -258,7 +258,7 @@
 	</select>
 	
 	<select id="decision" resultType="java.lang.String">
-		select decision_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador})
+		select decision_${sqlFuncionDecision} (#{llaveTablaDocumento}, #{llaveTablaModificador}, #{ramdom})
 	</select>
 	
 	<select id="valorEntransicionParaRevertir" resultType="java.math.BigDecimal">

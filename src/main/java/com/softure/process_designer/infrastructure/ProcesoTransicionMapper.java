@@ -17,7 +17,7 @@ public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionD
 	
 	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
-	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador);
+	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador, @Param("ramdom") String ramdom);
 	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento, @Param("expediente") String expediente);
 	List<ProcesoTransicionDTO> getFullToSynchronize(@Param("process") List<String> process);
 	int funcionRegresarTablaHistoricos(@Param("documentId") String documentId);
