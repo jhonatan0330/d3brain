@@ -134,15 +134,12 @@ public class CallManageTransition {
 
 		String nameTrace = (previousStep == null) ? dto.getNombre() : previousStep + "->" + dto.getNombre();
 		if (anteriorEstado != null && anteriorEstado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) == 0) {
-			documentRecentCreateInTransition = iterateInState(respuesta, expedienteDTO, documentoDTO, token,
-					relacionAnterior, documentRecentCreateInTransition);
+			afectado = iterateInState(respuesta, expedienteDTO, documentoDTO, token,
+					relacionAnterior, documentRecentCreateInTransition, dineroProcesado);
 		} else {
 			String ubicacion = obtenerUbicacion(documentoDTO, dto.getLlaveTabla(), token);
 			if (ubicacion != null)
 				locationTransition = ubicacion;
-			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
-					dto.getAfectaSaldo());
-			afectado = moveBalanceDocument(expediente, token, dto, valorModificador, dineroProcesado);
 			modificadorId = documentoDTO.getLlaveTabla();
 			// Genero documento en caso que toque
 			if (dto.getPlantilla() != null) {
@@ -157,9 +154,20 @@ public class CallManageTransition {
 				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,
 						expedienteDTO, documentoDTO.getTransaccion(), tokenToGenerateDocument, 0, documentRecentCreateInTransition);
 				// Por si es la transicion inicial no le quite el poder del documento que genero
-				if (automatico != null && automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
-					modificadorId = automatico.getLlaveTabla();
+				if (automatico != null) {
+					if( automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
+						modificadorId = automatico.getLlaveTabla();
+					
+					if(automatico.getDinero()!=null && automatico.getDinero().getValorTotal()!=null)
+						valorModificador = automatico.getDinero().getValorTotal();
+				}
+				
 			}
+			// movi esto despues de la creacion de la plantilla para que tome el valor modificador del nuevo documento creado
+			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
+					dto.getAfectaSaldo());
+			afectado = moveBalanceDocument(expediente, token, dto, valorModificador, dineroProcesado);	
+
 			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(),
 					documentoDTO.getNombre());
 			// Creo la relacion del documento Gestor
@@ -243,14 +251,16 @@ public class CallManageTransition {
 	 * @return
 	 * @throws ServerException
 	 */
-	private Map<String, List<PedidoVentaDTO>> iterateInState(ProcesoTransicionDTO pTransition, 
+	private PedidoVentaDineroDTO iterateInState(ProcesoTransicionDTO pTransition, 
 			PedidoVentaDTO pDocumentPrincipal, 
 			PedidoVentaDTO pDocumentoModificador,
 			String pToken, 
 			DocumentoRelacionGestorDTO pRelationBack,
-			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction
+			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction,
+			PedidoVentaDineroDTO dineroProcesado // aqui hay algo para mejorar 
 	) throws ServerException {
 
+		PedidoVentaDineroDTO afectado = null;
 		ProcesoEstadoDTO _stateInitial = estadoService.consultaXId(pTransition.getEstadoPartida());
 		if (_stateInitial.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La iteracion " + _stateInitial.getNombre() + " esta inactiva");
@@ -301,7 +311,7 @@ public class CallManageTransition {
 						_result.add(acabdoCrear);
 						// Esto es porque cuando son iteradores no se gestionaba el dinero
 						if(acabdoCrear.getDinero()!=null&& acabdoCrear.getDinero().getSaldo()!=null)
-							moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pToken, pTransition, acabdoCrear.getDinero().getValorTotal(), null);
+							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pToken, pTransition, acabdoCrear.getDinero().getValorTotal(), null);
 													
 					}
 				}
@@ -311,7 +321,7 @@ public class CallManageTransition {
 				pStackDocumentsCreateInTransaction.put(pTransition.getLlaveTabla(), _result);
 			}
 		}
-		return pStackDocumentsCreateInTransaction;
+		return afectado;
 	}
 
 	private ProcesoTransicionDTO executeAPI(String estadoLlegada, PedidoVentaDTO expedienteDTO,
@@ -511,11 +521,15 @@ public class CallManageTransition {
 		if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO) == 0)
 			factor = factor.negate();
 
-		System.out.format("\n[%s] Afectando saldos con factor %s", dinero.getDocumento(), factor.toString());
+		BigDecimal _calculateNewSaldo = dinero.getSaldo().add(saldoDocumento.multiply(factor));
+		
+		System.out.format( "\n" + transicion.getNombre() + " [" + pExpediente.getNombre() + "] : " 
+				+ dinero.getSaldo() + " + " 
+				+ saldoDocumento.multiply(factor) + " = " + _calculateNewSaldo);
 		if (transicion.getEstadoPartida() == null) { // Para los documentos iniciales
 			if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
 				throw new ServerException("No es logico que inicie in proceso restando");
-			dinero.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
+			dinero.setSaldo(_calculateNewSaldo);
 			// Controlar saldo se coloca para poder controlar los cambios de valores dle
 			// documento en el tiempo con modificar
 			dinero.setControlarSaldo(true);
@@ -525,7 +539,7 @@ public class CallManageTransition {
 		}
 		dineroService.inactivarConHistorial(dinero, pExpediente.getHistorico());
 		PedidoVentaDineroDTO nuevo = new PedidoVentaDineroDTO();
-		nuevo.setSaldo(dinero.getSaldo().add(saldoDocumento.multiply(factor)));
+		nuevo.setSaldo(_calculateNewSaldo);
 		// Controlar saldo se coloca para poder controlar los cambios de valores dle
 		// documento en el tiempo con modificar
 		nuevo.setControlarSaldo(true);

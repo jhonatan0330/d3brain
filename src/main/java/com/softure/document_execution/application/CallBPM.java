@@ -136,7 +136,7 @@ public class CallBPM {
 				ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
 				// Esto lo hice solamente para una transicion inicial que gneraba un ciclo con
 				// iteraciones
-				if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) != 0) {
+				if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) != 0 && pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION) != 0) {
 					manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
 							null, null, securityToken, transaccion, null);
 				}
