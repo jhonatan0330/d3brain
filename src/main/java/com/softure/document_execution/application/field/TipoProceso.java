@@ -508,7 +508,8 @@ public class TipoProceso {
 					&& procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				retirarExpedienteDocumento(pCampo, procesoDTO, token);
 			} else {
-				relacionarExpedienteDocumento(pCampo, procesoDTO, token);
+				relacionExpedienteService.relacionarExpedienteDocumento(pCampo.getLlaveTabla(), procesoDTO.getLlaveTabla(), token, pCampo.getCampoDTO().getNombre()
+						, pCampo.getTransaccionRegistro(), (procesoDTO.getDinero()==null)?null:procesoDTO.getDinero().getSaldo());
 			}
 		}
 	}
@@ -529,32 +530,7 @@ public class TipoProceso {
 		return false;
 	}
 
-	private boolean relacionarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
-			String token) throws ServerException {
-		if (procesoDTO.getLlaveTabla() == null)
-			throw new ServerException(
-					"Por favor valida el motivo por el cual no se identifica la llave del expediente en el campo "
-							+ pCampo.getCampoDTO().getNombre());
-		// Creo una relacion entre el campo y los pedidos detalles, primero reviso si
-		// existe
-		DocumentoRelacionExpedienteFilterDTO docExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
-		docExpedienteFilter.setCampoMaestro(pCampo.getLlaveTabla());
-		docExpedienteFilter.setExpedienteDetalle(procesoDTO.getLlaveTabla());
-		docExpedienteFilter.setEstado(SharedConstants.STATE_ACTIVE);
-		DocumentoRelacionExpedienteDTO docExpediente = relacionExpedienteService.consultaUnica(docExpedienteFilter);
-		if (docExpediente == null) {
-			docExpediente = new DocumentoRelacionExpedienteDTO();
-			docExpediente.setCampoMaestro(pCampo.getLlaveTabla());
-			docExpediente.setExpedienteDetalle(procesoDTO.getLlaveTabla());
-			if (procesoDTO.getDinero() != null)
-				docExpediente.setValor(procesoDTO.getDinero().getSaldo());
-			docExpediente.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-			docExpediente = relacionExpedienteService.guardar(docExpediente, token);
-			return true;
-		}
-		return false;
-	}
-
+	
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		return listDocumentFromFieldProcessFunction.execute(pCampo,
@@ -699,7 +675,8 @@ public class TipoProceso {
 							for (PedidoVentaDTO iDocumentoRelacionar : pCampo.getExpedientes()) {
 								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0) {
 									campoDestino.getExpedientes().add(iDocumentoRelacionar);
-									if(campoValor.isEmpty())relacionarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);									
+									if(campoValor.isEmpty()) relacionExpedienteService.relacionarExpedienteDocumento(campoDestino.getLlaveTabla(), iDocumentoRelacionar.getLlaveTabla(), token,
+											campoDestino.getCampoDTO().getNombre(), campoDestino.getTransaccionRegistro(), (iDocumentoRelacionar.getDinero()==null)?null:iDocumentoRelacionar.getDinero().getSaldo());									
 								} else {
 									for (PedidoVentaDTO iExpediente : campoDestino.getExpedientes()) {
 										if(iExpediente.getLlaveTabla().compareTo(iDocumentoRelacionar.getLlaveTabla())==0){

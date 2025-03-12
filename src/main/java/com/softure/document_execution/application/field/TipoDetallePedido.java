@@ -290,83 +290,12 @@ public class TipoDetallePedido {
 			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), null, tercero,
 					(tarifarioFuncion != null) ? tarifarioFuncion.getLlaveTabla() : null, pCampo.getDependientes(),
 					pCampo.getSecurityToken()));
-			/*List<CategoriaProductoDTO> categorias = new ArrayList<CategoriaProductoDTO>();
-			for (ProductoDTO productoDTO : pBase.getProductos()) {
-				boolean existeCategoria = false;
-				for (CategoriaProductoDTO catPlantilla : categorias) {
-					if (catPlantilla.getLlaveTabla().compareTo(productoDTO.getCategoria()) == 0) {
-						existeCategoria = true;
-						productoDTO.getDetallePlantilla().getPropiedades().addAll(catPlantilla.getPropiedades());
-						break;
-					}
-				}
-				if (!existeCategoria) {
-					CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(productoDTO.getCategoria());
-					categoria.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
-							categoria.getLlaveTabla(), null, configuracionSvc.getUserFlex(pCampo.getSecurityToken())));
-					productoDTO.getDetallePlantilla().getPropiedades().addAll(categoria.getPropiedades());
-					categorias.add(categoria);
-				}
-			}
-			pBase.setCategorias(ordenar(categorias).getHijos());*/
 		}
 		pCampo.setCampoDTO(pBase);
 		System.out.println("Consulta DB Detalle FIN :" + new Date());
 		return pCampo;
 	}
 
-	/*
-	private CategoriaProductoDTO ordenar(List<CategoriaProductoDTO> categorias) throws ServerException {
-		if (categorias == null)
-			categorias = new ArrayList<CategoriaProductoDTO>();
-		CategoriaProductoDTO nodoPrincipal = new CategoriaProductoDTO();
-		nodoPrincipal.setLlaveTabla("NODO1476");
-		categorias.add(0, nodoPrincipal);
-		while (categorias.size() > 1) {
-			CategoriaProductoDTO ultimo = categorias.get(categorias.size() - 1);
-			if (ultimo.getNodoSuperior() == null)
-				ultimo.setNodoSuperior("NODO1476");
-			CategoriaProductoDTO padre = null;
-			for (int i = categorias.size() - 2; i >= 0; i--) {
-				padre = esPadre(categorias.get(i), ultimo.getNodoSuperior());
-				if (padre != null)
-					break;
-			}
-			if (padre == null) {
-				CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(ultimo.getNodoSuperior());
-				if (categoria == null)
-					throw new ServerException("No se encuentra la categoria principal. " + ultimo.getNodoSuperior());
-				categorias.add(categoria);
-			} else {
-				if (padre.getHijos() == null)
-					padre.setHijos(new ArrayList<CategoriaProductoDTO>());
-				int j = 0;// Ordenar alfabeticamenta
-				while (j < padre.getHijos().size()
-						&& padre.getHijos().get(j).getNombre().compareTo(ultimo.getNombre()) < 0) {
-					j++;
-				}
-				padre.getHijos().add(j, ultimo);
-				categorias.remove(ultimo);
-			}
-		}
-		return nodoPrincipal;
-	}
-
-	private CategoriaProductoDTO esPadre(CategoriaProductoDTO categoria, String llavePadre) {
-		if (categoria.getLlaveTabla().compareTo(llavePadre) == 0) {
-			return categoria;
-		} else {
-			if (categoria.getHijos() == null)
-				return null;
-			for (CategoriaProductoDTO iCategoria : categoria.getHijos()) {
-				CategoriaProductoDTO busqueda = esPadre(iCategoria, llavePadre);
-				if (busqueda != null)
-					return busqueda;
-			}
-		}
-		return null;
-	}
-*/
 	private List<ProductoDTO> detallarProductos2Plantilla(List<ProductoDTO> productos,
 			DocumentoPlantillaCaracteristicaDTO pCampo, CategoriaProductoDTO categoria, String tercero,
 			String propiedadFuncionTarifario, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario,
@@ -394,8 +323,6 @@ public class TipoDetallePedido {
 				}
 				productoDTO.getDetallePlantilla().setProductoImagen(productoDTO.getImagen());
 				productoDTO.getDetallePlantilla().setProductoDocumento(productoDTO.getDocumento());
-				// productoDTO.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
-				// productoDTO.getLlaveTabla(), null, pCampo.getSecurityToken()));
 			}
 		}
 		return productos;

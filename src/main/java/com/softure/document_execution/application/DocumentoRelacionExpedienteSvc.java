@@ -1,8 +1,7 @@
 package com.softure.document_execution.application;
 
 import java.util.List;
-
-// BEGIN region interImport
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import com.shared.domain.SharedConstants;
@@ -109,6 +108,34 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 		filter.setPaginacionRegistroFinal(5000);
 		return listarConsulta(filter);
 	}
+	
+	public boolean relacionarExpedienteDocumento(String pFieldId, String pProcessId,
+			String token, String pFieldName, String pTransaction, BigDecimal pProcessValue) throws ServerException {
+		if (pProcessId == null)
+			throw new ServerException(
+					"Por favor valida el motivo por el cual no se identifica la llave del expediente en el campo "
+							+ pFieldName);
+		// Creo una relacion entre el campo y los pedidos detalles, primero reviso si
+		// existe
+		DocumentoRelacionExpedienteFilterDTO _filter = new DocumentoRelacionExpedienteFilterDTO();
+		_filter.setCampoMaestro(pFieldId);
+		_filter.setExpedienteDetalle(pProcessId);
+		_filter.setEstado(SharedConstants.STATE_ACTIVE);
+		DocumentoRelacionExpedienteDTO _relation = consultaUnica(_filter);
+		if (_relation == null) {
+			_relation = new DocumentoRelacionExpedienteDTO();
+			_relation.setCampoMaestro(pFieldId);
+			_relation.setExpedienteDetalle(pProcessId);
+			_relation.setValor(pProcessValue);
+			//if (procesoDTO.getDinero() != null)
+			//	docExpediente.setValor(procesoDTO.getDinero().getSaldo());
+			_relation.setTransaccionRegistro(pTransaction);
+			_relation = guardar(_relation, token);
+			return true;
+		}
+		return false;
+	}
+
 // END region aditionalMethods
 
 }

@@ -149,32 +149,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			
 		}
 		dto = save(dto);
-		/*
-		dto.setCaracteristicas(caracteristicas);
-		if (dto.getCaracteristicas() != null && dto.getCaracteristicas().size() != 0) {
-			for (int i = 0; i < dto.getCaracteristicas().size(); i++) {
-				PedidoVentaCaracteristicaDTO pvc = dto.getCaracteristicas().get(i);
-				if (!pvc.getCampo().startsWith("***")) {
-					if (pvc.getCampoDTO() == null) {
-						DocumentoPlantillaCaracteristicaDTO newP = new DocumentoPlantillaCaracteristicaDTO();
-						newP.setFormato(productoCaracteristicaService.consultaXId(pvc.getCampo()).getFormato());
-						pvc.setCampoDTO(newP);
-					}
-					formatValidarCampo(pvc, dto);
-					DetalleCaracteristicaProductoDTO caracteristica = new DetalleCaracteristicaProductoDTO();
-					// Copiado de actualizar, si cambio algo cambio en guardar
-					caracteristica.setCampo(pvc.getCampo());
-					caracteristica.setEntidad(dto.getLlaveTabla());
-					caracteristica.setEstado(pvc.getEstado());
-					caracteristica.setTransaccionRegistro(dto.getTransaccionRegistro());
-					caracteristica.setValorFecha(pvc.getValorFecha());
-					caracteristica.setValorNumero(pvc.getValorNumero());
-					caracteristica.setValorOpcion(pvc.getValorOpcion());
-					caracteristica.setValorText(pvc.getValorText());
-					caracteristica = detalleCaracteristicaProductoService.guardar(caracteristica, token);
-				}
-			}
-		}*/
 		return dto;
 		// END DetallePedidoVenta_guardar
 	}
@@ -191,7 +165,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		for (DetallePedidoVentaDTO iDetalle : base) {
 			ProductoDTO iProducto = new ProductoDTO();
 			iProducto.setLlaveTabla(iDetalle.getProducto());
-			// iProducto.setSecurityToken(null);
 			productosSimplificados.add(iProducto);
 		}
 		productosSimplificados = simplificarConsultaBDProductos(productosSimplificados);
@@ -220,8 +193,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		}
 		if (bases != null && bases.size() != 0) {
 			List<PropiedadDTO> propiedadesBases = configuracionSvc.listarProductoSimplificar(bases);
-			//List<ProductoCaracteristicaDTO> camposBases = productoCaracteristicaService
-			//		.listarProductoSimplificar(bases);
 			for (ProductoDTO iProductoDTO : bases) {
 				iProductoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
 				if (propiedadesBases != null && !propiedadesBases.isEmpty()) {
@@ -230,18 +201,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 							iProductoDTO.getPropiedades().add(propiedadDTO);
 					}
 				}
-				/*iProductoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
-				if (camposBases != null && !camposBases.isEmpty()) {
-					for (ProductoCaracteristicaDTO campoDTO : camposBases) {
-						if (campoDTO.getBase().compareTo(iProductoDTO.getLlaveTabla()) == 0)
-							iProductoDTO.getCampos().add(campoDTO);
-					}
-				}*/
 			}
 		}
 		List<PropiedadDTO> propiedadesProducto = configuracionSvc.listarProductoSimplificar(productos);
-		//List<ProductoCaracteristicaDTO> camposProducto = productoCaracteristicaService
-		//		.listarProductoSimplificar(productos);
 		for (ProductoDTO productoDTO : result) {
 			productoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
 			if (propiedadesProducto != null && !propiedadesProducto.isEmpty()) {
@@ -261,21 +223,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			productoDTO.setTemplateFields(Propiedades.obtenerValor(productoDTO, Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO));
 			if(productoDTO.getTemplateFields().isEmpty())
 				productoDTO.setTemplateFields(null);
-			/*productoDTO.setCampos(new ArrayList<ProductoCaracteristicaDTO>());
-			if (camposProducto != null && !camposProducto.isEmpty()) {
-				for (ProductoCaracteristicaDTO campoDTO : camposProducto) {
-					if (campoDTO.getBase().compareTo(productoDTO.getLlaveTabla()) == 0)
-						productoDTO.getCampos().add(campoDTO);
-				}
-			}
-			if (productoDTO.getCampos().isEmpty() && productoDTO.getProductoBase() != null) {
-				for (ProductoDTO iBase : bases) {
-					if (productoDTO.getProductoBase().compareTo(iBase.getLlaveTabla()) == 0) {
-						productoDTO.setCampos(iBase.getCampos());
-						break;
-					}
-				}
-			}*/
 		}
 		return result;
 	}
@@ -348,7 +295,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			result.setValorUnitario(filter.getValor());
 			result.setValorSubtotal(filter.getValor());
 			result.setValorTotal(filter.getValor());
-			// result.setNombre(filter.getProductoNombre());
 			result.setValorMaximo(filter.getValorMaximo());
 			result.setValorMinimo(filter.getValorMinimo());
 		}
@@ -361,74 +307,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			result.setDocumentoDetalle(documentoService.consultaCompleta(result.getDetalleId(), token));
 		}
 		createFieldsProduct(result, token);
-		/*result.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-		// Consulto las caracteristicas
-		List<ProductoCaracteristicaDTO> caracteristicas = producto.getCampos();
-		if (caracteristicas != null && !caracteristicas.isEmpty()) {
-			List<DetalleCaracteristicaProductoDTO> dcpList = null;
-
-			if (dto.getLlaveTabla() != null) {
-				DetalleCaracteristicaProductoFilterDTO filtro = new DetalleCaracteristicaProductoFilterDTO();
-				filtro.setEntidad(dto.getLlaveTabla());
-				filtro.setEstado(SharedConstants.STATE_ACTIVE);
-				dcpList = detalleCaracteristicaProductoService.listarConsulta(filtro);
-			}
-			for (ProductoCaracteristicaDTO productoCaracteristicaDTO : caracteristicas) {
-				PedidoVentaCaracteristicaDTO nueva = null;
-				if (dcpList != null && !dcpList.isEmpty()) {
-					for (DetalleCaracteristicaProductoDTO dcpDTO : dcpList) {
-						if (dcpDTO.getCampo().compareTo(productoCaracteristicaDTO.getLlaveTabla()) == 0) {
-							nueva = new PedidoVentaCaracteristicaDTO();
-							nueva.setDocumento(dcpDTO.getEntidad());
-							nueva.setEstado(dcpDTO.getEstado());
-							nueva.setTransaccionRegistro(dto.getTransaccionRegistro());
-							nueva.setValorFecha(dcpDTO.getValorFecha());
-							nueva.setValorNumero(dcpDTO.getValorNumero());
-							nueva.setValorOpcion(dcpDTO.getValorOpcion());
-							nueva.setValorText(dcpDTO.getValorText());
-							nueva.setLlaveTabla(dcpDTO.getLlaveTabla());
-							break;
-						}
-					}
-				}
-				DocumentoPlantillaCaracteristicaDTO nuevaCaracteristica = new DocumentoPlantillaCaracteristicaDTO();
-				nuevaCaracteristica.setCodigo(productoCaracteristicaDTO.getCodigo());
-				nuevaCaracteristica.setFormato(productoCaracteristicaDTO.getFormato());
-				nuevaCaracteristica.setNombre(productoCaracteristicaDTO.getNombre());
-				nuevaCaracteristica.setOrden(productoCaracteristicaDTO.getOrden() + 4);// Por los cuatro parametros
-																						// inciales
-				nuevaCaracteristica.setDocumentos(productoCaracteristicaDTO.getCaracteristicas());
-				nuevaCaracteristica.setLlaveTabla(productoCaracteristicaDTO.getLlaveTabla());
-				// nuevaCaracteristica.setSecurityToken(productoCaracteristicaDTO.getDocumentoAuxiliar());
-
-				// Propiedades.obtenerParametro(dto.getCampoDTO(),
-				// Propiedades.PERMISO_CAMPO_OBLIGATORIO)!=null
-
-				List<PropiedadDTO> parametros = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
-						productoCaracteristicaDTO.getLlaveTabla(), null, getUserFlex(token));
-
-				parametros.add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-						Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
-				nuevaCaracteristica.setPropiedades(parametros);
-				if (productoCaracteristicaDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-					if (Propiedades.obtenerParametro(nuevaCaracteristica, Propiedades.NUMERO_FUNCION_SQL) != null)
-						nuevaCaracteristica.getPropiedades().add(Propiedades.crearParametro(
-								PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, "***PRODUCTO", null));
-					if (Propiedades.obtenerParametro(nuevaCaracteristica, Propiedades.NUMERO_FORMULA) != null)
-						nuevaCaracteristica.getPropiedades().add(Propiedades.crearParametro(
-								PropiedadValorDefinidoDTO.CAMPO, null, Propiedades.DEPENDE, "***TOTAL", null));
-				}
-
-				if (nueva == null)
-					nueva = new PedidoVentaCaracteristicaDTO();
-				nuevaCaracteristica.setPlantilla(dto.getPlantilla());
-				nueva.setCampoDTO(nuevaCaracteristica);
-				nueva.setCampo(nuevaCaracteristica.getLlaveTabla());
-				result.getCaracteristicas().add(nueva);
-			}
-		}
-		*/
-		
 		return result;
 	}
 

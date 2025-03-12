@@ -1559,9 +1559,17 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		existeFilter.setKey(dto.getKey());
 		existeFilter.setTipo(dto.getTipo());
-		PropiedadDTO existe = consultaUnica(existeFilter);
-		if (existe == null)
+		List<PropiedadDTO> _actualProperties = listarConsulta(existeFilter);
+		if (_actualProperties == null || _actualProperties.isEmpty()) {
 			guardar(dto, token);
+		}else {
+			//No se si crear la validacion
+			//if(_actualProperties.size()>1)
+				//throw new ServerException("Esta propiedad esta doble" + dto.getKey() );
+		}
+		/*PropiedadDTO existe = consultaUnica(existeFilter);
+		if (existe == null)
+			guardar(dto, token);*/
 	}
 
 }
