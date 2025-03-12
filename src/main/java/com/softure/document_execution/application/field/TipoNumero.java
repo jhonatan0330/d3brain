@@ -319,7 +319,11 @@ public class TipoNumero {
 		// Me aparecian errores porque los numeros incluian espacios
 		if (formula != null)
 			formula = formula.replace(" ", "");
-		return CalculatorUtil.calcular(formula);
+		try {
+			return CalculatorUtil.calcular(formula);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+		}
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)

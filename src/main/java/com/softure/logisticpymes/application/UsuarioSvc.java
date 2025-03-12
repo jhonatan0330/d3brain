@@ -77,6 +77,14 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		dto = super.inactivar(dto, token);
 		actividadSvc.validateActivitiesToInactivateUser(dto.getLlaveTabla());
 		propertySvc.inactivateAllPropertiesOfUser(dto.getLlaveTabla(), token);
+		UsuarioAutenticacionFilterDTO autenticacionFilter = new UsuarioAutenticacionFilterDTO();
+		autenticacionFilter.setUsuario(dto.getLlaveTabla());
+		autenticacionFilter.setEstado(SharedConstants.STATE_ACTIVE);
+		List<UsuarioAutenticacionDTO> autenticaciones = usuarioAutenticacionSvc.listarConsulta(autenticacionFilter);
+		for (UsuarioAutenticacionDTO autenticacion : autenticaciones) {
+			autenticacion.setEstado(SharedConstants.STATE_INACTIVE);
+			usuarioAutenticacionSvc.inactivar(autenticacion, token);
+		}
 		return dto;
 		// END Usuario_inactivar
 	}

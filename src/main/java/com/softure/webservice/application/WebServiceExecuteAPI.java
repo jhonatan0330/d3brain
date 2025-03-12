@@ -138,8 +138,6 @@ public class WebServiceExecuteAPI {
 			}
 			
 			webServiceEjecucionSvc.update(apiBasic);
-			// transaccionSvc.registrarSincronizacion(apiBasic.getTransaccion(),
-			// DocumentoTransaccionSvc.API_ASYNC);
 		}
 		return result;
 	}
@@ -173,34 +171,23 @@ public class WebServiceExecuteAPI {
 				}
 				callWS.setFechaEjecucion(new Date());
 				callWS.setError(preconditionWS.getError());
-				callWS.setParametros(getParametersWithHttp(callWS.getParametros()));
-				callWS.setError(getParametersWithHttp(callWS.getError()));
-				callWS.setExtracciones(getParametersWithHttp(callWS.getExtracciones()));
+				callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()));
 				webServiceEjecucionSvc.update(callWS);
 				publishErrorMessage(service, preconditionWS, modificador);
 				log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre()
 						+ ") por error de API precondicion ");
 				return SharedConstants.ERROR;
 			}
-			if (preconditionWS.getExtracciones() != null) {
+			if (preconditionWS.getExtracciones() != null) 
 				extractionApiPrecondition = preconditionWS.getExtracciones();
-				if (callWS.getParametros() == null) {
-					callWS.setParametros(extractionApiPrecondition);
-				} else {
-					callWS.setParametros(getParametersWithHttp(callWS.getParametros()) + extractionApiPrecondition);
-				}
-			}
+		}
 
-		}
-		// No se porque coloco solo CallWSPArametros y falla
-		String paramToHeader = extractionApiPrecondition;
-		callWS.setParametros(getParametersWithHttp(callWS.getParametros()));
-		if (paramToHeader == null) {
-			paramToHeader = callWS.getParametros();
+		if (extractionApiPrecondition == null) {
+			callWS.setParametersInexecution(callWS.getParametros());
 		} else {
-			paramToHeader = paramToHeader.concat(callWS.getParametros());
+			callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()) + extractionApiPrecondition);
 		}
-		Map<String, String> headers = getHeaderProperties(service, paramToHeader);
+		Map<String, String> headers = getHeaderProperties(service, callWS.getParametersInexecution());
 		// Execution
 		callWS = launchWebService(service, callWS, token, headers, modificador);
 		// Primero intento de nuevo ejecutarlo
@@ -308,23 +295,22 @@ public class WebServiceExecuteAPI {
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
 			Map<String, String> headerProperties, PedidoVentaDTO modificador) throws ServerException {
 
-		String parameters = callWS.getParametros();
 		// Reemplazos
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_CODE_REPLACE);
-		parameters = prepareParameterFromProperties(parameters, replaceProperties);
+		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties) );
 		// Esto lo puedo unir con prepare, lo que sucede es que no quiero copiar en bd
 		// los parametros fijos
 		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
 		if (properties != null && !properties.isEmpty()) {
 			for (PropiedadDTO iProp : properties) {
-				parameters = prepareParameterFromProperties(parameters, propiedadesSvc.obtenerPropiedades(
-						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null));
+				callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), propiedadesSvc.obtenerPropiedades(
+						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null)));
 			}
 		}
 
-		String template = templatesService.generateOutputFile(service.getTemplate(), parameters);
-		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), parameters);
+		String template = templatesService.generateOutputFile(service.getTemplate(), callWS.getParametersInexecution());
+		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), callWS.getParametersInexecution());
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametros(),
@@ -395,14 +381,7 @@ public class WebServiceExecuteAPI {
 			callWS.setExtracciones(
 					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
 		}
-		
-		callWS.setParametros(null);
-		//String parameterHelperToLong = null;
-		/*if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
-			parameterHelperToLong = callWS.getParametros();
-			callWS.setParametros(
-					uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
-		}*/
+		if (callWS.getError() == null) callWS.setParametros(null);
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
 		if (extractionHelperToLong != null)
@@ -503,7 +482,6 @@ public class WebServiceExecuteAPI {
 					} else {
 						result.add( "ERROR: " + propiedadDTO.getMotivo() );
 					}
-//					errorResult = errorResult + ERROR_EXTRAYENDO + propiedadDTO.getValor()	+ SharedConstants.PUNTO_COMA_DOBLE;
 				}
 			} else {
 				String newValue = matcher.group(1);
@@ -511,21 +489,11 @@ public class WebServiceExecuteAPI {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
 				}
-				/*result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getLlaveTabla()
-						+ SharedConstants.IGUAL;
-				if (newValue != null && newValue.length() > 4000) {
-					result = result
-							+ uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice");
-				} else {
-					result = result + newValue;
-				}*/
 				if (newValue != null && newValue.length() > 4000) {
 					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice"));
 				} else {
 					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + newValue);
 				}
-				
-				
 				// debo colocar oble para que se guarden en formularios
 				if (propiedadDTO.getTexto() != null)
 					result.add( propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue);
@@ -533,15 +501,8 @@ public class WebServiceExecuteAPI {
 				//Estas no van en el calculo de las modificaciones
 				if(propiedadDTO.getMotivo()!=null)
 					result.add( "INFO_" + propiedadDTO.getMotivo() + SharedConstants.IGUAL + newValue);
-					
-				//result = result + SharedConstants.PUNTO_COMA_DOBLE + propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue;
 			}
 		}
-		/*if (errorResult.length() != 0)
-			result = errorResult + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS + SharedConstants.DOS_PUNTOS
-					+ result;
-		if (result.length() == 0)
-			result = null;*/
 		return result;
 	}
 

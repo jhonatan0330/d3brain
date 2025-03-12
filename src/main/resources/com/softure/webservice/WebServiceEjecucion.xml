@@ -19,7 +19,6 @@
 			,cwse_salida as  salida
 			,cwse_error as  error
 			,cwse_masivo as  masivo
-			,cwse_extracciones as  extracciones
 			,cwse_sincrona as  sincrona
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a
@@ -138,9 +137,6 @@
 		<if test="masivo!=null">
 			,cwse_masivo
 		</if>
-		<if test="extracciones!=null">
-			,cwse_extracciones
-		</if>
 		<if test="sincrona!=null">
 			,cwse_sincrona
 		</if>
@@ -185,9 +181,6 @@
 		<if test="masivo!=null">
 			,#{masivo}
 		</if>
-		<if test="extracciones!=null">
-			,#{extracciones}
-		</if>
 		<if test="sincrona!=null">
 			,#{sincrona}
 		</if>
@@ -212,7 +205,6 @@
 				cwse_salida = #{salida},
 				cwse_error = #{error},
 				cwse_masivo = #{masivo},
-				cwse_extracciones = #{extracciones},
 				cwse_sincrona = #{sincrona},
 				cwse_estado =#{estado}
 		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
@@ -236,7 +228,6 @@
 			,cwse_salida as  salida
 			,cwse_error as  error
 			,cwse_masivo as  masivo
-			,cwse_extracciones as  extracciones
 			,cwse_sincrona as  sincrona
 			,cwse_estado as estado
 		from webserviceejecucion_wsep a

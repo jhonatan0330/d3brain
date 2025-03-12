@@ -20,6 +20,7 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	private String modificador;
 	private String transaccion;
 	private String parametros;
+	private String parametersInexecution;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaEjecucion;
 	private String entrada;
@@ -119,6 +120,12 @@ public class WebServiceEjecucionDTO extends BasicDTO
 	}
 	public void setSincrona(String sincrona) {
 		this.sincrona = sincrona;
+	}
+	public String getParametersInexecution() {
+		return parametersInexecution;
+	}
+	public void setParametersInexecution(String parametersInexecution) {
+		this.parametersInexecution = parametersInexecution;
 	}
 	
 }
