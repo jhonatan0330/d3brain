@@ -280,13 +280,10 @@ public class CallManageTransition {
 	 * @return
 	 * @throws ServerException
 	 */
+	// aqui  hay algo  para  mejorar
 	private PedidoVentaDineroDTO iterateInState(ProcesoTransicionDTO pTransition, PedidoVentaDTO pDocumentPrincipal,
 			PedidoVentaDTO pDocumentoModificador, String pToken, DocumentoRelacionGestorDTO pRelationBack,
-			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction, PedidoVentaDineroDTO dineroProcesado // aqui
-																														// hay
-																														// algo
-																														// para
-																														// mejorar
+			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction, PedidoVentaDineroDTO dineroProcesado 
 	) throws ServerException {
 
 		PedidoVentaDineroDTO afectado = null;
@@ -365,7 +362,7 @@ public class CallManageTransition {
 										if (_iFieldDocumentPrincipal.getCampo()
 												.compareTo(_iRelacion.getCampo()) == 0) {
 											relacionExpedienteService.relacionarExpedienteDocumento(_iFieldDocumentPrincipal.getLlaveTabla(),
-													pDocumentPrincipal.getLlaveTabla(), pToken, _iRelacion.getCampoNombre(),
+													acabdoCrear.getLlaveTabla(), pToken, _iRelacion.getCampoNombre(),
 													acabdoCrear.getTransaccion(),
 													(acabdoCrear.getDinero() != null) ? acabdoCrear.getDinero().getSaldo()
 															: null);

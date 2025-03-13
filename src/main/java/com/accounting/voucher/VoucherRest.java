@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.accounting.api.domain.VoucherPrepareRequest;
 import com.accounting.voucher.application.VoucherCreateService;
 import com.accounting.voucher.application.VoucherGetService;
+import com.accounting.voucher.application.VoucherReCreateService;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.shared.application.SharedAuthenticateService;
@@ -36,6 +38,8 @@ public class VoucherRest {
 	private VoucherCreateService createService;
 	@Autowired @Lazy 
 	private VoucherGetService getVoucherService;
+	@Autowired @Lazy 
+	private VoucherReCreateService recreateService;
 
 	@GetMapping("/{catalog}")
 	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
@@ -71,5 +75,13 @@ public class VoucherRest {
 	public VoucherDTO deleteManualVoucher(HttpServletRequest request,
 			@RequestHeader("Authorization") String token, @PathVariable("voucherId") String voucherId) throws ServerException {
 		return createService.delete(voucherId);
+	}
+	
+
+	@PostMapping("/generate-voucher")
+	public SharedIdResponse generateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token, 
+			@RequestBody VoucherPrepareRequest item
+		) throws ServerException {
+		return recreateService.call(item, tokenService.validate(token, request));
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("webServiceEjecucionService")
@@ -85,14 +86,17 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 	
 	public WebServiceEjecucionDTO ejecutarAPI(WebServiceEjecucionFilterDTO dto)throws ServerException{
-		// BEGIN region ejecutarAPI
 		WebServiceEjecucionDTO bd = consultaXId(dto.getLlaveTabla());
 		if(bd.getFechaEjecucion()!=null) throw new ServerException("Este API ya fue ejecutado");
 		if(bd.getSincrona()==null) throw new ServerException("Este API no es asincrono");
-		WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
-		executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null);
+		if(bd.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC)==0) {
+			executeAPIFunction.applyScheduleToExecute(consultaXId(dto.getLlaveTabla()), dto.getSecurityToken());
+		} else {
+			WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
+			executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null);	
+		}
+		
 		return consultaXId(dto.getLlaveTabla());
-		// END region ejecutarAPI
 	}
 
 	@Override
@@ -110,10 +114,15 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
 	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
 	 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
-	 			WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
-	 			if (service == null)
-	 				throw new ServerException("El id del servicio no se encuentra en la BD.");
-	 			executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null);
+	 			if(iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC)==0) {
+	 				executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
+	 			} else {
+	 				
+	 				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
+	 				if (service == null)
+	 					throw new ServerException("El id del servicio no se encuentra en la BD.");
+	 				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null);
+	 			}
 			}
 	 	}
 	}

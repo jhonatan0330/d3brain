@@ -30,6 +30,7 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 
 	
 	public static final String API_ASYNC = "A";
+	public static final String API_PREPARE_ASYNC = "P";
 	public static final String MAIL_ASYNC = "M";
 	// END region servicesDocumentoTransaccion
 

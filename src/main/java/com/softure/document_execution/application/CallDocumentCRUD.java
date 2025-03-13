@@ -392,7 +392,7 @@ public class CallDocumentCRUD {
 		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, props);
 		if (apis != null && !apis.isEmpty()) {
 			for (PropiedadDTO api : apis) {
-				apiService.prepareApiToExecution(api.getValor(), dto, dto, token, null);
+				apiService.programateExecution(api.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
 			}
 		}
 		dto.setCaracteristicas(null);// Por error al serializar

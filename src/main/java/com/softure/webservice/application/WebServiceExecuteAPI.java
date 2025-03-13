@@ -83,6 +83,28 @@ public class WebServiceExecuteAPI {
 	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
 
+	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId, String pToken) throws ServerException {
+		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
+		callWS.setServicio(pServiceId);
+		String userId = webServiceSvc.getUserFlex(pToken);
+		callWS.setUsuario(userId);
+		callWS.setFecha(new Date());
+		callWS.setDocumento(pDocumentId);
+		callWS.setTransaccion(pTransactionId);
+		callWS.setSincrona(DocumentoTransaccionSvc.API_PREPARE_ASYNC);
+		callWS.setModificador(pModificadorId);
+		webServiceEjecucionSvc.save(callWS);
+	}
+	
+	public void applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
+		
+		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, pToken, null);
+		dto.setFechaEjecucion(new Date());
+		if (dto.getSincrona() != null) {
+			dto.setSincrona(null);
+		}
+		webServiceEjecucionSvc.update(dto);
+	}
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la
 	 * propiedad {@link PropiedadValorDefinidoDTO.API_SERVICE} que hace no se
