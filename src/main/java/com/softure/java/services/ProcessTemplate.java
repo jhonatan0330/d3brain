@@ -224,14 +224,24 @@ public class ProcessTemplate {
 														if (iCampo.getTransaccionRegistro() != null)
 															codeReplaceList = codeReplaceList + "("
 																	+ iCampo.getTransaccionRegistro() + ")";
-														// +ConstantesGenerales.LINEA_MEDIA_DOBLE
-														// +"GUIA"+ConstantesGenerales.COMA_DOBLE+"CT100"
 														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE
 																+ "L" + "_" + codeReplaceList
 																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
 																		iCampo, iCampo.getTransaccionRegistro());
 														// Coloque el service en null para evitar que se generen ciclos
 														// infinitos
+														if (iCampo.getValorOpcion() != null) {
+															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
+																	+ "_KEY" +  SharedConstants.COMA_DOBLE + iCampo.getValorOpcion();
+															//Esto todavia no se si lo use
+															/*if (iCampo.getExpedientes() != null && !iCampo.getExpedientes().isEmpty()) {
+																PedidoVentaDTO iElement = iCampo.getExpedientes().get(0);
+																if (iElement != null && iElement.getNombre() != null) {
+																	parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
+																			+ valueAuxToCode + "_ID" + SharedConstants.IGUAL + iElement.getNombre();
+																}
+															}*/
+														}
 													}
 												}
 											}
