@@ -117,7 +117,7 @@ public class ApiAccountVoucherService {
 		TypeDTO type = typeService.getOne(typeFilter);
 		if (type == null)
 			throw new ServerException("No se reconoce el tipo de documento");
-		if (type.getAutomatic() && item.getDocument() == null)
+		if (type.getService()!=null && item.getDocument() == null)
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 
 		item.setCatalog(catalog.getKey());

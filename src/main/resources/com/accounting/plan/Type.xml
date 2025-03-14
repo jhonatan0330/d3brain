@@ -10,7 +10,7 @@
 			,ctcm_catalogo as catalog
 			,ctcm_nombre as name
 			,ctcm_codigo as code
-			,btcm_automatico as automatic
+			,ctcm_servicio as service
 			,ctcm_patron as pattern
 			,ctcm_consecutivo as consecutive
 			,dtcm_creacionfecha as createdAt
@@ -28,7 +28,7 @@
 <if test="catalog!=null">		and ctcm_catalogo = #{catalog}</if>
 <if test="name!=null">		and ctcm_nombre = #{name}</if>
 <if test="code!=null">		and ctcm_codigo = #{code}</if>
-<if test="automaticFilter!=null">		and btcm_automatico = #{automaticFilter}</if>  
+<if test="service!=null">		and ctcm_servicio = #{service}</if>
 <if test="pattern!=null">		and ctcm_patron = #{pattern}</if>
 <if test="consecutive!=null">		and ctcm_consecutivo = #{consecutive}</if>
 
@@ -67,7 +67,7 @@
 		<if test="catalog!=null">,ctcm_catalogo</if>
 		<if test="name!=null">,ctcm_nombre</if>
 		<if test="code!=null">,ctcm_codigo</if>
-		<if test="automatic!=null">,btcm_automatico</if>
+		<if test="service!=null">,ctcm_servicio</if>
 		<if test="pattern!=null">,ctcm_patron</if>
 		<if test="consecutive!=null">,ctcm_consecutivo</if>
 		<if test="createdUser!=null">,ctcm_creacionusuario</if>
@@ -77,7 +77,7 @@
 		<if test="catalog!=null">,#{catalog}</if>
 		<if test="name!=null">,#{name}</if>
 		<if test="code!=null">,#{code}</if>
-		<if test="automatic!=null">,#{automatic}</if>
+		<if test="service!=null">,#{service}</if>
 		<if test="pattern!=null">,#{pattern}</if>
 		<if test="consecutive!=null">,#{consecutive}</if>
 		<if test="createdUser!=null">,#{createdUser}</if>
@@ -92,7 +92,7 @@
 		ctcm_catalogo = #{catalog},
 		ctcm_nombre = #{name},
 		ctcm_codigo = #{code},
-		btcm_automatico = #{automatic},
+		ctcm_servicio = #{service},
 		ctcm_patron = #{pattern},
 		ctcm_consecutivo = #{consecutive},
 		ctcm_estado =#{state}

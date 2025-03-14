@@ -96,14 +96,16 @@ public class WebServiceExecuteAPI {
 		webServiceEjecucionSvc.save(callWS);
 	}
 	
-	public void applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
+	public String applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
 		
 		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, pToken, null);
 		dto.setFechaEjecucion(new Date());
-		if (dto.getSincrona() != null) {
-			dto.setSincrona(null);
-		}
+		//if (dto.getSincrona() != null) {
+		//	dto.setSincrona(null);
+		//}
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		webServiceEjecucionSvc.update(dto);
+		return dto.getLlaveTabla();
 	}
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la

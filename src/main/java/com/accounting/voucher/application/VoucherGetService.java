@@ -4,9 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.accounting.api.domain.VoucherPrepareRequest;
 import com.accounting.plan.application.base.CatalogService;
+import com.accounting.plan.application.base.TypeService;
 import com.accounting.plan.domain.CatalogDTO;
+import com.accounting.plan.domain.TypeDTO;
+import com.accounting.plan.domain.TypeFilterDTO;
 import com.accounting.voucher.application.base.AccountRecordService;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.AccountRecordDTO;
@@ -16,6 +22,7 @@ import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
+import com.shared.domain.SharedToken;
 import com.shared.domain.ServerException;
 
 @Service
@@ -27,6 +34,8 @@ public class VoucherGetService {
 	private CatalogService catalogService;
 	@Autowired @Lazy 
 	private AccountRecordService recordService;
+	@Autowired @Lazy 
+	private TypeService typeService;
 
 	public List<VoucherDTO> call(String catalogId) throws ServerException {
 		CatalogDTO catalog = getCatalog(catalogId);
@@ -53,14 +62,25 @@ public class VoucherGetService {
 		return voucher;
 	}
 	
-	public SharedIdResponse getByDocument(String documentId) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public SharedIdResponse getByDocument(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
 
+		TypeFilterDTO _typeFilter = new TypeFilterDTO();
+		_typeFilter.setService(pItem.getServiceId());
+		_typeFilter.setState(SharedConstants.STATE_ACTIVE);
+		TypeDTO type = typeService.getOne(_typeFilter);
+		if (type == null)
+			throw new ServerException("No se encontro un tipo de comprobante con ese identificador");
+		
 		VoucherFilterDTO filter = new VoucherFilterDTO();
-		filter.setDocument(documentId);
+		filter.setType(null);
+		filter.setDocument(pItem.getDocumentId());
+		filter.setDocument(type.getKey());
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		VoucherDTO header = voucherService.getOne(filter);
 		if (header == null)
-			throw new ServerException("No se encontro un comprobante para este documento");
+			throw new ServerException("No se encontro un comprobante para este documento y este servicio");
+		
 		return new SharedIdResponse(header.getKey(), header.getCode());
 	}
 

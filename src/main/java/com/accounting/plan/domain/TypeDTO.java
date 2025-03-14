@@ -10,7 +10,7 @@ public class TypeDTO extends SharedDataObject{
 	private String catalog;
 	private String name;
 	private String code;
-	private boolean automatic;
+	private String service;
 	private String pattern;
 	private String consecutive;
 
@@ -38,12 +38,12 @@ public class TypeDTO extends SharedDataObject{
 		this.code = code;
 	}
 
-	public boolean getAutomatic() {
-		return automatic;
+	public String getService() {
+		return service;
 	}
 
-	public void setAutomatic(boolean automatic) {
-		this.automatic = automatic;
+	public void setService(String service) {
+		this.service = service;
 	}
 
 	public String getPattern() {

@@ -53,12 +53,6 @@ public class VoucherRest {
 		return getVoucherService.getById( voucherId);
 	}
 
-	@GetMapping("/document/{documentId}")
-	public SharedIdResponse getVoucherId(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			 @PathVariable("documentId") String documentId) throws ServerException {
-		return getVoucherService.getByDocument( documentId);
-	}
-
 	@PostMapping("/manual")
 	public SharedIdResponse createManualVoucher(HttpServletRequest request,
 			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
@@ -84,4 +78,11 @@ public class VoucherRest {
 		) throws ServerException {
 		return recreateService.call(item, tokenService.validate(token, request));
 	}
+	
+	@PostMapping("/document")
+	public SharedIdResponse getVoucherId(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@RequestBody VoucherPrepareRequest item) throws ServerException {
+		return getVoucherService.getByDocument( item, tokenService.validate(token, request));
+	}
+
 }

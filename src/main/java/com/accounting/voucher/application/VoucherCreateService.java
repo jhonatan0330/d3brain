@@ -181,7 +181,7 @@ public class VoucherCreateService {
 		TypeDTO type = typeService.getById(_voucher.getHeader().getType());
 		if (type == null)
 			throw new ServerException("No se reconoce el tipo de documento");
-		if (type.getAutomatic() && _voucher.getHeader().getDocument() == null)
+		if (type.getService()!=null && _voucher.getHeader().getDocument() == null)
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 		
 		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE)==0 && _voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)

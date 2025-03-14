@@ -266,9 +266,10 @@
 							"type": "STRING"
 						},
 						{
-							"name": "automatic",
-							"tableName": "automatico",
-							"type": "BOOLEAN"
+							"name": "service",
+							"tableName": "servicio",
+							"type": "CLASS",
+							"optional": true
 						},
 						{
 							"name": "pattern",
