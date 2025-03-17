@@ -430,7 +430,7 @@
 			 	else (cwse_entrada || ';;' || cwse_salida)
 			end as adjunto 
 		  from webserviceejecucion_wsep
-		  where cwse_documento = #{dto.documentoPrincipal}
+		  where cwse_documento = #{dto.documentoPrincipal} and cwse_estado = 'A'
 	</if>
 	<if test="verReportes!=null">
 	union 

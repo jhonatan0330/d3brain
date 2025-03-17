@@ -326,6 +326,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		if(dependientes==null) throw new ServerException("Por favor cierra y vuelve a cargar la pagina"); 
 		for (int i = 0; i <dependientes.size(); i++) {
 			PedidoVentaCaracteristicaDTO iDepende = dependientes.get(i);
+			// Esto fue por un error en ccarga al consultar el producto pero no se si pasa lo mismo en otros sistemas
+			if (iDepende.getCampoDTO() == null)
+				iDepende.setCampoDTO(campoDocumentoService.consultaXId(iDepende.getCampo()));
 			if(i == 0) {
 				dependentOrderList.add(iDepende);
 			}else {
