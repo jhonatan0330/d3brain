@@ -75,7 +75,7 @@ public class VoucherGetService {
 		VoucherFilterDTO filter = new VoucherFilterDTO();
 		filter.setType(null);
 		filter.setDocument(pItem.getDocumentId());
-		filter.setDocument(type.getKey());
+		filter.setType(type.getKey());
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		VoucherDTO header = voucherService.getOne(filter);
 		if (header == null)
