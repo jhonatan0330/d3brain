@@ -211,9 +211,10 @@ public class CallManageTransition {
 		case ProcesoEstadoDTO.TIPO_DECISION:
 			respuesta = resolveStateDesition(dto.getEstadoLLegada(), expediente, documentoDTO.getLlaveTabla(), token);
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
+			//Aqui clean los documentos creados se supone que ya se tuv o que hacer lo de la iteracion
 			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
 					relacionAnterior, tokenSystem.getLlaveTabla(), transaccion, nameTrace, userID,
-					documentRecentCreateInTransition, locationTransition);
+					new HashMap<>(), locationTransition);
 			break;
 		case ProcesoEstadoDTO.TIPO_ITERADOR:
 			respuesta = getNextTransition(dto.getEstadoLLegada(), null);
@@ -317,8 +318,14 @@ public class CallManageTransition {
 			// + ", no tiene relaciones, usa las relaciones para identificar que campo
 			// deseas utilizar");
 		} else {
-			for (RelacionInternaDTO _iRelacion : relaciones) {
-				pStackDocumentsCreateInTransaction.put(_iRelacion.getCampo(), _documentsToCreate);
+			if (_documentsToCreate != null && !_documentsToCreate.isEmpty()) {
+				for (RelacionInternaDTO _iRelacion : relaciones) {
+					if(pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo())==null) {
+						pStackDocumentsCreateInTransaction.put(_iRelacion.getCampo(), _documentsToCreate);	
+					}else {
+						pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo()).addAll(_documentsToCreate);
+					}
+				}
 			}
 		}
 		if (pTransition.getPlantilla() != null) {
@@ -330,20 +337,20 @@ public class CallManageTransition {
 							.listar2Documento(iDocumentoIterar.getLlaveTabla(), iDocumentoIterar.getHistorico()));
 					// Aqui al parecer el expediednte principal es el modificador pero no me parece
 					// que sea asi, deberia ser el expediente??, o talvez todos
-					PedidoVentaDTO acabdoCrear = createDocumentSinceProperties.generateDocuments(pTransition,
+					PedidoVentaDTO _newDocumentOfIteration = createDocumentSinceProperties.generateDocuments(pTransition,
 							iDocumentoIterar, pDocumentoModificador, iDocumentoIterar.getTransaccion(), pToken, i + 1,
 							pStackDocumentsCreateInTransaction);
 					// Creo la relacion del documento Gestor
 					relacionGestorService.trazar(pDocumentPrincipal.getLlaveTabla(),
-							(acabdoCrear == null) ? null : acabdoCrear.getLlaveTabla(), pTransition.getNombre(),
+							(_newDocumentOfIteration == null) ? null : _newDocumentOfIteration.getLlaveTabla(), pTransition.getNombre(),
 							pTransition.getEstadoPartida(), pTransition.getEstadoLLegada(), null, null, pToken,
 							pRelationBack, pDocumentPrincipal.getHistorico(), null, false);
-					if (acabdoCrear != null) {
-						_result.add(acabdoCrear);
+					if (_newDocumentOfIteration != null) {
+						_result.add(_newDocumentOfIteration);
 						// Esto es porque cuando son iteradores no se gestionaba el dinero
-						if (acabdoCrear.getDinero() != null && acabdoCrear.getDinero().getSaldo() != null)
+						if (_newDocumentOfIteration.getDinero() != null && _newDocumentOfIteration.getDinero().getSaldo() != null)
 							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pToken, pTransition,
-									acabdoCrear.getDinero().getValorTotal(), null);
+									_newDocumentOfIteration.getDinero().getValorTotal(), null);
 						PropiedadDTO _propertyAgreggate = propiedadService.obtenerPropiedad(
 								PropiedadValorDefinidoDTO.ESTADO, _stateInitial.getLlaveTabla(),
 								Propiedades.ADD_ITERATION_DOCUMENT, null);
@@ -357,16 +364,36 @@ public class CallManageTransition {
 										+ pTransition.getEstadoPartidaNombre()
 										+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas utilizar");
 							} else {
+								//En comporbante de egreso necesito tener las conciliraciones 1x1 para el comprobante contable
+								// aun asi puedo relacionar con un campo de el principal del modificador o de uno que se va a crear
+								// ejemplo en rodamiento al legalizar
+								List<PedidoVentaCaracteristicaDTO> _fieldsToAdd = new ArrayList<>();
+								if (pDocumentoModificador != null && pDocumentoModificador.getCaracteristicas()!=null)
+									_fieldsToAdd.addAll(pDocumentoModificador.getCaracteristicas());
+								if (pDocumentPrincipal != null && pDocumentPrincipal.getCaracteristicas()!=null)
+									_fieldsToAdd.addAll(pDocumentPrincipal.getCaracteristicas());
+								
 								for (RelacionInternaDTO _iRelacion : _relationToAdd) {
-									for(PedidoVentaCaracteristicaDTO _iFieldDocumentPrincipal : pDocumentPrincipal.getCaracteristicas()) {
+									boolean _found = false;
+									for(PedidoVentaCaracteristicaDTO _iFieldDocumentPrincipal : _fieldsToAdd) {
 										if (_iFieldDocumentPrincipal.getCampo()
 												.compareTo(_iRelacion.getCampo()) == 0) {
 											relacionExpedienteService.relacionarExpedienteDocumento(_iFieldDocumentPrincipal.getLlaveTabla(),
-													acabdoCrear.getLlaveTabla(), pToken, _iRelacion.getCampoNombre(),
-													acabdoCrear.getTransaccion(),
-													(acabdoCrear.getDinero() != null) ? acabdoCrear.getDinero().getSaldo()
+													_newDocumentOfIteration.getLlaveTabla(), pToken, _iRelacion.getCampoNombre(),
+													_newDocumentOfIteration.getTransaccion(),
+													(_newDocumentOfIteration.getDinero() != null) ? _newDocumentOfIteration.getDinero().getSaldo()
 															: null);
+											_found = true;
 											break;
+										}
+									}
+									if (!_found) {
+										if(pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo())==null) {
+											List<PedidoVentaDTO> _list = new ArrayList<>();
+											_list.add(_newDocumentOfIteration);
+											pStackDocumentsCreateInTransaction.put(_iRelacion.getCampo(), _list);	
+										}else {
+											pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo()).add(_newDocumentOfIteration);
 										}
 									}
 								}
@@ -377,7 +404,6 @@ public class CallManageTransition {
 				if (_result.size() == 0)
 					throw new ServerException(
 							"No se generaron documentos en la iteracion revisa las propiedades de la transicion para crear los campos");
-				pStackDocumentsCreateInTransaction.put(pTransition.getLlaveTabla(), _result);
 			}
 		}
 		return afectado;
