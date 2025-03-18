@@ -388,11 +388,16 @@ public class CallDocumentCRUD {
 		bpmService.execute(pedido, token);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		manageTemplateTypes(dto, plantilla, token);
-		String[] props = { Propiedades.API, Propiedades.TEMPLATE_VOUCHER };
-		List<PropiedadDTO> apis = Propiedades.obtenerVariosParametro(plantilla, props);
-		if (apis != null && !apis.isEmpty()) {
-			for (PropiedadDTO api : apis) {
-				apiService.programateExecution(api.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
+		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
+		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
+			for (PropiedadDTO _iApi : _PropertyListToAPis) {
+				apiService.prepareApiToExecution(_iApi.getValor(), dto, null, token, null);
+			}
+		}
+		_PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER);
+		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
+			for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
+				apiService.programateExecution(_iVoucher.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
 			}
 		}
 		dto.setCaracteristicas(null);// Por error al serializar
