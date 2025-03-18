@@ -866,7 +866,14 @@ public class WebServiceExecuteAPI {
 				result = result + item.getKey() + " : " + item.getValue() + "\n\n";
 			}
 		}
-		result = result + "\n\nParameters\n\n" + parameters + "\n\nExtractions\n\n" + extractions;
+		if (parameters != null) {
+			result = result + "\n\nParameters\n\n";
+			result = result +  parameters.replaceAll(";;", "\n");
+		}
+		if (extractions != null) {
+			result = result + "\n\nExtractions\n\n";
+			result = result +  extractions.replaceAll(";;", "\n");
+		}
 		return result + "\n\nBODY\n\n";
 	}
 

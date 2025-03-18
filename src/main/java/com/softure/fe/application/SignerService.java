@@ -72,6 +72,7 @@ import xades4j.providers.SignaturePolicyInfoProvider;
 import xades4j.providers.SignaturePropertiesCollector;
 import xades4j.providers.SignaturePropertiesProvider;
 import xades4j.utils.XadesProfileResolutionException;
+import xades4j.verification.SigningCertificateReferenceNotFoundException;
 
 @Service
 public class SignerService {
@@ -198,7 +199,12 @@ public class SignerService {
 		try {
 			
 			signer.sign(new SignedDataObjects(dataObjRef), elemToSign, SignatureAppendingStrategies.AsFirstChild);
-		}catch(Exception ex) {
+		}catch (SigningCertificateReferenceNotFoundException enf) {
+            throw new ServerException("Certificado no encontrado");
+		} catch (XAdES4jException exa) {
+			throw new ServerException(exa.getMessage());
+		}
+		catch(Exception ex) {
 			throw new ServerException("Certificado vencido");
 		}
 	}

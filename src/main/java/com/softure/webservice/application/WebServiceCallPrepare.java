@@ -70,8 +70,7 @@ public class WebServiceCallPrepare {
 			callWS.setTransaccion(modificador.getTransaccion());
 		}
 		callWS = webServiceEjecucionSvc.save(callWS);
-		if (parameterHelperToLong != null)
-			callWS.setParametros(parameterHelperToLong);
+		callWS.setParametersInexecution(parameters);
 		return callWS;
 	}
 
