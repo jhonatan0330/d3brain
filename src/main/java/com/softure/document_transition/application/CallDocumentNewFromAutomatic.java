@@ -81,7 +81,7 @@ public class CallDocumentNewFromAutomatic {
 	 */
 	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber,
-			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction) throws ServerException {
+			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction, PedidoVentaDTO pDocumentIterate) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		// Por aqui voy cuando viene en una iteracion pero no se que otros caso pueda
 		// intente refactor pero salio un aviso asi que deje quieto mientras
@@ -135,22 +135,27 @@ public class CallDocumentNewFromAutomatic {
 								+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 					}
 					for (RelacionInternaDTO iRelacion : relaciones) {
-						if (documento != null && documento.getPlantilla() != null
-								&& iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
-							camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(
-									documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
-						} else {
-							if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
-									&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
-								// Solo consulto el documento cuando en realidad lo necesito, en general no
-								// veien las caracteristicas
-								if (expedienteDTO.getCaracteristicas() == null)
-									expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
-											expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
-								camposNuevos.add(copyFieldDocument(CallDocumentCommons
-										.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),
-										iPropiedadDTO.getValor()));
-							}
+						if (documento != null && documento.getPlantilla() != null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
+							if (documento.getCaracteristicas() == null)
+								documento.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
+										documento.getLlaveTabla(), documento.getHistorico()));
+							camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+							break;
+						}
+						if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
+								&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
+							// Solo consulto el documento cuando en realidad lo necesito, en general no veien las caracteristicas
+							if (expedienteDTO.getCaracteristicas() == null)
+								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
+							camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),iPropiedadDTO.getValor()));
+							break;
+						}
+						if (pDocumentIterate != null && pDocumentIterate.getPlantilla() != null
+								&& iRelacion.getPlantilla().compareTo(pDocumentIterate.getPlantilla()) == 0) {
+							if (pDocumentIterate.getCaracteristicas() == null)
+								pDocumentIterate.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(pDocumentIterate.getLlaveTabla(), pDocumentIterate.getHistorico()));
+							camposNuevos.add(copyFieldDocument(CallDocumentCommons.obtenerValor(pDocumentIterate.getCaracteristicas(), iRelacion.getCampo()),iPropiedadDTO.getValor()));
+							break;
 						}
 					}
 					break;
@@ -182,13 +187,15 @@ public class CallDocumentNewFromAutomatic {
 					}
 					break;
 				case Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION:
-					PedidoVentaCaracteristicaDTO fieldNewFromIteration = copyFieldDocument(null,
-							iPropiedadDTO.getValor());
-					fieldNewFromIteration.setValorOpcion(documento.getLlaveTabla());
-					fieldNewFromIteration.setValorText(documento.getNombre());
-					fieldNewFromIteration.setValorFecha(documento.getFecha());
-					fieldNewFromIteration.setValorNumero(documento.getConsecutivo());
-					camposNuevos.add(fieldNewFromIteration);
+					if (pDocumentIterate != null) {
+						PedidoVentaCaracteristicaDTO fieldNewFromIteration = copyFieldDocument(null,
+								iPropiedadDTO.getValor());
+						fieldNewFromIteration.setValorOpcion(pDocumentIterate.getLlaveTabla());
+						fieldNewFromIteration.setValorText(pDocumentIterate.getNombre());
+						fieldNewFromIteration.setValorFecha(pDocumentIterate.getFecha());
+						fieldNewFromIteration.setValorNumero(pDocumentIterate.getConsecutivo());
+						camposNuevos.add(fieldNewFromIteration);	
+					}
 					break;
 				case Propiedades.GENERA_DOCUMENTO_TEXTO:
 					String textValueToNewField = iPropiedadDTO.getValor();

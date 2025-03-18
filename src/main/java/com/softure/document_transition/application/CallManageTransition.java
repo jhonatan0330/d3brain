@@ -173,7 +173,7 @@ public class CallManageTransition {
 				// generar
 				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,
 						expedienteDTO, documentoDTO.getTransaccion(), tokenToGenerateDocument, 0,
-						documentRecentCreateInTransition);
+						documentRecentCreateInTransition, null);
 				// Por si es la transicion inicial no le quite el poder del documento que genero
 				if (automatico != null) {
 					if (automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
@@ -338,8 +338,8 @@ public class CallManageTransition {
 					// Aqui al parecer el expediednte principal es el modificador pero no me parece
 					// que sea asi, deberia ser el expediente??, o talvez todos
 					PedidoVentaDTO _newDocumentOfIteration = createDocumentSinceProperties.generateDocuments(pTransition,
-							iDocumentoIterar, pDocumentoModificador, iDocumentoIterar.getTransaccion(), pToken, i + 1,
-							pStackDocumentsCreateInTransaction);
+							pDocumentPrincipal, pDocumentoModificador, iDocumentoIterar.getTransaccion(), pToken, i + 1,
+							pStackDocumentsCreateInTransaction, iDocumentoIterar);
 					// Creo la relacion del documento Gestor
 					relacionGestorService.trazar(pDocumentPrincipal.getLlaveTabla(),
 							(_newDocumentOfIteration == null) ? null : _newDocumentOfIteration.getLlaveTabla(), pTransition.getNombre(),
