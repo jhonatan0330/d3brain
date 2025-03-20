@@ -207,7 +207,9 @@ public class WebServiceExecuteAPI {
 		}
 
 		if (extractionApiPrecondition == null) {
-			callWS.setParametersInexecution(callWS.getParametros());
+			if(callWS.getParametersInexecution()==null) {
+				callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()));
+			}
 		} else {
 			callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()) + extractionApiPrecondition);
 		}
