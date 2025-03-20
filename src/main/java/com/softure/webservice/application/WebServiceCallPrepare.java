@@ -166,7 +166,7 @@ public class WebServiceCallPrepare {
 									parameters = templatesService.addParameterString(parameters, iRelacion, campo,
 											campo.getCampoDTO().getCodigo(), "M", iRelacion.getAuxiliar(),
 											Propiedades.obtenerVariosParametro(service,
-													Propiedades.API_CODE_REFERENCE_LIST));
+													Propiedades.API_CODE_REFERENCE_LIST), SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
 								}
 							}
 						}
@@ -256,7 +256,7 @@ public class WebServiceCallPrepare {
 										: campo.getTransaccionRegistro();
 								parameters = templatesService.addParameterString(parameters, iRelacion, campo,
 										codeReplace, "D", iRelacion.getAuxiliar(), Propiedades
-												.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE_LIST));
+												.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE_LIST), SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
 							}
 						}
 					}

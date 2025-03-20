@@ -868,11 +868,11 @@ public class WebServiceExecuteAPI {
 		}
 		if (parameters != null) {
 			result = result + "\n\nParameters\n\n";
-			result = result +  parameters.replaceAll(";;", "\n");
+			result = result +  parameters.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
 		}
 		if (extractions != null) {
 			result = result + "\n\nExtractions\n\n";
-			result = result +  extractions.replaceAll(";;", "\n");
+			result = result +  extractions.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
 		}
 		return result + "\n\nBODY\n\n";
 	}

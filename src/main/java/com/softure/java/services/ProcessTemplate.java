@@ -149,7 +149,7 @@ public class ProcessTemplate {
 						if (iCampo.getTransaccionRegistro() != null)
 							codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
 						parameters = addParameterString(parameters, null, iCampo, codeReplace, "R",
-								iCampo.getTransaccionRegistro(), referidas);
+								iCampo.getTransaccionRegistro(), referidas, SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
 					}
 				}
 			}
@@ -159,22 +159,22 @@ public class ProcessTemplate {
 
 	public String addParameterString(String parameters, RelacionInternaDTO iRelacion,
 			PedidoVentaCaracteristicaDTO campo, String codeReplace, String tipo, String formatToField,
-			List<PropiedadDTO> referidas) throws ServerException {
+			List<PropiedadDTO> referidas, String pSeparatorChar, String pEqualChar) throws ServerException {
 		String valueAuxToCode = "";
 		if (iRelacion != null) {
 			if (iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
 				valueAuxToCode = "(" + iRelacion.getAuxiliar() + ")";
 		}
-		parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
-				+ SharedConstants.IGUAL + formatToReplaceAll(campo, formatToField);
+		parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode
+				+ pEqualChar + formatToReplaceAll(campo, formatToField);
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
-					+ "_KEY" + SharedConstants.IGUAL + campo.getValorOpcion();
+			parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode
+					+ "_KEY" + pEqualChar + campo.getValorOpcion();
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
-					parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-							+ valueAuxToCode + "_ID" + SharedConstants.IGUAL + iElement.getNombre();
+					parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace
+							+ valueAuxToCode + "_ID" + pEqualChar + iElement.getNombre();
 				}
 			}
 		} else {
@@ -215,6 +215,19 @@ public class ProcessTemplate {
 											List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(
 													relaciones, camposOpcionReferidos);
 											if (camposReferidos != null) {
+												
+												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
+													if (iCampo.getValorText() != null) {
+														if (iCampo.getCampoDTO() == null)
+															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
+														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
+														if (iCampo.getTransaccionRegistro() != null)codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
+														parameters = addParameterString(parameters, null, iCampo, codeReplaceList, "L",
+																iCampo.getTransaccionRegistro(), referidas, SharedConstants.LINEA_MEDIA_DOBLE, SharedConstants.COMA_DOBLE);
+													}
+												}
+												/*
+												
 												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 													if (iCampo.getValorText() != null) {
 														if (iCampo.getCampoDTO() == null)
@@ -228,11 +241,19 @@ public class ProcessTemplate {
 																+ "L" + "_" + codeReplaceList
 																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
 																		iCampo, iCampo.getTransaccionRegistro());
+														
+														parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
+																+ SharedConstants.IGUAL + formatToReplaceAll(campo, formatToField);
+														
+														
 														// Coloque el service en null para evitar que se generen ciclos
 														// infinitos
 														if (iCampo.getValorOpcion() != null) {
 															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
 																	+ "_KEY" +  SharedConstants.COMA_DOBLE + iCampo.getValorOpcion();
+															
+														
+															
 															// Lo uso para obtener el nombre del expediente, ejemplo en ampliar plazo de softure
 															if (iCampo.getExpedientes() != null && !iCampo.getExpedientes().isEmpty()) {
 																PedidoVentaDTO iElement = iCampo.getExpedientes().get(0);
@@ -243,7 +264,7 @@ public class ProcessTemplate {
 															}
 														}
 													}
-												}
+												}*/
 											}
 										}
 									}

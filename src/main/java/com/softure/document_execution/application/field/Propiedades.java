@@ -897,6 +897,13 @@ public class Propiedades {
 			ruleProperty = " Para campos texto N(Solo numero), E(Correo electronico), T(Telefono).\n\n Para campos numero se utiliza un DecimalFormat\n\nS(Simple) = El texto no se coloca en mayusculas";
 			break;
 		}
+		case FUNCION_SQL_NEW_ANTES : {
+			ruleProperty = """
+					 Antes de ABRIR EL FORMULARIO a ejecutar las validaciones retorna un texto, OK si pasa todas las validaciones y cualquier otro texto que es el que queremos que se muestre de error.
+					
+					CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS character varying AS""";
+			break;
+		}
 		case FUNCION_SQL_VALIDAR_ANTES: {
 			ruleProperty = """
 					 Antes de iniciar a ejecutar las validaciones y los almacenamientos se va a ejecutar esta funcion de BD con resultados S y N.
