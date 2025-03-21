@@ -62,7 +62,7 @@ public class VoucherReCreateService {
 
 		PedidoVentaDTO _document = pedidoVentaService.consultaXId(pItem.getDocumentId());
 		return new SharedIdResponse(pItem.getDocumentId(), _document.getNombre(),
-				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, pToken.getToken(), null));
+				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, pToken.getToken(), null));
 
 	}
 

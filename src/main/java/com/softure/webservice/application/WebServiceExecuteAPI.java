@@ -98,7 +98,7 @@ public class WebServiceExecuteAPI {
 	
 	public String applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
 		
-		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, pToken, null);
+		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, null, pToken, null);
 		dto.setFechaEjecucion(new Date());
 		//if (dto.getSincrona() != null) {
 		//	dto.setSincrona(null);
@@ -119,7 +119,7 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador,
+	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
 			String token, String previousParameter) throws ServerException {
 		// Valido existencia del servicio
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
@@ -133,7 +133,7 @@ public class WebServiceExecuteAPI {
 				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
 		// Inicia ejecucion
 		log.info("[" + document.getNombre() + "] Procesando API (" + service.getNombre() + ")");
-		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, token, userId,
+		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token, userId,
 				previousParameter);
 		String preValidation = propiedadesSvc.prevalidateAPI(service, apiBasic.getDocumento(),
 				apiBasic.getModificador(), apiBasic.getParametros());
@@ -149,7 +149,7 @@ public class WebServiceExecuteAPI {
 		String result = SharedConstants.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
-			result = executeApi(service, apiBasic, token, modificador, document);
+			result = executeApi(service, apiBasic, token, modificador, document, pIterador);
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			applyScheduleToExecute(apiBasic, service);
@@ -176,7 +176,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			PedidoVentaDTO modificador, PedidoVentaDTO documentMain) throws ServerException {
+			PedidoVentaDTO modificador, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador) throws ServerException {
 		if (callWS.getFechaEjecucion() != null)
 			return SharedConstants.OK;
 		if (service.getPropiedades() == null) {
@@ -186,7 +186,7 @@ public class WebServiceExecuteAPI {
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
 		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(), callWS.getDocumento(), token, modificador,
-				documentMain);
+				documentMain, pIterador);
 		String extractionApiPrecondition = null;		
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -284,7 +284,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser, String callWSDocument,
-			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain) throws ServerException {
+			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
@@ -301,7 +301,7 @@ public class WebServiceExecuteAPI {
 		}
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
-		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, token,
+		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
 				callWSUser, null);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}

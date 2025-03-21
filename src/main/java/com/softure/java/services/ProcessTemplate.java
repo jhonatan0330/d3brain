@@ -119,7 +119,7 @@ public class ProcessTemplate {
 	}
 
 	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
-			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp) throws ServerException {
+			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp, PedidoVentaDTO iterador) throws ServerException {
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 		if (relaciones != null && !relaciones.isEmpty()) {
 			List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
@@ -136,6 +136,10 @@ public class ProcessTemplate {
 			}
 			if (modificador != null && modificador.getCaracteristicas() != null) {
 				camposOpcionReferidos.addAll(modificador.getCaracteristicas().stream()
+						.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
+			}
+			if (iterador != null && iterador.getCaracteristicas() != null) {
+				camposOpcionReferidos.addAll(iterador.getCaracteristicas().stream()
 						.map(PedidoVentaCaracteristicaDTO::clone).collect(Collectors.toList()));
 			}
 			List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(relaciones,

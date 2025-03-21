@@ -398,6 +398,14 @@ public class CallManageTransition {
 									}
 								}
 							}
+						} else {
+							if(pStackDocumentsCreateInTransaction.get(pTransition.getLlaveTabla())==null) {
+								List<PedidoVentaDTO> _list = new ArrayList<>();
+								_list.add(_newDocumentOfIteration);
+								pStackDocumentsCreateInTransaction.put(pTransition.getLlaveTabla(), _list);	
+							}else {
+								pStackDocumentsCreateInTransaction.get(pTransition.getLlaveTabla()).add(_newDocumentOfIteration);
+							}
 						}
 					}
 				}
@@ -424,7 +432,7 @@ public class CallManageTransition {
 
 		String resultAPI = SharedConstants.OK;
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {
-			resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, token,
+			resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, null, token,
 					apiService.prepareParameterFromProperties(null,
 							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER)));
 		} else {
@@ -443,7 +451,7 @@ public class CallManageTransition {
 					}
 				}
 
-				resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, token,
+				resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, null, token,
 						stringToDocumentsToAPI);
 			} else {
 				// en caso de error solo ejecuto en la proxima trnsaccion los que fueron
@@ -451,7 +459,7 @@ public class CallManageTransition {
 				List<PedidoVentaDTO> okDocumentsInAPI = new ArrayList<>();
 				for (Map.Entry<String, List<PedidoVentaDTO>> entry : documentRecentCreateInTransition.entrySet()) {
 					for (PedidoVentaDTO pedidoVentaDTO : entry.getValue()) {
-						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO,
+						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO, pedidoVentaDTO,
 								token, null);
 						if (resultAPI.compareTo(SharedConstants.OK) != 0) {
 							// Esto es

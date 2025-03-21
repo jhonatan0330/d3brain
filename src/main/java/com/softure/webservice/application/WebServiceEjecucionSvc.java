@@ -93,7 +93,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 			executeAPIFunction.applyScheduleToExecute(consultaXId(dto.getLlaveTabla()), dto.getSecurityToken());
 		} else {
 			WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
-			executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null);	
+			executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null, null);	
 		}
 		
 		return consultaXId(dto.getLlaveTabla());
@@ -121,7 +121,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	 				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
 	 				if (service == null)
 	 					throw new ServerException("El id del servicio no se encuentra en la BD.");
-	 				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null);
+	 				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
 	 			}
 			}
 	 	}

@@ -46,13 +46,13 @@ public class WebServiceCallPrepare {
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadesSvc;
 
-	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
 			String token, String userId, String initialPameters) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
-		String parameters = getParameters(service, document, modificador, token);
+		String parameters = getParameters(service, document, modificador, iterador,  token);
 		if (initialPameters != null) {
 			parameters = parameters + initialPameters;
 		}
@@ -86,14 +86,14 @@ public class WebServiceCallPrepare {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
 			String token) throws ServerException {
 		if (service.getPropiedades() == null || service.getPropiedades().isEmpty())
 			return null;
 		String parameters = "";
 		parameters = getDirectParameters(service, document, parameters);
 		parameters = getSpecialParameter(service, document, modificador, token, parameters);
-		parameters = getReferedParameters(service, document, modificador, parameters);
+		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
 		parameters = getBaseParameters(service, document, modificador, parameters);
 		if (parameters == "")
 			parameters = null;
@@ -115,7 +115,7 @@ public class WebServiceCallPrepare {
 			// Obtengo propiedades del servicio
 			baseService.setPropiedades(
 					propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), null, null));
-			String baseParameter =  getParameters(baseService, document, modificador, parameters);
+			String baseParameter =  getParameters(baseService, document, modificador, null, parameters);
 			if(baseParameter!=null) {
 				if(parameters!=null & !parameters.isEmpty()) parameters =  parameters + SharedConstants.PUNTO_COMA_DOBLE;
 				parameters = parameters + baseParameter;
@@ -125,14 +125,14 @@ public class WebServiceCallPrepare {
 	}
 
 	private String getReferedParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			String parameters) throws ServerException {
+			String parameters, PedidoVentaDTO iterador) throws ServerException {
 		// Referidas
 		List<PropiedadDTO> referidas = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE);
 		if (referidas != null && !referidas.isEmpty()) {
 			for (PropiedadDTO iProp : referidas) {
 				parameters = templatesService.extractParameterTypeR(
 						Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE_LIST), document,
-						modificador, parameters, iProp);
+						modificador, parameters, iProp, iterador);
 			}
 		}
 		if (modificador != null) {

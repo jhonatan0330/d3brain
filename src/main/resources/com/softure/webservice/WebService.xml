@@ -32,6 +32,9 @@
 			<if test="url!=null">
 				and cwbs_url = #{url}
 			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cwbs_nombre) like upper('%' || #{filtroParametro} || '%') or cwbs_codigo =  #{filtroParametro})
+			</if>
 	</sql>
 
 	<sql id="paginationWebServiceFragment">
