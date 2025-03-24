@@ -227,6 +227,11 @@
 	
 	<select id="listarPermitidos" resultType="PedidoVentaDTO">
 		<include refid="selectPedidoVentaFragment" />
+		<if test="dto.filtersByFields!=null">
+			<foreach item="item" index="index" collection="dto.filtersByFields" >
+		<if test="item.valorOpcion!=null">inner join pedidoventacaracteristica_pvcp cp_${item.campo} on (cp_${item.campo}.cpvc_documento = cpdv_llave and cp_${item.campo}.cpvc_campo = #{item.campo} and cp_${item.campo}.cpvc_estado = 'A' and cp_${item.campo}.cpvc_valoropcion = #{item.valorOpcion})</if>
+			</foreach>
+		</if>
 		where 1=1
 		<include refid="filterMainFragment" />
 		<if test="campoFiltro!=null">
@@ -257,11 +262,6 @@
 					</if>
 					)<if test="dto.funcionario!=null">or cpdv_funcionario = #{dto.funcionario}</if>)
 	        </foreach>
-		</if>
-		<if test="dto.filtersByFields!=null">
-			<foreach item="item" index="index" collection="dto.filtersByFields" >
-				<if test="item.valorOpcion!=null">and (#{item.valorOpcion} = (select cp.cpvc_valoropcion from campo_documento cp where cp.cdrc_documento = cpdv_llave and cp.cpvc_campo = #{item.campo}))</if>
-			</foreach>
 		</if>
 		<include refid="orderMainFragment" />
 	</select>

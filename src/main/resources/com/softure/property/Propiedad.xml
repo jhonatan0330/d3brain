@@ -132,7 +132,7 @@
 	<select id="listar" parameterType="PropiedadDTO" resultType="PropiedadDTO">
 		<include refid="selectPropiedadFragment" />
 		<include refid="wherePropiedadFragment" />
-		order by nombre, key, texto
+		order by nombre, key, texto, motivo
 		<include refid="paginationPropiedadFragment" />
 	</select>
 
