@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.accounting.api.domain.VoucherPrepareRequest;
+import com.accounting.plan.application.base.TypeService;
+import com.accounting.plan.domain.TypeDTO;
+import com.accounting.plan.domain.TypeFilterDTO;
 import com.accounting.voucher.application.base.VoucherService;
 import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.domain.ServerException;
@@ -40,12 +43,22 @@ public class VoucherReCreateService {
 	@Autowired
 	@Lazy
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
+	@Autowired @Lazy 
+	private TypeService typeService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
 
+		TypeFilterDTO _typeFilter = new TypeFilterDTO();
+		_typeFilter.setService(pItem.getServiceId());
+		_typeFilter.setState(SharedConstants.STATE_ACTIVE);
+		TypeDTO type = typeService.getOne(_typeFilter);
+		if (type == null)
+			throw new ServerException("No se encontro un tipo de comprobante con ese identificador");
+		
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pItem.getDocumentId());
+		_filter.setType(type.getKey());
 		_filter.setState(SharedConstants.STATE_ACTIVE);
 		if (voucherService.count(_filter) != 0)
 			throw new ServerException("Este documento ya tiene un comprobante");

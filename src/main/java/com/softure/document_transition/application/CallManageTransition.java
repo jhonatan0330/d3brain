@@ -338,7 +338,7 @@ public class CallManageTransition {
 					// Aqui al parecer el expediednte principal es el modificador pero no me parece
 					// que sea asi, deberia ser el expediente??, o talvez todos
 					PedidoVentaDTO _newDocumentOfIteration = createDocumentSinceProperties.generateDocuments(pTransition,
-							pDocumentPrincipal, pDocumentoModificador, iDocumentoIterar.getTransaccion(), pToken, i + 1,
+							pDocumentoModificador, pDocumentPrincipal, iDocumentoIterar.getTransaccion(), pToken, i + 1,
 							pStackDocumentsCreateInTransaction, iDocumentoIterar);
 					// Creo la relacion del documento Gestor
 					relacionGestorService.trazar(pDocumentPrincipal.getLlaveTabla(),
