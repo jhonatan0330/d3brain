@@ -311,12 +311,12 @@ public class CallManageTransition {
 		}
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(_propertyFuncionSQL.getLlaveTabla());
 		if (relaciones == null || relaciones.isEmpty()) {
-			// throw new ServerException("La propiedad " + _propertyFuncionSQL.getNombre() +
-			// " de la iteracion "
-			// + pTransition.getNombre() + " del proceso " + pTransition.getProcesoNombre()
-			// + " con estado inicial " + pTransition.getEstadoPartidaNombre()
-			// + ", no tiene relaciones, usa las relaciones para identificar que campo
-			// deseas utilizar");
+			// no se si esto
+			if(pStackDocumentsCreateInTransaction.get(pTransition.getLlaveTabla())==null) {
+				pStackDocumentsCreateInTransaction.put(pTransition.getLlaveTabla(), _documentsToCreate);	
+			}else {
+				pStackDocumentsCreateInTransaction.get(pTransition.getLlaveTabla()).addAll(_documentsToCreate);
+			}
 		} else {
 			if (_documentsToCreate != null && !_documentsToCreate.isEmpty()) {
 				for (RelacionInternaDTO _iRelacion : relaciones) {
@@ -458,9 +458,10 @@ public class CallManageTransition {
 				// exitosos
 				List<PedidoVentaDTO> okDocumentsInAPI = new ArrayList<>();
 				for (Map.Entry<String, List<PedidoVentaDTO>> entry : documentRecentCreateInTransition.entrySet()) {
-					for (PedidoVentaDTO pedidoVentaDTO : entry.getValue()) {
+					for (int i = 0; i < entry.getValue().size(); i++) {
+						PedidoVentaDTO pedidoVentaDTO = entry.getValue().get(i);
 						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO, pedidoVentaDTO,
-								token, null);
+								token, SharedConstants.PUNTO_COMA_DOBLE + "ITERADOR_NUMBER" + SharedConstants.IGUAL + i);
 						if (resultAPI.compareTo(SharedConstants.OK) != 0) {
 							// Esto es
 							// documentRecentCreateInTransition = okDocumentsInAPI;

@@ -188,7 +188,7 @@ public class WebServiceExecuteAPI {
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
 		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(), callWS.getDocumento(), token, modificador,
-				documentMain, pIterador);
+				documentMain, pIterador, callWS.getParametersInexecution());
 		String extractionApiPrecondition = null;		
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -286,7 +286,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser, String callWSDocument,
-			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador) throws ServerException {
+			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador, String parentParameters) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
@@ -304,7 +304,7 @@ public class WebServiceExecuteAPI {
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
-				callWSUser, null);
+				callWSUser, parentParameters);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}
 
