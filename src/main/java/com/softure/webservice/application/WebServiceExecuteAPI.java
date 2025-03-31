@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -23,11 +24,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
@@ -393,7 +395,7 @@ public class WebServiceExecuteAPI {
 			if (responseApi == null)
 				responseApi = "";
 			responseApi = e.getMessage() + "\n\n" + responseApi;
-			callWS.setError(e.getMessage());
+			callWS.setError("ERROR EN API :" + e.getMessage());
 			log.info("[] Procesando API error (" + e.getMessage() + ")");
 		}
 
@@ -603,24 +605,45 @@ public class WebServiceExecuteAPI {
 			}
 
 			log.info("[" + con.getURL().toString() + "] Procesando API status (" + con.getResponseCode() + ")");
-			BufferedReader in = null;
-			if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
+			int responseCode = con.getResponseCode();
+            InputStream inputStream;
+			/*if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
 				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 			} else {
 				in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-			}
-			String inputLine;
+			}*/
+			
+			 // Usa getErrorStream() si el código de respuesta es 400 o cualquier otro error
+            if (responseCode >= 400) {
+                inputStream = con.getErrorStream();
+            } else {
+                inputStream = con.getInputStream();
+            }
+
+            // Manejo seguro del InputStream para evitar NullPointerException
+            if (inputStream != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                    	content.append(line);
+                    }
+                }
+            } else {
+            	content.append("No response body received. response code = " + responseCode);
+            }
+                
+			/*String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				content.append(inputLine);
 			}
-			in.close();
+			in.close();*/
 		}  catch (SocketTimeoutException stoe) {
 			throw new ServerException(stoe.getMessage() +".  RTO=" + con.getReadTimeout() + " CTO=" + con.getConnectTimeout());
 		}
 		catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}finally {
-		    if(con != null) con.disconnect();
+			if(con != null) con.disconnect();
 		}
 		return content.toString();
 	}
