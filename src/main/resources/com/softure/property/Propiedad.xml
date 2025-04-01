@@ -624,7 +624,38 @@ COST 100;
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp, documentoplantilla_dplp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
-        and cpvd_llave in ('PROP_85', 'PROP_84', 'PROP_107', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114')
+        and cpvd_llave in ('PROP_85', 'PROP_84', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114')
+        and cdpl_llave in  (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
+        union
+        select
+             null as  llaveTabla
+            ,cpvd_llave as  propiedadValor
+            ,'L' as  tipo
+            ,cpvd_nombre as  nombre
+            ,cpvd_codigo  as  key
+            ,cdpl_llave as  campo
+            ,cdpl_proceso as  valor
+            ,(select cprc_nombre from proceso_prcp where cprc_llave = cdpl_proceso) as  texto
+            ,null as  fechaDefinicion
+            ,null as  fechaImplementacion
+            ,null as  cambioCreacion
+            ,null as  cambioEliminacion
+            ,null as  rol
+            ,null as  rolNombre
+            ,null as  rolExcluyente
+			,null as  rolExcluyenteNombre
+            ,null as  fechaInicial
+            ,null as  fechaFinal
+            ,null as  usuario
+            ,null as  usuarioNombre
+      		,null as  usuarioExcluyente
+			,null as  usuarioExcluyenteNombre
+      		,null as  motivo
+      		,null as  bloqueo
+            ,cpvd_estado as estado
+        from propiedadvalordefinido_pvdp, documentoplantilla_dplp
+        where cpvd_origen = 'L' and cpvd_estado = 'A'
+        and cpvd_llave = 'PROP_107'
         and cdpl_llave in  (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
         order by nombre, key
     </select>

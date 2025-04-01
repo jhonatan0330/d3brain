@@ -54,6 +54,7 @@ import com.softure.process_designer.application.ProcesoTransicionSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
+import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
@@ -804,6 +805,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(tarifario.getNombre());
 	}
 
+	private void identificadorProceso(PropiedadDTO dto) throws ServerException {
+		ProcesoDTO _process = procesoService.consultaXId(dto.getValor());
+		if (_process == null) {
+			ProcesoFilterDTO _processFilter = new ProcesoFilterDTO();
+			_processFilter.setNombre(dto.getValor().toUpperCase());
+			_processFilter.setEstado(SharedConstants.STATE_ACTIVE);
+			_process = procesoService.consultaUnica(_processFilter);
+			if (_process == null)
+				throw new ServerException(
+						"No se encontro proceso con Id, nombre o Codigo que concuerde");
+		}
+		dto.setValor(_process.getLlaveTabla());
+		dto.setTexto(_process.getNombre());
+	}
+	
 	private void identificadorReporte(PropiedadDTO dto) throws ServerException {
 		ReporteBaseDTO reporte = reporteService.consultaXId(dto.getValor());
 		if (reporte == null) {
@@ -1068,6 +1084,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		case Propiedades.PLANTILLA_MONITOR: {
 			identificadorCatalogo(dto);
+			break;
+		}
+		case Propiedades.PERMISO_PLANTILLA_LISTAR_MENU: {
+			identificadorProceso(dto);
 			break;
 		}
 		}
