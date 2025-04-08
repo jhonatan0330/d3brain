@@ -806,6 +806,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	private void identificadorProceso(PropiedadDTO dto) throws ServerException {
+		if (dto.getValor().compareTo("*") == 0) {
+			DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
+			dto.setValor(plantillaPrincipal.getProceso());
+		}
 		ProcesoDTO _process = procesoService.consultaXId(dto.getValor());
 		if (_process == null) {
 			ProcesoFilterDTO _processFilter = new ProcesoFilterDTO();
