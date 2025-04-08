@@ -20,6 +20,7 @@ import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import com.softure.upload.application.UploadSvc;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
@@ -50,6 +51,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
 	@Autowired @Lazy  private RelacionInternaSvc relacionService;
 	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy  private UploadSvc uploadService;
 
 	@Override
 	public ProcesoTransicionAutomaticaDTO consultaXId(String llave) throws ServerException {
@@ -125,7 +127,6 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		// END ProcesoTransicionAutomatica_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public void lanzarTransaccionesTemporizadas() {
 		List<ProcesoTransicionAutomaticaDTO> transiciones = procesoTransicionAutomaticaMapper.consultarPendientes();
 		if(transiciones ==null || transiciones.isEmpty()) return;
@@ -334,9 +335,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 			dto.setMensaje("La propiedad temporizador esta bloqueada a esta horas");
 		}
 		dto.setEjecucion(new Date());
+		if (dto.getMensaje() != null && dto.getMensaje().length() > 4000) {
+			dto.setMensaje(
+					uploadService.uploadFile(dto.getMensaje().getBytes(), "Parameter.txt", null, "task"));
+		}
 		return update(dto);
 	}
 	
-// END region aditionalMethods
 
 }
