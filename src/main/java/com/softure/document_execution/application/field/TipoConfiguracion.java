@@ -264,7 +264,8 @@ public class TipoConfiguracion {
 				PropiedadDTO option =  null;
 				if(options!=null) {
 					for (PropiedadDTO propiedadDTO : options) {
-						if(propiedadDTO.getValor().compareTo(pCampo.getValorOpcion())==0) {
+						if(propiedadDTO.getValor().compareTo(pCampo.getValorOpcion())==0 || 
+								(propiedadDTO.getTexto()!=null && propiedadDTO.getTexto().compareTo(pCampo.getValorOpcion())==0)) {
 							option = propiedadDTO;
 							pCampo.setValorText(option.getTexto());
 							break;

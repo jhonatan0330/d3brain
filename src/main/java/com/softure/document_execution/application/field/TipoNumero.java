@@ -139,7 +139,9 @@ public class TipoNumero {
 				roundInt = Integer.parseInt(roundNumber);
 			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));
 		} catch (NumberFormatException e) {
-			throw new ServerException(e.getMessage());
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					+ " El campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+					+ pCampo.getCampoDTO().getCodigo() + ") en la propiedad redondeo tiene el siguiente error :" + e.getMessage());
 		}
 
 		// Validar minimo y maximo
