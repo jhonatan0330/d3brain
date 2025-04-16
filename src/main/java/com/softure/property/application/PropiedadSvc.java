@@ -479,6 +479,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(plantilla.getNombre());
 
 		if (!createDocument && dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
+			if (dto.getCampo().compareTo(plantilla.getLlaveTabla()) == 0) {
+				throw new ServerException("No se puede crear la plantilla de diferencias para la misma plantilla");
+			}
 			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService
 					.listarCamposPlantillaConComplementos(dto.getCampo(), null, false);
 			for (DocumentoPlantillaCaracteristicaDTO iCampo : fields) {
