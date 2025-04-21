@@ -1,24 +1,28 @@
 package com.softure.authentication.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.SharedToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.shared.domain.SharedToken;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorDTO;
-import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.domain.ModuloFilterDTO;
@@ -28,14 +32,8 @@ import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 
-
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("usuarioAutenticacionService")
 public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>
@@ -176,22 +174,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		newAuth.setFechaMaxima(getNewMaximunDate(user.getUsuario()));
 		newAuth = save(newAuth);
 
-		UsuarioSesionFilterDTO filterSesion = new UsuarioSesionFilterDTO();
-		filterSesion.setEstado(SharedConstants.STATE_ACTIVE);
-		filterSesion.setUsuario(dto.getUsuario());
-		List<UsuarioSesionDTO> sesiones = usuarioSesionService.listarConsulta(filterSesion);
-		if (sesiones != null && !sesiones.isEmpty()) {
-			for (UsuarioSesionDTO usuarioSesionDTO : sesiones) {
-				if (token == null) {
-					usuarioSesionDTO.setEstado(SharedConstants.STATE_INACTIVE);
-					usuarioSesionDTO.setFechaCierre(new Date());
-					usuarioSesionService.update(usuarioSesionDTO);
-				} else {
-					if (usuarioSesionDTO.getLlaveTabla().compareTo(token) != 0)
-						usuarioSesionService.inactivar(usuarioSesionDTO, token);
-				}
-			}
-		}
+		usuarioSesionService.closeAllSession(user.getUsuario(), token);
 		return user;
 		// END region cambiarClave
 	}

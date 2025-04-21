@@ -11,6 +11,7 @@ import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
 
+import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -122,6 +123,15 @@ public class UsuarioSesionSvc extends BasicSvc<UsuarioSesionDTO, UsuarioSesionFi
 		}
 		return null;	
 		
+	}
+	public void closeAllSession (String userId, String token) throws ServerException {
+		try {
+			usuarioSesionMapper.closeAllSession(userId, token);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
 	}
 // END region aditionalMethods
 

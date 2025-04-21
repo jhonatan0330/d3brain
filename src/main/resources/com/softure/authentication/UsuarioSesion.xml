@@ -144,6 +144,11 @@
 		and crac_estado = 'A'
 		and cerl_usuario = #{usuario}
 	</select>
+	
+	<select id="closeAllSession" >
+		update usuariosesion_ussp 		set cuss_estado = 'I'
+		where cuss_usuario = #{userId} and cuss_llave  != #{token}
+	</select>
 <!--// END region script-->
 
 </mapper>
