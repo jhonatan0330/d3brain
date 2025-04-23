@@ -31,20 +31,22 @@ import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.upload.application.UploadSvc;
+import com.softure.webservice.application.WebServiceEjecucionSvc;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/document")
 public class DocumentController {
 
-	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
-	@Autowired @Lazy  private UploadSvc uploadService;
-	@Autowired @Lazy  private CallDocumentCRUD saveUpdateDocumentFunction;
-	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy  private ActividadSvc actividadService;
-	@Autowired @Lazy  private ProductoInventarioSvc inventoryService;
+	@Autowired @Lazy private PedidoVentaSvc pedidoVentaService;
+	@Autowired @Lazy private UploadSvc uploadService;
+	@Autowired @Lazy private CallDocumentCRUD saveUpdateDocumentFunction;
+	@Autowired @Lazy private CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	@Autowired @Lazy private ActividadSvc actividadService;
+	@Autowired @Lazy private ProductoInventarioSvc inventoryService;
 	@Autowired @Lazy private MailReleaseMessageQueueService releaseQueueService;
 	@Autowired @Lazy private ProcesoTransicionAutomaticaSvc transicionservice;
+	@Autowired @Lazy private WebServiceEjecucionSvc apiService;
 
 	
 	@PostMapping(value="/getDocument")
@@ -107,5 +109,12 @@ public class DocumentController {
 		int _prepare = transicionservice.programateAll();
 		return "*******TAREAS (" + _launch +") ***  PROGRAMADAS ("+ _prepare +") ***"  + new Date().toString();
 	}
+	
+	@GetMapping("/ping_api")
+	public String sendApi() throws ServerException {
+		return apiService.apiToTransaction();
+	}
 
+	
+	
 }

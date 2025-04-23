@@ -108,23 +108,24 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	}
 
 // BEGIN region aditionalMethods
-	public void apiToTransaction() throws ServerException {
+	public String apiToTransaction() throws ServerException {
 		List<WebServiceEjecucionDTO> tareasPendientes = webServiceEjecucionMapper.apisTransaccion();
-		System.out.println("*******APIS ASYNC ("+tareasPendientes.size()+") ****" + new Date().toString());
-	 	if(tareasPendientes!=null && tareasPendientes.size()>0){
-	 		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
-	 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
-	 			if(iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC)==0) {
-	 				executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
-	 			} else {
-	 				
-	 				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
-	 				if (service == null)
-	 					throw new ServerException("El id del servicio no se encuentra en la BD.");
-	 				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
-	 			}
-			}
-	 	}
+		
+	 	if(tareasPendientes==null || tareasPendientes.isEmpty())
+	 		return "*******APIS ASYNC (0) ****" + new Date().toString();
+	 	UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
+ 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
+ 			if(iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC)==0) {
+ 				executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
+ 			} else {
+ 				
+ 				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
+ 				if (service == null)
+ 					throw new ServerException("El id del servicio no se encuentra en la BD.");
+ 				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
+ 			}
+		}
+	 	return "*******APIS ASYNC ("+tareasPendientes.size()+") ****" + new Date().toString();
 	}
 	
 	public boolean hasPropertiesAsync() {
