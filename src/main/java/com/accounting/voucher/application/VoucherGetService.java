@@ -1,5 +1,6 @@
 package com.accounting.voucher.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -13,13 +14,17 @@ import com.accounting.plan.application.base.TypeService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.TypeDTO;
 import com.accounting.plan.domain.TypeFilterDTO;
+import com.accounting.voucher.application.base.AccountRecordAuxiliarService;
 import com.accounting.voucher.application.base.AccountRecordService;
 import com.accounting.voucher.application.base.VoucherService;
+import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
+import com.accounting.voucher.domain.AccountRecordAuxiliarFilterDTO;
 import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.AccountRecordFilterDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.accounting.voucher.domain.VoucherLine;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
 import com.shared.domain.SharedToken;
@@ -34,6 +39,8 @@ public class VoucherGetService {
 	private CatalogService catalogService;
 	@Autowired @Lazy 
 	private AccountRecordService recordService;
+	@Autowired @Lazy 
+	private AccountRecordAuxiliarService recordAuxiliarService;
 	@Autowired @Lazy 
 	private TypeService typeService;
 
@@ -84,11 +91,35 @@ public class VoucherGetService {
 		return new SharedIdResponse(header.getKey(), header.getCode());
 	}
 
-	private List<AccountRecordDTO> getRecords(String voucherId) throws ServerException {
+	private List<VoucherLine> getRecords(String voucherId) throws ServerException {
+		
 		AccountRecordFilterDTO filter = new AccountRecordFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		filter.setVoucher(voucherId);
-		return recordService.getMany(filter);
+		List<AccountRecordDTO> _records = recordService.getMany(filter);
+		if(_records == null || _records.isEmpty()) return null;
+		
+		AccountRecordAuxiliarFilterDTO _filter = new AccountRecordAuxiliarFilterDTO();
+		_filter.setVoucher(voucherId);
+		_filter.setState(SharedConstants.STATE_ACTIVE);
+		List<AccountRecordAuxiliarDTO> _auxiliares = recordAuxiliarService.getMany(_filter);
+		
+		List<VoucherLine> _lines  = new ArrayList<>();
+		for (AccountRecordDTO accountRecordDTO : _records) {
+			VoucherLine _line = new VoucherLine();
+			_line.setLine(accountRecordDTO);
+			if(_auxiliares != null && !_auxiliares.isEmpty()) {
+				for (AccountRecordAuxiliarDTO iAux : _auxiliares) {
+					if(iAux.getRecordLine().compareTo(accountRecordDTO.getKey())==0) {
+						if(_line.getReferences()==null) _line.setReferences(new ArrayList<>());
+						_line.getReferences().add(iAux);	
+					}
+				}
+			}
+			_lines.add(_line);
+		}
+		return _lines;
+		
 	}
 	
 }

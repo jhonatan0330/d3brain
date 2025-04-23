@@ -11,6 +11,7 @@ import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.AccountFilterDTO;
+import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
@@ -30,7 +31,9 @@ public class PlanCreateAccountService {
 		if (account.getCatalogDocument() != null) {
 			CatalogFilterDTO filter = new CatalogFilterDTO();
 			filter.setDocument(account.getCatalogDocument());
-			account.setCatalog(catalogService.getOne(filter).getKey());
+			CatalogDTO _catalog = catalogService.getOne(filter);
+			if(_catalog==null) throw new ServerException("Vamos a crear una cuenta pero no llego un documento que se relacione a un catalogo :(");
+			account.setCatalog(_catalog.getKey());
 		}
 		if (account.getParentDocument() != null) {
 			AccountFilterDTO filterParent = new AccountFilterDTO();
@@ -97,7 +100,18 @@ public class PlanCreateAccountService {
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO callDelete(String accountId) throws ServerException {
-		return accountService.delete(accountId);
+		AccountDTO result = accountService.delete(accountId);
+		if(result.getParent()== null ) return result;
+		if(result.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0) return result;
+		AccountFilterDTO filter = new AccountFilterDTO();
+		filter.setParent(result.getParent());
+		filter.setState(SharedConstants.STATE_ACTIVE);
+		if(accountService.count(filter)==0) {
+			AccountDTO parent = accountService.getById(result.getParent());
+			parent.setType(AccountConst.TYPE_OPERATIONAL);
+			accountService.update(parent);
+		}
+		return result;
 	}
 
 

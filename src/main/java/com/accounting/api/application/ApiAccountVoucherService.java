@@ -22,9 +22,11 @@ import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.domain.TypeDTO;
 import com.accounting.plan.domain.TypeFilterDTO;
 import com.accounting.voucher.application.VoucherCreateService;
+import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
 import com.accounting.voucher.domain.AccountRecordDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
+import com.accounting.voucher.domain.VoucherLine;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
@@ -64,7 +66,7 @@ public class ApiAccountVoucherService {
 		header.setType(_item.getType());
 		voucher.setHeader(header);
 
-		List<AccountRecordDTO> lines = new ArrayList<>();
+		List<VoucherLine> lines = new ArrayList<>();
 		for (VoucherLineRequest accountRecordDTO : _item.getLines()) {
 			AccountRecordDTO line = new AccountRecordDTO();
 			line.setAccount(accountRecordDTO.getAccount());
@@ -72,18 +74,36 @@ public class ApiAccountVoucherService {
 			line.setPositive(accountRecordDTO.getDebit());
 			line.setNote(accountRecordDTO.getNote());
 			
-			//Esto toca mejorarlo
+			VoucherLine _line = new VoucherLine();
+			_line.setLine(line);
+			
 			if (accountRecordDTO.getReferences() != null && !accountRecordDTO.getReferences().isEmpty()) {
-				line.setThird(accountRecordDTO.getReferences().get(0).getCode());
-				line.setThirdId(accountRecordDTO.getReferences().get(0).getDocumentId());
-				line.setThirdName(accountRecordDTO.getReferences().get(0).getName());
-				if(accountRecordDTO.getReferences().size() > 1) {
-                    line.setCenter(accountRecordDTO.getReferences().get(1).getCode());
-                    line.setCenterId(accountRecordDTO.getReferences().get(1).getDocumentId());
-                    line.setCenterName(accountRecordDTO.getReferences().get(1).getName());
+				_line.setReferences(new ArrayList<>());
+				for (VoucherLineDimensionRequest iReference : accountRecordDTO.getReferences()) {
+					AccountRecordAuxiliarDTO _auxiliar = new AccountRecordAuxiliarDTO();
+					_auxiliar.setAuxiliarCode(iReference.getCode());
+					_auxiliar.setAuxiliarDocumentId(iReference.getDocumentId());
+					_auxiliar.setAuxiliarName(iReference.getName());
+					_auxiliar.setAuxiliarType(iReference.getAuxiliar());
+
+					AccountDTO accountReference = findAccount(_item.getCatalog(), iReference.getCode(), accountRecordDTO.getAccount());
+					if (accountReference == null) {
+						accountReference = new AccountDTO();
+						accountReference.setDocument(iReference.getDocumentId());
+						accountReference.setCatalog(_item.getCatalog());
+						accountReference.setCode(iReference.getCode().toUpperCase());
+						accountReference.setName(iReference.getName());
+						accountReference.setParent(accountRecordDTO.getAccount());
+						accountReference.setType(AccountConst.TYPE_AUXILIAR);
+						accountReference = createAccountService.call(accountReference);
+					}
+					_auxiliar.setAccount(accountReference.getKey());
+					
+					_line.getReferences().add(_auxiliar);
 				}
 			}
-			lines.add(line);
+			
+			lines.add(_line);
 		}
 		voucher.setRecords(lines);
 
@@ -138,30 +158,18 @@ public class ApiAccountVoucherService {
 		if (account == null)
 			throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
 		if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
-            throw new ServerException("La cuenta " + account.getName() + " no es operativa, revisa que la cuenta no sea un auxiliar o un grupo");
+            throw new ServerException("La cuenta (" + account.getCode() + ") " + account.getName() + " no es operativa, revisa que la cuenta no sea un auxiliar o un grupo");
 		
 		if (lineVO.getReferences() != null && !lineVO.getReferences().isEmpty()) {
 			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {
-				AccountDTO accountReference = findAccount(catalog.getKey(), reference.getCode(), account.getKey());
-				if (accountReference == null) {
-					if (reference.getCode() == null)
-						throw new ServerException("Estamos creando los auxiliares de " + account.getCode() + " Necesitamos un codigo para relacionar la cuenta, gracias");
-					if (reference.getName() == null)
-						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
-					if (reference.getDocumentId() == null)
-						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
-					if (reference.getDocumentId().length() > 32 )
-						throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
-					accountReference = new AccountDTO();
-					accountReference.setDocument(reference.getDocumentId());
-					accountReference.setCatalogDocument(catalog.getDocument());
-					accountReference.setCode(reference.getCode().toUpperCase());
-					accountReference.setName(reference.getName());
-					accountReference.setParent(account.getKey());
-					accountReference.setType(AccountConst.TYPE_AUXILIAR);
-					accountReference = createAccountService.call(accountReference);
-				}
-				reference.setCode(accountReference.getKey());
+				if (reference.getCode() == null || reference.getCode().isEmpty())
+					throw new ServerException("Estamos creando los auxiliares " +reference.getAuxiliar() +" de " + account.getCode() + " Necesitamos un codigo para relacionar la cuenta, gracias");
+				if (reference.getName() == null || reference.getCode().isEmpty())
+					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
+				if (reference.getDocumentId() == null || reference.getCode().isEmpty())
+					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
+				if (reference.getDocumentId().length() > 32 )
+					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
 			}
 		}
 		return account;

@@ -1,4 +1,4 @@
-package com.accounting.plan.application.base;
+package com.accounting.voucher.application.base;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,27 +8,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.ValueDimensionDTO;
-import com.accounting.plan.domain.ValueDimensionFilterDTO;
-import com.accounting.plan.infrastructure.ValueDimensionMapper;
+import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
+import com.accounting.voucher.domain.AccountRecordAuxiliarFilterDTO;
+import com.accounting.voucher.infrastructure.AccountRecordAuxiliarMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 
-@Service("ValueDimensionAccountingService")
-public class ValueDimensionService {
+@Service("AccountRecordAuxiliarAccountingService")
+public class AccountRecordAuxiliarService {
 
 	@Autowired @Lazy
-	private ValueDimensionMapper mapper;
+	private AccountRecordAuxiliarMapper mapper;
 
-	public ValueDimensionDTO getById(String id) throws ServerException {
+	public AccountRecordAuxiliarDTO getById(String id) throws ServerException {
 		if (id == null)
-			throw new ServerException("La llave del DTO se encuentra vacia. ValueDimension");
-		ValueDimensionFilterDTO dto = new ValueDimensionFilterDTO();
+			throw new ServerException("La llave del DTO se encuentra vacia. AccountRecordAuxiliar");
+		AccountRecordAuxiliarFilterDTO dto = new AccountRecordAuxiliarFilterDTO();
 		dto.setKey(id);
 		return mapper.getOne(dto);
 	}
 
-	public ValueDimensionDTO getOne(ValueDimensionFilterDTO dto) throws ServerException {
+	public AccountRecordAuxiliarDTO getOne(AccountRecordAuxiliarFilterDTO dto) throws ServerException {
 		try {
 			return mapper.getOne(dto);
 		} catch (BindingException ex) {
@@ -38,7 +38,7 @@ public class ValueDimensionService {
 		}
 	}
 
-	public List<ValueDimensionDTO> getMany(ValueDimensionFilterDTO dto) throws ServerException {
+	public List<AccountRecordAuxiliarDTO> getMany(AccountRecordAuxiliarFilterDTO dto) throws ServerException {
 		if (dto.getStartRow() == null)
 			dto.setStartRow(0);
 		if (dto.getEndRow() == null || dto.getEndRow() == 0)
@@ -52,7 +52,7 @@ public class ValueDimensionService {
 		}
 	}
 
-	public int count(ValueDimensionFilterDTO dto) throws ServerException {
+	public int count(AccountRecordAuxiliarFilterDTO dto) throws ServerException {
 		try {
 			return mapper.count(dto);
 		} catch (BindingException ex) {
@@ -62,7 +62,7 @@ public class ValueDimensionService {
 		}
 	}
 
-	public void save(ValueDimensionDTO dto) throws ServerException {
+	public void save(AccountRecordAuxiliarDTO dto) throws ServerException {
 		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
@@ -73,7 +73,7 @@ public class ValueDimensionService {
 		}
 	}
 
-	public void update(ValueDimensionDTO dto) throws ServerException {
+	public void update(AccountRecordAuxiliarDTO dto) throws ServerException {
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -83,8 +83,8 @@ public class ValueDimensionService {
 		}
 	}
 
-	public ValueDimensionDTO delete(String id) throws ServerException {
-		ValueDimensionDTO dto = getById(id);
+	public AccountRecordAuxiliarDTO delete(String id) throws ServerException {
+		AccountRecordAuxiliarDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
 		if (dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)

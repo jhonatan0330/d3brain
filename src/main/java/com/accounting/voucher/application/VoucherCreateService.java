@@ -21,12 +21,14 @@ import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.StackVoucherDTO;
 import com.accounting.plan.domain.TypeDTO;
+import com.accounting.voucher.application.base.AccountRecordAuxiliarService;
 import com.accounting.voucher.application.base.AccountRecordService;
 import com.accounting.voucher.application.base.VoucherService;
-import com.accounting.voucher.domain.AccountRecordDTO;
+import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherDTO;
 import com.accounting.voucher.domain.VoucherFilterDTO;
+import com.accounting.voucher.domain.VoucherLine;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
@@ -45,6 +47,8 @@ public class VoucherCreateService {
 	private VoucherService voucherService;
 	@Autowired @Lazy 
 	private AccountRecordService recordService;
+	@Autowired @Lazy 
+	private AccountRecordAuxiliarService auxiliarService;
 	@Autowired @Lazy 
 	private ConsecutivoSvc consecutiveService;
 	@Autowired @Lazy 
@@ -79,8 +83,8 @@ public class VoucherCreateService {
 	}
 
 	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO) throws ServerException {
-		for (AccountRecordDTO item : _voucher.getRecords()) {
-			AccountDTO account = accountService.getById(item.getAccount());
+		for (VoucherLine item : _voucher.getRecords()) {
+			AccountDTO account = accountService.getById(item.getLine().getAccount());
 			if (account == null)
 				throw new ServerException("La cuenta no existe en la base de datos");
 			if (account.getCatalog().compareTo(catalogDTO.getKey()) != 0)
@@ -89,28 +93,20 @@ public class VoucherCreateService {
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
 			createMapLine(catalogDTO, account);
 
-			// Para Mejorar
-			if (item.getThird()!=null) {
-				AccountDTO third = accountService.getById(item.getThird());
-				if (third == null)
-					throw new ServerException("El tercero no existe en la base de datos");
-				if (third.getCatalog().compareTo(catalogDTO.getKey()) != 0)
-					throw new ServerException("El tercero no pertenece al catalogo. " + third.getName());
-				if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-					throw new ServerException("El tercero no se encuentra activo. " + third.getName());
-				createMapLine(catalogDTO, third);
+			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
+				for (AccountRecordAuxiliarDTO iAuxiliar : item.getReferences()) {
+					AccountDTO third = accountService.getById(iAuxiliar.getAccount());
+					if (third == null)
+						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no existe en la base de datos");
+					if (third.getCatalog().compareTo(catalogDTO.getKey()) != 0)
+						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no pertenece al catalogo. " + third.getName());
+					if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no se encuentra activo. " + third.getName());
+					createMapLine(catalogDTO, third);
+				}
+				
 			}
-			
-			if (item.getCenter()!=null) {
-				AccountDTO center = accountService.getById(item.getCenter());
-				if (center == null)
-					throw new ServerException("El centro de costo no existe en la base de datos");
-				if (center.getCatalog().compareTo(catalogDTO.getKey()) != 0)
-					throw new ServerException("El centro de costo no pertenece al catalogo. " + center.getName());
-				if (center.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-					throw new ServerException("El centro de costo no se encuentra activo. " + center.getName());
-				createMapLine(catalogDTO, center);
-			}
+
 		}
 	}
 
@@ -135,11 +131,19 @@ public class VoucherCreateService {
 
 
 	private void saveRecords(String catalogCode, Voucher _voucher, String headerId) throws ServerException {
-		for (AccountRecordDTO item : _voucher.getRecords()) {
-			if (item.getAccount() != null) {
-				item.setVoucher(headerId);
-				item.setCatalogCode(catalogCode);
-				recordService.save(item);
+		for (VoucherLine item : _voucher.getRecords()) {
+			if (item.getLine().getAccount() != null) {
+				item.getLine().setVoucher(headerId);
+				item.getLine().setCatalogCode(catalogCode);
+				recordService.save(item.getLine());
+				
+				if(item.getReferences()!=null) {
+					for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
+						iAux.setVoucher(headerId);
+						iAux.setRecordLine(item.getLine().getKey());
+						auxiliarService.save(iAux);
+					}
+				}
 			}
 		}
 	}
@@ -154,27 +158,44 @@ public class VoucherCreateService {
 		if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
 			throw new ServerException("El valor total del comprobante no esta diligenciado");
 		BigDecimal valueAllRecords = BigDecimal.ZERO;
-		List<AccountRecordDTO> toRemove = new ArrayList<>();
-		for (AccountRecordDTO recordAccount : _voucher.getRecords()) {
-			if (recordAccount.getAccount() != null && recordAccount.getAccount().isEmpty())
-				recordAccount.setAccount(null);
-			if (recordAccount.getPositive() == null)
-				recordAccount.setPositive(BigDecimal.ZERO);
-			if (recordAccount.getNegative() == null)
-				recordAccount.setNegative(BigDecimal.ZERO);
-			recordAccount.setValue(recordAccount.getPositive().add(recordAccount.getNegative().negate()));
-			if (recordAccount.getAccount() == null && recordAccount.getValue().compareTo(BigDecimal.ZERO) != 0)
-				throw new ServerException("Existe un registro con valor " + recordAccount.getValue()
+		List<VoucherLine> toRemove = new ArrayList<>();
+		for (VoucherLine iVoucherLine : _voucher.getRecords()) {
+
+			if (iVoucherLine.getLine().getAccount() != null && iVoucherLine.getLine().getAccount().isEmpty())
+				iVoucherLine.getLine().setAccount(null);
+			if (iVoucherLine.getLine().getPositive() == null)
+				iVoucherLine.getLine().setPositive(BigDecimal.ZERO);
+			if (iVoucherLine.getLine().getNegative() == null)
+				iVoucherLine.getLine().setNegative(BigDecimal.ZERO);
+			iVoucherLine.getLine().setValue(iVoucherLine.getLine().getPositive().add(iVoucherLine.getLine().getNegative().negate()));
+			if (iVoucherLine.getLine().getAccount() == null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) != 0)
+				throw new ServerException("Existe un registro con valor " + iVoucherLine.getLine().getValue()
 						+ " pero no tiene una cuenta asignada");
-			if (recordAccount.getAccount() != null && recordAccount.getValue().compareTo(BigDecimal.ZERO) == 0)
+			if (iVoucherLine.getLine().getAccount() != null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0)
 				throw new ServerException("Existe un registro sin valor pero no tiene una cuenta asignada");
-			if (recordAccount.getAccount() == null && recordAccount.getValue().compareTo(BigDecimal.ZERO) == 0) {
-				toRemove.add(recordAccount);
+			if (iVoucherLine.getLine().getAccount() == null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0) {
+				toRemove.add(iVoucherLine);
 			} else {
-				valueAllRecords = valueAllRecords.add(recordAccount.getPositive());
-				if (recordAccount.getNote() != null && recordAccount.getNote().isEmpty())
-					recordAccount.setNote(null);
-				recordAccount.setFactDate(_voucher.getHeader().getFactDate());
+				valueAllRecords = valueAllRecords.add(iVoucherLine.getLine().getPositive());
+				if (iVoucherLine.getLine().getNote() != null && iVoucherLine.getLine().getNote().isEmpty())
+					iVoucherLine.getLine().setNote(null);
+				iVoucherLine.getLine().setFactDate(_voucher.getHeader().getFactDate());
+			
+			}
+			if(iVoucherLine.getReferences()!=null && !iVoucherLine.getReferences().isEmpty()) {
+				for (AccountRecordAuxiliarDTO iReference : iVoucherLine.getReferences()) {
+					
+					if (iReference.getAuxiliarType() == null || iReference.getAuxiliarType().isEmpty())
+						throw new ServerException("Existe un registro con valor " + iVoucherLine.getLine().getAccountCode()
+								+ " con una referencia auxiliar que no tiene el tipo");
+					
+					if (iReference.getAuxiliarCode() != null && iReference.getAuxiliarCode().isEmpty())
+						iReference.setAuxiliarCode(null);
+					if (iReference.getAuxiliarName() != null && iReference.getAuxiliarName().isEmpty())
+						iReference.setAuxiliarName(null);
+					if (iReference.getAuxiliarDocumentId() != null && iReference.getAuxiliarDocumentId().isEmpty())
+						iReference.setAuxiliarDocumentId(null);
+				}
 			}
 		}
 		
@@ -207,7 +228,7 @@ public class VoucherCreateService {
 		_voucher.getHeader().setCreatedUser(token.getUser());
 		_voucher.getHeader().setCreatedUserName(token.getUserName());
 		// Desde Angular viene una ultima linea vacia
-		for (AccountRecordDTO item : toRemove) {
+		for (VoucherLine item : toRemove) {
 			_voucher.getRecords().remove(item);
 		}
 	}

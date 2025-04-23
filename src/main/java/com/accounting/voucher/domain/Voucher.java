@@ -5,7 +5,7 @@ import java.util.List;
 public class Voucher {
 
 	private VoucherDTO header;
-	private List<AccountRecordDTO> records;
+	private List<VoucherLine> records;
 	
 	public VoucherDTO getHeader() {
 		return header;
@@ -13,10 +13,10 @@ public class Voucher {
 	public void setHeader(VoucherDTO voucher) {
 		this.header = voucher;
 	}
-	public List<AccountRecordDTO> getRecords() {
+	public List<VoucherLine> getRecords() {
 		return records;
 	}
-	public void setRecords(List<AccountRecordDTO> records) {
+	public void setRecords(List<VoucherLine> records) {
 		this.records = records;
 	}
 	

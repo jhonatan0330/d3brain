@@ -20,8 +20,9 @@ import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.voucher.application.base.AccountRecordService;
-import com.accounting.voucher.domain.AccountRecordDTO;
+import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
 import com.accounting.voucher.domain.Voucher;
+import com.accounting.voucher.domain.VoucherLine;
 import com.shared.domain.ServerException;
 import com.softure.process_form.application.ConsecutivoSvc;
 
@@ -57,14 +58,13 @@ public class VoucherCalculateService {
 	}
 
 	private void calculateBalance(Voucher _voucher) throws ServerException {
-		for (AccountRecordDTO item : _voucher.getRecords()) {
-			saveMap(item.getAccount(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
-			// Para mejorar el tema de las dimensiones
-			if (item.getThird() != null) {
-				saveMap(item.getThird(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
-			}
-			if (item.getCenter() != null) {
-				saveMap(item.getCenter(), item.getFactDate(), item.getPositive(), item.getNegative(), item.getValue());
+		for (VoucherLine item : _voucher.getRecords()) {
+			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), item.getLine().getPositive(), item.getLine().getNegative(), item.getLine().getValue());
+			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
+				for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
+					if(iAux.getAccount()!= null)
+					saveMap(iAux.getAccount(), item.getLine().getFactDate(), item.getLine().getPositive(), item.getLine().getNegative(), item.getLine().getValue());	
+				}
 			}
 		}
 	}

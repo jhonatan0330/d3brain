@@ -133,119 +133,6 @@
 					]
 				},
 				{
-					"name": "Dimension",
-					"table": "dimension",
-					"prefix": "dim",
-					"attributes": [
-						{
-							"name": "account",
-							"tableName": "cuenta",
-							"type": "CLASS"
-						},
-						{
-							"name": "name",
-							"tableName": "nombre",
-							"type": "STRING"
-						},
-						{
-							"name": "code",
-							"tableName": "codigo",
-							"type": "STRING"
-						},
-						{
-							"name": "field",
-							"tableName": "campo",
-							"type": "CLASS"
-						},
-						{
-							"name": "type",
-							"tableName": "tipo",
-							"type": "STRING",
-							"size": 1
-						}
-					]
-				},
-				{
-					"name": "FormatVoucher",
-					"table": "formato",
-					"prefix": "frm",
-					"attributes": [
-						{
-							"name": "catalog",
-							"tableName": "catalogo",
-							"type": "CLASS"
-						},
-						{
-							"name": "template",
-							"tableName": "plantilla",
-							"type": "CLASS"
-						}
-					]
-				},
-				{
-					"name": "FormatLine",
-					"table": "linea",
-					"prefix": "lin",
-					"attributes": [
-						{
-							"name": "format",
-							"tableName": "formato",
-							"type": "CLASS"
-						},
-						{
-							"name": "account",
-							"tableName": "cuenta",
-							"type": "CLASS"
-						},
-						{
-							"name": "description",
-							"tableName": "description",
-							"type": "STRING",
-							"size": 200,
-							"optional": true
-						},
-						{
-							"name": "positive",
-							"tableName": "positivo",
-							"type": "STRING",
-							"optional": true
-						},
-						{
-							"name": "negative",
-							"tableName": "negativo",
-							"type": "STRING",
-							"optional": true
-						}
-					]
-				},
-				{
-					"name": "ValueDimension",
-					"table": "valor",
-					"prefix": "vlr",
-					"attributes": [
-						{
-							"name": "dimension",
-							"tableName": "dimension",
-							"type": "CLASS"
-						},
-						{
-							"name": "value",
-							"tableName": "valor",
-							"type": "STRING"
-						},
-						{
-							"name": "code",
-							"tableName": "codigo",
-							"type": "STRING"
-						},
-						{
-							"name": "template",
-							"tableName": "plantilla",
-							"type": "CLASS"
-						}
-					]
-				},
-				{
 					"name": "Type",
 					"table": "tipocomprobante",
 					"prefix": "tcm",
@@ -534,95 +421,51 @@
 							"name": "value",
 							"tableName": "valor",
 							"type": "NUMBER"
-						},
-						{
-							"name": "third",
-							"tableName": "tercero",
-							"type": "CLASS",
-							"optional": true
-						},
-						{
-							"name": "thirdId",
-							"tableName": "terceroid",
-							"type": "STRING",
-							"size": 200,
-							"optional": true
-						},
-						{
-							"name": "thirdName",
-							"tableName": "terceronombre",
-							"type": "STRING",
-							"size": 200,
-							"optional": true
-						},
-						{
-							"name": "center",
-							"tableName": "centrocosto",
-							"type": "CLASS",
-							"optional": true
-						},
-						{
-							"name": "centerId",
-							"tableName": "centrocostoid",
-							"type": "STRING",
-							"size": 200,
-							"optional": true
-						},
-						{
-							"name": "centerName",
-							"tableName": "centrocostonombre",
-							"type": "STRING",
-							"size": 200,
-							"optional": true
-						}
+						}						
 					]
-				}
-			]
-		},
-		{
-			"name": "Hechos contables",
-			"code": "fact",
-			"schema": "account",
-			"entities": [
+				},
 				{
-					"name": "Fact",
-					"table": "hecho",
-					"prefix": "hch",
+					"name": "AccountRecordAuxiliar",
+					"table": "registroauxiliar",
+					"prefix": "rax",
 					"attributes": [
 						{
-							"name": "registerDate",
-							"tableName": "fecharegistro",
-							"type": "DATETIME"
-						},
-						{
-							"name": "factDate",
-							"tableName": "fechaevento",
-							"type": "DATETIME"
-						},
-						{
-							"name": "dimension",
-							"tableName": "dimension",
+							"name": "voucher",
+							"tableName": "comprobante",
 							"type": "CLASS"
 						},
 						{
-							"name": "value",
-							"tableName": "valor",
-							"type": "STRING"
-						},
-						{
-							"name": "code",
-							"tableName": "codigo",
-							"type": "STRING"
-						},
-						{
-							"name": "template",
-							"tableName": "plantilla",
+							"name": "recordLine",
+							"tableName": "registro",
 							"type": "CLASS"
 						},
 						{
-							"name": "id",
-							"tableName": "id",
-							"type": "STRING"
+							"name": "account",
+							"tableName": "cuenta",
+							"type": "CLASS"
+						},
+						{
+							"name": "auxiliarType",
+							"tableName": "auxiliartipo",
+							"type": "CLASS"
+						},
+						{
+							"name": "auxiliarDocumentId",
+							"tableName": "auxiliardocumento",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "auxiliarCode",
+							"tableName": "auxiliarcode",
+							"type": "STRING",
+							"size": 200
+						},
+						{
+							"name": "auxiliarName",
+							"tableName": "auxiliarnombre",
+							"type": "STRING",
+							"size": 200
 						}
 					]
 				}

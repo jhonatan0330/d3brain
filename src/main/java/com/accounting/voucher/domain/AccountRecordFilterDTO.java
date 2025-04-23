@@ -21,12 +21,6 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
-	private String third;
-	private String thirdId;
-	private String thirdName;
-	private String center;
-	private String centerId;
-	private String centerName;
 
 	public String getCatalogCode() {
 		return catalogCode;
@@ -114,54 +108,6 @@ public class AccountRecordFilterDTO extends SharedDataObjectFilter {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
-	}
-
-	public String getThird() {
-		return third;
-	}
-
-	public void setThird(String third) {
-		this.third = third;
-	}
-
-	public String getThirdId() {
-		return thirdId;
-	}
-
-	public void setThirdId(String thirdId) {
-		this.thirdId = thirdId;
-	}
-
-	public String getThirdName() {
-		return thirdName;
-	}
-
-	public void setThirdName(String thirdName) {
-		this.thirdName = thirdName;
-	}
-
-	public String getCenter() {
-		return center;
-	}
-
-	public void setCenter(String center) {
-		this.center = center;
-	}
-
-	public String getCenterId() {
-		return centerId;
-	}
-
-	public void setCenterId(String centerId) {
-		this.centerId = centerId;
-	}
-
-	public String getCenterName() {
-		return centerName;
-	}
-
-	public void setCenterName(String centerName) {
-		this.centerName = centerName;
 	}
 
 }
