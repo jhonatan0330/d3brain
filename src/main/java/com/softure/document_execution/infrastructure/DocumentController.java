@@ -1,6 +1,7 @@
 package com.softure.document_execution.infrastructure;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,10 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.inventory.application.ProductoInventarioSvc;
 import com.softure.inventory.domain.ProductoInventarioDTO;
+import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
+import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.upload.application.UploadSvc;
 
 @RestController
@@ -40,6 +43,9 @@ public class DocumentController {
 	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired @Lazy  private ActividadSvc actividadService;
 	@Autowired @Lazy  private ProductoInventarioSvc inventoryService;
+	@Autowired @Lazy private MailReleaseMessageQueueService releaseQueueService;
+	@Autowired @Lazy private ProcesoTransicionAutomaticaSvc transicionservice;
+
 	
 	@PostMapping(value="/getDocument")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token) throws ServerException  {
@@ -90,4 +96,16 @@ public class DocumentController {
 		return inventoryService.getByProducto(id);
 	}
 	
+	@GetMapping("/ping_mail")
+	public String sendMail() throws ServerException {
+		return "******* CORREOS (" + releaseQueueService.call() + ") ***" + new Date().toString();
+	}
+
+	@GetMapping("/ping_task")
+	public String sendTemporizer() throws ServerException {
+		int _launch = transicionservice.lanzarTransaccionesTemporizadas();
+		int _prepare = transicionservice.programateAll();
+		return "*******TAREAS (" + _launch +") ***  PROGRAMADAS ("+ _prepare +") ***"  + new Date().toString();
+	}
+
 }

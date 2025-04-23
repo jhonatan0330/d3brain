@@ -232,9 +232,8 @@ public class SoftureConfiguration {
 	@Scheduled(fixedDelayString = "${fixedDelayTask.in.milliseconds}")
 	public void sendTemporizer() throws ServerException {
 		if (env.getProperty("cron.task").compareTo("true") == 0) {
-			System.out.println("*******TAREAS****" + new Date().toString());
-			transicionservice.lanzarTransaccionesTemporizadas();
-			transicionservice.programateAll();
+			System.out.println("*******TAREAS (" + transicionservice.lanzarTransaccionesTemporizadas() +") ***" + new Date().toString());
+			System.out.println("*******TAREAS PROGRAMADAS (" + transicionservice.programateAll() +") ***" + new Date().toString());
 		}
 	}
 

@@ -127,10 +127,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		// END ProcesoTransicionAutomatica_guardar
 	}
 
-	public void lanzarTransaccionesTemporizadas() {
+	public int lanzarTransaccionesTemporizadas() {
 		List<ProcesoTransicionAutomaticaDTO> transiciones = procesoTransicionAutomaticaMapper.consultarPendientes();
-		if(transiciones ==null || transiciones.isEmpty()) return;
-		List<ProcesoTransicionAutomaticaDTO> transaccionesEjecutadas = null;
+		if(transiciones ==null || transiciones.isEmpty()) return 0;
+		List<ProcesoTransicionAutomaticaDTO> transaccionesEjecutadas = new ArrayList<ProcesoTransicionAutomaticaDTO>();
 		for (ProcesoTransicionAutomaticaDTO procesoTransicionAutomaticaDTO : transiciones) {
 			ProcesoTransicionAutomaticaDTO previousValidate = containsTransicion(transaccionesEjecutadas, procesoTransicionAutomaticaDTO);
 			procesoTransicionAutomaticaDTO.setEjecucion(new Date());
@@ -155,11 +155,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					}
 				}
 			}
-			if(previousValidate == null) {
-				if(transaccionesEjecutadas == null) transaccionesEjecutadas = new ArrayList<ProcesoTransicionAutomaticaDTO>();
+			if(previousValidate == null) 
 				transaccionesEjecutadas.add(procesoTransicionAutomaticaDTO);
-			}
 		}
+		return transaccionesEjecutadas.size();
 	}
 	
 	// Con el objetivo que no se duplique la ejecucion de una transicion se mira que ese tipo no se ejecutara antes
@@ -180,9 +179,10 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		return null;
 	}
 	
-	public void programateAll() throws ServerException {
+	public int programateAll() throws ServerException {
+		int _count= 0;
 		List<PropiedadDTO> faltantes = propiedadService.consultarTemporizadoresPendientes();
-		if(faltantes==null || faltantes.isEmpty()) return;
+		if(faltantes==null || faltantes.isEmpty()) return _count;
 		for (PropiedadDTO propiedadDTO : faltantes) {
 			Date fechaProgramada = null;
 			String error = null;
@@ -216,6 +216,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				}else {
 					programar.setMensaje(propiedadDTO.getMotivo());
 				}
+				_count++;
 			} else {
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
@@ -229,6 +230,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
 			save(programar);
 		}
+		return _count;
 	}
 
 	private Date calcularFecha(Date ultimaEjecucion, String valor) throws ServerException {
