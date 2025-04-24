@@ -38,6 +38,11 @@
 							"name": "document",
 							"tableName": "documento",
 							"type": "CLASS"
+						},
+						{
+							"name": "template",
+							"tableName": "plantila",
+							"type": "CLASS"
 						}
 					]
 				},

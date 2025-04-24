@@ -16,6 +16,7 @@ public class CatalogDTO extends SharedParamObject{
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date finalDate;
 	private String document;
+	private String template;
 
 	public String getName() {
 		return name;
@@ -55,6 +56,14 @@ public class CatalogDTO extends SharedParamObject{
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 }

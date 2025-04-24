@@ -39,32 +39,42 @@ import com.softure.process_form.domain.ConsecutivoDTO;
 @Service
 public class VoucherCreateService {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CatalogService catalogService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private AccountService accountService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private VoucherService voucherService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private AccountRecordService recordService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private AccountRecordAuxiliarService auxiliarService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ConsecutivoSvc consecutiveService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ResultMapExtendService mapService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private TimeFrameService timeFrameService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private StackVoucherService stackBasicService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private TypeService typeService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
 		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
 		validateInfoHeaderAndRecords(_voucher, token, catalogDTO.getCode());
-		
+
 		configureAccounts(_voucher, catalogDTO);
 		voucherService.save(_voucher.getHeader());
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
@@ -93,18 +103,21 @@ public class VoucherCreateService {
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
 			createMapLine(catalogDTO, account);
 
-			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
+			if (item.getReferences() != null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAuxiliar : item.getReferences()) {
 					AccountDTO third = accountService.getById(iAuxiliar.getAccount());
 					if (third == null)
-						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no existe en la base de datos");
+						throw new ServerException(
+								"El auxiliar " + iAuxiliar.getAuxiliarType() + " no existe en la base de datos");
 					if (third.getCatalog().compareTo(catalogDTO.getKey()) != 0)
-						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no pertenece al catalogo. " + third.getName());
+						throw new ServerException("El auxiliar " + iAuxiliar.getAuxiliarType()
+								+ " no pertenece al catalogo. " + third.getName());
 					if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-						throw new ServerException("El auxiliar " +iAuxiliar.getAuxiliarType()+ " no se encuentra activo. " + third.getName());
+						throw new ServerException("El auxiliar " + iAuxiliar.getAuxiliarType()
+								+ " no se encuentra activo. " + third.getName());
 					createMapLine(catalogDTO, third);
 				}
-				
+
 			}
 
 		}
@@ -116,19 +129,21 @@ public class VoucherCreateService {
 			account.setInitialDate(catalogDTO.getInitialDate());
 			account.setFinalDate(catalogDTO.getFinalDate());
 			accountService.update(account);
-			if(account.getParent()!=null) createMapLine(catalogDTO, accountService.getById(account.getParent()));	
-		}else {
-			/*if (account.getInitialDate().compareTo(_voucher.getHeader().getFactDate()) > 0)
-				throw new ServerException(
-						"La cuenta no ha generado el esquema de valores, la fecha inicial de la cuenta es mayor a la fecha del voucher.");
-			if (account.getFinalDate().compareTo(_voucher.getHeader().getFactDate()) < 0)
-				throw new ServerException(
-						"La cuenta no ha generado el esquema de valores, la fecha final de la cuenta es menor a la fecha del voucher.");*/	
+			if (account.getParent() != null)
+				createMapLine(catalogDTO, accountService.getById(account.getParent()));
+		} else {
+			/*
+			 * if (account.getInitialDate().compareTo(_voucher.getHeader().getFactDate()) >
+			 * 0) throw new ServerException(
+			 * "La cuenta no ha generado el esquema de valores, la fecha inicial de la cuenta es mayor a la fecha del voucher."
+			 * ); if (account.getFinalDate().compareTo(_voucher.getHeader().getFactDate()) <
+			 * 0) throw new ServerException(
+			 * "La cuenta no ha generado el esquema de valores, la fecha final de la cuenta es menor a la fecha del voucher."
+			 * );
+			 */
 		}
-		
-	}
-	
 
+	}
 
 	private void saveRecords(String catalogCode, Voucher _voucher, String headerId) throws ServerException {
 		for (VoucherLine item : _voucher.getRecords()) {
@@ -136,8 +151,8 @@ public class VoucherCreateService {
 				item.getLine().setVoucher(headerId);
 				item.getLine().setCatalogCode(catalogCode);
 				recordService.save(item.getLine());
-				
-				if(item.getReferences()!=null) {
+
+				if (item.getReferences() != null) {
 					for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
 						iAux.setVoucher(headerId);
 						iAux.setRecordLine(item.getLine().getKey());
@@ -148,7 +163,8 @@ public class VoucherCreateService {
 		}
 	}
 
-	private void validateInfoHeaderAndRecords(Voucher _voucher, SharedToken token, String catalogoCode) throws ServerException {
+	private void validateInfoHeaderAndRecords(Voucher _voucher, SharedToken token, String catalogoCode)
+			throws ServerException {
 		if (_voucher == null)
 			throw new ServerException("Es en serio no enviaste informacion");
 		if (_voucher.getHeader() == null)
@@ -157,7 +173,9 @@ public class VoucherCreateService {
 			throw new ServerException("Es curiosos pero no enviaste registros de cuentas");
 		if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
 			throw new ServerException("El valor total del comprobante no esta diligenciado");
-		BigDecimal valueAllRecords = BigDecimal.ZERO;
+		BigDecimal valueAllRecordsPositive = BigDecimal.ZERO;
+		BigDecimal valueAllRecordsNegative = BigDecimal.ZERO;
+		
 		List<VoucherLine> toRemove = new ArrayList<>();
 		for (VoucherLine iVoucherLine : _voucher.getRecords()) {
 
@@ -167,28 +185,34 @@ public class VoucherCreateService {
 				iVoucherLine.getLine().setPositive(BigDecimal.ZERO);
 			if (iVoucherLine.getLine().getNegative() == null)
 				iVoucherLine.getLine().setNegative(BigDecimal.ZERO);
-			iVoucherLine.getLine().setValue(iVoucherLine.getLine().getPositive().add(iVoucherLine.getLine().getNegative().negate()));
-			if (iVoucherLine.getLine().getAccount() == null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) != 0)
+			iVoucherLine.getLine()
+					.setValue(iVoucherLine.getLine().getPositive().add(iVoucherLine.getLine().getNegative().negate()));
+			if (iVoucherLine.getLine().getAccount() == null
+					&& iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) != 0)
 				throw new ServerException("Existe un registro con valor " + iVoucherLine.getLine().getValue()
 						+ " pero no tiene una cuenta asignada");
-			if (iVoucherLine.getLine().getAccount() != null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0)
+			if (iVoucherLine.getLine().getAccount() != null
+					&& iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0)
 				throw new ServerException("Existe un registro sin valor pero no tiene una cuenta asignada");
-			if (iVoucherLine.getLine().getAccount() == null && iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0) {
+			if (iVoucherLine.getLine().getAccount() == null
+					&& iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0) {
 				toRemove.add(iVoucherLine);
 			} else {
-				valueAllRecords = valueAllRecords.add(iVoucherLine.getLine().getPositive());
+				valueAllRecordsPositive = valueAllRecordsPositive.add(iVoucherLine.getLine().getPositive());
+				valueAllRecordsNegative = valueAllRecordsNegative.add(iVoucherLine.getLine().getNegative());
 				if (iVoucherLine.getLine().getNote() != null && iVoucherLine.getLine().getNote().isEmpty())
 					iVoucherLine.getLine().setNote(null);
 				iVoucherLine.getLine().setFactDate(_voucher.getHeader().getFactDate());
-			
+
 			}
-			if(iVoucherLine.getReferences()!=null && !iVoucherLine.getReferences().isEmpty()) {
+			if (iVoucherLine.getReferences() != null && !iVoucherLine.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iReference : iVoucherLine.getReferences()) {
-					
+
 					if (iReference.getAuxiliarType() == null || iReference.getAuxiliarType().isEmpty())
-						throw new ServerException("Existe un registro con valor " + iVoucherLine.getLine().getAccountCode()
-								+ " con una referencia auxiliar que no tiene el tipo");
-					
+						throw new ServerException(
+								"Existe un registro con valor " + iVoucherLine.getLine().getAccountCode()
+										+ " con una referencia auxiliar que no tiene el tipo");
+
 					if (iReference.getAuxiliarCode() != null && iReference.getAuxiliarCode().isEmpty())
 						iReference.setAuxiliarCode(null);
 					if (iReference.getAuxiliarName() != null && iReference.getAuxiliarName().isEmpty())
@@ -198,22 +222,27 @@ public class VoucherCreateService {
 				}
 			}
 		}
-		
+
 		TypeDTO type = typeService.getById(_voucher.getHeader().getType());
 		if (type == null)
 			throw new ServerException("No se reconoce el tipo de documento");
-		if (type.getService()!=null && _voucher.getHeader().getDocument() == null)
+		if (type.getService() != null && _voucher.getHeader().getDocument() == null)
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
-		
-		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE)==0 && _voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
-			throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
-					+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords + ")");
-		
+
+		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE) == 0) {
+			if (_voucher.getHeader().getValue().compareTo(valueAllRecordsPositive) != 0)
+				throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
+						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive + ")");
+			if (valueAllRecordsNegative.compareTo(valueAllRecordsPositive) != 0)
+				throw new ServerException("El valor de los valores negativos (" + valueAllRecordsNegative
+						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive + "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
+		}
+
 		ConsecutivoDTO consecutive = null;
 		if (type.getConsecutive() == null) {
 			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
 			newConsecutive.setNombre(type.getName());
-			newConsecutive.setPrefijo(catalogoCode +"_"+type.getCode() + "_");
+			newConsecutive.setPrefijo(catalogoCode + "_" + type.getCode() + "_");
 			newConsecutive.setNumeroInicial(new BigDecimal(1000));
 			newConsecutive.setNumeroActual(new BigDecimal(1000));
 			consecutive = consecutiveService.guardar(newConsecutive, token.getToken());
@@ -224,7 +253,7 @@ public class VoucherCreateService {
 		}
 		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
 		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
-		
+
 		_voucher.getHeader().setCreatedUser(token.getUser());
 		_voucher.getHeader().setCreatedUserName(token.getUserName());
 		// Desde Angular viene una ultima linea vacia
@@ -251,8 +280,6 @@ public class VoucherCreateService {
 		return catalogDTO;
 	}
 
-
-
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {
 		// Como no funciona el cosultar por id toca el getOne
 		VoucherFilterDTO filterVoucher = new VoucherFilterDTO();
@@ -265,8 +292,8 @@ public class VoucherCreateService {
 		voucherService.update(_voucher.getHeader());
 		return new SharedIdResponse(_voucher.getHeader().getKey(), _voucher.getHeader().getCode());
 	}
-	
-	public VoucherDTO delete(String voucherId) throws ServerException{
+
+	public VoucherDTO delete(String voucherId) throws ServerException {
 		return voucherService.delete(voucherId);
 	}
 }

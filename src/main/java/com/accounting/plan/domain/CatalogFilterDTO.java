@@ -16,6 +16,7 @@ public class CatalogFilterDTO extends SharedDataObjectFilter {
 	private Date finalDateMin;
 	private Date finalDateMax;
 	private String document;
+	private String template;
 
 	public String getName() {
 		return name;
@@ -71,6 +72,14 @@ public class CatalogFilterDTO extends SharedDataObjectFilter {
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(String template) {
+		this.template = template;
 	}
 
 }
