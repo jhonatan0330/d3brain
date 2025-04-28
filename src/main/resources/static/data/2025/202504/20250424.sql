@@ -6,4 +6,4 @@ update account.catalogo_ctg set cctg_plantila = (select cpdv_plantilla from pedi
 
 ALTER TABLE account.catalogo_ctg alter COLUMN cctg_plantila set not null;
 
-ALTER TABLE public.reporteejecucion_rejp DROP CONSTRAINT fk_reporteejecuciondocumento;
+ALTER TABLE public.reporteejecucion_rejp DROP CONSTRAINT if exists fk_reporteejecuciondocumento;

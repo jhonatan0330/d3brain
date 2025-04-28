@@ -42,18 +42,14 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 
 	@Override
 	public WebServiceDTO activar(WebServiceDTO dto, String token) throws ServerException {
-		// BEGIN WebService_activar
 		return super.activar(dto, token);
-		// END WebService_activar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO actualizar(WebServiceDTO dto, String token) throws ServerException {
-		// BEGIN WebService_actualizar
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return super.actualizar(dto, token);
-		// END WebService_actualizar
 	}
 
 	@Override
@@ -82,9 +78,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO guardar(WebServiceDTO dto, String token) throws ServerException {
-		// BEGIN WebService_guardar
 		return super.guardar(dto, token);
-		// END WebService_guardar
 	}
 
 	public List<WebServiceDTO> getFullToSynchronize(List<String> process) throws ServerException {
@@ -96,7 +90,36 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		return webServiceMapper.getFullToSynchronize(process);
 	}
 
-// BEGIN region aditionalMethods
-// END region aditionalMethods
+	public WebServiceDTO createVocherTemplate(String pToken, String pName, String pCode) throws ServerException {
+		WebServiceDTO ws = new WebServiceDTO();
+		ws.setCodigo(pCode);
+		ws.setNombre(pName);
+		ws.setTemplate("{\r\n"
+				+ "	\"catalog\": \"PUC2025\",\r\n"
+				+ "	\"concept\": \"\",\r\n"
+				+ "	\"factDate\": \"\",\r\n"
+				+ "	\"value\": \"\",\r\n"
+				+ "	\"document\": \"\",\r\n"
+				+ "	\"type\": \"\",\r\n"
+				+ "	\"lines\": [\r\n"
+				+ "			\"account\": \"\",\r\n"
+				+ "			\"debit\": \"\",\r\n"
+				+ "			\"note\": \"\",\r\n"
+				+ "			\"references\": [\r\n"
+				+ "				{\r\n"
+				+ "					\"auxiliar\": \"\",\r\n"
+				+ "					\"code\": \"\",\r\n"
+				+ "					\"documentId\": \"\",\r\n"
+				+ "					\"name\": \"\"\r\n"
+				+ "				}\r\n"
+				+ "			]\r\n"
+				+ "		}\r\n"
+				+ "	]\r\n"
+				+ "}");
+		ws.setUrl("http://localhost:8080/api_account/voucher");
+		ws = guardar(ws, pToken);
+		return ws;
+	}
+
 
 }

@@ -1,17 +1,15 @@
 package com.softure.property.application;
 
-// BEGIN region interImport
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.BindingException;
-import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-// END region interImport
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +28,6 @@ import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
-
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.BodegaDTO;
 import com.softure.inventory.domain.BodegaFilterDTO;
@@ -78,6 +75,8 @@ import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
+import jakarta.annotation.PostConstruct;
+
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
@@ -86,7 +85,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired @Lazy 
 	private PropiedadMapper propiedadMapper;
 
-	// BEGIN region servicesPropiedad
 	@Autowired @Lazy 
 	private BodegaSvc bodegaService;
 	@Autowired @Lazy 
@@ -130,7 +128,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private HomologateAdapterService homologateService;
 	@Autowired @Lazy 
 	private CreateAccountTemplateService createAccountService;
-	// END region servicesPropiedad
 
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
@@ -949,24 +946,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		case Propiedades.UPDATE_INFORMATIVE_FIELD:
 		case Propiedades.CAMPO_DIFERENCIAS:
-		case Propiedades.DEPENDE: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.DISPONIBILIDAD_CROQUIS: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.MODIFICAR_CAMPO: {
-			return identificadorCampo(dto, token);
-		}
+		case Propiedades.DISPONIBILIDAD_CROQUIS:
+		case Propiedades.MODIFICAR_CAMPO:
+		case Propiedades.DEPENDE: 
 		case Propiedades.FECHA_MAXIMA_CAMPO:
 		case Propiedades.FECHA_MINIMA_CAMPO:
-		case Propiedades.INFORMATIVE_DATA: {
-			return identificadorCampo(dto, token);
-		}
-		case Propiedades.PROCESO_VALOR: {
-			identificadorValorProceso(dto, token);
-			break;
-		}
 		case Propiedades.UBICACION:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE:
@@ -986,8 +970,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PLANTILLA_FECHA_FINAL:
 		case Propiedades.PLANTILLA_FECHA_INICIO:
 		case Propiedades.PLANTILLA_IMAGEN:
-		case Propiedades.RESPONSABLE: {
+		case Propiedades.RESPONSABLE: 
+		case Propiedades.INFORMATIVE_DATA: {
 			return identificadorCampo(dto, token);
+		}
+		case Propiedades.PROCESO_VALOR: {
+			identificadorValorProceso(dto, token);
+			break;
 		}
 		case Propiedades.ENCABEZADO: {
 			break;
@@ -1053,7 +1042,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.API_TRANSACCION:
 		case Propiedades.TEMPLATE_VOUCHER:
 		case Propiedades.API: {
-			identificadorApi(dto);
+			identificadorApi(dto, token);
 			break;
 		}
 		case Propiedades.MENSAJE_DESTINATARIO:
@@ -1256,7 +1245,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(bd.getNombre());
 	}
 
-	private void identificadorApi(PropiedadDTO dto) throws ServerException {
+	private void identificadorApi(PropiedadDTO dto, String token) throws ServerException {
+		
 		WebServiceDTO bd = apiService.consultaXId(dto.getValor());
 		// Si es actualizar valido por el id
 		if (bd == null) {
@@ -1271,9 +1261,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				bd = apiService.consultaUnica(bdFilter);
 			}
-			if (bd == null)
-				throw new ServerException("El api " + dto.getValor().toUpperCase()
-						+ "no fue reconocido para la propiedad " + dto.getKey());
+			if (bd == null) {
+				if (dto.getKey().compareTo(Propiedades.TEMPLATE_VOUCHER) == 0) {
+					if (dto.getValor().compareTo("*") == 0) {
+					
+						DocumentoPlantillaDTO _template = plantillaService.consultaXId(dto.getCampo());
+						if(_template ==null) throw new ServerException("Al crear el api no se identifico plantilla");
+						
+						WebServiceDTO ws = apiService.createVocherTemplate(token, _template.getNombre(), _template.getCodigo());
+						dto.setValor(ws.getLlaveTabla());
+					}
+				} else {
+					throw new ServerException("El api " + dto.getValor().toUpperCase()
+							+ "no fue reconocido para la propiedad " + dto.getKey());
+				}
+			}
 		}
 		dto.setValor(bd.getLlaveTabla());
 		dto.setTexto(bd.getNombre());

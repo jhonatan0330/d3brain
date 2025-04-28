@@ -121,7 +121,7 @@ public class TipoProceso {
 									|| result.getCampoDTO().getDocumentos() == null
 									|| result.getCampoDTO().getDocumentos().isEmpty())
 								throw new ServerException("Revisando el campo " + pCampo.getCampoDTO().getNombre()
-										+ " No se encuentra el documento con codigo : " + pCampo.getValorText());
+										+ " No se encuentra el documento con codigo : " + pCampo.getValorText() + ". Revisa permisos y el documento");
 							if (result.getCampoDTO().getDocumentos().size() > 1) {
 								for (PedidoVentaDTO iDocument : result.getCampoDTO().getDocumentos()) {
 									if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0 ||(iDocument.getDescripcion()!=null && iDocument.getDescripcion().compareTo(pCampo.getValorText())==0)) {

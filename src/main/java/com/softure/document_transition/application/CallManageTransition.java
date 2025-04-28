@@ -467,7 +467,7 @@ public class CallManageTransition {
 				for (Map.Entry<String, List<PedidoVentaDTO>> entry : documentRecentCreateInTransition.entrySet()) {
 					for (int i = 0; i < entry.getValue().size(); i++) {
 						PedidoVentaDTO pedidoVentaDTO = entry.getValue().get(i);
-						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, pedidoVentaDTO,
+						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO,
 								pedidoVentaDTO, token,
 								SharedConstants.PUNTO_COMA_DOBLE + "ITERADOR_NUMBER" + SharedConstants.IGUAL + i);
 						if (resultAPI.compareTo(SharedConstants.OK) != 0) {

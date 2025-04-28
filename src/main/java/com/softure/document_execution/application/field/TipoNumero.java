@@ -324,7 +324,7 @@ public class TipoNumero {
 		try {
 			return CalculatorUtil.calcular(formula);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+			throw new ServerException( "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " tiene el siguiente error : " +e.getMessage());
 		}
 	}
 

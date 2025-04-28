@@ -92,7 +92,7 @@ public class WebServiceCallPrepare {
 			return null;
 		String parameters = "";
 		parameters = getDirectParameters(service, document, parameters);
-		parameters = getSpecialParameter(service, document, modificador, token, parameters);
+		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
 		parameters = getBaseParameters(service, document, modificador, parameters);
 		if (parameters == "")
@@ -175,7 +175,7 @@ public class WebServiceCallPrepare {
 		return parameters;
 	}
 
-	private String getSpecialParameter(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+	private String getSpecialParameter(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterator,
 			String token, String parameters) throws ServerException {
 		// Especiales
 		List<PropiedadDTO> especiales = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_ESPECIAL);
@@ -200,12 +200,24 @@ public class WebServiceCallPrepare {
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
 									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
 									+ SharedConstants.IGUAL + document.getLlaveTabla();
+						if (modificador != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+						if (iterator != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID_ITERATOR"
+									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
+									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
 						break;
 					case "E_CODE_MODIFICATOR":
 						if (modificador != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
 									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
 									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+						if (iterator != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
+									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
 						break;
 					case "E_TOKEN":
 						if (token != null)
