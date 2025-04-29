@@ -241,15 +241,17 @@ public class SoftureConfiguration {
 
 	@Scheduled(fixedDelayString = "${fixedDelayApi.in.milliseconds}")
 	public void sendAPI() throws ServerException {
-		if (executeAPITask == null) {
-			if (apiService.hasPropertiesAsync()) {
-				executeAPITask = SharedConstants.OK;
-			} else {
-				executeAPITask = SharedConstants.NO_STRING;
+		if (env.getProperty("cron.api").compareTo("true") == 0) {
+			if (executeAPITask == null) {			
+				if (apiService.hasPropertiesAsync()) {
+					executeAPITask = SharedConstants.OK;
+				} else {
+					executeAPITask = SharedConstants.NO_STRING;
+				}
 			}
-		}
-		if (executeAPITask.compareTo(SharedConstants.OK) == 0) {
-			apiService.apiToTransaction();
+			if (executeAPITask.compareTo(SharedConstants.OK) == 0) {
+				apiService.apiToTransaction();
+			}	
 		}
 	}
 	
