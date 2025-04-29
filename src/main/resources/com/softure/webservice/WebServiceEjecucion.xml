@@ -237,7 +237,7 @@
 			and dwse_fechaejecucion is null 
 			and cwse_sincrona is not null
 		order by dwse_fecha
-		limit 100
+		limit 50
 	</select>
 	
 	<select id="hasPropertiesAsync" resultType="int">

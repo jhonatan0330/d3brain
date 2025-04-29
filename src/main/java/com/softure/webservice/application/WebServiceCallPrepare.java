@@ -201,11 +201,11 @@ public class WebServiceCallPrepare {
 									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
 									+ SharedConstants.IGUAL + document.getLlaveTabla();
 						if (modificador != null)
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID_MODIFICATOR"
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE +  "E_CODE_MODIFICATOR"
 									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
 									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
 						if (iterator != null)
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID_ITERATOR"
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE +  "E_CODE_ITERATOR"
 									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
 									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
 						break;
@@ -215,9 +215,13 @@ public class WebServiceCallPrepare {
 									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
 									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
 						if (iterator != null)
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ITERATOR"
 									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
 									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
+						if (document != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
+									+ SharedConstants.IGUAL + document.getLlaveTabla();
 						break;
 					case "E_TOKEN":
 						if (token != null)
