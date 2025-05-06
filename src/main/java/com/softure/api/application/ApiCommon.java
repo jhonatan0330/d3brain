@@ -47,6 +47,10 @@ public class ApiCommon {
 					assignateValueToProducts(fieldVO.getProducts(), productoService, detallePedidoVentaService, null));
 			break;
 		}
+		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
+			iCampo.setValorOpcion(fieldVO.getValue());
+			break;
+		}
 		default: {
 			iCampo.setValorText(fieldVO.getValue());
 			break;
@@ -54,7 +58,7 @@ public class ApiCommon {
 		}
 	}
 
-	private static boolean isUUID(String value) {
+	public static boolean isUUID(String value) {
 		if (value == null)
 			return false;
 		if (value.length() != 32)
@@ -134,7 +138,7 @@ public class ApiCommon {
 		if (results == null)
 			return documents;
 		for (PedidoVentaDTO pedidoVentaDTO : results) {
-			if(template!=null) {
+			if(template!=null && pedidoVentaDTO.getPlantilla()!=null) {
 				pedidoVentaDTO.setCaracteristicas(pedidoVentaCaracteristicaService
 						.listar2Documento(pedidoVentaDTO.getLlaveTabla(), pedidoVentaDTO.getHistorico()));
 				for (PedidoVentaCaracteristicaDTO field : pedidoVentaDTO.getCaracteristicas()) {

@@ -55,13 +55,22 @@ public class ApiGetFieldDataService {
 				ApiCommon.chooseValueToField(
 						iPrecondition, dependent,
 						productoService, detallePedidoVentaService);
-				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
-					dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,iPrecondition.getValue(), fieldDependent));
+				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+					if(ApiCommon.isUUID(iPrecondition.getValue())) {
+						dependent.setValorOpcion(iPrecondition.getValue());
+					}else {
+						dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,iPrecondition.getValue(), fieldDependent));
+					}
+					
+				}
+					
 				fieldFilter.getDependientes().add(dependent);
 			}
 		}
 		fieldFilter.setSecurityToken(token);
 		PedidoVentaCaracteristicaDTO fieldData = fieldService.completarDatosBase(fieldFilter);
+		//Los tipo numero lo quitan pero lso tipo proceso lo dejan
+		if(fieldData.getCampoDTO()==null)fieldData.setCampoDTO(fieldBD);
 		DataFieldResponse result = new DataFieldResponse();
 		result.setField(fieldData.getCampoDTO().getCodigo());
 		result.setInternalId(fieldData.getValorOpcion());

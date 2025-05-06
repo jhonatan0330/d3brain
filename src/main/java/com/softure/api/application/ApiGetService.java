@@ -32,6 +32,7 @@ public class ApiGetService {
 	public List<DocumentResponse> call(String token, DocumentFilterRequest filter) throws ServerException {
 		
 		if(token==null || token.isEmpty()) throw new ServerException("Es obligatorio enviar un token valido");
+		if(filter==null ) throw new ServerException("Por el momento es necesario que envies el nodo de document :( ");
 		DocumentoPlantillaDTO templateBD = templateService.consultarPorCodigo(filter.getTemplate());
 		if(templateBD==null) throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
 		templateBD = templateService.obtenerCampos(templateBD, token, true);
