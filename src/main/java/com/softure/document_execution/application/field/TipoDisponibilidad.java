@@ -98,7 +98,7 @@ public class TipoDisponibilidad {
 			if (funcion != null) {
 				campoService.validarDependientes(pBase, pCampo.getDependientes());
 				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-						funcion.getLlaveTabla(), pCampo.getDocumento(),
+						funcion.getLlaveTabla(), pCampo.getDocumento(), pCampo.getSecurityToken(),
 						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
@@ -220,7 +220,7 @@ public class TipoDisponibilidad {
 			if (funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-						funcion.getLlaveTabla(), pCampo.getLlaveTabla(),
+						funcion.getLlaveTabla(), pCampo.getLlaveTabla(), token,
 						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {

@@ -47,7 +47,7 @@ public class TipoNumero {
 			} else {
 				if (funcionCalculo!= null) {
 					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
-							funcionCalculo, pCampo.getDocumento(), pCampo.getDependientes());
+							funcionCalculo, pCampo.getDocumento(), token, pCampo.getDependientes());
 					if(valorCalculado==null) valorCalculado = BigDecimal.ZERO;
 					pCampo.setValorNumero(valorCalculado);
 				} else {
@@ -88,7 +88,7 @@ public class TipoNumero {
 								|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 										Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
 							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
-									funcionCalculo, pCampo.getDocumento(), pCampo.getDependientes());
+									funcionCalculo, pCampo.getDocumento(), token, pCampo.getDependientes());
 							// Algunas funciones no traen el valor del cero
 							if (valorCalculado == null)
 								valorCalculado = BigDecimal.ZERO;
@@ -193,7 +193,7 @@ public class TipoNumero {
 								Propiedades.FUNCION_NUMBER_ALL_CALCULATE_SAVE) != null)) {
 			if(pCampo.getDependientes()==null) pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo,
-					pCampo.getDocumento(), pCampo.getDependientes()));
+					pCampo.getDocumento(), token, pCampo.getDependientes()));
 			if (pCampo.getValorNumero() == null)
 				pCampo.setValorNumero(BigDecimal.ZERO);
 			formatText(pCampo);
@@ -335,6 +335,7 @@ public class TipoNumero {
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.NUMERO_FUNCION_SQL);
 		if (funcionCalculo != null) {
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
+			//Este ordenar esta como repetido porque en calcularNumeroFuncion tambiens e usa
 			List<PedidoVentaCaracteristicaDTO> newDependientes = campoService
 					.ordenarAlfabeticaDepende(pCampo.getDependientes());
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
@@ -346,7 +347,7 @@ public class TipoNumero {
 			}
 			try {
 				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo,
-						pCampo.getDocumento(), newDependientes));
+						pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}
@@ -354,6 +355,7 @@ public class TipoNumero {
 			
 			
 		}
+		// Es apra evitar enviar mucha informacion en el response
 		//pCampo.setCampoDTO(pBase);
 		pCampo.setCampoDTO(null);
 		pCampo.setDependientes(null);

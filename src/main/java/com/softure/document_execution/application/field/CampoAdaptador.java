@@ -27,6 +27,7 @@ public class CampoAdaptador {
 	@Autowired @Lazy  private TipoNumero tipoNumero;
 	@Autowired @Lazy  private TipoProceso tipoProceso;
 	@Autowired @Lazy  private TipoProductoLista tipoProductoLista;
+	@Autowired @Lazy  private TipoSeccion tipoSeccion;
 	@Autowired @Lazy  private TipoTexto tipoTexto;
 	
 	/**
@@ -124,6 +125,7 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.consultarDatosBase(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.GPS_MAP:{vResultado = tipoGPSMap.consultarDatosBase(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.SECCION:{vResultado = tipoSeccion.consultarDatosBase(pCampo);break;}
 			default:{break;}
 		}
 		//if(vResultado!=null) vResultado.setCampoDTO(pCampo.getCampoDTO());

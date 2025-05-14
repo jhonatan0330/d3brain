@@ -586,4 +586,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_283' , 'L', 'PLANTILLA ACTIVAR', 'PLANTILLA_ACTIVAR', 'REQUISITO');
-	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto, bpvd_solicitamotivo) 
+	VALUES('PROP_284' , 'C', 'SECCION FUNCION PARA VISIBILIDAD', 'SECCION_FUNCION_SQL', 'REQUISITO', 'S', true, true);

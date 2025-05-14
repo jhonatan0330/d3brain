@@ -296,11 +296,11 @@
 	</select>
 	
 	<select id="calcularNumeroFuncion" resultType="java.math.BigDecimal">
-		select propiedad_${sqlFuncionCalculo} (#{documento}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+		select propiedad_${sqlFuncionCalculo} (#{documento}, #{token}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
 	</select>
 	
 	<select id="calcularFechaFuncion" resultType="java.util.Date">
-		select propiedad_${sqlFuncionCalculo} (#{documento}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+		select propiedad_${sqlFuncionCalculo} (#{documento}, #{token}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
 	</select>
 	
 	<select id="consultarCampoCroquis" resultType="PedidoVentaCaracteristicaDTO">

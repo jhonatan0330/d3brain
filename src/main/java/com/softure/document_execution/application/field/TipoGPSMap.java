@@ -86,7 +86,7 @@ public class TipoGPSMap {
 			HashMap<String, DocumentoPlantillaCaracteristicaDTO> hmap = new HashMap<String, DocumentoPlantillaCaracteristicaDTO>();
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
 			List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-					funcionConsulta.getLlaveTabla(), pCampo.getDocumento(),
+					funcionConsulta.getLlaveTabla(), pCampo.getDocumento(), pCampo.getSecurityToken(),
 					campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			if (ocupados != null && !ocupados.isEmpty()) {
 				pCampo.setExpedientes(new ArrayList<>());

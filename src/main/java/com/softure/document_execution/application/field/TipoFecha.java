@@ -365,8 +365,8 @@ public class TipoFecha {
 				}
 			}
 			try {
-				pCampo.setValorFechaMax(campoService.calcularFechaFuncion(funcionCalculo.getLlaveTabla(),
-						pCampo.getDocumento(), newDependientes));
+				pCampo.setValorFechaMax(campoService.calcularFechaFuncion(funcionCalculo,
+						pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

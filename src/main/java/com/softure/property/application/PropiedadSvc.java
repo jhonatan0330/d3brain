@@ -210,6 +210,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				break;
 			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
 			case Propiedades.FECHA_FUNCION_SQL:
+			case Propiedades.SECCION_FUNCION_SQL:	
 			case Propiedades.NUMERO_FUNCION_SQL:
 				if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
 					propiedadMapper.eliminarFuncionNumerica(dto);					
@@ -297,11 +298,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("No se encuentra la propiedad con Id " + dto.getPropiedadValor());
 		dto.setTipo(valorDefinido.getOrigen());
 		dto.setKey(valorDefinido.getCodigo());
-		if (dto.getValor() != null) {
+		if (dto.getValor() != null)
 			dto.setValor(SoftureUtil.cleanStartEndSpaces(dto.getValor()));
-			if (dto.getValor().compareTo("-help") == 0)
-				throw new ServerException("Ayuda de " + dto.getKey() + "\n\n\n" + Propiedades.instrucciones(dto.getKey()));
-		}
 		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (!valorDefinido.getNecesitaDesarrollo())
 			dto.setFechaImplementacion(new Date());
@@ -376,6 +374,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				case Propiedades.DETALLE_TARIFARIO_SQL:
 					propiedadMapper.crearFuncionTarifas(dto);
 					break;
+				case Propiedades.SECCION_FUNCION_SQL:
 				case Propiedades.NUMERO_FUNCION_SQL:
 					if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
 						propiedadMapper.crearFuncionNumerica(dto);	

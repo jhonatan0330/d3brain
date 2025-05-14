@@ -239,7 +239,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return null;
 	}
 	
-	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, String token, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		if(propFunction ==null)	return BigDecimal.ZERO;
 		if(Propiedades.isFunctionNotFreeMarker(propFunction.getValor())) {
 			try {
@@ -247,7 +247,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 				// al final se carga pero en ibatis falla por el arrray vacio
 				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
 				if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
-				return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, dependientesOrdenados);
+				return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, token, dependientesOrdenados);
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(), "");
 			}	
@@ -271,14 +271,30 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
-	public Date calcularFechaFuncion(String sqlFuncionDecision, String documento, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
-		try {
-			List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
-			if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
-			return  pedidoVentaCaracteristicaMapper.calcularFechaFuncion(SoftureUtil.formatFunction(sqlFuncionDecision), documento, dependientesOrdenados);
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), "");
+	public Date calcularFechaFuncion(PropiedadDTO sqlFuncionDecision, String documento, String token, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+		if(sqlFuncionDecision ==null)	return null;
+		if(Propiedades.isFunctionNotFreeMarker(sqlFuncionDecision.getValor())) {
+			try {
+				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+				if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
+				return  pedidoVentaCaracteristicaMapper.calcularFechaFuncion(SoftureUtil.formatFunction(sqlFuncionDecision.getLlaveTabla()), documento, token, dependientesOrdenados);
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), "");
+			}
+		}else {
+			String parameters = "";
+			for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo() + SharedConstants.IGUAL;
+				
+				if(iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+					parameters = parameters + ((iProp.getValorNumero()==null)?"0":iProp.getValorNumero().toString());
+				}else {
+					parameters = parameters + ((iProp.getValorText()==null)?"0":iProp.getValorText());
+				}
+			}
+			return SoftureUtil.toDate(templatesService.generateOutputFile(sqlFuncionDecision.getValor(), parameters));
 		}
+		
 	}
 	
 	
@@ -289,9 +305,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	
 	// Aqui traigo en el valor auxiliar traigo la plantila y en el estado el estado del documento 
 	// para dibujar los colores y la plantilla
-	public List<PedidoVentaCaracteristicaDTO> camposOcupadosCroquis(String sqlFuncionDecision, String campoId, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+	public List<PedidoVentaCaracteristicaDTO> camposOcupadosCroquis(String sqlFuncionDecision, String campoId, String token , List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		try {
-			return  pedidoVentaCaracteristicaMapper.consultarCamposOcupados(SoftureUtil.formatFunction(sqlFuncionDecision), campoId, dependientes);
+			return  pedidoVentaCaracteristicaMapper.consultarCamposOcupados(SoftureUtil.formatFunction(sqlFuncionDecision), campoId, token, dependientes);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de campos ocupados : " + sqlFuncionDecision);
 		}

@@ -29,10 +29,10 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	List<PedidoVentaCaracteristicaDTO> listarParaReporte(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listarParaMensaje(@Param("documento") String documento, @Param("plantilla") String plantilla, @Param("propiedad") String propiedad, @Param("modificador") String modificador);
 	List<PedidoVentaCaracteristicaDTO> listarParaGestor(@Param("documento") String documento, @Param("transaccion") String transaccion);
-	BigDecimal calcularNumeroFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
-	Date calcularFechaFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+	BigDecimal calcularNumeroFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("token") String token, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+	Date calcularFechaFuncion(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("documento") String documento, @Param("token") String token, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	PedidoVentaCaracteristicaDTO consultarCampoCroquis(String nombreDocumento);
-	List<PedidoVentaCaracteristicaDTO> consultarCamposOcupados(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("campoId")String campoId, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+	List<PedidoVentaCaracteristicaDTO> consultarCamposOcupados(@Param("sqlFuncionCalculo") String sqlFuncionDecision, @Param("campoId")String campoId, @Param("token") String token, @Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
 	String getTemplate(String documento);
 	//String valueFieldProcessMultipleToPartialDivideDocument(String field);
 	String getUnique(PedidoVentaCaracteristicaDTO dto);
