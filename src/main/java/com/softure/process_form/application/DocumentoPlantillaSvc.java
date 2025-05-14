@@ -68,26 +68,26 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	@Override
 	public DocumentoPlantillaDTO activar(DocumentoPlantillaDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoPlantilla_activar
+		RolAccesoFilterDTO rolFilter = new RolAccesoFilterDTO();
+		rolFilter.setPlantilla(dto.getLlaveTabla());
+		rolFilter.setEstado(SharedConstants.STATE_INACTIVE);
+		RolAccesoDTO rol = rolService.consultaUnica(rolFilter);
+		if(rol!=null) rolService.activar(rol, token);
 		return super.activar(dto, token);
-		// END DocumentoPlantilla_activar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO actualizar( DocumentoPlantillaDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoPlantilla_actualizar
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.actualizar(dto, token);
 		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;
-		// END DocumentoPlantilla_actualizar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoPlantilla_inactivar
 		ProcesoTransicionFilterDTO validar = new ProcesoTransicionFilterDTO();
 		validar.setEstado(SharedConstants.STATE_ACTIVE);
 		validar.setPlantilla(dto.getLlaveTabla());
@@ -307,12 +307,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 	}
 	
-	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token) throws ServerException {
+	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token, String action) throws ServerException {
 		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
 		DocumentoPlantillaDTO templateDelete = new DocumentoPlantillaDTO();
 		templateDelete.setProceso(principalTemplate.getProceso());
-		templateDelete.setNombre(principalTemplate.getNombre() + " - DELETE");
-		templateDelete.setObjetivo(".");
+		templateDelete.setNombre(principalTemplate.getNombre() + " - " + action.toString());
 		templateDelete = guardar(templateDelete, token);
 		crearCampoProcesos(templateDelete.getLlaveTabla(), token);
 		crearCampoNombre(templateDelete.getLlaveTabla(), token);

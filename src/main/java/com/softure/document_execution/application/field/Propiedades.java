@@ -205,6 +205,7 @@ public class Propiedades {
 	public static final String PERMISO_CAMPO_OPCIONAL = "PERMISO_CAMPO_OPCIONAL";
 
 	public static final String PLANTILLA_ANULAR = "PLANTILLA_ANULAR";
+	public static final String PLANTILLA_ACTIVAR = "PLANTILLA_ACTIVAR";
 	public static final String PLANTILLA_DIFERENCIAS = "PLANTILLA_DIFERENCIAS";
 	public static final String CAMPO_DIFERENCIAS = "CAMPO_DIFERENCIAS";
 	public static final String PLANTILLA_TIPO_ROL = "PLANTILLA_TIPO_ROL";

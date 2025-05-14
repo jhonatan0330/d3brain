@@ -429,31 +429,24 @@ public class CallBPM {
 							saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO, updaterDTO,
 									token);
 							relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
+							
 							// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
 							// Estas lineas las copie de la opcion maquina de estados con gestionar estados
 						
-							List<String> caminosGestionar = getCaminos(pCampo);
-							if (caminosGestionar != null && !caminosGestionar.isEmpty()) {
-								List<String> caminosValidados = validarCamino(caminosGestionar, procesoDTO.getPlantilla());
-								if (caminosValidados.size() != 0) {
-									List<String> documentosGestionados = new ArrayList<String>();
-									documentosGestionados.add(pCampo.getDocumento());
-									BigDecimal saldoDoc = null;
-									// Me sucedio el probelma de validar lso saldos de un documento cuando son
-									// multiples
-									if (pCampo.getExpedientes().size() > 1) {
-										if (procesoDTO.getDinero() != null)
-											saldoDoc = procesoDTO.getDinero().getSaldo();
-									} else {
-										if (updaterDTO.getDinero() != null)
-											saldoDoc = updaterDTO.getDinero().getValorTotal();
-									}
-									doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, token, saldoDoc, 
-											caminosGestionar, documentosGestionados, 
-											pCampo.getTransaccionRegistro(),
-											caminosValidados,
-											procesoDTO.getNombre());	
-								}
+							bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO);
+						}else {
+							prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ACTIVAR, usuarioToken);
+							if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
+								procesoDTO.setEstado(SharedConstants.STATE_INACTIVE);
+								saveUpdateInactivateDocumentFunction.activateDocument(procesoDTO, updaterDTO,
+										token);
+								relacionarGestor(procesoDTO, updaterDTO, "ACTIVAR DOCUMENTO", token);
+								
+								// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
+								// Estas lineas las copie de la opcion maquina de estados con gestionar estados
+							
+								bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO);
 							}
 						}
 					}else {
@@ -488,6 +481,33 @@ public class CallBPM {
 		}
 
 		return pCampo;
+	}
+
+	private void bpmToDocumentWithoutStateMAchine(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO updaterDTO,
+			String token, PedidoVentaDTO procesoDTO) throws ServerException {
+		List<String> caminosGestionar = getCaminos(pCampo);
+		if (caminosGestionar != null && !caminosGestionar.isEmpty()) {
+			List<String> caminosValidados = validarCamino(caminosGestionar, procesoDTO.getPlantilla());
+			if (caminosValidados.size() != 0) {
+				List<String> documentosGestionados = new ArrayList<String>();
+				documentosGestionados.add(pCampo.getDocumento());
+				BigDecimal saldoDoc = null;
+				// Me sucedio el probelma de validar lso saldos de un documento cuando son
+				// multiples
+				if (pCampo.getExpedientes().size() > 1) {
+					if (procesoDTO.getDinero() != null)
+						saldoDoc = procesoDTO.getDinero().getSaldo();
+				} else {
+					if (updaterDTO.getDinero() != null)
+						saldoDoc = updaterDTO.getDinero().getValorTotal();
+				}
+				doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, token, saldoDoc, 
+						caminosGestionar, documentosGestionados, 
+						pCampo.getTransaccionRegistro(),
+						caminosValidados,
+						procesoDTO.getNombre());	
+			}
+		}
 	}
 
 	public void dividirDocumento(PedidoVentaDTO anterior, PedidoVentaDTO nuevo, String securityToken,

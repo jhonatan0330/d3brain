@@ -141,7 +141,6 @@ public class CallDocumentCRUD {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO inactivateDocumentWithProcess(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO,
 			String token) throws ServerException {
-		// BEGIN PedidoVenta_inactivar
 		PedidoVentaDTO bd = pedidoService.consultaXId(documentDTO.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null)
 			throw new ServerException("Para inactivar el expediente se debe usar un documento de transicion de estado");
@@ -158,13 +157,30 @@ public class CallDocumentCRUD {
 
 		documentDTO = pedidoService.inactivate(documentDTO);
 		manageTemplateTypes(documentDTO, null, token);
-		/*
-		 * if(Propiedades.obtenerParametro(dto.getPlantilla(),
-		 * Propiedades.PLANTILLA_TIPO_CUENTA) !=null) {
-		 * cuentaService.inactivarDocumento(dto); }
-		 */
+
 		return documentDTO;
-		// END PedidoVenta_inactivar
+	}
+	
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public PedidoVentaDTO activateDocument(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO,
+			String token) throws ServerException {
+		PedidoVentaDTO bd = pedidoService.consultaXId(documentDTO.getLlaveTabla());
+		if (bd.getEstadoExpediente() != null)
+			throw new ServerException("Para activar el expediente se debe usar un documento de transicion de estado");
+		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO, token);
+		/*String transaccion = documentDTO.getTransaccion();
+		if (transaccion == null)
+			transaccion = transaccionSvc.crear(token).getLlaveTabla();
+		for (PedidoVentaCaracteristicaDTO iterador : documentDTO.getCaracteristicas()) {
+			if (iterador.getCampoDTO() == null)
+				iterador.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(iterador.getCampo()));
+			iterador.setTransaccionInactivo(transaccion);
+			adaptador.activar(iterador, updaterDTO, token);
+		} */
+
+		documentDTO = pedidoService.activate(documentDTO);
+		manageTemplateTypes(documentDTO, null, token);
+		return documentDTO;
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

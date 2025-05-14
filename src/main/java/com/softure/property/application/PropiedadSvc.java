@@ -455,7 +455,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		boolean createDocument = false;// Es una ayudita porque se creaban 2 veces los campos diferencias
 		if (dto.getValor().compareTo("*") == 0) {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
-				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token);
+				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token, "DELETE");
+				dto.setValor(plantilla.getLlaveTabla());
+			}
+			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0) {
+				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token, "ACTIVATE");
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.REPORT_MODULE_REFERENCE) == 0) {
@@ -932,6 +936,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.COVERAGE_TEMPLATE:
 		case Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO:
 		case Propiedades.PLANTILLA_NUEVO_USUARIO:
+		case Propiedades.PLANTILLA_ACTIVAR:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;
@@ -1390,6 +1395,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (propiedadDTO.getKey().compareTo(Propiedades.PERMISO_PLANTILLA_ELIMINAR) == 0)
 				agregar = false; // CAsi siempre se borran estos permisos
 			if (propiedadDTO.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0)
+				agregar = false; // CAsi siempre se borran estos permisos
+			if (propiedadDTO.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0)
 				agregar = false; // CAsi siempre se borran estos permisos
 			if (agregar) {
 				PropiedadDTO newPropiedad = new PropiedadDTO();
