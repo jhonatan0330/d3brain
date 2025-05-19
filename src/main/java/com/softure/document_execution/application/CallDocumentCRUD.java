@@ -521,7 +521,7 @@ public class CallDocumentCRUD {
 				if (!campoEncontrado
 						&& campoPlantilla.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.SECCION) != 0)
 					throw new ServerException("Revisa porque el campo " + campoPlantilla.getNombre()
-							+ " no viene registrado en el documento " + plantilla.getNombre());
+							+ " no viene registrado en el documento " + plantilla.getNombre() + "\nCODE:caud_usuario");
 			}
 			dto.setCaracteristicas(ordenadas);
 			if (!isUpdateAutomatic && dto.getLlaveTabla() != null) {
