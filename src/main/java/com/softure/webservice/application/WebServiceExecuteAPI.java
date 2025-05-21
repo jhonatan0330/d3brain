@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
@@ -98,6 +100,7 @@ public class WebServiceExecuteAPI {
 		webServiceEjecucionSvc.save(callWS);
 	}
 	
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public String applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
 		
 		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, null, pToken, null);
@@ -326,14 +329,14 @@ public class WebServiceExecuteAPI {
 		// Reemplazos
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_CODE_REPLACE);
-		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties) );
+		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties, service.getLlaveTabla()) );
 		// Esto lo puedo unir con prepare, lo que sucede es que no quiero copiar en bd
 		// los parametros fijos
 		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
 		if (properties != null && !properties.isEmpty()) {
 			for (PropiedadDTO iProp : properties) {
 				callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), propiedadesSvc.obtenerPropiedades(
-						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null)));
+						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null), service.getLlaveTabla()));
 			}
 		}
 
@@ -419,7 +422,7 @@ public class WebServiceExecuteAPI {
 		return callWS;
 	}
 
-	public String prepareParameterFromProperties(String parameters, List<PropiedadDTO> replaceProperties)
+	public String prepareParameterFromProperties(String parameters, List<PropiedadDTO> replaceProperties, String apiId)
 			throws ServerException {
 		if (replaceProperties != null && !replaceProperties.isEmpty()) {
 			if (parameters == null)
@@ -431,6 +434,8 @@ public class WebServiceExecuteAPI {
 				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + SharedConstants.IGUAL
 						+ iProp.getValor();
 			}
+			if(apiId != null)
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "P_API_ID" + SharedConstants.IGUAL + apiId;
 		}
 		return parameters;
 	}

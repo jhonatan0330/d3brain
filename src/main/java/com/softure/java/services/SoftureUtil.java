@@ -64,9 +64,11 @@ public class SoftureUtil {
 	}
 
 	public static String formatDatePattern(Date fecha, String patternFormat) {
+		if(patternFormat.compareTo("LOCAL_API")==0) {
+			return formatDatePattern(fecha, "yyyy-MM-dd") + "T" + formatDatePattern(fecha, "HH:mm:ss") +  ".000-0500";
+		}
 		DateFormat format = new SimpleDateFormat(patternFormat);
-		if (fecha == null)
-			return "";
+		if (fecha == null) return "";
 		return format.format(fecha);
 	}
 

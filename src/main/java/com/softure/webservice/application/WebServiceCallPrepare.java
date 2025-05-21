@@ -228,6 +228,25 @@ public class WebServiceCallPrepare {
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
 									+ SharedConstants.IGUAL + token;
 						break;
+					case "E_ALL":
+						if (modificador != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+						if (iterator != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ITERATOR"
+									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
+									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
+						if (document != null) {
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
+									+ SharedConstants.IGUAL + document.getLlaveTabla();
+							if(document.getFecha()!=null)
+								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_FECHA"
+										+ SharedConstants.IGUAL +  SoftureUtil.formatDatePattern(document.getFecha(), "LOCAL_API");
+						}
+							
+						break;
 					default:
 						parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
 								+ SharedConstants.IGUAL + iProp.getValor();

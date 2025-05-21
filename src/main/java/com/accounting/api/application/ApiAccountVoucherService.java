@@ -130,14 +130,22 @@ public class ApiAccountVoucherService {
 		if (item.getLines() == null || item.getLines().isEmpty())
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag lines");
 
-		TypeFilterDTO typeFilter = new TypeFilterDTO();
-		typeFilter.setCatalog(catalog.getKey());
-		typeFilter.setCode(item.getType().toUpperCase());
-		typeFilter.setState(SharedConstants.STATE_ACTIVE);
-		TypeDTO type = typeService.getOne(typeFilter);
+		TypeFilterDTO _typeFilter = new TypeFilterDTO();
+		_typeFilter.setService(item.getType());
+		_typeFilter.setState(SharedConstants.STATE_ACTIVE);
+		TypeDTO type = typeService.getOne(_typeFilter);
+		
+		if(type ==null) {
+			TypeFilterDTO typeFilter = new TypeFilterDTO();
+			typeFilter.setCatalog(catalog.getKey());
+			typeFilter.setCode(item.getType().toUpperCase());
+			typeFilter.setState(SharedConstants.STATE_ACTIVE);
+			type = typeService.getOne(typeFilter);	
+		}
+		
 		if (type == null)
 			throw new ServerException("No se reconoce el tipo de documento");
-		if (type.getService()!=null && item.getDocument() == null)
+		if (type.getService()!=null && (item.getDocument() == null || item.getDocument().isEmpty()))
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 
 		item.setCatalog(catalog.getKey());

@@ -441,7 +441,7 @@ public class CallManageTransition {
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {
 			resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, null, token,
 					apiService.prepareParameterFromProperties(null,
-							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER)));
+							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER), propAPI.getValor()));
 		} else {
 			// Para el manifiesto primero se crea muchas remesas y despues un solo
 			// manifiesto
