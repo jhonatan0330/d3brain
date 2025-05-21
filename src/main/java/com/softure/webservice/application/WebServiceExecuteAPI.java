@@ -435,7 +435,7 @@ public class WebServiceExecuteAPI {
 						+ iProp.getValor();
 			}
 			if(apiId != null)
-				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "P_API_ID" + SharedConstants.IGUAL + apiId;
+				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_API_ID" + SharedConstants.IGUAL + apiId;
 		}
 		return parameters;
 	}
