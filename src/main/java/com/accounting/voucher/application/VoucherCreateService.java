@@ -213,10 +213,6 @@ public class VoucherCreateService {
 								"Existe un registro con valor " + iVoucherLine.getLine().getAccountCode()
 										+ " con una referencia auxiliar que no tiene el tipo");
 
-					if (iReference.getAuxiliarCode() != null && iReference.getAuxiliarCode().isEmpty())
-						iReference.setAuxiliarCode(null);
-					if (iReference.getAuxiliarName() != null && iReference.getAuxiliarName().isEmpty())
-						iReference.setAuxiliarName(null);
 					if (iReference.getAuxiliarDocumentId() != null && iReference.getAuxiliarDocumentId().isEmpty())
 						iReference.setAuxiliarDocumentId(null);
 				}

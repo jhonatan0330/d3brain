@@ -462,15 +462,13 @@
 						},
 						{
 							"name": "auxiliarCode",
-							"tableName": "auxiliarcode",
 							"type": "STRING",
-							"size": 200
+							"script": "select cc.ccue_codigo from account.cuenta_cue cc where ccue_llave = crax_cuenta"
 						},
 						{
 							"name": "auxiliarName",
-							"tableName": "auxiliarnombre",
 							"type": "STRING",
-							"size": 200
+							"script": "select cc.ccue_nombre from account.cuenta_cue cc where ccue_llave = crax_cuenta"
 						}
 					]
 				}

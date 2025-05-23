@@ -12,8 +12,8 @@
 			,crax_cuenta as account
 			,crax_auxiliartipo as auxiliarType
 			,crax_auxiliardocumento as auxiliarDocumentId
-			,crax_auxiliarcode as auxiliarCode
-			,crax_auxiliarnombre as auxiliarName
+			,(select cc.ccue_codigo from account.cuenta_cue cc where ccue_llave = crax_cuenta) as auxiliarCode
+			,(select cc.ccue_nombre from account.cuenta_cue cc where ccue_llave = crax_cuenta) as auxiliarName
 			,drax_creacionfecha as createdAt
 			,crax_creacionusuario as createdUser
 			,crax_creacionusuarionombre as createdUserName
@@ -31,8 +31,6 @@
 <if test="account!=null">		and crax_cuenta = #{account}</if>
 <if test="auxiliarType!=null">		and crax_auxiliartipo = #{auxiliarType}</if>
 <if test="auxiliarDocumentId!=null">		and crax_auxiliardocumento = #{auxiliarDocumentId}</if>
-<if test="auxiliarCode!=null">		and crax_auxiliarcode = #{auxiliarCode}</if>
-<if test="auxiliarName!=null">		and crax_auxiliarnombre = #{auxiliarName}</if>
 
 	</sql>
 
@@ -71,8 +69,6 @@
 		<if test="account!=null">,crax_cuenta</if>
 		<if test="auxiliarType!=null">,crax_auxiliartipo</if>
 		<if test="auxiliarDocumentId!=null">,crax_auxiliardocumento</if>
-		<if test="auxiliarCode!=null">,crax_auxiliarcode</if>
-		<if test="auxiliarName!=null">,crax_auxiliarnombre</if>
 		<if test="createdUser!=null">,crax_creacionusuario</if>
 		<if test="createdUserName!=null">,crax_creacionusuarionombre</if>
 		<if test="state!=null">,crax_estado</if>
@@ -82,8 +78,6 @@
 		<if test="account!=null">,#{account}</if>
 		<if test="auxiliarType!=null">,#{auxiliarType}</if>
 		<if test="auxiliarDocumentId!=null">,#{auxiliarDocumentId}</if>
-		<if test="auxiliarCode!=null">,#{auxiliarCode}</if>
-		<if test="auxiliarName!=null">,#{auxiliarName}</if>
 		<if test="createdUser!=null">,#{createdUser}</if>
 		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
@@ -98,8 +92,6 @@
 		crax_cuenta = #{account},
 		crax_auxiliartipo = #{auxiliarType},
 		crax_auxiliardocumento = #{auxiliarDocumentId},
-		crax_auxiliarcode = #{auxiliarCode},
-		crax_auxiliarnombre = #{auxiliarName},
 		crax_estado =#{state}
 		<include refid="whereAccountRecordAuxiliarPrimaryKeyFragment" />
 	</select>

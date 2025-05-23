@@ -82,8 +82,8 @@ public class VoucherCalculateService {
 				resultMapDTO.setNegative(resultMapDTO.getNegative().add(negative));
 			}
 			if (account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) {
-				resultMapDTO.setValue(resultMapDTO.getValue().add(value.negate()));
-				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value.negate()));
+				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
+				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
 			}else {
 				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
 				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));

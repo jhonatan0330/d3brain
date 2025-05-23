@@ -20,7 +20,6 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
-import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
@@ -47,11 +46,13 @@ public class WebServiceCallPrepare {
 	private PropiedadSvc propiedadesSvc;
 
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
-			String token, String userId, String initialPameters) throws ServerException {
+			String token, String initialPameters) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
+		String userId = webServiceSvc.getUserFlex(token);
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
+		//aqui ya viene con todoas las properties
 		String parameters = getParameters(service, document, modificador, iterador,  token);
 		if (initialPameters != null) {
 			parameters = parameters + initialPameters;
@@ -94,35 +95,12 @@ public class WebServiceCallPrepare {
 		parameters = getDirectParameters(service, document, parameters);
 		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
-		parameters = getBaseParameters(service, document, modificador, parameters);
 		if (parameters == "")
 			parameters = null;
 		return parameters;
 	}
 
-	// Falta evitar un ciclo infinito puede ser una funcion global que guarde string y que no se repitan esto esta en tipoproceso
-	private String getBaseParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			String parameters) throws ServerException {
-		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
-		if (properties == null || properties.isEmpty())return parameters; 
-		for (PropiedadDTO iProp : properties) {
-			//esta parte se puede centralizar para evitar referencias circulares
-			WebServiceDTO baseService = webServiceSvc.consultaXId(iProp.getValor());
-			if (baseService == null)
-				throw new ServerException("El id del servicio no se encuentra en la BD." + iProp.getValor());
-			if (baseService.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-				throw new ServerException("El servicio " + service.getNombre() + " no se encuentra Activo." + iProp.getValor());
-			// Obtengo propiedades del servicio
-			baseService.setPropiedades(
-					propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), null, null));
-			String baseParameter =  getParameters(baseService, document, modificador, null, parameters);
-			if(baseParameter!=null) {
-				if(parameters!=null & !parameters.isEmpty()) parameters =  parameters + SharedConstants.PUNTO_COMA_DOBLE;
-				parameters = parameters + baseParameter;
-			}
-		}
-		return parameters;
-	}
+	
 
 	private String getReferedParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
 			String parameters, PedidoVentaDTO iterador) throws ServerException {
@@ -239,7 +217,7 @@ public class WebServiceCallPrepare {
 									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
 						if (document != null) {
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
-									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ID"
 									+ SharedConstants.IGUAL + document.getLlaveTabla();
 							if(document.getFecha()!=null)
 								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_FECHA"

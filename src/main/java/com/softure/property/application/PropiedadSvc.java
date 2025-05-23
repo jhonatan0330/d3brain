@@ -738,7 +738,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		CatalogDTO catalog = catalogService.getById(dto.getValor());
 		if (catalog == null) {
 			CatalogFilterDTO filter = new CatalogFilterDTO();
-			filter.setCode(dto.getValor());
+			filter.setCode(dto.getValor().toUpperCase());
 			catalog = catalogService.getOne(filter);
 			if (catalog == null)
 				throw new ServerException("No se encontro un catalogo con nombre o Codigo que concuerde");
@@ -1082,6 +1082,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			validarTemporizador(dto);
 			break;
 		}
+		case Propiedades.API_ACCOUNT_CATALOG:
 		case Propiedades.PLANTILLA_MONITOR: {
 			identificadorCatalogo(dto);
 			break;
@@ -1272,12 +1273,14 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						DocumentoPlantillaDTO _template = plantillaService.consultaXId(dto.getCampo());
 						if(_template ==null) throw new ServerException("Al crear el api no se identifico plantilla");
 						
-						WebServiceDTO ws = apiService.createVocherTemplate(token, _template.getNombre(), _template.getCodigo());
-						dto.setValor(ws.getLlaveTabla());
+						bd = apiService.createVocherTemplate(token, _template.getNombre(), _template.getCodigo());
+					} else {
+						throw new ServerException("El api " + dto.getValor().toUpperCase()
+								+ " no fue reconocido para la propiedad " + dto.getKey());
 					}
 				} else {
 					throw new ServerException("El api " + dto.getValor().toUpperCase()
-							+ "no fue reconocido para la propiedad " + dto.getKey());
+							+ " no fue reconocido para la propiedad " + dto.getKey());
 				}
 			}
 		}

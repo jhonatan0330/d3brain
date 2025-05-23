@@ -127,19 +127,10 @@ public class WebServiceExecuteAPI {
 	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
 			String token, String previousParameter) throws ServerException {
 		// Valido existencia del servicio
-		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
-		if (service == null)
-			throw new ServerException("El id del servicio no se encuentra en la BD." + serviceId);
-		if (service.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-			throw new ServerException("El servicio " + service.getNombre() + " no se encuentra Activo." + serviceId);
-		// Obtengo propiedades del servicio
-		String userId = webServiceSvc.getUserFlex(token);
-		service.setPropiedades(
-				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
+		WebServiceDTO service = webServiceSvc.getByIdFullProperties(serviceId, token);
 		// Inicia ejecucion
 		log.info("[" + document.getNombre() + "] Procesando API (" + service.getNombre() + ")");
-		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token, userId,
-				previousParameter);
+		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token,	previousParameter);
 		String preValidation = propiedadesSvc.prevalidateAPI(service, apiBasic.getDocumento(),
 				apiBasic.getModificador(), apiBasic.getParametros());
 		if (preValidation != null) {
@@ -185,8 +176,7 @@ public class WebServiceExecuteAPI {
 		if (callWS.getFechaEjecucion() != null)
 			return SharedConstants.OK;
 		if (service.getPropiedades() == null) {
-			service.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
-					service.getLlaveTabla(), null, null));
+			service = webServiceSvc.getByIdFullProperties(service.getLlaveTabla(), token);
 		}
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
@@ -293,11 +283,7 @@ public class WebServiceExecuteAPI {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
-		WebServiceDTO previousEndPoint = webServiceSvc.consultaXId(previousProp.getValor());
-		if (previousEndPoint == null)
-			throw new ServerException("El id del servicio no se encuentra en la BD." + previousProp.getValor());
-		previousEndPoint.setPropiedades(propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
-				previousEndPoint.getLlaveTabla(), null, callWSUser));
+		WebServiceDTO previousEndPoint = webServiceSvc.getByIdFullProperties(previousProp.getValor(), token);
 		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
 		if (documentMain == null) {
@@ -307,7 +293,7 @@ public class WebServiceExecuteAPI {
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
-				callWSUser, parentParameters);
+				 parentParameters);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
 	}
 
@@ -332,13 +318,13 @@ public class WebServiceExecuteAPI {
 		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties, service.getLlaveTabla()) );
 		// Esto lo puedo unir con prepare, lo que sucede es que no quiero copiar en bd
 		// los parametros fijos
-		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
+		/*List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
 		if (properties != null && !properties.isEmpty()) {
 			for (PropiedadDTO iProp : properties) {
 				callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), propiedadesSvc.obtenerPropiedades(
 						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null), service.getLlaveTabla()));
 			}
-		}
+		}*/
 
 		String template = templatesService.generateOutputFile(service.getTemplate(), callWS.getParametersInexecution());
 		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), callWS.getParametersInexecution());

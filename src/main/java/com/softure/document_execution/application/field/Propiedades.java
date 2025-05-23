@@ -220,6 +220,7 @@ public class Propiedades {
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
+	public static final String API_ACCOUNT_CATALOG = "API_ACCOUNT_CATALOG";
 	public static final String REPORT_MODULE_REFERENCE = "REPORT_MODULE_REFERENCE";
 
 	public static final String GPS = "GPS";

@@ -31,6 +31,8 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
 import com.shared.domain.SharedToken;
+import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 
 @Service
 public class ApiAccountVoucherService {
@@ -50,6 +52,9 @@ public class ApiAccountVoucherService {
 	@Autowired
 	@Lazy
 	private PlanCreateAccountService createAccountService;
+	@Autowired
+	@Lazy
+	private PedidoVentaSvc documentService;
 
 	public SharedIdResponse call(SharedToken _token, VoucherRequest _item) throws ServerException {
 		validateItem(_item);
@@ -80,25 +85,25 @@ public class ApiAccountVoucherService {
 			if (accountRecordDTO.getReferences() != null && !accountRecordDTO.getReferences().isEmpty()) {
 				_line.setReferences(new ArrayList<>());
 				for (VoucherLineDimensionRequest iReference : accountRecordDTO.getReferences()) {
-					AccountRecordAuxiliarDTO _auxiliar = new AccountRecordAuxiliarDTO();
-					_auxiliar.setAuxiliarCode(iReference.getCode());
-					_auxiliar.setAuxiliarDocumentId(iReference.getDocumentId());
-					_auxiliar.setAuxiliarName(iReference.getName());
-					_auxiliar.setAuxiliarType(iReference.getAuxiliar());
-
-					AccountDTO accountReference = findAccount(_item.getCatalog(), iReference.getCode(), accountRecordDTO.getAccount());
+					
+					AccountDTO accountReference = findAccountByDocumentId(_item.getCatalog(), iReference.getDocumentId(), accountRecordDTO.getAccount());
 					if (accountReference == null) {
 						accountReference = new AccountDTO();
 						accountReference.setDocument(iReference.getDocumentId());
 						accountReference.setCatalog(_item.getCatalog());
-						accountReference.setCode(iReference.getCode().toUpperCase());
-						accountReference.setName(iReference.getName());
+						PedidoVentaDTO _document = documentService.consultaXId(iReference.getDocumentId());
+						if(_document == null)
+							throw new ServerException("No se encuentra el documento con id " + iReference.getDocumentId());
+						accountReference.setCode(_document.getNombre());
+						accountReference.setName((_document.getDescripcion()==null)? _document.getNombre() : _document.getDescripcion());
 						accountReference.setParent(accountRecordDTO.getAccount());
 						accountReference.setType(AccountConst.TYPE_AUXILIAR);
 						accountReference = createAccountService.call(accountReference);
 					}
+					AccountRecordAuxiliarDTO _auxiliar = new AccountRecordAuxiliarDTO();
+					_auxiliar.setAuxiliarDocumentId(iReference.getDocumentId());
+					_auxiliar.setAuxiliarType(iReference.getAuxiliar());
 					_auxiliar.setAccount(accountReference.getKey());
-					
 					_line.getReferences().add(_auxiliar);
 				}
 			}
@@ -162,7 +167,7 @@ public class ApiAccountVoucherService {
 
 	private AccountDTO getAccount(CatalogDTO catalog, VoucherLineRequest lineVO) throws ServerException {
 		
-		AccountDTO account = findAccount(catalog.getKey(), lineVO.getAccount(), null);
+		AccountDTO account = findAccountByCode(catalog.getKey(), lineVO.getAccount(), null);
 		if (account == null)
 			throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
 		if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
@@ -170,26 +175,31 @@ public class ApiAccountVoucherService {
 		
 		if (lineVO.getReferences() != null && !lineVO.getReferences().isEmpty()) {
 			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {
-				if (reference.getCode() == null || reference.getCode().isEmpty())
-					throw new ServerException("Estamos creando los auxiliares " +reference.getAuxiliar() +" de " + account.getCode() + " Necesitamos un codigo para relacionar la cuenta, gracias");
-				if (reference.getName() == null || reference.getCode().isEmpty())
-					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos el nombre de la cuenta para crearla");
-				if (reference.getDocumentId() == null || reference.getCode().isEmpty())
-					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
+				if (reference.getDocumentId() == null || reference.getDocumentId().isEmpty())
+					throw new ServerException("Estamos creando el auxiliar de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
 				if (reference.getDocumentId().length() > 32 )
-					throw new ServerException("Estamos creando el auxiliar "+ reference.getCode() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
+					throw new ServerException("Estamos creando el auxiliar "+ reference.getDocumentId() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
 			}
 		}
 		return account;
 	}
 
-	private AccountDTO findAccount(String catalogId, String accountCode, String parentId) throws ServerException {
+	private AccountDTO findAccountByCode(String catalogId, String accountCode, String parentId) throws ServerException {
 		AccountFilterDTO filterA = new AccountFilterDTO();
 		filterA.setCatalog(catalogId);
 		filterA.setParent(parentId);
 		filterA.setCode(accountCode.toUpperCase());
 		filterA.setState(SharedConstants.STATE_ACTIVE);
-		return  accountService.getOne(filterA);
+		return accountService.getOne(filterA);
+	}
+	
+	private AccountDTO findAccountByDocumentId(String catalogId, String documentId, String parentId) throws ServerException {
+		AccountFilterDTO filterA = new AccountFilterDTO();
+		filterA.setCatalog(catalogId);
+		filterA.setParent(parentId);
+		filterA.setCode(documentId);
+		filterA.setState(SharedConstants.STATE_ACTIVE);
+		return accountService.getOne(filterA);
 	}
 
 }
