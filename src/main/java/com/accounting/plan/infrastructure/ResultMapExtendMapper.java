@@ -32,5 +32,7 @@ public interface ResultMapExtendMapper {
 	List<AccountDTO> selectAccountExtendTime();
 	
 	TimeFrameDTO selectTimeFrameLevel(@Param("level") int level);
+	
+	BigDecimal getPreviousBalance(@Param("accountId") String accountId, @Param("timeFrameId") String timeFrameId);
 
 }

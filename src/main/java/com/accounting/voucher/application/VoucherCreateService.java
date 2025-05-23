@@ -12,9 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
-import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.application.base.StackVoucherService;
-import com.accounting.plan.application.base.TimeFrameService;
 import com.accounting.plan.application.base.TypeService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
@@ -59,12 +57,6 @@ public class VoucherCreateService {
 	private ConsecutivoSvc consecutiveService;
 	@Autowired
 	@Lazy
-	private ResultMapExtendService mapService;
-	@Autowired
-	@Lazy
-	private TimeFrameService timeFrameService;
-	@Autowired
-	@Lazy
 	private StackVoucherService stackBasicService;
 	@Autowired
 	@Lazy
@@ -101,7 +93,7 @@ public class VoucherCreateService {
 				throw new ServerException("La cuenta no pertenece al catalogo. " + account.getName());
 			if (account.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
-			createMapLine(catalogDTO, account);
+			//createMapLine(catalogDTO, account);
 
 			if (item.getReferences() != null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAuxiliar : item.getReferences()) {
@@ -115,34 +107,12 @@ public class VoucherCreateService {
 					if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 						throw new ServerException("El auxiliar " + iAuxiliar.getAuxiliarType()
 								+ " no se encuentra activo. " + third.getName());
-					createMapLine(catalogDTO, third);
+					//createMapLine(catalogDTO, third);
 				}
 
 			}
 
 		}
-	}
-
-	private void createMapLine(CatalogDTO catalogDTO, AccountDTO account) throws ServerException {
-		if (account.getInitialDate() == null || account.getFinalDate() == null) {
-			mapService.insertMapAccount(account.getKey(), catalogDTO.getInitialDate(), catalogDTO.getFinalDate());
-			account.setInitialDate(catalogDTO.getInitialDate());
-			account.setFinalDate(catalogDTO.getFinalDate());
-			accountService.update(account);
-			if (account.getParent() != null)
-				createMapLine(catalogDTO, accountService.getById(account.getParent()));
-		} else {
-			/*
-			 * if (account.getInitialDate().compareTo(_voucher.getHeader().getFactDate()) >
-			 * 0) throw new ServerException(
-			 * "La cuenta no ha generado el esquema de valores, la fecha inicial de la cuenta es mayor a la fecha del voucher."
-			 * ); if (account.getFinalDate().compareTo(_voucher.getHeader().getFactDate()) <
-			 * 0) throw new ServerException(
-			 * "La cuenta no ha generado el esquema de valores, la fecha final de la cuenta es menor a la fecha del voucher."
-			 * );
-			 */
-		}
-
 	}
 
 	private void saveRecords(String catalogCode, Voucher _voucher, String headerId) throws ServerException {

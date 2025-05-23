@@ -57,7 +57,18 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
+	
+	public BigDecimal getPreviousBalance(String accountId, String timeFrameId) throws ServerException {
+		try {
+			return mapper.getPreviousBalance(accountId, timeFrameId);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
 
+	/*
 	@SuppressWarnings("deprecation")
 	public void insertMapAccount(String accountId, Date startDate, Date endDate) throws ServerException {
 		try {
@@ -80,7 +91,7 @@ public class ResultMapExtendService {
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
+	}*/
 
 	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value)
 			throws ServerException {
@@ -103,15 +114,6 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
-	/*
-	 * private CatalogDTO getCatalog(String catalogId) throws ServerException { if
-	 * (catalogId == null) throw new
-	 * ServerException("Es necesario colcoar el Id del catalogo"); CatalogDTO
-	 * catalog = catalogService.getById(catalogId); if (catalog == null) throw new
-	 * ServerException("No se identifico un catalogo con el identificador " +
-	 * catalogId); return catalog; }
-	 */
 
 	public List<ResultMapDTO> getItemsAccount(String accountId, Date dateFact) throws ServerException {
 		Calendar dateFactCalendar = Calendar.getInstance();
@@ -146,32 +148,5 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
-	/*
-	 * @Transactional(value = "transactionManager", rollbackFor = Exception.class,
-	 * propagation = Propagation.REQUIRED) public void configureAccount() throws
-	 * ServerException { List<AccountDTO> accounts = getAccountWithTimeToExtend();
-	 * if (accounts != null && !accounts.isEmpty()) { HashMap<String, CatalogDTO>
-	 * hmap = new HashMap<String, CatalogDTO>();
-	 * 
-	 * for (AccountDTO accountDTO : accounts) { if
-	 * (!hmap.containsKey(accountDTO.getCatalog()))
-	 * hmap.put(accountDTO.getCatalog(), getCatalog(accountDTO.getCatalog()));
-	 * CatalogDTO catalog = hmap.get(accountDTO.getCatalog()); if
-	 * (accountDTO.getInitialDate() == null) { matrixService.call(accountDTO,
-	 * catalog.getInitialDate()); } else if (accountDTO.getFinalDate() == null) {
-	 * throw new
-	 * ServerException("Uy no deberia pasar esto en una cuenta que tenga fecha de inicio pero no de fin"
-	 * ); } else if (accountDTO.getInitialDate().compareTo(catalog.getInitialDate())
-	 * > 0) { Calendar calculateDate = new GregorianCalendar();
-	 * calculateDate.setTime(accountDTO.getInitialDate());
-	 * calculateDate.add(Calendar.DAY_OF_MONTH, -1); matrixService.call(accountDTO,
-	 * calculateDate.getTime()); } else if
-	 * (accountDTO.getFinalDate().compareTo(catalog.getFinalDate()) < 0) { Calendar
-	 * calculateDate = new GregorianCalendar();
-	 * calculateDate.setTime(accountDTO.getFinalDate());
-	 * calculateDate.add(Calendar.DAY_OF_MONTH, 1); matrixService.call(accountDTO,
-	 * calculateDate.getTime()); } } } }
-	 */
 
 }

@@ -46,6 +46,8 @@ public class PlanCreateCatalogService {
 			throw new ServerException("No se reconoce catalogo");
 		if (catalog.getCode() == null)
 			throw new ServerException("El codigo del catalogo es obligatorio");
+		if (catalog.getTemplate() == null)
+			throw new ServerException("La plantilla del catalogo es obligatorio");
 		if (!catalog.getCode().matches("[0-9A-Za-z]+"))
 			throw new ServerException(
 					"El codigo solo puede tener letras y numeros y no puede tener espacios.");
@@ -54,16 +56,21 @@ public class PlanCreateCatalogService {
 					"El codigo menos de 20 digitos");
 		if (catalog.getName() == null)
 			throw new ServerException("El nombre del catalogo es obligatorio");
-		if (catalog.getInitialDate() == null || catalog.getFinalDate() == null)
-			throw new ServerException("La fecha de inicio y de fin del catalogo es obligatorio");
-		if (catalog.getInitialDate().compareTo(catalog.getFinalDate()) > 0)
-			throw new ServerException("La fecha de inicio debe ser menor a la fecha de fin del catalogo");
+		if (catalog.getInitialDate() == null ) //|| catalog.getFinalDate() == null
+			throw new ServerException("La fecha de inicio del catalogo es obligatorio");
 		
-		Calendar fecha = Calendar.getInstance();
-	    fecha.setTime(catalog.getFinalDate());
-		int ultimoDiaDelMes = fecha.getActualMaximum(Calendar.DAY_OF_MONTH);
-        if(fecha.get(Calendar.DAY_OF_MONTH) != ultimoDiaDelMes)
-        	throw new ServerException("La fecha de fin del catalogo debe ser el último día del mes");
+		
+		if(catalog.getFinalDate()!=null) {
+			
+			if (catalog.getInitialDate().compareTo(catalog.getFinalDate()) > 0)
+				throw new ServerException("La fecha de inicio debe ser menor a la fecha de fin del catalogo");
+			
+			Calendar fecha = Calendar.getInstance();
+		    fecha.setTime(catalog.getFinalDate());
+			int ultimoDiaDelMes = fecha.getActualMaximum(Calendar.DAY_OF_MONTH);
+	        if(fecha.get(Calendar.DAY_OF_MONTH) != ultimoDiaDelMes)
+	        	throw new ServerException("La fecha de fin del catalogo debe ser el último día del mes");	
+		}
                
 		CatalogFilterDTO filter = new CatalogFilterDTO();
 		filter.setCode(catalog.getCode());
@@ -78,14 +85,21 @@ public class PlanCreateCatalogService {
 
 	private void createTemporalFrame(Date initialDate, Date finalDate) throws ServerException {
 
+		if(finalDate == null) {
+			Calendar fecha = Calendar.getInstance();
+			fecha.setTime(initialDate);
+			fecha.add(Calendar.YEAR, 5);
+			finalDate = fecha.getTime();
+		}
 		//Esta pensado para tener 5 niveles de detalle sino que los niveles 4 y 5 traen muchos registros
 		// La idea es colocar una propiedad que permita aumentar o reducir los niveles
-		int maxLevel = 3;
+		int maxLevel = 4;
 
 		TimeFrameDTO timeFrame = mapService.getTimeFrameLevel(0);
 		if (timeFrame.getStartDate() == null) {			
 			createLevel0(initialDate, finalDate);
 		} else {
+			//Esta parte es para actualizar el rango de fechas del nivel 0
 			boolean updateFlag = false;
 			if(initialDate.getTime()< timeFrame.getStartDate().getTime()) {
 				timeFrame.setStartDate(initialDate);
@@ -138,6 +152,7 @@ public class PlanCreateCatalogService {
 					createLevel4(initialDate, finalDate);
 				if (level == 5)
 					createLevel5(initialDate, finalDate);
+				// No necesito realizar la actualizacion de fecha final
 				return;
 			}
 		}

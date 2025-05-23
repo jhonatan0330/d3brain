@@ -64,6 +64,7 @@ public class HomologateCatalog {
 		if (newCatalog == null) {
 			newCatalog = new CatalogDTO();
 			newCatalog.setDocument(document.getLlaveTabla());
+			newCatalog.setTemplate(document.getPlantilla());
 			newCatalog.setFinalDate(CallDocumentCommons.getValueDate(document, "FECHA_FINAL"));
 			newCatalog.setInitialDate(CallDocumentCommons.getValueDate(document, "FECHA_INICIAL"));
 			newCatalog.setName(CallDocumentCommons.getValueText(document, "NOMBRE"));

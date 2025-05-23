@@ -119,18 +119,6 @@
 							"optional": true
 						},
 						{
-							"name": "initialDate",
-							"tableName": "fechainicial",
-							"type": "DATETIME",
-							"optional": true
-						},
-						{
-							"name": "finalDate",
-							"tableName": "fechafinal",
-							"type": "DATETIME",
-							"optional": true
-						},
-						{
 							"name": "document",
 							"tableName": "documento",
 							"type": "CLASS"

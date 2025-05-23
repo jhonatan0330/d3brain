@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.ResultMapExtendService;
+import com.accounting.plan.application.base.ResultMapService;
 import com.accounting.plan.application.base.TimeFrameService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
@@ -50,6 +51,9 @@ public class VoucherCalculateService {
 	@Autowired
 	@Lazy
 	private TimeFrameService timeFrameService;
+	@Autowired
+	@Lazy
+	private ResultMapService resultMapService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void call(String voucherId) throws ServerException {
@@ -76,13 +80,16 @@ public class VoucherCalculateService {
 		List<ResultMapDTO> mapItems = mapService.getItemsAccount(accountId, factDate);
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
+			if(resultMapDTO.getKey() == null) 
+				resultMapDTO = createMapLine( account, resultMapDTO.getTimeFrame());
+			
 			if (positive.compareTo(BigDecimal.ZERO) != 0) {
 				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive));
 			} else {
 				resultMapDTO.setNegative(resultMapDTO.getNegative().add(negative));
 			}
 			if (account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) {
-				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
+				resultMapDTO.setValue(resultMapDTO.getValue().add(value.negate()));
 				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
 			}else {
 				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
@@ -107,4 +114,22 @@ public class VoucherCalculateService {
 		}
 	}
 
+	
+	private ResultMapDTO createMapLine(AccountDTO pAccount, String pTimeFrame) throws ServerException {
+		
+		ResultMapDTO _map = new ResultMapDTO();
+		_map.setAccount(pAccount.getKey());
+		_map.setTimeFrame(pTimeFrame);
+		BigDecimal _value = mapService.getPreviousBalance(pAccount.getKey(), pTimeFrame);
+		if(_value != null) {
+			_map.setLastBalance(_value);
+			_map.setNextBalance(_value);
+		} 
+		resultMapService.save(_map);
+		return resultMapService.getById(_map.getKey());
+		
+		// mapService.insertMapAccount(account.getKey(), catalogDTO.getInitialDate(), catalogDTO.getFinalDate());
+				//if (pAccount.getParent() != null)
+					//createMapLine(accountService.getById(pAccount.getParent()), pTimeFrame);
+	}
 }

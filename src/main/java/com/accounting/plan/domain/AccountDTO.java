@@ -1,7 +1,5 @@
 package com.accounting.plan.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
@@ -21,10 +19,6 @@ public class AccountDTO extends SharedDataObject{
 	private String operation;
 	private String template;
 	private String field;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date initialDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date finalDate;
 	private String document;
 
 	public String getCatalog() {
@@ -121,22 +115,6 @@ public class AccountDTO extends SharedDataObject{
 
 	public void setField(String field) {
 		this.field = field;
-	}
-
-	public Date getInitialDate() {
-		return initialDate;
-	}
-
-	public void setInitialDate(Date initialDate) {
-		this.initialDate = initialDate;
-	}
-
-	public Date getFinalDate() {
-		return finalDate;
-	}
-
-	public void setFinalDate(Date finalDate) {
-		this.finalDate = finalDate;
 	}
 
 	public String getDocument() {

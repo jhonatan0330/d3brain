@@ -17,8 +17,6 @@
 			,ccue_naturaleza as operation
 			,ccue_plantilla as template
 			,ccue_campo as field
-			,dcue_fechainicial as initialDate
-			,dcue_fechafinal as finalDate
 			,ccue_documento as document
 			,dcue_creacionfecha as createdAt
 			,ccue_creacionusuario as createdUser
@@ -42,8 +40,6 @@
 <if test="operation!=null">		and ccue_naturaleza = #{operation}</if>
 <if test="template!=null">		and ccue_plantilla = #{template}</if>
 <if test="field!=null">		and ccue_campo = #{field}</if>
-<if test="initialDateMin!=null">		and dcue_fechainicial >= #{initialDateMin}</if><if test="initialDateMax!=null">		and dcue_fechainicial <![CDATA[ < ]]> #{initialDateMax}</if>
-<if test="finalDateMin!=null">		and dcue_fechafinal >= #{finalDateMin}</if><if test="finalDateMax!=null">		and dcue_fechafinal <![CDATA[ < ]]> #{finalDateMax}</if>
 <if test="document!=null">		and ccue_documento = #{document}</if>
 <if test="filter!=null">		and (upper(ccue_nombre) like upper('%' || #{filter} || '%') or upper(ccue_codigo) like upper('%' || #{filter} || '%'))</if>
 	</sql>
@@ -88,8 +84,6 @@
 		<if test="operation!=null">,ccue_naturaleza</if>
 		<if test="template!=null">,ccue_plantilla</if>
 		<if test="field!=null">,ccue_campo</if>
-		<if test="initialDate!=null">,dcue_fechainicial</if>
-		<if test="finalDate!=null">,dcue_fechafinal</if>
 		<if test="document!=null">,ccue_documento</if>
 		<if test="createdUser!=null">,ccue_creacionusuario</if>
 		<if test="createdUserName!=null">,ccue_creacionusuarionombre</if>
@@ -105,8 +99,6 @@
 		<if test="operation!=null">,#{operation}</if>
 		<if test="template!=null">,#{template}</if>
 		<if test="field!=null">,#{field}</if>
-		<if test="initialDate!=null">,#{initialDate}</if>
-		<if test="finalDate!=null">,#{finalDate}</if>
 		<if test="document!=null">,#{document}</if>
 		<if test="createdUser!=null">,#{createdUser}</if>
 		<if test="createdUserName!=null">,#{createdUserName}</if>
@@ -127,8 +119,6 @@
 		ccue_naturaleza = #{operation},
 		ccue_plantilla = #{template},
 		ccue_campo = #{field},
-		dcue_fechainicial = #{initialDate},
-		dcue_fechafinal = #{finalDate},
 		ccue_documento = #{document},
 		ccue_estado =#{state}
 		<include refid="whereAccountPrimaryKeyFragment" />

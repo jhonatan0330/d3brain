@@ -1,6 +1,5 @@
 package com.accounting.plan.domain;
 
-import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
 
@@ -21,10 +20,6 @@ public class AccountFilterDTO extends SharedDataObjectFilter {
 	private String operation;
 	private String template;
 	private String field;
-	private Date initialDateMin;
-	private Date initialDateMax;
-	private Date finalDateMin;
-	private Date finalDateMax;
 	private String document;
 
 	public String getCatalog() {
@@ -121,38 +116,6 @@ public class AccountFilterDTO extends SharedDataObjectFilter {
 
 	public void setField(String field) {
 		this.field = field;
-	}
-
-	public Date getInitialDateMin() {
-		return initialDateMin;
-	}
-
-	public void setInitialDateMin(Date initialDateMin) {
-		this.initialDateMin = initialDateMin;
-	}
-
-	public Date getInitialDateMax() {
-		return initialDateMax;
-	}
-
-	public void setInitialDateMax(Date initialDateMax) {
-		this.initialDateMax = initialDateMax;
-	}
-
-	public Date getFinalDateMin() {
-		return finalDateMin;
-	}
-
-	public void setFinalDateMin(Date finalDateMin) {
-		this.finalDateMin = finalDateMin;
-	}
-
-	public Date getFinalDateMax() {
-		return finalDateMax;
-	}
-
-	public void setFinalDateMax(Date finalDateMax) {
-		this.finalDateMax = finalDateMax;
 	}
 
 	public String getDocument() {
