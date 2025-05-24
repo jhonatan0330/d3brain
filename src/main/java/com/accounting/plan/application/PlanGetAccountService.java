@@ -26,10 +26,32 @@ public class PlanGetAccountService {
 		return accountService.getMany(filter);
 	}
 
-	public AccountDTO getById(String catalogId, String id) throws ServerException {
+	public AccountDTO getByCatalogAndId(String catalogId, String id) throws ServerException {
 		AccountFilterDTO filter = new AccountFilterDTO();
 		filter.setCatalog(catalogId);
 		filter.setKey(id);
 		return accountService.getOne(filter);
+	}
+	
+	public AccountDTO findAccountByCode(String catalogId, String accountCode, String parentId) throws ServerException {
+		AccountFilterDTO filterA = new AccountFilterDTO();
+		filterA.setCatalog(catalogId);
+		filterA.setParent(parentId);
+		filterA.setCode(accountCode.toUpperCase());
+		filterA.setState(SharedConstants.STATE_ACTIVE);
+		return accountService.getOne(filterA);
+	}
+	
+	public AccountDTO findAccountByDocumentId(String catalogId, String documentId, String parentId) throws ServerException {
+		AccountFilterDTO filterA = new AccountFilterDTO();
+		filterA.setCatalog(catalogId);
+		filterA.setParent(parentId);
+		filterA.setDocument(documentId);
+		filterA.setState(SharedConstants.STATE_ACTIVE);
+		return accountService.getOne(filterA);
+	}
+	
+	public AccountDTO getById( String id) throws ServerException {
+		return accountService.getById(id);
 	}
 }

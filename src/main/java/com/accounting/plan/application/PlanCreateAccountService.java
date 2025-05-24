@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.accounting.api.domain.VoucherRequest;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.domain.AccountConst;
@@ -15,6 +16,8 @@ import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 
 @Service("PlanCreateAccountTemplateAccountingService")
 public class PlanCreateAccountService {
@@ -24,7 +27,13 @@ public class PlanCreateAccountService {
 	private AccountService accountService;
 	@Autowired
 	@Lazy
+	private PlanGetAccountService planGetAccountService;
+	@Autowired
+	@Lazy
 	private CatalogService catalogService;
+	@Autowired
+	@Lazy
+	private PedidoVentaSvc documentService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account) throws ServerException {
@@ -114,5 +123,29 @@ public class PlanCreateAccountService {
 		return result;
 	}
 
+	public AccountDTO createAuxiliarAccount(VoucherRequest _item, String accountParentId,
+			String documentId) throws ServerException {
+		AccountDTO accountReference = new AccountDTO();
+		accountReference.setDocument(documentId);
+		accountReference.setCatalog(_item.getCatalog());
+		AccountDTO _parentAccount = accountService.getById(accountParentId);
+		if (_parentAccount == null)
+			throw new ServerException("No se identifica la cuenta");
+		
+		PedidoVentaDTO _document = documentService.consultaXId(documentId);
+		if(_document == null)
+			throw new ServerException("No se encuentra el documento con id " + documentId);
+		accountReference.setCode(_document.getNombre());
+		accountReference.setName((_document.getDescripcion()==null)? _document.getNombre() : _document.getDescripcion());
+		accountReference.setParent(accountParentId);
+		accountReference.setType(AccountConst.TYPE_AUXILIAR);
+		accountReference = call(accountReference);
+		if(_parentAccount.getParent()!=null) {
+			AccountDTO accountAuxParent = planGetAccountService.findAccountByDocumentId(_item.getCatalog(), documentId, _parentAccount.getParent());
+			if (accountAuxParent == null) 
+				createAuxiliarAccount(_item, _parentAccount.getParent(), documentId);
+		}
+		return accountReference;
+	}
 
 }

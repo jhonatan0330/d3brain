@@ -5,12 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,39 +36,23 @@ public class PlanAccountingRest {
 	private PlanGetBalanceService getBalanceService;
 	
 	@GetMapping("/balance/{catalog}")
-	public List<ResultMapDTO> getBalance(@PathVariable("catalog") String catalog, @RequestHeader("Authorization") String token) throws ServerException {
+	public List<ResultMapDTO> getBalance(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {
 		return getBalanceService.getBalance(catalog);
-	}
-	
-	
-	@PostMapping("/account")
-	public AccountDTO createAccount(@RequestBody AccountDTO account, @RequestHeader("Authorization") String token) throws ServerException {
-		return createAccountService.call(account);
-	}
-	
-	@PutMapping("/account")
-	public AccountDTO updateAccount(@RequestHeader("Authorization") String token, @RequestBody AccountDTO account) throws ServerException {
-		return createAccountService.callUpdate(account);
-	}
-	
-	@DeleteMapping("/account/{accountId}")
-	public AccountDTO deleteAccount(@PathVariable("acountId") String accountId, @RequestHeader("Authorization") String token) throws ServerException {
-		return createAccountService.callDelete(accountId);
-	}
+	}	
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable("catalog") String catalog, @RequestHeader("Authorization") String token, @RequestParam(value="filter", required = false) String filter) throws ServerException {
+	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
 		return getAccountService.getActive(catalog, filter);
 	}
 	
 	@GetMapping(value="/account/{catalog}/{id}")
-	public AccountDTO getAccountById(@PathVariable("catalog") String catalog, @PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return getAccountService.getById(catalog, id);
+	public AccountDTO getAccountById(@PathVariable String catalog, @PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return getAccountService.getByCatalogAndId(catalog, id);
 	}
 	
 	
 	@GetMapping(value="/catalog/{id}")
-	public CatalogDTO getCatalogById(@PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public CatalogDTO getCatalogById(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return getCatalogService.getById(id);
 	}
 	
@@ -81,7 +61,5 @@ public class PlanAccountingRest {
 		return getCatalogService.getActive();
 	}
 	
-
-
 
 }

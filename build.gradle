@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.3.9'
+	id 'org.springframework.boot' version '3.3.12'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'java'
 }
@@ -38,11 +38,8 @@ dependencies {
     }
 	implementation 'com.google.zxing:core:3.4.1'
 	implementation 'commons-net:commons-net:3.9.0'
-	//implementation 'commons-fileupload:commons-fileupload:1.5'
 	
 	implementation 'org.apache.commons:commons-fileupload2:2.0.0-M2'
-	//Esta la debo borrar y cambiar en algun momento con la nueva forma de subir archivos
-	//implementation 'org.apache.commons:commons-fileupload2-jakarta:2.0.0-M1'
 	
 	implementation 'org.apache.commons:commons-lang3:3.13.0'
 	implementation 'org.apache.commons:commons-csv:1.10.0'

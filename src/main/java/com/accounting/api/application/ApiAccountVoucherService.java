@@ -11,12 +11,11 @@ import com.accounting.api.domain.VoucherLineDimensionRequest;
 import com.accounting.api.domain.VoucherLineRequest;
 import com.accounting.api.domain.VoucherRequest;
 import com.accounting.plan.application.PlanCreateAccountService;
-import com.accounting.plan.application.base.AccountService;
+import com.accounting.plan.application.PlanGetAccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.TypeService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
-import com.accounting.plan.domain.AccountFilterDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.domain.TypeDTO;
@@ -31,8 +30,6 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
 import com.shared.domain.SharedToken;
-import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.domain.PedidoVentaDTO;
 
 @Service
 public class ApiAccountVoucherService {
@@ -45,16 +42,13 @@ public class ApiAccountVoucherService {
 	private CatalogService catalogService;
 	@Autowired
 	@Lazy
-	private AccountService accountService;
+	private PlanGetAccountService accountService;
 	@Autowired
 	@Lazy
 	private TypeService typeService;
 	@Autowired
 	@Lazy
 	private PlanCreateAccountService createAccountService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc documentService;
 
 	public SharedIdResponse call(SharedToken _token, VoucherRequest _item) throws ServerException {
 		validateItem(_item);
@@ -86,20 +80,10 @@ public class ApiAccountVoucherService {
 				_line.setReferences(new ArrayList<>());
 				for (VoucherLineDimensionRequest iReference : accountRecordDTO.getReferences()) {
 					
-					AccountDTO accountReference = findAccountByDocumentId(_item.getCatalog(), iReference.getDocumentId(), accountRecordDTO.getAccount());
-					if (accountReference == null) {
-						accountReference = new AccountDTO();
-						accountReference.setDocument(iReference.getDocumentId());
-						accountReference.setCatalog(_item.getCatalog());
-						PedidoVentaDTO _document = documentService.consultaXId(iReference.getDocumentId());
-						if(_document == null)
-							throw new ServerException("No se encuentra el documento con id " + iReference.getDocumentId());
-						accountReference.setCode(_document.getNombre());
-						accountReference.setName((_document.getDescripcion()==null)? _document.getNombre() : _document.getDescripcion());
-						accountReference.setParent(accountRecordDTO.getAccount());
-						accountReference.setType(AccountConst.TYPE_AUXILIAR);
-						accountReference = createAccountService.call(accountReference);
-					}
+					AccountDTO accountReference = accountService.findAccountByDocumentId(_item.getCatalog(), iReference.getDocumentId(), accountRecordDTO.getAccount());
+					if (accountReference == null) 
+						accountReference = createAccountService.createAuxiliarAccount(_item, accountRecordDTO.getAccount(), iReference.getDocumentId());
+					
 					AccountRecordAuxiliarDTO _auxiliar = new AccountRecordAuxiliarDTO();
 					_auxiliar.setAuxiliarDocumentId(iReference.getDocumentId());
 					_auxiliar.setAuxiliarType(iReference.getAuxiliar());
@@ -115,6 +99,8 @@ public class ApiAccountVoucherService {
 		return createService.call(voucher, _token);
 
 	}
+
+	
 
 	private void validateItem(VoucherRequest item) throws ServerException {
 		if (item.getCatalog() == null || item.getCatalog().isEmpty())
@@ -167,7 +153,7 @@ public class ApiAccountVoucherService {
 
 	private AccountDTO getAccount(CatalogDTO catalog, VoucherLineRequest lineVO) throws ServerException {
 		
-		AccountDTO account = findAccountByCode(catalog.getKey(), lineVO.getAccount(), null);
+		AccountDTO account = accountService.findAccountByCode(catalog.getKey(), lineVO.getAccount(), null);
 		if (account == null)
 			throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
 		if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
@@ -184,22 +170,6 @@ public class ApiAccountVoucherService {
 		return account;
 	}
 
-	private AccountDTO findAccountByCode(String catalogId, String accountCode, String parentId) throws ServerException {
-		AccountFilterDTO filterA = new AccountFilterDTO();
-		filterA.setCatalog(catalogId);
-		filterA.setParent(parentId);
-		filterA.setCode(accountCode.toUpperCase());
-		filterA.setState(SharedConstants.STATE_ACTIVE);
-		return accountService.getOne(filterA);
-	}
 	
-	private AccountDTO findAccountByDocumentId(String catalogId, String documentId, String parentId) throws ServerException {
-		AccountFilterDTO filterA = new AccountFilterDTO();
-		filterA.setCatalog(catalogId);
-		filterA.setParent(parentId);
-		filterA.setDocument(documentId);
-		filterA.setState(SharedConstants.STATE_ACTIVE);
-		return accountService.getOne(filterA);
-	}
 
 }

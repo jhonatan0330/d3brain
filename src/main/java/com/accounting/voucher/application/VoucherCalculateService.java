@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.accounting.plan.application.base.AccountService;
-import com.accounting.plan.application.base.CatalogService;
+import com.accounting.plan.application.PlanGetAccountService;
 import com.accounting.plan.application.base.ResultMapExtendService;
 import com.accounting.plan.application.base.ResultMapService;
 import com.accounting.plan.application.base.TimeFrameService;
@@ -30,12 +29,10 @@ import com.softure.process_form.application.ConsecutivoSvc;
 @Service
 public class VoucherCalculateService {
 
+
 	@Autowired
 	@Lazy
-	private CatalogService catalogService;
-	@Autowired
-	@Lazy
-	private AccountService accountService;
+	private PlanGetAccountService accountService;
 	@Autowired
 	@Lazy
 	private VoucherGetService voucherService;
@@ -104,14 +101,34 @@ public class VoucherCalculateService {
 			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());
 			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
 		}
-
+		System.out.println("account: " + account.getCode());
 		if (account.getParent() != null) {
 			AccountDTO accountParent = accountService.getById(account.getParent());
+			System.out.println("parent: " + accountParent.getCode());
 			// Las cuentas auxilires de terceros y centros no agrupan no deban acumular
-			if (accountParent!=null && accountParent.getType().compareTo(AccountConst.TYPE_GROUP) == 0) {
-				saveMap(account.getParent(), factDate, positive, negative, value);
+			if(account.getType().compareTo(AccountConst.TYPE_AUXILIAR) == 0) {
+				if(accountParent!=null && accountParent.getParent()!=null) {
+					AccountDTO accountParentTop = accountService.getById(accountParent.getParent());
+					System.out.println("parentTop: " + accountParentTop.getCode());
+					if(accountParentTop.getCode().compareTo("250505") == 0) {
+						System.out.println("parentTop: " + accountParentTop.getCode());
+					}
+					if (accountParentTop!= null && accountParentTop.getParent() != null) {
+						AccountDTO _accountGroupParent = accountService.findAccountByDocumentId(account.getCatalog(), account.getDocument(), accountParentTop.getKey());
+						
+						if (_accountGroupParent != null) {
+							System.out.println("parent AUX: " + _accountGroupParent.getCode());
+							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value);
+						}
+					}
+				}
+			} else {
+				if (accountParent.getType().compareTo(AccountConst.TYPE_GROUP) == 0) {
+					saveMap(account.getParent(), factDate, positive, negative, value);
+				} 
 			}
 		}
+		
 	}
 
 	
