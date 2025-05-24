@@ -197,7 +197,7 @@ public class ApiAccountVoucherService {
 		AccountFilterDTO filterA = new AccountFilterDTO();
 		filterA.setCatalog(catalogId);
 		filterA.setParent(parentId);
-		filterA.setCode(documentId);
+		filterA.setDocument(documentId);
 		filterA.setState(SharedConstants.STATE_ACTIVE);
 		return accountService.getOne(filterA);
 	}

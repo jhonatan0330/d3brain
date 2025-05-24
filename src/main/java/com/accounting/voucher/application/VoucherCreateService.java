@@ -107,7 +107,6 @@ public class VoucherCreateService {
 					if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 						throw new ServerException("El auxiliar " + iAuxiliar.getAuxiliarType()
 								+ " no se encuentra activo. " + third.getName());
-					//createMapLine(catalogDTO, third);
 				}
 
 			}
