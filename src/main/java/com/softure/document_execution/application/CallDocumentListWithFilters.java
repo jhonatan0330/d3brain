@@ -124,6 +124,7 @@ public class CallDocumentListWithFilters {
 					if (relacionesPropiedadHeredable == null || relacionesPropiedadHeredable.isEmpty())
 						throw new ServerException("Este campo de heredable no tiene relaciones de campos");
 
+					if(estadosFiltro!=null) dto.setEstado(null);
 					return listadoCompleto(
 							// Consulto las realaciones del campo para saber cuales campos heredan con la
 							// funcion de
@@ -359,6 +360,7 @@ public class CallDocumentListWithFilters {
 				filterDTO.setFiltroParametro(null);
 			if (filterDTO.getFuncionarioNombre() == null)
 				filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
+			if(estadosFiltro!=null) filterDTO.setEstado(null);
 			if (propiedadesFiltro != null)
 				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
 						estadosFiltro, textoFiltroComas);

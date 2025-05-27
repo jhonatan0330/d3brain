@@ -16,6 +16,9 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.process_designer.application.ProcesoEstadoSvc;
+import com.softure.process_designer.domain.ProcesoEstadoDTO;
+import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -28,6 +31,7 @@ public class ApiGetService {
 	@Autowired @Lazy  private CallSearchProcessFromText searchProcessFromText;
 	@Autowired @Lazy  private DocumentoPlantillaSvc templateService;
 	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	@Autowired @Lazy  private ProcesoEstadoSvc stateService;
 	
 	public List<DocumentResponse> call(String token, DocumentFilterRequest filter) throws ServerException {
 		
@@ -51,7 +55,16 @@ public class ApiGetService {
 			filterDTO.setFechaRegistroMin(filter.getCreationDateMin());
 			filterDTO.setFechaRegistroMax(filter.getCreationDateMax());
 			if(filter.getStates()!=null && !filter.getStates().isEmpty()) {
-				filterDTO.setEstadoExpediente( String.join(";", filter.getStates()) );
+				filterDTO.setEstadoExpediente("");
+				for (String _iState : filter.getStates()) {
+					ProcesoEstadoFilterDTO pesFilter = new ProcesoEstadoFilterDTO();
+					pesFilter.setProceso(templateBD.getProceso());
+					pesFilter.setCodigo(_iState);
+					pesFilter.setEstado(SharedConstants.STATE_ACTIVE);
+					ProcesoEstadoDTO _state  = stateService.consultaUnica(pesFilter);
+					if(_state!=null) filterDTO.setEstadoExpediente(filterDTO.getEstadoExpediente() + ";" + _state.getLlaveTabla());
+				}
+				if(filterDTO.getEstadoExpediente().isEmpty())filterDTO.setEstadoExpediente(null);
 			}
 			if(filter.getFilters()!=null && !filter.getFilters().isEmpty()) {
 				filterDTO.setFiltersByFields(new ArrayList<>());

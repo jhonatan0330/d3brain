@@ -318,7 +318,7 @@
 			,cpdv_plantilla as  valorAuxiliar
 			,cpdv_estadoexpediente as  estado
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as transaccionRegistro
-		from propiedad_${sqlFuncionCalculo} (#{campoId}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
+		from propiedad_${sqlFuncionCalculo} (#{campoId}, #{token}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
 			inner join pedidoventa_pdvp on (cpdv_llave = cpvc_documento)
 	</select>
     
