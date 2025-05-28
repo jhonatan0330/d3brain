@@ -8,6 +8,7 @@
 		select
 			cstk_llave as key
 			,cstk_comprobante as voucher
+			,cstk_accion as action
 			,dstk_creacionfecha as createdAt
 			,cstk_creacionusuario as createdUser
 			,cstk_creacionusuarionombre as createdUserName
@@ -21,6 +22,7 @@
 		and cstk_llave = #{key}</if><if test="state!=null">
 		and cstk_estado = #{state}</if>
 <if test="voucher!=null">		and cstk_comprobante = #{voucher}</if>
+<if test="action!=null">		and cstk_accion = #{action}</if>
 
 	</sql>
 
@@ -55,11 +57,13 @@
 	<select id="insert" parameterType="StackVoucherDTO" resultType="StackVoucherDTO">
 		insert into account.pila_stk(cstk_llave, dstk_creacionfecha, dstk_modificacionfecha
 		<if test="voucher!=null">,cstk_comprobante</if>
+		<if test="action!=null">,cstk_accion</if>
 		<if test="createdUser!=null">,cstk_creacionusuario</if>
 		<if test="createdUserName!=null">,cstk_creacionusuarionombre</if>
 		<if test="state!=null">,cstk_estado</if>
 		) values (#{key}, now(), now()
 		<if test="voucher!=null">,#{voucher}</if>
+		<if test="action!=null">,#{action}</if>
 		<if test="createdUser!=null">,#{createdUser}</if>
 		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
@@ -70,6 +74,7 @@
 		update account.pila_stk
 		set dstk_modificacionfecha = now(),
 		cstk_comprobante = #{voucher},
+		cstk_accion = #{action},
 		cstk_estado =#{state}
 		<include refid="whereStackVoucherPrimaryKeyFragment" />
 	</select>

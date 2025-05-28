@@ -8,6 +8,7 @@
 		select cstk_llave as key
 			,cstk_comprobante as voucher
 			,cstk_estado as state
+			,cstk_accion as action
 		from account.pila_stk 
 		where cstk_estado = 'A' 
 		order by dstk_creacionfecha limit 50;

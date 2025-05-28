@@ -231,7 +231,15 @@
 							"name": "voucher",
 							"tableName": "comprobante",
 							"type": "CLASS"
+						},
+						{
+							"name": "action",
+							"tableName": "accion",
+							"type": "STRING",
+							"size": 1,
+							"optional": true
 						}
+							
 					]
 				},
 				{
@@ -355,6 +363,12 @@
 							"name": "document",
 							"tableName": "documento",
 							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "deleteDate",
+							"tableName": "fechaanulacion",
+							"type": "DATETIME",
 							"optional": true
 						}
 					]

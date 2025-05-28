@@ -19,6 +19,8 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 	private Date factDateMax;
 	private BigDecimal value;
 	private String document;
+	private Date deleteDateMin;
+	private Date deleteDateMax;
 
 	public String getCatalog() {
 		return catalog;
@@ -90,6 +92,22 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+
+	public Date getDeleteDateMin() {
+		return deleteDateMin;
+	}
+
+	public void setDeleteDateMin(Date deleteDateMin) {
+		this.deleteDateMin = deleteDateMin;
+	}
+
+	public Date getDeleteDateMax() {
+		return deleteDateMax;
+	}
+
+	public void setDeleteDateMax(Date deleteDateMax) {
+		this.deleteDateMax = deleteDateMax;
 	}
 
 }

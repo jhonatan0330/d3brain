@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
+import com.accounting.voucher.application.VoucherDeleteService;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
@@ -94,6 +95,9 @@ public class CallManageTransition {
 	@Autowired
 	@Lazy
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
+	@Autowired
+	@Lazy
+	private VoucherDeleteService voucherDeleteService;
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
 			BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
@@ -251,6 +255,7 @@ public class CallManageTransition {
 					filtroEstado.getNombre(), documentoDTO.getLlaveTabla(), token);
 			generateMessageService.call(expedienteDTO, dto, responsable, documentoDTO, token);
 			activateHistoric(expedienteDTO);
+			accountManager(expedienteDTO, token);
 			break;
 		}
 
@@ -263,6 +268,15 @@ public class CallManageTransition {
 		if (expedienteDTO.getHistorico() != null
 				&& expedienteDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
 			procesoTransicionMapper.funcionRegresarTablaHistoricos(expedienteDTO.getLlaveTabla());
+		}
+	}
+	
+	private void accountManager(PedidoVentaDTO expedienteDTO, String pToken) throws ServerException {
+		if (expedienteDTO == null)
+			return;
+		if (expedienteDTO.getEstado() != null
+				&& expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
+			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), expedienteDTO.getPlantilla(), pToken);
 		}
 	}
 

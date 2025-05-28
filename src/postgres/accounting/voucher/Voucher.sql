@@ -12,6 +12,7 @@ ALTER TABLE account.comprobante_cmp ADD ccmp_concepto varchar(200);
 ALTER TABLE account.comprobante_cmp ADD dcmp_fechacomprobante timestamp with time zone NOT NULL ;
 ALTER TABLE account.comprobante_cmp ADD mcmp_valor NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.comprobante_cmp ADD ccmp_documento varchar(32);
+ALTER TABLE account.comprobante_cmp ADD dcmp_fechaanulacion timestamp with time zone;
 
 ALTER TABLE account.comprobante_cmp ADD dcmp_creacionfecha timestamptz NOT NULL DEFAULT NOW();
 ALTER TABLE account.comprobante_cmp ADD ccmp_creacionusuario varchar(32);

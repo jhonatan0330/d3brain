@@ -30,6 +30,8 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
 import com.shared.domain.SharedToken;
+import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 
 @Service
 public class ApiAccountVoucherService {
@@ -49,6 +51,9 @@ public class ApiAccountVoucherService {
 	@Autowired
 	@Lazy
 	private PlanCreateAccountService createAccountService;
+	@Autowired
+	@Lazy
+	private PedidoVentaSvc documentService;
 
 	public SharedIdResponse call(SharedToken _token, VoucherRequest _item) throws ServerException {
 		validateItem(_item);
@@ -138,6 +143,12 @@ public class ApiAccountVoucherService {
 			throw new ServerException("No se reconoce el tipo de documento");
 		if (type.getService()!=null && (item.getDocument() == null || item.getDocument().isEmpty()))
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
+		
+		if(item.getDocument()!=null){
+			PedidoVentaDTO _document = documentService.consultaXId(item.getDocument());
+			if(_document == null) throw new ServerException("No existe el documento " + item.getDocument());
+			if(_document.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("No se puede hacer comprobantes a documentos inactivos");
+		}
 
 		item.setCatalog(catalog.getKey());
 		item.setType(type.getKey());

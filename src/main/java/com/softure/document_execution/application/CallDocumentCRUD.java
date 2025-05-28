@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.SharedConstants;
+import com.accounting.voucher.application.VoucherDeleteService;
 import com.configuration.homologate.application.HomologateAdapterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,6 +109,9 @@ public class CallDocumentCRUD {
 	private CallBPM bpmService;
 	@Autowired @Lazy 
 	private HomologateAdapterService homologateService;
+	@Autowired
+	@Lazy
+	private VoucherDeleteService voucherDeleteService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
@@ -157,7 +161,7 @@ public class CallDocumentCRUD {
 
 		documentDTO = pedidoService.inactivate(documentDTO);
 		manageTemplateTypes(documentDTO, null, token);
-
+		voucherDeleteService.callByDocument(bd.getLlaveTabla(), bd.getPlantilla(), token);
 		return documentDTO;
 	}
 	
@@ -276,6 +280,8 @@ public class CallDocumentCRUD {
 		bpmService.execute(dto, token);
 		manageTemplateTypes(dto, plantilla, token);
 		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
+		voucherDeleteService.callByDocument(dto.getLlaveTabla(), dto.getPlantilla(), token);
+		voucherCreate(dto, token, plantilla);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
 			relacionGestorService.trazar(dto.getLlaveTabla(),
@@ -410,14 +416,19 @@ public class CallDocumentCRUD {
 				apiService.prepareApiToExecution(_iApi.getValor(), dto, null,null, token, null);
 			}
 		}
-		_PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER);
+		voucherCreate(dto, token, plantilla);
+		dto.setCaracteristicas(null);// Por error al serializar
+		return pedido;
+	}
+
+	private void voucherCreate(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla)
+			throws ServerException {
+		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER);
 		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
 			for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
 				apiService.programateExecution(_iVoucher.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
 			}
 		}
-		dto.setCaracteristicas(null);// Por error al serializar
-		return pedido;
 	}
 
 	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion)

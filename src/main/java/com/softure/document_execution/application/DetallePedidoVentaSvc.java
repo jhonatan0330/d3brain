@@ -221,7 +221,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				}
 			}
 			productoDTO.setTemplateFields(Propiedades.obtenerValor(productoDTO, Propiedades.TIPO_PRODUCTO_FORMULARIO_DETALLADO));
-			if(productoDTO.getTemplateFields().isEmpty())
+			if(productoDTO.getTemplateFields()!=null && productoDTO.getTemplateFields().isEmpty())
 				productoDTO.setTemplateFields(null);
 		}
 		return result;

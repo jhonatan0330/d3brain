@@ -24,6 +24,7 @@ import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
 import com.accounting.voucher.domain.Voucher;
 import com.accounting.voucher.domain.VoucherLine;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.process_form.application.ConsecutivoSvc;
 
 @Service
@@ -53,18 +54,22 @@ public class VoucherCalculateService {
 	private ResultMapService resultMapService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void call(String voucherId) throws ServerException {
-		Voucher voucher = voucherService.getById(voucherId);
-		calculateBalance(voucher);
-	}
-
-	private void calculateBalance(Voucher _voucher) throws ServerException {
+	public void call(String voucherId, String action) throws ServerException {
+		Voucher _voucher = voucherService.getById(voucherId);
+		BigDecimal _positive =null;
+		BigDecimal _negative =null;
 		for (VoucherLine item : _voucher.getRecords()) {
-			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), item.getLine().getPositive(), item.getLine().getNegative(), item.getLine().getValue());
+			_positive = item.getLine().getPositive();
+			_negative = item.getLine().getNegative();
+			if(action !=null && action.compareTo(SharedConstants.STATE_INACTIVE)==0) {
+				_negative = item.getLine().getPositive();
+				_positive = item.getLine().getNegative();
+			}
+			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue());
 			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
 					if(iAux.getAccount()!= null)
-					saveMap(iAux.getAccount(), item.getLine().getFactDate(), item.getLine().getPositive(), item.getLine().getNegative(), item.getLine().getValue());	
+					saveMap(iAux.getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue());	
 				}
 			}
 		}
@@ -101,23 +106,17 @@ public class VoucherCalculateService {
 			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());
 			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
 		}
-		System.out.println("account: " + account.getCode());
+		
 		if (account.getParent() != null) {
 			AccountDTO accountParent = accountService.getById(account.getParent());
-			System.out.println("parent: " + accountParent.getCode());
 			// Las cuentas auxilires de terceros y centros no agrupan no deban acumular
 			if(account.getType().compareTo(AccountConst.TYPE_AUXILIAR) == 0) {
 				if(accountParent!=null && accountParent.getParent()!=null) {
 					AccountDTO accountParentTop = accountService.getById(accountParent.getParent());
-					System.out.println("parentTop: " + accountParentTop.getCode());
-					if(accountParentTop.getCode().compareTo("250505") == 0) {
-						System.out.println("parentTop: " + accountParentTop.getCode());
-					}
 					if (accountParentTop!= null && accountParentTop.getParent() != null) {
 						AccountDTO _accountGroupParent = accountService.findAccountByDocumentId(account.getCatalog(), account.getDocument(), accountParentTop.getKey());
 						
 						if (_accountGroupParent != null) {
-							System.out.println("parent AUX: " + _accountGroupParent.getCode());
 							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value);
 						}
 					}
@@ -144,9 +143,5 @@ public class VoucherCalculateService {
 		} 
 		resultMapService.save(_map);
 		return resultMapService.getById(_map.getKey());
-		
-		// mapService.insertMapAccount(account.getKey(), catalogDTO.getInitialDate(), catalogDTO.getFinalDate());
-				//if (pAccount.getParent() != null)
-					//createMapLine(accountService.getById(pAccount.getParent()), pTimeFrame);
 	}
 }

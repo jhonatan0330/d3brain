@@ -9,6 +9,7 @@ import com.shared.domain.SharedDataObjectFilter;
 public class StackVoucherFilterDTO extends SharedDataObjectFilter {
 
 	private String voucher;
+	private String action;
 
 	public String getVoucher() {
 		return voucher;
@@ -16,6 +17,14 @@ public class StackVoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setVoucher(String voucher) {
 		this.voucher = voucher;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 }

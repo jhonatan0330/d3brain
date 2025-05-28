@@ -1,7 +1,10 @@
 package com.accounting.voucher.application;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,6 +224,7 @@ public class VoucherCreateService {
 
 		_voucher.getHeader().setCreatedUser(token.getUser());
 		_voucher.getHeader().setCreatedUserName(token.getUserName());
+		_voucher.getHeader().setDeleteDate( Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		// Desde Angular viene una ultima linea vacia
 		for (VoucherLine item : toRemove) {
 			_voucher.getRecords().remove(item);
@@ -253,12 +257,4 @@ public class VoucherCreateService {
 		return voucherService.getOne(filterVoucher);
 	}
 
-	public SharedIdResponse update(Voucher _voucher, SharedToken token) throws ServerException {
-		voucherService.update(_voucher.getHeader());
-		return new SharedIdResponse(_voucher.getHeader().getKey(), _voucher.getHeader().getCode());
-	}
-
-	public VoucherDTO delete(String voucherId) throws ServerException {
-		return voucherService.delete(voucherId);
-	}
 }
