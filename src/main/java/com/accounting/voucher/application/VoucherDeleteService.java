@@ -18,17 +18,11 @@ import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
-import com.softure.document_execution.application.field.Propiedades;
-import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
-import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service
 public class VoucherDeleteService {
 
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadService;
 	@Autowired @Lazy 
 	private VoucherService voucherService;
 	@Autowired
@@ -61,8 +55,8 @@ public class VoucherDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse callByDocument(String pDocumentId, String pTemplateId, String pToken) throws ServerException {
-		List<PropiedadDTO> _prop =  propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, pTemplateId, Propiedades.TEMPLATE_VOUCHER, null);
+	public SharedIdResponse callByDocument(String pDocumentId, List<PropiedadDTO> _prop, String pToken) throws ServerException {
+		
 		if(_prop == null || _prop.isEmpty()) return null;
 		
 		VoucherFilterDTO _filter = new VoucherFilterDTO();

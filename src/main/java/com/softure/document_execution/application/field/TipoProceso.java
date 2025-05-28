@@ -692,22 +692,16 @@ public class TipoProceso {
 								campoService.update(campoDestino);
 							}else {
 								PedidoVentaDTO updateDocument = pedidoService.consultaCompleta(dependiente.getValorOpcion(), token);
+								
 								for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
 									if(iFieldUpdateDocument.getCampo().compareTo(campoDestino.getCampo())==0) {
 										iFieldUpdateDocument.setModificado(true);
 										iFieldUpdateDocument.setExpedientes(campoDestino.getExpedientes());
-									} else {
-										List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDENT_PROPS);
-										if(dependents!=null && !dependents.isEmpty()) {
-											for (PropiedadDTO iDependent : dependents) {
-												if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
-													iFieldUpdateDocument.setValorNumero(null);
-													iFieldUpdateDocument.setModificado(true);
-												}
-											}
-										}
-									}
+										break;
+									} 
 								}
+								organizeDependsNumberToUpdate(campoDestino, updateDocument);
+								
 								crudService.updateWithoutTransaction(updateDocument, pCampo.getDocumento(), token, true);
 							}
 						}
@@ -717,5 +711,27 @@ public class TipoProceso {
 			}
 		}
 
+	}
+
+	private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
+			PedidoVentaDTO updateDocument) {
+		for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
+			List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDENT_PROPS);
+			if(dependents!=null && !dependents.isEmpty()) {
+				for (PropiedadDTO iDependent : dependents) {
+						if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
+							if(!iFieldUpdateDocument.getModificado()) {
+								iFieldUpdateDocument.setValorNumero(null);
+								iFieldUpdateDocument.setModificado(true);
+								//Lo repirto para que se calculen los que dependen de estos
+								organizeDependsNumberToUpdate(iFieldUpdateDocument,	 updateDocument);
+							}
+							break;
+						}	
+				}
+				
+			}	
+		}
+		
 	}
 }

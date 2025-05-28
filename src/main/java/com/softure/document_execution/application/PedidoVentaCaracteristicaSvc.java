@@ -246,6 +246,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 				// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
 				// al final se carga pero en ibatis falla por el arrray vacio
 				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+				dependientesOrdenados = removeDuplicateDepends(dependientesOrdenados);
+				includeDocumentArray(dependientesOrdenados);
 				if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
 				return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, token, dependientesOrdenados);
 			} catch (Exception e) {
@@ -269,6 +271,31 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 			}
 			
 		}
+	}
+
+	private void includeDocumentArray(List<PedidoVentaCaracteristicaDTO> dependientesOrdenados) {
+		List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
+		for (PedidoVentaCaracteristicaDTO iDependiente : dependientesOrdenados) {
+			if(iDependiente.getValorOpcion()==null) {
+				if(iDependiente.getExpedientes()!=null ) {
+					//Esto aplica para los campos multiples
+					for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
+						//Esto porque algunos expedientes los estamos descargando
+						if(iExpediente.getEstado()==null || iExpediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0) {
+							PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
+							pd.setValorOpcion(iExpediente.getLlaveTabla());
+							expedientesMultiples.add(pd);	
+						}
+					}	
+				}
+				if(iDependiente.getValorText()==null) {
+					if(iDependiente.getValorFecha()!=null) {
+						iDependiente.setValorText(SoftureUtil.formatDateTime(iDependiente.getValorFecha()));
+					}
+				}
+			}
+		}
+		if(expedientesMultiples.size()!=0) dependientesOrdenados.addAll(expedientesMultiples);
 	}
 	
 	public Date calcularFechaFuncion(PropiedadDTO sqlFuncionDecision, String documento, String token, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {

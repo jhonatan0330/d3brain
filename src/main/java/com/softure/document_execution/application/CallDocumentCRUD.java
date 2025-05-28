@@ -161,7 +161,9 @@ public class CallDocumentCRUD {
 
 		documentDTO = pedidoService.inactivate(documentDTO);
 		manageTemplateTypes(documentDTO, null, token);
-		voucherDeleteService.callByDocument(bd.getLlaveTabla(), bd.getPlantilla(), token);
+		voucherDeleteService.callByDocument(bd.getLlaveTabla(),
+				propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, bd.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null)
+				,token);
 		return documentDTO;
 	}
 	
@@ -280,7 +282,7 @@ public class CallDocumentCRUD {
 		bpmService.execute(dto, token);
 		manageTemplateTypes(dto, plantilla, token);
 		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
-		voucherDeleteService.callByDocument(dto.getLlaveTabla(), dto.getPlantilla(), token);
+		voucherDeleteService.callByDocument(dto.getLlaveTabla(),  Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER), token);
 		voucherCreate(dto, token, plantilla);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
