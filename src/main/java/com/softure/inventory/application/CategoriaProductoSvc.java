@@ -84,6 +84,7 @@ public class CategoriaProductoSvc extends BasicSvc<CategoriaProductoDTO, Categor
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CategoriaProductoDTO guardar(CategoriaProductoDTO dto, String token) throws ServerException {
 		// BEGIN CategoriaProducto_guardar
+		if(dto.getPlantilla()==null)  throw new ServerException("Al crear una categoria de producto debe seleccionar una plantilla.");
 		dto = super.guardar(dto, token);
 		if (dto.getCantidadMaxima().compareTo(BigDecimal.ZERO)!=0) categoriaProductoMapper.ingresarInventarioFaltanteBodega();
 		return dto;

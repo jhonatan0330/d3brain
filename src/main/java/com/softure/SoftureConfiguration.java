@@ -85,6 +85,8 @@ public class SoftureConfiguration {
 		System.out.println("BD = " + env.getProperty("db.url"));
 		System.out.println("Correos Activos = " + env.getProperty("cron.enabled"));
 		System.out.println("Tareas Activas = " + env.getProperty("cron.task"));
+		System.out.println("Tareas Asincronas = " + env.getProperty("cron.api"));
+		System.out.println("Acumulador = " + env.getProperty("cron.account"));
 		System.out.println("*********************************************************");
 		// Obtengo version actual
 		PooledDataSource ds = dynamicDataSource();

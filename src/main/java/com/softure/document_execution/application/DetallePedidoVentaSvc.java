@@ -206,7 +206,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		List<PropiedadDTO> propiedadesProducto = configuracionSvc.listarProductoSimplificar(productos);
 		for (ProductoDTO productoDTO : result) {
 			productoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
-			if (propiedadesProducto != null && !propiedadesProducto.isEmpty()) {
+			if (propiedadesProducto != null && !propiedadesProducto.isEmpty() && productoDTO.getCategoriaPlantilla() != null) {
 				for (PropiedadDTO propiedadDTO : propiedadesProducto) {
 					if (propiedadDTO.getCampo().compareTo(productoDTO.getCategoriaPlantilla()) == 0)
 						productoDTO.getPropiedades().add(propiedadDTO);
@@ -214,7 +214,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			}
 			if (productoDTO.getPropiedades().isEmpty() && productoDTO.getProductoBase() != null) {
 				for (ProductoDTO iBase : bases) {
-					if (productoDTO.getProductoBase().compareTo(iBase.getCategoriaPlantilla()) == 0) {
+					if (iBase.getCategoriaPlantilla()!=null && productoDTO.getProductoBase().compareTo(iBase.getCategoriaPlantilla()) == 0) {
 						productoDTO.setPropiedades(iBase.getPropiedades());
 						break;
 					}

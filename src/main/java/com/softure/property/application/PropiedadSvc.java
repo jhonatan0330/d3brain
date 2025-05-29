@@ -752,6 +752,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			CategoriaProductoDTO nuevaCategoria = new CategoriaProductoDTO();
 			nuevaCategoria.setNombre(plantillaPrincipal.getNombre());
 			nuevaCategoria.setImagen(plantillaPrincipal.getImagen());
+			nuevaCategoria.setPlantilla(plantillaPrincipal.getLlaveTabla());
 			nuevaCategoria = categoriaProductoService.guardar(nuevaCategoria, token);
 			dto.setValor(nuevaCategoria.getLlaveTabla());
 		}
