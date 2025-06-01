@@ -81,4 +81,9 @@ public class FERest {
 		}
 		return responseFe;
 	}
+	
+	@PostMapping("/generateCU")
+	public FEResponse generateCUFE(@RequestBody String xml) throws ServerException {
+		return signerService.generateCodigo(xml);
+	}
 }

@@ -275,6 +275,13 @@ public class SignerService {
 		getSignatureValue(doc, responseFe);
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
 	}
+	
+	public FEResponse generateCodigo(String xmlIn) throws ServerException {
+		FEResponse response = new FEResponse();
+		response.setCufe(encryptThisString(xmlIn));
+		response.setResult("200");
+		return response;
+	}
 
 	private void getSignatureValue(Document doc, FEResponse responseFe) {
 		// Para facilitar el envio a la DIAn extrayendo estos datos
