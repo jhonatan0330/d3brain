@@ -143,7 +143,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	public void crear(DocumentoPlantillaDTO plantilla, String token) throws ServerException {
 		// A veces el numero del consecutivo se repetia en ese caso toca evitar para las
 		// automaticas que se cree error
-		String prefix = plantilla.getCodigo() + "-";
+		String prefix = plantilla.getCodigo();
 		ConsecutivoFilterDTO filter = new ConsecutivoFilterDTO();
 		filter.setPrefijo(prefix);
 		List<ConsecutivoDTO> result = listarConsulta(filter);
