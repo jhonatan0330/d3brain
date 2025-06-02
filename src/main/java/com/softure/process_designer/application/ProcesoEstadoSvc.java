@@ -75,7 +75,14 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		transicion.setEstadoLLegada(dto.getLlaveTabla());
 		transicion.setEstado(SharedConstants.STATE_ACTIVE);
 		if (procesoTransicionService.contarResultados(transicion) != 0)
-			throw new ServerException("Este estado es usada en varias transacciones activas");
+			throw new ServerException("Este estado es usada en varias transacciones activas como estado de llegada");
+		
+		transicion = new ProcesoTransicionFilterDTO();
+		transicion.setEstadoPartida(dto.getLlaveTabla());
+		transicion.setEstado(SharedConstants.STATE_ACTIVE);
+		if (procesoTransicionService.contarResultados(transicion) != 0)
+			throw new ServerException("Este estado es usada en varias transacciones activas como estado de partida");
+		
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
 		return dto;
