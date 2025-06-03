@@ -53,8 +53,8 @@ public class GPSRest {
 	}
 	
 	@GetMapping(value="/get-device/{query}")
-	public List<GPSDispositivoDTO> getdevicesByQuery(@RequestHeader("Authorization") String token, @PathVariable(required = false)String query)  throws ServerException  {
-		return getDevicesByQueryService.call(query);
+	public List<GPSDispositivoDTO> getdevicesByQuery(@RequestHeader("Authorization") String token, @PathVariable(name= "query" ,required = false)String pQuery)  throws ServerException  {
+		return getDevicesByQueryService.call(pQuery);
 	}
 	
 	@PostMapping(value="/getGPSLocation")

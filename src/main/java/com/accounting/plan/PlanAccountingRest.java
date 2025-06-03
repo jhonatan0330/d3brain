@@ -36,24 +36,24 @@ public class PlanAccountingRest {
 	private PlanGetBalanceService getBalanceService;
 	
 	@GetMapping("/balance/{catalog}")
-	public List<ResultMapDTO> getBalance(@PathVariable String catalog, @RequestHeader("Authorization") String token) throws ServerException {
-		return getBalanceService.getBalance(catalog);
+	public List<ResultMapDTO> getBalance(@PathVariable(name="catalog") String pCatalog, @RequestHeader("Authorization") String token) throws ServerException {
+		return getBalanceService.getBalance(pCatalog);
 	}	
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable String catalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
-		return getAccountService.getActive(catalog, filter);
+	public List<AccountDTO> getAccount(@PathVariable(name="catalog") String pCatalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
+		return getAccountService.getActive(pCatalog, filter);
 	}
 	
 	@GetMapping(value="/account/{catalog}/{id}")
-	public AccountDTO getAccountById(@PathVariable String catalog, @PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return getAccountService.getByCatalogAndId(catalog, id);
+	public AccountDTO getAccountById(@PathVariable(name="catalog") String pCatalog, @PathVariable(name="id") String pId, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return getAccountService.getByCatalogAndId(pCatalog, pId);
 	}
 	
 	
 	@GetMapping(value="/catalog/{id}")
-	public CatalogDTO getCatalogById(@PathVariable String id, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return getCatalogService.getById(id);
+	public CatalogDTO getCatalogById(@PathVariable(name="id") String pId, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return getCatalogService.getById(pId);
 	}
 	
 	@GetMapping("/catalog")

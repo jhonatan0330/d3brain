@@ -71,8 +71,8 @@ public class TemplateController {
 	}
 	
 	@GetMapping(value="/getTraceFields/{documentId}/{transaction}")
-	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable String documentId, @PathVariable String transaction, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return fieldsService.listar2Gestor(documentId, transaction);
+	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable(name="documentId") String pDocumentId, @PathVariable(name="transaction") String pTransaction, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return fieldsService.listar2Gestor(pDocumentId, pTransaction);
 	}
 	
 	@PostMapping(value="/getPropertyRelations")

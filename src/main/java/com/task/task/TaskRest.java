@@ -62,7 +62,7 @@ public class TaskRest {
 	}
 
 	@PostMapping(value="/delete/{id}")
-	public SharedIdResponse delete(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable String id)  throws ServerException  {
-		return taskDeleteService.call(id, tokenService.getUser(token, request));
+	public SharedIdResponse delete(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable(name="id") String pId)  throws ServerException  {
+		return taskDeleteService.call(pId, tokenService.getUser(token, request));
 	}
 }

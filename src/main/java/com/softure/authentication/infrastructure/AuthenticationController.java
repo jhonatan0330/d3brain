@@ -41,10 +41,10 @@ public class AuthenticationController {
 	}
 	
 	@GetMapping(value="/properties/{type}/{field}")
-	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token, @PathVariable String type, @PathVariable String field) throws ServerException {
+	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token, @PathVariable(name="type") String pType, @PathVariable(name="field") String pField) throws ServerException {
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
-		filter.setTipo(type);
-		filter.setCampo(field);
+		filter.setTipo(pType);
+		filter.setCampo(pField);
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return propertiesService.listarConsulta(filter);
 	}

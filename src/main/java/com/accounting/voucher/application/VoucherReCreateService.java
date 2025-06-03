@@ -20,13 +20,11 @@ import com.shared.domain.SharedToken;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.webservice.application.WebServiceEjecucionSvc;
 import com.softure.webservice.application.WebServiceExecuteAPI;
 import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
-import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 
 @Service
 public class VoucherReCreateService {
@@ -84,12 +82,8 @@ public class VoucherReCreateService {
 		if (voucherService.count(_filter) != 0)
 			throw new ServerException("Este documento ya tiene un comprobante");
 
-		WebServiceEjecucionFilterDTO _serviceFilter = new WebServiceEjecucionFilterDTO();
-		_serviceFilter.setServicio(pItem.getServiceId());
-		_serviceFilter.setDocumento(pItem.getDocumentId());
-		_serviceFilter.setSincrona(DocumentoTransaccionSvc.API_PREPARE_ASYNC);
-		_serviceFilter.setEstado(SharedConstants.STATE_ACTIVE);
-		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.consultaUnica(_serviceFilter);
+		
+		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.getServiceVoucherActive(pItem.getServiceId(), pItem.getDocumentId());
 		if (_service != null)
 			return new SharedIdResponse(pItem.getDocumentId(), null, null,
 					apiService.applyScheduleToExecute(_service, pToken.getToken()));
@@ -99,5 +93,7 @@ public class VoucherReCreateService {
 				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, pToken.getToken(), null));
 
 	}
+
+
 
 }

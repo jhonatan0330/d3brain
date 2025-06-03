@@ -19,6 +19,8 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
 import com.softure.property.domain.PropiedadDTO;
+import com.softure.webservice.application.WebServiceEjecucionSvc;
+import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
 @Service
 public class VoucherDeleteService {
@@ -28,6 +30,9 @@ public class VoucherDeleteService {
 	@Autowired
 	@Lazy
 	private StackVoucherService stackBasicService;
+	@Autowired
+	@Lazy
+	private WebServiceEjecucionSvc taskService;
 	
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse callById(String pVoucherId, String pToken) throws ServerException {
@@ -47,6 +52,7 @@ public class VoucherDeleteService {
 			stack.setVoucher(pVoucherId);
 			stack.setAction(SharedConstants.STATE_INACTIVE);
 			stackBasicService.save(stack);
+			
 		} else {
 			stack.setState(SharedConstants.STATE_INACTIVE);
 			stackBasicService.update(stack);
@@ -55,9 +61,9 @@ public class VoucherDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse callByDocument(String pDocumentId, List<PropiedadDTO> _prop, String pToken) throws ServerException {
+	public void callByDocument(String pDocumentId, List<PropiedadDTO> _prop, String pToken) throws ServerException {
 		
-		if(_prop == null || _prop.isEmpty()) return null;
+		if(_prop == null || _prop.isEmpty()) return;
 		
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pDocumentId);
@@ -66,7 +72,13 @@ public class VoucherDeleteService {
 		for (VoucherDTO voucherDTO : _vouchers) {
 			callById(voucherDTO.getKey(), pToken);
 		}
-		return null;
+		
+		for (PropiedadDTO propiedadDTO : _prop) {
+			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive( propiedadDTO.getValor(), pDocumentId);
+			if (_service != null)
+				taskService.inactivate(_service);	
+		}
+		
 	}
 	
 }

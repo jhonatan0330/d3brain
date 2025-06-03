@@ -79,10 +79,10 @@ public class DocumentController {
 	
 	
 	@PostMapping(value="/upload")
-    public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+    public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile pFile,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-			return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, null);
+			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null);
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
@@ -94,8 +94,8 @@ public class DocumentController {
 	}
 	
 	@GetMapping(value="/getInventory/{id}")
-	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String id, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return inventoryService.getByProducto(id);
+	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String pId, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return inventoryService.getByProducto(pId);
 	}
 	
 	@GetMapping("/ping_mail")
