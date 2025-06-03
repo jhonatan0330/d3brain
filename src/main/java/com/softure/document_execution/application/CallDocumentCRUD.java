@@ -285,6 +285,7 @@ public class CallDocumentCRUD {
 		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
 		voucherDeleteService.callByDocument(dto.getLlaveTabla(),  Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER), token);
 		voucherCreate(dto, token, plantilla);
+		generateNotifications(dto, token, plantilla, dto);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
 			relacionGestorService.trazar(dto.getLlaveTabla(),
@@ -420,6 +421,7 @@ public class CallDocumentCRUD {
 			}
 		}
 		voucherCreate(dto, token, plantilla);
+		generateNotifications(dto, token, plantilla, pedido);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
@@ -427,10 +429,19 @@ public class CallDocumentCRUD {
 	private void voucherCreate(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla)
 			throws ServerException {
 		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER);
-		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
-			for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
-				apiService.programateExecution(_iVoucher.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
-			}
+		if (_PropertyListToAPis == null || _PropertyListToAPis.isEmpty()) return;
+		
+		for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
+			apiService.programateExecution(_iVoucher.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(), token);
+		}
+	}
+	
+	private void generateNotifications(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla,PedidoVentaDTO pedido)
+			throws ServerException {
+		List<PropiedadDTO> _propertyListToNotify = Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_MESSAGE_SQL);
+		if (_propertyListToNotify == null || _propertyListToNotify.isEmpty()) return;
+		for (PropiedadDTO _iValidation : _propertyListToNotify) {
+			CallDocumentCommons.addMessageError(pedido, propiedadService.templateNotifications(_iValidation.getLlaveTabla(), dto.getCaracteristicas(), token, dto.getLlaveTabla()));
 		}
 	}
 

@@ -592,3 +592,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_285' , 'W', 'CATALOGO CONTABLE TIPO', 'API_ACCOUNT_CATALOG', 'REQUISITO');
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_solicitamotivo, bpvd_multiple) 
+	VALUES('PROP_286' , 'L', 'NOTIFICACIONES DE UN DOCUMENTO', 'TEMPLATE_MESSAGE', 'REQUISITO', true, true, true);

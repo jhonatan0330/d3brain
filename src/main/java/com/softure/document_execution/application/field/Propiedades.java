@@ -217,6 +217,9 @@ public class Propiedades {
 	public static final String PLANTILLA_TIPO_CONFIGURATION = "PLANTILLA_TIPO_CONFIGURATION";
 	public static final String PLANTILLA_RENDER_ESPECIAL_SQL = "PLANTILLA_RENDER_ESPECIAL_SQL";
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
+	public static final String TEMPLATE_VOUCHER = "TEMPLATE_VOUCHER";
+	public static final String TEMPLATE_MESSAGE_SQL = "TEMPLATE_MESSAGE_SQL";
+	
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 	public static final String API_ACCOUNT_CATALOG = "API_ACCOUNT_CATALOG";
 	public static final String REPORT_MODULE_REFERENCE = "REPORT_MODULE_REFERENCE";
@@ -284,8 +287,6 @@ public class Propiedades {
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
 	
-	//Contabilidad
-	public static final String TEMPLATE_VOUCHER = "TEMPLATE_VOUCHER";
 	
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
 			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,

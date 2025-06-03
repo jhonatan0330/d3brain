@@ -215,8 +215,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				propiedadMapper.eliminarFuncionCamposEspecialesPlantilla(dto);
 				break;
 			case Propiedades.FUNCION_SQL_PREVALIDATE_API:
-				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
-				case Propiedades.FUNCION_SQL_NEW_ANTES:
+			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
+			case Propiedades.TEMPLATE_MESSAGE_SQL:
+			case Propiedades.FUNCION_SQL_NEW_ANTES:
 				propiedadMapper.eliminarFuncionPrevalidacion(dto);
 				break;
 			default:
@@ -387,6 +388,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 					propiedadMapper.crearFuncionPrevalidacion(dto);
 					break;
+				case Propiedades.TEMPLATE_MESSAGE_SQL:
 				case Propiedades.FUNCION_SQL_NEW_ANTES:
 					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
 					break;
@@ -1272,6 +1274,20 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			System.out.format("\nValidando funcion SQL (%s)", pPropiedad.getMotivo());
 			validarFuncion(pPropiedad, documento, modificador, token);
 		}
+	}
+	
+	public String templateNotifications(String pPropertyId, List<PedidoVentaCaracteristicaDTO> campos, String documento,
+			String token) throws ServerException {
+		String _result = null;
+		try {
+			_result =  propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(pPropertyId),
+					documento, token, campos);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
+		}
+		if (_result.compareTo("OK") == 0)
+			_result = null;
+		return _result;
 	}
 
 	public void prevalidate(BasicParamDTO dto, List<PedidoVentaCaracteristicaDTO> campos, String documento,
