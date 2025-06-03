@@ -52,6 +52,8 @@ public class HomologateProductStock {
 				campoService.createField(templateId, "MAXIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		
 		sincronize(templateId, fieldsTemplate, token, crudService);
 	}

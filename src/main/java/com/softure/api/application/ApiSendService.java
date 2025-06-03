@@ -40,7 +40,7 @@ public class ApiSendService {
 		assignateValue(document, item.getFields(), token);
 		// Envio a guardar el documento
 		document = saveDocumentService.save(document, token, null);
-		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre());
+		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre(), document.getEstadoNombre(), document.getMessages());
 	}
 
 	private void validateItem(DocumentRequest item) throws ServerException {

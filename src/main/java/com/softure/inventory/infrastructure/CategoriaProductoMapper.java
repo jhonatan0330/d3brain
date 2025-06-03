@@ -8,9 +8,4 @@ import com.softure.java.domain.IBasicMapper;
 
 @SoftureSqlConnMapper(value = "CategoriaProductoMapper")
 public interface CategoriaProductoMapper extends IBasicMapper<CategoriaProductoDTO, CategoriaProductoFilterDTO>{
-	
-
-// BEGIN region aditionalMethods  
-	void ingresarInventarioFaltanteBodega();
-// END region aditionalMethods
 }

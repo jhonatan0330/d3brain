@@ -21,7 +21,7 @@ public class WebServiceController {
 	private WebServiceCopyAPI copyService;
 	
 	@PostMapping(value="/copy")
-	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam("apiId") String apiId) throws ServerException {
+	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam String apiId) throws ServerException {
 		return copyService.call(apiId, token);
 	}
 	

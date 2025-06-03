@@ -63,5 +63,20 @@
     "name": "fixedDelayTask.in.milliseconds",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayTask.in.milliseconds'"
+  },
+  {
+    "name": "cron.api",
+    "type": "java.lang.String",
+    "description": "A description for 'cron.api'"
+  },
+  {
+    "name": "cron.account",
+    "type": "java.lang.String",
+    "description": "A description for 'cron.account'"
+  },
+  {
+    "name": "fixedDelayAccount.in.milliseconds",
+    "type": "java.lang.String",
+    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
   }
 ]}

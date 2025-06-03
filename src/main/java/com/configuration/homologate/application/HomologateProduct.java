@@ -15,7 +15,6 @@ import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
@@ -28,7 +27,6 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 public class HomologateProduct {
 
 	@Autowired @Lazy private ProductoSvc productService;
-	@Autowired @Lazy private CategoriaProductoSvc categoriaSvc;
 	@Autowired @Lazy private UsuarioRolProductoSvc usuarioRolProductoSvc;
 	
 	public void createProductFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService, PropiedadSvc propertyService) throws ServerException {
@@ -68,17 +66,6 @@ public class HomologateProduct {
 			newProducto.setDescripcion(CallDocumentCommons.getValueText(documento, "DESCRIPCION"));
 			newProducto.setProductoBase(getBase(CallDocumentCommons.getValueOption(documento, "BASE")));
 			newProducto = productService.save(newProducto);
-			// Al crear un producto, no puedo crear propiedades 
-			/*CategoriaProductoDTO category = categoriaSvc.consultaXId(categoria);
-			if(category.getInventarios()) {
-				PropiedadDTO propiedadModifcable = new PropiedadDTO();
-				propiedadModifcable.setCampo(newProducto.getLlaveTabla());
-				propiedadModifcable.setKey(Propiedades.INVENTARIO_OBLIGATORIO);
-				propiedadModifcable.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
-				propiedadModifcable.setValor("1");
-				propiedadService.guardar(propiedadModifcable, token);
-			}*/
-			categoriaSvc.organizarInventario();
 		}else {
 			if(documento.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0) {
 				newProducto.setDescripcion(CallDocumentCommons.getValueText(documento, "DESCRIPCION"));

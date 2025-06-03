@@ -91,11 +91,11 @@ public class VoucherReCreateService {
 		_serviceFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.consultaUnica(_serviceFilter);
 		if (_service != null)
-			return new SharedIdResponse(pItem.getDocumentId(), null,
+			return new SharedIdResponse(pItem.getDocumentId(), null, null,
 					apiService.applyScheduleToExecute(_service, pToken.getToken()));
 
 		PedidoVentaDTO _document = pedidoVentaService.consultaXId(pItem.getDocumentId());
-		return new SharedIdResponse(pItem.getDocumentId(), _document.getNombre(),
+		return new SharedIdResponse(pItem.getDocumentId(), _document.getNombre(), _document.getEstadoNombre(),
 				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, pToken.getToken(), null));
 
 	}
