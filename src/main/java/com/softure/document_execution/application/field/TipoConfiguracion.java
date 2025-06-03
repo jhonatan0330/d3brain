@@ -3,7 +3,8 @@ package com.softure.document_execution.application.field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -15,11 +16,8 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.BodegaDTO;
-import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
@@ -46,8 +44,6 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 @Component
 public class TipoConfiguracion {
 
-	@Autowired @Lazy 
-	private BodegaSvc bodegaService;
 	@Autowired @Lazy 
 	private CambioSvc cambioService;
 	@Autowired @Lazy 
@@ -180,19 +176,6 @@ public class TipoConfiguracion {
 						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(encuesta.getNombre());
 						// adaptado.setDescripcion(encuesta.getNombre());
-						pCampo.setPrincipal(adaptado);
-					}
-					break;
-				case BODEGAS:
-					BodegaDTO bodega = bodegaService.consultaXId(pCampo.getValorOpcion());
-					if (bodega == null) {
-						throw new ServerException("No se identifica bodega");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(bodega.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(bodega.getNombre());
-						adaptado.setDescripcion(bodega.getNombre());
 						pCampo.setPrincipal(adaptado);
 					}
 					break;
@@ -335,14 +318,6 @@ public class TipoConfiguracion {
 						throw new ServerException("No se identifica la encuesta");
 					} else {
 						pCampo.setValorText(encuesta.getNombre());
-					}
-					break;
-				case BODEGAS:
-					BodegaDTO bodega = bodegaService.consultaXId(pCampo.getValorOpcion());
-					if (bodega == null) {
-						throw new ServerException("No se identifica el bodega");
-					} else {
-						pCampo.setValorText(bodega.getNombre());
 					}
 					break;
 				case FORMATO_EXPORTAR:
@@ -537,23 +512,6 @@ public class TipoConfiguracion {
 						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iEncuesta.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
-						pBase.getDocumentos().add(adaptado);
-					}
-				}
-				break;
-			case BODEGAS:
-				BodegaFilterDTO bodega = new BodegaFilterDTO();
-				bodega.setFiltroParametro(pCampo.getFiltroParametro());
-				bodega.setEstado(SharedConstants.STATE_ACTIVE);
-				List<BodegaDTO> bodegas = bodegaService.listarConsulta(bodega);
-				if (bodegas != null && !bodegas.isEmpty()) {
-					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for (BodegaDTO iBodega : bodegas) {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(iBodega.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(iBodega.getCodigo());
-						adaptado.setDescripcion(iBodega.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}
 				}

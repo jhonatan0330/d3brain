@@ -14,11 +14,8 @@ import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.ProductoInventarioSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.BodegaDTO;
-import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
@@ -32,7 +29,6 @@ public class HomologateProductStock {
 
 	@Autowired @Lazy private ProductoInventarioSvc stockService;
 	@Autowired @Lazy private ProductoSvc productService;
-	@Autowired @Lazy private BodegaSvc storeService;
 	
 	public void createFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService, CallDocumentCRUD crudService) throws ServerException {
@@ -80,7 +76,7 @@ public class HomologateProductStock {
 
 				PedidoVentaCaracteristicaDTO fieldProductDiscount = new PedidoVentaCaracteristicaDTO();
 				fieldProductDiscount.setCampo(fieldsTemplate.get(1));
-				fieldProductDiscount.setValorOpcion(getKeyStore(iPid.getBodega()));
+				fieldProductDiscount.setValorOpcion(iPid.getBodega());
 				document.getCaracteristicas().add(fieldProductDiscount);
 		
 				PedidoVentaCaracteristicaDTO fieldCantidad = new PedidoVentaCaracteristicaDTO();
@@ -110,7 +106,7 @@ public class HomologateProductStock {
 			newItem = new ProductoInventarioDTO();
 			newItem.setDocumento(document.getLlaveTabla());
 			newItem.setProducto(getBase(CallDocumentCommons.getValueOption(document, "PRODUCTO")));
-			newItem.setBodega(getBaseStore(CallDocumentCommons.getValueOption(document, "BODEGA")));
+			newItem.setBodega(CallDocumentCommons.getValueOption(document, "BODEGA"));
 			newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
 			newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
 			stockService.guardar(newItem, token);
@@ -122,7 +118,7 @@ public class HomologateProductStock {
 				}
 			} else {
 				newItem.setProducto(getBase(CallDocumentCommons.getValueOption(document, "PRODUCTO")));
-				newItem.setBodega(getBaseStore(CallDocumentCommons.getValueOption(document, "BODEGA")));
+				newItem.setBodega(CallDocumentCommons.getValueOption(document, "BODEGA"));
 				newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
 				newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
 				newItem.setEstado(SharedConstants.STATE_ACTIVE);
@@ -145,19 +141,5 @@ public class HomologateProductStock {
 		return prod.getDocumento();
 	}
 	
-	private String getBaseStore(String valueOption) throws ServerException {
-		if(valueOption==null) return null;
-		BodegaFilterDTO filter = new BodegaFilterDTO();
-		filter.setDocumento(valueOption);
-		BodegaDTO prod = storeService.consultaUnica(filter);
-		if(prod==null) return null;
-		return prod.getLlaveTabla();
-	}
 	
-	private String getKeyStore(String valueOption) throws ServerException {
-		if(valueOption==null) return null;
-		BodegaDTO prod = storeService.consultaXId(valueOption);
-		if(prod==null) return null;
-		return prod.getDocumento();
-	}
 }

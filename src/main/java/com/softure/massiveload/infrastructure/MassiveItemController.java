@@ -32,9 +32,9 @@ public class MassiveItemController {
 
 	@GetMapping("")
 	public List<MasivaItemRequest> find(@RequestHeader(name = "Authorization") String token, String cargaFilter, String documentoFilter, Date fechaSerializacionMin, Date fechaSerializacionMax, Date fechaSincronizacionMin, Date fechaSincronizacionMax, String modeloFilter, String nombreFilter, String progresoFilter, 
-			@RequestParam(value="state",defaultValue = "A") String state, 
-			@RequestParam(value="page",defaultValue = "0") int page,
-			@RequestParam(value="size",defaultValue = "30") int size) throws ServerException {
+			@RequestParam(defaultValue = "A") String state, 
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "30") int size) throws ServerException {
 		var filter = new MassiveItemFilter(state, page, size);
 		filter.setCarga(cargaFilter); 
 		filter.setDocumento(documentoFilter); 

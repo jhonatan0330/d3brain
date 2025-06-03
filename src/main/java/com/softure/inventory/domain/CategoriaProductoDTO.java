@@ -21,7 +21,7 @@ public class CategoriaProductoDTO extends BasicParamDTO
 	private BigDecimal cantidadMaxima;
 	private String nodoSuperior;
 	private List<CategoriaProductoDTO> hijos;
-	private boolean inventarios;
+	//private boolean inventarios;
 	private boolean composicion;
 	private Integer promocionBase;
 	private String plantilla;
@@ -61,13 +61,13 @@ public class CategoriaProductoDTO extends BasicParamDTO
 	public List<CategoriaProductoDTO> getHijos() {
 		return hijos;
 	}
-	public void setInventarios(boolean inventarios) {
+	/*public void setInventarios(boolean inventarios) {
 		this.inventarios = inventarios;
 	}
 	
 	public boolean getInventarios() {
 		return inventarios;
-	}
+	}*/
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
 	}

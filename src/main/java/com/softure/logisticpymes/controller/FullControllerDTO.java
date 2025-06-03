@@ -55,18 +55,9 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
-import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
-import com.softure.inventory.application.DeduccionProductoSvc;
-import com.softure.inventory.application.TrazabilidadProductoInventarioSvc;
-import com.softure.inventory.domain.BodegaDTO;
-import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
-import com.softure.inventory.domain.DeduccionProductoDTO;
-import com.softure.inventory.domain.DeduccionProductoFilterDTO;
-import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
-import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.java.dto.exception.FlexException;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
@@ -2532,76 +2523,6 @@ public class FullControllerDTO {
 	
 	
 	
-	@Autowired @Lazy  private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
-	
-	@PostMapping(value="/consultaXIdTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO consultaXIdTrazabilidadProductoInventario(@RequestBody String llave) throws FlexException {
-		try {
-			return trazabilidadProductoInventarioService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	
-	@PostMapping(value="/consultaUnicaTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO consultaUnicaTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaTrazabilidadProductoInventario")
-	public List<TrazabilidadProductoInventarioDTO> listarConsultaTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioFilterDTO dto) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO activarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO inactivarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO actualizarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarTrazabilidadProductoInventario")
-	public TrazabilidadProductoInventarioDTO guardarTrazabilidadProductoInventario(@RequestBody TrazabilidadProductoInventarioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return trazabilidadProductoInventarioService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	
-	
 	@Autowired @Lazy  private CategoriaProductoSvc categoriaProductoService;
 	
 	@PostMapping(value="/consultaXIdCategoriaProducto")
@@ -2732,85 +2653,6 @@ public class FullControllerDTO {
 	public UsuarioRolProductoDTO guardarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return usuarioRolProductoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired @Lazy  private BodegaSvc bodegaService;
-	
-	@PostMapping(value="/listarConsultaBodega")
-	public List<BodegaDTO> listarConsultaBodega(@RequestBody BodegaFilterDTO dto) throws FlexException  {
-		try {
-			return bodegaService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired @Lazy  private DeduccionProductoSvc deduccionProductoService;
-	
-	@PostMapping(value="/consultaXIdDeduccionProducto")
-	public DeduccionProductoDTO consultaXIdDeduccionProducto(@RequestBody String llave) throws FlexException {
-		try {
-			return deduccionProductoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	
-	@PostMapping(value="/consultaUnicaDeduccionProducto")
-	public DeduccionProductoDTO consultaUnicaDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
-		try {
-			return deduccionProductoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaDeduccionProducto")
-	public List<DeduccionProductoDTO> listarConsultaDeduccionProducto(@RequestBody DeduccionProductoFilterDTO dto) throws FlexException  {
-		try {
-			return deduccionProductoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarDeduccionProducto")
-	public DeduccionProductoDTO activarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return deduccionProductoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarDeduccionProducto")
-	public DeduccionProductoDTO inactivarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return deduccionProductoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarDeduccionProducto")
-	public DeduccionProductoDTO actualizarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return deduccionProductoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarDeduccionProducto")
-	public DeduccionProductoDTO guardarDeduccionProducto(@RequestBody DeduccionProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return deduccionProductoService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

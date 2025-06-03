@@ -20,7 +20,7 @@ public class ArticleRest {
 	@Autowired @Lazy  GetArticleService getArticleService;
 	
 	@GetMapping(value = "/article")
-	public ArticleDTO getArticle(@RequestHeader("Authorization") String token, @RequestParam("type") String type, @RequestParam("id") String id)
+	public ArticleDTO getArticle(@RequestHeader("Authorization") String token, @RequestParam String type, @RequestParam String id)
 			throws ServerException {
 		return getArticleService.call(id, type, token);
 	}

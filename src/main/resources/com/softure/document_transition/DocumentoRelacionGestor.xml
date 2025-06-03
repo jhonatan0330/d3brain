@@ -376,7 +376,7 @@
 			,cdpr_documento as  documentoPrincipal
 			,cpro_documento as  documentoModificador
 			,dtpi_fecha as fecha
-			,(select descripcion(cbod_documento) from bodega_bodp where cbod_llave = ctpi_bodega) as  estadoInicial
+			,descripcion(ctpi_bodega) as  estadoInicial
 			,null as  estadoFinal
 			,null as estado
 			,ctpi_responsable as  usuario

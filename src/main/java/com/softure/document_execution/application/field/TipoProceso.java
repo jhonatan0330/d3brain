@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.CallDocumentListBySQLFunction;
@@ -46,6 +47,7 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class TipoProceso {
 
+	
 	@Autowired @Lazy 
 	private CuentaSvc cuentaService;
 	@Autowired @Lazy 
@@ -147,14 +149,8 @@ public class TipoProceso {
 					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
 							+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 
-				String bodega = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
-				if (!bodega.isEmpty())
-					tipoBodega.validarPrepararCampo(pCampo, bodega);
-
 				// Valido que el documento este activo y actualizo algunos valores
 				if (pCampo.getValorOpcion() != null) {
-					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
-						tipoBodega.consultarBodegaDesdeDocumento(pCampo);
 					loadActualOptionToDocumentList(pCampo);
 
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.CUENTA_MOVIMIENTO) != null) {

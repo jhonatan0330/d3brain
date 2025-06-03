@@ -1,14 +1,18 @@
 package com.softure.inventory.application;
 
-import java.util.List;
-
-// BEGIN region interImport
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.math.BigDecimal;
+import java.util.List;
 
-import com.shared.domain.SharedConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.application.field.AuxiliarProcesoBodega;
 import com.softure.document_execution.application.field.Propiedades;
@@ -19,19 +23,13 @@ import com.softure.inventory.domain.DeduccionProductoFilterDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.DeduccionProductoMapper;
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {
@@ -39,12 +37,10 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	@Autowired @Lazy 
 	private DeduccionProductoMapper deduccionProductoMapper;
 	
-	// BEGIN region servicesDeduccionProducto
-	@Autowired @Lazy  private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
-	@Autowired @Lazy  private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy  private AuxiliarProcesoBodega tipoBodega;
-	@Autowired @Lazy  private PropiedadSvc propiedadService;
-	// END region servicesDeduccionProducto
+	@Autowired @Lazy private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
+	@Autowired @Lazy private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy private AuxiliarProcesoBodega tipoBodega;
+	@Autowired @Lazy private PropiedadSvc propiedadService;
 
 	@Override
 	public DeduccionProductoDTO consultaXId(String llave) throws ServerException {
@@ -94,7 +90,6 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 			trazabilidadProductoInventarioService.guardar(trazabilidad, token);
 		}
 		return dto;
-		// END DeduccionProducto_inactivar
 	}
 	
 	@Override
@@ -168,13 +163,6 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 		for (PedidoVentaCaracteristicaDTO iCampo : expediente.getCaracteristicas()) {
 			// Identificar los campos bodega
 			if(Propiedades.obtenerParametro(iCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)!=null) {
-				// Validar
-				String bodega = Propiedades.obtenerValor(iCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
-				if(bodega.isEmpty()) {
-					tipoBodega.consultarBodegaDesdeDocumento(iCampo);
-					bodega = iCampo.getValorAuxiliar();
-				}
-				tipoBodega.validarPrepararCampo(iCampo, bodega);
 				// Guardar
 				deduccionesFinales = tipoBodega.validarInventario(iCampo, token) ;
 				for(DeduccionProductoDTO iDeduccion : deduccionesFinales){

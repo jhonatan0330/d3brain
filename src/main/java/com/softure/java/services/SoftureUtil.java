@@ -3,6 +3,9 @@ package com.softure.java.services;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -285,5 +288,25 @@ public class SoftureUtil {
         byte[] encryptedBytes = cipher.doFinal(data.getBytes());
         return Base64.getEncoder().encodeToString(encryptedBytes);
     }
+    
+	public static String encryptSHA384(String input) throws ServerException {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-384");
+
+			byte[] messageDigest = md.digest(input.getBytes());
+			BigInteger no = new BigInteger(1, messageDigest);
+
+			String hashtext = no.toString(16);
+
+			while (hashtext.length() < 96) {
+				hashtext = "0" + hashtext;
+			}
+
+			return hashtext;
+		} catch (NoSuchAlgorithmException e) {
+			throw new ServerException(e.getMessage());
+		}
+	}
+
 
 }

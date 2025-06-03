@@ -46,7 +46,7 @@ public class TaskRest {
 	}
 	
 	@GetMapping(value="/{id}")
-	public TaskDTO getById(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestParam("id") String id)  throws ServerException  {
+	public TaskDTO getById(HttpServletRequest request, @RequestHeader("Authorization") String token, @RequestParam String id)  throws ServerException  {
 		tokenService.getUser(token, request);
 		return taskService.getById(id);
 	}
@@ -62,7 +62,7 @@ public class TaskRest {
 	}
 
 	@PostMapping(value="/delete/{id}")
-	public SharedIdResponse delete(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable("id") String id)  throws ServerException  {
+	public SharedIdResponse delete(HttpServletRequest request, @RequestHeader("Authorization") String token, @PathVariable String id)  throws ServerException  {
 		return taskDeleteService.call(id, tokenService.getUser(token, request));
 	}
 }

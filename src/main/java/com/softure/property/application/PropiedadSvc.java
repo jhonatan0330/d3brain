@@ -25,11 +25,8 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.BodegaDTO;
-import com.softure.inventory.domain.BodegaFilterDTO;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
@@ -84,8 +81,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired @Lazy 
 	private PropiedadMapper propiedadMapper;
 
-	@Autowired @Lazy 
-	private BodegaSvc bodegaService;
 	@Autowired @Lazy 
 	private CambioSvc cambioService;
 	@Autowired @Lazy 
@@ -697,28 +692,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return filtroPlantilla;
 	}
 
-	private void identificadorBodega(PropiedadDTO dto) throws ServerException {
-		BodegaDTO bodega = bodegaService.consultaXId(dto.getValor());
-		if (bodega == null) {
-			BodegaFilterDTO bodegaFilter = new BodegaFilterDTO();
-			bodegaFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			List<BodegaDTO> bodegas = bodegaService.listarConsulta(bodegaFilter);
-			if (bodegas == null || bodegas.isEmpty())
-				throw new ServerException("No se tienen bodegas creadas");
-			bodega = null;
-			for (BodegaDTO bodegaDTO : bodegas) {
-				if (bodegaDTO.getNombre().compareTo(dto.getValor().toUpperCase()) == 0
-						|| bodegaDTO.getCodigo().compareTo(dto.getValor().toUpperCase()) == 0) {
-					bodega = bodegaDTO;
-					break;
-				}
-			}
-			if (bodega == null)
-				throw new ServerException("No se encontro bodega con Id, nombre o Codigo que concuerde");
-		}
-		dto.setValor(bodega.getLlaveTabla());
-		dto.setTexto(bodega.getNombre());
-	}
 
 	private void identificadorProducto(PropiedadDTO dto) throws ServerException {
 		ProductoDTO producto = productoService.consultaXId(dto.getValor());
@@ -940,10 +913,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		case Propiedades.PROCESO_GESTIONAR_ESTADOS: {
 			identificadorPlantillasGestion(dto);
-			break;
-		}
-		case Propiedades.BODEGA_FIJA: {
-			identificadorBodega(dto);
 			break;
 		}
 		case Propiedades.UPDATE_INFORMATIVE_FIELD:

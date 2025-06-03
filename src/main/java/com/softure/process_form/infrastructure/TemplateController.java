@@ -52,7 +52,7 @@ public class TemplateController {
 	}
 	
 	@GetMapping(value="/getFields")
-	public DocumentoPlantillaDTO obtenerCampos(@RequestParam("id") String id, @RequestHeader("Authorization") String token) throws ServerException {
+	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {
 		DocumentoPlantillaDTO filterTemplate = new DocumentoPlantillaDTO();
 		filterTemplate.setLlaveTabla(id);
 		return documentoplantillaService.obtenerCampos(filterTemplate, token, true);
@@ -71,7 +71,7 @@ public class TemplateController {
 	}
 	
 	@GetMapping(value="/getTraceFields/{documentId}/{transaction}")
-	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable("documentId") String documentId, @PathVariable("transaction") String transaction, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable String documentId, @PathVariable String transaction, @RequestHeader("Authorization") String token)  throws ServerException  {
 		return fieldsService.listar2Gestor(documentId, transaction);
 	}
 	

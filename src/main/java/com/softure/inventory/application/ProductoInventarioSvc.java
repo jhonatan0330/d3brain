@@ -1,25 +1,22 @@
 package com.softure.inventory.application;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
-// BEGIN region interImport
-import java.util.Date;
-import java.math.BigDecimal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.inventory.domain.BodegaDTO;
+import com.shared.domain.SharedConstants;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.ProductoInventarioMapper;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.softure.logisticpymes.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
@@ -31,8 +28,6 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	private ProductoInventarioMapper productoInventarioMapper;
 	@Autowired @Lazy 
 	private ProductoSvc productService;
-	@Autowired @Lazy 
-	private BodegaSvc storeService;
 	@Autowired @Lazy 
 	private CategoriaProductoSvc categoryService;
 	
@@ -106,8 +101,8 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	@Override
 	public ProductoInventarioDTO guardar(ProductoInventarioDTO dto, String token) throws ServerException {
 		// BEGIN ProductoInventario_guardar
+		if(dto.getDocumento()==null)  throw new ServerException("Al crear un inventario de producto debe teenr un documento.");
 		ProductoDTO product = productService.consultaXId(dto.getProducto());
-		BodegaDTO store = storeService.consultaXId(dto.getBodega());
 		
 		ProductoInventarioFilterDTO unicoFilter = new ProductoInventarioFilterDTO();
 		unicoFilter.setBodega(dto.getBodega());
@@ -115,9 +110,9 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 		ProductoInventarioDTO unico = consultaUnica(unicoFilter);
 		if(unico!=null){
 			if(unico.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0){
-				throw new ServerException("Este producto " + product.getNombre() +" ya se encuentra referenciado para controlar en esta bodega " + store.getNombre());
+				throw new ServerException("Este producto " + product.getNombre() +" ya se encuentra referenciado para controlar en esta bodega ");
 			}else{
-				throw new ServerException("Este producto " + product.getNombre() +" se encuentra inactivo para manejo de inventarios en esta bodega " + store.getNombre());
+				throw new ServerException("Este producto " + product.getNombre() +" se encuentra inactivo para manejo de inventarios en esta bodega ");
 			}
 		}
 		if(dto.getCantidadMinima()==null) dto.setCantidadMinima(BigDecimal.ZERO);

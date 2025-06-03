@@ -16,7 +16,6 @@ import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.BodegaSvc;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.money.application.CuentaSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -42,7 +41,6 @@ public class HomologateAdapterService {
 	@Autowired @Lazy  private RolAccesoSvc rolService;
 	@Autowired @Lazy  private CallDocumentCRUD crudService;
 	
-	@Autowired @Lazy  private BodegaSvc bodegaService;
 	@Autowired @Lazy  private CuentaSvc cuentaService;
 	
 	@Autowired @Lazy  private HomologateTariff tariffHomologate;
@@ -58,8 +56,6 @@ public class HomologateAdapterService {
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
 		switch (dto.getKey()) {
-		case Propiedades.PLANTILLA_TIPO_BODEGA:
-			break;
 		case Propiedades.PLANTILLA_TIPO_CUENTA:
 			break;
 		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
@@ -227,10 +223,6 @@ public class HomologateAdapterService {
 
 	public void crearProducto(PedidoVentaDTO documento, String categoria, String token) throws ServerException {
 		productHomologate.crearDesdeDocumento(documento, categoria, token);
-	}
-
-	public void crearBodega(PedidoVentaDTO documento) throws ServerException {
-		bodegaService.crearDesdeDocumento(documento);
 	}
 
 	// Este metodo habia desaparecido pero es necesario para poder abrir los turnos

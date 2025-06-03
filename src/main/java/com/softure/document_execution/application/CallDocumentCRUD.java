@@ -6,18 +6,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.accounting.voucher.application.VoucherDeleteService;
 import com.configuration.homologate.application.HomologateAdapterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
@@ -859,8 +860,6 @@ public class CallDocumentCRUD {
 		PropiedadDTO categoria = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO);
 		if (categoria != null)
 			homologateService.crearProducto(dto, categoria.getValor(), token);
-		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_BODEGA) != null)
-			homologateService.crearBodega(dto);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA) != null)
 			homologateService.crearCuenta(dto, token);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar

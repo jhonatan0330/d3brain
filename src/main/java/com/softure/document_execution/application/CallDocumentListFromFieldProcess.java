@@ -3,12 +3,12 @@ package com.softure.document_execution.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.document_execution.application.field.AuxiliarProcesoBodega;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
@@ -23,17 +23,16 @@ import com.softure.property.domain.RelacionInternaDTO;
 public class CallDocumentListFromFieldProcess {
 
 	@Autowired @Lazy 
+	private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy 
+	private RelacionInternaSvc relationService;
+	@Autowired @Lazy 
 	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired @Lazy 
 	private CallDocumentListBySQLFunction listDocumentBySQLFunction;
 	@Autowired @Lazy 
-	private AuxiliarProcesoBodega tipoBodega;
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relationService;
+	
 
 	// Es muy importante que venga el campo con todas las propiedadses
 	public PedidoVentaCaracteristicaFilterDTO execute(PedidoVentaCaracteristicaFilterDTO pCampo,
@@ -47,9 +46,9 @@ public class CallDocumentListFromFieldProcess {
 		List<PedidoVentaDTO> resultados = null;
 		if (multiple.isEmpty() && campoHeredado1.isEmpty()) {// Consulto opciones de combo
 			// Esto es de los tipo bodega
-			String bodegaFija = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
-			if (!bodegaFija.isEmpty())
-				pCampo.setValorOpcion(tipoBodega.consultarBodegaBaseFija(bodegaFija));
+			//String bodegaFija = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
+			//if (!bodegaFija.isEmpty())
+				//pCampo.setValorOpcion(tipoBodega.consultarBodegaBaseFija(bodegaFija));
 			// Movi esto porque simpre que tenga opcion va a consultar uno creo que tengo un
 			// problema con los que dependen o algo asi
 			if (pCampo.getValorOpcion() != null) {// Si tiene valor opcion es porque ya esta seleccionado
