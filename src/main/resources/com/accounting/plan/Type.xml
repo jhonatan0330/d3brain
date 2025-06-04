@@ -13,10 +13,6 @@
 			,ctcm_servicio as service
 			,ctcm_patron as pattern
 			,ctcm_consecutivo as consecutive
-			,dtcm_creacionfecha as createdAt
-			,ctcm_creacionusuario as createdUser
-			,ctcm_creacionusuarionombre as createdUserName
-			,dtcm_modificacionfecha as updatedAt
 			,ctcm_estado as state
 		from account.tipocomprobante_tcm a
 	</sql>
@@ -63,32 +59,28 @@
 	</select>
 
 	<select id="insert" parameterType="TypeDTO" resultType="TypeDTO">
-		insert into account.tipocomprobante_tcm(ctcm_llave, dtcm_creacionfecha, dtcm_modificacionfecha
+		insert into account.tipocomprobante_tcm(ctcm_llave
 		<if test="catalog!=null">,ctcm_catalogo</if>
 		<if test="name!=null">,ctcm_nombre</if>
 		<if test="code!=null">,ctcm_codigo</if>
 		<if test="service!=null">,ctcm_servicio</if>
 		<if test="pattern!=null">,ctcm_patron</if>
 		<if test="consecutive!=null">,ctcm_consecutivo</if>
-		<if test="createdUser!=null">,ctcm_creacionusuario</if>
-		<if test="createdUserName!=null">,ctcm_creacionusuarionombre</if>
 		<if test="state!=null">,ctcm_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="catalog!=null">,#{catalog}</if>
 		<if test="name!=null">,#{name}</if>
 		<if test="code!=null">,#{code}</if>
 		<if test="service!=null">,#{service}</if>
 		<if test="pattern!=null">,#{pattern}</if>
 		<if test="consecutive!=null">,#{consecutive}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TypeDTO" resultType="TypeDTO">
 		update account.tipocomprobante_tcm
-		set dtcm_modificacionfecha = now(),
+		set
 		ctcm_catalogo = #{catalog},
 		ctcm_nombre = #{name},
 		ctcm_codigo = #{code},

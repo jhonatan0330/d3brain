@@ -9,7 +9,7 @@ public class VoucherLineRequest {
 	private BigDecimal debit;
 	private BigDecimal credit;
 	private String note;
-	
+	private String type;
 	private ArrayList<VoucherLineDimensionRequest> references;
 	
 	public String getAccount() {
@@ -36,7 +36,12 @@ public class VoucherLineRequest {
 	public void setNote(String note) {
 		this.note = note;
 	}
-	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public ArrayList<VoucherLineDimensionRequest> getReferences() {
 		return references;
 	}

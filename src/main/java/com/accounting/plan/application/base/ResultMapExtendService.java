@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.ResultMapDTO;
 import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.plan.infrastructure.ResultMapExtendMapper;
@@ -68,30 +67,6 @@ public class ResultMapExtendService {
 		}
 	}
 
-	/*
-	@SuppressWarnings("deprecation")
-	public void insertMapAccount(String accountId, Date startDate, Date endDate) throws ServerException {
-		try {
-
-			Date dateYearStart = new Date(startDate.getYear(), 0, 1);
-			Date dateMonthStart = new Date(startDate.getYear(), startDate.getMonth(), 1);
-			Date dateDayStart = new Date(startDate.getYear(), startDate.getMonth(), startDate.getDate());
-			
-			Date dateYearEnd = new Date(endDate.getYear(), 0, 1);
-			Date dateMonthEnd = new Date(endDate.getYear(), endDate.getMonth(), 1);
-			Date dateDayEnd = new Date(endDate.getYear(), endDate.getMonth(), endDate.getDate());
-			
-			mapper.insertMapAccount(accountId, 
-					dateYearStart, dateYearEnd,
-					dateMonthStart, dateMonthEnd,
-					dateDayStart, dateDayEnd 
-					);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}*/
 
 	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value)
 			throws ServerException {
@@ -122,16 +97,6 @@ public class ResultMapExtendService {
 			return mapper.getItemsAccount(accountId, dateFactCalendar.get(Calendar.YEAR),
 					dateFactCalendar.get(Calendar.MONTH), dateFactCalendar.get(Calendar.DATE),
 					dateFactCalendar.get(Calendar.HOUR_OF_DAY), (dateFactCalendar.get(Calendar.MINUTE) / 10 * 10));
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
-
-	public List<AccountDTO> getAccountWithTimeToExtend() throws ServerException {
-		try {
-			return mapper.selectAccountExtendTime();
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {

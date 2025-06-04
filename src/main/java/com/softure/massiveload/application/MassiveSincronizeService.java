@@ -27,7 +27,6 @@ public class MassiveSincronizeService {
 		newLoadMassive.setArchivo(fileUrl);
 		newLoadMassive.setPlantilla(template);
 		List<PedidoVentaDTO> documents = generateDocuments(fileUrl, template);
-		newLoadMassive.setCreatedUser(token); // TODO : Colcoar el usuario
 		if(documents==null || documents.isEmpty()) {
 			newLoadMassive.setState(MassiveMasterDTO.ERROR);
 			newLoadMassive.setMensaje("No se generaron items para cargar");
@@ -59,7 +58,6 @@ public class MassiveSincronizeService {
 			  item.setNombre(loadId);
 			  item.setProgreso(MassiveItemDTO.ERROR);
 			}
-			item.setCreatedUser(token);// TODO hay que colcoar el usuario correcto
 			cargaMasivaItemService.save(item);	
 		}
 	}

@@ -20,7 +20,6 @@ public class TaskCreateService {
 	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
 		TaskDTO dto = task.toModel();
 		dto.setUser(user);
-		dto.setCreatedUser(user);
 		taskService.save(dto);
 		return new SharedIdResponse(dto.getKey());
 	}

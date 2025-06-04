@@ -77,6 +77,7 @@ public class ApiAccountVoucherService {
 			line.setNegative(accountRecordDTO.getCredit());
 			line.setPositive(accountRecordDTO.getDebit());
 			line.setNote(accountRecordDTO.getNote());
+			line.setType(accountRecordDTO.getType());
 			
 			VoucherLine _line = new VoucherLine();
 			_line.setLine(line);

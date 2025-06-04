@@ -1,7 +1,6 @@
 package com.accounting.voucher.application;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -97,10 +96,7 @@ public class VoucherCalculateService {
 				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
 				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
 			}
-			
 			resultMapDTO.setQuantity(resultMapDTO.getQuantity() + 1);
-			resultMapDTO.setAverage(resultMapDTO.getValue()
-					.divide(new BigDecimal(resultMapDTO.getQuantity()), 2, RoundingMode.CEILING).floatValue());
 			// guardar las modificaciones
 			mapService.update(resultMapDTO);
 			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());

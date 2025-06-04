@@ -14,10 +14,6 @@
 			,crax_auxiliardocumento as auxiliarDocumentId
 			,(select cc.ccue_codigo from account.cuenta_cue cc where ccue_llave = crax_cuenta) as auxiliarCode
 			,(select cc.ccue_nombre from account.cuenta_cue cc where ccue_llave = crax_cuenta) as auxiliarName
-			,drax_creacionfecha as createdAt
-			,crax_creacionusuario as createdUser
-			,crax_creacionusuarionombre as createdUserName
-			,drax_modificacionfecha as updatedAt
 			,crax_estado as state
 		from account.registroauxiliar_rax a
 	</sql>
@@ -63,30 +59,26 @@
 	</select>
 
 	<select id="insert" parameterType="AccountRecordAuxiliarDTO" resultType="AccountRecordAuxiliarDTO">
-		insert into account.registroauxiliar_rax(crax_llave, drax_creacionfecha, drax_modificacionfecha
+		insert into account.registroauxiliar_rax(crax_llave
 		<if test="voucher!=null">,crax_comprobante</if>
 		<if test="recordLine!=null">,crax_registro</if>
 		<if test="account!=null">,crax_cuenta</if>
 		<if test="auxiliarType!=null">,crax_auxiliartipo</if>
 		<if test="auxiliarDocumentId!=null">,crax_auxiliardocumento</if>
-		<if test="createdUser!=null">,crax_creacionusuario</if>
-		<if test="createdUserName!=null">,crax_creacionusuarionombre</if>
 		<if test="state!=null">,crax_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="voucher!=null">,#{voucher}</if>
 		<if test="recordLine!=null">,#{recordLine}</if>
 		<if test="account!=null">,#{account}</if>
 		<if test="auxiliarType!=null">,#{auxiliarType}</if>
 		<if test="auxiliarDocumentId!=null">,#{auxiliarDocumentId}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="AccountRecordAuxiliarDTO" resultType="AccountRecordAuxiliarDTO">
 		update account.registroauxiliar_rax
-		set drax_modificacionfecha = now(),
+		set
 		crax_comprobante = #{voucher},
 		crax_registro = #{recordLine},
 		crax_cuenta = #{account},

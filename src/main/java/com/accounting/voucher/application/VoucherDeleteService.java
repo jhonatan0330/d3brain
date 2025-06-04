@@ -51,6 +51,7 @@ public class VoucherDeleteService {
 			stack = new StackVoucherDTO();
 			stack.setVoucher(pVoucherId);
 			stack.setAction(SharedConstants.STATE_INACTIVE);
+			stack.setCreationDate(new Date());
 			stackBasicService.save(stack);
 			
 		} else {
@@ -75,8 +76,12 @@ public class VoucherDeleteService {
 		
 		for (PropiedadDTO propiedadDTO : _prop) {
 			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive( propiedadDTO.getValor(), pDocumentId);
-			if (_service != null)
-				taskService.inactivate(_service);	
+			if (_service != null) {
+				_service.setEstado(SharedConstants.STATE_INACTIVE);
+				_service.setFechaEjecucion(new Date());
+				_service.setError("Documento eliminado, se inactiva el servicio de voucher asociado");
+				taskService.update(_service);	
+			}
 		}
 		
 	}

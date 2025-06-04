@@ -8,11 +8,8 @@
 		select
 			cstk_llave as key
 			,cstk_comprobante as voucher
+			,dstk_creacionfecha as creationDate
 			,cstk_accion as action
-			,dstk_creacionfecha as createdAt
-			,cstk_creacionusuario as createdUser
-			,cstk_creacionusuarionombre as createdUserName
-			,dstk_modificacionfecha as updatedAt
 			,cstk_estado as state
 		from account.pila_stk a
 	</sql>
@@ -22,6 +19,7 @@
 		and cstk_llave = #{key}</if><if test="state!=null">
 		and cstk_estado = #{state}</if>
 <if test="voucher!=null">		and cstk_comprobante = #{voucher}</if>
+<if test="creationDateMin!=null">		and dstk_creacionfecha >= #{creationDateMin}</if><if test="creationDateMax!=null">		and dstk_creacionfecha <![CDATA[ < ]]> #{creationDateMax}</if>
 <if test="action!=null">		and cstk_accion = #{action}</if>
 
 	</sql>
@@ -55,25 +53,24 @@
 	</select>
 
 	<select id="insert" parameterType="StackVoucherDTO" resultType="StackVoucherDTO">
-		insert into account.pila_stk(cstk_llave, dstk_creacionfecha, dstk_modificacionfecha
+		insert into account.pila_stk(cstk_llave
 		<if test="voucher!=null">,cstk_comprobante</if>
+		<if test="creationDate!=null">,dstk_creacionfecha</if>
 		<if test="action!=null">,cstk_accion</if>
-		<if test="createdUser!=null">,cstk_creacionusuario</if>
-		<if test="createdUserName!=null">,cstk_creacionusuarionombre</if>
 		<if test="state!=null">,cstk_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="voucher!=null">,#{voucher}</if>
+		<if test="creationDate!=null">,#{creationDate}</if>
 		<if test="action!=null">,#{action}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="StackVoucherDTO" resultType="StackVoucherDTO">
 		update account.pila_stk
-		set dstk_modificacionfecha = now(),
+		set
 		cstk_comprobante = #{voucher},
+		dstk_creacionfecha = #{creationDate},
 		cstk_accion = #{action},
 		cstk_estado =#{state}
 		<include refid="whereStackVoucherPrimaryKeyFragment" />

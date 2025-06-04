@@ -1,6 +1,5 @@
 package com.shared.application;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +17,6 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 	
 	public void update(T dto) throws ServerException {
 		try {
-			dto.setUpdatedAt(new Date());
 			mapper.update(dto); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
@@ -79,8 +77,6 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 	}
 	
 	public String save(T dto) throws ServerException {
-		if(dto.getCreatedUser() == null) throw new ServerException("Ingrese los datos del usuario que realiza el ingreso del registro");
-		dto.setCreatedAt(new Date());
 		dto.setKey(generateIdUUID());
 		try {
 			mapper.insert(dto); 

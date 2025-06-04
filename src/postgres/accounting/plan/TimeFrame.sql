@@ -14,8 +14,3 @@ ALTER TABLE account.periodotiempo_ptm ADD nptm_mes int;
 ALTER TABLE account.periodotiempo_ptm ADD nptm_dia int;
 ALTER TABLE account.periodotiempo_ptm ADD nptm_hora int;
 ALTER TABLE account.periodotiempo_ptm ADD nptm_minuto int;
-
-ALTER TABLE account.periodotiempo_ptm ADD dptm_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.periodotiempo_ptm ADD cptm_creacionusuario varchar(32);
-ALTER TABLE account.periodotiempo_ptm ADD cptm_creacionusuarionombre varchar(200);
-ALTER TABLE account.periodotiempo_ptm ADD dptm_modificacionfecha timestamptz;

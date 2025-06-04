@@ -16,10 +16,6 @@
 			,nptm_dia as day
 			,nptm_hora as hour
 			,nptm_minuto as minute
-			,dptm_creacionfecha as createdAt
-			,cptm_creacionusuario as createdUser
-			,cptm_creacionusuarionombre as createdUserName
-			,dptm_modificacionfecha as updatedAt
 			,cptm_estado as state
 		from account.periodotiempo_ptm a
 	</sql>
@@ -69,7 +65,7 @@
 	</select>
 
 	<select id="insert" parameterType="TimeFrameDTO" resultType="TimeFrameDTO">
-		insert into account.periodotiempo_ptm(cptm_llave, dptm_creacionfecha, dptm_modificacionfecha
+		insert into account.periodotiempo_ptm(cptm_llave
 		<if test="level!=null">,nptm_nivel</if>
 		<if test="startDate!=null">,dptm_fechainicio</if>
 		<if test="endDate!=null">,dptm_fechafin</if>
@@ -79,10 +75,8 @@
 		<if test="day!=null">,nptm_dia</if>
 		<if test="hour!=null">,nptm_hora</if>
 		<if test="minute!=null">,nptm_minuto</if>
-		<if test="createdUser!=null">,cptm_creacionusuario</if>
-		<if test="createdUserName!=null">,cptm_creacionusuarionombre</if>
 		<if test="state!=null">,cptm_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="level!=null">,#{level}</if>
 		<if test="startDate!=null">,#{startDate}</if>
 		<if test="endDate!=null">,#{endDate}</if>
@@ -92,15 +86,13 @@
 		<if test="day!=null">,#{day}</if>
 		<if test="hour!=null">,#{hour}</if>
 		<if test="minute!=null">,#{minute}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TimeFrameDTO" resultType="TimeFrameDTO">
 		update account.periodotiempo_ptm
-		set dptm_modificacionfecha = now(),
+		set
 		nptm_nivel = #{level},
 		dptm_fechainicio = #{startDate},
 		dptm_fechafin = #{endDate},

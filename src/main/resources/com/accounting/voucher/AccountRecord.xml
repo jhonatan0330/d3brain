@@ -16,10 +16,7 @@
 			,mreg_positivo as positive
 			,mreg_negativo as negative
 			,mreg_valor as value
-			,dreg_creacionfecha as createdAt
-			,creg_creacionusuario as createdUser
-			,creg_creacionusuarionombre as createdUserName
-			,dreg_modificacionfecha as updatedAt
+			,creg_tipo as type
 			,creg_estado as state
 		from account.registro_reg a
 	</sql>
@@ -35,6 +32,7 @@
 <if test="positive!=null">		and mreg_positivo = #{positive}</if>
 <if test="negative!=null">		and mreg_negativo = #{negative}</if>
 <if test="value!=null">		and mreg_valor = #{value}</if>
+<if test="type!=null">		and creg_tipo = #{type}</if>
 
 	</sql>
 
@@ -67,7 +65,7 @@
 	</select>
 
 	<select id="insert" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
-		insert into account.registro_reg(creg_llave, dreg_creacionfecha, dreg_modificacionfecha
+		insert into account.registro_reg(creg_llave
 		<if test="voucher!=null">,creg_comprobante</if>
 		<if test="account!=null">,creg_cuenta</if>
 		<if test="note!=null">,creg_descripcion</if>
@@ -75,10 +73,9 @@
 		<if test="positive!=null">,mreg_positivo</if>
 		<if test="negative!=null">,mreg_negativo</if>
 		<if test="value!=null">,mreg_valor</if>
-		<if test="createdUser!=null">,creg_creacionusuario</if>
-		<if test="createdUserName!=null">,creg_creacionusuarionombre</if>
+		<if test="type!=null">,creg_tipo</if>
 		<if test="state!=null">,creg_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="voucher!=null">,#{voucher}</if>
 		<if test="account!=null">,#{account}</if>
 		<if test="note!=null">,#{note}</if>
@@ -86,15 +83,14 @@
 		<if test="positive!=null">,#{positive}</if>
 		<if test="negative!=null">,#{negative}</if>
 		<if test="value!=null">,#{value}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
+		<if test="type!=null">,#{type}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="AccountRecordDTO" resultType="AccountRecordDTO">
 		update account.registro_reg
-		set dreg_modificacionfecha = now(),
+		set
 		creg_comprobante = #{voucher},
 		creg_cuenta = #{account},
 		creg_descripcion = #{note},
@@ -102,6 +98,7 @@
 		mreg_positivo = #{positive},
 		mreg_negativo = #{negative},
 		mreg_valor = #{value},
+		creg_tipo = #{type},
 		creg_estado =#{state}
 		<include refid="whereAccountRecordPrimaryKeyFragment" />
 	</select>

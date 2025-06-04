@@ -13,16 +13,11 @@
 			,crmp_periodo as timeFrame
 			,(select cptm_codigo from account.periodotiempo_ptm where cptm_llave = crmp_periodo) as timeFrameName
 			,nrmp_cantidad as quantity
-			,nrmp_promedio as average
 			,mrmp_saldoanterior as lastBalance
 			,mrmp_saldosiguiente as nextBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
-			,drmp_creacionfecha as createdAt
-			,crmp_creacionusuario as createdUser
-			,crmp_creacionusuarionombre as createdUserName
-			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state
 		from x_${catalog}_${type}_rmp
 			inner join cuenta_cue on (ccue_llave = crmp_cuenta)
@@ -136,16 +131,11 @@
 			,cptm_llave as timeFrame
 			,cptm_codigo as timeFrameName
 			,nrmp_cantidad as quantity
-			,nrmp_promedio as average
 			,mrmp_saldoanterior as lastBalance
 			,mrmp_saldosiguiente as nextBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
-			,drmp_creacionfecha as createdAt
-			,crmp_creacionusuario as createdUser
-			,crmp_creacionusuarionombre as createdUserName
-			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state 
 		from account.cuenta_cue
 			left join account.periodotiempo_ptm on ( nptm_nivel = 0) 
@@ -164,7 +154,6 @@
 			,cptm_llave as timeFrame
 			,cptm_codigo as timeFrameName
 			,nrmp_cantidad as quantity
-			,nrmp_promedio as average
 			,mrmp_saldoanterior as lastBalance
 			,mrmp_saldosiguiente as nextBalance
 			,mrmp_positivo as positive
@@ -184,9 +173,7 @@
 	<select id="updateItem" >
 		update account.maparesultados_rmp
 			set
-				drmp_modificacionfecha = now(),
 				nrmp_cantidad = #{item.quantity},
-				nrmp_promedio = #{item.average},
 				mrmp_positivo = #{item.positive},
 				mrmp_negativo = #{item.negative},
 				mrmp_valor = #{item.value},
@@ -195,16 +182,6 @@
 			crmp_llave =#{item.key}
 	</select>
 	
-	<!--select id="insertMapAccount" >
-		INSERT INTO account.maparesultados_rmp
-			(crmp_llave, crmp_cuenta, crmp_periodo)
-		select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''), #{accountId}, cptm_llave 
-		from account.periodotiempo_ptm 
-		where nptm_nivel = 0
-				or (nptm_nivel = 1 and dptm_fechainicio >= #{startDateYear} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateYear})
-				or (nptm_nivel = 2 and dptm_fechainicio >= #{startDateMonth} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateMonth})
-				or (nptm_nivel = 3 and dptm_fechainicio >= #{startDateDay} and dptm_fechainicio <![CDATA[ <= ]]> #{endDateDay})
-	</!select-->
 	
 	<select id="updateBalance" >
 		update account.maparesultados_rmp
@@ -216,24 +193,6 @@
 			 	select cptm_llave from account.periodotiempo_ptm where nptm_nivel = #{level} and dptm_fechainicio > #{startDate})
 	</select>
 	
-	<select id="selectAccountExtendTime" resultType="AccountDTO">
-		select 
-			cuenta.ccue_llave as key
-			,cuenta.ccue_catalogo as catalog
-			,cuenta.dcue_fechainicial as initialDate
-			,cuenta.dcue_fechafinal as finalDate
-			,ccue_nombre as name
-		from account.cuenta_cue cuenta
-			inner join account.catalogo_ctg catalogo on (catalogo.cctg_llave = cuenta.ccue_catalogo and catalogo.cctg_estado= 'A')
-		where cuenta.ccue_estado = 'A'
-		and (
-			cuenta.dcue_fechainicial is null 
-			or cuenta.dcue_fechafinal is null
-			or cuenta.dcue_fechainicial > catalogo.dctg_fechainicial 
-			or cuenta.dcue_fechafinal <![CDATA[ < ]]>  catalogo.dctg_fechafinal
-		)
-		order by cuenta.ccue_wbs limit 500;
-	</select>
 	
 	<select id="selectTimeFrameLevel" resultType="TimeFrameDTO">
 		select ${level} as key

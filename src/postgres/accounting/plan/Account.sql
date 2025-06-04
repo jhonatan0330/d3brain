@@ -16,8 +16,3 @@ ALTER TABLE account.cuenta_cue ADD ccue_naturaleza varchar(1) NOT NULL ;
 ALTER TABLE account.cuenta_cue ADD ccue_plantilla varchar(32);
 ALTER TABLE account.cuenta_cue ADD ccue_campo varchar(32);
 ALTER TABLE account.cuenta_cue ADD ccue_documento varchar(32) NOT NULL ;
-
-ALTER TABLE account.cuenta_cue ADD dcue_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.cuenta_cue ADD ccue_creacionusuario varchar(32);
-ALTER TABLE account.cuenta_cue ADD ccue_creacionusuarionombre varchar(200);
-ALTER TABLE account.cuenta_cue ADD dcue_modificacionfecha timestamptz;

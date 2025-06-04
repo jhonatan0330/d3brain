@@ -22,10 +22,6 @@
 			,dtrf_fechainicial as fechaInicial
 			,dtrf_fechafinal as fechaFinal
 			,ctrf_documento as documento
-			,dtrf_creacionfecha as createdAt
-			,ctrf_creacionusuario as createdUser
-			,ctrf_creacionusuarionombre as createdUserName
-			,dtrf_modificacionfecha as updatedAt
 			,ctrf_estado as state
 		from tarifario_trfp a
 	</sql>
@@ -81,7 +77,7 @@
 	</select>
 
 	<select id="insert" parameterType="TarifarioDTO" resultType="TarifarioDTO">
-		insert into tarifario_trfp(ctrf_llave, dtrf_creacionfecha, dtrf_modificacionfecha
+		insert into tarifario_trfp(ctrf_llave
 		<if test="nombre!=null">,ctrf_nombre</if>
 		<if test="tipoRecurso!=null">,ctrf_tiporecurso</if>
 		<if test="tipoRecursoNombre!=null">,ctrf_tiporecursonombre</if>
@@ -97,10 +93,8 @@
 		<if test="fechaInicial!=null">,dtrf_fechainicial</if>
 		<if test="fechaFinal!=null">,dtrf_fechafinal</if>
 		<if test="documento!=null">,ctrf_documento</if>
-		<if test="createdUser!=null">,ctrf_creacionusuario</if>
-		<if test="createdUserName!=null">,ctrf_creacionusuarionombre</if>
 		<if test="state!=null">,ctrf_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="nombre!=null">,#{nombre}</if>
 		<if test="tipoRecurso!=null">,#{tipoRecurso}</if>
 		<if test="tipoRecursoNombre!=null">,#{tipoRecursoNombre}</if>
@@ -116,15 +110,13 @@
 		<if test="fechaInicial!=null">,#{fechaInicial}</if>
 		<if test="fechaFinal!=null">,#{fechaFinal}</if>
 		<if test="documento!=null">,#{documento}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TarifarioDTO" resultType="TarifarioDTO">
 		update tarifario_trfp
-		set dtrf_modificacionfecha = now(),
+		set
 		ctrf_nombre = #{nombre},
 		ctrf_tiporecurso = #{tipoRecurso},
 		ctrf_tiporecursonombre = #{tipoRecursoNombre},

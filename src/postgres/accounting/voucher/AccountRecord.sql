@@ -12,8 +12,4 @@ ALTER TABLE account.registro_reg ADD dreg_fecha timestamp with time zone NOT NUL
 ALTER TABLE account.registro_reg ADD mreg_positivo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.registro_reg ADD mreg_negativo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.registro_reg ADD mreg_valor NUMERIC(18,6) NOT NULL DEFAULT 0;
-
-ALTER TABLE account.registro_reg ADD dreg_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE account.registro_reg ADD creg_creacionusuario varchar(32);
-ALTER TABLE account.registro_reg ADD creg_creacionusuarionombre varchar(200);
-ALTER TABLE account.registro_reg ADD dreg_modificacionfecha timestamptz;
+ALTER TABLE account.registro_reg ADD creg_tipo varchar(1);

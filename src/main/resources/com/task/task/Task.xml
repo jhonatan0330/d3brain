@@ -14,10 +14,6 @@
 			,dtsk_dueDate as dueDate
 			,ntsk_priority as priority
 			,ntsk_order as order
-			,dtsk_creacionfecha as createdAt
-			,ctsk_creacionusuario as createdUser
-			,ctsk_creacionusuarionombre as createdUserName
-			,dtsk_modificacionfecha as updatedAt
 			,ctsk_estado as state
 		from task.task_tsk a
 	</sql>
@@ -65,7 +61,7 @@
 	</select>
 
 	<select id="insert" parameterType="TaskDTO" resultType="TaskDTO">
-		insert into task.task_tsk(ctsk_llave, dtsk_creacionfecha, dtsk_modificacionfecha
+		insert into task.task_tsk(ctsk_llave
 		<if test="user!=null">,ctsk_user</if>
 		<if test="title!=null">,ctsk_title</if>
 		<if test="notes!=null">,ctsk_notes</if>
@@ -73,10 +69,8 @@
 		<if test="dueDate!=null">,dtsk_dueDate</if>
 		<if test="priority!=null">,ntsk_priority</if>
 		<if test="order!=null">,ntsk_order</if>
-		<if test="createdUser!=null">,ctsk_creacionusuario</if>
-		<if test="createdUserName!=null">,ctsk_creacionusuarionombre</if>
 		<if test="state!=null">,ctsk_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="user!=null">,#{user}</if>
 		<if test="title!=null">,#{title}</if>
 		<if test="notes!=null">,#{notes}</if>
@@ -84,15 +78,13 @@
 		<if test="dueDate!=null">,#{dueDate}</if>
 		<if test="priority!=null">,#{priority}</if>
 		<if test="order!=null">,#{order}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="TaskDTO" resultType="TaskDTO">
 		update task.task_tsk
-		set dtsk_modificacionfecha = now(),
+		set
 		ctsk_user = #{user},
 		ctsk_title = #{title},
 		ctsk_notes = #{notes},

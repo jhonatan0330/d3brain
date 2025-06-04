@@ -15,7 +15,6 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 	private String timeFrame;
 	private String timeFrameName;
 	private Integer quantity;
-	private Float average;
 	private BigDecimal lastBalance;
 	private BigDecimal nextBalance;
 	private BigDecimal positive;
@@ -68,14 +67,6 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
-	}
-
-	public Float getAverage() {
-		return average;
-	}
-
-	public void setAverage(Float average) {
-		this.average = average;
 	}
 
 	public BigDecimal getLastBalance() {

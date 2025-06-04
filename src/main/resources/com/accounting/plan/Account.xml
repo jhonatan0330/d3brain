@@ -18,10 +18,6 @@
 			,ccue_plantilla as template
 			,ccue_campo as field
 			,ccue_documento as document
-			,dcue_creacionfecha as createdAt
-			,ccue_creacionusuario as createdUser
-			,ccue_creacionusuarionombre as createdUserName
-			,dcue_modificacionfecha as updatedAt
 			,ccue_estado as state
 		from account.cuenta_cue a
 	</sql>
@@ -73,7 +69,7 @@
 	</select>
 
 	<select id="insert" parameterType="AccountDTO" resultType="AccountDTO">
-		insert into account.cuenta_cue(ccue_llave, dcue_creacionfecha, dcue_modificacionfecha
+		insert into account.cuenta_cue(ccue_llave
 		<if test="catalog!=null">,ccue_catalogo</if>
 		<if test="wbs!=null">,ccue_wbs</if>
 		<if test="name!=null">,ccue_nombre</if>
@@ -85,10 +81,8 @@
 		<if test="template!=null">,ccue_plantilla</if>
 		<if test="field!=null">,ccue_campo</if>
 		<if test="document!=null">,ccue_documento</if>
-		<if test="createdUser!=null">,ccue_creacionusuario</if>
-		<if test="createdUserName!=null">,ccue_creacionusuarionombre</if>
 		<if test="state!=null">,ccue_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="catalog!=null">,#{catalog}</if>
 		<if test="wbs!=null">,#{wbs}</if>
 		<if test="name!=null">,#{name}</if>
@@ -100,15 +94,13 @@
 		<if test="template!=null">,#{template}</if>
 		<if test="field!=null">,#{field}</if>
 		<if test="document!=null">,#{document}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="AccountDTO" resultType="AccountDTO">
 		update account.cuenta_cue
-		set dcue_modificacionfecha = now(),
+		set
 		ccue_catalogo = #{catalog},
 		ccue_wbs = #{wbs},
 		ccue_nombre = #{name},

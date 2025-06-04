@@ -21,6 +21,7 @@ public class AccountRecordDTO extends SharedDataObject{
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
+	private String type;
 
 	public String getCatalogCode() {
 		return catalogCode;
@@ -100,6 +101,14 @@ public class AccountRecordDTO extends SharedDataObject{
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }

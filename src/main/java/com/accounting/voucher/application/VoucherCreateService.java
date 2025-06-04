@@ -84,6 +84,7 @@ public class VoucherCreateService {
 	private void stackVoucher(String voucherId) throws ServerException {
 		StackVoucherDTO stack = new StackVoucherDTO();
 		stack.setVoucher(voucherId);
+		stack.setCreationDate(new Date());
 		stackBasicService.save(stack);
 	}
 
@@ -145,6 +146,7 @@ public class VoucherCreateService {
 			throw new ServerException("Es curiosos pero no enviaste registros de cuentas");
 		if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
 			throw new ServerException("El valor total del comprobante no esta diligenciado");
+		BigDecimal valueAllRecords = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsPositive = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsNegative = BigDecimal.ZERO;
 		
@@ -170,12 +172,14 @@ public class VoucherCreateService {
 					&& iVoucherLine.getLine().getValue().compareTo(BigDecimal.ZERO) == 0) {
 				toRemove.add(iVoucherLine);
 			} else {
+				if (iVoucherLine.getLine().getType() == null
+						|| iVoucherLine.getLine().getType().compareTo(AccountConst.TYPE_RECORD_RECLASIFICATION) != 0)
+					valueAllRecords = valueAllRecords.add(iVoucherLine.getLine().getPositive());	
 				valueAllRecordsPositive = valueAllRecordsPositive.add(iVoucherLine.getLine().getPositive());
 				valueAllRecordsNegative = valueAllRecordsNegative.add(iVoucherLine.getLine().getNegative());
 				if (iVoucherLine.getLine().getNote() != null && iVoucherLine.getLine().getNote().isEmpty())
 					iVoucherLine.getLine().setNote(null);
 				iVoucherLine.getLine().setFactDate(_voucher.getHeader().getFactDate());
-
 			}
 			if (iVoucherLine.getReferences() != null && !iVoucherLine.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iReference : iVoucherLine.getReferences()) {
@@ -198,9 +202,9 @@ public class VoucherCreateService {
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 
 		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE) == 0) {
-			if (_voucher.getHeader().getValue().compareTo(valueAllRecordsPositive) != 0)
+			if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
 				throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
-						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive + ")");
+						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords + "), sin tener en cuenta los de reclasificacion");
 			if (valueAllRecordsNegative.compareTo(valueAllRecordsPositive) != 0)
 				throw new ServerException("El valor de los valores negativos (" + valueAllRecordsNegative
 						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive + "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
@@ -221,9 +225,6 @@ public class VoucherCreateService {
 		}
 		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
 		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
-
-		_voucher.getHeader().setCreatedUser(token.getUser());
-		_voucher.getHeader().setCreatedUserName(token.getUserName());
 		_voucher.getHeader().setDeleteDate( Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		// Desde Angular viene una ultima linea vacia
 		for (VoucherLine item : toRemove) {

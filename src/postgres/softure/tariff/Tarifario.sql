@@ -20,8 +20,3 @@ ALTER TABLE tarifario_trfp ADD btrf_rangocantidad bool NOT NULL DEFAULT false;
 ALTER TABLE tarifario_trfp ADD dtrf_fechainicial timestamp with time zone NOT NULL ;
 ALTER TABLE tarifario_trfp ADD dtrf_fechafinal timestamp with time zone;
 ALTER TABLE tarifario_trfp ADD ctrf_documento varchar(32) NOT NULL ;
-
-ALTER TABLE tarifario_trfp ADD dtrf_creacionfecha timestamptz NOT NULL DEFAULT NOW();
-ALTER TABLE tarifario_trfp ADD ctrf_creacionusuario varchar(32);
-ALTER TABLE tarifario_trfp ADD ctrf_creacionusuarionombre varchar(200);
-ALTER TABLE tarifario_trfp ADD dtrf_modificacionfecha timestamptz;

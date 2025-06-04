@@ -13,16 +13,11 @@
 			,crmp_periodo as timeFrame
 			,(select cptm_codigo from account.periodotiempo_ptm where cptm_llave = crmp_periodo) as timeFrameName
 			,nrmp_cantidad as quantity
-			,nrmp_promedio as average
 			,mrmp_saldoanterior as lastBalance
 			,mrmp_saldosiguiente as nextBalance
 			,mrmp_positivo as positive
 			,mrmp_negativo as negative
 			,mrmp_valor as value
-			,drmp_creacionfecha as createdAt
-			,crmp_creacionusuario as createdUser
-			,crmp_creacionusuarionombre as createdUserName
-			,drmp_modificacionfecha as updatedAt
 			,crmp_estado as state
 		from account.maparesultados_rmp a
 	</sql>
@@ -34,7 +29,6 @@
 <if test="account!=null">		and crmp_cuenta = #{account}</if>
 <if test="timeFrame!=null">		and crmp_periodo = #{timeFrame}</if>
 <if test="quantity!=null">		and nrmp_cantidad = #{quantity}</if>
-<if test="average!=null">		and nrmp_promedio = #{average}</if>
 <if test="lastBalance!=null">		and mrmp_saldoanterior = #{lastBalance}</if>
 <if test="nextBalance!=null">		and mrmp_saldosiguiente = #{nextBalance}</if>
 <if test="positive!=null">		and mrmp_positivo = #{positive}</if>
@@ -72,42 +66,35 @@
 	</select>
 
 	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
-		insert into account.maparesultados_rmp(crmp_llave, drmp_creacionfecha, drmp_modificacionfecha
+		insert into account.maparesultados_rmp(crmp_llave
 		<if test="account!=null">,crmp_cuenta</if>
 		<if test="timeFrame!=null">,crmp_periodo</if>
 		<if test="quantity!=null">,nrmp_cantidad</if>
-		<if test="average!=null">,nrmp_promedio</if>
 		<if test="lastBalance!=null">,mrmp_saldoanterior</if>
 		<if test="nextBalance!=null">,mrmp_saldosiguiente</if>
 		<if test="positive!=null">,mrmp_positivo</if>
 		<if test="negative!=null">,mrmp_negativo</if>
 		<if test="value!=null">,mrmp_valor</if>
-		<if test="createdUser!=null">,crmp_creacionusuario</if>
-		<if test="createdUserName!=null">,crmp_creacionusuarionombre</if>
 		<if test="state!=null">,crmp_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="account!=null">,#{account}</if>
 		<if test="timeFrame!=null">,#{timeFrame}</if>
 		<if test="quantity!=null">,#{quantity}</if>
-		<if test="average!=null">,#{average}</if>
 		<if test="lastBalance!=null">,#{lastBalance}</if>
 		<if test="nextBalance!=null">,#{nextBalance}</if>
 		<if test="positive!=null">,#{positive}</if>
 		<if test="negative!=null">,#{negative}</if>
 		<if test="value!=null">,#{value}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
 		update account.maparesultados_rmp
-		set drmp_modificacionfecha = now(),
+		set
 		crmp_cuenta = #{account},
 		crmp_periodo = #{timeFrame},
 		nrmp_cantidad = #{quantity},
-		nrmp_promedio = #{average},
 		mrmp_saldoanterior = #{lastBalance},
 		mrmp_saldosiguiente = #{nextBalance},
 		mrmp_positivo = #{positive},

@@ -11,6 +11,8 @@ public class AccountConst {
 	public static final String TYPE_PATTERN_INDICATOR = "I";
 	public static final String TYPE_PATTERN_COMPROBANTE = "C";
 	
+	public static final String TYPE_RECORD_RECLASIFICATION = "R";
+	
 	public static final String STATUS_OPERATING = "OPERATING";
 	public static final String STATUS_BLOCKED = "BLOCKED";
 	public static final String STATUS_PLANNING = "PLANNING";

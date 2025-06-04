@@ -110,10 +110,10 @@ public class APIController {
 	}
 	
 	@PostMapping(value="/upload")
-    public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile file,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+    public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile pFile,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, null); 
+        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null); 
         	SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
      		        .withMessage(url).build();
 			return response;
@@ -124,21 +124,21 @@ public class APIController {
 	
 	
 	@PostMapping(value="/uploadResponseString")
-    public String handleFileUploadFlex(@RequestParam("file") MultipartFile file) throws ServerException {
-        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+    public String handleFileUploadFlex(@RequestParam("file") MultipartFile pFile) throws ServerException {
+        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
         	//En flex no es posible pasar los datos del header ver flash.net.FileReference.upload
-        	return uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), null, "config"); 
+        	return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config"); 
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
     }
 	
 	@PostMapping(value="/changePicture")
-    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile file,  @RequestHeader("Authorization") String token) throws ServerException {
-        if (file.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
+    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile pFile,  @RequestHeader("Authorization") String token) throws ServerException {
+        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	String url =uploadService.uploadFile(file.getBytes(), file.getOriginalFilename(), token, "config");
+        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config");
 			return usuarioService.changePicture(url, token);
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());

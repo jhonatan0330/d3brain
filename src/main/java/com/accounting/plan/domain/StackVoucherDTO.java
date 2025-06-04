@@ -1,5 +1,7 @@
 package com.accounting.plan.domain;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
@@ -8,6 +10,8 @@ import org.apache.ibatis.type.Alias;
 public class StackVoucherDTO extends SharedDataObject{
 
 	private String voucher;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date creationDate;
 	private String action;
 
 	public String getVoucher() {
@@ -16,6 +20,14 @@ public class StackVoucherDTO extends SharedDataObject{
 
 	public void setVoucher(String voucher) {
 		this.voucher = voucher;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	public String getAction() {

@@ -15,10 +15,6 @@
 			,cart_imagen as image
 			,cart_introduccion as introduction
 			,cart_ayuda as help
-			,dart_creacionfecha as createdAt
-			,cart_creacionusuario as createdUser
-			,cart_creacionusuarionombre as createdUserName
-			,dart_modificacionfecha as updatedAt
 			,cart_estado as state
 		from learning.article_art a
 	</sql>
@@ -67,7 +63,7 @@
 	</select>
 
 	<select id="insert" parameterType="ArticleDTO" resultType="ArticleDTO">
-		insert into learning.article_art(cart_llave, dart_creacionfecha, dart_modificacionfecha
+		insert into learning.article_art(cart_llave
 		<if test="title!=null">,cart_titulo</if>
 		<if test="automatic!=null">,cart_automatica</if>
 		<if test="entityType!=null">,cart_entidadTipo</if>
@@ -76,10 +72,8 @@
 		<if test="image!=null">,cart_imagen</if>
 		<if test="introduction!=null">,cart_introduccion</if>
 		<if test="help!=null">,cart_ayuda</if>
-		<if test="createdUser!=null">,cart_creacionusuario</if>
-		<if test="createdUserName!=null">,cart_creacionusuarionombre</if>
 		<if test="state!=null">,cart_estado</if>
-		) values (#{key}, now(), now()
+		) values (#{key}
 		<if test="title!=null">,#{title}</if>
 		<if test="automatic!=null">,#{automatic}</if>
 		<if test="entityType!=null">,#{entityType}</if>
@@ -88,15 +82,13 @@
 		<if test="image!=null">,#{image}</if>
 		<if test="introduction!=null">,#{introduction}</if>
 		<if test="help!=null">,#{help}</if>
-		<if test="createdUser!=null">,#{createdUser}</if>
-		<if test="createdUserName!=null">,#{createdUserName}</if>
 		<if test="state!=null">,#{state}</if>
 		)
 	</select>
 
 	<select id="update" parameterType="ArticleDTO" resultType="ArticleDTO">
 		update learning.article_art
-		set dart_modificacionfecha = now(),
+		set
 		cart_titulo = #{title},
 		cart_automatica = #{automatic},
 		cart_entidadTipo = #{entityType},
