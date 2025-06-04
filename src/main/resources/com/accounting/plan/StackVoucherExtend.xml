@@ -7,6 +7,7 @@
 	<select id="stackAvailable" resultType="StackVoucherDTO">
 		select cstk_llave as key
 			,cstk_comprobante as voucher
+			,dstk_creacionfecha as creationDate
 			,cstk_estado as state
 			,cstk_accion as action
 		from account.pila_stk 
