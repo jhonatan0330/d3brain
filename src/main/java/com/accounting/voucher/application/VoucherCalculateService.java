@@ -1,8 +1,11 @@
 package com.accounting.voucher.application;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -57,6 +60,7 @@ public class VoucherCalculateService {
 		Voucher _voucher = voucherService.getById(voucherId);
 		BigDecimal _positive =null;
 		BigDecimal _negative =null;
+		Map<String, ResultMapDTO> acumulador = new HashMap<String, ResultMapDTO>();
 		for (VoucherLine item : _voucher.getRecords()) {
 			_positive = item.getLine().getPositive();
 			_negative = item.getLine().getNegative();
@@ -64,26 +68,54 @@ public class VoucherCalculateService {
 				_negative = item.getLine().getPositive();
 				_positive = item.getLine().getNegative();
 			}
-			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue());
+			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue(), acumulador);
 			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
 					if(iAux.getAccount()!= null)
-					saveMap(iAux.getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue());	
+					saveMap(iAux.getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue(), acumulador);	
 				}
 			}
 		}
+		// guardar las modificaciones
+		Map<String, TimeFrameDTO> _times = new HashMap<String, TimeFrameDTO>();
+		for (ResultMapDTO cpv : acumulador.values()) {
+			if(cpv.getKey() == null) {
+				resultMapService.save(cpv);
+			} else {
+				mapService.update(cpv);	
+			}
+			TimeFrameDTO timeFrame = null;
+			if (_times.containsKey(cpv.getTimeFrame())) {
+				timeFrame = _times.get(cpv.getTimeFrame());
+		    } else {
+		    	timeFrame = timeFrameService.getById(cpv.getTimeFrame());
+		        _times.put(cpv.getTimeFrame(), timeFrame);
+		    }
+			if (timeFrame != null)			
+				mapService.updateBalance(cpv.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), cpv.getValue());
+		}
 	}
 
-	private void saveMap(String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value)
+	private void saveMap(String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value, Map<String, ResultMapDTO> acumulador)
 			throws ServerException {
 		AccountDTO account = accountService.getById(accountId);
+
 		// Obtener la fila de la cuenta en todos los niveles
-		List<ResultMapDTO> mapItems = mapService.getItemsAccount(accountId, factDate);
+		List<ResultMapDTO> mapItems = new ArrayList<ResultMapDTO>();
+		for (Map.Entry<String, ResultMapDTO> entry : acumulador.entrySet()) {
+		    String clave = entry.getKey();
+		    if(clave.startsWith(accountId)) {
+		    	mapItems.add(entry.getValue());
+		    }
+		}
+		if(mapItems.isEmpty()) {
+			mapItems = mapService.getItemsAccount(accountId, factDate);
+		}
+
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
 			if(resultMapDTO.getKey() == null) 
 				resultMapDTO = createMapLine( account, resultMapDTO.getTimeFrame());
-			
 			if (positive.compareTo(BigDecimal.ZERO) != 0) {
 				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive));
 			} else {
@@ -97,10 +129,8 @@ public class VoucherCalculateService {
 				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
 			}
 			resultMapDTO.setQuantity(resultMapDTO.getQuantity() + 1);
-			// guardar las modificaciones
-			mapService.update(resultMapDTO);
-			TimeFrameDTO timeFrame = timeFrameService.getById(resultMapDTO.getTimeFrame());
-			mapService.updateBalance(resultMapDTO.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), value);
+			
+			acumulador.put(accountId + "|" + resultMapDTO.getTimeFrame(), resultMapDTO);
 		}
 		
 		if (account.getParent() != null) {
@@ -113,13 +143,13 @@ public class VoucherCalculateService {
 						AccountDTO _accountGroupParent = accountService.findAccountByDocumentId(account.getCatalog(), account.getDocument(), accountParentTop.getKey());
 						
 						if (_accountGroupParent != null) {
-							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value);
+							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value, acumulador);
 						}
 					}
 				}
 			} else {
 				if (accountParent.getType().compareTo(AccountConst.TYPE_GROUP) == 0) {
-					saveMap(account.getParent(), factDate, positive, negative, value);
+					saveMap(account.getParent(), factDate, positive, negative, value, acumulador);
 				} 
 			}
 		}
@@ -136,8 +166,16 @@ public class VoucherCalculateService {
 		if(_value != null) {
 			_map.setLastBalance(_value);
 			_map.setNextBalance(_value);
-		} 
-		resultMapService.save(_map);
-		return resultMapService.getById(_map.getKey());
+		} else {
+			_map.setLastBalance(BigDecimal.ZERO);
+			_map.setNextBalance(BigDecimal.ZERO);
+		}
+		_map.setPositive(BigDecimal.ZERO);
+		_map.setNegative(BigDecimal.ZERO);
+		_map.setValue(BigDecimal.ZERO);
+		_map.setQuantity(0);
+		return _map;
+		//resultMapService.save(_map);
+		//return resultMapService.getById(_map.getKey());
 	}
 }
