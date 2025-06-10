@@ -74,6 +74,7 @@ public class UsuarioSesionSvc {
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioSesionDTO guardar(UsuarioSesionDTO dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
+		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
 			usuarioSesionMapper.insertar(dto);
 		} catch (Exception e) {
@@ -166,6 +167,7 @@ public class UsuarioSesionSvc {
 		sesion.setPrivada(true);
 		//Aqui la idea es no guardar en base de datos la clave del administrador
 		sesion.setLlaveTabla(usuarioSystem);
+		sesion.setEstado(SharedConstants.STATE_ACTIVE);
 		sessionMap.put(sesion.getLlaveTabla(), sesion);
 		//sesion = usuarioSesionService.save(sesion);
 		return sesion;
