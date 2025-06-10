@@ -1,6 +1,5 @@
 package com.softure.logisticpymes.application;
 
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,11 +9,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
-import com.softure.authentication.domain.UsuarioSesionDTO;
-import com.softure.authentication.domain.UsuarioSesionFilterDTO;
-import com.softure.authentication.infrastructure.UsuarioSesionMapper;
+import com.shared.domain.SharedConstants;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.java.domain.BasicDTO;
 import com.softure.java.domain.BasicFilterDTO;
 import com.softure.java.domain.IBasicMapper;
@@ -25,11 +22,11 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	@Autowired
 	@Lazy
-	private UsuarioSesionMapper usuarioSesionMapper;
+	private UsuarioSesionSvc usuarioSesionService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T actualizar(T dto, String token) throws ServerException {
-		getUserFlex(token);
+		usuarioSesionService.getUserFlex(token);
 		try {
 			mapper.actualizar(dto);
 		} catch (Exception e) {
@@ -63,7 +60,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	}
 
 	public T inactivar(T dto, String token) throws ServerException {
-		getUserFlex(token);
+		usuarioSesionService.getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
@@ -79,7 +76,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	}
 
 	public T activar(T dto, String token) throws ServerException {
-		getUserFlex(token);
+		usuarioSesionService.getUserFlex(token);
 		dto = consultaXId(dto.getLlaveTabla());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a Activar");
@@ -96,7 +93,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T guardar(T dto, String token) throws ServerException {
-		getUserFlex(token);
+		usuarioSesionService.getUserFlex(token);
 		dto.setLlaveTabla(generarLlave());
 		try {
 			mapper.insertar(dto);
@@ -116,44 +113,6 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
-
-	public String getUserFlex(String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
-		filter.setLlaveTabla(token);
-		UsuarioSesionDTO sesion = null;
-		try {
-			sesion = usuarioSesionMapper.consultar(filter);
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-		if (sesion == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		return sesion.getUsuario();
-
-	}
-
-	public boolean isPublicToken(String token) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
-		filter.setLlaveTabla(token);
-		UsuarioSesionDTO sesion = usuarioSesionMapper.consultar(filter);
-		if (sesion == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		return !sesion.getPrivada();
 	}
 
 	public void paginar(TFilter dto) {
@@ -200,8 +159,6 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 
-	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
-	// propagation=Propagation.REQUIRED)
 	public T save(T dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
 		try {
@@ -213,8 +170,6 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 
-	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
-	// propagation=Propagation.REQUIRED)
 	public T update(T dto) throws ServerException {
 		try {
 			mapper.actualizar(dto);
@@ -222,5 +177,13 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
+	}
+	
+	public String getUserFlex(String token) throws ServerException {
+		return usuarioSesionService.getUserFlex(token);
+	}
+	
+	public boolean isPublicToken(String token) throws ServerException {
+		return usuarioSesionService.isPublicToken(token);
 	}
 }

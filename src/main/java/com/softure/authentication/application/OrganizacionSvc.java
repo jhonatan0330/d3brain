@@ -31,7 +31,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private DocumentoPlantillaSvc plantillaService;
 	@Autowired
 	@Lazy
-	private UsuarioAutenticacionSvc usuarioAutenticacionService;
+	private UsuarioSesionSvc usuarioAutenticacionService;
 	@Autowired
 	@Lazy
 	private PropiedadSvc configuracionSvc;

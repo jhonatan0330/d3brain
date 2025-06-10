@@ -1,13 +1,27 @@
 package com.softure.process_designer.application;
 
-import java.util.List;
-
+import java.util.ArrayList;
+import java.util.Calendar;
 // BEGIN region interImport
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.shared.domain.ServerException;
+import com.softure.authentication.application.UsuarioSesionSvc;
+import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.document_execution.application.CallDocumentListWithFilters;
+import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.document_execution.domain.PedidoVentaFilterDTO;
+import com.softure.document_transition.application.CallDocumentNewFromAutomatic;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.mail.application.MailSendMessageToAdminService;
@@ -22,22 +36,7 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.upload.application.UploadSvc;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
-import com.softure.authentication.domain.UsuarioSesionDTO;
-import com.softure.document_execution.application.CallDocumentListWithFilters;
-import com.softure.document_execution.application.field.Propiedades;
-import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.document_execution.domain.PedidoVentaFilterDTO;
-import com.softure.document_transition.application.CallDocumentNewFromAutomatic;
 
 @Service("procesoTransicionAutomaticaService")
 public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {
@@ -48,7 +47,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	@Autowired @Lazy  private MailSendMessageToAdminService sendMessageToAdminSvc;
 	@Autowired @Lazy  private PropiedadSvc propiedadService;
 	@Autowired @Lazy  private CallDocumentNewFromAutomatic createDocumentSinceProperties;
-	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private UsuarioSesionSvc autenticacionService;
 	@Autowired @Lazy  private RelacionInternaSvc relacionService;
 	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired @Lazy  private UploadSvc uploadService;

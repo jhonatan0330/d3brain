@@ -2,11 +2,12 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.infrastructure.MensajeMapper;
@@ -19,7 +20,7 @@ public class MailReleaseMessageQueueService {
 	@Autowired @Lazy 
 	private MailSendMessageService sendMessage;
 	@Autowired @Lazy 
-	private UsuarioAutenticacionSvc autenticacionService;
+	private UsuarioSesionSvc autenticacionService;
 
 	public String call() throws ServerException {
 		List<MensajeDTO> messageToSend = mensajeMapper.mensajesDisponibles();

@@ -149,6 +149,22 @@
 		update usuariosesion_ussp 		set cuss_estado = 'I'
 		where cuss_usuario = #{userId} and cuss_llave  != #{token}
 	</select>
+	
+	<select id="obtenerPrincipal" resultType="java.lang.String">
+		select
+			cusr_llave 
+		from organizacion_orgp
+			inner join usuario_usrp on (corg_usuariosystem = cusr_llave and cusr_estado = 'A')
+		where corg_principal is null and corg_estado = 'A'
+	</select>
+	
+	
+	<select id="obtenerPrincipalMail" resultType="java.lang.String">
+		select	cusr_correo
+		from organizacion_orgp
+			inner join usuario_usrp on (corg_usuariosystem = cusr_llave and cusr_estado = 'A')
+		where corg_principal is null and corg_estado = 'A'
+	</select>
 <!--// END region script-->
 
 </mapper>

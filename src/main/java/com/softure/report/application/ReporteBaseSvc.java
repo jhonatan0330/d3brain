@@ -1,15 +1,35 @@
 package com.softure.report.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.authentication.application.UsuarioSesionSvc;
+import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
+import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.logisticpymes.application.UsuarioSvc;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -21,30 +41,8 @@ import com.softure.report.domain.ReporteEjecucionDTO;
 import com.softure.report.domain.ReporteEjecucionFilterDTO;
 import com.softure.report.infrastructure.ReporteBaseMapper;
 import com.softure.upload.application.UploadSvc;
-import com.shared.domain.SharedConstants;
 
 import jakarta.annotation.PostConstruct;
-import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
-import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
-import com.softure.document_execution.application.PedidoVentaSvc;
-import com.softure.document_execution.application.field.Propiedades;
-import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.logisticpymes.application.UsuarioSvc;
-import com.softure.logisticpymes.domain.UsuarioDTO;
-import com.softure.mail.application.MailSendMessageToAdminService;
 
 @DependsOnDatabaseInitialization
 @Service("reporteBaseService")
@@ -68,7 +66,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	private PropiedadSvc propiedadService;
 	@Autowired
 	@Lazy
-	private UsuarioAutenticacionSvc autenticacionService;
+	private UsuarioSesionSvc autenticacionService;
 	@Autowired
 	@Lazy
 	private UsuarioSvc usuarioService;
@@ -319,7 +317,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		try {
 			if (usuario == null) {
 				if (reporte.getPublico()) {
-					usuario = autenticacionService.getUserSystem().getLlaveTabla();
+					usuario = autenticacionService.getUserSystemKey();
 				} else {
 					throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
 				}

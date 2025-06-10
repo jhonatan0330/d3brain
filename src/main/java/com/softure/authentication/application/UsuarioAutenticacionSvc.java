@@ -1,6 +1,5 @@
 package com.softure.authentication.application;
 
-// BEGIN region interImport
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -17,7 +16,6 @@ import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedToken;
-import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
@@ -42,8 +40,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Autowired @Lazy 
 	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 
-	// BEGIN region servicesUsuarioAutenticacion
-
 	@Autowired @Lazy 
 	private UsuarioAutenticacionAutorizacionSvc authorizationService;
 	@Autowired @Lazy 
@@ -56,7 +52,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	private UsuarioSvc usuarioService;
 	@Autowired @Lazy 
 	private UsuarioSesionErrorSvc errorService;
-	// END region servicesUsuarioAutenticacion
 
 	@Override
 	public UsuarioAutenticacionDTO consultaXId(String llave) throws ServerException {
@@ -203,37 +198,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		}
 	}
 
-	public UsuarioDTO getUserSystem() throws ServerException {
-		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
-		if (principal == null)
-			throw new ServerException("No se tiene organizacion principal");
-		if (principal.getUsuarioSystem() == null)
-			throw new ServerException("No se tiene configurado el usuario sistem en la organizacion principal");
-		UsuarioDTO usuarioSystem = usuarioService.consultaXId(principal.getUsuarioSystem());
-		if (usuarioSystem == null || usuarioSystem.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-			throw new ServerException("El usuario sistema no exisste o esta inactivo");
-		return usuarioSystem;
-	}
 
-	public UsuarioSesionDTO generateAdministratorToken() throws ServerException {
-		UsuarioDTO usuarioSystem = getUserSystem();
-		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
-		sesion.setFecha(new Date());
-		// sesion.setFechaCierre(usuarioSesionService.getFechaCierre(usuarioSystem.getLlaveTabla()));
-		sesion.setUsuario(usuarioSystem.getLlaveTabla());
-		sesion.setPrivada(true);
-		sesion = usuarioSesionService.save(sesion);
-		return sesion;
-	}
 
-	public void logout(String token) throws ServerException {
-		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
-		if (sesion == null)
-			throw new ServerException("Token incorrecto");
-		if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
-			throw new ServerException("Se encuentra inactiva la sesion");
-		usuarioSesionService.inactivar(sesion, null);
-	}
+	
 
 	public String getFechaActualizacion() {
 		return usuarioAutenticacionMapper.versionActual();
@@ -366,7 +333,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion.setUsuario(autenticacion.getUsuario());
 			sesion.setIp(dto.getIp());
 			sesion.setPrivada(true);
-			sesion = usuarioSesionService.guardar(sesion, dto.getSecurityToken());
+			sesion = usuarioSesionService.guardar(sesion);
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());
 
@@ -403,15 +370,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return autenticacion;
 	}
 
-	public String getTokenPublic(String userId, String ip) throws ServerException{
-		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
-		sesion.setFecha(new Date());
-		sesion.setFechaCierre(usuarioSesionService.getFechaCierre(userId));
-		sesion.setUsuario(userId);
-		sesion.setIp(ip);
-		sesion = usuarioSesionService.save(sesion);
-		return sesion.getLlaveTabla();
-	}
 	
 	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
 		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
@@ -483,6 +441,5 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return checkToken(token, HttpUtils.getRequestIP(request)).getUsuario();
 
 	}
-// END region aditionalMethods
 
 }

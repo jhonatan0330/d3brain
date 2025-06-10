@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -18,7 +18,6 @@ import com.softure.document_execution.application.PedidoVentaDineroSvc;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
@@ -50,7 +49,7 @@ public class CallDocumentNewFromAutomatic {
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	@Autowired
 	@Lazy
-	private UsuarioAutenticacionSvc autenticacionService;
+	private UsuarioSesionSvc autenticacionService;
 	@Autowired
 	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc fieldsOfTemplateService;
@@ -251,7 +250,7 @@ public class CallDocumentNewFromAutomatic {
 	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
 			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
-			UsuarioDTO userAdmin = autenticacionService.getUserSystem();
+			String userAdmin = autenticacionService.getUserSystemKey();
 			if (userAdmin == null)
 				throw new ServerException("Es indispensable configurar el usuario administrador");
 			PedidoVentaDTO nuevo = new PedidoVentaDTO();
@@ -277,7 +276,7 @@ public class CallDocumentNewFromAutomatic {
 
 			nuevo.setLlaveTabla(null);
 			nuevo.setTransaccion(transaccion);
-			nuevo.setFuncionario(userAdmin.getLlaveTabla());
+			nuevo.setFuncionario(userAdmin);
 			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true);
 		} else {
 			return null;

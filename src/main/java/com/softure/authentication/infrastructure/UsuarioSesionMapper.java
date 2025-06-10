@@ -11,8 +11,9 @@ import com.softure.java.domain.IBasicMapper;
 @SoftureSqlConnMapper(value = "UsuarioSesionMapper")
 public interface UsuarioSesionMapper extends IBasicMapper<UsuarioSesionDTO, UsuarioSesionFilterDTO>{
 
-// BEGIN region aditionalMethods  
 	int tiempoSesion(String usuario);
 	void closeAllSession(@Param("userId")String userId, @Param("token")String token);
-// END region aditionalMethods
+	String obtenerPrincipal();
+	String obtenerPrincipalMail();
+	
 }

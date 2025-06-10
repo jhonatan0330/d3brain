@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.accounting.voucher.application.VoucherDeleteService;
 import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.shared.domain.SharedConstants;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
@@ -73,7 +73,7 @@ public class CallManageTransition {
 	private CallDocumentNewFromAutomatic createDocumentSinceProperties;
 	@Autowired
 	@Lazy
-	private UsuarioAutenticacionSvc autenticacionService;
+	private UsuarioSesionSvc autenticacionService;
 	@Autowired
 	@Lazy
 	private WebServiceExecuteAPI apiService;

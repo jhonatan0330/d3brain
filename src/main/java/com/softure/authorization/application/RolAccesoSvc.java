@@ -107,15 +107,13 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		// END RolAcceso_guardar
 	}
 
-// BEGIN region aditionalMethods
-	
+
 	public boolean usuarioPermisosCompletos(String token) throws ServerException{
 		String user = getUserFlex(token);
 		if(user.compareTo("PROCESS")==0) return true;
 		if(rolAccesoMapper.permisosCompletos(user)!=0) return true;
 		return false;
 	}
-// END region aditionalMethods
 
 	public List<RolAccesoDTO> getFullToSynchronize(List<String> process) {
 		return rolAccesoMapper.getFullToSynchronize(process);

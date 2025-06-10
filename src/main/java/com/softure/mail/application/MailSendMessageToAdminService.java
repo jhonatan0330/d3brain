@@ -2,35 +2,34 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authentication.application.OrganizacionSvc;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.java.services.MailUtils;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
-import com.softure.logisticpymes.domain.UsuarioDTO;
 
 @Service
 public class MailSendMessageToAdminService {
 
 	@Autowired @Lazy  private ServidorSvc servidorService;
 	@Autowired @Lazy  private OrganizacionSvc organizacionService;
-	
-	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private UsuarioSesionSvc autenticacionService;
 	
 	public void call(String messageTitle, String messageText) throws ServerException {
-		UsuarioDTO userAdmin = autenticacionService.getUserSystem();
-		if(userAdmin==null || userAdmin.getCorreo()==null ) return;
-		call(messageTitle, messageText, userAdmin.getCorreo());
+		String userAdmin = autenticacionService.getUserSystemMail();
+		if(userAdmin==null) return;
+		call(messageTitle, messageText, userAdmin);
 	}
 	
 	public void call(String messageTitle, String messageText, String adminMail) throws ServerException {

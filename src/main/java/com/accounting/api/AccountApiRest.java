@@ -18,7 +18,7 @@ import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.api.application.ApiAuthorizeService;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -30,7 +30,7 @@ public class AccountApiRest {
 	@Autowired @Lazy private ApiAuthorizeService apiAuthorizeService;
 	@Autowired @Lazy private ApiAccountVoucherService voucherService;
 	@Autowired @Lazy private StackAccountProccessService accountService;
-	@Autowired @Lazy private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy private UsuarioSesionSvc autenticacionService;
 
 	
 	@PostMapping("/voucher")

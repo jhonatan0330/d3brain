@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.logisticpymes.application.BasicSvc;
@@ -28,7 +28,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	@Autowired @Lazy 
 	private WebServiceEjecucionMapper webServiceEjecucionMapper;
 	
-	@Autowired @Lazy  private UsuarioAutenticacionSvc autenticacionService;
+	@Autowired @Lazy  private UsuarioSesionSvc autenticacionService;
 	@Autowired @Lazy  private WebServiceExecuteAPI executeAPIFunction;
 	@Autowired @Lazy  private WebServiceSvc webServiceSvc;
 
