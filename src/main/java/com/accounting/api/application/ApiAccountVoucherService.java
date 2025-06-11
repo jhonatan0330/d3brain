@@ -13,13 +13,11 @@ import com.accounting.api.domain.VoucherRequest;
 import com.accounting.plan.application.PlanCreateAccountService;
 import com.accounting.plan.application.PlanGetAccountService;
 import com.accounting.plan.application.base.CatalogService;
-import com.accounting.plan.application.base.TypeService;
 import com.accounting.plan.domain.AccountConst;
 import com.accounting.plan.domain.AccountDTO;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.domain.TypeDTO;
-import com.accounting.plan.domain.TypeFilterDTO;
 import com.accounting.voucher.application.VoucherCreateService;
 import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
 import com.accounting.voucher.domain.AccountRecordDTO;
@@ -47,7 +45,7 @@ public class ApiAccountVoucherService {
 	private PlanGetAccountService accountService;
 	@Autowired
 	@Lazy
-	private TypeService typeService;
+	private PrepareTypeToCatalogService typeService;
 	@Autowired
 	@Lazy
 	private PlanCreateAccountService createAccountService;
@@ -56,7 +54,7 @@ public class ApiAccountVoucherService {
 	private PedidoVentaSvc documentService;
 
 	public SharedIdResponse call(SharedToken _token, VoucherRequest _item) throws ServerException {
-		validateItem(_item);
+		validateItem(_item, _token);
 
 		Voucher voucher = new Voucher();
 
@@ -103,12 +101,11 @@ public class ApiAccountVoucherService {
 		voucher.setRecords(lines);
 
 		return createService.call(voucher, _token);
-
 	}
 
 	
 
-	private void validateItem(VoucherRequest item) throws ServerException {
+	private void validateItem(VoucherRequest item, SharedToken pToken) throws ServerException {
 		if (item.getCatalog() == null || item.getCatalog().isEmpty())
 			throw new ServerException("El codigo del catalogo no se reconoce");
 		if (item.getType() == null || item.getType().isEmpty())
@@ -127,21 +124,9 @@ public class ApiAccountVoucherService {
 		if (item.getLines() == null || item.getLines().isEmpty())
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag lines");
 
-		TypeFilterDTO _typeFilter = new TypeFilterDTO();
-		_typeFilter.setService(item.getType());
-		_typeFilter.setState(SharedConstants.STATE_ACTIVE);
-		TypeDTO type = typeService.getOne(_typeFilter);
 		
-		if(type ==null) {
-			TypeFilterDTO typeFilter = new TypeFilterDTO();
-			typeFilter.setCatalog(catalog.getKey());
-			typeFilter.setCode(item.getType().toUpperCase());
-			typeFilter.setState(SharedConstants.STATE_ACTIVE);
-			type = typeService.getOne(typeFilter);	
-		}
+		TypeDTO type = typeService.call(item.getType(),pToken);
 		
-		if (type == null)
-			throw new ServerException("No se reconoce el tipo de documento");
 		if (type.getService()!=null && (item.getDocument() == null || item.getDocument().isEmpty()))
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 		
