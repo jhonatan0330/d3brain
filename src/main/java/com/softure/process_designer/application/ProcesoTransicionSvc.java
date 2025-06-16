@@ -77,13 +77,14 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		ProcesoTransicionDTO bd = consultaXId(dto.getLlaveTabla());
 		if(bd.getEstadoPartida()==null) {
 			PedidoVentaFilterDTO contar = new PedidoVentaFilterDTO();
-			contar.setEstado(SharedConstants.STATE_ACTIVE);
+			contar.setEstado(SharedConstants.STATE_COMPLETE);
 			contar.setPlantilla(bd.getPlantilla());
 			int cantidad = pedidoService.contarResultados(contar);
 			if(cantidad != 0) {
-				PedidoVentaDTO plantilla = pedidoService.consultaXId(bd.getPlantilla());
-				throw new ServerException("Al intentar anular la transicion " + bd.getNombre() + " encontramos que existen " + cantidad + " registros de la plantilla " + plantilla.getNombre() + " todavia activos. Eliminar esta transicion puede generar una inconsistencia en la informacion, lo mejor es que finalices el ciclo de estos documentos. Recuerda estos estados del proceso siempre van a estar con tu documento si te equivocaste de plantilla lo mejor es iniciar una nueva plantilla");
+				DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(bd.getPlantilla());
+				throw new ServerException("Al intentar anular la transicion " + bd.getNombre() + " encontramos que existen " + cantidad + " registros de la plantilla " + plantilla.getNombre() + " que fueron completados, por ello no podemos asignarlos");
 			}
+			procesoTransicionMapper.clearStateOfDocumentsProcess(bd.getPlantilla());
 		}
 		return super.inactivar(dto, token);
 		// END ProcesoTransicion_inactivar

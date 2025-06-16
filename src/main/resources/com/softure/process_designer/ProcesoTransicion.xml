@@ -301,6 +301,11 @@
 	<select id="funcionRegresarTablaHistoricos" resultType="int">
 		select * from regresar_campos(#{documentId})
 	</select>
+	
+	<select id="clearStateOfDocumentsProcess" >
+		update pedidoventa_pdvp set cpdv_estadoexpediente = null 
+		where cpdv_llave = #{templateId}
+	</select>
 <!--// END region script-->
 
 </mapper>

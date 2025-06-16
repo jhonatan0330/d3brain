@@ -93,9 +93,12 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	public PedidoVentaAjusteDTO guardar(PedidoVentaAjusteDTO dto, String token) throws ServerException {
 		// BEGIN PedidoVentaAjuste_guardar
 		PedidoVentaDTO documento = documentoService.consultaXId(dto.getDocumento());
+		if(documento == null) throw new ServerException("El documento no existe");
 		dto.setEstadoInicial(documento.getEstadoExpediente());
 		ProcesoEstadoDTO estadoInicial = procesoEstadoService.consultaXId(documento.getEstadoExpediente());
+		if(estadoInicial == null) throw new ServerException("El estado inicial del documento no existe");
 		ProcesoEstadoDTO estadoFinal = procesoEstadoService.consultaXId(dto.getEstadoFinal());
+		if(estadoFinal == null) throw new ServerException("El estado final del documento no existe");
 		if(estadoFinal.getProceso().compareTo(estadoInicial.getProceso())!=0) throw new ServerException("El estado no pertenece al mismo proceso");
 		dto.setFecha(new Date());
 		dto.setResponsable(getUserFlex(token));

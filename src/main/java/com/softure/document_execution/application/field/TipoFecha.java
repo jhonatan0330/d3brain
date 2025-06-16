@@ -9,7 +9,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -138,7 +139,7 @@ public class TipoFecha {
 					fecha.set(Calendar.MILLISECOND, 0);
 					pCampo.setValorFecha(fecha.getTime());
 					pCampo.setValorText(SoftureUtil.formatDate(pCampo.getValorFecha()));
-					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+					/*if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 						fecha.setTime(getTimeBlock(pCampo));
 						fecha.set(Calendar.HOUR_OF_DAY, 0);
@@ -149,7 +150,7 @@ public class TipoFecha {
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() +  " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " permite la fecha " + SoftureUtil.formatDate(fecha.getTime())
 									+ ". Y la fecha recibida es " + SoftureUtil.formatDate(pCampo.getValorFecha()));
-					}
+					}*/
 				} else {
 					Calendar hora = Calendar.getInstance();
 					hora.setTime(pCampo.getValorFecha());
@@ -160,7 +161,7 @@ public class TipoFecha {
 						pCampo.setValorText(SoftureUtil.formatDateTime(pCampo.getValorFecha()));
 						// Le coloque el campo modificado para las facturas roa que modifican el cufe
 						// creo que esto del modificado aplica para varios lados
-						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+						/*if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 								Propiedades.PERMISO_CAMPO_BLOQUEAR) != null && pCampo.getModificado()) {
 							hora.setTime(getTimeBlock(pCampo));
 							if (Math.abs(pCampo.getValorFecha().getTime() - hora.getTime().getTime()) > 900000)
@@ -168,7 +169,7 @@ public class TipoFecha {
 										+ " permite la fecha " + SoftureUtil.formatDateTime(hora.getTime())
 										+ ". Y la fecha recibida es "
 										+ SoftureUtil.formatDateTime(pCampo.getValorFecha()));
-						}
+						}*/
 					} else {
 						hora.set(Calendar.YEAR, 0);
 						hora.set(Calendar.MONTH, 0);
@@ -303,6 +304,7 @@ public class TipoFecha {
 		}
 	}
 
+	/*
 	private Date getTimeBlock(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pCampo.getCampoDTO(),Propiedades.FECHA_FUNCION_SQL);
 		if (funcionCalculo != null) {
@@ -315,7 +317,7 @@ public class TipoFecha {
 				return filter.getValorFechaMax();
 		}
 		return new Date();
-	}
+	}*/
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {

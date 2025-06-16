@@ -467,12 +467,12 @@ public class CallDocumentCRUD {
 	}
 
 	private void validateBalance(PedidoVentaDTO pedido, DocumentoPlantillaDTO plantilla) throws ServerException {
-		String total = Propiedades.obtenerValor(plantilla, Propiedades.TOTAL);
-		if (!total.isEmpty()) {
+		PropiedadDTO total = Propiedades.obtenerParametro(plantilla, Propiedades.TOTAL);
+		if (total!=null) {
 			PedidoVentaCaracteristicaDTO campoValor = CallDocumentCommons.obtenerValor(pedido.getCaracteristicas(),
-					total);
+					total.getValor());
 			if (campoValor == null)
-				throw new ServerException("Se debe colocar la caracteristica de valor TOTAL");
+				throw new ServerException("En la plantilla " +plantilla.getNombre() + " se registro la propiedad TOTAL pero el campo no se encuentra, revisa que el campo del propiedad total no este inactivo");
 			// En roa me sucdeio que automaticamente modifciaban una guia y despues
 			// modficaban el recibo pero el valor quedaba mal porque tomaba el valor viejo
 			if (campoValor.getModificado()) {
