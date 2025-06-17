@@ -220,38 +220,37 @@ public class SignerService {
 		return writer.toString();
 	}
 
-	public void zipFileWithoutSaveLocal(String data, FEResponse responseFe, String fileNameInZip)
+	public void zipFileWithoutSaveLocal(String data, FEResponse responseFe, String fileNameInZip, boolean generateZip)
 			throws IOException, ServerException {
 
 		// Hay algo similar en mailsendmessage
 		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (ZipOutputStream zos = new ZipOutputStream(baos)) {
+		
+		if(!generateZip) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
-			ZipEntry zipEntry = new ZipEntry(fileNameInZip);
-			zos.putNextEntry(zipEntry);
+				ZipEntry zipEntry = new ZipEntry(fileNameInZip);
+				zos.putNextEntry(zipEntry);
 
-			ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
-			byte[] buffer = new byte[1024];
-			int len;
-			while ((len = bais.read(buffer)) > 0) {
-				zos.write(buffer, 0, len);
+				ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes());
+				byte[] buffer = new byte[1024];
+				int len;
+				while ((len = bais.read(buffer)) > 0) {
+					zos.write(buffer, 0, len);
+				}
+
+				zos.closeEntry();
 			}
-
-			zos.closeEntry();
+			byte[] bytes = baos.toByteArray();
+			responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
+			responseFe.setZipBase64(Base64.getEncoder().encodeToString(bytes));
 		}
-		byte[] bytes = baos.toByteArray();
-		responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
-		responseFe.setZipBase64(Base64.getEncoder().encodeToString(bytes));
-
 	}
 
-	public void sign(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
+	public void sign(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException, XAdES4jException,
 			ParserConfigurationException, TransformerException, SAXException, ServerException {
-		
-	
-		
 		Document doc = loadDocument(xmlIn);
 		//removeEmptyNodes(doc);
 		doc = processCUFE(doc, responseFe);
@@ -260,10 +259,10 @@ public class SignerService {
 		doc = decriptFilesBase64(doc);
 		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
-		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc),generateZip);
 	}
 
-	public void signNE(String xmlIn, FEResponse responseFe) throws KeyStoreException, IOException, XAdES4jException,
+	public void signNE(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException, XAdES4jException,
 			ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
 		//removeEmptyNodes(doc);
@@ -273,7 +272,7 @@ public class SignerService {
 		doc = decriptFilesBase64(doc);
 		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
-		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc));
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc),generateZip);
 	}
 	
 	public FEResponse generateCodigo(String xmlIn) throws ServerException {

@@ -106,7 +106,7 @@ public class TipoTexto {
 			if (iRegistro != null && !iRegistro.isEmpty()) {
 				if (!pat.matcher(iRegistro).matches())
 					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-							+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() +" Revisa el campo ya que no tiene un formato valido, " + iRegistro);
+							+ " Revisa el campo " + pCampo.getCampoDTO().getNombre() +"  ya que no tiene un formato valido, " + iRegistro);
 			}
 		}
 	}

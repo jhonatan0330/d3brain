@@ -93,6 +93,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		// BEGIN DocumentoPlantillaCaracteristica_inactivar
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
+		//validar que el campo no se use en ninguna propiedad
 		return dto;
 		// END DocumentoPlantillaCaracteristica_inactivar
 	}

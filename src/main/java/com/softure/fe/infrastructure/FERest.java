@@ -30,7 +30,35 @@ public class FERest {
 	public FEResponse transformXML(@RequestBody String xml) throws ServerException {	
 		FEResponse responseFe = new FEResponse();
 		try {
-			signerService.sign(xml, responseFe);
+			signerService.sign(xml, responseFe, false);
+			responseFe.setResult("200");
+		} catch (KeyStoreException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (IOException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (XAdES4jException e) {
+			responseFe.setError(e.getMessage() + " :" + e.getCause().getCause().toString());
+			responseFe.setResult("400");
+		} catch (ParserConfigurationException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (TransformerException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (SAXException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		}
+		return responseFe;
+	}
+	
+	@PostMapping("/signWithZip")
+	public FEResponse transformXMLWithZip(@RequestBody String xml) throws ServerException {	
+		FEResponse responseFe = new FEResponse();
+		try {
+			signerService.sign(xml, responseFe, true);
 			responseFe.setResult("200");
 		} catch (KeyStoreException e) {
 			responseFe.setError(e.getMessage());
@@ -58,7 +86,35 @@ public class FERest {
 	public FEResponse transformXMLNE(@RequestBody String xml) throws ServerException {	
 		FEResponse responseFe = new FEResponse();
 		try {
-			signerService.signNE(xml, responseFe);
+			signerService.signNE(xml, responseFe, false);
+			responseFe.setResult("200");
+		} catch (KeyStoreException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (IOException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (XAdES4jException e) {
+			responseFe.setError(e.getMessage() + " :" + e.getCause().getCause().toString());
+			responseFe.setResult("400");
+		} catch (ParserConfigurationException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (TransformerException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (SAXException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		}
+		return responseFe;
+	}
+	
+	@PostMapping("/signNEWithZip")
+	public FEResponse transformXMLNEWithZip(@RequestBody String xml) throws ServerException {	
+		FEResponse responseFe = new FEResponse();
+		try {
+			signerService.signNE(xml, responseFe, true);
 			responseFe.setResult("200");
 		} catch (KeyStoreException e) {
 			responseFe.setError(e.getMessage());
