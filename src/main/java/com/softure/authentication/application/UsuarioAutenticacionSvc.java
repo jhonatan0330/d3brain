@@ -372,7 +372,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	
 	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
-		UsuarioSesionDTO sesion = usuarioSesionService.consultaXId(token);
+		UsuarioSesionDTO sesion = usuarioSesionService.checkToken(token);
 		if (sesion == null || sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0
 				|| (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)) {
 			UsuarioSesionErrorDTO use = new UsuarioSesionErrorDTO();

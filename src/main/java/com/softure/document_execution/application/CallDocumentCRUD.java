@@ -184,9 +184,37 @@ public class CallDocumentCRUD {
 			iterador.setTransaccionInactivo(transaccion);
 			adaptador.activar(iterador, updaterDTO, token);
 		} */
+		
+		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
+		plantillaFilter.setLlaveTabla(documentDTO.getPlantilla());
+		plantillaFilter.setSecurityToken(token);
+		
+		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+				rolService.usuarioPermisosCompletos(token));
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 
+		//if (!isUpdateAutomatic)
+			propiedadService.prevalidate(plantilla, documentDTO.getCaracteristicas(), documentDTO.getLlaveTabla(), token);
+		
 		documentDTO = pedidoService.activate(documentDTO);
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, documentDTO.getLlaveTabla(), null, documentDTO.getFuncionario(),
+				token);
 		manageTemplateTypes(documentDTO, null, token);
+		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
+		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
+			for (PropiedadDTO _iApi : _PropertyListToAPis) {
+				apiService.prepareApiToExecution(_iApi.getValor(), documentDTO, null,null, token, null);
+			}
+		}
+		voucherCreate(bd, token, plantilla);
+		generateNotifications(documentDTO, token, plantilla, documentDTO);
+		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
+		//if (crearTraza)
+			relacionGestorService.trazar(documentDTO.getLlaveTabla(),
+					 null , plantilla.getNombre(),
+							documentDTO.getEstadoExpediente(), documentDTO.getEstadoExpediente(),
+					(documentDTO.getDinero() == null) ? null : documentDTO.getDinero().getLlaveTabla(), null, token, null,
+							documentDTO.getHistorico(), documentDTO.getTransaccion(), true);
 		return documentDTO;
 	}
 
@@ -197,13 +225,13 @@ public class CallDocumentCRUD {
 
 	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, String token,
 			boolean isUpdateAutomatic) throws ServerException {
-		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		PedidoVentaDTO bd = pedidoService.consultaXId(dto.getLlaveTabla());
 		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
 		dto.setPlantilla(bd.getPlantilla());
 		// if(dto.getTransaccion()!=null &&
 		// dto.getTransaccion().compareTo(bd.getTransaccion())==0)
 		// dto.setTransaccion(null);
+		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		plantillaFilter.setSecurityToken(token);
 		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,

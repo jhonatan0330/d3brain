@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,7 +15,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -107,17 +108,14 @@ public class MailSendMessageService {
 
 			if (dto.getAdjuntoURL() != null) {
 				String[] attachments = dto.getAdjuntoURL().split(SharedConstants.PUNTO_COMA_DOBLE);
-				List<File> filesToAttach = null;
 				String urlName = "attach";
 				for (String string : attachments) {
 					if (!string.isEmpty()) {
 						try {
 							urlName = string.substring(string.lastIndexOf('/') + 1);
 							File file = File.createTempFile("file_", urlName);
-							FileUtils.copyURLToFile(new URL(string), file);
-							if (filesToAttach == null)
-								filesToAttach = new ArrayList<>();
-							filesToAttach.add(file);
+							FileUtils.copyURLToFile(new URI(string).toURL(), file);
+							attachmentsFiles.put(urlName, new FileDataSource(file));
 						} catch (IOException e) {
 							dto.setCorreoError(e.getLocalizedMessage());
 							sendToAdminService.call("Error enviando correos electronicos (Adjunto)" + dto.getTitulo(),
@@ -125,31 +123,28 @@ public class MailSendMessageService {
 						}
 					}
 				}
-				if (filesToAttach != null && filesToAttach.size() > 0) {
-					if (attachmentsFiles == null)
-						attachmentsFiles = new HashMap<String, DataSource>();
-					if (filesToAttach.size() != 1) {
-						final ByteArrayOutputStream fos = new ByteArrayOutputStream();
-						ZipOutputStream zipOut = new ZipOutputStream(fos);
-						for (File fileToZip : filesToAttach) {
-							FileInputStream fis = new FileInputStream(fileToZip);
-							ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
-							zipOut.putNextEntry(zipEntry);
-							byte[] bytes = new byte[1024];
-							int length;
-							while ((length = fis.read(bytes)) >= 0) {
-								zipOut.write(bytes, 0, length);
-							}
-							fis.close();
-						}
-						zipOut.close();
-						fos.close();
-						attachmentsFiles.put(urlName + ".zip",
-								new ByteArrayDataSource(fos.toByteArray(), "application/octet-stream"));
-					} else {
-						attachmentsFiles.put(urlName, new FileDataSource(filesToAttach.get(0)));
+			}
+			
+			if(plantilla.getNombre().contains("ZIP") && attachmentsFiles != null && attachmentsFiles.size() > 0) {
+				final ByteArrayOutputStream fos = new ByteArrayOutputStream();
+				ZipOutputStream zipOut = new ZipOutputStream(fos);
+				for (Map.Entry<String, DataSource> entry : attachmentsFiles.entrySet()) {
+					File fileToZip = new File(entry.getValue().getName());
+					FileInputStream fis = new FileInputStream(fileToZip);
+					ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+					zipOut.putNextEntry(zipEntry);
+					byte[] bytes = new byte[1024];
+					int length;
+					while ((length = fis.read(bytes)) >= 0) {
+						zipOut.write(bytes, 0, length);
 					}
+					fis.close();
 				}
+				zipOut.close();
+				fos.close();
+				attachmentsFiles.clear();
+				attachmentsFiles.put("files.zip", new ByteArrayDataSource(fos.toByteArray(), "application/zip"));
+				
 			}
 			try {
 				JavaMailSenderImpl mailSender = MailUtils.getMailSender(servidor);
