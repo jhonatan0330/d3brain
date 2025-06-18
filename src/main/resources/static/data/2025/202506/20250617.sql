@@ -11,7 +11,7 @@ where cwbs_llave in (
 update mensajeplantillacorreo_mplp mm 
 set cmpl_nombre = cmpl_nombre || ' (ZIP)'
 where cmpl_llave in (
-	select p2.cppd_campo from propiedad_ppdp p2
+	select p2.cppd_valor from propiedad_ppdp p2
 	where p2.cppd_estado = 'A' and p2.cppd_propiedadvalor = 'PROP_57' and p2.cppd_campo in (
 	select pp.cppd_campo from propiedad_ppdp pp 
 		where pp.cppd_estado = 'A' and pp.cppd_propiedadvalor in ('PROP_241','PROP_245','PROP_240')
