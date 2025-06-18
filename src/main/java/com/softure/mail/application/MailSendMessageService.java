@@ -115,6 +115,8 @@ public class MailSendMessageService {
 							urlName = string.substring(string.lastIndexOf('/') + 1);
 							File file = File.createTempFile("file_", urlName);
 							FileUtils.copyURLToFile(new URI(string).toURL(), file);
+							if (attachmentsFiles == null)
+								attachmentsFiles = new HashMap<String, DataSource>();
 							attachmentsFiles.put(urlName, new FileDataSource(file));
 						} catch (IOException e) {
 							dto.setCorreoError(e.getLocalizedMessage());
