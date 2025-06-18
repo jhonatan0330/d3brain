@@ -227,7 +227,7 @@ public class SignerService {
 		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 		
-		if(!generateZip) {
+		if(generateZip) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
