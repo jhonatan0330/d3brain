@@ -32,7 +32,7 @@ public class TipoNumero {
 	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 				pCampo.getCampoDTO().getNombre());
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),

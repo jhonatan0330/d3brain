@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired; import org.spring
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.java.services.SoftureUtil;
@@ -17,7 +18,7 @@ public class TipoTexto {
 	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
 				pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorText() != null) {
@@ -31,10 +32,17 @@ public class TipoTexto {
 			calcularValorFormula(pCampo);
 		}
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
-				&& pCampo.getValorText() == null)
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-					+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-					+ pCampo.getCampoDTO().getCodigo() + ")");
+				&& pCampo.getValorText() == null) {
+			if(isUpdateAutomatic) {				
+				CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			} else {
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			}
+		}
 		if (pCampo.getValorText() == null)
 			return;
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD) != null) {

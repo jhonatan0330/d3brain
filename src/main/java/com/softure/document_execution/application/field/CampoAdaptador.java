@@ -52,21 +52,21 @@ public class CampoAdaptador {
 	 * @param pCampo
 	 * @throws ServerException
 	 */
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException{
 		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		switch(pCampo.getCampoDTO().getFormato()){
-			case DocumentoPlantillaCaracteristicaDTO.ARCHIVO:{ tipoArchivo.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.BINARIO:{tipoBinario.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION:{tipoConfiguracion.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.CROQUIS:{tipoCroquis.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{ tipoDetallePedido.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.FECHA:{ tipoFecha.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{ tipoInformativo.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{ tipoNumero.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{ tipoProceso.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{ tipoProductoLista.validarPrepararCampo(pCampo, token);break;}
-			case DocumentoPlantillaCaracteristicaDTO.TEXTO:{ tipoTexto.validarPrepararCampo(pCampo, token);break;}
+			case DocumentoPlantillaCaracteristicaDTO.ARCHIVO:{ tipoArchivo.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.BINARIO:{tipoBinario.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION:{tipoConfiguracion.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.CROQUIS:{tipoCroquis.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO:{ tipoDetallePedido.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.FECHA:{ tipoFecha.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{ tipoInformativo.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{ tipoNumero.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{ tipoProceso.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{ tipoProductoLista.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
+			case DocumentoPlantillaCaracteristicaDTO.TEXTO:{ tipoTexto.validarPrepararCampo(pCampo, token, isUpdateAutomatic);break;}
 			default:{break;}
 		}
 	}

@@ -81,6 +81,24 @@ public class CallDocumentCommons {
 		document.getMessages().add(msg);
 	}
 	
+	public static void copyMessages(PedidoVentaDTO pSince, PedidoVentaDTO pTo) {
+		if(pSince==null || pTo == null || pSince.getMessages() == null || pSince.getMessages().size() == 0) return;
+		if(pTo.getMessages()==null) pTo.setMessages(new ArrayList<>());
+		
+		for (DocumentMessage iMsgSince: pSince.getMessages()) {
+			boolean found = false;
+			for (DocumentMessage iMsgTo: pTo.getMessages()) {
+				//Solo necesito ver que no sea el mismo objeto, por el momento no el mensaje
+				if(iMsgSince == iMsgTo) {
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				pTo.getMessages().add(iMsgSince);
+		}
+	}
+	
 
 	public static Date getValueDate(PedidoVentaDTO document, String code) {
 		PedidoVentaCaracteristicaDTO field = getField(document, code);

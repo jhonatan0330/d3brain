@@ -63,11 +63,7 @@ public class CallBPM {
 		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
 				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token);
-				if (iField.getDocumentsToBPM()!=null && iField.getDocumentsToBPM().getMessages() != null) {
-					if (document.getMessages() == null)
-						document.setMessages(new ArrayList<>());
-					document.getMessages().addAll(iField.getDocumentsToBPM().getMessages());
-				}
+				CallDocumentCommons.copyMessages( iField.getDocumentsToBPM(), document);
 			}
 		}
 	}
@@ -144,7 +140,8 @@ public class CallBPM {
 				if (documentosGestionados == null)
 					documentosGestionados = new ArrayList<String>();
 				documentosGestionados.add(expediente.getLlaveTabla());
-				saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
+				// NO se porque en las transiciones activo o inactivo roles, es una mala practica a cada rato revisa esto
+				//saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 			} else {
 				if (primerLlamado) {
 					ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());

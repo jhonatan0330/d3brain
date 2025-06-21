@@ -322,12 +322,13 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (!fromApi) {
 			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
 			// autenticacion.setOrganizaciones(organizacionService.obtenerUsuario(autenticacion.getUsuario()));
+		}else {
+			sesion = usuarioSesionService.getSessionCacheByUser(usuario.getLlaveTabla());
 		}
 
 		if (sesion == null) {
 			sesion = new UsuarioSesionDTO();
-			sesion.setFecha(new Date());
-			sesion.setFechaCierre(usuarioSesionService.getFechaCierre(autenticacion.getUsuario()));
+			
 			if (sesion.getFechaCierre() == null && autenticacion.getFechaMaxima() != null)
 				sesion.setFechaCierre(autenticacion.getFechaMaxima());
 			sesion.setUsuario(autenticacion.getUsuario());

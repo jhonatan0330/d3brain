@@ -1,5 +1,6 @@
 package com.softure.property.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -26,14 +27,48 @@ public class PropertyCRUDSvc {
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setUsuario(userId);
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
-		
+		filter.setPaginacionRegistroFinal(1000);
 		List<PropiedadDTO> propertiesToInactivate = propertyService.listarConsulta(filter);
+		if (propertiesToInactivate==null ) propertiesToInactivate = new ArrayList<>();
+					
+		filter.setUsuario(null);
+		filter.setUsuarioExcluyente(userId);
 		
+		propertiesToInactivate.addAll(propertyService.listarConsulta(filter));
+			
 		if (propertiesToInactivate==null || propertiesToInactivate.size()==0)
 			return;
 		
 		CambioDTO changeRequest = new CambioDTO();
 		changeRequest.setMotivo("Eliminar permisos de un usuario");
+		changeService.guardar(changeRequest, token);
+		
+		
+		for(PropiedadDTO iProperty: propertiesToInactivate) {
+			propertyService.inactivar(iProperty, token);	
+		}
+	}
+	
+	public void inactivateAllPropertiesOfRol(String rolId, String token) throws ServerException {
+		
+
+		PropiedadFilterDTO filter = new PropiedadFilterDTO();
+		filter.setRol(rolId);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
+		filter.setPaginacionRegistroFinal(1000);
+		List<PropiedadDTO> propertiesToInactivate = propertyService.listarConsulta(filter);
+		if (propertiesToInactivate==null ) propertiesToInactivate = new ArrayList<>();
+					
+		filter.setRol(null);
+		filter.setRolExcluyente(rolId);
+		
+		propertiesToInactivate.addAll(propertyService.listarConsulta(filter));
+			
+		if (propertiesToInactivate==null || propertiesToInactivate.size()==0)
+			return;
+		
+		CambioDTO changeRequest = new CambioDTO();
+		changeRequest.setMotivo("Eliminar permisos de un rol");
 		changeService.guardar(changeRequest, token);
 		
 		

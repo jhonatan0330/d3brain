@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.property.application.PropertyCRUDSvc;
 
 import jakarta.annotation.PostConstruct;
 
@@ -24,9 +25,8 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	@Autowired @Lazy 
 	private RolAccesoMapper rolAccesoMapper;
 	
-	// BEGIN region servicesRolAcceso
 	@Autowired @Lazy  private UsuarioRolSvc usuarioRolService;
-	// END region servicesRolAcceso
+	@Autowired @Lazy  private PropertyCRUDSvc propertySvc;
 
 	@Override
 	public RolAccesoDTO consultaXId(String llave) throws ServerException {
@@ -66,6 +66,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		filtro.setRolAcceso(dto.getLlaveTabla());
 		int cont = usuarioRolService.contarResultados(filtro);
 		if(cont!=0) throw new ServerException("No se puede inactivar el rol debido a que tiene usuarios activos. " + cont);
+		propertySvc.inactivateAllPropertiesOfRol(dto.getLlaveTabla(), token);
 		return dto;
 		// END RolAcceso_inactivar
 	}

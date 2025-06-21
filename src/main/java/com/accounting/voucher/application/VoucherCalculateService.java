@@ -104,7 +104,7 @@ public class VoucherCalculateService {
 		List<ResultMapDTO> mapItems = new ArrayList<ResultMapDTO>();
 		for (Map.Entry<String, ResultMapDTO> entry : acumulador.entrySet()) {
 		    String clave = entry.getKey();
-		    if(clave.startsWith(accountId)) {
+		    if(clave.startsWith(accountId+ "|")) {
 		    	mapItems.add(entry.getValue());
 		    }
 		}
@@ -114,7 +114,8 @@ public class VoucherCalculateService {
 
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
-			if(resultMapDTO.getKey() == null) 
+			// Si no existe la fila, crearla, si tiene valor se creo en la misma transacción
+			if(resultMapDTO.getKey() == null && resultMapDTO.getValue() == null) 
 				resultMapDTO = createMapLine( account, resultMapDTO.getTimeFrame());
 			if (positive.compareTo(BigDecimal.ZERO) != 0) {
 				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive));
@@ -123,7 +124,7 @@ public class VoucherCalculateService {
 			}
 			if (account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) {
 				resultMapDTO.setValue(resultMapDTO.getValue().add(value.negate()));
-				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
+				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value.negate()));
 			}else {
 				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
 				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));

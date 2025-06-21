@@ -4,7 +4,6 @@ package com.softure.authentication.application;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import com.shared.domain.SharedConstants;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
+import com.softure.java.services.SoftureUtil;
 
 @Service("usuarioSesionService")
 public class UsuarioSesionSvc {
@@ -40,40 +40,15 @@ public class UsuarioSesionSvc {
 		dto.setLlaveTabla(llave);
 		return usuarioSesionMapper.consultar(dto);
 	}
-
-
-/*	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public UsuarioSesionDTO actualizar( UsuarioSesionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioSesion_actualizar
-		return super.actualizar(dto, token);
-		// END UsuarioSesion_actualizar
-	}*/
-	
-/*	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public UsuarioSesionDTO inactivar(UsuarioSesionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioSesion_inactivar
-		dto.setFechaCierre(new Date());
-		return super.inactivar(dto, token);
-		// END UsuarioSesion_inactivar
-	}*/
-	
-/*	public UsuarioSesionDTO consultaUnica(UsuarioSesionFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}*/
-	
-/*	public int contarResultados(UsuarioSesionFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}*/
-	
-/*	public List<UsuarioSesionDTO> listarConsulta(UsuarioSesionFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}*/
 	
 
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioSesionDTO guardar(UsuarioSesionDTO dto) throws ServerException {
-		dto.setLlaveTabla(generarLlave());
+		
+		dto.setFecha(new Date());
+		dto.setFechaCierre(getFechaCierre(dto.getUsuario()));
+		
+		dto.setLlaveTabla( SoftureUtil.generarLlave());
 		dto.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
 			usuarioSesionMapper.insertar(dto);
@@ -176,8 +151,6 @@ public class UsuarioSesionSvc {
 
 	public String getTokenPublic(String userId, String ip) throws ServerException{
 		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
-		sesion.setFecha(new Date());
-		sesion.setFechaCierre(getFechaCierre(userId));
 		sesion.setUsuario(userId);
 		sesion.setIp(ip);
 		sesion = guardar(sesion);
@@ -239,11 +212,20 @@ public class UsuarioSesionSvc {
 		return sesion;
 	}
 	
-	//Copiado de basicsvc
-	private String generarLlave() {
-		UUID uuid = UUID.randomUUID();
-		String gen = uuid.toString();
-		gen = gen.replaceAll("-", "");
-		return gen;
+	public UsuarioSesionDTO getSessionCacheByUser(String userId) {
+		if(userId == null || userId.isEmpty()) return null;
+	    for (Map.Entry<String, UsuarioSesionDTO> entry : sessionMap.entrySet()) {
+	        UsuarioSesionDTO dto = entry.getValue();
+	        if (dto != null && userId.equals(dto.getUsuario())) {
+	        	if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0 || (dto.getFechaCierre() != null && dto.getFechaCierre().compareTo(new Date()) < 0)) {
+	        		sessionMap.remove(entry.getKey());
+	        	}else {
+	        		return dto;	
+	        	}
+	        }
+	    }
+	    return null;
 	}
+
+	
 }

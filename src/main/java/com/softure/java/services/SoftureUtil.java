@@ -18,6 +18,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -308,5 +309,11 @@ public class SoftureUtil {
 		}
 	}
 
+	public static String generarLlave() {
+		UUID uuid = UUID.randomUUID();
+		String gen = uuid.toString();
+		gen = gen.replaceAll("-", "");
+		return gen;
+	}
 
 }

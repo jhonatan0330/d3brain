@@ -1,11 +1,11 @@
 package com.softure.logisticpymes.application;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +15,7 @@ import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.java.domain.BasicDTO;
 import com.softure.java.domain.BasicFilterDTO;
 import com.softure.java.domain.IBasicMapper;
+import com.softure.java.services.SoftureUtil;
 
 public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
@@ -97,7 +98,9 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		dto.setLlaveTabla(generarLlave());
 		try {
 			mapper.insertar(dto);
-		} catch (Exception e) {
+		} catch (DuplicateKeyException e) {
+			throw new ServerException(e.getMessage());
+		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		dto = consultaXId(dto.getLlaveTabla());
@@ -123,10 +126,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 	}
 
 	public String generarLlave() {
-		UUID uuid = UUID.randomUUID();
-		String gen = uuid.toString();
-		gen = gen.replaceAll("-", "");
-		return gen;
+		return SoftureUtil.generarLlave();
 	}
 
 	public T inactivate(T dto) throws ServerException {

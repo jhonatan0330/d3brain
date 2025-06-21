@@ -627,7 +627,9 @@ public class CallDocumentCRUD {
 			}
 			// 3. valido cada campo
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-				adaptador.validarPrepararCampo(campoDocumento, token);
+				adaptador.validarPrepararCampo(campoDocumento, token, isUpdateAutomatic);
+				//Como no es el mismo documento y no quiero forzarlo a que sea el mimso le copioe los mensajes
+				CallDocumentCommons.copyMessages(campoDocumento.getPrincipal(), dto);
 				if (campoDocumento.getValorText() != null) {
 					String filtro = Propiedades.obtenerValor(campoDocumento.getCampoDTO(), Propiedades.FILTRO);
 					if (!filtro.isEmpty())

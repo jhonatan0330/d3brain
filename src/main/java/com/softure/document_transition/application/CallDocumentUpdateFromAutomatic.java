@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -97,6 +98,7 @@ public class CallDocumentUpdateFromAutomatic {
 			List<PropiedadDTO> modificarCampo) throws ServerException {
 		execute(pCampo.getDependientes(), pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, token,
 				modificarCampo);
+		CallDocumentCommons.copyMessages( procesoDTO, pCampo.getDocumentsToBPM());
 	}
 
 	/**
@@ -150,6 +152,7 @@ public class CallDocumentUpdateFromAutomatic {
 			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction
 					.updateWithoutTransaction(updateDocument, updaterDocumentId, token, true);
 			procesoDTO.setNombre(pedidoActualizado.getNombre());
+			CallDocumentCommons.copyMessages(pedidoActualizado, procesoDTO);
 			// Cambie pCampo.getPrincipal().getLlaveTabla() x el que esta modificadndo creo
 			// que eso funciona
 			relacionarGestor(procesoDTO, updaterDocumentId, token, transaction);

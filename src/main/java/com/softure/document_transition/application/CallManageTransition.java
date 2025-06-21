@@ -15,6 +15,7 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -98,6 +99,8 @@ public class CallManageTransition {
 	@Autowired
 	@Lazy
 	private VoucherDeleteService voucherDeleteService;
+	@Autowired @Lazy 
+	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
 			BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
@@ -180,6 +183,9 @@ public class CallManageTransition {
 						documentRecentCreateInTransition, null);
 				// Por si es la transicion inicial no le quite el poder del documento que genero
 				if (automatico != null) {
+					//No se porque a los 2 por el momento asi
+					CallDocumentCommons.copyMessages( automatico, expedienteDTO);
+					CallDocumentCommons.copyMessages( automatico, documentoDTO);
 					if (automatico.getPlantilla().compareTo(dto.getPlantilla()) == 0)
 						modificadorId = automatico.getLlaveTabla();
 
@@ -256,6 +262,8 @@ public class CallManageTransition {
 			generateMessageService.call(expedienteDTO, dto, responsable, documentoDTO, token);
 			activateHistoric(expedienteDTO);
 			accountManager(expedienteDTO, token);
+			//Esto lo movi estaba en CallBPM gestionarExpedienteDependientes y de hay viene pero necesitaba que solo se hiciera cuando es un estado y no en apis o decisiones
+			saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO, token);
 			break;
 		}
 

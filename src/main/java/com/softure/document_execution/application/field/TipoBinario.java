@@ -14,7 +14,7 @@ public class TipoBinario {
 	
 	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc campoService;
 	
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException{
 		if(pCampo.getValorNumero()==null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO)==0){
 			String parametro = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BINARIO_FALSO);
 			if( parametro.isEmpty()){

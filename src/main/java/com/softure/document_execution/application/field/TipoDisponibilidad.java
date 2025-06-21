@@ -177,7 +177,7 @@ public class TipoDisponibilidad {
 		return componente;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		String[] locations = null;
 		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 			pCampo.setValorText(null);

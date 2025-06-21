@@ -33,7 +33,7 @@ public class TipoInformativo {
 	@Autowired @Lazy 
 	private PedidoVentaSvc documentService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 		filter.setCampoDTO(pCampo.getCampoDTO());
 		filter.setCampo(pCampo.getCampo());

@@ -88,7 +88,7 @@ public class TipoProceso {
 			pCampo.setPrincipal(pedidoService.consultaXId(pCampo.getValorOpcion()));// Consulto el Id por proceso
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		if (campoHeredado1.isEmpty()) {// Los heredados trabajan solos
 			System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
@@ -145,10 +145,15 @@ public class TipoProceso {
 				}
 				// Valido obligatoriedad
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
-						&& pCampo.getValorOpcion() == null)
-					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-							+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
-
+						&& pCampo.getValorOpcion() == null) {
+					if(isUpdateAutomatic) {				
+						CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+					} else {
+						throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+					}
+				}
 				// Valido que el documento este activo y actualizo algunos valores
 				if (pCampo.getValorOpcion() != null) {
 					loadActualOptionToDocumentList(pCampo);

@@ -1377,8 +1377,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				agregar = false; // Cuando copio esta propiedad queda mal y duplicada
 			if (propiedadDTO.getKey().compareTo(Propiedades.PERMISO_PLANTILLA_MODIFICAR) == 0)
 				agregar = false; // Cuando copio esta propiedad se crea la plantilla de modificar y no es la idea
-			if (propiedadDTO.getKey().compareTo(Propiedades.PERMISO_PLANTILLA_ELIMINAR) == 0)
-				agregar = false; // CAsi siempre se borran estos permisos
 			if (propiedadDTO.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0)
 				agregar = false; // CAsi siempre se borran estos permisos
 			if (propiedadDTO.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0)
