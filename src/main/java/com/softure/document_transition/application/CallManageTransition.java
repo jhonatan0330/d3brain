@@ -263,7 +263,7 @@ public class CallManageTransition {
 			activateHistoric(expedienteDTO);
 			accountManager(expedienteDTO, token);
 			//Esto lo movi estaba en CallBPM gestionarExpedienteDependientes y de hay viene pero necesitaba que solo se hiciera cuando es un estado y no en apis o decisiones
-			saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO, token);
+			//saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO, token);
 			break;
 		}
 
