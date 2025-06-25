@@ -441,7 +441,8 @@ public class CallDocumentCRUD {
 				token);
 		bpmService.execute(pedido, token);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
-		manageTemplateTypes(dto, plantilla, token);
+		//Aqui envio el pedido porque necesito saber si es un documento incial de estado o simple para el tema de los roles
+		manageTemplateTypes(pedido, plantilla, token);
 		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
 		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
 			for (PropiedadDTO _iApi : _PropertyListToAPis) {
@@ -896,7 +897,8 @@ public class CallDocumentCRUD {
 			plantilla.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 					dto.getPlantilla(), null, null));
 		}
-		saveRole(dto, token);
+		//Sucede que en los estados tambien se llama esta funcion, y cuando son procesos de inicio se duplicaba y generaba error
+		if(dto.getEstadoExpediente() == null)saveRole(dto, token);
 
 		PropiedadDTO categoria = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO);
 		if (categoria != null)
