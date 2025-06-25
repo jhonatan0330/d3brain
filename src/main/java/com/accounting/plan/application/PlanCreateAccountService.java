@@ -132,7 +132,14 @@ public class PlanCreateAccountService {
 		if (_parentAccount == null)
 			throw new ServerException("No se identifica la cuenta");
 		
-		PedidoVentaDTO _document = documentService.consultaXId(documentId);
+		PedidoVentaDTO _document = null;
+		if(documentId.compareTo(AccountConst.AUXILIAR_EMPTY)==0) {
+			_document = new PedidoVentaDTO();
+			_document.setNombre((_parentAccount==null)?"_0":(_parentAccount.getCode()+"_0"));
+			_document.setDescripcion("Cuenta auxiliar sin documento");
+		}else {
+			_document = documentService.consultaXId(documentId);
+		}
 		if(_document == null)
 			throw new ServerException("No se encuentra el documento con id " + documentId);
 		accountReference.setCode(_document.getNombre());

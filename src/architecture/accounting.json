@@ -370,6 +370,11 @@
 							"tableName": "fechaanulacion",
 							"type": "DATETIME",
 							"optional": true
+						},
+						{
+							"name": "creationDate",
+							"tableName": "creacionfecha",
+							"type": "DATETIME"
 						}
 					]
 				},

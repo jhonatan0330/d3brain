@@ -159,8 +159,8 @@ public class ApiAccountVoucherService {
 		if (lineVO.getReferences() != null && !lineVO.getReferences().isEmpty()) {
 			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {
 				if (reference.getDocumentId() == null || reference.getDocumentId().isEmpty())
-					throw new ServerException("Estamos creando el auxiliar de " + account.getCode() + " Necesitamos un id de documento para relacionar la cuenta, gracias");
-				if (reference.getDocumentId().length() > 32 )
+					reference.setDocumentId(AccountConst.AUXILIAR_EMPTY);
+				if (reference.getDocumentId()!=null && reference.getDocumentId().length() > 32 )
 					throw new ServerException("Estamos creando el auxiliar "+ reference.getDocumentId() + " de " + account.getCode() + " El id de documento es un identificador a un documento del sistema no puede tener mas de 32 caracteres, gracias");
 			}
 		}

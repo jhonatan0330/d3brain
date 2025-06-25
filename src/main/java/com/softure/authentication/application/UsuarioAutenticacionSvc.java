@@ -167,6 +167,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			newAuth.setAutorizacionCrea(autho.getLlaveTabla());
 		newAuth.setIp(dto.getIp());
 		newAuth.setFechaMaxima(getNewMaximunDate(user.getUsuario()));
+		newAuth.setFechaCreacion(new Date());
 		newAuth = save(newAuth);
 
 		usuarioSesionService.closeAllSession(user.getUsuario(), token);
@@ -177,10 +178,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioAutenticacion_guardar
 		dto.setFechaMaxima(getNewMaximunDate(dto.getUsuario()));
+		dto.setFechaCreacion(new Date());
 		return super.guardar(dto, token);
-		// END UsuarioAutenticacion_guardar
 	}
 
 // BEGIN region aditionalMethods

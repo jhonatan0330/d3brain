@@ -24,7 +24,10 @@ public class UsuarioAutenticacionFilterDTO extends BasicFilterDTO
 	private String ip;
 	private String autorizacionCrea;
 	private String autorizacionElimina;
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacionMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacionMax;
 	
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -118,6 +121,21 @@ public class UsuarioAutenticacionFilterDTO extends BasicFilterDTO
 		return fechaMaximaMax;
 	}
 	
+	public void setFechaCreacionMin(Date fechaCreacionMin) {
+		this.fechaCreacionMin = fechaCreacionMin;
+	}
+	
+	public Date getFechaCreacionMin() {
+		return fechaCreacionMin;
+	}
+	
+	public void setFechaCreacionMax(Date fechaCreacionMax) {
+		this.fechaCreacionMax = fechaCreacionMax;
+	}
+	
+	public Date getFechaCreacionMax() {
+		return fechaCreacionMax;
+	}
 	
 	public void setIp(String ip) {
 		this.ip = ip;

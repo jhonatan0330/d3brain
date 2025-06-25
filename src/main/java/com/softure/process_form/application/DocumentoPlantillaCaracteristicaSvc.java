@@ -457,7 +457,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 		campoTiempo = new DocumentoPlantillaCaracteristicaDTO();
 		campoTiempo.setCodigo("FECHA");
-		campoTiempo.setNombre("RANGO DE FECHAS");
+		campoTiempo.setNombre( (rango)?"RANGO DE FECHAS":"FECHA" );
 		campoTiempo.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);

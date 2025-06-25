@@ -12,6 +12,7 @@
 			,cuau_clave as  clave
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cuau_usuario) as  usuarioNombre
 			,duau_fechamaxima as  fechaMaxima
+			,duau_fechacreacion as  fechaCreacion
 			,cuau_autorizacioncrea as  autorizacionCrea
 			,cuau_autorizacionelimina as  autorizacionElimina
 			,cuau_estado as estado
@@ -40,6 +41,12 @@
 			</if>
 			<if test="fechaMaximaMax!=null">
 				and duau_fechamaxima <![CDATA[ < ]]>  #{fechaMaximaMax}
+			</if>
+			<if test="fechaCreacionMin!=null">
+				and duau_fechacreacion >= #{fechaCreacionMin}
+			</if>
+			<if test="fechaCreacionMax!=null">
+				and duau_fechacreacion <![CDATA[ < ]]>  #{fechaCreacionMax}
 			</if>
 			<if test="autorizacionCrea!=null">
 				and cuau_autorizacioncrea = #{autorizacionCrea}
@@ -96,6 +103,9 @@
 		<if test="fechaMaxima!=null">
 			,duau_fechamaxima
 		</if>
+		<if test="fechaCreacion!=null">
+			,duau_fechacreacion
+		</if>
 		<if test="autorizacionCrea!=null">
 			,cuau_autorizacioncrea
 		</if>
@@ -118,6 +128,9 @@
 		</if>
 		<if test="fechaMaxima!=null">
 			,#{fechaMaxima}
+		</if>
+		<if test="fechaCreacion!=null">
+			,#{fechaCreacion}
 		</if>
 		<if test="autorizacionCrea!=null">
 			,#{autorizacionCrea}

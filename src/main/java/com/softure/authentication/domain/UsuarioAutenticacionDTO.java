@@ -30,6 +30,8 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	private String ip;
 	private String autorizacionCrea;
 	private String autorizacionElimina;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacion;
 
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
@@ -138,5 +140,13 @@ public class UsuarioAutenticacionDTO extends BasicDTO
 	}
 // BEGIN region metodoInterfaces
 // END region metodoInterfaces
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
 
 }

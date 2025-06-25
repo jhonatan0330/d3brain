@@ -96,12 +96,14 @@ public class VoucherGetService {
 		AccountRecordFilterDTO filter = new AccountRecordFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		filter.setVoucher(voucherId);
+		filter.setEndRow(4000);
 		List<AccountRecordDTO> _records = recordService.getMany(filter);
 		if(_records == null || _records.isEmpty()) return null;
 		
 		AccountRecordAuxiliarFilterDTO _filter = new AccountRecordAuxiliarFilterDTO();
 		_filter.setVoucher(voucherId);
 		_filter.setState(SharedConstants.STATE_ACTIVE);
+		filter.setEndRow(10000);
 		List<AccountRecordAuxiliarDTO> _auxiliares = recordAuxiliarService.getMany(_filter);
 		
 		List<VoucherLine> _lines  = new ArrayList<>();

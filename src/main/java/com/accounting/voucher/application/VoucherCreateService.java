@@ -225,6 +225,7 @@ public class VoucherCreateService {
 		}
 		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
 		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
+		_voucher.getHeader().setCreationDate(new Date());
 		_voucher.getHeader().setDeleteDate( Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		// Desde Angular viene una ultima linea vacia
 		for (VoucherLine item : toRemove) {

@@ -21,6 +21,8 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 	private String document;
 	private Date deleteDateMin;
 	private Date deleteDateMax;
+	private Date creationDateMin;
+	private Date creationDateMax;
 
 	public String getCatalog() {
 		return catalog;
@@ -108,6 +110,22 @@ public class VoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setDeleteDateMax(Date deleteDateMax) {
 		this.deleteDateMax = deleteDateMax;
+	}
+
+	public Date getCreationDateMin() {
+		return creationDateMin;
+	}
+
+	public void setCreationDateMin(Date creationDateMin) {
+		this.creationDateMin = creationDateMin;
+	}
+
+	public Date getCreationDateMax() {
+		return creationDateMax;
+	}
+
+	public void setCreationDateMax(Date creationDateMax) {
+		this.creationDateMax = creationDateMax;
 	}
 
 }

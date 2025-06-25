@@ -16,4 +16,6 @@ public class AccountConst {
 	public static final String STATUS_OPERATING = "OPERATING";
 	public static final String STATUS_BLOCKED = "BLOCKED";
 	public static final String STATUS_PLANNING = "PLANNING";
+	
+	public static final String AUXILIAR_EMPTY = "EMPTY";
 }
