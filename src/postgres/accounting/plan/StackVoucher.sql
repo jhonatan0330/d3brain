@@ -7,4 +7,6 @@ CREATE TABLE account.pila_stk (
 
 ALTER TABLE account.pila_stk ADD cstk_comprobante varchar(32) NOT NULL ;
 ALTER TABLE account.pila_stk ADD dstk_creacionfecha timestamp with time zone NOT NULL ;
+ALTER TABLE account.pila_stk ADD dstk_ejecucionfecha timestamp with time zone;
+ALTER TABLE account.pila_stk ADD dstk_finalfecha timestamp with time zone;
 ALTER TABLE account.pila_stk ADD cstk_accion varchar(1);

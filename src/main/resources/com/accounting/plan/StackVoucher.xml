@@ -9,6 +9,8 @@
 			cstk_llave as key
 			,cstk_comprobante as voucher
 			,dstk_creacionfecha as creationDate
+			,dstk_ejecucionfecha as executionDate
+			,dstk_finalfecha as finishDate
 			,cstk_accion as action
 			,cstk_estado as state
 		from account.pila_stk a
@@ -20,6 +22,8 @@
 		and cstk_estado = #{state}</if>
 <if test="voucher!=null">		and cstk_comprobante = #{voucher}</if>
 <if test="creationDateMin!=null">		and dstk_creacionfecha >= #{creationDateMin}</if><if test="creationDateMax!=null">		and dstk_creacionfecha <![CDATA[ < ]]> #{creationDateMax}</if>
+<if test="executionDateMin!=null">		and dstk_ejecucionfecha >= #{executionDateMin}</if><if test="executionDateMax!=null">		and dstk_ejecucionfecha <![CDATA[ < ]]> #{executionDateMax}</if>
+<if test="finishDateMin!=null">		and dstk_finalfecha >= #{finishDateMin}</if><if test="finishDateMax!=null">		and dstk_finalfecha <![CDATA[ < ]]> #{finishDateMax}</if>
 <if test="action!=null">		and cstk_accion = #{action}</if>
 
 	</sql>
@@ -56,11 +60,15 @@
 		insert into account.pila_stk(cstk_llave
 		<if test="voucher!=null">,cstk_comprobante</if>
 		<if test="creationDate!=null">,dstk_creacionfecha</if>
+		<if test="executionDate!=null">,dstk_ejecucionfecha</if>
+		<if test="finishDate!=null">,dstk_finalfecha</if>
 		<if test="action!=null">,cstk_accion</if>
 		<if test="state!=null">,cstk_estado</if>
 		) values (#{key}
 		<if test="voucher!=null">,#{voucher}</if>
 		<if test="creationDate!=null">,#{creationDate}</if>
+		<if test="executionDate!=null">,#{executionDate}</if>
+		<if test="finishDate!=null">,#{finishDate}</if>
 		<if test="action!=null">,#{action}</if>
 		<if test="state!=null">,#{state}</if>
 		)
@@ -71,6 +79,8 @@
 		set
 		cstk_comprobante = #{voucher},
 		dstk_creacionfecha = #{creationDate},
+		dstk_ejecucionfecha = #{executionDate},
+		dstk_finalfecha = #{finishDate},
 		cstk_accion = #{action},
 		cstk_estado =#{state}
 		<include refid="whereStackVoucherPrimaryKeyFragment" />

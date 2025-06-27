@@ -238,6 +238,18 @@
 							"type": "DATETIME"
 						},
 						{
+							"name": "executionDate",
+							"tableName": "ejecucionfecha",
+							"type": "DATETIME",
+							"optional": true
+						},
+						{
+							"name": "finishDate",
+							"tableName": "finalfecha",
+							"type": "DATETIME",
+							"optional": true
+						},
+						{
 							"name": "action",
 							"tableName": "accion",
 							"type": "STRING",
@@ -305,6 +317,10 @@
 						{
 							"name": "value",
 							"tableName": "valor",
+							"type": "NUMBER"
+						},
+						{
+							"name": "valueInProcessing",
 							"type": "NUMBER"
 						}
 					]

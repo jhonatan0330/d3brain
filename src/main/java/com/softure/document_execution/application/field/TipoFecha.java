@@ -31,8 +31,7 @@ public class TipoFecha {
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
-		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
-				pCampo.getCampoDTO().getNombre());
+		// System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),	pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorFecha() == null) {
 			// PAra factura electronica de roa debo colcoar la fecha actual automaticamente
 			// viene vacio

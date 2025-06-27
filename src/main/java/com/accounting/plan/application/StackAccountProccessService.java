@@ -1,5 +1,6 @@
 package com.accounting.plan.application;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,13 @@ public class StackAccountProccessService {
 			return "0";
 		for (StackVoucherDTO stackVoucherDTO : stack) {
 			stackVoucherDTO.setState(SharedConstants.STATE_COMPLETE);
+			stackVoucherDTO.setExecutionDate(new Date());
 			stackBasicMapper.update(stackVoucherDTO);
+		}
+		for (StackVoucherDTO stackVoucherDTO : stack) {
 			calculateService.call(stackVoucherDTO.getVoucher(), stackVoucherDTO.getAction());
+			stackVoucherDTO.setFinishDate(new Date());
+			stackBasicMapper.update(stackVoucherDTO);			
 		}
 		return String.valueOf(stack.size());
 	}

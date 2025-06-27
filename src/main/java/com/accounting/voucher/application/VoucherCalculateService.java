@@ -58,21 +58,14 @@ public class VoucherCalculateService {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void call(String voucherId, String action) throws ServerException {
 		Voucher _voucher = voucherService.getById(voucherId);
-		BigDecimal _positive =null;
-		BigDecimal _negative =null;
 		Map<String, ResultMapDTO> acumulador = new HashMap<String, ResultMapDTO>();
 		for (VoucherLine item : _voucher.getRecords()) {
-			_positive = item.getLine().getPositive();
-			_negative = item.getLine().getNegative();
-			if(action !=null && action.compareTo(SharedConstants.STATE_INACTIVE)==0) {
-				_negative = item.getLine().getPositive();
-				_positive = item.getLine().getNegative();
-			}
-			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue(), acumulador);
+
+			saveMap(item.getLine().getAccount(), item.getLine().getFactDate(), item.getLine().getPositive() , item.getLine().getNegative(), item.getLine().getValue(), acumulador, action);
 			if(item.getReferences()!=null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAux : item.getReferences()) {
 					if(iAux.getAccount()!= null)
-					saveMap(iAux.getAccount(), item.getLine().getFactDate(), _positive , _negative, item.getLine().getValue(), acumulador);	
+					saveMap(iAux.getAccount(), item.getLine().getFactDate(), item.getLine().getPositive() , item.getLine().getNegative(), item.getLine().getValue(), acumulador, action);	
 				}
 			}
 		}
@@ -92,11 +85,11 @@ public class VoucherCalculateService {
 		        _times.put(cpv.getTimeFrame(), timeFrame);
 		    }
 			if (timeFrame != null)			
-				mapService.updateBalance(cpv.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), cpv.getValue());
+				mapService.updateBalance(cpv.getAccount(), timeFrame.getStartDate(), timeFrame.getLevel(), cpv.getValueInProcessing());
 		}
 	}
 
-	private void saveMap(String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value, Map<String, ResultMapDTO> acumulador)
+	private void saveMap(String accountId, Date factDate, BigDecimal positive, BigDecimal negative, BigDecimal value, Map<String, ResultMapDTO> acumulador, String action)
 			throws ServerException {
 		AccountDTO account = accountService.getById(accountId);
 
@@ -112,24 +105,32 @@ public class VoucherCalculateService {
 			mapItems = mapService.getItemsAccount(accountId, factDate);
 		}
 
+		//el factor es la estrategia para anular
+		BigDecimal factor = BigDecimal.ONE;
+		if(action !=null && action.compareTo(SharedConstants.STATE_INACTIVE)==0) factor = BigDecimal.ONE.negate();
+				
 		// sumarle el valor a cada nivel
 		for (ResultMapDTO resultMapDTO : mapItems) {
 			// Si no existe la fila, crearla, si tiene valor se creo en la misma transacción
 			if(resultMapDTO.getKey() == null && resultMapDTO.getValue() == null) 
 				resultMapDTO = createMapLine( account, resultMapDTO.getTimeFrame());
+			
 			if (positive.compareTo(BigDecimal.ZERO) != 0) {
-				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive));
+				resultMapDTO.setPositive(resultMapDTO.getPositive().add(positive.multiply(factor)));
 			} else {
-				resultMapDTO.setNegative(resultMapDTO.getNegative().add(negative));
+				resultMapDTO.setNegative(resultMapDTO.getNegative().add(negative.multiply(factor)));
 			}
-			if (account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) {
-				resultMapDTO.setValue(resultMapDTO.getValue().add(value.negate()));
-				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value.negate()));
-			}else {
-				resultMapDTO.setValue(resultMapDTO.getValue().add(value));
-				resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(value));
-			}
-			resultMapDTO.setQuantity(resultMapDTO.getQuantity() + 1);
+			BigDecimal _valueToApply = value.multiply(factor);
+			if (account.getOperation().compareTo(AccountConst.OPERATION_MINUS) == 0) _valueToApply = _valueToApply.negate(); 
+			
+			resultMapDTO.setValue(resultMapDTO.getValue().add(_valueToApply));
+			resultMapDTO.setNextBalance(resultMapDTO.getNextBalance().add(_valueToApply));
+			
+			if(resultMapDTO.getValueInProcessing() == null)
+				resultMapDTO.setValueInProcessing(BigDecimal.ZERO);
+			resultMapDTO.setValueInProcessing(resultMapDTO.getValueInProcessing().add(_valueToApply));
+			
+			resultMapDTO.setQuantity(resultMapDTO.getQuantity() + (1*factor.intValue()));
 			
 			acumulador.put(accountId + "|" + resultMapDTO.getTimeFrame(), resultMapDTO);
 		}
@@ -144,13 +145,13 @@ public class VoucherCalculateService {
 						AccountDTO _accountGroupParent = accountService.findAccountByDocumentId(account.getCatalog(), account.getDocument(), accountParentTop.getKey());
 						
 						if (_accountGroupParent != null) {
-							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value, acumulador);
+							saveMap(_accountGroupParent.getKey(), factDate, positive, negative, value, acumulador, action);
 						}
 					}
 				}
 			} else {
 				if (accountParent.getType().compareTo(AccountConst.TYPE_GROUP) == 0) {
-					saveMap(account.getParent(), factDate, positive, negative, value, acumulador);
+					saveMap(account.getParent(), factDate, positive, negative, value, acumulador, action);
 				} 
 			}
 		}
@@ -174,6 +175,7 @@ public class VoucherCalculateService {
 		_map.setPositive(BigDecimal.ZERO);
 		_map.setNegative(BigDecimal.ZERO);
 		_map.setValue(BigDecimal.ZERO);
+		_map.setValueInProcessing(BigDecimal.ZERO);
 		_map.setQuantity(0);
 		return _map;
 		//resultMapService.save(_map);

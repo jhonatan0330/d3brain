@@ -33,8 +33,7 @@ public class TipoNumero {
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
-		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
-				pCampo.getCampoDTO().getNombre());
+		// System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);

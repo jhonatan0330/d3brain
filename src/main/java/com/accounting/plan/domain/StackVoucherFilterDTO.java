@@ -12,6 +12,10 @@ public class StackVoucherFilterDTO extends SharedDataObjectFilter {
 	private String voucher;
 	private Date creationDateMin;
 	private Date creationDateMax;
+	private Date executionDateMin;
+	private Date executionDateMax;
+	private Date finishDateMin;
+	private Date finishDateMax;
 	private String action;
 
 	public String getVoucher() {
@@ -36,6 +40,38 @@ public class StackVoucherFilterDTO extends SharedDataObjectFilter {
 
 	public void setCreationDateMax(Date creationDateMax) {
 		this.creationDateMax = creationDateMax;
+	}
+
+	public Date getExecutionDateMin() {
+		return executionDateMin;
+	}
+
+	public void setExecutionDateMin(Date executionDateMin) {
+		this.executionDateMin = executionDateMin;
+	}
+
+	public Date getExecutionDateMax() {
+		return executionDateMax;
+	}
+
+	public void setExecutionDateMax(Date executionDateMax) {
+		this.executionDateMax = executionDateMax;
+	}
+
+	public Date getFinishDateMin() {
+		return finishDateMin;
+	}
+
+	public void setFinishDateMin(Date finishDateMin) {
+		this.finishDateMin = finishDateMin;
+	}
+
+	public Date getFinishDateMax() {
+		return finishDateMax;
+	}
+
+	public void setFinishDateMax(Date finishDateMax) {
+		this.finishDateMax = finishDateMax;
 	}
 
 	public String getAction() {

@@ -91,8 +91,7 @@ public class TipoProceso {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		if (campoHeredado1.isEmpty()) {// Los heredados trabajan solos
-			System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
-					pCampo.getCampoDTO().getNombre());
+			//System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 			if(pCampo.getValorText()!=null && pCampo.getValorText().isEmpty())pCampo.setValorText(null);
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
 			autosave(multiple, pCampo, token);
@@ -427,9 +426,7 @@ public class TipoProceso {
 					updateInformativeService.call(pCampo, token);
 					return pCampo;
 				} else {
-					System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",
-							pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-							pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					// System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",		pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),					pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 
@@ -447,9 +444,7 @@ public class TipoProceso {
 					generarPagos(pCampo, token);
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
 						tipoBodega.aplicarMovimientosBodega(pCampo, token);
-					System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )",
-							pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-							pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
+					//System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )",						pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),						pCampo.getCampoDTO().getNombre(), pCampo.getValorText(), pCampo.getValorOpcion());
 					// throw new ServerException("Probando");
 					updateInformativeService.call(pCampo, token);
 				}

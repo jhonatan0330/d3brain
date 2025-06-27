@@ -20,6 +20,7 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
+	private BigDecimal valueInProcessing;
 
 	public String getAccount() {
 		return account;
@@ -107,6 +108,14 @@ public class ResultMapFilterDTO extends SharedDataObjectFilter {
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public BigDecimal getValueInProcessing() {
+		return valueInProcessing;
+	}
+
+	public void setValueInProcessing(BigDecimal valueInProcessing) {
+		this.valueInProcessing = valueInProcessing;
 	}
 
 }

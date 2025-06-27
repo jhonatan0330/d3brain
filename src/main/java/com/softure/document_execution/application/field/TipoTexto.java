@@ -19,8 +19,7 @@ public class TipoTexto {
 	private PedidoVentaCaracteristicaSvc campoService;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
-		System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(),
-				pCampo.getCampoDTO().getNombre());
+		// System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorText() != null) {
 			pCampo.setValorText(SoftureUtil.cleanStartEndSpaces(pCampo.getValorText()));
 			if( pCampo.getValorText().isEmpty()) pCampo.setValorText(null);

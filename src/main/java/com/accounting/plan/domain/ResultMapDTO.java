@@ -19,6 +19,7 @@ public class ResultMapDTO extends SharedDataObject{
 	private BigDecimal positive;
 	private BigDecimal negative;
 	private BigDecimal value;
+	private BigDecimal valueInProcessing;
 
 	public String getAccount() {
 		return account;
@@ -106,6 +107,14 @@ public class ResultMapDTO extends SharedDataObject{
 
 	public void setValue(BigDecimal value) {
 		this.value = value;
+	}
+
+	public BigDecimal getValueInProcessing() {
+		return valueInProcessing;
+	}
+
+	public void setValueInProcessing(BigDecimal valueInProcessing) {
+		this.valueInProcessing = valueInProcessing;
 	}
 
 }
