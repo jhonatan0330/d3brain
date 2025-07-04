@@ -665,14 +665,12 @@ public class CallDocumentListWithFilters {
 				campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 				campo.setLlaveTabla(pvrDTO.getTransaccionRegistro());
-				pvrDTO.setTransaccionRegistro(null);
+				//pvrDTO.setTransaccionRegistro(null);
 				pvrDTO.setCampoDTO(campo);
 				dto.getCaracteristicas().add(pvrDTO);
 				if ((pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
 						|| pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0)
 						&& pvrDTO.getValorOpcion() != null) {
-					PedidoVentaDTO filtroProceso = new PedidoVentaDTO();
-					filtroProceso.setLlaveTabla(pvrDTO.getValorOpcion());
 					for (PedidoVentaCaracteristicaDTO pvrDTO2 : camposDocumentos) {
 						if (pvrDTO2.getDocumento().compareTo(pvrDTO.getValorOpcion()) == 0) {
 							DocumentoPlantillaCaracteristicaDTO campo2 = new DocumentoPlantillaCaracteristicaDTO();
@@ -680,6 +678,8 @@ public class CallDocumentListWithFilters {
 							campo2.setPropiedades(new ArrayList<PropiedadDTO>());
 							campo2.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 									null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
+							campo2.setLlaveTabla(pvrDTO2.getTransaccionRegistro());
+							//pvrDTO2.setTransaccionRegistro(null);
 							pvrDTO2.setCampoDTO(campo2);
 							dto.getCaracteristicas().add(pvrDTO2);
 						}
@@ -689,6 +689,8 @@ public class CallDocumentListWithFilters {
 		}
 		return dto;
 	}
+	
+	
 
 	public List<PedidoVentaDTO> listarUsuario(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto.getFuncionario() == null)
