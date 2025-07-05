@@ -27,6 +27,7 @@ import com.softure.authorization.domain.UsuarioRolDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.application.field.TipoVinculo;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
@@ -110,9 +111,10 @@ public class CallDocumentCRUD {
 	private CallBPM bpmService;
 	@Autowired @Lazy 
 	private HomologateAdapterService homologateService;
-	@Autowired
-	@Lazy
+	@Autowired	@Lazy
 	private VoucherDeleteService voucherDeleteService;
+	@Autowired	@Lazy
+	private TipoVinculo tipoVinculoService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
@@ -450,10 +452,31 @@ public class CallDocumentCRUD {
 			}
 		}
 		voucherCreate(dto, token, plantilla);
+		makeVinculateDocument(dto, token);
 		generateNotifications(dto, token, plantilla, pedido);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
+
+	private void makeVinculateDocument(PedidoVentaDTO pDTO, String pToken) throws ServerException {
+		if(pDTO.getCaracteristicas() == null) return;
+		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
+			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
+				PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField,pToken);
+				if(_vinculateDocument != null) {
+					_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
+					_iField.setValorOpcion(_vinculateDocument.getLlaveTabla());
+					_iField.setValorText(_vinculateDocument.getNombre());
+					tipoVinculoService.guardarCampo(_iField, pToken);	
+				}
+			}
+		}
+		
+	}
+	
+	
+
+	
 
 	private void voucherCreate(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla)
 			throws ServerException {
@@ -834,17 +857,14 @@ public class CallDocumentCRUD {
 
 	private List<PedidoVentaCaracteristicaDTO> saveInternalFields(PedidoVentaDTO dto, String token)
 			throws ServerException {
-		List<PedidoVentaCaracteristicaDTO> result = null;
-		if (dto.getCaracteristicas() != null) {
-			result = new ArrayList<PedidoVentaCaracteristicaDTO>();
-			for (PedidoVentaCaracteristicaDTO iterable : dto.getCaracteristicas()) {
-				// iterable.getModificado()!=null &&
-				if (iterable.getModificado()) {
-					iterable.setDocumento(dto.getLlaveTabla());
-					result.add(adaptador.guardarCampo(iterable, token));
-				} else {// Antes solo devolvia las que iteraba pero no se porque
-					result.add(iterable);
-				}
+		if(dto.getCaracteristicas() == null) return null;
+		List<PedidoVentaCaracteristicaDTO> result = new ArrayList<PedidoVentaCaracteristicaDTO>();
+		for (PedidoVentaCaracteristicaDTO iterable : dto.getCaracteristicas()) {
+			if (iterable.getModificado()) {
+				iterable.setDocumento(dto.getLlaveTabla());
+				result.add(adaptador.guardarCampo(iterable, token));
+			} else {// Antes solo devolvia las que iteraba pero no se porque
+				result.add(iterable);
 			}
 		}
 		return result;

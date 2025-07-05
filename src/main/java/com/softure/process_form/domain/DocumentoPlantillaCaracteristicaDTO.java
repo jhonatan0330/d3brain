@@ -29,6 +29,7 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	public static final String GPS = "P";
 	public static final String GPS_MAP = "M";
 	public static final String SECCION = "S";
+	public static final String VINCULO = "C";
 	public static final String INFORMATIVO = "V";
 
 	private String objetivo;
@@ -39,7 +40,6 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	private String codigo;
 	private Integer orden;
 	private String imagen;
-	//private List<CategoriaProductoDTO> categorias;
 	private List<ProductoDTO> productos;
 	private List<PedidoVentaDTO> documentos;
 

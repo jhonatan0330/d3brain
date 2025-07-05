@@ -62,6 +62,8 @@ public class Propiedades {
 	public static final String INFORMATIVE_DATA = "INFORMATIVE_DATA";
 	public static final String UPDATE_INFORMATIVE_FIELD = "UPDATE_INFORMATIVE_FIELD";
 
+	public static final String VINCULO_DATA = "VINCULO_DATA";
+	
 	public static final String AUTOLOAD = "AUTOLOAD";
 	public static final String AUTOLOAD_SAVE = "AUTOLOAD_SAVE";
 	public static final String MULTIPLE = "MULTIPLE";

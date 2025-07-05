@@ -598,3 +598,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
 	VALUES('PROP_287' , 'O', 'LOGIN HTML', 'LOGIN_HTML', 'REQUISITO', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
+	VALUES('PROP_288' , 'C', 'RELACIONAR DOCUMENTO AL CAMPO DEL NUEVO FORMULARIO', 'VINCULO_DATA', 'REQUISITO', 'C', true);

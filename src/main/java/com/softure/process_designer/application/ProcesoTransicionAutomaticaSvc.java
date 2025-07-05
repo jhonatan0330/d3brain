@@ -300,13 +300,13 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 							dto.setMensaje("");
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
 						}else {
 							campoPrinicipal.setExpedientes(documentos);
-							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
 							if(nuevo !=null) {
 								dto.setMensaje(nuevo.getNombre());	
 							}else {

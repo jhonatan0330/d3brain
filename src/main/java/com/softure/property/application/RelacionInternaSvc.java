@@ -139,6 +139,24 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		return super.listarConsulta(filtro);
 	}
 	
+	public RelacionInternaDTO getFirstRelation(String pProperty, String pOptionalTemplateId)throws ServerException {
+		List<RelacionInternaDTO> _relations = relacionesPropiedad(pProperty);
+		if (_relations == null || _relations.isEmpty()) {
+			return null;
+		}
+		
+		if (pOptionalTemplateId == null || pOptionalTemplateId.isEmpty()) {
+			return _relations.get(0);
+		} else {
+			for (RelacionInternaDTO iRelation : _relations) {
+				if (iRelation.getPlantilla().compareTo(pOptionalTemplateId) == 0) {
+					return iRelation;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public List<RelacionInternaDTO> getRelationsFullToSynchronize()throws ServerException {
 		return relacionInternaMapper.getRelationsFullToSynchronize();
 	}
@@ -157,7 +175,6 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 				guardar(newRelation, token);
 			}
 		}
-		
 	}
 
 }

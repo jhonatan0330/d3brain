@@ -12,6 +12,8 @@ import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 
 public class CallDocumentCommons {
 
@@ -154,5 +156,42 @@ public class CallDocumentCommons {
 				return iField;
 		}
 		return null;
+	}
+	
+	public static PedidoVentaDTO generateNewDocument(DocumentoPlantillaDTO pPlantilla, String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin)
+			throws ServerException {
+		PedidoVentaDTO nuevo = new PedidoVentaDTO();
+		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+		nuevo.setPlantilla(pPlantilla.getLlaveTabla());
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : pPlantilla.getCaracteristicas()) {
+			boolean relacionExistente = false;
+			for (PedidoVentaCaracteristicaDTO iCampoCopiar : camposNuevos) {
+				if (iCampo.getLlaveTabla().compareTo(iCampoCopiar.getCampo()) == 0) {
+					nuevo.getCaracteristicas().add(copyFieldDocument(iCampoCopiar, iCampoCopiar.getCampo()));
+					relacionExistente = true;
+					break;
+				}
+			}
+			if (!relacionExistente)
+				nuevo.getCaracteristicas().add(copyFieldDocument(null, iCampo.getLlaveTabla()));
+		}
+		nuevo.setLlaveTabla(null);
+		nuevo.setTransaccion(transaccion);
+		nuevo.setFuncionario(userAdmin);
+		return nuevo;
+	}
+
+	public static PedidoVentaCaracteristicaDTO copyFieldDocument(PedidoVentaCaracteristicaDTO actual, String campoId) {
+		PedidoVentaCaracteristicaDTO nueva = new PedidoVentaCaracteristicaDTO();
+		nueva.setCampo(campoId);
+		if (actual != null) {
+			nueva.setValorAuxiliar(actual.getValorAuxiliar());
+			nueva.setValorFecha(actual.getValorFecha());
+			nueva.setValorNumero(actual.getValorNumero());
+			nueva.setValorOpcion(actual.getValorOpcion());
+			nueva.setValorText(actual.getValorText());
+			nueva.setExpedientes(actual.getExpedientes());
+		}
+		return nueva;
 	}
 }

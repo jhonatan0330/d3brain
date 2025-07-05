@@ -163,8 +163,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				adaptador.cargarConsultaCampo(uc, securityToken);
 				if (!modificable) {
 					Propiedades.retirarPropiedad(uc.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE);
-					// Propiedades.retirarPropiedad(uc.getCampoDTO(),
-					// Propiedades.PERMISO_CAMPO_EDITABLE);
 				}
 				bd.getCaracteristicas().add(uc);
 			}

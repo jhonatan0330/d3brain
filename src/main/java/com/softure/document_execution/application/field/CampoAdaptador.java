@@ -29,12 +29,8 @@ public class CampoAdaptador {
 	@Autowired @Lazy  private TipoProductoLista tipoProductoLista;
 	@Autowired @Lazy  private TipoSeccion tipoSeccion;
 	@Autowired @Lazy  private TipoTexto tipoTexto;
+	@Autowired @Lazy  private TipoVinculo tipoVinculo;
 	
-	/**
-	 * Este metodo consulta una caracteristica de un documento, segun las condiciones del campo
-	 * @param pCampo
-	 * @throws ServerException
-	 */
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		switch(pCampo.getCampoDTO().getFormato()){
@@ -44,14 +40,11 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{ tipoDisponibilidad.cargarConsultaCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{ tipoProceso.cargarConsultaCampo(pCampo);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{ tipoProductoLista.cargarConsultaCampo(pCampo);break;}
+			case DocumentoPlantillaCaracteristicaDTO.VINCULO:{ tipoVinculo.cargarConsultaCampo(pCampo);break;}
 			default:{break;}
 		}
 	}
-	/**
-	 * Este metodo valida la caracteristica antes de guardar o modificar
-	 * @param pCampo
-	 * @throws ServerException
-	 */
+
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException{
 		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		switch(pCampo.getCampoDTO().getFormato()){
@@ -70,13 +63,7 @@ public class CampoAdaptador {
 			default:{break;}
 		}
 	}
-	
-	/**
-	 * Este metodo contiene la logica de guardar la caracteristica
-	 * @param pCampo
-	 * @return
-	 * @throws ServerException
-	 */
+
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException{
 		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado =null;
@@ -89,13 +76,13 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD:{vResultado = tipoDisponibilidad.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.FECHA:{vResultado = tipoFecha.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.GPS:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
-			//case DocumentoPlantillaCaracteristicaDTO.GPS_MAP:{vResultado = tipoGPS.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:{vResultado = tipoInformativo.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.NUMERO:{vResultado = tipoNumero.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PROCESO:{vResultado = tipoProceso.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA:{vResultado = tipoProductoLista.guardarCampo(pCampo, token);break;}
 			case DocumentoPlantillaCaracteristicaDTO.SECCION:{vResultado = pCampo; break;}
 			case DocumentoPlantillaCaracteristicaDTO.TEXTO:{vResultado = tipoTexto.guardarCampo(pCampo, token);break;}
+			case DocumentoPlantillaCaracteristicaDTO.VINCULO:{vResultado = pCampo; break;}
 			default:{break;}
 		}
 		if(vResultado==null) throw new ServerException("El campo no se encuentra configurado para guardar " + pCampo.getCampoDTO().getNombre());
@@ -103,12 +90,6 @@ public class CampoAdaptador {
 		return vResultado;
 	}
 	
-	/**
-	 * Este metodo se usa para las consultas asincronas del formulario desde el cliente
-	 * @param pCampo
-	 * @return
-	 * @throws ServerException
-	 */
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo) throws ServerException{
 		if(pCampo.getCampo()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		pCampo.setCampoDTO(fieldService.consultaXId(pCampo.getCampo()));
@@ -128,15 +109,10 @@ public class CampoAdaptador {
 			case DocumentoPlantillaCaracteristicaDTO.SECCION:{vResultado = tipoSeccion.consultarDatosBase(pCampo);break;}
 			default:{break;}
 		}
-		//if(vResultado!=null) vResultado.setCampoDTO(pCampo.getCampoDTO());
 		return vResultado;
 	}
 	
-	/**
-	 * Se encargade realizar las operaciones correspondientes a la inactivacion del documento
-	 * @param pCampo
-	 * @throws ServerException
-	 */
+
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO documentoModificadorDTO, String token) throws ServerException{
 		if(pCampo.getCampoDTO()==null) throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado =null;
