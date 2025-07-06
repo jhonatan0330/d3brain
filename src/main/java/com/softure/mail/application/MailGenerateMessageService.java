@@ -104,11 +104,13 @@ public class MailGenerateMessageService {
                     correosFijos = new ArrayList<String>();
                     if(fieldsEmailToSend!=null && !fieldsEmailToSend.isEmpty()) {
                         for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
-                        	String[] externalMail = iFieldsEmailToSend.getValorText().split(SharedConstants.PUNTO_COMA);
-                            for (String iMail : externalMail) {
-                				if (iMail!= null && !iMail.isEmpty())
-                					correosFijos.add(iMail.toLowerCase());
-                            }
+                        	if(iFieldsEmailToSend.getValorText() !=null) {
+                        		String[] externalMail = iFieldsEmailToSend.getValorText().split(SharedConstants.PUNTO_COMA);
+                                for (String iMail : externalMail) {
+                    				if (iMail!= null && !iMail.isEmpty())
+                    					correosFijos.add(iMail.toLowerCase());
+                                }
+                        	}
                         }
                     }
                 }
