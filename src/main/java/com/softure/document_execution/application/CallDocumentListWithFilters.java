@@ -665,6 +665,7 @@ public class CallDocumentListWithFilters {
 				campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 				campo.setLlaveTabla(pvrDTO.getTransaccionRegistro());
+				campo.setCodigo(pvrDTO.getTransaccionInactivo());
 				//pvrDTO.setTransaccionRegistro(null);
 				pvrDTO.setCampoDTO(campo);
 				dto.getCaracteristicas().add(pvrDTO);
@@ -679,7 +680,7 @@ public class CallDocumentListWithFilters {
 							campo2.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 									null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 							campo2.setLlaveTabla(pvrDTO2.getTransaccionRegistro());
-							//pvrDTO2.setTransaccionRegistro(null);
+							campo2.setCodigo(pvrDTO.getTransaccionInactivo() + pvrDTO2.getTransaccionInactivo());
 							pvrDTO2.setCampoDTO(campo2);
 							dto.getCaracteristicas().add(pvrDTO2);
 						}
