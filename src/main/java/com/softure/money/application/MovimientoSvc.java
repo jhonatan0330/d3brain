@@ -192,7 +192,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		if(dto.getFechaEvento()==null) throw new ServerException("Registra la fecha del movimiento");
 		dto.setFechaRegistro(new Date());
 		if(dto.getMonto()== null) throw new ServerException("El monto del movimiento no esta");
-		if(dto.getMonto().compareTo(BigDecimal.ZERO) <= 0) throw new ServerException("El monto del movimiento debe ser mayor a Cero");
+		if(dto.getMonto().compareTo(BigDecimal.ZERO) < 0) {throw new ServerException("Estas intentando registrar un movimiento con un monto negativo (" + dto.getMonto().intValue()+"), lo cual no es permitido cuando estas gestionado dinero");}
 
 		CuentaDTO cuenta = cuentaService.consultaXId(dto.getCuenta());
 		BigDecimal sobregiro = BigDecimal.ZERO;
