@@ -187,6 +187,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (productoDTO.getProductoBase() != null) {
 				ProductoDTO iBase = new ProductoDTO();
 				iBase.setLlaveTabla(productoDTO.getProductoBase());
+				iBase.setNombre(productoDTO.getNombre());
 				iBase.setCategoriaPlantilla(productoDTO.getCategoriaPlantilla());
 				bases.add(iBase);
 			}
@@ -197,6 +198,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				iProductoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
 				if (propiedadesBases != null && !propiedadesBases.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : propiedadesBases) {
+						if(iProductoDTO.getCategoriaPlantilla()==null)
+							throw new ServerException("El producto " +  iProductoDTO.getNombre() + " tiene una categoria plantilla nula");
 						if (propiedadDTO.getCampo().compareTo(iProductoDTO.getCategoriaPlantilla()) == 0)
 							iProductoDTO.getPropiedades().add(propiedadDTO);
 					}
