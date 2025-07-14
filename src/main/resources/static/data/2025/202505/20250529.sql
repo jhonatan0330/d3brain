@@ -1,10 +1,10 @@
 COMMENT ON TABLE usuario_usrp IS '2025-05-29';
 
-ALTER TABLE public.productoinventario_pinp DROP CONSTRAINT fk_productoinventariobodega;
+ALTER TABLE public.productoinventario_pinp DROP CONSTRAINT If EXISTS fk_productoinventariobodega;
 
-ALTER TABLE public.deduccionproducto_dprp DROP CONSTRAINT fk_deduccionproductobodega;
+ALTER TABLE public.deduccionproducto_dprp DROP CONSTRAINT If EXISTS fk_deduccionproductobodega;
 
-ALTER TABLE public.trazabilidadproductoinventario_tpip DROP CONSTRAINT fk_trazabilidadproductoinventariobodega;
+ALTER TABLE public.trazabilidadproductoinventario_tpip DROP CONSTRAINT If EXISTS fk_trazabilidadproductoinventariobodega;
 
 update productoinventario_pinp
 set cpin_bodega = (select bb.cbod_documento from bodega_bodp bb where bb.cbod_llave = cpin_bodega);

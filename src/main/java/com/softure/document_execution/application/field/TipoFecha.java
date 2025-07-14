@@ -256,7 +256,22 @@ public class TipoFecha {
 					if (!maximo.isEmpty()) {
 						try {
 							long tiempoAdicional = Long.valueOf(maximo);
-							Date fechaMaxima = new Date(new Date().getTime() + tiempoAdicional);
+							Calendar fechaMaximaCalendar = Calendar.getInstance();
+							if (Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_CON_HORA).isEmpty()) {
+								fechaMaximaCalendar.set(Calendar.HOUR_OF_DAY, 0);
+								fechaMaximaCalendar.set(Calendar.MINUTE, 0);
+								fechaMaximaCalendar.set(Calendar.SECOND, 0);
+								fechaMaximaCalendar.set(Calendar.MILLISECOND, 0);
+							}
+							if (!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR)
+									.isEmpty()) {
+								fechaMaximaCalendar.set(Calendar.YEAR, 0);
+								fechaMaximaCalendar.set(Calendar.MONTH, 0);
+								fechaMaximaCalendar.set(Calendar.DAY_OF_MONTH, 0);
+								fechaMaximaCalendar.set(Calendar.SECOND, 0);
+								fechaMaximaCalendar.set(Calendar.MILLISECOND, 0);
+							}
+							Date fechaMaxima = new Date(fechaMaximaCalendar.getTime().getTime() + tiempoAdicional);
 							if (pCampo.getValorFecha().compareTo(fechaMaxima) > 0)
 								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 										+ " debe ser menor a " + SoftureUtil.formatDateTime(fechaMaxima));
@@ -273,7 +288,6 @@ public class TipoFecha {
 							long tiempoAdicional = Long.valueOf(minimo);
 							Calendar fechaMinimaCalendar = Calendar.getInstance();
 							if (Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_CON_HORA).isEmpty()) {
-								fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
 								fechaMinimaCalendar.set(Calendar.HOUR_OF_DAY, 0);
 								fechaMinimaCalendar.set(Calendar.MINUTE, 0);
 								fechaMinimaCalendar.set(Calendar.SECOND, 0);
@@ -281,17 +295,17 @@ public class TipoFecha {
 							}
 							if (!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FECHA_SIN_CALENDAR)
 									.isEmpty()) {
-								fechaMinimaCalendar.setTime(new Date(new Date().getTime() - tiempoAdicional));
 								fechaMinimaCalendar.set(Calendar.YEAR, 0);
 								fechaMinimaCalendar.set(Calendar.MONTH, 0);
 								fechaMinimaCalendar.set(Calendar.DAY_OF_MONTH, 0);
 								fechaMinimaCalendar.set(Calendar.SECOND, 0);
 								fechaMinimaCalendar.set(Calendar.MILLISECOND, 0);
 							}
-							if (pCampo.getValorFecha().compareTo(fechaMinimaCalendar.getTime()) < 0)
+							Date fechaMinima =  new Date(fechaMinimaCalendar.getTime().getTime() - tiempoAdicional);
+							if (pCampo.getValorFecha().compareTo(fechaMinima) < 0)
 								throw new ServerException(
 										"La fecha " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " debe ser mayor a "
-												+ SoftureUtil.formatDateTime(fechaMinimaCalendar.getTime()));
+												+ SoftureUtil.formatDateTime(fechaMinima));
 						} catch (NumberFormatException exNumber) {
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " contiene un valor que no puede convertirse en numero como fecha minima. "
