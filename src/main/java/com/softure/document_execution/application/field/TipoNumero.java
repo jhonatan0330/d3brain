@@ -259,10 +259,14 @@ public class TipoNumero {
 									String code = iterable.getCampoDTO().getCodigo() + "_"
 											+ iCaracteristica.getCampoDTO().getCodigo();
 									BigDecimal acumulado = valoresDetallesCampo.get(code);
+									BigDecimal valorNumero = iCaracteristica.getValorNumero();
+									if(valorNumero == null) {
+										valorNumero = BigDecimal.ZERO;
+									}
 									if (acumulado == null) {
-										valoresDetallesCampo.put(code, iCaracteristica.getValorNumero());
+										valoresDetallesCampo.put(code, valorNumero);
 									} else {
-										valoresDetallesCampo.put(code, acumulado.add(iCaracteristica.getValorNumero()));
+										valoresDetallesCampo.put(code, acumulado.add(valorNumero));
 									}
 								}
 							}
