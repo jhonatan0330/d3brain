@@ -12,6 +12,7 @@ import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
@@ -220,8 +221,14 @@ public class TipoConfiguracion {
 			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 					Propiedades.VISIBLE_VALOR_DEPENDIENTE);
 			if (visibleValueOK == null || pCampo.getDependientes() == null) {
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-						+ " es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + ")");
+				if(isUpdateAutomatic) {				
+					CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+							+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+				} else {
+					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+							+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+				}
+				
 			} else {
 				String optionsToSelect = null;
 				for (PropiedadDTO propiedadDTO : visibleValueOK) {
@@ -234,9 +241,15 @@ public class TipoConfiguracion {
 						}
 					}
 				}
-				if (optionsToSelect != null)
-					throw new ServerException("Es obligatorio seleccionar un valor en el campo "
-							+ pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
+				if (optionsToSelect != null) {
+					if(isUpdateAutomatic) {				
+						CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "Es obligatorio seleccionar un valor en el campo "
+								+ pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
+					} else {
+						throw new ServerException("Es obligatorio seleccionar un valor en el campo "
+								+ pCampo.getCampoDTO().getNombre() + " cuando escoges la opcion " + optionsToSelect);
+					}
+				}
 			}
 		}
 		if (pCampo.getValorOpcion() != null) {

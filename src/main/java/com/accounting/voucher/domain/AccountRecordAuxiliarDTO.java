@@ -1,10 +1,13 @@
 package com.accounting.voucher.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("AccountRecordAuxiliarDTO")
+@JsonInclude(Include.NON_NULL)
 public class AccountRecordAuxiliarDTO extends SharedDataObject{
 
 	private String voucher;
