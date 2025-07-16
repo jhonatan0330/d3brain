@@ -210,10 +210,10 @@ public class WebServiceExecuteAPI {
 		}
 		Map<String, String> headers = getHeaderProperties(service, callWS.getParametersInexecution());
 		// Execution
-		callWS = launchWebService(service, callWS, token, headers, modificador);
+		callWS = launchWebService(service, callWS, token, headers, modificador, pIterador);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, token, 1, headers, modificador);
+			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = SharedConstants.ERROR;
@@ -294,7 +294,7 @@ public class WebServiceExecuteAPI {
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
 				 parentParameters);
-		return launchWebService(previousEndPoint, previousWS, token, headers, updater);
+		return launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador);
 	}
 
 	/**
@@ -310,7 +310,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			Map<String, String> headerProperties, PedidoVentaDTO modificador) throws ServerException {
+			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador) throws ServerException {
 
 		// Reemplazos
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
@@ -373,7 +373,7 @@ public class WebServiceExecuteAPI {
 				// Esto lo puedo quitar con lso apis locales
 				if (modificador != null )
 					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
-							token, extractionString);
+							token, extractionString, iterador);
 				
 			}
 			
@@ -437,16 +437,16 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador) throws ServerException {
+			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
 			return callWS;
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
-				callWS = launchWebService(service, callWS, token, headers, modificador);
+				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador);
+					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador);
 			}
 		} catch (NumberFormatException e) {
 		}

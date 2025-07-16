@@ -57,7 +57,7 @@ public class CallDocumentUpdateFromAutomatic {
 	 * @throws ServerException
 	 */
 	public void executeFromAPIExtraction(PedidoVentaDTO modificador, List<PropiedadDTO> propertiesToSearchFieldDestiny,
-			String token, String extractionText) throws ServerException {
+			String token, String extractionText, PedidoVentaDTO iterador) throws ServerException {
 		// Cuando son servicios asincronos no hay un documento modificador?? de pronto
 		// afecte las extracciones
 		if (modificador == null)
@@ -65,29 +65,46 @@ public class CallDocumentUpdateFromAutomatic {
 		// PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
 		Map<String, Object> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
-		List<PedidoVentaCaracteristicaDTO> generateFieldsFromProperty = new ArrayList<PedidoVentaCaracteristicaDTO>();
+		List<PedidoVentaCaracteristicaDTO> generateFieldsFromPropertyModificator = null;
+		List<PedidoVentaCaracteristicaDTO> generateFieldsFromPropertyIterator = null;
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
 			PedidoVentaCaracteristicaDTO newField = new PedidoVentaCaracteristicaDTO();
 			Object itemToAdition = extractionMap.get(propiedadDTO.getLlaveTabla());
 			if (itemToAdition != null && itemToAdition.getClass().getName().compareTo("java.lang.String") == 0) {
 				newField.setValorText((String) itemToAdition);
+				newField.setModificado(true);
 				// campo
 				List<RelacionInternaDTO> relations = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
 				for (RelacionInternaDTO iRelation : relations) {
 					if (iRelation.getPlantilla().compareTo(modificador.getPlantilla()) == 0) {
 						newField.setCampo(iRelation.getCampo());
 						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
+						if (generateFieldsFromPropertyModificator == null) {
+							generateFieldsFromPropertyModificator = new ArrayList<>();
+						}
+						generateFieldsFromPropertyModificator.add(newField);
+					}
+					if (iterador!=null && iRelation.getPlantilla().compareTo(iterador.getPlantilla()) == 0) {
+						newField.setCampo(iRelation.getCampo());
+						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
+						if (generateFieldsFromPropertyIterator == null) {
+							generateFieldsFromPropertyIterator = new ArrayList<>();
+						}
+						generateFieldsFromPropertyIterator.add(newField);
 					}
 				}
-				newField.setModificado(true);
-				// Coloque esta validacion ya que cuando una relacion no concuerda no se debe
-				// agregar
-				if (newField.getCampo() != null)
-					generateFieldsFromProperty.add(newField);
 			}
 		}
-		execute(generateFieldsFromProperty, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador,
-				token, propertiesToSearchFieldDestiny);
+		if(generateFieldsFromPropertyModificator != null && !generateFieldsFromPropertyModificator.isEmpty()) {
+			execute(generateFieldsFromPropertyModificator, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador,
+					token, propertiesToSearchFieldDestiny);
+		}
+		
+		if(iterador != null && generateFieldsFromPropertyIterator != null && !generateFieldsFromPropertyIterator.isEmpty()) {
+					execute(generateFieldsFromPropertyIterator, iterador.getLlaveTabla(), iterador.getTransaccion(), iterador,
+							token, propertiesToSearchFieldDestiny);
+		}
+		
 	}
 
 	/*
