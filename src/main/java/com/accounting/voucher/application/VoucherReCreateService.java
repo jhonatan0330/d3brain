@@ -40,7 +40,6 @@ public class VoucherReCreateService {
 	@Lazy
 	private PrepareTypeToCatalogService typeFindSvc;
 
-
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
 
@@ -63,7 +62,5 @@ public class VoucherReCreateService {
 				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, pToken.getToken(), null));
 
 	}
-
-
 
 }

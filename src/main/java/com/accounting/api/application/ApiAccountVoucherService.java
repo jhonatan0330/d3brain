@@ -133,7 +133,6 @@ public class ApiAccountVoucherService {
 		if(item.getDocument()!=null){
 			PedidoVentaDTO _document = documentService.consultaXId(item.getDocument());
 			if(_document == null) throw new ServerException("No existe el documento " + item.getDocument());
-			if(_document.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) throw new ServerException("No se puede hacer comprobantes a documentos inactivos");
 		}
 
 		item.setCatalog(catalog.getKey());

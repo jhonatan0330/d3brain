@@ -1,8 +1,7 @@
 package com.softure.authentication.application;
 
-// BEGIN region interImport
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.ibatis.binding.BindingException;
@@ -25,14 +24,7 @@ public class UsuarioSesionSvc {
 	@Autowired @Lazy 
 	private UsuarioSesionMapper usuarioSesionMapper;
 
-	private Map<String, UsuarioSesionDTO> sessionMap = new LinkedHashMap<String, UsuarioSesionDTO>(2000, 0.75f, true) {
-		private static final long serialVersionUID = 1L;
-
-		@Override
-	    protected boolean removeEldestEntry(Map.Entry<String, UsuarioSesionDTO> eldest) {
-	        return size() > 2000;
-	    }
-	};
+	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<String, UsuarioSesionDTO>();
 
 	public UsuarioSesionDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. UsuarioSesion");
@@ -144,6 +136,7 @@ public class UsuarioSesionSvc {
 		sesion.setLlaveTabla(usuarioSystem);
 		sesion.setEstado(SharedConstants.STATE_ACTIVE);
 		sessionMap.put(sesion.getLlaveTabla(), sesion);
+		System.out.println("SESSION ***************** Generando token de administrador: " + sessionMap.size());
 		//sesion = usuarioSesionService.save(sesion);
 		return sesion;
 	}
@@ -193,6 +186,7 @@ public class UsuarioSesionSvc {
 			try {
 				sesion = usuarioSesionMapper.consultar(filter);
 				sessionMap.put(token, sesion);
+				System.out.println("SESSION ***************** CACHE token: " + sessionMap.size());
 			} catch (BindingException ex) {
 				throw new ServerException(ex.getMessage());
 			} catch (Exception e) {
@@ -203,10 +197,12 @@ public class UsuarioSesionSvc {
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 			sessionMap.remove(token);
+			System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0) {
-			sessionMap.remove(token);			
+			sessionMap.remove(token);
+			System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 		return sesion;
@@ -219,6 +215,7 @@ public class UsuarioSesionSvc {
 	        if (dto != null && userId.equals(dto.getUsuario())) {
 	        	if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0 || (dto.getFechaCierre() != null && dto.getFechaCierre().compareTo(new Date()) < 0)) {
 	        		sessionMap.remove(entry.getKey());
+	        		System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
 	        	}else {
 	        		return dto;	
 	        	}

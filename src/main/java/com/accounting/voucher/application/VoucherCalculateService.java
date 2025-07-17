@@ -178,7 +178,6 @@ public class VoucherCalculateService {
 		_map.setValueInProcessing(BigDecimal.ZERO);
 		_map.setQuantity(0);
 		return _map;
-		//resultMapService.save(_map);
-		//return resultMapService.getById(_map.getKey());
+
 	}
 }
