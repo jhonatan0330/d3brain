@@ -136,7 +136,7 @@ public class UsuarioSesionSvc {
 		sesion.setLlaveTabla(usuarioSystem);
 		sesion.setEstado(SharedConstants.STATE_ACTIVE);
 		sessionMap.put(sesion.getLlaveTabla(), sesion);
-		System.out.println("SESSION ***************** Generando token de administrador: " + sessionMap.size());
+		System.out.println( new Date().toString() + "SESSION ***************** Generando token de administrador: " + sessionMap.size());
 		//sesion = usuarioSesionService.save(sesion);
 		return sesion;
 	}
@@ -186,7 +186,7 @@ public class UsuarioSesionSvc {
 			try {
 				sesion = usuarioSesionMapper.consultar(filter);
 				sessionMap.put(token, sesion);
-				System.out.println("SESSION ***************** CACHE token: " + sessionMap.size());
+				System.out.println(new Date().toString() +"SESSION ***************** CACHE token: " + sessionMap.size());
 			} catch (BindingException ex) {
 				throw new ServerException(ex.getMessage());
 			} catch (Exception e) {
@@ -197,12 +197,12 @@ public class UsuarioSesionSvc {
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 			sessionMap.remove(token);
-			System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
+			System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0) {
 			sessionMap.remove(token);
-			System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
+			System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 		return sesion;
@@ -215,7 +215,7 @@ public class UsuarioSesionSvc {
 	        if (dto != null && userId.equals(dto.getUsuario())) {
 	        	if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0 || (dto.getFechaCierre() != null && dto.getFechaCierre().compareTo(new Date()) < 0)) {
 	        		sessionMap.remove(entry.getKey());
-	        		System.out.println("SESSION ***************** RETIRANDO token: " + sessionMap.size());
+	        		System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
 	        	}else {
 	        		return dto;	
 	        	}

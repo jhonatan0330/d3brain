@@ -310,7 +310,7 @@ public class CallDocumentCRUD {
 		dto.setCaracteristicas(saveInternalFields(dto, token));
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId,
 				dto.getFuncionario(), token);
-		bpmService.execute(dto, token);
+		bpmService.execute(dto, token, null);
 		manageTemplateTypes(dto, plantilla, token);
 		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
 		voucherDeleteService.callByDocument(dto.getLlaveTabla(),  Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER), token);
@@ -387,7 +387,11 @@ public class CallDocumentCRUD {
 		return saveWithoutTransaction(updateDocument, token, true);
 	}
 
-	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic)
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic) throws ServerException {
+		return saveWithoutTransaction(dto, token, isAutomatic, null);
+	}
+	
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic, PedidoVentaDTO pGenerator)
 			throws ServerException {
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
@@ -441,7 +445,7 @@ public class CallDocumentCRUD {
 		// decia que fallaba :(
 		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
 				token);
-		bpmService.execute(pedido, token);
+		bpmService.execute(pedido, token, pGenerator);
 		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
 		//Aqui envio el pedido porque necesito saber si es un documento incial de estado o simple para el tema de los roles
 		manageTemplateTypes(pedido, plantilla, token);
@@ -503,7 +507,7 @@ public class CallDocumentCRUD {
 		if (inicial != null) {
 			manageTransitionFunction.execute(inicial, pedido.getLlaveTabla(), pedido,
 					(pedido.getDinero() == null) ? null : pedido.getDinero().getValorTotal(), pedido.getDinero(), null,
-					token, transaccion, null);
+					token, transaccion, null, null);
 		} else {// Cuando son transacciones que no inician un proceso (aqui traza del documento
 				// en tipo proceso traza al proceso)
 				// cundo son solo documetnos sin transciones se envian mensajes

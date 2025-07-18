@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired; import org.spring
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
+import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -45,10 +46,17 @@ public class TipoInformativo {
 		pCampo.setValorOpcion(filter.getValorOpcion());
 		pCampo.setValorText(filter.getValorText());
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
-				&& pCampo.getValorText() == null)
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-					+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-					+ pCampo.getCampoDTO().getCodigo() + ")");
+				&& pCampo.getValorText() == null) {
+			if(isUpdateAutomatic) {				
+				CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			} else {
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			}
+		}
 	}
 
 

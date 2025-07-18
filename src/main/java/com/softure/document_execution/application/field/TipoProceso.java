@@ -470,6 +470,9 @@ public class TipoProceso {
 	}
 
 	private void addDocumentToBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO principal, boolean modificacion) {
+		if(pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
+			return;
+		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_GESTIONAR_ESTADOS) == null) return;
 		pCampo.setDocumentsToBPM(principal);
 		pCampo.setModificadoBPM(modificacion);
 	}

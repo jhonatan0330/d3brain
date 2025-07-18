@@ -61,13 +61,13 @@ public class CallDocumentNewFromAutomatic {
 			PedidoVentaCaracteristicaDTO vieneAutomatica) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		camposNuevos.add(vieneAutomatica);
-		return processNewFields(transicion, transaccion, token, camposNuevos);
+		return processNewFields(transicion, transaccion, token, camposNuevos, null);
 	}
 
 	/**
 	 * 
 	 * @param transicion
-	 * @param documento       Documento modificador que realiza la accion sobre el
+	 * @param pGenerator       Documento modificador que realiza la accion sobre el
 	 *                        documetnto base
 	 * @param expedienteDTO   Documento base que se esta fafectando con el proceso
 	 * @param transaccion     Como reuso esto en los temporizadores automaticos
@@ -77,7 +77,7 @@ public class CallDocumentNewFromAutomatic {
 	 * @return
 	 * @throws ServerException
 	 */
-	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO documento,
+	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO pGenerator,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber,
 			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction, PedidoVentaDTO pDocumentIterate) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
@@ -103,13 +103,13 @@ public class CallDocumentNewFromAutomatic {
 			for (PropiedadDTO iPropiedadDTO : camposGenerar) {
 				switch (iPropiedadDTO.getKey()) {
 				case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR:
-					if (documento != null) {
+					if (pGenerator != null) {
 						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null, iPropiedadDTO.getValor());
-						campoPrincipal.setValorOpcion(documento.getLlaveTabla());
-						if (documento.getDinero() != null)
+						campoPrincipal.setValorOpcion(pGenerator.getLlaveTabla());
+						if (pGenerator.getDinero() != null)
 							// Importante para que coja valor porque va a consultar po BD y no tiene
-							campoPrincipal.setValorNumero(documento.getDinero().getValorTotal());
-						campoPrincipal.setPrincipal(documento);
+							campoPrincipal.setValorNumero(pGenerator.getDinero().getValorTotal());
+						campoPrincipal.setPrincipal(pGenerator);
 						camposNuevos.add(campoPrincipal);
 					}
 					break;
@@ -133,11 +133,11 @@ public class CallDocumentNewFromAutomatic {
 								+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 					}
 					for (RelacionInternaDTO iRelacion : relaciones) {
-						if (documento != null && documento.getPlantilla() != null && iRelacion.getPlantilla().compareTo(documento.getPlantilla()) == 0) {
-							if (documento.getCaracteristicas() == null)
-								documento.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
-										documento.getLlaveTabla(), documento.getHistorico()));
-							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(documento.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+						if (pGenerator != null && pGenerator.getPlantilla() != null && iRelacion.getPlantilla().compareTo(pGenerator.getPlantilla()) == 0) {
+							if (pGenerator.getCaracteristicas() == null)
+								pGenerator.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
+										pGenerator.getLlaveTabla(), pGenerator.getHistorico()));
+							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(pGenerator.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
 							break;
 						}
 						if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
@@ -163,7 +163,7 @@ public class CallDocumentNewFromAutomatic {
 						campoGenerado = pedidoVentaCaracteristicaService.consultarSQLCampoGenerarDocumento(
 								iPropiedadDTO.getLlaveTabla(),
 								(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
-								(documento != null) ? documento.getLlaveTabla() : null);
+								(pGenerator != null) ? pGenerator.getLlaveTabla() : null);
 					} catch (Exception ex) {
 						throw new ServerException("Se presento un error en la consulta de la transicion "
 								+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(),
@@ -176,7 +176,7 @@ public class CallDocumentNewFromAutomatic {
 							throw new ServerException("La propiedad " + iPropiedadDTO.getNombre()
 									+ "No tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 						for (RelacionInternaDTO iRelacion : relations) {
-							if (documento != null
+							if (pGenerator != null
 									&& iRelacion.getPlantilla().compareTo(transicion.getPlantilla()) == 0) {
 								camposNuevos.add(CallDocumentCommons.copyFieldDocument(campoGenerado, iRelacion.getCampo()));
 								break;
@@ -243,11 +243,11 @@ public class CallDocumentNewFromAutomatic {
 			}
 		}
 
-		return processNewFields(transicion, transaccion, token, camposNuevos);
+		return processNewFields(transicion, transaccion, token, camposNuevos, pGenerator);
 	}
 
 	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion,
-			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos) throws ServerException {
+			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos, PedidoVentaDTO pGenerator) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
 			String userAdmin = autenticacionService.getUserSystemKey();
 			if (userAdmin == null)
@@ -256,12 +256,11 @@ public class CallDocumentNewFromAutomatic {
 			pPlantilla.setLlaveTabla(transicion.getPlantilla());
 			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token, false);
 			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion, token, camposNuevos, userAdmin);
-			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true);
+			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true, pGenerator);
 		} else {
 			return null;
 		}
 	}
-
 	
 
 	private String getUserId(String token) throws ServerException {

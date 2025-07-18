@@ -104,11 +104,11 @@ public class CallManageTransition {
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
 			BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
-			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep)
+			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep, PedidoVentaDTO pGenerator)
 			throws ServerException {
 		String userID = getUserId(token);
 		return executeInternal(dto, expediente, documentoDTO, valorModificador, dineroProcesado, relacionAnterior,
-				token, transaccion, previousStep, userID, new HashMap<>(), null);
+				token, transaccion, previousStep, userID, new HashMap<>(), null, pGenerator);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class CallManageTransition {
 			PedidoVentaDTO documentoDTO, BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
 			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep,
 			String userID, Map<String, List<PedidoVentaDTO>> documentRecentCreateInTransition,
-			String locationTransition) throws ServerException {
+			String locationTransition, PedidoVentaDTO pGenerator) throws ServerException {
 
 		// Aqui lleno las propiedades del dto asi no falla api
 		if (dto.getPropiedades() == null)
@@ -178,9 +178,11 @@ public class CallManageTransition {
 					tokenToGenerateDocument = autenticacionService.generateAdministratorToken().getLlaveTabla();
 				// Tengo que optimizar esto siempre va a preguntar si tiene documentos para
 				// generar
-				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, documentoDTO,
+				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(dto, 
+						(pGenerator==null) ? documentoDTO : pGenerator,
 						expedienteDTO, documentoDTO.getTransaccion(), tokenToGenerateDocument, 0,
-						documentRecentCreateInTransition, null);
+						documentRecentCreateInTransition, 
+						(pGenerator==null) ? pGenerator : documentoDTO);
 				// Por si es la transicion inicial no le quite el poder del documento que genero
 				if (automatico != null) {
 					//No se porque a los 2 por el momento asi
@@ -191,8 +193,8 @@ public class CallManageTransition {
 
 					if (automatico.getDinero() != null && automatico.getDinero().getValorTotal() != null)
 						valorModificador = automatico.getDinero().getValorTotal();
-				}
 
+				}
 			}
 			// movi esto despues de la creacion de la plantilla para que tome el valor
 			// modificador del nuevo documento creado
@@ -225,14 +227,14 @@ public class CallManageTransition {
 			// la iteracion
 			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
 					relacionAnterior, tokenSystem.getLlaveTabla(), transaccion, nameTrace, userID, new HashMap<>(),
-					locationTransition);
+					locationTransition, pGenerator);
 			break;
 		case ProcesoEstadoDTO.TIPO_ITERADOR:
 			respuesta = getNextTransition(dto.getEstadoLLegada(), null);
 			// Por si siguen decisiones
 			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
 					relacionAnterior, token, transaccion, nameTrace, userID, documentRecentCreateInTransition,
-					locationTransition);
+					locationTransition, pGenerator);
 			// Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato
 			// tiene ponerlo antes o despues
 			generateMessageService.call(expedienteDTO, dto, null, documentoDTO, token);
@@ -246,7 +248,7 @@ public class CallManageTransition {
 						relacionAnterior, token, transaccion,
 						(previousStep == null) ? dto.getEstadoLlegadaNombre()
 								: previousStep + "->" + dto.getEstadoLlegadaNombre(),
-						userID, documentRecentCreateInTransition, locationTransition);
+						userID, documentRecentCreateInTransition, locationTransition, pGenerator);
 			} catch (Exception e) {
 				CallDocumentCommons.addMessageError(documentoDTO, e.getMessage());
 			}

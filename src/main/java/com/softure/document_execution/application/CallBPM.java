@@ -57,12 +57,12 @@ public class CallBPM {
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
 
-	public void execute(PedidoVentaDTO document, String token) throws ServerException {
+	public void execute(PedidoVentaDTO document, String token, PedidoVentaDTO pGeneratorToBPM) throws ServerException {
 		if (document == null || document.getCaracteristicas() == null || document.getCaracteristicas().isEmpty())
 			return;
 		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
-				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token);
+				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token, pGeneratorToBPM);
 				CallDocumentCommons.copyMessages( iField.getDocumentsToBPM(), document);
 			}
 		}
@@ -88,9 +88,9 @@ public class CallBPM {
 				Propiedades.PROCESO_GESTIONAR_ESTADOS);
 		if (caminos != null) {
 			for (PropiedadDTO iCamino : caminos) {
-				if (iCamino.getValor().compareTo("*") == 0) {
-					caminosGestionar.add("*");
-					System.out.format(" Camino (*)");
+				if (iCamino.getValor().compareTo("*") == 0 || iCamino.getValor().compareTo("+") == 0) {
+					caminosGestionar.add(iCamino.getValor());
+					System.out.format(" Camino ("+iCamino.getValor()+")");
 				} else {
 					caminosGestionar.add(iCamino.getValor() + ";");
 					System.out.format(", Camino (%s)", iCamino.getValor());
@@ -103,7 +103,7 @@ public class CallBPM {
 	private void gestionarExpedienteDependientes(PedidoVentaDTO procesoDTO, PedidoVentaDTO documento,
 			String securityToken, BigDecimal saldoDocumento, List<String> plantillasRevisadas,
 			List<String> caminosGestionables, List<String> documentosGestionados, String transaccion,
-			boolean primerLlamado) throws ServerException {
+			boolean primerLlamado, PedidoVentaDTO pGenerator) throws ServerException {
 		if (caminosGestionables == null || caminosGestionables.isEmpty())
 			return;
 		if (caminosGestionables.size() == 1 && caminosGestionables.get(0).isEmpty())
@@ -117,59 +117,65 @@ public class CallBPM {
 		if (expediente == null)
 			throw new ServerException("No se identifico el expediente");
 
-		System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(),
-				documento.getNombre());
-		if (procesoDTO.getEstadoExpediente() != null) {
-			ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
-					procesoDTO.getEstadoExpediente(), null, procesoDTO.getNombre());
-			if (expediente.getEstadoExpediente() == null)
-				throw new ServerException("Revise el estado del expediente que no es NULO : " + expediente.getNombre());
-			if (expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente()) != 0)
-				throw new ServerException(
-						"Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
-			// Manejo de los saldos de los procesos
-			if (transicion != null) {
-				ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
-				// Esto lo hice solamente para una transicion inicial que gneraba un ciclo con
-				// iteraciones
-				if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) != 0 && pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_DECISION) != 0) {
-					manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
-							null, null, securityToken, transaccion, null);
-				}
-				// Para evitar que se generen ciclos validando los mismos documentos
-				if (documentosGestionados == null)
-					documentosGestionados = new ArrayList<String>();
-				documentosGestionados.add(expediente.getLlaveTabla());
-				// NO se porque en las transiciones activo o inactivo roles, es una mala practica a cada rato revisa esto
-				//saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
-			} else {
-				if (primerLlamado) {
+		if(caminosValidados.get(0).compareTo("+") != 0) {
+			System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(),
+					documento.getNombre());
+			if (procesoDTO.getEstadoExpediente() != null) {
+				ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
+						procesoDTO.getEstadoExpediente(), null, procesoDTO.getNombre());
+				if (expediente.getEstadoExpediente() == null)
+					throw new ServerException("Revise el estado del expediente que no es NULO : " + expediente.getNombre());
+				if (expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente()) != 0)
+					throw new ServerException(
+							"Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
+				// Manejo de los saldos de los procesos
+				if (transicion != null) {
 					ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
-					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(documento.getPlantilla());
-					String mensajeFault = "Revisa porque las plantillas " + plantilla.getNombre() + " ( Codigo = "
-							+ plantilla.getCodigo() + " ) no generan ninguna transicion en el proceso "
-							+ pState.getProcesoNombre();
-					mensajeFault = mensajeFault + " desde el estado " + pState.getNombre() + " (Codigo = "
-							+ pState.getCodigo() + ")";
-					mensajeFault = mensajeFault + ", el campo lo solicita. ( Documento = " + procesoDTO.getNombre()
-							+ " )";
-					if (procesoDTO.getDescripcion() != null)
-						mensajeFault = mensajeFault + procesoDTO.getDescripcion();
+					// Esto lo hice solamente para una transicion inicial que gneraba un ciclo con
+					// iteraciones
+					if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0 ) {
+						manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
+								null, null, securityToken, transaccion, null, pGenerator);
+					}
+					// Para evitar que se generen ciclos validando los mismos documentos
+					if (documentosGestionados == null)
+						documentosGestionados = new ArrayList<String>();
+					documentosGestionados.add(expediente.getLlaveTabla());
+					// NO se porque en las transiciones activo o inactivo roles, es una mala practica a cada rato revisa esto
+					//saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
+				} else {
+					if (primerLlamado) {
+						ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
+						DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(documento.getPlantilla());
+						String mensajeFault = "Revisa porque las plantillas " + plantilla.getNombre() + " ( Codigo = "
+								+ plantilla.getCodigo() + " ) no generan ninguna transicion en el proceso "
+								+ pState.getProcesoNombre();
+						mensajeFault = mensajeFault + " desde el estado " + pState.getNombre() + " (Codigo = "
+								+ pState.getCodigo() + ")";
+						mensajeFault = mensajeFault + ", el campo lo solicita. ( Documento = " + procesoDTO.getNombre()
+								+ " )";
+						if (procesoDTO.getDescripcion() != null)
+							mensajeFault = mensajeFault + procesoDTO.getDescripcion();
 
-					throw new ServerException(mensajeFault);
+						throw new ServerException(mensajeFault);
+					}
 				}
-			}
+			}	
+		} else {
+			caminosValidados.remove(0);// Elimina el + que es para todos los estados
+			caminosValidados.add(0, "*");// Agrega el * para todos los estados
 		}
+		
 		plantillasRevisadas.add(procesoDTO.getPlantilla());
 		doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), documento, securityToken, saldoDocumento, plantillasRevisadas,
-				documentosGestionados, transaccion, caminosValidados, expediente.getNombre());
+				documentosGestionados, transaccion, caminosValidados, expediente.getNombre(), pGenerator);
 	}
 
 	//Va a existir algun problema en el futuro en casos que los documentos no hagan parte de procesos cya arregle cuando 
 	// es al inciiar pero cuando es por la mitad de una transicion larga no se como se comporte
 	private void doBpmInInnerDocuments(String currentDocumentId , PedidoVentaDTO startDocument, String securityToken,
 			BigDecimal saldoDocumento, List<String> plantillasRevisadas, List<String> documentosGestionados,
-			String transaccion, List<String> caminosValidados, String currentDocumentName) throws ServerException {
+			String transaccion, List<String> caminosValidados, String currentDocumentName, PedidoVentaDTO pGenerator) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(currentDocumentId);
 		if (gestionables != null && !gestionables.isEmpty()) {
 			System.out.format("\n[%s] Gestionando documentos que esten relacionados", currentDocumentName,
@@ -216,7 +222,7 @@ public class CallBPM {
 							documentosGestionados.add(expedienteId);
 							gestionarExpedienteDependientes(expAnidado, startDocument, securityToken,
 									iExpediente.getValor(), plantillasRevisadas, caminosValidados,
-									documentosGestionados, transaccion, false);
+									documentosGestionados, transaccion, false, pGenerator);
 						}
 					}
 				}
@@ -318,11 +324,11 @@ public class CallBPM {
 
 	private List<String> validarCamino(List<String> caminosGestionables, String plantilla) throws ServerException {
 		List<String> caminosValidados = new ArrayList<String>();
-		String codigoDocumento = plantillaService.consultaXId(plantilla).getCodigo();
 		for (String camino : caminosGestionables) {
-			if (camino.compareTo("*") == 0) {
+			if (camino.compareTo("*") == 0 || camino.compareTo("+") == 0) {
 				caminosValidados.add(camino);
 			} else {
+				String codigoDocumento = plantillaService.consultaXId(plantilla).getCodigo();
 				if ((camino + ";").startsWith(codigoDocumento + ";")) {
 					caminosValidados.add(camino.replaceFirst(codigoDocumento + ";", ""));
 				}
@@ -360,7 +366,7 @@ public class CallBPM {
 	}
 
 	private PedidoVentaCaracteristicaDTO administrarExpedientes(PedidoVentaCaracteristicaDTO pCampo,
-			PedidoVentaDTO updaterDTO, boolean modificacion, String token) throws ServerException {
+			PedidoVentaDTO updaterDTO, boolean modificacion, String token, PedidoVentaDTO pGenerator) throws ServerException {
 
 		if (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty())
 			return pCampo;
@@ -400,7 +406,7 @@ public class CallBPM {
 
 						gestionarExpedienteDependientes(procesoDTO, updaterDTO, token, saldoDoc,
 								new ArrayList<String>(), caminosGestionar, documentosGestionados,
-								pCampo.getTransaccionRegistro(), !modificacion);
+								pCampo.getTransaccionRegistro(), !modificacion, pGenerator);
 					} else {
 						// Esto algun día lo voy a unir con el modificar
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION) != null) {
@@ -430,7 +436,7 @@ public class CallBPM {
 							// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
 							// Estas lineas las copie de la opcion maquina de estados con gestionar estados
 						
-							bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO);
+							bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO, pGenerator);
 						}else {
 							prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ACTIVAR, usuarioToken);
@@ -443,7 +449,7 @@ public class CallBPM {
 								// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
 								// Estas lineas las copie de la opcion maquina de estados con gestionar estados
 							
-								bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO);
+								bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO, pGenerator);
 							}
 						}
 					}else {
@@ -481,7 +487,7 @@ public class CallBPM {
 	}
 
 	private void bpmToDocumentWithoutStateMAchine(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO updaterDTO,
-			String token, PedidoVentaDTO procesoDTO) throws ServerException {
+			String token, PedidoVentaDTO procesoDTO, PedidoVentaDTO pGenerator) throws ServerException {
 		List<String> caminosGestionar = getCaminos(pCampo);
 		if (caminosGestionar != null && !caminosGestionar.isEmpty()) {
 			List<String> caminosValidados = validarCamino(caminosGestionar, procesoDTO.getPlantilla());
@@ -502,7 +508,7 @@ public class CallBPM {
 						caminosGestionar, documentosGestionados, 
 						pCampo.getTransaccionRegistro(),
 						caminosValidados,
-						procesoDTO.getNombre());	
+						procesoDTO.getNombre(), pGenerator);	
 			}
 		}
 	}
