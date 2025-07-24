@@ -272,8 +272,11 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
 	public ReporteBaseDTO validateReport(String reportId, String token) throws ServerException {
 		ReporteBaseDTO base = consultaXId(reportId);
-		if (base == null)
-			throw new ServerException("Reporte base no encontrado");
+		if (base == null) {
+			base = getByCode(reportId, null);
+			if (base == null)
+				throw new ServerException("Reporte base no encontrado");
+		}
 		base.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, reportId, null,
 				getUserFromParameters(token)));// getUserFlex(token)
 		return base;
