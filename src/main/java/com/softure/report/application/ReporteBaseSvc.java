@@ -277,7 +277,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			if (base == null)
 				throw new ServerException("Reporte base no encontrado");
 		}
-		base.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, reportId, null,
+		base.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, base.getLlaveTabla(), null,
 				getUserFromParameters(token)));// getUserFlex(token)
 		return base;
 	}
