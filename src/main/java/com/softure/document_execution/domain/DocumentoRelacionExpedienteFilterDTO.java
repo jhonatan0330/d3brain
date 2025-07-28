@@ -12,8 +12,8 @@ public class DocumentoRelacionExpedienteFilterDTO extends BasicFilterDTO
 
 	private String campoMaestro;
 	private String expedienteDetalle;
-	private String transaccionRegistro;
-	private String transaccionInactivo;
+	private String documentoRegistro;
+	private String documentoInactivo;
 
 	
 	public void setCampoMaestro(String campoMaestro) {
@@ -34,21 +34,21 @@ public class DocumentoRelacionExpedienteFilterDTO extends BasicFilterDTO
 	}
 	
 	
-	public void setTransaccionRegistro(String transaccionRegistro) {
-		this.transaccionRegistro = transaccionRegistro;
+	public void setDocumentoRegistro(String documentoRegistro) {
+		this.documentoRegistro = documentoRegistro;
 	}
 	
-	public String getTransaccionRegistro() {
-		return transaccionRegistro;
+	public String getDocumentoRegistro() {
+		return documentoRegistro;
 	}
 	
 	
-	public void setTransaccionInactivo(String transaccionInactivo) {
-		this.transaccionInactivo = transaccionInactivo;
+	public void setDocumentoInactivo(String documentoInactivo) {
+		this.documentoInactivo = documentoInactivo;
 	}
 	
-	public String getTransaccionInactivo() {
-		return transaccionInactivo;
+	public String getDocumentoInactivo() {
+		return documentoInactivo;
 	}
 	
 

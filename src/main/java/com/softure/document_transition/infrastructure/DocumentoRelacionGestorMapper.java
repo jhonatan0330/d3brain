@@ -21,8 +21,10 @@ public interface DocumentoRelacionGestorMapper extends IBasicMapper<DocumentoRel
 			, @Param("verMensajes")String verMensajes
 			, @Param("verInventarios")String verInventarios
 			, @Param("verReportes")String verReportes
-			, @Param("usuarioAutomatico")String usuarioAutomatico
-			, @Param("verApi")String verApi);
+			, @Param("verApi")String verApi
+			, @Param("verValores")String verValores
+			, @Param("verUbicacion")String verUbicacion
+			, @Param("verComprobantes")String verComprobantes);
 	DocumentoRelacionGestorDTO ultimoRegistro(@Param("documentoPrincipal")String documentoPrincipal, @Param("historico")String historico);
 	String getSystemUser();
 	String isActual(String documento);

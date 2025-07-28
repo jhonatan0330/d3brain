@@ -389,6 +389,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					propiedadMapper.crearFuncionPrevalidacion(dto);
 					break;
 				case Propiedades.TEMPLATE_MESSAGE_SQL:
+				case Propiedades.HTML_DOCUMENT_SQL:
 				case Propiedades.FUNCION_SQL_NEW_ANTES:
 					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
 					break;
@@ -925,7 +926,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.DEPENDE: 
 		case Propiedades.FECHA_MAXIMA_CAMPO:
 		case Propiedades.FECHA_MINIMA_CAMPO:
-		case Propiedades.UBICACION:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE:
 		case Propiedades.GENERA_DOCUMENTO_DEL_RESULTADO_ITERACION:

@@ -1,8 +1,6 @@
 package com.softure.document_execution.domain;
 
 import java.math.BigDecimal;
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 
@@ -10,14 +8,12 @@ import com.softure.java.domain.BasicDTO;
 
 @Alias("DocumentoRelacionExpedienteDTO")
 public class DocumentoRelacionExpedienteDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String campoMaestro;
 	private String expedienteDetalle;
-	private String transaccionRegistro;
-	private String transaccionInactivo;
+	private String documentoRegistro;
+	private String documentoInactivo;
 	private BigDecimal valor;
 
 	public void setCampoMaestro(String campoMaestro) {
@@ -34,19 +30,19 @@ public class DocumentoRelacionExpedienteDTO extends BasicDTO
 	public String getExpedienteDetalle() {
 		return expedienteDetalle;
 	}
-	public void setTransaccionRegistro(String transaccionRegistro) {
-		this.transaccionRegistro = transaccionRegistro;
+	public void setDocumentoRegistro(String documentoRegistro) {
+		this.documentoRegistro = documentoRegistro;
 	}
 	
-	public String getTransaccionRegistro() {
-		return transaccionRegistro;
+	public String getDocumentoRegistro() {
+		return documentoRegistro;
 	}
-	public void setTransaccionInactivo(String transaccionInactivo) {
-		this.transaccionInactivo = transaccionInactivo;
+	public void setDocumentoInactivo(String documentoInactivo) {
+		this.documentoInactivo = documentoInactivo;
 	}
 	
-	public String getTransaccionInactivo() {
-		return transaccionInactivo;
+	public String getDocumentoInactivo() {
+		return documentoInactivo;
 	}
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
@@ -55,7 +51,5 @@ public class DocumentoRelacionExpedienteDTO extends BasicDTO
 	public BigDecimal getValor() {
 		return valor;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

@@ -215,7 +215,7 @@ public class CallDocumentCRUD {
 			relacionGestorService.trazar(documentDTO.getLlaveTabla(),
 					 null , plantilla.getNombre(),
 							documentDTO.getEstadoExpediente(), documentDTO.getEstadoExpediente(),
-					(documentDTO.getDinero() == null) ? null : documentDTO.getDinero().getLlaveTabla(), null, token, null,
+					(documentDTO.getDinero() == null) ? null : documentDTO.getDinero().getLlaveTabla(),  token, null,
 							documentDTO.getHistorico(), documentDTO.getTransaccion(), true);
 		return documentDTO;
 	}
@@ -321,7 +321,7 @@ public class CallDocumentCRUD {
 			relacionGestorService.trazar(dto.getLlaveTabla(),
 					(updateDocument == null) ? null : updateDocument.getLlaveTabla(), plantilla.getNombre(),
 					dto.getEstadoExpediente(), dto.getEstadoExpediente(),
-					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null, token, null,
+					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), token, null,
 					dto.getHistorico(), transaccion, true);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return dto;
@@ -516,7 +516,7 @@ public class CallDocumentCRUD {
 			// Pase aqui la traza ya que debo integrar
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null,
 					pedido.getEstadoExpediente(),
-					(pedido.getDinero() == null) ? null : pedido.getDinero().getLlaveTabla(), null, token, null,
+					(pedido.getDinero() == null) ? null : pedido.getDinero().getLlaveTabla(), token, null,
 					pedido.getHistorico(), transaccion, false);
 		}
 		// return inicial;

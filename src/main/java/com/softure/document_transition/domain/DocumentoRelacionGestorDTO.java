@@ -1,16 +1,14 @@
 package com.softure.document_transition.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.softure.java.domain.BasicDTO;
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softure.java.domain.BasicDTO;
+
 @Alias("DocumentoRelacionGestorDTO")
 public class DocumentoRelacionGestorDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documentoPrincipal;
@@ -26,12 +24,7 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	private String comentario;
 	private String plantilla;
 	private String plantillaNombre;
-	private String ubicacion;
-	private String ubicacionNombre;
-	private String ubicacionPlantilla;
 	private String valores;
-	private BigDecimal saldo;
-	private BigDecimal total;
 	private String transaccion;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date cierre;
@@ -123,27 +116,7 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	public String getPlantillaNombre() {
 		return plantillaNombre;
 	}
-	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
-	}
 	
-	public String getUbicacion() {
-		return ubicacion;
-	}
-	public void setUbicacionNombre(String ubicacionNombre) {
-		this.ubicacionNombre = ubicacionNombre;
-	}
-	
-	public String getUbicacionNombre() {
-		return ubicacionNombre;
-	}
-	public void setUbicacionPlantilla(String ubicacionPlantilla) {
-		this.ubicacionPlantilla = ubicacionPlantilla;
-	}
-	
-	public String getUbicacionPlantilla() {
-		return ubicacionPlantilla;
-	}
 	public void setValores(String valores) {
 		this.valores = valores;
 	}
@@ -151,20 +124,7 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	public String getValores() {
 		return valores;
 	}
-	public void setSaldo(BigDecimal saldo) {
-		this.saldo = saldo;
-	}
 	
-	public BigDecimal getSaldo() {
-		return saldo;
-	}
-	public void setTotal(BigDecimal total) {
-		this.total = total;
-	}
-	
-	public BigDecimal getTotal() {
-		return total;
-	}
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;
 	}
@@ -193,8 +153,6 @@ public class DocumentoRelacionGestorDTO extends BasicDTO
 	public String getAdjunto() {
 		return adjunto;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 	public boolean getEstadorepetido() {
 		return estadorepetido;

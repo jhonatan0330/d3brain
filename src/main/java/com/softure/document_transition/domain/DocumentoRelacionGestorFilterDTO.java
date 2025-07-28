@@ -1,10 +1,11 @@
 package com.softure.document_transition.domain;
 
 import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.softure.java.domain.BasicFilterDTO;
 
 import org.apache.ibatis.type.Alias;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.softure.java.domain.BasicFilterDTO;
 @Alias("DocumentoRelacionGestorFilterDTO")
 public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 {
@@ -24,9 +25,6 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	private String comentario;
 	private String plantilla;
 	private String plantillaNombre;
-	private String ubicacion;
-	private String ubicacionNombre;
-	private String ubicacionPlantilla;
 	private String valores;
 	private String transaccion;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -152,34 +150,6 @@ public class DocumentoRelacionGestorFilterDTO extends BasicFilterDTO
 	public String getPlantillaNombre() {
 		return plantillaNombre;
 	}
-	
-	
-	public void setUbicacion(String ubicacion) {
-		this.ubicacion = ubicacion;
-	}
-	
-	public String getUbicacion() {
-		return ubicacion;
-	}
-	
-	
-	public void setUbicacionNombre(String ubicacionNombre) {
-		this.ubicacionNombre = ubicacionNombre;
-	}
-	
-	public String getUbicacionNombre() {
-		return ubicacionNombre;
-	}
-	
-	
-	public void setUbicacionPlantilla(String ubicacionPlantilla) {
-		this.ubicacionPlantilla = ubicacionPlantilla;
-	}
-	
-	public String getUbicacionPlantilla() {
-		return ubicacionPlantilla;
-	}
-	
 	
 	public void setValores(String valores) {
 		this.valores = valores;

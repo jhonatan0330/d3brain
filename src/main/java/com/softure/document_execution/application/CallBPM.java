@@ -240,7 +240,7 @@ public class CallBPM {
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), nuevo.getLlaveTabla(), motivo,
-				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null,
+				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, securityToken, null,
 				anterior.getHistorico(), nuevo.getTransaccion(), false);
 	}
 
@@ -413,7 +413,7 @@ public class CallBPM {
 							System.out.format("\n[%s (%s) - %s] Dividir documento...... %s",
 									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
 									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
-							dividirDocumento(procesoDTO, updaterDTO, token, pCampo.getTransaccionRegistro());
+							dividirDocumento(procesoDTO, updaterDTO, token, pCampo.getDocumento());
 							// Lo coloco aqui porque se relacionaba todo
 							relacionarGestor(procesoDTO, updaterDTO, "Dividir documento", token);
 						} else {
@@ -514,7 +514,7 @@ public class CallBPM {
 	}
 
 	public void dividirDocumento(PedidoVentaDTO anterior, PedidoVentaDTO nuevo, String securityToken,
-			String transaccion) throws ServerException {
+			String pDocumentStart) throws ServerException {
 		// Se encarga de incluir el documento en los padres
 		DocumentoRelacionExpedienteFilterDTO dre = new DocumentoRelacionExpedienteFilterDTO();
 		dre.setEstado(SharedConstants.STATE_ACTIVE);
@@ -525,7 +525,7 @@ public class CallBPM {
 				DocumentoRelacionExpedienteDTO relacionCargueNuevo = new DocumentoRelacionExpedienteDTO();
 				relacionCargueNuevo.setCampoMaestro(relacion.getCampoMaestro());
 				relacionCargueNuevo.setExpedienteDetalle(nuevo.getLlaveTabla());
-				relacionCargueNuevo.setTransaccionRegistro(transaccion);
+				relacionCargueNuevo.setDocumentoRegistro(pDocumentStart);
 				// Esto lo borre en las devoluciones parciales de bbx
 				/*
 				 * String valorTomar = campoService

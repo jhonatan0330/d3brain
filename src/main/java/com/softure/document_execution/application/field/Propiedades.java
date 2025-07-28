@@ -220,6 +220,7 @@ public class Propiedades {
 	public static final String PLANTILLA_HISTORIAL_ACTIVO = "PLANTILLA_HISTORIAL_ACTIVO";
 	public static final String TEMPLATE_VOUCHER = "TEMPLATE_VOUCHER";
 	public static final String TEMPLATE_MESSAGE_SQL = "TEMPLATE_MESSAGE_SQL";
+	public static final String HTML_DOCUMENT_SQL = "HTML_DOCUMENT_SQL";
 	
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 	public static final String API_ACCOUNT_CATALOG = "API_ACCOUNT_CATALOG";
@@ -233,7 +234,6 @@ public class Propiedades {
 
 	public static final String PLANTILLA_INICIA_PROCESO = "PLANTILLA_INICIA_PROCESO";
 
-	// REPORTE
 	public static final String REPORTE_ENCABEZADO = "REPORTE_ENCABEZADO";
 	public static final String REPORTE_ENCABEZADO_EXCEL = "REPORTE_ENCABEZADO_EXCEL";
 	public static final String REPORTE_PIE_PAGINA = "REPORTE_PIE_PAGINA";
@@ -250,7 +250,6 @@ public class Propiedades {
 	public static final String REPORT_QUERY = "REPORT_QUERY";
 	public static final String CONNECTION_STRING_DB = "CONNECTION_STRING_DB";
 
-	// ESTADO PROCESO
 	public static final String ROL = "ROL";
 	public static final String FUNCION_SQL_ESTADO_ASIGNAR = "FUNCION_SQL_ESTADO_ASIGNAR";
 	public static final String ESTADO_ASIGNAR = "ESTADO_ASIGNAR";

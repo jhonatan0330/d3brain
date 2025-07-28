@@ -31,9 +31,10 @@ public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 	private String valorAuxiliar;
 	private BigDecimal valorNumeroMin;
 	private BigDecimal valorNumeroMax;
-	private List<DetallePedidoVentaDTO> detalles;
+	//private List<DetallePedidoVentaDTO> detalles;
 	private List<PedidoVentaCaracteristicaDTO> dependientes;
 	private List<PedidoVentaDTO> expedientes;
+	private String mensaje;
 	private String transaccionRegistro;
 	private String transaccionInactivo;
 
@@ -124,20 +125,7 @@ public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 	
 	public BigDecimal getValorNumeroMax() {
 		return valorNumeroMax;
-	}
-	
-					
-	
-	public void setDetalles(List<DetallePedidoVentaDTO> detalles) {
-		this.detalles = detalles;
-	}
-	
-	public List<DetallePedidoVentaDTO> getDetalles() {
-		return detalles;
-	}
-	
-					
-					
+	}					
 	
 	public void setDependientes(List<PedidoVentaCaracteristicaDTO> dependientes) {
 		this.dependientes = dependientes;
@@ -147,7 +135,7 @@ public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 		return dependientes;
 	}
 	
-					
+	
 	
 	public void setExpedientes(List<PedidoVentaDTO> expedientes) {
 		this.expedientes = expedientes;
@@ -157,8 +145,17 @@ public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 		return expedientes;
 	}
 	
-					
+			
 	
+	public void setMensaje(String mensaje) {
+		this.mensaje = mensaje;
+	}
+	
+	public String getMensaje() {
+		return mensaje;
+	}
+	
+		
 	public void setTransaccionRegistro(String transaccionRegistro) {
 		this.transaccionRegistro = transaccionRegistro;
 	}
@@ -166,7 +163,6 @@ public class PedidoVentaCaracteristicaFilterDTO extends BasicFilterDTO
 	public String getTransaccionRegistro() {
 		return transaccionRegistro;
 	}
-	
 	
 	public void setTransaccionInactivo(String transaccionInactivo) {
 		this.transaccionInactivo = transaccionInactivo;

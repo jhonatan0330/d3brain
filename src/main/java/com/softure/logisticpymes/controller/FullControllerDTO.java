@@ -42,15 +42,12 @@ import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.DocumentoRelacionExpedienteSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
-import com.softure.document_execution.application.PedidoVentaDineroSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
 import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.document_execution.domain.PedidoVentaDineroDTO;
-import com.softure.document_execution.domain.PedidoVentaDineroFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
@@ -80,13 +77,10 @@ import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoFilterDTO;
 import com.softure.money.application.CuentaSvc;
 import com.softure.money.application.MovimientoSvc;
-import com.softure.money.application.TurnoSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
 import com.softure.money.domain.MovimientoDTO;
 import com.softure.money.domain.MovimientoFilterDTO;
-import com.softure.money.domain.TurnoDTO;
-import com.softure.money.domain.TurnoFilterDTO;
 import com.softure.notification.application.ActividadSvc;
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.notification.domain.ActividadFilterDTO;
@@ -535,15 +529,7 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-	@PostMapping(value="/consultaUnicaDocumentoRelacionGestor")
-	public DocumentoRelacionGestorDTO consultaUnicaDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
-		try {
-			return documentoRelacionGestorService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
+
 	
 	@PostMapping(value="/listarConsultaDocumentoRelacionGestor")
 	public List<DocumentoRelacionGestorDTO> listarConsultaDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorFilterDTO dto) throws FlexException  {
@@ -554,32 +540,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/activarDocumentoRelacionGestor")
-	public DocumentoRelacionGestorDTO activarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoRelacionGestorService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarDocumentoRelacionGestor")
-	public DocumentoRelacionGestorDTO inactivarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoRelacionGestorService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarDocumentoRelacionGestor")
-	public DocumentoRelacionGestorDTO actualizarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return documentoRelacionGestorService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	@PostMapping(value="/guardarDocumentoRelacionGestor")
 	public DocumentoRelacionGestorDTO guardarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
@@ -1079,137 +1039,6 @@ public class FullControllerDTO {
 	public List<MovimientoDTO> obtenerMovimientoSiguienteFechaMovimiento(@RequestBody MovimientoFilterDTO dto)throws FlexException {
 		try {
 			return movimientoService.obtenerMovimientoSiguienteFecha(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@Autowired @Lazy  private TurnoSvc turnoService;
-	
-	@PostMapping(value="/consultaXIdTurno")
-	public TurnoDTO consultaXIdTurno(@RequestBody String llave) throws FlexException {
-		try {
-			return turnoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaTurno")
-	public TurnoDTO consultaUnicaTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
-		try {
-			return turnoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaTurno")
-	public List<TurnoDTO> listarConsultaTurno(@RequestBody TurnoFilterDTO dto) throws FlexException  {
-		try {
-			return turnoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarTurno")
-	public TurnoDTO activarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return turnoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarTurno")
-	public TurnoDTO inactivarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return turnoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarTurno")
-	public TurnoDTO actualizarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return turnoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarTurno")
-	public TurnoDTO guardarTurno(@RequestBody TurnoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return turnoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@Autowired @Lazy  private PedidoVentaDineroSvc pedidoVentaDineroService;
-	
-	@PostMapping(value="/consultaXIdPedidoVentaDinero")
-	public PedidoVentaDineroDTO consultaXIdPedidoVentaDinero(@RequestBody String llave) throws FlexException {
-		try {
-			return pedidoVentaDineroService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaPedidoVentaDinero")
-	public PedidoVentaDineroDTO consultaUnicaPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaPedidoVentaDinero")
-	public List<PedidoVentaDineroDTO> listarConsultaPedidoVentaDinero(@RequestBody PedidoVentaDineroFilterDTO dto) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarPedidoVentaDinero")
-	public PedidoVentaDineroDTO activarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarPedidoVentaDinero")
-	public PedidoVentaDineroDTO inactivarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarPedidoVentaDinero")
-	public PedidoVentaDineroDTO actualizarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarPedidoVentaDinero")
-	public PedidoVentaDineroDTO guardarPedidoVentaDinero(@RequestBody PedidoVentaDineroDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return pedidoVentaDineroService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

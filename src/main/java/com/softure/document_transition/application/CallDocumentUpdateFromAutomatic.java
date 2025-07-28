@@ -276,7 +276,7 @@ public class CallDocumentUpdateFromAutomatic {
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), updaterDocumentId, "Modificar Campos",
-				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, securityToken, null,
+				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, securityToken, null,
 				anterior.getHistorico(), transaction, true);
 	}
 

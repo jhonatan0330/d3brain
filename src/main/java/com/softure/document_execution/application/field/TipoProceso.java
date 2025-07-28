@@ -511,7 +511,8 @@ public class TipoProceso {
 				retirarExpedienteDocumento(pCampo, procesoDTO, token);
 			} else {
 				relacionExpedienteService.relacionarExpedienteDocumento(pCampo.getLlaveTabla(), procesoDTO.getLlaveTabla(), token, pCampo.getCampoDTO().getNombre()
-						, pCampo.getTransaccionRegistro(), (procesoDTO.getDinero()==null)?null:procesoDTO.getDinero().getSaldo());
+						, (procesoDTO.getDinero()==null)?null:procesoDTO.getDinero().getSaldo(), 
+								pCampo.getPrincipal().getLlaveTabla());
 			}
 		}
 	}
@@ -525,7 +526,7 @@ public class TipoProceso {
 		filtroExpFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
 		if (filtroExp != null) {
-			filtroExp.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			filtroExp.setDocumentoInactivo(pCampo.getDocumento());
 			relacionExpedienteService.inactivar(filtroExp, token);
 			return true;
 		}
@@ -535,8 +536,13 @@ public class TipoProceso {
 	
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
-		return listDocumentFromFieldProcessFunction.execute(pCampo,
+		PedidoVentaCaracteristicaFilterDTO pResult = listDocumentFromFieldProcessFunction.execute(pCampo,
 				caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken()));
+		PropiedadDTO _property =Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.HTML_DOCUMENT_SQL); 
+		if(_property != null ) {
+			pResult.setMensaje(propiedadService.validarFuncionSQL2(_property,pCampo.getValorOpcion(), pCampo.getSecurityToken()));
+		}
+		return pResult;
 	}
 
 	private void cerrarCaja(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
@@ -678,7 +684,8 @@ public class TipoProceso {
 								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0) {
 									campoDestino.getExpedientes().add(iDocumentoRelacionar);
 									if(campoValor.isEmpty()) relacionExpedienteService.relacionarExpedienteDocumento(campoDestino.getLlaveTabla(), iDocumentoRelacionar.getLlaveTabla(), token,
-											campoDestino.getCampoDTO().getNombre(), campoDestino.getTransaccionRegistro(), (iDocumentoRelacionar.getDinero()==null)?null:iDocumentoRelacionar.getDinero().getSaldo());									
+											campoDestino.getCampoDTO().getNombre(), (iDocumentoRelacionar.getDinero()==null)?null:iDocumentoRelacionar.getDinero().getSaldo(), 
+													pCampo.getPrincipal().getLlaveTabla());					
 								} else {
 									for (PedidoVentaDTO iExpediente : campoDestino.getExpedientes()) {
 										if(iExpediente.getLlaveTabla().compareTo(iDocumentoRelacionar.getLlaveTabla())==0){

@@ -1,17 +1,16 @@
 package com.softure.document_transition.application;
 
+import java.util.Date;
 import java.util.List;
 
-// BEGIN region interImport
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.document_transition.infrastructure.DocumentoRelacionGestorMapper;
@@ -24,9 +23,6 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	
 	@Autowired @Lazy 
 	private DocumentoRelacionGestorMapper documentoRelacionGestorMapper;
-	
-	// BEGIN region servicesDocumentoRelacionGestor
-	// END region servicesDocumentoRelacionGestor
 
 	@Override
 	public DocumentoRelacionGestorDTO consultaXId(String llave) throws ServerException {
@@ -41,38 +37,6 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	  this.mapper = documentoRelacionGestorMapper;
 	}
 	
-	@Override
-	public DocumentoRelacionGestorDTO activar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionGestor_activar
-		return super.activar(dto, token);
-		// END DocumentoRelacionGestor_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public DocumentoRelacionGestorDTO actualizar( DocumentoRelacionGestorDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionGestor_actualizar
-		return super.actualizar(dto, token);
-		// END DocumentoRelacionGestor_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public DocumentoRelacionGestorDTO inactivar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionGestor_inactivar
-		return super.inactivar(dto, token);
-		// END DocumentoRelacionGestor_inactivar
-	}
-	
-	@Override
-	public DocumentoRelacionGestorDTO consultaUnica(DocumentoRelacionGestorFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(DocumentoRelacionGestorFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
 	
 	@Override
 	public List<DocumentoRelacionGestorDTO> listarConsulta(DocumentoRelacionGestorFilterDTO dto)
@@ -81,44 +45,45 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 	}
 	
 	public List<DocumentoRelacionGestorDTO> listarExpedientesGestionadores(DocumentoRelacionGestorFilterDTO dto)throws ServerException{
-		// BEGIN region listarExpedientesGestionadores
 		if(dto==null || dto.getDocumentoPrincipal()==null) throw new ServerException("Revisa porque no encontramos el documento principal");
 		paginar(dto);
 		String verMensaje = null;
 		String verAsignacion = null;
 		String verInventarios = null;
 		String verReportes = null;
-		String usuarioAutomatico = null;
+		//String usuarioAutomatico = null;
 		String verApi = null;
+		String verValores = null;
+		String verUbicacion = null;
+		String verComprobantes = null;
 		if(dto.getEstado()!=null) {
 			if(dto.getEstado().length() > 1 && dto.getEstado().charAt(1) == '1') verAsignacion = "1";
 			if(dto.getEstado().length() > 2 && dto.getEstado().charAt(2) == '1') verMensaje = "1";
 			if(dto.getEstado().length() > 3 && dto.getEstado().charAt(3) == '1') verInventarios = "1";
-			if(dto.getEstado().length() > 4 && dto.getEstado().charAt(4) == '1') verReportes = "1";
-			if(dto.getEstado().length() > 5 && dto.getEstado().charAt(5) != '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
+			if(dto.getEstado().length() > 4 && dto.getEstado().charAt(4) == '1') verValores = "1";
+			if(dto.getEstado().length() > 5 && dto.getEstado().charAt(5) == '1') verReportes = "1";
 			if(dto.getEstado().length() > 6 && dto.getEstado().charAt(6) == '1') verApi = "1";
+			if(dto.getEstado().length() > 7 && dto.getEstado().charAt(7) == '1') verUbicacion = "1";
+			if(dto.getEstado().length() > 8 && dto.getEstado().charAt(8) == '1') verComprobantes = "1";
+			//if(dto.getEstado().length() > 9 && dto.getEstado().charAt(5) != '1') usuarioAutomatico = documentoRelacionGestorMapper.getSystemUser();
 		}
 		return documentoRelacionGestorMapper.listarExpedientesGestionadores(
 				dto,
 				documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal()),
-				verAsignacion, verMensaje, verInventarios, verReportes, usuarioAutomatico, verApi);
-		// END region listarExpedientesGestionadores
+				verAsignacion, verMensaje, verInventarios, verReportes, verApi, verValores, verUbicacion, verComprobantes);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionGestorDTO guardar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionGestor_guardar
 		if(documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal())!=null) {
 			return super.guardar(dto, token);	
 		}else {
 			getUserFlex(token);
 			return documentoRelacionGestorMapper.insertHistoricTable(dto);
 		}
-		// END DocumentoRelacionGestor_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public DocumentoRelacionGestorDTO trazar(
 			String principal, 
 			String modificador, 
@@ -126,7 +91,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			String estadoInicial, 
 			String estadoFinal, 
 			String valores, 
-			String ubicacion, 
+			
 			String token, 
 			DocumentoRelacionGestorDTO anterior,
 			Integer historico,
@@ -168,7 +133,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		gestor.setEstadoInicial(estadoInicial);
 		gestor.setEstadoFinal(estadoFinal);
 		gestor.setValores(valores);
-		gestor.setUbicacion(ubicacion);
+		
 		if(nombre!=null && nombre.length()>100)
 			nombre = nombre.substring(nombre.length()-100, nombre.length());
 		gestor.setNombre(nombre);
@@ -183,7 +148,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			// Esto no es necesario en universal generaba un error que las guias no cambiaban de ubicacion
 			// toca en cada estado colocar la ubicacion
 			// lo volvi a activar para las transacciones que no tienen modificador asi no me borra al modificar el documento
-			if((modificador == null || isUpdateDocument) && gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
+			//if((modificador == null || isUpdateDocument) && gestor.getUbicacion()==null) gestor.setUbicacion( actual.getUbicacion());
 		}
 		gestor.setUsuario(getUserFlex(token));
 		if(historico ==null) {
@@ -196,6 +161,5 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 		System.out.format("\n[] TRACE por transicion %s, con estado inicial ( %s ) y estado final ( %s )", gestor.getNombre(), gestor.getEstadoInicial(), gestor.getEstadoFinal());
 		return gestor;
 	}
-// END region aditionalMethods
 
 }

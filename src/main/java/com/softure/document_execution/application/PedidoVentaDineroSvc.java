@@ -27,9 +27,6 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	
 	@Autowired @Lazy 
 	private PedidoVentaDineroMapper pedidoVentaDineroMapper;
-	
-	// BEGIN region servicesPedidoVentaDinero
-	// END region servicesPedidoVentaDinero
 
 	@Override
 	public PedidoVentaDineroDTO consultaXId(String llave) throws ServerException {
@@ -45,51 +42,22 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 	}
 	
 	@Override
-	public PedidoVentaDineroDTO activar(PedidoVentaDineroDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaDinero_activar
-		return super.activar(dto, token);
-		// END PedidoVentaDinero_activar
-	}
-	
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDineroDTO actualizar( PedidoVentaDineroDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaDinero_actualizar
 		throw new ServerException("Metodo inactivo usar guardar");
-		// END PedidoVentaDinero_actualizar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDineroDTO inactivar(PedidoVentaDineroDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaDinero_inactivar
 		throw new ServerException("Metodo inactivo usar inactivar ConHistorial");
-		// END PedidoVentaDinero_inactivar
-	}
-	
-	@Override
-	public PedidoVentaDineroDTO consultaUnica(PedidoVentaDineroFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(PedidoVentaDineroFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<PedidoVentaDineroDTO> listarConsulta(PedidoVentaDineroFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
 	}
 	
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PedidoVentaDineroDTO guardar(PedidoVentaDineroDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaDinero_guardar
 		throw new ServerException("Metodo inactivo usar guardar con historial");
-		// END PedidoVentaDinero_guardar
 	}
 
 // BEGIN region aditionalMethods

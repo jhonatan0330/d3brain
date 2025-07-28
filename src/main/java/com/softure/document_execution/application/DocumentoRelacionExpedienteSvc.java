@@ -25,8 +25,6 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	@Autowired @Lazy 
 	private DocumentoRelacionExpedienteMapper documentoRelacionExpedienteMapper;
 	
-	// BEGIN region servicesDocumentoRelacionExpediente
-	// END region servicesDocumentoRelacionExpediente
 
 	@Override
 	public DocumentoRelacionExpedienteDTO consultaXId(String llave) throws ServerException {
@@ -43,26 +41,20 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	
 	@Override
 	public DocumentoRelacionExpedienteDTO activar(DocumentoRelacionExpedienteDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionExpediente_activar
 		return super.activar(dto, token);
-		// END DocumentoRelacionExpediente_activar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionExpedienteDTO actualizar( DocumentoRelacionExpedienteDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionExpediente_actualizar
 		return super.actualizar(dto, token);
-		// END DocumentoRelacionExpediente_actualizar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionExpedienteDTO inactivar(DocumentoRelacionExpedienteDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionExpediente_inactivar
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		return super.actualizar(dto, token);
-		// END DocumentoRelacionExpediente_inactivar
 	}
 	
 	@Override
@@ -85,12 +77,9 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoRelacionExpedienteDTO guardar(DocumentoRelacionExpedienteDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoRelacionExpediente_guardar
 		return super.guardar(dto, token);
-		// END DocumentoRelacionExpediente_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public List<DocumentoRelacionExpedienteDTO> listarHeredados(String plantilla, String campoMaestro, String llaveOpcion, String plantillaTransicion, List<String> plantillasGestionadas) throws ServerException {
 		if(plantillasGestionadas!=null && !plantillasGestionadas.isEmpty()) {
 			for (String iPlantilla : plantillasGestionadas) {
@@ -110,7 +99,7 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 	}
 	
 	public boolean relacionarExpedienteDocumento(String pFieldId, String pProcessId,
-			String token, String pFieldName, String pTransaction, BigDecimal pProcessValue) throws ServerException {
+			String token, String pFieldName, BigDecimal pProcessValue, String pKeyDocumentRelation) throws ServerException {
 		if (pProcessId == null)
 			throw new ServerException(
 					"Por favor valida el motivo por el cual no se identifica la llave del expediente en el campo "
@@ -129,7 +118,7 @@ public class DocumentoRelacionExpedienteSvc extends BasicSvc<DocumentoRelacionEx
 			_relation.setValor(pProcessValue);
 			//if (procesoDTO.getDinero() != null)
 			//	docExpediente.setValor(procesoDTO.getDinero().getSaldo());
-			_relation.setTransaccionRegistro(pTransaction);
+			_relation.setDocumentoRegistro(pKeyDocumentRelation);
 			_relation = guardar(_relation, token);
 			return true;
 		}

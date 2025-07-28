@@ -18,6 +18,7 @@ public class PedidoVentaDineroDTO extends BasicDTO
 	private BigDecimal saldo;
 	private BigDecimal valorCampo;
 	private boolean controlarSaldo;
+	private String modificador;
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
@@ -61,6 +62,14 @@ public class PedidoVentaDineroDTO extends BasicDTO
 
 	public void setControlarSaldo(boolean controlarSaldo) {
 		this.controlarSaldo = controlarSaldo;
+	}
+
+	public String getModificador() {
+		return modificador;
+	}
+
+	public void setModificador(String modificador) {
+		this.modificador = modificador;
 	}
 
 }
