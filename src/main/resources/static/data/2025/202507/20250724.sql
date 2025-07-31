@@ -34,9 +34,9 @@ where pp.cppd_propiedadvalor = 'PROP_133'
 
 --3. Actualizo el campo
 update propiedad_ppdp pp 
-set cppd_campo =  (select pt.cptr_estadollegada from procesotransicion_ptrp pt where pt.cptr_llave = pp.cppd_campo)
-,cppd_tipo = 'E'
-where pp.cppd_propiedadvalor = 'PROP_133';
+	set cppd_campo = (select pt.cptr_estadollegada from procesotransicion_ptrp pt where pt.cptr_llave = pp.cppd_campo) ,cppd_tipo = 'E'
+where pp.cppd_propiedadvalor = 'PROP_133'
+	and (select pt.cptr_estadollegada from procesotransicion_ptrp pt where pt.cptr_llave = pp.cppd_campo) is not null;
 	 
 -- 4. Coloco relaciones
 INSERT INTO relacioninterna_ritp

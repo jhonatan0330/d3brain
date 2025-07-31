@@ -252,6 +252,11 @@ public class CallBPM {
 		List<String> caminosValidados = validarCamino(caminosGestionables, procesoDTO.getPlantilla());
 		if (caminosValidados.size() == 0)
 			return;
+		if(caminosValidados.get(0).compareTo("+") == 0) {
+				caminosValidados.remove(0);// Elimina el + que es para todos los estados
+				caminosValidados.add(0, "*");// Agrega el * para todos los estados
+				return;
+		}
 		DocumentoRelacionGestorFilterDTO filtroGestor = new DocumentoRelacionGestorFilterDTO();
 		filtroGestor.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroGestor.setEstadoFinal(procesoDTO.getEstadoExpediente());
