@@ -123,7 +123,7 @@ public class ApiCommon {
 					break;
 				}
 			}
-			detallePedidoVentaService.createFieldsProduct(detalle, token);
+			detallePedidoVentaService.createFieldsProduct(detalle, token, null);
 		}
 
 		return result;

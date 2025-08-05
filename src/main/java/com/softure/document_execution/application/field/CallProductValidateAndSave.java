@@ -70,9 +70,9 @@ public class CallProductValidateAndSave {
 		return agrupados;
 	}
 	
-	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document, List<PropiedadDTO> tarrifs, String token) throws ServerException {
+	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document, List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess) throws ServerException {
 		List<DetallePedidoVentaDTO> detallesActuales = detallePedidoVentaService
-				.listarCompleto(document, tarrifs, null, null, token);
+				.listarCompleto(document, tarrifs, null, null, token, newOnlyFormProcess);
 
 		if(products!=null) {
 			for (DetallePedidoVentaDTO detalle : products) {

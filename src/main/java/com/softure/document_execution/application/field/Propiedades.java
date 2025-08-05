@@ -63,6 +63,8 @@ public class Propiedades {
 	public static final String UPDATE_INFORMATIVE_FIELD = "UPDATE_INFORMATIVE_FIELD";
 
 	public static final String VINCULO_DATA = "VINCULO_DATA";
+	public static final String VINCULO_DELETE = "VINCULO_DELETE";
+	public static final String VINCULO_FIELD_SQL = "VINCULO_FIELD_SQL";
 	
 	public static final String AUTOLOAD = "AUTOLOAD";
 	public static final String AUTOLOAD_SAVE = "AUTOLOAD_SAVE";
@@ -137,6 +139,7 @@ public class Propiedades {
 	public static final String PRODUCTO_CAMPO_CANTIDAD = "PRODUCTO_CAMPO_CANTIDAD";
 	public static final String PRODUCTO_CAMPO_TOTAL = "PRODUCTO_CAMPO_TOTAL";
 	public static final String UNICO_PRODUCTO = "UNICO_PRODUCTO";
+	public static final String ITEM_DETAIL_FORM_VISIBLE = "ITEM_DETAIL_FORM_VISIBLE";
 	
 	public static final String DETALLE_TARIFA_PRODUCTO = "DETALLE_TARIFA_PRODUCTO";
 	public static final String DETALLE_TARIFARIO_SQL = "DETALLE_TARIFARIO_SQL";

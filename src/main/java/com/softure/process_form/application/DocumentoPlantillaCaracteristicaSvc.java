@@ -539,5 +539,15 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(List<String> process) {
 		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize(process);
 	}
+	
+
+	public int countFieldsVinculo(String pTemplate) throws ServerException {
+		if (pTemplate == null)
+			throw new ServerException("Para consultar los datos de una plantilla debes enviar el id de la plantilla");
+		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtroCampo.setEstado(SharedConstants.STATE_ACTIVE);
+		filtroCampo.setPlantilla(pTemplate);
+		return super.contarResultados(filtroCampo);
+	}
 
 }

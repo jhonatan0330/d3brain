@@ -269,6 +269,9 @@ public class CallManageTransition {
 			obtenerUbicacion(expedienteDTO, documentoDTO, pTransitionProcess.getEstadoLLegada(), token);
 			//Esto lo movi estaba en CallBPM gestionarExpedienteDependientes y de hay viene pero necesitaba que solo se hiciera cuando es un estado y no en apis o decisiones
 			saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO, token);
+			if(expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0) {
+				saveUpdateInactivateDocumentFunction.deleteVinculateDocument(expedienteDTO, token);
+			}
 			break;
 		}
 

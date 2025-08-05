@@ -16,6 +16,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -26,7 +27,8 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
@@ -38,23 +40,31 @@ import com.softure.logisticpymes.application.BasicSvc;
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaMapper pedidoVentaMapper;
 
 	// BEGIN region servicesPedidoVenta
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CampoAdaptador adaptador;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaSvc documentoPlantillaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropiedadSvc propiedadService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private RolAccesoSvc rolService;
 	// END region servicesPedidoVenta
 
@@ -170,16 +180,19 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		return bd;
 		// END region consultaCompleta
 	}
-	
+
 	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
-		List<PropiedadDTO> prop = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, filter.getPlantilla(),
-                Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
-		if(prop.isEmpty() || prop.size() != 1) return result;
+		List<PropiedadDTO> prop = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+				filter.getPlantilla(), Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
+		if (prop.isEmpty() || prop.size() != 1)
+			return result;
 		for (PropiedadDTO propiedadDTO : prop) {
-			String resultString = propiedadService.validarFuncionSQL2(propiedadDTO, filter.getPlantilla(), filter.getSecurityToken());
+			String resultString = propiedadService.validarFuncionSQL2(propiedadDTO, filter.getPlantilla(),
+					filter.getSecurityToken());
 			if (resultString != null && resultString.compareTo(SharedConstants.OK) != 0) {
-				if(result.getMessages() == null) result.setMessages(new ArrayList<>());
+				if (result.getMessages() == null)
+					result.setMessages(new ArrayList<>());
 				DocumentMessage message = new DocumentMessage();
 				message.setType(SharedConstants.ERROR);
 				message.setMessage(resultString);
@@ -223,7 +236,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(pedido.getLlaveTabla(), pedido.getHistorico());
 			pedido.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			if(caracteristicasActuales==null) caracteristicasActuales = new ArrayList<>();
+			if (caracteristicasActuales == null)
+				caracteristicasActuales = new ArrayList<>();
 			PedidoVentaCaracteristicaDTO uc = null;
 			for (DocumentoPlantillaCaracteristicaDTO documentoCaracteristicaDTO : camposBase) {
 				uc = null;
@@ -270,8 +284,9 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			String llaveTablaModificador) throws ServerException {
 		List<PedidoVentaDTO> result = null;
 		try {
-			//ramdom por problemas del framework se repetia la respuesta cuando iteraba
-			result = pedidoVentaMapper.iteracion(sqlFuncionDecision, llaveTablaDocumento, llaveTablaModificador, generarLlave());
+			// ramdom por problemas del framework se repetia la respuesta cuando iteraba
+			result = pedidoVentaMapper.iteracion(sqlFuncionDecision, llaveTablaDocumento, llaveTablaModificador,
+					generarLlave());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de Iteracion con errores: ");
 		}
@@ -286,6 +301,27 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			return pedidoVentaMapper.listarUsuario(filter);
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
+		}
+	}
+
+	//Por el momento lo uso para tipo vinculo funcion
+	public List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(PedidoVentaFilterDTO dto,
+			String funcionBusqueda, List<PedidoVentaCaracteristicaDTO> parametros) throws ServerException {
+		if (funcionBusqueda == null)
+			return null;
+		if(dto==null) {
+			dto = new PedidoVentaFilterDTO();			
+		}
+			
+		paginar(dto);
+		try {
+			funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
+			if (dto.getFiltroParametro() != null)
+				dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());
+			return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda, null,
+					parametros);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
 		}
 	}
 

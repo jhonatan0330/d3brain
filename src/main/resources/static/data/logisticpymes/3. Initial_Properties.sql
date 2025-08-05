@@ -599,8 +599,18 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto)
 	VALUES('PROP_287' , 'O', 'LOGIN HTML', 'LOGIN_HTML', 'REQUISITO', true);
 	
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean) 
-	VALUES('PROP_288' , 'C', 'RELACIONAR DOCUMENTO AL CAMPO DEL NUEVO FORMULARIO', 'VINCULO_DATA', 'REQUISITO', 'C', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria,) 
+	VALUES('PROP_288' , 'C', 'RELACIONAR DOCUMENTO AL CAMPO DEL NUEVO FORMULARIO', 'VINCULO_DATA', 'REQUISITO', 'C');
 	
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
-	VALUES('PROP_289' , 'C', 'HTML DEL CAMPO CONSULTADO EN BD', 'HTML_DOCUMENT_SQL', 'REQUISITO', true);
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_289' , 'C', 'HTML DEL CAMPO CONSULTADO EN BD', 'HTML_DOCUMENT_SQL', 'REQUISITO', 'Z', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_290' , 'C', 'FUNCION PARA CAMPOS VINCULO', 'VINCULO_FIELD_SQL', 'REQUISITO', 'C', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
+	VALUES('PROP_291' , 'C', 'FORMULARIO DETALLADO ITEM', 'ITEM_DETAIL_FORM_VISIBLE', 'REQUISITO', 'J', true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
+	VALUES('PROP_292' , 'C', 'FORMULARIO ELIMINACION VINCULO', 'VINCULO_DELETE', 'REQUISITO', 'C', true);
+	

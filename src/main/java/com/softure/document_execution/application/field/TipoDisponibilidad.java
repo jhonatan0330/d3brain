@@ -80,7 +80,7 @@ public class TipoDisponibilidad {
 		if (!producto.isEmpty()) {
 			if (!pCampo.getModificado())
 				pCampo.setDetalles(
-						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token));
+						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token, null));
 		}
 	}
 
@@ -251,7 +251,7 @@ public class TipoDisponibilidad {
 			}
 			if (pCampo.getDocumento() != null) {
 				pCampo.setDetalles(
-						validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null, token));
+						validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null, token, null));
 			} else {
 				pCampo.setDetalles(agrupados);
 			}

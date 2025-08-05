@@ -155,7 +155,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 
 // BEGIN region aditionalMethods
 	public List<DetallePedidoVentaDTO> listarCompleto(String documento, List<PropiedadDTO> tarifario,
-			String propiedadFuncion, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token)
+			String propiedadFuncion, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token, String newOnlyFormProcess)
 			throws ServerException {
 		List<DetallePedidoVentaDTO> base = detallePedidoVentaMapper.listar2Documento(documento);
 		if (base == null || base.isEmpty())
@@ -170,7 +170,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		productosSimplificados = simplificarConsultaBDProductos(productosSimplificados);
 		for (DetallePedidoVentaDTO detallePedidoVentaDTO : base) {
 			result.add(consultaCompleta(detallePedidoVentaDTO, tarifario, null, propiedadFuncion,
-					parametrosFuncionTarifario, productosSimplificados, token));
+					parametrosFuncionTarifario, productosSimplificados, token, newOnlyFormProcess));
 		}
 		return result;
 	}
@@ -233,7 +233,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DetallePedidoVentaDTO consultaCompleta(DetallePedidoVentaDTO dto, List<PropiedadDTO> tarifario,
 			String tercero, String propiedadFuncionTarifario,
 			List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, List<ProductoDTO> productosSimplificados,
-			String token) throws ServerException {
+			String token, String newOnlyFormProcess) throws ServerException {
 		DetallePedidoVentaDTO result;
 		if (dto.getProducto() == null)
 			throw new ServerException("Para esta operacion se debe colocar el producto");
@@ -309,12 +309,15 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if(result.getDetalleId()!=null) {
 			result.setDocumentoDetalle(documentoService.consultaCompleta(result.getDetalleId(), token));
 		}
-		createFieldsProduct(result, token);
+		createFieldsProduct(result, token, newOnlyFormProcess);
 		return result;
 	}
 
 	
-	public void createFieldsProduct(DetallePedidoVentaDTO field, String token) throws ServerException {
+	public void createFieldsProduct(DetallePedidoVentaDTO field, String token, String newOnlyFormProcess) throws ServerException {
+		
+		if(newOnlyFormProcess!=null && !newOnlyFormProcess.isEmpty()) return;
+		
 		if(field.getDocumentoDetalle() ==null) {
 			field.setDocumentoDetalle(new PedidoVentaDTO());
 			if(field.getPlantillaDetalle()!=null) {
@@ -329,6 +332,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				}
 			}
 		}
+		
+		
+			
 		if(field.getDocumentoDetalle().getCaracteristicas()==null)field.getDocumentoDetalle().setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		if (field.getPropiedades() == null)
 			field.setPropiedades(new ArrayList<PropiedadDTO>());
@@ -626,7 +632,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			DetallePedidoVentaDTO filtroPlantilla = new DetallePedidoVentaDTO();
 			filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
 			productoDTO
-					.setDetallePlantilla(consultaCompleta(filtroPlantilla, null, null, null, null, productos, token));
+					.setDetallePlantilla(consultaCompleta(filtroPlantilla, null, null, null, null, productos, token, null));
 		}
 		return productos;
 	}

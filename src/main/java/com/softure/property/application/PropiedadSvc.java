@@ -187,6 +187,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			bd.setLlaveTabla(SoftureUtil.formatFunction(bd.getLlaveTabla()));
 			switch (bd.getKey()) {
 			case Propiedades.TABLERO_CONTROL_SQL:
+			case Propiedades.VINCULO_FIELD_SQL:
 			case Propiedades.PROCESO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionFiltros(bd);
 				break;
@@ -349,6 +350,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				dto.setLlaveTabla(SoftureUtil.formatFunction(dto.getLlaveTabla()));
 				switch (dto.getKey()) {
 				case Propiedades.TABLERO_CONTROL_SQL:
+				case Propiedades.VINCULO_FIELD_SQL:
 				case Propiedades.PROCESO_FUNCION_SQL:
 					propiedadMapper.crearFuncionFiltros(dto);
 					break;
@@ -911,6 +913,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PLANTILLA_NUEVO_USUARIO:
 		case Propiedades.PLANTILLA_ACTIVAR:
 		case Propiedades.VINCULO_DATA:
+		case Propiedades.VINCULO_DELETE:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;
