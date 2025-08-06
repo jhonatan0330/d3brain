@@ -316,7 +316,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	
 	public void createFieldsProduct(DetallePedidoVentaDTO field, String token, String newOnlyFormProcess) throws ServerException {
 		
-		if(newOnlyFormProcess!=null && !newOnlyFormProcess.isEmpty()) return;
+		
 		
 		if(field.getDocumentoDetalle() ==null) {
 			field.setDocumentoDetalle(new PedidoVentaDTO());
@@ -336,6 +336,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		
 			
 		if(field.getDocumentoDetalle().getCaracteristicas()==null)field.getDocumentoDetalle().setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
+		
+		if(newOnlyFormProcess!=null && !newOnlyFormProcess.isEmpty()) return;
 		if (field.getPropiedades() == null)
 			field.setPropiedades(new ArrayList<PropiedadDTO>());
 		DocumentoPlantillaCaracteristicaDTO baseValorUnitario = null;
