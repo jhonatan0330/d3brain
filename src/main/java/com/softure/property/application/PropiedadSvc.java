@@ -195,6 +195,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				propiedadMapper.eliminarFuncionProductos(dto);
 				break;
 			case Propiedades.ITERACION_SQL:
+			case Propiedades.API_SQL:
 			case Propiedades.DECISION_SQL:
 				propiedadMapper.eliminarFuncionDecision(dto);
 				break;
@@ -361,6 +362,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					propiedadMapper.crearFuncionProductos(dto);
 					break;
 				case Propiedades.DECISION_SQL:
+				case Propiedades.API_SQL:
 					propiedadMapper.crearFuncionDecision(dto);
 					break;
 				case Propiedades.ITERACION_SQL:

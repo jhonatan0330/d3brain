@@ -1,8 +1,11 @@
 package com.softure.webservice.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -95,12 +98,21 @@ public class WebServiceCallPrepare {
 		parameters = getDirectParameters(service, document, parameters);
 		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
-		if (parameters == "")
+		if (parameters == "") {			
 			parameters = null;
-		return parameters;
-	}
-
-	
+		}
+        String[] partes = parameters.split(";;");
+        // 2. Usar HashSet para quitar duplicados
+        Set<String> sinDuplicados = new HashSet<>();
+        for (String parte : partes) {
+            sinDuplicados.add(parte.trim());
+        }
+        // 3. Convertir a lista y ordenar
+        List<String> ordenadas = new ArrayList<>(sinDuplicados);
+        Collections.sort(ordenadas);
+        // 4. Unir nuevamente con ";;"
+        return  String.join(";;", ordenadas);
+	}	
 
 	private String getReferedParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
 			String parameters, PedidoVentaDTO iterador) throws ServerException {

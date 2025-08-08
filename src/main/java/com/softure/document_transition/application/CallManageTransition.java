@@ -467,14 +467,30 @@ public class CallManageTransition {
 				estadoLlegada, null, getUserId(token)));
 
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
-		if (propAPI == null)
-			throw new ServerException("El estado %s no tiene definido el API".formatted(apiDTO.getNombre()));
+		String _apiKey = null;
+		if (propAPI == null) {
+			propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API_SQL);
+			if (propAPI == null) 
+				throw new ServerException("El estado %s no tiene definido el API".formatted(apiDTO.getNombre()));
+			try {
+				_apiKey = procesoTransicionMapper.decision(
+						SoftureUtil.formatFunction(propAPI.getLlaveTabla()), expedienteDTO.getLlaveTabla(),
+						documentoDTO.getLlaveTabla(), estadoService.generarLlave());
+			} catch (Exception e) {
+				throw new ServerException(e.getMessage(), "API Funcion : " + apiDTO.getNombre());
+			}
+			if (_apiKey == null)
+				throw new ServerException("El API %s no tiene definido correctamente la funcion del API".formatted(apiDTO.getNombre()));
+		} else {
+			_apiKey = propAPI.getValor();
+		}
 
+		
 		String resultAPI = SharedConstants.OK;
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {
-			resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, null, token,
+			resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null, token,
 					apiService.prepareParameterFromProperties(null,
-							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER), propAPI.getValor()));
+							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER), _apiKey));
 		} else {
 			// Para el manifiesto primero se crea muchas remesas y despues un solo
 			// manifiesto
@@ -491,7 +507,7 @@ public class CallManageTransition {
 					}
 				}
 
-				resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO, null,
+				resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null,
 						token, stringToDocumentsToAPI);
 			} else {
 				// en caso de error solo ejecuto en la proxima trnsaccion los que fueron
@@ -500,7 +516,7 @@ public class CallManageTransition {
 				for (Map.Entry<String, List<PedidoVentaDTO>> entry : documentRecentCreateInTransition.entrySet()) {
 					for (int i = 0; i < entry.getValue().size(); i++) {
 						PedidoVentaDTO pedidoVentaDTO = entry.getValue().get(i);
-						resultAPI = apiService.prepareApiToExecution(propAPI.getValor(), expedienteDTO, documentoDTO,
+						resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO,
 								pedidoVentaDTO, token,
 								SharedConstants.PUNTO_COMA_DOBLE + "ITERADOR_NUMBER" + SharedConstants.IGUAL + i);
 						if (resultAPI.compareTo(SharedConstants.OK) != 0) {

@@ -266,6 +266,7 @@ public class Propiedades {
 	public static final String GENERA_DOCUMENTO_FUNCION_SQL = "GENERA_DOCUMENTO_FUNCION_SQL";
 	public static final String GENERA_DOCUMENTO_TEXTO = "GENERA_DOCUMENTO_TEXTO";
 	public static final String DECISION_SQL = "DECISION_SQL";
+	public static final String API_SQL = "API_SQL";
 	public static final String ITERACION_SQL = "ITERACION_SQL";
 	public static final String ADD_ITERATION_DOCUMENT = "ADD_ITERATION_DOCUMENT";
 

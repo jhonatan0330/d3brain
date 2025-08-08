@@ -330,7 +330,7 @@ public class WebServiceExecuteAPI {
 		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), callWS.getParametersInexecution());
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
-		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametros(),
+		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
 				callWS.getExtracciones(), service.getNombre()) + template;
 		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice"));
 		String responseApi = null;

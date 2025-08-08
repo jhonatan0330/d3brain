@@ -614,3 +614,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
 	VALUES('PROP_292' , 'C', 'FORMULARIO ELIMINACION VINCULO', 'VINCULO_DELETE', 'REQUISITO', 'C', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
+	VALUES('PROP_293' , 'A', 'API_SQL', 'API_SQL', 'REQUISITO', 'P', true);
+	
