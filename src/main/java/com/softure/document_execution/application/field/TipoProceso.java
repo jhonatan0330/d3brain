@@ -37,6 +37,7 @@ import com.softure.money.domain.MovimientoFilterDTO;
 import com.softure.money.domain.TurnoDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
@@ -673,6 +674,9 @@ public class TipoProceso {
 						if (campoDestino != null) {
 							campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 							campoDestino.setCampoDTO(caracteristicaService.consultaXId(campoDestino.getCampo()));
+							if(campoDestino.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO)==0) {
+								throw new ServerException("El campo destino " + campoDestino.getCampoDTO().getNombre() + " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");
+							}
 							campoDestino.setCampoDTO(caracteristicaService.cargarComplementos(campoDestino.getCampoDTO(), token));
 							String campoValor = Propiedades.obtenerValor(campoDestino.getCampoDTO(), Propiedades.PROCESO_VALOR);
 							campoDestino.setExpedientes(new ArrayList<>());
@@ -713,6 +717,21 @@ public class TipoProceso {
 								
 								crudService.updateWithoutTransaction(updateDocument, pCampo.getDocumento(), token, true);
 							}
+						} else {
+							// Para campos vinculo que no se realacionaron poruq se modifico la estructura de la plantilla
+							// Esto lo hice rapido creo que debe tener mas elaboracion
+							DocumentoPlantillaCaracteristicaDTO _field = caracteristicaService.consultaXId(iRelacion.getCampo());
+							if(_field.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO)==0
+									&& dependiente.getExpedientes()!=null && dependiente.getExpedientes().size() == 1
+									&& _field.getPlantilla().compareTo(dependiente.getExpedientes().get(0).getPlantilla())==0) {
+								campoDestino = new PedidoVentaCaracteristicaDTO();
+								campoDestino.setCampo(_field.getLlaveTabla());
+								campoDestino.setDocumento(dependiente.getExpedientes().get(0).getLlaveTabla());
+								campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
+								campoDestino.setValorText(dependiente.getPrincipal().getNombre());
+								campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
+								campoService.save(campoDestino);
+							} 
 						}
 					}
 					break;
