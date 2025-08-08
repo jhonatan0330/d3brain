@@ -98,9 +98,8 @@ public class WebServiceCallPrepare {
 		parameters = getDirectParameters(service, document, parameters);
 		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
-		if (parameters == "") {			
-			parameters = null;
-		}
+		if (parameters == "") 			
+			return null;
         String[] partes = parameters.split(";;");
         // 2. Usar HashSet para quitar duplicados
         Set<String> sinDuplicados = new HashSet<>();
