@@ -344,7 +344,7 @@ public class CallManageTransition {
 			}
 		}
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(_propertyFuncionSQL.getLlaveTabla());
-		if (relaciones != null && relaciones.isEmpty()) {
+		if (relaciones != null && !relaciones.isEmpty()) {
 			if (_documentsToCreate != null && !_documentsToCreate.isEmpty()) {
 				for (RelacionInternaDTO _iRelacion : relaciones) {
 					if (pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo()) == null) {
