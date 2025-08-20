@@ -509,7 +509,8 @@ public class TipoProceso {
 		for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
 			if (procesoDTO.getEstado() != null
 					&& procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-				retirarExpedienteDocumento(pCampo, procesoDTO, token);
+				retirarExpedienteDocumento(pCampo, procesoDTO, 
+						(pCampo.getPrincipal()==null)?null: pCampo.getPrincipal().getLlaveTabla(),token);
 			} else {
 				relacionExpedienteService.relacionarExpedienteDocumento(pCampo.getLlaveTabla(), procesoDTO.getLlaveTabla(), token, pCampo.getCampoDTO().getNombre()
 						, (procesoDTO.getDinero()==null)?null:procesoDTO.getDinero().getSaldo(), 
@@ -519,7 +520,7 @@ public class TipoProceso {
 	}
 
 	private boolean retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
-			String token) throws ServerException {
+			String pDocumentMainRetire, String token) throws ServerException {
 		// Si es inactivo, busco la relacion del expediente y el campo
 		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
 		filtroExpFilter.setCampoMaestro(pCampo.getLlaveTabla());
@@ -527,7 +528,7 @@ public class TipoProceso {
 		filtroExpFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
 		if (filtroExp != null) {
-			filtroExp.setDocumentoInactivo(pCampo.getDocumento());
+			filtroExp.setDocumentoInactivo(pDocumentMainRetire);
 			relacionExpedienteService.inactivar(filtroExp, token);
 			return true;
 		}
@@ -694,7 +695,8 @@ public class TipoProceso {
 									for (PedidoVentaDTO iExpediente : campoDestino.getExpedientes()) {
 										if(iExpediente.getLlaveTabla().compareTo(iDocumentoRelacionar.getLlaveTabla())==0){
 											campoDestino.getExpedientes().remove(iExpediente);
-											if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino, iDocumentoRelacionar, token);
+											if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino, iDocumentoRelacionar, 
+													(pCampo.getPrincipal()==null)?null: pCampo.getPrincipal().getLlaveTabla(), token);
 											break;
 										}
 									}
