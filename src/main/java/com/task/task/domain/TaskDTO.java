@@ -18,6 +18,8 @@ public class TaskDTO extends SharedDataObject{
 	private Date dueDate;
 	private Integer priority;
 	private Integer order;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date createdAt;
 
 	public String getUser() {
 		return user;
@@ -73,6 +75,14 @@ public class TaskDTO extends SharedDataObject{
 
 	public void setOrder(Integer order) {
 		this.order = order;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
 }

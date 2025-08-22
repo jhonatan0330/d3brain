@@ -12,3 +12,4 @@ ALTER TABLE task.task_tsk ADD dtsk_completed timestamp with time zone;
 ALTER TABLE task.task_tsk ADD dtsk_dueDate timestamp with time zone;
 ALTER TABLE task.task_tsk ADD ntsk_priority int NOT NULL DEFAULT 0;
 ALTER TABLE task.task_tsk ADD ntsk_order int NOT NULL DEFAULT 0;
+ALTER TABLE task.task_tsk ADD dtsk_creacionfecha timestamp with time zone NOT NULL ;

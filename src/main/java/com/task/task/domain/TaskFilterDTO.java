@@ -18,6 +18,8 @@ public class TaskFilterDTO extends SharedDataObjectFilter {
 	private Date dueDateMax;
 	private Integer priority;
 	private Integer order;
+	private Date createdAtMin;
+	private Date createdAtMax;
 
 	public String getUser() {
 		return user;
@@ -89,6 +91,22 @@ public class TaskFilterDTO extends SharedDataObjectFilter {
 
 	public void setOrder(Integer order) {
 		this.order = order;
+	}
+
+	public Date getCreatedAtMin() {
+		return createdAtMin;
+	}
+
+	public void setCreatedAtMin(Date createdAtMin) {
+		this.createdAtMin = createdAtMin;
+	}
+
+	public Date getCreatedAtMax() {
+		return createdAtMax;
+	}
+
+	public void setCreatedAtMax(Date createdAtMax) {
+		this.createdAtMax = createdAtMax;
 	}
 
 }

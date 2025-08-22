@@ -3,13 +3,11 @@ package com.accounting.voucher.domain;
 import java.math.BigDecimal;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("VoucherDTO")
-@JsonInclude(Include.NON_NULL)
 public class VoucherDTO extends SharedDataObject{
 
 	private String catalog;

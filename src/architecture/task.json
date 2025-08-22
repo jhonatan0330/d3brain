@@ -51,6 +51,11 @@
 							"tableName": "order",
 							"type": "INT",
 							"order": 1
+						},
+						{
+							"name": "createdAt",
+							"tableName": "creacionfecha",
+							"type": "DATETIME"
 						}
 					]
 				}

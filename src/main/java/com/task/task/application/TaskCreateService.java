@@ -1,5 +1,7 @@
 package com.task.task.application;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +22,7 @@ public class TaskCreateService {
 	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
 		TaskDTO dto = task.toModel();
 		dto.setUser(user);
+		dto.setCreatedAt(new Date());
 		taskService.save(dto);
 		return new SharedIdResponse(dto.getKey());
 	}
