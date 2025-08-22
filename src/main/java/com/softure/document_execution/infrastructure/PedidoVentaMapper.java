@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
@@ -13,11 +14,14 @@ import com.softure.property.domain.PropiedadDTO;
 @SoftureSqlConnMapper(value = "PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
+	List<String> obtenerFiltrosPorRelacion(@Param("pFilter") PedidoVentaCaracteristicaFilterDTO pFilter);
+	
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("campoFiltro") List<String> campoFiltro,
 			@Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
 			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
-			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple);
+			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
+			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones);
 
 	List<String> optionsToFilterByField(@Param("usuario") String usuario, @Param("relaciones") List<String> relaciones);
 

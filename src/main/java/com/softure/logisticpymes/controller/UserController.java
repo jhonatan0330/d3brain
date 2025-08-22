@@ -42,7 +42,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/{userId}")
-	@PostMapping(value="/getUserById")
 	public UsuarioDTO getUserById(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId) throws ServerException {
 		return userService.consultaXId(pUserId);
 	}

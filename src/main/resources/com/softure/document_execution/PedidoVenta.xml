@@ -225,15 +225,19 @@
 			order by dpdv_fecha desc, cpdv_nombre desc
 	</select>
 	
+	<select id="obtenerFiltrosPorRelacion"  resultType="java.lang.String">
+		select cp.cpvc_documento 
+		from pedidoventacaracteristica_pvcp cp
+        where cp.cpvc_campo = #{pFilter.campo}
+         	and cp.cpvc_estado = 'A' 
+			and cp.cpvc_valoropcion = #{pFilter.valorOpcion}
+	</select>
+	
 	<select id="listarPermitidos" resultType="PedidoVentaDTO">
 		<include refid="selectPedidoVentaFragment" />
-		<if test="dto.filtersByFields!=null">
-			<foreach item="item" index="index" collection="dto.filtersByFields" >
-		<if test="item.valorOpcion!=null">inner join pedidoventacaracteristica_pvcp cp_${item.campo} on (cp_${item.campo}.cpvc_documento = cpdv_llave and cp_${item.campo}.cpvc_campo = #{item.campo} and cp_${item.campo}.cpvc_estado = 'A' and cp_${item.campo}.cpvc_valoropcion = #{item.valorOpcion})</if>
-			</foreach>
-		</if>
 		where 1=1
 		<include refid="filterMainFragment" />
+		<if test="filtroPorRelaciones!=null">and cpdv_llave in <foreach item="item" collection="filtroPorRelaciones" separator="," open="(" close=")">#{item}</foreach></if>
 		<if test="campoFiltro!=null">
 			and cpdv_llave in (
 				select pvc.cpvc_documento from pedidoventacaracteristica_pvcp pvc where pvc.cpvc_valoropcion = #{valorFiltro} and pvc.cpvc_campo in <foreach item="item" collection="campoFiltro" separator="," open="(" close=")">#{item}</foreach> and pvc.cpvc_estado = 'A'

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -128,7 +130,7 @@ public class CallDocumentListWithFilters {
 					return listadoCompleto(
 							// Consulto las realaciones del campo para saber cuales campos heredan con la
 							// funcion de
-							pedidoVentaMapper.listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable,
+							listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable,
 									dto.getTextoFiltro(), null, null, textoFiltroComas, generalState),
 							tokenHeredable, null);
 				} catch (Exception e) {
@@ -190,6 +192,50 @@ public class CallDocumentListWithFilters {
 			return resultManyTemplates;
 		}
 		return readResultByTemplate(dto, dto.getPlantilla());
+	}
+	
+	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO dto,
+			List<String> filtroEstados, List<String> campoFiltro,
+			String valorFiltro, String ordenNombre,
+			String ordenDescendente, List<String> filtroTexto,
+			List<String> filtroEstadosGeneralesMultiple)throws ServerException {
+		
+		List<String> _filterIdsByToRelations = null;
+		if(dto.getFiltersByFields()!=null && !dto.getFiltersByFields().isEmpty()) {
+			for (PedidoVentaCaracteristicaFilterDTO _iFilter : dto.getFiltersByFields()) {
+				try {
+					List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter);
+					if(_filterIdsByToRelations ==null) {
+						_filterIdsByToRelations = _resultFilter;
+					}else {
+						List<String> menor  = _filterIdsByToRelations.size() < _resultFilter.size() ? _filterIdsByToRelations : _resultFilter;
+						List<String> mayor = _filterIdsByToRelations.size() < _resultFilter.size() ? _resultFilter : _filterIdsByToRelations;
+
+				        Set<String> setMenor = new HashSet<>(menor);
+
+				        _filterIdsByToRelations = new ArrayList<>();
+				        
+				        for (String val : mayor) {
+				            if (setMenor.contains(val)) {
+				            	_filterIdsByToRelations.add(val);
+				            }
+				        }
+				        
+						
+					}
+					
+				} catch (Exception e) {
+					throw new ServerException(e.getMessage());
+				}
+				
+			}
+		}
+		
+		return pedidoVentaMapper.listarPermitidos(dto,
+				filtroEstados,  campoFiltro,
+				 valorFiltro,  ordenNombre,
+				 ordenDescendente, filtroTexto,
+				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations);
 	}
 
 	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter)
@@ -292,7 +338,7 @@ public class CallDocumentListWithFilters {
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
-							pedidoVentaMapper.listarPermitidos(filtro, null, null, null, null, null, null, null), token,
+							listarPermitidos(filtro, null, null, null, null, null, null, null), token,
 							null);
 				} catch (ServerException e) {
 					throw new ServerException(e.getMessage());
@@ -364,7 +410,7 @@ public class CallDocumentListWithFilters {
 			if (propiedadesFiltro != null)
 				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
 						estadosFiltro, textoFiltroComas);
-			return listadoCompleto(pedidoVentaMapper.listarPermitidos(filterDTO, estadosFiltro, null, null, orden,
+			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden,
 					ordenAscendente, textoFiltroComas, null), token, null);
 		}
 	}
