@@ -203,32 +203,34 @@ public class CallDocumentListWithFilters {
 		List<String> _filterIdsByToRelations = null;
 		if(dto.getFiltersByFields()!=null && !dto.getFiltersByFields().isEmpty()) {
 			for (PedidoVentaCaracteristicaFilterDTO _iFilter : dto.getFiltersByFields()) {
-				try {
-					List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter);
-					if(_filterIdsByToRelations ==null) {
-						_filterIdsByToRelations = _resultFilter;
-					}else {
-						List<String> menor  = _filterIdsByToRelations.size() < _resultFilter.size() ? _filterIdsByToRelations : _resultFilter;
-						List<String> mayor = _filterIdsByToRelations.size() < _resultFilter.size() ? _resultFilter : _filterIdsByToRelations;
+				if(_iFilter.getValorOpcion()!=null) {
+					try {
+						List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter);
+						if(_filterIdsByToRelations ==null) {
+							_filterIdsByToRelations = _resultFilter;
+						}else {
+							List<String> menor  = _filterIdsByToRelations.size() < _resultFilter.size() ? _filterIdsByToRelations : _resultFilter;
+							List<String> mayor = _filterIdsByToRelations.size() < _resultFilter.size() ? _resultFilter : _filterIdsByToRelations;
 
-				        Set<String> setMenor = new HashSet<>(menor);
+					        Set<String> setMenor = new HashSet<>(menor);
 
-				        _filterIdsByToRelations = new ArrayList<>();
-				        
-				        for (String val : mayor) {
-				            if (setMenor.contains(val)) {
-				            	_filterIdsByToRelations.add(val);
-				            }
-				        }
-				        
+					        _filterIdsByToRelations = new ArrayList<>();
+					        
+					        for (String val : mayor) {
+					            if (setMenor.contains(val)) {
+					            	_filterIdsByToRelations.add(val);
+					            }
+					        }
+					        
+							
+						}
 						
+					} catch (Exception e) {
+						throw new ServerException(e.getMessage());
 					}
-					
-				} catch (Exception e) {
-					throw new ServerException(e.getMessage());
 				}
-				
 			}
+			if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) _filterIdsByToRelations = null;
 		}
 		
 		return pedidoVentaMapper.listarPermitidos(dto,
