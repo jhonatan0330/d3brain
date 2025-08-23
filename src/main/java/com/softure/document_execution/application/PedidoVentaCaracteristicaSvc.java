@@ -243,12 +243,16 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		if(propFunction ==null)	return BigDecimal.ZERO;
 		if(Propiedades.isFunctionNotFreeMarker(propFunction.getValor())) {
 			try {
-				// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
-				// al final se carga pero en ibatis falla por el arrray vacio
-				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
-				dependientesOrdenados = removeDuplicateDepends(dependientesOrdenados);
-				includeDocumentArray(dependientesOrdenados);
-				if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;
+				
+				List<PedidoVentaCaracteristicaDTO> dependientesOrdenados = null;
+				if(dependientes!=null) {
+					// En formularios de pedidos de bbx se envia a calclualr el flete sin dependientes
+					// al final se carga pero en ibatis falla por el arrray vacio
+					dependientesOrdenados = ordenarAlfabeticaDepende(dependientes);
+					dependientesOrdenados = removeDuplicateDepends(dependientesOrdenados);
+					includeDocumentArray(dependientesOrdenados);
+					if(dependientesOrdenados !=null && dependientesOrdenados.isEmpty()) dependientesOrdenados = null;					
+				}
 				return  pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, token, dependientesOrdenados);
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(), "");
