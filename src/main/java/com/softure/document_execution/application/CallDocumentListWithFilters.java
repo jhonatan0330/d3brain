@@ -200,9 +200,23 @@ public class CallDocumentListWithFilters {
 			String ordenDescendente, List<String> filtroTexto,
 			List<String> filtroEstadosGeneralesMultiple)throws ServerException {
 		
+		List<String> _filterIdsByToRelations = getFieldsValueToFilter(dto);
+		
+		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
+			return new ArrayList<>();
+		}
+		
+		return pedidoVentaMapper.listarPermitidos(dto,
+				filtroEstados,  campoFiltro,
+				 valorFiltro,  ordenNombre,
+				 ordenDescendente, filtroTexto,
+				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations);
+	}
+
+	private List<String> getFieldsValueToFilter(PedidoVentaFilterDTO pFilter) throws ServerException {
 		List<String> _filterIdsByToRelations = null;
-		if(dto.getFiltersByFields()!=null && !dto.getFiltersByFields().isEmpty()) {
-			for (PedidoVentaCaracteristicaFilterDTO _iFilter : dto.getFiltersByFields()) {
+		if(pFilter.getFiltersByFields()!=null && !pFilter.getFiltersByFields().isEmpty()) {
+			for (PedidoVentaCaracteristicaFilterDTO _iFilter : pFilter.getFiltersByFields()) {
 				if(_iFilter.getValorOpcion()!=null) {
 					try {
 						List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter);
@@ -230,14 +244,9 @@ public class CallDocumentListWithFilters {
 					}
 				}
 			}
-			if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) _filterIdsByToRelations = null;
+			
 		}
-		
-		return pedidoVentaMapper.listarPermitidos(dto,
-				filtroEstados,  campoFiltro,
-				 valorFiltro,  ordenNombre,
-				 ordenDescendente, filtroTexto,
-				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations);
+		return _filterIdsByToRelations;
 	}
 
 	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter)
@@ -296,7 +305,7 @@ public class CallDocumentListWithFilters {
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(filterDTO,
 								propiedadFuncion.getLlaveTabla(), null), token, null);
 					}
-					if (dtoFilter.getCampoOrigen() == null || dtoFilter.getCaracteristicas()==null)
+					if (dtoFilter.getCampoOrigen() == null || (dtoFilter.getCaracteristicas()==null && dtoFilter.getFiltersByFields()==null))
 						propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla,
 								Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
 				}
@@ -436,8 +445,12 @@ public class CallDocumentListWithFilters {
 				relaciones);
 		if (options == null || options.isEmpty())
 			return new ArrayList<>();
+		List<String> _filterIdsByToRelations = getFieldsValueToFilter(filterDTO);
+		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
+			return new ArrayList<>();
+		}
 		return listadoCompleto(pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden,
-				ordenAscendente, textoFiltroComas, camposFiltro, null, options), token, null);
+				ordenAscendente, textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations), token, null);
 	}
 
 	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {

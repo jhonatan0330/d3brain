@@ -246,17 +246,6 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 				throw new ServerException("La cuenta " + cuenta.getNombre() +" sobrepasa el limite de sobregiro de ("+ SoftureUtil.formatMoney(sobregiro) + ") actualmente tiene un saldo de Saldo de ("+ SoftureUtil.formatMoney(cuenta.getSaldo()) + ") y quedaria con un valor final de "+ SoftureUtil.formatMoney(cuenta.getSaldo().add(dto.getMonto().negate()))  + ". Cuenta:" + cuenta.getNombre());
 			dto.setMontoAplicado(dto.getMonto().negate());
 		}
-		/*if(dto.getTipo().compareTo(MovimientoDTO.TRANSFERENCIA)==0){
-			//algunas validaciones antes de guardar la transferencia
-			//if(dto.getCuentaPermisoUsuarioDestino()==null) throw new ServerException("Para una transferencia es obligatorio referenciar el permiso en la cuenta de destino");
-			//CuentaPermisoUsuarioDTO permisoTransferencia = cuentaPermisoUsuarioService.consultaXId(dto.getCuentaPermisoUsuarioDestino());
-			//if(permisoTransferencia==null)throw new ServerException("No tiene permiso para la cuenta destino. Cuenta destino");
-			
-			dto.setCuentaDestino(permisoTransferencia.getCuenta());
-			if(dto.getCuenta().compareTo(dto.getCuentaDestino())==0) throw new ServerException("Para una transferencia la cuenta de destino no puede ser la misma de origen");
-			if(cuenta.getSaldo().add(dto.getMonto().negate()).compareTo(cuenta.getSobregiro().negate())<0) throw new ServerException("La cuenta sobrepasa el limite de sobregiro. Saldo: "+cuenta.getSaldo() + ". Sobregiro:" + cuenta.getSobregiro() + ". Cuenta:" + cuenta.getNombre());
-			dto.setMontoAplicado(dto.getMonto().negate());
-		}*/
 
 		//Como la contrapartida es para otro tercero no importa
 		dto.setSaldoInicial(BigDecimal.ZERO);

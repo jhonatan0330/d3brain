@@ -35,7 +35,6 @@ public class UserController {
 		return roleService.listarConsulta(_filter);
 	}
 	
-	
 	@PostMapping(value="/getUsers")
 	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioFilterDTO filter) throws ServerException {
 		return userService.listarConsulta(filter);
