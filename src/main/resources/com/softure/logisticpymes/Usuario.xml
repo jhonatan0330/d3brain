@@ -64,12 +64,6 @@
 		<include refid="paginationUsuarioFragment" />
 	</select>
 
-	<select id="cantidadRegistros" parameterType="UsuarioDTO" resultType="int">
-		select count(*)
-		from usuario_usrp
-		<include refid="whereUsuarioFragment" />
-	</select>
-
 
 	<select id="insertar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
 		insert into usuario_usrp(
@@ -126,8 +120,8 @@
 				cusr_estado =#{estado}
 		<include refid="whereUsuarioPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleUsuarioFragment">
+
+	<select id="listarRol" parameterType="UsuarioDTO" resultType="UsuarioDTO">
 		select
 			cusr_llave as  llaveTabla
 			,cusr_identificacion as  identificacion
@@ -137,32 +131,15 @@
 			,cusr_telefono as  telefono
 			,cusr_estado as estado
 		from usuario_usrp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="UsuarioDTO">
-		<include refid="selectSimpleUsuarioFragment" />
-		<include refid="whereUsuarioFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="UsuarioDTO">
-		<include refid="selectSimpleUsuarioFragment" />
-		<include refid="whereUsuarioFragment" />
-		order by cusr_nombre 
+			inner join usuariorol_erlp on (cerl_usuario = cusr_llave and  cerl_estado='A' )
+		where 
+			cusr_estado = 'A'
+		    cerl_rolacceso = #{rol}
+		   	and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
 		<include refid="paginationUsuarioFragment" />
 	</select>
 	
 
-	<select id="listarRol" parameterType="UsuarioDTO" resultType="UsuarioDTO">
-		<include refid="selectUsuarioFragment" />
-where 
-   cusr_llave in (select cerl_usuario from usuariorol_erlp where cerl_estado='A' and cerl_rolacceso = #{rol})
-   and cusr_estado = 'A' 
-   and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
-		<include refid="paginationUsuarioFragment" />
-	</select>
-	
-
-<!--// BEGIN region script-->
 	<select id="getUsersState" resultType="UsuarioDTO">
 		<include refid="selectUsuarioFragment" />
 		inner join pedidoventa_pdvp on (cpdv_llave = #{document})
@@ -174,6 +151,5 @@ where
 		and cusr_estado = 'A'
 		and (cact_responsable is null or cusr_llave != cact_responsable)
 	</select>
-<!--// END region script-->
 
 </mapper>

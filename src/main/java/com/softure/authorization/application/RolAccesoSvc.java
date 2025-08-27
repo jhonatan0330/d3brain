@@ -87,13 +87,9 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		return super.listarConsulta(dto);
 	}
 	
-	public List<RolAccesoDTO> consultaUsuarioDocumento(RolAccesoFilterDTO dto)throws ServerException{
-		// BEGIN region consultaUsuarioDocumento
-		if(dto.getSecurityToken()==null) throw new ServerException("No se puede consultar Roles sin token de seguridad");
-		// END region consultaUsuarioDocumento
-		paginar(dto);
+	public List<RolAccesoDTO> consultaUsuarioDocumento(String userId)throws ServerException{
 		try {
-			return rolAccesoMapper.consultaUsuarioDocumento(dto); 
+			return rolAccesoMapper.consultaUsuarioDocumento(userId); 
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}

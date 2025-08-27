@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
@@ -27,6 +29,8 @@ public class UserController {
 	
 	@Autowired @Lazy  private RolAccesoSvc roleService;
 	@Autowired @Lazy  private UsuarioSvc userService;
+	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
+	@Autowired @Lazy  private RolAccesoSvc rolAccesoService;
 
 	@GetMapping(value="/getRole")
 	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization", required = false) String token) throws ServerException {
@@ -37,8 +41,8 @@ public class UserController {
 	
 	
 	@PostMapping(value="/getUsers")
-	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioFilterDTO filter) throws ServerException {
-		return userService.listarConsulta(filter);
+	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioFilterDTO pFilter) throws ServerException {
+		return userService.listarRol(pFilter);
 	}
 	
 	@GetMapping("/{userId}")
@@ -46,5 +50,14 @@ public class UserController {
 		return userService.consultaXId(pUserId);
 	}
 	
+	@PostMapping(value="/cambiarClaveUsuarioAutenticacion")
+	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token)throws ServerException {
+		return usuarioAutenticacionService.cambiarClave(dto, token);
+	}
+	
+	@GetMapping(value="/roles/{userId}")
+	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId)throws ServerException {
+			return rolAccesoService.consultaUsuarioDocumento(pUserId);
+	}
 	
 }

@@ -3,6 +3,7 @@ package com.softure.mail.application;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,8 @@ public class MailRecoverPasswordService {
 		    mailSender.send(mimeMessage);
 		} catch (MessagingException e) {
 			throw new ServerException(e.getMessage());
+		} catch (MailAuthenticationException mae) {
+			throw new ServerException("Mail Authentication error : " + mae.getMessage());
 		}
 	}
 }

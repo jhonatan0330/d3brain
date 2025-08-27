@@ -13,7 +13,7 @@ import com.softure.java.domain.IBasicMapper;
 public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFilterDTO>{
 	
 
-	List<RolAccesoDTO> consultaUsuarioDocumento(RolAccesoFilterDTO dto);
+	List<RolAccesoDTO> consultaUsuarioDocumento(@Param("userId")String userId);
 
 // BEGIN region aditionalMethods  
 	int permisosCompletos(String user);
