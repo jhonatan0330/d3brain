@@ -194,7 +194,7 @@ public class MailGenerateMessageService {
                 documento.getPlantilla(), plantillaCorreo.getLlaveTabla(),
                 (modificador == null) ? null : modificador.getLlaveTabla());
         
-        String parametros = MailUtils.generateParameters(plantillaCorreo, documento, responsable, modificador, camposMensaje);
+        String parametros = MailUtils.generateParameters(plantillaCorreo, documento, (responsable==null)?null:responsable.getNombre(), modificador, camposMensaje);
         parametros = templatesService.extractParameterTypeR(null, documento, modificador, parametros, plantillaCorreo, null);
         
         String mensajeTitulo = templatesService.generateOutputFile(formatosPlantilla.getTitulo(), parametros);

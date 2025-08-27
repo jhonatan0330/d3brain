@@ -9,7 +9,6 @@ import com.shared.domain.ServerException;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.logisticpymes.domain.ServidorDTO;
-import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.property.domain.PropiedadDTO;
 
 public class MailUtils {
@@ -48,11 +47,11 @@ public class MailUtils {
 		return template;
 	}
 	
-	public static String generateParameters(PropiedadDTO plantillaCorreo, PedidoVentaDTO documento, UsuarioDTO responsable,
+	public static String generateParameters(PropiedadDTO plantillaCorreo, PedidoVentaDTO documento, String pResponsable,
 			PedidoVentaDTO modificador, List<PedidoVentaCaracteristicaDTO> camposMensaje) throws ServerException {
 		String parametros = generarParametros(documento, "D_");
-        if (responsable != null)
-            parametros = parametros + MailUtils.SEPARADOR + "D_RESPONSABLE=" + responsable.getNombre();
+        if (pResponsable != null)
+            parametros = parametros + MailUtils.SEPARADOR + "D_RESPONSABLE=" + pResponsable;
         if (modificador != null)
             parametros = parametros + MailUtils.SEPARADOR + generarParametros(modificador, "M_");
         if (camposMensaje != null && !camposMensaje.isEmpty()) {

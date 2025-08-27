@@ -109,8 +109,6 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	}
 
 	public TurnoDTO iniciarTurno(TurnoDTO dto, String token)throws ServerException{
-		//CuentaPermisoUsuarioDTO permiso = cuentaPermisoUsuarioService.consultaXId(dto.getCuentaPermiso());
-		//if(permiso == null)throw new ServerException("Permisos incorrecto");
 		CuentaFilterDTO cajaFilter = new CuentaFilterDTO();
 		cajaFilter.setDocumento(dto.getCuenta());
 		CuentaDTO caja = cuentaService.consultaUnica(cajaFilter);
