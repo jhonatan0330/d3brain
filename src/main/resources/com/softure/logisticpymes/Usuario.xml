@@ -134,7 +134,7 @@
 			inner join usuariorol_erlp on (cerl_usuario = cusr_llave and  cerl_estado='A' )
 		where 
 			cusr_estado = 'A'
-		    cerl_rolacceso = #{rol}
+		    and cerl_rolacceso = #{rol}
 		   	and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
 		<include refid="paginationUsuarioFragment" />
 	</select>
