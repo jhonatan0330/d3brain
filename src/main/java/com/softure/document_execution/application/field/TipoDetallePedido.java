@@ -189,6 +189,26 @@ public class TipoDetallePedido {
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 		
+			PropiedadDTO _prop = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE); 
+			
+			if(_prop!=null) {
+				List<String> _fieldRelations = configuracionSvc.camposRelacionados(_prop);
+				if(_fieldRelations!=null && !_fieldRelations.isEmpty()) {
+					for (DetallePedidoVentaDTO _iDetail : pCampo.getDetalles()) {
+						if(_iDetail.getDocumentoDetalle()!=null && _iDetail.getDocumentoDetalle().getCaracteristicas()!=null) {
+							for (PedidoVentaCaracteristicaDTO _iFieldDocumentToSave : _iDetail.getDocumentoDetalle().getCaracteristicas()) {
+								for(String _iRelation: _fieldRelations) {
+									if(_iRelation.compareTo(_iFieldDocumentToSave.getCampo())==0) {
+										_iFieldDocumentToSave.setValorOpcion(pCampo.getDocumento());
+										break;
+									}
+								}
+							}
+						}
+					}	
+				}
+			}
+			
 			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
 					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());

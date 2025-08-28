@@ -211,7 +211,6 @@
 			,dpvc_valorfecha as  valorFecha
 			,cpvc_valoropcion as  valorOpcion
 			,mpvc_valornumero as  valorNumero
-			,cpvc_valorauxiliar as  valorAuxiliar
 			,cdpc_formato as estado
 			,ndpc_orden as orden
 		from pedidoventacaracteristica_pvcp a
@@ -232,7 +231,6 @@
 			,dpvc_valorfecha as  valorFecha
 			,cpvc_valoropcion as  valorOpcion
 			,mpvc_valornumero as  valorNumero
-			,cpvc_valorauxiliar as  valorAuxiliar
 			,cdpc_formato as estado
 			,ndpc_orden as orden
 		from historic.z_pvc_pedidoventacaracteristica

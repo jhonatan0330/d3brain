@@ -540,6 +540,28 @@ public class CallDocumentListWithFilters {
 			List<PedidoVentaDTO> hijos = null;
 			List<PedidoVentaDineroDTO> dineroDocumentos = null;
 			if (base != null && !base.isEmpty()) {
+				List<String> _ids = new ArrayList<>();
+				for (PedidoVentaCaracteristicaDTO d : base) {
+				    if (DocumentoPlantillaCaracteristicaDTO.VINCULO.equals(d.getEstado())) {
+				        _ids.add(d.getValorOpcion());
+				    }
+				}
+				
+				
+				if(_ids !=null && !_ids.isEmpty()) {
+					List<PedidoVentaDTO> _documentsVinculo = pedidoVentaMapper.listar2Ids(_ids);
+					for (PedidoVentaCaracteristicaDTO _fieldBase : base) {
+						if(_fieldBase.getValorOpcion()!=null) {
+							for (PedidoVentaDTO _document : _documentsVinculo) {
+								if(_fieldBase.getValorOpcion().equals(_document.getLlaveTabla()) && _document.getEstadoNombre()!=null) {
+									_fieldBase.setValorText(_document.getEstadoNombre() + " - " + _fieldBase.getValorText());
+									_fieldBase.setValorAuxiliar(_document.getEstadoExpediente());
+								}
+							}	
+						}
+					}
+				}
+					
 				hijos = pedidoVentaMapper.listarVisibleRenderNivel2(result);
 				if (hijos != null && !hijos.isEmpty()) {
 					List<PedidoVentaCaracteristicaDTO> visibleHijos = pedidoVentaCaracteristicaService
