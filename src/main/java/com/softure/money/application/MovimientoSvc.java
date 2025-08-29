@@ -207,7 +207,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 				// hay un usuario automatico que debo dejar que haga el registro del turno
 				if(cuenta.getValidarTurno() && !rolService.usuarioPermisosCompletos(token) && turno.getUsuario().compareTo(getUserFlex(token))!=0) throw new ServerException("Esta cuenta "+ cuenta.getNombre() +" se encuentra ocupada por "+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
-				if(dto.getFechaEvento().compareTo(turno.getFechaApertura())<0) throw new ServerException("No se pueden registrar movimientos con fechas menores al inicio del turno." + SoftureUtil.formatDateTime(turno.getFechaApertura()));
+				if(dto.getFechaEvento().compareTo(turno.getFechaApertura())<0) throw new ServerException("Iniciaste turno de la cuenta en esta fecha " + SoftureUtil.formatDateTime(turno.getFechaApertura()) + ", te agradecemos que cambies la fecha de tu documento a una fecha que sea mayor");
 			}else{
 				if(cuenta.getValidarTurno())throw new ServerException("Es necesario tener un turno activo en esta caja para registrar un movimiento de dinero");
 			}

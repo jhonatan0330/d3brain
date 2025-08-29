@@ -135,7 +135,7 @@
 		where 
 			cusr_estado = 'A'
 		    and cerl_rolacceso = #{rol}
-		   	and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
+		   	<if test="filtroParametro!=null">and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))</if>
 		<include refid="paginationUsuarioFragment" />
 	</select>
 	
