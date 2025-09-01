@@ -35,9 +35,6 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.property.domain.PropiedadDTO;
-import com.softure.survey.application.EncuestaSvc;
-import com.softure.survey.domain.EncuestaDTO;
-import com.softure.survey.domain.EncuestaFilterDTO;
 import com.softure.tariff.application.base.TarifarioService;
 import com.softure.tariff.domain.TarifarioDTO;
 import com.softure.tariff.domain.TarifarioFilterDTO;
@@ -53,8 +50,6 @@ public class TipoConfiguracion {
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 	@Autowired @Lazy 
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy 
-	private EncuestaSvc encuestaService;
 	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
 	@Autowired @Lazy 
@@ -164,19 +159,6 @@ public class TipoConfiguracion {
 						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(cambio.getNombre());
 						adaptado.setDescripcion(cambio.getMotivo());
-						pCampo.setPrincipal(adaptado);
-					}
-					break;
-				case ENCUESTAS:
-					EncuestaDTO encuesta = encuestaService.consultaXId(pCampo.getValorOpcion());
-					if (encuesta == null) {
-						throw new ServerException("No se identifica la encuesta");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(encuesta.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(encuesta.getNombre());
-						// adaptado.setDescripcion(encuesta.getNombre());
 						pCampo.setPrincipal(adaptado);
 					}
 					break;
@@ -323,14 +305,6 @@ public class TipoConfiguracion {
 						throw new ServerException("No se identifica el categoria");
 					} else {
 						pCampo.setValorText(cambio.getNombre());
-					}
-					break;
-				case ENCUESTAS:
-					EncuestaDTO encuesta = encuestaService.consultaXId(pCampo.getValorOpcion());
-					if (encuesta == null) {
-						throw new ServerException("No se identifica la encuesta");
-					} else {
-						pCampo.setValorText(encuesta.getNombre());
 					}
 					break;
 				case FORMATO_EXPORTAR:
@@ -507,23 +481,6 @@ public class TipoConfiguracion {
 						adaptado.setLlaveTabla(iCambio.getLlaveTabla());
 						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iCambio.getNombre());
-						// adaptado.setDescripcion(iCategoria.getNombre());
-						pBase.getDocumentos().add(adaptado);
-					}
-				}
-				break;
-			case ENCUESTAS:
-				EncuestaFilterDTO encuesta = new EncuestaFilterDTO();
-				encuesta.setFiltroParametro(pCampo.getFiltroParametro());
-				encuesta.setEstado(SharedConstants.STATE_ACTIVE);
-				List<EncuestaDTO> encuestas = encuestaService.listarConsulta(encuesta);
-				if (encuestas != null && !encuestas.isEmpty()) {
-					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for (EncuestaDTO iEncuesta : encuestas) {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(iEncuesta.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(iEncuesta.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}

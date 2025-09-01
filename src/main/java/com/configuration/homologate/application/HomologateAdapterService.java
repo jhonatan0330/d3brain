@@ -45,7 +45,6 @@ public class HomologateAdapterService {
 	
 	@Autowired @Lazy  private HomologateTariff tariffHomologate;
 	@Autowired @Lazy  private HomologateFee feeHomologate;
-	@Autowired @Lazy  private HomologateArticle articleHomologate;
 	@Autowired @Lazy  private HomologateFaq faqHomologate;
 	@Autowired @Lazy  private HomologateCatalog catalogHomologate;
 	@Autowired @Lazy  private HomologateAccount accountHomologate;
@@ -156,10 +155,6 @@ public class HomologateAdapterService {
 			feeHomologate.createFeeFields(templateId, token, campoService, propertyService, crudService);
 			break;
 		}
-		case ConfigEnum.ARTICLE: {
-			articleHomologate.createArticleFields(templateId, token, campoService, propertyService);
-			break;
-		}
 		case ConfigEnum.FAQ: {
 			faqHomologate.createFaqFields(templateId, token, campoService, propertyService);
 			break;
@@ -195,10 +190,6 @@ public class HomologateAdapterService {
 			feeHomologate.createFee(document, token, crudService);
 			break;
 		}
-		case ConfigEnum.ARTICLE: {
-			articleHomologate.updateArticle(document);
-			break;
-		}
 		case ConfigEnum.CATALOG: {
 			catalogHomologate.createCatalog(document);
 			break;
@@ -218,7 +209,6 @@ public class HomologateAdapterService {
 		default:
 			throw new ServerException("Unexpected value: " + propValue);
 		}
-
 	}
 
 	public void crearProducto(PedidoVentaDTO documento, String categoria, String token) throws ServerException {
