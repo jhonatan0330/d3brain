@@ -115,8 +115,11 @@
 
 	<select id="consultaUsuarioDocumento" resultType="RolAccesoDTO">
 		<include refid="selectRolAccesoFragment" />
-, usuariorol_erlp where crac_estado ='A' and crac_llave = cerl_rolacceso and cerl_estado='A'
-and cerl_usuario = (select cuss_usuario from usuariosesion_ussp  where cuss_llave =#{userId})
+		,usuariorol_erlp 
+		where crac_estado ='A' 
+			and crac_llave = cerl_rolacceso 
+			and cerl_estado='A'
+			and cerl_usuario = #{userId}
 	</select>
 	
 
