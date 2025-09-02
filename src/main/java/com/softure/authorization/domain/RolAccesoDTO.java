@@ -1,16 +1,14 @@
 package com.softure.authorization.domain;
 
-// BEGIN region interImport
-// END region interImport
-
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
 @Alias("RolAccesoDTO")
+@JsonInclude(Include.NON_NULL)
 public class RolAccesoDTO extends BasicParamDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String plantilla;
@@ -62,7 +60,5 @@ public class RolAccesoDTO extends BasicParamDTO
 	public Integer getMinutosSesion() {
 		return minutosSesion;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

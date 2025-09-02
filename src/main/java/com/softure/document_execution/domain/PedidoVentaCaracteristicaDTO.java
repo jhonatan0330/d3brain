@@ -16,8 +16,6 @@ import org.apache.ibatis.type.Alias;
 @Alias("PedidoVentaCaracteristicaDTO")
 @JsonInclude(Include.NON_NULL)
 public class PedidoVentaCaracteristicaDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documento;

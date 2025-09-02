@@ -114,8 +114,13 @@
 	
 
 	<select id="consultaUsuarioDocumento" resultType="RolAccesoDTO">
-		<include refid="selectRolAccesoFragment" />
-		,usuariorol_erlp 
+		select
+			crac_llave as  llaveTabla
+			,crac_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  nombre
+			,cerl_documento as  codigo
+			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  imagen
+		from rolacceso_racp a ,usuariorol_erlp 
 		where crac_estado ='A' 
 			and crac_llave = cerl_rolacceso 
 			and cerl_estado='A'
