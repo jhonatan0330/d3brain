@@ -561,7 +561,7 @@ public class CallManageTransition {
 			// throw new ServerException("El resultado ha sido nulo\nDecision : " +
 			// decisionDTO.getNombre());
 		}
-		ProcesoTransicionDTO solucion = getNextTransition(decisionDTO.getLlaveTabla(), resultado);
+		ProcesoTransicionDTO solucion = getNextTransition(decisionDTO.getLlaveTabla(), resultado.toUpperCase());
 		return solucion;
 	}
 

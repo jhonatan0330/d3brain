@@ -34,29 +34,31 @@ public class CallDocumentListBySQLFunction {
 		if(entityFilter==null) entityFilter = new PedidoVentaFilterDTO(); // en tipo proceos autoload no sabia que filtrar
 		if(codigoDepende!=null){//Coloco las dependencias
 			campoService.validarDependientes(campo, dependientes);
-			dependientes = campoService.ordenarAlfabeticaDepende(dependientes);
-			dependientes = campoService.removeDuplicateDepends(dependientes);
-			if(dependientes.get(0).getValorOpcion()!=null)//Se me perdia la referencia y no se porque
-				entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
-			List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
-			for (PedidoVentaCaracteristicaDTO iDependiente : dependientes) {
-				if(iDependiente.getValorOpcion()==null) {
-					if(iDependiente.getExpedientes()!=null ) {
-						//Esto aplica para los campos multiples
-						for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
-							PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
-							pd.setValorOpcion(iExpediente.getLlaveTabla());
-							expedientesMultiples.add(pd);
-						}	
-					}
-					if(iDependiente.getValorText()==null) {
-						if(iDependiente.getValorFecha()!=null) {
-							iDependiente.setValorText(SoftureUtil.formatDateTime(iDependiente.getValorFecha()));
+			if(dependientes!=null) {
+				dependientes = campoService.ordenarAlfabeticaDepende(dependientes);
+				dependientes = campoService.removeDuplicateDepends(dependientes);
+				if(dependientes.get(0).getValorOpcion()!=null)//Se me perdia la referencia y no se porque
+					entityFilter.setLlaveTabla(new String(dependientes.get(0).getValorOpcion()));
+				List<PedidoVentaCaracteristicaDTO> expedientesMultiples = new ArrayList<PedidoVentaCaracteristicaDTO>();
+				for (PedidoVentaCaracteristicaDTO iDependiente : dependientes) {
+					if(iDependiente.getValorOpcion()==null) {
+						if(iDependiente.getExpedientes()!=null ) {
+							//Esto aplica para los campos multiples
+							for (PedidoVentaDTO iExpediente : iDependiente.getExpedientes()) {
+								PedidoVentaCaracteristicaDTO pd = new PedidoVentaCaracteristicaDTO();
+								pd.setValorOpcion(iExpediente.getLlaveTabla());
+								expedientesMultiples.add(pd);
+							}	
+						}
+						if(iDependiente.getValorText()==null) {
+							if(iDependiente.getValorFecha()!=null) {
+								iDependiente.setValorText(SoftureUtil.formatDateTime(iDependiente.getValorFecha()));
+							}
 						}
 					}
 				}
+				if(expedientesMultiples.size()!=0) dependientes.addAll(expedientesMultiples);	
 			}
-			if(expedientesMultiples.size()!=0) dependientes.addAll(expedientesMultiples);
 		}
 		//entityFilter.setDescripcion(funcionConsulta.getLlaveTabla());
 		List<PedidoVentaDTO> result = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(entityFilter, 

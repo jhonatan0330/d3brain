@@ -357,6 +357,8 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	public void validarDependientes(DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException{
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, Propiedades.DEPENDENT_PROPS);
 		if(codigoDepende==null || codigoDepende.isEmpty()) return;
+		// En algunso casos de relacionar me apsaba que llaamba el mismo dependiente y no venia
+		if(codigoDepende.size()==1 && codigoDepende.get(0).getCampo().compareTo(campo.getLlaveTabla())==0) return;
 		//Valido que la cantidad de dependientes este correcta
 		if(dependientes==null || dependientes.isEmpty())throw new ServerException("Revise los dependientes.\n " + campo.getNombre());
 		//if(dependientes.size()!=codigoDepende.size()) throw new ServerException("El numero de dependientes no concuerda. Tipo Expediente" + codigoDepende.size());
