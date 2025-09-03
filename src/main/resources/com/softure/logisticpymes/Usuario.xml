@@ -64,6 +64,11 @@
 		<include refid="paginationUsuarioFragment" />
 	</select>
 
+	<select id="cantidadRegistros" parameterType="UsuarioDTO" resultType="int">
+		select count(*)
+		from usuario_usrp
+		<include refid="whereUsuarioFragment" />
+	</select>
 
 	<select id="insertar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
 		insert into usuario_usrp(
@@ -151,5 +156,7 @@
 		and cusr_estado = 'A'
 		and (cact_responsable is null or cusr_llave != cact_responsable)
 	</select>
+	
+
 
 </mapper>
