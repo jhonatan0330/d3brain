@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -210,10 +212,10 @@ public class WebServiceExecuteAPI {
 		}
 		Map<String, String> headers = getHeaderProperties(service, callWS.getParametersInexecution());
 		// Execution
-		callWS = launchWebService(service, callWS, token, headers, modificador, pIterador);
+		callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, documentMain);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador);
+			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador,documentMain);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = SharedConstants.ERROR;
@@ -233,10 +235,13 @@ public class WebServiceExecuteAPI {
 		if (pParameters != null && pParameters.startsWith("http")) {
 			try {
 				File file = File.createTempFile("PARAMETER_", ".txt");
-				FileUtils.copyURLToFile(new URL(pParameters), file);
+				
+					FileUtils.copyURLToFile(new URI(pParameters).toURL(), file);
+				
 				pParameters=  FileUtils.readFileToString(file, Charset.defaultCharset());
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException e ) {
+				pParameters = pParameters + e.getMessage();
+			} catch (URISyntaxException e) {
 				pParameters = pParameters + e.getMessage();
 			}
 		}
@@ -294,7 +299,7 @@ public class WebServiceExecuteAPI {
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
 				 parentParameters);
-		return launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador);
+		return launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador, documentMain);
 	}
 
 	/**
@@ -310,7 +315,7 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador) throws ServerException {
+			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument) throws ServerException {
 
 		// Reemplazos
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
@@ -373,7 +378,7 @@ public class WebServiceExecuteAPI {
 				// Esto lo puedo quitar con lso apis locales
 				if (modificador != null )
 					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
-							token, extractionString, iterador);
+							token, extractionString, iterador, pMainDocument);
 				
 			}
 			
@@ -437,16 +442,16 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador) throws ServerException {
+			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador, PedidoVentaDTO pMainDocument) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
 			return callWS;
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
-				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador);
+				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, pMainDocument);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador);
+					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador, pMainDocument);
 			}
 		} catch (NumberFormatException e) {
 		}

@@ -57,7 +57,7 @@ public class CallDocumentUpdateFromAutomatic {
 	 * @throws ServerException
 	 */
 	public void executeFromAPIExtraction(PedidoVentaDTO modificador, List<PropiedadDTO> propertiesToSearchFieldDestiny,
-			String token, String extractionText, PedidoVentaDTO iterador) throws ServerException {
+			String token, String extractionText, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument) throws ServerException {
 		// Cuando son servicios asincronos no hay un documento modificador?? de pronto
 		// afecte las extracciones
 		if (modificador == null)
@@ -65,6 +65,7 @@ public class CallDocumentUpdateFromAutomatic {
 		// PedidoVentaDTO processDTO = pedidoService.consultaXId(documentId);
 		Map<String, Object> extractionMap = SoftureUtil.createMaptoString(extractionText);
 		// Necesito crear los campos para que se cargue
+		List<PedidoVentaCaracteristicaDTO> generateFieldsFromPropertyMain = null;
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromPropertyModificator = null;
 		List<PedidoVentaCaracteristicaDTO> generateFieldsFromPropertyIterator = null;
 		for (PropiedadDTO propiedadDTO : propertiesToSearchFieldDestiny) {
@@ -92,6 +93,15 @@ public class CallDocumentUpdateFromAutomatic {
 						}
 						generateFieldsFromPropertyIterator.add(newField);
 					}
+					if (pMainDocument!=null && modificador.getLlaveTabla().compareTo(pMainDocument.getLlaveTabla())!=0 
+							&&  iRelation.getPlantilla().compareTo(pMainDocument.getPlantilla()) == 0) {
+						newField.setCampo(iRelation.getCampo());
+						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
+						if (generateFieldsFromPropertyMain == null) {
+							generateFieldsFromPropertyMain = new ArrayList<>();
+						}
+						generateFieldsFromPropertyMain.add(newField);
+					}
 				}
 			}
 		}
@@ -103,6 +113,11 @@ public class CallDocumentUpdateFromAutomatic {
 		if(iterador != null && generateFieldsFromPropertyIterator != null && !generateFieldsFromPropertyIterator.isEmpty()) {
 					execute(generateFieldsFromPropertyIterator, iterador.getLlaveTabla(), iterador.getTransaccion(), iterador,
 							token, propertiesToSearchFieldDestiny);
+		}
+		
+		if(generateFieldsFromPropertyMain != null && !generateFieldsFromPropertyMain.isEmpty()) {
+			execute(generateFieldsFromPropertyMain, pMainDocument.getLlaveTabla(), pMainDocument.getTransaccion(), pMainDocument,
+					token, propertiesToSearchFieldDestiny);
 		}
 		
 	}
