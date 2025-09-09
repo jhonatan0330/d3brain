@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -148,6 +150,11 @@ public class APIController {
 	@PostMapping(value="/changeState")
 	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,@RequestHeader("Authorization") String token)  throws ServerException  {
 		return pedidoVentaAjusteService.guardar(ajuste, token);	
+	}
+	
+	@GetMapping(value="/getMessageToProcessField/{property}/{fieldValue}")
+	public String message(@PathVariable(name="property") String pProperty,@PathVariable(name="fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token);
 	}
 	
 }

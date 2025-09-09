@@ -1,12 +1,17 @@
 package com.softure.document_execution.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.ArrayList;
+import java.util.List;
 
-import com.shared.domain.SharedConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.document_execution.application.field.CampoAdaptador;
 import com.softure.document_execution.application.field.Propiedades;
@@ -17,6 +22,7 @@ import com.softure.document_execution.domain.PedidoVentaDineroDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaMapper;
 import com.softure.java.services.SoftureUtil;
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -27,15 +33,7 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {
@@ -323,6 +321,15 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
+	}
+
+	public String getMessageToProcessField(String pProperty, String pValue, String pToken)
+			throws ServerException {
+		PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.CAMPO,
+				pProperty, Propiedades.HTML_DOCUMENT_SQL, pToken);
+		if (prop ==null)
+			return null;
+		return propiedadService.validarFuncionSQL2(prop,pValue, pToken);
 	}
 
 }

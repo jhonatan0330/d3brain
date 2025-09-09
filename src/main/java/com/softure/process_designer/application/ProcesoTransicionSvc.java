@@ -153,22 +153,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 		return null;
 	}
-	/*
-	@Autowired @Lazy  ManageTransitionFunction manageTransition;
-	
-	public ProcesoTransicionDTO gestionarTransicion(
-			ProcesoTransicionDTO dto, 
-			String expediente, 
-			PedidoVentaDTO documentoDTO, 
-			BigDecimal valorModificador, 
-			PedidoVentaDineroDTO dineroProcesado, 
-			DocumentoRelacionGestorDTO relacionAnterior,
-			String token,
-			String transaccion) throws ServerException {
-		
-		return manageTransition.execute(dto, expediente, documentoDTO, valorModificador, dineroProcesado, relacionAnterior, token, transaccion);
-	}*/
-	
+
 	private void validarTransicion(ProcesoTransicionDTO dto) throws ServerException {
 		if(dto==null) throw new ServerException("Transicion nula");
 		if(dto.getProceso()==null) throw new ServerException("Transicion sin maquina de estados");
@@ -256,7 +241,6 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		plantilla.setProceso(dto.getProceso());
 		plantilla.setCodigo(codigoFormulario);
 		plantilla.setNombre(dto.getNombre());
-		plantilla.setObjetivo(dto.getNombre());
 		if(dto.getEstadoPartida()==null)plantilla.setPropiedades(new ArrayList<PropiedadDTO>());//Esta es la estrategia para que se cree listable el formularios
 		plantilla = plantillaService.guardar(plantilla, token);
 		if(dto.getEstadoPartida()!=null) plantillaService.crearCampoProcesos(plantilla.getLlaveTabla(), token);

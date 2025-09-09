@@ -539,13 +539,8 @@ public class TipoProceso {
 	
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
-		PedidoVentaCaracteristicaFilterDTO pResult = listDocumentFromFieldProcessFunction.execute(pCampo,
+		return listDocumentFromFieldProcessFunction.execute(pCampo,
 				caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken()));
-		PropiedadDTO _property =Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.HTML_DOCUMENT_SQL); 
-		if(_property != null ) {
-			pResult.setMensaje(propiedadService.validarFuncionSQL2(_property,pCampo.getValorOpcion(), pCampo.getSecurityToken()));
-		}
-		return pResult;
 	}
 
 	private void cerrarCaja(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {

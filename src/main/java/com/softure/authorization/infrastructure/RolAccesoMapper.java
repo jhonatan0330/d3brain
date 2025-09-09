@@ -11,13 +11,9 @@ import com.softure.java.domain.IBasicMapper;
 
 @SoftureSqlConnMapper(value = "RolAccesoMapper")
 public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFilterDTO>{
-	
 
 	List<RolAccesoDTO> consultaUsuarioDocumento(@Param("userId")String userId);
-
-// BEGIN region aditionalMethods  
 	int permisosCompletos(String user);
 	List<RolAccesoDTO> getFullToSynchronize(@Param("process") List<String> process);
-// END region aditionalMethods
 
 }

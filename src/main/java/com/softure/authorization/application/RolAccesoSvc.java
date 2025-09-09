@@ -42,24 +42,8 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	}
 	
 	@Override
-	public RolAccesoDTO activar(RolAccesoDTO dto, String token) throws ServerException {
-		// BEGIN RolAcceso_activar
-		return super.activar(dto, token);
-		// END RolAcceso_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public RolAccesoDTO actualizar( RolAccesoDTO dto, String token) throws ServerException {
-		// BEGIN RolAcceso_actualizar
-		return super.actualizar(dto, token);
-		// END RolAcceso_actualizar
-	}
-	
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RolAccesoDTO inactivar(RolAccesoDTO dto, String token) throws ServerException {
-		// BEGIN RolAcceso_inactivar
 		dto = super.inactivar(dto, token);
 		UsuarioRolFilterDTO filtro = new UsuarioRolFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -68,24 +52,8 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		if(cont!=0) throw new ServerException("No se puede inactivar el rol debido a que tiene usuarios activos. " + cont);
 		propertySvc.inactivateAllPropertiesOfRol(dto.getLlaveTabla(), token);
 		return dto;
-		// END RolAcceso_inactivar
 	}
 	
-	@Override
-	public RolAccesoDTO consultaUnica(RolAccesoFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(RolAccesoFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<RolAccesoDTO> listarConsulta(RolAccesoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
 	
 	public List<RolAccesoDTO> consultaUsuarioDocumento(String userId)throws ServerException{
 		try {
@@ -94,16 +62,6 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public RolAccesoDTO guardar(RolAccesoDTO dto, String token) throws ServerException {
-		// BEGIN RolAcceso_guardar
-		dto = super.guardar(dto, token);
-		return dto;
-		// END RolAcceso_guardar
-	}
-
 
 	public boolean usuarioPermisosCompletos(String token) throws ServerException{
 		String user = getUserFlex(token);
