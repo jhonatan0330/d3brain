@@ -1164,6 +1164,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		return consultadas;
 	}
+	
+	public List<PropiedadDTO> getToUser(String usuario)
+			throws ServerException {
+		return propiedadMapper.consultarPermisosUsuario(usuario);
+	}
 
 	private List<PropiedadDTO> cleanPropertiesFromTimeAndExclusion(List<PropiedadDTO> consultadas) {
 

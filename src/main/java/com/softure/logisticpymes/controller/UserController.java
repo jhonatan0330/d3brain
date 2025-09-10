@@ -22,6 +22,8 @@ import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
+import com.softure.property.application.PropiedadSvc;
+import com.softure.property.domain.PropiedadDTO;
 
 @RestController
 @RequestMapping("/user")
@@ -31,6 +33,7 @@ public class UserController {
 	@Autowired @Lazy  private UsuarioSvc userService;
 	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired @Lazy  private RolAccesoSvc rolAccesoService;
+	@Autowired @Lazy  private PropiedadSvc propertyService;
 
 	@GetMapping(value="/getRole")
 	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization", required = false) String token) throws ServerException {
@@ -57,6 +60,11 @@ public class UserController {
 	@GetMapping(value="/roles/{userId}")
 	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId)throws ServerException {
 			return rolAccesoService.consultaUsuarioDocumento(pUserId);
+	}
+	
+	@GetMapping(value="/properties/{userId}")
+	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId)throws ServerException {
+		return propertyService.getToUser(pUserId);
 	}
 	
 }

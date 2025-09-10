@@ -487,6 +487,51 @@ COST 100;
         <include refid="wherePropiedadFragment" />
     </select>
 
+    <select id="consultarPermisosUsuario" resultType="PropiedadDTO">
+        select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,cpvd_nombre as  nombre
+			,cpvd_codigo as key
+			,cppd_campo as  campo
+			,case cppd_tipo 
+				when 'P' then (select cprc_nombre from proceso_prcp where cprc_llave = cppd_campo)
+				when 'A' then (select cpes_nombre from procesoestado_pesp where cpes_llave = cppd_campo)
+				when 'T' then (select cptr_nombre from procesotransicion_ptrp where cptr_llave = cppd_campo)
+				when 'L' then (select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cppd_campo)
+				when 'C' then (select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = cppd_campo)
+				when 'E' then (select crpb_nombre from reportebase_rpbp where crpb_llave = cppd_campo)
+				when 'O' then (select corg_nombre from organizacion_orgp where corg_llave = cppd_campo)
+				when 'W' then (select cwbs_nombre from webservice_wbsp where cwbs_llave = cppd_campo)
+				when 'S' then (select cser_nombre from servidor_serp where cser_llave = cppd_campo)
+				when 'G' then (select cctg_nombre from account.catalogo_ctg where cctg_llave = cppd_campo)
+				when 'K' then (select ccue_nombre from account.cuenta_cue where ccue_llave = cppd_campo)
+				else cppd_campo 
+			end as valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
+			,cppd_motivo as  motivo
+			,cppd_estado as estado
+		from propiedad_ppdp a
+			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
+        where cppd_estado = 'A'
+            and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
+            and (cppd_rolExcluyente is null or cppd_rolExcluyente in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
+            and (cppd_usuario is null or cppd_usuario = #{usuario})
+            and (cppd_usuarioExcluyente is null or cppd_usuarioExcluyente = #{usuario})
+        order by valor, nombre, key, fechainicial, dppd_fechafinal , usuario, rol, texto
+    </select>
+    
     <select id="consultarRol" resultType="PropiedadDTO">
         select
 			cppd_llave as  llaveTabla
