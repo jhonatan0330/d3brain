@@ -525,10 +525,8 @@ COST 100;
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
         where cppd_estado = 'A'
-            and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
-            and (cppd_rolExcluyente is null or cppd_rolExcluyente in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario}))
-            and (cppd_usuario is null or cppd_usuario = #{usuario})
-            and (cppd_usuarioExcluyente is null or cppd_usuarioExcluyente = #{usuario})
+            and (cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario})
+            		or cppd_usuario = #{usuario})
         order by valor, nombre, key, fechainicial, dppd_fechafinal , usuario, rol, texto
     </select>
     

@@ -59,12 +59,15 @@ import com.softure.java.dto.exception.FlexException;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.application.ServidorSvc;
+import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.logisticpymes.domain.CambioFilterDTO;
 import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
+import com.softure.logisticpymes.domain.UsuarioDTO;
+import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 import com.softure.mail.application.MailUserSendMessage;
 import com.softure.mail.application.MensajePlantillaCorreoSvc;
 import com.softure.mail.application.MensajeSvc;
@@ -130,6 +133,25 @@ import com.softure.webservice.domain.WebServiceFilterDTO;
 @RestController
 @RequestMapping("/flex")
 public class FullControllerDTO {
+	
+	@Autowired @Lazy  private UsuarioSvc usuarioService;
+	
+	@PostMapping(value="/listarRolUsuario")
+	public List<UsuarioDTO> listarRolUsuario(@RequestBody UsuarioFilterDTO dto)throws FlexException {
+		try {
+			return usuarioService.listarRol(dto);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
+	@PostMapping(value="/consultaXIdUsuario")
+	public UsuarioDTO consultaXIdUsuario(@RequestBody String llave) throws FlexException {
+		try {
+			return usuarioService.consultaXId(llave);
+		} catch (ServerException e) {
+			throw new FlexException(e.getMessage());
+		}
+	}
 	
 	
 	@Autowired @Lazy  private PlantillaConsecutivoSvc plantillaConsecutivoService;

@@ -159,6 +159,7 @@ public class Propiedades {
 	public static final String ALERTAR_CAMPO_PROCESO = "ALERTAR_CAMPO_PROCESO";
 
 	public static final String BODEGA_MOVIMIENTO = "BODEGA_MOVIMIENTO";
+	public static final String VINCULO_MAKE_IN_OTHER_FORM = "VINCULO_MAKE_IN_OTHER_FORM";
 
 	////////////////// PLANTILLA////////////////////////////
 	// Si se coloca una nueva propiedad se coloca en el campo instrucciones

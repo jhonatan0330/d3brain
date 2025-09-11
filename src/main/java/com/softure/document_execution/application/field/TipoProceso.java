@@ -477,6 +477,7 @@ public class TipoProceso {
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.MODIFICAR_CAMPO) == null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION) == null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL) == null
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_MAKE_IN_OTHER_FORM) == null
 				) return;
 		pCampo.setDocumentsToBPM(principal);
 		pCampo.setModificadoBPM(modificacion);

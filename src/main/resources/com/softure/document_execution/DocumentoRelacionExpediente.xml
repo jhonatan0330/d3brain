@@ -126,32 +126,6 @@
 		<include refid="whereDocumentoRelacionExpedientePrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleDocumentoRelacionExpedienteFragment">
-		select
-			cdex_llave as  llaveTabla
-			,cdex_campomaestro as  campoMaestro
-			,cdex_expedientedetalle as  expedienteDetalle
-			,cdex_documentoregistro as  documentoRegistro
-			,cdex_documentoinactivo as  documentoInactivo
-			,mdex_valor as  valor
-			,cdex_estado as estado
-		from documentorelacionexpediente_dexp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="DocumentoRelacionExpedienteDTO">
-		<include refid="selectSimpleDocumentoRelacionExpedienteFragment" />
-		<include refid="whereDocumentoRelacionExpedienteFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="DocumentoRelacionExpedienteDTO">
-		<include refid="selectSimpleDocumentoRelacionExpedienteFragment" />
-		<include refid="whereDocumentoRelacionExpedienteFragment" />
-		<include refid="paginationDocumentoRelacionExpedienteFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
 	<select id="listarHeredados" resultType="DocumentoRelacionExpedienteDTO">
 		select
 			cpdv_llave as  expedienteDetalle
@@ -160,6 +134,5 @@
 		and cpdv_llave in (select cdrc_documento from campo_documento where cpvc_campo = #{campoMaestro} and cpvc_valoropcion = #{llaveOpcion})
 		and (cpdv_estadoexpediente is null or cpdv_estadoexpediente in (select cptr_estadopartida from procesotransicion_ptrp  where cptr_plantilla  = #{plantillaTransicion} and cptr_estado = 'A'))
 	</select>
-<!--// END region script-->
 
 </mapper>

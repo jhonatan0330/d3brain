@@ -165,8 +165,7 @@ public class CallDocumentCRUD {
 			logSvc.finalizar(tran.getFecha(), dto.getTransaccion(), session + "-" + userId);
 			return result;
 		} catch (Exception e) {
-			 errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(),
-			 dtoToJson, token);
+			 errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(), dtoToJson, token);
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -501,15 +500,22 @@ public class CallDocumentCRUD {
 		if (pDTO.getCaracteristicas() == null)
 			return;
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
-			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
-				PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField, pToken);
-				if (_vinculateDocument != null) {
-					_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
-					_iField.setValorOpcion(_vinculateDocument.getLlaveTabla());
-					_iField.setValorText(_vinculateDocument.getNombre());
-					tipoVinculoService.guardarCampo(_iField, pToken);
-				}
+			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
+					&& Propiedades.obtenerParametro(_iField.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR)==null) {
+				createDocumentOfVinculateField(pToken, _iField);
 			}
+		}
+	}
+
+	public void createDocumentOfVinculateField(String pToken, PedidoVentaCaracteristicaDTO _iField)
+			throws ServerException {
+		
+		PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField, pToken);
+		if (_vinculateDocument != null) {
+			_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
+			_iField.setValorOpcion(_vinculateDocument.getLlaveTabla());
+			_iField.setValorText(_vinculateDocument.getNombre());
+			tipoVinculoService.guardarCampo(_iField, pToken);
 		}
 	}
 
@@ -707,24 +713,7 @@ public class CallDocumentCRUD {
 			// que queden completas asi el campo este despues en orden
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
 
-				List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(),
-						Propiedades.DEPENDENT_PROPS);
-				if (codigoDepende != null) {
-					for (PropiedadDTO codigo : codigoDepende) {
-						for (PedidoVentaCaracteristicaDTO fieldExpediente : dto.getCaracteristicas()) {
-							if (codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0) {
-								if (campoDocumento.getDependientes() == null)
-									campoDocumento.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
-								if (fieldExpediente.getModificado())
-									campoDocumento.setModificado(true);
-								campoDocumento.getDependientes().add(fieldExpediente);
-								break;
-							}
-						}
-					}
-					// Esto es muy riesgoso hacerlo toca despues con calma hacer pruebas
-					// campoDocumento.setDependientes(pedidoVentaCaracteristicaService.ordenarAlfabeticaDepende(campoDocumento.getDependientes()));
-				}
+				organizeDepends(dto.getCaracteristicas(), campoDocumento);
 			}
 			// 3. valido cada campo
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
@@ -758,6 +747,27 @@ public class CallDocumentCRUD {
 			} else {
 				dto.setTextoFiltro(null);
 			}
+		}
+	}
+
+	public void organizeDepends(List<PedidoVentaCaracteristicaDTO> pFieldsDTO, PedidoVentaCaracteristicaDTO pField) {
+		List<PropiedadDTO> _propDepend = Propiedades.obtenerVariosParametro(pField.getCampoDTO(),
+				Propiedades.DEPENDENT_PROPS);
+		if (_propDepend != null) {
+			for (PropiedadDTO _iProp : _propDepend) {
+				for (PedidoVentaCaracteristicaDTO fieldExpediente : pFieldsDTO) {
+					if (_iProp.getValor().compareTo(fieldExpediente.getCampo()) == 0) {
+						if (pField.getDependientes() == null)
+							pField.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
+						if (fieldExpediente.getModificado())
+							pField.setModificado(true);
+						pField.getDependientes().add(fieldExpediente);
+						break;
+					}
+				}
+			}
+			// Esto es muy riesgoso hacerlo toca despues con calma hacer pruebas
+			// campoDocumento.setDependientes(pedidoVentaCaracteristicaService.ordenarAlfabeticaDepende(campoDocumento.getDependientes()));
 		}
 	}
 

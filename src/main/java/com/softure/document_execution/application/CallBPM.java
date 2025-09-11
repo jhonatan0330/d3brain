@@ -57,13 +57,40 @@ public class CallBPM {
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
 
-	public void execute(PedidoVentaDTO document, String token, PedidoVentaDTO pGeneratorToBPM) throws ServerException {
-		if (document == null || document.getCaracteristicas() == null || document.getCaracteristicas().isEmpty())
+	public void execute(PedidoVentaDTO pDocument, String token, PedidoVentaDTO pGeneratorToBPM) throws ServerException {
+		if (pDocument == null || pDocument.getCaracteristicas() == null || pDocument.getCaracteristicas().isEmpty())
 			return;
-		for (PedidoVentaCaracteristicaDTO iField : document.getCaracteristicas()) {
+		for (PedidoVentaCaracteristicaDTO iField : pDocument.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
 				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token, pGeneratorToBPM);
-				CallDocumentCommons.copyMessages( iField.getDocumentsToBPM(), document);
+				CallDocumentCommons.copyMessages( iField.getDocumentsToBPM(), pDocument);
+				PropiedadDTO _propMake = Propiedades.obtenerParametro(iField.getCampoDTO(), Propiedades.VINCULO_MAKE_IN_OTHER_FORM); 
+				if(_propMake!=null) {
+					List<String> _relationIds = propiedadService.camposRelacionados(_propMake);
+					if(_relationIds==null || _relationIds.isEmpty()) 
+						throw new ServerException("La propiedad VINCULO_MAKE_IN_OTHER_FORM no tiene relaciones. Campo: " +iField.getCampoDTO().getNombre() );
+					if(iField.getValorOpcion()!=null) {
+						PedidoVentaDTO _expediente = pedidoService.consultaXId(iField.getValorOpcion());
+						if (_expediente == null)
+							throw new ServerException("No se identifico el expediente");
+						_expediente = pedidoService.obtenerCamposCompletos(_expediente, token);
+						for (String _iIdField : _relationIds) {
+							for (PedidoVentaCaracteristicaDTO _iFieldToReview : _expediente.getCaracteristicas()) {
+								if(_iFieldToReview.getCampo().compareTo(_iIdField)==0) {
+									_iFieldToReview.setPrincipal(_expediente);
+									_iFieldToReview.setTransaccionRegistro(pDocument.getTransaccion());
+									if(_iFieldToReview.getCampoDTO().getPropiedades()==null) {
+										_iFieldToReview.getCampoDTO().setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+												_iFieldToReview.getCampo(), null, null)); 
+									}
+									saveUpdateInactivateDocumentFunction.organizeDepends(_expediente.getCaracteristicas(), _iFieldToReview);
+									saveUpdateInactivateDocumentFunction.createDocumentOfVinculateField(token, _iFieldToReview);
+									break;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}

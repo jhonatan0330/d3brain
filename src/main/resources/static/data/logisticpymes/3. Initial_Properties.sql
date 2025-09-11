@@ -617,3 +617,5 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto) 
 	VALUES('PROP_293' , 'A', 'API_SQL', 'API_SQL', 'REQUISITO', 'P', true);
 	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
+	VALUES('PROP_294' , 'C', 'GENERAR CAMPO VINCULO DEL DOICUMENTO SELECCIONADO', 'VINCULO_MAKE_IN_OTHER_FORM', 'REQUISITO', 'Z', true);

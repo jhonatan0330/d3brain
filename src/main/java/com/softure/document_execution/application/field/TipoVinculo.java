@@ -102,7 +102,6 @@ public class TipoVinculo {
 				throw new ServerException(
 						"No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
 			}
-
 		}
 		return generateDocumentToVinculate(pCampo, ptoken, _templateId, pCampo.getPrincipal().getLlaveTabla());
 	}
