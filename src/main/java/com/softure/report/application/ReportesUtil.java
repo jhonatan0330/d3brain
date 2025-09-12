@@ -1,13 +1,11 @@
 package com.softure.report.application;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Connection;
 import java.util.Map;
 
 import com.shared.domain.ServerException;
 
-import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -27,22 +25,25 @@ public class ReportesUtil {
 	private static final String REPORTE_ENCABEZADO_EXCEL = "REPORTE_ENCABEZADO_EXCEL";
 	private static final String REPORTE_PIE_PAGINA = "REPORTE_PIE_PAGINA";
 
-	public static byte[] exportarReporteExcel(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion) throws Exception {
+	public static byte[] exportarReporteExcel(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion, JasperReportCache pCache, String pReportKey) throws Exception {
 		try {
 			if(parametrosReporte.containsKey(REPORTE_ENCABEZADO_EXCEL)) {
-				JasperReport encabezado = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_ENCABEZADO_EXCEL).toString().getBytes("utf-8")));
+				JasperReport encabezado = pCache.getReport(parametrosReporte.get(REPORTE_ENCABEZADO_EXCEL).toString(), pReportKey);
+				//JasperReport encabezado = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_ENCABEZADO_EXCEL).toString().getBytes("utf-8")));
 				parametrosReporte.put(REPORTE_ENCABEZADO_EXCEL, encabezado);
 				reportejrxml = replaceHeader(reportejrxml, REPORTE_ENCABEZADO_EXCEL);
 			}
 			for (Map.Entry<String, Object> entry: parametrosReporte.entrySet()) {
 				if(entry.getKey().startsWith(P_SUBREPORT)) {
-					JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
+					JasperReport jasperSubReport = pCache.getReport(entry.getValue().toString(), pReportKey);
+					//JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
 					parametrosReporte.put(entry.getKey(), jasperSubReport);
 					reportejrxml = replaceReport(reportejrxml,jasperSubReport.getName(), entry.getKey());
 				}
 			}
 			
-			JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
+			JasperReport jasperReport = pCache.getReport(reportejrxml, pReportKey);
+			//JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametrosReporte, conexion);
 			ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();
 			JRXlsExporter vXlsExporter = new JRXlsExporter();
@@ -136,28 +137,32 @@ public class ReportesUtil {
 		return report;
 	}
 	
-	public static byte[] exportarReportePDF(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion)throws Exception {
+	public static byte[] exportarReportePDF(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion, JasperReportCache pCache, String pReportKey)throws Exception {
 		ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();
 		try {
 			if(parametrosReporte.containsKey(REPORTE_ENCABEZADO)) {
-				JasperReport encabezado = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_ENCABEZADO).toString().getBytes("utf-8")));
+				JasperReport encabezado = pCache.getReport(parametrosReporte.get(REPORTE_ENCABEZADO).toString(), pReportKey);
+				//JasperReport encabezado = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_ENCABEZADO).toString().getBytes("utf-8")));
 				parametrosReporte.put(REPORTE_ENCABEZADO, encabezado);
 				reportejrxml = replaceHeader(reportejrxml, REPORTE_ENCABEZADO);
 			}
 			if(parametrosReporte.containsKey(REPORTE_PIE_PAGINA)) {
-				JasperReport piePage = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_PIE_PAGINA).toString().getBytes("utf-8")));
+				JasperReport piePage = pCache.getReport(parametrosReporte.get(REPORTE_PIE_PAGINA).toString(), pReportKey);
+				//JasperReport piePage = JasperCompileManager.compileReport(new ByteArrayInputStream(parametrosReporte.get(REPORTE_PIE_PAGINA).toString().getBytes("utf-8")));
 				parametrosReporte.put(REPORTE_PIE_PAGINA, piePage);
 				reportejrxml = replaceFooter(reportejrxml);
 			}
 			for (Map.Entry<String, Object> entry: parametrosReporte.entrySet()) {
 				if(entry.getKey().startsWith(P_SUBREPORT)) {
-					JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
+					JasperReport jasperSubReport = pCache.getReport(entry.getValue().toString(), pReportKey);
+					//JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
 					parametrosReporte.put(entry.getKey(), jasperSubReport);
 					reportejrxml = replaceReport(reportejrxml,jasperSubReport.getName(), entry.getKey());
 				}
 			}
 			
-			JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
+			JasperReport jasperReport = pCache.getReport(reportejrxml, pReportKey);
+			//JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametrosReporte, conexion);
 
 			SimplePdfExporterConfiguration configuration = null;
@@ -191,18 +196,20 @@ public class ReportesUtil {
 		}
 	}
 
-	public static byte[] exportarReporteHTML(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion) throws Exception {
+	public static byte[] exportarReporteHTML(String reportejrxml, Map<String, Object> parametrosReporte, Connection conexion, JasperReportCache pCache, String pReportKey) throws Exception {
 		try {
 			
 			for (Map.Entry<String, Object> entry: parametrosReporte.entrySet()) {
 				if(entry.getKey().startsWith(P_SUBREPORT)) {
-					JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
+					JasperReport jasperSubReport = pCache.getReport(entry.getValue().toString(), pReportKey);
+					//JasperReport jasperSubReport = JasperCompileManager.compileReport(new ByteArrayInputStream(entry.getValue().toString().getBytes("utf-8")));
 					parametrosReporte.put(entry.getKey(), jasperSubReport);
 					reportejrxml = replaceReport(reportejrxml,jasperSubReport.getName(), entry.getKey());
 				}
 			}
 			
-			JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
+			JasperReport jasperReport = pCache.getReport(reportejrxml, pReportKey);
+			//JasperReport jasperReport = JasperCompileManager.compileReport(new ByteArrayInputStream(reportejrxml.getBytes("utf-8")));
 			JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametrosReporte, conexion);
 			
 			ByteArrayOutputStream vByteOutputStream = new ByteArrayOutputStream();

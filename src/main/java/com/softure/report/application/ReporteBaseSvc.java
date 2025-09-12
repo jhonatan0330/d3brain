@@ -79,6 +79,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired
 	@Lazy
 	private MailSendMessageToAdminService mensajeToAdminService;
+	@Autowired
+	@Lazy
+	private JasperReportCache cacheService;
 
 	public static final String P_KEY = "P_KEY";
 
@@ -339,7 +342,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			if (Propiedades.obtenerParametro(reporte, Propiedades.CONNECTION_STRING_DB) != null) {
 				generadorReporte = new GeneradorReportes(Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB));
 			}else {
-				generadorReporte = new GeneradorReportes(dataSource.getConnection());
+				generadorReporte = new GeneradorReportes(dataSource.getConnection(), cacheService, reporte.getLlaveTabla());
 			}
 			byte[] resultado = null;
 			if (tipoReporte == null) {

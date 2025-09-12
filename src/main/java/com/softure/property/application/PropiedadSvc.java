@@ -61,6 +61,7 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.PropiedadValorDefinidoFilterDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.property.infrastructure.PropiedadMapper;
+import com.softure.report.application.JasperReportCache;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.report.domain.ReporteBaseFilterDTO;
@@ -120,6 +121,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	@Autowired @Lazy 
 	private HomologateAdapterService homologateService;
+	
+	@Autowired @Lazy 
+	private JasperReportCache reportCacheService;
 	
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
@@ -1464,6 +1468,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				}
 			}
 		}
+		reportCacheService.clearCache();
 	}
 
 	private void vaildarBase64(PropiedadDTO dto) throws ServerException {

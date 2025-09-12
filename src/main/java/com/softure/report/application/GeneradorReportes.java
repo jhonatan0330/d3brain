@@ -13,15 +13,19 @@ import net.sf.jasperreports.engine.JRParameter;
 public class GeneradorReportes {
 
 	private Connection conexion ;
+	private JasperReportCache cache;
+	private String reportKey;
 	private boolean isRemote = false;
 	
 	public Connection getConexion() {
 		return conexion;
 	}
 
-	public GeneradorReportes(Connection conexionSource) throws Exception {
+	public GeneradorReportes(Connection conexionSource, JasperReportCache pCache, String pReportKey) throws Exception {
 		if ( conexionSource == null ) throw new Exception("Llave conexion esta nula", null);
 		conexion = conexionSource;
+		this.cache =pCache;
+		this.reportKey = pReportKey;
 	}
 	
 	public GeneradorReportes(String dataSource) throws Exception {
@@ -44,7 +48,7 @@ public class GeneradorReportes {
 			pParametrosReporte.put(JRParameter.IS_IGNORE_PAGINATION, true);
 		}
 		try {
-			return ReportesUtil.exportarReporteExcel(pNombreReporte, pParametrosReporte, conexion);
+			return ReportesUtil.exportarReporteExcel(pNombreReporte, pParametrosReporte, conexion, cache, reportKey);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -60,7 +64,7 @@ public class GeneradorReportes {
 
 	public byte[] generarReportePDF(String pNombreReporte,	Map<String, Object> pParametrosReporte) throws Exception {
 		try {
-			return ReportesUtil.exportarReportePDF(pNombreReporte, pParametrosReporte, conexion);
+			return ReportesUtil.exportarReportePDF(pNombreReporte, pParametrosReporte, conexion, cache, reportKey);
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -76,7 +80,7 @@ public class GeneradorReportes {
 	
 	public byte[] generarReporteHTML(String pNombreReporte,	Map<String, Object> pParametrosReporte) throws Exception {
 		try {
-			return ReportesUtil.exportarReporteHTML(pNombreReporte, pParametrosReporte, conexion);
+			return ReportesUtil.exportarReporteHTML(pNombreReporte, pParametrosReporte, conexion, cache, reportKey);
 		} catch (Exception e) {
 			throw e;
 		} finally {
