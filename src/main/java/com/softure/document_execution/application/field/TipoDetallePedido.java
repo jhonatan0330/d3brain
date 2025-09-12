@@ -209,13 +209,16 @@ public class TipoDetallePedido {
 				}
 			}
 			
-			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
-			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
-			if (bd != null) {
-				if (pCampo.getValorText() == null) {
-					return pCampo;
-				} else {
+			
+			
+			
+			if (pCampo.getValorText() == null) {
+				return pCampo;
+			} else {
+				PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
+				if (bd != null) {
+					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
+							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 					if (pCampo.getValorText().compareTo(bd.getValorText()) == 0
 							&& ((bd.getValorNumero() == null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 									|| (bd.getValorNumero() != null
@@ -226,13 +229,12 @@ public class TipoDetallePedido {
 						bd.setValorNumero(pCampo.getValorNumero());
 						return campoService.actualizar(bd, token);
 					}
+				}else {
+					bd = campoService.guardar(pCampo, token);
+					pCampo.setLlaveTabla(bd.getLlaveTabla());
+					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
+							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));		
 				}
-			}
-			if (pCampo.getValorText() == null) {
-				return pCampo;
-			} else {
-				bd = campoService.guardar(pCampo, token);
-				pCampo.setLlaveTabla(bd.getLlaveTabla());
 			}
 		}
 
