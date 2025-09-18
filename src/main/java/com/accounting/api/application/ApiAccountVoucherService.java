@@ -2,6 +2,7 @@ package com.accounting.api.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +31,7 @@ import com.shared.domain.SharedIdResponse;
 import com.shared.domain.SharedToken;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.java.services.SoftureUtil;
 
 @Service
 public class ApiAccountVoucherService {
@@ -67,8 +69,9 @@ public class ApiAccountVoucherService {
 		header.setValue(_item.getValue());
 		header.setType(_item.getType());
 		voucher.setHeader(header);
-
+		
 		List<VoucherLine> lines = new ArrayList<>();
+		Map<String, AccountDTO> _accountMap = new java.util.HashMap<String, AccountDTO>();
 		for (VoucherLineRequest accountRecordDTO : _item.getLines()) {
 			AccountRecordDTO line = new AccountRecordDTO();
 			line.setAccount(accountRecordDTO.getAccount());
@@ -84,14 +87,24 @@ public class ApiAccountVoucherService {
 				_line.setReferences(new ArrayList<>());
 				for (VoucherLineDimensionRequest iReference : accountRecordDTO.getReferences()) {
 					
-					AccountDTO accountReference = accountService.findAccountByDocumentId(_item.getCatalog(), iReference.getDocumentId(), accountRecordDTO.getAccount());
-					if (accountReference == null) 
-						accountReference = createAccountService.createAuxiliarAccount(_item, accountRecordDTO.getAccount(), iReference.getDocumentId());
+					AccountDTO _accountReference = null;
+					String _referenceString = SoftureUtil.formatFunction(iReference.getDocumentId() + "_"+ accountRecordDTO.getAccount());
+					if (_accountMap.containsKey(_referenceString)) {
+						_accountReference = _accountMap.get(_referenceString);
+					}else {
+						_accountReference =  accountService.findAccountByDocumentId(_item.getCatalog(), iReference.getDocumentId(), accountRecordDTO.getAccount());
+						if(_accountReference!=null)_accountMap.put(_referenceString, _accountReference);
+					}
 					
+					if (_accountReference == null) {
+						_accountReference = createAccountService.createAuxiliarAccount(_item, accountRecordDTO.getAccount(), iReference.getDocumentId());
+						_accountMap.put(_referenceString, _accountReference);
+					}
+						
 					AccountRecordAuxiliarDTO _auxiliar = new AccountRecordAuxiliarDTO();
 					_auxiliar.setAuxiliarDocumentId(iReference.getDocumentId());
 					_auxiliar.setAuxiliarType(iReference.getAuxiliar());
-					_auxiliar.setAccount(accountReference.getKey());
+					_auxiliar.setAccount(_accountReference.getKey());
 					_line.getReferences().add(_auxiliar);
 				}
 			}
@@ -99,13 +112,13 @@ public class ApiAccountVoucherService {
 			lines.add(_line);
 		}
 		voucher.setRecords(lines);
-
 		return createService.call(voucher, _token);
 	}
 
 	
 
 	private void validateItem(VoucherRequest item, SharedToken pToken) throws ServerException {
+	
 		if (item.getCatalog() == null || item.getCatalog().isEmpty())
 			throw new ServerException("El codigo del catalogo no se reconoce");
 		if (item.getType() == null || item.getType().isEmpty())
@@ -138,22 +151,29 @@ public class ApiAccountVoucherService {
 		item.setCatalog(catalog.getKey());
 		item.setType(type.getKey());
 
+		Map<String, AccountDTO> _accountMap = new java.util.HashMap<String, AccountDTO>();
 		for (int i = 0; i < item.getLines().size(); i++) {
 			VoucherLineRequest lineVO = item.getLines().get(i);
 			if (lineVO.getAccount() == null)
 				throw new ServerException("La linea " + i + " no tiene el codigo de la cuenta");
-			AccountDTO account = getAccount(catalog, lineVO);
+			AccountDTO account = getAccount(catalog, lineVO, _accountMap);
 			lineVO.setAccount(account.getKey());
 		}
+		
 	}
 
-	private AccountDTO getAccount(CatalogDTO catalog, VoucherLineRequest lineVO) throws ServerException {
-		
-		AccountDTO account = accountService.findAccountByCode(catalog.getKey(), lineVO.getAccount(), null);
-		if (account == null)
-			throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
-		if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
-            throw new ServerException("La cuenta (" + account.getCode() + ") " + account.getName() + " no es operativa, revisa que la cuenta no sea un auxiliar o un grupo");
+	private AccountDTO getAccount(CatalogDTO catalog, VoucherLineRequest lineVO, Map<String, AccountDTO> pAccountMap) throws ServerException {
+		AccountDTO account = null;
+		if (pAccountMap.containsKey(lineVO.getAccount().toUpperCase())) {
+			account = pAccountMap.get(lineVO.getAccount().toUpperCase());
+		}else {
+			account = accountService.findAccountByCode(catalog.getKey(), lineVO.getAccount(), null);
+			if (account == null)
+				throw new ServerException("No se reconoce la cuenta con el codigo " + lineVO.getAccount().toUpperCase());
+			if(account.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
+	            throw new ServerException("La cuenta (" + account.getCode() + ") " + account.getName() + " no es operativa, revisa que la cuenta no sea un auxiliar o un grupo");
+			pAccountMap.put(lineVO.getAccount().toUpperCase(), account);
+		}
 		
 		if (lineVO.getReferences() != null && !lineVO.getReferences().isEmpty()) {
 			for (VoucherLineDimensionRequest reference : lineVO.getReferences()) {

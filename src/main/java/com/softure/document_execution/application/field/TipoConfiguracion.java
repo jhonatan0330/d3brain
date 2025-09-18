@@ -217,7 +217,7 @@ public class TipoConfiguracion {
 					if (optionsToSelect != null)
 						break;
 					for (PedidoVentaCaracteristicaDTO iFieldDependent : pCampo.getDependientes()) {
-						if (propiedadDTO.getValor().compareTo(iFieldDependent.getValorText()) == 0) {
+						if (iFieldDependent.getValorText()!= null && propiedadDTO.getValor().compareTo(iFieldDependent.getValorText()) == 0) {
 							optionsToSelect = propiedadDTO.getValor();
 							break;
 						}
