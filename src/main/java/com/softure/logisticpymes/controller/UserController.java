@@ -52,6 +52,11 @@ public class UserController {
 		return userService.consultaXId(pUserId);
 	}
 	
+	@GetMapping("/document/{documentId}")
+	public UsuarioDTO getUserByDocument(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="documentId") String pDocumentId) throws ServerException {
+		return userService.getUserByDocument(pDocumentId);
+	}
+	
 	@PostMapping(value="/cambiarClaveUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token)throws ServerException {
 		return usuarioAutenticacionService.cambiarClave(dto, token);

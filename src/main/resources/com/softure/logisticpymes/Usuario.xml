@@ -157,6 +157,11 @@
 		and (cact_responsable is null or cusr_llave != cact_responsable)
 	</select>
 	
+	<select id="getUserByDocument" resultType="UsuarioDTO">
+		<include refid="selectUsuarioFragment" />
+		inner join usuariorol_erlp on (cerl_usuario = cusr_llave and cerl_estado = 'A')
+		where cerl_documento =  #{pDocument}
+	</select>
 
 
 </mapper>

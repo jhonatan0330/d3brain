@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.shared.domain.SharedApiErrorResponse;
+import com.shared.domain.SharedIdResponse;
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
@@ -153,8 +154,8 @@ public class APIController {
 	}
 	
 	@GetMapping(value="/getMessageToProcessField/{property}/{fieldValue}")
-	public String message(@PathVariable(name="property") String pProperty,@PathVariable(name="fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token);
+	public SharedIdResponse message(@PathVariable(name="property") String pProperty,@PathVariable(name="fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)  throws ServerException  {
+		return new SharedIdResponse(null, null, null, pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token))  ;
 	}
 	
 }

@@ -107,7 +107,10 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	
 	public List<UsuarioDTO> listarRol(UsuarioFilterDTO dto)throws ServerException{
 		// BEGIN region listarRol
-		if(dto.getRol()==null) return listarConsulta(dto);
+		if(dto.getRol()==null) {
+			if(dto.getEstado()==null) dto.setEstado(SharedConstants.STATE_ACTIVE);
+			return listarConsulta(dto);
+		}
 		// END region listarRol
 		paginar(dto);
 		try {
@@ -139,6 +142,10 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		UsuarioDTO bd = consultaXId(getUserFlex(token));
 		bd.setImagen(url);
 		return update(bd);
+	}
+	
+	public UsuarioDTO getUserByDocument(String pDocument) throws ServerException {
+		return usuarioMapper.getUserByDocument(pDocument);
 	}
 
 }

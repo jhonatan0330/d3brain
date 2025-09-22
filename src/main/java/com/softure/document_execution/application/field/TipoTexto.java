@@ -90,6 +90,9 @@ public class TipoTexto {
 			case "S": {
 				break;
 			}
+			case "D": {
+				break;
+			}
 			case "N": {
 				validateFormatProperty(pCampo.getValorText().split(";"), "^[0-9]*$", pCampo);
 				pCampo.setValorText(pCampo.getValorText().toLowerCase());

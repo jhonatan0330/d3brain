@@ -29,6 +29,13 @@ public class CallDocumentListBySQLFunction {
 			PropiedadDTO funcionConsulta, 
 			String campoValor,
 			String token) throws ServerException{
+		List<PedidoVentaDTO> result = executeWithoutDetailDocument(campo, dependientes, entityFilter, funcionConsulta);
+		return listDocumentWithFiltersFunction.listadoCompleto( result, token, campoValor);
+	}
+
+	public List<PedidoVentaDTO> executeWithoutDetailDocument(DocumentoPlantillaCaracteristicaDTO campo,
+			List<PedidoVentaCaracteristicaDTO> dependientes, PedidoVentaFilterDTO entityFilter,
+			PropiedadDTO funcionConsulta) throws ServerException {
 		//En caso que sea funcion y tenga una dependencia va a aenviar ese valor como llave tabla
 		List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campo, Propiedades.DEPENDENT_PROPS);
 		if(entityFilter==null) entityFilter = new PedidoVentaFilterDTO(); // en tipo proceos autoload no sabia que filtrar
@@ -63,7 +70,7 @@ public class CallDocumentListBySQLFunction {
 		//entityFilter.setDescripcion(funcionConsulta.getLlaveTabla());
 		List<PedidoVentaDTO> result = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(entityFilter, 
 				funcionConsulta.getLlaveTabla(), dependientes);
-		return listDocumentWithFiltersFunction.listadoCompleto( result, token, campoValor);
+		return result;
 	}
 
 }

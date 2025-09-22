@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
+import com.softure.document_execution.application.CallDocumentListBySQLFunction;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
@@ -42,6 +43,8 @@ public class TipoVinculo {
 	@Autowired
 	@Lazy
 	private CallDocumentCRUD crudService;
+	@Autowired @Lazy 
+	private CallDocumentListBySQLFunction sqlFunctionService;
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
@@ -78,8 +81,32 @@ public class TipoVinculo {
 
 	public PedidoVentaDTO doDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken)
 			throws ServerException {
+		
+		PropiedadDTO _functionSQl = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_GET_PREVIOUS_SQL);
+		
 		PropiedadDTO _templateId = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_DATA);
-		return createDocumentToSave(pCampo, ptoken, _templateId);
+	
+		if(_functionSQl !=null) {
+			List<PedidoVentaDTO> _optionToLink =  sqlFunctionService.executeWithoutDetailDocument(pCampo.getCampoDTO(), pCampo.getDependientes(), null, _functionSQl);
+			if(_optionToLink!=null && _optionToLink.size()> 1) {
+				throw new ServerException(
+						"El campo vinculo esta consultando si exsite un documento al cual vincular, pero la funcion devuelve muchos resultados, por favor revisa la funcion");
+			}
+			if(_optionToLink!=null && _optionToLink.size()== 1) {
+				return _optionToLink.get(0);
+			}
+		}
+		
+		if (_templateId == null || _templateId.getValor().isEmpty()) {
+			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) != null) {
+				return null; // Si el campo es opcional, no se genera un documento, para los update
+			} else {
+				throw new ServerException(
+						"No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
+			}
+		}
+		return generateDocumentToVinculate(pCampo, ptoken, _templateId, pCampo.getPrincipal().getLlaveTabla());
+		
 	}
 
 	public void updateDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken) throws ServerException {
@@ -93,18 +120,7 @@ public class TipoVinculo {
 				Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE));
 	}
 
-	private PedidoVentaDTO createDocumentToSave(PedidoVentaCaracteristicaDTO pCampo, String ptoken,
-			PropiedadDTO _templateId) throws ServerException {
-		if (_templateId == null || _templateId.getValor().isEmpty()) {
-			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) != null) {
-				return null; // Si el campo es opcional, no se genera un documento, para los update
-			} else {
-				throw new ServerException(
-						"No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
-			}
-		}
-		return generateDocumentToVinculate(pCampo, ptoken, _templateId, pCampo.getPrincipal().getLlaveTabla());
-	}
+	
 
 	private PedidoVentaDTO generateDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken,
 			PropiedadDTO _templateId, String pDocumentToRelationMain) throws ServerException {

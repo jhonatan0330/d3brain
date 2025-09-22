@@ -18,5 +18,6 @@ public interface UsuarioMapper extends IBasicMapper<UsuarioDTO, UsuarioFilterDTO
 
 // BEGIN region aditionalMethods  
 	List<UsuarioDTO> getUsersState(@Param("document")String document);
+	UsuarioDTO getUserByDocument(@Param("pDocument")String pDocument);
 // END region aditionalMethods
 }

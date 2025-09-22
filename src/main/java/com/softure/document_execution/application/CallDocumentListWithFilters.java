@@ -344,12 +344,13 @@ public class CallDocumentListWithFilters {
 			filtro.setFuncionarioNombre(dtoFilter.getFuncionarioNombre());
 			filtro.setFuncionario(filterDTO.getFuncionario()); // No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
+			List<String> generalState = generateFiltersByGeneralState(filtro);
 			if (secToken != null || filtro.getFuncionario() != null)
 				filtro.setCaracteristicas(filterDTO.getCaracteristicas());
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
-							listarPermitidos(filtro, null, null, null, null, null, null, null), token,
+							listarPermitidos(filtro, null, null, null, null, null, null, generalState), token,
 							null);
 				} catch (ServerException e) {
 					throw new ServerException(e.getMessage());

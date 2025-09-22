@@ -160,6 +160,8 @@ public class Propiedades {
 
 	public static final String BODEGA_MOVIMIENTO = "BODEGA_MOVIMIENTO";
 	public static final String VINCULO_MAKE_IN_OTHER_FORM = "VINCULO_MAKE_IN_OTHER_FORM";
+	public static final String VINCULO_GET_PREVIOUS_SQL = "VINCULO_GET_PREVIOUS_SQL";
+	
 
 	////////////////// PLANTILLA////////////////////////////
 	// Si se coloca una nueva propiedad se coloca en el campo instrucciones

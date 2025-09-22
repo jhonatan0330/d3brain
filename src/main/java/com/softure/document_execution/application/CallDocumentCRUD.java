@@ -512,7 +512,7 @@ public class CallDocumentCRUD {
 		
 		PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField, pToken);
 		if (_vinculateDocument != null) {
-			_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
+			if(_vinculateDocument.getLlaveTabla()==null) _vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
 			_iField.setValorOpcion(_vinculateDocument.getLlaveTabla());
 			_iField.setValorText(_vinculateDocument.getNombre());
 			tipoVinculoService.guardarCampo(_iField, pToken);

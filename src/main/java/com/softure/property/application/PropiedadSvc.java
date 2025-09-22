@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -192,6 +193,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			switch (bd.getKey()) {
 			case Propiedades.TABLERO_CONTROL_SQL:
 			case Propiedades.VINCULO_FIELD_SQL:
+			case Propiedades.VINCULO_GET_PREVIOUS_SQL:
 			case Propiedades.PROCESO_FUNCION_SQL:
 				propiedadMapper.eliminarFuncionFiltros(bd);
 				break;
@@ -356,6 +358,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				switch (dto.getKey()) {
 				case Propiedades.TABLERO_CONTROL_SQL:
 				case Propiedades.VINCULO_FIELD_SQL:
+				case Propiedades.VINCULO_GET_PREVIOUS_SQL:
 				case Propiedades.PROCESO_FUNCION_SQL:
 					propiedadMapper.crearFuncionFiltros(dto);
 					break;
@@ -1370,6 +1373,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		try {
 			respuestaValidacion = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(dto.getLlaveTabla()),
 					template, token, null);
+		} catch (UncategorizedSQLException e) {
+			throw new ServerException(e.getLocalizedMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
