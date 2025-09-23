@@ -36,24 +36,24 @@ public class UserController {
 	@Autowired @Lazy  private PropiedadSvc propertyService;
 
 	@GetMapping(value="/getRole")
-	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization", required = false) String token) throws ServerException {
+	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization") String token) throws ServerException {
 		RolAccesoFilterDTO _filter = new RolAccesoFilterDTO();
 		_filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return roleService.listarConsulta(_filter);
 	}
 	
 	@PostMapping(value="/getUsers")
-	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioFilterDTO pFilter) throws ServerException {
+	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization") String token, @RequestBody UsuarioFilterDTO pFilter) throws ServerException {
 		return userService.listarRol(pFilter);
 	}
 	
 	@GetMapping("/{userId}")
-	public UsuarioDTO getUserById(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId) throws ServerException {
+	public UsuarioDTO getUserById(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId) throws ServerException {
 		return userService.consultaXId(pUserId);
 	}
 	
 	@GetMapping("/document/{documentId}")
-	public UsuarioDTO getUserByDocument(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="documentId") String pDocumentId) throws ServerException {
+	public UsuarioDTO getUserByDocument(@RequestHeader(name="Authorization") String token, @PathVariable(name="documentId") String pDocumentId) throws ServerException {
 		return userService.getUserByDocument(pDocumentId);
 	}
 	
@@ -63,12 +63,12 @@ public class UserController {
 	}
 	
 	@GetMapping(value="/roles/{userId}")
-	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId)throws ServerException {
+	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId)throws ServerException {
 			return rolAccesoService.consultaUsuarioDocumento(pUserId);
 	}
 	
 	@GetMapping(value="/properties/{userId}")
-	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name="Authorization", required = false) String token, @PathVariable(name="userId") String pUserId)throws ServerException {
+	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId)throws ServerException {
 		return propertyService.getToUser(pUserId);
 	}
 	
