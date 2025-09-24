@@ -12,8 +12,6 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.domain.PropiedadDTO;
-import com.softure.property.domain.PropiedadValorDefinidoDTO;
-
 @Service
 public class SynchronizeRolService {
 
@@ -35,8 +33,7 @@ public class SynchronizeRolService {
 				if (local != null) {
 					localListToErase.remove(local);
 					log.info("EXIST ROL " + remote.getCodigo() + " - " + remote.getNombre());
-					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(), PropiedadValorDefinidoDTO.ROL,
-							local.getLlaveTabla(), token, log, compare);
+					//propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(), PropiedadValorDefinidoDTO.ROL,	local.getLlaveTabla(), token, log, compare);
 					boolean isToMigrate = false;
 					for (PropiedadDTO iProperty : propierties) {
 						isToMigrate = false;

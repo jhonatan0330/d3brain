@@ -196,8 +196,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newRol.setPermisosCompletos(rolFiltro.getPermisosCompletos());
 			newRol.setPlantilla(copy.getLlaveTabla());
 			newRol = rolService.guardar(newRol, token);
-			rolFiltro.setPropiedades( configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL, rolFiltro.getLlaveTabla(),null, null));
-			configuracionSvc.copiarPropiedades(rolFiltro.getPropiedades(), newRol.getLlaveTabla(), token);
+			//rolFiltro.setPropiedades( configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL, rolFiltro.getLlaveTabla(),null, null));
+			//configuracionSvc.copiarPropiedades(rolFiltro.getPropiedades(), newRol.getLlaveTabla(), token);
 		}
 		// Copio propiedades plantilla
 		bd.setPropiedades(obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null));

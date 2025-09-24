@@ -292,7 +292,7 @@ public class Propiedades {
 	public static final String PLANTILLA_PERMISO_PUBLICO = "PLANTILLA_PERMISO_PUBLICO";
 	
 	//ol
-	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
+	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";	
 	
 	
 	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,

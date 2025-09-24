@@ -171,23 +171,8 @@
 		select description from pg_description join pg_class on pg_description.objoid = pg_class.oid join pg_namespace on pg_class.relnamespace = pg_namespace.oid where relname = 'usuario_usrp';
 	</select>
 	
-	<select id="timeToNewPassword" resultType="java.lang.String">
-		select pp.cppd_valor from usuariorol_erlp ue 
-			inner join propiedad_ppdp pp on (pp.cppd_campo = ue.cerl_rolacceso and pp.cppd_estado = 'A')
-		where ue.cerl_usuario = #{user}
-			and ue.cerl_estado = 'A'
-			and pp.cppd_propiedadvalor = 'PROP_263'
-		order by pp.cppd_valor desc
-		limit 1;
-	</select>
-	
 	<select id="cantidadAsignaciones" parameterType="java.lang.String" resultType="int">
 		select count(*) from actividad_actp where cact_estado = 'A' and cact_responsable = #{usuario}
-	</select>
-	
-	<select id="ocultarLicencia" parameterType="java.lang.String" resultType="int">
-		select count(*) from usuariorol_erlp inner join propiedad_ppdp on (cppd_estado = 'A' and cppd_campo = cerl_rolacceso and cppd_propiedadvalor = 'PROP_179')
-		where cerl_estado = 'A' and cerl_usuario = #{usuario}
 	</select>
 	
 <!--// END region script-->

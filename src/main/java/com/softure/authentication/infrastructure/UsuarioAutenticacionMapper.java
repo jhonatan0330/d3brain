@@ -13,9 +13,7 @@ public interface UsuarioAutenticacionMapper extends IBasicMapper<UsuarioAutentic
 	String consultarValidez();
 	String versionActual();
 	String fechaMinima();
-	String timeToNewPassword(String user);
 	
 	int cantidadAsignaciones(String usuario);
-	int ocultarLicencia(String usuario);
 
 }

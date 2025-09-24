@@ -16,6 +16,7 @@ import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
+import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.RelacionInternaSvc;
@@ -45,6 +46,8 @@ public class TipoVinculo {
 	private CallDocumentCRUD crudService;
 	@Autowired @Lazy 
 	private CallDocumentListBySQLFunction sqlFunctionService;
+	@Autowired @Lazy 
+	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
@@ -193,9 +196,11 @@ public class TipoVinculo {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd == null)
 			return null;
+		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
+			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO(), token));
 		PropiedadDTO _templateId = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_DELETE);
 		if (_templateId == null) {
-			throw new ServerException(
+			throw new ServerException( "En el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()+
 					"No encontramos la plantilla de ELIMINAR vinculo, por favor valide la configuracion del campo");
 		}
 		return generateDocumentToVinculate(pCampo, token, _templateId, bd.getValorOpcion());

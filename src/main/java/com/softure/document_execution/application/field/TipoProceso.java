@@ -740,6 +740,7 @@ public class TipoProceso {
 
 	}
 
+	//OJO SE DUPLICO EN CallDocumentUpdateFromAutomatic
 	private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
 			PedidoVentaDTO updateDocument) {
 		for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {

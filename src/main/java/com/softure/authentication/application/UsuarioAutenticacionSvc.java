@@ -16,6 +16,7 @@ import com.shared.application.SharedAuthenticateService;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedToken;
+import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
@@ -24,11 +25,13 @@ import com.softure.authentication.domain.UsuarioSesionErrorDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
 import com.softure.authorization.application.ModuloSvc;
 import com.softure.authorization.domain.ModuloFilterDTO;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
+import com.softure.property.domain.PropiedadDTO;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -339,7 +342,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		autenticacion.setToken(sesion.getLlaveTabla());
 
 		if (!fromApi) {
-			if(usuarioAutenticacionMapper.ocultarLicencia(autenticacion.getUsuario()) == 0) {
+			
+			PropiedadDTO _propLicence = Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.OCULTAR_MENSAJE_LICENCIA);
+			if(_propLicence ==null) {
 				String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
 				if (fechaTrial == null)
 					reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
@@ -393,9 +398,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	private Date getNewMaximunDate(String user) throws ServerException {
 		if(user ==null) throw new ServerException("No se identifica el usuario para calcular el tiempo de recuperacion de clave");
-		
-		String timeToNewPassword = usuarioAutenticacionMapper.timeToNewPassword(user);
-		if (timeToNewPassword==null) {
+		OrganizacionDTO org = organizacionService.obtenerPrincipalPropiedades(user);
+		String timeToNewPassword = Propiedades.obtenerValor(org, Propiedades.TIEMPO_NUEVA_CLAVE);
+		if (timeToNewPassword==null || timeToNewPassword.isEmpty()) {
 			Calendar newDate = Calendar.getInstance();
 			newDate.add(Calendar.MONTH, 2);
 			return newDate.getTime();	
@@ -412,6 +417,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				throw new ServerException("Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : " + timeToNewPassword);
 			}
 		}
+		
+
+		
 		
 	}
 

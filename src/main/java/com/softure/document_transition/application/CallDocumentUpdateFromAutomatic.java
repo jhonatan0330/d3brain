@@ -12,6 +12,7 @@ import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
@@ -245,6 +246,10 @@ public class CallDocumentUpdateFromAutomatic {
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);
 
+							
+							if(camposActualesDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+								organizeDependsNumberToUpdate(newField, currentFields);
+							}
 							// Tengo que actualizar el modificador por un tema en el api que no guarda los
 							// cambios de los campos
 							if (process.getCaracteristicas() != null && !process.getCaracteristicas().isEmpty()) {
@@ -372,4 +377,26 @@ public class CallDocumentUpdateFromAutomatic {
 		return false;
 	}
 
+	//OJO SE DUPLICO EN TipoProceso
+		private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
+				List<PedidoVentaCaracteristicaDTO> _currentFieldsOfMainDocument) {
+			for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : _currentFieldsOfMainDocument) {
+				List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDENT_PROPS);
+				if(dependents!=null && !dependents.isEmpty()) {
+					for (PropiedadDTO iDependent : dependents) {
+							if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
+								if(!iFieldUpdateDocument.getModificado()) {
+									iFieldUpdateDocument.setValorNumero(null);
+									iFieldUpdateDocument.setModificado(true);
+									//Lo repirto para que se calculen los que dependen de estos
+									organizeDependsNumberToUpdate(iFieldUpdateDocument,	 _currentFieldsOfMainDocument);
+								}
+								break;
+							}	
+					}
+					
+				}	
+			}
+			
+		}
 }

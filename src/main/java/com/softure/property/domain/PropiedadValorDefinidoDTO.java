@@ -1,16 +1,11 @@
 package com.softure.property.domain;
 
-// BEGIN region interImport
-// END region interImport
-
 import org.apache.ibatis.type.Alias;
 
 import com.softure.java.domain.BasicDTO;
 
 @Alias("PropiedadValorDefinidoDTO")
 public class PropiedadValorDefinidoDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 	public static final String PROCESO = "P";
 	public static final String ESTADO = "A";
@@ -18,7 +13,6 @@ public class PropiedadValorDefinidoDTO extends BasicDTO
 	public static final String PLANTILLA = "L";
 	public static final String CAMPO = "C";
 	public static final String REPORTE = "E";
-	public static final String ROL = "R";
 	public static final String ORGANIZACION = "O";
 	public static final String API_SERVICE = "W";
 	public static final String SERVIDOR = "S";

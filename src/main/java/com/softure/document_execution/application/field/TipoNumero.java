@@ -125,9 +125,9 @@ public class TipoNumero {
 							+ " no se puede modificar, valor esperado : " + SoftureUtil.formatMoney(BigDecimal.ZERO));
 			} else {
 				if (pCampo.getValorNumero().compareTo(bd.getValorNumero()) != 0)
-					throw new ServerException(
-							"El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : "
-									+ SoftureUtil.formatMoney(bd.getValorNumero()));
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							+ "El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : "
+									+ SoftureUtil.formatMoney(bd.getValorNumero()) + " y se envia " + SoftureUtil.formatMoney(pCampo.getValorNumero()));
 			}
 		}
 

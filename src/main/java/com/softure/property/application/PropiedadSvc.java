@@ -1551,8 +1551,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			return "PROCESO";
 		case PropiedadValorDefinidoDTO.REPORTE:
 			return "REPORTE";
-		case PropiedadValorDefinidoDTO.ROL:
-			return "ROL";
 		case PropiedadValorDefinidoDTO.SERVIDOR:
 			return "SERVIDOR";
 		case PropiedadValorDefinidoDTO.TRANSICION:
