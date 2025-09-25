@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -1023,6 +1024,7 @@ public class CallDocumentCRUD {
 					token);
 	}
 
+	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, noRollbackFor = DuplicateKeyException.class)
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
 		// Valido que tenga relacion de plantilla
 		RolAccesoFilterDTO dpiRolFilter = new RolAccesoFilterDTO();
@@ -1107,7 +1109,13 @@ public class CallDocumentCRUD {
 					usr.setCorreo(usrMail);
 					usr.setTelefono(usrPhone);
 					usr.setEstado(SharedConstants.STATE_ACTIVE);
-					usr = usuarioService.guardar(usr, token);
+					try {
+						usr = usuarioService.guardar(usr, token);	
+					}  catch (DuplicateKeyException e) {
+						return; // Si dos procesos intentan crear el mismo usuario esto sucede en cisrtos casos remotos de apis
+					}catch (Exception e) {
+						throw new ServerException(e.getMessage());
+					}
 				} else {
 					if (usr.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0) {
 						usr.setCorreo(usrMail);

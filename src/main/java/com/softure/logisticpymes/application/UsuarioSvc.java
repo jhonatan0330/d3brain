@@ -121,9 +121,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public UsuarioDTO guardar(UsuarioDTO dto, String token) throws ServerException {
-		// BEGIN Usuario_guardar
 		UsuarioFilterDTO filtro  = new UsuarioFilterDTO();
 		filtro.setIdentificacion(dto.getIdentificacion());
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -131,7 +129,6 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		if(dto.getImagen()==null) dto.setImagen(SharedConstants.AVATAR);
 		if(dto.getCorreo()!=null) dto.setCorreo(dto.getCorreo().toLowerCase());
 		return super.guardar(dto, token);
-		// END Usuario_guardar
 	}
 
 	public List<UsuarioDTO> getUsersState(String document)throws ServerException{

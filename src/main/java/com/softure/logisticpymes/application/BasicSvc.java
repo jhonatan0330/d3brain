@@ -92,14 +92,13 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T guardar(T dto, String token) throws ServerException {
 		usuarioSesionService.getUserFlex(token);
 		dto.setLlaveTabla(generarLlave());
 		try {
 			mapper.insertar(dto);
 		} catch (DuplicateKeyException e) {
-			throw new ServerException(e.getMessage());
+			throw e;
 		}catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
