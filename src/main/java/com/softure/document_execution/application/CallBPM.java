@@ -576,7 +576,7 @@ public class CallBPM {
 				 */
 				if (nuevo.getDinero() != null) {
 					relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
-					relacion.setValor(anterior.getDinero().getValorTotal().subtract(nuevo.getDinero().getValorTotal()));
+					relacion.setValor(anterior.getDinero().getValorTotal());//.subtract(nuevo.getDinero().getValorTotal()));
 					relacionExpedienteService.update(relacion);
 					relacionExpedienteService.guardar(relacionCargueNuevo, securityToken);
 				}
