@@ -12,6 +12,7 @@ import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
 import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.authentication.infrastructure.OrganizacionMapper;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -105,6 +106,12 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 					result.getLlaveTabla(), null, user));
 		}
 		return result;
+	}
+
+	public boolean permisosCompletos(String user) throws ServerException {
+		OrganizacionDTO _main = obtenerPrincipal();
+		return (configuracionSvc.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,
+				_main.getLlaveTabla(), Propiedades.APP_ADMIN, user)!=null);
 	}
 
 

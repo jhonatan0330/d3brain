@@ -23,8 +23,6 @@ import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionErrorDTO;
 import com.softure.authentication.infrastructure.UsuarioAutenticacionMapper;
-import com.softure.authorization.application.ModuloSvc;
-import com.softure.authorization.domain.ModuloFilterDTO;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.application.BasicSvc;
@@ -45,8 +43,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	@Autowired @Lazy 
 	private UsuarioAutenticacionAutorizacionSvc authorizationService;
-	@Autowired @Lazy 
-	private ModuloSvc modulosService;
 	@Autowired @Lazy 
 	private OrganizacionSvc organizacionService;
 	@Autowired @Lazy 
@@ -366,10 +362,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			// Esto lo uso en la app mobile la idea es cambiarlo
 			autenticacion
 					.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
-
-			ModuloFilterDTO filterMod = new ModuloFilterDTO();
-			filterMod.setSecurityToken(sesion.getLlaveTabla());
-			autenticacion.setModulos(modulosService.modulosUsuario(filterMod));
 		}
 
 

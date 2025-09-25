@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
@@ -27,6 +28,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	
 	@Autowired @Lazy  private UsuarioRolSvc usuarioRolService;
 	@Autowired @Lazy  private PropertyCRUDSvc propertySvc;
+	@Autowired @Lazy  private OrganizacionSvc organizationSvc;
 
 	@Override
 	public RolAccesoDTO consultaXId(String llave) throws ServerException {
@@ -66,8 +68,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	public boolean usuarioPermisosCompletos(String token) throws ServerException{
 		String user = getUserFlex(token);
 		if(user.compareTo("PROCESS")==0) return true;
-		if(rolAccesoMapper.permisosCompletos(user)!=0) return true;
-		return false;
+		return organizationSvc.permisosCompletos(user);
 	}
 
 	public List<RolAccesoDTO> getFullToSynchronize(List<String> process) {

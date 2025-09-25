@@ -11,8 +11,6 @@
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  nombre
 			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  codigo
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = crac_plantilla) as  imagen
-			,brac_permisoscompletos as  permisosCompletos
-			,nrac_minutossesion as  minutosSesion
 			,crac_estado as estado
 		from rolacceso_racp a
 	</sql>
@@ -27,9 +25,6 @@
 			</if>
 			<if test="plantilla!=null">
 				and crac_plantilla = #{plantilla}
-			</if>
-			<if test="permisosCompletosFilter!=null">
-				and brac_permisoscompletos = #{permisosCompletosFilter}
 			</if>
 			<if test="filtroParametro!=null">
 				and ((select upper(cdpl_nombre) from documentoplantilla_dplp where cdpl_llave = crac_plantilla) like upper('%' || #{filtroParametro} || '%'))
@@ -75,12 +70,6 @@
 		<if test="plantilla!=null">
 			,crac_plantilla
 		</if>
-		<if test="permisosCompletos!=null">
-			,brac_permisoscompletos
-		</if>
-		<if test="minutosSesion!=null">
-			,nrac_minutossesion
-		</if>
 		<if test="estado!=null">
 			,crac_estado
 		</if>
@@ -88,12 +77,6 @@
 			#{llaveTabla}
 		<if test="plantilla!=null">
 			,#{plantilla}
-		</if>
-		<if test="permisosCompletos!=null">
-			,#{permisosCompletos}
-		</if>
-		<if test="minutosSesion!=null">
-			,#{minutosSesion}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -105,8 +88,6 @@
 		update rolacceso_racp
 			set
 				crac_plantilla = #{plantilla},
-				brac_permisoscompletos = #{permisosCompletos},
-				nrac_minutossesion = #{minutosSesion},
 				crac_estado =#{estado}
 		<include refid="whereRolAccesoPrimaryKeyFragment" />
 	</select>
@@ -129,18 +110,12 @@
 	
 
 <!--// BEGIN region script-->
-	<select id="permisosCompletos" resultType="int">
-	select count(*) from usuariorol_erlp, rolacceso_racp where crac_llave = cerl_rolacceso 
-				and brac_permisoscompletos and cerl_estado = 'A' and cerl_usuario = #{user}
-	</select>
 	
 	<select id="getFullToSynchronize" resultType="RolAccesoDTO">
 		select
 			crac_llave as  llaveTabla
 			,crac_plantilla as  plantilla
 			,cdpl_codigo as  codigo
-			,brac_permisoscompletos as  permisosCompletos
-			,nrac_minutossesion as  minutosSesion
 			,crac_estado as estado
 		from rolacceso_racp
 			inner join documentoplantilla_dplp dd on (cdpl_llave = crac_plantilla)

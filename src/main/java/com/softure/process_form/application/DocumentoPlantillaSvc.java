@@ -192,8 +192,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		RolAccesoDTO rolFiltro = rolService.consultaUnica(rolFiltroFilter);
 		if(rolFiltro!=null) {
 			RolAccesoDTO newRol = new RolAccesoDTO();
-			newRol.setMinutosSesion(rolFiltro.getMinutosSesion());
-			newRol.setPermisosCompletos(rolFiltro.getPermisosCompletos());
 			newRol.setPlantilla(copy.getLlaveTabla());
 			newRol = rolService.guardar(newRol, token);
 			//rolFiltro.setPropiedades( configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL, rolFiltro.getLlaveTabla(),null, null));

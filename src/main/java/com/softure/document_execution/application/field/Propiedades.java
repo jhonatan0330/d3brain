@@ -290,6 +290,9 @@ public class Propiedades {
 	public static final String PUBLIC_USER = "PUBLIC_USER";
 	public static final String PLANTILLA_NUEVO_USUARIO = "PLANTILLA_NUEVO_USUARIO";
 	public static final String PLANTILLA_PERMISO_PUBLICO = "PLANTILLA_PERMISO_PUBLICO";
+	public static final String APP_ADMIN = "APP_ADMIN";
+	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
+	
 	
 	//ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";	

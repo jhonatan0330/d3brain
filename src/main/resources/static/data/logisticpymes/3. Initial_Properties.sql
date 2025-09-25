@@ -622,3 +622,12 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto)
 	VALUES('PROP_295' , 'C', 'CONSULTAR SI EXISTE DOCUMENTO VINCULO', 'VINCULO_GET_PREVIOUS_SQL', 'REQUISITO', 'C', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_296' , 'O', 'PERMISO DE ADMINISTRADOR', 'APP_ADMIN', 'REQUISITO', true, true, true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo,  bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_297' , 'O', 'MODULOS GENERALES', 'APP_MODULES', 'REQUISITO', true,  true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_298' , 'O', 'TIEMPO DE SESION ACTIVA', 'APP_SESSION_TIME', 'REQUISITO', true, true, true);

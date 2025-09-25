@@ -740,7 +740,6 @@ COST 100;
         	and cppd_propiedadvalor != 'PROP_219'--API KEY --No copio el api key para generar la necesidad de una nueva API
         	and cppd_propiedadvalor != 'PROP_220'--COVERAGE IMAGEN --Es para no copiar las imagenes
         	and (rr.crac_estado = 'A' or rr.crac_estado is null)
-        	and (rr.brac_permisoscompletos = false or rr.brac_permisoscompletos is null)
         	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
 union
 		select
@@ -760,7 +759,6 @@ union
         where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
 	        and cppd_propiedadvalor = 'PROP_117' and cppd_valor = '*'
     	    and (rr.crac_estado = 'A' or rr.crac_estado is null)
-    	    and (rr.brac_permisoscompletos = false or rr.brac_permisoscompletos is null)
     	    and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
 union
 		select
@@ -780,7 +778,6 @@ union
         where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
         	and cppd_propiedadvalor = 'PROP_136' and cppd_valor = '*'
         	and (rr.crac_estado = 'A' or rr.crac_estado is null)
-        	and (rr.brac_permisoscompletos = false or rr.brac_permisoscompletos is null)
         	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
     </select>
     

@@ -15,8 +15,6 @@ public class RolAccesoDTO extends BasicDTO
 	private String nombre;
 	private String codigo;
 	private String imagen;
-	private boolean permisosCompletos;
-	private Integer minutosSesion;
 
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
@@ -46,19 +44,6 @@ public class RolAccesoDTO extends BasicDTO
 	public String getImagen() {
 		return imagen;
 	}
-	public void setPermisosCompletos(boolean permisosCompletos) {
-		this.permisosCompletos = permisosCompletos;
-	}
 	
-	public boolean getPermisosCompletos() {
-		return permisosCompletos;
-	}
-	public void setMinutosSesion(Integer minutosSesion) {
-		this.minutosSesion = minutosSesion;
-	}
-	
-	public Integer getMinutosSesion() {
-		return minutosSesion;
-	}
 
 }

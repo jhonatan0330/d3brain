@@ -1,7 +1,7 @@
 COMMENT ON TABLE usuario_usrp IS '2025-09-20';
 
 update propiedadvalordefinido_pvdp 
-set cpvd_nombre = 'GENERAR CAMPO VINCULO DEL DOICUMENTO SELECCIONADO'
+set cpvd_nombre = 'GENERAR CAMPO VINCULO DEL DOCUMENTO SELECCIONADO'
 where cpvd_llave  = 'PROP_294';
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto)

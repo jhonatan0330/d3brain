@@ -23,15 +23,9 @@ import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionFilterDTO;
-import com.softure.authorization.application.ModuloSvc;
-import com.softure.authorization.application.PermisoSvc;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.application.UsuarioRolSvc;
-import com.softure.authorization.domain.ModuloDTO;
-import com.softure.authorization.domain.ModuloFilterDTO;
-import com.softure.authorization.domain.PermisoDTO;
-import com.softure.authorization.domain.PermisoFilterDTO;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.authorization.domain.UsuarioRolDTO;
@@ -2183,72 +2177,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired @Lazy  private ModuloSvc moduloService;
-	
-	@PostMapping(value="/consultaXIdModulo")
-	public ModuloDTO consultaXIdModulo(@RequestBody String llave) throws FlexException {
-		try {
-			return moduloService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@PostMapping(value="/consultaUnicaModulo")
-	public ModuloDTO consultaUnicaModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
-		try {
-			return moduloService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaModulo")
-	public List<ModuloDTO> listarConsultaModulo(@RequestBody ModuloFilterDTO dto) throws FlexException  {
-		try {
-			return moduloService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarModulo")
-	public ModuloDTO activarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarModulo")
-	public ModuloDTO inactivarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarModulo")
-	public ModuloDTO actualizarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarModulo")
-	public ModuloDTO guardarModulo(@RequestBody ModuloDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return moduloService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
 	
 	@Autowired @Lazy  private ReporteBaseSvc reporteBaseService;
 	
@@ -2394,71 +2322,6 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@Autowired @Lazy  private PermisoSvc permisoService;
-	
-	@PostMapping(value="/consultaXIdPermiso")
-	public PermisoDTO consultaXIdPermiso(@RequestBody String llave) throws FlexException {
-		try {
-			return permisoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	@PostMapping(value="/consultaUnicaPermiso")
-	public PermisoDTO consultaUnicaPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
-		try {
-			return permisoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaPermiso")
-	public List<PermisoDTO> listarConsultaPermiso(@RequestBody PermisoFilterDTO dto) throws FlexException  {
-		try {
-			return permisoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarPermiso")
-	public PermisoDTO activarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return permisoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarPermiso")
-	public PermisoDTO inactivarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return permisoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarPermiso")
-	public PermisoDTO actualizarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return permisoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarPermiso")
-	public PermisoDTO guardarPermiso(@RequestBody PermisoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return permisoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	
 	@Autowired @Lazy  private UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService;
@@ -2826,12 +2689,4 @@ public class FullControllerDTO {
 		}
 	}
 	
-	@PostMapping(value="/modulosUsuarioModuloContratado")
-	public List<ModuloDTO> modulosUsuarioModuloContratado(@RequestBody ModuloFilterDTO dto)throws FlexException {
-		try {
-			return moduloService.modulosUsuario(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}	
 }

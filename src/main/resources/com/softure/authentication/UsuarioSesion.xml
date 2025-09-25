@@ -136,14 +136,6 @@
 	</select>
 
 <!--// BEGIN region script-->
-	<select id="tiempoSesion" parameterType="java.lang.String" resultType="int">
-		select coalesce(max(nrac_minutossesion),0) from 
-		usuariorol_erlp, rolacceso_racp
-		where crac_llave = cerl_rolacceso 
-		and cerl_estado ='A' 
-		and crac_estado = 'A'
-		and cerl_usuario = #{usuario}
-	</select>
 	
 	<select id="closeAllSession" >
 		update usuariosesion_ussp 		set cuss_estado = 'I'
@@ -158,6 +150,12 @@
 		where corg_principal is null and corg_estado = 'A'
 	</select>
 	
+	<select id="obtenerOrganizacion" resultType="java.lang.String">
+		select
+			corg_llave 
+		from organizacion_orgp
+		where corg_principal is null and corg_estado = 'A'
+	</select>
 	
 	<select id="obtenerPrincipalMail" resultType="java.lang.String">
 		select	cusr_correo

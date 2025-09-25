@@ -16,15 +16,24 @@ import com.shared.domain.SharedConstants;
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
+import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.services.SoftureUtil;
+import com.softure.property.application.PropiedadSvc;
+import com.softure.property.domain.PropiedadDTO;
+import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 @Service("usuarioSesionService")
 public class UsuarioSesionSvc {
 	
 	@Autowired @Lazy 
 	private UsuarioSesionMapper usuarioSesionMapper;
+	@Autowired
+	@Lazy
+	private PropiedadSvc configuracionSvc;
 
 	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<String, UsuarioSesionDTO>();
+	
+	private Map<String, Integer> sessionTimeMap = new HashMap<String, Integer>();
 
 	public UsuarioSesionDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. UsuarioSesion");
@@ -51,29 +60,47 @@ public class UsuarioSesionSvc {
 	}
 
 	public String actualizarSesion(String token) throws ServerException {
-		UsuarioSesionFilterDTO bdFilter = new UsuarioSesionFilterDTO();
-		bdFilter.setSecurityToken(token);
-		bdFilter.setUsuario(getUserFlex(token));
-		int tiempo = usuarioSesionMapper.tiempoSesion(bdFilter.getUsuario());
-		if(tiempo!=0) {
-			UsuarioSesionDTO bd = consultaXId(token);
-			bd.setFechaCierre(new Date(new Date().getTime() + (tiempo *60 * 1000)));
-			try {
-				usuarioSesionMapper.actualizar(bd);
-			} catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
+		UsuarioSesionDTO bd = consultaXId(token);
+		if(bd!=null) {
+			int tiempo = getUserSessionTime(bd.getUsuario());
+			if(tiempo!=0) {
+				bd.setFechaCierre(new Date(new Date().getTime() + (tiempo *60 * 1000)));
+				try {
+					usuarioSesionMapper.actualizar(bd);
+				} catch (Exception e) {
+					throw new ServerException(e.getCause().getMessage());
+				}
+			}	
 			return bd.getUsuario();
 		}
-		return bdFilter.getUsuario();
+		return getUserFlex(token);		
 	}
 	
 	public Date getFechaCierre(String usuario) throws ServerException {
-		int tiempo = usuarioSesionMapper.tiempoSesion(usuario);
+		int tiempo = getUserSessionTime(usuario);
 		if(tiempo!=0) {
 			return new Date(new Date().getTime() + (tiempo *60 * 1000));
 		}
 		return null;
+	}
+	
+	private int getUserSessionTime(String pUser) throws ServerException {
+		Integer _time = sessionTimeMap.get(pUser);
+		if(_time ==null) {
+			String _main = usuarioSesionMapper.obtenerOrganizacion();
+			PropiedadDTO _prop = configuracionSvc.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,_main, Propiedades.APP_SESSION_TIME, pUser);
+			if(_prop ==null) {
+				_time = 0;
+			} else {
+				try {
+		    		_time = Integer.parseInt(_prop.getValor());
+			    }catch (NumberFormatException e) {
+			    	_time = 0;
+				}	
+			}
+			sessionTimeMap.put(pUser, _time);
+		}
+		return _time;
 	}
 	
 	public UsuarioSesionDTO checkToken(String token)throws ServerException{
