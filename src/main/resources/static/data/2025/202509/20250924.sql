@@ -39,7 +39,7 @@ INSERT INTO public.propiedad_ppdp
 select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''),
 	'PROP_298', 'O', (select oo.corg_llave  from organizacion_orgp oo where oo.corg_estado = 'A' and oo.corg_principal is null),
 	rr.nrac_minutossesion , now(), now(), 'SC_20250924', rr.crac_llave  
-from rolacceso_racp rr where rr.nrac_minutossesion != 0 and crac_estado = 'A'
+from rolacceso_racp rr where rr.nrac_minutossesion != 0 and crac_estado = 'A';
 
 ALTER TABLE permiso_perp RENAME TO permiso_perp_old;
 
