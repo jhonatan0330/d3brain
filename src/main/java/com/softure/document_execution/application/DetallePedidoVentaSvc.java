@@ -362,8 +362,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				baseValorUnitario.setOrden(3);
 				baseValorUnitario.setLlaveTabla("***UNIDAD");
 				baseValorUnitario.setPropiedades(new ArrayList<PropiedadDTO>());
-				// baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				// null, Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
+				baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				 null, Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
 				baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.NUMERO_MONEDA, Propiedades.TRUE, null));
 				PedidoVentaCaracteristicaDTO cpValorUnitario = new PedidoVentaCaracteristicaDTO();

@@ -26,7 +26,7 @@ public class MailRecoverPasswordService {
 	@Autowired @Lazy  private ServidorSvc servidorService;
 	@Autowired @Lazy  private OrganizacionSvc organizacionService;
 	
-	public void call(String correo, String key, String code) throws ServerException {
+	public void call(String correo, String key, String code, String urlServer) throws ServerException {
 		ServidorFilterDTO filter = new ServidorFilterDTO();
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setTipo(ServidorDTO.MAIL);
@@ -37,12 +37,13 @@ public class MailRecoverPasswordService {
 		MimeMessage mimeMessage = mailSender.createMimeMessage();
 		MimeMessageHelper mailMsg = new MimeMessageHelper(mimeMessage);
 		OrganizacionDTO principal = organizacionService.obtenerPrincipal();
-		if (principal.getServidor()==null) throw new ServerException("Se debe configurar la url del servidor principal para la organizacion " + principal.getNombre());
+		if (urlServer==null) throw new ServerException("Se debe configurar la url del servidor principal para la organizacion " + principal.getNombre());
 		try {
 			mailMsg.setFrom(servidorService.getFromMail(servidores.get(0)));
 			mailMsg.setTo(correo);
 			mailMsg.setSubject(principal.getNombre() +  " Recuperacion de clave de acceso");  
-			mailMsg.setText("<table style=\"height: 164px;\" width=\"600\" bgcolor=\"#0d47a1\"><tbody><tr style=\"height: 18px;\"><td style=\"height: 18px; width: 590px;\" bgcolor=\"#0d47a1\">&nbsp;</td></tr><tr style=\"text-align: center;\"><td style=\"height: 132px; width: 590px; text-align: center;\" bgcolor=\"#E4E4E4\"><a style=\"border-radius: 4px; display: inline-block; font-weight: bold; padding: 12px 24px; !important; color: #ffffff !important; background-color: #80bf2e;\" href=\"" + principal.getServidor() + "/sessions/new/"+key+"\" target=\"_blank\">PRESIONA PARA NUEVA CLAVE</a>"
+			mailMsg.setText("<table style=\"height: 164px;\" width=\"600\" bgcolor=\"#0d47a1\"><tbody><tr style=\"height: 18px;\"><td style=\"height: 18px; width: 590px;\" bgcolor=\"#0d47a1\">&nbsp;</td></tr><tr style=\"text-align: center;\"><td style=\"height: 132px; width: 590px; text-align: center;\" bgcolor=\"#E4E4E4\"><a style=\"border-radius: 4px; display: inline-block; font-weight: bold; padding: 12px 24px; !important; color: #ffffff !important; background-color: #80bf2e;\" href=\"" 
+					+ urlServer + "/sessions/new/"+key+"\" target=\"_blank\">PRESIONA PARA NUEVA CLAVE</a>"
 					+ "<p>El codigo de seguridad es : <strong>"+code+"</strong></p><p>El codigo se vencera en 15 minutos</p></td></tr><tr><td style=\"font-size: 11px; color: #eeeeee;\" align=\"center\">"+ principal.getNombre() + "  " + principal.getSlogan() +"</td></tr></tbody></table>"
 					, true); 
 		    mailSender.send(mimeMessage);

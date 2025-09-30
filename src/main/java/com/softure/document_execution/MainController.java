@@ -74,7 +74,12 @@ public class MainController {
 	@PostMapping(value="/solicitarNuevaClave")
 	public void solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		usuarioAutenticacionService.solicitarNuevaClave(filter);
+		String baseUrl = request.getScheme() + "://" + request.getServerName();
+		if (!(request.getScheme().equals("http") && request.getServerPort() == 80) &&
+		    !(request.getScheme().equals("https") && request.getServerPort() == 443)) {
+		    baseUrl += ":" + request.getServerPort();
+		}
+		usuarioAutenticacionService.solicitarNuevaClave(filter, baseUrl);
 	}
 	
 	@PostMapping(value="/cambiarClaveOtherSystem")

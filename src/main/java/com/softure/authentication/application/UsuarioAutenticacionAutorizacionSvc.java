@@ -91,7 +91,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 	}
 
 // BEGIN region aditionalMethods
-	public void generarAutorizacion(String usuario, String correo, String ip) throws ServerException {
+	public void generarAutorizacion(String usuario, String correo, String ip, String urlServer) throws ServerException {
 		UsuarioAutenticacionAutorizacionDTO dto = new UsuarioAutenticacionAutorizacionDTO();
 		dto.setCorreo(correo);
 		dto.setUsuario(usuario);
@@ -100,7 +100,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 		dto.setFechaMaxima(new Date(dto.getFechaSolicitud().getTime()+15*60*1000));
 		dto.setCodigo(String.valueOf(Double.valueOf(Math.random()*1000000).intValue()));
 		dto = save(dto);
-		mailRecoverPasswordService.call(correo, dto.getLlaveTabla(), dto.getCodigo() );	
+		mailRecoverPasswordService.call(correo, dto.getLlaveTabla(), dto.getCodigo() , urlServer);	
 	}
 	
 	public UsuarioAutenticacionAutorizacionDTO validar(String llave, String code, String newKey, String ip) throws ServerException {

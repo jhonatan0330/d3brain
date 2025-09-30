@@ -117,16 +117,18 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioAutenticacionDTO user = null;
 		// Se envia por el administrador por el momento solo flex
 		if (dto.getClaveAnterior().compareTo("ADMIN$123") == 0) {
-			if (dto.getLlaveTabla() != null) {
-				user = consultaXId(dto.getLlaveTabla());
-				if (user == null)
-					throw new ServerException("El usuario no tiene una autenticacion");
-				if (user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-					throw new ServerException(
-							"Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
-				// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new
-				// ServerException("No concuerda la clave anterior");
-			}
+			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
+			filtro.setEstado(SharedConstants.STATE_ACTIVE);
+			filtro.setUsuario(dto.getUsuario());
+			user = consultaUnica(filtro);
+			if (user == null)
+				throw new ServerException("El usuario no tiene una autenticacion");
+			if (user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+				throw new ServerException(
+						"Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
+			// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new
+			// ServerException("No concuerda la clave anterior");
+			
 		} else {
 			// La validacion de la autorizacion la retiro para que funcione flex
 			if (dto.getLlaveTabla() != null)
@@ -224,7 +226,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		reportarError(uaf, error);
 	}
 
-	public void solicitarNuevaClave(UsuarioAutenticacionDTO dto) throws ServerException {
+	public void solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer) throws ServerException {
 		if (dto == null || dto.getUsuarioDTO() == null)
 			throw new ServerException("Faltan los datos de recuperacion");
 		if (dto.getUsuarioDTO().getCorreo() == null)
@@ -247,7 +249,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {
-			authorizationService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp());
+			authorizationService.generarAutorizacion(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
 		} catch (Exception e) {
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
 		}

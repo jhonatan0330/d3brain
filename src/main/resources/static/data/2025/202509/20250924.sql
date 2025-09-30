@@ -26,7 +26,7 @@ from modulo_modp mm
 where mm.cmod_llave = 'AdministracionLogisticpymes';
 
 INSERT INTO public.propiedad_ppdp
-(cppd_llave, cppd_propiedadvalor, cppd_tipo, cppd_campo, cppd_texto, cppd_valor, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion,  cppd_rol)
+(cppd_llave, cppd_propiedadvalor, cppd_tipo, cppd_campo, cppd_valor, cppd_texto, dppd_fechadefinicion, dppd_fechaimplementacion, cppd_cambiocreacion,  cppd_rol)
 select replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''),
 	'PROP_297', 'O', (select oo.corg_llave  from organizacion_orgp oo where oo.corg_estado = 'A' and oo.corg_principal is null),
 	replace(cmod_url, '/', ''), cmod_nombre,  now(), now(), 'SC_20250924', pp.cper_rolacceso 
