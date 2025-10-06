@@ -204,6 +204,11 @@ public class CallDocumentListWithFilters {
 		
 		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
 			return new ArrayList<>();
+		} else {
+			// En faseta no traia el turno porque filtraba  por los creados por el mismo funcionario
+			if(dto.getCaracteristicas()!=null && !dto.getCaracteristicas().isEmpty()) {
+				dto.setCaracteristicas(null);
+			}
 		}
 		
 		return pedidoVentaMapper.listarPermitidos(dto,

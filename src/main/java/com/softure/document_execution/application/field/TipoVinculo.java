@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.CallDocumentListBySQLFunction;
@@ -196,6 +197,11 @@ public class TipoVinculo {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd == null)
 			return null;
+		
+		PedidoVentaDTO document = documentService.consultaXId(bd.getValorOpcion());
+		if(document.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0)
+			return null;
+		
 		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
 			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO(), token));
 		PropiedadDTO _templateId = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_DELETE);
