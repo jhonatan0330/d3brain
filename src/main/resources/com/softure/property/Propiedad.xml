@@ -521,6 +521,7 @@ COST 100;
 			,cppd_usuarioexcluyente as  usuarioExcluyente
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
 			,cppd_estado as estado
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
@@ -551,6 +552,7 @@ COST 100;
 			,cppd_usuarioexcluyente as  usuarioExcluyente
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
 			,cppd_estado as estado
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
