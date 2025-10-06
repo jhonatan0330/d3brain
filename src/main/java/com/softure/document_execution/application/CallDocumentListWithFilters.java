@@ -194,24 +194,27 @@ public class CallDocumentListWithFilters {
 		return readResultByTemplate(dto, dto.getPlantilla());
 	}
 	
-	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO dto,
+	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO pFilter,
 			List<String> filtroEstados, List<String> campoFiltro,
 			String valorFiltro, String ordenNombre,
 			String ordenDescendente, List<String> filtroTexto,
 			List<String> filtroEstadosGeneralesMultiple)throws ServerException {
 		
-		List<String> _filterIdsByToRelations = getFieldsValueToFilter(dto);
+		List<String> _filterIdsByToRelations = getFieldsValueToFilter(pFilter);
 		
 		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
 			return new ArrayList<>();
 		} else {
-			// En faseta no traia el turno porque filtraba  por los creados por el mismo funcionario
-			if(dto.getCaracteristicas()!=null && !dto.getCaracteristicas().isEmpty()) {
-				dto.setCaracteristicas(null);
+			if(pFilter.getCampoOrigen()!=null) {
+				// En faseta no traia el turno porque filtraba  por los creados por el mismo funcionario
+				if(pFilter.getCaracteristicas()!=null && !pFilter.getCaracteristicas().isEmpty()) {
+					pFilter.setCaracteristicas(null);
+				}	
 			}
+			
 		}
 		
-		return pedidoVentaMapper.listarPermitidos(dto,
+		return pedidoVentaMapper.listarPermitidos(pFilter,
 				filtroEstados,  campoFiltro,
 				 valorFiltro,  ordenNombre,
 				 ordenDescendente, filtroTexto,
