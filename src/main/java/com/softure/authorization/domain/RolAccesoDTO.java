@@ -4,11 +4,11 @@ import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.softure.java.domain.BasicDTO;
+import com.softure.logisticpymes.domain.BasicParamDTO;
 
 @Alias("RolAccesoDTO")
 @JsonInclude(Include.NON_NULL)
-public class RolAccesoDTO extends BasicDTO
+public class RolAccesoDTO extends BasicParamDTO
 {
 
 	private String plantilla;
