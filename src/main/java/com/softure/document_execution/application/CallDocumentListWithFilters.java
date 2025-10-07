@@ -207,7 +207,8 @@ public class CallDocumentListWithFilters {
 		} else {
 			if(pFilter.getCampoOrigen()!=null) {
 				// En faseta no traia el turno porque filtraba  por los creados por el mismo funcionario
-				if(pFilter.getCaracteristicas()!=null && !pFilter.getCaracteristicas().isEmpty() && pFilter.getCaracteristicas().get(0).getValorOpcion()==null) {
+				if(pFilter.getCaracteristicas()!=null && !pFilter.getCaracteristicas().isEmpty() && pFilter.getCaracteristicas().get(0).getValorOpcion()==null
+						&& pFilter.getFuncionario()==null) {
 					pFilter.setCaracteristicas(null);
 				}	
 			}
