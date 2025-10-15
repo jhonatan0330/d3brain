@@ -50,6 +50,7 @@ import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.java.dto.exception.FlexException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.application.ServidorSvc;
@@ -123,6 +124,8 @@ import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/flex")
@@ -2601,9 +2604,9 @@ public class FullControllerDTO {
 	
 
 	@PostMapping(value="/autenticarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionFilterDTO dto)throws FlexException {
+	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request, @RequestBody UsuarioAutenticacionFilterDTO dto)throws FlexException {
 		try {
-			return usuarioAutenticacionService.autenticar(dto);
+			return usuarioAutenticacionService.autenticar(dto, false, SoftureUtil.getRequestUrl(request));
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

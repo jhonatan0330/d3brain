@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("UsuarioAutenticacionAutorizacionDTO")
 public class UsuarioAutenticacionAutorizacionDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String usuario;
@@ -88,7 +86,5 @@ public class UsuarioAutenticacionAutorizacionDTO extends BasicDTO
 	public String getIpRedencion() {
 		return ipRedencion;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

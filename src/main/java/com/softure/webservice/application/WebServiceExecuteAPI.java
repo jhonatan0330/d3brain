@@ -139,7 +139,7 @@ public class WebServiceExecuteAPI {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
 			webServiceEjecucionSvc.update(apiBasic);
-			publishErrorMessage(service, apiBasic, modificador);
+			if(preValidation.startsWith(SharedConstants.OK)) publishErrorMessage(service, apiBasic, modificador);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
 					+ ") por error de validacion previa a la ejecucion");
 			return SharedConstants.ERROR;
@@ -321,18 +321,25 @@ public class WebServiceExecuteAPI {
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_CODE_REPLACE);
 		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties, service.getLlaveTabla()) );
-		// Esto lo puedo unir con prepare, lo que sucede es que no quiero copiar en bd
-		// los parametros fijos
-		/*List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(service, Propiedades.API_BASE);
-		if (properties != null && !properties.isEmpty()) {
-			for (PropiedadDTO iProp : properties) {
-				callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), propiedadesSvc.obtenerPropiedades(
-						PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), Propiedades.API_CODE_REPLACE, null), service.getLlaveTabla()));
-			}
-		}*/
 
-		String template = templatesService.generateOutputFile(service.getTemplate(), callWS.getParametersInexecution());
-		String urlWithParameters = templatesService.generateOutputFile(service.getUrl(), callWS.getParametersInexecution());
+		String template = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE), callWS.getParametersInexecution());
+		if(template ==null || template.isEmpty()) {
+			callWS.setFechaEjecucion(new Date());
+			callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			callWS.setParametros("NOT_TEMPLATE");
+			callWS = webServiceEjecucionSvc.update(callWS);
+			return callWS;
+		}
+		String urlWithParameters = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
+		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una informacion
+		if(urlWithParameters ==null || urlWithParameters.isEmpty()) {
+			callWS.setFechaEjecucion(new Date());
+			callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			callWS.setParametros("NOT_URL");
+			callWS = webServiceEjecucionSvc.update(callWS);
+			return callWS;
+		}
+		
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
@@ -408,8 +415,6 @@ public class WebServiceExecuteAPI {
 		callWS.setTextoRespuesta(responseApi);
 		if (extractionHelperToLong != null)
 			callWS.setExtracciones(extractionHelperToLong);
-		//if (parameterHelperToLong != null)
-		//	callWS.setParametros(parameterHelperToLong);
 		return callWS;
 	}
 

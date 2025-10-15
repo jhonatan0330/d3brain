@@ -27,10 +27,9 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 
 	@Autowired @Lazy 
 	private WebServiceMapper webServiceMapper;
-
 	@Autowired @Lazy 
 	private PropiedadSvc paramService;
-
+	
 	@Override
 	public WebServiceDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
@@ -129,35 +128,36 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		WebServiceDTO ws = new WebServiceDTO();
 		ws.setCodigo("CC_" + pCode);
 		ws.setNombre("CONT " + pName);
-		ws.setTemplate("{\r\n"
-				+ "	\"catalog\": \"{{R_CATALOGO_ACTUAL}}\",\r\n"
-				+ "	\"concept\": \"DOCUMENTO {{E_CODE}}\",\r\n"
-				+ "	\"factDate\": \"{{E_CODE_FECHA}}\",\r\n"
-				+ "	\"document\": \"{{E_CODE_ID}}\",\r\n"
-				+ "	\"type\": \"{{E_API_ID}}\",\r\n"
-				+ "	\"value\": \"${R_BUSCA_EL_VALOR}\",\r\n"
-				+ "	\"lines\": [\r\n"
-				+ "		{\r\n"
-				+ "			\"account\": \"\",\r\n"
-				+ "			\"debit O credit\": \"\",\r\n"
-				+ "			\"note\": \"\",\r\n"
-				+ "			\"references\": [\r\n"
-				+ "				{\r\n"
-				+ "					\"auxiliar\": \"\",\r\n"
-				+ "					\"code\": \"\",\r\n"
-				+ "					\"documentId\": \"\",\r\n"
-				+ "					\"name\": \"\"\r\n"
-				+ "				}\r\n"
-				+ "			]\r\n"
-				+ "		}\r\n"
-				+ "	]\r\n"
-				+ "}");
-		ws.setUrl("http://localhost:8080/api_account/voucher");
 		ws = guardar(ws, pToken);
 		
 		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
 				Propiedades.API_BASE, "CONT_A", pToken), pToken);
-		
+		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
+				Propiedades.API_URL, "http://localhost:8080/api_account/voucher", pToken), pToken);
+		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
+				Propiedades.API_TEMPLATE, "{\r\n"
+						+ "	\"catalog\": \"{{R_CATALOGO_ACTUAL}}\",\r\n"
+						+ "	\"concept\": \"DOCUMENTO {{E_CODE}}\",\r\n"
+						+ "	\"factDate\": \"{{E_CODE_FECHA}}\",\r\n"
+						+ "	\"document\": \"{{E_CODE_ID}}\",\r\n"
+						+ "	\"type\": \"{{E_API_ID}}\",\r\n"
+						+ "	\"value\": \"${R_BUSCA_EL_VALOR}\",\r\n"
+						+ "	\"lines\": [\r\n"
+						+ "		{\r\n"
+						+ "			\"account\": \"\",\r\n"
+						+ "			\"debit O credit\": \"\",\r\n"
+						+ "			\"note\": \"\",\r\n"
+						+ "			\"references\": [\r\n"
+						+ "				{\r\n"
+						+ "					\"auxiliar\": \"\",\r\n"
+						+ "					\"code\": \"\",\r\n"
+						+ "					\"documentId\": \"\",\r\n"
+						+ "					\"name\": \"\"\r\n"
+						+ "				}\r\n"
+						+ "			]\r\n"
+						+ "		}\r\n"
+						+ "	]\r\n"
+						+ "}", pToken), pToken);
 		return ws;
 	}
 

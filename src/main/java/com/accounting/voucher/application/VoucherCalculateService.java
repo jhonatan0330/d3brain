@@ -54,6 +54,7 @@ public class VoucherCalculateService {
 	@Autowired
 	@Lazy
 	private ResultMapService resultMapService;
+	
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void call(String voucherId, String action) throws ServerException {
@@ -103,6 +104,8 @@ public class VoucherCalculateService {
 		}
 		if(mapItems.isEmpty()) {
 			mapItems = mapService.getItemsAccount(accountId, factDate);
+			if(mapItems.isEmpty())
+				throw new ServerException("No hay linea de tiempo para este periodo");
 		}
 
 		//el factor es la estrategia para anular

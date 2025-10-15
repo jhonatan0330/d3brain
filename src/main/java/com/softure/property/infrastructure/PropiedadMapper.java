@@ -41,7 +41,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	// Para mejorar los errores en BD
 	void crearFuncionPrevalidacionReturnString(PropiedadDTO dto);
 	void crearFuncionPrevalidateAPI(PropiedadDTO dto);
-	void eliminarFuncionPrevalidateAPI(PropiedadDTO dto);
+	//void eliminarFuncionPrevalidateAPI(PropiedadDTO dto);
 	void eliminarFuncionPrevalidacion(PropiedadDTO dto);
 	void eliminarFuncionCamposEspecialesPlantilla(PropiedadDTO dto);
 	void eliminarFuncionCampoGenerar(PropiedadDTO dto);

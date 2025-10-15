@@ -9,8 +9,7 @@
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
+			,cwbs_proceso as  proceso
 			,cwbs_estado as estado
 		from webservice_wbsp a
 	</sql>
@@ -29,8 +28,8 @@
 			<if test="codigo!=null">
 				and cwbs_codigo = #{codigo}
 			</if>
-			<if test="url!=null">
-				and cwbs_url = #{url}
+			<if test="proceso!=null">
+				and cwbs_proceso = #{proceso}
 			</if>
 			<if test="filtroParametro!=null">
 				and (upper(cwbs_nombre) like upper('%' || #{filtroParametro} || '%') or cwbs_codigo =  #{filtroParametro})
@@ -79,11 +78,8 @@
 		<if test="codigo!=null">
 			,cwbs_codigo
 		</if>
-		<if test="template!=null">
-			,cwbs_template
-		</if>
-		<if test="url!=null">
-			,cwbs_url
+		<if test="proceso!=null">
+			,cwbs_proceso
 		</if>
 		<if test="estado!=null">
 			,cwbs_estado
@@ -96,11 +92,8 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
-		<if test="template!=null">
-			,#{template}
-		</if>
-		<if test="url!=null">
-			,#{url}
+		<if test="proceso!=null">
+			,#{proceso}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -113,8 +106,7 @@
 			set
 				cwbs_nombre = #{nombre},
 				cwbs_codigo = #{codigo},
-				cwbs_template = #{template},
-				cwbs_url = #{url},
+				cwbs_proceso = #{proceso},
 				cwbs_estado =#{estado}
 		<include refid="whereWebServicePrimaryKeyFragment" />
 	</select>
@@ -124,8 +116,7 @@
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
+			,cwbs_proceso as  proceso
 		from procesoestado_pesp pes 
 			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
 			inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
@@ -135,8 +126,7 @@
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
+			,cwbs_proceso as  proceso
 		from documentoplantilla_dplp dd
 			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
 			inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
@@ -146,8 +136,7 @@
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
+			,cwbs_proceso as  proceso
 		from procesoestado_pesp pes 
 			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
 			inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
@@ -158,8 +147,7 @@
 			cwbs_llave as  llaveTabla
 			,cwbs_nombre as  nombre
 			,cwbs_codigo as  codigo
-			,cwbs_template as  template
-			,cwbs_url as  url
+			,cwbs_proceso as  proceso
 		from documentoplantilla_dplp dd
 			inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
 			inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')

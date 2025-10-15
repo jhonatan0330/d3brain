@@ -1,20 +1,19 @@
 package com.softure.webservice.domain;
 
-// BEGIN region interImport
-// END region interImport
-
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Alias("WebServiceDTO")
 public class WebServiceDTO extends BasicParamDTO
 {
 
 	private String nombre;
 	private String codigo;
-	private String template;
-	private String url;
+	private String proceso;
+
 	
 	public String getNombre() {
 		return nombre;
@@ -28,7 +27,7 @@ public class WebServiceDTO extends BasicParamDTO
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	public String getTemplate() {
+	/*public String getTemplate() {
 		return template;
 	}
 	public void setTemplate(String template) {
@@ -39,6 +38,12 @@ public class WebServiceDTO extends BasicParamDTO
 	}
 	public void setUrl(String url) {
 		this.url = url;
+	}*/
+	public String getProceso() {
+		return proceso;
+	}
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
 	}
 
 }

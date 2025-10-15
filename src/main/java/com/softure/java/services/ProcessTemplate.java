@@ -82,7 +82,7 @@ public class ProcessTemplate {
 				}
 			}
 			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
-			if (plantilla.contains("$")) {
+			if (plantilla.contains("$") || plantilla.contains("<#")) {
 				Map<String, Object> newMap = new HashMap<String, Object>();
 				// En fremarker sale error con los parentesis
 				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {

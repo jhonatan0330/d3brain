@@ -25,6 +25,7 @@ import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.services.HttpUtils;
+import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
@@ -57,7 +58,7 @@ public class MainController {
 	@PostMapping(value="/autenticarUsuarioAutenticacion")
 	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request, @RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior()==null));
+		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior()==null), SoftureUtil.getRequestUrl(request));
 	}
 	
 	@PostMapping(value="/checkToken")
@@ -74,12 +75,7 @@ public class MainController {
 	@PostMapping(value="/solicitarNuevaClave")
 	public void solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		String baseUrl = request.getScheme() + "://" + request.getServerName();
-		if (!(request.getScheme().equals("http") && request.getServerPort() == 80) &&
-		    !(request.getScheme().equals("https") && request.getServerPort() == 443)) {
-		    baseUrl += ":" + request.getServerPort();
-		}
-		usuarioAutenticacionService.solicitarNuevaClave(filter, baseUrl);
+		usuarioAutenticacionService.solicitarNuevaClave(filter, SoftureUtil.getRequestUrl(request));
 	}
 	
 	@PostMapping(value="/cambiarClaveOtherSystem")

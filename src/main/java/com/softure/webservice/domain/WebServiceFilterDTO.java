@@ -14,7 +14,7 @@ public class WebServiceFilterDTO extends BasicFilterDTO
 
 	private String nombre;
 	private String codigo;
-	private String url;
+	private String proceso;
 	
 	public String getNombre() {
 		return nombre;
@@ -28,11 +28,11 @@ public class WebServiceFilterDTO extends BasicFilterDTO
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-	public String getUrl() {
-		return url;
+	public String getProceso() {
+		return proceso;
 	}
-	public void setUrl(String url) {
-		this.url = url;
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
 	}
 
 }

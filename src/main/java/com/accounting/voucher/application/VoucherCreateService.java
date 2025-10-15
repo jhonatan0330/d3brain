@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.accounting.plan.application.PlanCreateCatalogService;
 import com.accounting.plan.application.base.AccountService;
 import com.accounting.plan.application.base.CatalogService;
 import com.accounting.plan.application.base.StackVoucherService;
@@ -64,6 +65,11 @@ public class VoucherCreateService {
 	@Autowired
 	@Lazy
 	private TypeService typeService;
+	@Autowired
+	@Lazy
+	private PlanCreateCatalogService createCatalogService;
+	
+	
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
@@ -75,6 +81,7 @@ public class VoucherCreateService {
 		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
 		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
 		stackVoucher(headerDTO.getKey());
+		createCatalogService.validateTemporalFrame(_voucher.getHeader().getFactDate());
 		// Esto lo retiro por el momenot miestras esten junto //el codigo al final para
 		// evitar errores en transaccionalidad
 		// getCodeVoucher(catalogDTO, headerDTO, token.getToken());
@@ -144,8 +151,8 @@ public class VoucherCreateService {
 			throw new ServerException("Te hace falta la informacion de encabezado del comprobante");
 		if (_voucher.getRecords() == null || _voucher.getRecords().isEmpty())
 			throw new ServerException("Es curiosos pero no enviaste registros de cuentas");
-		if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
-			throw new ServerException("El valor total del comprobante no esta diligenciado");
+		//if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
+			//throw new ServerException("El valor total del comprobante no esta diligenciado");
 		BigDecimal valueAllRecords = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsPositive = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsNegative = BigDecimal.ZERO;
@@ -242,10 +249,10 @@ public class VoucherCreateService {
 		if (catalogDTO == null)
 			throw new ServerException("No se encontro un catalogo con ese identificador");
 		_voucher.setCatalogCode(catalogDTO.getCode());
-		if (_voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
+		if (catalogDTO.getInitialDate()!=null && _voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
 			throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
 					+ catalogDTO.getInitialDate().toString());
-		if (_voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
+		if (catalogDTO.getFinalDate()!=null && _voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
 			throw new ServerException("La fecha del comprobante debe ser menor al periodo del catalogo. Fecha final "
 					+ catalogDTO.getFinalDate().toString());
 		return catalogDTO;

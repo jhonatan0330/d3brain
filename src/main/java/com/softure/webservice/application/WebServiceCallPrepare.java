@@ -170,9 +170,7 @@ public class WebServiceCallPrepare {
 		List<PropiedadDTO> especiales = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_ESPECIAL);
 		if (especiales != null && !especiales.isEmpty()) {
 			for (PropiedadDTO iProp : especiales) {
-				if (iProp.getTexto() == null)
-					throw new ServerException(
-							"Es necesario colocar texto en la propiedad de codigo especial " + iProp.getValor());
+				if (iProp.getTexto() == null)iProp.setTexto(iProp.getValor());
 				if (iProp.getTexto().startsWith("E_FECHA_")) {
 					Date fieldDate = templatesService.getDateWithTransformations(new Date(), iProp.getTexto());
 					parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()

@@ -20,7 +20,6 @@ import com.softure.webservice.domain.WebServiceDTO;
 @Service
 public class PrepareTypeToCatalogService {
 
-	
 	@Autowired
 	@Lazy
 	private WebServiceSvc webServiceSvc;
@@ -29,10 +28,23 @@ public class PrepareTypeToCatalogService {
 	private TypeService typeService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TypeDTO call(String pServiceId, SharedToken pToken) throws ServerException {
+	public TypeDTO call(String pServiceId, String pCatalogId, SharedToken pToken) throws ServerException {
 
-		if(pServiceId == null)
-			throw new ServerException("El servicio no puede ser nulo");
+		// Aqui creo un type por defecto para la parametrizacion en la organizacion
+		if(pServiceId == null ) {
+			if(pCatalogId!=null) {
+				TypeFilterDTO _typeDefaultFilter = new TypeFilterDTO();
+				_typeDefaultFilter.setCatalog(pCatalogId);
+				_typeDefaultFilter.setState(SharedConstants.STATE_ACTIVE);
+				_typeDefaultFilter.setPattern(AccountConst.TYPE_PATTERN_INDICATOR);
+				TypeDTO _default = typeService.getOne(_typeDefaultFilter); 
+				if(_default ==null) 
+					throw new ServerException("El catalogo no tiene un tipo por defecto que elpatron sea indicador");	
+				return _default;
+			} else {
+				throw new ServerException("El servicio no puede ser nulo");
+			}
+		}
 		
 		TypeFilterDTO _typeFilter = new TypeFilterDTO();
 		_typeFilter.setService(pServiceId);

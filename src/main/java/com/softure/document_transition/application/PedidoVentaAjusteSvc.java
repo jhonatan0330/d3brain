@@ -1,16 +1,10 @@
 package com.softure.document_transition.application;
 
+import java.util.Date;
 import java.util.List;
 
-// BEGIN region interImport
-import java.util.Date;
-
-import com.softure.process_designer.application.ProcesoEstadoSvc;
-import com.softure.process_designer.domain.ProcesoEstadoDTO;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-
-import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +16,10 @@ import com.softure.document_transition.domain.PedidoVentaAjusteDTO;
 import com.softure.document_transition.domain.PedidoVentaAjusteFilterDTO;
 import com.softure.document_transition.infrastructure.PedidoVentaAjusteMapper;
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.process_designer.application.ProcesoEstadoSvc;
+import com.softure.process_designer.domain.ProcesoEstadoDTO;
+
+import jakarta.annotation.PostConstruct;
 
 @Service("pedidoVentaAjusteService")
 public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoVentaAjusteFilterDTO> {
@@ -29,11 +27,9 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 	@Autowired @Lazy 
 	private PedidoVentaAjusteMapper pedidoVentaAjusteMapper;
 	
-	// BEGIN region servicesPedidoVentaAjuste
 	@Autowired @Lazy  private PedidoVentaSvc documentoService;
 	@Autowired @Lazy  private ProcesoEstadoSvc procesoEstadoService;
 	@Autowired @Lazy  private CallManageTransition manageTransitionFunction;
-	// END region servicesPedidoVentaAjuste
 
 	@Override
 	public PedidoVentaAjusteDTO consultaXId(String llave) throws ServerException {
@@ -106,7 +102,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 		documento.setEstadoExpediente(estadoFinal.getLlaveTabla());
 		documento.setEstado(estadoFinal.getEstadoDocumento());
 		documentoService.update(documento);
-		manageTransitionFunction.assignResponsibleToActivity(documento.getLlaveTabla(), estadoFinal.getLlaveTabla(), estadoFinal.getNombre(), null, token);
+		manageTransitionFunction.assignResponsibleToActivity(documento.getLlaveTabla(), estadoFinal, null, token);
 		//Queda pendiente lo del responsable
 		return dto;
 		// END PedidoVentaAjuste_guardar

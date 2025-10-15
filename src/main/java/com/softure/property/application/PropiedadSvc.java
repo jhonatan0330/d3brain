@@ -31,6 +31,7 @@ import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.CambioSvc;
@@ -125,6 +126,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	
 	@Autowired @Lazy 
 	private JasperReportCache reportCacheService;
+	@Autowired @Lazy 
+	private ProcessTemplate templatesService;
 	
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
@@ -226,7 +229,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 			case Propiedades.TEMPLATE_MESSAGE_SQL:
 			case Propiedades.FUNCION_SQL_NEW_ANTES:
-				propiedadMapper.eliminarFuncionPrevalidacion(dto);
+				if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+					propiedadMapper.eliminarFuncionPrevalidacion(dto);
+				}
 				break;
 			default:
 				propiedadMapper.eliminarFuncion(bd);
@@ -405,7 +410,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
 					break;
 				case Propiedades.FUNCION_SQL_PREVALIDATE_API:
-					propiedadMapper.crearFuncionPrevalidateAPI(dto);
+					if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+						propiedadMapper.crearFuncionPrevalidateAPI(dto);	
+					}
 					break;
 				default:
 					propiedadMapper.crearFuncion(dto);
@@ -1339,8 +1346,24 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				String extractionsWithEnd = extractions;
 				if (extractionsWithEnd != null)
 					extractionsWithEnd = extractionsWithEnd + ";;";
-				propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()), document,
-						editor, extractionsWithEnd);
+				if(Propiedades.isFunctionNotFreeMarker(pPropiedad.getValor())) {
+					propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()), document,
+							editor, extractionsWithEnd);	
+				} else {
+					String parameters = extractionsWithEnd;
+					/*for (PedidoVentaCaracteristicaDTO iProp : extractionsWithEnd) {
+						parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo() + SharedConstants.IGUAL;
+						
+						if(iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+							parameters = parameters + ((iProp.getValorNumero()==null)?"0":iProp.getValorNumero().toString());
+						}else {
+							parameters = parameters + ((iProp.getValorText()==null)?"0":iProp.getValorText());
+						}
+					}*/
+					String _result = templatesService.generateOutputFile(pPropiedad.getValor(), parameters);
+					if (_result!= null && _result.isEmpty()) return null;
+					return _result;
+				}
 			} catch (Exception se) {
 				if (se.getCause() != null) {
 					return se.getCause().getMessage();

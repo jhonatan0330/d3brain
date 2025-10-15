@@ -43,7 +43,7 @@ public class VoucherReCreateService {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
 
-		TypeDTO type = typeFindSvc.call(pItem.getServiceId(), pToken);
+		TypeDTO type = typeFindSvc.call(pItem.getServiceId(), null, pToken);
 			
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pItem.getDocumentId());

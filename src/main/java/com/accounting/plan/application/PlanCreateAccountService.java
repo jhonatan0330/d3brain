@@ -18,6 +18,8 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.process_designer.application.ProcesoEstadoSvc;
+import com.softure.process_designer.domain.ProcesoEstadoDTO;
 
 @Service("PlanCreateAccountTemplateAccountingService")
 public class PlanCreateAccountService {
@@ -34,6 +36,9 @@ public class PlanCreateAccountService {
 	@Autowired
 	@Lazy
 	private PedidoVentaSvc documentService;
+	@Autowired
+	@Lazy
+	private ProcesoEstadoSvc stateProcessService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account) throws ServerException {
@@ -139,6 +144,13 @@ public class PlanCreateAccountService {
 			_document.setDescripcion("Cuenta auxiliar sin documento");
 		}else {
 			_document = documentService.consultaXId(documentId);
+			// Mis auxiliares esperados son documentos o estados para el catalogo principal
+			ProcesoEstadoDTO _pes = stateProcessService.consultaXId(documentId);
+			if(_pes != null) {
+				_document = new PedidoVentaDTO();
+				_document.setNombre(_pes.getCodigo());
+				_document.setDescripcion(_pes.getNombre());
+			}
 		}
 		if(_document == null)
 			throw new ServerException("No se encuentra el documento con id " + documentId);

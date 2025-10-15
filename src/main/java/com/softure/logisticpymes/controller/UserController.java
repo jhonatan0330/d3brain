@@ -19,11 +19,14 @@ import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authorization.application.RolAccesoSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
+import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
@@ -50,6 +53,11 @@ public class UserController {
 	@GetMapping("/{userId}")
 	public UsuarioDTO getUserById(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId) throws ServerException {
 		return userService.consultaXId(pUserId);
+	}
+	
+	@PostMapping("/dfa")
+	public void validateDFA(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO pAuth) throws ServerException {
+		usuarioAutenticacionService.dobleFactorAutenticacion(pAuth.getUsuario(), pAuth.getToken(), HttpUtils.getRequestIP(request));
 	}
 	
 	@GetMapping("/document/{documentId}")

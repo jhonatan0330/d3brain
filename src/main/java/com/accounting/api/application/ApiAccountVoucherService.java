@@ -121,8 +121,8 @@ public class ApiAccountVoucherService {
 	
 		if (item.getCatalog() == null || item.getCatalog().isEmpty())
 			throw new ServerException("El codigo del catalogo no se reconoce");
-		if (item.getType() == null || item.getType().isEmpty())
-			throw new ServerException("No se encuentra el tipo de documento");
+		//if (item.getType() == null || item.getType().isEmpty())
+			//throw new ServerException("No se encuentra el tipo de documento");
 
 		if (item.getConcept() == null || item.getConcept().isEmpty())
 			throw new ServerException("No se registra el concepto");
@@ -136,9 +136,8 @@ public class ApiAccountVoucherService {
 			throw new ServerException("No se reconoce el catalogo con ese codigo");
 		if (item.getLines() == null || item.getLines().isEmpty())
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag lines");
-
 		
-		TypeDTO type = typeService.call(item.getType(),pToken);
+		TypeDTO type = typeService.call(item.getType(), catalog.getKey(), pToken);
 		
 		if (type.getService()!=null && (item.getDocument() == null || item.getDocument().isEmpty()))
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");

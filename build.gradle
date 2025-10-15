@@ -26,14 +26,19 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	
-	implementation 'net.sf.jasperreports:jasperreports:6.21.3'
+	implementation('net.sf.jasperreports:jasperreports:6.21.3') {
+	    exclude group: 'commons-logging', module: 'commons-logging'
+	}
 	implementation 'net.sf.jasperreports:jasperreports-chart-themes:6.21.3'
 	implementation 'net.sf.jasperreports:jasperreports-fonts:6.21.3'
 	
-	implementation 'net.sf.barcode4j:barcode4j:2.1'
+	implementation('net.sf.barcode4j:barcode4j:2.1') {
+	    exclude group: 'commons-logging', module: 'commons-logging'
+	}
 	implementation ('org.apache.xmlgraphics:batik-bridge:1.19')
 	{
         exclude group: 'xml-apis', module: 'xml-apis'
+        exclude group: 'commons-logging', module: 'commons-logging'
     }
 	implementation 'com.google.zxing:core:3.5.3'
 	implementation 'commons-net:commons-net:3.9.0'
@@ -60,6 +65,10 @@ dependencies {
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 	implementation 'com.sun.activation:jakarta.activation:2.0.1'
 	
+}
+
+configurations.all {
+    exclude group: 'commons-logging', module: 'commons-logging'
 }
 
 test {

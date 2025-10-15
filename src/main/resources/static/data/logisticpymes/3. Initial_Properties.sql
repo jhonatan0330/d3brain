@@ -619,15 +619,23 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
 	VALUES('PROP_294' , 'C', 'GENERAR CAMPO VINCULO DEL DOCUMENTO SELECCIONADO', 'VINCULO_MAKE_IN_OTHER_FORM', 'REQUISITO', 'Z', true);
-
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto)
 	VALUES('PROP_295' , 'C', 'CONSULTAR SI EXISTE DOCUMENTO VINCULO', 'VINCULO_GET_PREVIOUS_SQL', 'REQUISITO', 'C', true);
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
 	VALUES('PROP_296' , 'O', 'PERMISO DE ADMINISTRADOR', 'APP_ADMIN', 'REQUISITO', true, true, true);
-	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo,  bpvd_piderol, bpvd_pideusuario) 
 	VALUES('PROP_297' , 'O', 'MODULOS GENERALES', 'APP_MODULES', 'REQUISITO', true,  true);
-	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto, bpvd_piderol, bpvd_pideusuario) 
 	VALUES('PROP_298' , 'O', 'TIEMPO DE SESION ACTIVA', 'APP_SESSION_TIME', 'REQUISITO', true, true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_299' , 'W', 'API_URL', 'API_URL', 'REQUISITO',  true);	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_300' , 'W', 'API_TEMPLATE', 'API_TEMPLATE', 'REQUISITO',  true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo, cpvd_origencategoria) 
+	VALUES('PROP_301' , 'A', 'API', 'API', 'REQUISITO', 'E');
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_302' , 'O', 'DOBLE FACTOR DE AUTENTICACION', 'APP_DFA', 'REQUISITO', true, true, true);

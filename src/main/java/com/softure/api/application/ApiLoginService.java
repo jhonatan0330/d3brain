@@ -8,20 +8,23 @@ import com.shared.domain.SharedIdResponse;
 import com.softure.api.domain.LoginRequest;
 import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
+import com.softure.java.services.SoftureUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class ApiLoginService {
 
 	@Autowired @Lazy  UsuarioAutenticacionSvc authenticationService;
 	
-	public SharedIdResponse call(LoginRequest login) throws ServerException {
+	public SharedIdResponse call(LoginRequest login, HttpServletRequest request) throws ServerException {
 		if(login == null) throw new ServerException("No se enviaron datos");
 		if(login.getUser() == null) throw new ServerException("Por favor ingrese el usuario");
 		if(login.getPassword() == null) throw new ServerException("Por favor ingrese la clave");
 		UsuarioAutenticacionFilterDTO user = new UsuarioAutenticacionFilterDTO();
 		user.setSesion(login.getUser());
 		user.setClave(login.getPassword());
-		return new SharedIdResponse( authenticationService.autenticar(user, true).getToken());
+		return new SharedIdResponse( authenticationService.autenticar(user, true, SoftureUtil.getRequestUrl(request)).getToken());
 	}
 
 }

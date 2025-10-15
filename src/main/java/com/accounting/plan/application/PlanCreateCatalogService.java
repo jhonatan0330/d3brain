@@ -1,5 +1,7 @@
 package com.accounting.plan.application;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +19,9 @@ import com.accounting.plan.application.base.TimeFrameService;
 import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.domain.TimeFrameDTO;
+import com.accounting.plan.domain.TimeFrameFilterDTO;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 
 @Service("PlanCreateCatalogTemplateAccountingService")
 public class PlanCreateCatalogService {
@@ -56,8 +60,8 @@ public class PlanCreateCatalogService {
 					"El codigo menos de 20 digitos");
 		if (catalog.getName() == null)
 			throw new ServerException("El nombre del catalogo es obligatorio");
-		if (catalog.getInitialDate() == null ) //|| catalog.getFinalDate() == null
-			throw new ServerException("La fecha de inicio del catalogo es obligatorio");
+		//if (catalog.getInitialDate() == null ) //|| catalog.getFinalDate() == null
+		//	throw new ServerException("La fecha de inicio del catalogo es obligatorio");
 		
 		
 		if(catalog.getFinalDate()!=null) {
@@ -82,13 +86,42 @@ public class PlanCreateCatalogService {
 	public CatalogDTO callDelete(String catalogId) throws ServerException {
 		return catalogService.delete(catalogId);
 	}
+	
+	public void validateTemporalFrame(Date pDate) throws ServerException {
+		TimeFrameFilterDTO _filter = new TimeFrameFilterDTO();
+		_filter.setLevel(1);
+		LocalDate localDate = pDate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+		_filter.setCode(String.valueOf(localDate.getYear()));
+		_filter.setState(SharedConstants.STATE_ACTIVE);
+		TimeFrameDTO _year = timeFrameService.getOne(_filter);
+		if(_year == null) {
+			
+			createTemporalFrame(pDate, null);
+		}
+		
+	}
 
 	private void createTemporalFrame(Date initialDate, Date finalDate) throws ServerException {
 
+		if (initialDate == null )
+			throw new ServerException("La fecha de inicio del catalogo es obligatorio");
+		
+		Calendar _date = Calendar.getInstance();
+		_date.setTime(initialDate);
+		_date.set(Calendar.MONTH, 0);
+		_date.set(Calendar.DAY_OF_MONTH, 1);
+		_date.set(Calendar.HOUR, 0);
+		_date.set(Calendar.MINUTE, 0);
+		_date.set(Calendar.SECOND, 0);
+		initialDate = _date.getTime();
+		
 		if(finalDate == null) {
 			Calendar fecha = Calendar.getInstance();
 			fecha.setTime(initialDate);
-			fecha.add(Calendar.YEAR, 5);
+			fecha.add(Calendar.YEAR, 1);
 			finalDate = fecha.getTime();
 		}
 		//Esta pensado para tener 5 niveles de detalle sino que los niveles 4 y 5 traen muchos registros

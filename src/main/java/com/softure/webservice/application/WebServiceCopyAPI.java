@@ -36,8 +36,7 @@ public class WebServiceCopyAPI {
 		WebServiceDTO newAPi = new WebServiceDTO();
 		newAPi.setCodigo(service.getCodigo() + "COPY");
 		newAPi.setNombre(service.getNombre() + "COPY");
-		newAPi.setTemplate(service.getTemplate());
-		newAPi.setUrl(service.getUrl());
+		newAPi.setProceso(service.getProceso());
 		
 		newAPi = webServiceSvc.save(newAPi);
 		if(service.getPropiedades()==null) return new SharedIdResponse(newAPi.getLlaveTabla());

@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.shared.domain.SharedConstants;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.shared.domain.ServerException;
 
 public class SoftureUtil {
@@ -315,5 +319,35 @@ public class SoftureUtil {
 		gen = gen.replaceAll("-", "");
 		return gen;
 	}
+	
+	public static boolean isUUID(String value) {
+		if (value == null)
+			return false;
+		if (value.length() != 32)
+			return false;
+		if (value.contains(" "))
+			return false;
+		if (value.contains("-"))
+			return false;
+		return true;
+	}
 
+	public static String getRequestUrl(HttpServletRequest request) {
+		String baseUrl = request.getScheme() + "://" + request.getServerName();
+		if (!(request.getScheme().equals("http") && request.getServerPort() == 80) &&
+		    !(request.getScheme().equals("https") && request.getServerPort() == 443)) {
+		    baseUrl += ":" + request.getServerPort();
+		}
+		return baseUrl;
+	}
+	
+	public static Date agregarMinutos(Date pFecha, int pMinutos) {
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(pFecha);
+        cal.add(Calendar.MINUTE, pMinutos); 
+        return cal.getTime();
+
+    }
+	
 }
