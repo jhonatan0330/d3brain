@@ -8,17 +8,6 @@
 		select
 			ctrf_llave as key
 			,ctrf_nombre as nombre
-			,ctrf_tiporecurso as tipoRecurso
-			,ctrf_tiporecursonombre as tipoRecursoNombre
-			,ctrf_tipodimension2 as tipoDimension2
-			,ctrf_tipodimension2nombre as tipoDimension2Nombre
-			,ctrf_tipodimension3 as tipoDimension3
-			,ctrf_tipodimension3nombre as tipoDimension3Nombre
-			,ctrf_tipodimension4 as tipoDimension4
-			,ctrf_tipodimension4nombre as tipoDimension4Nombre
-			,btrf_productoopcional as productoOpcional
-			,btrf_rangovalores as rangoValores
-			,btrf_rangocantidad as rangoCantidad
 			,dtrf_fechainicial as fechaInicial
 			,dtrf_fechafinal as fechaFinal
 			,ctrf_documento as documento
@@ -31,17 +20,6 @@
 		and ctrf_llave = #{key}</if><if test="state!=null">
 		and ctrf_estado = #{state}</if>
 <if test="nombre!=null">		and ctrf_nombre = #{nombre}</if>
-<if test="tipoRecurso!=null">		and ctrf_tiporecurso = #{tipoRecurso}</if>
-<if test="tipoRecursoNombre!=null">		and ctrf_tiporecursonombre = #{tipoRecursoNombre}</if>
-<if test="tipoDimension2!=null">		and ctrf_tipodimension2 = #{tipoDimension2}</if>
-<if test="tipoDimension2Nombre!=null">		and ctrf_tipodimension2nombre = #{tipoDimension2Nombre}</if>
-<if test="tipoDimension3!=null">		and ctrf_tipodimension3 = #{tipoDimension3}</if>
-<if test="tipoDimension3Nombre!=null">		and ctrf_tipodimension3nombre = #{tipoDimension3Nombre}</if>
-<if test="tipoDimension4!=null">		and ctrf_tipodimension4 = #{tipoDimension4}</if>
-<if test="tipoDimension4Nombre!=null">		and ctrf_tipodimension4nombre = #{tipoDimension4Nombre}</if>
-<if test="productoOpcionalFilter!=null">		and btrf_productoopcional = #{productoOpcionalFilter}</if>  
-<if test="rangoValoresFilter!=null">		and btrf_rangovalores = #{rangoValoresFilter}</if>  
-<if test="rangoCantidadFilter!=null">		and btrf_rangocantidad = #{rangoCantidadFilter}</if>  
 <if test="fechaInicialMin!=null">		and dtrf_fechainicial >= #{fechaInicialMin}</if><if test="fechaInicialMax!=null">		and dtrf_fechainicial <![CDATA[ < ]]> #{fechaInicialMax}</if>
 <if test="fechaFinalMin!=null">		and dtrf_fechafinal >= #{fechaFinalMin}</if><if test="fechaFinalMax!=null">		and dtrf_fechafinal <![CDATA[ < ]]> #{fechaFinalMax}</if>
 <if test="documento!=null">		and ctrf_documento = #{documento}</if>
@@ -79,34 +57,12 @@
 	<select id="insert" parameterType="TarifarioDTO" resultType="TarifarioDTO">
 		insert into tarifario_trfp(ctrf_llave
 		<if test="nombre!=null">,ctrf_nombre</if>
-		<if test="tipoRecurso!=null">,ctrf_tiporecurso</if>
-		<if test="tipoRecursoNombre!=null">,ctrf_tiporecursonombre</if>
-		<if test="tipoDimension2!=null">,ctrf_tipodimension2</if>
-		<if test="tipoDimension2Nombre!=null">,ctrf_tipodimension2nombre</if>
-		<if test="tipoDimension3!=null">,ctrf_tipodimension3</if>
-		<if test="tipoDimension3Nombre!=null">,ctrf_tipodimension3nombre</if>
-		<if test="tipoDimension4!=null">,ctrf_tipodimension4</if>
-		<if test="tipoDimension4Nombre!=null">,ctrf_tipodimension4nombre</if>
-		<if test="productoOpcional!=null">,btrf_productoopcional</if>
-		<if test="rangoValores!=null">,btrf_rangovalores</if>
-		<if test="rangoCantidad!=null">,btrf_rangocantidad</if>
 		<if test="fechaInicial!=null">,dtrf_fechainicial</if>
 		<if test="fechaFinal!=null">,dtrf_fechafinal</if>
 		<if test="documento!=null">,ctrf_documento</if>
 		<if test="state!=null">,ctrf_estado</if>
 		) values (#{key}
 		<if test="nombre!=null">,#{nombre}</if>
-		<if test="tipoRecurso!=null">,#{tipoRecurso}</if>
-		<if test="tipoRecursoNombre!=null">,#{tipoRecursoNombre}</if>
-		<if test="tipoDimension2!=null">,#{tipoDimension2}</if>
-		<if test="tipoDimension2Nombre!=null">,#{tipoDimension2Nombre}</if>
-		<if test="tipoDimension3!=null">,#{tipoDimension3}</if>
-		<if test="tipoDimension3Nombre!=null">,#{tipoDimension3Nombre}</if>
-		<if test="tipoDimension4!=null">,#{tipoDimension4}</if>
-		<if test="tipoDimension4Nombre!=null">,#{tipoDimension4Nombre}</if>
-		<if test="productoOpcional!=null">,#{productoOpcional}</if>
-		<if test="rangoValores!=null">,#{rangoValores}</if>
-		<if test="rangoCantidad!=null">,#{rangoCantidad}</if>
 		<if test="fechaInicial!=null">,#{fechaInicial}</if>
 		<if test="fechaFinal!=null">,#{fechaFinal}</if>
 		<if test="documento!=null">,#{documento}</if>
@@ -118,17 +74,6 @@
 		update tarifario_trfp
 		set
 		ctrf_nombre = #{nombre},
-		ctrf_tiporecurso = #{tipoRecurso},
-		ctrf_tiporecursonombre = #{tipoRecursoNombre},
-		ctrf_tipodimension2 = #{tipoDimension2},
-		ctrf_tipodimension2nombre = #{tipoDimension2Nombre},
-		ctrf_tipodimension3 = #{tipoDimension3},
-		ctrf_tipodimension3nombre = #{tipoDimension3Nombre},
-		ctrf_tipodimension4 = #{tipoDimension4},
-		ctrf_tipodimension4nombre = #{tipoDimension4Nombre},
-		btrf_productoopcional = #{productoOpcional},
-		btrf_rangovalores = #{rangoValores},
-		btrf_rangocantidad = #{rangoCantidad},
 		dtrf_fechainicial = #{fechaInicial},
 		dtrf_fechafinal = #{fechaFinal},
 		ctrf_documento = #{documento},

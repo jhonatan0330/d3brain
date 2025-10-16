@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
-import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoInventarioDTO;
 import com.softure.inventory.domain.ProductoInventarioFilterDTO;
@@ -28,8 +27,6 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	private ProductoInventarioMapper productoInventarioMapper;
 	@Autowired @Lazy 
 	private ProductoSvc productService;
-	@Autowired @Lazy 
-	private CategoriaProductoSvc categoryService;
 	
 	@Override
 	public ProductoInventarioDTO consultaXId(String llave) throws ServerException {
@@ -44,17 +41,10 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 	  this.mapper = productoInventarioMapper;
 	}
 	
-	@Override
-	public ProductoInventarioDTO activar(ProductoInventarioDTO dto, String token) throws ServerException {
-		// BEGIN ProductoInventario_activar
-		return super.activar(dto, token);
-		// END ProductoInventario_activar
-	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProductoInventarioDTO actualizar( ProductoInventarioDTO dto, String token) throws ServerException {
-		// BEGIN ProductoInventario_actualizar
 		ProductoInventarioDTO bd = consultaXId(dto.getLlaveTabla());
 		if(dto.getCantidadModificar()!=null && dto.getCantidadModificar().compareTo(BigDecimal.ZERO)!=0){
 			bd.setCantidadActual(bd.getCantidadActual().add(dto.getCantidadModificar()));
@@ -70,31 +60,6 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 			}
 		}
 		return bd;
-		// END ProductoInventario_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProductoInventarioDTO inactivar(ProductoInventarioDTO dto, String token) throws ServerException {
-		// BEGIN ProductoInventario_inactivar
-		return super.inactivar(dto, token);
-		// END ProductoInventario_inactivar
-	}
-	
-	@Override
-	public ProductoInventarioDTO consultaUnica(ProductoInventarioFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(ProductoInventarioFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<ProductoInventarioDTO> listarConsulta(ProductoInventarioFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
 	}
 	
 
@@ -116,12 +81,7 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 			}
 		}
 		if(dto.getCantidadMinima()==null) dto.setCantidadMinima(BigDecimal.ZERO);
-		if(dto.getCantidadMaxima()==null) {
-			CategoriaProductoDTO category = categoryService.consultaXId(product.getCategoria());
-			dto.setCantidadMaxima(category.getCantidadMaxima());
-			if(dto.getCantidadMaxima().compareTo(BigDecimal.ZERO) ==0)
-				dto.setCantidadMaxima(BigDecimal.valueOf(1000));
-		}
+		if(dto.getCantidadMaxima()==null) dto.setCantidadMaxima(BigDecimal.valueOf(1000));
 		if(dto.getCantidadMinima().compareTo(dto.getCantidadMaxima())>=0)
 			throw new ServerException("La cantidad minima no puede ser mayor o igual a la maxima");
 		
@@ -131,7 +91,6 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 		// END ProductoInventario_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public List<ProductoInventarioDTO> getByProducto( String id)
 			throws ServerException {
 		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
@@ -140,6 +99,5 @@ public class ProductoInventarioSvc extends BasicSvc<ProductoInventarioDTO, Produ
 		return super.listarConsulta(filter);
 	}
 	
-// END region aditionalMethods
 
 }

@@ -16,7 +16,6 @@ public class TarifaFilterDTO extends BasicFilterDTO
 	private String productoNombre;
 	private String recurso;
 	private String recursoNombre;
- 	private Boolean rangoPreciosFilter = null;
 	private Integer cantidadMinima;
 	private Integer cantidadMaxima;
 	private String dimension2;
@@ -81,15 +80,6 @@ public class TarifaFilterDTO extends BasicFilterDTO
 	}
 	
  	
- 	public void setRangoPreciosFilter(Boolean rangoPreciosFilter) {
-		this.rangoPreciosFilter = rangoPreciosFilter;
-	}
-	
-	public Boolean getRangoPreciosFilter() {
-		return rangoPreciosFilter;
-	}
-	
-	
 	public void setCantidadMinima(Integer cantidadMinima) {
 		this.cantidadMinima = cantidadMinima;
 	}

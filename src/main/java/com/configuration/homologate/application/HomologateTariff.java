@@ -1,6 +1,5 @@
 package com.configuration.homologate.application;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,21 +48,6 @@ public class HomologateTariff {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 	
-		// bool producto opcional
-		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO_OPCIONAL",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 4, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		// bool rango valores
-		fieldsTemplate.add(campoService.createField(templateId, "RANGO_VALORES",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 5, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		// bool rango valores
-		fieldsTemplate.add(campoService.createField(templateId, "RANGO_CANTIDADES",
-				DocumentoPlantillaCaracteristicaDTO.BINARIO, 6, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		sincronizeTariff(templateId, fieldsTemplate, token, crudService, funcionario);
 	}
 	
@@ -94,24 +78,6 @@ public class HomologateTariff {
 					fieldFinalDate.setValorFecha(iTariff.getFechaFinal());
 					document.getCaracteristicas().add(fieldFinalDate);
 
-					PedidoVentaCaracteristicaDTO fieldBoolProduct = new PedidoVentaCaracteristicaDTO();
-					fieldBoolProduct.setCampo(fieldsTemplate.get(3));
-					if (iTariff.getProductoOpcional())
-						fieldBoolProduct.setValorNumero(BigDecimal.ONE);
-					document.getCaracteristicas().add(fieldBoolProduct);
-
-					PedidoVentaCaracteristicaDTO fieldValueRange = new PedidoVentaCaracteristicaDTO();
-					fieldValueRange.setCampo(fieldsTemplate.get(4));
-					if (iTariff.getRangoValores())
-						fieldValueRange.setValorNumero(BigDecimal.ONE);
-					document.getCaracteristicas().add(fieldValueRange);
-
-					PedidoVentaCaracteristicaDTO fieldValueQuantity = new PedidoVentaCaracteristicaDTO();
-					fieldValueQuantity.setCampo(fieldsTemplate.get(5));
-					if (iTariff.getRangoCantidad())
-						fieldValueQuantity.setValorNumero(BigDecimal.ONE);
-					document.getCaracteristicas().add(fieldValueQuantity);
-
 					document.setFuncionario(funcionario);
 					document = crudService.saveWithoutTransaction(document, token, true);
 					iTariff.setDocumento(document.getLlaveTabla());
@@ -132,9 +98,6 @@ public class HomologateTariff {
 			newTariff.setFechaFinal(CallDocumentCommons.getValueDate(document, "FECHA_FINAL"));
 			newTariff.setFechaInicial(CallDocumentCommons.getValueDate(document, "FECHA_INICIAL"));
 			newTariff.setNombre(CallDocumentCommons.getValueText(document, "NOMBRE"));
-			newTariff.setProductoOpcional(CallDocumentCommons.getValueBool(document, "PRODUCTO_OPCIONAL"));
-			newTariff.setRangoCantidad(CallDocumentCommons.getValueBool(document, "RANGO_CANTIDADES"));
-			newTariff.setRangoValores(CallDocumentCommons.getValueBool(document, "RANGO_VALORES"));
 			tariffService.save(newTariff);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
@@ -146,9 +109,6 @@ public class HomologateTariff {
 				newTariff.setFechaFinal(CallDocumentCommons.getValueDate(document, "FECHA_FINAL"));
 				newTariff.setFechaInicial(CallDocumentCommons.getValueDate(document, "FECHA_INICIAL"));
 				newTariff.setNombre(CallDocumentCommons.getValueText(document, "NOMBRE"));
-				newTariff.setProductoOpcional(CallDocumentCommons.getValueBool(document, "PRODUCTO_OPCIONAL"));
-				newTariff.setRangoCantidad(CallDocumentCommons.getValueBool(document, "RANGO_CANTIDADES"));
-				newTariff.setRangoValores(CallDocumentCommons.getValueBool(document, "RANGO_VALORES"));
 				newTariff.setState(SharedConstants.STATE_ACTIVE);
 				tariffService.update(newTariff);
 			}

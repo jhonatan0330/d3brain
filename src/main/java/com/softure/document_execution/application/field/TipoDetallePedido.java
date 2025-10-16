@@ -22,7 +22,6 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -35,8 +34,6 @@ public class TipoDetallePedido {
 
 	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	//@Autowired @Lazy 
-	//private CategoriaProductoSvc categoriaProductoService;
 	@Autowired @Lazy 
 	private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired @Lazy 
@@ -310,7 +307,7 @@ public class TipoDetallePedido {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 				pCampo.setDependientes(campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			}
-			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), null, tercero,
+			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), tercero,
 					(tarifarioFuncion != null) ? tarifarioFuncion.getLlaveTabla() : null, pCampo.getDependientes(),
 					pCampo.getSecurityToken(), Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
 		}
@@ -320,7 +317,7 @@ public class TipoDetallePedido {
 	}
 
 	private List<ProductoDTO> detallarProductos2Plantilla(List<ProductoDTO> productos,
-			DocumentoPlantillaCaracteristicaDTO pCampo, CategoriaProductoDTO categoria, String tercero,
+			DocumentoPlantillaCaracteristicaDTO pCampo,  String tercero,
 			String propiedadFuncionTarifario, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario,
 			String token, String newOnlyFormProcess) throws ServerException {
 		if (productos != null && !productos.isEmpty()) {
@@ -338,10 +335,7 @@ public class TipoDetallePedido {
 				filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
 				productoDTO.setDetallePlantilla(detallePedidoVentaService.consultaCompleta(filtroPlantilla, tarifario,
 						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados, token, newOnlyFormProcess));
-				if (imagenes == null) {
-					if (productoDTO.getImagen() == null && categoria != null)
-						productoDTO.setImagen(categoria.getImagen());
-				} else {
+				if (imagenes != null) {
 					productoDTO.setImagen(null);
 				}
 				productoDTO.getDetallePlantilla().setProductoImagen(productoDTO.getImagen());

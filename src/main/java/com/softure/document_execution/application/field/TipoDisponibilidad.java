@@ -132,10 +132,10 @@ public class TipoDisponibilidad {
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
 		PropiedadDTO estructura = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
 		if (estructura == null)
-			throw new ServerException(
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +
 					"Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
 		 if (dependents == null || dependents.isEmpty())
-					 throw new ServerException("Revise los dependientes. Tipo Disponibilidad");
+					 throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +"Revise los dependientes. Tipo Disponibilidad");
 		PedidoVentaCaracteristicaDTO vCroquis = null;
 		
 		List<PedidoVentaCaracteristicaDTO> fieldsInRelations = findFieldService.call(estructura.getLlaveTabla(), dependents);
@@ -152,12 +152,12 @@ public class TipoDisponibilidad {
 			}
 
 			if (dependienteCroquis == null)
-				throw new ServerException("No se encontro en los dependientes la estructura del croquis");
+				throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +"No se encontro en los dependientes la estructura del croquis");
 			vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
 		}
 		
 		if (vCroquis == null)
-			throw new ServerException("La estructura no tiene un campo croquis que se encuentre activo");
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() + "La estructura no tiene un campo croquis que se encuentre activo");
 
 		pBase.setImagen(vCroquis.getValorText());
 		PuestoFilterDTO filtro = new PuestoFilterDTO();
@@ -185,18 +185,18 @@ public class TipoDisponibilidad {
 		// Valido obligatoriedad
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorText() == null)
-			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +"Es necesario registrar el campo ");
 
 		if (pCampo.getValorText() != null)
 			locations = pCampo.getValorText().split("-");
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (locations == null || locations.length == 0))
-			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre());
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " Es necesario registrar el campo ");
 		if (locations != null) {
 
 			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
 			if (currentItems == null || currentItems.isEmpty())
-				throw new ServerException("No hay opciones para seleccionar una posicion del croquis");
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + "No hay opciones para seleccionar una posicion del croquis");
 			int positionCount = 0;
 			for (String actual : locations) {
 				if (actual != null && !actual.isEmpty()) {

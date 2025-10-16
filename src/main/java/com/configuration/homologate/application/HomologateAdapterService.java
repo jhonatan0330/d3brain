@@ -32,25 +32,56 @@ import com.softure.report.domain.ReporteBaseFilterDTO;
 @Service("HomologatePrepareService")
 public class HomologateAdapterService {
 
-	
-	@Autowired @Lazy  private PropiedadSvc propertyService;
-	@Autowired @Lazy  private ProductoSvc productoService;
-	@Autowired @Lazy  private ReporteBaseSvc reporteService;
-	@Autowired @Lazy  private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired @Lazy  private RolAccesoSvc rolService;
-	@Autowired @Lazy  private CallDocumentCRUD crudService;
-	
-	@Autowired @Lazy  private CuentaSvc cuentaService;
-	
-	@Autowired @Lazy  private HomologateTariff tariffHomologate;
-	@Autowired @Lazy  private HomologateFee feeHomologate;
-	@Autowired @Lazy  private HomologateFaq faqHomologate;
-	@Autowired @Lazy  private HomologateCatalog catalogHomologate;
-	@Autowired @Lazy  private HomologateAccount accountHomologate;
-	@Autowired @Lazy  private HomologateProduct productHomologate;
-	@Autowired @Lazy  private HomologateProductStock productStockHomologate;
-	@Autowired @Lazy  private HomologateProductStockDeduction productStockDeductionHomologate;
+	@Autowired
+	@Lazy
+	private PropiedadSvc propertyService;
+	@Autowired
+	@Lazy
+	private ProductoSvc productoService;
+	@Autowired
+	@Lazy
+	private ReporteBaseSvc reporteService;
+	@Autowired
+	@Lazy
+	private DocumentoPlantillaSvc plantillaService;
+	@Autowired
+	@Lazy
+	private DocumentoPlantillaCaracteristicaSvc campoService;
+	@Autowired
+	@Lazy
+	private RolAccesoSvc rolService;
+	@Autowired
+	@Lazy
+	private CallDocumentCRUD crudService;
+
+	@Autowired
+	@Lazy
+	private CuentaSvc cuentaService;
+
+	@Autowired
+	@Lazy
+	private HomologateTariff tariffHomologate;
+	@Autowired
+	@Lazy
+	private HomologateFee feeHomologate;
+	@Autowired
+	@Lazy
+	private HomologateFaq faqHomologate;
+	@Autowired
+	@Lazy
+	private HomologateCatalog catalogHomologate;
+	@Autowired
+	@Lazy
+	private HomologateAccount accountHomologate;
+	@Autowired
+	@Lazy
+	private HomologateProduct productHomologate;
+	@Autowired
+	@Lazy
+	private HomologateProductStock productStockHomologate;
+	@Autowired
+	@Lazy
+	private HomologateProductStockDeduction productStockDeductionHomologate;
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
@@ -58,7 +89,8 @@ public class HomologateAdapterService {
 		case Propiedades.PLANTILLA_TIPO_CUENTA:
 			break;
 		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
-			productHomologate.createProductFields(plantillaPrincipal.getLlaveTabla(), token, campoService, propertyService);
+			productHomologate.createProductFields(plantillaPrincipal.getLlaveTabla(), token, campoService,
+					propertyService);
 			break;
 		case Propiedades.PLANTILLA_TIPO_REPORTE:
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
@@ -81,11 +113,12 @@ public class HomologateAdapterService {
 				propertyService.guardar(historico, token);
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
-				//Esto es un truco para crear un query report de una plantilla
-				//Quedo pendiente
-				if(dto.getUsuarioExcluyenteNombre()!=null) {
+				// Esto es un truco para crear un query report de una plantilla
+				// Quedo pendiente
+				if (dto.getUsuarioExcluyenteNombre() != null) {
 					propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
-							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY, generateScriptToTemplate(dto.getUsuarioExcluyenteNombre()), token), token);
+							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY,
+							generateScriptToTemplate(dto.getUsuarioExcluyenteNombre()), token), token);
 				}
 			}
 			break;
@@ -121,34 +154,43 @@ public class HomologateAdapterService {
 		String result = "select d.cpdv_nombre as \"CODIGO\"";
 		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId, null);
 		for (DocumentoPlantillaCaracteristicaDTO iField : fields) {
-			
+
 			switch (iField.getFormato()) {
-				case DocumentoPlantillaCaracteristicaDTO.FECHA: {
-					result = result + "\n	,(select cp.dpvc_valorfecha from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";
-					break;
-				}
-				case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
-					result = result + "\n	,to_char(coalesce((select cp.mpvc_valornumero from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"'), 0), 'FM9999999999999999') as \""+iField.getNombre()+"\"";
-					break;
-				}
-				default:{
-					result = result + "\n	,(select cp.cpvc_valortext from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"+iField.getCodigo()+"') as \""+iField.getNombre()+"\"";
-				}
+			case DocumentoPlantillaCaracteristicaDTO.FECHA: {
+				result = result
+						+ "\n	,(select cp.dpvc_valorfecha from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"
+						+ iField.getCodigo() + "') as \"" + iField.getNombre() + "\"";
+				break;
+			}
+			case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
+				result = result
+						+ "\n	,to_char(coalesce((select cp.mpvc_valornumero from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"
+						+ iField.getCodigo() + "'), 0), 'FM9999999999999999') as \"" + iField.getNombre() + "\"";
+				break;
+			}
+			default: {
+				result = result
+						+ "\n	,(select cp.cpvc_valortext from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"
+						+ iField.getCodigo() + "') as \"" + iField.getNombre() + "\"";
+			}
 			}
 		}
-		result = result + "\n	,(select cpes_nombre from procesoestado_pesp where cpes_llave = d.cpdv_estadoexpediente) as \"ESTADO\"";
-		result = result + "\nfrom documentoplantilla_dplp inner join pedidoventa_pdvp d on (cdpl_llave = d.cpdv_plantilla) \nwhere cdpl_codigo = '" + dp.getCodigo() + "' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
+		result = result
+				+ "\n	,(select cpes_nombre from procesoestado_pesp where cpes_llave = d.cpdv_estadoexpediente) as \"ESTADO\"";
+		result = result
+				+ "\nfrom documentoplantilla_dplp inner join pedidoventa_pdvp d on (cdpl_llave = d.cpdv_plantilla) \nwhere cdpl_codigo = '"
+				+ dp.getCodigo()
+				+ "' and d.dpdv_fecha >= $P{P_FECHA_INICIO} and d.dpdv_fecha < $P{P_FECHA_FIN} \norder by 1";
 		return result;
 	}
-
-
 
 	private void adapterConfiguration(String templateId, String propValue, String token) throws ServerException {
 		if (propValue == null)
 			return;
 		switch (propValue) {
 		case ConfigEnum.TARIFARIO: {
-			tariffHomologate.createTariffFields(templateId, token, campoService, propertyService, crudService, campoService.getUserFlex(token));
+			tariffHomologate.createTariffFields(templateId, token, campoService, propertyService, crudService,
+					campoService.getUserFlex(token));
 			break;
 		}
 		case ConfigEnum.TARIFA: {
@@ -211,8 +253,8 @@ public class HomologateAdapterService {
 		}
 	}
 
-	public void crearProducto(PedidoVentaDTO documento, String categoria, String token) throws ServerException {
-		productHomologate.crearDesdeDocumento(documento, categoria, token);
+	public void crearProducto(PedidoVentaDTO documento, String token) throws ServerException {
+		productHomologate.crearDesdeDocumento(documento, token);
 	}
 
 	// Este metodo habia desaparecido pero es necesario para poder abrir los turnos

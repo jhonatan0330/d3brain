@@ -44,14 +44,12 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Autowired @Lazy 
 	private DocumentoPlantillaMapper documentoPlantillaMapper;
 	
-	// BEGIN region servicesDocumentoPlantilla
 	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 	@Autowired @Lazy  private PropiedadSvc configuracionSvc;
 	@Autowired @Lazy  private ProcesoEstadoSvc estadoService;
 	@Autowired @Lazy  private RolAccesoSvc rolService;
 	@Autowired @Lazy  private ReporteBaseSvc reporteService;
 	@Autowired @Lazy  private ProcesoTransicionSvc transicionService;
-	// END region servicesDocumentoPlantilla
 
 	@Override
 	public DocumentoPlantillaDTO consultaXId(String llave) throws ServerException {
@@ -107,32 +105,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			rolService.inactivar(rol, token);
 		}
 		return super.inactivar(dto, token);
-		// END DocumentoPlantilla_inactivar
-	}
-	
-	@Override
-	public DocumentoPlantillaDTO consultaUnica(DocumentoPlantillaFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(DocumentoPlantillaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<DocumentoPlantillaDTO> listarConsulta(DocumentoPlantillaFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
 	}
 	
 	public List<DocumentoPlantillaDTO> consultaUsuario(DocumentoPlantillaFilterDTO dto)throws ServerException{
-		// BEGIN region consultaUsuario
 		return listarPlantillasUsuario(dto, false);
-		// END region consultaUsuario
 	}
-
-	
 	
 	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token, boolean external)throws ServerException{
 		// BEGIN region obtenerCampos
@@ -218,27 +195,21 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		
 		return copy;
-		// END region duplicar
 	}
 	public List<DocumentoPlantillaDTO> consultaAdministrador(DocumentoPlantillaFilterDTO dto)throws ServerException{
-		// BEGIN region consultaAdministrador
 		boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
 		if(!todosPermisos) throw new ServerException("En los roles que tienes asignados no tienes un rol que tenga permisos de consultar todas las plantillas");
 		return listarPlantillasUsuario(dto, true);
-		// END region consultaAdministrador
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO guardar(DocumentoPlantillaDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoPlantilla_guardar
 		configurarInicioPlantilla(dto);
 		dto = super.guardar(dto, token);
 		return dto;
-		// END DocumentoPlantilla_guardar
 	}
 
-// BEGIN region aditionalMethods
 	
 	public DocumentoPlantillaDTO consultarPorCodigo(String codigo) throws ServerException{
 		if(codigo==null || codigo.isEmpty()) throw new ServerException("Es obligatorio colocar la plantilla");
@@ -558,11 +529,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return documentoPlantillaMapper.getFullToSynchronize(process);
 	}
 	
-	public DocumentoPlantillaDTO getTemplateConfiguration(String configuration, String token) throws ServerException {
-		return obtenerCampos(documentoPlantillaMapper.getTemplateConfiguration(configuration), token, true);
+	public List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace() throws ServerException {
+		return documentoPlantillaMapper.getTemplateofCategoriesReplace();
 	}
-
-	
-// END region aditionalMethods
 
 }

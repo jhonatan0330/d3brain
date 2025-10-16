@@ -188,20 +188,19 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				ProductoDTO iBase = new ProductoDTO();
 				iBase.setLlaveTabla(productoDTO.getProductoBase());
 				iBase.setNombre(productoDTO.getNombre());
-				iBase.setCategoriaPlantilla(productoDTO.getCategoriaPlantilla());
+				iBase.setCategoria(null);
 				bases.add(iBase);
 			}
 		}
+		bases =  productoService.listarProductoSimplificar(bases);
 		if (bases != null && bases.size() != 0) {
 			List<PropiedadDTO> propiedadesBases = configuracionSvc.listarProductoSimplificar(bases);
-			for (ProductoDTO iProductoDTO : bases) {
-				iProductoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
+			for (ProductoDTO _iBase : bases) {
+				_iBase.setPropiedades(new ArrayList<PropiedadDTO>());
 				if (propiedadesBases != null && !propiedadesBases.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : propiedadesBases) {
-						if(iProductoDTO.getCategoriaPlantilla()==null)
-							throw new ServerException("El producto " +  iProductoDTO.getNombre() + " tiene una categoria plantilla nula");
-						if (propiedadDTO.getCampo().compareTo(iProductoDTO.getCategoriaPlantilla()) == 0)
-							iProductoDTO.getPropiedades().add(propiedadDTO);
+						if (propiedadDTO.getCampo().compareTo(_iBase.getCategoria()) == 0)
+							_iBase.getPropiedades().add(propiedadDTO);
 					}
 				}
 			}
@@ -209,15 +208,15 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		List<PropiedadDTO> propiedadesProducto = configuracionSvc.listarProductoSimplificar(productos);
 		for (ProductoDTO productoDTO : result) {
 			productoDTO.setPropiedades(new ArrayList<PropiedadDTO>());
-			if (propiedadesProducto != null && !propiedadesProducto.isEmpty() && productoDTO.getCategoriaPlantilla() != null) {
+			if (propiedadesProducto != null && !propiedadesProducto.isEmpty() && productoDTO.getCategoria() != null) {
 				for (PropiedadDTO propiedadDTO : propiedadesProducto) {
-					if (propiedadDTO.getCampo().compareTo(productoDTO.getCategoriaPlantilla()) == 0)
+					if (propiedadDTO.getCampo().compareTo(productoDTO.getCategoria()) == 0)
 						productoDTO.getPropiedades().add(propiedadDTO);
 				}
 			}
 			if (productoDTO.getPropiedades().isEmpty() && productoDTO.getProductoBase() != null) {
 				for (ProductoDTO iBase : bases) {
-					if (iBase.getCategoriaPlantilla()!=null && productoDTO.getProductoBase().compareTo(iBase.getCategoriaPlantilla()) == 0) {
+					if (iBase.getCategoria()!=null && productoDTO.getProductoBase().compareTo(iBase.getCategoria()) == 0) {
 						productoDTO.setPropiedades(iBase.getPropiedades());
 						break;
 					}

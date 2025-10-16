@@ -245,7 +245,7 @@
 		order by cdpl_nombre
 	</select>
 	
-	<select id="getTemplateConfiguration" resultType="DocumentoPlantillaDTO">
+	<select id="getTemplateofCategoriesReplace" resultType="DocumentoPlantillaDTO">
 		select
 			cdpl_llave as  llaveTabla
 			,cdpl_objetivo as  objetivo
@@ -257,8 +257,7 @@
 			,cdpl_estado as estado
 		from propiedad_ppdp pp 
 			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = pp.cppd_campo and dd.cdpl_estado= 'A')
-		where pp.cppd_valor = #{configuration}
-			and pp.cppd_propiedadvalor = 'PROP_255'
+		where pp.cppd_propiedadvalor = 'PROP_144'
 			and cppd_estado  ='A'
 	</select>
 <!--// END region script-->

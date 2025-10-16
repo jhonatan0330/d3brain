@@ -26,10 +26,7 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.CategoriaProductoDTO;
-import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
@@ -88,8 +85,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private CambioSvc cambioService;
 	@Autowired @Lazy 
 	private CatalogService catalogService;
-	@Autowired @Lazy 
-	private CategoriaProductoSvc categoriaProductoService;
 	@Autowired @Lazy 
 	private DocumentoPlantillaCaracteristicaSvc campoService;
 	@Autowired @Lazy 
@@ -740,29 +735,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(catalog.getName());
 	}
 
-	private void identificadorCategoriaProducto(PropiedadDTO dto, String token) throws ServerException {
-		if (dto.getValor().compareTo("*") == 0) {// Si viene en cero se crea el campo
-			DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
-			CategoriaProductoDTO nuevaCategoria = new CategoriaProductoDTO();
-			nuevaCategoria.setNombre(plantillaPrincipal.getNombre());
-			nuevaCategoria.setImagen(plantillaPrincipal.getImagen());
-			nuevaCategoria.setPlantilla(plantillaPrincipal.getLlaveTabla());
-			nuevaCategoria = categoriaProductoService.guardar(nuevaCategoria, token);
-			dto.setValor(nuevaCategoria.getLlaveTabla());
-		}
-		CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(dto.getValor());
-		if (categoria == null) {
-			CategoriaProductoFilterDTO categoriaFilter = new CategoriaProductoFilterDTO();
-			categoriaFilter.setNombre(dto.getValor().toUpperCase());
-			categoriaFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			categoria = categoriaProductoService.consultaUnica(categoriaFilter);
-			if (categoria == null)
-				throw new ServerException("No se encontro categoria con Id, nombre o Codigo que concuerde");
-		}
-		dto.setValor(categoria.getLlaveTabla());
-		dto.setTexto(categoria.getNombre());
-	}
-
 	private void identificadorUsuario(PropiedadDTO dto) throws ServerException {
 		if (dto.getValor().compareTo("*") == 0)
 			return;
@@ -999,9 +971,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO: {
 			return identificadorCampo(dto, token);
 		}
-		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
 		case Propiedades.DETALLE_CATEGORIA: {
-			identificadorCategoriaProducto(dto, token);
+			identificadorPlantilla(dto, token);
 			break;
 		}
 		case Propiedades.REPORTE_ENCABEZADO:

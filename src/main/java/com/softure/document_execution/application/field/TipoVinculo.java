@@ -93,7 +93,7 @@ public class TipoVinculo {
 		if(_functionSQl !=null) {
 			List<PedidoVentaDTO> _optionToLink =  sqlFunctionService.executeWithoutDetailDocument(pCampo.getCampoDTO(), pCampo.getDependientes(), null, _functionSQl);
 			if(_optionToLink!=null && _optionToLink.size()> 1) {
-				throw new ServerException(
+				throw new ServerException( "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +
 						"El campo vinculo esta consultando si exsite un documento al cual vincular, pero la funcion devuelve muchos resultados, por favor revisa la funcion");
 			}
 			if(_optionToLink!=null && _optionToLink.size()== 1) {
@@ -105,7 +105,7 @@ public class TipoVinculo {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) != null) {
 				return null; // Si el campo es opcional, no se genera un documento, para los update
 			} else {
-				throw new ServerException(
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +
 						"No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
 			}
 		}
@@ -130,7 +130,7 @@ public class TipoVinculo {
 			PropiedadDTO _templateId, String pDocumentToRelationMain) throws ServerException {
 		RelacionInternaDTO _relation = relationService.getFirstRelation(_templateId.getLlaveTabla(), null);
 		if (_relation == null) {
-			throw new ServerException("No encontramos la RELACION que identifica en campo del documento");
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " No encontramos la RELACION que identifica en campo del documento");
 		}
 
 		DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
@@ -154,7 +154,7 @@ public class TipoVinculo {
 						RelacionInternaDTO _relationDependent = relationService
 								.getFirstRelation(_iDependentProp.getLlaveTabla(), null);
 						if (_relationDependent == null) {
-							throw new ServerException(
+							throw new ServerException( "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + 
 									"No encontramos la RELACION de un dependiente que identifica en campo del documento");
 						}
 						_newFields.add(
@@ -170,7 +170,7 @@ public class TipoVinculo {
 			for (PropiedadDTO _iSqlProperty : _sqlProperties) {
 				RelacionInternaDTO _relationSql = relationService.getFirstRelation(_iSqlProperty.getLlaveTabla(), null);
 				if (_relationSql == null) {
-					throw new ServerException(
+					throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +
 							"No encontramos la RELACION de un SQL que identifica en campo del documento");
 				}
 				PedidoVentaCaracteristicaDTO _newFieldSql = CallDocumentCommons.copyFieldDocument(pCampo,

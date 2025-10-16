@@ -13,11 +13,10 @@ import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO>{
 	
 
-// BEGIN region aditionalMethods  
 	List<DocumentoPlantillaDTO> listarMenu(DocumentoPlantillaFilterDTO dto);
 	List<DocumentoPlantillaDTO> getProcessBoardsToMenu(DocumentoPlantillaFilterDTO dto);
 	List<DocumentoPlantillaDTO> getFullToSynchronize(@Param("process") List<String> process);
-	DocumentoPlantillaDTO getTemplateConfiguration(String configuration);
-// END region aditionalMethods
+	List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace();
 
+	
 }

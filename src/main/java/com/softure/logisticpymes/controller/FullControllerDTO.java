@@ -46,9 +46,6 @@ import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.DocumentoRelacionGestorSvc;
 import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
-import com.softure.inventory.application.CategoriaProductoSvc;
-import com.softure.inventory.domain.CategoriaProductoDTO;
-import com.softure.inventory.domain.CategoriaProductoFilterDTO;
 import com.softure.java.dto.exception.FlexException;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.CambioSvc;
@@ -2038,75 +2035,6 @@ public class FullControllerDTO {
 	public MensajePlantillaCorreoDTO guardarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
 		try {
 			return mensajePlantillaCorreoService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	
-	@Autowired @Lazy  private CategoriaProductoSvc categoriaProductoService;
-	
-	@PostMapping(value="/consultaXIdCategoriaProducto")
-	public CategoriaProductoDTO consultaXIdCategoriaProducto(@RequestBody String llave) throws FlexException {
-		try {
-			return categoriaProductoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-
-	
-	@PostMapping(value="/consultaUnicaCategoriaProducto")
-	public CategoriaProductoDTO consultaUnicaCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return categoriaProductoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaCategoriaProducto")
-	public List<CategoriaProductoDTO> listarConsultaCategoriaProducto(@RequestBody CategoriaProductoFilterDTO dto) throws FlexException  {
-		try {
-			return categoriaProductoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarCategoriaProducto")
-	public CategoriaProductoDTO activarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return categoriaProductoService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarCategoriaProducto")
-	public CategoriaProductoDTO inactivarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return categoriaProductoService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarCategoriaProducto")
-	public CategoriaProductoDTO actualizarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return categoriaProductoService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarCategoriaProducto")
-	public CategoriaProductoDTO guardarCategoriaProducto(@RequestBody CategoriaProductoDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return categoriaProductoService.guardar(dto, token);		
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

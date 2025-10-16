@@ -1012,9 +1012,8 @@ public class CallDocumentCRUD {
 		if (dto.getEstadoExpediente() == null)
 			saveRole(dto, token);
 
-		PropiedadDTO categoria = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO);
-		if (categoria != null)
-			homologateService.crearProducto(dto, categoria.getValor(), token);
+		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO) != null)
+			homologateService.crearProducto(dto, token);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA) != null)
 			homologateService.crearCuenta(dto, token);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar

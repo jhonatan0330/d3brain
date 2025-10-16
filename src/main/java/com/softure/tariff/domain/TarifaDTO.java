@@ -19,8 +19,6 @@ public class TarifaDTO extends BasicDTO {
 	private String productoDocumento;
 	private String productoNombre;
 	private String recurso;
-	private String recursoNombre;
-	private boolean rangoPrecios;
 	private BigDecimal valorMinimo;
 	private BigDecimal valor;
 	private BigDecimal valorMaximo;
@@ -28,11 +26,9 @@ public class TarifaDTO extends BasicDTO {
 	private Integer cantidadMaxima;
 	private BigDecimal totalMinimo;
 	private String dimension2;
-	private String dimension2Nombre;
 	private String dimension3;
-	private String dimension3Nombre;
 	private String dimension4;
-	private String dimension4Nombre;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date createdAt;
 	private String createdUser;
@@ -78,22 +74,6 @@ public class TarifaDTO extends BasicDTO {
 
 	public String getRecurso() {
 		return recurso;
-	}
-
-	public void setRecursoNombre(String recursoNombre) {
-		this.recursoNombre = recursoNombre;
-	}
-
-	public String getRecursoNombre() {
-		return recursoNombre;
-	}
-
-	public void setRangoPrecios(boolean rangoPrecios) {
-		this.rangoPrecios = rangoPrecios;
-	}
-
-	public boolean getRangoPrecios() {
-		return rangoPrecios;
 	}
 
 	public void setValorMinimo(BigDecimal valorMinimo) {
@@ -152,28 +132,12 @@ public class TarifaDTO extends BasicDTO {
 		return dimension2;
 	}
 
-	public void setDimension2Nombre(String dimension2Nombre) {
-		this.dimension2Nombre = dimension2Nombre;
-	}
-
-	public String getDimension2Nombre() {
-		return dimension2Nombre;
-	}
-
 	public void setDimension3(String dimension3) {
 		this.dimension3 = dimension3;
 	}
 
 	public String getDimension3() {
 		return dimension3;
-	}
-
-	public void setDimension3Nombre(String dimension3Nombre) {
-		this.dimension3Nombre = dimension3Nombre;
-	}
-
-	public String getDimension3Nombre() {
-		return dimension3Nombre;
 	}
 
 	public void setDimension4(String dimension4) {
@@ -184,13 +148,6 @@ public class TarifaDTO extends BasicDTO {
 		return dimension4;
 	}
 
-	public void setDimension4Nombre(String dimension4Nombre) {
-		this.dimension4Nombre = dimension4Nombre;
-	}
-
-	public String getDimension4Nombre() {
-		return dimension4Nombre;
-	}
 
 	public Date getCreatedAt() {
 		return createdAt;

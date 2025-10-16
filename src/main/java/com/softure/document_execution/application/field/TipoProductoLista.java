@@ -1,21 +1,19 @@
 package com.softure.document_execution.application.field;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.authorization.application.UsuarioRolProductoSvc;
 import com.softure.authorization.domain.UsuarioRolProductoDTO;
 import com.softure.authorization.domain.UsuarioRolProductoFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
-import com.softure.inventory.application.CategoriaProductoSvc;
 import com.softure.inventory.application.ProductoSvc;
-import com.softure.inventory.domain.CategoriaProductoDTO;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
@@ -30,8 +28,6 @@ public class TipoProductoLista {
 	private ProductoSvc productoService;
 	@Autowired @Lazy 
 	private UsuarioRolProductoSvc usuarioRolProductoService;
-	@Autowired @Lazy 
-	private CategoriaProductoSvc categoriaProductoService;
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		UsuarioRolProductoFilterDTO urp = new UsuarioRolProductoFilterDTO();
@@ -116,24 +112,13 @@ public class TipoProductoLista {
 		entityFilt.setFiltroParametro(pCampo.getFiltroParametro());
 		pBase.setProductos(productoService.listarConsulta(entityFilt));
 
+		// Creo que solo lo uso para branding box que es dar promociones por paquetes de 30
 		if (pBase.getProductos() != null && !pBase.getProductos().isEmpty()) {
-			List<CategoriaProductoDTO> categorias = new ArrayList<CategoriaProductoDTO>();
 			for (ProductoDTO productoDTO : pBase.getProductos()) {
-				boolean existeCategoria = false;
-				for (CategoriaProductoDTO catPlantilla : categorias) {
-					if (catPlantilla.getLlaveTabla().compareTo(productoDTO.getCategoria()) == 0) {
-						productoDTO.setCantidadPromocionBase(catPlantilla.getPromocionBase());
-						existeCategoria = true;
-						break;
-					}
-				}
-				if (!existeCategoria) {
-					CategoriaProductoDTO categoria = categoriaProductoService.consultaXId(productoDTO.getCategoria());
-					productoDTO.setCantidadPromocionBase(categoria.getPromocionBase());
-					categorias.add(categoria);
-				}
+				productoDTO.setCantidadPromocionBase(30);
 			}
 		}
+
 		pCampo.setCampoDTO(pBase);
 		return pCampo;
 	}

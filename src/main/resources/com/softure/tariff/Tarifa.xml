@@ -15,8 +15,6 @@
 			,ctar_productodocumento as productoDocumento
 			,descripcion(ctar_productodocumento) as  productoNombre
 			,ctar_recurso as  recurso
-			,descripcion(ctar_recurso) as  recursoNombre
-			,btar_rangoprecios as  rangoPrecios
 			,mtar_valorminimo as  valorMinimo
 			,mtar_valor as  valor
 			,mtar_valormaximo as  valorMaximo
@@ -24,11 +22,8 @@
 			,ntar_cantidadmaxima as  cantidadMaxima
 			,mtar_totalminimo as  totalMinimo
 			,ctar_dimension2 as  dimension2
-			,descripcion(ctar_dimension2) as  dimension2Nombre
 			,ctar_dimension3 as  dimension3
-			,descripcion(ctar_dimension3) as  dimension3Nombre
 			,ctar_dimension4 as  dimension4
-			,descripcion(ctar_dimension4) as  dimension4Nombre
 			,ctar_creacionusuario as createdUser
 			,dtar_modificacionfecha as updatedAt
 			,ctar_modificacionusuario as updatedUser
@@ -58,9 +53,6 @@
 			</if>
 			<if test="recurso!=null">
 				and ctar_recurso = #{recurso}
-			</if>
-			<if test="rangoPreciosFilter!=null">
-				and btar_rangoprecios = #{rangoPreciosFilter}
 			</if>
 			<if test="dimension2!=null">
 				and ctar_dimension2 = #{dimension2}
@@ -103,11 +95,7 @@
 		<include refid="whereTarifaFragment" />
 		order by ctar_tarifario 
 		, productonombre 
-		, recursonombre 
 		, ntar_cantidadminima 
-		, dimension2nombre 
-		, dimension3nombre 
-		, dimension4nombre 
 		<include refid="paginationTarifaFragment" />
 	</select>
 
@@ -135,9 +123,6 @@
 		</if>
 		<if test="recurso!=null">
 			,ctar_recurso
-		</if>
-		<if test="rangoPrecios!=null">
-			,btar_rangoprecios
 		</if>
 		<if test="valorMinimo!=null">
 			,mtar_valorminimo
@@ -189,9 +174,6 @@
 		<if test="recurso!=null">
 			,#{recurso}
 		</if>
-		<if test="rangoPrecios!=null">
-			,#{rangoPrecios}
-		</if>
 		<if test="valorMinimo!=null">
 			,#{valorMinimo}
 		</if>
@@ -236,7 +218,6 @@
 				ctar_producto = #{producto},
 				ctar_productodocumento = #{productoDocumento},
 				ctar_recurso = #{recurso},
-				btar_rangoprecios = #{rangoPrecios},
 				mtar_valorminimo = #{valorMinimo},
 				mtar_valor = #{valor},
 				mtar_valormaximo = #{valorMaximo},
@@ -262,7 +243,7 @@
 	  <choose><when test="dimension4!=null"></when><otherwise>and ctar_dimension4 is null</otherwise></choose>
 	  <if test="cantidadMinima!=null">and ((#{cantidadMinima} between ntar_cantidadminima and ntar_cantidadmaxima) or (#{cantidadMaxima} between ntar_cantidadminima and ntar_cantidadmaxima))</if>
 	  and ctar_estado = 'A'
-	  order by tarifarioNombre, productoNombre, recursoNombre, ntar_cantidadminima
+	  order by tarifarioNombre, productoNombre, ntar_cantidadminima
 	</select>
 
 	<select id="obtenerTarifaFuncion" resultType="TarifaDTO">
@@ -275,14 +256,9 @@
 			,ctar_productodocumento as  productoDocumento
 			,descripcion(ctar_productodocumento)  as  productoNombre
 			,ctar_recurso as  recurso
-			,descripcion(ctar_recurso) as  recursoNombre
 			,ctar_dimension2 as  dimension2
-			,descripcion(ctar_dimension2) as  dimension2Nombre
 			,ctar_dimension3 as  dimension3
-			,descripcion(ctar_dimension2) as  dimension3Nombre
 			,ctar_dimension4 as  dimension4
-			,descripcion(ctar_dimension2) as  dimension4Nombre
-			,btar_rangoprecios as  rangoPrecios
 			,mtar_valorminimo as  valorMinimo
 			,mtar_valor as  valor
 			,mtar_valormaximo as  valorMaximo
@@ -291,30 +267,6 @@
 			,mtar_totalminimo as  totalMinimo
 			,ctar_estado as estado
 		from propiedad_${propiedad} (#{producto}, #{productoBase}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
-	</select>
-
-	<!--// Esto despues lo voy a reubicar -->
-	<select id="getDimentionOptions" resultType="TariffOptionDTO">
-		select
-			cpdv_llave as key,
-			cpdv_nombre as code,
-			<if test="template==null">(select cpro_llave from producto_prop where cpro_documento = cpdv_llave) as productId,</if>
-			cpdv_plantilla as template,
-			descripcion(cpdv_llave) as name
-		from pedidoventa_pdvp 
-		where cpdv_estado = 'A'
-		and (cpdv_nombre like upper('%' || #{filter} || '%') or cpdv_textofiltro like '%' || #{filter} || '%') 
-		<choose>
-		<when test="template!=null">
-		and cpdv_plantilla = #{template}
-		</when>
-		<otherwise>
-		and cpdv_plantilla in (select cppd_campo from propiedad_ppdp 
-		inner join documentoplantilla_dplp on (cdpl_llave = cppd_campo)
-		where cppd_propiedadvalor = 'PROP_144' and cppd_estado = 'A'
-		and cdpl_estado = 'A')
-		</otherwise>
-		</choose>
 	</select>
 
 </mapper>

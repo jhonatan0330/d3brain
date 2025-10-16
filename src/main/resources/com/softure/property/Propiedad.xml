@@ -629,8 +629,7 @@ COST 100;
      <select id="listarProductoSimplificado" resultType="PropiedadDTO">
 		<include refid="selectPropiedadFragment" /> 
 		where cppd_estado = 'A' and cppd_tipo = 'L' and  cppd_campo in (
-			select cc.ccpr_plantilla from producto_prop pp 
-				inner join categoriaproducto_cprp cc on (cc.ccpr_llave = pp.cpro_categoria)
+			select pp.cpro_categoria from producto_prop pp 
 			where pp.cpro_estado = 'A'
 			and pp.cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
 		)
