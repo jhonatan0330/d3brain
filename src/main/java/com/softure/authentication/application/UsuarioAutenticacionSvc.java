@@ -342,7 +342,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				if(Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.APP_DFA)!=null) {
 					// Mientras terminamos lo del flex
 					if(dto.getIp()!=null)			
-						authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
+						authorizationService.makeTokenNumber(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
 				}
 			}
 		}
