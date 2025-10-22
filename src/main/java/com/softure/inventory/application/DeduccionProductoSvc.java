@@ -25,7 +25,7 @@ import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.DeduccionProductoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
@@ -40,7 +40,8 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 	@Autowired @Lazy private TrazabilidadProductoInventarioSvc trazabilidadProductoInventarioService;
 	@Autowired @Lazy private PedidoVentaSvc pedidoService;
 	@Autowired @Lazy private AuxiliarProcesoBodega tipoBodega;
-	@Autowired @Lazy private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 
 	@Override
 	public DeduccionProductoDTO consultaXId(String llave) throws ServerException {
@@ -131,7 +132,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 		PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(pedidoService.consultaXId(documento), token);
 		//2. Coloco los dependientes//Actualizar dependencias despues de los camps para que queden completas asi el campo este despues en orden
 		for (PedidoVentaCaracteristicaDTO campoDocumento : expediente.getCaracteristicas()) {
-			campoDocumento.getCampoDTO().setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campoDocumento.getCampo(), null,null));
+			campoDocumento.getCampoDTO().setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.CAMPO, campoDocumento.getCampo(), null,null));
 			List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(campoDocumento.getCampoDTO(), Propiedades.DEPENDE);
 			if(codigoDepende!=null ){
 				for (PropiedadDTO codigo: codigoDepende){

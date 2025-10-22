@@ -117,7 +117,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		if(dto.getValorNumero()!=null && dto.getValorNumero().compareTo(BigDecimal.ZERO)==0) dto.setValorNumero(null);
 		if(dto.getValorNumero()!=null && dto.getValorNumero().compareTo(new BigDecimal(9999999999999999.0))>0) throw new ServerException("Se excedio del numero maximo");
 		if(dto.getPrincipal().getHistorico() == null) {
-			save(dto);
+			saveSimple(dto);
 		} else {
 			dto.setLlaveTabla(generarLlave());
 			pedidoVentaCaracteristicaMapper.insertarHistorico(dto);

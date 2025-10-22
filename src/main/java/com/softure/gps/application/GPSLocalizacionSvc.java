@@ -90,7 +90,7 @@ public class GPSLocalizacionSvc extends BasicSvc<GPSLocalizacionDTO, GPSLocaliza
 		dto.setFechaReporte(new Date());
 		GPSDispositivoDTO dispositivo = gpsDispositivoService.consultaXId(dto.getDispositivo());
 		dispositivo.setUltimaConexion(dto.getFecha());
-		gpsDispositivoService.save(dispositivo);
+		gpsDispositivoService.saveSimple(dispositivo);
 		dto = super.save(dto);
 		return dto;
 		// END GPSLocalizacion_guardar

@@ -23,7 +23,7 @@ import com.softure.java.services.HttpUtils;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.logisticpymes.domain.UsuarioFilterDTO;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +36,9 @@ public class UserController {
 	@Autowired @Lazy  private UsuarioSvc userService;
 	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
 	@Autowired @Lazy  private RolAccesoSvc rolAccesoService;
-	@Autowired @Lazy  private PropiedadSvc propertyService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+
 
 	@GetMapping(value="/getRole")
 	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization") String token) throws ServerException {
@@ -77,7 +79,7 @@ public class UserController {
 	
 	@GetMapping(value="/properties/{userId}")
 	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId)throws ServerException {
-		return propertyService.getToUser(pUserId);
+		return cacheService.getToUser(pUserId);
 	}
 	
 }

@@ -31,6 +31,7 @@ import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 import com.softure.mail.application.MailSendMessageToAdminService;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -64,6 +65,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Autowired
 	@Lazy
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cachePropertyService;
+
 	@Autowired
 	@Lazy
 	private UsuarioSesionSvc autenticacionService;
@@ -171,7 +175,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		filtro.setPlantilla(documento);
 		List<ReporteBaseDTO> result = listarConsulta(filtro);
 		for (ReporteBaseDTO reporteBaseDTO : result) {
-			reporteBaseDTO.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE,
+			reporteBaseDTO.setPropiedades(cachePropertyService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE,
 					reporteBaseDTO.getLlaveTabla(), null, null));
 		}
 		return result;
@@ -237,7 +241,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				case Propiedades.REPORTE_ENCABEZADO:
 				case Propiedades.REPORTE_PIE_PAGINA:
 				case Propiedades.REPORTE_ENCABEZADO_EXCEL: {
-					PropiedadDTO subreporteJRXML = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.REPORTE,
+					PropiedadDTO subreporteJRXML = cachePropertyService.obtenerPropiedad( PropiedadValorDefinidoDTO.REPORTE,
 							propiedadDTO.getValor(), Propiedades.REPORTE_JRXML, usuario);// getUserFlex(token)
 					if (subreporteJRXML == null)
 						throw new ServerException(
@@ -280,7 +284,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			if (base == null)
 				throw new ServerException("Reporte base no encontrado");
 		}
-		base.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE, base.getLlaveTabla(), null,
+		base.setPropiedades(cachePropertyService.obtenerPropiedades( PropiedadValorDefinidoDTO.REPORTE, base.getLlaveTabla(), null,
 				getUserFromParameters(token)));// getUserFlex(token)
 		return base;
 	}

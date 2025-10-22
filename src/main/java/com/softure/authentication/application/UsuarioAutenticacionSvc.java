@@ -51,6 +51,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	private UsuarioSvc usuarioService;
 	@Autowired @Lazy 
 	private UsuarioSesionErrorSvc errorService;
+	
+	// Cache
+	private String fechaMinima;
 
 	@Override
 	public UsuarioAutenticacionDTO consultaXId(String llave) throws ServerException {
@@ -64,44 +67,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	@PostConstruct
 	public void initIt() throws Exception {
 		this.mapper = usuarioAutenticacionMapper;
-	}
-
-	@Override
-	public UsuarioAutenticacionDTO activar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioAutenticacion_activar
-		return super.activar(dto, token);
-		// END UsuarioAutenticacion_activar
-	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionDTO actualizar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioAutenticacion_actualizar
-		return super.actualizar(dto, token);
-		// END UsuarioAutenticacion_actualizar
-	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionDTO inactivar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
-		// BEGIN UsuarioAutenticacion_inactivar
-		return super.inactivar(dto, token);
-		// END UsuarioAutenticacion_inactivar
-	}
-
-	@Override
-	public UsuarioAutenticacionDTO consultaUnica(UsuarioAutenticacionFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(UsuarioAutenticacionFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<UsuarioAutenticacionDTO> listarConsulta(UsuarioAutenticacionFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
 	}
 
 
@@ -206,7 +171,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		use.setFecha(new Date());
 		use.setSesion(dto.getSesion());
 		use.setError(error);
-		errorService.save(use);
+		errorService.saveSimple(use);
 		throw new ServerException(error);
 	}
 
@@ -255,11 +220,12 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (!fromApi) {
 			if (dto.getClaveAnterior() == null)
 				reportarError(dto, "Por favor actualice su version de software");
-			String fechaMinima = null;
-			try {
-				fechaMinima = usuarioAutenticacionMapper.fechaMinima();
-			} catch (Exception e) {
-				reportarError(dto, e.getMessage());
+			if(fechaMinima==null) {
+				try {
+					fechaMinima = usuarioAutenticacionMapper.fechaMinima();
+				} catch (Exception e) {
+					reportarError(dto, e.getMessage());
+				}	
 			}
 			if (fechaMinima != null) {
 				if (dto.getClaveAnterior().length() > 13)
@@ -371,12 +337,9 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 							"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
 			}
 			// Esto lo uso en la app mobile la idea es cambiarlo
-			autenticacion
-					.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
+			//autenticacion
+			//		.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
 		}
-
-		
-
 		return autenticacion;
 	}
 
@@ -390,7 +353,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			use.setFecha(new Date());
 			use.setSesion(token);
 			use.setError("Error validando Token");
-			errorService.save(use);
+			errorService.saveSimple(use);
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 

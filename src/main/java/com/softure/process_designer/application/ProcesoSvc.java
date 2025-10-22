@@ -15,6 +15,7 @@ import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_designer.infrastructure.ProcesoMapper;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -34,7 +35,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	@Autowired @Lazy 
 	private ProcesoMapper procesoMapper;
 
-	// BEGIN region servicesProceso
 	@Autowired @Lazy 
 	private ProcesoEstadoSvc estadoService;
 	@Autowired @Lazy 
@@ -43,8 +43,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	private PropiedadSvc propiedadService;
 	@Autowired @Lazy 
 	private PropiedadSvc paramService;
-	// END region servicesProceso
-
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+	
 	@Override
 	public ProcesoDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
@@ -320,7 +321,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
 		for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
-			iEstado.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
+			iEstado.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO,
 					iEstado.getLlaveTabla(), null, null));
 		}
 
@@ -329,10 +330,10 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		filtroTransicionDTO.setProceso(proceso.getLlaveTabla());
 		proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
 		for (ProcesoTransicionDTO iTransicion : proceso.getTransiciones()) {
-			iTransicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
+			iTransicion.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.TRANSICION,
 					iTransicion.getLlaveTabla(), null, null));
 			if (iTransicion.getPlantilla() != null) {
-				iTransicion.getPropiedades().addAll(propiedadService.obtenerPropiedades(
+				iTransicion.getPropiedades().addAll(cacheService.obtenerPropiedades(
 						PropiedadValorDefinidoDTO.PLANTILLA, iTransicion.getPlantilla(), null, null));
 			}
 		}

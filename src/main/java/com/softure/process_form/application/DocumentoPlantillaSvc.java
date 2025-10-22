@@ -22,6 +22,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.process_form.infrastructure.DocumentoPlantillaMapper;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -50,6 +51,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Autowired @Lazy  private RolAccesoSvc rolService;
 	@Autowired @Lazy  private ReporteBaseSvc reporteService;
 	@Autowired @Lazy  private ProcesoTransicionSvc transicionService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 
 	@Override
 	public DocumentoPlantillaDTO consultaXId(String llave) throws ServerException {
@@ -240,7 +243,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			throw new ServerException("La plantilla " + plantilla.getNombre() + "se encuentra inactiva");
 		//plantilla.setSecurityToken(dto.getSecurityToken());
 		if(fullPermisos) {
-			plantilla.setPropiedades(configuracionSvc.obtenerEspecialFullPermisos(dto.getLlaveTabla()));
+			plantilla.setPropiedades(cacheService.obtenerEspecialFullPermisos( dto.getLlaveTabla()));
 		}else {
 			plantilla.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), dto.getSecurityToken()));			
 		}
@@ -253,7 +256,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		//si el token es null que traiga todos principalmente para copiar
 		String usuario = null;
 		if(token !=null) usuario = getUserFlex(token);
-		List<PropiedadDTO> propiedades = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, plantilla, null, usuario);
+		List<PropiedadDTO> propiedades = cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, plantilla, null, usuario);
 		if(propiedades==null) propiedades = new ArrayList<PropiedadDTO>();
 		return propiedades;
 	}
@@ -401,12 +404,12 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			
 			List<PropiedadDTO> todasPropiedadesEvitandoConsultaBD = null;
 			if(todosPermisos) {
-				todasPropiedadesEvitandoConsultaBD = configuracionSvc.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas);
+				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			}else {
-				todasPropiedadesEvitandoConsultaBD = configuracionSvc.listarPlantillasSimplificar(plantillasPermitidas, usuario);
+				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar( plantillasPermitidas, usuario);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
-				List<PropiedadDTO> todasPropiedadesReportesOcultos = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, usuario);
+				List<PropiedadDTO> todasPropiedadesReportesOcultos = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, usuario);
 				if(todasPropiedadesReportesOcultos !=null && !todasPropiedadesReportesOcultos.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : todasPropiedadesReportesOcultos) {
 						for (ReporteBaseDTO iReport : reportes) {
@@ -418,11 +421,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					}
 				}
 			}
-			List<PropiedadDTO> todasPropiedadesEstados = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
+			List<PropiedadDTO> todasPropiedadesEstados = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
 			todasPropiedadesEstados = configuracionSvc.clearResponseProperties(todasPropiedadesEstados);
-			List<PropiedadDTO> todasPropiedadesReportes = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);
+			List<PropiedadDTO> todasPropiedadesReportes = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);
 			todasPropiedadesReportes = configuracionSvc.clearResponseProperties(todasPropiedadesReportes);
-			List<PropiedadDTO> propiedadesReporteAutoPrint = configuracionSvc.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_AUTOPRINT, usuario);
+			List<PropiedadDTO> propiedadesReporteAutoPrint = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_AUTOPRINT, usuario);
 			if(propiedadesReporteAutoPrint!=null && !propiedadesReporteAutoPrint.isEmpty()) todasPropiedadesReportes.addAll(configuracionSvc.clearResponseProperties(propiedadesReporteAutoPrint));
 			
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){

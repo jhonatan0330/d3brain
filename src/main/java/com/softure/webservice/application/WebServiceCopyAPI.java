@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.domain.WebServiceDTO;
@@ -19,6 +20,9 @@ public class WebServiceCopyAPI {
 	private WebServiceSvc webServiceSvc;
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadesSvc;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+
 	
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public SharedIdResponse call(String serviceId, String token) throws ServerException {
@@ -31,7 +35,7 @@ public class WebServiceCopyAPI {
 		// Obtengo propiedades del servicio
 		String userId = webServiceSvc.getUserFlex(token);
 		service.setPropiedades(
-				propiedadesSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
+				cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
 		
 		WebServiceDTO newAPi = new WebServiceDTO();
 		newAPi.setCodigo(service.getCodigo() + "COPY");

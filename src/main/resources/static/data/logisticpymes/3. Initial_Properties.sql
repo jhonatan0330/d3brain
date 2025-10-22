@@ -639,3 +639,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 	
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
 	VALUES('PROP_302' , 'O', 'DOBLE FACTOR DE AUTENTICACION', 'APP_DFA', 'REQUISITO', true, true, true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_303' , 'O', 'PERMISO DE CONSULTAS', 'APP_READER', 'REQUISITO', true, true, true);

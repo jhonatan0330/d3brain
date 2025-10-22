@@ -39,7 +39,7 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -70,7 +70,8 @@ public class TipoProceso {
 	@Autowired @Lazy 
 	private MovimientoSvc movimientoService;
 	@Autowired @Lazy 
-	private PropiedadSvc propiedadService;
+	private PropertyGetWithCacheService cacheService;
+
 	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
 	@Autowired @Lazy 
@@ -164,7 +165,7 @@ public class TipoProceso {
 						CuentaDTO caja = cuentaService.consultaUnica(cajaFilter);
 						if (caja == null) {
 							PedidoVentaDTO cuentaDocumento = pedidoService.consultaXId(pCampo.getValorOpcion());
-							PropiedadDTO propiedadCuenta = propiedadService.obtenerPropiedad(
+							PropiedadDTO propiedadCuenta = cacheService.obtenerPropiedad(
 									PropiedadValorDefinidoDTO.PLANTILLA, cuentaDocumento.getPlantilla(),
 									Propiedades.PLANTILLA_TIPO_CUENTA, null);
 							if (propiedadCuenta == null) {
@@ -729,7 +730,7 @@ public class TipoProceso {
 								campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
 								campoDestino.setValorText(dependiente.getPrincipal().getNombre());
 								campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-								campoService.save(campoDestino);
+								campoService.saveSimple(campoDestino);
 							} 
 						}
 					}

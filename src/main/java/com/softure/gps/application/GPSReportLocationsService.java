@@ -35,7 +35,7 @@ public class GPSReportLocationsService {
 			gpsLocalizacionDTO.setDocumento(null);
 			gpsLocalizacionDTO.setFechaReporte(new Date());
 			gpsLocalizacionDTO.setEstado(null);
-			locationService.save(gpsLocalizacionDTO);
+			locationService.saveSimple(gpsLocalizacionDTO);
 		}
 		// No tengo nada que retornar pero para que no salga vacia
 		// algun dia guardare las transacciones de envio
@@ -60,7 +60,7 @@ public class GPSReportLocationsService {
 		if(mat.group(1)!=null)gpsLocalizacionDTO.setLatitud(gpsLocalizacionDTO.getLatitud().negate());
 		gpsLocalizacionDTO.setLongitud(new BigDecimal(mat.group(6)));
 		if(mat.group(5)!=null)gpsLocalizacionDTO.setLongitud(gpsLocalizacionDTO.getLongitud().negate());
-		locationService.save(gpsLocalizacionDTO);
+		locationService.saveSimple(gpsLocalizacionDTO);
 		
 	}
 }

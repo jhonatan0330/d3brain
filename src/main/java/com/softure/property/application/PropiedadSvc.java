@@ -78,8 +78,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
 
-	@Autowired @Lazy 
-	private PropiedadMapper propiedadMapper;
+	@Autowired @Lazy PropiedadMapper propiedadMapper;
 
 	@Autowired @Lazy 
 	private CambioSvc cambioService;
@@ -124,6 +123,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
 	
+	@Autowired @Lazy
+	public PropertyGetWithCacheService cacheService;
+	
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
@@ -139,44 +141,21 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	@Override
-	public PropiedadDTO activar(PropiedadDTO dto, String token) throws ServerException {
-		// BEGIN Propiedad_activar
-		throw new ServerException("No se permite activar las propiedades");
-		// END Propiedad_activar
-	}
-
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PropiedadDTO actualizar(PropiedadDTO dto, String token) throws ServerException {
-		// BEGIN Propiedad_actualizar
 		String llaveTabla = dto.getLlaveTabla();
 		dto = guardar(dto, token);
-
 		relacionService.copyFromProperty(llaveTabla, dto.getLlaveTabla(), token, dto.getCambioCreacion(), true);
-		/*
-		 * List<RelacionInternaDTO> relaciones =
-		 * relacionService.relacionesPropiedad(llaveTabla); if (relaciones != null &&
-		 * !relaciones.isEmpty()) { for (RelacionInternaDTO relacionInternaDTO :
-		 * relaciones) { if (dto.getValor().compareTo(relacionInternaDTO.getCampo()) !=
-		 * 0) { RelacionInternaDTO nueva = new RelacionInternaDTO();
-		 * nueva.setPropiedad(dto.getLlaveTabla());
-		 * nueva.setPlantilla(relacionInternaDTO.getPlantilla());
-		 * nueva.setCampo(relacionInternaDTO.getCampo());
-		 * nueva.setFechaInicio(relacionInternaDTO.getFechaInicio());
-		 * nueva.setCambioCreacion(relacionInternaDTO.getCambioCreacion());
-		 * relacionService.guardar(nueva, token); } } }
-		 */
 		PropiedadDTO inactivo = new PropiedadDTO();
 		inactivo.setLlaveTabla(llaveTabla);
 		inactivar(inactivo, token);
+		//cacheService.clearProperties(); ya lo trae el guardar
 		return dto;
-		// END Propiedad_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PropiedadDTO inactivar(PropiedadDTO dto, String token) throws ServerException {
-		// BEGIN Propiedad_inactivar
 		PropiedadDTO bd = consultaXId(dto.getLlaveTabla());
 		bd.setCambioEliminacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
 		if (bd.getKey() == null) {
@@ -247,24 +226,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				relacionService.inactivar(relacionInternaDTO, token);
 			}
 		}
+		cacheService.clearProperties();
 		return bd;
-		// END Propiedad_inactivar
 	}
 
-	@Override
-	public PropiedadDTO consultaUnica(PropiedadFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(PropiedadFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<PropiedadDTO> listarConsulta(PropiedadFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
-	}
 
 	private String getLocationError(String type, String fieldId) throws ServerException {
 		switch (type) {
@@ -425,12 +390,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			campoService.actualizarFiltros(dto.getCampo());
 		if (dto.getKey().compareTo(Propiedades.DESCRIPCION) == 0)
 			campoService.actualizarDescripcion(dto.getCampo(), dto.getValor());
-		// relacionarCampo(dto, token);
+		cacheService.clearProperties();
 		return dto;
-		// END Propiedad_guardar
 	}
-
-// BEGIN region aditionalMethods
 
 	public PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
 		PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
@@ -1098,107 +1060,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	 * }
 	 */
 
-	public String obtenerUnica(String tipo, String plantilla, String key, String usuario) throws ServerException {
-		PropiedadDTO filtroOrden = obtenerPropiedad(tipo, plantilla, key, usuario);
-		if (filtroOrden == null)
-			return null;
-		return filtroOrden.getValor();
-	}
-
-	public PropiedadDTO obtenerPropiedad(String tipo, String plantilla, String key, String usuario)
-			throws ServerException {
-		if (plantilla == null)
-			throw new ServerException("El campo esta nulo");
-		List<PropiedadDTO> propiedades = obtenerPropiedades(tipo, plantilla, key, usuario);
-		if (propiedades == null || propiedades.isEmpty())
-			return null;
-		return propiedades.get(0);
-	}
-
-	public List<PropiedadDTO> obtenerPropiedades(String tipo, String entidad, String key, String usuario)
-			throws ServerException {
-		return obtenerPropiedades(tipo, entidad, key, usuario, null);
-	}
-	
-	public List<PropiedadDTO> obtenerPropiedades(String tipo, String entidad, String key, String usuario, Boolean privada)
-			throws ServerException {
-		if (entidad == null)
-			throw new ServerException("El campo esta nulo");
-		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario, privada);
-	}
-
-	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario)
-			throws ServerException {
-		return obtenerPropiedadesSinEntidad(tipo, entidad, key, usuario, null);
-	}
-	
-	// Los dividi oara optimizar el menu de usuario y asi consultar los estados
-	// todas las propiedades
-	public List<PropiedadDTO> obtenerPropiedadesSinEntidad(String tipo, String entidad, String key, String usuario, Boolean privada)
-			throws ServerException {
-		PropiedadFilterDTO filtroOrden = new PropiedadFilterDTO();
-		filtroOrden.setTipo(tipo);
-		filtroOrden.setCampo(entidad);
-		if (key != null) {
-			PropiedadValorDefinidoDTO valorDefinido = consultarValorDefinido(tipo, key);
-			filtroOrden.setPropiedadValor(valorDefinido.getLlaveTabla());
-		}
-		List<PropiedadDTO> consultadas = propiedadMapper.consultarRol(filtroOrden, usuario, new Date(), privada);
-		if (usuario != null) {
-			return cleanPropertiesFromTimeAndExclusion(consultadas);
-		}
-		return consultadas;
-	}
-	
-	public List<PropiedadDTO> getToUser(String usuario)
-			throws ServerException {
-		return propiedadMapper.consultarPermisosUsuario(usuario);
-	}
-
-	private List<PropiedadDTO> cleanPropertiesFromTimeAndExclusion(List<PropiedadDTO> consultadas) {
-
-		List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
-		List<PropiedadDTO> excluidas = new ArrayList<PropiedadDTO>();
-
-		if (!consultadas.isEmpty()) {
-			// Valido bloqueo por exclusion
-			for (PropiedadDTO iPropiedadDTO : consultadas) {
-				if (iPropiedadDTO.getUsuarioExcluyente() != null || iPropiedadDTO.getRolExcluyente() != null)
-					excluidas.add(iPropiedadDTO);
-			}
-			if (!excluidas.isEmpty()) {
-				for (PropiedadDTO iPropiedadDTO : excluidas) {
-					// Aqui me di cuenta que estaba borrando todas las propiedades de la plantilla
-					// Filtro el valor: en las opciones de una lista (multiple) se puede dejar de un
-					// tipo y mostrar el otro
-					consultadas.removeIf(x -> (x.getPropiedadValor().compareTo(iPropiedadDTO.getPropiedadValor()) == 0
-							&& x.getCampo().compareTo(iPropiedadDTO.getCampo()) == 0
-							&& x.getValor().compareTo(iPropiedadDTO.getValor()) == 0));
-				}
-			}
-			// Valido bloqueo por tiempo
-			for (PropiedadDTO iPropiedadDTO : consultadas) {
-				if (Propiedades.validarBloqueo(iPropiedadDTO))
-					validadas.add(iPropiedadDTO);
-			}
-		}
-
-		return validadas;
-
-	}
-
-	public List<PropiedadDTO> obtenerEspecialFullPermisos(String plantilla) throws ServerException {
-		PropiedadDTO filtroOrden = new PropiedadDTO();
-		filtroOrden.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
-		filtroOrden.setCampo(plantilla);
-		return propiedadMapper.consultarPermisosFullPlantilla(filtroOrden);
-	}
-
-	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD(List<DocumentoPlantillaDTO> plantillas)
-			throws ServerException {
-		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas);
-	}
-
 	private void identificadorMensaje(PropiedadDTO dto) throws ServerException {
 		MensajePlantillaCorreoDTO bd = mensajeService.consultaXId(dto.getValor());
 		// Si es actualizar valido por el id
@@ -1251,14 +1112,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		dto.setValor(bd.getLlaveTabla());
 		dto.setTexto(bd.getNombre());
-	}
-
-	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String tipo, String documento, String modificador,
-			String usuario, String token) throws ServerException {
-		dto.setPropiedades(obtenerPropiedades(tipo, dto.getLlaveTabla(), null, usuario));
-		if (dto.getPropiedades() == null)
-			throw new ServerException("NO se logro consultar las propiedades del documento");
-		validarFuncionConsultandoPropiedad(dto, documento, modificador, usuario, token);
 	}
 
 	public void validarFuncionConsultandoPropiedad(BasicParamDTO dto, String documento, String modificador,
@@ -1517,13 +1370,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	public List<PropiedadDTO> getFullPropertiesToConfiguration() throws ServerException {
 		return propiedadMapper.getFullPropertiesToConfiguration();
-	}
-
-	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario)
-			throws ServerException {
-
-		List<PropiedadDTO> consultadas = propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
-		return cleanPropertiesFromTimeAndExclusion(consultadas);
 	}
 
 	public String ubicarPropiedad(PropiedadDTO propiedad) throws ServerException {

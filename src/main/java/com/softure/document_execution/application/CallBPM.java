@@ -27,6 +27,7 @@ import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -56,6 +57,8 @@ public class CallBPM {
 	private DocumentoPlantillaSvc plantillaService;
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 
 	public void execute(PedidoVentaDTO pDocument, String token, PedidoVentaDTO pGeneratorToBPM) throws ServerException {
 		if (pDocument == null || pDocument.getCaracteristicas() == null || pDocument.getCaracteristicas().isEmpty())
@@ -80,7 +83,7 @@ public class CallBPM {
 									_iFieldToReview.setPrincipal(_expediente);
 									_iFieldToReview.setTransaccionRegistro(pDocument.getTransaccion());
 									if(_iFieldToReview.getCampoDTO().getPropiedades()==null) {
-										_iFieldToReview.getCampoDTO().setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+										_iFieldToReview.getCampoDTO().setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.CAMPO,
 												_iFieldToReview.getCampo(), null, null)); 
 									}
 									saveUpdateInactivateDocumentFunction.organizeDepends(_expediente.getCaracteristicas(), _iFieldToReview);
@@ -457,7 +460,7 @@ public class CallBPM {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
 						String usuarioToken = (token == null) ? null : propiedadService.getUserFlex(token);
-						PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+						PropiedadDTO prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.PLANTILLA,
 								procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
 						if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
 							procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
@@ -470,7 +473,7 @@ public class CallBPM {
 						
 							bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO, pGenerator);
 						}else {
-							prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+							prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.PLANTILLA,
 									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ACTIVAR, usuarioToken);
 							if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
 								procesoDTO.setEstado(SharedConstants.STATE_INACTIVE);

@@ -18,7 +18,7 @@ import com.softure.authentication.domain.UsuarioSesionFilterDTO;
 import com.softure.authentication.infrastructure.UsuarioSesionMapper;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.services.SoftureUtil;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
@@ -27,9 +27,10 @@ public class UsuarioSesionSvc {
 	
 	@Autowired @Lazy 
 	private UsuarioSesionMapper usuarioSesionMapper;
-	@Autowired
-	@Lazy
-	private PropiedadSvc configuracionSvc;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+
+	private String mainOrganization;
 
 	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<String, UsuarioSesionDTO>();
 	
@@ -87,8 +88,8 @@ public class UsuarioSesionSvc {
 	private int getUserSessionTime(String pUser) throws ServerException {
 		Integer _time = sessionTimeMap.get(pUser);
 		if(_time ==null) {
-			String _main = usuarioSesionMapper.obtenerOrganizacion();
-			PropiedadDTO _prop = configuracionSvc.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,_main, Propiedades.APP_SESSION_TIME, pUser);
+			if(this.mainOrganization ==null) this.mainOrganization = usuarioSesionMapper.obtenerOrganizacion();
+			PropiedadDTO _prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,this.mainOrganization, Propiedades.APP_SESSION_TIME, pUser);
 			if(_prop ==null) {
 				_time = 0;
 			} else {

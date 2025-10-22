@@ -25,6 +25,7 @@ import com.softure.mail.domain.MensajeDTO;
 import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -36,6 +37,8 @@ public class MailGenerateMessageService {
     private MensajeSvc messageService;
     @Autowired @Lazy 
     private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
     @Autowired @Lazy 
     private UsuarioSvc usuarioService;
     @Autowired @Lazy 
@@ -58,34 +61,34 @@ public class MailGenerateMessageService {
             // El tema es que si coloco mensaje a la plantilla, pero es parte de una
             // transicion se duplica el mensaje
             tipo = PropiedadValorDefinidoDTO.PLANTILLA;
-            mensaje = propiedadService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
+            mensaje = cacheService.obtenerPropiedad( tipo, campo, Propiedades.MENSAJE, usuarioToken);
             // Esto lo repitopero no se bien si deba hacerlo asi
             if (mensaje == null && transicionDTO != null && transicionDTO.getEstadoPartida() == null) {
                 campo = transicionDTO.getLlaveTabla();
                 tipo = PropiedadValorDefinidoDTO.TRANSICION;
-                mensaje = propiedadService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
+                mensaje = cacheService.obtenerPropiedad( tipo, campo, Propiedades.MENSAJE, usuarioToken);
                 if (mensaje == null && transicionDTO.getProceso() != null) {
                     campo = transicionDTO.getProceso();
                     tipo = PropiedadValorDefinidoDTO.PROCESO;
-                    mensaje = propiedadService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
+                    mensaje = cacheService.obtenerPropiedad( tipo, campo, Propiedades.MENSAJE, usuarioToken);
                 }
             }
         } else {
             if (transicionDTO != null) {
                 campo = transicionDTO.getLlaveTabla();
                 tipo = PropiedadValorDefinidoDTO.TRANSICION;
-                mensaje = propiedadService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
+                mensaje = cacheService.obtenerPropiedad( tipo, campo, Propiedades.MENSAJE, usuarioToken);
                 if (mensaje == null && transicionDTO.getProceso() != null) {
                     campo = transicionDTO.getProceso();
                     tipo = PropiedadValorDefinidoDTO.PROCESO;
-                    mensaje = propiedadService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
+                    mensaje = cacheService.obtenerPropiedad( tipo, campo, Propiedades.MENSAJE, usuarioToken);
                 }
             }
         }
         // Si encontro mensaje
         if (mensaje != null) {
             System.out.format("\n[%s] Mensaje ( %s )", pedido.getNombre(), mensaje.getTexto());
-            List<PropiedadDTO> destinatariosFijos = propiedadService.obtenerPropiedades(tipo, campo,
+            List<PropiedadDTO> destinatariosFijos = cacheService.obtenerPropiedades( tipo, campo,
                     Propiedades.MENSAJE_DESTINATARIO, usuarioToken);
             List<UsuarioDTO> fijos = null;
             List<String> correosFijos = null;
@@ -129,11 +132,11 @@ public class MailGenerateMessageService {
             throw new ServerException("Revisa porque el identificador del mensaje no aparece en BD." + plantillaCorreo);
         // No envio mensaje al que creo el documento
         String usuarioGenerador = (token == null) ? null : usuarioService.getUserFlex(token);
-        PropiedadDTO mensajeFuncion = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
+        PropiedadDTO mensajeFuncion = cacheService.obtenerPropiedad( plantillaCorreo.getTipo(),
                 plantillaCorreo.getCampo(), Propiedades.MENSAJE_DESTINATARIOS_SQL, usuarioGenerador);
-        PropiedadDTO mensajeReporte = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
+        PropiedadDTO mensajeReporte = cacheService.obtenerPropiedad( plantillaCorreo.getTipo(),
                 plantillaCorreo.getCampo(), Propiedades.MENSAJE_REPORTE, usuarioGenerador);
-        PropiedadDTO mensajeAdjuntoURL = propiedadService.obtenerPropiedad(plantillaCorreo.getTipo(),
+        PropiedadDTO mensajeAdjuntoURL = cacheService.obtenerPropiedad( plantillaCorreo.getTipo(),
                 plantillaCorreo.getCampo(), Propiedades.MENSAJE_ADJUNTO_URL, usuarioGenerador);
         // Por algun motivo validaba esto del reporte creo que tiene que ver con algun null
         //if (mensajeReporte == null)
@@ -262,7 +265,7 @@ public class MailGenerateMessageService {
             mensaje.setReporte(mensajeReporte.getValor());
         mensaje.setParametros(parametros);
         
-        messageService.save(mensaje);
+        messageService.saveSimple(mensaje);
         System.out.format("\n[%s] Mensaje ( %s ) asignado a (%s) ", documento.getNombre(),  formatosPlantilla.getNombre(), destinyMails);
     }
   

@@ -10,6 +10,7 @@ import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.java.services.SoftureUtil;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.PropiedadValorDefinidoSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -21,11 +22,13 @@ public class SynchronizePropertiesService {
 	@Autowired @Lazy 
 	private PropiedadSvc propertiesService;
 	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+	@Autowired @Lazy 
 	private PropiedadValorDefinidoSvc typeService;
 
 	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal, String token,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
-		List<PropiedadDTO> localPropertiesToErase = propertiesService.obtenerPropiedades(type, entityLocal, null, null);
+		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades( type, entityLocal, null, null);
 		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type,
 				entityRemote);
 		// Saco un listado de las propiedades nuevas

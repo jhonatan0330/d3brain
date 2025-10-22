@@ -168,6 +168,16 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		dto = consultaXId(dto.getLlaveTabla());
 		return dto;
 	}
+	
+	public T saveSimple(T dto) throws ServerException {
+		dto.setLlaveTabla(generarLlave());
+		try {
+			mapper.insertar(dto);
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+		return dto;
+	}
 
 	public T update(T dto) throws ServerException {
 		try {

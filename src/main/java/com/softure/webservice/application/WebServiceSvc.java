@@ -13,6 +13,7 @@ import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -29,6 +30,9 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	private WebServiceMapper webServiceMapper;
 	@Autowired @Lazy 
 	private PropiedadSvc paramService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
+
 	
 	@Override
 	public WebServiceDTO consultaXId(String llave) throws ServerException {
@@ -105,7 +109,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		String userId = null; 
 		if(pToken != null) userId = getUserFlex(pToken);
 		_service.setPropiedades(
-				paramService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, _service.getLlaveTabla(), null, userId));
+				cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.API_SERVICE, _service.getLlaveTabla(), null, userId));
 		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(_service, Propiedades.API_BASE);
 		if (properties == null || properties.isEmpty()) return _service; 
 		for (PropiedadDTO iProp : properties) {
@@ -117,7 +121,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 				throw new ServerException("El servicio " + _service.getNombre() + " no se encuentra Activo." + iProp.getValor());
 			// Obtengo propiedades del servicio
 			_service.getPropiedades().addAll(
-					paramService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), null, userId));
+					cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.API_SERVICE, iProp.getValor(), null, userId));
 		}
 		return _service;
 	}

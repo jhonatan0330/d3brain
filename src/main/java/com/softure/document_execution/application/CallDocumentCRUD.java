@@ -58,6 +58,7 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.process_form.domain.PlantillaConsecutivoDTO;
 import com.softure.process_form.domain.PlantillaConsecutivoFilterDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -114,6 +115,8 @@ public class CallDocumentCRUD {
 	@Autowired
 	@Lazy
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
 	private UsuarioSvc usuarioService;
@@ -191,7 +194,7 @@ public class CallDocumentCRUD {
 		documentDTO = pedidoService.inactivate(documentDTO);
 		manageTemplateTypes(documentDTO, null, token);
 		deleteVinculateDocument(documentDTO, token);
-		voucherDeleteService.callByDocument(bd.getLlaveTabla(), propiedadService.obtenerPropiedades(
+		voucherDeleteService.callByDocument(bd.getLlaveTabla(), cacheService.obtenerPropiedades(
 				PropiedadValorDefinidoDTO.PLANTILLA, bd.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null), token);
 		return documentDTO;
 	}
@@ -1004,7 +1007,7 @@ public class CallDocumentCRUD {
 		// Viene de inactivar
 		if (plantilla == null) {
 			plantilla = new DocumentoPlantillaDTO();
-			plantilla.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+			plantilla.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
 					dto.getPlantilla(), null, null));
 		}
 		// Sucede que en los estados tambien se llama esta funcion, y cuando son
@@ -1042,14 +1045,14 @@ public class CallDocumentCRUD {
 			String usrMail = null;
 			String usrPhone = null;
 
-			String campoCorreo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
+			String campoCorreo = cacheService.obtenerUnica( PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
 					Propiedades.CORREO_ROL, getUserID(token));
-			String campoCelular = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
+			String campoCelular = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
 					Propiedades.CELULAR_ROL, getUserID(token));
 
 			// En casos que el mismo usuario se coloque varias veces en un mismo formulario
 			// x ejemplo contactos de varios proyectos
-			String campoConsecutivo = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA,
+			String campoConsecutivo = cacheService.obtenerUnica( PropiedadValorDefinidoDTO.PLANTILLA,
 					dto.getPlantilla(), Propiedades.CONSECUTIVO, getUserID(token));
 			if (campoConsecutivo == null)
 				throw new ServerException("Se debe configurar la propiedad consecutivo para obtener el id del usuario");

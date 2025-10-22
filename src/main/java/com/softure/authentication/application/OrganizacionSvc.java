@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.softure.authentication.domain.OrganizacionDTO;
@@ -14,7 +12,7 @@ import com.softure.authentication.domain.OrganizacionFilterDTO;
 import com.softure.authentication.infrastructure.OrganizacionMapper;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import jakarta.annotation.PostConstruct;
@@ -27,7 +25,9 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private OrganizacionMapper organizacionMapper;
 	@Autowired
 	@Lazy
-	private PropiedadSvc configuracionSvc;
+	private PropertyGetWithCacheService cacheService;
+
+	private OrganizacionDTO mainOrganization;
 
 	@Override
 	public OrganizacionDTO consultaXId(String llave) throws ServerException {
@@ -43,6 +43,11 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		this.mapper = organizacionMapper;
 	}
 
+	@Override
+	public OrganizacionDTO actualizar(OrganizacionDTO dto, String token) throws ServerException {
+		mainOrganization = null;
+		return super.actualizar(dto, token);
+	}
 
 	@Override
 	public List<OrganizacionDTO> listarConsulta(OrganizacionFilterDTO dto) throws ServerException {
@@ -51,16 +56,19 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 
 	public OrganizacionDTO obtenerPrincipalPublic(String ipRequest) throws ServerException {
 		try {
-			OrganizacionDTO result = organizacionMapper.obtenerPrincipal();
-			// Por el momento no se usa el usuario publico, pero se deja comentado por si se requiere en el futuro
-			
-			//String userPublic = configuracionSvc.obtenerUnica(PropiedadValorDefinidoDTO.ORGANIZACION,
-			//		result.getLlaveTabla(), Propiedades.PUBLIC_USER, null);
-			//if (userPublic != null) {
-			//	String token =  usuarioAutenticacionService.getTokenPublic(userPublic, ipRequest);
-			//	result.setPublicToken(token);
-			//}
-			result.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION,
+			OrganizacionDTO result = obtenerPrincipal();
+			// Por el momento no se usa el usuario publico, pero se deja comentado por si se
+			// requiere en el futuro
+
+			// String userPublic =
+			// configuracionSvc.obtenerUnica(PropiedadValorDefinidoDTO.ORGANIZACION,
+			// result.getLlaveTabla(), Propiedades.PUBLIC_USER, null);
+			// if (userPublic != null) {
+			// String token = usuarioAutenticacionService.getTokenPublic(userPublic,
+			// ipRequest);
+			// result.setPublicToken(token);
+			// }
+			result.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION,
 					result.getLlaveTabla(), null, null, false));
 			return result;
 		} catch (Exception e) {
@@ -69,19 +77,14 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 
 	public OrganizacionDTO obtenerPrincipal() throws ServerException {
+		if (this.mainOrganization != null)
+			return mainOrganization;
 		try {
-			return organizacionMapper.obtenerPrincipal();
+			this.mainOrganization = organizacionMapper.obtenerPrincipal();
+			return mainOrganization;
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public OrganizacionDTO guardar(OrganizacionDTO dto, String token) throws ServerException {
-		// BEGIN Organizacion_guardar
-		return super.guardar(dto, token);
-		// END Organizacion_guardar
 	}
 
 	public List<OrganizacionDTO> obtenerUsuario(String usuario) throws ServerException {
@@ -89,7 +92,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 			List<OrganizacionDTO> organizaciones = organizacionMapper.obtenerUsuario(usuario);
 			if (organizaciones != null && !organizaciones.isEmpty()) {
 				for (OrganizacionDTO organizacionDTO : organizaciones) {
-					organizacionDTO.setPropiedades(configuracionSvc.obtenerPropiedades(
+					organizacionDTO.setPropiedades(cacheService.obtenerPropiedades(
 							PropiedadValorDefinidoDTO.ORGANIZACION, organizacionDTO.getLlaveTabla(), null, null));
 				}
 			}
@@ -102,7 +105,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	public OrganizacionDTO obtenerPrincipalPropiedades(String user) throws ServerException {
 		OrganizacionDTO result = obtenerPrincipal();
 		if (result != null) {
-			result.setPropiedades(configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION,
+			result.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION,
 					result.getLlaveTabla(), null, user));
 		}
 		return result;
@@ -110,9 +113,8 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 
 	public boolean permisosCompletos(String user) throws ServerException {
 		OrganizacionDTO _main = obtenerPrincipal();
-		return (configuracionSvc.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,
-				_main.getLlaveTabla(), Propiedades.APP_ADMIN, user)!=null);
+		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
+				Propiedades.APP_ADMIN, user) != null);
 	}
-
 
 }

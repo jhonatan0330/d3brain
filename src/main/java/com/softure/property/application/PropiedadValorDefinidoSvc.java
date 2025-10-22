@@ -38,45 +38,14 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 	  this.mapper = propiedadValorDefinidoMapper;
 	}
 	
-	@Override
-	public PropiedadValorDefinidoDTO activar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
-		// BEGIN PropiedadValorDefinido_activar
-		return super.activar(dto, token);
-		// END PropiedadValorDefinido_activar
-	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PropiedadValorDefinidoDTO actualizar( PropiedadValorDefinidoDTO dto, String token) throws ServerException {
-		// BEGIN PropiedadValorDefinido_actualizar
 		dto = validarPropiedad(dto);
 		return super.actualizar(dto, token);
-		// END PropiedadValorDefinido_actualizar
 	}
 	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public PropiedadValorDefinidoDTO inactivar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
-		// BEGIN PropiedadValorDefinido_inactivar
-		return super.inactivar(dto, token);
-		// END PropiedadValorDefinido_inactivar
-	}
-	
-	@Override
-	public PropiedadValorDefinidoDTO consultaUnica(PropiedadValorDefinidoFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(PropiedadValorDefinidoFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<PropiedadValorDefinidoDTO> listarConsulta(PropiedadValorDefinidoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
 	
 	public List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto)throws ServerException{
 		// BEGIN region listarPorOrigen

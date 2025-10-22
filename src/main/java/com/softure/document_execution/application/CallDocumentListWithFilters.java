@@ -32,6 +32,7 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -43,6 +44,8 @@ public class CallDocumentListWithFilters {
 	private PedidoVentaMapper pedidoVentaMapper;
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired @Lazy 
 	private PedidoVentaSvc pedidoVentaService;
 	@Autowired @Lazy 
@@ -300,7 +303,7 @@ public class CallDocumentListWithFilters {
 				verTodos = true;
 			} else {
 				plantilla = new DocumentoPlantillaDTO();
-				plantilla.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+				plantilla.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
 						templateFilter, null, pedidoVentaService.getUserFlex(token)));
 				List<PropiedadDTO> propiedadesVerTodos = Propiedades.obtenerVariosParametro(plantilla,
 						Propiedades.PERMISO_PLANTILLA_VER_TODOS);
@@ -387,7 +390,7 @@ public class CallDocumentListWithFilters {
 					if (plantilla == null) {
 						plantilla = new DocumentoPlantillaDTO();
 						plantilla
-								.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+								.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
 										templateFilter, null, pedidoVentaService.getUserFlex(token)));
 					}
 					// Quito los filtros para las consultas campos que vienen de un campo tipo
@@ -585,14 +588,14 @@ public class CallDocumentListWithFilters {
 				iterador = consultaPedidoInterfazVisual(iterador, base);
 				if (campoValor == null || campoValor.compareTo("0") == 0) {
 					if (hmap.get(iterador.getPlantilla()) == null) {
-						PropiedadDTO propiedadCuenta = propiedadService.obtenerPropiedad(
-								PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
+						PropiedadDTO propiedadCuenta = cacheService.obtenerPropiedad(
+								 PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
 								Propiedades.PLANTILLA_TIPO_CUENTA, null);
 						if (propiedadCuenta != null) {
 							// Para que los tipo cuenta muestre el saldo
 							hmap.put(iterador.getPlantilla(), "TIPO_CUENTA_VALOR");
 						} else {
-							PropiedadDTO propiedad = propiedadService.obtenerPropiedad(
+							PropiedadDTO propiedad = cacheService.obtenerPropiedad(
 									PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.TOTAL,
 									null);
 							if (propiedad == null) {
@@ -677,7 +680,7 @@ public class CallDocumentListWithFilters {
 				}
 				// Campos especiales de una lista
 				if (hmapCamposEspeciales.get(iterador.getPlantilla()) == null) {
-					PropiedadDTO propiedadRender = propiedadService.obtenerPropiedad(
+					PropiedadDTO propiedadRender = cacheService.obtenerPropiedad(
 							PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
 							Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL, pedidoVentaService.getUserFlex(securityToken));
 					if (propiedadRender == null) {

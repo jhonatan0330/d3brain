@@ -17,6 +17,7 @@ import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
@@ -27,6 +28,8 @@ public class ProcessCopy {
 	private ProcesoSvc processService;
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired @Lazy  
 	private ProcesoEstadoSvc estadoService;
 	@Autowired @Lazy  
@@ -50,7 +53,7 @@ public class ProcessCopy {
 	
 	private ProcesoDTO getFullProccessToCopy(ProcesoDTO proceso, String userId) throws ServerException {
 		proceso.setPropiedades(
-				propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PROCESO, proceso.getLlaveTabla(), null, userId));
+				cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PROCESO, proceso.getLlaveTabla(), null, userId));
 		
 		
         /*if(proceso.getLlaveTabla()!=null) {
@@ -72,7 +75,7 @@ public class ProcessCopy {
 			proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
 			if(proceso.getEstados()!=null) {
 	        	for (ProcesoEstadoDTO iEstado: proceso.getEstados()) {
-	        		iEstado.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, iEstado.getLlaveTabla(), null, null));
+	        		iEstado.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, iEstado.getLlaveTabla(), null, null));
 	    		}	
 	        }
 			
@@ -82,7 +85,7 @@ public class ProcessCopy {
 			proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
 	        if(proceso.getTransiciones()!=null) {
 	        	for (ProcesoTransicionDTO iTransicion: proceso.getTransiciones()) {
-	        		iTransicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION, iTransicion.getLlaveTabla(), null, null));
+	        		iTransicion.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.TRANSICION, iTransicion.getLlaveTabla(), null, null));
 	    		}	
 	        }
 			

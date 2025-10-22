@@ -29,6 +29,7 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -42,7 +43,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Lazy
 	private PedidoVentaMapper pedidoVentaMapper;
 
-	// BEGIN region servicesPedidoVenta
 	@Autowired
 	@Lazy
 	private CampoAdaptador adaptador;
@@ -61,10 +61,11 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Autowired
 	@Lazy
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
 	private RolAccesoSvc rolService;
-	// END region servicesPedidoVenta
 
 	@Override
 	public PedidoVentaDTO consultaXId(String llave) throws ServerException {
@@ -130,7 +131,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		boolean modificable = true;
 		if (bd.getEstadoExpediente() != null) {
 			String usuarioToken = (securityToken == null) ? null : getUserFlex(securityToken);
-			modificable = (propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, bd.getEstadoExpediente(),
+			modificable = (cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, bd.getEstadoExpediente(),
 					Propiedades.MODIFICABLE, usuarioToken) == null) ? false : true;
 		} else {
 			if (bd.getEstado().compareTo(PedidoVentaDTO.ESTADO_ACTIVO) != 0) {
@@ -181,7 +182,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
-		List<PropiedadDTO> prop = propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+		List<PropiedadDTO> prop = cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
 				filter.getPlantilla(), Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
 		if (prop.isEmpty() || prop.size() != 1)
 			return result;
@@ -325,7 +326,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 	public String getMessageToProcessField(String pProperty, String pValue, String pToken)
 			throws ServerException {
-		PropiedadDTO prop = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.CAMPO,
+		PropiedadDTO prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.CAMPO,
 				pProperty, Propiedades.HTML_DOCUMENT_SQL, pToken);
 		if (prop ==null)
 			return null;

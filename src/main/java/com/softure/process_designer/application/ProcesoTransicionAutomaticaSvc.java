@@ -29,6 +29,7 @@ import com.softure.process_designer.domain.ProcesoTransicionAutomaticaDTO;
 import com.softure.process_designer.domain.ProcesoTransicionAutomaticaFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.infrastructure.ProcesoTransicionAutomaticaMapper;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -51,6 +52,8 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	@Autowired @Lazy  private RelacionInternaSvc relacionService;
 	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	@Autowired @Lazy  private UploadSvc uploadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 
 	@Override
 	public ProcesoTransicionAutomaticaDTO consultaXId(String llave) throws ServerException {
@@ -227,7 +230,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				programar.setMensaje(error);
 			}
 			programar.setPropiedad(propiedadDTO.getLlaveTabla());
-			save(programar);
+			saveSimple(programar);
 		}
 		return _count;
 	}
@@ -283,7 +286,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
 					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-					String propiedadMultiple = propiedadService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
+					String propiedadMultiple = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
 					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
 					transicion.setLlaveTabla(dto.getTransicion());
 

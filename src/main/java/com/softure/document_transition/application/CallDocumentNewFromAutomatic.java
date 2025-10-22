@@ -23,7 +23,7 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
-import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -38,9 +38,8 @@ public class CallDocumentNewFromAutomatic {
 	@Autowired
 	@Lazy
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
@@ -86,7 +85,7 @@ public class CallDocumentNewFromAutomatic {
 		if (transicion.getPlantilla() == null)
 			return null;
 		String user = getUserId(token);
-		transicion.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
+		transicion.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
 				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE,

@@ -11,6 +11,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.infrastructure.DocumentoPlantillaCaracteristicaMapper;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -34,8 +35,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	@Autowired @Lazy 
 	private PropiedadSvc parametroService;
-	//@Autowired @Lazy 
-	//private ProductoCaracteristicaSvc campoProductoService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired @Lazy 
 	private CallSearchProcessFromText searchProcessFromText;
 
@@ -251,7 +252,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		if (token != null)
 			usuario = getUserFlex(token);
 		if (campo != null)
-			campo.setPropiedades(parametroService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+			campo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
 					campo.getLlaveTabla(), null, usuario));
 		return campo;
 	}

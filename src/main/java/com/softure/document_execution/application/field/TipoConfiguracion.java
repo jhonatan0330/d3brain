@@ -243,6 +243,7 @@ public class TipoConfiguracion {
 								|| (propiedadDTO.getTexto() != null
 										&& propiedadDTO.getTexto().compareTo(pCampo.getValorOpcion()) == 0)) {
 							option = propiedadDTO;
+							pCampo.setValorOpcion(option.getValor());
 							pCampo.setValorText(option.getTexto());
 							break;
 						}

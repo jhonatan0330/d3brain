@@ -99,7 +99,7 @@ public class WebServiceExecuteAPI {
 		callWS.setTransaccion(pTransactionId);
 		callWS.setSincrona(DocumentoTransaccionSvc.API_PREPARE_ASYNC);
 		callWS.setModificador(pModificadorId);
-		webServiceEjecucionSvc.save(callWS);
+		webServiceEjecucionSvc.saveSimple(callWS);
 	}
 	
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)

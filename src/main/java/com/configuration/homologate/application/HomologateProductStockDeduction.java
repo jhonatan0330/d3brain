@@ -113,7 +113,7 @@ public class HomologateProductStockDeduction {
 			newItem.setProductoDescontar(getBase(CallDocumentCommons.getValueOption(document, "DESCONTAR")));
 			newItem.setCantidadProductoDescontar(CallDocumentCommons.getValueNumber(document, "CANTIDAD"));
 			newItem.setCaracteristica(CallDocumentCommons.getValueOption(document, "CARACTERISTICA"));
-			discountStockService.save(newItem);
+			discountStockService.saveSimple(newItem);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				if (newItem.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {

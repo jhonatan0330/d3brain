@@ -40,6 +40,7 @@ import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 import com.softure.process_designer.infrastructure.ProcesoTransicionMapper;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -71,6 +72,8 @@ public class CallManageTransition {
 	@Autowired
 	@Lazy
 	private PedidoVentaSvc pedidoService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
 	private CallDocumentNewFromAutomatic createDocumentSinceProperties;
@@ -144,7 +147,7 @@ public class CallManageTransition {
 
 		// Aqui lleno las propiedades del dto asi no falla api
 		if (pTransitionProcess.getPropiedades() == null)
-			pTransitionProcess.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
+			pTransitionProcess.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.TRANSICION,
 					pTransitionProcess.getLlaveTabla(), null, userID));
 		propiedadService.validarFuncionConsultandoPropiedad(pTransitionProcess, PropiedadValorDefinidoDTO.TRANSICION, expediente,
 				documentoDTO.getLlaveTabla(), userID);
@@ -262,7 +265,7 @@ public class CallManageTransition {
 			// dejo aqui este update el estado no quedaba correcto quedaba en la iteracion
 			pedidoService.update(expedienteDTO);
 			if(_stateTo.getPropiedades()==null) {
-				_stateTo.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, _stateTo.getLlaveTabla(),null, userID));
+				_stateTo.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, _stateTo.getLlaveTabla(),null, userID));
 			}
 			UsuarioDTO responsable = assignResponsibleToActivity(expediente, _stateTo, documentoDTO.getLlaveTabla(), token);
 			generateMessageService.call(expedienteDTO, pTransitionProcess, responsable, documentoDTO, token);
@@ -307,7 +310,7 @@ public class CallManageTransition {
 				&& expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 			
 			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), 
-					propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, expedienteDTO.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null)
+					cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA, expedienteDTO.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null)
 					, pToken);
 		}
 	}
@@ -338,7 +341,7 @@ public class CallManageTransition {
 		ProcesoEstadoDTO _stateInitial = estadoService.consultaXId(pTransition.getEstadoPartida());
 		if (_stateInitial.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La iteracion " + _stateInitial.getNombre() + " esta inactiva");
-		PropiedadDTO _propertyFuncionSQL = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO,
+		PropiedadDTO _propertyFuncionSQL = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.ESTADO,
 				_stateInitial.getLlaveTabla(), Propiedades.ITERACION_SQL, null);
 		List<PedidoVentaDTO> _documentsToCreate = null;
 		if (_propertyFuncionSQL == null) {
@@ -392,8 +395,8 @@ public class CallManageTransition {
 								&& _newDocumentOfIteration.getDinero().getSaldo() != null)
 							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pToken, pTransition,
 									_newDocumentOfIteration.getDinero().getValorTotal(), null);
-						PropiedadDTO _propertyAgreggate = propiedadService.obtenerPropiedad(
-								PropiedadValorDefinidoDTO.ESTADO, _stateInitial.getLlaveTabla(),
+						PropiedadDTO _propertyAgreggate = cacheService.obtenerPropiedad(
+								 PropiedadValorDefinidoDTO.ESTADO, _stateInitial.getLlaveTabla(),
 								Propiedades.ADD_ITERATION_DOCUMENT, null);
 						if (_propertyAgreggate != null) {
 							List<RelacionInternaDTO> _relationToAdd = relacionService
@@ -476,7 +479,7 @@ public class CallManageTransition {
 		ProcesoEstadoDTO apiDTO = estadoService.consultaXId(estadoLlegada);
 		if (apiDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El punto del api " + apiDTO.getNombre() + " esta inactivo");
-		apiDTO.setPropiedades(propiedadService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO,
+		apiDTO.setPropiedades(cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO,
 				estadoLlegada, null, getUserId(token)));
 
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
@@ -553,7 +556,7 @@ public class CallManageTransition {
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(decision);
 		if (decisionDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La decision " + decisionDTO.getNombre() + " esta inactiva");
-		PropiedadDTO propiedadFuncion = propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, decision,
+		PropiedadDTO propiedadFuncion = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.ESTADO, decision,
 				Propiedades.DECISION_SQL, getUserId(token));
 		String resultado = null;
 		if (propiedadFuncion == null) {
@@ -630,7 +633,7 @@ public class CallManageTransition {
 		if (pState == null)
 			return null;
 		if(pState.getPropiedades()==null) {
-			pState.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, pState.getLlaveTabla(),null, getUserId(token)));
+			pState.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, pState.getLlaveTabla(),null, getUserId(token)));
 		}
 		ActividadDTO responsable = new ActividadDTO();
 		PropiedadDTO propiedadFuncion = Propiedades.obtenerParametro(pState, Propiedades.FUNCION_SQL_ESTADO_ASIGNAR);
@@ -786,7 +789,7 @@ public class CallManageTransition {
 		
 		ProcesoEstadoDTO _stateTo = estadoService.consultaXId(pTransitionProcess.getEstadoLLegada());
 		if(_stateTo.getPropiedades()==null) {
-			_stateTo.setPropiedades(propiedadService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, _stateTo.getLlaveTabla(),null, null));
+			_stateTo.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, _stateTo.getLlaveTabla(),null, null));
 		}
 		obtenerUbicacion(anterior,  documento, _stateTo, token);
 		BigDecimal valorModificador = null;
