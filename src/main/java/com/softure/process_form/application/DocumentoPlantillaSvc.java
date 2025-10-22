@@ -13,7 +13,9 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.process_designer.application.ProcesoEstadoSvc;
+import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.application.ProcesoTransicionSvc;
+import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoEstadoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
@@ -45,14 +47,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Autowired @Lazy 
 	private DocumentoPlantillaMapper documentoPlantillaMapper;
 	
-	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy  private PropiedadSvc configuracionSvc;
-	@Autowired @Lazy  private ProcesoEstadoSvc estadoService;
-	@Autowired @Lazy  private RolAccesoSvc rolService;
-	@Autowired @Lazy  private ReporteBaseSvc reporteService;
-	@Autowired @Lazy  private ProcesoTransicionSvc transicionService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
+	@Autowired @Lazy private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	@Autowired @Lazy private PropiedadSvc configuracionSvc;
+	@Autowired @Lazy private RolAccesoSvc rolService;
+	@Autowired @Lazy private ReporteBaseSvc reporteService;
+	@Autowired @Lazy private ProcesoSvc procesoService;
+	@Autowired @Lazy private ProcesoEstadoSvc estadoService;
+	@Autowired @Lazy private ProcesoTransicionSvc transicionService;
+	@Autowired @Lazy private PropertyGetWithCacheService cacheService;
 
 	@Override
 	public DocumentoPlantillaDTO consultaXId(String llave) throws ServerException {
@@ -111,7 +113,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	public List<DocumentoPlantillaDTO> consultaUsuario(DocumentoPlantillaFilterDTO dto)throws ServerException{
-		return listarPlantillasUsuario(dto, false);
+		return listarPlantillasUsuario(dto, null);
 	}
 	
 	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token, boolean external)throws ServerException{
@@ -199,10 +201,17 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		
 		return copy;
 	}
+	
 	public List<DocumentoPlantillaDTO> consultaAdministrador(DocumentoPlantillaFilterDTO dto)throws ServerException{
 		boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
 		if(!todosPermisos) throw new ServerException("En los roles que tienes asignados no tienes un rol que tenga permisos de consultar todas las plantillas");
-		return listarPlantillasUsuario(dto, true);
+		return listarPlantillasUsuario(dto, "ADMIN");
+	}
+	
+	public List<DocumentoPlantillaDTO> consultaAuditor(DocumentoPlantillaFilterDTO dto)throws ServerException{
+		boolean todosPermisos = rolService.usuarioPermisosAuditor(dto.getSecurityToken());
+		if(!todosPermisos) throw new ServerException("En los roles que tienes asignados no tienes el permiso de auditor");
+		return listarPlantillasUsuario(dto, "READER");
 	}
 
 	@Override
@@ -265,15 +274,20 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	
 	public void configurarInicioPlantilla(DocumentoPlantillaDTO dto) throws ServerException {
 		//Coloco una imagen por defecto
+		if(dto.getProceso()==null) throw new ServerException("Falta el proceso al cual pertence la plantilla");
 		if(dto.getImagen()==null) dto.setImagen(SharedConstants.LOGO);
 		if(dto.getCodigo()==null) {
+			
+			ProcesoDTO _process = procesoService.consultaXId(dto.getProceso());
+			if(_process==null) throw new ServerException("La plantilla tiene un id de proceso que no corresponde");
+			
 			DocumentoPlantillaFilterDTO filtroCantidad = new DocumentoPlantillaFilterDTO();
-			int cantidadCampos = contarResultados(filtroCantidad) +1;
-			dto.setCodigo("F"+ cantidadCampos);
+			int cantidadCampos = contarResultados(filtroCantidad) + 1;
+			dto.setCodigo(_process.getCodigo().substring(0,2)+ cantidadCampos);
 			filtroCantidad = new DocumentoPlantillaFilterDTO();
 			filtroCantidad.setCodigo(dto.getCodigo());
 			if(consultaUnica(filtroCantidad)!=null) {
-				dto.setCodigo("D"+ cantidadCampos);
+				dto.setCodigo("P"+ cantidadCampos);
 			}
 		}
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
@@ -377,11 +391,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return estados;
 	}
 	
-	public List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO dto, boolean todosPermisos)throws ServerException{
-		//boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
+	private List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO dto, String pProfile)throws ServerException{
+		
 		String usuario = null;
 		if(dto.getSecurityToken() !=null) usuario = getUserFlex(dto.getSecurityToken());
-		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(dto, todosPermisos);
+		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(dto, (pProfile!=null));
 		List<DocumentoPlantillaDTO> result = new ArrayList<DocumentoPlantillaDTO>();
 		boolean nuevaPlantilla = true;
 		if(plantillasPermitidas!=null && plantillasPermitidas.size()!=0){
@@ -396,15 +410,15 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(filtroEstado);
 			
 			ProcesoTransicionFilterDTO filtroTransicion = new ProcesoTransicionFilterDTO();
-			filtroTransicion.setSecurityToken((todosPermisos)?null:dto.getSecurityToken());
+			filtroTransicion.setSecurityToken((pProfile!=null)?null:dto.getSecurityToken());
 			filtroTransicion.setEstado(SharedConstants.STATE_ACTIVE);
 			
 			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol(filtroTransicion);
 			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null, null);
 			
 			List<PropiedadDTO> todasPropiedadesEvitandoConsultaBD = null;
-			if(todosPermisos) {
-				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas);
+			if(pProfile!=null) {
+				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas, pProfile);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			}else {
 				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar( plantillasPermitidas, usuario);

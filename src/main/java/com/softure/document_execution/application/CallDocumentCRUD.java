@@ -206,15 +206,6 @@ public class CallDocumentCRUD {
 		if (bd.getEstadoExpediente() != null)
 			throw new ServerException("Para activar el expediente se debe usar un documento de transicion de estado");
 		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO, token);
-		/*
-		 * String transaccion = documentDTO.getTransaccion(); if (transaccion == null)
-		 * transaccion = transaccionSvc.crear(token).getLlaveTabla(); for
-		 * (PedidoVentaCaracteristicaDTO iterador : documentDTO.getCaracteristicas()) {
-		 * if (iterador.getCampoDTO() == null)
-		 * iterador.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(
-		 * iterador.getCampo())); iterador.setTransaccionInactivo(transaccion);
-		 * adaptador.activar(iterador, updaterDTO, token); }
-		 */
 
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(documentDTO.getPlantilla());

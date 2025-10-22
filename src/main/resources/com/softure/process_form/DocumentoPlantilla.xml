@@ -192,14 +192,19 @@
 	</select>
 	
 	<select id="getProcessBoardsToMenu" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
-		<include refid="selectDocumentoPlantillaFragment" />
+	select
+			cdpl_llave as  llaveTabla
+			,cdpl_nombre as  nombre
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
 		where cdpl_estado = 'A'
-		union
+	union
 		select
 			null as  llaveTabla
-			,null as  objetivo
 			,cprc_nombre as  nombre
-			,null as  consecutivo
 			,cprc_imagen as  imagen
 			,cprc_codigo as  codigo
 			,cprc_llave as  proceso
@@ -207,16 +212,11 @@
 		from proceso_prcp 
 		where cprc_estado = 'A'
 			and cprc_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
-			and cppd_propiedadvalor = 'PROP_183'
-			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
-			and (dppd_fechafinal is null or dppd_fechafinal > now())
-			)
-		union
+				and cppd_propiedadvalor = 'PROP_183')
+	union
 		select 
 			null as  llaveTabla
-			,null as  objetivo
 			,cppd_texto as  nombre
-			,null as  consecutivo
 			,cppd_motivo as  imagen
 			,cppd_llave as  codigo
 			,null as  proceso
@@ -224,8 +224,6 @@
 		from propiedad_ppdp 
 		where cppd_estado = 'A' 
 			and cppd_propiedadvalor = 'PROP_182'
-			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
-			and (dppd_fechafinal is null or dppd_fechafinal > now())	
 		order by nombre;
 	</select>
 	

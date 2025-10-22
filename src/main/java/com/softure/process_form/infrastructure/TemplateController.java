@@ -43,12 +43,20 @@ public class TemplateController {
 	@Autowired @Lazy  private RelacionInternaSvc relacionesService;
 	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc fieldsService;
 	
-	
-	@GetMapping(value="/getTemplates")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token)  throws ServerException  {
+	@GetMapping(value="/getTemplates/{profile}")
+	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token, @PathVariable(name="profile") String pProfile)  throws ServerException  {
 		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
 		filter.setSecurityToken(token);
-		return documentoplantillaService.consultaUsuario(filter);	
+		switch (pProfile) {
+		case "ADMIN": {
+			return documentoplantillaService.consultaAdministrador(filter);
+		}
+		case "READER": {
+			return documentoplantillaService.consultaAuditor(filter);
+		}
+		default:
+			return documentoplantillaService.consultaUsuario(filter);
+		}
 	}
 	
 	@GetMapping(value="/getFields")

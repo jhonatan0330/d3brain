@@ -37,10 +37,10 @@ public class PropertyGetWithCacheService {
 		String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
 		List<PropiedadDTO> _propertiesType = propByTypeMap.get(_key);
 		if(_propertiesType==null) {
-			PropiedadFilterDTO filtroOrden = new PropiedadFilterDTO();
-			filtroOrden.setTipo(pFilter.getTipo());
-			filtroOrden.setCampo(pFilter.getCampo());
-			List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(pFilter, null, null, null);
+			PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
+			_filterAll.setTipo(pFilter.getTipo());
+			_filterAll.setCampo(pFilter.getCampo());
+			List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
 			propByTypeMap.put(_key, _fromDB);
 			_propertiesType = _fromDB;
 		}
@@ -81,6 +81,10 @@ public class PropertyGetWithCacheService {
 	public void clearProperties() throws ServerException {
 		propByTypeMap.clear();
 	}
+	
+	public void clearRole() throws ServerException {
+		userRoleMap.clear();
+	}
 
 	public List<PropiedadDTO> obtenerPropiedadesSinEntidad( String tipo, String entidad, String key, String usuario, Boolean privada)
 			throws ServerException {
@@ -110,7 +114,7 @@ public class PropertyGetWithCacheService {
 		return obtenerPropiedadesSinEntidad( tipo, entidad, key, usuario, privada);
 	}
 
-	List<PropiedadDTO> cleanPropertiesFromTimeAndExclusion(List<PropiedadDTO> consultadas) {
+	private List<PropiedadDTO> cleanPropertiesFromTimeAndExclusion(List<PropiedadDTO> consultadas) {
 	
 		List<PropiedadDTO> validadas = new ArrayList<PropiedadDTO>();
 		List<PropiedadDTO> excluidas = new ArrayList<PropiedadDTO>();
@@ -142,9 +146,9 @@ public class PropertyGetWithCacheService {
 	
 	}
 
-	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD( List<DocumentoPlantillaDTO> plantillas)
+	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD( List<DocumentoPlantillaDTO> plantillas, String pProfile)
 			throws ServerException {
-		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas);
+		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas, pProfile);
 	}
 
 	public List<PropiedadDTO> obtenerEspecialFullPermisos( String plantilla) throws ServerException {
@@ -188,7 +192,7 @@ public class PropertyGetWithCacheService {
 		return cleanPropertiesFromTimeAndExclusion(consultadas);
 	}
 	
-	public PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
+	private PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
 		if(types==null) {
 			PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
 			valorDefinidoFilter.setEstado(SharedConstants.STATE_ACTIVE);

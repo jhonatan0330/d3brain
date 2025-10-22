@@ -293,6 +293,7 @@ public class Propiedades {
 	public static final String PLANTILLA_NUEVO_USUARIO = "PLANTILLA_NUEVO_USUARIO";
 	public static final String PLANTILLA_PERMISO_PUBLICO = "PLANTILLA_PERMISO_PUBLICO";
 	public static final String APP_ADMIN = "APP_ADMIN";
+	public static final String APP_READER = "APP_READER";
 	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
 	public static final String APP_DFA = "APP_DFA";
 	

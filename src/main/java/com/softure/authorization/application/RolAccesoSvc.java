@@ -70,6 +70,12 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		if(user.compareTo("PROCESS")==0) return true;
 		return organizationSvc.permisosCompletos(user);
 	}
+	
+	public boolean usuarioPermisosAuditor(String token) throws ServerException{
+		String user = getUserFlex(token);
+		if(user.compareTo("PROCESS")==0) return true;
+		return organizationSvc.permisosAuditor(user);
+	}
 
 	public List<RolAccesoDTO> getFullToSynchronize(List<String> process) {
 		return rolAccesoMapper.getFullToSynchronize(process);

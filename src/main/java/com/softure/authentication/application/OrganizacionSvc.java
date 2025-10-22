@@ -116,5 +116,12 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
 				Propiedades.APP_ADMIN, user) != null);
 	}
+	
+	// Esto toca unirlo con lo anterior lo estoy haciendo rapido
+	public boolean permisosAuditor(String user) throws ServerException {
+		OrganizacionDTO _main = obtenerPrincipal();
+		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
+				Propiedades.APP_READER, user) != null);
+	}
 
 }

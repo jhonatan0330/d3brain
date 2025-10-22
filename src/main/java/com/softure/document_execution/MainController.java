@@ -98,10 +98,10 @@ public class MainController {
 		return listDocumentWithFiltersFunction.listarUsuario(dto);
 	}
 	
-	@GetMapping(value="/getAdministratorTemplates")
+	/*@GetMapping(value="/getAdministratorTemplates")
 	public List<DocumentoPlantillaDTO> consultaAdministrador(@RequestHeader("Authorization") String token)  throws ServerException  {
 		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
 		filter.setSecurityToken(token);
 		return plantillaService.consultaAdministrador(filter);	
-	}
+	}*/
 }

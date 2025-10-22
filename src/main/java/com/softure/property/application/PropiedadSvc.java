@@ -124,7 +124,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private ProcessTemplate templatesService;
 	
 	@Autowired @Lazy
-	public PropertyGetWithCacheService cacheService;
+	private PropertyGetWithCacheService cacheService;
 	
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
