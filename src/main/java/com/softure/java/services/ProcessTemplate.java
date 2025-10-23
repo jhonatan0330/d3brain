@@ -266,8 +266,11 @@ public class ProcessTemplate {
 									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
 											+ valueAuxToCode + "[" + String.valueOf(i + 1) + "]="
 											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_NUM" + SharedConstants.COMA_DOBLE
-											+ String.valueOf(i + 1) + SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
-											+ SharedConstants.COMA_DOBLE + iRelation.getValorTotal().intValue();
+											+ String.valueOf(i + 1) 
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
+											+ SharedConstants.COMA_DOBLE + iRelation.getValorTotal().intValue()
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_CANT"
+											+ SharedConstants.COMA_DOBLE + iRelation.getCantidad().intValue();
 									for (PropiedadDTO iProp : propertiesWithRelationField) {
 										if (iProp.getMotivo() != null) {
 											parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_"
@@ -309,8 +312,23 @@ public class ProcessTemplate {
 																+ "L" + "_" + codeReplaceList
 																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
 																		iCampo, iCampo.getTransaccionRegistro());
-														// Coloque el service en null para evitar que se generen ciclos
-														// infinitos
+
+														// Aqui posiblementen nunca coja los expedientes
+														if (iCampo.getValorOpcion() != null) {
+															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
+																	//+ valueAuxToCode
+																	+ "_KEY" + SharedConstants.COMA_DOBLE
+																	+ iCampo.getValorOpcion();
+															if (iCampo.getExpedientes() != null && !iCampo.getExpedientes().isEmpty()) {
+																PedidoVentaDTO iElement = iCampo.getExpedientes().get(0);
+																if (iElement != null && iElement.getNombre() != null) {
+																	parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList 
+																			//+ valueAuxToCode 
+																			+ "_ID"
+																			+ SharedConstants.COMA_DOBLE + iElement.getNombre();
+																}
+															}
+														}
 													}
 												}
 											}
