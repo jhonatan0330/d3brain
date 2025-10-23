@@ -18,7 +18,10 @@ import com.accounting.voucher.domain.VoucherFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.SharedIdResponse;
+import com.softure.document_execution.application.field.Propiedades;
+import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadDTO;
+import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.application.WebServiceEjecucionSvc;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
@@ -33,6 +36,8 @@ public class VoucherDeleteService {
 	@Autowired
 	@Lazy
 	private WebServiceEjecucionSvc taskService;
+	@Autowired @Lazy 
+	private PropertyGetWithCacheService cacheService;
 	
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse callById(String pVoucherId, String pToken) throws ServerException {
@@ -62,8 +67,9 @@ public class VoucherDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void callByDocument(String pDocumentId, List<PropiedadDTO> _prop, String pToken) throws ServerException {
+	public void callByDocument(String pDocumentId, String pTemplate, String pToken) throws ServerException {
 		
+		List<PropiedadDTO> _prop = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE, Propiedades.TEMPLATE_VOUCHER, pTemplate, null);
 		if(_prop == null || _prop.isEmpty()) return;
 		
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
@@ -75,7 +81,7 @@ public class VoucherDeleteService {
 		}
 		
 		for (PropiedadDTO propiedadDTO : _prop) {
-			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive( propiedadDTO.getValor(), pDocumentId);
+			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive( propiedadDTO.getCampo(), pDocumentId);
 			if (_service != null) {
 				_service.setEstado(SharedConstants.STATE_INACTIVE);
 				_service.setFechaEjecucion(new Date());

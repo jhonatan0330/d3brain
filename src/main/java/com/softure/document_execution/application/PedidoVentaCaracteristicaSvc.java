@@ -39,11 +39,9 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	@Autowired @Lazy 
 	private ProcessTemplate templatesService;
 	
-	// BEGIN region servicesPedidoVentaCaracteristica
 	@Autowired @Lazy  private CampoAdaptador adaptador;
 	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
 	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
-	// END region servicesPedidoVentaCaracteristica
 
 	@Override
 	public PedidoVentaCaracteristicaDTO consultaXId(String llave) throws ServerException {
@@ -58,12 +56,7 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 	  this.mapper = pedidoVentaCaracteristicaMapper;
 	}
 	
-	@Override
-	public PedidoVentaCaracteristicaDTO activar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaCaracteristica_activar
-		return activate(dto);
-		// END PedidoVentaCaracteristica_activar
-	}
+
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
@@ -86,21 +79,6 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		// END PedidoVentaCaracteristica_inactivar
 	}
 	
-	@Override
-	public PedidoVentaCaracteristicaDTO consultaUnica(PedidoVentaCaracteristicaFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(PedidoVentaCaracteristicaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<PedidoVentaCaracteristicaDTO> listarConsulta(PedidoVentaCaracteristicaFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
 	
 	public PedidoVentaCaracteristicaDTO completarDatosBase(PedidoVentaCaracteristicaFilterDTO dto)throws ServerException{
 		// BEGIN region completarDatosBase
@@ -128,7 +106,6 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		// END PedidoVentaCaracteristica_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico)
 			throws ServerException {//La plantilla es para optimizar la consultas de la particion
 		return listar2Documento(documento, historico, null);
@@ -216,19 +193,6 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		return fieldsInternal;
 	}
 	
-	/**
-	 * Usa el campo estado para permitir que varias relaciones se encuentren (ejemplo ruta que va de bta a bta se necesita el codigo de la ciudad)
-	 * @param documentIds Contiene los ids de los valoropcion que queremos buscar
-	 * @param fieldId Contiene las relaciones que son la base para buscar campos de los documentos internos
-	 * @return
-	 * @throws ServerException
-	 */
-	public List<PedidoVentaCaracteristicaDTO> listar2getApiCode(List<PedidoVentaCaracteristicaDTO> documentIds,
-			List<RelacionInternaDTO> fieldId) throws ServerException {
-		if (documentIds == null || documentIds.isEmpty() || fieldId == null || fieldId.isEmpty())
-			return null;
-		return pedidoVentaCaracteristicaMapper.listar2getApiCode(documentIds, fieldId);
-	}
 
 	public PedidoVentaCaracteristicaDTO buscarActivo(PedidoVentaCaracteristicaDTO dto, Integer historico) throws ServerException {
 		if(dto==null || dto.getDocumento()==null || dto.getCampo()==null) throw new ServerException("Error al consultar el campo previo por falta de datos");
@@ -454,7 +418,32 @@ public class PedidoVentaCaracteristicaSvc extends BasicSvc<PedidoVentaCaracteris
 		}
 	}
 	
+	/**
+	 * PARA MOVER A OTRO MAPPER
+	 */
+	public List<PedidoVentaCaracteristicaDTO> listar2getApiCode(List<PedidoVentaCaracteristicaDTO> documentIds,
+			List<RelacionInternaDTO> fieldId) throws ServerException {
+		if (documentIds == null || documentIds.isEmpty() || fieldId == null || fieldId.isEmpty())
+			return null;
+		return pedidoVentaCaracteristicaMapper.listar2getApiCode(documentIds, fieldId);
+	}
+	public String getCodeKeyOfTemplate(String pTemplate, String pCode) throws ServerException {
+		if (pTemplate == null || pTemplate.isEmpty() || pCode == null || pCode.isEmpty())
+			return null;
+		return pedidoVentaCaracteristicaMapper.getCodeKeyOfTemplate(pTemplate, pCode);
+	}
 	
-// END region aditionalMethods
+	public String getKeyOfDocumentBase(String pCodeKey, String pValue) throws ServerException {
+		if (pCodeKey == null || pCodeKey.isEmpty() || pValue == null || pValue.isEmpty())
+			return null;
+		return pedidoVentaCaracteristicaMapper.getKeyOfDocumentBase(pCodeKey, pValue);
+	}
+	
+	public PedidoVentaCaracteristicaDTO getKeyToReplace(String pKeyBase, String pTemplate, String pCodeTemplate) throws ServerException {
+		if (pKeyBase == null || pKeyBase.isEmpty() || pCodeTemplate == null || pCodeTemplate.isEmpty())
+			return null;
+		return pedidoVentaCaracteristicaMapper.getKeyToReplace(pKeyBase, pTemplate, pCodeTemplate);
+	}
+	
 
 }

@@ -18,14 +18,11 @@ import com.softure.property.domain.RelacionInternaDTO;
 @SoftureSqlConnMapper(value = "PedidoVentaCaracteristicaMapper")
 public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO>{
 	
-
-// BEGIN region aditionalMethods  
 	List<PedidoVentaCaracteristicaDTO> listar2Documento(@Param("documento")String documento, @Param("campo")String campo);
 	List<PedidoVentaCaracteristicaDTO> listar2DocumentoHistorico(@Param("documento")String documento, @Param("campo")String campo);
 	List<PedidoVentaCaracteristicaDTO> listarGestionables(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(@Param("documentos") List<PedidoVentaDTO> documentos, @Param("historicos") List<PedidoVentaDTO> historicos);
 	List<PedidoVentaCaracteristicaDTO> listar2getMessageMailDestiny(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
-	List<PedidoVentaCaracteristicaDTO> listar2getApiCode(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
 	List<PedidoVentaCaracteristicaDTO> listarParaReporte(@Param("documento")String documento);
 	List<PedidoVentaCaracteristicaDTO> listarParaMensaje(@Param("documento") String documento, @Param("plantilla") String plantilla, @Param("propiedad") String propiedad, @Param("modificador") String modificador);
 	List<PedidoVentaCaracteristicaDTO> listarParaGestor(@Param("documento") String documento, @Param("transaccion") String transaccion);
@@ -41,5 +38,13 @@ public interface PedidoVentaCaracteristicaMapper extends IBasicMapper<PedidoVent
 	
 	PedidoVentaCaracteristicaDTO inactivarCampoHistorico(@Param("idCampo") String idCampo, @Param("transaccion") String transaccion, @Param("historico") String historico);
 	PedidoVentaCaracteristicaDTO insertarHistorico(PedidoVentaCaracteristicaDTO dto);
-// END region aditionalMethods
+	
+	
+	
+	List<PedidoVentaCaracteristicaDTO> listar2getApiCode(@Param("documentos") List<PedidoVentaCaracteristicaDTO> documentos, @Param("campoIds") List<RelacionInternaDTO> campoId);
+	String getCodeKeyOfTemplate(@Param("pTemplate")String pTemplate, @Param("pCode")String pCode);
+	String getKeyOfDocumentBase(@Param("pCodeKey")String pCodeKey, @Param("pValue")String pValue);
+	PedidoVentaCaracteristicaDTO getKeyToReplace(@Param("pKeyBase")String pKeyBase, @Param("pTemplate")String pTemplate, @Param("pCodeTemplate")String pCodeTemplate);
+	
+	
 }

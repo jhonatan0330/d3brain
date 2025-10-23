@@ -31,21 +31,42 @@ public class PropertyGetWithCacheService {
 	
 	private Map<String, List<PropiedadDTO>> propByTypeMap = new HashMap<String, List<PropiedadDTO>>();
 	private Map<String, List<String>> userRoleMap = new HashMap<String, List<String>>();
+	private Map<String, List<PropiedadDTO>> propByKey = new HashMap<String, List<PropiedadDTO>>();
 
 	private List<PropiedadDTO> getCacheRolProperties( String pUser, Boolean pPrivada, PropiedadFilterDTO pFilter) {
-		if(pFilter.getCampo()==null) return propiedadMapper.consultarRol(pFilter, pUser, new Date(), pPrivada);
-		String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
-		List<PropiedadDTO> _propertiesType = propByTypeMap.get(_key);
-		if(_propertiesType==null) {
-			PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
-			_filterAll.setTipo(pFilter.getTipo());
-			_filterAll.setCampo(pFilter.getCampo());
-			List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
-			propByTypeMap.put(_key, _fromDB);
-			_propertiesType = _fromDB;
+		List<PropiedadDTO> _propertiesType = null;
+		if(pFilter.getCampo()==null) {
+			if(pFilter.getPropiedadValor()!=null) {
+				_propertiesType = propByKey.get(pFilter.getPropiedadValor());
+				if(_propertiesType==null) {
+					PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
+					_filterAll.setPropiedadValor(pFilter.getPropiedadValor());
+					_filterAll.setTipo(pFilter.getTipo());
+					List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
+					propByKey.put(pFilter.getPropiedadValor(), _fromDB);
+					_propertiesType = _fromDB;
+				}
+			} else {
+				return propiedadMapper.consultarRol(pFilter, pUser, new Date(), pPrivada);
+			}
+		} else {
+			String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
+			_propertiesType = propByTypeMap.get(_key);
+			if(_propertiesType==null) {
+				PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
+				_filterAll.setTipo(pFilter.getTipo());
+				_filterAll.setCampo(pFilter.getCampo());
+				List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
+				propByTypeMap.put(_key, _fromDB);
+				_propertiesType = _fromDB;
+			}
 		}
-		// Esto es para que no se afecte el cache
-		_propertiesType = new ArrayList<>(_propertiesType);
+		if(_propertiesType ==null) {
+			_propertiesType = new ArrayList<>();
+		}else {
+			// Esto es para que no se afecte el cache
+			_propertiesType = new ArrayList<>(_propertiesType);			
+		}
 		if(_propertiesType.isEmpty()) return _propertiesType;
 		if(pFilter.getPropiedadValor()!=null) {
 			 _propertiesType.removeIf(p -> !p.getPropiedadValor().equals(pFilter.getPropiedadValor()));
@@ -80,6 +101,7 @@ public class PropertyGetWithCacheService {
 	
 	public void clearProperties() throws ServerException {
 		propByTypeMap.clear();
+		propByKey.clear();
 	}
 	
 	public void clearRole() throws ServerException {
@@ -208,5 +230,17 @@ public class PropertyGetWithCacheService {
 		return _value;
 	}
 
+	public List<PropiedadDTO> getByValueWithoutField(String pType, String pKey, String pValue, String pUser)
+			throws ServerException {
+		if (pKey == null) throw new ServerException("Es encesaario colcoar el pKey");
+		PropiedadValorDefinidoDTO valorDefinido = consultarValorDefinido(pType, pKey);
+		PropiedadFilterDTO _filter = new PropiedadFilterDTO();
+		_filter.setPropiedadValor(valorDefinido.getLlaveTabla());
+		_filter.setTipo(pType);
+		
+		List<PropiedadDTO> _props = getCacheRolProperties( pUser, false, _filter);
+		_props.removeIf(p -> p.getValor()==null || !p.getValor().equals(pValue));
+		return _props;
+	}
 
 }

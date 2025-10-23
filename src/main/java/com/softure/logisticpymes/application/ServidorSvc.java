@@ -22,9 +22,11 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	@Autowired @Lazy 
 	private ServidorMapper servidorMapper;
 	
-	// BEGIN region servicesServidor
-	// END region servicesServidor
+	private ServidorDTO uploadLocalPath;
 
+	private ServidorDTO uploadFTPPath;
+
+	
 	@Override
 	public ServidorDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. Servidor");
@@ -37,58 +39,27 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	public void initIt() throws Exception {
 	  this.mapper = servidorMapper;
 	}
-	
-	@Override
-	public ServidorDTO activar(ServidorDTO dto, String token) throws ServerException {
-		// BEGIN Servidor_activar
-		return super.activar(dto, token);
-		// END Servidor_activar
-	}
-	
+
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO actualizar( ServidorDTO dto, String token) throws ServerException {
-		// BEGIN Servidor_actualizar
 		validateDTO(dto);
 		return super.actualizar(dto, token);
-		// END Servidor_actualizar
 	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO inactivar(ServidorDTO dto, String token) throws ServerException {
-		// BEGIN Servidor_inactivar
 		return super.inactivar(dto, token);
-		// END Servidor_inactivar
 	}
 	
-	@Override
-	public ServidorDTO consultaUnica(ServidorFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(ServidorFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<ServidorDTO> listarConsulta(ServidorFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
-
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ServidorDTO guardar(ServidorDTO dto, String token) throws ServerException {
-		// BEGIN Servidor_guardar
 		validateDTO(dto);
 		return super.guardar(dto, token);
-		// END Servidor_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public ServidorDTO obtenerServidorPrincipal(String tipo) throws ServerException {
 		ServidorFilterDTO filtroFilter = new ServidorFilterDTO();
 		filtroFilter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -114,6 +85,20 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 		}
 		return server.getUsuario();
 	}
-// END region aditionalMethods
 
+	public ServidorDTO getUploadLocalPath() {
+		return uploadLocalPath;
+	}
+
+	public ServidorDTO getUploadFTPPath() {
+		return uploadFTPPath;
+	}
+
+	public void setUploadLocalPath(ServidorDTO uploadLocalPath) {
+		this.uploadLocalPath = uploadLocalPath;
+	}
+
+	public void setUploadFTPPath(ServidorDTO uploadFTPPath) {
+		this.uploadFTPPath = uploadFTPPath;
+	}
 }

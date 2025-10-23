@@ -194,8 +194,7 @@ public class CallDocumentCRUD {
 		documentDTO = pedidoService.inactivate(documentDTO);
 		manageTemplateTypes(documentDTO, null, token);
 		deleteVinculateDocument(documentDTO, token);
-		voucherDeleteService.callByDocument(bd.getLlaveTabla(), cacheService.obtenerPropiedades(
-				PropiedadValorDefinidoDTO.PLANTILLA, bd.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null), token);
+		voucherDeleteService.callByDocument(bd.getLlaveTabla(),  bd.getPlantilla(), token);
 		return documentDTO;
 	}
 
@@ -228,7 +227,7 @@ public class CallDocumentCRUD {
 				apiService.prepareApiToExecution(_iApi.getValor(), documentDTO, null, null, token, null);
 			}
 		}
-		voucherCreate(bd, token, plantilla);
+		voucherCreate(bd, token);
 		makeVinculateDocument(bd, token);
 		generateNotifications(documentDTO, token, plantilla, documentDTO);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
@@ -333,9 +332,8 @@ public class CallDocumentCRUD {
 		bpmService.execute(dto, token, null);
 		manageTemplateTypes(dto, plantilla, token);
 		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
-		voucherDeleteService.callByDocument(dto.getLlaveTabla(),
-				Propiedades.obtenerVariosParametro(plantilla, Propiedades.TEMPLATE_VOUCHER), token);
-		voucherCreate(dto, token, plantilla);
+		voucherDeleteService.callByDocument(dto.getLlaveTabla(), plantilla.getLlaveTabla(),  token);
+		voucherCreate(dto, token);
 		updateVinculateDocument(dto, token);
 		generateNotifications(dto, token, plantilla, dto);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
@@ -483,7 +481,7 @@ public class CallDocumentCRUD {
 				apiService.prepareApiToExecution(_iApi.getValor(), dto, null, null, token, null);
 			}
 		}
-		voucherCreate(dto, token, plantilla);
+		voucherCreate(dto, token);
 		makeVinculateDocument(dto, token);
 		generateNotifications(dto, token, plantilla, pedido);
 		dto.setCaracteristicas(null);// Por error al serializar
@@ -548,15 +546,14 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void voucherCreate(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla)
+	private void voucherCreate(PedidoVentaDTO dto, String token)
 			throws ServerException {
-		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla,
-				Propiedades.TEMPLATE_VOUCHER);
+		List<PropiedadDTO> _PropertyListToAPis = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE, Propiedades.TEMPLATE_VOUCHER, dto.getPlantilla(), getUserID(token));
 		if (_PropertyListToAPis == null || _PropertyListToAPis.isEmpty())
 			return;
 
 		for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
-			apiService.programateExecution(_iVoucher.getValor(), dto.getLlaveTabla(), null, dto.getTransaccion(),
+			apiService.programateExecution(_iVoucher.getCampo(), dto.getLlaveTabla(), null, dto.getTransaccion(),
 					token);
 		}
 	}

@@ -480,6 +480,36 @@
 		</if>
 		)
 	</select>
-<!--// END region script-->
 
+
+	<select id="getCodeKeyOfTemplate" resultType="java.lang.String">
+		select dc.cdpc_llave  from documentoplantillacaracteristica_dpcp dc
+				inner join documentoplantilla_dplp dp on dp.cdpl_llave = dc.cdpc_plantilla 
+			where dc.cdpc_codigo = #{pCode}
+				and dp.cdpl_codigo = #{pTemplate}
+	</select>
+
+	<select id="getKeyOfDocumentBase" resultType="java.lang.String">
+		select cpvc_documento from pedidoventacaracteristica_pvcp pp 
+		where pp.cpvc_estado = 'A' and pp.cpvc_valoropcion = #{pValue}
+		and pp.cpvc_campo = #{pCodeKey}
+	</select>
+	
+	<select id="getKeyToReplace" resultType="PedidoVentaCaracteristicaDTO">
+		select
+			cpvc_llave as  llaveTabla
+			,cpvc_documento as  documento
+			,cpvc_campo as  campo
+			,cpvc_valortext as  valorText
+			,dpvc_valorfecha as  valorFecha
+			,cpvc_valoropcion as  valorOpcion
+			,cpvc_valorauxiliar as  valorAuxiliar
+			,mpvc_valornumero as  valorNumero
+		from pedidoventacaracteristica_pvcp pp 
+	where pp.cpvc_estado = 'A' and pp.cpvc_documento = #{pKeyBase}
+	and pp.cpvc_campo = (select dc.cdpc_llave  from documentoplantillacaracteristica_dpcp dc
+				inner join documentoplantilla_dplp dp on dp.cdpl_llave = dc.cdpc_plantilla 
+			where dc.cdpc_codigo = #{pCodeTemplate}
+				and dp.cdpl_codigo = #{pTemplate})
+	</select>
 </mapper>

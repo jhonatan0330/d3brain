@@ -31,6 +31,8 @@ public class UsuarioSesionSvc {
 	private PropertyGetWithCacheService cacheService;
 
 	private String mainOrganization;
+	private String mainUser;
+	private String mainUserMail;
 
 	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<String, UsuarioSesionDTO>();
 	
@@ -126,24 +128,26 @@ public class UsuarioSesionSvc {
 	}
 	
 	public String getUserSystemKey() throws ServerException {
+		if (this.mainUser != null)
+			return mainUser;
 		try {
-			String _key = usuarioSesionMapper.obtenerPrincipal();
-			if (_key == null)
+			this.mainUser = usuarioSesionMapper.obtenerPrincipal();
+			if (this.mainUser == null)
 				throw new ServerException("Revisa la organizacion principal, revisa el usuario system y tambien valida que el usuario se encuentre activo");
-			return _key;
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
+			return mainUser;
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
 	
 	public String getUserSystemMail() throws ServerException {
+		if (this.mainUserMail != null)
+			return mainUserMail;
 		try {
-			String _key = usuarioSesionMapper.obtenerPrincipalMail();
-			if (_key == null)
+			this.mainUserMail = usuarioSesionMapper.obtenerPrincipalMail();
+			if (this.mainUserMail == null)
 				throw new ServerException("Revisa la organizacion principal, revisa el usuario system y tambien valida que el usuario se encuentre activo");
-			return _key;
+			return this.mainUserMail;
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
@@ -208,21 +212,8 @@ public class UsuarioSesionSvc {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		UsuarioSesionDTO sesion = sessionMap.get(token);
-		if(sesion == null) {
-			UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
-			filter.setLlaveTabla(token);
-			try {
-				sesion = usuarioSesionMapper.consultar(filter);
-				sessionMap.put(token, sesion);
-				System.out.println(new Date().toString() +"SESSION ***************** CACHE token: " + sessionMap.size());
-			} catch (BindingException ex) {
-				throw new ServerException(ex.getMessage());
-			} catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
-		}
-		if (sesion == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		if(sesion == null) sesion = getUserSession(token);
+		if (sesion == null) throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 			sessionMap.remove(token);
 			System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
@@ -235,7 +226,24 @@ public class UsuarioSesionSvc {
 		}
 		return sesion;
 	}
+
+
+	public UsuarioSesionDTO getUserSession(String token) throws ServerException {
+		try {
+			UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
+			filter.setLlaveTabla(token);
+			UsuarioSesionDTO _sesion = usuarioSesionMapper.consultar(filter);
+			sessionMap.put(token, _sesion);
+			System.out.println(new Date().toString() +"SESSION ***************** CACHE token: " + sessionMap.size());
+			return _sesion;
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+	}
 	
+	//TEngo que mejorar el tema de las sesiones por el momento esta pausado
 	public UsuarioSesionDTO getSessionCacheByUser(String userId) {
 		if(userId == null || userId.isEmpty()) return null;
 	    for (Map.Entry<String, UsuarioSesionDTO> entry : sessionMap.entrySet()) {

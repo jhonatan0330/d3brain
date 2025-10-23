@@ -243,21 +243,22 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 		UsuarioSesionDTO sesion = null;
 		if (dto.getSecurityToken() != null && dto.getClave() == null) {
-			if(dto.getUsuario()!=null) {
+			// Tengo que arreglar el tema del número de sesiones
+			/*if(dto.getUsuario()!=null) {
 				sesion = usuarioSesionService.getSessionCacheByUser(dto.getUsuario());
 				if(sesion != null) {
-					if(sesion.getLlaveTabla().compareTo(dto.getSecurityToken())!=0)reportarError(dto, "Usuario perdio autenticacion.");
+					if(sesion.getLlaveTabla().compareTo(dto.getSecurityToken())!=0)reportarError(dto, "Usuario perdio autenticacion por maximo numero de sesiones.");
 				}	
-			}
-			if(sesion == null) {
-				sesion = usuarioSesionService.consultaXId(dto.getSecurityToken());
+			}*/
+			//if(sesion == null) {
+				sesion = usuarioSesionService.getUserSession(dto.getSecurityToken());
 				if (sesion == null)
-					reportarError(dto, "Autenticacion incorrecta");
+					reportarError(dto, "Autenticacion incorrecta por token");
 				if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 					reportarError(dto, "Se encuentra inactiva la sesion");
 				if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
-					reportarError(dto, "Usuario perdio autenticacion.");
-			}
+					reportarError(dto, "Usuario perdio autenticacion por tiempo.");
+			//}
 			autenticacion = new UsuarioAutenticacionDTO();
 			autenticacion.setUsuario(sesion.getUsuario());	
 		} else {

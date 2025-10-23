@@ -32,6 +32,7 @@ public class UploadSvc {
 	private CargaArchivoSvc cargaService;
 	@Autowired @Lazy 
 	private ServidorSvc servidorService;
+	
 
 	public String uploadFile(byte[] bytes, String name, String token, String typeFile) throws ServerException {
 		CargaArchivoDTO registro = new CargaArchivoDTO();
@@ -39,10 +40,11 @@ public class UploadSvc {
 		registro.setSize(bytes.length);
 		if (token != null)
 			registro.setUsuario(cargaService.getUserFlex(token));
-		ServidorDTO uploadPath = servidorService.obtenerServidorPrincipal(ServidorDTO.LOCAL_FTP);
-		if (uploadPath != null) {
+		if (servidorService.getUploadLocalPath() == null && servidorService.getUploadFTPPath() == null) 
+			servidorService.setUploadLocalPath(servidorService.obtenerServidorPrincipal(ServidorDTO.LOCAL_FTP));
+		if (servidorService.getUploadLocalPath() != null) {
 			try {
-				registro.setUrl(uploadLocal(bytes, uploadPath, name));
+				registro.setUrl(uploadLocal(bytes, servidorService.getUploadLocalPath(), name));
 				cargaService.guardar(registro, null);
 				return registro.getUrl();
 			} catch (IOException e) {
@@ -69,19 +71,19 @@ public class UploadSvc {
 
 	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro, String typeFile)
 			throws ServerException {
-		ServidorDTO servidor = servidorService.obtenerServidorPrincipal(ServidorDTO.FTP);
-		if (servidor == null)
+		if (servidorService.getUploadFTPPath() == null) servidorService.setUploadFTPPath( servidorService.obtenerServidorPrincipal(ServidorDTO.FTP));
+		if (servidorService.getUploadFTPPath() == null)
 			throw new ServerException("Configure el servidor FTP");
 
-		registro.setServidor(servidor.getLlaveTabla());
+		registro.setServidor(servidorService.getUploadFTPPath().getLlaveTabla());
 
 		FTPClient ftpClient = new FTPClient();
-		String server = servidor.getUrl();
+		String server = servidorService.getUploadFTPPath().getUrl();
 		int port = 21;
-		String user = servidor.getUsuario();
-		String pass = servidor.getClave();
-		String urlBase = servidor.getUrlConexion();
-		String folderBase = servidor.getBase();
+		String user = servidorService.getUploadFTPPath().getUsuario();
+		String pass = servidorService.getUploadFTPPath().getClave();
+		String urlBase = servidorService.getUploadFTPPath().getUrlConexion();
+		String folderBase = servidorService.getUploadFTPPath().getBase();
 		if (server == null || user == null || pass == null)
 			throw new ServerException(
 					"Parametros FTP incompletos, o coloque la propiedad FILE_SERVER, para almacenar los recursos en su equipo");

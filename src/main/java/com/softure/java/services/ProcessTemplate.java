@@ -3,7 +3,8 @@ package com.softure.java.services;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Period;
@@ -14,8 +15,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -119,7 +126,8 @@ public class ProcessTemplate {
 	}
 
 	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
-			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp, PedidoVentaDTO iterador) throws ServerException {
+			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp, PedidoVentaDTO iterador)
+			throws ServerException {
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 		if (relaciones != null && !relaciones.isEmpty()) {
 			List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
@@ -153,7 +161,8 @@ public class ProcessTemplate {
 						if (iCampo.getTransaccionRegistro() != null)
 							codeReplace = codeReplace + "(" + iCampo.getTransaccionRegistro() + ")";
 						parameters = addParameterString(parameters, null, iCampo, codeReplace, "R",
-								iCampo.getTransaccionRegistro(), referidas, SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
+								iCampo.getTransaccionRegistro(), referidas, SharedConstants.PUNTO_COMA_DOBLE,
+								SharedConstants.IGUAL);
 					}
 				}
 			}
@@ -169,16 +178,16 @@ public class ProcessTemplate {
 			if (iRelacion.getAuxiliar() != null && !iRelacion.getAuxiliar().isEmpty())
 				valueAuxToCode = "(" + iRelacion.getAuxiliar() + ")";
 		}
-		parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode
-				+ pEqualChar + formatToReplaceAll(campo, formatToField);
+		parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + pEqualChar
+				+ formatToReplaceAll(campo, formatToField);
 		if (campo.getValorOpcion() != null) {
-			parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode
-					+ "_KEY" + pEqualChar + campo.getValorOpcion();
+			parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_KEY" + pEqualChar
+					+ campo.getValorOpcion();
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
-					parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace
-							+ valueAuxToCode + "_ID" + pEqualChar + iElement.getNombre();
+					parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_ID"
+							+ pEqualChar + iElement.getNombre();
 				}
 			}
 		} else {
@@ -219,19 +228,7 @@ public class ProcessTemplate {
 											List<PedidoVentaCaracteristicaDTO> camposReferidos = getFieldsFromOtherDocument(
 													relaciones, camposOpcionReferidos);
 											if (camposReferidos != null) {
-												
-												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
-													if (iCampo.getValorText() != null) {
-														if (iCampo.getCampoDTO() == null)
-															iCampo.setCampoDTO(fieldService.consultaXId(iCampo.getCampo()));
-														String codeReplaceList = iCampo.getCampoDTO().getCodigo();
-														if (iCampo.getTransaccionRegistro() != null)codeReplaceList = codeReplaceList + "(" + iCampo.getTransaccionRegistro() + ")";
-														parameters = addParameterString(parameters, null, iCampo, codeReplaceList, "L",
-																iCampo.getTransaccionRegistro(), referidas, SharedConstants.LINEA_MEDIA_DOBLE, SharedConstants.COMA_DOBLE);
-													}
-												}
-												/*
-												
+
 												for (PedidoVentaCaracteristicaDTO iCampo : camposReferidos) {
 													if (iCampo.getValorText() != null) {
 														if (iCampo.getCampoDTO() == null)
@@ -241,34 +238,12 @@ public class ProcessTemplate {
 														if (iCampo.getTransaccionRegistro() != null)
 															codeReplaceList = codeReplaceList + "("
 																	+ iCampo.getTransaccionRegistro() + ")";
-														parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE
-																+ "L" + "_" + codeReplaceList
-																+ SharedConstants.COMA_DOBLE + formatToReplaceAll(
-																		iCampo, iCampo.getTransaccionRegistro());
-														
-														parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace + valueAuxToCode
-																+ SharedConstants.IGUAL + formatToReplaceAll(campo, formatToField);
-														
-														
-														// Coloque el service en null para evitar que se generen ciclos
-														// infinitos
-														if (iCampo.getValorOpcion() != null) {
-															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
-																	+ "_KEY" +  SharedConstants.COMA_DOBLE + iCampo.getValorOpcion();
-															
-														
-															
-															// Lo uso para obtener el nombre del expediente, ejemplo en ampliar plazo de softure
-															if (iCampo.getExpedientes() != null && !iCampo.getExpedientes().isEmpty()) {
-																PedidoVentaDTO iElement = iCampo.getExpedientes().get(0);
-																if (iElement != null && iElement.getNombre() != null) {
-																	parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + tipo + "_" + codeReplace
-																			+ valueAuxToCode + "_ID" + SharedConstants.IGUAL + iElement.getNombre();
-																}
-															}
-														}
+														parameters = addParameterString(parameters, null, iCampo,
+																codeReplaceList, "L", iCampo.getTransaccionRegistro(),
+																referidas, SharedConstants.LINEA_MEDIA_DOBLE,
+																SharedConstants.COMA_DOBLE);
 													}
-												}*/
+												}
 											}
 										}
 									}
@@ -581,14 +556,18 @@ public class ProcessTemplate {
 		}
 	}
 
-	private String getFileTransformation(String textField, String nameTransformation) {
+	private String getFileTransformation(String textField, String nameTransformation) throws ServerException {
 		if (nameTransformation == null || nameTransformation.isEmpty() || textField == null || textField.isEmpty())
 			return textField;
 		if (nameTransformation.compareTo("B64") == 0) {
 			if (textField.startsWith("http")) {
 				try {
 					File file = File.createTempFile("FILE_BASE64_", ".tmp");
-					FileUtils.copyURLToFile(new URL(textField), file);
+					try {
+						FileUtils.copyURLToFile(new URI(textField).toURL(), file);
+					} catch (URISyntaxException e) {
+						throw new ServerException(e.getMessage());
+					}
 					return Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -599,4 +578,69 @@ public class ProcessTemplate {
 		}
 		return textField;
 	}
+
+	public String addParametersFromTemplateLink(String template) throws ServerException {
+		// Parte contable para saltar a formularios especiales
+		if (template.contains("[[")) {
+
+			Pattern pattern = Pattern.compile("\\[\\[(.*?)]]");
+			Matcher matcher = pattern.matcher(template);
+
+			Set<String> unicos = new HashSet<>();
+
+			while (matcher.find()) {
+				unicos.add(matcher.group(1)); 
+			}
+			
+			Map<String, Map<String, Map<String, Set<String>>>> _groupText = new TreeMap<>();
+
+
+			for (String entrada : unicos) {
+				String[] partes = entrada.split("\\.");
+				if (partes.length == 4) {
+					String formulario = partes[0];
+					String field_formulario = partes[1];
+					String key = partes[2];
+					String codigo = partes[3];
+
+					_groupText.computeIfAbsent(formulario, f -> new TreeMap<>()) // agrupar por formulario
+							.computeIfAbsent(field_formulario, c -> new TreeMap<>()) // agrupar por _field
+							.computeIfAbsent(key, k -> new TreeSet<>()) // agrupar por key
+							.add(codigo); // agregar código
+				}
+			}
+
+	        for (var _iForm : _groupText.entrySet()) {
+	            for (var _iField : _iForm.getValue().entrySet()) {
+	            	String _fieldBaseFromDocument = campoService.getCodeKeyOfTemplate(_iForm.getKey(), _iField.getKey());
+	            	if(_fieldBaseFromDocument != null) {
+	            		// Aqui obtengo el campo del formulario
+		                for (var _iKey : _iField.getValue().entrySet()) {
+		                	String _keyOfDocumentBase = campoService.getKeyOfDocumentBase(_fieldBaseFromDocument, _iKey.getKey());
+		                	if(_keyOfDocumentBase != null) {
+			                	for (var _iCodeToReplace : _iKey.getValue()) {
+			                		// Aquie puede mejorar para los campos fecha y demas pero no se como :(, puede ser un quinto campo de formato
+			                		PedidoVentaCaracteristicaDTO _field = campoService.getKeyToReplace(_keyOfDocumentBase, _iForm.getKey(), _iCodeToReplace);
+			                		if(_field!= null) {
+			                			String _keyToReplace = _field.getValorOpcion();
+				                		if(_keyToReplace ==null)_keyToReplace = _field.getValorText();
+				                		if(_keyToReplace ==null)_keyToReplace = "";
+				                		String codeToEvaluate = "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace+ "]]";
+				                		while (template.contains(codeToEvaluate)) {
+					    					template = template.replace(codeToEvaluate, _keyToReplace);
+					    				}	
+			                		}
+			                		
+			                	}		                		
+		                	}
+		                }	
+	            	}
+	            }
+	        }
+			template = template.replaceAll("\\[\\[[A-Za-z0-9_/():\\-\\.\\_]*\\]\\]", "");
+		}
+
+		return template;
+	}
+
 }

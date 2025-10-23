@@ -441,6 +441,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				createDocument = true;
 			}
 		}
+		
+		
 		DocumentoPlantillaDTO plantilla = buscarPlantilla(dto.getValor());
 		if (plantilla == null)
 			throw new ServerException(
@@ -864,6 +866,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PLANTILLA_ACTIVAR:
 		case Propiedades.VINCULO_DATA:
 		case Propiedades.VINCULO_DELETE:
+		case Propiedades.TEMPLATE_VOUCHER:
 		case Propiedades.PLANTILLA_ANULAR: {
 			identificadorPlantilla(dto, token);
 			break;
@@ -966,7 +969,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.API_AUTHENTICATION:
 		case Propiedades.API_BASE:
 		case Propiedades.API_TRANSACCION:
-		case Propiedades.TEMPLATE_VOUCHER:
 		case Propiedades.API: {
 			identificadorApi(dto, token);
 			break;
@@ -1093,21 +1095,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				bd = apiService.consultaUnica(bdFilter);
 			}
 			if (bd == null) {
-				if (dto.getKey().compareTo(Propiedades.TEMPLATE_VOUCHER) == 0) {
-					if (dto.getValor().compareTo("*") == 0) {
-					
-						DocumentoPlantillaDTO _template = plantillaService.consultaXId(dto.getCampo());
-						if(_template ==null) throw new ServerException("Al crear el api no se identifico plantilla");
-						
-						bd = apiService.createVocherTemplate(token, _template.getNombre(), _template.getCodigo());
-					} else {
-						throw new ServerException("El api " + dto.getValor().toUpperCase()
-								+ " no fue reconocido para la propiedad " + dto.getKey());
-					}
-				} else {
-					throw new ServerException("El api " + dto.getValor().toUpperCase()
-							+ " no fue reconocido para la propiedad " + dto.getKey());
-				}
+				throw new ServerException("El api " + dto.getValor().toUpperCase()
+						+ " no fue reconocido para la propiedad " + dto.getKey());
 			}
 		}
 		dto.setValor(bd.getLlaveTabla());

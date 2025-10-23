@@ -308,10 +308,7 @@ public class CallManageTransition {
 			return;
 		if (expedienteDTO.getEstado() != null
 				&& expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-			
-			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), 
-					cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA, expedienteDTO.getPlantilla(), Propiedades.TEMPLATE_VOUCHER, null)
-					, pToken);
+			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), expedienteDTO.getPlantilla(), pToken);
 		}
 	}
 

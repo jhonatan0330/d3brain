@@ -49,39 +49,11 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	}
 
 	@Override
-	public WebServiceDTO activar(WebServiceDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
-	}
-
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO actualizar(WebServiceDTO dto, String token) throws ServerException {
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		return super.actualizar(dto, token);
-	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public WebServiceDTO inactivar(WebServiceDTO dto, String token) throws ServerException {
-		// BEGIN WebService_inactivar
-		return super.inactivar(dto, token);
-		// END WebService_inactivar
-	}
-
-	@Override
-	public WebServiceDTO consultaUnica(WebServiceFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(WebServiceFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<WebServiceDTO> listarConsulta(WebServiceFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
 	}
 
 	@Override
@@ -125,45 +97,5 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		}
 		return _service;
 	}
-	
-	
-
-	public WebServiceDTO createVocherTemplate(String pToken, String pName, String pCode) throws ServerException {
-		WebServiceDTO ws = new WebServiceDTO();
-		ws.setCodigo("CC_" + pCode);
-		ws.setNombre("CONT " + pName);
-		ws = guardar(ws, pToken);
-		
-		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
-				Propiedades.API_BASE, "CONT_A", pToken), pToken);
-		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
-				Propiedades.API_URL, "http://localhost:8080/api_account/voucher", pToken), pToken);
-		paramService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.API_SERVICE, ws.getLlaveTabla(),
-				Propiedades.API_TEMPLATE, "{\r\n"
-						+ "	\"catalog\": \"{{R_CATALOGO_ACTUAL}}\",\r\n"
-						+ "	\"concept\": \"DOCUMENTO {{E_CODE}}\",\r\n"
-						+ "	\"factDate\": \"{{E_CODE_FECHA}}\",\r\n"
-						+ "	\"document\": \"{{E_CODE_ID}}\",\r\n"
-						+ "	\"type\": \"{{E_API_ID}}\",\r\n"
-						+ "	\"value\": \"${R_BUSCA_EL_VALOR}\",\r\n"
-						+ "	\"lines\": [\r\n"
-						+ "		{\r\n"
-						+ "			\"account\": \"\",\r\n"
-						+ "			\"debit O credit\": \"\",\r\n"
-						+ "			\"note\": \"\",\r\n"
-						+ "			\"references\": [\r\n"
-						+ "				{\r\n"
-						+ "					\"auxiliar\": \"\",\r\n"
-						+ "					\"code\": \"\",\r\n"
-						+ "					\"documentId\": \"\",\r\n"
-						+ "					\"name\": \"\"\r\n"
-						+ "				}\r\n"
-						+ "			]\r\n"
-						+ "		}\r\n"
-						+ "	]\r\n"
-						+ "}", pToken), pToken);
-		return ws;
-	}
-
 
 }

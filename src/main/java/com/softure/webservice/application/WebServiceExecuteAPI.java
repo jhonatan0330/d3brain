@@ -323,6 +323,9 @@ public class WebServiceExecuteAPI {
 		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties, service.getLlaveTabla()) );
 
 		String template = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE), callWS.getParametersInexecution());
+
+		if(template.contains("[[")) template = templatesService.addParametersFromTemplateLink(template);
+		
 		if(template ==null || template.isEmpty()) {
 			callWS.setFechaEjecucion(new Date());
 			callWS.setEstado(SharedConstants.STATE_INACTIVE);
@@ -549,7 +552,7 @@ public class WebServiceExecuteAPI {
 		URL urlApi;
 		HttpURLConnection con = null;
 		try {
-			urlApi = new URL(url);
+			urlApi = new URI(url).toURL();
 			con = (HttpURLConnection) urlApi.openConnection();
 			PropiedadDTO httpMethodValue = Propiedades.obtenerParametro(apiService,
 					Propiedades.HTTP_METHOD);
@@ -643,6 +646,8 @@ public class WebServiceExecuteAPI {
 		}
 		catch (IOException e) {
 			throw new ServerException(e.getMessage());
+		} catch (URISyntaxException e1) {
+			throw new ServerException(e1.getMessage());
 		}finally {
 			if(con != null) con.disconnect();
 		}
