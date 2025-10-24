@@ -350,4 +350,10 @@ public class SoftureUtil {
 
     }
 	
+	public static String maskError(String pMessage) {
+		if (pMessage.indexOf("Where:")!=-1) {
+			return pMessage.substring( ((pMessage.indexOf("ERROR:")!=-1)?pMessage.indexOf("ERROR"):0 ), pMessage.indexOf("Where:"));
+		}
+		return pMessage;
+	}
 }

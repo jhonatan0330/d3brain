@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Component;
 
 import com.accounting.voucher.application.VoucherDeleteService;
@@ -564,7 +565,10 @@ public class CallManageTransition {
 				resultado = procesoTransicionMapper.decision(
 						SoftureUtil.formatFunction(propiedadFuncion.getLlaveTabla()), llaveTablaDocumento,
 						llaveModificador, estadoService.generarLlave());
-			} catch (Exception e) {
+			}catch (BadSqlGrammarException e) {
+				throw new ServerException(e.getCause().getMessage(), "Decision : " + decisionDTO.getNombre());
+			}
+			catch (Exception e) {
 				throw new ServerException(e.getMessage(), "Decision : " + decisionDTO.getNombre());
 			}
 			// Antes tenia esto como una excepcion pero para los apis asincronos eso no

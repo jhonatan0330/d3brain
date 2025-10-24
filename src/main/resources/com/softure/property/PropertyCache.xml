@@ -151,7 +151,7 @@
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
-        and cpvd_llave in ('PROP_85', 'PROP_84', 'PROP_107', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114', 'PROP_161')
+        and cpvd_llave in ('PROP_84', 'PROP_107', 'PROP_78',  'PROP_79', 'PROP_77', 'PROP_108', 'PROP_114', 'PROP_161')
         order by nombre, key
     </select>
     
@@ -188,7 +188,7 @@
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp, documentoplantilla_dplp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
-        and cpvd_llave in ('PROP_108'<if test="profile=='ADMIN'">,'PROP_85', 'PROP_84', 'PROP_78', 'PROP_77', 'PROP_114'</if>)
+        and cpvd_llave in ('PROP_108'<if test="profile=='ADMIN'">, 'PROP_84', 'PROP_78', 'PROP_77', 'PROP_114'</if>)
         and cdpl_llave in  (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
         union
         select

@@ -12,13 +12,18 @@ public class ServerException extends Exception {
 	private static final String CLOSE = "]]";
 	
 	public ServerException(String message) {
-		super((message.indexOf("Where:")!=-1)?message.substring( ((message.indexOf("ERROR:")!=-1)?message.indexOf("ERROR"):0 ), message.indexOf("Where:")):message);
+		super(prepareMessage(message, null));
 		logger.log(Level.SEVERE, message,this);
 	}
 
 	public ServerException(String message, String origen) {
 		super(prepareMessage(message, origen));
 		logger.log(Level.SEVERE, message,this);
+	}
+	
+	public ServerException(String message, boolean _print) {
+		super(prepareMessage(message, null));
+		if(_print)logger.log(Level.SEVERE, message,this);
 	}
 	
 	public String getOrigen() {

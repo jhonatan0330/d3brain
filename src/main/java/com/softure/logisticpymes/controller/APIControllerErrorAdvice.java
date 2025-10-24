@@ -4,12 +4,14 @@ import org.postgresql.util.PSQLException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.shared.domain.SharedApiErrorResponse;
 import com.shared.domain.ServerException;
 import com.softure.java.dto.exception.FlexException;
+import com.softure.java.services.SoftureUtil;
 
 @ControllerAdvice
 public class APIControllerErrorAdvice {
@@ -20,7 +22,7 @@ public class APIControllerErrorAdvice {
     	 SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
     		        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     		        .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-    		        .withMessage(e.getTextMessage())
+    		        .withMessage(SoftureUtil.maskError(e.getTextMessage()))
     		        .withDetail(e.getOrigen())
     		        .build();
     		        return new ResponseEntity<SharedApiErrorResponse>(response, response.getStatus());
@@ -53,7 +55,18 @@ public class APIControllerErrorAdvice {
 	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
 	         .withMessage("BadSqlGrammarException")
-	         .withDetail(e.getCause().getMessage())
+	         .withDetail(SoftureUtil.maskError(e.getCause().getMessage()))
+	         .build();
+	        return new ResponseEntity<>(response, response.getStatus());
+	 }
+	
+	@ExceptionHandler(UncategorizedSQLException.class)
+	protected ResponseEntity<SharedApiErrorResponse> handleCustomAPIException(UncategorizedSQLException e) {
+	   SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
+	         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	         .withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
+	         .withMessage("UncategorizedSQLException")
+	         .withDetail(SoftureUtil.maskError(e.getMessage()))
 	         .build();
 	        return new ResponseEntity<>(response, response.getStatus());
 	 }

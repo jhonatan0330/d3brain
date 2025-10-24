@@ -170,7 +170,7 @@ public class CallDocumentCRUD {
 			return result;
 		} catch (Exception e) {
 			 errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(), dtoToJson, token);
-			throw new ServerException(e.getMessage());
+			throw new ServerException(e.getMessage(), false);
 		}
 	}
 
