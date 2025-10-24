@@ -17,6 +17,7 @@ import com.softure.authentication.application.UsuarioAutenticacionSvc;
 import com.softure.authentication.application.UsuarioOrganizacionSvc;
 import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.authentication.domain.OrganizacionDTO;
+import com.softure.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionDTO;
 import com.softure.authentication.domain.UsuarioAutenticacionFilterDTO;
 import com.softure.authentication.domain.UsuarioOrganizacionDTO;
@@ -73,9 +74,9 @@ public class MainController {
 	}
 	
 	@PostMapping(value="/solicitarNuevaClave")
-	public void solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		usuarioAutenticacionService.solicitarNuevaClave(filter, SoftureUtil.getRequestUrl(request));
+		return usuarioAutenticacionService.solicitarNuevaClave(filter, SoftureUtil.getRequestUrl(request));
 	}
 	
 	@PostMapping(value="/cambiarClaveOtherSystem")

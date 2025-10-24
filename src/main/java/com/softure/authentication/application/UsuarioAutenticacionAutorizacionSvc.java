@@ -80,9 +80,13 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 		return super.guardar(dto, token);
 	}
 
-	public void makeTokenLink(String usuario, String correo, String ip, String urlServer) throws ServerException {
+	public UsuarioAutenticacionAutorizacionDTO makeTokenLink(String usuario, String correo, String ip, String urlServer) throws ServerException {
 		UsuarioAutenticacionAutorizacionDTO dto = makeToken(usuario, correo, ip);
 		mailRecoverPasswordService.callLink(correo, dto.getLlaveTabla(), dto.getCodigo() , urlServer);	
+		UsuarioAutenticacionAutorizacionDTO _response = new UsuarioAutenticacionAutorizacionDTO();
+		// Aqui despues oculto parte del correo
+		_response.setCorreo(correo);
+		return _response;
 	}
 	
 	public void makeTokenNumber(String usuario, String correo, String ip, String urlServer) throws ServerException {
@@ -99,7 +103,7 @@ public class UsuarioAutenticacionAutorizacionSvc extends BasicSvc<UsuarioAutenti
 		dto.setFechaSolicitud(new Date());
 		dto.setFechaMaxima(SoftureUtil.agregarMinutos(new Date(), 15));
 		dto.setCodigo(String.valueOf(Double.valueOf(Math.random()*1000000).intValue()));
-		return save(dto);
+		return saveSimple(dto);
 	}
 	
 	public UsuarioAutenticacionAutorizacionDTO validateLink(String llave, String ip) throws ServerException {

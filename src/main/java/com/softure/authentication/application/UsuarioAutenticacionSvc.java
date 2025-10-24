@@ -183,7 +183,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		reportarError(uaf, error);
 	}
 
-	public void solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer) throws ServerException {
+	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer) throws ServerException {
 		if (dto == null || dto.getUsuarioDTO() == null)
 			throw new ServerException("Faltan los datos de recuperacion");
 		if (dto.getUsuarioDTO().getCorreo() == null)
@@ -206,11 +206,12 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {
-			authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
+			return authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
 		} catch (Exception e) {
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
 		}
 
+		return null;
 	}
 
 	// PAra el api de flex despues lo puedo quitar
