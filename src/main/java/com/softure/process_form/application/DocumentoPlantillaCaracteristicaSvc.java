@@ -1,13 +1,24 @@
 package com.softure.process_form.application;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.shared.domain.SharedConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.java.services.SoftureUtil;
+// END region interImport
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import com.softure.process_form.infrastructure.DocumentoPlantillaCaracteristicaMapper;
@@ -15,16 +26,8 @@ import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-import com.softure.java.services.SoftureUtil;
 
 import jakarta.annotation.PostConstruct;
-// END region interImport
-import com.softure.logisticpymes.application.BasicSvc;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc
@@ -39,14 +42,23 @@ public class DocumentoPlantillaCaracteristicaSvc
 	private PropertyGetWithCacheService cacheService;
 	@Autowired @Lazy 
 	private CallSearchProcessFromText searchProcessFromText;
+	
+	private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<String, DocumentoPlantillaCaracteristicaDTO>();
+	
 
 	@Override
 	public DocumentoPlantillaCaracteristicaDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. DocumentoPlantillaCaracteristica");
+		
+		DocumentoPlantillaCaracteristicaDTO _db = fieldsMap.get(llave);
+		if(_db != null) return _db;
+		
 		DocumentoPlantillaCaracteristicaFilterDTO dto = new DocumentoPlantillaCaracteristicaFilterDTO();
 		dto.setLlaveTabla(llave);
-		return documentoPlantillaCaracteristicaMapper.consultar(dto);
+		_db = documentoPlantillaCaracteristicaMapper.consultar(dto);
+		fieldsMap.put(llave, _db);
+		return _db;
 	}
 
 	@PostConstruct
@@ -54,19 +66,15 @@ public class DocumentoPlantillaCaracteristicaSvc
 		this.mapper = documentoPlantillaCaracteristicaMapper;
 	}
 
-	@Override
-	public DocumentoPlantillaCaracteristicaDTO activar(DocumentoPlantillaCaracteristicaDTO dto, String token)
-			throws ServerException {
-		// BEGIN DocumentoPlantillaCaracteristica_activar
-		return super.activar(dto, token);
-		// END DocumentoPlantillaCaracteristica_activar
+	public void clearCache() {
+		fieldsMap.clear();
 	}
 
+	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO actualizar(DocumentoPlantillaCaracteristicaDTO dto, String token)
 			throws ServerException {
-		// BEGIN DocumentoPlantillaCaracteristica_actualizar
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.actualizar(dto, token);
 		organizar(dto, token);
@@ -83,38 +91,21 @@ public class DocumentoPlantillaCaracteristicaSvc
 				update(fieldDifference);
 			}
 		}
+		clearCache();
 		return dto;
-		// END DocumentoPlantillaCaracteristica_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO inactivar(DocumentoPlantillaCaracteristicaDTO dto, String token)
 			throws ServerException {
-		// BEGIN DocumentoPlantillaCaracteristica_inactivar
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
 		//validar que el campo no se use en ninguna propiedad
+		clearCache();
 		return dto;
-		// END DocumentoPlantillaCaracteristica_inactivar
 	}
 
-	@Override
-	public DocumentoPlantillaCaracteristicaDTO consultaUnica(DocumentoPlantillaCaracteristicaFilterDTO dto)
-			throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(DocumentoPlantillaCaracteristicaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<DocumentoPlantillaCaracteristicaDTO> listarConsulta(DocumentoPlantillaCaracteristicaFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
 
 	// Esto lo uso en APiCommon y la idea es que se mejore en las cargas masivas
 	// para que solo consulte de a uno y si es null que gestione los errores por
@@ -175,6 +166,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
 		if (filtroPlantilla != null)
 			createFieldDifference(dto, filtroPlantilla.getValor(), token);
+		clearCache();
 		return dto;
 		// END DocumentoPlantillaCaracteristica_guardar
 	}
@@ -214,28 +206,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 				Propiedades.CAMPO_DIFERENCIAS, newCampo.getLlaveTabla(), token), token);
 
 	}
-
-	/*private DocumentoPlantillaCaracteristicaDTO consultaUnicaProducto(String id) throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO campo = consultaXId(id);
-		if (campo == null) {
-			// Seguramente viende de un producto
-			ProductoCaracteristicaDTO campoProducto = campoProductoService.consultaXId(id);
-			if (campoProducto == null)
-				throw new ServerException("El id del campo no se encuentra en la BD.");
-			campo = new DocumentoPlantillaCaracteristicaDTO();
-			campo.setCodigo(campoProducto.getCodigo());
-			campo.setEstado(campoProducto.getEstado());
-			campo.setFormato(campoProducto.getFormato());
-			campo.setImagen(campoProducto.getImagen());
-			campo.setNombre(campoProducto.getNombre());
-			campo.setOrden(campoProducto.getOrden());
-			//campo.setObjetivo(campoProducto.getObjetivo());
-			campo.setPlantilla(campoProducto.getBase());
-			campo.setPlantillaNombre(campoProducto.getBaseNombre());
-			campo.setLlaveTabla(id);
-		}
-		return campo;
-	}*/
 
 	public DocumentoPlantillaCaracteristicaDTO consultaUnicaConComplementos(String id, String token)
 			throws ServerException {
