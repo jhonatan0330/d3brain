@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -52,20 +53,24 @@ public class PropertyGetWithCacheService {
 		} else {
 			String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
 			_propertiesType = propByTypeMap.get(_key);
-			if(_propertiesType==null || !_key.equals("CORREGIR RAPIDO")) {
+			if(_propertiesType==null) {
 				PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
 				_filterAll.setTipo(pFilter.getTipo());
 				_filterAll.setCampo(pFilter.getCampo());
 				List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
 				propByTypeMap.put(_key, _fromDB);
-				_propertiesType = _fromDB;
+				_propertiesType = _fromDB.stream()
+					    .map(PropiedadDTO::new)
+					    .collect(Collectors.toList());
 			}
 		}
 		if(_propertiesType ==null) {
 			_propertiesType = new ArrayList<>();
 		}else {
 			// Esto es para que no se afecte el cache
-			_propertiesType = new ArrayList<>(_propertiesType);			
+			_propertiesType = _propertiesType.stream()
+				    .map(PropiedadDTO::new)
+				    .collect(Collectors.toList());
 		}
 		if(_propertiesType.isEmpty()) return _propertiesType;
 		if(pFilter.getPropiedadValor()!=null) {

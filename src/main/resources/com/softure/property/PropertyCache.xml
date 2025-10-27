@@ -86,7 +86,7 @@
 			,cpvd_nombre as  nombre
 			,cpvd_codigo as  key
 			,cppd_campo as  campo
-			,<if test="privada!=null">case when bpvd_privada = true then 'private' else cppd_valor end</if><if test="privada == null">cppd_valor</if> as valor
+			,cppd_valor as valor
 			,cppd_texto as  texto
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre

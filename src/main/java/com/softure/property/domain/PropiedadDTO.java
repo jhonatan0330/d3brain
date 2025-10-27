@@ -201,5 +201,41 @@ public class PropiedadDTO extends BasicDTO{
 	public String getBloqueo() {
 		return bloqueo;
 	}
+	
+	public PropiedadDTO() {
+	    // Constructor vacío requerido por frameworks o para instanciar manualmente
+	}
+	
+	// Este metodo lo lo uso para e cache de las propiedades, de esta forma yo evito que se modifiquen las propiedades del cahce 
+	
+	public PropiedadDTO(PropiedadDTO other) {
+		
+	    this.propiedadValor = other.propiedadValor;
+	    this.tipo = other.tipo;
+	    this.nombre = other.nombre;
+	    this.key = other.key;
+	    this.campo = other.campo;
+	    this.valor = other.valor;
+	    this.texto = other.texto;
+	    this.fechaDefinicion = (other.fechaDefinicion != null) ? new Date(other.fechaDefinicion.getTime()) : null;
+	    this.fechaImplementacion = (other.fechaImplementacion != null) ? new Date(other.fechaImplementacion.getTime()) : null;
+	    this.cambioCreacion = other.cambioCreacion;
+	    this.cambioEliminacion = other.cambioEliminacion;
+	    this.rol = other.rol;
+	    this.rolNombre = other.rolNombre;
+	    this.rolExcluyente = other.rolExcluyente;
+	    this.rolExcluyenteNombre = other.rolExcluyenteNombre;
+	    this.fechaInicial = (other.fechaInicial != null) ? new Date(other.fechaInicial.getTime()) : null;
+	    this.fechaFinal = (other.fechaFinal != null) ? new Date(other.fechaFinal.getTime()) : null;
+	    this.usuario = other.usuario;
+	    this.usuarioNombre = other.usuarioNombre;
+	    this.usuarioExcluyente = other.usuarioExcluyente;
+	    this.usuarioExcluyenteNombre = other.usuarioExcluyenteNombre;
+	    this.motivo = other.motivo;
+	    this.bloqueo = other.bloqueo;
+	    this.setLlaveTabla(other.getLlaveTabla());
+	    this.setEstado(other.getEstado());
+	}
+
 
 }
