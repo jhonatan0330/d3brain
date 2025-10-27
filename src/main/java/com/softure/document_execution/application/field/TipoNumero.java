@@ -162,19 +162,14 @@ public class TipoNumero {
 	}
 
 	private void formatText(PedidoVentaCaracteristicaDTO pCampo) {
-		if (!Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_MONEDA).isEmpty()) {
-			pCampo.setValorText(SoftureUtil.formatMoney(pCampo.getValorNumero()));
-		} else {
-			String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
-			if (formato.isEmpty()) {
-				pCampo.setValorText(pCampo.getValorNumero().toPlainString());
-				if (pCampo.getValorText().endsWith(".0")) {
-					pCampo.setValorText(pCampo.getValorText().substring(0, pCampo.getValorText().length() - 2));
-				}
-			} else {
-				pCampo.setValorText(SoftureUtil.formatNumberPattern(pCampo.getValorNumero(), formato));
+		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
+		if (formato.isEmpty()) {
+			pCampo.setValorText(pCampo.getValorNumero().toPlainString());
+			if (pCampo.getValorText().endsWith(".0")) {
+				pCampo.setValorText(pCampo.getValorText().substring(0, pCampo.getValorText().length() - 2));
 			}
-
+		} else {
+			pCampo.setValorText(SoftureUtil.formatNumberPattern(pCampo.getValorNumero(), formato));
 		}
 	}
 

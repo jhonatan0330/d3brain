@@ -366,8 +366,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				baseValorUnitario.setPropiedades(new ArrayList<PropiedadDTO>());
 				baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				 null, Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
-				baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-						Propiedades.NUMERO_MONEDA, Propiedades.TRUE, null));
 				PedidoVentaCaracteristicaDTO cpValorUnitario = new PedidoVentaCaracteristicaDTO();
 				cpValorUnitario.setDocumento(field.getLlaveTabla());
 				cpValorUnitario.setValorNumero(valorUnitario);
@@ -457,8 +455,6 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				baseTotal.setOrden(4);
 				baseTotal.setLlaveTabla("***TOTAL");
 				baseTotal.setPropiedades(new ArrayList<PropiedadDTO>());
-				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-						Propiedades.NUMERO_MONEDA, Propiedades.TRUE, null));
 				baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
 						Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE, null));
 				// baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,

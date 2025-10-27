@@ -52,7 +52,7 @@ public class PropertyGetWithCacheService {
 		} else {
 			String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
 			_propertiesType = propByTypeMap.get(_key);
-			if(_propertiesType==null) {
+			if(_propertiesType==null || !_key.equals("CORREGIR RAPIDO")) {
 				PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
 				_filterAll.setTipo(pFilter.getTipo());
 				_filterAll.setCampo(pFilter.getCampo());

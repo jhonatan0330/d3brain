@@ -102,7 +102,6 @@ public class Propiedades {
 	public static final String TEXTO_LONGITUD_MINIMA = "TEXTO_LONGITUD_MINIMA";
 
 	public static final String NUMERO_REDONDEO = "NUMERO_REDONDEO";
-	public static final String NUMERO_MONEDA = "NUMERO_MONEDA";
 	public static final String NUMERO_FORMULA = "NUMERO_FORMULA";
 	public static final String NUMERO_MAXIMO = "NUMERO_MAXIMO";
 	public static final String NUMERO_MINIMO = "NUMERO_MINIMO";

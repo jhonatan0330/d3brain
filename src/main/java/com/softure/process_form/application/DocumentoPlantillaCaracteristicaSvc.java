@@ -483,10 +483,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoValor.setPlantilla(plantilla);
 		//campoValor.setObjetivo("Define el valor total del documento");
 		campoValor = guardar(campoValor, token);
-
-		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoValor.getLlaveTabla(),
-				Propiedades.NUMERO_MONEDA, Propiedades.TRUE, token), token);
-
 		return campoValor.getLlaveTabla();
 	}
 
