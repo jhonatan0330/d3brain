@@ -293,6 +293,19 @@
 			inner join relacioninterna_ritp on (crit_propiedad = param_herencia.cppd_llave and crit_estado = 'A')
 		where 
 			cpdv_llave = #{documento}
+	union
+		select 
+			'CAMPO_DETALLE' as  llaveTabla
+			,cdpc_llave as  campo
+			,null as  valorText
+			,cdpv_detalleid as  valorOpcion
+			,null as  valorAuxiliar
+			,null as estado
+		from pedidoventa_pdvp
+			inner join documentoplantillacaracteristica_dpcp dpc on (dpc.cdpc_plantilla = cpdv_plantilla and dpc.cdpc_estado = 'A' and dpc.cdpc_formato = 'J')
+			inner join detallepedidoventa_dpvp det on det.cdpv_documento = #{documento} --and det.cdpv_campo = dpc.cdpc_llave 
+		where 
+			cpdv_llave = #{documento}
 	</select>
 	
 	<select id="calcularNumeroFuncion" resultType="java.math.BigDecimal">

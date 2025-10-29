@@ -1,7 +1,5 @@
 package com.softure.webservice.infrastructure;
 
-
-// BEGIN region interImport  
 import java.util.List;
 
 import com.softure.SoftureSqlConnMapper;
@@ -13,8 +11,5 @@ import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 public interface WebServiceEjecucionMapper extends IBasicMapper<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO>{
 	
 
-// BEGIN region aditionalMethods  
 	List<WebServiceEjecucionDTO> apisTransaccion();
-	int hasPropertiesAsync();
-// END region aditionalMethods
 }

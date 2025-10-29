@@ -40,7 +40,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import com.accounting.plan.application.StackAccountProccessService;
 import com.shared.domain.ServerException;
-import com.shared.domain.SharedConstants;
 import com.softure.mail.application.MailReleaseMessageQueueService;
 import com.softure.process_designer.application.ProcesoTransicionAutomaticaSvc;
 import com.softure.report.application.ReporteBaseSvc;
@@ -244,16 +243,7 @@ public class SoftureConfiguration {
 	@Scheduled(fixedDelayString = "${fixedDelayApi.in.milliseconds}")
 	public void sendAPI() throws ServerException {
 		if (env.getProperty("cron.api").compareTo("true") == 0) {
-			if (executeAPITask == null) {			
-				if (apiService.hasPropertiesAsync()) {
-					executeAPITask = SharedConstants.OK;
-				} else {
-					executeAPITask = SharedConstants.NO_STRING;
-				}
-			}
-			if (executeAPITask.compareTo(SharedConstants.OK) == 0) {
-				apiService.apiToTransaction();
-			}	
+			apiService.apiToTransaction();
 		}
 	}
 	

@@ -44,39 +44,7 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 	public void initIt() throws Exception {
 	  this.mapper = webServiceEjecucionMapper;
 	}
-	
-	@Override
-	public WebServiceEjecucionDTO activar(WebServiceEjecucionDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public WebServiceEjecucionDTO actualizar( WebServiceEjecucionDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public WebServiceEjecucionDTO inactivar(WebServiceEjecucionDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
-	}
-	
-	@Override
-	public WebServiceEjecucionDTO consultaUnica(WebServiceEjecucionFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(WebServiceEjecucionFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<WebServiceEjecucionDTO> listarConsulta(WebServiceEjecucionFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
+
 	
 	public WebServiceEjecucionDTO ejecutarAPI(WebServiceEjecucionFilterDTO dto)throws ServerException{
 		WebServiceEjecucionDTO bd = consultaXId(dto.getLlaveTabla());
@@ -88,7 +56,6 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 			WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
 			executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null, null);	
 		}
-		
 		return consultaXId(dto.getLlaveTabla());
 	}
 
@@ -116,10 +83,6 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
  			}
 		}
 	 	return "*******APIS ASYNC ("+tareasPendientes.size()+") ****" + new Date().toString();
-	}
-	
-	public boolean hasPropertiesAsync() {
-		return webServiceEjecucionMapper.hasPropertiesAsync()!=0;
 	}
 
 	public WebServiceEjecucionDTO getServiceVoucherActive(String pServiceId, String pDocumentId) throws ServerException {

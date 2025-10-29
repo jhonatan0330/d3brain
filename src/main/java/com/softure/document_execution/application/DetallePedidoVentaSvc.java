@@ -282,18 +282,21 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		}
 		result.setPlantillaDetalle(producto.getTemplateFields());
 		result.setPropiedades(producto.getPropiedades());
-		if (propiedadFuncionTarifario != null) {
-			result.setTarifas(tarifaService.obtenerTarifaFuncion(propiedadFuncionTarifario, producto,
-					parametrosFuncionTarifario));
-		} else {
-			// Consulto las tarifas
-			if (tarifario != null) {
-				result.setTarifas(consultarTarifas(tarifario, tercero, dto.getProducto()));
-				if (producto.getProductoBase() != null
-						&& (result.getTarifas() == null || result.getTarifas().isEmpty()))
-					result.setTarifas(consultarTarifas(tarifario, tercero, producto.getProductoBase()));
+		if(newOnlyFormProcess ==null || newOnlyFormProcess.isEmpty()) {
+			if (propiedadFuncionTarifario != null) {
+				result.setTarifas(tarifaService.obtenerTarifaFuncion(propiedadFuncionTarifario, producto,
+						parametrosFuncionTarifario));
+			} else {
+				// Consulto las tarifas
+				if (tarifario != null) {
+					result.setTarifas(consultarTarifas(tarifario, tercero, dto.getProducto()));
+					if (producto.getProductoBase() != null
+							&& (result.getTarifas() == null || result.getTarifas().isEmpty()))
+						result.setTarifas(consultarTarifas(tarifario, tercero, producto.getProductoBase()));
+				}
 			}
 		}
+		
 		if (result.getTarifas() != null && !result.getTarifas().isEmpty() && dto.getLlaveTabla() == null) {
 			TarifaDTO filter = result.getTarifas().get(0);
 			result.setCantidad(BigDecimal.ONE);

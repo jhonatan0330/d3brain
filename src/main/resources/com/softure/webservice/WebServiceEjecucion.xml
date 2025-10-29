@@ -211,7 +211,6 @@
 	</select>
 
 
-<!--// BEGIN region script-->
 
 	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
 		select
@@ -240,10 +239,4 @@
 		limit 50
 	</select>
 	
-	<select id="hasPropertiesAsync" resultType="int">
-		select count(*) from propiedad_ppdp
-		where cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_198'
-	</select>
-<!--// END region script-->
-
 </mapper>

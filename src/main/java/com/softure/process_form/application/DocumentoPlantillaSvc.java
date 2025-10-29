@@ -391,17 +391,17 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return estados;
 	}
 	
-	private List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO dto, String pProfile)throws ServerException{
+	private List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO pDTO, String pProfile)throws ServerException{
 		
-		String usuario = null;
-		if(dto.getSecurityToken() !=null) usuario = getUserFlex(dto.getSecurityToken());
-		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(dto, (pProfile!=null));
-		List<DocumentoPlantillaDTO> result = new ArrayList<DocumentoPlantillaDTO>();
+		String _user = null;
+		if(pDTO.getSecurityToken() !=null) _user = getUserFlex(pDTO.getSecurityToken());
+		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(pDTO, (pProfile!=null));
+		List<DocumentoPlantillaDTO> _resultTemplates = new ArrayList<DocumentoPlantillaDTO>();
 		boolean nuevaPlantilla = true;
 		if(plantillasPermitidas!=null && plantillasPermitidas.size()!=0){
 			//obtengo todo y didtribuyo para evitar tantas consultas a la BD y para optimizar tiempo
 			
-			List<ReporteBaseDTO> reportes = reporteService.listarMenu();
+			List<ReporteBaseDTO> _reports = reporteService.listarMenu();
 			
 			ProcesoEstadoFilterDTO filtroEstado = new ProcesoEstadoFilterDTO();
 			filtroEstado.setEstado(SharedConstants.STATE_ACTIVE);
@@ -410,7 +410,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(filtroEstado);
 			
 			ProcesoTransicionFilterDTO filtroTransicion = new ProcesoTransicionFilterDTO();
-			filtroTransicion.setSecurityToken((pProfile!=null)?null:dto.getSecurityToken());
+			filtroTransicion.setSecurityToken((pProfile!=null)?null:pDTO.getSecurityToken());
 			filtroTransicion.setEstado(SharedConstants.STATE_ACTIVE);
 			
 			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol(filtroTransicion);
@@ -421,30 +421,34 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas, pProfile);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			}else {
-				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar( plantillasPermitidas, usuario);
+				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar( plantillasPermitidas, _user);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
-				List<PropiedadDTO> todasPropiedadesReportesOcultos = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, usuario);
+				List<PropiedadDTO> todasPropiedadesReportesOcultos = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.OCULTAR_REPORTE, _user);
 				if(todasPropiedadesReportesOcultos !=null && !todasPropiedadesReportesOcultos.isEmpty()) {
 					for (PropiedadDTO propiedadDTO : todasPropiedadesReportesOcultos) {
-						for (ReporteBaseDTO iReport : reportes) {
+						for (ReporteBaseDTO iReport : _reports) {
 							if(iReport.getLlaveTabla().compareTo(propiedadDTO.getCampo())==0) {
-								reportes.remove(iReport);
+								_reports.remove(iReport);
 								break;
 							}
 						}
 					}
 				}
 			}
-			List<PropiedadDTO> todasPropiedadesEstados = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, usuario);
+			List<PropiedadDTO> todasPropiedadesEstados = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, _user);
 			todasPropiedadesEstados = configuracionSvc.clearResponseProperties(todasPropiedadesEstados);
-			List<PropiedadDTO> todasPropiedadesReportes = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, usuario);
+			List<PropiedadDTO> todasPropiedadesReportes = cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, _user);
 			todasPropiedadesReportes = configuracionSvc.clearResponseProperties(todasPropiedadesReportes);
-			List<PropiedadDTO> propiedadesReporteAutoPrint = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_AUTOPRINT, usuario);
+			List<PropiedadDTO> propiedadesReporteAutoPrint = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_AUTOPRINT, _user);
 			if(propiedadesReporteAutoPrint!=null && !propiedadesReporteAutoPrint.isEmpty()) todasPropiedadesReportes.addAll(configuracionSvc.clearResponseProperties(propiedadesReporteAutoPrint));
+			
+			List<PropiedadDTO> _propAccountTemplate = cacheService.obtenerPropiedadesSinEntidad( PropiedadValorDefinidoDTO.API_SERVICE, null, Propiedades.TEMPLATE_VOUCHER, _user);
+			_propAccountTemplate = configuracionSvc.clearResponseProperties(_propAccountTemplate);
+			
 			
 			for(DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas){
 				nuevaPlantilla = true;
-				for(DocumentoPlantillaDTO iBD : result){
+				for(DocumentoPlantillaDTO iBD : _resultTemplates){
 					if(iplantillaPermitida.getLlaveTabla()==null || iplantillaPermitida.getLlaveTabla().compareTo(iBD.getLlaveTabla())==0) {
 						nuevaPlantilla = false;
 						break;
@@ -460,6 +464,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						if(propiedadDTO.getCampo().compareTo(iplantillaPermitida.getLlaveTabla())==0) 
 							iplantillaPermitida.getPropiedades().add(propiedadDTO);
 					}
+					
+					for (PropiedadDTO _iProrTemplateVoucher : _propAccountTemplate) {
+						if(_iProrTemplateVoucher.getValor().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
+							iplantillaPermitida.getPropiedades().add(_iProrTemplateVoucher);
+						}
+					}
+					
 					if(!iplantillaPermitida.getPropiedades().isEmpty()) {
 						//throw new ServerException("El usuario no tiene permiso sobre el documento " + iplantillaPermitida.getNombre());
 						String procesoInicial = null;
@@ -481,8 +492,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						if (iplantillaPermitida.getEstados()==null) iplantillaPermitida.setEstados(crearEstadosBasicos());
 
 						//iplantillaPermitida.setReportes(reporteService.listarDisponiblesDocumento(iplantillaPermitida.getLlaveTabla(), false));
-						if(reportes!=null && !reportes.isEmpty()) {
-							for (ReporteBaseDTO reporteBaseDTO : reportes) {
+						if(_reports!=null && !_reports.isEmpty()) {
+							for (ReporteBaseDTO reporteBaseDTO : _reports) {
 								if(reporteBaseDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla())==0) {
 									reporteBaseDTO.setPropiedades(new ArrayList<>());
 									for (PropiedadDTO propiedadDTO : todasPropiedadesReportes) {
@@ -494,7 +505,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 								}
 							}
 						}
-						result.add(iplantillaPermitida);	
+						_resultTemplates.add(iplantillaPermitida);	
 					}
 				}
 			}
@@ -503,12 +514,12 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				if(iplantillaPermitida.getLlaveTabla()==null) {
 					statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
 							iplantillaPermitida.getProceso());
-					result.add(0, iplantillaPermitida);
+					_resultTemplates.add(0, iplantillaPermitida);
 				}
 			}
 		}
-		System.out.format("%s \n[%s] Listando (%s) plantillas ", new Date(), usuario, result.size());
-		return result;
+		System.out.format("%s \n[%s] Listando (%s) plantillas ", new Date(), _user, _resultTemplates.size());
+		return _resultTemplates;
 	}
 	
 	
