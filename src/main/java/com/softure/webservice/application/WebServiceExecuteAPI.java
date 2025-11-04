@@ -139,7 +139,7 @@ public class WebServiceExecuteAPI {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
 			webServiceEjecucionSvc.update(apiBasic);
-			if(preValidation.startsWith(SharedConstants.OK)) publishErrorMessage(service, apiBasic, modificador);
+			if(!preValidation.startsWith(SharedConstants.OK)) publishErrorMessage(service, apiBasic, modificador);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
 					+ ") por error de validacion previa a la ejecucion");
 			return SharedConstants.ERROR;
