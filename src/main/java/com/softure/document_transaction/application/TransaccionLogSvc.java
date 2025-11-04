@@ -1,16 +1,13 @@
 package com.softure.document_transaction.application;
 
-import java.util.List;
-
-// BEGIN region interImport
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
+import com.softure.document_transaction.domain.DocumentoTransaccionDTO;
 import com.softure.document_transaction.domain.TransaccionLogDTO;
 import com.softure.document_transaction.domain.TransaccionLogFilterDTO;
 import com.softure.document_transaction.infrastructure.TransaccionLogMapper;
@@ -24,9 +21,6 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	@Autowired @Lazy 
 	private TransaccionLogMapper transaccionLogMapper;
 	
-	// BEGIN region servicesTransaccionLog
-	// END region servicesTransaccionLog
-
 	@Override
 	public TransaccionLogDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. TransaccionLog");
@@ -39,64 +33,26 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 	public void initIt() throws Exception {
 	  this.mapper = transaccionLogMapper;
 	}
-	
-	@Override
-	public TransaccionLogDTO activar(TransaccionLogDTO dto, String token) throws ServerException {
-		// BEGIN TransaccionLog_activar
-		return super.activar(dto, token);
-		// END TransaccionLog_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TransaccionLogDTO actualizar( TransaccionLogDTO dto, String token) throws ServerException {
-		// BEGIN TransaccionLog_actualizar
-		return super.actualizar(dto, token);
-		// END TransaccionLog_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TransaccionLogDTO inactivar(TransaccionLogDTO dto, String token) throws ServerException {
-		// BEGIN TransaccionLog_inactivar
-		return super.inactivar(dto, token);
-		// END TransaccionLog_inactivar
-	}
-	
-	@Override
-	public TransaccionLogDTO consultaUnica(TransaccionLogFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(TransaccionLogFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<TransaccionLogDTO> listarConsulta(TransaccionLogFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
 
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TransaccionLogDTO guardar(TransaccionLogDTO dto, String token) throws ServerException {
-		// BEGIN TransaccionLog_guardar
-		return super.guardar(dto, token);
-		// END TransaccionLog_guardar
-	}
-
-// BEGIN region aditionalMethods
 	public TransaccionLogDTO finalizar(Date startDate, String transactionId, String session) throws ServerException {
 		TransaccionLogDTO newLog = new TransaccionLogDTO();
 		newLog.setFechaInicio(startDate);
 		newLog.setFechaFin(new Date());
 		newLog.setTransaccion(transactionId);
 		newLog.setSesion(session);
-		return save(newLog);
+		return saveSimple(newLog);
 	}
-// END region aditionalMethods
+	
+	public TransaccionLogDTO endToAPI(DocumentoTransaccionDTO pTransaction, String pInput, String pOutput) throws ServerException {
+		TransaccionLogDTO newLog = new TransaccionLogDTO();
+		newLog.setFechaInicio(pTransaction.getFecha());
+		newLog.setFechaFin(new Date());
+		newLog.setTransaccion(pTransaction.getLlaveTabla());
+		//newLog.setSesion(session);
+		newLog.setUsuario(pTransaction.getUsuario());
+		newLog.setEntrada(pInput);
+		newLog.setSalida(pOutput);
+		return saveSimple(newLog);
+	}
 
 }

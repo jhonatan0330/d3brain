@@ -224,7 +224,7 @@ public class SignerService {
 			throws IOException, ServerException {
 
 		// Hay algo similar en mailsendmessage
-		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml"));
+		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml", "private"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 		
 		if(generateZip) {
@@ -244,7 +244,7 @@ public class SignerService {
 				zos.closeEntry();
 			}
 			byte[] bytes = baos.toByteArray();
-			responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip"));
+			responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip", "private"));
 			responseFe.setZipBase64(Base64.getEncoder().encodeToString(bytes));
 		}
 	}

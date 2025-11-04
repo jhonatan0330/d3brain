@@ -63,7 +63,7 @@ public class WebServiceCallPrepare {
 		callWS.setParametros(parameters);
 		if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
 			callWS.setParametros(
-					uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt", token, "webservice"));
+					uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt", token, "webservice", "private"));
 		}
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());

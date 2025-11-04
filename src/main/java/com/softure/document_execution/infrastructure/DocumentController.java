@@ -82,7 +82,7 @@ public class DocumentController {
     public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile pFile,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null);
+			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public");
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}

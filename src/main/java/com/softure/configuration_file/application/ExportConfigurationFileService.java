@@ -115,7 +115,7 @@ public class ExportConfigurationFileService {
 
 	private FileVO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		FileVO result = new FileVO();
-		result.setUrl(uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "webservice"));
+		result.setUrl(uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "export", "private"));
 		return result;
 	}
 

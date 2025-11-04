@@ -1,16 +1,19 @@
 package com.softure.upload.application;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.net.ftp.FTP;
@@ -33,57 +36,115 @@ public class UploadSvc {
 	@Autowired @Lazy 
 	private ServidorSvc servidorService;
 	
-
-	public String uploadFile(byte[] bytes, String name, String token, String typeFile) throws ServerException {
+	public String uploadFile(byte[] bytes, String name, String token, String typeFile, String pVisibility) throws ServerException {
 		CargaArchivoDTO registro = new CargaArchivoDTO();
 		registro.setFechaInicio(new Date());
 		registro.setSize(bytes.length);
 		if (token != null)
 			registro.setUsuario(cargaService.getUserFlex(token));
-		if (servidorService.getUploadLocalPath() == null && servidorService.getUploadFTPPath() == null) 
-			servidorService.setUploadLocalPath(servidorService.obtenerServidorPrincipal(ServidorDTO.LOCAL_FTP));
-		if (servidorService.getUploadLocalPath() != null) {
+		
+		ServidorDTO _server = servidorService.resolveServer();
+        registro.setServidor(_server.getLlaveTabla());
+		
+		try {
+			registro.setUrl(uploadWithServer(_server, bytes, name, typeFile, pVisibility));
+		} catch (Exception e) {
+			registro.setError(e.getMessage());
+			throw new ServerException(e.getMessage(), e);
+		} finally {
+		    cargaService.guardar(registro, null);
+		}
+		return registro.getUrl();
+	}
+	
+	private String uploadWithServer(ServidorDTO pServer, byte[] pBytes, String pName, String pType, String pVisibility) throws IOException, ServerException {
+		if(pServer==null || pServer.getTipo()==null) return null;
+		if(pServer.getTipo().equals(ServidorDTO.FTP)) {
+			return uploadToFTP(pServer, pBytes, pName, pType);
+		}else {
+			return uploadToLocal(pServer, pBytes, pName, pType, pVisibility);
+		}
+	}
+	
+    private String uploadToLocal(ServidorDTO pServer, byte[] pBytes, String pName, String pType, String pVisibility)
+            throws IOException, ServerException {
+
+        String baseDir = Optional.ofNullable(pServer.getBase())
+                .orElseThrow(() -> new ServerException("No se configuró la carpeta base para almacenamiento local"));
+
+        Calendar cal = Calendar.getInstance();
+        String year = String.valueOf(cal.get(Calendar.YEAR));
+        String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+        String day = String.format("%02d", cal.get(Calendar.DAY_OF_MONTH));
+
+        Path uploadDir = Paths.get(baseDir, pVisibility, pType, year, month, day);
+        Files.createDirectories(uploadDir);
+
+        String extension = getExtension(pName);
+        String uniqueName = UUID.randomUUID().toString().replace("-", "") + extension;
+        Path filePath = uploadDir.resolve(uniqueName);
+
+        Files.write(filePath, pBytes, StandardOpenOption.CREATE_NEW);
+
+        return filePath.toString().replace(baseDir, "");
+    }
+/*
+	private String uploadLocal(ServidorDTO pServer, byte[] pBytes, String pName, String pType) throws IOException, ServerException {
+		try {
+			String uploadPath = pServer.getUrl();
+			String folderBase = pServer.getBase();
+			if (folderBase == null)
+				throw new ServerException(
+						"No se a configurado la CARPETA BASE base del servidor FTP, en donde se puede consultar los documentos");
+
+			uploadPath = uploadPath + File.separator + folderBase;
+			if (!new File(uploadPath).exists())
+				new File(uploadPath).mkdir();
+			uploadPath = uploadPath + File.separator + pType;
+			if (!new File(uploadPath).exists())
+				new File(uploadPath).mkdir();
+			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
+			if (!new File(uploadPath).exists())
+				new File(uploadPath).mkdir();
+			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
+			if (!new File(uploadPath).exists())
+				new File(uploadPath).mkdir();
+			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.DATE));
+			if (!new File(uploadPath).exists())
+				new File(uploadPath).mkdir();
+
+			String fileName = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)) + "_"
+					+ String.valueOf(Calendar.getInstance().get(Calendar.MONTH)) + "_"
+					+ String.valueOf(Calendar.getInstance().get(Calendar.DATE)) + "_"
+					+ UUID.randomUUID().toString().replaceAll("-", "") + getExtension(pName);
+			String filePath = uploadPath + File.separator + fileName;
+			File storeFile = new File(filePath);
+			// saves the file on disk
 			try {
-				registro.setUrl(uploadLocal(bytes, servidorService.getUploadLocalPath(), name));
-				cargaService.guardar(registro, null);
-				return registro.getUrl();
-			} catch (IOException e) {
-				registro.setError(e.getMessage());
-				cargaService.guardar(registro, null);
-				throw new ServerException(e.getMessage());
-			}
-		} else {
-			try {
-				registro.setUrl(uploadFTP(bytes, name, registro, typeFile));
-				cargaService.guardar(registro, null);
-				return registro.getUrl();
+				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(storeFile));
+				stream.write(pBytes);
+				stream.close();
 			} catch (Exception e) {
-				registro.setError(e.getMessage());
-				cargaService.guardar(registro, null);
 				throw new ServerException(e.getMessage());
 			}
+			return fileName;
+
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage());
 		}
 	}
 
-	public byte[] transformBase64ToPDF(String b64) {
-		return Base64.getDecoder().decode(b64);
-	}
 
-	private String uploadFTP(byte[] bytes, String name, CargaArchivoDTO registro, String typeFile)
+	private String uploadFTP(ServidorDTO pServer, byte[] pBytes, String pName, String pTypeFile)
 			throws ServerException {
-		if (servidorService.getUploadFTPPath() == null) servidorService.setUploadFTPPath( servidorService.obtenerServidorPrincipal(ServidorDTO.FTP));
-		if (servidorService.getUploadFTPPath() == null)
-			throw new ServerException("Configure el servidor FTP");
-
-		registro.setServidor(servidorService.getUploadFTPPath().getLlaveTabla());
-
+		
 		FTPClient ftpClient = new FTPClient();
-		String server = servidorService.getUploadFTPPath().getUrl();
+		String server = pServer.getUrl();
 		int port = 21;
-		String user = servidorService.getUploadFTPPath().getUsuario();
-		String pass = servidorService.getUploadFTPPath().getClave();
-		String urlBase = servidorService.getUploadFTPPath().getUrlConexion();
-		String folderBase = servidorService.getUploadFTPPath().getBase();
+		String user = pServer.getUsuario();
+		String pass = pServer.getClave();
+		String urlBase = pServer.getUrlConexion();
+		String folderBase = pServer.getBase();
 		if (server == null || user == null || pass == null)
 			throw new ServerException(
 					"Parametros FTP incompletos, o coloque la propiedad FILE_SERVER, para almacenar los recursos en su equipo");
@@ -94,7 +155,7 @@ public class UploadSvc {
 			throw new ServerException(
 					"No se a configurado la CARPETA BASE base del servidor FTP, en donde se puede consultar los documentos");
 		String dirToCreate = folderBase;
-		String extension = getExtension(name);
+		String extension = getExtension(pName);
 		String fileName = UUID.randomUUID().toString().replaceAll("-", "") + extension;
 		String urlFinal = null;
 		try {
@@ -110,9 +171,9 @@ public class UploadSvc {
 			// Creates a directory
 			createInFolder(ftpClient, dirToCreate);
 
-			if (typeFile != null) {
-				dirToCreate = dirToCreate + "/" + typeFile;
-				createInFolder(ftpClient, typeFile);
+			if (pTypeFile != null) {
+				dirToCreate = dirToCreate + "/" + pTypeFile;
+				createInFolder(ftpClient, pTypeFile);
 			}
 
 			SimpleDateFormat sm = new SimpleDateFormat("yyyy");
@@ -130,13 +191,9 @@ public class UploadSvc {
 			dirToCreate = dirToCreate + "/" + dayFolder;
 			createInFolder(ftpClient, dayFolder);
 
-			// La compresion la hago en el cliente y evito cargar el servidor
-			//if (extension.toLowerCase().compareTo(".jpg") == 0 || extension.toLowerCase().compareTo(".jpeg") == 0)
-			//	bytes = CompressionUtils.compress(bytes);
-
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-			success = ftpClient.storeFile(fileName, new ByteArrayInputStream(bytes));
+			success = ftpClient.storeFile(fileName, new ByteArrayInputStream(pBytes));
 			if (!success)
 				throw new ServerException(showServerReply(ftpClient));
 			urlFinal = new URI(urlBase + "/" + dirToCreate + "/" + fileName).normalize().toString();
@@ -175,68 +232,112 @@ public class UploadSvc {
 			}
 		}
 	}
+*/
+	
+    private String uploadToFTP(ServidorDTO server, byte[] bytes, String name, String type)
+            throws ServerException {
 
-	private String uploadLocal(byte[] bytes, ServidorDTO servidor, String name) throws IOException, ServerException {
-		try {
-			String uploadPath = servidor.getUrl();
-			String folderBase = servidor.getBase();
-			if (folderBase == null)
-				throw new ServerException(
-						"No se a configurado la CARPETA BASE base del servidor FTP, en donde se puede consultar los documentos");
+        FTPClient ftpClient = new FTPClient();
+        String host = server.getUrl();
+        int port = 21;
+        String user = server.getUsuario();
+        String pass = server.getClave();
+        String urlBase = server.getUrlConexion();
+        String folderBase = server.getBase();
 
-			uploadPath = uploadPath + File.separator + folderBase;
-			if (!new File(uploadPath).exists())
-				new File(uploadPath).mkdir();
-			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.YEAR));
-			if (!new File(uploadPath).exists())
-				new File(uploadPath).mkdir();
-			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.MONTH));
-			if (!new File(uploadPath).exists())
-				new File(uploadPath).mkdir();
-			uploadPath = uploadPath + File.separator + String.valueOf(Calendar.getInstance().get(Calendar.DATE));
-			if (!new File(uploadPath).exists())
-				new File(uploadPath).mkdir();
+        if (host == null || user == null || pass == null)
+            throw new ServerException("Parámetros FTP incompletos");
 
-			String fileName = String.valueOf(Calendar.getInstance().get(Calendar.YEAR)) + "_"
-					+ String.valueOf(Calendar.getInstance().get(Calendar.MONTH)) + "_"
-					+ String.valueOf(Calendar.getInstance().get(Calendar.DATE)) + "_"
-					+ UUID.randomUUID().toString().replaceAll("-", "") + getExtension(name);
-			String filePath = uploadPath + File.separator + fileName;
-			File storeFile = new File(filePath);
-			// saves the file on disk
-			try {
-				BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(storeFile));
-				stream.write(bytes);
-				stream.close();
-			} catch (Exception e) {
-				throw new ServerException(e.getMessage());
-			}
-			return fileName;
+        if (urlBase == null)
+            throw new ServerException("No se configuró la URL base del servidor FTP");
 
-		} catch (Exception e) {
-			throw new ServerException(e.getMessage());
-		}
+        if (folderBase == null)
+            throw new ServerException("No se configuró la carpeta base del servidor FTP");
+
+        String extension = getExtension(name);
+        String fileName = UUID.randomUUID().toString().replace("-", "") + extension;
+
+        String finalUrl;
+        try {
+            ftpClient.connect(host, port);
+            int reply = ftpClient.getReplyCode();
+            if (!FTPReply.isPositiveCompletion(reply))
+                throw new ServerException("Respuesta del servidor no positiva: " + showServerReply(ftpClient));
+
+            if (!ftpClient.login(user, pass))
+                throw new ServerException("No se pudo iniciar sesión en el servidor FTP");
+
+            ftpClient.enterLocalPassiveMode();
+            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+
+            // Crear estructura de carpetas
+            String remoteDir = buildFTPDirectory(ftpClient, folderBase, type);
+
+            // Subir archivo
+            boolean stored = ftpClient.storeFile(fileName, new ByteArrayInputStream(bytes));
+            if (!stored)
+                throw new ServerException("No se pudo subir el archivo. " + showServerReply(ftpClient));
+
+            // Construir URL final
+            finalUrl = new URI(urlBase + "/" + remoteDir + "/" + fileName).normalize().toString();
+
+        } catch (IOException | URISyntaxException e) {
+            throw new ServerException("Error en FTP: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (ftpClient.isConnected()) {
+                    ftpClient.logout();
+                    ftpClient.disconnect();
+                }
+            } catch (IOException ignore) {}
+        }
+
+        return finalUrl;
+    }
+
+    // --------------------------------------------------------
+    // CREAR DIRECTORIOS EN FTP
+    // --------------------------------------------------------
+    private String buildFTPDirectory(FTPClient ftpClient, String base, String type)
+            throws IOException, ServerException {
+
+        Calendar cal = Calendar.getInstance();
+        String year = String.valueOf(cal.get(Calendar.YEAR));
+        String month = String.format("%02d", cal.get(Calendar.MONTH) + 1);
+        String day = String.format("%02d", cal.get(Calendar.DAY_OF_MONTH));
+
+        List<String> dirs = Arrays.asList(base, type, year, month, day);
+        StringBuilder currentPath = new StringBuilder();
+
+        for (String dir : dirs) {
+            if (dir == null || dir.isEmpty()) continue;
+            currentPath.append(dir).append("/");
+            if (!ftpClient.changeWorkingDirectory(dir)) {
+                ftpClient.makeDirectory(dir);
+                ftpClient.changeWorkingDirectory(dir);
+            }
+        }
+
+        return currentPath.toString().replaceAll("/$", "");
+    }
+    
+    private String getExtension(String name) {
+        if (name != null && name.contains(".")) {
+            return name.substring(name.lastIndexOf("."));
+        }
+        return "";
+    }
+	
+    private static String showServerReply(FTPClient ftpClient) {
+        StringBuilder sb = new StringBuilder("SERVER: ");
+        String[] replies = ftpClient.getReplyStrings();
+        if (replies != null)
+            for (String reply : replies)
+                sb.append(reply).append(" ");
+        return sb.toString();
+    }
+
+	public byte[] transformBase64ToPDF(String b64) {
+		return Base64.getDecoder().decode(b64);
 	}
-
-	private String getExtension(String nombre) {
-		if (nombre != null) {
-			int lastPoint = nombre.lastIndexOf(".");
-			if (lastPoint > 0) {
-				return nombre.substring(lastPoint);
-			}
-		}
-		return "";
-	}
-
-	private static String showServerReply(FTPClient ftpClient) {
-		String[] replies = ftpClient.getReplyStrings();
-		String result = "SERVER: ";
-		if (replies != null && replies.length > 0) {
-			for (String aReply : replies) {
-				result = result + aReply;
-			}
-		}
-		return result;
-	}
-
 }

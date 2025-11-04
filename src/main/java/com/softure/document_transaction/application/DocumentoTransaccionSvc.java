@@ -1,14 +1,11 @@
 package com.softure.document_transaction.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.softure.authentication.application.UsuarioSesionSvc;
@@ -25,14 +22,12 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	@Autowired @Lazy 
 	private DocumentoTransaccionMapper documentoTransaccionMapper;
 	
-	// BEGIN region servicesDocumentoTransaccion
 	@Autowired @Lazy  private UsuarioSesionSvc sesionSvc;
 
-	
 	public static final String API_ASYNC = "A";
 	public static final String API_PREPARE_ASYNC = "P";
 	public static final String MAIL_ASYNC = "M";
-	// END region servicesDocumentoTransaccion
+
 
 	@Override
 	public DocumentoTransaccionDTO consultaXId(String llave) throws ServerException {
@@ -47,61 +42,11 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	  this.mapper = documentoTransaccionMapper;
 	}
 	
-	@Override
-	public DocumentoTransaccionDTO activar(DocumentoTransaccionDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoTransaccion_activar
-		return super.activar(dto, token);
-		// END DocumentoTransaccion_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public DocumentoTransaccionDTO actualizar( DocumentoTransaccionDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoTransaccion_actualizar
-		return super.actualizar(dto, token);
-		// END DocumentoTransaccion_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public DocumentoTransaccionDTO inactivar(DocumentoTransaccionDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoTransaccion_inactivar
-		return super.inactivar(dto, token);
-		// END DocumentoTransaccion_inactivar
-	}
-	
-	@Override
-	public DocumentoTransaccionDTO consultaUnica(DocumentoTransaccionFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(DocumentoTransaccionFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<DocumentoTransaccionDTO> listarConsulta(DocumentoTransaccionFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public DocumentoTransaccionDTO guardar(DocumentoTransaccionDTO dto, String token) throws ServerException {
-		// BEGIN DocumentoTransaccion_guardar
-		return super.guardar(dto, token);
-		// END DocumentoTransaccion_guardar
-	}
-
-// BEGIN region aditionalMethods
 	public DocumentoTransaccionDTO crear(String token) throws ServerException {
 		DocumentoTransaccionDTO nuevo = new DocumentoTransaccionDTO();
 		nuevo.setUsuario(sesionSvc.actualizarSesion(token));
 		nuevo.setFecha(new Date());
-		return save(nuevo);
+		return saveSimple(nuevo);
 	}
-// END region aditionalMethods
 
 }

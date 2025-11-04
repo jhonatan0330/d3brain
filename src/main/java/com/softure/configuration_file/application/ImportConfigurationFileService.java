@@ -209,7 +209,7 @@ public class ImportConfigurationFileService {
 
 	private FileVO uploadFile(String token, String logs) throws ServerException {
 		FileVO result = new FileVO();
-		result.setUrl(uploadService.uploadFile(logs.getBytes(), "Entrada.txt", token, "webservice"));
+		result.setUrl(uploadService.uploadFile(logs.getBytes(), "Entrada.txt", token, "import", "private"));
 		return result;
 	}
 

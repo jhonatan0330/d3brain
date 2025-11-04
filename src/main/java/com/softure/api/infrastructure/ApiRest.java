@@ -2,7 +2,8 @@ package com.softure.api.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +19,14 @@ import com.softure.api.application.ApiGetReportService;
 import com.softure.api.application.ApiGetService;
 import com.softure.api.application.ApiLoginService;
 import com.softure.api.application.ApiSendService;
-import com.softure.api.domain.DocumentFilterRequest;
-import com.softure.api.domain.DocumentResponse;
-import com.softure.api.domain.DocumentFilterWithLoginRequest;
-import com.softure.api.domain.DocumentRequest;
-import com.softure.api.domain.DocumentWithLoginRequest;
+import com.softure.api.application.TransactionLogger;
 import com.softure.api.domain.DataFieldResponse;
 import com.softure.api.domain.DataFieldWithLoginRequest;
+import com.softure.api.domain.DocumentFilterRequest;
+import com.softure.api.domain.DocumentFilterWithLoginRequest;
+import com.softure.api.domain.DocumentRequest;
+import com.softure.api.domain.DocumentResponse;
+import com.softure.api.domain.DocumentWithLoginRequest;
 import com.softure.api.domain.LoginRequest;
 import com.softure.api.domain.ReportRequest;
 
@@ -34,80 +36,106 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("api")
 public class ApiRest {
 
-	@Autowired @Lazy  ApiAuthorizeService apiAuthorizeService;
-	@Autowired @Lazy  ApiGetService apiGetService;
-	@Autowired @Lazy  ApiGetReportService apiGetReportService;
-	@Autowired @Lazy  ApiGetFieldDataService apiGetFieldDataService;
-	@Autowired @Lazy  ApiLoginService apiLoginService;
-	@Autowired @Lazy  ApiSendService apiSendService;
-	
+	@Autowired
+	@Lazy
+	ApiAuthorizeService apiAuthorizeService;
+	@Autowired
+	@Lazy
+	ApiGetService apiGetService;
+	@Autowired
+	@Lazy
+	ApiGetReportService apiGetReportService;
+	@Autowired
+	@Lazy
+	ApiGetFieldDataService apiGetFieldDataService;
+	@Autowired
+	@Lazy
+	ApiLoginService apiLoginService;
+	@Autowired
+	@Lazy
+	ApiSendService apiSendService;
+
+
+    @Autowired @Lazy
+    private TransactionLogger transactionLogger;
+
 	@PostMapping("/get")
-	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentFilterRequest filter
-		) throws ServerException {
-		apiAuthorizeService.call(apiKey,token);
-		return apiGetService.call(token, filter);
+	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token,
+			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentFilterRequest filter)
+			throws ServerException {
+		apiAuthorizeService.call(apiKey, token);
+		
+		return transactionLogger.executeWithLogging(token, filter,
+                () -> apiGetService.call(token, filter));
+		
 	}
-	
+
 	@PostMapping("/getReport")
-	public SharedIdResponse getReportFromApi(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody ReportRequest filter
-		) throws ServerException {
-		apiAuthorizeService.call(apiKey,token);
+	public SharedIdResponse getReportFromApi(@RequestHeader(name = "Authorization") String token,
+			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody ReportRequest filter)
+			throws ServerException {
+		apiAuthorizeService.call(apiKey, token);
 		return apiGetReportService.call(token, filter);
 	}
-	
+
 	@PostMapping("/getWithLogin")
-	public List<DocumentResponse> getDocumentFromWithLoginApi(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentFilterWithLoginRequest filter
-		) throws ServerException {
+	public List<DocumentResponse> getDocumentFromWithLoginApi(HttpServletRequest request,
+			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentFilterWithLoginRequest filter)
+			throws ServerException {
 		SharedIdResponse token = apiLoginService.call(filter.getLogin(), request);
 		apiAuthorizeService.call(apiKey, token.getId());
-		return apiGetService.call(token.getId(), filter.getDocument());
+
+		return transactionLogger.executeWithLogging(token.getId(), filter.getDocument(),
+                () -> apiGetService.call(token.getId(), filter.getDocument()));
+
 	}
-	
+
 	@PostMapping("/getDataFieldWithLogin")
-	public DataFieldResponse getDataFieldFromWithLoginApi(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DataFieldWithLoginRequest filter
-		) throws ServerException {
+	public DataFieldResponse getDataFieldFromWithLoginApi(HttpServletRequest request,
+			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DataFieldWithLoginRequest filter)
+			throws ServerException {
+
 		SharedIdResponse token = apiLoginService.call(filter.getLogin(), request);
 		apiAuthorizeService.call(apiKey, token.getId());
-		return apiGetFieldDataService.call(token.getId(), filter.getField());
+		
+		return transactionLogger.executeWithLogging(token.getId(), filter.getField(),
+	                () -> apiGetFieldDataService.call(token.getId(), filter.getField()));
+
 	}
-	
-	
+
 	@PostMapping("/login")
-	public SharedIdResponse login(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody LoginRequest login
-		) throws ServerException {
+	public SharedIdResponse login(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody LoginRequest login) throws ServerException {
 		apiAuthorizeService.call(apiKey, null);
 		return apiLoginService.call(login, request);
 	}
-	
+
 	@PostMapping("/send")
-	public SharedIdResponse send(@RequestHeader(name = "Authorization") String token, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentRequest item
-		) throws ServerException {
-		apiAuthorizeService.call(apiKey,token);
-		return apiSendService.call(token, item);
+	public SharedIdResponse send(@RequestHeader(name = "Authorization") String token,
+			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentRequest item)
+			throws ServerException {
+		apiAuthorizeService.call(apiKey, token);
+		
+		return transactionLogger.executeWithLogging(token, item,
+                () -> apiSendService.call(token, item));
 	}
-	
+
 	@PostMapping("/sendWithLogin")
-	public SharedIdResponse sendWithLogin(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey
-			,@RequestBody DocumentWithLoginRequest item
-		) throws ServerException {
+	public SharedIdResponse sendWithLogin(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody DocumentWithLoginRequest item) throws ServerException {
 		SharedIdResponse token = apiLoginService.call(item.getLogin(), request);
 		apiAuthorizeService.call(apiKey, token.getId());
-		return apiSendService.call(token.getId(), item.getDocument());
+		
+		return transactionLogger.executeWithLogging(token.getId(), item.getDocument(),
+                () -> apiSendService.call(token.getId(), item.getDocument()));
 	}
-	
+
 	@GetMapping("/ok")
-	public String ok(@RequestHeader(name = "x-api-key") String apiKey
-		) throws ServerException {
+	public String ok(@RequestHeader(name = "x-api-key") String apiKey) throws ServerException {
 		apiAuthorizeService.call(apiKey, null);
 		return "OK";
 	}
-	
+
 	@GetMapping("/ping")
 	public String ping() throws ServerException {
 		return "PING";

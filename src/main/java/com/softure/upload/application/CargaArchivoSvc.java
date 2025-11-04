@@ -1,11 +1,10 @@
 package com.softure.upload.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +22,6 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	
 	@Autowired @Lazy 
 	private CargaArchivoMapper cargaArchivoMapper;
-	
-	// BEGIN region servicesCargaArchivo
-	// END region servicesCargaArchivo
 
 	@Override
 	public CargaArchivoDTO consultaXId(String llave) throws ServerException {
@@ -39,57 +35,12 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 	public void initIt() throws Exception {
 	  this.mapper = cargaArchivoMapper;
 	}
-	
-	@Override
-	public CargaArchivoDTO activar(CargaArchivoDTO dto, String token) throws ServerException {
-		// BEGIN CargaArchivo_activar
-		return super.activar(dto, token);
-		// END CargaArchivo_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public CargaArchivoDTO actualizar( CargaArchivoDTO dto, String token) throws ServerException {
-		// BEGIN CargaArchivo_actualizar
-		return super.actualizar(dto, token);
-		// END CargaArchivo_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public CargaArchivoDTO inactivar(CargaArchivoDTO dto, String token) throws ServerException {
-		// BEGIN CargaArchivo_inactivar
-		return super.inactivar(dto, token);
-		// END CargaArchivo_inactivar
-	}
-	
-	@Override
-	public CargaArchivoDTO consultaUnica(CargaArchivoFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(CargaArchivoFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<CargaArchivoDTO> listarConsulta(CargaArchivoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public CargaArchivoDTO guardar(CargaArchivoDTO dto, String token) throws ServerException {
-		// BEGIN CargaArchivo_guardar
 		dto.setFechaFin(new Date());
-		return super.save(dto);
-		// END CargaArchivo_guardar
+		return super.saveSimple(dto);
 	}
-
-// BEGIN region aditionalMethods
-// END region aditionalMethods
 
 }

@@ -341,7 +341,7 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		dto.setEjecucion(new Date());
 		if (dto.getMensaje() != null && dto.getMensaje().length() > 4000) {
 			dto.setMensaje(
-					uploadService.uploadFile(dto.getMensaje().getBytes(), "Parameter.txt", null, "task"));
+					uploadService.uploadFile(dto.getMensaje().getBytes(), "Parameter.txt", null, "task", "private"));
 		}
 		return update(dto);
 	}

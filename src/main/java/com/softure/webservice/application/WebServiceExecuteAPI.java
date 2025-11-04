@@ -156,7 +156,7 @@ public class WebServiceExecuteAPI {
 			if (apiBasic.getParametros() != null && apiBasic.getParametros().length() > 4000) {
 				parameterHelperToLong = apiBasic.getParametros();
 				apiBasic.setParametros(
-						uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice"));
+						uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice", "private"));
 			}
 			
 			webServiceEjecucionSvc.update(apiBasic);
@@ -347,7 +347,7 @@ public class WebServiceExecuteAPI {
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
 				callWS.getExtracciones(), service.getNombre()) + template;
-		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice"));
+		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice", "private"));
 		String responseApi = null;
 		try {
 			responseApi = callApi(service, urlWithParameters, template, headerProperties);
@@ -405,13 +405,13 @@ public class WebServiceExecuteAPI {
 
 		if (callWS.getExtracciones() != null)
 			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
-		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice"));
+		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice", "private"));
 		callWS.setFechaEjecucion(new Date());
 		String extractionHelperToLong = null;
 		if (callWS.getExtracciones() != null && callWS.getExtracciones().length() > 4000) {
 			extractionHelperToLong = callWS.getExtracciones();
 			callWS.setExtracciones(
-					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice"));
+					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice", "private"));
 		}
 		if (callWS.getError() == null) callWS.setParametros(null);
 		callWS = webServiceEjecucionSvc.update(callWS);
@@ -519,10 +519,10 @@ public class WebServiceExecuteAPI {
 				String newValue = matcher.group(1);
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
-							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice");
+							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice", "private");
 				}
 				if (newValue != null && newValue.length() > 4000) {
-					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice"));
+					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice", "private"));
 				} else {
 					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + newValue);
 				}
@@ -723,7 +723,7 @@ public class WebServiceExecuteAPI {
 				log.info("[" + templateDTO.getCodigo() + "] Escribiendo documento de carga masiva ("
 						+ documentFromMap.size() + ")");
 				result = result
-						+ uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice")
+						+ uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice", "private")
 						+ ";;";
 			}
 		}

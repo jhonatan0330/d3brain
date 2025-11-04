@@ -10,26 +10,6 @@
     "description": "A description for 'cron.task'"
   },
   {
-    "name": "db.accounting.driver",
-    "type": "java.lang.String",
-    "description": "A description for 'db.accounting.driver'"
-  },
-  {
-    "name": "db.accounting.jdbc-url",
-    "type": "java.lang.String",
-    "description": "A description for 'db.accounting.url'"
-  },
-  {
-    "name": "db.accounting.username",
-    "type": "java.lang.String",
-    "description": "A description for 'db.accounting.username'"
-  },
-  {
-    "name": "db.accounting.password",
-    "type": "java.lang.String",
-    "description": "A description for 'db.accounting.password'"
-  },
-  {
     "name": "db.driver",
     "type": "java.lang.String",
     "description": "A description for 'db.driver'"
@@ -75,13 +55,35 @@
     "description": "A description for 'cron.account'"
   },
   {
+    "name": "fixedDelayAccount",
+    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
+  },
+  {
+    "name": "fixedDelayAccount.in",
+    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
+  },
+  {
     "name": "fixedDelayAccount.in.milliseconds",
-    "type": "java.lang.String",
+    "type": "java.lang.Integer",
     "description": "A description for 'fixedDelayAccount.in.milliseconds'"
   },
   {
     "name": "fixedDelayMail.in.milliseconds",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayMail.in.milliseconds'"
+  },
+  {
+    "name": "app",
+    "description": "A description for 'pathFiles'"
+  },
+  {
+    "name": "app.pathFiles",
+    "type": "java.lang.String",
+    "description": "A description for 'app.pathFiles'"
+  },
+  {
+    "name": "fixedDelayAccount.in.milliseconds",
+    "type": "java.lang.String",
+    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
   }
 ]}

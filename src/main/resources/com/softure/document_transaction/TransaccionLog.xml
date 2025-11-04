@@ -11,6 +11,9 @@
 			,dtlg_fechafin as  fechaFin
 			,ctlg_transaccion as  transaccion
 			,ctlg_sesion as sesion
+			,ctlg_usuario as usuario
+			,ctlg_entrada as entrada
+			,ctlg_salida as salida
 			,ctlg_estado as estado
 		from transaccionlog_tlgp a
 	</sql>
@@ -90,6 +93,15 @@
 		<if test="sesion!=null">
 			,ctlg_sesion
 		</if>
+		<if test="usuario!=null">
+			,ctlg_usuario
+		</if>
+		<if test="entrada!=null">
+			,ctlg_entrada
+		</if>
+		<if test="salida!=null">
+			,ctlg_salida
+		</if>
 		<if test="estado!=null">
 			,ctlg_estado
 		</if>
@@ -107,6 +119,15 @@
 		<if test="sesion!=null">
 			,#{sesion}
 		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="entrada!=null">
+			,#{entrada}
+		</if>
+		<if test="salida!=null">
+			,#{salida}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -120,35 +141,11 @@
 				dtlg_fechafin = #{fechaFin},
 				ctlg_transaccion = #{transaccion},
 				ctlg_sesion = #{sesion},
+				ctlg_usuario = #{usuario},
+				ctlg_entrada = #{entrada},
+				ctlg_salida = #{salida},
 				ctlg_estado =#{estado}
 		<include refid="whereTransaccionLogPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleTransaccionLogFragment">
-		select
-			ctlg_llave as  llaveTabla
-			,dtlg_fechainicio as  fechaInicio
-			,dtlg_fechafin as  fechaFin
-			,ctlg_transaccion as  transaccion
-			,ctlg_sesion as  sesion
-			,ctlg_estado as estado
-		from transaccionlog_tlgp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="TransaccionLogDTO">
-		<include refid="selectSimpleTransaccionLogFragment" />
-		<include refid="whereTransaccionLogFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="TransaccionLogDTO">
-		<include refid="selectSimpleTransaccionLogFragment" />
-		<include refid="whereTransaccionLogFragment" />
-		<include refid="paginationTransaccionLogFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-<!--// END region script-->
 
 </mapper>

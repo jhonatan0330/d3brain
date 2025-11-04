@@ -116,7 +116,7 @@ public class APIController {
     public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile pFile,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
         if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null); 
+        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public"); 
         	SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
      		        .withMessage(url).build();
 			return response;
@@ -131,7 +131,7 @@ public class APIController {
         if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
         	//En flex no es posible pasar los datos del header ver flash.net.FileReference.upload
-        	return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config"); 
+        	return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config", "public"); 
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
@@ -141,7 +141,7 @@ public class APIController {
     public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile pFile,  @RequestHeader("Authorization") String token) throws ServerException {
         if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
         try {
-        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config");
+        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config", "public");
 			return usuarioService.changePicture(url, token);
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());

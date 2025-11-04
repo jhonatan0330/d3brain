@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("TransaccionLogDTO")
 public class TransaccionLogDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -18,6 +16,26 @@ public class TransaccionLogDTO extends BasicDTO
 	private Date fechaFin;
 	private String transaccion;
 	private String sesion;
+	private String usuario;
+	private String entrada;
+	private String salida;
+	
+
+	public String getEntrada() {
+		return entrada;
+	}
+
+	public void setEntrada(String entrada) {
+		this.entrada = entrada;
+	}
+
+	public String getSalida() {
+		return salida;
+	}
+
+	public void setSalida(String salida) {
+		this.salida = salida;
+	}
 
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
@@ -40,8 +58,6 @@ public class TransaccionLogDTO extends BasicDTO
 	public String getTransaccion() {
 		return transaccion;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 	public String getSesion() {
 		return sesion;
@@ -49,6 +65,14 @@ public class TransaccionLogDTO extends BasicDTO
 
 	public void setSesion(String sesion) {
 		this.sesion = sesion;
+	}
+
+	public String getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 
 }

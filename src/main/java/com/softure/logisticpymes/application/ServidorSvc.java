@@ -2,14 +2,15 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.logisticpymes.domain.ServidorDTO;
 import com.softure.logisticpymes.domain.ServidorFilterDTO;
 import com.softure.logisticpymes.infrastructure.ServidorMapper;
@@ -18,18 +19,21 @@ import jakarta.annotation.PostConstruct;
 
 @Service("servidorService")
 public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
-	
-	@Autowired @Lazy 
+
+	@Autowired
+	@Lazy
 	private ServidorMapper servidorMapper;
-	
-	private ServidorDTO uploadLocalPath;
+	@Autowired
+	public Environment env;
 
-	private ServidorDTO uploadFTPPath;
+	private ServidorDTO localServer;
 
-	
+	private ServidorDTO ftpServer;
+
 	@Override
 	public ServidorDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. Servidor");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. Servidor");
 		ServidorFilterDTO dto = new ServidorFilterDTO();
 		dto.setLlaveTabla(llave);
 		return servidorMapper.consultar(dto);
@@ -37,26 +41,32 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = servidorMapper;
+		this.mapper = servidorMapper;
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ServidorDTO actualizar( ServidorDTO dto, String token) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public ServidorDTO actualizar(ServidorDTO dto, String token) throws ServerException {
 		validateDTO(dto);
+		localServer = null;
+		ftpServer = null;
 		return super.actualizar(dto, token);
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ServidorDTO inactivar(ServidorDTO dto, String token) throws ServerException {
+		localServer = null;
+		ftpServer = null;
 		return super.inactivar(dto, token);
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ServidorDTO guardar(ServidorDTO dto, String token) throws ServerException {
 		validateDTO(dto);
+		localServer = null;
+		ftpServer = null;
 		return super.guardar(dto, token);
 	}
 
@@ -65,40 +75,72 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 		filtroFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroFilter.setTipo(tipo);
 		List<ServidorDTO> servidores = listarConsulta(filtroFilter);
-		if(servidores==null || servidores.isEmpty()) return null;
+		if (servidores == null || servidores.isEmpty())
+			return null;
 		return servidores.get(0);
 	}
-	
+
 	private void validateDTO(ServidorDTO dto) throws ServerException {
-		if(dto.getPuerto()!=null) {
+		if (dto.getPuerto() != null) {
 			try {
 				Integer.parseInt(dto.getPuerto());
-			}catch (Exception e) {
+			} catch (Exception e) {
 				throw new ServerException("REvisa el valor del puerto que debe ser numerico y sin espacios");
 			}
 		}
 	}
-	
+
 	public String getFromMail(ServidorDTO server) {
-		if(server.getBase() != null && !server.getBase().isEmpty()) {
+		if (server.getBase() != null && !server.getBase().isEmpty()) {
 			return server.getBase();
 		}
 		return server.getUsuario();
 	}
 
-	public ServidorDTO getUploadLocalPath() {
-		return uploadLocalPath;
+	public ServidorDTO getLocalServer() {
+		return localServer;
 	}
 
-	public ServidorDTO getUploadFTPPath() {
-		return uploadFTPPath;
+	public ServidorDTO getFTPServer() {
+		return ftpServer;
 	}
 
-	public void setUploadLocalPath(ServidorDTO uploadLocalPath) {
-		this.uploadLocalPath = uploadLocalPath;
+	public void setLocalServer(ServidorDTO _server) {
+		this.localServer = _server;
 	}
 
-	public void setUploadFTPPath(ServidorDTO uploadFTPPath) {
-		this.uploadFTPPath = uploadFTPPath;
+	public void setFTPServer(ServidorDTO _server) {
+		this.ftpServer = _server;
+	}
+
+	public ServidorDTO resolveServer() throws ServerException {
+		if (getLocalServer() == null && getFTPServer() == null) {
+			setLocalServer(obtenerServidorPrincipal(ServidorDTO.LOCAL_FTP));
+		}
+
+		if (getLocalServer() == null && getFTPServer() == null)
+			setFTPServer(obtenerServidorPrincipal(ServidorDTO.FTP));
+
+		ServidorDTO server = getLocalServer() != null ? getLocalServer() : getFTPServer();
+
+		if (server != null)
+			return server;
+
+		return resolveLocalServer();
+	}
+
+	public ServidorDTO resolveLocalServer() throws ServerException {
+		if (localServer != null)
+			return localServer;
+		String _configPathToLocalFiles = env.getProperty("app.pathFiles");
+		if (_configPathToLocalFiles == null)
+			throw new ServerException(
+					"No se ha configurado el servidor para carga de archivos, ni tampoco ruta en el archivo de configuracion");
+
+		ServidorDTO server = new ServidorDTO();
+		server.setTipo(ServidorDTO.LOCAL_FTP);
+		server.setBase(_configPathToLocalFiles);
+		setLocalServer(server);
+		return server;
 	}
 }
