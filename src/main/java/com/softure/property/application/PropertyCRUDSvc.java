@@ -8,16 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
-import com.softure.logisticpymes.application.CambioSvc;
-import com.softure.logisticpymes.domain.CambioDTO;
+
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadFilterDTO;
 
 @Service
 public class PropertyCRUDSvc {
 
-	@Autowired @Lazy 
-	private CambioSvc changeService;
 	
 	@Autowired @Lazy 
 	private PropiedadSvc propertyService;
@@ -37,12 +34,7 @@ public class PropertyCRUDSvc {
 		propertiesToInactivate.addAll(propertyService.listarConsulta(filter));
 			
 		if (propertiesToInactivate==null || propertiesToInactivate.size()==0)
-			return;
-		
-		CambioDTO changeRequest = new CambioDTO();
-		changeRequest.setMotivo("Eliminar permisos de un usuario");
-		changeService.guardar(changeRequest, token);
-		
+			return;		
 		
 		for(PropiedadDTO iProperty: propertiesToInactivate) {
 			propertyService.inactivar(iProperty, token);	
@@ -51,7 +43,6 @@ public class PropertyCRUDSvc {
 	
 	public void inactivateAllPropertiesOfRol(String rolId, String token) throws ServerException {
 		
-
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setRol(rolId);
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -66,11 +57,6 @@ public class PropertyCRUDSvc {
 			
 		if (propertiesToInactivate==null || propertiesToInactivate.size()==0)
 			return;
-		
-		CambioDTO changeRequest = new CambioDTO();
-		changeRequest.setMotivo("Eliminar permisos de un rol");
-		changeService.guardar(changeRequest, token);
-		
 		
 		for(PropiedadDTO iProperty: propertiesToInactivate) {
 			propertyService.inactivar(iProperty, token);	

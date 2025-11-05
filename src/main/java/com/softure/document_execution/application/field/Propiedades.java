@@ -558,10 +558,11 @@ public class Propiedades {
 		if(props==null) return;
 		for(PropiedadDTO iProp : props) {
 			iProp.setBloqueo(null);
-			iProp.setCambioCreacion(null);
-			iProp.setCambioEliminacion(null);
+			iProp.setUsuarioCreacion(null);
+			iProp.setUsuarioEliminacion(null);
 			iProp.setRol(null);
 			iProp.setFechaDefinicion(null);
+			iProp.setFechaEliminacion(null);
 			iProp.setFechaFinal(null);
 			iProp.setFechaInicial(null);
 			iProp.setRolExcluyente(null);

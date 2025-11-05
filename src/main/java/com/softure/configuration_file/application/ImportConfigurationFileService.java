@@ -2,11 +2,13 @@ package com.softure.configuration_file.application;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
@@ -16,16 +18,12 @@ import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.FileVO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.configuration_file.domain.LogConfigurationDTO;
-import com.softure.logisticpymes.application.CambioSvc;
-import com.softure.logisticpymes.domain.CambioDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.upload.application.UploadSvc;
 
 @Service
 public class ImportConfigurationFileService {
 
-	@Autowired @Lazy 
-	private CambioSvc changeService;
 	@Autowired @Lazy 
 	private SynchronizeTypePropertiesService sincronizeTypeService;
 	@Autowired @Lazy 
@@ -55,7 +53,7 @@ public class ImportConfigurationFileService {
 
 		// JSON from file to Object
 		try {
-			HierarchyExporterDTO hierarchy = mapper.readValue(new URL(file.getUrl()), HierarchyExporterDTO.class);
+			HierarchyExporterDTO hierarchy = mapper.readValue(new URI(file.getUrl()).toURL(), HierarchyExporterDTO.class);
 			return uploadFile(token, sincronize(token, hierarchy).getLogs());
 		} catch (StreamReadException e) {
 			throw new ServerException(e.getMessage());
@@ -64,6 +62,8 @@ public class ImportConfigurationFileService {
 		} catch (MalformedURLException e) {
 			throw new ServerException(e.getMessage());
 		} catch (IOException e) {
+			throw new ServerException(e.getMessage());
+		} catch (URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -74,7 +74,7 @@ public class ImportConfigurationFileService {
 
 		// JSON from file to Object
 		try {
-			HierarchyExporterDTO hierarchy = mapper.readValue(new URL(file.getUrl()), HierarchyExporterDTO.class);
+			HierarchyExporterDTO hierarchy = mapper.readValue(new URI(file.getUrl()).toURL(), HierarchyExporterDTO.class);
 			return uploadFile(token, compareFile(token, hierarchy).getLogs());
 		} catch (StreamReadException e) {
 			throw new ServerException(e.getMessage());
@@ -84,13 +84,12 @@ public class ImportConfigurationFileService {
 			throw new ServerException(e.getMessage());
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
+		} catch (URISyntaxException e) {
+			throw new ServerException(e.getMessage());
 		}
 	}
 
 	private LogConfigurationDTO sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		CambioDTO changeRequest = new CambioDTO();
-		changeRequest.setMotivo("Importacion");
-		changeService.guardar(changeRequest, token);
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()

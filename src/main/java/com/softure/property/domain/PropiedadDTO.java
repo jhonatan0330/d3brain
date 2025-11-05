@@ -19,12 +19,6 @@ public class PropiedadDTO extends BasicDTO{
 	private String campo;
 	private String valor;
 	private String texto;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaDefinicion;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaImplementacion;
-	private String cambioCreacion;
-	private String cambioEliminacion;
 	private String rol;
 	private String rolNombre;
 	private String rolExcluyente;
@@ -39,6 +33,13 @@ public class PropiedadDTO extends BasicDTO{
 	private String usuarioExcluyenteNombre;
 	private String motivo;
 	private String bloqueo;
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaDefinicion;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaEliminacion;
+	private String usuarioCreacion;
+	private String usuarioEliminacion;
 
 	public void setPropiedadValor(String propiedadValor) {
 		this.propiedadValor = propiedadValor;
@@ -96,27 +97,7 @@ public class PropiedadDTO extends BasicDTO{
 	public Date getFechaDefinicion() {
 		return fechaDefinicion;
 	}
-	public void setFechaImplementacion(Date fechaImplementacion) {
-		this.fechaImplementacion = fechaImplementacion;
-	}
 	
-	public Date getFechaImplementacion() {
-		return fechaImplementacion;
-	}
-	public void setCambioCreacion(String cambioCreacion) {
-		this.cambioCreacion = cambioCreacion;
-	}
-	
-	public String getCambioCreacion() {
-		return cambioCreacion;
-	}
-	public void setCambioEliminacion(String cambioEliminacion) {
-		this.cambioEliminacion = cambioEliminacion;
-	}
-	
-	public String getCambioEliminacion() {
-		return cambioEliminacion;
-	}
 	public void setRol(String rol) {
 		this.rol = rol;
 	}
@@ -218,9 +199,9 @@ public class PropiedadDTO extends BasicDTO{
 	    this.valor = other.valor;
 	    this.texto = other.texto;
 	    this.fechaDefinicion = (other.fechaDefinicion != null) ? new Date(other.fechaDefinicion.getTime()) : null;
-	    this.fechaImplementacion = (other.fechaImplementacion != null) ? new Date(other.fechaImplementacion.getTime()) : null;
-	    this.cambioCreacion = other.cambioCreacion;
-	    this.cambioEliminacion = other.cambioEliminacion;
+	    this.fechaEliminacion = (other.fechaEliminacion != null) ? new Date(other.fechaEliminacion.getTime()) : null;
+	    this.usuarioCreacion = other.usuarioCreacion;
+	    this.usuarioEliminacion = other.usuarioEliminacion;
 	    this.rol = other.rol;
 	    this.rolNombre = other.rolNombre;
 	    this.rolExcluyente = other.rolExcluyente;
@@ -235,6 +216,30 @@ public class PropiedadDTO extends BasicDTO{
 	    this.bloqueo = other.bloqueo;
 	    this.setLlaveTabla(other.getLlaveTabla());
 	    this.setEstado(other.getEstado());
+	}
+
+	public Date getFechaEliminacion() {
+		return fechaEliminacion;
+	}
+
+	public void setFechaEliminacion(Date fechaEliminacion) {
+		this.fechaEliminacion = fechaEliminacion;
+	}
+
+	public String getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(String usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public String getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(String usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
 	}
 
 

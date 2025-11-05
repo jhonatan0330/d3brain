@@ -48,12 +48,9 @@ import com.softure.document_transition.domain.DocumentoRelacionGestorDTO;
 import com.softure.document_transition.domain.DocumentoRelacionGestorFilterDTO;
 import com.softure.java.dto.exception.FlexException;
 import com.softure.java.services.SoftureUtil;
-import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.PuestoSvc;
 import com.softure.logisticpymes.application.ServidorSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
-import com.softure.logisticpymes.domain.CambioDTO;
-import com.softure.logisticpymes.domain.CambioFilterDTO;
 import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.logisticpymes.domain.ServidorDTO;
@@ -1309,85 +1306,6 @@ public class FullControllerDTO {
 			throw new FlexException(e.getMessage());
 		}
 	}
-	
-
-	@PostMapping(value="/listarRelacionRelacionInterna")
-	public List<RelacionInternaDTO> listarRelacionRelacionInterna(@RequestBody RelacionInternaFilterDTO dto)throws FlexException {
-		try {
-			return relacionInternaService.listarRelacion(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
-	
-	@Autowired @Lazy  private CambioSvc cambioService;
-	
-	@PostMapping(value="/consultaXIdCambio")
-	public CambioDTO consultaXIdCambio(@RequestBody String llave) throws FlexException {
-		try {
-			return cambioService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/consultaUnicaCambio")
-	public CambioDTO consultaUnicaCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
-		try {
-			return cambioService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/listarConsultaCambio")
-	public List<CambioDTO> listarConsultaCambio(@RequestBody CambioFilterDTO dto) throws FlexException  {
-		try {
-			return cambioService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/activarCambio")
-	public CambioDTO activarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return cambioService.activar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/inactivarCambio")
-	public CambioDTO inactivarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return cambioService.inactivar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/actualizarCambio")
-	public CambioDTO actualizarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return cambioService.actualizar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	@PostMapping(value="/guardarCambio")
-	public CambioDTO guardarCambio(@RequestBody CambioDTO dto, @RequestHeader("Authorization") String token) throws FlexException  {
-		try {
-			return cambioService.guardar(dto, token);		
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-	
-	
 	
 	@Autowired @Lazy  private PropiedadValorDefinidoSvc propiedadValorDefinidoService;
 	

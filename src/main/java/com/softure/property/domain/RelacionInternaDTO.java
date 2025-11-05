@@ -15,8 +15,6 @@ import com.softure.java.domain.BasicDTO;
 @Alias("RelacionInternaDTO")
 @JsonInclude(Include.NON_NULL)
 public class RelacionInternaDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String propiedad;
@@ -28,8 +26,10 @@ public class RelacionInternaDTO extends BasicDTO
 	private String auxiliar;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicio;
-	private String cambioCreacion;
-	private String cambioEliminacion;
+	private String usuarioCreacion;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaEliminacion;
+	private String usuarioEliminacion;
 
 	public void setPropiedad(String propiedad) {
 		this.propiedad = propiedad;
@@ -87,21 +87,30 @@ public class RelacionInternaDTO extends BasicDTO
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}
-	public void setCambioCreacion(String cambioCreacion) {
-		this.cambioCreacion = cambioCreacion;
+
+	public String getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(String usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public Date getFechaEliminacion() {
+		return fechaEliminacion;
+	}
+
+	public void setFechaEliminacion(Date fechaEliminacion) {
+		this.fechaEliminacion = fechaEliminacion;
+	}
+
+	public String getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(String usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
 	}
 	
-	public String getCambioCreacion() {
-		return cambioCreacion;
-	}
-	public void setCambioEliminacion(String cambioEliminacion) {
-		this.cambioEliminacion = cambioEliminacion;
-	}
-	
-	public String getCambioEliminacion() {
-		return cambioEliminacion;
-	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

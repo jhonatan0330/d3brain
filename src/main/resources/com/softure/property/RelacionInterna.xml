@@ -15,8 +15,9 @@
 			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
 			,crit_auxiliar as  auxiliar
 			,drit_fechainicio as  fechaInicio
-			,crit_cambiocreacion as  cambioCreacion
-			,crit_cambioeliminacion as  cambioEliminacion
+			,crit_usuariocreacion as  usuarioCreacion
+			,drit_fechaeliminacion as  fechaEliminacion
+			,crit_usuarioeliminacion as  usuarioEliminacion
 			,crit_estado as estado
 		from relacioninterna_ritp a
 	</sql>
@@ -47,11 +48,11 @@
 			<if test="fechaInicioMax!=null">
 				and drit_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
 			</if>
-			<if test="cambioCreacion!=null">
-				and crit_cambiocreacion = #{cambioCreacion}
+			<if test="usuarioCreacion!=null">
+				and crit_usuariocreacion = #{usuarioCreacion}
 			</if>
-			<if test="cambioEliminacion!=null">
-				and crit_cambioeliminacion = #{cambioEliminacion}
+			<if test="usuarioEliminacion!=null">
+				and crit_usuarioeliminacion = #{usuarioEliminacion}
 			</if>
 	</sql>
 
@@ -66,7 +67,7 @@
 
 	<sql id="whereRelacionInternaPrimaryKeyFragment">
 		where
-			crit_llave	=#{llaveTabla}
+			crit_llave = #{llaveTabla}
 	</sql>
 
 	<select id="consultar" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
@@ -108,11 +109,14 @@
 		<if test="fechaInicio!=null">
 			,drit_fechainicio
 		</if>
-		<if test="cambioCreacion!=null">
-			,crit_cambiocreacion
+		<if test="usuarioCreacion!=null">
+			,crit_usuariocreacion
 		</if>
-		<if test="cambioEliminacion!=null">
-			,crit_cambioeliminacion
+		<if test="fechaEliminacion!=null">
+			,drit_fechaeliminacion
+		</if>
+		<if test="usuarioEliminacion!=null">
+			,crit_usuarioeliminacion
 		</if>
 		<if test="estado!=null">
 			,crit_estado
@@ -134,11 +138,14 @@
 		<if test="fechaInicio!=null">
 			,#{fechaInicio}
 		</if>
-		<if test="cambioCreacion!=null">
-			,#{cambioCreacion}
+		<if test="usuarioCreacion!=null">
+			,#{usuarioCreacion}
 		</if>
-		<if test="cambioEliminacion!=null">
-			,#{cambioEliminacion}
+		<if test="fechaEliminacion!=null">
+			,#{fechaEliminacion}
+		</if>
+		<if test="usuarioEliminacion!=null">
+			,#{usuarioEliminacion}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -154,46 +161,13 @@
 				crit_campo = #{campo},
 				crit_auxiliar = #{auxiliar},
 				drit_fechainicio = #{fechaInicio},
-				crit_cambiocreacion = #{cambioCreacion},
-				crit_cambioeliminacion = #{cambioEliminacion},
+				crit_usuariocreacion = #{usuarioCreacion},
+				drit_fechaeliminacion = #{fechaEliminacion},
+				crit_usuarioeliminacion = #{usuarioEliminacion},
 				crit_estado =#{estado}
 		<include refid="whereRelacionInternaPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleRelacionInternaFragment">
-		select
-			crit_llave as  llaveTabla
-			,crit_propiedad as  propiedad
-			,crit_plantilla as  plantilla
-			,crit_campo as  campo
-			,crit_auxiliar as  auxiliar
-			,crit_estado as estado
-		from relacioninterna_ritp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="RelacionInternaDTO">
-		<include refid="selectSimpleRelacionInternaFragment" />
-		<include refid="whereRelacionInternaFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="RelacionInternaDTO">
-		<include refid="selectSimpleRelacionInternaFragment" />
-		<include refid="whereRelacionInternaFragment" />
-		order by plantillanombre 
-		, camponombre 
-		, crit_auxiliar 
-		<include refid="paginationRelacionInternaFragment" />
-	</select>
-	
-
-	<select id="listarRelacion" parameterType="RelacionInternaDTO" resultType="RelacionInternaDTO">
-		<include refid="selectRelacionInternaFragment" />
-
-		<include refid="paginationRelacionInternaFragment" />
-	</select>
-	
-
-<!--// BEGIN region script-->
 	<select id="getRelationsFullToSynchronize" resultType="RelacionInternaDTO">
 		select
 			crit_propiedad as  propiedad
@@ -205,6 +179,10 @@
 		from relacioninterna_ritp a
 		where crit_estado = 'A'
 	</select>
-<!--// END region script-->
 
+	<select id="getTemplateOfField" resultType="java.lang.String">
+		select  cdpc_plantilla 
+		from documentoplantillacaracteristica_dpcp
+		where cdpc_llave = #{pFieldId}
+	</select>
 </mapper>

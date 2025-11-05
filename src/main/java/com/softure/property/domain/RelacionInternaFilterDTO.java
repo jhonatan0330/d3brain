@@ -24,10 +24,9 @@ public class RelacionInternaFilterDTO extends BasicFilterDTO
 	private Date fechaInicioMin;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicioMax;
-	private String cambioCreacion;
-	private String cambioEliminacion;
+	private String usuarioCreacion;
+	private String usuarioEliminacion;
 
-	
 	public void setPropiedad(String propiedad) {
 		this.propiedad = propiedad;
 	}
@@ -106,23 +105,23 @@ public class RelacionInternaFilterDTO extends BasicFilterDTO
 	public Date getFechaInicioMax() {
 		return fechaInicioMax;
 	}
-	
-	
-	public void setCambioCreacion(String cambioCreacion) {
-		this.cambioCreacion = cambioCreacion;
+
+	public String getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(String usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public String getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(String usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
 	}
 	
-	public String getCambioCreacion() {
-		return cambioCreacion;
-	}
-	
-	
-	public void setCambioEliminacion(String cambioEliminacion) {
-		this.cambioEliminacion = cambioEliminacion;
-	}
-	
-	public String getCambioEliminacion() {
-		return cambioEliminacion;
-	}
+
 	
 }

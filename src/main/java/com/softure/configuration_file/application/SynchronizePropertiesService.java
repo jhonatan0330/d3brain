@@ -42,8 +42,8 @@ public class SynchronizePropertiesService {
 				if (findProperty != null) {
 					localPropertiesToErase.remove(findProperty);
 					log.info("EXIST PROPERTY " + remoteProperty.getPropiedadValor());
-					remoteProperty.setCambioEliminacion("YA");
-					remoteProperty.setCambioCreacion(findProperty.getLlaveTabla());
+					remoteProperty.setUsuarioEliminacion("YA");
+					remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
 				} else {
 					if (compare) {
 						PropiedadValorDefinidoDTO typeVD=  typeService.consultaXId(remoteProperty.getPropiedadValor());
@@ -110,8 +110,8 @@ public class SynchronizePropertiesService {
 						try {
 							findProperty = propertiesService.guardar(newProperty, token);
 							log.info("NEW PROPERTY " + remoteProperty.getPropiedadValor());
-							remoteProperty.setCambioEliminacion("YA");
-							remoteProperty.setCambioCreacion(findProperty.getLlaveTabla());
+							remoteProperty.setUsuarioEliminacion("YA");
+							remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
 						} catch (Exception e) {
 							log.error(remoteProperty.getPropiedadValor() + " - " + SoftureUtil.recortar(remoteProperty.getValor(), 20) + " : "
 									+ e.getMessage());

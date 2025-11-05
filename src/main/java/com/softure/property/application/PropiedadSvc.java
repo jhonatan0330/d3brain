@@ -31,7 +31,6 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.logisticpymes.application.CambioSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.BasicParamDTO;
 import com.softure.logisticpymes.domain.UsuarioDTO;
@@ -80,8 +79,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	@Autowired @Lazy PropiedadMapper propiedadMapper;
 
-	@Autowired @Lazy 
-	private CambioSvc cambioService;
 	@Autowired @Lazy 
 	private CatalogService catalogService;
 	@Autowired @Lazy 
@@ -145,7 +142,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	public PropiedadDTO actualizar(PropiedadDTO dto, String token) throws ServerException {
 		String llaveTabla = dto.getLlaveTabla();
 		dto = guardar(dto, token);
-		relacionService.copyFromProperty(llaveTabla, dto.getLlaveTabla(), token, dto.getCambioCreacion(), true);
+		relacionService.copyFromProperty(llaveTabla, dto.getLlaveTabla(), token, dto.getUsuarioCreacion(), true);
 		PropiedadDTO inactivo = new PropiedadDTO();
 		inactivo.setLlaveTabla(llaveTabla);
 		inactivar(inactivo, token);
@@ -156,8 +153,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PropiedadDTO inactivar(PropiedadDTO dto, String token) throws ServerException {
+		if(!rolService.usuarioPermisosCompletos(token))
+			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
 		PropiedadDTO bd = consultaXId(dto.getLlaveTabla());
-		bd.setCambioEliminacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
+		bd.setUsuarioEliminacion(getUserFlex(token));
+		bd.setFechaEliminacion(new Date());
 		if (bd.getKey() == null) {
 			PropiedadValorDefinidoDTO valorDefinido = valorDefinidoService.consultaXId(bd.getPropiedadValor());
 			bd.setTipo(valorDefinido.getOrigen());
@@ -266,9 +266,9 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setKey(valorDefinido.getCodigo());
 		if (dto.getValor() != null)
 			dto.setValor(SoftureUtil.cleanStartEndSpaces(dto.getValor()));
-		dto.setCambioCreacion(cambioService.obtenerCambioGrabando(token).getLlaveTabla());
-		if (!valorDefinido.getNecesitaDesarrollo())
-			dto.setFechaImplementacion(new Date());
+		if(!rolService.usuarioPermisosCompletos(token))
+			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
+
 		if(dto.getMotivo()!=null && dto.getMotivo().isEmpty()) dto.setMotivo(null);
 		if (valorDefinido.getMultiple()) {
 			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
@@ -316,6 +316,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			homologateService.call(dto, token);
 		}
 		dto.setFechaDefinicion(new Date());
+		dto.setUsuarioCreacion(getUserFlex(token));
 		dto = super.guardar(dto, token);
 		try {
 			if (dto.getKey().contains("SQL")) {
@@ -1270,7 +1271,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				newPropiedad = guardar(newPropiedad, token);
 				result.add(newPropiedad);
 				relacionService.copyFromProperty(propiedadDTO.getLlaveTabla(), newPropiedad.getLlaveTabla(), token,
-						propiedadDTO.getCambioCreacion(), false);
+						propiedadDTO.getUsuarioCreacion(), false);
 			}
 		}
 		return result;
@@ -1405,10 +1406,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			propiedadDTO.setRolExcluyente(null);
 			propiedadDTO.setRolExcluyenteNombre(null);
 			propiedadDTO.setRolNombre(null);
-			propiedadDTO.setCambioCreacion(null);
-			propiedadDTO.setCambioEliminacion(null);
+			propiedadDTO.setUsuarioCreacion(null);
+			propiedadDTO.setUsuarioEliminacion(null);
 			propiedadDTO.setFechaDefinicion(null);
-			propiedadDTO.setFechaImplementacion(null);
+			propiedadDTO.setFechaEliminacion(null);
 			propiedadDTO.setFechaFinal(null);
 			propiedadDTO.setFechaInicial(null);
 			propiedadDTO.setBloqueo(null);

@@ -15,16 +15,6 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private String key;
 	private String campo;
 	private String texto;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaDefinicionMin;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaDefinicionMax;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaImplementacionMin;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
-	private Date fechaImplementacionMax;
-	private String cambioCreacion;
-	private String cambioEliminacion;
 	private String rol;
 	private String rolNombre;
 	private String rolExcluyente;
@@ -45,6 +35,16 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private String valor;
 	private String bloqueo;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaDefinicionMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaDefinicionMax;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaEliminacionMin;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaEliminacionMax;
+	private String usuarioCreacion;
+	private String usuarioEliminacion;
 	
 	public void setPropiedadValor(String propiedadValor) {
 		this.propiedadValor = propiedadValor;
@@ -114,41 +114,6 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	
 	public Date getFechaDefinicionMax() {
 		return fechaDefinicionMax;
-	}
-	
-	
-	public void setFechaImplementacionMin(Date fechaImplementacionMin) {
-		this.fechaImplementacionMin = fechaImplementacionMin;
-	}
-	
-	public Date getFechaImplementacionMin() {
-		return fechaImplementacionMin;
-	}
-	
-	public void setFechaImplementacionMax(Date fechaImplementacionMax) {
-		this.fechaImplementacionMax = fechaImplementacionMax;
-	}
-	
-	public Date getFechaImplementacionMax() {
-		return fechaImplementacionMax;
-	}
-	
-	
-	public void setCambioCreacion(String cambioCreacion) {
-		this.cambioCreacion = cambioCreacion;
-	}
-	
-	public String getCambioCreacion() {
-		return cambioCreacion;
-	}
-	
-	
-	public void setCambioEliminacion(String cambioEliminacion) {
-		this.cambioEliminacion = cambioEliminacion;
-	}
-	
-	public String getCambioEliminacion() {
-		return cambioEliminacion;
 	}
 	
 	
@@ -280,6 +245,38 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+
+	public Date getFechaEliminacionMin() {
+		return fechaEliminacionMin;
+	}
+
+	public void setFechaEliminacionMin(Date fechaEliminacionMin) {
+		this.fechaEliminacionMin = fechaEliminacionMin;
+	}
+
+	public Date getFechaEliminacionMax() {
+		return fechaEliminacionMax;
+	}
+
+	public void setFechaEliminacionMax(Date fechaEliminacionMax) {
+		this.fechaEliminacionMax = fechaEliminacionMax;
+	}
+
+	public String getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(String usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public String getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(String usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
 	}
 	
 

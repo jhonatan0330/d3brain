@@ -30,8 +30,8 @@ public class SynchronizeRelationService {
 			return;
 		log.setRoot("SynchronizeRelationService");
 		for (PropiedadDTO remoteProperty : hierarchy.getProperties()) {
-			if (remoteProperty.getCambioEliminacion() != null
-					&& remoteProperty.getCambioEliminacion().compareTo("YA") == 0) {
+			if (remoteProperty.getUsuarioEliminacion() != null
+					&& remoteProperty.getUsuarioEliminacion().compareTo("YA") == 0) {
 				switch (remoteProperty.getPropiedadValor()) {
 				case "PROP_33": // CAMPO_HEREDADO
 				case "PROP_36": // PROCESO_ACCIONES
@@ -62,7 +62,7 @@ public class SynchronizeRelationService {
 					// List<PropiedadDTO> localPropertiesToErase =
 					// propertiesService.obtenerPropiedades(remoteProperty.getTipo(),
 					// remoteProperty.getCambioCreacion(), remoteProperty.getKey(), null);
-					PropiedadDTO findProperty = propertiesService.consultaXId(remoteProperty.getCambioCreacion());
+					PropiedadDTO findProperty = propertiesService.consultaXId(remoteProperty.getUsuarioCreacion());
 					log.setRoot("SynchronizeRelationService Prop " + findProperty.getKey() + " val: " + findProperty.getValor() + " " + findProperty.getMotivo());
 					synchronizeRelations(hierarchy, findProperty, remoteProperty, token, log, compare);
 					break;

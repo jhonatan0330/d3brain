@@ -15,9 +15,9 @@
 			,cppd_valor as  valor
 			,cppd_texto as  texto
 			,dppd_fechadefinicion as  fechaDefinicion
-			,dppd_fechaimplementacion as  fechaImplementacion
-			,cppd_cambiocreacion as  cambioCreacion
-			,cppd_cambioeliminacion as  cambioEliminacion
+			,dppd_fechaeliminacion as  fechaEliminacion
+			,cppd_usuariocreacion as  usuarioCreacion
+			,cppd_usuarioeliminacion as  usuarioEliminacion
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
 			,cppd_rolexcluyente as  rolExcluyente
@@ -60,17 +60,17 @@
 			<if test="fechaDefinicionMax!=null">
 				and dppd_fechadefinicion <![CDATA[ < ]]>  #{fechaDefinicionMax}
 			</if>
-			<if test="fechaImplementacionMin!=null">
-				and dppd_fechaimplementacion >= #{fechaImplementacionMin}
+			<if test="fechaEliminacionMin!=null">
+				and dppd_fechaeliminacion >= #{fechaEliminacionMin}
 			</if>
-			<if test="fechaImplementacionMax!=null">
-				and dppd_fechaimplementacion <![CDATA[ < ]]>  #{fechaImplementacionMax}
+			<if test="fechaEliminacionMax!=null">
+				and dppd_fechaeliminacion <![CDATA[ < ]]>  #{fechaEliminacionMax}
 			</if>
-			<if test="cambioCreacion!=null">
-				and cppd_cambiocreacion = #{cambioCreacion}
+			<if test="usuarioCreacion!=null">
+				and cppd_usuariocreacion = #{usuarioCreacion}
 			</if>
-			<if test="cambioEliminacion!=null">
-				and cppd_cambioeliminacion = #{cambioEliminacion}
+			<if test="usuarioEliminacion!=null">
+				and cppd_usuarioeliminacion = #{usuarioEliminacion}
 			</if>
 			<if test="rol!=null">
 				and cppd_rol = #{rol}
@@ -164,14 +164,14 @@
 		<if test="fechaDefinicion!=null">
 			,dppd_fechadefinicion
 		</if>
-		<if test="fechaImplementacion!=null">
-			,dppd_fechaimplementacion
+		<if test="fechaEliminacion!=null">
+			,dppd_fechaeliminacion
 		</if>
-		<if test="cambioCreacion!=null">
-			,cppd_cambiocreacion
+		<if test="usuarioCreacion!=null">
+			,cppd_usuariocreacion
 		</if>
-		<if test="cambioEliminacion!=null">
-			,cppd_cambioeliminacion
+		<if test="usuarioEliminacion!=null">
+			,cppd_usuarioeliminacion
 		</if>
 		<if test="rol!=null">
 			,cppd_rol
@@ -220,14 +220,14 @@
 		<if test="fechaDefinicion!=null">
 			,#{fechaDefinicion}
 		</if>
-		<if test="fechaImplementacion!=null">
-			,#{fechaImplementacion}
+		<if test="fechaEliminacion!=null">
+			,#{fechaEliminacion}
 		</if>
-		<if test="cambioCreacion!=null">
-			,#{cambioCreacion}
+		<if test="usuarioCreacion!=null">
+			,#{usuarioCreacion}
 		</if>
-		<if test="cambioEliminacion!=null">
-			,#{cambioEliminacion}
+		<if test="usuarioEliminacion!=null">
+			,#{usuarioEliminacion}
 		</if>
 		<if test="rol!=null">
 			,#{rol}
@@ -268,9 +268,9 @@
 				cppd_valor = #{valor},
 				cppd_texto = #{texto},
 				dppd_fechadefinicion = #{fechaDefinicion},
-				dppd_fechaimplementacion = #{fechaImplementacion},
-				cppd_cambiocreacion = #{cambioCreacion},
-				cppd_cambioeliminacion = #{cambioEliminacion},
+				dppd_fechaeliminacion = #{fechaEliminacion},
+				cppd_usuariocreacion = #{usuarioCreacion},
+				cppd_usuarioeliminacion = #{usuarioEliminacion},
 				cppd_rol = #{rol},
 				cppd_rolexcluyente = #{rolExcluyente},
 				dppd_fechainicial = #{fechaInicial},

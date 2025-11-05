@@ -20,9 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
-import com.softure.logisticpymes.application.CambioSvc;
-import com.softure.logisticpymes.domain.CambioDTO;
-import com.softure.logisticpymes.domain.CambioFilterDTO;
 import com.softure.process_designer.application.ProcesoSvc;
 import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
@@ -38,10 +35,6 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 
 @Component
 public class TipoConfiguracion {
-
-	@Autowired
-	@Lazy
-	private CambioSvc cambioService;
 
 	@Autowired
 	@Lazy
@@ -138,19 +131,6 @@ public class TipoConfiguracion {
 						adaptado.setImagen(rolAcceso.getImagen());
 						adaptado.setNombre(rolAcceso.getCodigo());
 						adaptado.setDescripcion(rolAcceso.getNombre());
-						pCampo.setPrincipal(adaptado);
-					}
-					break;
-				case CAMBIO:
-					CambioDTO cambio = cambioService.consultaXId(pCampo.getValorOpcion());
-					if (cambio == null) {
-						throw new ServerException("No se identifica el cambio");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(cambio.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(cambio.getNombre());
-						adaptado.setDescripcion(cambio.getMotivo());
 						pCampo.setPrincipal(adaptado);
 					}
 					break;
@@ -294,14 +274,6 @@ public class TipoConfiguracion {
 						throw new ServerException("No se identifica el categoria");
 					} else {
 						pCampo.setValorText(rol.getNombre());
-					}
-					break;
-				case CAMBIO:
-					CambioDTO cambio = cambioService.consultaXId(pCampo.getValorOpcion());
-					if (cambio == null) {
-						throw new ServerException("No se identifica el categoria");
-					} else {
-						pCampo.setValorText(cambio.getNombre());
 					}
 					break;
 				case FORMATO_EXPORTAR:
@@ -459,23 +431,6 @@ public class TipoConfiguracion {
 						adaptado.setImagen(iCambio.getImagen());
 						adaptado.setNombre(iCambio.getCodigo());
 						adaptado.setDescripcion(iCambio.getNombre());
-						pBase.getDocumentos().add(adaptado);
-					}
-				}
-				break;
-			case CAMBIO:
-				CambioFilterDTO cambio = new CambioFilterDTO();
-				cambio.setNombre(pCampo.getFiltroParametro());
-				cambio.setEstado(SharedConstants.STATE_ACTIVE);
-				List<CambioDTO> cambios = cambioService.listarConsulta(cambio);
-				if (cambios != null && !cambios.isEmpty()) {
-					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
-					for (CambioDTO iCambio : cambios) {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(iCambio.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(iCambio.getNombre());
-						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptado);
 					}
 				}
