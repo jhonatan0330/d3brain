@@ -138,6 +138,10 @@ public class WebServiceExecuteAPI {
 		if (preValidation != null) {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
+			if (apiBasic.getError() != null && apiBasic.getError().length() > 4000) {
+				apiBasic.setError(
+						uploadService.uploadFile(apiBasic.getError().getBytes(), "Parameter.txt", token, "webservice", "private"));
+			}
 			webServiceEjecucionSvc.update(apiBasic);
 			if(!preValidation.startsWith(SharedConstants.OK)) publishErrorMessage(service, apiBasic, modificador);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
