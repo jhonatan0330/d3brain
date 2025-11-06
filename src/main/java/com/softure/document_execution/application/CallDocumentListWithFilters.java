@@ -72,7 +72,7 @@ public class CallDocumentListWithFilters {
 		// Yo tenia el normalize por BD pero no fue una buena practica porque consume
 		// mucha memoria
 		if (dto.getFiltroParametro() != null)
-			dto.setFiltroParametro(SoftureUtil.formatFunction(dto.getFiltroParametro()).toUpperCase());
+			dto.setFiltroParametro(SoftureUtil.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());
 		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().endsWith(" "))
 			dto.setFiltroParametro(dto.getFiltroParametro().substring(0, dto.getFiltroParametro().length() - 1));
 		if (dto.getNombre() != null) {
