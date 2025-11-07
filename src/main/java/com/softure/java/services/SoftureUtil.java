@@ -202,6 +202,8 @@ public class SoftureUtil {
 	    currentFunction = currentFunction.replaceAll("[^a-z0-9]", "_");
 	    currentFunction = currentFunction.replaceAll("_+", "_");
 	    
+	    currentFunction = currentFunction.replaceAll("^_+|_+$", "");
+	    
 		return currentFunction;
 	}
 
@@ -211,7 +213,7 @@ public class SoftureUtil {
 
 		currentFunction = Normalizer.normalize(currentFunction, Normalizer.Form.NFD);
 		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-		currentFunction = currentFunction.replaceAll("\\s+", "");
+		
 		return currentFunction.toUpperCase();
 	}
 
