@@ -191,9 +191,9 @@ public class SoftureUtil {
 		if (currentFunction == null)
 			throw new ServerException("La funcion no puede ser nula");
 		currentFunction = cleanStartEndSpaces(currentFunction);
-		currentFunction = currentFunction.replace(" ", "_");
-		currentFunction = currentFunction.replace("-", "_");
-		currentFunction = currentFunction.replaceAll("\\r|\\n", "__");
+		currentFunction = currentFunction.replaceAll("\\s+", "_");
+		currentFunction = currentFunction.replaceAll("\\-", "_");
+		currentFunction = currentFunction.replaceAll("\\r|\\n", "_");
 		currentFunction = currentFunction.toLowerCase();
 
 		currentFunction = Normalizer.normalize(currentFunction, Normalizer.Form.NFD);
@@ -211,7 +211,8 @@ public class SoftureUtil {
 
 		currentFunction = Normalizer.normalize(currentFunction, Normalizer.Form.NFD);
 		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-		return currentFunction;
+		currentFunction = currentFunction.replaceAll("\\s+", "");
+		return currentFunction.toUpperCase();
 	}
 
 	public static String cleanStartEndSpaces(String str){
