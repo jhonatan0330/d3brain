@@ -39,13 +39,15 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public RelacionInternaDTO actualizar( RelacionInternaDTO dto, String token) throws ServerException {
-		String llaveTabla = dto.getLlaveTabla();
-		dto = guardar(dto, token);
-		RelacionInternaDTO inactivo = new RelacionInternaDTO();
-		inactivo.setLlaveTabla(llaveTabla);
-		inactivar(inactivo, token);
-		return dto;
+	public RelacionInternaDTO actualizar( RelacionInternaDTO pDTO, String pToken) throws ServerException {
+		String llaveTabla = pDTO.getLlaveTabla();
+		RelacionInternaDTO _newRelation = guardar(pDTO, pToken);
+		if(_newRelation.getLlaveTabla().equals(pDTO.getLlaveTabla()))
+			return _newRelation;
+		RelacionInternaDTO _deleteRelation = new RelacionInternaDTO();
+		_deleteRelation.setLlaveTabla(llaveTabla);
+		inactivar(_deleteRelation, pToken);
+		return pDTO;
 	}
 	
 	@Override

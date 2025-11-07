@@ -332,18 +332,25 @@ public class WebServiceExecuteAPI {
 		
 		if(template ==null || template.isEmpty()) {
 			callWS.setFechaEjecucion(new Date());
-			callWS.setEstado(SharedConstants.STATE_INACTIVE);
-			callWS.setParametros("NOT_TEMPLATE");
+			//Creo que se necesita para ver el hisotoria
+			//callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			callWS.setParametros(null);
+			callWS.setError("NOT_TEMPLATE");
 			callWS = webServiceEjecucionSvc.update(callWS);
+			callWS.setError(null);
+			callWS.setParametros("NOT_TEMPLATE");
 			return callWS;
 		}
 		String urlWithParameters = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
 		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una informacion
 		if(urlWithParameters ==null || urlWithParameters.isEmpty()) {
 			callWS.setFechaEjecucion(new Date());
-			callWS.setEstado(SharedConstants.STATE_INACTIVE);
-			callWS.setParametros("NOT_URL");
+			//callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			callWS.setParametros(null);
+			callWS.setError("NOT_URL");
 			callWS = webServiceEjecucionSvc.update(callWS);
+			callWS.setError(null);
+			callWS.setParametros("NOT_URL");
 			return callWS;
 		}
 		
