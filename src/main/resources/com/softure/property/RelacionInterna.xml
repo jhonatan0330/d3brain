@@ -185,4 +185,10 @@
 		from documentoplantillacaracteristica_dpcp
 		where cdpc_llave = #{pFieldId}
 	</select>
+	
+	<select id="updatePropertyRelations">
+		update propiedad_ppdp 
+		set nppd_relaciones = (select count(*) from relacioninterna_ritp rr where rr.crit_propiedad = cppd_llave and rr.crit_estado = 'A')
+		where cppd_estado = 'A' and cppd_llave = #{pProperty}
+	</select>
 </mapper>

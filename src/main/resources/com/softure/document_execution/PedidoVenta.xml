@@ -267,6 +267,11 @@
 					)<if test="dto.funcionario!=null">or cpdv_funcionario = #{dto.funcionario}</if>)
 	        </foreach>
 		</if>
+		<if test="pStaticRelation!=null">
+			<foreach item="relation" index="index" collection="pStaticRelation" >
+				and (select cp.cpvc_valortext from pedidoventacaracteristica_pvcp cp where cp.cpvc_documento = a.cpdv_llave  and cp.cpvc_campo = #{relation.campo} and cp.cpvc_estado = 'A') = #{relation.auxiliar}
+			</foreach>
+		</if>
 		<include refid="orderMainFragment" />
 	</select>
 	
@@ -344,6 +349,11 @@
 		 	cross join campo4id(a.cpdv_llave, #{item.valor}, a.npdv_historico) cp_campo
 		where cp_campo.cpvc_valoropcion in <foreach item="option" collection="optionsToFilter" separator="," open="(" close=")">#{option}</foreach>
 		 	<include refid="filterMainFragment" />
+		 	<if test="pStaticRelation!=null">
+				<foreach item="relation" index="index" collection="pStaticRelation" >
+					and (select cp.cpvc_valortext from pedidoventacaracteristica_pvcp cp where cp.cpvc_documento = a.cpdv_llave  and cp.cpvc_campo = #{relation.campo} and cp.cpvc_estado = 'A') = #{relation.auxiliar}
+				</foreach>
+			</if>
 		</foreach>
 		<include refid="orderMainFragment" />
 	</select>

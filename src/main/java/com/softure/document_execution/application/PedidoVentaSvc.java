@@ -83,41 +83,21 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 	@Override
 	public PedidoVentaDTO activar(PedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVenta_activar
 		throw new ServerException("Un documento que fue inactivado no se puede volver a activar.");
-		// END PedidoVenta_activar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO actualizar(PedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVenta_actualizar
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction update");
-		// END PedidoVenta_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO inactivar(PedidoVentaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVenta_inactivar
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction inactivate");
-		// END PedidoVenta_inactivar
 	}
 
-	@Override
-	public PedidoVentaDTO consultaUnica(PedidoVentaFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(PedidoVentaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<PedidoVentaDTO> listarConsulta(PedidoVentaFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
-	}
 
 	public PedidoVentaDTO consultaCompleta(String documentId, String token) throws ServerException {
 		// BEGIN region consultaCompleta
@@ -320,7 +300,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda, null,
 					parametros);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage());
+			throw new ServerException(e.getMessage(), e);
 		}
 	}
 
@@ -332,5 +312,16 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			return null;
 		return propiedadService.validarFuncionSQL2(prop,pValue, pToken);
 	}
-
+	
+	public PedidoVentaDTO findByCode(String pName, String pTemplate) throws ServerException {
+		if(pTemplate==null || pName==null) return null;
+		PedidoVentaFilterDTO filter = new PedidoVentaFilterDTO();
+		filter.setNombre(pName);
+		filter.setPlantilla(pTemplate);
+		try {
+			return pedidoVentaMapper.consultar(filter);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), e);
+		}
+	}
 }

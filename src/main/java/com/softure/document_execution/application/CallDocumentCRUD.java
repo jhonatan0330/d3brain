@@ -146,6 +146,40 @@ public class CallDocumentCRUD {
 	private TipoVinculo tipoVinculoService;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public PedidoVentaDTO massive(PedidoVentaDTO pDocument, String pToken, String pSession) throws ServerException {
+		//Este metodo es igual al de guardar pero debi colocar una logica del modificar
+		// La idea es despues mejorar las cargas masivas 
+		// Para almacenar el archivo y crear los registros desde el back
+		if(pDocument.getNombre()==null) return save(pDocument, pToken, pSession);
+		//Camino del Update
+		PedidoVentaDTO bd = pedidoService.findByCode(pDocument.getNombre(), pDocument.getPlantilla());
+		if(bd==null) throw new ServerException("No se encontro el documento con nombre " + pDocument.getNombre() + " para la plantilla " + pDocument.getPlantilla());
+		bd = pedidoService.obtenerCamposCompletos(bd, pToken);
+		for (PedidoVentaCaracteristicaDTO iterador : pDocument.getCaracteristicas()) {
+			if(iterador.getValorText()!=null || iterador.getValorOpcion()!=null || iterador.getValorFecha()!=null || iterador.getValorNumero()!=null) {
+				for (PedidoVentaCaracteristicaDTO bdField : bd.getCaracteristicas()) {
+					if(bdField.getCampo().compareTo(iterador.getCampo())==0) {
+						if(iterador.getValorText()!=null && iterador.getValorText().equals("NULL_SPACE")) {
+							bdField.setValorText(null);
+							bdField.setValorNumero(null);
+							bdField.setValorFecha(null);
+							bdField.setValorOpcion(null);
+						}else {
+							bdField.setValorText(iterador.getValorText());
+							bdField.setValorNumero(iterador.getValorNumero());
+							bdField.setValorFecha(iterador.getValorFecha());
+							bdField.setValorOpcion(iterador.getValorOpcion());
+						}
+						bdField.setModificado(true);
+						break;
+					}
+				}
+			}
+		}
+		return update(bd, null, pToken);
+	}
+	
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
 		String userId = getUserID(token);
 		if (session != null) {

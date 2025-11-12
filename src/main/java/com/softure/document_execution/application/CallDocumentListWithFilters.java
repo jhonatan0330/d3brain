@@ -34,8 +34,10 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
+import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import com.softure.property.domain.RelacionInternaDTO;
 
 @Component
 public class CallDocumentListWithFilters {
@@ -44,6 +46,8 @@ public class CallDocumentListWithFilters {
 	private PedidoVentaMapper pedidoVentaMapper;
 	@Autowired @Lazy 
 	private PropiedadSvc propiedadService;
+	@Autowired @Lazy 
+	private RelacionInternaSvc relationService;
 	@Autowired @Lazy 
 	private PropertyGetWithCacheService cacheService;
 	@Autowired @Lazy 
@@ -134,7 +138,7 @@ public class CallDocumentListWithFilters {
 							// Consulto las realaciones del campo para saber cuales campos heredan con la
 							// funcion de
 							listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable,
-									dto.getTextoFiltro(), null, null, textoFiltroComas, generalState),
+									dto.getTextoFiltro(), null, null, textoFiltroComas, generalState, null),
 							tokenHeredable, null);
 				} catch (Exception e) {
 					throw new ServerException(e.getMessage());
@@ -174,7 +178,7 @@ public class CallDocumentListWithFilters {
 				if (auxiliaresPlantilla != null && !auxiliaresPlantilla.isEmpty()) {
 					List<PedidoVentaDTO> resultManyTemplates = new ArrayList<>();
 					for (PropiedadDTO iProp : auxiliaresPlantilla) {
-						resultManyTemplates.addAll(readResultByTemplate(dto, iProp.getValor()));
+						resultManyTemplates.addAll(readResultByTemplate(dto, iProp.getValor(), iProp));
 					}
 					return resultManyTemplates;
 				}
@@ -187,21 +191,21 @@ public class CallDocumentListWithFilters {
 					dto.getProceso());
 			if (transitionToStartProcess != null && !transitionToStartProcess.isEmpty()) {
 				for (ProcesoTransicionDTO iTransition : transitionToStartProcess) {
-					resultManyTemplates.addAll(readResultByTemplate(dto, iTransition.getPlantilla()));
+					resultManyTemplates.addAll(readResultByTemplate(dto, iTransition.getPlantilla(), null));
 				}
 			} else {
 				return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto, dto.getProceso(), null), dto.getSecurityToken(), null);
 			}
 			return resultManyTemplates;
 		}
-		return readResultByTemplate(dto, dto.getPlantilla());
+		return readResultByTemplate(dto, dto.getPlantilla(), null);
 	}
 	
 	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO pFilter,
 			List<String> filtroEstados, List<String> campoFiltro,
 			String valorFiltro, String ordenNombre,
 			String ordenDescendente, List<String> filtroTexto,
-			List<String> filtroEstadosGeneralesMultiple)throws ServerException {
+			List<String> filtroEstadosGeneralesMultiple, PropiedadDTO pProperty)throws ServerException {
 		
 		List<String> _filterIdsByToRelations = getFieldsValueToFilter(pFilter);
 		
@@ -215,14 +219,18 @@ public class CallDocumentListWithFilters {
 					pFilter.setCaracteristicas(null);
 				}	
 			}
-			
+		}
+		
+		List<RelacionInternaDTO> _relations = null;
+		if(pProperty!=null && pProperty.getRelaciones()!=null && pProperty.getRelaciones()!= 0) {
+			_relations = relationService.relacionesPropiedad(pProperty.getLlaveTabla());
 		}
 		
 		return pedidoVentaMapper.listarPermitidos(pFilter,
 				filtroEstados,  campoFiltro,
 				 valorFiltro,  ordenNombre,
 				 ordenDescendente, filtroTexto,
-				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations);
+				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations, _relations);
 	}
 
 	private List<String> getFieldsValueToFilter(PedidoVentaFilterDTO pFilter) throws ServerException {
@@ -261,7 +269,7 @@ public class CallDocumentListWithFilters {
 		return _filterIdsByToRelations;
 	}
 
-	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter)
+	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter, PropiedadDTO pProperty)
 			throws ServerException {
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setFechaRegistroMax(dtoFilter.getFechaRegistroMax());
@@ -362,7 +370,7 @@ public class CallDocumentListWithFilters {
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
-							listarPermitidos(filtro, null, null, null, null, null, null, generalState), token,
+							listarPermitidos(filtro, null, null, null, null, null, null, generalState, pProperty), token,
 							null);
 				} catch (ServerException e) {
 					throw new ServerException(e.getMessage());
@@ -370,7 +378,7 @@ public class CallDocumentListWithFilters {
 					throw new ServerException(e.getCause().getMessage());
 				}
 			} else {
-				return filtrarConRestriccionEnCampo(filtro, propiedadesFiltro, token, null, null, null, null);
+				return filtrarConRestriccionEnCampo(filtro, propiedadesFiltro, token, null, null, null, null, pProperty);
 			}
 		} else {
 			String orden = null;
@@ -433,15 +441,15 @@ public class CallDocumentListWithFilters {
 			if(estadosFiltro!=null) filterDTO.setEstado(null);
 			if (propiedadesFiltro != null)
 				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
-						estadosFiltro, textoFiltroComas);
+						estadosFiltro, textoFiltroComas, pProperty);
 			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden,
-					ordenAscendente, textoFiltroComas, null), token, null);
+					ordenAscendente, textoFiltroComas, null, pProperty), token, null);
 		}
 	}
 
 	private List<PedidoVentaDTO> filtrarConRestriccionEnCampo(PedidoVentaFilterDTO filterDTO,
 			List<PropiedadDTO> camposFiltro, String token, String orden, String ordenAscendente,
-			List<String> estadosFiltro, List<String> textoFiltroComas) throws ServerException {
+			List<String> estadosFiltro, List<String> textoFiltroComas, PropiedadDTO pPropiedadDTO) throws ServerException {
 		// Estoy revisando el tema coloco las relaciones de todos los campos, hasta
 		// ahora estoy colocando multiple, pero la idea
 		// es mejorar el codigo con arq hexagonal y creando uan calse de dominio que
@@ -462,8 +470,12 @@ public class CallDocumentListWithFilters {
 		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
 			return new ArrayList<>();
 		}
+		List<RelacionInternaDTO> _relations = null;
+		if(pPropiedadDTO!=null && pPropiedadDTO.getRelaciones()!= 0) {
+			_relations = relationService.relacionesPropiedad(pPropiedadDTO.getLlaveTabla());
+		}
 		return listadoCompleto(pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden,
-				ordenAscendente, textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations), token, null);
+				ordenAscendente, textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations, _relations), token, null);
 	}
 
 	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {

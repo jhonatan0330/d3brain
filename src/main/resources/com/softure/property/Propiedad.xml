@@ -30,6 +30,7 @@
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
 			,cppd_estado as estado
 		from propiedad_ppdp a
 	</sql>

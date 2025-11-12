@@ -13,4 +13,6 @@ public interface RelacionInternaMapper extends IBasicMapper<RelacionInternaDTO, 
 	List<RelacionInternaDTO> getRelationsFullToSynchronize();
 
 	String getTemplateOfField(String pFieldId);
+	
+	void updatePropertyRelations(String pProperty);
 }

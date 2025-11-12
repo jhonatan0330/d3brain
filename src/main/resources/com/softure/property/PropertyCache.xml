@@ -30,6 +30,7 @@
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
 			,cppd_estado as estado
 		from propiedad_ppdp a
 	</sql>
@@ -69,6 +70,7 @@
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
 			,cppd_estado as estado
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
@@ -100,6 +102,7 @@
 			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
 			,cppd_estado as estado
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
@@ -148,6 +151,7 @@
 			,null as  usuarioExcluyenteNombre
 			,null as  motivo
       		,null as  bloqueo
+      		,0 as  relaciones
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
@@ -185,6 +189,7 @@
 			,null as  usuarioExcluyenteNombre
       		,null as  motivo
       		,null as  bloqueo
+      		,0 as  relaciones
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp, documentoplantilla_dplp
         where cpvd_origen = 'L' and cpvd_estado = 'A'
@@ -216,6 +221,7 @@
 			,null as  usuarioExcluyenteNombre
       		,null as  motivo
       		,null as  bloqueo
+      		,0 as  relaciones
             ,cpvd_estado as estado
         from propiedadvalordefinido_pvdp, documentoplantilla_dplp
         where cpvd_origen = 'L' and cpvd_estado = 'A'

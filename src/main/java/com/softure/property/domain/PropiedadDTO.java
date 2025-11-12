@@ -40,6 +40,8 @@ public class PropiedadDTO extends BasicDTO{
 	private Date fechaEliminacion;
 	private String usuarioCreacion;
 	private String usuarioEliminacion;
+	
+	private Integer relaciones;
 
 	public void setPropiedadValor(String propiedadValor) {
 		this.propiedadValor = propiedadValor;
@@ -214,6 +216,7 @@ public class PropiedadDTO extends BasicDTO{
 	    this.usuarioExcluyenteNombre = other.usuarioExcluyenteNombre;
 	    this.motivo = other.motivo;
 	    this.bloqueo = other.bloqueo;
+	    this.relaciones = other.relaciones;
 	    this.setLlaveTabla(other.getLlaveTabla());
 	    this.setEstado(other.getEstado());
 	}
@@ -240,6 +243,14 @@ public class PropiedadDTO extends BasicDTO{
 
 	public void setUsuarioEliminacion(String usuarioEliminacion) {
 		this.usuarioEliminacion = usuarioEliminacion;
+	}
+
+	public Integer getRelaciones() {
+		return relaciones;
+	}
+
+	public void setRelaciones(Integer relaciones) {
+		this.relaciones = relaciones;
 	}
 
 

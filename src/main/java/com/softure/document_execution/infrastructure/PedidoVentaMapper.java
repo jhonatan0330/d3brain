@@ -10,6 +10,7 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 import com.softure.property.domain.PropiedadDTO;
+import com.softure.property.domain.RelacionInternaDTO;
 
 @SoftureSqlConnMapper(value = "PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
@@ -21,7 +22,8 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
 			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
-			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones);
+			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones,
+			@Param("pStaticRelation") List<RelacionInternaDTO> pStaticRelation);
 
 	List<String> optionsToFilterByField(@Param("usuario") String usuario, @Param("relaciones") List<String> relaciones);
 
@@ -31,7 +33,8 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("camposFiltro") List<PropiedadDTO> camposFiltro,
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
 			@Param("optionsToFilter") List<String> optionsToFilter,
-			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones);
+			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones,
+			@Param("pStaticRelation") List<RelacionInternaDTO> pStaticRelation);
 
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
 

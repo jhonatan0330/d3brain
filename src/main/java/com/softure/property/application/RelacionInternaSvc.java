@@ -42,11 +42,12 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	public RelacionInternaDTO actualizar( RelacionInternaDTO pDTO, String pToken) throws ServerException {
 		String llaveTabla = pDTO.getLlaveTabla();
 		RelacionInternaDTO _newRelation = guardar(pDTO, pToken);
-		if(_newRelation.getLlaveTabla().equals(pDTO.getLlaveTabla()))
+		if(_newRelation.getLlaveTabla().equals(llaveTabla))
 			return _newRelation;
 		RelacionInternaDTO _deleteRelation = new RelacionInternaDTO();
 		_deleteRelation.setLlaveTabla(llaveTabla);
 		inactivar(_deleteRelation, pToken);
+		relacionInternaMapper.updatePropertyRelations(pDTO.getPropiedad());
 		return pDTO;
 	}
 	
@@ -57,7 +58,9 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		bd.setUsuarioEliminacion(getUserFlex(token));
 		bd.setFechaEliminacion(new Date());
 		bd.setEstado(SharedConstants.STATE_INACTIVE);
-		return super.update(bd);
+		bd =  super.update(bd);
+		relacionInternaMapper.updatePropertyRelations(bd.getPropiedad());
+		return bd;
 	}
 	
 	
@@ -83,7 +86,9 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		if(dto.getPlantilla().compareTo(_templateOfField)!=0) throw new ServerException("La plantilla no corresponde al campo escogido");
 		
 		if(dto.getFechaInicio()==null)dto.setFechaInicio(new Date());
-		return super.guardar(dto, token);
+		dto = super.saveSimple(dto);
+		relacionInternaMapper.updatePropertyRelations(dto.getPropiedad());
+		return dto;
 	}
 
 	public List<RelacionInternaDTO> relacionesPropiedad(String propiedad)throws ServerException {
@@ -130,6 +135,8 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 				}
 				guardar(newRelation, token);
 			}
+		}else {
+			relacionInternaMapper.updatePropertyRelations(propertyIdNew);
 		}
 	}
 

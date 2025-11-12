@@ -128,23 +128,24 @@ public class TipoVinculo {
 
 	private PedidoVentaDTO generateDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken,
 			PropiedadDTO _templateId, String pDocumentToRelationMain) throws ServerException {
-		RelacionInternaDTO _relation = relationService.getFirstRelation(_templateId.getLlaveTabla(), null);
-		if (_relation == null) {
-			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " No encontramos la RELACION que identifica en campo del documento");
-		}
+		
 
 		DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
 		pPlantilla.setLlaveTabla(_templateId.getValor());
 		pPlantilla = plantillaService.obtenerCampos(pPlantilla, ptoken, false);
 
 		List<PedidoVentaCaracteristicaDTO> _newFields = new ArrayList<PedidoVentaCaracteristicaDTO>();
-		PedidoVentaCaracteristicaDTO _newField = new PedidoVentaCaracteristicaDTO();
-		_newField.setCampo(_relation.getCampo());
-		_newField.setValorOpcion(pDocumentToRelationMain);
-		//_newField.setValorText((pCampo.getPrincipal().getDescripcion() != null) ? pCampo.getPrincipal().getDescripcion()
-		//		: pCampo.getPrincipal().getNombre());
-		_newFields.add(_newField);
-
+		
+		RelacionInternaDTO _relation = relationService.getFirstRelation(_templateId.getLlaveTabla(), null);
+		if (_relation != null) {
+			PedidoVentaCaracteristicaDTO _newField = new PedidoVentaCaracteristicaDTO();
+			_newField.setCampo(_relation.getCampo());
+			_newField.setValorOpcion(pDocumentToRelationMain);
+			//_newField.setValorText((pCampo.getPrincipal().getDescripcion() != null) ? pCampo.getPrincipal().getDescripcion()
+			//		: pCampo.getPrincipal().getNombre());
+			_newFields.add(_newField);	
+		}
+		
 		if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
 			List<PropiedadDTO> _dependentsProperties = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 					Propiedades.DEPENDE);

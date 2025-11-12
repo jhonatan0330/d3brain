@@ -72,12 +72,29 @@ public class APIController {
 
 	@PostMapping(value="/guardarDocumento")
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {
-		PedidoVentaDTO result = new PedidoVentaDTO();
 		if(documento.getLlaveTabla()==null){
 			documento = saveUpdateDocumentFunction.save(documento, token, session);
 		}else{
 			documento = saveUpdateDocumentFunction.update(documento, null, token);
 		}
+		PedidoVentaDTO result = new PedidoVentaDTO();
+		result.setNombre(documento.getNombre());
+		result.setPlantilla(documento.getPlantilla());
+		result.setLlaveTabla(documento.getLlaveTabla());
+		result.setEstadoExpediente(documento.getEstadoExpediente());
+		result.setEstadoNombre(documento.getEstadoNombre());
+		result.setDescripcion(documento.getDescripcion());
+		result.setMessages(documento.getMessages());
+		return result;
+	}
+	
+	@PostMapping(value="/saveByMassive")
+	public PedidoVentaDTO saveByMassive(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {
+		//Este metodo es igual al de guardar pero debi colocar una logica del modificar
+		// La idea es despues mejorar las cargas masivas 
+		// Para almacenar el archivo y crear los registros desde el back
+		documento = saveUpdateDocumentFunction.massive(documento, token, session);
+		PedidoVentaDTO result = new PedidoVentaDTO();
 		result.setNombre(documento.getNombre());
 		result.setPlantilla(documento.getPlantilla());
 		result.setLlaveTabla(documento.getLlaveTabla());
