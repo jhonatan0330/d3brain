@@ -33,27 +33,31 @@ import jakarta.annotation.PostConstruct;
 public class DocumentoPlantillaCaracteristicaSvc
 		extends BasicSvc<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO> {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper;
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropiedadSvc parametroService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropertyGetWithCacheService cacheService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CallSearchProcessFromText searchProcessFromText;
-	
+
 	private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<String, DocumentoPlantillaCaracteristicaDTO>();
-	
 
 	@Override
 	public DocumentoPlantillaCaracteristicaDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. DocumentoPlantillaCaracteristica");
-		
+
 		DocumentoPlantillaCaracteristicaDTO _db = fieldsMap.get(llave);
-		if(_db != null) return _db;
-		
+		if (_db != null)
+			return _db;
+
 		DocumentoPlantillaCaracteristicaFilterDTO dto = new DocumentoPlantillaCaracteristicaFilterDTO();
 		dto.setLlaveTabla(llave);
 		_db = documentoPlantillaCaracteristicaMapper.consultar(dto);
@@ -70,7 +74,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		fieldsMap.clear();
 	}
 
-	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO actualizar(DocumentoPlantillaCaracteristicaDTO dto, String token)
@@ -101,11 +104,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 			throws ServerException {
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
-		//validar que el campo no se use en ninguna propiedad
+		// validar que el campo no se use en ninguna propiedad
 		clearCache();
 		return dto;
 	}
-
 
 	// Esto lo uso en APiCommon y la idea es que se mejore en las cargas masivas
 	// para que solo consulte de a uno y si es null que gestione los errores por
@@ -126,7 +128,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
 			PedidoVentaDTO addItem = new PedidoVentaDTO();
 			try {
-				String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(), iDoc.getNombre(), dtoCarga);
+				String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(),
+						iDoc.getNombre(), dtoCarga);
 				addItem.setLlaveTabla(keyOfDocument);
 			} catch (Exception e) {
 				CallDocumentCommons.addMessageError(addItem, e.getMessage());
@@ -149,9 +152,9 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCantidad = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCantidad.setPlantilla(dto.getPlantilla());
 		int cantidadCampos = contarResultados(filtroCantidad);
-		if (dto.getOrden()!=null && dto.getOrden().compareTo(0) != 0) {
+		if (dto.getOrden() != null && dto.getOrden().compareTo(0) != 0) {
 			// 2024-3 retire cantidadCampos == 0 &&
-			//Porque al duplicar algunas no aparecian correctamente quinber guias
+			// Porque al duplicar algunas no aparecian correctamente quinber guias
 			// Esto es porque cuando se crean las plantillas automaticas no cuenta
 			// correctametne la cantidad de campos ?? cuales no se si lo dane
 			cantidadCampos = dto.getOrden();
@@ -174,13 +177,13 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
 			String token) throws ServerException {
 
-		//Primero valido que no exista el campo
+		// Primero valido que no exista el campo
 		DocumentoPlantillaCaracteristicaFilterDTO filterField = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filterField.setCodigo(iCampo.getCodigo());
 		filterField.setPlantilla(templateDifferenceId);
 		DocumentoPlantillaCaracteristicaDTO newCampo = consultaUnica(filterField);
-		if(newCampo==null) {
-			
+		if (newCampo == null) {
+
 			newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
 			if (iCampo.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.INFORMATIVO) == 0) {
@@ -190,18 +193,19 @@ public class DocumentoPlantillaCaracteristicaSvc
 			}
 			newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
-			//newCampo.setObjetivo(".");
-			newCampo.setOrden(iCampo.getOrden()+1);
+			// newCampo.setObjetivo(".");
+			newCampo.setOrden(iCampo.getOrden() + 1);
 			newCampo.setPlantilla(templateDifferenceId);
 			newCampo = guardar(newCampo, token);
-	
-			//Esto lo quite por el tipo fecha pero no se exactamente porque lo tenia
-			//parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
-			//		Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
-			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, newCampo.getLlaveTabla(),
-					Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 
-		}	
+			// Esto lo quite por el tipo fecha pero no se exactamente porque lo tenia
+			// parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+			// newCampo.getLlaveTabla(),
+			// Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
+			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+					newCampo.getLlaveTabla(), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+
+		}
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, iCampo.getLlaveTabla(),
 				Propiedades.CAMPO_DIFERENCIAS, newCampo.getLlaveTabla(), token), token);
 
@@ -210,9 +214,9 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public DocumentoPlantillaCaracteristicaDTO consultaUnicaConComplementos(String id, String token)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campo = consultaXId(id);
-		//if (campo == null) {// Seguramente viende de un producto
-		//	campo = consultaUnicaProducto(id);
-		//}
+		// if (campo == null) {// Seguramente viende de un producto
+		// campo = consultaUnicaProducto(id);
+		// }
 		return cargarComplementos(campo, token);
 	}
 
@@ -222,8 +226,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		if (token != null)
 			usuario = getUserFlex(token);
 		if (campo != null)
-			campo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
-					campo.getLlaveTabla(), null, usuario));
+			campo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campo.getLlaveTabla(),
+					null, usuario));
 		return campo;
 	}
 
@@ -245,7 +249,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		List<DocumentoPlantillaCaracteristicaDTO> campos = listarCamposPlantilla(plantilla, token);
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : campos) {
 			iCampo = cargarComplementos(iCampo, token);
-			if(external) Propiedades.clearPropertiesToOut(iCampo.getPropiedades());
+			if (external)
+				Propiedades.clearPropertiesToOut(iCampo.getPropiedades());
 		}
 		return campos;
 	}
@@ -282,7 +287,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public void actualizarFiltros(String llaveTabla) throws ServerException {
 		documentoPlantillaCaracteristicaMapper.actualizarFiltros(llaveTabla);
 	}
-	
+
 	public void actualizarDescripcion(String pTemplate, String pField) throws ServerException {
 		documentoPlantillaCaracteristicaMapper.actualizarDescripcion(pTemplate, pField);
 	}
@@ -301,13 +306,13 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoNombre.setOrden(1);
 			campoNombre.setPlantilla(plantilla);
-			//campoNombre.setObjetivo("Almacenar el nombre");
 			campoNombre = guardar(campoNombre, token);
 		}
 		return campoNombre.getLlaveTabla();
 	}
-	
-	public String createField(String template, String fieldCode, String type, Integer order, String token) throws ServerException {
+
+	public String createField(String template, String fieldCode, String type, Integer order, String token)
+			throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO filter = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filter.setCodigo(fieldCode);
 		filter.setPlantilla(template);
@@ -338,7 +343,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			campoNombre.setOrden(2);
 			campoNombre.setPlantilla(plantilla);
-			//campoNombre.setObjetivo("Almacenar el id");
 			campoNombre = guardar(campoNombre, token);
 		}
 		return campoNombre.getLlaveTabla();
@@ -358,7 +362,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoTelefono.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoTelefono.setOrden(4);
 			campoTelefono.setPlantilla(plantilla);
-			//campoTelefono.setObjetivo(".");
 			campoTelefono = guardar(campoTelefono, token);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -383,7 +386,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoCorreo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoCorreo.setOrden(3);
 			campoCorreo.setPlantilla(plantilla);
-			//campoCorreo.setObjetivo(".");
 			campoCorreo = guardar(campoCorreo, token);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoCorreo.getLlaveTabla(),
@@ -393,7 +395,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		}
 		return campoCorreo.getLlaveTabla();
 	}
-	
+
 	public String crearCampoMotivo(String plantilla, String token) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
@@ -407,9 +409,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setNombre("MOTIVO");
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoNombre.setOrden(2);
-			campoNombre.setPlantilla(plantilla);;
+			campoNombre.setPlantilla(plantilla);
+			;
 			campoNombre = guardar(campoNombre, token);
-			
+
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoNombre.getLlaveTabla(),
 					Propiedades.FORMATO, "E", token);
 			prop.setPropiedadValor("PROP_01");
@@ -428,31 +431,18 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 		campoTiempo = new DocumentoPlantillaCaracteristicaDTO();
 		campoTiempo.setCodigo("FECHA");
-		campoTiempo.setNombre( (rango)?"RANGO DE FECHAS":"FECHA" );
+		campoTiempo.setNombre((rango) ? "RANGO DE FECHAS" : "FECHA");
 		campoTiempo.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);
-		//campoTiempo.setObjetivo("Contiene las fechas del reporte");
+		// campoTiempo.setObjetivo("Contiene las fechas del reporte");
 		campoTiempo = guardar(campoTiempo, token);
 
 		if (rango) {
 			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 					campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
-			// Esto lo quite porque al final para el usuario es mejor el rango que los campos separados
-			/*campoTiempoFilter.setCodigo("FECHA_FIN");
-			campoTiempoFilter.setPlantilla(plantilla);
-			DocumentoPlantillaCaracteristicaDTO campoTiempoFinal = consultaUnica(campoTiempoFilter);
-			if (campoTiempoFinal != null)
-				return campoTiempo.getLlaveTabla();
-
-			campoTiempoFinal = new DocumentoPlantillaCaracteristicaDTO();
-			campoTiempoFinal.setCodigo("FECHA_FIN");
-			campoTiempoFinal.setNombre("FECHA FINAL");
-			campoTiempoFinal.setFormato(DocumentoPlantillaCaracteristicaDTO.FECHA);
-			campoTiempoFinal.setOrden(2);
-			campoTiempoFinal.setPlantilla(plantilla);
-			//campoTiempo.setObjetivo("Contiene las fechas del reporte");
-			campoTiempoFinal = guardar(campoTiempoFinal, token);*/
+			// Esto lo quite porque al final para el usuario es mejor el rango que los
+			// campos separados
 		}
 
 		return campoTiempo.getLlaveTabla();
@@ -465,7 +455,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
 		campoProceso.setOrden(1);
 		campoProceso.setPlantilla(plantilla);
-		//campoProceso.setObjetivo(".");
 		campoProceso = guardar(campoProceso, token);
 
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -481,7 +470,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoValor.setNombre("VALOR");
 		campoValor.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 		campoValor.setPlantilla(plantilla);
-		//campoValor.setObjetivo("Define el valor total del documento");
+		// campoValor.setObjetivo("Define el valor total del documento");
 		campoValor = guardar(campoValor, token);
 		return campoValor.getLlaveTabla();
 	}
@@ -489,7 +478,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public DocumentoPlantillaCaracteristicaDTO consultaXIdProducto(String llave) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO newP = null;
 		if (!llave.startsWith("***")) {
-			//newP = consultaUnicaProducto(llave);
+			// newP = consultaUnicaProducto(llave);
 			newP = consultaXId(llave);
 		} else {
 			newP = new DocumentoPlantillaCaracteristicaDTO();
@@ -506,7 +495,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 	public List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(List<String> process) {
 		return documentoPlantillaCaracteristicaMapper.getFullToSynchronize(process);
 	}
-	
 
 	public int countFieldsVinculo(String pTemplate) throws ServerException {
 		if (pTemplate == null)
@@ -514,6 +502,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCampo.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroCampo.setPlantilla(pTemplate);
+		filtroCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.VINCULO);
 		return super.contarResultados(filtroCampo);
 	}
 

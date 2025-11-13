@@ -173,9 +173,9 @@ public class PropertyGetWithCacheService {
 	
 	}
 
-	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD( List<DocumentoPlantillaDTO> plantillas, String pProfile)
+	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD( List<DocumentoPlantillaDTO> plantillas, String pProfile, String pUser)
 			throws ServerException {
-		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas, pProfile);
+		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas, pProfile, pUser);
 	}
 
 	public List<PropiedadDTO> obtenerEspecialFullPermisos( String plantilla) throws ServerException {

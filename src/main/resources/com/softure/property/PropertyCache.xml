@@ -161,8 +161,12 @@
     
     <select id="obtenerEspecialFullPermisosSimplificandoBD" resultType="PropiedadDTO">
         <include refid="selectPropiedadFragment" />
-        where cppd_tipo = 'L' and cppd_estado = 'A' and cppd_rol is null
+        where cppd_tipo = 'L' and cppd_estado = 'A'
         	and cppd_campo in (<foreach item="item"  separator="," collection="plantillas" >#{item.llaveTabla}</foreach>)
+        	and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{user}))
+            and (cppd_rolExcluyente is null or cppd_rolExcluyente in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{user}))
+            and (cppd_usuario is null or cppd_usuario = #{user})
+            and (cppd_usuarioExcluyente is null or cppd_usuarioExcluyente = #{user})
         union
         select
              null as  llaveTabla

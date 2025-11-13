@@ -2,7 +2,6 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
-// BEGIN region interImport
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,7 +32,6 @@ import com.softure.report.domain.ReporteBaseDTO;
 import com.softure.java.services.SoftureUtil;
 
 import jakarta.annotation.PostConstruct;
-// END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 
 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
@@ -117,7 +115,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token, boolean external)throws ServerException{
-		// BEGIN region obtenerCampos
 		if(dto==null) return null;
 		dto.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token, external));
 		int order = 0;
@@ -139,7 +136,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			if(!modificar) Propiedades.retirarPropiedad(campo, Propiedades.PERMISO_CAMPO_MODIFICABLE);
 		}
 		return dto;
-		// END region obtenerCampos
 	}
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public DocumentoPlantillaDTO duplicar(DocumentoPlantillaDTO dto, String token)throws ServerException{
@@ -352,20 +348,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		configuracionSvc.guardar(historico, token);
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 				templateUpdate.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
-		/*List<PropiedadDTO> updatePermission = configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, templateReferenceId, Propiedades.PERMISO_PLANTILLA_MODIFICAR, token);
-		for (PropiedadDTO propiedadDTO : updatePermission) {
-			PropiedadDTO parametroTipo = new PropiedadDTO();
-			parametroTipo.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
-			parametroTipo.setCampo(templateUpdate.getLlaveTabla());
-			parametroTipo.setKey(Propiedades.PERMISO_PLANTILLA_CREAR);
-			parametroTipo.setValor("1");
-			parametroTipo.setRol(propiedadDTO.getRol());
-			parametroTipo.setRolExcluyente(propiedadDTO.getRol());
-			parametroTipo.setBloqueo(propiedadDTO.getBloqueo());
-			parametroTipo.setUsuario(propiedadDTO.getUsuario());
-			parametroTipo.setUsuarioExcluyente(propiedadDTO.getUsuarioExcluyente());
-			configuracionSvc.guardar(propiedadDTO, token);
-		}*/
 		return templateUpdate;
 	}
 	
@@ -417,8 +399,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null, null);
 			
 			List<PropiedadDTO> todasPropiedadesEvitandoConsultaBD = null;
-			if(pProfile!=null) {
-				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas, pProfile);
+			// Aqui colqoue la restriccion, se supone que siempre viene perfil con un usuario
+			if(pProfile!=null && _user != null) {
+				todasPropiedadesEvitandoConsultaBD = cacheService.obtenerEspecialFullPermisosSimplificandoBD( plantillasPermitidas, pProfile, _user);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			}else {
 				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar( plantillasPermitidas, _user);

@@ -45,9 +45,11 @@ public class TipoVinculo {
 	@Autowired
 	@Lazy
 	private CallDocumentCRUD crudService;
-	@Autowired @Lazy 
+	@Autowired 
+	@Lazy 
 	private CallDocumentListBySQLFunction sqlFunctionService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy 
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
@@ -199,8 +201,9 @@ public class TipoVinculo {
 		if (bd == null)
 			return null;
 		
+		//Si esta anulado no lo gestiono para eliminarlo
 		PedidoVentaDTO document = documentService.consultaXId(bd.getValorOpcion());
-		if(document.getEstado().compareTo(SharedConstants.STATE_ACTIVE)==0)
+		if(document.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0)
 			return null;
 		
 		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
