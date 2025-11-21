@@ -144,6 +144,10 @@ public class CallDocumentCRUD {
 	@Autowired
 	@Lazy
 	private TipoVinculo tipoVinculoService;
+	
+	@Autowired
+	@Lazy
+	private CallUpdateByRelations createUpdateByRelationFields;
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaDTO massive(PedidoVentaDTO pDocument, String pToken, String pSession) throws ServerException {
@@ -498,6 +502,7 @@ public class CallDocumentCRUD {
 			}
 		}
 		pedido.setCaracteristicas(saveInternalFields(dto, token));
+		createUpdateByRelationFields.call(this, pedido, token);
 		if (dto.getDinero() != null && pedido.getDinero() == null)
 			pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
 		// Al crear un documento que va a un API se estaba ejecutando el api y despues
@@ -1199,5 +1204,7 @@ public class CallDocumentCRUD {
 	private String getUserID(String token) throws ServerException {
 		return pedidoService.getUserFlex(token);
 	}
+	
+	
 
 }

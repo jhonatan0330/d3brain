@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -27,13 +28,17 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoNumero {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
-		// System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
+		// System.out.format("\n[%s - %s] Validando.....",
+		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		PropiedadDTO bloqProperty = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 				Propiedades.PERMISO_CAMPO_BLOQUEAR);
 		String formula = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.NUMERO_FORMULA);
@@ -44,16 +49,17 @@ public class TipoNumero {
 				BigDecimal valorCalculado = calcular(pCampo, formula.toUpperCase());
 				pCampo.setValorNumero(valorCalculado);
 			} else {
-				if (funcionCalculo!= null) {
-					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
-							funcionCalculo, pCampo.getDocumento(), token, pCampo.getDependientes());
-					if(valorCalculado==null) valorCalculado = BigDecimal.ZERO;
+				if (funcionCalculo != null) {
+					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
+							pCampo.getDocumento(), token, pCampo.getDependientes());
+					if (valorCalculado == null)
+						valorCalculado = BigDecimal.ZERO;
 					pCampo.setValorNumero(valorCalculado);
 				} else {
 					pCampo.setValorNumero(BigDecimal.ZERO);
 				}
 			}
-			
+
 		} else {
 			if (!formula.isEmpty()) {
 				if (pCampo.getModificado()) {
@@ -65,7 +71,8 @@ public class TipoNumero {
 						BigDecimal valorCalculado = calcular(pCampo, formula);
 						BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 						if (diferencia.abs().longValue() > 1)
-							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 									+ " no se calculo correctamente, valor esperado : ("
 									+ SoftureUtil.formatMoney(valorCalculado) + ") y se recibe ("
 									+ SoftureUtil.formatMoney(pCampo.getValorNumero()) + ")");
@@ -76,7 +83,7 @@ public class TipoNumero {
 				}
 			}
 			// Valido que se calcule bien la funcion
-			
+
 			if (bloqProperty != null && funcionCalculo != null) {
 				// Dividi el tema del depende ya que siempre tengo que calcular el valor sin
 				// necesidad del depende
@@ -86,8 +93,8 @@ public class TipoNumero {
 						if (pCampo.getLlaveTabla() == null
 								|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 										Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
-							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(
-									funcionCalculo, pCampo.getDocumento(), token, pCampo.getDependientes());
+							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
+									pCampo.getDocumento(), token, pCampo.getDependientes());
 							// Algunas funciones no traen el valor del cero
 							if (valorCalculado == null)
 								valorCalculado = BigDecimal.ZERO;
@@ -124,10 +131,11 @@ public class TipoNumero {
 					throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
 							+ " no se puede modificar, valor esperado : " + SoftureUtil.formatMoney(BigDecimal.ZERO));
 			} else {
-				if (pCampo.getValorNumero().compareTo(bd.getValorNumero()) != 0)
+				if (!isUpdateAutomatic && pCampo.getValorNumero().compareTo(bd.getValorNumero()) != 0)
 					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-							+ "El campo " + pCampo.getCampoDTO().getNombre() + " no se puede modificar, valor esperado : "
-									+ SoftureUtil.formatMoney(bd.getValorNumero()) + " y se envia " + SoftureUtil.formatMoney(pCampo.getValorNumero()));
+							+ "El campo " + pCampo.getCampoDTO().getNombre()
+							+ " no se puede modificar, valor esperado : " + SoftureUtil.formatMoney(bd.getValorNumero())
+							+ " y se envia " + SoftureUtil.formatMoney(pCampo.getValorNumero()));
 			}
 		}
 
@@ -138,9 +146,9 @@ public class TipoNumero {
 				roundInt = Integer.parseInt(roundNumber);
 			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));
 		} catch (NumberFormatException e) {
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-					+ " El campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-					+ pCampo.getCampoDTO().getCodigo() + ") en la propiedad redondeo tiene el siguiente error :" + e.getMessage());
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " El campo "
+					+ pCampo.getCampoDTO().getNombre() + "(codigo : " + pCampo.getCampoDTO().getCodigo()
+					+ ") en la propiedad redondeo tiene el siguiente error :" + e.getMessage());
 		}
 
 		// Validar minimo y maximo
@@ -185,9 +193,10 @@ public class TipoNumero {
 				&& (Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE) == null
 						|| Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 								Propiedades.FUNCION_NUMBER_ALL_CALCULATE_SAVE) != null)) {
-			if(pCampo.getDependientes()==null) pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo,
-					pCampo.getDocumento(), token, pCampo.getDependientes()));
+			if (pCampo.getDependientes() == null)
+				pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
+			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), token,
+					pCampo.getDependientes()));
 			if (pCampo.getValorNumero() == null)
 				pCampo.setValorNumero(BigDecimal.ZERO);
 			formatText(pCampo);
@@ -236,18 +245,23 @@ public class TipoNumero {
 			if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
 				throw new ServerException("Revise los dependientes del campo " + pCampo.getCampoDTO().getNombre());
 			for (PedidoVentaCaracteristicaDTO iterable : pCampo.getDependientes()) {
-				//Esto lo borre poreque n box una calculo automatico hacia que el valor se colcoara en cero por dependiente y no se autocalculaba
-				//if (iterable.getValorNumero() == null)	iterable.setValorNumero(BigDecimal.ZERO);
+				// Esto lo borre poreque n box una calculo automatico hacia que el valor se
+				// colcoara en cero por dependiente y no se autocalculaba
+				// if (iterable.getValorNumero() == null)
+				// iterable.setValorNumero(BigDecimal.ZERO);
 				if (iterable.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 					// Esta aprte fue para fenix para calcular valores internos de los productos
 					if (iterable.getDetalles() != null && !iterable.getDetalles().isEmpty()) {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
 						for (DetallePedidoVentaDTO iDetalle : iterable.getDetalles()) {
 							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
-							if (iDetalle.getDocumentoDetalle() !=null && iDetalle.getDocumentoDetalle().getCaracteristicas() != null && !iDetalle.getDocumentoDetalle().getCaracteristicas().isEmpty()
-									&& (iDetalle.getEstado() == null || iDetalle.getEstado()
-											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
-								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getDocumentoDetalle().getCaracteristicas()) {
+							if (iDetalle.getDocumentoDetalle() != null
+									&& iDetalle.getDocumentoDetalle().getCaracteristicas() != null
+									&& !iDetalle.getDocumentoDetalle().getCaracteristicas().isEmpty()
+									&& (iDetalle.getEstado() == null
+											|| iDetalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
+								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getDocumentoDetalle()
+										.getCaracteristicas()) {
 									if (iCaracteristica.getCampoDTO() == null)
 										iCaracteristica.setCampoDTO(
 												caracteristicaService.consultaXIdProducto(iCaracteristica.getCampo()));
@@ -255,7 +269,7 @@ public class TipoNumero {
 											+ iCaracteristica.getCampoDTO().getCodigo();
 									BigDecimal acumulado = valoresDetallesCampo.get(code);
 									BigDecimal valorNumero = iCaracteristica.getValorNumero();
-									if(valorNumero == null) {
+									if (valorNumero == null) {
 										valorNumero = BigDecimal.ZERO;
 									}
 									if (acumulado == null) {
@@ -280,26 +294,29 @@ public class TipoNumero {
 						for (PedidoVentaDTO iDetalle : iterable.getExpedientes()) {
 							// Aveces vienen inactivos y esos no toca tenerlos en cuenta
 							if (iDetalle.getCaracteristicas() != null && !iDetalle.getCaracteristicas().isEmpty()
-									&&iDetalle.getDinero()!=null && (iDetalle.getEstado() == null || iDetalle.getEstado()
-											.compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
+									&& iDetalle.getDinero() != null && (iDetalle.getEstado() == null
+											|| iDetalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
 								for (PedidoVentaCaracteristicaDTO iCaracteristica : iDetalle.getCaracteristicas()) {
-									if(iCaracteristica.getValorText()!=null) {
+									if (iCaracteristica.getValorText() != null) {
 										if (iCaracteristica.getCampoDTO() == null)
 											iCaracteristica.setCampoDTO(
 													caracteristicaService.consultaXId(iCaracteristica.getCampo()));
 										String code = iterable.getCampoDTO().getCodigo() + "_";
-										if (iCaracteristica.getCampoDTO().getCodigo()==null) {
-											code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampo()) + "_";	
-										}else {
-											code = code	+ SoftureUtil.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_" ;
+										if (iCaracteristica.getCampoDTO().getCodigo() == null) {
+											code = code + SoftureUtil.formatFunction(iCaracteristica.getCampo()) + "_";
+										} else {
+											code = code + SoftureUtil
+													.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_";
 										}
-										code = code	+ SoftureUtil.formatFunction( iCaracteristica.getValorText()).toUpperCase();
+										code = code + SoftureUtil.formatFunction(iCaracteristica.getValorText())
+												.toUpperCase();
 										BigDecimal acumulado = valoresDetallesCampo.get(code);
 										if (acumulado == null) {
 											valoresDetallesCampo.put(code, iDetalle.getDinero().getValorTotal());
 										} else {
-											valoresDetallesCampo.put(code, acumulado.add(iDetalle.getDinero().getValorTotal()));
-										}	
+											valoresDetallesCampo.put(code,
+													acumulado.add(iDetalle.getDinero().getValorTotal()));
+										}
 									}
 								}
 							}
@@ -313,7 +330,7 @@ public class TipoNumero {
 					}
 				}
 				formula = StringUtils.replace(formula, iterable.getCampoDTO().getCodigo(),
-						(iterable.getValorNumero()==null)?"0":iterable.getValorNumero().toPlainString());
+						(iterable.getValorNumero() == null) ? "0" : iterable.getValorNumero().toPlainString());
 			}
 		}
 		// Me aparecian errores porque los numeros incluian espacios
@@ -322,7 +339,8 @@ public class TipoNumero {
 		try {
 			return CalculatorUtil.calcular(formula);
 		} catch (Exception e) {
-			throw new ServerException( "El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " tiene el siguiente error : " +e.getMessage());
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
+					+ pCampo.getCampoDTO().getPlantillaNombre() + " tiene el siguiente error : " + e.getMessage());
 		}
 	}
 
@@ -333,7 +351,8 @@ public class TipoNumero {
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.NUMERO_FUNCION_SQL);
 		if (funcionCalculo != null) {
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
-			//Este ordenar esta como repetido porque en calcularNumeroFuncion tambiens e usa
+			// Este ordenar esta como repetido porque en calcularNumeroFuncion tambiens e
+			// usa
 			List<PedidoVentaCaracteristicaDTO> newDependientes = campoService
 					.ordenarAlfabeticaDepende(pCampo.getDependientes());
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
@@ -344,17 +363,17 @@ public class TipoNumero {
 				}
 			}
 			try {
-				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo,
-						pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes));
+				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
+						pCampo.getSecurityToken(), newDependientes));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}
-			if(pCampo.getValorNumeroMax()==null) pCampo.setValorNumeroMax(BigDecimal.ZERO);
-			
-			
+			if (pCampo.getValorNumeroMax() == null)
+				pCampo.setValorNumeroMax(BigDecimal.ZERO);
+
 		}
 		// Es apra evitar enviar mucha informacion en el response
-		//pCampo.setCampoDTO(pBase);
+		// pCampo.setCampoDTO(pBase);
 		pCampo.setCampoDTO(null);
 		pCampo.setDependientes(null);
 		return pCampo;

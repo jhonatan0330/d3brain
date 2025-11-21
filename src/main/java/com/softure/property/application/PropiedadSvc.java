@@ -77,52 +77,74 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
 
-	@Autowired @Lazy PropiedadMapper propiedadMapper;
+	@Autowired
+	@Lazy
+	PropiedadMapper propiedadMapper;
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CatalogService catalogService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private MensajePlantillaCorreoSvc mensajeService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcesoSvc procesoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcesoEstadoSvc estadoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcesoTransicionSvc transicionService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcesoTransicionAutomaticaSvc automatizadorService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProductoSvc productoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropiedadValorDefinidoSvc valorDefinidoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private TarifarioService tarifarioService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ReporteBaseSvc reporteService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private RolAccesoSvc rolService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private UsuarioSvc usuarioService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private WebServiceSvc apiService;
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private HomologateAdapterService homologateService;
-	
-	@Autowired @Lazy 
+
+	@Autowired
+	@Lazy
 	private JasperReportCache reportCacheService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcessTemplate templatesService;
-	
-	@Autowired @Lazy
+
+	@Autowired
+	@Lazy
 	private PropertyGetWithCacheService cacheService;
-	
+
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
@@ -146,14 +168,14 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		PropiedadDTO inactivo = new PropiedadDTO();
 		inactivo.setLlaveTabla(llaveTabla);
 		inactivar(inactivo, token);
-		//cacheService.clearProperties(); ya lo trae el guardar
+		// cacheService.clearProperties(); ya lo trae el guardar
 		return dto;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PropiedadDTO inactivar(PropiedadDTO dto, String token) throws ServerException {
-		if(!rolService.usuarioPermisosCompletos(token))
+		if (!rolService.usuarioPermisosCompletos(token))
 			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
 		PropiedadDTO bd = consultaXId(dto.getLlaveTabla());
 		bd.setUsuarioEliminacion(getUserFlex(token));
@@ -187,10 +209,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				break;
 			case Propiedades.DISPONIBILIDAD_FUNCION_SQL:
 			case Propiedades.FECHA_FUNCION_SQL:
-			case Propiedades.SECCION_FUNCION_SQL:	
+			case Propiedades.SECCION_FUNCION_SQL:
 			case Propiedades.NUMERO_FUNCION_SQL:
-				if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
-					propiedadMapper.eliminarFuncionNumerica(dto);					
+				if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+					propiedadMapper.eliminarFuncionNumerica(dto);
 				}
 				break;
 			case Propiedades.GENERA_DOCUMENTO_FUNCION_SQL:
@@ -203,7 +225,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 			case Propiedades.TEMPLATE_MESSAGE_SQL:
 			case Propiedades.FUNCION_SQL_NEW_ANTES:
-				if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+				if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
 					propiedadMapper.eliminarFuncionPrevalidacion(dto);
 				}
 				break;
@@ -229,7 +251,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		cacheService.clearProperties();
 		return bd;
 	}
-
 
 	private String getLocationError(String type, String fieldId) throws ServerException {
 		switch (type) {
@@ -266,10 +287,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setKey(valorDefinido.getCodigo());
 		if (dto.getValor() != null)
 			dto.setValor(SoftureUtil.cleanStartEndSpaces(dto.getValor()));
-		if(!rolService.usuarioPermisosCompletos(token))
+		if (!rolService.usuarioPermisosCompletos(token))
 			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
 
-		if(dto.getMotivo()!=null && dto.getMotivo().isEmpty()) dto.setMotivo(null);
+		if (dto.getMotivo() != null && dto.getMotivo().isEmpty())
+			dto.setMotivo(null);
 		if (valorDefinido.getMultiple()) {
 			PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
 			existeFilter.setCampo(dto.getCampo());
@@ -282,10 +304,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			existeFilter.setUsuarioExcluyente(dto.getUsuarioExcluyente());
 			existeFilter.setMotivo(dto.getMotivo());
 			List<PropiedadDTO> existe = listarConsulta(existeFilter);
-			if (existe != null && existe.size()>1)
+			if (existe != null && existe.size() > 1)
 				throw new ServerException(
 						"Cuando se repiten propiedades multiples se necesita tener un motivo que la describa "
-								+ existe.get(0).getNombre() + getLocationError(existe.get(0).getTipo(), existe.get(0).getCampo()));
+								+ existe.get(0).getNombre()
+								+ getLocationError(existe.get(0).getTipo(), existe.get(0).getCampo()));
 		}
 		if (valorDefinido.getSolicitaMotivo() && dto.getMotivo() == null)
 			throw new ServerException("La propiedad necesita tener motivo. \n" + valorDefinido.getNombre()
@@ -346,8 +369,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.SECCION_FUNCION_SQL:
 				case Propiedades.NUMERO_FUNCION_SQL:
-					if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
-						propiedadMapper.crearFuncionNumerica(dto);	
+					if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+						propiedadMapper.crearFuncionNumerica(dto);
 					}
 					break;
 				case Propiedades.FECHA_FUNCION_SQL:
@@ -371,8 +394,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
 					break;
 				case Propiedades.FUNCION_SQL_PREVALIDATE_API:
-					if(Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
-						propiedadMapper.crearFuncionPrevalidateAPI(dto);	
+					if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+						propiedadMapper.crearFuncionPrevalidateAPI(dto);
 					}
 					break;
 				default:
@@ -382,8 +405,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 			if (dto.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0)
 				propiedadMapper.crearFuncionFiltros(dto);
-			//if (dto.getKey().compareTo(Propiedades.PLANTILLA_MONITOR) == 0)
-				//createAccountService.call(dto.getValor(), dto.getCampo(), null);
+			// if (dto.getKey().compareTo(Propiedades.PLANTILLA_MONITOR) == 0)
+			// createAccountService.call(dto.getValor(), dto.getCampo(), null);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de SQL : " + dto.getMotivo());
 		}
@@ -425,11 +448,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		boolean createDocument = false;// Es una ayudita porque se creaban 2 veces los campos diferencias
 		if (dto.getValor().compareTo("*") == 0) {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
-				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token, "DELETE");
+				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
+						"DELETE");
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0) {
-				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token, "ACTIVATE");
+				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
+						"ACTIVATE");
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.REPORT_MODULE_REFERENCE) == 0) {
@@ -442,8 +467,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				createDocument = true;
 			}
 		}
-		
-		
+
 		DocumentoPlantillaDTO plantilla = buscarPlantilla(dto.getValor());
 		if (plantilla == null)
 			throw new ServerException(
@@ -545,8 +569,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						plantillaId = filtro.getPlantilla();
 					}
 				} else {
-					
-					switch(dto.getKey()) {
+
+					switch (dto.getKey()) {
 					case Propiedades.CAMPO_DIFERENCIAS: {
 						// Obtengo la plantilla para que la busqueda sea correcta
 						PropiedadDTO filtroPlantilla = getPropertyDifferenceTemplate(
@@ -577,7 +601,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 			}
 			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.PLANTILLA) == 0) {
-				switch(dto.getKey()) {
+				switch (dto.getKey()) {
 				case Propiedades.PRODUCTO_CAMPO_VALOR_MINIMO:
 				case Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO:
 				case Propiedades.PRODUCTO_CAMPO_CANTIDAD:
@@ -597,7 +621,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				}
 				}
 			}
-				
+
 			if (dto.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION) == 0)
 				plantillaId = transicionService.consultaXId(dto.getCampo()).getPlantilla();
 			if (plantillaId == null)
@@ -608,19 +632,19 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				if (producto == null) {
 					throw new ServerException("ID de la plantilla configurado en el campo no es valido");
 				} else {
-					//ProductoCaracteristicaFilterDTO campoProductoFilter = new ProductoCaracteristicaFilterDTO();
-					//campoProductoFilter.setEstado(SharedConstants.STATE_ACTIVE);
-					//campoProductoFilter.setBase(producto.getLlaveTabla());
-					//campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
-					//ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService
-					//		.consultaUnica(campoProductoFilter);
-					//if (campoProducto == null)
-						throw new ServerException("El campo " + dto.getTexto() + " no fue reconocido en el producto "
-								+ producto.getNombre() + "\nKey : " + dto.getKey() + "\nValue Code : "
-								+ dto.getValor());
-						//dto.setValor(campoProducto.getLlaveTabla());
-						//dto.setTexto(campoProducto.getNombre());
-						//return false;
+					// ProductoCaracteristicaFilterDTO campoProductoFilter = new
+					// ProductoCaracteristicaFilterDTO();
+					// campoProductoFilter.setEstado(SharedConstants.STATE_ACTIVE);
+					// campoProductoFilter.setBase(producto.getLlaveTabla());
+					// campoProductoFilter.setCodigo(dto.getValor().toUpperCase());
+					// ProductoCaracteristicaDTO campoProducto = productoCaracteristicaService
+					// .consultaUnica(campoProductoFilter);
+					// if (campoProducto == null)
+					throw new ServerException("El campo " + dto.getTexto() + " no fue reconocido en el producto "
+							+ producto.getNombre() + "\nKey : " + dto.getKey() + "\nValue Code : " + dto.getValor());
+					// dto.setValor(campoProducto.getLlaveTabla());
+					// dto.setTexto(campoProducto.getNombre());
+					// return false;
 				}
 			}
 			// VAlido por el nombre
@@ -653,7 +677,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		return consultaUnica(filtro);
 	}
-	
+
 	public PropiedadDTO getProductTemplate(String templateId) throws ServerException {
 		PropiedadFilterDTO filtro = new PropiedadFilterDTO();
 		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
@@ -672,7 +696,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		PropiedadDTO filtroPlantilla = consultaUnica(filtro);
 		return filtroPlantilla;
 	}
-
 
 	private void identificadorProducto(PropiedadDTO dto) throws ServerException {
 		ProductoDTO producto = productoService.consultaXId(dto.getValor());
@@ -749,13 +772,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			_processFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			_process = procesoService.consultaUnica(_processFilter);
 			if (_process == null)
-				throw new ServerException(
-						"No se encontro proceso con Id, nombre o Codigo que concuerde");
+				throw new ServerException("No se encontro proceso con Id, nombre o Codigo que concuerde");
 		}
 		dto.setValor(_process.getLlaveTabla());
 		dto.setTexto(_process.getNombre());
 	}
-	
+
 	private void identificadorReporte(PropiedadDTO dto) throws ServerException {
 		ReporteBaseDTO reporte = reporteService.consultaXId(dto.getValor());
 		if (reporte == null) {
@@ -823,15 +845,16 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		} else {
 			if (dto.getValor().compareTo("+") == 0) {
 				dto.setTexto("PUENTE");
-			}else {
+			} else {
 				dto.setTexto(null);
 				String[] plantillas = dto.getValor().split(";");
 				String valorFinal = null;
 				for (String iPlantilla : plantillas) {
 					DocumentoPlantillaDTO filtro = buscarPlantilla(iPlantilla);
 					if (filtro == null)
-						throw new ServerException("Codigo de la plantilla configurado en el campo no es valido.\nNombre : "
-								+ iPlantilla + "\nPropiedad : " + dto.getKey());
+						throw new ServerException(
+								"Codigo de la plantilla configurado en el campo no es valido.\nNombre : " + iPlantilla
+										+ "\nPropiedad : " + dto.getKey());
 					if (dto.getTexto() == null) {
 						dto.setTexto(filtro.getNombre());
 						valorFinal = filtro.getCodigo();
@@ -840,8 +863,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						valorFinal = valorFinal + ";" + filtro.getCodigo();
 					}
 				}
-				dto.setValor(valorFinal);	
-			}			
+				dto.setValor(valorFinal);
+			}
 		}
 		return false;
 	}
@@ -880,7 +903,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.CAMPO_DIFERENCIAS:
 		case Propiedades.DISPONIBILIDAD_CROQUIS:
 		case Propiedades.MODIFICAR_CAMPO:
-		case Propiedades.DEPENDE: 
+		case Propiedades.DEPENDE:
 		case Propiedades.FECHA_MAXIMA_CAMPO:
 		case Propiedades.FECHA_MINIMA_CAMPO:
 		case Propiedades.GENERA_DOCUMENTO_CAMPO:
@@ -901,7 +924,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PLANTILLA_FECHA_FINAL:
 		case Propiedades.PLANTILLA_FECHA_INICIO:
 		case Propiedades.PLANTILLA_IMAGEN:
-		case Propiedades.RESPONSABLE: 
+		case Propiedades.RESPONSABLE:
 		case Propiedades.INFORMATIVE_DATA: {
 			return identificadorCampo(dto, token);
 		}
@@ -1080,7 +1103,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	private void identificadorApi(PropiedadDTO dto, String token) throws ServerException {
-		
+
 		WebServiceDTO bd = apiService.consultaXId(dto.getValor());
 		// Si es actualizar valido por el id
 		if (bd == null) {
@@ -1114,12 +1137,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			validarFuncion(pPropiedad, documento, modificador, token);
 		}
 	}
-	
+
 	public String templateNotifications(String pPropertyId, List<PedidoVentaCaracteristicaDTO> campos, String documento,
 			String token) throws ServerException {
 		String _result = null;
 		try {
-			_result =  propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(pPropertyId),
+			_result = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(pPropertyId),
 					documento, token, campos);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
@@ -1160,22 +1183,25 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				String extractionsWithEnd = extractions;
 				if (extractionsWithEnd != null)
 					extractionsWithEnd = extractionsWithEnd + ";;";
-				if(Propiedades.isFunctionNotFreeMarker(pPropiedad.getValor())) {
-					propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()), document,
-							editor, extractionsWithEnd);	
+				if (Propiedades.isFunctionNotFreeMarker(pPropiedad.getValor())) {
+					propiedadMapper.funcionPrevalidateAPI(SoftureUtil.formatFunction(pPropiedad.getLlaveTabla()),
+							document, editor, extractionsWithEnd);
 				} else {
 					String parameters = extractionsWithEnd;
-					/*for (PedidoVentaCaracteristicaDTO iProp : extractionsWithEnd) {
-						parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo() + SharedConstants.IGUAL;
-						
-						if(iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
-							parameters = parameters + ((iProp.getValorNumero()==null)?"0":iProp.getValorNumero().toString());
-						}else {
-							parameters = parameters + ((iProp.getValorText()==null)?"0":iProp.getValorText());
-						}
-					}*/
+					/*
+					 * for (PedidoVentaCaracteristicaDTO iProp : extractionsWithEnd) { parameters =
+					 * parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" +
+					 * iProp.getCampoDTO().getCodigo() + SharedConstants.IGUAL;
+					 * 
+					 * if(iProp.getCampoDTO().getFormato().compareTo(
+					 * DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) { parameters = parameters +
+					 * ((iProp.getValorNumero()==null)?"0":iProp.getValorNumero().toString()); }else
+					 * { parameters = parameters +
+					 * ((iProp.getValorText()==null)?"0":iProp.getValorText()); } }
+					 */
 					String _result = templatesService.generateOutputFile(pPropiedad.getValor(), parameters);
-					if (_result!= null && _result.isEmpty()) return null;
+					if (_result != null && _result.isEmpty())
+						return null;
 					return _result;
 				}
 			} catch (Exception se) {
@@ -1204,19 +1230,19 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (respuestaValidacion.compareTo("S") != 0)
 			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo());
 	}
-	
-	public String validarFuncionSQL2(PropiedadDTO dto, String template, String token)throws ServerException {
+
+	public String validarFuncionSQL2(PropiedadDTO dto, String template, String token) throws ServerException {
 		String respuestaValidacion = null;
 		try {
-			respuestaValidacion = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(dto.getLlaveTabla()),
-					template, token, null);
+			respuestaValidacion = propiedadMapper.funcionPrevalidacionPlantillaReturnString(
+					SoftureUtil.formatFunction(dto.getLlaveTabla()), template, token, null);
 		} catch (UncategorizedSQLException e) {
 			throw new ServerException(e.getLocalizedMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
-		return respuestaValidacion;		
-		
+		return respuestaValidacion;
+
 	}
 
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token)
@@ -1381,8 +1407,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			return "PROCESO";
 		case PropiedadValorDefinidoDTO.REPORTE:
 			return "REPORTE";
-		case PropiedadValorDefinidoDTO.SERVIDOR:
-			return "SERVIDOR";
 		case PropiedadValorDefinidoDTO.TRANSICION:
 			ProcesoTransicionDTO bdTR = transicionService.consultaXId(propiedad.getCampo());
 			return "TRANSICION : " + bdTR.getNombre().toLowerCase() + " \n PROCESO: "
@@ -1422,22 +1446,22 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		PropiedadFilterDTO existeFilter = new PropiedadFilterDTO();
 		existeFilter.setCampo(dto.getCampo());
 		if (dto.getPropiedadValor() == null)
-			existeFilter.setPropiedadValor(
-					consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
+			existeFilter.setPropiedadValor(consultarValorDefinido(dto.getTipo(), dto.getKey()).getLlaveTabla());
 		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		existeFilter.setKey(dto.getKey());
 		existeFilter.setTipo(dto.getTipo());
 		List<PropiedadDTO> _actualProperties = listarConsulta(existeFilter);
 		if (_actualProperties == null || _actualProperties.isEmpty()) {
 			guardar(dto, token);
-		}else {
-			//No se si crear la validacion
-			//if(_actualProperties.size()>1)
-				//throw new ServerException("Esta propiedad esta doble" + dto.getKey() );
+		} else {
+			// No se si crear la validacion
+			// if(_actualProperties.size()>1)
+			// throw new ServerException("Esta propiedad esta doble" + dto.getKey() );
 		}
-		/*PropiedadDTO existe = consultaUnica(existeFilter);
-		if (existe == null)
-			guardar(dto, token);*/
+		/*
+		 * PropiedadDTO existe = consultaUnica(existeFilter); if (existe == null)
+		 * guardar(dto, token);
+		 */
 	}
 
 }

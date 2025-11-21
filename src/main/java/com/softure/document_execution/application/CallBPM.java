@@ -414,7 +414,7 @@ public class CallBPM {
 						expedienteTransicionService.consultarProceso(procesoDTO.getPlantilla()));
 			}
 			maquinaEstados = hmap.get(procesoDTO.getPlantilla());
-			if (procesoDTO.getEstado() == null) {
+			if (procesoDTO.getEstado() == null || procesoDTO.getEstadoExpediente()!=null) {
 				// Lo empece en documentos con maquina de estados y sin maquina de estados
 				// La idea es que no toque hacer bpm para que modifique otro documento
 				// Esto lo tuve que hacer en logimax para un cilo que se generaba de

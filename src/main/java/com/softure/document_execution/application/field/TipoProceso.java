@@ -37,13 +37,10 @@ import com.softure.money.domain.MovimientoFilterDTO;
 import com.softure.money.domain.TurnoDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
-import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.PropertyGetWithCacheService;
-import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
-import com.softure.property.domain.RelacionInternaDTO;
 
 @Component
 public class TipoProceso {
@@ -74,8 +71,7 @@ public class TipoProceso {
 
 	@Autowired @Lazy 
 	private PedidoVentaDineroSvc dineroService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relacionService;
+
 	@Autowired @Lazy 
 	private TurnoSvc turnoService;
 	@Autowired @Lazy 
@@ -441,7 +437,7 @@ public class TipoProceso {
 						turno.setDocumento(pCampo.getDocumento());
 						turno = turnoService.iniciarTurno(turno, token);
 					}
-					relacionExternaDocumentos(pCampo, token);
+					//relacionExternaDocumentos(pCampo, token);
 					cerrarCaja(pCampo, token);
 					generarPagos(pCampo, token);
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
@@ -465,7 +461,7 @@ public class TipoProceso {
 				relacionarExpedientes(pCampo, token);
 				// administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
 				addDocumentToBPM(pCampo, pCampo.getPrincipal(), modificacion);
-				relacionExternaDocumentos(pCampo, token);
+				//relacionExternaDocumentos(pCampo, token);
 			}
 		}
 		return pCampo;
@@ -644,123 +640,5 @@ public class TipoProceso {
 		pCampo.setValorNumero(result.getMonto());
 	}
 
-	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
-
-		String[] props = { Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS };
-		List<PropiedadDTO> relacionExternaAgregar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), props);
-		if (relacionExternaAgregar == null)
-			return;
-		if (pCampo.getDependientes() == null)
-			throw new ServerException(
-					"relacionado o retirando documentos no esta relacionado el dependiente que contiene el campo proceso que vamos a afectar");
-		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
-		for (PropiedadDTO propiedadDTO : relacionExternaAgregar) {
-			for (PedidoVentaCaracteristicaDTO dependiente : pCampo.getDependientes()) {
-				if (dependiente.getCampo().compareTo(propiedadDTO.getValor()) == 0) {
-					List<RelacionInternaDTO> relaciones = relacionService
-							.relacionesPropiedad(propiedadDTO.getLlaveTabla());
-					if (relaciones == null || relaciones.isEmpty())
-						throw new ServerException("Revisa las relaciones de la propiedad " + propiedadDTO.getNombre()
-								+ " del campo " + pCampo.getCampoDTO().getNombre());
-					for (RelacionInternaDTO iRelacion : relaciones) {
-						PedidoVentaCaracteristicaFilterDTO campoDestinoFilter = new PedidoVentaCaracteristicaFilterDTO();
-						campoDestinoFilter.setDocumento(dependiente.getValorOpcion());
-						campoDestinoFilter.setCampo(iRelacion.getCampo());
-						PedidoVentaCaracteristicaDTO campoDestino = campoService.consultaUnica(campoDestinoFilter);
-						// Aqui sucedio en colegios, la plantilla curso se creo sin campo estudiantes y
-						// se creo un curso, este no se asociaba porque no existia el campo destino.
-						// toca dejarlo asi porque hay casos donde se salta esta validacion.
-						if (campoDestino != null) {
-							campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-							campoDestino.setCampoDTO(caracteristicaService.consultaXId(campoDestino.getCampo()));
-							if(campoDestino.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO)==0) {
-								throw new ServerException("El campo destino " + campoDestino.getCampoDTO().getNombre() + " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");
-							}
-							campoDestino.setCampoDTO(caracteristicaService.cargarComplementos(campoDestino.getCampoDTO(), token));
-							String campoValor = Propiedades.obtenerValor(campoDestino.getCampoDTO(), Propiedades.PROCESO_VALOR);
-							campoDestino.setExpedientes(new ArrayList<>());
-							List<PedidoVentaDTO> actualDocuments =  listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(campoDestino.getLlaveTabla(),
-									token, campoValor);
-							if(actualDocuments!=null && !actualDocuments.isEmpty())
-								campoDestino.getExpedientes().addAll(actualDocuments);
-							for (PedidoVentaDTO iDocumentoRelacionar : pCampo.getExpedientes()) {
-								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0) {
-									campoDestino.getExpedientes().add(iDocumentoRelacionar);
-									if(campoValor.isEmpty()) relacionExpedienteService.relacionarExpedienteDocumento(campoDestino.getLlaveTabla(), iDocumentoRelacionar.getLlaveTabla(), token,
-											campoDestino.getCampoDTO().getNombre(), (iDocumentoRelacionar.getDinero()==null)?null:iDocumentoRelacionar.getDinero().getSaldo(), 
-													pCampo.getPrincipal().getLlaveTabla());					
-								} else {
-									for (PedidoVentaDTO iExpediente : campoDestino.getExpedientes()) {
-										if(iExpediente.getLlaveTabla().compareTo(iDocumentoRelacionar.getLlaveTabla())==0){
-											campoDestino.getExpedientes().remove(iExpediente);
-											if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino, iDocumentoRelacionar, 
-													(pCampo.getPrincipal()==null)?null: pCampo.getPrincipal().getLlaveTabla(), token);
-											break;
-										}
-									}
-								}
-							}
-							if(campoValor.isEmpty()) {
-								campoDestino.setValorText(String.valueOf(campoDestino.getExpedientes().size()));
-								campoService.update(campoDestino);
-							}else {
-								PedidoVentaDTO updateDocument = pedidoService.consultaCompleta(dependiente.getValorOpcion(), token);
-								
-								for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
-									if(iFieldUpdateDocument.getCampo().compareTo(campoDestino.getCampo())==0) {
-										iFieldUpdateDocument.setModificado(true);
-										iFieldUpdateDocument.setExpedientes(campoDestino.getExpedientes());
-										break;
-									} 
-								}
-								organizeDependsNumberToUpdate(campoDestino, updateDocument);
-								
-								crudService.updateWithoutTransaction(updateDocument, pCampo.getDocumento(), token, true);
-							}
-						} else {
-							// Para campos vinculo que no se realacionaron poruq se modifico la estructura de la plantilla
-							// Esto lo hice rapido creo que debe tener mas elaboracion
-							DocumentoPlantillaCaracteristicaDTO _field = caracteristicaService.consultaXId(iRelacion.getCampo());
-							if(_field.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO)==0
-									&& dependiente.getExpedientes()!=null && dependiente.getExpedientes().size() == 1
-									&& _field.getPlantilla().compareTo(dependiente.getExpedientes().get(0).getPlantilla())==0) {
-								campoDestino = new PedidoVentaCaracteristicaDTO();
-								campoDestino.setCampo(_field.getLlaveTabla());
-								campoDestino.setDocumento(dependiente.getExpedientes().get(0).getLlaveTabla());
-								campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
-								campoDestino.setValorText(dependiente.getPrincipal().getNombre());
-								campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-								campoService.saveSimple(campoDestino);
-							} 
-						}
-					}
-					break;
-				}
-			}
-		}
-
-	}
-
-	//OJO SE DUPLICO EN CallDocumentUpdateFromAutomatic
-	private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
-			PedidoVentaDTO updateDocument) {
-		for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
-			List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDENT_PROPS);
-			if(dependents!=null && !dependents.isEmpty()) {
-				for (PropiedadDTO iDependent : dependents) {
-						if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
-							if(!iFieldUpdateDocument.getModificado()) {
-								iFieldUpdateDocument.setValorNumero(null);
-								iFieldUpdateDocument.setModificado(true);
-								//Lo repirto para que se calculen los que dependen de estos
-								organizeDependsNumberToUpdate(iFieldUpdateDocument,	 updateDocument);
-							}
-							break;
-						}	
-				}
-				
-			}	
-		}
-		
-	}
+	
 }

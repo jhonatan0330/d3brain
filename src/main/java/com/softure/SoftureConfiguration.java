@@ -55,28 +55,26 @@ import jakarta.servlet.http.HttpServlet;
 		"com.*.*.infrastructure" }, annotationClass = SoftureSqlConnMapper.class, sqlSessionFactoryRef = "sqlSessionFactory")
 public class SoftureConfiguration {
 
-	@Autowired 
+	@Autowired
 	private Environment env;
 	private MailReleaseMessageQueueService releaseQueueService;
 	private ProcesoTransicionAutomaticaSvc transicionservice;
 	private WebServiceEjecucionSvc apiService;
 	private StackAccountProccessService accountService;
 	private ReporteBaseSvc reporteBaseService;
-	
 
-	@Autowired 
+	@Autowired
 	private AutowireCapableBeanFactory beanFactory;
 
-	public SoftureConfiguration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto, @Lazy WebServiceEjecucionSvc apis
-			,@Lazy ReporteBaseSvc report, @Lazy StackAccountProccessService stack) {
+	public SoftureConfiguration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto,
+			@Lazy WebServiceEjecucionSvc apis, @Lazy ReporteBaseSvc report, @Lazy StackAccountProccessService stack) {
 		this.releaseQueueService = mail;
 		this.transicionservice = auto;
 		this.apiService = apis;
 		this.reporteBaseService = report;
 		this.accountService = stack;
 	}
-	
-	
+
 	@EventListener(ApplicationReadyEvent.class)
 	public void doSomethingAfterStartup() {
 		System.out.println("*********************************************************");
@@ -232,8 +230,10 @@ public class SoftureConfiguration {
 	@Scheduled(fixedDelayString = "${fixedDelayTask.in.milliseconds}")
 	public void sendTemporizer() throws ServerException {
 		if (env.getProperty("cron.task").compareTo("true") == 0) {
-			System.out.println("*******TAREAS (" + transicionservice.lanzarTransaccionesTemporizadas() +") ***" + new Date().toString());
-			System.out.println("*******TAREAS PROGRAMADAS (" + transicionservice.programateAll() +") ***" + new Date().toString());
+			System.out.println("*******TAREAS (" + transicionservice.lanzarTransaccionesTemporizadas() + ") ***"
+					+ new Date().toString());
+			System.out.println("*******TAREAS PROGRAMADAS (" + transicionservice.programateAll() + ") ***"
+					+ new Date().toString());
 		}
 	}
 
@@ -245,7 +245,7 @@ public class SoftureConfiguration {
 			apiService.apiToTransaction();
 		}
 	}
-	
+
 	@Scheduled(fixedDelayString = "${fixedDelayAccount.in.milliseconds}")
 	public void sendAccount() throws ServerException {
 		if (env.getProperty("cron.account").compareTo("true") == 0)

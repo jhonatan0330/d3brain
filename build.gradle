@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.5.7'
+	id 'org.springframework.boot' version '3.5.8'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 	id 'com.github.ben-manes.versions' version '0.52.0'
@@ -65,6 +65,18 @@ dependencies {
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 	implementation 'com.sun.activation:jakarta.activation:2.0.1'
 	
+	//Copn openai no pudo por presion, estoy con hugging
+	//implementation "org.springframework.ai:spring-ai-huggingface:1.1.0"
+	//implementation "org.springframework.ai:spring-ai-transformers:1.1.0"
+	//implementation("org.springframework.ai:spring-ai-client-chat:1.1.0")
+
+	
+	
+}
+
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ["-parameters"]
 }
 
 configurations.all {
