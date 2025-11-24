@@ -346,7 +346,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if (field.getPropiedades() == null)
 			field.setPropiedades(new ArrayList<PropiedadDTO>());
 		DocumentoPlantillaCaracteristicaDTO baseValorUnitario = null;
-		if (field.getTarifas() != null && !field.getTarifas().isEmpty()) {
+		//if (field.getTarifas() != null && !field.getTarifas().isEmpty()) {
 			BigDecimal valorUnitario = null;
 			if (field.getLlaveTabla() != null) {
 				valorUnitario = field.getValorUnitario();
@@ -391,7 +391,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (baseValorUnitario == null)
 				throw new ServerException(
 						"Se ha presentado un problema consultando el campo de valor unitario" + field.getNombre());
-		}
+		//}
 
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(field, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		DocumentoPlantillaCaracteristicaDTO baseCantidad = null;
@@ -443,7 +443,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		cpProducto.setCampo("***PRODUCTO");
 		field.getDocumentoDetalle().getCaracteristicas().add(0, cpProducto);
 
-		if (field.getTarifas() != null && !field.getTarifas().isEmpty()) {
+		//if (field.getTarifas() != null && !field.getTarifas().isEmpty()) {
 			// Creo un campo con el valor subtotal
 			PropiedadDTO pCampoTotal = Propiedades.obtenerParametro(field, Propiedades.PRODUCTO_CAMPO_TOTAL);
 			DocumentoPlantillaCaracteristicaDTO baseTotal = null;
@@ -499,7 +499,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			if (baseTotal == null)
 				throw new ServerException(
 						"Se ha presentado un problema consultando el campo de valor total" + field.getNombre());
-		}
+		//}
 
 	}
 
