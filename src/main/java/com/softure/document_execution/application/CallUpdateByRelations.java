@@ -9,7 +9,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.field.Propiedades;
+import com.softure.document_execution.domain.DocumentoRelacionExpedienteDTO;
+import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -135,11 +138,11 @@ public class CallUpdateByRelations {
 										if (iExpediente.getLlaveTabla()
 												.compareTo(iDocumentoRelacionar.getLlaveTabla()) == 0) {
 											campoDestino.getExpedientes().remove(iExpediente);
-											/*
-											 * if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino,
-											 * iDocumentoRelacionar, (pCampo.getPrincipal()==null)?null:
-											 * pCampo.getPrincipal().getLlaveTabla(), token); break;
-											 */
+											
+											 if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino,
+											  iDocumentoRelacionar, (pCampo.getPrincipal()==null)?null:
+											  pCampo.getPrincipal().getLlaveTabla(), token); break;
+											 
 										}
 									}
 								}
@@ -216,5 +219,22 @@ public class CallUpdateByRelations {
 			}
 		}
 
+	}
+	
+	//copiado de tipo proceso
+	private boolean retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
+			String pDocumentMainRetire, String token) throws ServerException {
+		// Si es inactivo, busco la relacion del expediente y el campo
+		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
+		filtroExpFilter.setCampoMaestro(pCampo.getLlaveTabla());
+		filtroExpFilter.setExpedienteDetalle(procesoDTO.getLlaveTabla());
+		filtroExpFilter.setEstado(SharedConstants.STATE_ACTIVE);
+		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
+		if (filtroExp != null) {
+			filtroExp.setDocumentoInactivo(pDocumentMainRetire);
+			relacionExpedienteService.inactivar(filtroExp, token);
+			return true;
+		}
+		return false;
 	}
 }
