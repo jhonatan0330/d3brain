@@ -8,9 +8,9 @@
 		select
 			cpro_llave as  llaveTabla
 			,descripcion(cpro_documento) as  nombre
-			,(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  codigo
-			,(select cpdv_textofiltro from pedidoventa_pdvp where cpdv_llave = cpro_documento) as  filtros
-			,coalesce(cpro_imagen,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cpro_categoria)) as  imagen
+			,cpdv_nombre as  codigo
+			,cpdv_textofiltro as  filtros
+			,imagen(cpdv_llave, cpdv_plantilla, npdv_historico) as  imagen
 			,cpro_descripcion as  descripcion
 			,cpro_categoria as  categoria
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cpro_categoria) as  categoriaNombre
@@ -19,6 +19,7 @@
 			,cpro_productobase as  productoBase
 			,cpro_estado as estado
 		from producto_prop a
+			inner join pedidoventa_pdvp on cpdv_llave = cpro_documento
 	</sql>
 
 	<sql id="whereProductoFragment">
@@ -39,7 +40,7 @@
 				and cpro_productobase = #{productoBase}
 			</if>
 			<if test="filtroParametro!=null">
-				and ((select upper(cpdv_nombre) from pedidoventa_pdvp where cpdv_llave = cpro_documento)= upper(#{filtroParametro}) or upper(descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))
+				and ( upper(cpdv_nombre)= upper(#{filtroParametro}) or upper(descripcion(cpro_documento)) like upper('%' || #{filtroParametro} || '%'))
 			</if>
 	</sql>
 
@@ -137,7 +138,6 @@
 
 	<select id="listarProductoCampo" resultType="ProductoDTO">
 		<include refid="selectProductoFragment" /> 
-			inner join pedidoventa_pdvp on (cpdv_llave = cpro_documento)
 			inner join documentoplantilla_dplp on (cdpl_llave = cpdv_plantilla)
 		where cpro_estado ='A' and cpdv_estado = 'A' and cdpl_estado = 'A'
 		and cpro_categoria in (select cppd_valor from propiedad_ppdp where cppd_propiedadvalor = 'PROP_127' and cppd_estado = 'A' and cppd_campo = #{campo})
@@ -195,8 +195,7 @@
 	
 	<select id="filtrarPorCodigo" resultType="ProductoDTO">
 		<include refid="selectProductoFragment" />
-		inner join pedidoventa_pdvp pp2 on (cpro_documento = cpdv_llave)
-		where pp2.cpdv_nombre = #{codigo} or descripcion(pp2.cpdv_llave) = #{codigo}
+		where cpdv_nombre = #{codigo} or descripcion(cpdv_llave) = #{codigo}
 		order by nombre 
 	</select>
 <!--// END region script-->
