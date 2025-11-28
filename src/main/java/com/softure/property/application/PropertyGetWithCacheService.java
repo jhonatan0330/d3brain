@@ -2,9 +2,7 @@ package com.softure.property.application;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.CacheManager;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadDTO;
@@ -27,24 +26,19 @@ public class PropertyGetWithCacheService {
 	
 	@Autowired @Lazy private PropertyCacheMapper propiedadMapper;
 	@Autowired @Lazy private PropiedadValorDefinidoMapper propiedadValorDefinidoMapper;
+	@Autowired @Lazy private CacheManager cacheService;
 	
-	private List<PropiedadValorDefinidoDTO> types;
-	
-	private Map<String, List<PropiedadDTO>> propByTypeMap = new HashMap<String, List<PropiedadDTO>>();
-	private Map<String, List<String>> userRoleMap = new HashMap<String, List<String>>();
-	private Map<String, List<PropiedadDTO>> propByKey = new HashMap<String, List<PropiedadDTO>>();
-
 	private List<PropiedadDTO> getCacheRolProperties( String pUser, Boolean pPrivada, PropiedadFilterDTO pFilter) {
 		List<PropiedadDTO> _propertiesType = null;
 		if(pFilter.getCampo()==null) {
 			if(pFilter.getPropiedadValor()!=null) {
-				_propertiesType = propByKey.get(pFilter.getPropiedadValor());
+				_propertiesType = cacheService.getPropByKeyValue(pFilter.getPropiedadValor());
 				if(_propertiesType==null) {
 					PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
 					_filterAll.setPropiedadValor(pFilter.getPropiedadValor());
 					_filterAll.setTipo(pFilter.getTipo());
 					List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
-					propByKey.put(pFilter.getPropiedadValor(), _fromDB);
+					cacheService.putPropByKey(pFilter.getPropiedadValor(), _fromDB);
 					_propertiesType = _fromDB;
 				}
 			} else {
@@ -52,13 +46,13 @@ public class PropertyGetWithCacheService {
 			}
 		} else {
 			String _key = pFilter.getTipo()+ "_" + pFilter.getCampo();
-			_propertiesType = propByTypeMap.get(_key);
+			_propertiesType = cacheService.getPropByType(_key);
 			if(_propertiesType==null) {
 				PropiedadFilterDTO _filterAll = new PropiedadFilterDTO();
 				_filterAll.setTipo(pFilter.getTipo());
 				_filterAll.setCampo(pFilter.getCampo());
 				List<PropiedadDTO> _fromDB = propiedadMapper.consultarRol(_filterAll, null, null, null);
-				propByTypeMap.put(_key, _fromDB);
+				cacheService.putPropByType(_key, _fromDB);
 				_propertiesType = _fromDB.stream()
 					    .map(PropiedadDTO::new)
 					    .collect(Collectors.toList());
@@ -83,10 +77,10 @@ public class PropertyGetWithCacheService {
 			_propertiesType.removeIf(p -> p.getUsuarioExcluyente()!=null && !p.getUsuarioExcluyente().equals(pUser));
 			if(_propertiesType.isEmpty()) return _propertiesType;
 			// REviso propiedades por rol
-			List<String> _role = userRoleMap.get(pUser);
+			List<String> _role = cacheService.getUserRoles(pUser);
 			if(_role==null) {
 				_role = propiedadMapper.getUserRole(pUser);
-				userRoleMap.put(pUser, _role);	
+				cacheService.putUserRoles(pUser, _role);	
 			}
 			final List<String> _roleFinalToManageError = _role;
 			_propertiesType.removeIf(p -> p.getRol() != null && !_roleFinalToManageError.contains(p.getRol()));
@@ -105,12 +99,12 @@ public class PropertyGetWithCacheService {
 	}
 	
 	public void clearProperties() throws ServerException {
-		propByTypeMap.clear();
-		propByKey.clear();
+		cacheService.clearPropByTypeMap();
+		cacheService.clearPropByKey();
 	}
 	
 	public void clearRole() throws ServerException {
-		userRoleMap.clear();
+		cacheService.clearUserRoleMap();
 	}
 
 	public List<PropiedadDTO> obtenerPropiedadesSinEntidad( String tipo, String entidad, String key, String usuario, Boolean privada)
@@ -220,13 +214,13 @@ public class PropertyGetWithCacheService {
 	}
 	
 	private PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
-		if(types==null) {
+		if(cacheService.getTypes()==null) {
 			PropiedadValorDefinidoFilterDTO valorDefinidoFilter = new PropiedadValorDefinidoFilterDTO();
 			valorDefinidoFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			types = propiedadValorDefinidoMapper.listar(valorDefinidoFilter);	
+			cacheService.setTypes( propiedadValorDefinidoMapper.listar(valorDefinidoFilter));	
 		}
 		
-		PropiedadValorDefinidoDTO _value = types.stream()
+		PropiedadValorDefinidoDTO _value = cacheService.getTypes().stream()
 				.filter(p -> p.getCodigo().equals(key) && p.getOrigen().equals(tipo))
 				.findFirst()
 				.orElse(null);

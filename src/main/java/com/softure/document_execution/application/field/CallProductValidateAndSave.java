@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -19,9 +20,11 @@ import com.softure.property.domain.PropiedadDTO;
 @Service
 public class CallProductValidateAndSave {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
 
 	public List<DetallePedidoVentaDTO> orderToValidate(List<DetallePedidoVentaDTO> products) throws ServerException {
@@ -40,7 +43,8 @@ public class CallProductValidateAndSave {
 			for (ProductoDTO iProducto : productos) {
 				if (iProducto.getLlaveTabla().compareTo(detalle.getProducto()) == 0) {
 					detalle.setPropiedades(iProducto.getPropiedades());
-					if(detalle.getNombre()==null) detalle.setNombre(iProducto.getNombre());
+					if (detalle.getNombre() == null)
+						detalle.setNombre(iProducto.getNombre());
 					detalle.setPlantillaDetalle(iProducto.getTemplateFields());
 					break;
 				}
@@ -60,7 +64,7 @@ public class CallProductValidateAndSave {
 						// Esto se hace por el tema de validar caracteristicas
 						agregar = true;
 					}
-					
+
 					break;
 				}
 			}
@@ -69,18 +73,19 @@ public class CallProductValidateAndSave {
 		}
 		return agrupados;
 	}
-	
-	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document, List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess) throws ServerException {
-		List<DetallePedidoVentaDTO> detallesActuales = detallePedidoVentaService
-				.listarCompleto(document, tarrifs, null, null, token, newOnlyFormProcess);
 
-		if(products!=null) {
+	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document,
+			List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess) throws ServerException {
+		List<DetallePedidoVentaDTO> detallesActuales = detallePedidoVentaService.listarCompleto(document, tarrifs, null,
+				null, token, newOnlyFormProcess, null);
+
+		if (products != null) {
 			for (DetallePedidoVentaDTO detalle : products) {
 				if (detalle.getLlaveTabla() != null) {
 					if (detallesActuales != null && !detallesActuales.isEmpty()) {
 						for (DetallePedidoVentaDTO actual : detallesActuales) {
 							if (detalle.getLlaveTabla().compareTo(actual.getLlaveTabla()) == 0) {
-								//Coloco estos valores que debeiran venir de forn pero para evitar errores
+								// Coloco estos valores que debeiran venir de forn pero para evitar errores
 								detalle.setDetalleId(actual.getDetalleId());
 								detalle.setDocumento(actual.getDocumento());
 								detalle.setPlantilla(actual.getPlantilla());
@@ -103,7 +108,7 @@ public class CallProductValidateAndSave {
 				}
 			}
 		}
-		
+
 		if (detallesActuales != null && detallesActuales != null && !detallesActuales.isEmpty()) {
 			if (products == null)
 				products = new ArrayList<DetallePedidoVentaDTO>();
@@ -112,7 +117,7 @@ public class CallProductValidateAndSave {
 				products.add(detalleEliminado);
 			}
 		}
-		
+
 		return products;
 	}
 
@@ -128,10 +133,9 @@ public class CallProductValidateAndSave {
 			if (detalle.getLlaveTabla() == null) {
 				detalle = detallePedidoVentaService.guardar(detalle, token);
 				// En inventario se debe tener primero el campo bodega y evitar agregar
-				//result.add(detalle);
+				// result.add(detalle);
 			} else {
-				if (detalle.getEstado() != null
-						&& detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
+				if (detalle.getEstado() != null && detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					detalle.setTransaccionInactivo(transaction);
 					detallePedidoVentaService.inactivar(detalle, token);
 				} else {
@@ -147,11 +151,12 @@ public class CallProductValidateAndSave {
 		}
 		return result;
 	}
-	
+
 	private boolean sonCaracteristicasIguales(DetallePedidoVentaDTO detalleAgrupado, DetallePedidoVentaDTO detalle)
 			throws ServerException {
 		// Valido qus las caracteristicas del proeudcto sean iguales para sumarlas
-		if (detalleAgrupado.getDocumentoDetalle()!=null && detalleAgrupado.getDocumentoDetalle().getCaracteristicas() != null 
+		if (detalleAgrupado.getDocumentoDetalle() != null
+				&& detalleAgrupado.getDocumentoDetalle().getCaracteristicas() != null
 				&& !detalleAgrupado.getDocumentoDetalle().getCaracteristicas().isEmpty()) {
 			if (detalle.getDocumentoDetalle().getCaracteristicas() == null)
 				return true;
@@ -159,7 +164,8 @@ public class CallProductValidateAndSave {
 				return true;
 			if (detalle.getDocumentoDetalle().getCaracteristicas().isEmpty())
 				return true;
-			if (detalle.getDocumentoDetalle().getCaracteristicas().size() != detalleAgrupado.getDocumentoDetalle().getCaracteristicas().size())
+			if (detalle.getDocumentoDetalle().getCaracteristicas().size() != detalleAgrupado.getDocumentoDetalle()
+					.getCaracteristicas().size())
 				return true;
 
 			for (PedidoVentaCaracteristicaDTO dcp : detalle.getDocumentoDetalle().getCaracteristicas()) {

@@ -10,6 +10,8 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
@@ -90,10 +92,12 @@ public class SignerService {
 			public SignaturePolicyBase getSignaturePolicy() {
 				try {
 					return new SignaturePolicyIdentifierProperty(new ObjectIdentifier(policyUrl),
-							new URL(policyUrl).openStream());
+							new URI(policyUrl).toURL().openStream());
 				} catch (MalformedURLException ex) {
 					return new SignaturePolicyImpliedProperty();
 				} catch (IOException ex) {
+					return new SignaturePolicyImpliedProperty();
+				} catch (URISyntaxException e) {
 					return new SignaturePolicyImpliedProperty();
 				}
 			}
@@ -130,7 +134,7 @@ public class SignerService {
 		try {
 			File file = File.createTempFile("FE_DIAN_", ".pfx");
 			if (certificate.startsWith("http")) {
-				FileUtils.copyURLToFile(new URL(certificate), file);
+				FileUtils.copyURLToFile(new URI(certificate).toURL(), file);
 			} else {
 				byte[] keyByte = Base64.getDecoder().decode(certificate);
 				// FileUtils.writeByteArrayToFile(file, keyByte);
@@ -139,7 +143,7 @@ public class SignerService {
 				}
 			}
 			return file;
-		} catch (IOException e) {
+		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return null;

@@ -856,6 +856,9 @@ public class CallDocumentCRUD {
 				case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 					codigoNuevo = fieldFirstValueConsecutive.getValorText();
 					break;
+				case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:
+					codigoNuevo = fieldFirstValueConsecutive.getValorText();
+					break;
 				case DocumentoPlantillaCaracteristicaDTO.PROCESO:
 					if (fieldFirstValueConsecutive.getValorOpcion() == null)
 						throw new ServerException("El valor no puede ser nulo, para asignar un consecutivo."

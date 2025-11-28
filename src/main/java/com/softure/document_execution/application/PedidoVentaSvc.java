@@ -135,9 +135,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(bd.getLlaveTabla(), bd.getHistorico());
 			bd.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			PedidoVentaCaracteristicaDTO uc = null;
 			for (DocumentoPlantillaCaracteristicaDTO documentoCaracteristicaDTO : plantilla.getCaracteristicas()) {
-				uc = null;
+				PedidoVentaCaracteristicaDTO uc = null;
 				for (PedidoVentaCaracteristicaDTO pedidoCaracteristica : caracteristicasActuales) {
 					if (pedidoCaracteristica.getCampo().compareTo(documentoCaracteristicaDTO.getLlaveTabla()) == 0) {
 						uc = pedidoCaracteristica;
@@ -149,11 +148,32 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				uc.setCampo(documentoCaracteristicaDTO.getLlaveTabla());
 				uc.setCampoDTO(documentoCaracteristicaDTO);
 				uc.setDocumento(bd.getLlaveTabla());
-				adaptador.cargarConsultaCampo(uc, securityToken);
+				
 				if (!modificable) {
 					Propiedades.retirarPropiedad(uc.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE);
 				}
 				bd.getCaracteristicas().add(uc);
+			}
+			for (PedidoVentaCaracteristicaDTO _iField : bd.getCaracteristicas()) {
+				List<PropiedadDTO> _propDepend = Propiedades.obtenerVariosParametro(_iField.getCampoDTO(),
+						Propiedades.DEPENDENT_PROPS);
+				if (_propDepend != null) {
+					for (PropiedadDTO _iProp : _propDepend) {
+						for (PedidoVentaCaracteristicaDTO _iFieldExpediente : bd.getCaracteristicas()) {
+							if (_iProp.getValor().compareTo(_iFieldExpediente.getCampo()) == 0) {
+								if (_iField.getDependientes() == null)
+									_iField.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
+								if (_iFieldExpediente.getModificado())
+									_iField.setModificado(true);
+								_iField.getDependientes().add(_iFieldExpediente);
+								break;
+							}
+						}
+					}
+					// Esto es muy riesgoso hacerlo toca despues con calma hacer pruebas
+					// campoDocumento.setDependientes(pedidoVentaCaracteristicaService.ordenarAlfabeticaDepende(campoDocumento.getDependientes()));
+				}
+				adaptador.cargarConsultaCampo(_iField, securityToken);
 			}
 		}
 		return bd;

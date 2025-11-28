@@ -3,22 +3,22 @@ package com.softure.authorization.application;
 
 import java.util.Date;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.authentication.application.UsuarioAutenticacionSvc;
-import com.softure.authorization.domain.UsuarioRolDTO;
-import com.softure.authorization.domain.UsuarioRolFilterDTO;
-import com.softure.authorization.infrastructure.UsuarioRolMapper;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.CacheManager;
+import com.softure.authentication.application.UsuarioAutenticacionSvc;
+import com.softure.authorization.domain.UsuarioRolDTO;
+import com.softure.authorization.domain.UsuarioRolFilterDTO;
+import com.softure.authorization.infrastructure.UsuarioRolMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
-import com.softure.property.application.PropertyGetWithCacheService;
 
 import jakarta.annotation.PostConstruct;
 
@@ -30,7 +30,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 	
 	@Autowired @Lazy private UsuarioSvc usuarioService;
 	@Autowired @Lazy private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired @Lazy private PropertyGetWithCacheService cacheService;
+	@Autowired @Lazy private CacheManager cacheService;
 
 	@Override
 	public UsuarioRolDTO consultaXId(String llave) throws ServerException {
@@ -66,7 +66,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 			if(usuario.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0)
 				usuarioService.inactivar(usuario, token);
 		}
-		cacheService.clearRole();
+		cacheService.clearUserRoleMap();
 		return dto;
 	}
 	
@@ -76,7 +76,7 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 		dto.setFechaInicial(new Date());
 		dto = super.guardar(dto, token);
 		autenticacionService.crearAutenticacion(dto.getUsuario(), token);
-		cacheService.clearRole();
+		cacheService.clearUserRoleMap();
 		return dto;
 	}
 	

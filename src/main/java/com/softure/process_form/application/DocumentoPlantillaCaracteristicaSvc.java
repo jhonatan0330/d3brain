@@ -1,9 +1,7 @@
 package com.softure.process_form.application;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import com.softure.CacheManager;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -36,42 +35,38 @@ public class DocumentoPlantillaCaracteristicaSvc
 	@Autowired
 	@Lazy
 	private DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper;
-
 	@Autowired
 	@Lazy
 	private PropiedadSvc parametroService;
 	@Autowired
 	@Lazy
-	private PropertyGetWithCacheService cacheService;
+	private PropertyGetWithCacheService propertyManagerService;
 	@Autowired
 	@Lazy
 	private CallSearchProcessFromText searchProcessFromText;
-
-	private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<String, DocumentoPlantillaCaracteristicaDTO>();
-
+	@Autowired
+	@Lazy
+	private CacheManager cacheService;
+	
 	@Override
 	public DocumentoPlantillaCaracteristicaDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. DocumentoPlantillaCaracteristica");
 
-		DocumentoPlantillaCaracteristicaDTO _db = fieldsMap.get(llave);
+		DocumentoPlantillaCaracteristicaDTO _db = cacheService.getField(llave);
 		if (_db != null)
 			return _db;
 
 		DocumentoPlantillaCaracteristicaFilterDTO dto = new DocumentoPlantillaCaracteristicaFilterDTO();
 		dto.setLlaveTabla(llave);
 		_db = documentoPlantillaCaracteristicaMapper.consultar(dto);
-		fieldsMap.put(llave, _db);
+		cacheService.putField(llave, _db);
 		return _db;
 	}
 
 	@PostConstruct
 	public void initIt() throws Exception {
 		this.mapper = documentoPlantillaCaracteristicaMapper;
-	}
-
-	public void clearCache() {
-		fieldsMap.clear();
 	}
 
 	@Override
@@ -94,7 +89,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 				update(fieldDifference);
 			}
 		}
-		clearCache();
+		cacheService.clearFieldsMap();
 		return dto;
 	}
 
@@ -105,7 +100,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
 		// validar que el campo no se use en ninguna propiedad
-		clearCache();
+		cacheService.clearFieldsMap();
 		return dto;
 	}
 
@@ -146,7 +141,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaCaracteristicaDTO guardar(DocumentoPlantillaCaracteristicaDTO dto, String token)
 			throws ServerException {
-		// BEGIN DocumentoPlantillaCaracteristica_guardar
 		if (dto.getPlantilla() == null)
 			throw new ServerException("Es necesario la plantilla a la que pertenece el campo");
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCantidad = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -169,9 +163,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
 		if (filtroPlantilla != null)
 			createFieldDifference(dto, filtroPlantilla.getValor(), token);
-		clearCache();
+		cacheService.clearFieldsMap();
 		return dto;
-		// END DocumentoPlantillaCaracteristica_guardar
 	}
 
 	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
@@ -226,7 +219,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		if (token != null)
 			usuario = getUserFlex(token);
 		if (campo != null)
-			campo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campo.getLlaveTabla(),
+			campo.setPropiedades(propertyManagerService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campo.getLlaveTabla(),
 					null, usuario));
 		return campo;
 	}

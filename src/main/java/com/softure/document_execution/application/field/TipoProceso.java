@@ -140,15 +140,26 @@ public class TipoProceso {
 					}
 
 				}
+				String _defaultValue = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.DEFAULT);
+				if (_defaultValue != null && !_defaultValue.isEmpty() && pCampo.getValorOpcion() == null) {
+					PedidoVentaCaracteristicaFilterDTO _filter = toFilter(pCampo, token);
+					_filter.setFiltroParametro(_defaultValue);
+					_filter = consultarDatosBase(_filter);
+					if(_filter.getCampoDTO().getDocumentos()!=null && _filter.getCampoDTO().getDocumentos().size()==1)
+						pCampo.setValorOpcion(_filter.getCampoDTO().getDocumentos().get(0).getLlaveTabla());
+				}
 				// Valido obligatoriedad
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 						&& pCampo.getValorOpcion() == null) {
-					if(isUpdateAutomatic) {				
-						CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
-					} else {
-						throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+					//En caso que no tome el default
+					if(pCampo.getValorOpcion() == null) {
+						if(isUpdateAutomatic) {				
+							CallDocumentCommons.addMessageError(pCampo.getPrincipal(), "Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+						} else {
+							throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+						}	
 					}
 				}
 				// Valido que el documento este activo y actualizo algunos valores

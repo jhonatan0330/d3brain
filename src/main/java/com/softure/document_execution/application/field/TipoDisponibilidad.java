@@ -80,7 +80,7 @@ public class TipoDisponibilidad {
 		if (!producto.isEmpty()) {
 			if (!pCampo.getModificado())
 				pCampo.setDetalles(
-						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token, null));
+						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token, null, null));
 		}
 	}
 

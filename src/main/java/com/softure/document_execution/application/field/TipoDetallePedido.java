@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,21 +33,29 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoDetallePedido {
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProductoSvc productoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropiedadSvc configuracionSvc;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CallProductValidateAndSave validateAndSave;
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
@@ -59,7 +68,8 @@ public class TipoDetallePedido {
 			if (!pCampo.getModificado())
 				pCampo.setDetalles(
 						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), tarifario, null, null, token,
-								Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
+								Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
+								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO())));
 			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 				pCampo.setValorNumero(BigDecimal.ZERO);
 				for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
@@ -74,7 +84,8 @@ public class TipoDetallePedido {
 		}
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
 
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getDetalles() == null || pCampo.getDetalles().size() == 0))
@@ -117,8 +128,8 @@ public class TipoDetallePedido {
 					Propiedades.DETALLE_TARIFARIO);
 			if (tarifario != null && tarifario.isEmpty())
 				tarifario = null;
-			pCampo.setDetalles(
-					validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), tarifario, token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
+			pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), tarifario,
+					token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
 		} else {
 			pCampo.setDetalles(agrupados);
 		}
@@ -164,11 +175,13 @@ public class TipoDetallePedido {
 					if (campoTotal == null) {
 						detalle.setValorSubtotal(detalle.getValorUnitario().multiply(detalle.getCantidad()));
 					} else {
-						if(detalle.getDocumentoDetalle()!=null) {
-							for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getDocumentoDetalle().getCaracteristicas()) {
+						if (detalle.getDocumentoDetalle() != null) {
+							for (PedidoVentaCaracteristicaDTO iFieldCantidad : detalle.getDocumentoDetalle()
+									.getCaracteristicas()) {
 								if (iFieldCantidad.getCampo().compareTo(campoTotal.getValor()) == 0) {
 									detalle.setValorSubtotal(iFieldCantidad.getValorNumero());
-									if(detalle.getValorSubtotal()==null) detalle.setValorSubtotal(BigDecimal.ZERO);
+									if (detalle.getValorSubtotal() == null)
+										detalle.setValorSubtotal(BigDecimal.ZERO);
 									break;
 								}
 							}
@@ -185,37 +198,39 @@ public class TipoDetallePedido {
 			throws ServerException {
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
-		
-			PropiedadDTO _prop = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE); 
-			
-			if(_prop!=null) {
+
+			PropiedadDTO _prop = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
+					Propiedades.ITEM_DETAIL_FORM_VISIBLE);
+
+			if (_prop != null) {
 				List<String> _fieldRelations = configuracionSvc.camposRelacionados(_prop);
-				if(_fieldRelations!=null && !_fieldRelations.isEmpty()) {
+				if (_fieldRelations != null && !_fieldRelations.isEmpty()) {
 					for (DetallePedidoVentaDTO _iDetail : pCampo.getDetalles()) {
-						if(_iDetail.getDocumentoDetalle()!=null && _iDetail.getDocumentoDetalle().getCaracteristicas()!=null) {
-							for (PedidoVentaCaracteristicaDTO _iFieldDocumentToSave : _iDetail.getDocumentoDetalle().getCaracteristicas()) {
-								for(String _iRelation: _fieldRelations) {
-									if(_iRelation.compareTo(_iFieldDocumentToSave.getCampo())==0) {
+						if (_iDetail.getDocumentoDetalle() != null
+								&& _iDetail.getDocumentoDetalle().getCaracteristicas() != null) {
+							for (PedidoVentaCaracteristicaDTO _iFieldDocumentToSave : _iDetail.getDocumentoDetalle()
+									.getCaracteristicas()) {
+								for (String _iRelation : _fieldRelations) {
+									if (_iRelation.compareTo(_iFieldDocumentToSave.getCampo()) == 0) {
 										_iFieldDocumentToSave.setValorOpcion(pCampo.getDocumento());
 										break;
 									}
 								}
 							}
 						}
-					}	
+					}
 				}
 			}
-			
-			
-			
-			
+
 			if (pCampo.getValorText() == null) {
 				return pCampo;
 			} else {
-				PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
+				PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo,
+						pCampo.getPrincipal().getHistorico());
 				if (bd != null) {
 					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(),
+							pCampo.getLlaveTabla()));
 					if (pCampo.getValorText().compareTo(bd.getValorText()) == 0
 							&& ((bd.getValorNumero() == null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 									|| (bd.getValorNumero() != null
@@ -226,11 +241,12 @@ public class TipoDetallePedido {
 						bd.setValorNumero(pCampo.getValorNumero());
 						return campoService.actualizar(bd, token);
 					}
-				}else {
+				} else {
 					bd = campoService.guardar(pCampo, token);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));		
+							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(),
+							pCampo.getLlaveTabla()));
 				}
 			}
 		}
@@ -249,20 +265,7 @@ public class TipoDetallePedido {
 				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
 		if (pBase == null)
 			throw new ServerException("Error en el identificador de la caracteristica");
-		String tercero = null;
-		PropiedadDTO pTercero = Propiedades.obtenerParametro(pBase, Propiedades.PRODUCTOS_TERCERO);
-		if (pTercero != null) {
-			if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
-				throw new ServerException("Revise los dependientes");
-			for (PedidoVentaCaracteristicaDTO iDepende : pCampo.getDependientes()) {
-				if (iDepende.getCampo().compareTo(pTercero.getValor()) == 0) {
-					tercero = iDepende.getValorOpcion();
-					break;
-				}
-			}
-			if (tercero == null)
-				throw new ServerException("Debe seleccionar un " + pTercero.getTexto());
-		}
+		String tercero = getTercero(pCampo.getDependientes(), pBase);
 		PropiedadDTO funcionProductos = Propiedades.obtenerParametro(pBase, Propiedades.PRODUCTOS_FUNCION_SQL);
 		if (funcionProductos == null) {
 			if (tercero != null) {
@@ -289,14 +292,16 @@ public class TipoDetallePedido {
 						break;
 					}
 				}
-			}else {
-				throw new ServerException("Revise la configuracion se debe incluir una propiedad PRODUCTOS_FUNCION_CAMPO "
-						+ pCampo.getCampoDTO().getNombre());
+			} else {
+				throw new ServerException(
+						"Revise la configuracion se debe incluir una propiedad PRODUCTOS_FUNCION_CAMPO "
+								+ pCampo.getCampoDTO().getNombre());
 			}
 			if (valorCampo == null)
 				throw new ServerException("Revise la configuracion debe tener un campo relacionado para la funcion"
 						+ pCampoFuncion.getTexto());
-			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty())pCampo.setDependientes(campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
+			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty())
+				pCampo.setDependientes(campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			pBase.setProductos(productoService.listarProductoFuncion(funcionProductos.getLlaveTabla(), valorCampo,
 					pCampo.getFiltroParametro(), pCampo.getSecurityToken(), pCampo.getDependientes()));
 		}
@@ -309,17 +314,37 @@ public class TipoDetallePedido {
 			}
 			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), tercero,
 					(tarifarioFuncion != null) ? tarifarioFuncion.getLlaveTabla() : null, pCampo.getDependientes(),
-					pCampo.getSecurityToken(), Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
+					pCampo.getSecurityToken(),
+					Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
 		}
 		pCampo.setCampoDTO(pBase);
 		System.out.println("Consulta DB Detalle FIN :" + new Date());
 		return pCampo;
 	}
 
+	private String getTercero(List<PedidoVentaCaracteristicaDTO> pDependents, DocumentoPlantillaCaracteristicaDTO pBase)
+			throws ServerException {
+		PropiedadDTO pTercero = Propiedades.obtenerParametro(pBase, Propiedades.PRODUCTOS_TERCERO);
+		if (pTercero == null)
+			return null;
+		if (pDependents == null || pDependents.isEmpty())
+			throw new ServerException("Revise los dependientes");
+		String tercero = null;
+		for (PedidoVentaCaracteristicaDTO iDepende : pDependents) {
+			if (iDepende.getCampo().compareTo(pTercero.getValor()) == 0) {
+				tercero = iDepende.getValorOpcion();
+				break;
+			}
+		}
+		if (tercero == null)
+			throw new ServerException("Debe seleccionar un " + pTercero.getTexto());
+		return tercero;
+	}
+
 	private List<ProductoDTO> detallarProductos2Plantilla(List<ProductoDTO> productos,
-			DocumentoPlantillaCaracteristicaDTO pCampo,  String tercero,
-			String propiedadFuncionTarifario, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario,
-			String token, String newOnlyFormProcess) throws ServerException {
+			DocumentoPlantillaCaracteristicaDTO pCampo, String tercero, String propiedadFuncionTarifario,
+			List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token, String newOnlyFormProcess)
+			throws ServerException {
 		if (productos != null && !productos.isEmpty()) {
 			List<PropiedadDTO> tarifario = Propiedades.obtenerVariosParametro(pCampo, Propiedades.DETALLE_TARIFARIO);
 			String imagenes = Propiedades.obtenerValor(pCampo, Propiedades.DETALLE_OCULTAR_IMAGENES);
@@ -334,7 +359,8 @@ public class TipoDetallePedido {
 				filtroPlantilla.setPlantilla(pCampo.getPlantilla());
 				filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
 				productoDTO.setDetallePlantilla(detallePedidoVentaService.consultaCompleta(filtroPlantilla, tarifario,
-						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados, token, newOnlyFormProcess));
+						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados, token,
+						newOnlyFormProcess));
 				if (imagenes != null) {
 					productoDTO.setImagen(null);
 				}
@@ -378,7 +404,8 @@ public class TipoDetallePedido {
 
 					if (detalleDocumento.getProducto().compareTo(detalleExpediente.getProducto()) == 0) {
 						if (detalleDocumento.getCantidad().compareTo(detalleExpediente.getCantidad()) == 0) {
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades
+									.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
 						} else {
@@ -408,7 +435,8 @@ public class TipoDetallePedido {
 							detallesFinalNuevo.add(detalleDocumento);
 							detalleExpediente.setCantidad(detalleExpediente.getCantidad().add(nuevoTotal.negate()));
 							// Aqui porque antes no me actualiza la cantidad en las novedades parciales
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades
+									.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
 						}
@@ -434,7 +462,8 @@ public class TipoDetallePedido {
 					detalleDocumento.setValorMinimo(detalleExpediente.getValorMinimo());
 					detalleDocumento.setValorTotal(detalleExpediente.getValorMinimo());
 					detalleDocumento.setPlantilla(detalleExpediente.getPlantilla());
-					detallePedidoVentaService.createFieldsProduct(detalleDocumento, token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
+					detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
+							Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 					detallesFinalNuevo.add(detalleDocumento);
 				}
 			}
@@ -454,7 +483,8 @@ public class TipoDetallePedido {
 				}
 
 			}
-			//Esto e hizo por nuestro querido brandingo box, formulario pedidos y valor total
+			// Esto e hizo por nuestro querido brandingo box, formulario pedidos y valor
+			// total
 			if (fieldWithDetails != null) {
 				for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
 					if (iCampoExpediente.getCampoDTO().getFormato()
