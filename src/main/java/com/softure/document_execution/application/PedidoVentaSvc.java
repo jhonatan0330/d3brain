@@ -1,6 +1,5 @@
 package com.softure.document_execution.application;
 
-// BEGIN region interImport
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +99,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 
 	public PedidoVentaDTO consultaCompleta(String documentId, String token) throws ServerException {
-		// BEGIN region consultaCompleta
 		if (documentId == null)
 			throw new ServerException("En el desarrollo se debe crear el objeto desde la plantilla");
 		String securityToken = token;
@@ -177,7 +175,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			}
 		}
 		return bd;
-		// END region consultaCompleta
 	}
 
 	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
@@ -342,6 +339,16 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			return pedidoVentaMapper.consultar(filter);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), e);
+		}
+	}
+	
+	public void clearPedidoResponse(PedidoVentaDTO pDTO) {
+		if(pDTO ==null) return;
+
+		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
+			_iField.setCampoDTO(null);
+			_iField.setDependientes(null);
+			_iField.setTransaccionRegistro(null);
 		}
 	}
 }

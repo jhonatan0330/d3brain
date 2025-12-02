@@ -522,9 +522,16 @@ public class TipoProceso {
 				retirarExpedienteDocumento(pCampo, procesoDTO, 
 						(pCampo.getPrincipal()==null)?null: pCampo.getPrincipal().getLlaveTabla(),token);
 			} else {
+				BigDecimal _processValue = null ;
+				if(procesoDTO.getDinero()!=null) {
+					if(procesoDTO.getDinero().getValorCampo()!=null && procesoDTO.getDinero().getValorCampo().compareTo(BigDecimal.ZERO)!=0) {
+						_processValue = procesoDTO.getDinero().getValorCampo();
+					} else {
+						_processValue = procesoDTO.getDinero().getSaldo();
+					}
+				}
 				relacionExpedienteService.relacionarExpedienteDocumento(pCampo.getLlaveTabla(), procesoDTO.getLlaveTabla(), token, pCampo.getCampoDTO().getNombre()
-						, (procesoDTO.getDinero()==null)?null:procesoDTO.getDinero().getSaldo(), 
-								pCampo.getPrincipal().getLlaveTabla());
+						, _processValue,				pCampo.getPrincipal().getLlaveTabla());
 			}
 		}
 	}

@@ -61,7 +61,9 @@ public class APIController {
 	@PostMapping(value="/consultarDocumento")
 	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
 		documentoFiltro.setSecurityToken(token);
-		return pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
+		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
+		pedidoVentaService.clearPedidoResponse(_result);
+		return _result;
 	}
 	
 	@PostMapping(value="/validateBeforeNew")
