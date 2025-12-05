@@ -1104,8 +1104,11 @@ public class CallDocumentCRUD {
 					case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 						usrId = pvc.getValorText();
 						break;
+					case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO:
+						usrId = pvc.getValorText();
+						break;
 					default:
-						throw new ServerException("El componente no es tipo texto o numero");
+						throw new ServerException("En la creacion del rol el componente no es tipo texto o numero");
 					}
 				}
 				if (usrMail == null && campoCorreo != null && pvc.getCampo().compareTo(campoCorreo) == 0) {
