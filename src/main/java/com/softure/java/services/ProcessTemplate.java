@@ -118,6 +118,7 @@ public class ProcessTemplate {
 						e.printStackTrace();
 						e1.printStackTrace();
 					}
+					out.append(e.getMessage());
 				}
 				return out.toString();
 			}
@@ -183,6 +184,10 @@ public class ProcessTemplate {
 		if (campo.getValorOpcion() != null) {
 			parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_KEY" + pEqualChar
 					+ campo.getValorOpcion();
+			if (campo.getValorAuxiliar() != null ) {
+				parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_ID"
+						+ pEqualChar + campo.getValorAuxiliar();
+			}
 			if (campo.getExpedientes() != null && !campo.getExpedientes().isEmpty()) {
 				PedidoVentaDTO iElement = campo.getExpedientes().get(0);
 				if (iElement != null && iElement.getNombre() != null) {
@@ -190,6 +195,7 @@ public class ProcessTemplate {
 							+ pEqualChar + iElement.getNombre();
 				}
 			}
+			
 		} else {
 			if (referidas != null && !referidas.isEmpty()) {
 				Map<String, List<RelacionInternaDTO>> relations = null;

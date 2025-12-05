@@ -374,6 +374,7 @@
 	<select id="listar2getApiCode" resultType="PedidoVentaCaracteristicaDTO">
 		<foreach item="itemA" collection="documentos" separator=" union " >
 			<if test="itemA.valorOpcion!=null">
+			<foreach item="itemB" collection="campoIds" separator=" union " >
 				select
 					cpvc_llave as  llaveTabla
 					,cpvc_documento as  documento
@@ -381,14 +382,15 @@
 					,cpvc_valortext as  valorText
 					,dpvc_valorfecha as  valorFecha
 					,cpvc_valoropcion as  valorOpcion
-					,cpvc_valorauxiliar as  valorAuxiliar
+					,<choose><when test="itemB.auxiliar!=null">(select d.cpdv_nombre from pedidoventa_pdvp d where d.cpdv_llave = cpvc_valoropcion) </when><otherwise>cpvc_valorauxiliar</otherwise></choose> as  valorAuxiliar
 					,mpvc_valornumero as  valorNumero
 					,#{itemA.llaveTabla} as estado
 				from pedidoventa_pdvp pv
 					cross join campo4documento(pv.cpdv_llave, pv.npdv_historico) a
 				where pv.cpdv_llave = #{itemA.valorOpcion}
 					and cpvc_estado ='A'
-					and cpvc_campo in (<foreach item="itemB" collection="campoIds" separator="," >#{itemB.campo}</foreach>)
+					and cpvc_campo = #{itemB.campo}
+			</foreach>
 			</if>
 		</foreach>
 	</select>
