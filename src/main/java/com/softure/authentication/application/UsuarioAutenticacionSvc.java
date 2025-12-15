@@ -1,7 +1,9 @@
 package com.softure.authentication.application;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -324,7 +326,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				if (fechaTrial == null)
 					reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
 
-				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				/*SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 				try {
 					Date date = formatter.parse(fechaTrial);
 					diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
@@ -332,6 +334,28 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 						reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 				} catch (ParseException e) {
 					reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
+				}*/
+				
+				try {
+				    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+				    // Fecha con vencimiento a las 12:00 PM
+				    LocalDateTime fechaVencimiento = LocalDate
+				            .parse(fechaTrial, formatter)
+				            .atTime(12, 0); // 12:00 PM
+
+				    long millisVencimiento = fechaVencimiento
+				            .atZone(ZoneId.systemDefault())
+				            .toInstant()
+				            .toEpochMilli();
+
+				    diasVigencia = (millisVencimiento - System.currentTimeMillis()) / (24 * 3600000);
+
+				    if (diasVigencia < 0)
+				        reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
+
+				} catch (Exception e) {
+				    reportarError(dto, "El formato de la fecha de licencia está incorrecto");
 				}
 
 				if (diasVigencia >= 0 && diasVigencia <= 5)

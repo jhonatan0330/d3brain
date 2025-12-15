@@ -621,7 +621,7 @@ public class ProcessTemplate {
 
 			for (String entrada : unicos) {
 				String[] partes = entrada.split("\\.");
-				if (partes.length == 4) {
+				if (partes.length == 4 || partes.length == 5) {
 					String formulario = partes[0];
 					String field_formulario = partes[1];
 					String key = partes[2];
@@ -648,10 +648,10 @@ public class ProcessTemplate {
 			                		// En roa coloque una estructura para SIIGo que no necesitaba el ID sino el codigo de la cuenta
 			                		if(_field!= null) {
 			                			//key
-			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "_KEY]]",
-				                				_field.getValorText());
+			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + ".KEY]]",
+				                				_field.getValorOpcion());
 			                			//code / Aqui cuadre para que se obtenga el id en llavetabla 
-			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "_ID]]",
+			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + ".ID]]",
 			                					_field.getLlaveTabla());
 			                			//nombre
 			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "]]",
