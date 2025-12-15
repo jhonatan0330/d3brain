@@ -512,7 +512,7 @@
 	
 	<select id="getKeyToReplace" resultType="PedidoVentaCaracteristicaDTO">
 		select
-			cpvc_llave as  llaveTabla
+			(select cpdv_nombre from pedidoventa_pdvp where cpdv_llave = cpvc_valoropcion) as  llaveTabla
 			,cpvc_documento as  documento
 			,cpvc_campo as  campo
 			,cpvc_valortext as  valorText

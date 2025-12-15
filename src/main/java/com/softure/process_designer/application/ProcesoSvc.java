@@ -227,10 +227,16 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 					break;
 			}
 			if (padre == null) {
-				ProcesoDTO categoria = consultaXId(ultimo.getMacroproceso());
-				if (categoria == null)
-					throw new ServerException("No se encuentra la categoria principal. " + ultimo.getMacroproceso());
-				procesos.add(categoria);
+				//En universal sucedio que se creo una llamada al mismo proceso y se generaba un ciclo infinito
+				if(ultimo.getLlaveTabla().compareTo(ultimo.getMacroproceso())!=0) {
+					ProcesoDTO categoria = consultaXId(ultimo.getMacroproceso());
+					if (categoria == null)
+						throw new ServerException("No se encuentra la categoria principal. " + ultimo.getMacroproceso());
+					 procesos.add(categoria);	
+				}else {
+					procesos.remove(ultimo);	
+				}
+				
 			} else {
 				if (padre.getHijos() == null)
 					padre.setHijos(new ArrayList<ProcesoDTO>());

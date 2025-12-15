@@ -645,14 +645,17 @@ public class ProcessTemplate {
 			                	for (var _iCodeToReplace : _iKey.getValue()) {
 			                		// Aquie puede mejorar para los campos fecha y demas pero no se como :(, puede ser un quinto campo de formato
 			                		PedidoVentaCaracteristicaDTO _field = campoService.getKeyToReplace(_keyOfDocumentBase, _iForm.getKey(), _iCodeToReplace);
+			                		// En roa coloque una estructura para SIIGo que no necesitaba el ID sino el codigo de la cuenta
 			                		if(_field!= null) {
-			                			String _keyToReplace = _field.getValorOpcion();
-				                		if(_keyToReplace ==null)_keyToReplace = _field.getValorText();
-				                		if(_keyToReplace ==null)_keyToReplace = "";
-				                		String codeToEvaluate = "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace+ "]]";
-				                		while (template.contains(codeToEvaluate)) {
-					    					template = template.replace(codeToEvaluate, _keyToReplace);
-					    				}	
+			                			//key
+			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "_KEY]]",
+				                				_field.getValorText());
+			                			//code / Aqui cuadre para que se obtenga el id en llavetabla 
+			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "_ID]]",
+			                					_field.getLlaveTabla());
+			                			//nombre
+			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "]]",
+			                				_field.getValorText());
 			                		}
 			                		
 			                	}		                		
@@ -664,6 +667,16 @@ public class ProcessTemplate {
 			template = template.replaceAll("\\[\\[[A-Za-z0-9_/():\\-\\.\\_]*\\]\\]", "");
 		}
 
+		return template;
+	}
+
+	private String replaceCodeInTemplate(String template, String codeToEvaluate , String _iCodeToReplace) {
+
+		if(_iCodeToReplace ==null)_iCodeToReplace = "";
+		
+		while (template.contains(codeToEvaluate)) {
+			template = template.replace(codeToEvaluate, _iCodeToReplace);
+		}
 		return template;
 	}
 
