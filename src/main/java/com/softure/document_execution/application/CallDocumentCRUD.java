@@ -1040,10 +1040,8 @@ public class CallDocumentCRUD {
 			plantilla.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
 					dto.getPlantilla(), null, null));
 		}
-		// Sucede que en los estados tambien se llama esta funcion, y cuando son
-		// procesos de inicio se duplicaba y generaba error
-		if (dto.getEstadoExpediente() == null)
-			saveRole(dto, token);
+		
+		saveRole(dto, token);
 
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO) != null)
 			homologateService.crearProducto(dto, token);
@@ -1058,6 +1056,13 @@ public class CallDocumentCRUD {
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, noRollbackFor = DuplicateKeyException.class)
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
+		
+		DocumentoPlantillaDTO dp = new DocumentoPlantillaDTO();
+		dp.setPropiedades(documentoPlantillaService.obtenerPropiedadesPlantilla(dto.getPlantilla(), token));
+		
+		if (Propiedades.obtenerParametro(dp, Propiedades.PLANTILLA_TIPO_ROL) == null)
+			return;
+		
 		// Valido que tenga relacion de plantilla
 		RolAccesoFilterDTO dpiRolFilter = new RolAccesoFilterDTO();
 		dpiRolFilter.setPlantilla(dto.getPlantilla());
@@ -1065,6 +1070,13 @@ public class CallDocumentCRUD {
 		RolAccesoDTO dpiRol = rolService.consultaUnica(dpiRolFilter);
 		if (dpiRol == null)
 			return;
+		
+		// Sucede que en los estados tambien se llama esta funcion, y cuando son
+		// procesos de inicio se duplicaba y generaba error
+		// Me di cuenta que en box los conductores tenian estado y al modificar no funcionaba
+		//Lo quite y espero que griten para arreglarlo
+		//if (dto.getEstadoExpediente() != null)
+			//return;
 
 		if (dto.getEstado() == null || dto.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
 			// Obtengo los valores de Id y nombre

@@ -351,12 +351,12 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 				    diasVigencia = (millisVencimiento - System.currentTimeMillis()) / (24 * 3600000);
 
-				    if (diasVigencia < 0)
-				        reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
-
 				} catch (Exception e) {
 				    reportarError(dto, "El formato de la fecha de licencia está incorrecto");
 				}
+				
+				if (diasVigencia < 0)
+			        reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 
 				if (diasVigencia >= 0 && diasVigencia <= 5)
 					autenticacion.setMensaje(

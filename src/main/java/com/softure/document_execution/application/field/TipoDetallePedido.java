@@ -460,7 +460,7 @@ public class TipoDetallePedido {
 					detalleDocumento.setValorUnitario(detalleExpediente.getValorUnitario());
 					detalleDocumento.setValorMaximo(detalleExpediente.getValorMaximo());
 					detalleDocumento.setValorMinimo(detalleExpediente.getValorMinimo());
-					detalleDocumento.setValorTotal(detalleExpediente.getValorMinimo());
+					detalleDocumento.setValorTotal(detalleExpediente.getValorTotal());
 					detalleDocumento.setPlantilla(detalleExpediente.getPlantilla());
 					detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
 							Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));

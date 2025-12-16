@@ -257,7 +257,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 	
 
-	private List<PropiedadDTO> obtenerPropiedadesPlantilla(String plantilla, String token) throws ServerException {
+	public List<PropiedadDTO> obtenerPropiedadesPlantilla(String plantilla, String token) throws ServerException {
 		//si el token es null que traiga todos principalmente para copiar
 		String usuario = null;
 		if(token !=null) usuario = getUserFlex(token);

@@ -2,19 +2,20 @@ package com.softure.authorization.application;
 
 import java.util.List;
 
-import com.shared.domain.SharedConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.CacheManager;
 import com.softure.authentication.application.OrganizacionSvc;
 import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.authorization.domain.UsuarioRolFilterDTO;
 import com.softure.authorization.infrastructure.RolAccesoMapper;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.property.application.PropertyCRUDSvc;
 
@@ -29,13 +30,20 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	@Autowired @Lazy  private UsuarioRolSvc usuarioRolService;
 	@Autowired @Lazy  private PropertyCRUDSvc propertySvc;
 	@Autowired @Lazy  private OrganizacionSvc organizationSvc;
+	@Autowired @Lazy  private CacheManager cacheManager;
 
 	@Override
 	public RolAccesoDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. RolAcceso");
+		RolAccesoDTO _db = cacheManager.getRole(llave);
+		if (_db != null)
+			return _db;
+		
 		RolAccesoFilterDTO dto = new RolAccesoFilterDTO();
 		dto.setLlaveTabla(llave);
-		return rolAccesoMapper.consultar(dto);
+		_db = rolAccesoMapper.consultar(dto);
+		cacheManager.putRole(llave, _db);
+		return _db;
 	}
 
 	@PostConstruct
@@ -53,6 +61,7 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		int cont = usuarioRolService.contarResultados(filtro);
 		if(cont!=0) throw new ServerException("No se puede inactivar el rol debido a que tiene usuarios activos. " + cont);
 		propertySvc.inactivateAllPropertiesOfRol(dto.getLlaveTabla(), token);
+		cacheManager.clearRolesMap();
 		return dto;
 	}
 	

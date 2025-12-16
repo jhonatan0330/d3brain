@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.softure.authentication.domain.UsuarioSesionDTO;
+import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
@@ -15,232 +16,255 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class CacheManager {
 
-    private List<PropiedadValorDefinidoDTO> types;
+	private List<PropiedadValorDefinidoDTO> types;
 
-    private Map<String, List<PropiedadDTO>> propByTypeMap = new HashMap<>();
-    private Map<String, List<String>> userRoleMap = new HashMap<>();
-    private Map<String, List<PropiedadDTO>> propByKey = new HashMap<>();
+	private Map<String, List<PropiedadDTO>> propByTypeMap = new HashMap<>();
+	private Map<String, List<String>> userRoleMap = new HashMap<>();
+	private Map<String, List<PropiedadDTO>> propByKey = new HashMap<>();
 
-    private String mainOrganization;
-    private String mainUser;
-    private String mainUserMail;
+	private String mainOrganization;
+	private String mainUser;
+	private String mainUserMail;
 
-    private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<>();
-    private Map<String, Integer> sessionTimeMap = new HashMap<>();
+	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<>();
+	private Map<String, Integer> sessionTimeMap = new HashMap<>();
 
-    private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<>();
+	private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<>();
 
-    // ---------------------------------------------
-    // GETTERS & SETTERS
-    // ---------------------------------------------
+	private Map<String, RolAccesoDTO> rolesMap = new HashMap<>();
 
-    public List<PropiedadValorDefinidoDTO> getTypes() {
-        return types;
-    }
+	// ---------------------------------------------
+	// GETTERS & SETTERS
+	// ---------------------------------------------
 
-    public void setTypes(List<PropiedadValorDefinidoDTO> types) {
-        this.types = types;
-    }
+	public List<PropiedadValorDefinidoDTO> getTypes() {
+		return types;
+	}
 
-    public Map<String, List<PropiedadDTO>> getPropByTypeMap() {
-        return propByTypeMap;
-    }
+	public void setTypes(List<PropiedadValorDefinidoDTO> types) {
+		this.types = types;
+	}
 
-    public void setPropByTypeMap(Map<String, List<PropiedadDTO>> propByTypeMap) {
-        this.propByTypeMap = propByTypeMap;
-    }
+	public Map<String, List<PropiedadDTO>> getPropByTypeMap() {
+		return propByTypeMap;
+	}
 
-    public Map<String, List<String>> getUserRoleMap() {
-        return userRoleMap;
-    }
+	public void setPropByTypeMap(Map<String, List<PropiedadDTO>> propByTypeMap) {
+		this.propByTypeMap = propByTypeMap;
+	}
 
-    public void setUserRoleMap(Map<String, List<String>> userRoleMap) {
-        this.userRoleMap = userRoleMap;
-    }
+	public Map<String, List<String>> getUserRoleMap() {
+		return userRoleMap;
+	}
 
-    public Map<String, List<PropiedadDTO>> getPropByKey() {
-        return propByKey;
-    }
+	public void setUserRoleMap(Map<String, List<String>> userRoleMap) {
+		this.userRoleMap = userRoleMap;
+	}
 
-    public void setPropByKey(Map<String, List<PropiedadDTO>> propByKey) {
-        this.propByKey = propByKey;
-    }
+	public Map<String, List<PropiedadDTO>> getPropByKey() {
+		return propByKey;
+	}
 
-    public String getMainOrganization() {
-        return mainOrganization;
-    }
+	public void setPropByKey(Map<String, List<PropiedadDTO>> propByKey) {
+		this.propByKey = propByKey;
+	}
 
-    public void setMainOrganization(String mainOrganization) {
-        this.mainOrganization = mainOrganization;
-    }
+	public String getMainOrganization() {
+		return mainOrganization;
+	}
 
-    public String getMainUser() {
-        return mainUser;
-    }
+	public void setMainOrganization(String mainOrganization) {
+		this.mainOrganization = mainOrganization;
+	}
 
-    public void setMainUser(String mainUser) {
-        this.mainUser = mainUser;
-    }
+	public String getMainUser() {
+		return mainUser;
+	}
 
-    public String getMainUserMail() {
-        return mainUserMail;
-    }
+	public void setMainUser(String mainUser) {
+		this.mainUser = mainUser;
+	}
 
-    public void setMainUserMail(String mainUserMail) {
-        this.mainUserMail = mainUserMail;
-    }
+	public String getMainUserMail() {
+		return mainUserMail;
+	}
 
-    public Map<String, UsuarioSesionDTO> getSessionMap() {
-        return sessionMap;
-    }
+	public void setMainUserMail(String mainUserMail) {
+		this.mainUserMail = mainUserMail;
+	}
 
-    public void setSessionMap(Map<String, UsuarioSesionDTO> sessionMap) {
-        this.sessionMap = sessionMap;
-    }
+	public Map<String, UsuarioSesionDTO> getSessionMap() {
+		return sessionMap;
+	}
 
-    public Map<String, Integer> getSessionTimeMap() {
-        return sessionTimeMap;
-    }
+	public void setSessionMap(Map<String, UsuarioSesionDTO> sessionMap) {
+		this.sessionMap = sessionMap;
+	}
 
-    public void setSessionTimeMap(Map<String, Integer> sessionTimeMap) {
-        this.sessionTimeMap = sessionTimeMap;
-    }
+	public Map<String, Integer> getSessionTimeMap() {
+		return sessionTimeMap;
+	}
 
-    public Map<String, DocumentoPlantillaCaracteristicaDTO> getFieldsMap() {
-        return fieldsMap;
-    }
+	public void setSessionTimeMap(Map<String, Integer> sessionTimeMap) {
+		this.sessionTimeMap = sessionTimeMap;
+	}
 
-    public void setFieldsMap(Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap) {
-        this.fieldsMap = fieldsMap;
-    }
+	public Map<String, DocumentoPlantillaCaracteristicaDTO> getFieldsMap() {
+		return fieldsMap;
+	}
 
-    // ---------------------------------------------
-    // CLEAR FUNCTIONS (por campo)
-    // ---------------------------------------------
+	public void setFieldsMap(Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap) {
+		this.fieldsMap = fieldsMap;
+	}
 
-    public void clearTypes() {
-        this.types = null;
-    }
+	public Map<String, RolAccesoDTO> getRolesMap() {
+		return rolesMap;
+	}
 
-    public void clearPropByTypeMap() {
-        this.propByTypeMap.clear();
-    }
+	public void setRolesMap(Map<String, RolAccesoDTO> rolesMap) {
+		this.rolesMap = rolesMap;
+	}
 
-    public void clearUserRoleMap() {
-        this.userRoleMap.clear();
-    }
+	// ---------------------------------------------
+	// CLEAR FUNCTIONS (por campo)
+	// ---------------------------------------------
 
-    public void clearPropByKey() {
-        this.propByKey.clear();
-    }
+	public void clearTypes() {
+		this.types = null;
+	}
 
-    public void clearMainOrganization() {
-        this.mainOrganization = null;
-    }
+	public void clearPropByTypeMap() {
+		this.propByTypeMap.clear();
+	}
 
-    public void clearMainUser() {
-        this.mainUser = null;
-    }
+	public void clearUserRoleMap() {
+		this.userRoleMap.clear();
+	}
 
-    public void clearMainUserMail() {
-        this.mainUserMail = null;
-    }
+	public void clearPropByKey() {
+		this.propByKey.clear();
+	}
 
-    public void clearSessionMap() {
-        this.sessionMap.clear();
-    }
+	public void clearMainOrganization() {
+		this.mainOrganization = null;
+	}
 
-    public void clearSessionTimeMap() {
-        this.sessionTimeMap.clear();
-    }
+	public void clearMainUser() {
+		this.mainUser = null;
+	}
 
-    public void clearFieldsMap() {
-        this.fieldsMap.clear();
-    }
-    
-    // ----------------------------------------------------------
-    // MÉTODOS PUT / GET PERSONALIZADOS
-    // ----------------------------------------------------------
+	public void clearMainUserMail() {
+		this.mainUserMail = null;
+	}
 
-    // ---- propByTypeMap ----
-    public void putPropByType(String type, List<PropiedadDTO> propiedades) {
-        propByTypeMap.put(type, propiedades);
-    }
+	public void clearSessionMap() {
+		this.sessionMap.clear();
+	}
 
-    public List<PropiedadDTO> getPropByType(String type) {
-        return propByTypeMap.get(type);
-    }
+	public void clearSessionTimeMap() {
+		this.sessionTimeMap.clear();
+	}
 
-    // ---- userRoleMap ----
-    public void putUserRoles(String user, List<String> roles) {
-        userRoleMap.put(user, roles);
-    }
+	public void clearFieldsMap() {
+		this.fieldsMap.clear();
+	}
 
-    public List<String> getUserRoles(String user) {
-        return userRoleMap.get(user);
-    }
+	public void clearRolesMap() {
+		this.rolesMap.clear();
+	}
 
-    // ---- propByKey ----
-    public void putPropByKey(String key, List<PropiedadDTO> propiedades) {
-        propByKey.put(key, propiedades);
-    }
+	// ----------------------------------------------------------
+	// MÉTODOS PUT / GET PERSONALIZADOS
+	// ----------------------------------------------------------
 
-    public List<PropiedadDTO> getPropByKeyValue(String key) {
-        return propByKey.get(key);
-    }
+	// ---- propByTypeMap ----
+	public void putPropByType(String type, List<PropiedadDTO> propiedades) {
+		propByTypeMap.put(type, propiedades);
+	}
 
-    // ---- sessionMap ----
-    public void putSession(String sessionId, UsuarioSesionDTO session) {
-        sessionMap.put(sessionId, session);
-        System.out.println(new Date().toString() +"SESSION ***************** CACHE token: " + sessionMap.size());
-    }
-    
-    public void removeSession(String sessionId) {
-        sessionMap.remove(sessionId);
-        System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
-    }
+	public List<PropiedadDTO> getPropByType(String type) {
+		return propByTypeMap.get(type);
+	}
 
-    public UsuarioSesionDTO getSession(String sessionId) {
-        return sessionMap.get(sessionId);
-    }
+	// ---- userRoleMap ----
+	public void putUserRoles(String user, List<String> roles) {
+		userRoleMap.put(user, roles);
+	}
 
-    // ---- sessionTimeMap ----
-    public void putSessionTime(String sessionId, Integer time) {
-        sessionTimeMap.put(sessionId, time);
-    }
+	public List<String> getUserRoles(String user) {
+		return userRoleMap.get(user);
+	}
 
-    public Integer getSessionTime(String sessionId) {
-        return sessionTimeMap.get(sessionId);
-    }
+	// ---- propByKey ----
+	public void putPropByKey(String key, List<PropiedadDTO> propiedades) {
+		propByKey.put(key, propiedades);
+	}
 
-    // ---- fieldsMap ----
-    public void putField(String key, DocumentoPlantillaCaracteristicaDTO field) {
-        fieldsMap.put(key, field);
-    }
+	public List<PropiedadDTO> getPropByKeyValue(String key) {
+		return propByKey.get(key);
+	}
 
-    public DocumentoPlantillaCaracteristicaDTO getField(String key) {
-        return fieldsMap.get(key);
-    }
+	// ---- sessionMap ----
+	public void putSession(String sessionId, UsuarioSesionDTO session) {
+		sessionMap.put(sessionId, session);
+		System.out.println(new Date().toString() + "SESSION ***************** CACHE token: " + sessionMap.size());
+	}
 
+	public void removeSession(String sessionId) {
+		sessionMap.remove(sessionId);
+		System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
+	}
 
-    // ---------------------------------------------
-    // CLEAR ALL (LIMPIA)
-    // ---------------------------------------------
+	public UsuarioSesionDTO getSession(String sessionId) {
+		return sessionMap.get(sessionId);
+	}
 
-    public void clearAll() {
-        this.types = null;
+	// ---- sessionTimeMap ----
+	public void putSessionTime(String sessionId, Integer time) {
+		sessionTimeMap.put(sessionId, time);
+	}
 
-        this.propByTypeMap.clear();
-        this.userRoleMap.clear();
-        this.propByKey.clear();
+	public Integer getSessionTime(String sessionId) {
+		return sessionTimeMap.get(sessionId);
+	}
 
-        this.mainOrganization = null;
-        this.mainUser = null;
-        this.mainUserMail = null;
+	// ---- fieldsMap ----
+	public void putField(String key, DocumentoPlantillaCaracteristicaDTO field) {
+		fieldsMap.put(key, field);
+	}
 
-        this.sessionMap.clear();
-        this.sessionTimeMap.clear();
+	public DocumentoPlantillaCaracteristicaDTO getField(String key) {
+		return fieldsMap.get(key);
+	}
 
-        this.fieldsMap.clear();
-    }
+	// ---- fieldsMap ----
+	public void putRole(String key, RolAccesoDTO field) {
+		rolesMap.put(key, field);
+	}
+
+	public RolAccesoDTO getRole(String key) {
+		return rolesMap.get(key);
+	}
+
+	// ---------------------------------------------
+	// CLEAR ALL (LIMPIA)
+	// ---------------------------------------------
+
+	public void clearAll() {
+		this.types = null;
+
+		this.propByTypeMap.clear();
+		this.userRoleMap.clear();
+		this.propByKey.clear();
+
+		this.mainOrganization = null;
+		this.mainUser = null;
+		this.mainUserMail = null;
+
+		this.sessionMap.clear();
+		this.sessionTimeMap.clear();
+
+		this.fieldsMap.clear();
+		this.rolesMap.clear();
+	}
 }
