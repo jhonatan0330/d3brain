@@ -183,8 +183,17 @@ public class CallUpdateByRelations {
 								campoDestino = new PedidoVentaCaracteristicaDTO();
 								campoDestino.setCampo(_field.getLlaveTabla());
 								campoDestino.setDocumento(dependiente.getExpedientes().get(0).getLlaveTabla());
-								campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
-								campoDestino.setValorText(dependiente.getPrincipal().getNombre());
+
+								//El escenario era en trustmetrans se creaba exito del rnec y en ese momento si creaba la asociacion
+								if(dependiente.getExpedientes().get(0).getLlaveTabla().compareTo(pCampo.getExpedientes().get(0).getLlaveTabla())==0) {
+									//En el manifiesto se realaciona el mismo campo, porque se quiere asociar el manifiesto nuevo creado
+									campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
+									campoDestino.setValorText(dependiente.getPrincipal().getNombre());
+								}else {
+									// En la remesa ya existia la remesa y se asocia uno existente
+									campoDestino.setValorOpcion(pCampo.getExpedientes().get(0).getLlaveTabla());
+									campoDestino.setValorText(pCampo.getExpedientes().get(0).getNombre());
+								}
 								campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 								pedidoVentaCaracteristicaService.saveSimple(campoDestino);
 							}
