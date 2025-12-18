@@ -192,7 +192,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 							+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
 				if (dto.getFechaEvento().compareTo(turno.getFechaApertura()) < 0)
-					throw new ServerException("Iniciaste turno de la cuenta en esta fecha "
+					throw new ServerException("Iniciaste turno de la cuenta " +turno.getCuentaNombre() + " en esta fecha "
 							+ SoftureUtil.formatDateTime(turno.getFechaApertura())
 							+ ", te agradecemos que cambies la fecha de tu documento a una fecha que sea mayor");
 			} else {

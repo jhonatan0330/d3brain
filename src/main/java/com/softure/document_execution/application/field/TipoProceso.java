@@ -649,13 +649,11 @@ public class TipoProceso {
 		List<MovimientoDTO> movimientos = movimientoService.listarConsulta(movimiento);
 		if (movimientos == null || movimientos.isEmpty())
 			throw new ServerException("Estas anulando un movimiento y no se encuentra en la tabla de movimientos");
-		if (movimientos.size() != 1)
-			throw new ServerException(
-					"Estas anulando un movimiento de un documento y este documento tiene muchos movimientos");
-		MovimientoDTO result = movimientoService.inactivar(movimientos.get(0), token);
-		pCampo.setValorAuxiliar(result.getLlaveTabla());
-		pCampo.setValorFecha(result.getFechaEvento());
-		pCampo.setValorNumero(result.getMonto());
+		for (MovimientoDTO movimientoDTO : movimientos) {
+			movimientoService.inactivar(movimientoDTO, token);
+		} 
+		
+		
 	}
 
 	
