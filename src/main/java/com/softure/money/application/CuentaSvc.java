@@ -1,19 +1,17 @@
 package com.softure.money.application;
 
-import java.util.List;
-
 // BEGIN region interImport
 import java.math.BigDecimal;
 
-import com.shared.domain.SharedConstants;
-import com.shared.domain.ServerException;
-import com.softure.document_execution.domain.PedidoVentaDTO;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
+import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
@@ -43,12 +41,6 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	  this.mapper = cuentaMapper;
 	}
 	
-	@Override
-	public CuentaDTO activar(CuentaDTO dto, String token) throws ServerException {
-		// BEGIN Cuenta_activar
-		return super.activar(dto, token);
-		// END Cuenta_activar
-	}
 	
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
@@ -70,33 +62,7 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 		return super.inactivar(dto, token);
 		// END Cuenta_inactivar
 	}
-	
-	@Override
-	public CuentaDTO consultaUnica(CuentaFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(CuentaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<CuentaDTO> listarConsulta(CuentaFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
 
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public CuentaDTO guardar(CuentaDTO dto, String token) throws ServerException {
-		// BEGIN Cuenta_guardar
-		return super.guardar(dto, token);
-		// END Cuenta_guardar
-	}
-
-// BEGIN region aditionalMethods
 	public CuentaDTO crearCuenta(PedidoVentaDTO dto,  String token) throws ServerException {
 		CuentaFilterDTO filter = new CuentaFilterDTO();
 		filter.setDocumento(dto.getLlaveTabla());
@@ -124,6 +90,9 @@ public class CuentaSvc extends BasicSvc<CuentaDTO, CuentaFilterDTO> {
 	public BigDecimal sobregiro(String cuentaId) {
 		return new BigDecimal( cuentaMapper.sobregiro(cuentaId) );
 	}
-// END region aditionalMethods
+	
+	public boolean turnomultiple(String cuentaId) {
+		return  cuentaMapper.turnomultiple(cuentaId) ;
+	}
 
 }

@@ -8,9 +8,6 @@ import com.softure.money.domain.CuentaFilterDTO;
 
 @SoftureSqlConnMapper(value = "CuentaMapper")
 public interface CuentaMapper extends IBasicMapper<CuentaDTO, CuentaFilterDTO>{
-	
-
-// BEGIN region aditionalMethods  
 	Long sobregiro(String documento);
-// END region aditionalMethods
+	boolean turnomultiple(String documento);
 }

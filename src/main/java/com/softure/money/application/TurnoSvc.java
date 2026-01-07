@@ -1,25 +1,21 @@
 package com.softure.money.application;
 
+import java.util.Date;
 import java.util.List;
 
-// BEGIN region interImport
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
+import com.shared.domain.ServerException;
+import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
 import com.softure.money.domain.TurnoDTO;
 import com.softure.money.domain.TurnoFilterDTO;
 import com.softure.money.infrastructure.TurnoMapper;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.shared.domain.ServerException;
-import com.softure.logisticpymes.application.BasicSvc;
 
 @Service("turnoService")
 public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
@@ -27,9 +23,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	@Autowired @Lazy 
 	private TurnoMapper turnoMapper;
 	
-	// BEGIN region servicesTurno
 	@Autowired @Lazy  private CuentaSvc cuentaService;
-	// END region servicesTurno
 
 	@Override
 	public TurnoDTO consultaXId(String llave) throws ServerException {
@@ -43,56 +37,6 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	public void initIt() throws Exception {
 	  this.mapper = turnoMapper;
 	}
-	
-	@Override
-	public TurnoDTO activar(TurnoDTO dto, String token) throws ServerException {
-		// BEGIN Turno_activar
-		return super.activar(dto, token);
-		// END Turno_activar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TurnoDTO actualizar( TurnoDTO dto, String token) throws ServerException {
-		// BEGIN Turno_actualizar
-		return super.actualizar(dto, token);
-		// END Turno_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TurnoDTO inactivar(TurnoDTO dto, String token) throws ServerException {
-		// BEGIN Turno_inactivar
-		return super.inactivar(dto, token);
-		// END Turno_inactivar
-	}
-	
-	@Override
-	public TurnoDTO consultaUnica(TurnoFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(TurnoFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<TurnoDTO> listarConsulta(TurnoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public TurnoDTO guardar(TurnoDTO dto, String token) throws ServerException {
-		// BEGIN Turno_guardar
-		return super.guardar(dto, token);
-		// END Turno_guardar
-	}
-
-// BEGIN region aditionalMethods
 
 	public TurnoDTO consultarTurnoActual(TurnoDTO dto)throws ServerException{
 		TurnoFilterDTO turnoDTO = new TurnoFilterDTO();
@@ -116,12 +60,14 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		// Esto lo quite en autollanos
 		//if(!caja.getValidarTurno())throw new ServerException("Esta cuenta no permite iniciar turnos");
 
-		TurnoFilterDTO turnoFilterDTO = new TurnoFilterDTO();
-		turnoFilterDTO.setCuenta(caja.getLlaveTabla());
-		turnoFilterDTO.setEstado(TurnoDTO.ESTADO_EJECUCION);
-		List<TurnoDTO> turnos = listarConsulta(turnoFilterDTO);
-		if(turnos!=null && turnos.size()!=0)
-			throw new ServerException("Esta caja " + caja.getNombre() + " ya tiene un turno asignado con "+ turnos.get(0).getUsuarioNombre());
+		if(!cuentaService.turnomultiple(caja.getLlaveTabla())) {
+			TurnoFilterDTO turnoFilterDTO = new TurnoFilterDTO();
+			turnoFilterDTO.setCuenta(caja.getLlaveTabla());
+			turnoFilterDTO.setEstado(TurnoDTO.ESTADO_EJECUCION);
+			List<TurnoDTO> turnos = listarConsulta(turnoFilterDTO);
+			if(turnos!=null && turnos.size()!=0)
+				throw new ServerException("Esta caja " + caja.getNombre() + " ya tiene un turno asignado con "+ turnos.get(0).getUsuarioNombre());
+		}
 		
 		dto.setCuenta(caja.getLlaveTabla());
 		dto.setFechaApertura(new Date());
@@ -134,6 +80,5 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		}
 		return dto;
 	}
-// END region aditionalMethods
 
 }

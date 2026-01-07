@@ -36,28 +36,28 @@ public class PlanAccountingRest {
 	private PlanGetBalanceService getBalanceService;
 	
 	@GetMapping("/balance/{catalog}")
-	public List<ResultMapDTO> getBalance(@PathVariable(name="catalog") String pCatalog, @RequestHeader("Authorization") String token) throws ServerException {
+	public List<ResultMapDTO> getBalance(@PathVariable(name="catalog") String pCatalog, @RequestHeader(name="Authorization") String token) throws ServerException {
 		return getBalanceService.getBalance(pCatalog);
 	}	
 	
 	@GetMapping("/account/{catalog}")
-	public List<AccountDTO> getAccount(@PathVariable(name="catalog") String pCatalog, @RequestHeader("Authorization") String token, @RequestParam(required = false) String filter) throws ServerException {
-		return getAccountService.getActive(pCatalog, filter);
+	public List<AccountDTO> getAccount(@PathVariable(name="catalog") String pCatalog, @RequestHeader(name="Authorization") String token, @RequestParam(name="filter", required = false) String pFilter) throws ServerException {
+		return getAccountService.getActive(pCatalog, pFilter);
 	}
 	
 	@GetMapping(value="/account/{catalog}/{id}")
-	public AccountDTO getAccountById(@PathVariable(name="catalog") String pCatalog, @PathVariable(name="id") String pId, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public AccountDTO getAccountById(@PathVariable(name="catalog") String pCatalog, @PathVariable(name="id") String pId, @RequestHeader(name="Authorization") String token)  throws ServerException  {
 		return getAccountService.getByCatalogAndId(pCatalog, pId);
 	}
 	
 	
 	@GetMapping(value="/catalog/{id}")
-	public CatalogDTO getCatalogById(@PathVariable(name="id") String pId, @RequestHeader("Authorization") String token)  throws ServerException  {
+	public CatalogDTO getCatalogById(@PathVariable(name="id") String pId, @RequestHeader(name="Authorization") String token)  throws ServerException  {
 		return getCatalogService.getById(pId);
 	}
 	
 	@GetMapping("/catalog")
-	public List<CatalogDTO> getCatalog(@RequestHeader("Authorization") String token) throws ServerException {
+	public List<CatalogDTO> getCatalog(@RequestHeader(name="Authorization") String token) throws ServerException {
 		return getCatalogService.getActive();
 	}
 	

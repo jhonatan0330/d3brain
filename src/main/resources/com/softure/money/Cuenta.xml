@@ -136,34 +136,6 @@
 				ccue_estado =#{estado}
 		<include refid="whereCuentaPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleCuentaFragment">
-		select
-			ccue_llave as  llaveTabla
-			,ccue_codigo as  codigo
-			,ccue_nombre as  nombre
-			,ccue_documento as  documento
-			,dcue_fechaconciliacion as  fechaConciliacion
-			,bcue_validarturno as  validarTurno
-			,ccue_estado as estado
-		from cuenta_cuep a
-	</sql>
-	
-	<select id="consultarSimple" resultType="CuentaDTO">
-		<include refid="selectSimpleCuentaFragment" />
-		<include refid="whereCuentaFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="CuentaDTO">
-		<include refid="selectSimpleCuentaFragment" />
-		<include refid="whereCuentaFragment" />
-		order by ccue_nombre 
-		<include refid="paginationCuentaFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
 
 	<select id="sobregiro" resultType="java.lang.Long">
 		select 
@@ -176,6 +148,16 @@
 		where ccue_documento = #{documento}
 			and cppd_propiedadvalor = 'PROP_99'
 	</select>
-<!--// END region script-->
+	
+	<select id="turnomultime" resultType="java.lang.Boolean">
+	select exists (
+		select 1
+		from 
+			cuenta_cuep 
+			inner join pedidoventa_pdvp on (cpdv_llave = ccue_documento)
+			inner join campo_documento on cdrc_documento = cpdv_llave and cdpf_codigo = 'TURNO_MULTIPLE'
+		where ccue_documento = #{documento}
+	)
+	</select>
 
 </mapper>

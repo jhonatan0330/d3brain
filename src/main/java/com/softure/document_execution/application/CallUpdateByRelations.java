@@ -92,54 +92,61 @@ public class CallUpdateByRelations {
 						throw new ServerException("Revisa las relaciones de la propiedad " + propiedadDTO.getNombre()
 								+ " del campo " + pCampo.getCampoDTO().getNombre());
 					for (RelacionInternaDTO iRelacion : relaciones) {
+						PedidoVentaCaracteristicaDTO _fieldToReplace = null;
+						
 						PedidoVentaCaracteristicaFilterDTO campoDestinoFilter = new PedidoVentaCaracteristicaFilterDTO();
 						campoDestinoFilter.setDocumento(dependiente.getValorOpcion());
 						campoDestinoFilter.setCampo(iRelacion.getCampo());
-						PedidoVentaCaracteristicaDTO campoDestino = pedidoVentaCaracteristicaService
-								.consultaUnica(campoDestinoFilter);
+						campoDestinoFilter.setEstado(SharedConstants.STATE_ACTIVE);
+						List<PedidoVentaCaracteristicaDTO> _fieldsDestinyToreplace = pedidoVentaCaracteristicaService
+								.listarConsulta(campoDestinoFilter);
+						//A veces no entiendo porque se creaban muchos campos u eso generaba un error dificil de ideintificar
+						if(_fieldsDestinyToreplace!=null && !_fieldsDestinyToreplace.isEmpty()) {
+							_fieldToReplace = _fieldsDestinyToreplace.get(0);	
+						}
 						// Aqui sucedio en colegios, la plantilla curso se creo sin campo estudiantes y
 						// se creo un curso, este no se asociaba porque no existia el campo destino.
 						// toca dejarlo asi porque hay casos donde se salta esta validacion.
-						if (campoDestino != null) {
-							campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-							campoDestino.setCampoDTO(
-									documentoPlantillaCaracteristicaService.consultaXId(campoDestino.getCampo()));
-							if (campoDestino.getCampoDTO().getFormato()
+						if (_fieldToReplace != null) {
+							_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
+							_fieldToReplace.setCampoDTO(
+									documentoPlantillaCaracteristicaService.consultaXId(_fieldToReplace.getCampo()));
+							if (_fieldToReplace.getCampoDTO().getFormato()
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
-								throw new ServerException("El campo destino " + campoDestino.getCampoDTO().getNombre()
+								throw new ServerException("El campo destino " + _fieldToReplace.getCampoDTO().getNombre()
 										+ " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");
 							}
-							campoDestino.setCampoDTO(documentoPlantillaCaracteristicaService
-									.cargarComplementos(campoDestino.getCampoDTO(), token));
-							String campoValor = Propiedades.obtenerValor(campoDestino.getCampoDTO(),
+							_fieldToReplace.setCampoDTO(documentoPlantillaCaracteristicaService
+									.cargarComplementos(_fieldToReplace.getCampoDTO(), token));
+							String campoValor = Propiedades.obtenerValor(_fieldToReplace.getCampoDTO(),
 									Propiedades.PROCESO_VALOR);
-							campoDestino.setExpedientes(new ArrayList<>());
+							_fieldToReplace.setExpedientes(new ArrayList<>());
 							List<PedidoVentaDTO> actualDocuments = listDocumentWithFiltersFunction
-									.listarExpedientesPertenecenCampo(campoDestino.getLlaveTabla(), token, campoValor);
+									.listarExpedientesPertenecenCampo(_fieldToReplace.getLlaveTabla(), token, campoValor);
 							if (actualDocuments != null && !actualDocuments.isEmpty())
-								campoDestino.getExpedientes().addAll(actualDocuments);
+								_fieldToReplace.getExpedientes().addAll(actualDocuments);
 							for (PedidoVentaDTO iDocumentoRelacionar : pCampo.getExpedientes()) {
 								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0) {
 									PedidoVentaDTO _same_document = (pCampo.getCampo().equals(propiedadDTO.getValor()))
 											? pCampo.getPrincipal()
 											: iDocumentoRelacionar;
-									campoDestino.getExpedientes().add(_same_document);
+									_fieldToReplace.getExpedientes().add(_same_document);
 									if (campoValor.isEmpty())
 										relacionExpedienteService.relacionarExpedienteDocumento(
-												campoDestino.getLlaveTabla(), _same_document.getLlaveTabla(), token,
-												campoDestino.getCampoDTO().getNombre(),
+												_fieldToReplace.getLlaveTabla(), _same_document.getLlaveTabla(), token,
+												_fieldToReplace.getCampoDTO().getNombre(),
 												(_same_document.getDinero() == null) ? null
 														: _same_document.getDinero().getSaldo(),
 												pCampo.getPrincipal().getLlaveTabla());
 								} else {
 									// Si utilizo foreach falla por collection modified
-									for (int i = campoDestino.getExpedientes().size() - 1; i >= 0; i--) {
-										PedidoVentaDTO iExpediente = campoDestino.getExpedientes().get(i);
+									for (int i = _fieldToReplace.getExpedientes().size() - 1; i >= 0; i--) {
+										PedidoVentaDTO iExpediente = _fieldToReplace.getExpedientes().get(i);
 										if (iExpediente.getLlaveTabla()
 												.compareTo(iDocumentoRelacionar.getLlaveTabla()) == 0) {
-											campoDestino.getExpedientes().remove(iExpediente);
+											_fieldToReplace.getExpedientes().remove(iExpediente);
 											
-											 if(campoValor.isEmpty()) retirarExpedienteDocumento(campoDestino,
+											 if(campoValor.isEmpty()) retirarExpedienteDocumento(_fieldToReplace,
 											  iDocumentoRelacionar, (pCampo.getPrincipal()==null)?null:
 											  pCampo.getPrincipal().getLlaveTabla(), token); break;
 											 
@@ -148,8 +155,8 @@ public class CallUpdateByRelations {
 								}
 							}
 							if (campoValor.isEmpty()) {
-								campoDestino.setValorText(String.valueOf(campoDestino.getExpedientes().size()));
-								pedidoVentaCaracteristicaService.update(campoDestino);
+								_fieldToReplace.setValorText(String.valueOf(_fieldToReplace.getExpedientes().size()));
+								pedidoVentaCaracteristicaService.update(_fieldToReplace);
 							} else {
 								PedidoVentaDTO updateDocument = pDocumentsToUpdate.get(dependiente.getValorOpcion());
 								if (updateDocument == null) {
@@ -160,13 +167,13 @@ public class CallUpdateByRelations {
 
 								for (PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument
 										.getCaracteristicas()) {
-									if (iFieldUpdateDocument.getCampo().compareTo(campoDestino.getCampo()) == 0) {
+									if (iFieldUpdateDocument.getCampo().compareTo(_fieldToReplace.getCampo()) == 0) {
 										iFieldUpdateDocument.setModificado(true);
-										iFieldUpdateDocument.setExpedientes(campoDestino.getExpedientes());
+										iFieldUpdateDocument.setExpedientes(_fieldToReplace.getExpedientes());
 										break;
 									}
 								}
-								organizeDependsNumberToUpdate(campoDestino, updateDocument);
+								organizeDependsNumberToUpdate(_fieldToReplace, updateDocument);
 
 								pDocumentsToUpdate.put(dependiente.getValorOpcion(), updateDocument);
 							}
@@ -180,22 +187,22 @@ public class CallUpdateByRelations {
 									&& dependiente.getExpedientes() != null && dependiente.getExpedientes().size() == 1
 									&& _field.getPlantilla()
 											.compareTo(dependiente.getExpedientes().get(0).getPlantilla()) == 0) {
-								campoDestino = new PedidoVentaCaracteristicaDTO();
-								campoDestino.setCampo(_field.getLlaveTabla());
-								campoDestino.setDocumento(dependiente.getExpedientes().get(0).getLlaveTabla());
+								_fieldToReplace = new PedidoVentaCaracteristicaDTO();
+								_fieldToReplace.setCampo(_field.getLlaveTabla());
+								_fieldToReplace.setDocumento(dependiente.getExpedientes().get(0).getLlaveTabla());
 
 								//El escenario era en trustmetrans se creaba exito del rnec y en ese momento si creaba la asociacion
 								if(dependiente.getExpedientes().get(0).getLlaveTabla().compareTo(pCampo.getExpedientes().get(0).getLlaveTabla())==0) {
 									//En el manifiesto se realaciona el mismo campo, porque se quiere asociar el manifiesto nuevo creado
-									campoDestino.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
-									campoDestino.setValorText(dependiente.getPrincipal().getNombre());
+									_fieldToReplace.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
+									_fieldToReplace.setValorText(dependiente.getPrincipal().getNombre());
 								}else {
 									// En la remesa ya existia la remesa y se asocia uno existente
-									campoDestino.setValorOpcion(pCampo.getExpedientes().get(0).getLlaveTabla());
-									campoDestino.setValorText(pCampo.getExpedientes().get(0).getNombre());
+									_fieldToReplace.setValorOpcion(pCampo.getExpedientes().get(0).getLlaveTabla());
+									_fieldToReplace.setValorText(pCampo.getExpedientes().get(0).getNombre());
 								}
-								campoDestino.setTransaccionRegistro(pCampo.getTransaccionRegistro());
-								pedidoVentaCaracteristicaService.saveSimple(campoDestino);
+								_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
+								pedidoVentaCaracteristicaService.saveSimple(_fieldToReplace);
 							}
 						}
 					}
