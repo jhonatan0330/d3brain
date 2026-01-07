@@ -124,6 +124,11 @@ public class CallDocumentListWithFilters {
 				dto.setSecurityToken(null);// Se quito que solo viera los que tiene permiso
 				// La idea es implementar los filtros en los campos de los formularios de
 				// herencia
+
+				// Cuando es desde el buscador generarl busca todos los estaos
+				if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
+					dto.setEstado(SharedConstants.STATE_ACTIVE  + SharedConstants.PUNTO_COMA +SharedConstants.STATE_COMPLETE);
+				
 				List<String> generalState = generateFiltersByGeneralState(dto);
 				List<String> estadosFiltro = generateFiltersByStateFromProcess(dto);
 				List<String> textoFiltroComas = organizarFiltroComas(dto);
@@ -364,6 +369,7 @@ public class CallDocumentListWithFilters {
 			filtro.setFuncionarioNombre(dtoFilter.getFuncionarioNombre());
 			filtro.setFuncionario(filterDTO.getFuncionario()); // No me encontraba una guia con el usuario
 			filtro.setSecurityToken(secToken);
+			// Cuando es desde el buscador generarl busca todos los estados
 			List<String> generalState = generateFiltersByGeneralState(filtro);
 			if (secToken != null || filtro.getFuncionario() != null)
 				filtro.setCaracteristicas(filterDTO.getCaracteristicas());
@@ -549,8 +555,9 @@ public class CallDocumentListWithFilters {
 				result.add(textToGenerateFilters);
 			}
 		}
-		if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-			result = List.of(SharedConstants.STATE_ACTIVE, SharedConstants.STATE_COMPLETE);
+		// Esto lo quite y lo puse en la funcion que llama a esta generacion
+		//if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
+			//result = List.of(SharedConstants.STATE_ACTIVE, SharedConstants.STATE_COMPLETE);
 		return result;
 	}
 
