@@ -111,7 +111,8 @@ public class CallUpdateByRelations {
 							_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 							_fieldToReplace.setCampoDTO(
 									documentoPlantillaCaracteristicaService.consultaXId(_fieldToReplace.getCampo()));
-							if (_fieldToReplace.getCampoDTO().getFormato()
+							// Esta validacion la coloque porque al retirar me mostraba error y la idea es evitar las consultas si no se cumple
+							if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0 && _fieldToReplace.getCampoDTO().getFormato()
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
 								throw new ServerException("El campo destino " + _fieldToReplace.getCampoDTO().getNombre()
 										+ " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");

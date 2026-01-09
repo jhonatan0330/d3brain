@@ -101,6 +101,9 @@
 		<if test="imagen!=null">
 			,cdpc_imagen
 		</if>
+		<if test="usuarioCreacion!=null">
+			,cdpc_usuariocreacion
+		</if>
 		<if test="estado!=null">
 			,cdpc_estado
 		</if>
@@ -127,6 +130,9 @@
 		<if test="imagen!=null">
 			,#{imagen}
 		</if>
+		<if test="usuarioCreacion!=null">
+			,#{usuarioCreacion}
+		</if>
 		<if test="estado!=null">
 			,#{estado}
 		</if>
@@ -143,12 +149,12 @@
 				cdpc_codigo = #{codigo},
 				ndpc_orden = #{orden},
 				cdpc_imagen = #{imagen},
+				cdpc_usuarioeliminacion = #{usuarioEliminacion},
+				ddpc_fechaeliminacion = #{fechaEliminacion},
 				cdpc_estado =#{estado}
 		<include refid="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment" />
 	</select>
 
-
-<!--// BEGIN region script-->
 	<update id="actualizarFiltros" parameterType="java.lang.String" >
 	update pedidoventa_pdvp set cpdv_textofiltro = (SELECT array_to_string(ARRAY( SELECT upper(pvc.cpvc_valortext::text)
 		FROM pedidoventacaracteristica_pvcp pvc, documentoplantillacaracteristica_dpcp dpc_a, propiedad_ppdp ppd
@@ -180,6 +186,5 @@
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpc_plantilla, ndpc_orden 
 	</select>
-<!--// END region script-->
 
 </mapper>

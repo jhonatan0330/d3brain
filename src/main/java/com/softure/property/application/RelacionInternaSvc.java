@@ -23,6 +23,10 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	
 	@Autowired @Lazy private RelacionInternaMapper relacionInternaMapper;
 	
+	@Autowired
+	@Lazy
+	private PropertyGetWithCacheService cacheService;
+	
 	@Override
 	public RelacionInternaDTO consultaXId(String llave) throws ServerException {
 		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. RelacionInterna");
@@ -60,6 +64,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd =  super.update(bd);
 		relacionInternaMapper.updatePropertyRelations(bd.getPropiedad());
+		cacheService.clearProperties();
 		return bd;
 	}
 	
@@ -88,6 +93,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		if(dto.getFechaInicio()==null)dto.setFechaInicio(new Date());
 		dto = super.saveSimple(dto);
 		relacionInternaMapper.updatePropertyRelations(dto.getPropiedad());
+		cacheService.clearProperties();
 		return dto;
 	}
 

@@ -157,6 +157,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		}
 		if (dto.getCodigo() == null)
 			dto.setCodigo(SoftureUtil.formatFunction(dto.getNombre()).toUpperCase());
+		dto.setNombre(dto.getNombre().toUpperCase());
 		dto.setOrden(cantidadCampos);
 		dto.setCodigo(SoftureUtil.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.guardar(dto, token);

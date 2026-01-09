@@ -1,10 +1,12 @@
 package com.softure.process_form.domain;
 
+import java.util.Date;
 import java.util.List;
 
 
 import org.apache.ibatis.type.Alias;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.document_execution.domain.PedidoVentaDTO;
@@ -42,6 +44,13 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	private String imagen;
 	private List<ProductoDTO> productos;
 	private List<PedidoVentaDTO> documentos;
+	
+	private String usuarioCreacion;
+	private String usuarioEliminacion;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaEliminacion;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
+	private Date fechaCreacion;
 
 	public void setObjetivo(String objetivo) {
 		this.objetivo = objetivo;
@@ -113,6 +122,38 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO
 	
 	public List<PedidoVentaDTO> getDocumentos() {
 		return documentos;
+	}
+
+	public String getUsuarioCreacion() {
+		return usuarioCreacion;
+	}
+
+	public void setUsuarioCreacion(String usuarioCreacion) {
+		this.usuarioCreacion = usuarioCreacion;
+	}
+
+	public String getUsuarioEliminacion() {
+		return usuarioEliminacion;
+	}
+
+	public void setUsuarioEliminacion(String usuarioEliminacion) {
+		this.usuarioEliminacion = usuarioEliminacion;
+	}
+
+	public Date getFechaEliminacion() {
+		return fechaEliminacion;
+	}
+
+	public void setFechaEliminacion(Date fechaEliminacion) {
+		this.fechaEliminacion = fechaEliminacion;
+	}
+
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
 	}
 
 }
