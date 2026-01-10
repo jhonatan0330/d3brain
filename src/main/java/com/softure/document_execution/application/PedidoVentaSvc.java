@@ -60,7 +60,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	@Autowired
 	@Lazy
 	private PropiedadSvc propiedadService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
@@ -97,7 +98,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction inactivate");
 	}
 
-
 	public PedidoVentaDTO consultaCompleta(String documentId, String token) throws ServerException {
 		if (documentId == null)
 			throw new ServerException("En el desarrollo se debe crear el objeto desde la plantilla");
@@ -109,7 +109,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		boolean modificable = true;
 		if (bd.getEstadoExpediente() != null) {
 			String usuarioToken = (securityToken == null) ? null : getUserFlex(securityToken);
-			modificable = (cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.ESTADO, bd.getEstadoExpediente(),
+			modificable = (cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, bd.getEstadoExpediente(),
 					Propiedades.MODIFICABLE, usuarioToken) == null) ? false : true;
 		} else {
 			if (bd.getEstado().compareTo(PedidoVentaDTO.ESTADO_ACTIVO) != 0) {
@@ -146,7 +146,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				uc.setCampo(documentoCaracteristicaDTO.getLlaveTabla());
 				uc.setCampoDTO(documentoCaracteristicaDTO);
 				uc.setDocumento(bd.getLlaveTabla());
-				
+
 				if (!modificable) {
 					Propiedades.retirarPropiedad(uc.getCampoDTO(), Propiedades.PERMISO_CAMPO_MODIFICABLE);
 				}
@@ -179,7 +179,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
-		List<PropiedadDTO> prop = cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
+		List<PropiedadDTO> prop = cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 				filter.getPlantilla(), Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
 		if (prop.isEmpty() || prop.size() != 1)
 			return result;
@@ -300,15 +300,15 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 	}
 
-	//Por el momento lo uso para tipo vinculo funcion
+	// Por el momento lo uso para tipo vinculo funcion
 	public List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(PedidoVentaFilterDTO dto,
 			String funcionBusqueda, List<PedidoVentaCaracteristicaDTO> parametros) throws ServerException {
 		if (funcionBusqueda == null)
 			return null;
-		if(dto==null) {
-			dto = new PedidoVentaFilterDTO();			
+		if (dto == null) {
+			dto = new PedidoVentaFilterDTO();
 		}
-			
+
 		paginar(dto);
 		try {
 			funcionBusqueda = SoftureUtil.formatFunction(funcionBusqueda);
@@ -321,17 +321,17 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 	}
 
-	public String getMessageToProcessField(String pProperty, String pValue, String pToken)
-			throws ServerException {
-		PropiedadDTO prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.CAMPO,
-				pProperty, Propiedades.HTML_DOCUMENT_SQL, pToken);
-		if (prop ==null)
+	public String getMessageToProcessField(String pProperty, String pValue, String pToken) throws ServerException {
+		PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.CAMPO, pProperty,
+				Propiedades.HTML_DOCUMENT_SQL, pToken);
+		if (prop == null)
 			return null;
-		return propiedadService.validarFuncionSQL2(prop,pValue, pToken);
+		return propiedadService.validarFuncionSQL2(prop, pValue, pToken);
 	}
-	
+
 	public PedidoVentaDTO findByCode(String pName, String pTemplate) throws ServerException {
-		if(pTemplate==null || pName==null) return null;
+		if (pTemplate == null || pName == null)
+			return null;
 		PedidoVentaFilterDTO filter = new PedidoVentaFilterDTO();
 		filter.setNombre(pName);
 		filter.setPlantilla(pTemplate);
@@ -341,14 +341,24 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			throw new ServerException(e.getMessage(), e);
 		}
 	}
-	
+
 	public void clearPedidoResponse(PedidoVentaDTO pDTO) {
-		if(pDTO ==null) return;
+		if (pDTO == null)
+			return;
 
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
 			_iField.setCampoDTO(null);
 			_iField.setDependientes(null);
 			_iField.setTransaccionRegistro(null);
+		}
+	}
+
+	// Creo que esto puede ir en un mapper diferente de solo el crud
+	public List<PedidoVentaDTO> getByNameTemplateAndConsecutive(String pName, String pTemplate, String pConsecutive) throws ServerException {
+		try {
+			return pedidoVentaMapper.getByNameTemplateAndConsecutive(pName, pTemplate, pConsecutive);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), e);
 		}
 	}
 }

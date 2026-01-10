@@ -32,7 +32,6 @@ import com.softure.document_execution.application.field.TipoVinculo;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.domain.PedidoVentaDineroDTO;
-import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transaction.application.TransaccionErrorSvc;
 import com.softure.document_transaction.application.TransaccionLogSvc;
@@ -948,24 +947,21 @@ public class CallDocumentCRUD {
 		return consecutivo.getConsecutivoActual();
 	}
 
-	private String validateDoubleCodeIdActive(PedidoVentaDTO pedido, String codigoNuevo, ConsecutivoDTO consecutive)
+	private String validateDoubleCodeIdActive(PedidoVentaDTO pDocument, String pNewCode, ConsecutivoDTO pConsecutive)
 			throws ServerException {
-		PedidoVentaFilterDTO filtroNombreFilter = new PedidoVentaFilterDTO();
 		// Valido que no existan documentos con el mismo nombre ni cerrados ni activos
-		filtroNombreFilter.setNombre(codigoNuevo);
-		filtroNombreFilter.setPlantilla(pedido.getPlantilla());
-		List<PedidoVentaDTO> mismoNombre = pedidoService.listarConsulta(filtroNombreFilter);
+		List<PedidoVentaDTO> mismoNombre = pedidoService.getByNameTemplateAndConsecutive(pNewCode, pDocument.getPlantilla(), (pConsecutive==null)?null:pConsecutive.getLlaveTabla());
 		if (mismoNombre == null || mismoNombre.isEmpty())
-			return codigoNuevo;
+			return pNewCode;
 		for (PedidoVentaDTO igualNombre : mismoNombre) {
-			if (pedido.getLlaveTabla() == null || pedido.getLlaveTabla().compareTo(igualNombre.getLlaveTabla()) != 0) {
+			if (pDocument.getLlaveTabla() == null || pDocument.getLlaveTabla().compareTo(igualNombre.getLlaveTabla()) != 0) {
 				if (igualNombre.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 					// Se hace para evitar el error de concurrencia con los consecutivos automaticos
-					if (consecutive != null && !consecutive.getManual()) {
-						codigoNuevo = asignateConsecutive(pedido, consecutive.getLlaveTabla(), null);
-						return validateDoubleCodeIdActive(pedido, codigoNuevo, consecutive);
+					if (pConsecutive != null && !pConsecutive.getManual()) {
+						pNewCode = asignateConsecutive(pDocument, pConsecutive.getLlaveTabla(), null);
+						return validateDoubleCodeIdActive(pDocument, pNewCode, pConsecutive);
 					} else {
-						DocumentoPlantillaDTO plantilla = documentoPlantillaService.consultaXId(pedido.getPlantilla());
+						DocumentoPlantillaDTO plantilla = documentoPlantillaService.consultaXId(igualNombre.getPlantilla());
 						throw new ServerException("Ya existe un " + plantilla.getNombre() + " con el mismo codigo ("
 								+ igualNombre.getNombre() + "). Creado el "
 								+ SoftureUtil.formatDateTime(igualNombre.getFechaRegistro()) + " con estado "
@@ -974,7 +970,7 @@ public class CallDocumentCRUD {
 				}
 			}
 		}
-		return codigoNuevo;
+		return pNewCode;
 	}
 
 	private List<PedidoVentaCaracteristicaDTO> saveInternalFields(PedidoVentaDTO dto, String token)

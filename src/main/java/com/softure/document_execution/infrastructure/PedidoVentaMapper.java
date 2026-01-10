@@ -55,8 +55,11 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 	// Lo items hijos de los principales que son visibles
 	List<PedidoVentaDTO> listarVisibleRenderNivel2(@Param("documentos") List<PedidoVentaDTO> documentos);
 
+	// PAra las decisiones tipo iteracion	
 	List<PedidoVentaDTO> iteracion(@Param("sqlFuncionDecision") String sqlFuncionDecision,
 			@Param("llaveTablaDocumento") String llaveTablaDocumento,
 			@Param("llaveTablaModificador") String llaveTablaModificador,
-			@Param("ramdom") String ramdom);// PAra las decisiones tipo iteracion
+			@Param("ramdom") String ramdom);
+	
+	List<PedidoVentaDTO> getByNameTemplateAndConsecutive(@Param("pName") String pName, @Param("pTemplate")String pTemplate, @Param("pConsecutive")String pConsecutive);
 }
