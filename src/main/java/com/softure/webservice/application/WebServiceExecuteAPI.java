@@ -258,7 +258,10 @@ public class WebServiceExecuteAPI {
 			String infoError = callWS.getError();
 			PedidoVentaDTO _mainDocumentError = documentSvc.consultaXId(callWS.getDocumento()); 
 			infoError = infoError + "\nDocumento Principal: "
-					+ _mainDocumentError.getNombre() + ", " + _mainDocumentError.getDescripcion();
+					+ _mainDocumentError.getNombre() ;
+			if(_mainDocumentError.getDescripcion()!=null) {
+				infoError = infoError + ", " + _mainDocumentError.getDescripcion();
+			}
 			if (callWS.getModificador() != null) {
 				PedidoVentaDTO _modificatorDocumentError = null;
 				if(callWS.getModificador().compareTo(_mainDocumentError.getLlaveTabla())==0) {
@@ -268,6 +271,9 @@ public class WebServiceExecuteAPI {
 				}
 				infoError = infoError + "\nDocumento generador: "
 						+ _modificatorDocumentError.getNombre() + ", " + _modificatorDocumentError.getDescripcion();
+				if(_modificatorDocumentError.getDescripcion()!=null) {
+					infoError = infoError + ", " + _modificatorDocumentError.getDescripcion();
+				}
 			}
 				
 			infoError = infoError + "\nEntrada " + callWS.getEntrada();

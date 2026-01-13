@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.accounting.api.domain.VoucherRangeRequest;
 import com.accounting.api.domain.VoucherPrepareRequest;
+import com.accounting.voucher.application.VoucherRangeService;
 import com.accounting.voucher.application.VoucherCreateService;
 import com.accounting.voucher.application.VoucherDeleteService;
 import com.accounting.voucher.application.VoucherGetService;
@@ -42,6 +44,8 @@ public class VoucherRest {
 	private VoucherGetService getVoucherService;
 	@Autowired @Lazy 
 	private VoucherReCreateService recreateService;
+	@Autowired @Lazy 
+	private VoucherRangeService range;
 
 	@GetMapping("/{catalog}")
 	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
@@ -80,5 +84,16 @@ public class VoucherRest {
 			@RequestBody VoucherPrepareRequest item) throws ServerException {
 		return getVoucherService.getByDocument( item, tokenService.validate(token, request));
 	}
+	
+	@PostMapping("/range-clear-voucher")
+	public SharedIdResponse rangeClearVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@RequestBody VoucherRangeRequest item) throws ServerException {
+		return range.clear( item, tokenService.validate(token, request));
+	}
 
+	@PostMapping("/range-create-voucher")
+	public SharedIdResponse rangeCreateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@RequestBody VoucherRangeRequest item) throws ServerException {
+		return range.create( item, tokenService.validate(token, request));
+	}
 }
