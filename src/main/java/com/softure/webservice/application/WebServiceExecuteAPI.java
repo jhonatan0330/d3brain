@@ -256,11 +256,20 @@ public class WebServiceExecuteAPI {
 
 		try {
 			String infoError = callWS.getError();
+			PedidoVentaDTO _mainDocumentError = documentSvc.consultaXId(callWS.getDocumento()); 
 			infoError = infoError + "\nDocumento Principal: "
-					+ documentSvc.consultaXId(callWS.getDocumento()).getNombre();
-			if (callWS.getModificador() != null)
+					+ _mainDocumentError.getNombre() + ", " + _mainDocumentError.getDescripcion();
+			if (callWS.getModificador() != null) {
+				PedidoVentaDTO _modificatorDocumentError = null;
+				if(callWS.getModificador().compareTo(_mainDocumentError.getLlaveTabla())==0) {
+					_modificatorDocumentError = _mainDocumentError;
+				}else {
+					_modificatorDocumentError = documentSvc.consultaXId(callWS.getModificador());
+				}
 				infoError = infoError + "\nDocumento generador: "
-						+ documentSvc.consultaXId(callWS.getModificador()).getNombre();
+						+ _modificatorDocumentError.getNombre() + ", " + _modificatorDocumentError.getDescripcion();
+			}
+				
 			infoError = infoError + "\nEntrada " + callWS.getEntrada();
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date())

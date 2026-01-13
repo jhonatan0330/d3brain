@@ -75,8 +75,7 @@
 		from propiedad_ppdp a
 			inner join propiedadvalordefinido_pvdp on (cpvd_llave = cppd_propiedadvalor)
         where cppd_estado = 'A'
-            and (cppd_rol in (select cerl_rolacceso from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{usuario})
-            		or cppd_usuario = #{usuario})
+        	and (cppd_usuario = #{usuario} or cppd_usuarioexcluyente #{usuario})
         order by valor, nombre, key, fechainicial, dppd_fechafinal , usuario, rol, texto
     </select>
     
