@@ -205,6 +205,24 @@ public class CallUpdateByRelations {
 								_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 								pedidoVentaCaracteristicaService.saveSimple(_fieldToReplace);
 							}
+							// PAra trustmetran al agregar un recibo a factura se relacione
+							if (_field.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
+									&& dependiente.getExpedientes() != null && !dependiente.getExpedientes().isEmpty()
+									&& _field.getPlantilla()
+											.compareTo(dependiente.getExpedientes().get(0).getPlantilla()) == 0) {
+								
+								for (PedidoVentaDTO _iProcess : dependiente.getExpedientes()) {
+									_fieldToReplace = new PedidoVentaCaracteristicaDTO();
+									_fieldToReplace.setCampo(_field.getLlaveTabla());
+									_fieldToReplace.setDocumento(_iProcess.getLlaveTabla());
+									_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
+									
+									_fieldToReplace.setValorOpcion(pCampo.getValorOpcion());
+									_fieldToReplace.setValorText(pCampo.getValorText());
+									
+									pedidoVentaCaracteristicaService.saveSimple(_fieldToReplace);
+								}
+							}
 						}
 					}
 					break;
