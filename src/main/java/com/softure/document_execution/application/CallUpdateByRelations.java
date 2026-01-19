@@ -112,12 +112,6 @@ public class CallUpdateByRelations {
 								_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 								_fieldToReplace.setCampoDTO(
 										documentoPlantillaCaracteristicaService.consultaXId(_fieldToReplace.getCampo()));
-								// Esta validacion la coloque porque al retirar me mostraba error y la idea es evitar las consultas si no se cumple
-								if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0 
-										&& _fieldToReplace.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
-									throw new ServerException("El campo destino " + _fieldToReplace.getCampoDTO().getNombre()
-											+ " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");
-								}
 								_fieldToReplace.setCampoDTO(documentoPlantillaCaracteristicaService
 										.cargarComplementos(_fieldToReplace.getCampoDTO(), token));
 								String campoValor = Propiedades.obtenerValor(_fieldToReplace.getCampoDTO(),
@@ -135,7 +129,7 @@ public class CallUpdateByRelations {
 									} else {
 										_fieldToReplace.setValorText("0");
 										pedidoVentaCaracteristicaService.saveSimple(_fieldToReplace);
-										
+										_fieldToReplace.setEstado(SharedConstants.STATE_ACTIVE);
 										//Puedo evitar que el retirar se llame
 									}
 									
@@ -196,6 +190,14 @@ public class CallUpdateByRelations {
 									// Esto lo hice rapido creo que debe tener mas elaboracion
 									//DocumentoPlantillaCaracteristicaDTO _field = documentoPlantillaCaracteristicaService
 									//		.consultaXId(iRelacion.getCampo());
+									
+									// Esta validacion la coloque porque al retirar me mostraba error y la idea es evitar las consultas si no se cumple
+									/*if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0 
+											&& _fieldToReplace.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
+										throw new ServerException("El campo destino " + _fieldToReplace.getCampoDTO().getNombre()
+												+ " es de tipo vinculo, ya tiene un vinculo por eso no se puede relacionar con documentos");
+									}*/
+									
 									if (_fieldToReplace.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
 											&& dependiente.getExpedientes() != null && dependiente.getExpedientes().size() == 1) {
 										
@@ -224,8 +226,14 @@ public class CallUpdateByRelations {
 									// Para trustmetrans al agregar un recibo a factura se relacione
 									if (_fieldToReplace.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 
+										if(dependiente.getExpedientes().get(0).getLlaveTabla().compareTo(pCampo.getExpedientes().get(0).getLlaveTabla())==0) {
+											_fieldToReplace.setValorOpcion(dependiente.getPrincipal().getLlaveTabla());
+											_fieldToReplace.setValorText(dependiente.getPrincipal().getNombre());
+										}else {
 											_fieldToReplace.setValorOpcion(pCampo.getValorOpcion());
 											_fieldToReplace.setValorText(pCampo.getValorText());
+										}
+											
 											
 											if(_fieldToReplace.getLlaveTabla()==null) {
 												_fieldToReplace.setTransaccionRegistro(pCampo.getTransaccionRegistro());
