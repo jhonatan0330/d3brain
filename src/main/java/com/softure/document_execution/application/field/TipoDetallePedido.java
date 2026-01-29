@@ -1,7 +1,6 @@
 package com.softure.document_execution.application.field;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.DetallePedidoVentaSvc;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
@@ -187,7 +186,8 @@ public class TipoDetallePedido {
 							}
 						}
 					}
-					detalle.setValorTotal(detalle.getValorSubtotal().setScale(0, RoundingMode.CEILING));
+					// Retire el redondeo en facturas con impuestoss esto no da
+					detalle.setValorTotal(detalle.getValorSubtotal());
 					pCampo.setValorNumero(pCampo.getValorNumero().add(detalle.getValorTotal()));
 				}
 			}
