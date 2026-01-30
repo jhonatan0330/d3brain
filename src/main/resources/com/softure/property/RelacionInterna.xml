@@ -11,8 +11,10 @@
 			,(select cppd_motivo from propiedad_ppdp where cppd_llave = crit_propiedad) as  propiedadNombre
 			,crit_plantilla as  plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
+			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaCodigo
 			,crit_campo as  campo
 			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
+			,(select cdpc_codigo from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoCodigo
 			,crit_auxiliar as  auxiliar
 			,drit_fechainicio as  fechaInicio
 			,crit_usuariocreacion as  usuarioCreacion
@@ -173,8 +175,10 @@
 			crit_propiedad as  propiedad
 			,crit_plantilla as  plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
+			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaCodigo
 			,crit_campo as  campo
 			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
+			,(select cdpc_codigo from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoCodigo
 			,crit_auxiliar as  auxiliar
 		from relacioninterna_ritp a
 		where crit_estado = 'A'

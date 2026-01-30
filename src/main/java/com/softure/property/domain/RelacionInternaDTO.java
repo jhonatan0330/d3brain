@@ -21,8 +21,10 @@ public class RelacionInternaDTO extends BasicDTO
 	private String propiedadNombre;
 	private String plantilla;
 	private String plantillaNombre;
+	private String plantillaCodigo;
 	private String campo;
 	private String campoNombre;
+	private String campoCodigo;
 	private String auxiliar;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicio;
@@ -58,6 +60,13 @@ public class RelacionInternaDTO extends BasicDTO
 	
 	public String getPlantillaNombre() {
 		return plantillaNombre;
+	}
+	public void setPlantillaCodigo(String plantillaCodigo) {
+		this.plantillaCodigo = plantillaCodigo;
+	}
+	
+	public String getPlantillaCodigo() {
+		return plantillaCodigo;
 	}
 	public void setCampo(String campo) {
 		this.campo = campo;
@@ -110,6 +119,14 @@ public class RelacionInternaDTO extends BasicDTO
 
 	public void setUsuarioEliminacion(String usuarioEliminacion) {
 		this.usuarioEliminacion = usuarioEliminacion;
+	}
+
+	public String getCampoCodigo() {
+		return campoCodigo;
+	}
+
+	public void setCampoCodigo(String campoCodigo) {
+		this.campoCodigo = campoCodigo;
 	}
 	
 

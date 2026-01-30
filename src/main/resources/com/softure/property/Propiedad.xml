@@ -514,6 +514,7 @@ COST 100;
     <select id="getFullPropertiesToConfiguration" resultType="PropiedadDTO">
         select
 			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
 			,cppd_tipo as  tipo
 			,cppd_campo as  campo
 			,cppd_valor as  valor
@@ -537,6 +538,7 @@ COST 100;
 union
 		select
 			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
 			,cppd_tipo as  tipo
 			,cppd_campo as  campo
 			,cppd_valor as  valor
@@ -556,6 +558,7 @@ union
 union
 		select
 			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
 			,cppd_tipo as  tipo
 			,cppd_campo as  campo
 			,cppd_valor as  valor
@@ -581,7 +584,52 @@ union
 			inner join propiedad_ppdp prop_modificar on (prop_modificar.cppd_campo =dd.cdpl_llave and prop_modificar.cppd_estado = 'A' and prop_modificar.cppd_propiedadvalor= 'PROP_78')
 		where dd.cdpl_estado = 'A' 
 			and dd.cdpl_llave not in (select prop_plantilla.cppd_campo from propiedad_ppdp prop_plantilla where prop_plantilla.cppd_estado = 'A' and prop_plantilla.cppd_propiedadvalor= 'PROP_242')
-	</select>	
-<!--// END region script-->
+	</select>
+	
+	<select id="getByIdWithType" resultType="PropiedadDTO">
+		select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,case cppd_tipo 
+				when 'P' then 'Proceso : ' || (select cprc_nombre from proceso_prcp where cprc_llave = cppd_campo)
+				when 'A' then 'Estado : ' || (select cpes_nombre from procesoestado_pesp where cpes_llave = cppd_campo)
+				when 'T' then 'Transicion : ' || (select cptr_nombre from procesotransicion_ptrp where cptr_llave = cppd_campo)
+				when 'L' then 'Plantilla : ' || (select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cppd_campo)
+				when 'C' then 'Campo : ' || (select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = cppd_campo)
+				when 'E' then 'Reporte : ' || (select crpb_nombre from reportebase_rpbp where crpb_llave = cppd_campo)
+				when 'O' then 'Organizacion : ' || (select corg_nombre from organizacion_orgp where corg_llave = cppd_campo)
+				when 'W' then 'API : ' || (select cwbs_nombre from webservice_wbsp where cwbs_llave = cppd_campo)
+				when 'S' then 'Servidor : ' || (select cser_nombre from servidor_serp where cser_llave = cppd_campo)
+				when 'G' then 'Catalogo : ' || (select cctg_nombre from account.catalogo_ctg where cctg_llave = cppd_campo)
+				when 'K' then 'Cuenta : ' || (select ccue_nombre from account.cuenta_cue where ccue_llave = cppd_campo)
+				else cppd_campo 
+			end as  tipo
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,dppd_fechadefinicion as  fechaDefinicion
+			,dppd_fechaeliminacion as  fechaEliminacion
+			,cppd_usuariocreacion as  usuarioCreacion
+			,cppd_usuarioeliminacion as  usuarioEliminacion
+			,cppd_rol as  rol
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
+			,cppd_estado as estado
+		from propiedad_ppdp a
+		where cppd_llave = #{key}
+	</select>
+
 
 </mapper>

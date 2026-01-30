@@ -153,6 +153,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setLlaveTabla(llave);
 		return propiedadMapper.consultar(dto);
 	}
+	
 
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -1386,6 +1387,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	public List<PropiedadDTO> getFullPropertiesToConfiguration() throws ServerException {
 		return propiedadMapper.getFullPropertiesToConfiguration();
+	}
+	
+	public PropiedadDTO getByIdWithType(String llave) throws ServerException {
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. Propiedad");
+		return propiedadMapper.getByIdWithType(llave);
 	}
 
 	public String ubicarPropiedad(PropiedadDTO propiedad) throws ServerException {

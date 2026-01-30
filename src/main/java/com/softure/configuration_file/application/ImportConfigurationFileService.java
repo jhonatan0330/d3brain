@@ -129,6 +129,7 @@ public class ImportConfigurationFileService {
 		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs, false);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs, false);
 		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, false);
+		logs.setRoot("");
 		sincronizeRelationService.call(token, hierarchy, logs, false);
 		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs, false);
 		rolInProperties.addAll(templateUpdateProperties);
@@ -142,6 +143,7 @@ public class ImportConfigurationFileService {
 		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, false);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs, false);
 		sincronizeTemplateService.call(token, hierarchy, logs, false);
+		logs.setRoot("");
 		sincronizeRelationService.call(token, hierarchy, logs, false);
 		// No sincornizamos propiedades de rol
 		// sincronizeMessageService.call(token, hierarchy);
@@ -189,6 +191,7 @@ public class ImportConfigurationFileService {
 		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs, true);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs, true);
 		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, true);
+		logs.setRoot("");
 		sincronizeRelationService.call(token, hierarchy, logs, true);
 		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs, true);
 		rolInProperties.addAll(templateUpdateProperties);
@@ -202,6 +205,7 @@ public class ImportConfigurationFileService {
 		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, true);
 		sincronizeProcessStateService.callAfter(token, hierarchy, logs, true);
 		sincronizeTemplateService.call(token, hierarchy, logs, true);
+		logs.setRoot("");
 		sincronizeRelationService.call(token, hierarchy, logs, true);
 		return logs;
 	}

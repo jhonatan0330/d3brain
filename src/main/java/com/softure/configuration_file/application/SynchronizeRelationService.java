@@ -7,8 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired; import org.spring
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.configuration_file.domain.LogConfigurationDTO;
+import com.softure.java.services.SoftureUtil;
+import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
+import com.softure.process_form.application.DocumentoPlantillaSvc;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
+import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
@@ -21,6 +28,10 @@ public class SynchronizeRelationService {
 	private PropiedadSvc propertiesService;
 	@Autowired @Lazy 
 	private RelacionInternaSvc relationsService;
+	@Autowired @Lazy 
+	private DocumentoPlantillaCaracteristicaSvc fieldsService;
+	@Autowired @Lazy 
+	private DocumentoPlantillaSvc templateService;
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
@@ -28,7 +39,7 @@ public class SynchronizeRelationService {
 			return;
 		if (hierarchy.getRelations() == null || hierarchy.getRelations().isEmpty())
 			return;
-		log.setRoot("SynchronizeRelationService");
+		String templateRoot = log.getRoot() + " sincronizando las relaciones";
 		for (PropiedadDTO remoteProperty : hierarchy.getProperties()) {
 			if (remoteProperty.getUsuarioEliminacion() != null
 					&& remoteProperty.getUsuarioEliminacion().compareTo("YA") == 0) {
@@ -62,8 +73,15 @@ public class SynchronizeRelationService {
 					// List<PropiedadDTO> localPropertiesToErase =
 					// propertiesService.obtenerPropiedades(remoteProperty.getTipo(),
 					// remoteProperty.getCambioCreacion(), remoteProperty.getKey(), null);
-					PropiedadDTO findProperty = propertiesService.consultaXId(remoteProperty.getUsuarioCreacion());
-					log.setRoot("SynchronizeRelationService Prop " + findProperty.getKey() + " val: " + findProperty.getValor() + " " + findProperty.getMotivo());
+					PropiedadDTO findProperty = propertiesService.getByIdWithType(remoteProperty.getUsuarioCreacion());
+					String _msgError = findProperty.getTipo() + ".... Propiedad " + findProperty.getNombre() +"("+ findProperty.getPropiedadValor() + ") ";
+					if(findProperty.getTexto()!=null) {
+						_msgError = _msgError + " Con texto "  +findProperty.getTexto();
+					}else {
+						_msgError = _msgError + " Con valor "  + SoftureUtil.recortar(findProperty.getValor(), 20);
+					}
+					if(findProperty.getMotivo()!=null)_msgError = _msgError + " con el motivo : " + findProperty.getMotivo();
+					log.setRoot(templateRoot + _msgError);
 					synchronizeRelations(hierarchy, findProperty, remoteProperty, token, log, compare);
 					break;
 				}
@@ -88,7 +106,7 @@ public class SynchronizeRelationService {
 		if (relationsRemote != null && !relationsRemote.isEmpty()) {
 			for (RelacionInternaDTO remoteRelation : relationsRemote) {
 				RelacionInternaDTO findRelation = findRelationInList(localRelationsToErase,
-						remoteRelation.getPlantilla(), remoteRelation.getCampo(), remoteRelation.getAuxiliar());
+						remoteRelation.getPlantillaCodigo(), remoteRelation.getCampoCodigo(), remoteRelation.getAuxiliar());
 				if (findRelation != null) {
 					localRelationsToErase.remove(findRelation);
 					log.info("EXIST RELATION " + remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre());
@@ -97,29 +115,48 @@ public class SynchronizeRelationService {
 						log.error("COMPARE NOT EXIST RELATION " + remoteRelation.getPlantillaNombre() + ".."
 								+ remoteRelation.getCampoNombre());
 					} else {
-						RelacionInternaDTO newRelation = new RelacionInternaDTO();
-						newRelation.setAuxiliar(remoteRelation.getAuxiliar());
-						newRelation.setCampo(remoteRelation.getCampo());
-						newRelation.setPlantilla(remoteRelation.getPlantilla());
-						newRelation.setPropiedad(newProperty.getLlaveTabla());
-						try {
-							newRelation = relationsService.guardar(newRelation, token);
-							if (newRelation == null) {
-								log.error("RELACION NO CREADA -" + remoteRelation.getPropiedad() + " - "
-										+ remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre());
-							} else {
-								log.info("NEW RELATION " + newRelation.getPlantillaNombre() + ".."
-										+ newRelation.getCampoNombre());
-							}
-						} catch (Exception e) {
-							log.error(remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre()
-									+ " : " + e.getMessage());
+						
+						DocumentoPlantillaCaracteristicaDTO _field = searchField(remoteRelation.getPlantillaCodigo(), remoteRelation.getCampoCodigo());
+						
+						if(_field==null) {
+							log.error("RELACION NO CREADA POR CAMPO NO EXISTENTE (Plantilla: " +
+									 remoteRelation.getPlantillaNombre() +" - " + remoteRelation.getPlantillaCodigo() + ". Campo: " + remoteRelation.getCampoNombre() +" - " + remoteRelation.getCampoCodigo()+ ")");
+						} else {
+							RelacionInternaDTO newRelation = new RelacionInternaDTO();
+							newRelation.setAuxiliar(remoteRelation.getAuxiliar());
+							newRelation.setCampo(_field.getLlaveTabla());
+							newRelation.setPlantilla(_field.getPlantilla());
+							newRelation.setPropiedad(newProperty.getLlaveTabla());
+							try {
+								newRelation = relationsService.guardar(newRelation, token);
+								if (newRelation == null) {
+									log.error("RELACION NO CREADA -" + remoteRelation.getPropiedad() + " - "
+											+ remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre());
+								} else {
+									log.info("NEW RELATION " + newRelation.getPlantillaNombre() + ".."
+											+ newRelation.getCampoNombre());
+								}
+							} catch (Exception e) {
+								log.error(remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre()
+										+ " : " + e.getMessage());
+							}	
 						}
+						
 					}
 
 				}
 			}
 		}
+	}
+
+	private DocumentoPlantillaCaracteristicaDTO searchField(String plantillaCodigo, String campoCodigo) throws ServerException {
+		DocumentoPlantillaDTO _template = templateService.consultarPorCodigo(plantillaCodigo);
+		if(_template==null)	return null;
+		DocumentoPlantillaCaracteristicaFilterDTO _filter = new DocumentoPlantillaCaracteristicaFilterDTO();
+		_filter.setEstado(SharedConstants.STATE_ACTIVE);
+		_filter.setPlantilla(_template.getLlaveTabla());
+		_filter.setCodigo(campoCodigo);
+		return fieldsService.consultaUnica(_filter);
 	}
 
 	private List<RelacionInternaDTO> findRelationsInList(List<RelacionInternaDTO> array, String property) {
@@ -131,8 +168,8 @@ public class SynchronizeRelationService {
 	private RelacionInternaDTO findRelationInList(List<RelacionInternaDTO> array, String template, String field,
 			String auxiliar) {
 		for (RelacionInternaDTO relation : array) {
-			if (template.compareTo(relation.getPlantilla()) == 0) {
-				if (relation.getCampo().compareTo(field) == 0) {
+			if (template.compareTo(relation.getPlantillaCodigo()) == 0) {
+				if (relation.getCampoCodigo().compareTo(field) == 0) {
 					if ((relation.getAuxiliar() == null && auxiliar == null) || (auxiliar != null
 							&& relation.getAuxiliar() != null && auxiliar.compareTo(relation.getAuxiliar()) == 0))
 						return relation;

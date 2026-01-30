@@ -63,6 +63,7 @@ public class ExportConfigurationFileService {
 	private WebServiceSvc apiService;
 
 	public FileVO call(String token) throws ServerException {
+		rolService.getUserFlex(token);
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setMessages(messageService.getFullToSynchronize(null));
@@ -87,6 +88,8 @@ public class ExportConfigurationFileService {
 			throw new ServerException("No hay modulos");
 		List<String> processToInclude = new ArrayList<>();
 
+		rolService.getUserFlex(token);
+		
 		for (String iModule : modules.getModulesCode()) {
 			ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
 			filterProcess.setEstado(SharedConstants.STATE_ACTIVE);

@@ -20,6 +20,7 @@ public class SynchronizeTypePropertiesService {
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
+		typesService.getUserFlex(token);
 		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();
 		List<PropiedadValorDefinidoDTO> remoteList = hierarchy.getPropertyTypes();
 		if (remoteList != null && !remoteList.isEmpty()) {

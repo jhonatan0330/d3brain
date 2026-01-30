@@ -53,4 +53,7 @@ public interface PropiedadMapper extends IBasicMapper<PropiedadDTO, PropiedadFil
 	List<PropiedadDTO> listarProductoSimplificado(@Param("productos") List<ProductoDTO> productos);
 	List<PropiedadDTO> getFullPropertiesToConfiguration();
 	List<PropiedadDTO> getTemplateWithoutUpdate();
+	
+	PropiedadDTO getByIdWithType(@Param("key") String key);
+	
 }

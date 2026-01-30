@@ -113,8 +113,15 @@ public class SynchronizePropertiesService {
 							remoteProperty.setUsuarioEliminacion("YA");
 							remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
 						} catch (Exception e) {
-							log.error(remoteProperty.getPropiedadValor() + " - " + SoftureUtil.recortar(remoteProperty.getValor(), 20) + " : "
-									+ e.getMessage());
+							String _msgError = "La propiedad " + remoteProperty.getNombre() +"("+ remoteProperty.getPropiedadValor() + ") ";
+							if(remoteProperty.getTexto()!=null) {
+								_msgError = _msgError + " Con texto "  +remoteProperty.getTexto();
+							}else {
+								_msgError = _msgError + " Con valor "  + SoftureUtil.recortar(remoteProperty.getValor(), 20);
+							}
+							_msgError = _msgError + " Genera el siguiente error : " + e.getMessage();
+							log.error(_msgError);
+							
 							if (remoteProperty.getPropiedadValor().compareTo("PROP_242") == 0) {
 								log.error("NUL");
 							}

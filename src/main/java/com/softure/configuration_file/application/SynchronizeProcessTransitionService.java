@@ -29,7 +29,7 @@ public class SynchronizeProcessTransitionService {
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			
 			for (ProcesoTransicionDTO remote : remoteTocompare) {
-				log.setRoot("SynchronizeProcessTransitionService " + remote.getProcesoNombre());
+				log.setRoot("Sincronizando Transition del proceso " + remote.getProcesoNombre());
 				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
 				// Creo el nuevo proceso
 				if (local != null) {
@@ -53,7 +53,7 @@ public class SynchronizeProcessTransitionService {
 							newState = processTransitionService.save(newState);
 							log.info("NEW TRANSITION " + remote.getCodigo() + " - " + remote.getNombre());
 						} catch (Exception e) {
-							log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
+							log.error(" La transicion " + remote.getNombre() + "(Cod. " + remote.getCodigo() + ") Tiene el siguiente error: " + e.getMessage());
 						}
 					}
 				}
@@ -70,8 +70,7 @@ public class SynchronizeProcessTransitionService {
 				ProcesoTransicionDTO local = findProcessInList(localToErase, remote);
 				if (local != null) {
 					localToErase.remove(local);
-					log.setRoot("SynchronizeProcessTransitionAfterService " + local.getProcesoNombre() + "..."
-							+ local.getNombre());
+					log.setRoot("Sincronizando el proceso " + local.getProcesoNombre() + " la transicion de nombre" + local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token, log, compare);
 				}

@@ -108,10 +108,10 @@ public class SynchronizeTemplateService {
 				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
-					log.setRoot("SynchronizeTemplateServiceAfter " + local.getNombre());
+					log.setRoot("Sincronizando los campos de la plantilla " + local.getNombre() + "(Cod:"+local.getCodigo()+" )" );
 					fieldSynchronizeService.call(token, hierarchy, remote.getLlaveTabla(), local.getLlaveTabla(), log,
 							compare);
-					log.setRoot("SynchronizeTemplateServiceAfter " + local.getNombre());
+					log.setRoot("Sincronizando las propiedades de la plantilla " + local.getNombre() + "(Cod:"+local.getCodigo()+" )");
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log, compare);
 					// synchronizeFieldReport(token, hierarchy, remote.getLlaveTabla(),
