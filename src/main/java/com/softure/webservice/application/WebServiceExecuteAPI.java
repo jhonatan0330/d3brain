@@ -483,6 +483,16 @@ public class WebServiceExecuteAPI {
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
+				if(callWS.getParametersInexecution()==null) {
+					callWS.setParametersInexecution("API_TRY"+ SharedConstants.IGUAL + countIteration);
+				}else {
+					if(callWS.getParametersInexecution().contains("API_TRY"+ SharedConstants.IGUAL)) {
+						callWS.setParametersInexecution(callWS.getParametersInexecution().replace(SharedConstants.PUNTO_COMA_DOBLE + "API_TRY" + SharedConstants.IGUAL + (countIteration-1), ""));
+						callWS.setParametersInexecution(callWS.getParametersInexecution().replace("API_TRY" + SharedConstants.IGUAL+ (countIteration-1), ""));
+					}
+					callWS.setParametersInexecution(callWS.getParametersInexecution() + SharedConstants.PUNTO_COMA_DOBLE + "API_TRY" + SharedConstants.IGUAL
+							+ countIteration);
+				}
 				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, pMainDocument);
 				if (callWS.getError() != null)
 					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador, pMainDocument);

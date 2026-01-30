@@ -153,5 +153,13 @@
 			inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
 			inner join webservice_wbsp on (cwbs_llave = pp2.cppd_valor and  cwbs_estado = 'A')
 		where dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+		union
+		select -- APIs del proceso
+			cwbs_llave as  llaveTabla
+			,cwbs_nombre as  nombre
+			,cwbs_codigo as  codigo
+			,cwbs_proceso as  proceso
+		from webservice_wbsp
+		where cwbs_estado = 'A' and cwbs_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
 	</select>
 </mapper>
