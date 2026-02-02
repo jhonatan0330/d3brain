@@ -429,7 +429,7 @@ COST 100;
 	</select>
 
 	<select id="crearFuncionCampoGenerar">
-CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, iterador character varying, token character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
 $BODY$
 ${valor}
 $BODY$ 
@@ -438,7 +438,7 @@ COST 100;
 	</select>
 	
 	<select id="eliminarFuncionCampoGenerar" parameterType="PropiedadDTO" >
-		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying);
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying, iterador character varying, token character varying);
 	</select>
 		
 	<select id="eliminarFuncionTarifas" parameterType="PropiedadDTO" >

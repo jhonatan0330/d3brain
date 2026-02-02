@@ -413,7 +413,7 @@
 			,cpvc_valoropcion as  valorOpcion
 			,cpvc_valorauxiliar as  valorAuxiliar
 			,mpvc_valornumero as  valorNumero
-			from propiedad_${sqlFuncionCalculo} (#{llaveTablaDocumento}, #{llaveTablaModificador}, null)
+			from propiedad_${sqlFuncionCalculo} (#{llaveTablaDocumento}, #{llaveTablaModificador}, #{llaveTablaIterador}, null)
 	</select>
 	
 	<select id="camposEspecialesPlantilla" resultType="PedidoVentaCaracteristicaDTO">

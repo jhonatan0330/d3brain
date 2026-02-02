@@ -38,7 +38,8 @@ public class CallDocumentNewFromAutomatic {
 	@Autowired
 	@Lazy
 	private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropertyGetWithCacheService cacheService;
 	@Autowired
 	@Lazy
@@ -56,7 +57,8 @@ public class CallDocumentNewFromAutomatic {
 	@Lazy
 	private PedidoVentaDineroSvc dineroService;
 
-	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion, PedidoVentaDTO expedienteDTO, String transaccion, String token,
+	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion,
+			PedidoVentaDTO expedienteDTO, String transaccion, String token,
 			PedidoVentaCaracteristicaDTO vieneAutomatica) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		camposNuevos.add(vieneAutomatica);
@@ -66,7 +68,7 @@ public class CallDocumentNewFromAutomatic {
 	/**
 	 * 
 	 * @param transicion
-	 * @param pGenerator       Documento modificador que realiza la accion sobre el
+	 * @param pGenerator      Documento modificador que realiza la accion sobre el
 	 *                        documetnto base
 	 * @param expedienteDTO   Documento base que se esta fafectando con el proceso
 	 * @param transaccion     Como reuso esto en los temporizadores automaticos
@@ -78,14 +80,15 @@ public class CallDocumentNewFromAutomatic {
 	 */
 	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO pGenerator,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber,
-			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction, PedidoVentaDTO pDocumentIterate) throws ServerException {
+			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction, PedidoVentaDTO pDocumentIterate)
+			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		// Por aqui voy cuando viene en una iteracion pero no se que otros caso pueda
 		// intente refactor pero salio un aviso asi que deje quieto mientras
 		if (transicion.getPlantilla() == null)
 			return null;
 		String user = getUserId(token);
-		transicion.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.TRANSICION,
+		transicion.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 				transicion.getLlaveTabla(), null, user));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
 				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE,
@@ -103,7 +106,8 @@ public class CallDocumentNewFromAutomatic {
 				switch (iPropiedadDTO.getKey()) {
 				case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR:
 					if (pGenerator != null) {
-						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null, iPropiedadDTO.getValor());
+						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null,
+								iPropiedadDTO.getValor());
 						campoPrincipal.setValorOpcion(pGenerator.getLlaveTabla());
 						if (pGenerator.getDinero() != null)
 							// Importante para que coja valor porque va a consultar po BD y no tiene
@@ -114,7 +118,8 @@ public class CallDocumentNewFromAutomatic {
 					break;
 				case Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE:
 					if (expedienteDTO != null) {
-						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null, iPropiedadDTO.getValor());
+						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null,
+								iPropiedadDTO.getValor());
 						campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
 						if (expedienteDTO.getDinero() != null)
 							campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());
@@ -132,26 +137,35 @@ public class CallDocumentNewFromAutomatic {
 								+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 					}
 					for (RelacionInternaDTO iRelacion : relaciones) {
-						if (pGenerator != null && pGenerator.getPlantilla() != null && iRelacion.getPlantilla().compareTo(pGenerator.getPlantilla()) == 0) {
+						if (pGenerator != null && pGenerator.getPlantilla() != null
+								&& iRelacion.getPlantilla().compareTo(pGenerator.getPlantilla()) == 0) {
 							if (pGenerator.getCaracteristicas() == null)
-								pGenerator.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
-										pGenerator.getLlaveTabla(), pGenerator.getHistorico()));
-							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(pGenerator.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
+								pGenerator.setCaracteristicas(pedidoVentaCaracteristicaService
+										.listar2Documento(pGenerator.getLlaveTabla(), pGenerator.getHistorico()));
+							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(
+									pGenerator.getCaracteristicas(), iRelacion.getCampo()), iPropiedadDTO.getValor()));
 							break;
 						}
 						if (expedienteDTO != null && expedienteDTO.getPlantilla() != null
 								&& iRelacion.getPlantilla().compareTo(expedienteDTO.getPlantilla()) == 0) {
-							// Solo consulto el documento cuando en realidad lo necesito, en general no veien las caracteristicas
+							// Solo consulto el documento cuando en realidad lo necesito, en general no
+							// veien las caracteristicas
 							if (expedienteDTO.getCaracteristicas() == null)
-								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
-							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),iPropiedadDTO.getValor()));
+								expedienteDTO.setCaracteristicas(pedidoVentaCaracteristicaService
+										.listar2Documento(expedienteDTO.getLlaveTabla(), expedienteDTO.getHistorico()));
+							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons
+									.obtenerValor(expedienteDTO.getCaracteristicas(), iRelacion.getCampo()),
+									iPropiedadDTO.getValor()));
 							break;
 						}
 						if (pDocumentIterate != null && pDocumentIterate.getPlantilla() != null
 								&& iRelacion.getPlantilla().compareTo(pDocumentIterate.getPlantilla()) == 0) {
 							if (pDocumentIterate.getCaracteristicas() == null)
-								pDocumentIterate.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(pDocumentIterate.getLlaveTabla(), pDocumentIterate.getHistorico()));
-							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons.obtenerValor(pDocumentIterate.getCaracteristicas(), iRelacion.getCampo()),iPropiedadDTO.getValor()));
+								pDocumentIterate.setCaracteristicas(pedidoVentaCaracteristicaService.listar2Documento(
+										pDocumentIterate.getLlaveTabla(), pDocumentIterate.getHistorico()));
+							camposNuevos.add(CallDocumentCommons.copyFieldDocument(CallDocumentCommons
+									.obtenerValor(pDocumentIterate.getCaracteristicas(), iRelacion.getCampo()),
+									iPropiedadDTO.getValor()));
 							break;
 						}
 					}
@@ -162,7 +176,8 @@ public class CallDocumentNewFromAutomatic {
 						campoGenerado = pedidoVentaCaracteristicaService.consultarSQLCampoGenerarDocumento(
 								iPropiedadDTO.getLlaveTabla(),
 								(expedienteDTO != null) ? expedienteDTO.getLlaveTabla() : null,
-								(pGenerator != null) ? pGenerator.getLlaveTabla() : null);
+								(pGenerator != null) ? pGenerator.getLlaveTabla() : null,
+								(pDocumentIterate != null) ? pDocumentIterate.getLlaveTabla() : null);
 					} catch (Exception ex) {
 						throw new ServerException("Se presento un error en la consulta de la transicion "
 								+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(),
@@ -177,7 +192,8 @@ public class CallDocumentNewFromAutomatic {
 						for (RelacionInternaDTO iRelacion : relations) {
 							if (pGenerator != null
 									&& iRelacion.getPlantilla().compareTo(transicion.getPlantilla()) == 0) {
-								camposNuevos.add(CallDocumentCommons.copyFieldDocument(campoGenerado, iRelacion.getCampo()));
+								camposNuevos.add(
+										CallDocumentCommons.copyFieldDocument(campoGenerado, iRelacion.getCampo()));
 								break;
 							}
 						}
@@ -191,7 +207,7 @@ public class CallDocumentNewFromAutomatic {
 						fieldNewFromIteration.setValorText(pDocumentIterate.getNombre());
 						fieldNewFromIteration.setValorFecha(pDocumentIterate.getFecha());
 						fieldNewFromIteration.setValorNumero(pDocumentIterate.getConsecutivo());
-						camposNuevos.add(fieldNewFromIteration);	
+						camposNuevos.add(fieldNewFromIteration);
 					}
 					break;
 				case Propiedades.GENERA_DOCUMENTO_TEXTO:
@@ -202,7 +218,8 @@ public class CallDocumentNewFromAutomatic {
 					if (relacionesNumber == null || relacionesNumber.isEmpty())
 						throw new ServerException("La propiedad " + iPropiedadDTO.getNombre()
 								+ "No tiene relaciones, usa las relaciones para identificar que campo deseas que contenga el consecutivo");
-					PedidoVentaCaracteristicaDTO fieldNew = CallDocumentCommons.copyFieldDocument(null, relacionesNumber.get(0).getCampo());
+					PedidoVentaCaracteristicaDTO fieldNew = CallDocumentCommons.copyFieldDocument(null,
+							relacionesNumber.get(0).getCampo());
 					if (textValueToNewField.compareTo("#NUMBER") == 0) {
 						fieldNew.setValorNumero(new BigDecimal(iterationNumber));
 						fieldNew.setValorText(String.valueOf(iterationNumber));
@@ -222,7 +239,8 @@ public class CallDocumentNewFromAutomatic {
 			for (Map.Entry<String, List<PedidoVentaDTO>> _entry : stackDocumentsCreateInTransaction.entrySet()) {
 				for (DocumentoPlantillaCaracteristicaDTO _iCampo : _fieldsOfTemplate) {
 					if (_entry.getKey().compareTo(_iCampo.getLlaveTabla()) == 0) {
-						PedidoVentaCaracteristicaDTO _fieldNew = CallDocumentCommons.copyFieldDocument(null, _iCampo.getLlaveTabla());
+						PedidoVentaCaracteristicaDTO _fieldNew = CallDocumentCommons.copyFieldDocument(null,
+								_iCampo.getLlaveTabla());
 						_fieldNew.setExpedientes(_entry.getValue());
 						// Como de las iteraciones no traigo valores, es necesario buscar el valor y asi
 						// no me saca error
@@ -245,8 +263,8 @@ public class CallDocumentNewFromAutomatic {
 		return processNewFields(transicion, transaccion, token, camposNuevos, pGenerator);
 	}
 
-	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion,
-			String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos, PedidoVentaDTO pGenerator) throws ServerException {
+	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion, String transaccion, String token,
+			List<PedidoVentaCaracteristicaDTO> camposNuevos, PedidoVentaDTO pGenerator) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
 			String userAdmin = autenticacionService.getUserSystemKey();
 			if (userAdmin == null)
@@ -254,13 +272,13 @@ public class CallDocumentNewFromAutomatic {
 			DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
 			pPlantilla.setLlaveTabla(transicion.getPlantilla());
 			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token, false);
-			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion, token, camposNuevos, userAdmin);
+			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion, token, camposNuevos,
+					userAdmin);
 			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true, pGenerator);
 		} else {
 			return null;
 		}
 	}
-	
 
 	private String getUserId(String token) throws ServerException {
 		return plantillaService.getUserFlex(token);
