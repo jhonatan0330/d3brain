@@ -645,3 +645,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 --INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 --	VALUES('PROP_304' , 'W', 'EJECUTAR API CON ESTA PLANTILLA', 'API_LAUNCH_WITH_TEMPLATE', 'REQUISITO');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
+	VALUES('PROP_305' , 'T', 'TRANSICION VISIBLE EN CAMPOS VINCULO', 'TRANSICION_VISIBLE_VINCULO', 'REQUISITO', true, true, true);

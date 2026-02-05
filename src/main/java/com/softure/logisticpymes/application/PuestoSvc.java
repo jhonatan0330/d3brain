@@ -1,13 +1,13 @@
 package com.softure.logisticpymes.application;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.logisticpymes.infrastructure.PuestoMapper;
@@ -19,9 +19,6 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	
 	@Autowired @Lazy 
 	private PuestoMapper puestoMapper;
-	
-	// BEGIN region servicesPuesto
-	// END region servicesPuesto
 
 	@Override
 	public PuestoDTO consultaXId(String llave) throws ServerException {
@@ -37,55 +34,25 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 	}
 	
 	@Override
-	public PuestoDTO activar(PuestoDTO dto, String token) throws ServerException {
-		// BEGIN Puesto_activar
-		return super.activar(dto, token);
-		// END Puesto_activar
-	}
-	
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PuestoDTO actualizar( PuestoDTO dto, String token) throws ServerException {
-		// BEGIN Puesto_actualizar
-		//dto = colocarInterno(dto);
+		//Validar
+		if(dto.getFila().compareTo(0)<0) throw new ServerException("Revisa la posicion de no puede estar por encima del espacio visible");
 		return super.actualizar(dto, token);
-		// END Puesto_actualizar
 	}
 	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public PuestoDTO inactivar(PuestoDTO dto, String token) throws ServerException {
-		// BEGIN Puesto_inactivar
-		return super.inactivar(dto, token);
-		// END Puesto_inactivar
-	}
-	
-	@Override
-	public PuestoDTO consultaUnica(PuestoFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(PuestoFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<PuestoDTO> listarConsulta(PuestoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
-
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public PuestoDTO guardar(PuestoDTO dto, String token) throws ServerException {
-		// BEGIN Puesto_guardar
+		if(dto.getFila().compareTo(0)<0) throw new ServerException("Revisa la posicion de no puede estar por encima del espacio visible");
+		if(dto.getCampo()==null)  throw new ServerException("Campo de puesto sin enviar");
+		if(dto.getNombre()==null || dto.getNombre().isEmpty())  throw new ServerException("Nombre de puesto no puede ser vacio");
+		PuestoFilterDTO _filter = new PuestoFilterDTO();
+		_filter.setCampo(dto.getCampo());
+		_filter.setNombre(dto.getNombre());
+		_filter.setEstado(SharedConstants.STATE_ACTIVE);
+		if(contarResultados(_filter)!=0) throw new ServerException("Ya existe un puesto con este mismo nombre " + _filter.getNombre());
 		return super.guardar(dto, token);
-		// END Puesto_guardar
 	}
-
-// BEGIN region aditionalMethods
-// END region aditionalMethods
 
 }

@@ -171,6 +171,23 @@ public class TipoConfiguracion {
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
 			throws ServerException {
+		// Para las transiciones ponemos el texto
+		if(pCampo.getValorOpcion()==null && pCampo.getValorText()!=null) {
+			List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
+					Propiedades.OPCIONES);
+			if (options != null) {
+				for (PropiedadDTO propiedadDTO : options) {
+					if (propiedadDTO.getValor().compareTo(pCampo.getValorText()) == 0
+							|| (propiedadDTO.getTexto() != null
+									&& propiedadDTO.getTexto().compareTo(pCampo.getValorText()) == 0)) {
+						pCampo.setValorOpcion(propiedadDTO.getValor());
+						pCampo.setValorText(propiedadDTO.getTexto());
+						break;
+					}
+				}
+			}
+		}
+		//Aqui sigo normal
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorOpcion() == null || pCampo.getValorOpcion().isEmpty())) {
 			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
