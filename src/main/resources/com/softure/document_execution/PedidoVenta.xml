@@ -461,7 +461,7 @@
 			,cpdv_estado as estado
 		from pedidoventa_pdvp a
 			where cpdv_nombre = #{pName}
-			<choose><when test="pConsecutive != null">and cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_consecutivo = #{pTemplate})</when><otherwise>and cpdv_plantilla = #{pTemplate}</otherwise></choose>
+			<choose><when test="pConsecutive != null">and cpdv_plantilla in (select cdpl_llave from documentoplantilla_dplp where cdpl_consecutivo = #{pConsecutive} or cdpl_llave = #{pTemplate})</when><otherwise>and cpdv_plantilla = #{pTemplate}</otherwise></choose>
 	</select>
 
 </mapper>
