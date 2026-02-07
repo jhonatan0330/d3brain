@@ -1,17 +1,10 @@
 package com.softure.webservice.application;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -20,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,9 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
@@ -57,6 +56,8 @@ import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
+import reactor.core.publisher.Mono;
+
 @Component
 public class WebServiceExecuteAPI {
 
@@ -64,32 +65,51 @@ public class WebServiceExecuteAPI {
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaSvc templateService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PropiedadSvc propiedadesSvc;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private PedidoVentaSvc documentSvc;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private UploadSvc uploadService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private WebServiceSvc webServiceSvc;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private MailSendMessageToAdminService mensajeToAdminService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private WebServiceCallPrepare prepareDataService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired @Lazy 
+	@Autowired
+	@Lazy
 	private ProcessTemplate templatesService;
+	
+	private final WebClient webClient;
+	
+	public WebServiceExecuteAPI(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
-	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId, String pToken) throws ServerException {
+	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId,
+			String pToken) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(pServiceId);
 		String userId = webServiceSvc.getUserFlex(pToken);
@@ -101,19 +121,20 @@ public class WebServiceExecuteAPI {
 		callWS.setModificador(pModificadorId);
 		webServiceEjecucionSvc.saveSimple(callWS);
 	}
-	
+
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public String applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
-		
+
 		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, null, pToken, null);
 		dto.setFechaEjecucion(new Date());
-		//if (dto.getSincrona() != null) {
-		//	dto.setSincrona(null);
-		//}
+		// if (dto.getSincrona() != null) {
+		// dto.setSincrona(null);
+		// }
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		webServiceEjecucionSvc.update(dto);
 		return dto.getLlaveTabla();
 	}
+
 	/**
 	 * Primero crea el objeto de ejecucion y posteriomente ejecuta el api, exite la
 	 * propiedad {@link PropiedadValorDefinidoDTO.API_SERVICE} que hace no se
@@ -126,24 +147,26 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
-			String token, String previousParameter) throws ServerException {
+	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador,
+			PedidoVentaDTO pIterador, String token, String previousParameter) throws ServerException {
 		// Valido existencia del servicio
 		WebServiceDTO service = webServiceSvc.getByIdFullProperties(serviceId, token);
 		// Inicia ejecucion
 		log.info("[" + document.getNombre() + "] Procesando API (" + service.getNombre() + ")");
-		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token,	previousParameter);
+		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token,
+				previousParameter);
 		String preValidation = propiedadesSvc.prevalidateAPI(service, apiBasic.getDocumento(),
 				apiBasic.getModificador(), apiBasic.getParametros());
 		if (preValidation != null) {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
 			if (apiBasic.getError() != null && apiBasic.getError().length() > 4000) {
-				apiBasic.setError(
-						uploadService.uploadFile(apiBasic.getError().getBytes(), "Parameter.txt", token, "webservice", "private"));
+				apiBasic.setError(uploadService.uploadFile(apiBasic.getError().getBytes(), "Parameter.txt", token,
+						"webservice", "private"));
 			}
 			webServiceEjecucionSvc.update(apiBasic);
-			if(!preValidation.startsWith(SharedConstants.OK)) publishErrorMessage(service, apiBasic, modificador);
+			if (!preValidation.startsWith(SharedConstants.OK))
+				publishErrorMessage(service, apiBasic, modificador);
 			log.info("[" + apiBasic.getDocumento() + "] Finalizando API (" + service.getNombre()
 					+ ") por error de validacion previa a la ejecucion");
 			return SharedConstants.ERROR;
@@ -155,14 +178,14 @@ public class WebServiceExecuteAPI {
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			applyScheduleToExecute(apiBasic, service);
-			//Cuando los parametros son muy grandes
+			// Cuando los parametros son muy grandes
 			String parameterHelperToLong = null;
 			if (apiBasic.getParametros() != null && apiBasic.getParametros().length() > 4000) {
 				parameterHelperToLong = apiBasic.getParametros();
-				apiBasic.setParametros(
-						uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt", token, "webservice", "private"));
+				apiBasic.setParametros(uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt",
+						token, "webservice", "private"));
 			}
-			
+
 			webServiceEjecucionSvc.update(apiBasic);
 		}
 		return result;
@@ -186,9 +209,9 @@ public class WebServiceExecuteAPI {
 		}
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(), callWS.getDocumento(), token, modificador,
-				documentMain, pIterador, callWS.getParametersInexecution());
-		String extractionApiPrecondition = null;		
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(),
+				callWS.getDocumento(), token, modificador, documentMain, pIterador, callWS.getParametersInexecution());
+		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
 				if (callWS.getSincrona() != null) {
@@ -203,12 +226,12 @@ public class WebServiceExecuteAPI {
 						+ ") por error de API precondicion ");
 				return SharedConstants.ERROR;
 			}
-			if (preconditionWS.getExtracciones() != null) 
+			if (preconditionWS.getExtracciones() != null)
 				extractionApiPrecondition = preconditionWS.getExtracciones();
 		}
 
 		if (extractionApiPrecondition == null) {
-			if(callWS.getParametersInexecution()==null) {
+			if (callWS.getParametersInexecution() == null) {
 				callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()));
 			}
 		} else {
@@ -219,7 +242,7 @@ public class WebServiceExecuteAPI {
 		callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, documentMain);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador,documentMain);
+			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador, documentMain);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = SharedConstants.ERROR;
@@ -233,17 +256,17 @@ public class WebServiceExecuteAPI {
 		log.info("[" + callWS.getDocumento() + "] Finalizando API (" + service.getNombre() + ")");
 		return result;
 	}
-	
+
 	private String getParametersWithHttp(String pParameters) {
 		// Cuando los parametros son muy grandes y estan con http
 		if (pParameters != null && pParameters.startsWith("http")) {
 			try {
 				File file = File.createTempFile("PARAMETER_", ".txt");
-				
-					FileUtils.copyURLToFile(new URI(pParameters).toURL(), file);
-				
-				pParameters=  FileUtils.readFileToString(file, Charset.defaultCharset());
-			} catch (IOException e ) {
+
+				FileUtils.copyURLToFile(new URI(pParameters).toURL(), file);
+
+				pParameters = FileUtils.readFileToString(file, Charset.defaultCharset());
+			} catch (IOException e) {
 				pParameters = pParameters + e.getMessage();
 			} catch (URISyntaxException e) {
 				pParameters = pParameters + e.getMessage();
@@ -256,26 +279,25 @@ public class WebServiceExecuteAPI {
 
 		try {
 			String infoError = callWS.getError();
-			PedidoVentaDTO _mainDocumentError = documentSvc.consultaXId(callWS.getDocumento()); 
-			infoError = infoError + "\nDocumento Principal: "
-					+ _mainDocumentError.getNombre() ;
-			if(_mainDocumentError.getDescripcion()!=null) {
+			PedidoVentaDTO _mainDocumentError = documentSvc.consultaXId(callWS.getDocumento());
+			infoError = infoError + "\nDocumento Principal: " + _mainDocumentError.getNombre();
+			if (_mainDocumentError.getDescripcion() != null) {
 				infoError = infoError + ", " + _mainDocumentError.getDescripcion();
 			}
 			if (callWS.getModificador() != null) {
 				PedidoVentaDTO _modificatorDocumentError = null;
-				if(callWS.getModificador().compareTo(_mainDocumentError.getLlaveTabla())==0) {
+				if (callWS.getModificador().compareTo(_mainDocumentError.getLlaveTabla()) == 0) {
 					_modificatorDocumentError = _mainDocumentError;
-				}else {
+				} else {
 					_modificatorDocumentError = documentSvc.consultaXId(callWS.getModificador());
 				}
-				infoError = infoError + "\nDocumento generador: "
-						+ _modificatorDocumentError.getNombre() + ", " + _modificatorDocumentError.getDescripcion();
-				if(_modificatorDocumentError.getDescripcion()!=null) {
+				infoError = infoError + "\nDocumento generador: " + _modificatorDocumentError.getNombre() + ", "
+						+ _modificatorDocumentError.getDescripcion();
+				if (_modificatorDocumentError.getDescripcion() != null) {
 					infoError = infoError + ", " + _modificatorDocumentError.getDescripcion();
 				}
 			}
-				
+
 			infoError = infoError + "\nEntrada " + callWS.getEntrada();
 			infoError = infoError + "\nRespuesta " + callWS.getSalida();
 			infoError = infoError + "\n\nId " + callWS.getLlaveTabla() + " [" + SoftureUtil.formatDateTime(new Date())
@@ -302,8 +324,9 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser, String callWSDocument,
-			String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador, String parentParameters) throws ServerException {
+	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser,
+			String callWSDocument, String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain,
+			PedidoVentaDTO pIterador, String parentParameters) throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
@@ -316,8 +339,8 @@ public class WebServiceExecuteAPI {
 		}
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
-		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador, token,
-				 parentParameters);
+		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador,
+				token, parentParameters);
 		return launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador, documentMain);
 	}
 
@@ -334,21 +357,25 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument) throws ServerException {
+			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
+			PedidoVentaDTO pMainDocument) throws ServerException {
 
 		// Reemplazos
 		List<PropiedadDTO> replaceProperties = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_CODE_REPLACE);
-		callWS.setParametersInexecution( prepareParameterFromProperties(callWS.getParametersInexecution(), replaceProperties, service.getLlaveTabla()) );
+		callWS.setParametersInexecution(prepareParameterFromProperties(callWS.getParametersInexecution(),
+				replaceProperties, service.getLlaveTabla()));
 
-		String template = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE), callWS.getParametersInexecution());
+		String template = templatesService.generateOutputFile(
+				Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE), callWS.getParametersInexecution());
 
-		if(template.contains("[[")) template = templatesService.addParametersFromTemplateLink(template);
-		
-		if(template ==null || template.isEmpty()) {
+		if (template.contains("[["))
+			template = templatesService.addParametersFromTemplateLink(template);
+
+		if (template == null || template.isEmpty()) {
 			callWS.setFechaEjecucion(new Date());
-			//Creo que se necesita para ver el hisotoria
-			//callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			// Creo que se necesita para ver el hisotoria
+			// callWS.setEstado(SharedConstants.STATE_INACTIVE);
 			callWS.setParametros(null);
 			callWS.setError("NOT_TEMPLATE");
 			callWS = webServiceEjecucionSvc.update(callWS);
@@ -356,11 +383,13 @@ public class WebServiceExecuteAPI {
 			callWS.setParametros("NOT_TEMPLATE");
 			return callWS;
 		}
-		String urlWithParameters = templatesService.generateOutputFile(Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
-		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una informacion
-		if(urlWithParameters ==null || urlWithParameters.isEmpty()) {
+		String urlWithParameters = templatesService.generateOutputFile(
+				Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
+		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una
+		// informacion
+		if (urlWithParameters == null || urlWithParameters.isEmpty()) {
 			callWS.setFechaEjecucion(new Date());
-			//callWS.setEstado(SharedConstants.STATE_INACTIVE);
+			// callWS.setEstado(SharedConstants.STATE_INACTIVE);
 			callWS.setParametros(null);
 			callWS.setError("NOT_URL");
 			callWS = webServiceEjecucionSvc.update(callWS);
@@ -368,12 +397,13 @@ public class WebServiceExecuteAPI {
 			callWS.setParametros("NOT_URL");
 			return callWS;
 		}
-		
+
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
 				callWS.getExtracciones(), service.getNombre()) + template;
-		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice", "private"));
+		callWS.setEntrada(
+				uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice", "private"));
 		String responseApi = null;
 		try {
 			responseApi = callApi(service, urlWithParameters, template, headerProperties);
@@ -381,46 +411,48 @@ public class WebServiceExecuteAPI {
 					Propiedades.obtenerVariosParametro(service, Propiedades.API_VALIDATION)));
 			List<PropiedadDTO> extractionProperties = null;
 			if (callWS.getError() == null) {
-				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_NO_ERROR, Propiedades.API_EXTRACTION_TO_BASE_64 };
+				String[] props = { Propiedades.API_EXTRACTION, Propiedades.API_EXTRACTION_NO_ERROR,
+						Propiedades.API_EXTRACTION_TO_BASE_64 };
 				extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 			} else {
 				String[] props = { Propiedades.API_EXTRACTION_NO_ERROR };
-				extractionProperties = Propiedades.obtenerVariosParametro(service,  props );
+				extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 			}
-				 
+
 			List<String> resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
 			String extractionString = "";
-			for(String iExtraction: resultExtraction) {
+			for (String iExtraction : resultExtraction) {
 				if (iExtraction.toUpperCase().startsWith("ERROR")) {
-					if(callWS.getError() == null) {
+					if (callWS.getError() == null) {
 						callWS.setError(iExtraction);
-					}else {
-						callWS.setError(callWS.getError()+ "\n\n"  + iExtraction);
+					} else {
+						callWS.setError(callWS.getError() + "\n\n" + iExtraction);
 					}
 				} else {
-					if(extractionString.isEmpty()) {
-						extractionString =  iExtraction;
-					}else {
-						if(iExtraction.startsWith("INFO_")) {
-							if(modificador!=null)CallDocumentCommons.addMessageError(modificador, iExtraction.substring(5));
+					if (extractionString.isEmpty()) {
+						extractionString = iExtraction;
+					} else {
+						if (iExtraction.startsWith("INFO_")) {
+							if (modificador != null)
+								CallDocumentCommons.addMessageError(modificador, iExtraction.substring(5));
 						} else {
-							extractionString = extractionString + SharedConstants.PUNTO_COMA_DOBLE+ iExtraction;							
+							extractionString = extractionString + SharedConstants.PUNTO_COMA_DOBLE + iExtraction;
 						}
 					}
 				}
 			}
-			if (!extractionString.isEmpty()){
-				callWS.setExtracciones(SharedConstants.PUNTO_COMA_DOBLE+ extractionString);
+			if (!extractionString.isEmpty()) {
+				callWS.setExtracciones(SharedConstants.PUNTO_COMA_DOBLE + extractionString);
 				// Esto lo puedo quitar con lso apis locales
-				if (modificador != null )
-					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
-							token, extractionString, iterador, pMainDocument);
-				
+				if (modificador != null)
+					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties, token,
+							extractionString, iterador, pMainDocument);
+
 			}
-			
-			if (callWS.getError() != null) 
+
+			if (callWS.getError() != null)
 				responseApi = callWS.getError() + "\n\n" + responseApi;
-			
+
 		} catch (Exception e) {
 			if (responseApi == null)
 				responseApi = "";
@@ -431,15 +463,17 @@ public class WebServiceExecuteAPI {
 
 		if (callWS.getExtracciones() != null)
 			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
-		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice", "private"));
+		callWS.setSalida(
+				uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice", "private"));
 		callWS.setFechaEjecucion(new Date());
 		String extractionHelperToLong = null;
 		if (callWS.getExtracciones() != null && callWS.getExtracciones().length() > 4000) {
 			extractionHelperToLong = callWS.getExtracciones();
-			callWS.setExtracciones(
-					uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token, "webservice", "private"));
+			callWS.setExtracciones(uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token,
+					"webservice", "private"));
 		}
-		if (callWS.getError() == null) callWS.setParametros(null);
+		if (callWS.getError() == null)
+			callWS.setParametros(null);
 		callWS = webServiceEjecucionSvc.update(callWS);
 		callWS.setTextoRespuesta(responseApi);
 		if (extractionHelperToLong != null)
@@ -459,7 +493,7 @@ public class WebServiceExecuteAPI {
 				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + SharedConstants.IGUAL
 						+ iProp.getValor();
 			}
-			if(apiId != null)
+			if (apiId != null)
 				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_API_ID" + SharedConstants.IGUAL + apiId;
 		}
 		return parameters;
@@ -476,26 +510,31 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador, PedidoVentaDTO pMainDocument) throws ServerException {
+			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
+			PedidoVentaDTO pMainDocument) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
 			return callWS;
 		try {
 			int maxTry = Integer.parseInt(tryProp.getValor());
 			if (countIteration < maxTry && countIteration < 3) {
-				if(callWS.getParametersInexecution()==null) {
-					callWS.setParametersInexecution("API_TRY"+ SharedConstants.IGUAL + countIteration);
-				}else {
-					if(callWS.getParametersInexecution().contains("API_TRY"+ SharedConstants.IGUAL)) {
-						callWS.setParametersInexecution(callWS.getParametersInexecution().replace(SharedConstants.PUNTO_COMA_DOBLE + "API_TRY" + SharedConstants.IGUAL + (countIteration-1), ""));
-						callWS.setParametersInexecution(callWS.getParametersInexecution().replace("API_TRY" + SharedConstants.IGUAL+ (countIteration-1), ""));
+				if (callWS.getParametersInexecution() == null) {
+					callWS.setParametersInexecution("API_TRY" + SharedConstants.IGUAL + countIteration);
+				} else {
+					if (callWS.getParametersInexecution().contains("API_TRY" + SharedConstants.IGUAL)) {
+						callWS.setParametersInexecution(
+								callWS.getParametersInexecution().replace(SharedConstants.PUNTO_COMA_DOBLE + "API_TRY"
+										+ SharedConstants.IGUAL + (countIteration - 1), ""));
+						callWS.setParametersInexecution(callWS.getParametersInexecution()
+								.replace("API_TRY" + SharedConstants.IGUAL + (countIteration - 1), ""));
 					}
-					callWS.setParametersInexecution(callWS.getParametersInexecution() + SharedConstants.PUNTO_COMA_DOBLE + "API_TRY" + SharedConstants.IGUAL
-							+ countIteration);
+					callWS.setParametersInexecution(callWS.getParametersInexecution() + SharedConstants.PUNTO_COMA_DOBLE
+							+ "API_TRY" + SharedConstants.IGUAL + countIteration);
 				}
 				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, pMainDocument);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador, pMainDocument);
+					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador,
+							pMainDocument);
 			}
 		} catch (NumberFormatException e) {
 		}
@@ -516,11 +555,11 @@ public class WebServiceExecuteAPI {
 			return null;
 		for (PropiedadDTO propiedadDTO : validationProperties) {
 			if (!response.matches(propiedadDTO.getValor())) {
-				if(propiedadDTO.getMotivo()==null) {
+				if (propiedadDTO.getMotivo() == null) {
 					return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
-							+ propiedadDTO.getValor();					
+							+ propiedadDTO.getValor();
 				} else {
-					return "Error : "+ propiedadDTO.getMotivo();
+					return "Error : " + propiedadDTO.getMotivo();
 				}
 			}
 		}
@@ -545,10 +584,10 @@ public class WebServiceExecuteAPI {
 			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
 			if (!matcher.matches()) {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
-					if(propiedadDTO.getMotivo()==null) {
-						result.add( ERROR_EXTRAYENDO + propiedadDTO.getValor() );						
+					if (propiedadDTO.getMotivo() == null) {
+						result.add(ERROR_EXTRAYENDO + propiedadDTO.getValor());
 					} else {
-						result.add( "ERROR: " + propiedadDTO.getMotivo() );
+						result.add("ERROR: " + propiedadDTO.getMotivo());
 					}
 				}
 			} else {
@@ -558,137 +597,135 @@ public class WebServiceExecuteAPI {
 							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice", "private");
 				}
 				if (newValue != null && newValue.length() > 4000) {
-					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice", "private"));
+					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL + uploadService
+							.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice", "private"));
 				} else {
-					result.add( propiedadDTO.getLlaveTabla()+ SharedConstants.IGUAL + newValue);
+					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL + newValue);
 				}
 				// debo colocar oble para que se guarden en formularios
 				if (propiedadDTO.getTexto() != null)
-					result.add( propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue);
-				
-				//Estas no van en el calculo de las modificaciones
-				if(propiedadDTO.getMotivo()!=null)
-					result.add( "INFO_" + propiedadDTO.getMotivo() + SharedConstants.IGUAL + newValue);
+					result.add(propiedadDTO.getTexto() + SharedConstants.IGUAL + newValue);
+
+				// Estas no van en el calculo de las modificaciones
+				if (propiedadDTO.getMotivo() != null)
+					result.add("INFO_" + propiedadDTO.getMotivo() + SharedConstants.IGUAL + newValue);
 			}
 		}
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param apiService       Nombre del servidor
-	 * @param body             Cuerpo de la peticion POST
-	 * @param headerProperties
-	 * @return
-	 * @throws ServerException
-	 */
-	private String callApi(WebServiceDTO apiService, String url, String body, Map<String, String> headerProperties)
-			throws ServerException {
-		StringBuffer content = new StringBuffer();
-		URL urlApi;
-		HttpURLConnection con = null;
-		try {
-			urlApi = new URI(url).toURL();
-			con = (HttpURLConnection) urlApi.openConnection();
-			PropiedadDTO httpMethodValue = Propiedades.obtenerParametro(apiService,
-					Propiedades.HTTP_METHOD);
-			if (httpMethodValue != null) {
-				con.setRequestMethod(httpMethodValue.getValor());
-			}else {
-				con.setRequestMethod("POST");
-				con.setDoOutput(true);
-			}
-			
+	private WebClient.RequestBodySpec buildRequest(
+	        HttpMethod method,
+	        String url,
+	        Map<String, String> headerProperties,
+	        WebServiceDTO apiService
+	) {
 
-			if (headerProperties != null && headerProperties.size() != 0) {
-				for (Entry<String, String> jugador : headerProperties.entrySet()) {
-					String clave = jugador.getKey();
-					String valor = jugador.getValue();
-					con.setRequestProperty(clave, valor);
-				}
-			}
+	    WebClient.RequestBodySpec request = webClient
+	        .method(method)
+	        .uri(url)
+	        .headers(h -> {
+	            if (headerProperties != null) {
+	                headerProperties.forEach(h::add);
+	            }
+	        });
 
-			int connectTimeOut = 5000;
-			PropiedadDTO connectTimeOutValue = Propiedades.obtenerParametro(apiService,
-					Propiedades.API_CONNECT_TIMEOUT);
-			if (connectTimeOutValue != null) {
-				try {
-					connectTimeOut = Integer.valueOf(connectTimeOutValue.getValor());
-				} catch (NumberFormatException e) {
-					log.info(e.toString());
-				}
-			}
+	    // ===== CONTENT-TYPE =====
+	    if (headerProperties != null && headerProperties.containsKey("Content-Type")) {
 
-			int readTimeOut = 60000;
-			PropiedadDTO readTimeOutValue = Propiedades.obtenerParametro(apiService, Propiedades.API_READ_TIMEOUT);
-			if (readTimeOutValue != null) {
-				try {
-					readTimeOut = Integer.valueOf(readTimeOutValue.getValor());
-				} catch (NumberFormatException e) {
-					log.info(e.toString());
-				}
-			}
-			con.setConnectTimeout(connectTimeOut);
-			con.setReadTimeout(readTimeOut);
-			con.connect();
+	        // viene desde afuera → se respeta
+	        MediaType mediaType = MediaType.parseMediaType(
+	            headerProperties.get("Content-Type")
+	        );
+	        request.contentType(mediaType).accept(mediaType);
 
-			String standarEncoding = Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR);
-			if (standarEncoding.isEmpty())
-				standarEncoding = StandardCharsets.UTF_8.toString();
-			if(con.getRequestMethod().compareTo("GET")!=0) {
-				// Send request
-				DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-				// log.info("[" + con.getURL().toString() + "] Body API\n" + body);
-				// LA codificaion ISO_8859_1 es para soportar DIAn con tildes
-				wr.write(body.getBytes(standarEncoding));
-				wr.close();	
-			}
+	    } else {
 
-			log.info("[" + con.getURL().toString() + "] Procesando API status (" + con.getResponseCode() + ")");
-			int responseCode = con.getResponseCode();
-            InputStream inputStream;
-			/*if (100 <= con.getResponseCode() && con.getResponseCode() <= 399) {
-				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			} else {
-				in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-			}*/
-			
-			 // Usa getErrorStream() si el código de respuesta es 400 o cualquier otro error
-            if (responseCode >= 400) {
-                inputStream = con.getErrorStream();
-            } else {
-                inputStream = con.getInputStream();
-            }
+	        // NO viene → se define por defecto
+	        Charset charset = Charset.forName(
+	            Optional.ofNullable(
+	                Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR)
+	            ).orElse(StandardCharsets.UTF_8.name())
+	        );
 
-            // Manejo seguro del InputStream para evitar NullPointerException
-            if (inputStream != null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                    	content.append(line);
-                    }
-                }
-            } else {
-            	content.append("No response body received. response code = " + responseCode);
-            }
-                
-			/*String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				content.append(inputLine);
-			}
-			in.close();*/
-		}  catch (SocketTimeoutException stoe) {
-			throw new ServerException(stoe.getMessage() +".  RTO=" + con.getReadTimeout() + " CTO=" + con.getConnectTimeout());
-		}
-		catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		} catch (URISyntaxException e1) {
-			throw new ServerException(e1.getMessage());
-		}finally {
-			if(con != null) con.disconnect();
-		}
-		return content.toString();
+	        MediaType mediaType = new MediaType(
+	            MediaType.APPLICATION_JSON,
+	            charset
+	        );
+
+	        request.contentType(mediaType).accept(mediaType);
+	    }
+
+	    return request;
 	}
+
+	private String callApi(
+	        WebServiceDTO apiService,
+	        String url,
+	        String body,
+	        Map<String, String> headerProperties
+	) throws ServerException {
+
+	    long startTime = System.currentTimeMillis();
+
+	    try {
+	        // ===== HTTP METHOD =====
+	        String method = "POST";
+	        PropiedadDTO httpMethodValue =
+	                Propiedades.obtenerParametro(apiService, Propiedades.HTTP_METHOD);
+
+	        if (httpMethodValue != null && httpMethodValue.getValor() != null) {
+	            method = httpMethodValue.getValor().toUpperCase();
+	        }
+
+	        HttpMethod httpMethod = HttpMethod.valueOf(method);
+
+	        // ===== REQUEST =====
+	        WebClient.RequestBodySpec request = buildRequest(
+	        		httpMethod,
+	        	    url,
+	        	    headerProperties,
+	        	    apiService
+	        	);
+
+	        boolean hasBody = !HttpMethod.GET.equals(httpMethod) && body != null && !body.isEmpty();
+
+	        // ===== RESPONSE =====
+	        Mono<String> responseMono = hasBody
+	                ? request.bodyValue(body).retrieve().bodyToMono(String.class)
+	                : request.retrieve().bodyToMono(String.class);
+
+	        String response = responseMono.block();
+	        
+
+	        long duration = System.currentTimeMillis() - startTime;
+	        log.info("[API] {} {} -> OK ({} ms)", method, url, duration);
+
+	        return response;
+
+	    } catch (WebClientRequestException e) {
+	        // timeouts, DNS, connection refused
+	        throw new ServerException(
+	            String.format("Connection error calling API [%s]: %s", url, e.getMessage()), e
+	        );
+
+	    } catch (WebClientResponseException e) {
+	        long duration = System.currentTimeMillis() - startTime;
+	        log.error("[API] {} {} -> {} ({} ms)",
+	            e.getRequest().getMethod(),
+	            url,
+	            e.getStatusCode(),
+	            duration
+	        );
+	        throw new ServerException(
+	            "HTTP error calling API: " + e.getResponseBodyAsString(), e
+	        );
+
+	    } catch (Exception e) {
+	        throw new ServerException("Unexpected error calling API", e);
+	    }
+	}
+
 
 	/**
 	 * 
@@ -758,9 +795,8 @@ public class WebServiceExecuteAPI {
 				storageMassiveString = storageMassiveString + "</root>";
 				log.info("[" + templateDTO.getCodigo() + "] Escribiendo documento de carga masiva ("
 						+ documentFromMap.size() + ")");
-				result = result
-						+ uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token, "webservice", "private")
-						+ ";;";
+				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token,
+						"webservice", "private") + ";;";
 			}
 		}
 		if (result.endsWith(";;"))
@@ -935,11 +971,11 @@ public class WebServiceExecuteAPI {
 		}
 		if (parameters != null) {
 			result = result + "\n\nParameters\n\n";
-			result = result +  parameters.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
+			result = result + parameters.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
 		}
 		if (extractions != null) {
 			result = result + "\n\nExtractions\n\n";
-			result = result +  extractions.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
+			result = result + extractions.replaceAll(";;", "\n").replaceAll("--", "\n\t").replaceAll(",,", "=");
 		}
 		return result + "\n\nBODY\n\n";
 	}
