@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.5.8'
+	id 'org.springframework.boot' version '3.5.10'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 	id 'com.github.ben-manes.versions' version '0.52.0'
@@ -64,6 +64,9 @@ dependencies {
 	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 	implementation 'com.sun.activation:jakarta.activation:2.0.1'
+	
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	
 	
 	//Copn openai no pudo por presion, estoy con hugging
 	//implementation "org.springframework.ai:spring-ai-huggingface:1.1.0"
