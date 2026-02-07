@@ -56,6 +56,8 @@ import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
 
+import io.netty.channel.ConnectTimeoutException;
+import io.netty.handler.timeout.ReadTimeoutException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -554,7 +556,7 @@ public class WebServiceExecuteAPI {
 		if (validationProperties == null || validationProperties.isEmpty())
 			return null;
 		for (PropiedadDTO propiedadDTO : validationProperties) {
-			if (!response.matches(propiedadDTO.getValor())) {
+			if (!response.matches("(?s)" +propiedadDTO.getValor())) {
 				if (propiedadDTO.getMotivo() == null) {
 					return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
 							+ propiedadDTO.getValor();
@@ -581,7 +583,7 @@ public class WebServiceExecuteAPI {
 			return new ArrayList<>();
 		List<String> result = new ArrayList<>();
 		for (PropiedadDTO propiedadDTO : extractionList) {
-			final Matcher matcher = Pattern.compile(propiedadDTO.getValor()).matcher(responseApi);
+			final Matcher matcher = Pattern.compile(propiedadDTO.getValor(), Pattern.DOTALL).matcher(responseApi);
 			if (!matcher.matches()) {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_NO_ERROR) != 0) {
 					if (propiedadDTO.getMotivo() == null) {
@@ -701,12 +703,30 @@ public class WebServiceExecuteAPI {
 	        long duration = System.currentTimeMillis() - startTime;
 	        log.info("[API] {} {} -> OK ({} ms)", method, url, duration);
 
+	        if(response ==null) response = "No response body received.";
 	        return response;
 
 	    } catch (WebClientRequestException e) {
-	        // timeouts, DNS, connection refused
+	    	Throwable root = e.getCause();
+
+	        if (root instanceof ReadTimeoutException) {
+	            throw new ServerException(
+	                "READ TIMEOUT calling API [" + url + "]",
+	                e
+	            );
+	        }
+
+	        if (root instanceof ConnectTimeoutException) {
+	            throw new ServerException(
+	                "CONNECT TIMEOUT calling API [" + url + "]",
+	                e
+	            );
+	        }
+
 	        throw new ServerException(
-	            String.format("Connection error calling API [%s]: %s", url, e.getMessage()), e
+	            "Connection error calling API [" + url + "] ("
+	            + root.getClass().getSimpleName() + ")",
+	            e
 	        );
 
 	    } catch (WebClientResponseException e) {
@@ -722,7 +742,11 @@ public class WebServiceExecuteAPI {
 	        );
 
 	    } catch (Exception e) {
-	        throw new ServerException("Unexpected error calling API", e);
+	    	throw new ServerException(
+	    	        "Unexpected error calling API [" + url + "] ("
+	    	        + e.getClass().getSimpleName() + ")",
+	    	        e
+	    	    );
 	    }
 	}
 

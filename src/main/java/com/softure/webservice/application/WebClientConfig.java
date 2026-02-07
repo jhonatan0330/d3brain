@@ -28,9 +28,9 @@ public class WebClientConfig {
 
         HttpClient httpClient = HttpClient.create(provider)
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
-            .responseTimeout(Duration.ofSeconds(10))
+            .responseTimeout(Duration.ofSeconds(30))
             .doOnConnected(conn ->
-                conn.addHandlerLast(new ReadTimeoutHandler(10))
+                conn.addHandlerLast(new ReadTimeoutHandler(30))
                     .addHandlerLast(new WriteTimeoutHandler(10))
             );
 
