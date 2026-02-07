@@ -76,6 +76,7 @@ public class ProcessTemplate {
 	private MailSendMessageToAdminService sendToAdminService;
 
 	public String generateOutputFile(String plantilla, String parametros) {
+		if(plantilla==null || plantilla.isEmpty()) return plantilla;
 		if (parametros != null && !parametros.isEmpty()) {
 			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {

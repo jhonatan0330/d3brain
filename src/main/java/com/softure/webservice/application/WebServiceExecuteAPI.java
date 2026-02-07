@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,12 +102,12 @@ public class WebServiceExecuteAPI {
 	@Autowired
 	@Lazy
 	private ProcessTemplate templatesService;
-	
+
 	private final WebClient webClient;
-	
+
 	public WebServiceExecuteAPI(WebClient webClient) {
-        this.webClient = webClient;
-    }
+		this.webClient = webClient;
+	}
 
 	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId,
 			String pToken) throws ServerException {
@@ -343,7 +342,11 @@ public class WebServiceExecuteAPI {
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador,
 				token, parentParameters);
-		return launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador, documentMain);
+		previousWS = launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador, documentMain);
+		// Primero intento de nuevo ejecutarlo
+		if (previousWS.getError() != null)
+			previousWS = tryAgain(previousEndPoint, previousWS, token, 1, headers, updater, pIterador, documentMain);
+		return previousWS;
 	}
 
 	/**
@@ -368,23 +371,21 @@ public class WebServiceExecuteAPI {
 		callWS.setParametersInexecution(prepareParameterFromProperties(callWS.getParametersInexecution(),
 				replaceProperties, service.getLlaveTabla()));
 
-		String template = templatesService.generateOutputFile(
-				Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE), callWS.getParametersInexecution());
+		String template = Propiedades.obtenerValor(service, Propiedades.API_TEMPLATE);
+		template = templatesService.generateOutputFile(template, callWS.getParametersInexecution());
 
 		if (template.contains("[["))
 			template = templatesService.addParametersFromTemplateLink(template);
 
-		if (template == null || template.isEmpty()) {
-			callWS.setFechaEjecucion(new Date());
-			// Creo que se necesita para ver el hisotoria
-			// callWS.setEstado(SharedConstants.STATE_INACTIVE);
-			callWS.setParametros(null);
-			callWS.setError("NOT_TEMPLATE");
-			callWS = webServiceEjecucionSvc.update(callWS);
-			callWS.setError(null);
-			callWS.setParametros("NOT_TEMPLATE");
-			return callWS;
-		}
+		// Para los GET no se envia template todo esta en la url
+		/*
+		 * if (template == null || template.isEmpty()) { callWS.setFechaEjecucion(new
+		 * Date()); // Creo que se necesita para ver el hisotoria //
+		 * callWS.setEstado(SharedConstants.STATE_INACTIVE); callWS.setParametros(null);
+		 * callWS.setError("NOT_TEMPLATE"); callWS =
+		 * webServiceEjecucionSvc.update(callWS); callWS.setError(null);
+		 * callWS.setParametros("NOT_TEMPLATE"); return callWS; }
+		 */
 		String urlWithParameters = templatesService.generateOutputFile(
 				Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
 		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una
@@ -556,7 +557,7 @@ public class WebServiceExecuteAPI {
 		if (validationProperties == null || validationProperties.isEmpty())
 			return null;
 		for (PropiedadDTO propiedadDTO : validationProperties) {
-			if (!response.matches("(?s)" +propiedadDTO.getValor())) {
+			if (!response.matches("(?s)" + propiedadDTO.getValor())) {
 				if (propiedadDTO.getMotivo() == null) {
 					return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
 							+ propiedadDTO.getValor();
@@ -616,140 +617,95 @@ public class WebServiceExecuteAPI {
 		return result;
 	}
 
-	private WebClient.RequestBodySpec buildRequest(
-	        HttpMethod method,
-	        String url,
-	        Map<String, String> headerProperties,
-	        WebServiceDTO apiService
-	) {
+	private WebClient.RequestBodySpec buildRequest(HttpMethod method, String url, Map<String, String> headerProperties,
+			WebServiceDTO apiService) {
 
-	    WebClient.RequestBodySpec request = webClient
-	        .method(method)
-	        .uri(url)
-	        .headers(h -> {
-	            if (headerProperties != null) {
-	                headerProperties.forEach(h::add);
-	            }
-	        });
+		WebClient.RequestBodySpec request = webClient.method(method).uri(url).headers(h -> {
+			if (headerProperties != null) {
+				headerProperties.forEach(h::add);
+			}
+		});
 
-	    // ===== CONTENT-TYPE =====
-	    if (headerProperties != null && headerProperties.containsKey("Content-Type")) {
+		// ===== CONTENT-TYPE =====
+		if (headerProperties != null && headerProperties.containsKey("Content-Type")) {
 
-	        // viene desde afuera → se respeta
-	        MediaType mediaType = MediaType.parseMediaType(
-	            headerProperties.get("Content-Type")
-	        );
-	        request.contentType(mediaType).accept(mediaType);
+			// viene desde afuera → se respeta
+			MediaType mediaType = MediaType.parseMediaType(headerProperties.get("Content-Type"));
+			request.contentType(mediaType).accept(mediaType);
 
-	    } else {
+		} else {
 
-	        // NO viene → se define por defecto
-	        Charset charset = Charset.forName(
-	            Optional.ofNullable(
-	                Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR)
-	            ).orElse(StandardCharsets.UTF_8.name())
-	        );
+			String charsetName = Propiedades.obtenerValor(apiService, Propiedades.API_ENCODE_STANDAR);
 
-	        MediaType mediaType = new MediaType(
-	            MediaType.APPLICATION_JSON,
-	            charset
-	        );
+			Charset charset = (charsetName == null || charsetName.isBlank()) ? StandardCharsets.UTF_8
+					: Charset.forName(charsetName);
 
-	        request.contentType(mediaType).accept(mediaType);
-	    }
+			MediaType mediaType = new MediaType(MediaType.APPLICATION_JSON, charset);
 
-	    return request;
+			request.contentType(mediaType).accept(mediaType);
+		}
+
+		return request;
 	}
 
-	private String callApi(
-	        WebServiceDTO apiService,
-	        String url,
-	        String body,
-	        Map<String, String> headerProperties
-	) throws ServerException {
+	private String callApi(WebServiceDTO apiService, String url, String body, Map<String, String> headerProperties)
+			throws ServerException {
 
-	    long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
-	    try {
-	        // ===== HTTP METHOD =====
-	        String method = "POST";
-	        PropiedadDTO httpMethodValue =
-	                Propiedades.obtenerParametro(apiService, Propiedades.HTTP_METHOD);
+		try {
+			// ===== HTTP METHOD =====
+			String method = "POST";
+			PropiedadDTO httpMethodValue = Propiedades.obtenerParametro(apiService, Propiedades.HTTP_METHOD);
 
-	        if (httpMethodValue != null && httpMethodValue.getValor() != null) {
-	            method = httpMethodValue.getValor().toUpperCase();
-	        }
+			if (httpMethodValue != null && httpMethodValue.getValor() != null) {
+				method = httpMethodValue.getValor().toUpperCase();
+			}
 
-	        HttpMethod httpMethod = HttpMethod.valueOf(method);
+			HttpMethod httpMethod = HttpMethod.valueOf(method);
 
-	        // ===== REQUEST =====
-	        WebClient.RequestBodySpec request = buildRequest(
-	        		httpMethod,
-	        	    url,
-	        	    headerProperties,
-	        	    apiService
-	        	);
+			// ===== REQUEST =====
+			WebClient.RequestBodySpec request = buildRequest(httpMethod, url, headerProperties, apiService);
 
-	        boolean hasBody = !HttpMethod.GET.equals(httpMethod) && body != null && !body.isEmpty();
+			boolean hasBody = !HttpMethod.GET.equals(httpMethod) && body != null && !body.isEmpty();
 
-	        // ===== RESPONSE =====
-	        Mono<String> responseMono = hasBody
-	                ? request.bodyValue(body).retrieve().bodyToMono(String.class)
-	                : request.retrieve().bodyToMono(String.class);
+			// ===== RESPONSE =====
+			Mono<String> responseMono = hasBody ? request.bodyValue(body).retrieve().bodyToMono(String.class)
+					: request.retrieve().bodyToMono(String.class);
 
-	        String response = responseMono.block();
-	        
+			String response = responseMono.block();
 
-	        long duration = System.currentTimeMillis() - startTime;
-	        log.info("[API] {} {} -> OK ({} ms)", method, url, duration);
+			long duration = System.currentTimeMillis() - startTime;
+			log.info("[API] {} {} -> OK ({} ms)", method, url, duration);
 
-	        if(response ==null) response = "No response body received.";
-	        return response;
+			if (response == null)
+				response = "No response body received.";
+			return response;
 
-	    } catch (WebClientRequestException e) {
-	    	Throwable root = e.getCause();
+		} catch (WebClientRequestException e) {
+			Throwable root = e.getCause();
 
-	        if (root instanceof ReadTimeoutException) {
-	            throw new ServerException(
-	                "READ TIMEOUT calling API [" + url + "]",
-	                e
-	            );
-	        }
+			if (root instanceof ReadTimeoutException) {
+				throw new ServerException("READ TIMEOUT calling API [" + url + "]", e);
+			}
 
-	        if (root instanceof ConnectTimeoutException) {
-	            throw new ServerException(
-	                "CONNECT TIMEOUT calling API [" + url + "]",
-	                e
-	            );
-	        }
+			if (root instanceof ConnectTimeoutException) {
+				throw new ServerException("CONNECT TIMEOUT calling API [" + url + "]", e);
+			}
 
-	        throw new ServerException(
-	            "Connection error calling API [" + url + "] ("
-	            + root.getClass().getSimpleName() + ")",
-	            e
-	        );
+			throw new ServerException(
+					"Connection error calling API [" + url + "] (" + root.getClass().getSimpleName() + ")", e);
 
-	    } catch (WebClientResponseException e) {
-	        long duration = System.currentTimeMillis() - startTime;
-	        log.error("[API] {} {} -> {} ({} ms)",
-	            e.getRequest().getMethod(),
-	            url,
-	            e.getStatusCode(),
-	            duration
-	        );
-	        throw new ServerException(
-	            "HTTP error calling API: " + e.getResponseBodyAsString(), e
-	        );
+		} catch (WebClientResponseException e) {
+			long duration = System.currentTimeMillis() - startTime;
+			log.error("[API] {} {} -> {} ({} ms)", e.getRequest().getMethod(), url, e.getStatusCode(), duration);
+			throw new ServerException("HTTP error calling API: " + e.getResponseBodyAsString(), e);
 
-	    } catch (Exception e) {
-	    	throw new ServerException(
-	    	        "Unexpected error calling API [" + url + "] ("
-	    	        + e.getClass().getSimpleName() + ")",
-	    	        e
-	    	    );
-	    }
+		} catch (Exception e) {
+			throw new ServerException(
+					"Unexpected error calling API [" + url + "] (" + e.getClass().getSimpleName() + ")", e);
+		}
 	}
-
 
 	/**
 	 * 
