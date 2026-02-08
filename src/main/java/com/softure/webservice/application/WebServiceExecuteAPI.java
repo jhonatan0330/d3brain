@@ -631,7 +631,7 @@ public class WebServiceExecuteAPI {
 
 			// viene desde afuera → se respeta
 			MediaType mediaType = MediaType.parseMediaType(headerProperties.get("Content-Type"));
-			request.contentType(mediaType).accept(mediaType);
+			request.contentType(mediaType).accept(MediaType.ALL);
 
 		} else {
 
@@ -642,7 +642,7 @@ public class WebServiceExecuteAPI {
 
 			MediaType mediaType = new MediaType(MediaType.APPLICATION_JSON, charset);
 
-			request.contentType(mediaType).accept(mediaType);
+			request.contentType(mediaType).accept(MediaType.ALL);
 		}
 
 		return request;
