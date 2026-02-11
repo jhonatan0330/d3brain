@@ -5,6 +5,7 @@ import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.netty.channel.ChannelOption;
@@ -33,9 +34,18 @@ public class WebClientConfig {
                 conn.addHandlerLast(new ReadTimeoutHandler(30))
                     .addHandlerLast(new WriteTimeoutHandler(10))
             );
+        
+        int maxSize = 20 * 1024 * 1024; // 20 MB (ajusta según necesidad)
+
+        ExchangeStrategies strategies = ExchangeStrategies.builder()
+            .codecs(configurer ->
+                configurer.defaultCodecs().maxInMemorySize(maxSize)
+            )
+            .build();
 
         return WebClient.builder()
             .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .exchangeStrategies(strategies)
             .build();
     }
 }
