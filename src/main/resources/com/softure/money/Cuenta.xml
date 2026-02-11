@@ -149,7 +149,7 @@
 			and cppd_propiedadvalor = 'PROP_99'
 	</select>
 	
-	<select id="turnomultime" resultType="java.lang.Boolean">
+	<select id="turnomultiple" resultType="java.lang.Boolean">
 	select exists (
 		select 1
 		from 

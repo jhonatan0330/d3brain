@@ -203,7 +203,7 @@ public class TipoVinculo {
 		
 		//Si esta anulado no lo gestiono para eliminarlo
 		PedidoVentaDTO document = documentService.consultaXId(bd.getValorOpcion());
-		if(document.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0)
+		if(document.getEstado() != null && document.getEstado().compareTo(SharedConstants.STATE_INACTIVE)==0)
 			return null;
 		
 		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
