@@ -10,6 +10,8 @@ public class VoucherLineRequest {
 	private BigDecimal credit;
 	private String note;
 	private String type;
+	private String accountLink;
+	private String mainDocument;
 	private ArrayList<VoucherLineDimensionRequest> references;
 	
 	public String getAccount() {
@@ -47,6 +49,18 @@ public class VoucherLineRequest {
 	}
 	public void setReferences(ArrayList<VoucherLineDimensionRequest> references) {
 		this.references = references;
+	}
+	public String getMainDocument() {
+		return mainDocument;
+	}
+	public void setDocumentMain(String mainDocument) {
+		this.mainDocument = mainDocument;
+	}
+	public String getAccountLink() {
+		return accountLink;
+	}
+	public void setAccountLink(String accountLink) {
+		this.accountLink = accountLink;
 	}
 	
 }

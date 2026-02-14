@@ -12,6 +12,7 @@ public class VoucherRequest {
 	private Date factDate;
 	private BigDecimal value;
 	private String document;
+	private String mainDocument;
 	private String type;
 	
 	private List<VoucherLineRequest> lines;
@@ -58,6 +59,11 @@ public class VoucherRequest {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+	public String getMainDocument() {
+		return mainDocument;
+	}
+	public void setDocumentMain(String mainDocument) {
+		this.mainDocument = mainDocument;
+	}
 	
 }

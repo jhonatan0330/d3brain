@@ -16,6 +16,8 @@
 			,mreg_positivo as positive
 			,mreg_negativo as negative
 			,mreg_valor as value
+			,creg_expediente as mainDocument
+			,creg_vinculocuenta as accountLink
 			,creg_tipo as type
 			,creg_estado as state
 		from account.registro_reg a
@@ -32,6 +34,8 @@
 <if test="positive!=null">		and mreg_positivo = #{positive}</if>
 <if test="negative!=null">		and mreg_negativo = #{negative}</if>
 <if test="value!=null">		and mreg_valor = #{value}</if>
+<if test="mainDocument!=null">		and creg_expediente = #{mainDocument}</if>
+<if test="accountLink!=null">		and creg_vinculocuenta = #{accountLink}</if>
 <if test="type!=null">		and creg_tipo = #{type}</if>
 
 	</sql>
@@ -73,6 +77,8 @@
 		<if test="positive!=null">,mreg_positivo</if>
 		<if test="negative!=null">,mreg_negativo</if>
 		<if test="value!=null">,mreg_valor</if>
+		<if test="mainDocument!=null">,creg_expediente</if>
+		<if test="accountLink!=null">,creg_vinculocuenta</if>
 		<if test="type!=null">,creg_tipo</if>
 		<if test="state!=null">,creg_estado</if>
 		) values (#{key}
@@ -83,6 +89,8 @@
 		<if test="positive!=null">,#{positive}</if>
 		<if test="negative!=null">,#{negative}</if>
 		<if test="value!=null">,#{value}</if>
+		<if test="mainDocument!=null">,#{mainDocument}</if>
+		<if test="accountLink!=null">,#{accountLink}</if>
 		<if test="type!=null">,#{type}</if>
 		<if test="state!=null">,#{state}</if>
 		)
@@ -98,6 +106,8 @@
 		mreg_positivo = #{positive},
 		mreg_negativo = #{negative},
 		mreg_valor = #{value},
+		creg_expediente = #{mainDocument},
+		creg_vinculocuenta = #{accountLink},
 		creg_tipo = #{type},
 		creg_estado =#{state}
 		<include refid="whereAccountRecordPrimaryKeyFragment" />

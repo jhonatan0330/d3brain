@@ -19,6 +19,7 @@ public class VoucherDTO extends SharedDataObject{
 	private Date factDate;
 	private BigDecimal value;
 	private String document;
+	private String mainDocument;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date deleteDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -86,6 +87,14 @@ public class VoucherDTO extends SharedDataObject{
 
 	public void setDocument(String document) {
 		this.document = document;
+	}
+
+	public String getMainDocument() {
+		return mainDocument;
+	}
+
+	public void setMainDocument(String mainDocument) {
+		this.mainDocument = mainDocument;
 	}
 
 	public Date getDeleteDate() {

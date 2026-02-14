@@ -12,4 +12,6 @@ ALTER TABLE account.registro_reg ADD dreg_fecha timestamp with time zone NOT NUL
 ALTER TABLE account.registro_reg ADD mreg_positivo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.registro_reg ADD mreg_negativo NUMERIC(18,6) NOT NULL DEFAULT 0;
 ALTER TABLE account.registro_reg ADD mreg_valor NUMERIC(18,6) NOT NULL DEFAULT 0;
+ALTER TABLE account.registro_reg ADD creg_expediente varchar(32);
+ALTER TABLE account.registro_reg ADD creg_vinculocuenta varchar(32);
 ALTER TABLE account.registro_reg ADD creg_tipo varchar(1);

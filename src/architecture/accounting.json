@@ -382,6 +382,12 @@
 							"optional": true
 						},
 						{
+							"name": "mainDocument",
+							"tableName": "expediente",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
 							"name": "deleteDate",
 							"tableName": "fechaanulacion",
 							"type": "DATETIME",
@@ -449,6 +455,18 @@
 							"name": "value",
 							"tableName": "valor",
 							"type": "NUMBER"
+						},
+						{
+							"name": "mainDocument",
+							"tableName": "expediente",
+							"type": "CLASS",
+							"optional": true
+						},
+						{
+							"name": "accountLink",
+							"tableName": "vinculocuenta",
+							"type": "CLASS",
+							"optional": true
 						},
 						{
 							"name": "type",
