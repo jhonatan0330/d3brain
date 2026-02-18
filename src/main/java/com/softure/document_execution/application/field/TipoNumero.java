@@ -172,10 +172,8 @@ public class TipoNumero {
 	private void formatText(PedidoVentaCaracteristicaDTO pCampo) {
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if (formato.isEmpty()) {
-			pCampo.setValorText(pCampo.getValorNumero().toPlainString());
-			if (pCampo.getValorText().endsWith(".0")) {
-				pCampo.setValorText(pCampo.getValorText().substring(0, pCampo.getValorText().length() - 2));
-			}
+			BigDecimal valor = pCampo.getValorNumero().stripTrailingZeros();
+            pCampo.setValorText(valor.toPlainString());
 		} else {
 			pCampo.setValorText(SoftureUtil.formatNumberPattern(pCampo.getValorNumero(), formato));
 		}

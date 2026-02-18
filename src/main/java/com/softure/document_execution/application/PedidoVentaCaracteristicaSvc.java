@@ -268,18 +268,7 @@ public class PedidoVentaCaracteristicaSvc
 				throw new ServerException(e.getMessage(), "");
 			}
 		} else {
-			String parameters = "";
-			for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
-				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo()
-						+ SharedConstants.IGUAL;
-
-				if (iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-					parameters = parameters
-							+ ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
-				} else {
-					parameters = parameters + ((iProp.getValorText() == null) ? "0" : iProp.getValorText());
-				}
-			}
+			String parameters = templatesService.transformDependsToParams(dependientes);
 			try {
 				return new BigDecimal(templatesService.generateOutputFile(propFunction.getValor(), parameters));
 			} catch (NumberFormatException nf) {
@@ -332,22 +321,13 @@ public class PedidoVentaCaracteristicaSvc
 				throw new ServerException(e.getMessage(), "");
 			}
 		} else {
-			String parameters = "";
-			for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
-				parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo()
-						+ SharedConstants.IGUAL;
-
-				if (iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-					parameters = parameters
-							+ ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
-				} else {
-					parameters = parameters + ((iProp.getValorText() == null) ? "0" : iProp.getValorText());
-				}
-			}
+			String parameters = templatesService.transformDependsToParams(dependientes);
 			return SoftureUtil.toDate(templatesService.generateOutputFile(sqlFuncionDecision.getValor(), parameters));
 		}
 
 	}
+
+	
 
 	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId) throws ServerException {
 		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);

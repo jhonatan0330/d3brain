@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired; import org.spring
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
+import com.shared.domain.SharedConstants;
 import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 
 @Component
@@ -17,6 +19,8 @@ public class TipoTexto {
 
 	@Autowired @Lazy 
 	private PedidoVentaCaracteristicaSvc campoService;
+	@Autowired @Lazy 
+	private ProcessTemplate processTemplate;
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
 		// System.out.format("\n[%s - %s] Validando.....", pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
@@ -28,7 +32,7 @@ public class TipoTexto {
 		if (pCampo.getLlaveTabla() == null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA) != null) {
-			calcularValorFormula(pCampo);
+			return; //calcularValorFormula(pCampo);
 		}
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorText() == null) {
@@ -123,6 +127,12 @@ public class TipoTexto {
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
+		//Esto lo pase de validar aqui porque necesito a veces el ID y asumo que si es bloqueado se va a calcular bien
+		if (pCampo.getLlaveTabla() == null
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
+				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA) != null) {
+			calcularValorFormula(pCampo);
+		}
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorText() == null) {
@@ -153,11 +163,22 @@ public class TipoTexto {
 
 	private void calcularValorFormula(PedidoVentaCaracteristicaDTO pCampo) {
 		String textoCalculado = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA);
-		if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
-			for (PedidoVentaCaracteristicaDTO iDep : pCampo.getDependientes()) {
-				textoCalculado = StringUtils.replace(textoCalculado, iDep.getCampoDTO().getCodigo(),
-						(iDep.getValorText() == null) ? "" : iDep.getValorText());
+		if (Propiedades.isFunctionNotFreeMarker(textoCalculado)) {
+			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
+				for (PedidoVentaCaracteristicaDTO iDep : pCampo.getDependientes()) {
+					textoCalculado = StringUtils.replace(textoCalculado, iDep.getCampoDTO().getCodigo(),
+							(iDep.getValorText() == null) ? "" : iDep.getValorText());
+				}
+			}	
+		}else {
+			String params = processTemplate.transformDependsToParams(pCampo.getDependientes());
+			//En trustmetrans se necesita  armar un texto con el id del documento
+			if(pCampo.getPrincipal()!=null) {
+				if(pCampo.getPrincipal().getNombre()!=null)params = params + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
+						+ SharedConstants.IGUAL + pCampo.getPrincipal().getNombre(); 
+				//if(pCampo.getPrincipal().getDescripcion()!=null) textoCalculado = StringUtils.replace(textoCalculado, "E_CODE",pCampo.getPrincipal().getNombre());
 			}
+			textoCalculado = processTemplate.generateOutputFile(textoCalculado, params);	
 		}
 		pCampo.setValorText(textoCalculado);
 	}

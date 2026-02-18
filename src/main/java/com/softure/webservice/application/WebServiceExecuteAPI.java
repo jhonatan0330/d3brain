@@ -292,8 +292,7 @@ public class WebServiceExecuteAPI {
 				} else {
 					_modificatorDocumentError = documentSvc.consultaXId(callWS.getModificador());
 				}
-				infoError = infoError + "\nDocumento generador: " + _modificatorDocumentError.getNombre() + ", "
-						+ _modificatorDocumentError.getDescripcion();
+				infoError = infoError + "\nDocumento generador: " + _modificatorDocumentError.getNombre();
 				if (_modificatorDocumentError.getDescripcion() != null) {
 					infoError = infoError + ", " + _modificatorDocumentError.getDescripcion();
 				}

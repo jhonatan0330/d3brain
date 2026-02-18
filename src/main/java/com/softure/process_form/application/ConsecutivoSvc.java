@@ -178,8 +178,8 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			consecutivoDocumento = consecutivoDocumento + actual.getPrefijo();
 		if (!consecutivoDocumento.isEmpty()) {
 			consecutivoDocumento = consecutivoDocumento.replace("-", "");
-			nuevo.setPrefijo(consecutivoDocumento + "-");
-			nuevo.setNombre(nuevo.getNombre() + "-" + consecutivoDocumento);
+			nuevo.setPrefijo(consecutivoDocumento );
+			nuevo.setNombre(nuevo.getNombre() +  consecutivoDocumento);
 		}
 		if (actual.getNumeroFinal().compareTo(BigDecimal.ZERO) == 0) {
 			nuevo.setNumeroInicial(new BigDecimal(100));

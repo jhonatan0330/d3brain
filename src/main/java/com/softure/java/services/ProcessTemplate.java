@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.Duration;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
@@ -17,6 +18,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -125,6 +127,22 @@ public class ProcessTemplate {
 			}
 		}
 		return plantilla;
+	}
+	
+	public String transformDependsToParams(List<PedidoVentaCaracteristicaDTO> dependientes) {
+		String parameters = "";
+		for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
+			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo()
+					+ SharedConstants.IGUAL;
+
+			if (iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+				parameters = parameters
+						+ ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
+			} else {
+				parameters = parameters + ((iProp.getValorText() == null) ? "0" : iProp.getValorText());
+			}
+		}
+		return parameters;
 	}
 
 	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
@@ -509,7 +527,7 @@ public class ProcessTemplate {
 			 */
 			if (iCampo.getValorNumero() == null)
 				return iCampo.getValorText();
-			return new DecimalFormat("#.######").format(iCampo.getValorNumero().doubleValue());
+			return new DecimalFormat("#.######",DecimalFormatSymbols.getInstance(Locale.US)).format(iCampo.getValorNumero());
 		// Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare
 		// despues
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
