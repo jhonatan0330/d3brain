@@ -156,15 +156,17 @@ public class TipoVinculo {
 				PedidoVentaCaracteristicaDTO _newFieldSql = new PedidoVentaCaracteristicaDTO();
 				_newFieldSql.setCampo(_relationSql.getLlaveTabla()); //Aqui intento ajustar el campo para nuevos campos
 				_newFieldSql.setModificado(true);
-				_newFieldSql.setExpedientes(_resultsFunction);
-/*				if(_newFieldSql!=null) {
-					if(!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(),Propiedades.MULTIPLE).isEmpty()) {
-						
-					}
-					else {
+				_newFieldSql.setCampoDTO(caracteristicaService.consultaUnicaConComplementos(_relationSql.getCampo(), ptoken));
+				if(!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(),Propiedades.MULTIPLE).isEmpty()) {
+					_newFieldSql.setExpedientes(_resultsFunction);	
+				}
+				else {
+					if (_resultsFunction != null && !_resultsFunction.isEmpty()) {
 						_newFieldSql.setValorOpcion(_resultsFunction.get(0).getLlaveTabla());
+					}else {
+						_newFieldSql.setValorOpcion(null);
 					}
-				}*/
+				}
 				_fieldsFunctionSql.add(_newFieldSql);
 				_iSqlProperty.setValor(_relationSql.getLlaveTabla());//Aqui intento ajustar el campo para nuevos campos
 				_properties.add(_iSqlProperty);
@@ -227,15 +229,25 @@ public class TipoVinculo {
 				}
 				PedidoVentaCaracteristicaDTO _newFieldSql = CallDocumentCommons.copyFieldDocument(pCampo,
 						_relationSql.getCampo());
+				//En trustme la factura necesito enviar el documento para una funcion
+				PedidoVentaFilterDTO _filter = new PedidoVentaFilterDTO();
+				_filter.setLlaveTabla(pCampo.getDocumento());
+				
 				List<PedidoVentaDTO> _resultsFunction = documentService.listarExpedientesDisponiblesDocumentoFuncion(
-						null, _iSqlProperty.getLlaveTabla(), pCampo.getDependientes());
-				if (_resultsFunction != null && !_resultsFunction.isEmpty()) {
-					if (_resultsFunction.size() > 1) {
-						throw new ServerException("La funcion SQL: " + _iSqlProperty.getLlaveTabla()
-								+ " debe retornar un solo resultado, revise la configuracion");
-					}
-					_newFieldSql.setValorOpcion(_resultsFunction.get(0).getLlaveTabla());
+						_filter, _iSqlProperty.getLlaveTabla(), pCampo.getDependientes());
+				_newFieldSql.setCampoDTO(caracteristicaService.consultaUnicaConComplementos(_newFieldSql.getCampo(), ptoken));
+				if(!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(),Propiedades.MULTIPLE).isEmpty()) {
+					_newFieldSql.setExpedientes(_resultsFunction);	
 				}
+				else {
+					if (_resultsFunction != null && !_resultsFunction.isEmpty()) {
+						_newFieldSql.setValorOpcion(_resultsFunction.get(0).getLlaveTabla());
+					}else {
+						_newFieldSql.setValorOpcion(null);
+					}
+					
+				}
+				
 				_newFields.add(_newFieldSql);
 			}
 		}
