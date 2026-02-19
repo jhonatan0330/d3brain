@@ -166,7 +166,7 @@ public class TipoTexto {
 
 	private void calcularValorFormula(PedidoVentaCaracteristicaDTO pCampo) {
 		String textoCalculado = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA);
-		if (Propiedades.isFunctionNotFreeMarker(textoCalculado)) {
+		if (!(textoCalculado.contains("$") || textoCalculado.contains("<#"))) {
 			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
 				for (PedidoVentaCaracteristicaDTO iDep : pCampo.getDependientes()) {
 					textoCalculado = StringUtils.replace(textoCalculado, iDep.getCampoDTO().getCodigo(),
