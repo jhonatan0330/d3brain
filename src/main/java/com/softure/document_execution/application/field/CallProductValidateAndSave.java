@@ -75,9 +75,9 @@ public class CallProductValidateAndSave {
 	}
 
 	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document,
-			List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess) throws ServerException {
+			List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess, String pCampo) throws ServerException {
 		List<DetallePedidoVentaDTO> detallesActuales = detallePedidoVentaService.listarCompleto(document, tarrifs, null,
-				null, token, newOnlyFormProcess, null);
+				null, token, newOnlyFormProcess, null, pCampo);
 
 		if (products != null) {
 			for (DetallePedidoVentaDTO detalle : products) {

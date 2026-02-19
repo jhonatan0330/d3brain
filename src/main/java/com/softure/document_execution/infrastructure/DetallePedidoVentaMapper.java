@@ -1,8 +1,8 @@
 package com.softure.document_execution.infrastructure;
 
-
-// BEGIN region interImport  
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 
 import com.softure.SoftureSqlConnMapper;
 import com.softure.document_execution.domain.DetallePedidoVentaDTO;
@@ -12,8 +12,5 @@ import com.softure.java.domain.IBasicMapper;
 @SoftureSqlConnMapper(value = "DetallePedidoVentaMapper")
 public interface DetallePedidoVentaMapper extends IBasicMapper<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO>{
 	
-
-// BEGIN region aditionalMethods  
-	List<DetallePedidoVentaDTO> listar2Documento(String documento);
-// END region aditionalMethods
+	List<DetallePedidoVentaDTO> listar2Documento(@Param("documento")String pDocumento, @Param("campo")String pCampo);
 }

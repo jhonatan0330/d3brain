@@ -152,7 +152,7 @@ public class PedidoVentaCaracteristicaSvc
 				if (iFieldTemplateDTO.getLlaveTabla().compareTo(iCurrentField.getCampo()) == 0) {
 					iCurrentField.setCampoDTO(iFieldTemplateDTO);
 					if (iFieldTemplateDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
-						iCurrentField.setDetalles(detallePedidoVentaService.listar2Documento(documentId));
+						iCurrentField.setDetalles(detallePedidoVentaService.listar2Documento(documentId, iCurrentField.getLlaveTabla()));
 						for (DetallePedidoVentaDTO detalleDocumento : iCurrentField.getDetalles()) {
 							detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
 									Propiedades.obtenerValor(iFieldTemplateDTO, Propiedades.ITEM_DETAIL_FORM_VISIBLE));

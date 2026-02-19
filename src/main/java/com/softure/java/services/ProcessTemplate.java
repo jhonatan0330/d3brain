@@ -49,6 +49,7 @@ import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 
+import freemarker.core.InvalidReferenceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
@@ -108,12 +109,14 @@ public class ProcessTemplate {
 					}
 				}
 				mapParams.putAll(newMap);
-				StringWriter out = new StringWriter();
+				String result;
 				try {
+					StringWriter out = new StringWriter();
 					Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
 					Template t = new Template("templateName", plantilla, cfg);
 					t.process(mapParams, out);
-				} catch (Exception e) {
+					result = out.toString();
+				} catch (InvalidReferenceException e) {
 					try {
 						sendToAdminService.call("Error procesando una pantilla",
 								e.getMessage() + SharedConstants.NEW_LINE + plantilla);
@@ -121,9 +124,18 @@ public class ProcessTemplate {
 						e.printStackTrace();
 						e1.printStackTrace();
 					}
-					out.append(e.getMessage());
+					result =  e.getFTLInstructionStack();
+				}catch (Exception ex) {
+					try {
+						sendToAdminService.call("Error procesando una pantilla",
+								ex.getMessage() + SharedConstants.NEW_LINE + plantilla);
+					} catch (ServerException e1) {
+						ex.printStackTrace();
+						e1.printStackTrace();
+					}
+					result = ex.getMessage();
 				}
-				return out.toString();
+				return result;
 			}
 		}
 		return plantilla;
@@ -280,7 +292,7 @@ public class ProcessTemplate {
 					if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 						// Aqui deberia ser obtener por campo
 						List<DetallePedidoVentaDTO> detalleFromDocument = detallePedidoVentaService
-								.listar2Documento(campo.getDocumento());
+								.listar2Documento(campo.getDocumento(), campo.getLlaveTabla());
 						if (detalleFromDocument != null && !detalleFromDocument.isEmpty()) {
 							relations = getRealationsRelatedWithList(referidas, relations);
 							List<PropiedadDTO> propertiesWithRelationField = getPropertiesWithRelation(campo, referidas,

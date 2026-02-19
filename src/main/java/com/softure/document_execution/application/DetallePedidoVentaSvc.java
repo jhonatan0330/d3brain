@@ -146,10 +146,10 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		return dto;
 	}
 
-	public List<DetallePedidoVentaDTO> listarCompleto(String documento, List<PropiedadDTO> tarifario,
+	public List<DetallePedidoVentaDTO> listarCompleto(String pDocumento, List<PropiedadDTO> tarifario,
 			String propiedadFuncion, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token,
-			String newOnlyFormProcess, String tercero) throws ServerException {
-		List<DetallePedidoVentaDTO> base = detallePedidoVentaMapper.listar2Documento(documento);
+			String newOnlyFormProcess, String tercero, String pCampo) throws ServerException {
+		List<DetallePedidoVentaDTO> base = listar2Documento(pDocumento, pCampo);
 		if (base == null || base.isEmpty())
 			return new ArrayList<DetallePedidoVentaDTO>();
 		List<DetallePedidoVentaDTO> result = new ArrayList<DetallePedidoVentaDTO>();
@@ -167,8 +167,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		return result;
 	}
 
-	public List<DetallePedidoVentaDTO> listar2Documento(String documento) throws ServerException {
-		return detallePedidoVentaMapper.listar2Documento(documento);
+	public List<DetallePedidoVentaDTO> listar2Documento(String pDocumento, String pCampo) throws ServerException {
+		return detallePedidoVentaMapper.listar2Documento(pDocumento, pCampo);
 	}
 
 	public List<ProductoDTO> simplificarConsultaBDProductos(List<ProductoDTO> productos) throws ServerException {

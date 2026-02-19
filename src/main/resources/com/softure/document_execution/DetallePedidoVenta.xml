@@ -251,12 +251,10 @@
 		<include refid="whereDetallePedidoVentaPrimaryKeyFragment" />
 	</select>
 
-<!--// BEGIN region script-->
 	<select id="listar2Documento" parameterType="String" resultType="DetallePedidoVentaDTO">
 		<include refid="selectDetallePedidoVentaFragment" />
-		where cdpv_documento = #{documento} and cdpv_estado ='A'
+		where cdpv_documento = #{documento} and cdpv_estado ='A'<if test="campo!=null"> and cdpv_campo = #{campo}</if>
 		order by nombre
 	</select>
-<!--// END region script-->
 
 </mapper>

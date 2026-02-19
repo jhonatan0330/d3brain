@@ -68,7 +68,9 @@ public class TipoDetallePedido {
 				pCampo.setDetalles(
 						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), tarifario, null, null, token,
 								Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
-								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO())));
+								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO()), pCampo.getLlaveTabla()
+						)
+				);
 			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 				pCampo.setValorNumero(BigDecimal.ZERO);
 				for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
@@ -127,8 +129,12 @@ public class TipoDetallePedido {
 					Propiedades.DETALLE_TARIFARIO);
 			if (tarifario != null && tarifario.isEmpty())
 				tarifario = null;
-			pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), tarifario,
-					token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
+			pCampo.setDetalles(
+					validateAndSave.validateWithExistProducts(
+							agrupados, pCampo.getDocumento(), tarifario,
+							token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE), pCampo.getLlaveTabla()
+					)
+			);
 		} else {
 			pCampo.setDetalles(agrupados);
 		}
@@ -393,7 +399,7 @@ public class TipoDetallePedido {
 				documentoPrincipal = pedidoService.consultaXId(pCampo.getDependientes().get(0).getValorOpcion());
 			PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(documentoPrincipal, token);
 			List<DetallePedidoVentaDTO> detallesExpediente = detallePedidoVentaService
-					.listar2Documento(expediente.getLlaveTabla());
+					.listar2Documento(expediente.getLlaveTabla(), pCampo.getLlaveTabla());
 			// Expediente: Como queda el expediente
 			List<DetallePedidoVentaDTO> detallesFinalExpediente = new ArrayList<DetallePedidoVentaDTO>();
 			// Nuevo : Como queda el expediente actual
