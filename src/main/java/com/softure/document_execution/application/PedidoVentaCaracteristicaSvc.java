@@ -270,7 +270,10 @@ public class PedidoVentaCaracteristicaSvc
 		} else {
 			String parameters = templatesService.transformDependsToParams(dependientes);
 			try {
-				return new BigDecimal(templatesService.generateOutputFile(propFunction.getValor(), parameters));
+				String _calculateValue = templatesService.generateOutputFile(propFunction.getValor(), parameters);
+				if(_calculateValue==null) return BigDecimal.ONE.negate();
+				_calculateValue = _calculateValue.replaceAll("\\s+", "");
+				return new BigDecimal(_calculateValue);
 			} catch (NumberFormatException nf) {
 				return BigDecimal.ZERO;
 			}

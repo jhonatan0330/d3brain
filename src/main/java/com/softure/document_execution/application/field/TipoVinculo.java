@@ -2,6 +2,7 @@ package com.softure.document_execution.application.field;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -16,6 +17,7 @@ import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
+import com.softure.document_execution.domain.PedidoVentaFilterDTO;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
@@ -122,8 +124,55 @@ public class TipoVinculo {
 			return;
 		PedidoVentaDTO procesoDTO = documentService.consultaXId(pCampo.getValorOpcion());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
+		
+		
+		List<PedidoVentaCaracteristicaDTO> _fieldsFunctionSql = null;
+		List<PropiedadDTO> _properties = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE);
+		List<PropiedadDTO> _sqlProperties = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
+				Propiedades.VINCULO_FIELD_SQL);
+		if (_sqlProperties != null && !_sqlProperties.isEmpty()) {
+			
+			_sqlProperties = _sqlProperties.stream()
+				    .map(PropiedadDTO::new)
+				    .collect(Collectors.toList());
+			_fieldsFunctionSql = new ArrayList<>();
+			if(_properties==null) _properties = new ArrayList<>();
+			for (PropiedadDTO _iSqlProperty : _sqlProperties) {
+				RelacionInternaDTO _relationSql = relationService.getFirstRelation(_iSqlProperty.getLlaveTabla(), null);
+				if (_relationSql == null) {
+					throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +
+							" No encontramos la relacion interna de un SQL que identifica en campo del documento");
+				}
+				
+				//En trustme la factura necesito enviar el documento para una funcion
+				PedidoVentaFilterDTO _filter = new PedidoVentaFilterDTO();
+				_filter.setLlaveTabla(pCampo.getDocumento());
+				
+				List<PedidoVentaDTO> _resultsFunction = documentService.listarExpedientesDisponiblesDocumentoFuncion(
+						_filter, _iSqlProperty.getLlaveTabla(), pCampo.getDependientes());
+				
+				// busco en los campos de principal para evita vovler a buscarlo
+				//PedidoVentaCaracteristicaDTO _newFieldSql = CallDocumentCommons.copyFieldDocument(pCampo,_relationSql.getCampo());
+				PedidoVentaCaracteristicaDTO _newFieldSql = new PedidoVentaCaracteristicaDTO();
+				_newFieldSql.setCampo(_relationSql.getLlaveTabla()); //Aqui intento ajustar el campo para nuevos campos
+				_newFieldSql.setModificado(true);
+				_newFieldSql.setExpedientes(_resultsFunction);
+/*				if(_newFieldSql!=null) {
+					if(!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(),Propiedades.MULTIPLE).isEmpty()) {
+						
+					}
+					else {
+						_newFieldSql.setValorOpcion(_resultsFunction.get(0).getLlaveTabla());
+					}
+				}*/
+				_fieldsFunctionSql.add(_newFieldSql);
+				_iSqlProperty.setValor(_relationSql.getLlaveTabla());//Aqui intento ajustar el campo para nuevos campos
+				_properties.add(_iSqlProperty);
+			}
+		}
+		
 		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, ptoken,
-				Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.DEPENDE));
+				_properties , _fieldsFunctionSql);
 	}
 
 	

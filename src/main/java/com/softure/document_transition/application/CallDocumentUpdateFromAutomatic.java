@@ -128,8 +128,20 @@ public class CallDocumentUpdateFromAutomatic {
 	 * tambien de las facturas al aprobarlas en Sw42
 	 */
 	public void executeFromBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token,
-			List<PropiedadDTO> modificarCampo) throws ServerException {
-		execute(pCampo.getDependientes(), pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, token,
+			List<PropiedadDTO> modificarCampo, List<PedidoVentaCaracteristicaDTO> pNewFields) throws ServerException {
+		// pNewFields se usa porque los tipo vinculo tienen sql y no quiero dañar los dependientes
+		
+		List<PedidoVentaCaracteristicaDTO> dependientesUnificados = new ArrayList<>();
+
+	    if (pCampo.getDependientes() != null) {
+	        dependientesUnificados.addAll(pCampo.getDependientes());
+	    }
+
+	    if (pNewFields != null) {
+	        dependientesUnificados.addAll(pNewFields);
+	    }
+	    
+		execute(dependientesUnificados, pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, token,
 				modificarCampo);
 		CallDocumentCommons.copyMessages( procesoDTO, pCampo.getDocumentsToBPM());
 	}
@@ -242,6 +254,7 @@ public class CallDocumentUpdateFromAutomatic {
 							newField.setValorNumero(iDependiente.getValorNumero());
 							newField.setValorText(iDependiente.getValorText());
 							newField.setValorOpcion(iDependiente.getValorOpcion());
+							newField.setExpedientes(iDependiente.getExpedientes());
 							// Despues valido si se modifica o sigue igual en la funcionalidad de cada campo
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);

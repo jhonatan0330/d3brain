@@ -108,7 +108,7 @@ public class CallBPM {
 		System.out.format("\n%s (Modificando documento principal..... %s)", pCampo.getCampoDTO().getNombre(),
 				procesoDTO.getNombre());
 		campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
-		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, token, modificarCampo);
+		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, token, modificarCampo, null);
 		return true;
 	}
 
