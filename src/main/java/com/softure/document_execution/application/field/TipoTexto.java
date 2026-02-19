@@ -32,7 +32,10 @@ public class TipoTexto {
 		if (pCampo.getLlaveTabla() == null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA) != null) {
-			return; //calcularValorFormula(pCampo);
+			// En consecutvos me fallo porque no calcula
+			calcularValorFormula(pCampo);
+			// Esto lo coloque hace proco y estoy revisando
+			if(pCampo.getValorText()==null) return;
 		}
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorText() == null) {
