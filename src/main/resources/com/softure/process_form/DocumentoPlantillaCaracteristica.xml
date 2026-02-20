@@ -186,5 +186,14 @@
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpc_plantilla, ndpc_orden 
 	</select>
+	
+	<select id="countDependentsOfField" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
+		select count(*) from documentoplantillacaracteristica_dpcp dd 
+			inner join propiedad_ppdp pp on pp.cppd_campo = dd.cdpc_llave and pp.cppd_estado = 'A'
+		where dd.cdpc_plantilla = #{plantilla} and dd.cdpc_estado = 'A'
+			and pp.cppd_propiedadvalor = 'PROP_96'
+			and pp.cppd_valor = #{llaveTabla}
+			and dd.cdpc_llave != #{llaveTabla}
+	</select>
 
 </mapper>

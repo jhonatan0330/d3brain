@@ -29,8 +29,9 @@ public class TipoTexto {
 			if( pCampo.getValorText().isEmpty()) pCampo.setValorText(null);
 		}
 			
-		if (pCampo.getLlaveTabla() == null
-				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
+		if (//pCampo.getLlaveTabla() == null && 
+				pCampo.getModificado() &&
+				Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.TEXTO_FORMULA) != null) {
 			// En consecutvos me fallo porque no calcula
 			calcularValorFormula(pCampo);
@@ -181,7 +182,7 @@ public class TipoTexto {
 						+ SharedConstants.IGUAL + pCampo.getPrincipal().getNombre(); 
 				//if(pCampo.getPrincipal().getDescripcion()!=null) textoCalculado = StringUtils.replace(textoCalculado, "E_CODE",pCampo.getPrincipal().getNombre());
 			}
-			textoCalculado = processTemplate.generateOutputFile(textoCalculado, params);	
+			textoCalculado = processTemplate.generateOutputFile(textoCalculado, params);
 		}
 		pCampo.setValorText(textoCalculado);
 	}

@@ -918,7 +918,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.PERMISO_PLANTILLA_INICIO_RAPIDO:
 		case Propiedades.DESCRIPCION:
 		case Propiedades.CAMPO_EVIDENCIA:
-		case Propiedades.DESCRIPCION_NIVEL2:
 		case Propiedades.TOTAL:
 		case Propiedades.CONSECUTIVO:
 		case Propiedades.FECHA:

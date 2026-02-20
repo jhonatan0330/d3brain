@@ -46,7 +46,7 @@ public class TipoSeccion {
 			}
 			try {
 				pCampo.setValorNumeroMax(
-						campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes));
+						campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

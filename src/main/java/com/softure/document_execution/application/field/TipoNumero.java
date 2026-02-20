@@ -51,7 +51,7 @@ public class TipoNumero {
 			} else {
 				if (funcionCalculo != null) {
 					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
-							pCampo.getDocumento(), token, pCampo.getDependientes());
+							pCampo.getDocumento(), token, pCampo.getDependientes(), pCampo.getCampoDTO());
 					if (valorCalculado == null)
 						valorCalculado = BigDecimal.ZERO;
 					pCampo.setValorNumero(valorCalculado);
@@ -94,7 +94,7 @@ public class TipoNumero {
 								|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 										Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
 							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
-									pCampo.getDocumento(), token, pCampo.getDependientes());
+									pCampo.getDocumento(), token, pCampo.getDependientes(), pCampo.getCampoDTO());
 							// Algunas funciones no traen el valor del cero
 							if (valorCalculado == null)
 								valorCalculado = BigDecimal.ZERO;
@@ -194,7 +194,7 @@ public class TipoNumero {
 			if (pCampo.getDependientes() == null)
 				pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
 			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), token,
-					pCampo.getDependientes()));
+					pCampo.getDependientes(), pCampo.getCampoDTO()));
 			if (pCampo.getValorNumero() == null)
 				pCampo.setValorNumero(BigDecimal.ZERO);
 			formatText(pCampo);
@@ -362,7 +362,7 @@ public class TipoNumero {
 			}
 			try {
 				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
-						pCampo.getSecurityToken(), newDependientes));
+						pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

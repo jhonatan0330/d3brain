@@ -223,6 +223,28 @@ public class CallUpdateByRelations {
 												pedidoVentaCaracteristicaService.update(_fieldToReplace);
 											}
 											
+											// Esto aplico en trustmetrans para el rodamiento la descripcion
+											if(documentoPlantillaCaracteristicaService.countFieldsDependent(_fieldToReplace.getCampoDTO().getPlantilla(), _fieldToReplace.getCampo())!=0){
+												PedidoVentaDTO updateDocument = pDocumentsToUpdate.get(_fieldToReplace.getDocumento());
+												if (updateDocument == null) {
+													updateDocument = pedidoService.consultaCompleta(_fieldToReplace.getDocumento(), token);
+												}
+
+												for (PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument.getCaracteristicas()) {
+													if (iFieldUpdateDocument.getCampo().compareTo(_fieldToReplace.getCampo()) == 0) {
+														iFieldUpdateDocument.setModificado(true);
+														//iFieldUpdateDocument.setExpedientes(_fieldToReplace.getExpedientes());
+														iFieldUpdateDocument.setValorOpcion(_fieldToReplace.getValorOpcion());
+														iFieldUpdateDocument.setValorText(_fieldToReplace.getValorText());
+														break;
+													}
+												}
+												organizeDependsNumberToUpdate(_fieldToReplace, updateDocument);
+
+												pDocumentsToUpdate.put(_fieldToReplace.getDocumento(), updateDocument);
+	
+											}
+																						
 										}
 										
 										// Para trustmetrans al agregar un recibo a factura se relacione

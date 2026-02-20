@@ -499,5 +499,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 		filtroCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.VINCULO);
 		return super.contarResultados(filtroCampo);
 	}
+	
+	public int countFieldsDependent(String pTemplate, String pField) throws ServerException {
+		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
+		filtroCampo.setLlaveTabla(pField);
+		filtroCampo.setPlantilla(pTemplate);
+		return documentoPlantillaCaracteristicaMapper.countDependentsOfField(filtroCampo);
+	}
 
 }

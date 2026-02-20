@@ -168,9 +168,10 @@ public class Propiedades {
 	// Si se coloca una nueva propiedad se coloca en el campo instrucciones
 	public static final String TERCERO = "TERCERO";
 	public static final String ENCABEZADO = "ENCABEZADO";
+	// Intente cambiarlo a una opcion de que calculara directamente, pero encontre un problema con el update de la propiedad, hacer lso calculos puede bloquear el sistema
+	//asi que lo deje quieto, quite descripcion2
 	public static final String DESCRIPCION = "DESCRIPCION";
 	public static final String CAMPO_EVIDENCIA = "CAMPO_EVIDENCIA";
-	public static final String DESCRIPCION_NIVEL2 = "DESCRIPCION_NIVEL2";
 	public static final String TOTAL = "TOTAL";
 	public static final String CONSECUTIVO = "CONSECUTIVO";
 

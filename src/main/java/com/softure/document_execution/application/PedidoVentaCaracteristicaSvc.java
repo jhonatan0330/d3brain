@@ -244,7 +244,7 @@ public class PedidoVentaCaracteristicaSvc
 	}
 
 	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, String token,
-			List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+			List<PedidoVentaCaracteristicaDTO> dependientes, DocumentoPlantillaCaracteristicaDTO pCampoDTO) throws ServerException {
 		if (propFunction == null)
 			return BigDecimal.ZERO;
 		if (Propiedades.isFunctionNotFreeMarker(propFunction.getValor())) {
@@ -265,7 +265,9 @@ public class PedidoVentaCaracteristicaSvc
 						SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, token,
 						dependientesOrdenados);
 			} catch (Exception e) {
-				throw new ServerException(e.getMessage(), "");
+				String _log = "El campo " + pCampoDTO.getNombre()+ " de la plantilla " + pCampoDTO.getPlantillaNombre()
+				+ " envia el siguiente error";
+				throw new ServerException( e.getMessage(), _log);
 			}
 		} else {
 			String parameters = templatesService.transformDependsToParams(dependientes);

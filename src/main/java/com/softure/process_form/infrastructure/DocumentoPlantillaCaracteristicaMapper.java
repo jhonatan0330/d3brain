@@ -1,6 +1,5 @@
 package com.softure.process_form.infrastructure;
 
-
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
@@ -13,10 +12,9 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO
 @SoftureSqlConnMapper(value = "DocumentoPlantillaCaracteristicaMapper")
 public interface DocumentoPlantillaCaracteristicaMapper extends IBasicMapper<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO>{
 	
-
-// BEGIN region aditionalMethods 
 	void actualizarFiltros(String llaveTabla);
 	void actualizarDescripcion(@Param("pTemplate")String pTemplate, @Param("pField")String pField);
 	List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(@Param("process") List<String> process);
-// END region aditionalMethods
+	int countDependentsOfField(DocumentoPlantillaCaracteristicaFilterDTO pFilter);
+	
 }
