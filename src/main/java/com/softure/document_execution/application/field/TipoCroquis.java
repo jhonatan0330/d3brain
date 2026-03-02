@@ -119,6 +119,14 @@ public class TipoCroquis {
 		if (pCampo.getExpedientes() != null) {
 			if (pCampo.getLlaveTabla() == null)
 				throw new ServerException("Revise porque la llave del campo es nula. Tipo Croquis");
+			// PAra poder validar que no existan puestos con el mismo nombre se deben anular primero
+			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {
+				if (componente.getEstado() != null && componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
+						PuestoDTO inactivar = new PuestoDTO();
+						inactivar.setLlaveTabla(componente.getLlaveTabla());
+						puestoService.inactivar(inactivar, token);
+				}
+			}
 			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {
 				if (componente.getEstado() == null) {
 					PuestoDTO nuevo = new PuestoDTO();
@@ -128,12 +136,6 @@ public class TipoCroquis {
 					nuevo.setNombre(componente.getNombre());
 					nuevo.setImagen(componente.getImagen());
 					puestoService.guardar(nuevo, token);
-				} else {
-					if (componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-						PuestoDTO inactivar = new PuestoDTO();
-						inactivar.setLlaveTabla(componente.getLlaveTabla());
-						puestoService.inactivar(inactivar, token);
-					}
 				}
 			}
 		}
