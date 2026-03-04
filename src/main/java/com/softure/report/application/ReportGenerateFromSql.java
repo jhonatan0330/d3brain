@@ -1,5 +1,6 @@
 package com.softure.report.application;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -74,7 +75,7 @@ public class ReportGenerateFromSql {
 		} catch (SQLException e) {
 			throw new ServerException(e.getMessage());
 		}
-		return resultCSV.getBytes();
+		return ("\uFEFF" + resultCSV).getBytes(StandardCharsets.UTF_8);
 		
 	}
 	

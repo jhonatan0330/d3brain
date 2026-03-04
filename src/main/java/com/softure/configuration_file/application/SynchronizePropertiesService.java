@@ -66,6 +66,7 @@ public class SynchronizePropertiesService {
 							newProperty.setValor(remoteProperty.getValor());
 						} else {
 							switch (remoteProperty.getPropiedadValor()) {
+							case "PROP_06":
 							case "PROP_29":
 							case "PROP_37":
 							case "PROP_41":
@@ -98,7 +99,9 @@ public class SynchronizePropertiesService {
 							case "PROP_235":
 							case "PROP_237":
 							case "PROP_224":
-							case "PROP_249":{
+							case "PROP_249":
+							case "PROP_273":
+							case "PROP_297":{
 								newProperty.setValor(remoteProperty.getValor());
 								newProperty.setTexto(remoteProperty.getTexto());
 								break;
