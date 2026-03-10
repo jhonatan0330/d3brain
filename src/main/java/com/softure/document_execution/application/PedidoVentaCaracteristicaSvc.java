@@ -493,20 +493,33 @@ public class PedidoVentaCaracteristicaSvc
 	public String getCodeKeyOfTemplate(String pTemplate, String pCode) throws ServerException {
 		if (pTemplate == null || pTemplate.isEmpty() || pCode == null || pCode.isEmpty())
 			return null;
-		return pedidoVentaCaracteristicaMapper.getCodeKeyOfTemplate(pTemplate, pCode);
+		try {
+			return pedidoVentaCaracteristicaMapper.getCodeKeyOfTemplate(pTemplate, pCode);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+		}
 	}
 
 	public String getKeyOfDocumentBase(String pCodeKey, String pValue) throws ServerException {
 		if (pCodeKey == null || pCodeKey.isEmpty() || pValue == null || pValue.isEmpty())
 			return null;
-		return pedidoVentaCaracteristicaMapper.getKeyOfDocumentBase(pCodeKey, pValue);
+		try {
+			return pedidoVentaCaracteristicaMapper.getKeyOfDocumentBase(pCodeKey, pValue);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+		}
 	}
 
 	public PedidoVentaCaracteristicaDTO getKeyToReplace(String pKeyBase, String pTemplate, String pCodeTemplate)
 			throws ServerException {
 		if (pKeyBase == null || pKeyBase.isEmpty() || pCodeTemplate == null || pCodeTemplate.isEmpty())
 			return null;
-		return pedidoVentaCaracteristicaMapper.getKeyToReplace(pKeyBase, pTemplate, pCodeTemplate);
+		
+		try {
+			return pedidoVentaCaracteristicaMapper.getKeyToReplace(pKeyBase, pTemplate, pCodeTemplate);
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+		}
 	}
 
 }

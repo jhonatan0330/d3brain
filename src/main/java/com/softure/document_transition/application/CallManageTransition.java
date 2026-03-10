@@ -246,8 +246,14 @@ public class CallManageTransition {
 			generateMessageService.call(expedienteDTO, pTransitionProcess, null, documentoDTO, token);
 			break;
 		case ProcesoEstadoDTO.TIPO_API:
-			respuesta = executeAPI(pTransitionProcess.getEstadoLLegada(), expedienteDTO, documentoDTO, token,
-					documentRecentCreateInTransition);
+			try {
+				respuesta = executeAPI(pTransitionProcess.getEstadoLLegada(), expedienteDTO, documentoDTO, token,
+						documentRecentCreateInTransition);	
+			}catch (Exception e) {
+				CallDocumentCommons.addMessageError(documentoDTO, e.getMessage());
+				respuesta = getNextTransition(pTransitionProcess.getEstadoLLegada(),SharedConstants.ERROR); 
+			}
+			
 			try {
 				// Por si siguen decisiones
 				respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
