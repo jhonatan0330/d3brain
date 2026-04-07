@@ -44,6 +44,7 @@ public class AuxiliarProcesoBodega {
 	@Autowired @Lazy  private RelacionInternaSvc relacionService;
 	
 	public void aplicarMovimientosBodega(PedidoVentaCaracteristicaDTO pCampo, String token)throws ServerException {
+		// OJO: Primero tiene que estar el campo de bodega y despues del de prouctos
 		gestionarInventario(validarInventario(pCampo, token), token);
 	}
 	

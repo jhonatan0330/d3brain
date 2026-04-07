@@ -90,9 +90,9 @@ public class TipoTexto {
 				break;
 			}
 			case "T": {
-				pCampo.setValorText(pCampo.getValorText().replaceAll("\\s", ""));
-				validateFormatProperty(pCampo.getValorText().split(";"), "^[3,6][0-9]{9}$", pCampo);
-				pCampo.setValorText(pCampo.getValorText().toLowerCase());
+				pCampo.setValorText(pCampo.getValorText().replaceAll("[^\\d+]", ""));
+				validateFormatProperty(pCampo.getValorText().split(";"), "^(\\+?57)?(3\\d{9}|60[1-9]\\d{7})$", pCampo);
+				pCampo.setValorText(pCampo.getValorText());
 				break;
 			}
 			case "S": {

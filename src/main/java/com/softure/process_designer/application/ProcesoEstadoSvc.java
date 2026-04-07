@@ -181,11 +181,12 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 			throw new ServerException(e.getMessage(),
 					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
 		}
-		if (responsable == null) {
+		// En Fiel a veces no me retornaba valor porque el campo es opcional
+		/*if (responsable == null) {
 			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
 			throw new ServerException("Revise porque la funcion de asignacion no trae ningun responsable",
 					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
-		}
+		}*/
 		return responsable;
 	}
 

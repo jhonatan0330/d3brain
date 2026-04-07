@@ -44,6 +44,7 @@ public class SynchronizeRelationService {
 			if (remoteProperty.getUsuarioEliminacion() != null
 					&& remoteProperty.getUsuarioEliminacion().compareTo("YA") == 0) {
 				switch (remoteProperty.getPropiedadValor()) {
+				case "PROP_06": // BODEGA_MOVIMIENTO
 				case "PROP_33": // CAMPO_HEREDADO
 				case "PROP_36": // PROCESO_ACCIONES
 				case "PROP_82": // PERMISO_PLANTILLA_CAMPO_FILTRO
@@ -69,6 +70,9 @@ public class SynchronizeRelationService {
 				case "PROP_240": // MENSAJE_ADJUNTO_URL
 				case "PROP_238": // REEMPLAZAR CODIGO REFERENCIADO TIPO LISTA
 				case "PROP_241": // MENSAJE_ADJUNTO_URL
+				case "PROP_282": // AGREGAR EL DOCUMENTO CREADO A UN CAMPO
+				case "PROP_288": // RELACIONAR DOCUMENTO AL CAMPO DEL NUEVO FORMULARIO
+				case "PROP_292": // FORMULARIO ELIMINACION VINCULO	
 				{
 					// List<PropiedadDTO> localPropertiesToErase =
 					// propertiesService.obtenerPropiedades(remoteProperty.getTipo(),

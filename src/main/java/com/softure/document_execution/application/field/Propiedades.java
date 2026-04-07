@@ -236,6 +236,7 @@ public class Propiedades {
 
 	public static final String GPS = "GPS";
 	public static final String RELACIONAR_DOCUMENTOS = "RELACIONAR_DOCUMENTOS";
+	public static final String RELACIONAR_MISMOS = "RELACIONAR_MISMOS";
 	public static final String RETIRAR_DOCUMENTOS = "RETIRAR_DOCUMENTOS";
 	public static final String PLANTILLA_OCULTAR_GUARDAR = "PLANTILLA_OCULTAR_GUARDAR";
 	public static final String PERIODO_LIMPIEZA_HISTORICO = "PERIODO_LIMPIEZA_HISTORICO";

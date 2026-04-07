@@ -648,3 +648,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_propiedadboolean, bpvd_piderol, bpvd_pideusuario) 
 	VALUES('PROP_305' , 'T', 'TRANSICION VISIBLE EN CAMPOS VINCULO', 'TRANSICION_VISIBLE_VINCULO', 'REQUISITO', true, true, true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean, cpvd_origencategoria) 
+	VALUES('PROP_306' , 'C', 'RELACIONAR_MISMOS', 'RELACIONAR EL DOCUMENTO A LOS EXPEDIENTES DEL CAMPO', 'REQUISITO', true, 'Z');
