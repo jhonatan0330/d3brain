@@ -51,16 +51,16 @@ public class HomologateFee {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
 				Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
 		// ctar_recurso varchar(32) NULL,
-		fieldsTemplate.add(
+		/*fieldsTemplate.add(
 				campoService.createField(templateId, "DIM_1", DocumentoPlantillaCaracteristicaDTO.PROCESO, 3, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-				Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
+				Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);*/
 		// ctar_dimension2 varchar(32) NULL,
-		fieldsTemplate.add(
+		/*fieldsTemplate.add(
 				campoService.createField(templateId, "DIM_2", DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
@@ -85,48 +85,48 @@ public class HomologateFee {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
-				Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
+				Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);*/
 		// mtar_valorminimo numeric(18, 6) DEFAULT 0 NOT NULL,
 		fieldsTemplate.add(campoService.createField(templateId, "VALOR_MINIMO",
+				DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "VALOR", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		// mtar_valormaximo numeric(18, 6) DEFAULT 0 NOT NUL,
+		fieldsTemplate.add(campoService.createField(templateId, "VALOR_MAXIMO",
+				DocumentoPlantillaCaracteristicaDTO.NUMERO, 5, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		// ntar_cantidadmaxima int4 DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MINIMA",
+				DocumentoPlantillaCaracteristicaDTO.NUMERO, 6, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
+				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
+				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		// ntar_cantidadminima int4 DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MAXIMA",
 				DocumentoPlantillaCaracteristicaDTO.NUMERO, 7, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(6),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(6),
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(
-				campoService.createField(templateId, "VALOR", DocumentoPlantillaCaracteristicaDTO.NUMERO, 8, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(7),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(7),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// mtar_valormaximo numeric(18, 6) DEFAULT 0 NOT NUL,
-		fieldsTemplate.add(campoService.createField(templateId, "VALOR_MAXIMO",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 9, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(8),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(8),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// ntar_cantidadmaxima int4 DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MINIMA",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 10, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(9),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(9),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// ntar_cantidadminima int4 DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MAXIMA",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 11, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(10),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(10),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 		// mtar_totalminimo numeric(18, 6) DEFAULT 0 NOT NULL,
 		fieldsTemplate.add(campoService.createField(templateId, "TOTAL_MINIMO",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 12, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(11),
+				DocumentoPlantillaCaracteristicaDTO.NUMERO, 8, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(7),
 				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(11),
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(7),
 				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 
 		sincronizeFee(templateId, fieldsTemplate, token, crudService);
@@ -168,7 +168,7 @@ public class HomologateFee {
 						fieldRecurso.setValorOpcion(iFee.getRecurso());
 						document.getCaracteristicas().add(fieldRecurso);
 						// ctar_dimension2 varchar(32) NULL,
-						PedidoVentaCaracteristicaDTO fieldDim2 = new PedidoVentaCaracteristicaDTO();
+						/*PedidoVentaCaracteristicaDTO fieldDim2 = new PedidoVentaCaracteristicaDTO();
 						fieldDim2.setCampo(fieldsTemplate.get(3));
 						fieldDim2.setValorOpcion(iFee.getDimension2());
 						document.getCaracteristicas().add(fieldDim2);
@@ -181,37 +181,37 @@ public class HomologateFee {
 						PedidoVentaCaracteristicaDTO fieldDim4 = new PedidoVentaCaracteristicaDTO();
 						fieldDim4.setCampo(fieldsTemplate.get(5));
 						fieldDim4.setValorOpcion(iFee.getDimension4());
-						document.getCaracteristicas().add(fieldDim4);
+						document.getCaracteristicas().add(fieldDim4);*/
 						// mtar_valorminimo numeric(18, 6) DEFAULT 0 NOT NULL,
 						PedidoVentaCaracteristicaDTO fieldValueMin = new PedidoVentaCaracteristicaDTO();
-						fieldValueMin.setCampo(fieldsTemplate.get(6));
+						fieldValueMin.setCampo(fieldsTemplate.get(3));
 						fieldValueMin.setValorNumero(iFee.getValorMinimo());
 						document.getCaracteristicas().add(fieldValueMin);
 						// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
 						PedidoVentaCaracteristicaDTO fieldValue = new PedidoVentaCaracteristicaDTO();
-						fieldValue.setCampo(fieldsTemplate.get(7));
+						fieldValue.setCampo(fieldsTemplate.get(4));
 						fieldValue.setValorNumero(iFee.getValor());
 						document.getCaracteristicas().add(fieldValue);
 						// mtar_valormaximo numeric(18, 6) DEFAULT 0 NOT NUL,
 						PedidoVentaCaracteristicaDTO fieldValueMax = new PedidoVentaCaracteristicaDTO();
-						fieldValueMax.setCampo(fieldsTemplate.get(8));
+						fieldValueMax.setCampo(fieldsTemplate.get(5));
 						fieldValueMax.setValorNumero(iFee.getValorMaximo());
 						document.getCaracteristicas().add(fieldValueMax);
 						
 						// ntar_cantidadminima int4 DEFAULT 0 NOT NULL,
 						PedidoVentaCaracteristicaDTO fieldQuantityMin = new PedidoVentaCaracteristicaDTO();
-						fieldQuantityMin.setCampo(fieldsTemplate.get(9));
+						fieldQuantityMin.setCampo(fieldsTemplate.get(6));
 						fieldQuantityMin.setValorNumero(new BigDecimal(iFee.getCantidadMinima()));
 						document.getCaracteristicas().add(fieldQuantityMin);
 						// ntar_cantidadmaxima int4 DEFAULT 0 NOT NULL,
 						PedidoVentaCaracteristicaDTO fieldQuantityMax = new PedidoVentaCaracteristicaDTO();
-						fieldQuantityMax.setCampo(fieldsTemplate.get(10));
+						fieldQuantityMax.setCampo(fieldsTemplate.get(7));
 						fieldQuantityMax.setValorNumero(new BigDecimal(iFee.getCantidadMaxima()));
 						document.getCaracteristicas().add(fieldQuantityMax);
 						
 						// mtar_totalminimo numeric(18, 6) DEFAULT 0 NOT NULL,
 						PedidoVentaCaracteristicaDTO fieldTotalMin = new PedidoVentaCaracteristicaDTO();
-						fieldTotalMin.setCampo(fieldsTemplate.get(11));
+						fieldTotalMin.setCampo(fieldsTemplate.get(8));
 						fieldTotalMin.setValorNumero(iFee.getTotalMinimo());
 						document.getCaracteristicas().add(fieldTotalMin);
 
@@ -237,9 +237,9 @@ public class HomologateFee {
 			newFee.setTarifarioDocumento(CallDocumentCommons.getValueOption(document, "TARIFARIO"));
 			newFee.setProductoDocumento(CallDocumentCommons.getValueOption(document, "PRODUCTO"));
 			newFee.setRecurso(CallDocumentCommons.getValueOption(document, "DIM_1"));
-			newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
+			/*newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
 			newFee.setDimension3(CallDocumentCommons.getValueOption(document, "DIM_3"));
-			newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));
+			newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));*/
 			newFee.setValorMinimo(CallDocumentCommons.getValueNumber(document, "VALOR_MINIMO"));
 			newFee.setValor(CallDocumentCommons.getValueNumber(document, "VALOR"));
 			newFee.setValorMaximo(CallDocumentCommons.getValueNumber(document, "VALOR_MAXIMO"));
@@ -257,9 +257,9 @@ public class HomologateFee {
 				newFee.setTarifarioDocumento(CallDocumentCommons.getValueOption(document, "TARIFARIO"));
 				newFee.setProductoDocumento(CallDocumentCommons.getValueOption(document, "PRODUCTO"));
 				newFee.setRecurso(CallDocumentCommons.getValueOption(document, "DIM_1"));
-				newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
+				/*newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
 				newFee.setDimension3(CallDocumentCommons.getValueOption(document, "DIM_3"));
-				newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));
+				newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));*/
 				newFee.setValorMinimo(CallDocumentCommons.getValueNumber(document, "VALOR_MINIMO"));
 				newFee.setValor(CallDocumentCommons.getValueNumber(document, "VALOR"));
 				newFee.setValorMaximo(CallDocumentCommons.getValueNumber(document, "VALOR_MAXIMO"));

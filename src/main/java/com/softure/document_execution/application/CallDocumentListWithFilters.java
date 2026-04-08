@@ -721,6 +721,7 @@ public class CallDocumentListWithFilters {
 								campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 										null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 								pvrDTO.setCampoDTO(campo);
+								if (iterador.getCaracteristicas()==null) iterador.setCaracteristicas(new ArrayList<>());
 								iterador.getCaracteristicas().add(pvrDTO);
 							}
 						}

@@ -165,7 +165,7 @@ public class CallDocumentListFromFieldProcess {
 								pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor,
 								pCampo.getSecurityToken());	
 					}catch(ServerException ex) {
-						throw new ServerException("En el campo " + pBase.getNombre() + " se muestra este mensaje: "
+						throw new ServerException("En el campo " + pBase.getNombre() + " de la plantilla " +pBase.getPlantillaNombre() + " se muestra este mensaje: "
 						+ ex.getMessage());
 					}
 					
