@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import com.shared.domain.ServerException;
+import com.softure.fe.application.DianWsSecuritySigner;
 import com.softure.fe.application.SignerService;
 import com.softure.fe.domain.FEResponse;
 
@@ -25,6 +26,9 @@ public class FERest {
 
 	@Autowired @Lazy 
 	SignerService signerService;
+	
+	@Autowired @Lazy 
+	DianWsSecuritySigner headerService;
 
 	@PostMapping("/sign")
 	public FEResponse transformXML(@RequestBody String xml) throws ServerException {	
@@ -141,5 +145,36 @@ public class FERest {
 	@PostMapping("/generateCU")
 	public FEResponse generateCUFE(@RequestBody String xml) throws ServerException {
 		return signerService.generateCodigo(xml);
+	}
+	
+	@PostMapping("/signHeader")
+	public FEResponse transformHeaderXML(@RequestBody String xml) throws ServerException {	
+		FEResponse responseFe = new FEResponse();
+		try {
+			headerService.signHeader(xml, responseFe, false);
+			responseFe.setResult("200");
+		} catch (KeyStoreException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (IOException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (XAdES4jException e) {
+			responseFe.setError(e.getMessage() + " :" + e.getCause().getCause().toString());
+			responseFe.setResult("400");
+		} catch (ParserConfigurationException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (TransformerException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (SAXException e) {
+			responseFe.setError(e.getMessage());
+			responseFe.setResult("400");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return responseFe;
 	}
 }
