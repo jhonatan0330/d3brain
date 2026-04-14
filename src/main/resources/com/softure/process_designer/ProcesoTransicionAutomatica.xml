@@ -150,7 +150,12 @@
 	
 	<select id="obtenerFechaUltimaEjecucion" parameterType="java.lang.String" resultType="java.util.Date">
 		select dpta_fecha from procesotransicionautomatica_ptap 
-		where cpta_transicion = #{transicion} and dpta_ejecucion is not null and cpta_estado = 'A' order by dpta_ejecucion desc limit 1 
+		where cpta_transicion = #{transicion} 
+			and dpta_ejecucion is not null
+			and dpta_fecha <![CDATA[ < ]]> now() 
+			and cpta_estado = 'A' 
+		order by dpta_ejecucion desc 
+		limit 1 
 	</select>
 	
 	<select id="inactivarPropiedad" parameterType="java.lang.String" >

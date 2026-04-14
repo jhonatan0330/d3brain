@@ -68,42 +68,6 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	  this.mapper = procesoTransicionAutomaticaMapper;
 	}
 	
-	@Override
-	public ProcesoTransicionAutomaticaDTO activar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO actualizar( ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
-		// BEGIN ProcesoTransicionAutomatica_actualizar
-		return super.actualizar(dto, token);
-		// END ProcesoTransicionAutomatica_actualizar
-	}
-	
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO inactivar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
-		// BEGIN ProcesoTransicionAutomatica_inactivar
-		return super.inactivar(dto, token);
-		// END ProcesoTransicionAutomatica_inactivar
-	}
-	
-	@Override
-	public ProcesoTransicionAutomaticaDTO consultaUnica(ProcesoTransicionAutomaticaFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-	
-	@Override
-	public int contarResultados(ProcesoTransicionAutomaticaFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-	
-	@Override
-	public List<ProcesoTransicionAutomaticaDTO> listarConsulta(ProcesoTransicionAutomaticaFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
 	
 	//@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
@@ -115,18 +79,8 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public ProcesoTransicionAutomaticaDTO programar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
-		// BEGIN region programar
 		programateAll();
 		return null;
-		// END region programar
-	}
-
-	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO guardar(ProcesoTransicionAutomaticaDTO dto, String token) throws ServerException {
-		// BEGIN ProcesoTransicionAutomatica_guardar
-		return super.guardar(dto, token);
-		// END ProcesoTransicionAutomatica_guardar
 	}
 
 	public int lanzarTransaccionesTemporizadas() {
