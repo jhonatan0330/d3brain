@@ -595,8 +595,9 @@ public class WebServiceExecuteAPI {
 			} else {
 				String newValue = matcher.group(1);
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
+					var extension = (propiedadDTO.getMotivo()==null)?"txt":propiedadDTO.getMotivo();
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
-							Propiedades.API_EXTRACTION_TO_BASE_64 + ".pdf", token, "webservice", "private");
+							Propiedades.API_EXTRACTION_TO_BASE_64 + "." + extension, token, "webservice", "private");
 				}
 				if (newValue != null && newValue.length() > 4000) {
 					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL + uploadService
