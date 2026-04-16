@@ -237,9 +237,9 @@ public class HomologateFee {
 			newFee.setTarifarioDocumento(CallDocumentCommons.getValueOption(document, "TARIFARIO"));
 			newFee.setProductoDocumento(CallDocumentCommons.getValueOption(document, "PRODUCTO"));
 			newFee.setRecurso(CallDocumentCommons.getValueOption(document, "DIM_1"));
-			/*newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
+			newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
 			newFee.setDimension3(CallDocumentCommons.getValueOption(document, "DIM_3"));
-			newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));*/
+			newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));
 			newFee.setValorMinimo(CallDocumentCommons.getValueNumber(document, "VALOR_MINIMO"));
 			newFee.setValor(CallDocumentCommons.getValueNumber(document, "VALOR"));
 			newFee.setValorMaximo(CallDocumentCommons.getValueNumber(document, "VALOR_MAXIMO"));
@@ -257,9 +257,9 @@ public class HomologateFee {
 				newFee.setTarifarioDocumento(CallDocumentCommons.getValueOption(document, "TARIFARIO"));
 				newFee.setProductoDocumento(CallDocumentCommons.getValueOption(document, "PRODUCTO"));
 				newFee.setRecurso(CallDocumentCommons.getValueOption(document, "DIM_1"));
-				/*newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
+				newFee.setDimension2(CallDocumentCommons.getValueOption(document, "DIM_2"));
 				newFee.setDimension3(CallDocumentCommons.getValueOption(document, "DIM_3"));
-				newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));*/
+				newFee.setDimension4(CallDocumentCommons.getValueOption(document, "DIM_4"));
 				newFee.setValorMinimo(CallDocumentCommons.getValueNumber(document, "VALOR_MINIMO"));
 				newFee.setValor(CallDocumentCommons.getValueNumber(document, "VALOR"));
 				newFee.setValorMaximo(CallDocumentCommons.getValueNumber(document, "VALOR_MAXIMO"));
