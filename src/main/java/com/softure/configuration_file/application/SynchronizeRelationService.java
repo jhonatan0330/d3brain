@@ -120,31 +120,37 @@ public class SynchronizeRelationService {
 								+ remoteRelation.getCampoNombre());
 					} else {
 						
-						DocumentoPlantillaCaracteristicaDTO _field = searchField(remoteRelation.getPlantillaCodigo(), remoteRelation.getCampoCodigo());
-						
-						if(_field==null) {
-							log.error("RELACION NO CREADA POR CAMPO NO EXISTENTE (Plantilla: " +
-									 remoteRelation.getPlantillaNombre() +" - " + remoteRelation.getPlantillaCodigo() + ". Campo: " + remoteRelation.getCampoNombre() +" - " + remoteRelation.getCampoCodigo()+ ")");
+						if(remoteRelation.getPlantillaCodigo()==null) {
+							log.error("RELACION NO CREADA POR PLANTILLA NO EXISTENTE (Plantilla: " +
+									 remoteRelation.getPlantillaNombre() +" - " + remoteRelation.getPlantillaCodigo() + ")");
 						} else {
-							RelacionInternaDTO newRelation = new RelacionInternaDTO();
-							newRelation.setAuxiliar(remoteRelation.getAuxiliar());
-							newRelation.setCampo(_field.getLlaveTabla());
-							newRelation.setPlantilla(_field.getPlantilla());
-							newRelation.setPropiedad(newProperty.getLlaveTabla());
-							try {
-								newRelation = relationsService.guardar(newRelation, token);
-								if (newRelation == null) {
-									log.error("RELACION NO CREADA -" + remoteRelation.getPropiedad() + " - "
-											+ remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre());
-								} else {
-									log.info("NEW RELATION " + newRelation.getPlantillaNombre() + ".."
-											+ newRelation.getCampoNombre());
-								}
-							} catch (Exception e) {
-								log.error(remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre()
-										+ " : " + e.getMessage());
-							}	
+							DocumentoPlantillaCaracteristicaDTO _field = searchField(remoteRelation.getPlantillaCodigo(), remoteRelation.getCampoCodigo());
+							
+							if(_field==null) {
+								log.error("RELACION NO CREADA POR CAMPO NO EXISTENTE (Plantilla: " +
+										 remoteRelation.getPlantillaNombre() +" - " + remoteRelation.getPlantillaCodigo() + ". Campo: " + remoteRelation.getCampoNombre() +" - " + remoteRelation.getCampoCodigo()+ ")");
+							} else {
+								RelacionInternaDTO newRelation = new RelacionInternaDTO();
+								newRelation.setAuxiliar(remoteRelation.getAuxiliar());
+								newRelation.setCampo(_field.getLlaveTabla());
+								newRelation.setPlantilla(_field.getPlantilla());
+								newRelation.setPropiedad(newProperty.getLlaveTabla());
+								try {
+									newRelation = relationsService.guardar(newRelation, token);
+									if (newRelation == null) {
+										log.error("RELACION NO CREADA -" + remoteRelation.getPropiedad() + " - "
+												+ remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre());
+									} else {
+										log.info("NEW RELATION " + newRelation.getPlantillaNombre() + ".."
+												+ newRelation.getCampoNombre());
+									}
+								} catch (Exception e) {
+									log.error(remoteRelation.getPlantillaNombre() + ".." + remoteRelation.getCampoNombre()
+											+ " : " + e.getMessage());
+								}	
+							}
 						}
+						
 						
 					}
 
