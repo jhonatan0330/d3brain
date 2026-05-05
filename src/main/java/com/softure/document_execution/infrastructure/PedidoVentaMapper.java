@@ -15,7 +15,9 @@ import com.softure.property.domain.RelacionInternaDTO;
 @SoftureSqlConnMapper(value = "PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
-	List<String> obtenerFiltrosPorRelacion(@Param("pFilter") PedidoVentaCaracteristicaFilterDTO pFilter);
+	List<String> obtenerFiltrosPorRelacion(@Param("pFilter") PedidoVentaCaracteristicaFilterDTO pFilter,
+			@Param("pFilterTemplate") PedidoVentaFilterDTO pFilterTemplate,
+			@Param("pIdsFiltered") List<String> pIdsFiltered);
 	
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("campoFiltro") List<String> campoFiltro,

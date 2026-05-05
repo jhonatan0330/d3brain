@@ -225,12 +225,14 @@
 			order by dpdv_fecha desc, cpdv_nombre desc
 	</select>
 	
-	<select id="obtenerFiltrosPorRelacion"  resultType="java.lang.String">
-		select cp.cpvc_documento 
-		from pedidoventacaracteristica_pvcp cp
+	<select id="obtenerFiltrosPorRelacion" resultType="java.lang.String">
+		select cp.cpvc_documento from pedidoventacaracteristica_pvcp cp
+			<if test="pFilterTemplate.fechaMin!=null">inner join pedidoventa_pdvp pv on cpdv_llave = cp.cpvc_documento</if>
         where cp.cpvc_campo = #{pFilter.campo}
          	and cp.cpvc_estado = 'A' 
 			and cp.cpvc_valoropcion = #{pFilter.valorOpcion}
+			<if test="pFilterTemplate.fechaMin!=null">and pv.dpdv_fecha >= #{pFilterTemplate.fechaMin}<if test="pFilterTemplate.fechaMax!=null"> and pv.dpdv_fecha <![CDATA[ < ]]> #{pFilterTemplate.fechaMax}</if><if test="pFilterTemplate.plantilla!=null"> and pv.cpdv_plantilla = #{pFilterTemplate.plantilla}</if></if>
+			<if test="pIdsFiltered!=null">and cp.cpvc_documento in <foreach item="item" collection="pIdsFiltered" separator="," open="(" close=")">#{item}</foreach></if>
 	</select>
 	
 	<select id="listarPermitidos" resultType="PedidoVentaDTO">

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,6 +62,7 @@ public class CallDocumentListWithFilters {
 	private PedidoVentaDineroSvc dineroService;
 	@Autowired @Lazy 
 	private ProcesoTransicionSvc transicionService;
+	
 
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto == null)
@@ -244,8 +243,9 @@ public class CallDocumentListWithFilters {
 			for (PedidoVentaCaracteristicaFilterDTO _iFilter : pFilter.getFiltersByFields()) {
 				if(_iFilter.getValorOpcion()!=null) {
 					try {
-						List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter);
-						if(_filterIdsByToRelations ==null) {
+						//List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter, (_filterIdsByToRelations==null)?pFilter:null, _filterIdsByToRelations);
+						_filterIdsByToRelations = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter, (_filterIdsByToRelations==null)?pFilter:null, _filterIdsByToRelations);
+						/*if(_filterIdsByToRelations ==null) {
 							_filterIdsByToRelations = _resultFilter;
 						}else {
 							List<String> menor  = _filterIdsByToRelations.size() < _resultFilter.size() ? _filterIdsByToRelations : _resultFilter;
@@ -259,11 +259,11 @@ public class CallDocumentListWithFilters {
 					            if (setMenor.contains(val)) {
 					            	_filterIdsByToRelations.add(val);
 					            }
+					            if (_filterIdsByToRelations.size() >= MAX_SIZE) {
+                                    break;
+                                }
 					        }
-					        
-							
-						}
-						
+						}*/
 					} catch (Exception e) {
 						throw new ServerException(e.getMessage());
 					}
