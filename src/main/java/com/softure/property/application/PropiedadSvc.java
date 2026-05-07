@@ -225,6 +225,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			case Propiedades.FUNCION_SQL_PREVALIDATE_API:
 			case Propiedades.FUNCION_SQL_VALIDAR_ANTES:
 			case Propiedades.TEMPLATE_MESSAGE_SQL:
+			case Propiedades.VINCULO_VALIDATE_PREVIOUS_SQL:
 			case Propiedades.FUNCION_SQL_NEW_ANTES:
 				if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
 					propiedadMapper.eliminarFuncionPrevalidacion(dto);
@@ -391,8 +392,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					break;
 				case Propiedades.TEMPLATE_MESSAGE_SQL:
 				case Propiedades.HTML_DOCUMENT_SQL:
+				case Propiedades.VINCULO_VALIDATE_PREVIOUS_SQL:
 				case Propiedades.FUNCION_SQL_NEW_ANTES:
-					propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
+					if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
+						propiedadMapper.crearFuncionPrevalidacionReturnString(dto);
+					}
 					break;
 				case Propiedades.FUNCION_SQL_PREVALIDATE_API:
 					if (Propiedades.isFunctionNotFreeMarker(dto.getValor())) {
@@ -1243,6 +1247,31 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		return respuestaValidacion;
 
+	}
+	
+	public boolean canCreateFielVinculo(PropiedadDTO pProperty, List<PedidoVentaCaracteristicaDTO> campos, String documento,
+			String token) throws ServerException {
+		String _result = null;
+		try {
+			if (Propiedades.isFunctionNotFreeMarker(pProperty.getValor())) {
+				_result = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(pProperty.getLlaveTabla()),
+						documento, token, campos);
+			} else {
+				String parameters = "";
+				if(campos!=null) {
+					for (PedidoVentaCaracteristicaDTO iPedidoVentaCaracteristicaDTO : campos) {
+						if(iPedidoVentaCaracteristicaDTO.getCampoDTO()!=null && iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo()!=null && iPedidoVentaCaracteristicaDTO.getValorText()!=null)
+							parameters= parameters+ SharedConstants.PUNTO_COMA_DOBLE + iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() + SharedConstants.IGUAL + iPedidoVentaCaracteristicaDTO.getValorText();
+					}
+				}
+				_result = templatesService.generateOutputFile(pProperty.getValor(), parameters);
+			}
+			
+		} catch (Exception e) {
+			return false;
+		}
+		if(_result== null) return false;
+		return _result.compareToIgnoreCase(SharedConstants.OK)==0;
 	}
 
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token)

@@ -651,3 +651,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre,  cpvd_grupo, bpvd_propiedadboolean, cpvd_origencategoria) 
 	VALUES('PROP_306' , 'C', 'RELACIONAR_MISMOS', 'RELACIONAR EL DOCUMENTO A LOS EXPEDIENTES DEL CAMPO', 'REQUISITO', true, 'Z');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto)
+	VALUES('PROP_307' , 'C', 'VALIDAR SI SE GENERA EL VINCULO SEGUN CONDICIONES', 'VINCULO_VALIDATE_PREVIOUS_SQL', 'REQUISITO', 'C', true);

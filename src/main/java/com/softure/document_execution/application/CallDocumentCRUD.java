@@ -541,6 +541,12 @@ public class CallDocumentCRUD {
 	public void createDocumentOfVinculateField(String pToken, PedidoVentaCaracteristicaDTO _iField)
 			throws ServerException {
 		
+		PropiedadDTO vPreviousValidation = Propiedades.obtenerParametro(_iField.getCampoDTO(), Propiedades.VINCULO_VALIDATE_PREVIOUS_SQL);
+		if(vPreviousValidation !=null) {
+			if(!propiedadService.canCreateFielVinculo(vPreviousValidation, _iField.getDependientes(), _iField.getDocumento(), pToken))
+				return;
+		}
+		
 		PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField, pToken);
 		if (_vinculateDocument != null) {
 			if(_vinculateDocument.getLlaveTabla()==null) _vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
