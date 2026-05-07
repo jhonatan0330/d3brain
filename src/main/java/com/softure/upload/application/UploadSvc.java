@@ -37,6 +37,7 @@ public class UploadSvc {
 	private ServidorSvc servidorService;
 	
 	public String uploadFile(byte[] bytes, String name, String token, String typeFile, String pVisibility) throws ServerException {
+		if(typeFile==null) typeFile="files";
 		CargaArchivoDTO registro = new CargaArchivoDTO();
 		registro.setFechaInicio(new Date());
 		registro.setSize(bytes.length);
