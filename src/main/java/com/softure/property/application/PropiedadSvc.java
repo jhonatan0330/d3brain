@@ -1261,7 +1261,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				if(campos!=null) {
 					for (PedidoVentaCaracteristicaDTO iPedidoVentaCaracteristicaDTO : campos) {
 						if(iPedidoVentaCaracteristicaDTO.getCampoDTO()!=null && iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo()!=null && iPedidoVentaCaracteristicaDTO.getValorText()!=null)
-							parameters= parameters+ SharedConstants.PUNTO_COMA_DOBLE + iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() + SharedConstants.IGUAL + iPedidoVentaCaracteristicaDTO.getValorText();
+							parameters= parameters+ SharedConstants.PUNTO_COMA_DOBLE +"R_"+ iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() + SharedConstants.IGUAL + iPedidoVentaCaracteristicaDTO.getValorText();
 					}
 				}
 				_result = templatesService.generateOutputFile(pProperty.getValor(), parameters);
@@ -1270,8 +1270,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		} catch (Exception e) {
 			return false;
 		}
-		if(_result== null) return false;
-		return _result.compareToIgnoreCase(SharedConstants.OK)==0;
+		if(_result == null) throw new ServerException("En la validacion del campo vinculo para generarse obtienen un valor nulo");
+		if(_result.compareToIgnoreCase(SharedConstants.OK)==0) return true;
+		if(_result.compareToIgnoreCase(SharedConstants.NO_STRING)==0) return false;
+		throw new ServerException("En la validacion del campo vinculo para generarse obtienen un valor diferente a OK o a NO, el valor es :\n" + _result ); 
 	}
 
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token)

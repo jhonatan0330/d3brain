@@ -441,8 +441,9 @@ public class ProcessTemplate {
 		// Filtro los campos que recibo y tienen que ver con una relacion
 		// de paso les coloco el codigo en setTransaccionRegistro
 		// No puedo borrarlos de una vez toca agregarlos a validadas para borrar despues
-		for (RelacionInternaDTO iRelacion : relaciones) {
-			for (PedidoVentaCaracteristicaDTO iField : fields) {
+		for (PedidoVentaCaracteristicaDTO iField : fields) {
+			//HAgo revision de todos los campos porque en nota credito me di cuenta que 
+			for (RelacionInternaDTO iRelacion : relaciones) {
 				// Si son el mismo campos
 				if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
 					if (fieldsInternal == null)
