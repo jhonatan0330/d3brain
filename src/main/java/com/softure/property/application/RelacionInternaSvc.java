@@ -73,6 +73,8 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
 	public RelacionInternaDTO guardar(RelacionInternaDTO dto, String token) throws ServerException {
+		if(dto.getPlantilla()== null) throw new ServerException("Es obligatorio registrar la plantilla de la relacion");
+		if(dto.getCampo()== null) throw new ServerException("Es obligatorio registrar el campo de la relacion");
 		if(dto.getAuxiliar()!=null && dto.getAuxiliar().length()==0) dto.setAuxiliar(null);
 		RelacionInternaFilterDTO existeFilter = new RelacionInternaFilterDTO();
 		existeFilter.setCampo(dto.getCampo());
@@ -80,8 +82,17 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		existeFilter.setPropiedad(dto.getPropiedad());
 		existeFilter.setAuxiliar(dto.getAuxiliar());
 		existeFilter.setEstado(SharedConstants.STATE_ACTIVE);
-		RelacionInternaDTO existe = consultaUnica(existeFilter);
-		if(existe!=null) return existe;
+		List<RelacionInternaDTO> existe = listarConsulta(existeFilter);
+		if(existe != null && !existe.isEmpty()) {
+			for (RelacionInternaDTO iRelation : existe) {
+				if(dto.getAuxiliar()==null) {
+					if(iRelation.getAuxiliar()==null) return iRelation;
+				}else {
+					if(dto.getAuxiliar().compareTo(iRelation.getAuxiliar())==0)
+						return iRelation;
+				}
+			}
+		}
 		if(dto.getUsuarioCreacion()==null)dto.setUsuarioCreacion(getUserFlex(token));
 		if(dto.getFechaInicio()==null)dto.setFechaInicio(new Date());
 		
