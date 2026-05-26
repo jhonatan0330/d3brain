@@ -120,7 +120,14 @@ public class CallDocumentNewFromAutomatic {
 					if (expedienteDTO != null) {
 						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null,
 								iPropiedadDTO.getValor());
-						campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
+						if(cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.CAMPO, campoPrincipal.getCampo(), Propiedades.MULTIPLE, null)==null) {
+							campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
+						} else {
+							campoPrincipal.setExpedientes(new ArrayList<>());
+							campoPrincipal.getExpedientes().add(expedienteDTO);
+						}
+						
+						
 						if (expedienteDTO.getDinero() != null)
 							campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());
 						campoPrincipal.setPrincipal(expedienteDTO);

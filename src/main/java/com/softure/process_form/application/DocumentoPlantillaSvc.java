@@ -151,6 +151,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		copy = super.save(copy);
 		// Copio campos
 		bd.setCaracteristicas(caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null, false));
+		copy.setCaracteristicas(new ArrayList<>());
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : bd.getCaracteristicas()) {
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
@@ -160,8 +161,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			//newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(copy.getLlaveTabla());
-			newCampo = caracteristicaService.guardar(newCampo, token);
-			newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(), newCampo.getLlaveTabla(), token));
+			copy.getCaracteristicas().add( caracteristicaService.guardar(newCampo, token));
 		}
 		// Primero las propiedades de rol para evitar duplicar
 		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
@@ -194,7 +194,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newReporte = reporteService.guardar(newReporte, token);
 			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla(), token);
 		}
-		
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : copy.getCaracteristicas()) {
+			for (DocumentoPlantillaCaracteristicaDTO source : bd.getCaracteristicas()) {
+				if(source.getCodigo().compareTo(iCampo.getCodigo())==0) {
+					iCampo.setPropiedades(configuracionSvc.copiarPropiedades(source.getPropiedades(), iCampo.getLlaveTabla(), token));
+					break;
+				}
+			}
+		}
 		return copy;
 	}
 	
