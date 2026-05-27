@@ -160,6 +160,7 @@ public class ProcessTemplate {
 	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
 			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp, PedidoVentaDTO iterador)
 			throws ServerException {
+		// Estas relaciones ten cuidado si se te ocurre meterla a cache, pos la opcion JUMP de los auxiliar de relacion Interna
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 		if (relaciones != null && !relaciones.isEmpty()) {
 			List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
@@ -441,27 +442,35 @@ public class ProcessTemplate {
 		// Filtro los campos que recibo y tienen que ver con una relacion
 		// de paso les coloco el codigo en setTransaccionRegistro
 		// No puedo borrarlos de una vez toca agregarlos a validadas para borrar despues
-		for (PedidoVentaCaracteristicaDTO iField : fields) {
+		for (RelacionInternaDTO iRelacion : relaciones) {
+			
 			//HAgo revision de todos los campos porque en nota credito me di cuenta que 
-			for (RelacionInternaDTO iRelacion : relaciones) {
-				// Si son el mismo campos
-				if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
-					if (fieldsInternal == null)
-						fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
-					/// Para logimax debo colcoarles codigos en el auxiliar y el el registro
-					/// transaccion llevo esos codigos
-					// if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
-					// Quite el filtro por los auxiliares cuando son 2 de un mismo campo
-					relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
-					iField.setTransaccionRegistro(iRelacion.getAuxiliar());
-					// Necesito el id del campo para consultar los expedientes de multiples
-					PedidoVentaCaracteristicaDTO fieldNew = iField.clone();
-					fieldNew.setLlaveTabla(iField.getLlaveTabla());
-					fieldsInternal.add(fieldNew);
-					break;// Antes no estaba este break no se porque
-					// }
+			// Nos inventamos con Dani la opcion de JUMP_
+			if(iRelacion.getAuxiliar()!=null && iRelacion.getAuxiliar().startsWith("JUMP_")) {
+				iRelacion.setAuxiliar(iRelacion.getAuxiliar().replace("JUMP_", ""));
+				if(iRelacion.getAuxiliar().isEmpty()) iRelacion.setAuxiliar(null);
+			} else {
+				for (PedidoVentaCaracteristicaDTO iField : fields) {
+					// Si son el mismo campos
+					if (iRelacion.getCampo().compareTo(iField.getCampo()) == 0) {
+						if (fieldsInternal == null)
+							fieldsInternal = new ArrayList<PedidoVentaCaracteristicaDTO>();
+						/// Para logimax debo colcoarles codigos en el auxiliar y el el registro
+						/// transaccion llevo esos codigos
+						// if (iRelacion.getAuxiliar() == null || !fieldsInternal.contains(iField)) {
+						// Quite el filtro por los auxiliares cuando son 2 de un mismo campo
+						relacionesValidadas.add(iRelacion); // Esta relacion despues se va borrar por eso la adiciono
+						iField.setTransaccionRegistro(iRelacion.getAuxiliar());
+						// Necesito el id del campo para consultar los expedientes de multiples
+						PedidoVentaCaracteristicaDTO fieldNew = iField.clone();
+						fieldNew.setLlaveTabla(iField.getLlaveTabla());
+						fieldsInternal.add(fieldNew);
+						break;// Antes no estaba este break no se porque
+						// }
+					}
 				}
 			}
+			
 		}
 		// fieldsInternal Tiene los campos que cumplen con las relaciones
 		if (fieldsInternal != null) {
