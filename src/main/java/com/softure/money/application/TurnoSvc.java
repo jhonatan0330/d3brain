@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
+import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.money.domain.CuentaDTO;
 import com.softure.money.domain.CuentaFilterDTO;
@@ -70,7 +71,11 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		}
 		
 		dto.setCuenta(caja.getLlaveTabla());
-		dto.setFechaApertura(new Date());
+		if(dto.getFechaApertura()==null) {
+			dto.setFechaApertura(SoftureUtil.agregarMinutos(new Date(), -2) );
+		}else {
+			dto.setFechaApertura(SoftureUtil.agregarMinutos(dto.getFechaApertura(), -2) );
+		}
 		dto.setEstado(TurnoDTO.ESTADO_EJECUCION);
 		dto.setMontoInicial(caja.getSaldo());
 		if(dto.getLlaveTabla()==null){

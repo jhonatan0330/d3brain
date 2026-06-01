@@ -446,6 +446,7 @@ public class TipoProceso {
 						turno.setCuenta(pCampo.getValorOpcion());
 						turno.setUsuario(campoService.getUserFlex(token));
 						turno.setDocumento(pCampo.getDocumento());
+						turno.setFechaApertura(pCampo.getPrincipal().getFecha());
 						turno = turnoService.iniciarTurno(turno, token);
 					}
 					//relacionExternaDocumentos(pCampo, token);
