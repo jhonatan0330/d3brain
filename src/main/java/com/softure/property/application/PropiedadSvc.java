@@ -566,7 +566,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						|| dto.getKey().compareTo(Propiedades.UPDATE_INFORMATIVE_FIELD) == 0
 						|| dto.getKey().compareTo(Propiedades.FECHA_MAXIMA_CAMPO) == 0
 						|| dto.getKey().compareTo(Propiedades.FECHA_MINIMA_CAMPO) == 0
-						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS) == 0) {
+						|| dto.getKey().compareTo(Propiedades.RETIRAR_DOCUMENTOS) == 0
+						|| dto.getKey().compareTo(Propiedades.PRODUCTOS_TERCERO) == 0) {
 					DocumentoPlantillaCaracteristicaDTO filtro = campoService.consultaXId(dto.getCampo());
 					if (filtro == null) {
 						throw new ServerException("Este campo no tiene configurada la plantilla");
