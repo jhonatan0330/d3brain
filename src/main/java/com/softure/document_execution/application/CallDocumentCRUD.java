@@ -472,7 +472,7 @@ public class CallDocumentCRUD {
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:private_user");
 
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
-		validateFields(dto, plantilla, token, false);
+		validateFields(dto, plantilla, token, isAutomatic);
 
 		propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), null, token);
 
@@ -714,7 +714,7 @@ public class CallDocumentCRUD {
 						break;
 					}
 				}
-				if (!campoEncontrado
+				if (!campoEncontrado && !isUpdateAutomatic
 						&& campoPlantilla.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.SECCION) != 0)
 					throw new ServerException("Revisa porque el campo " + campoPlantilla.getNombre()
 							+ " no viene registrado en el documento " + plantilla.getNombre() + "\nCODE:caud_usuario");

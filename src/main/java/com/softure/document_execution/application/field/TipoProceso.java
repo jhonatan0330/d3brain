@@ -304,6 +304,7 @@ public class TipoProceso {
 					filterMultiple.setFiltroParametro(procesoDTO.getNombre());
 					if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
 						filterMultiple.setLlaveTabla(pCampo.getDependientes().get(0).getValorOpcion());
+						filterMultiple.setCaracteristicas(pCampo.getDependientes());
 					}
 					List<PedidoVentaDTO> resultListDocuments = listDocumentWithFiltersFunction
 							.listarAvanzado(filterMultiple);
@@ -314,19 +315,23 @@ public class TipoProceso {
 						for (PedidoVentaDTO iDocument : resultListDocuments) {
 							if (iDocument.getNombre().compareTo(pCampo.getValorText()) == 0) {
 								pCampo.setValorOpcion(iDocument.getLlaveTabla());
+								procesoDTO.setLlaveTabla(iDocument.getLlaveTabla());
+								procesoDTO.setEstadoExpediente(iDocument.getEstadoExpediente());
+								procesoDTO.setPlantilla(iDocument.getPlantilla());
+
 								break;
 							}
 						}
 					} else {
 						pCampo.setValorOpcion(resultListDocuments.get(0).getLlaveTabla());
+						procesoDTO.setLlaveTabla(resultListDocuments.get(0).getLlaveTabla());
+						procesoDTO.setEstadoExpediente(resultListDocuments.get(0).getEstadoExpediente());
+						procesoDTO.setPlantilla(resultListDocuments.get(0).getPlantilla());
 					}
 					if (pCampo.getValorOpcion() == null)
 						throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " obtiene "
 								+ resultListDocuments.size() + " resultados que concuerdan con el criterio : "
 								+ procesoDTO.getNombre());
-					procesoDTO.setLlaveTabla(resultListDocuments.get(0).getLlaveTabla());
-					procesoDTO.setEstadoExpediente(resultListDocuments.get(0).getEstadoExpediente());
-					procesoDTO.setPlantilla(resultListDocuments.get(0).getPlantilla());
 				}
 				procesoDTO.setEstado(null);
 				for (PedidoVentaDTO procesoActivo : procesosActuales) {
