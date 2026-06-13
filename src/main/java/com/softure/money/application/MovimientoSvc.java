@@ -92,7 +92,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		MovimientoDTO siguiente = (movimiento.getSiguiente() == null) ? null : consultaXId(movimiento.getSiguiente());
 		MovimientoDTO anterior = (movimiento.getAnterior() == null) ? null : consultaXId(movimiento.getAnterior());
 		CuentaDTO cuenta = cuentaService.consultaXId(movimiento.getCuenta());
-		BigDecimal sobregiro = cuentaService.sobregiro(cuenta.getLlaveTabla());
+		BigDecimal sobregiro = cuentaService.sobregiro(cuenta.getDocumento());
 		if (cuenta.getFechaConciliacion() != null)
 			if (cuenta.getFechaConciliacion().compareTo(movimiento.getFechaEvento()) >= 0)
 				throw new ServerException(
