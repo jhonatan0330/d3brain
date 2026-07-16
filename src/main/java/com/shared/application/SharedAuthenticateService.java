@@ -1,6 +1,5 @@
 package com.shared.application;
 
-
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedToken;
 

@@ -1,11 +1,10 @@
 package com.accounting.plan.domain;
 
-
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("AccountDTO")
-public class AccountDTO extends SharedDataObject{
+public class AccountDTO extends SharedDataObject {
 
 	private String catalog;
 	private String catalogDocument;

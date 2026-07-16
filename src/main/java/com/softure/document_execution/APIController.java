@@ -3,7 +3,6 @@ package com.softure.document_execution;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,48 +34,72 @@ import com.softure.logisticpymes.domain.UsuarioFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.upload.application.UploadSvc;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/rest")
 public class APIController {
 
-	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
-	@Autowired @Lazy  private DocumentoPlantillaSvc documentoplantillaService;
-	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
-	@Autowired @Lazy  private CallDocumentCRUD saveUpdateDocumentFunction;
-	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy  private PedidoVentaAjusteSvc pedidoVentaAjusteService;
-	@Autowired @Lazy  private UsuarioSvc usuarioService;
-	@Autowired @Lazy  private UploadSvc uploadService;
-	@Autowired @Lazy  private CampoAdaptador adaptador;
-	
-	@PostMapping(value="/logOut")
-	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion, @RequestHeader("Authorization") String token) throws ServerException {
-		if(autenticacion==null) throw new ServerException("Los datos de autenticacion son nulos");
+	private final UsuarioAutenticacionSvc usuarioAutenticacionService;
+	private final DocumentoPlantillaSvc documentoplantillaService;
+	private final PedidoVentaSvc pedidoVentaService;
+	private final CallDocumentCRUD saveUpdateDocumentFunction;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final PedidoVentaAjusteSvc pedidoVentaAjusteService;
+	private final UsuarioSvc usuarioService;
+	private final UploadSvc uploadService;
+	private final CampoAdaptador adaptador;
+
+	public APIController(@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService,
+			@Lazy DocumentoPlantillaSvc documentoplantillaService, @Lazy PedidoVentaSvc pedidoVentaService,
+			@Lazy CallDocumentCRUD saveUpdateDocumentFunction,
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy PedidoVentaAjusteSvc pedidoVentaAjusteService, @Lazy UsuarioSvc usuarioService,
+			@Lazy UploadSvc uploadService, @Lazy CampoAdaptador adaptador) {
+		this.usuarioAutenticacionService = usuarioAutenticacionService;
+		this.documentoplantillaService = documentoplantillaService;
+		this.pedidoVentaService = pedidoVentaService;
+		this.saveUpdateDocumentFunction = saveUpdateDocumentFunction;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.pedidoVentaAjusteService = pedidoVentaAjusteService;
+		this.usuarioService = usuarioService;
+		this.uploadService = uploadService;
+		this.adaptador = adaptador;
+	}
+
+	@PostMapping(value = "/logOut")
+	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion,
+			@RequestHeader("Authorization") String token) throws ServerException {
+		if (autenticacion == null)
+			throw new ServerException("Los datos de autenticacion son nulos");
 		usuarioAutenticacionService.inactivar(autenticacion, token);
 		return null;
 	}
-	
-	@PostMapping(value="/consultarDocumento")
-	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
+
+	@PostMapping(value = "/consultarDocumento")
+	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		documentoFiltro.setSecurityToken(token);
 		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
 		pedidoVentaService.clearPedidoResponse(_result);
 		return _result;
 	}
-	
-	@PostMapping(value="/validateBeforeNew")
-	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException  {
+
+	@PostMapping(value = "/validateBeforeNew")
+	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		documentoFiltro.setSecurityToken(token);
 		return pedidoVentaService.validateBeforeNew(documentoFiltro);
 	}
 
-	@PostMapping(value="/guardarDocumento")
-	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {
-		if(documento.getLlaveTabla()==null){
+	@PostMapping(value = "/guardarDocumento")
+	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO documento,
+			@RequestHeader("Authorization") String token,
+			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
+		if (documento.getLlaveTabla() == null) {
 			documento = saveUpdateDocumentFunction.save(documento, token, session);
-		}else{
+		} else {
 			documento = saveUpdateDocumentFunction.update(documento, null, token);
 		}
 		PedidoVentaDTO result = new PedidoVentaDTO();
@@ -89,11 +112,13 @@ public class APIController {
 		result.setMessages(documento.getMessages());
 		return result;
 	}
-	
-	@PostMapping(value="/saveByMassive")
-	public PedidoVentaDTO saveByMassive(@RequestBody PedidoVentaDTO documento, @RequestHeader("Authorization") String token, @RequestHeader(name = "non-duplicate", required = false) String session)  throws ServerException  {
-		//Este metodo es igual al de guardar pero debi colocar una logica del modificar
-		// La idea es despues mejorar las cargas masivas 
+
+	@PostMapping(value = "/saveByMassive")
+	public PedidoVentaDTO saveByMassive(@RequestBody PedidoVentaDTO documento,
+			@RequestHeader("Authorization") String token,
+			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
+		// Este metodo es igual al de guardar pero debi colocar una logica del modificar
+		// La idea es despues mejorar las cargas masivas
 		// Para almacenar el archivo y crear los registros desde el back
 		documento = saveUpdateDocumentFunction.massive(documento, token, session);
 		PedidoVentaDTO result = new PedidoVentaDTO();
@@ -106,75 +131,88 @@ public class APIController {
 		result.setMessages(documento.getMessages());
 		return result;
 	}
-	
-	@PostMapping(value="/consultarUsuario")
-	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/consultarUsuario")
+	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto, @RequestHeader("Authorization") String token)
+			throws ServerException {
 		dto.setSecurityToken(token);
-		return usuarioService.consultaUnica(dto);	
+		return usuarioService.consultaUnica(dto);
 	}
-		
-	@PostMapping(value="/consultarDatosBase")
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/consultarDatosBase")
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		dto.setSecurityToken(token);
 		return adaptador.consultarDatosBase(dto);
 	}
-	
-	
-	@PostMapping(value="/listarDocumentos")
-	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro, @RequestHeader("Authorization") String token) throws ServerException {
+
+	@PostMapping(value = "/listarDocumentos")
+	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		documentoFiltro.setSecurityToken(token);
 		return listDocumentWithFiltersFunction.listarAvanzado(documentoFiltro);
 	}
-	
-	@PostMapping(value="/obtenerCampos")
-	public DocumentoPlantillaDTO obtenerCampos(@RequestBody DocumentoPlantillaDTO documentoFiltro,  @RequestHeader("Authorization") String token) throws ServerException {
+
+	@PostMapping(value = "/obtenerCampos")
+	public DocumentoPlantillaDTO obtenerCampos(@RequestBody DocumentoPlantillaDTO documentoFiltro,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		return documentoplantillaService.obtenerCampos(documentoFiltro, token, true);
 	}
-	
-	@PostMapping(value="/upload")
-    public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile pFile,  @RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
-        try {
-        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public"); 
-        	SharedApiErrorResponse response =new SharedApiErrorResponse.ApiErrorResponseBuilder()
-     		        .withMessage(url).build();
+
+	@PostMapping(value = "/upload")
+	public SharedApiErrorResponse handleFileUpload(@RequestParam("file") MultipartFile pFile,
+			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+		if (pFile.isEmpty())
+			throw new ServerException("You failed to upload because the file was empty.");
+		try {
+			String url = uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public");
+			SharedApiErrorResponse response = new SharedApiErrorResponse.ApiErrorResponseBuilder().withMessage(url)
+					.build();
 			return response;
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
-    }
-	
-	
-	@PostMapping(value="/uploadResponseString")
-    public String handleFileUploadFlex(@RequestParam("file") MultipartFile pFile) throws ServerException {
-        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
-        try {
-        	//En flex no es posible pasar los datos del header ver flash.net.FileReference.upload
-        	return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config", "public"); 
+	}
+
+	@PostMapping(value = "/uploadResponseString")
+	public String handleFileUploadFlex(@RequestParam("file") MultipartFile pFile) throws ServerException {
+		if (pFile.isEmpty())
+			throw new ServerException("You failed to upload because the file was empty.");
+		try {
+			// En flex no es posible pasar los datos del header ver
+			// flash.net.FileReference.upload
+			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config", "public");
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
-    }
-	
-	@PostMapping(value="/changePicture")
-    public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile pFile,  @RequestHeader("Authorization") String token) throws ServerException {
-        if (pFile.isEmpty()) throw new ServerException("You failed to upload because the file was empty.");
-        try {
-        	String url =uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config", "public");
+	}
+
+	@PostMapping(value = "/changePicture")
+	public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile pFile,
+			@RequestHeader("Authorization") String token) throws ServerException {
+		if (pFile.isEmpty())
+			throw new ServerException("You failed to upload because the file was empty.");
+		try {
+			String url = uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config",
+					"public");
 			return usuarioService.changePicture(url, token);
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}
-    }
-	
-	@PostMapping(value="/changeState")
-	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,@RequestHeader("Authorization") String token)  throws ServerException  {
-		return pedidoVentaAjusteService.guardar(ajuste, token);	
 	}
-	
-	@GetMapping(value="/getMessageToProcessField/{property}/{fieldValue}")
-	public SharedIdResponse message(@PathVariable(name="property") String pProperty,@PathVariable(name="fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)  throws ServerException  {
-		return new SharedIdResponse(null, null, null, pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token))  ;
+
+	@PostMapping(value = "/changeState")
+	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,
+			@RequestHeader("Authorization") String token) throws ServerException {
+		return pedidoVentaAjusteService.guardar(ajuste, token);
 	}
-	
+
+	@GetMapping(value = "/getMessageToProcessField/{property}/{fieldValue}")
+	public SharedIdResponse message(@PathVariable(name = "property") String pProperty,
+			@PathVariable(name = "fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)
+			throws ServerException {
+		return new SharedIdResponse(null, null, null,
+				pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token));
+	}
+
 }

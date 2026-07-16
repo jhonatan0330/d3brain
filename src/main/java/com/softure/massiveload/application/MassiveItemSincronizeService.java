@@ -6,13 +6,10 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 
 @Service
-public class MassiveItemSincronizeService  {
+public class MassiveItemSincronizeService {
 
-	
 	public SharedIdResponse call(String token, String itemId) throws ServerException {
 		return null;
 	}
 
-
 }
-

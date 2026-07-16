@@ -3,7 +3,6 @@ package com.softure.process_form.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,7 +15,6 @@ import com.softure.document_execution.application.CallDocumentCommons;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
-// END region interImport
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
@@ -27,27 +25,30 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc
 		extends BasicSvc<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper;
-	@Autowired
-	@Lazy
-	private PropiedadSvc parametroService;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService propertyManagerService;
-	@Autowired
-	@Lazy
-	private CallSearchProcessFromText searchProcessFromText;
-	@Autowired
-	@Lazy
-	private CacheManager cacheService;
-	
+	private final DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper;
+	private final PropiedadSvc parametroService;
+	private final PropertyGetWithCacheService propertyManagerService;
+	private final CallSearchProcessFromText searchProcessFromText;
+	private final CacheManager cacheService;
+
+	public DocumentoPlantillaCaracteristicaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper,
+			@Lazy PropiedadSvc parametroService, @Lazy PropertyGetWithCacheService propertyManagerService,
+			@Lazy CallSearchProcessFromText searchProcessFromText, @Lazy CacheManager cacheService) {
+		super(usuarioSesionService);
+		this.documentoPlantillaCaracteristicaMapper = documentoPlantillaCaracteristicaMapper;
+		this.parametroService = parametroService;
+		this.propertyManagerService = propertyManagerService;
+		this.searchProcessFromText = searchProcessFromText;
+		this.cacheService = cacheService;
+	}
+
 	@Override
 	public DocumentoPlantillaCaracteristicaDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)
@@ -109,7 +110,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 	// fuera
 	public DocumentoPlantillaCaracteristicaDTO listarCarga(DocumentoPlantillaCaracteristicaFilterDTO dto)
 			throws ServerException {
-		// BEGIN region listarCarga
 		if (dto == null || dto.getLlaveTabla() == null)
 			throw new ServerException("Desarrollador el DTO viene nulo");
 		if (dto.getDocumentos() == null || dto.getDocumentos().isEmpty())
@@ -134,7 +134,6 @@ public class DocumentoPlantillaCaracteristicaSvc
 		}
 		dtoCarga.setDocumentos(documentAproval);
 		return dtoCarga;
-		// END region listarCarga
 	}
 
 	@Override
@@ -220,8 +219,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		if (token != null)
 			usuario = getUserFlex(token);
 		if (campo != null)
-			campo.setPropiedades(propertyManagerService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO, campo.getLlaveTabla(),
-					null, usuario));
+			campo.setPropiedades(propertyManagerService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+					campo.getLlaveTabla(), null, usuario));
 		return campo;
 	}
 
@@ -499,7 +498,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		filtroCampo.setFormato(DocumentoPlantillaCaracteristicaDTO.VINCULO);
 		return super.contarResultados(filtroCampo);
 	}
-	
+
 	public int countFieldsDependent(String pTemplate, String pField) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCampo.setLlaveTabla(pField);

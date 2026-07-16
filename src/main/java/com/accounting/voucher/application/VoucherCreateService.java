@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -41,35 +40,31 @@ import com.softure.process_form.domain.ConsecutivoDTO;
 @Service
 public class VoucherCreateService {
 
-	@Autowired
-	@Lazy
-	private CatalogService catalogService;
-	@Autowired
-	@Lazy
-	private AccountService accountService;
-	@Autowired
-	@Lazy
-	private VoucherService voucherService;
-	@Autowired
-	@Lazy
-	private AccountRecordService recordService;
-	@Autowired
-	@Lazy
-	private AccountRecordAuxiliarService auxiliarService;
-	@Autowired
-	@Lazy
-	private ConsecutivoSvc consecutiveService;
-	@Autowired
-	@Lazy
-	private StackVoucherService stackBasicService;
-	@Autowired
-	@Lazy
-	private TypeService typeService;
-	@Autowired
-	@Lazy
-	private PlanCreateCatalogService createCatalogService;
-	
-	
+	private final CatalogService catalogService;
+	private final AccountService accountService;
+	private final VoucherService voucherService;
+	private final AccountRecordService recordService;
+	private final AccountRecordAuxiliarService auxiliarService;
+	private final ConsecutivoSvc consecutiveService;
+	private final StackVoucherService stackBasicService;
+	private final TypeService typeService;
+	private final PlanCreateCatalogService createCatalogService;
+
+	public VoucherCreateService(@Lazy CatalogService catalogService, @Lazy AccountService accountService,
+			@Lazy VoucherService voucherService, @Lazy AccountRecordService recordService,
+			@Lazy AccountRecordAuxiliarService auxiliarService, @Lazy ConsecutivoSvc consecutiveService,
+			@Lazy StackVoucherService stackBasicService, @Lazy TypeService typeService,
+			@Lazy PlanCreateCatalogService createCatalogService) {
+		this.catalogService = catalogService;
+		this.accountService = accountService;
+		this.voucherService = voucherService;
+		this.recordService = recordService;
+		this.auxiliarService = auxiliarService;
+		this.consecutiveService = consecutiveService;
+		this.stackBasicService = stackBasicService;
+		this.typeService = typeService;
+		this.createCatalogService = createCatalogService;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
@@ -104,7 +99,7 @@ public class VoucherCreateService {
 				throw new ServerException("La cuenta no pertenece al catalogo. " + account.getName());
 			if (account.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
-			//createMapLine(catalogDTO, account);
+			// createMapLine(catalogDTO, account);
 
 			if (item.getReferences() != null && !item.getReferences().isEmpty()) {
 				for (AccountRecordAuxiliarDTO iAuxiliar : item.getReferences()) {
@@ -151,12 +146,14 @@ public class VoucherCreateService {
 			throw new ServerException("Te hace falta la informacion de encabezado del comprobante");
 		if (_voucher.getRecords() == null || _voucher.getRecords().isEmpty())
 			throw new ServerException("Es curiosos pero no enviaste registros de cuentas");
-		//if (_voucher.getHeader().getValue() == null || _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
-			//throw new ServerException("El valor total del comprobante no esta diligenciado");
+		// if (_voucher.getHeader().getValue() == null ||
+		// _voucher.getHeader().getValue().compareTo(BigDecimal.ZERO) == 0)
+		// throw new ServerException("El valor total del comprobante no esta
+		// diligenciado");
 		BigDecimal valueAllRecords = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsPositive = BigDecimal.ZERO;
 		BigDecimal valueAllRecordsNegative = BigDecimal.ZERO;
-		
+
 		List<VoucherLine> toRemove = new ArrayList<>();
 		for (VoucherLine iVoucherLine : _voucher.getRecords()) {
 
@@ -181,7 +178,7 @@ public class VoucherCreateService {
 			} else {
 				if (iVoucherLine.getLine().getType() == null
 						|| iVoucherLine.getLine().getType().compareTo(AccountConst.TYPE_RECORD_RECLASIFICATION) != 0)
-					valueAllRecords = valueAllRecords.add(iVoucherLine.getLine().getPositive());	
+					valueAllRecords = valueAllRecords.add(iVoucherLine.getLine().getPositive());
 				valueAllRecordsPositive = valueAllRecordsPositive.add(iVoucherLine.getLine().getPositive());
 				valueAllRecordsNegative = valueAllRecordsNegative.add(iVoucherLine.getLine().getNegative());
 				if (iVoucherLine.getLine().getNote() != null && iVoucherLine.getLine().getNote().isEmpty())
@@ -211,10 +208,12 @@ public class VoucherCreateService {
 		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE) == 0) {
 			if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
 				throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
-						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords + "), sin tener en cuenta los de reclasificacion");
+						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords
+						+ "), sin tener en cuenta los de reclasificacion");
 			if (valueAllRecordsNegative.compareTo(valueAllRecordsPositive) != 0)
 				throw new ServerException("El valor de los valores negativos (" + valueAllRecordsNegative
-						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive + "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
+						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive
+						+ "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
 		}
 
 		ConsecutivoDTO consecutive = null;
@@ -233,7 +232,8 @@ public class VoucherCreateService {
 		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
 		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
 		_voucher.getHeader().setCreationDate(new Date());
-		_voucher.getHeader().setDeleteDate( Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		_voucher.getHeader()
+				.setDeleteDate(Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		// Desde Angular viene una ultima linea vacia
 		for (VoucherLine item : toRemove) {
 			_voucher.getRecords().remove(item);
@@ -249,10 +249,10 @@ public class VoucherCreateService {
 		if (catalogDTO == null)
 			throw new ServerException("No se encontro un catalogo con ese identificador");
 		_voucher.setCatalogCode(catalogDTO.getCode());
-		if (catalogDTO.getInitialDate()!=null && _voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
+		if (catalogDTO.getInitialDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
 			throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
 					+ catalogDTO.getInitialDate().toString());
-		if (catalogDTO.getFinalDate()!=null && _voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
+		if (catalogDTO.getFinalDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
 			throw new ServerException("La fecha del comprobante debe ser menor al periodo del catalogo. Fecha final "
 					+ catalogDTO.getFinalDate().toString());
 		return catalogDTO;

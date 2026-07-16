@@ -19,7 +19,7 @@ public class Propiedades {
 	public static final String MENSAJE_ADJUNTO_URL = "MENSAJE_ADJUNTO_URL";
 	public static final String MENSAJE_DESTINATARIOS_SQL = "MENSAJE_DESTINATARIOS_SQL";
 	public static final String MENSAJE_DESTINATARIO = "MENSAJE_DESTINATARIO";
-	public static final String API = "API";	
+	public static final String API = "API";
 	public static final String API_TRANSACCION = "API_TRANSACCION";
 	public static final String API_HEADER = "API_HEADER";
 	public static final String API_NEW_DOCUMENT = "API_NEW_DOCUMENT";
@@ -60,14 +60,14 @@ public class Propiedades {
 	public static final String INVISIBLE = "INVISIBLE";
 	public static final String VISIBLE_VALOR_DEPENDIENTE = "VISIBLE_VALOR_DEPENDIENTE";
 	public static final String MODIFICAR_CAMPO = "MODIFICAR_CAMPO";
-	
+
 	public static final String INFORMATIVE_DATA = "INFORMATIVE_DATA";
 	public static final String UPDATE_INFORMATIVE_FIELD = "UPDATE_INFORMATIVE_FIELD";
 
 	public static final String VINCULO_DATA = "VINCULO_DATA";
 	public static final String VINCULO_DELETE = "VINCULO_DELETE";
 	public static final String VINCULO_FIELD_SQL = "VINCULO_FIELD_SQL";
-	
+
 	public static final String AUTOLOAD = "AUTOLOAD";
 	public static final String AUTOLOAD_SAVE = "AUTOLOAD_SAVE";
 	public static final String MULTIPLE = "MULTIPLE";
@@ -126,7 +126,7 @@ public class Propiedades {
 
 	public static final String DISPONIBILIDAD_CROQUIS = "DISPONIBILIDAD_CROQUIS"; // CROQUIS FUENTE
 	public static final String DISPONIBILIDAD_FUNCION_SQL = "DISPONIBILIDAD_FUNCION_SQL";
-	
+
 	public static final String SECCION_FUNCION_SQL = "SECCION_FUNCION_SQL";
 
 	public static final String DETALLE_NUMERO_COLUMNAS = "DETALLE_NUMERO_COLUMNAS";
@@ -141,7 +141,7 @@ public class Propiedades {
 	public static final String PRODUCTO_CAMPO_TOTAL = "PRODUCTO_CAMPO_TOTAL";
 	public static final String UNICO_PRODUCTO = "UNICO_PRODUCTO";
 	public static final String ITEM_DETAIL_FORM_VISIBLE = "ITEM_DETAIL_FORM_VISIBLE";
-	
+
 	public static final String DETALLE_TARIFA_PRODUCTO = "DETALLE_TARIFA_PRODUCTO";
 	public static final String DETALLE_TARIFARIO_SQL = "DETALLE_TARIFARIO_SQL";
 	public static final String DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD = "DETALLE_OCULTAR_UNIDADES_NOMBRE_CANTIDAD";
@@ -163,14 +163,15 @@ public class Propiedades {
 	public static final String VINCULO_MAKE_IN_OTHER_FORM = "VINCULO_MAKE_IN_OTHER_FORM";
 	public static final String VINCULO_GET_PREVIOUS_SQL = "VINCULO_GET_PREVIOUS_SQL";
 	public static final String VINCULO_VALIDATE_PREVIOUS_SQL = "VINCULO_VALIDATE_PREVIOUS_SQL";
-	
 
 	////////////////// PLANTILLA////////////////////////////
 	// Si se coloca una nueva propiedad se coloca en el campo instrucciones
 	public static final String TERCERO = "TERCERO";
 	public static final String ENCABEZADO = "ENCABEZADO";
-	// Intente cambiarlo a una opcion de que calculara directamente, pero encontre un problema con el update de la propiedad, hacer lso calculos puede bloquear el sistema
-	//asi que lo deje quieto, quite descripcion2
+	// Intente cambiarlo a una opcion de que calculara directamente, pero encontre
+	// un problema con el update de la propiedad, hacer lso calculos puede bloquear
+	// el sistema
+	// asi que lo deje quieto, quite descripcion2
 	public static final String DESCRIPCION = "DESCRIPCION";
 	public static final String CAMPO_EVIDENCIA = "CAMPO_EVIDENCIA";
 	public static final String TOTAL = "TOTAL";
@@ -180,7 +181,7 @@ public class Propiedades {
 	public static final String CELULAR_ROL = "CELULAR_ROL";
 
 	public static final String FECHA = "FECHA";
-	public static final String PLANTILLA_IMAGEN= "PLANTILLA_IMAGEN";
+	public static final String PLANTILLA_IMAGEN = "PLANTILLA_IMAGEN";
 	public static final String PLANTILLA_FECHA_INICIO = "PLANTILLA_FECHA_INICIO";
 	public static final String PLANTILLA_FECHA_FINAL = "PLANTILLA_FECHA_FINAL";
 	public static final String RESPONSABLE = "RESPONSABLE";
@@ -207,7 +208,6 @@ public class Propiedades {
 	public static final String PERMISO_PLANTILLA_VER_TODOS = "PERMISO_PLANTILLA_VER_TODOS";
 	public static final String PERMISO_PLANTILLA_LISTAR_MENU = "PERMISO_PLANTILLA_LISTAR_MENU";
 	public static final String PERMISO_PLANTILLA_LISTAR_MENU_PROCESO = "PERMISO_PLANTILLA_LISTAR_MENU_PROCESO";
-	
 
 	public static final String PERMISO_CAMPO_BLOQUEAR = "PERMISO_CAMPO_BLOQUEAR";
 	public static final String PERMISO_CAMPO_MODIFICABLE = "PERMISO_CAMPO_MODIFICABLE";
@@ -230,7 +230,7 @@ public class Propiedades {
 	public static final String TEMPLATE_VOUCHER = "TEMPLATE_VOUCHER";
 	public static final String TEMPLATE_MESSAGE_SQL = "TEMPLATE_MESSAGE_SQL";
 	public static final String HTML_DOCUMENT_SQL = "HTML_DOCUMENT_SQL";
-	
+
 	public static final String PLANTILLA_MONITOR = "PLANTILLA_MONITOR";
 	public static final String API_ACCOUNT_CATALOG = "API_ACCOUNT_CATALOG";
 	public static final String REPORT_MODULE_REFERENCE = "REPORT_MODULE_REFERENCE";
@@ -298,13 +298,12 @@ public class Propiedades {
 	public static final String APP_READER = "APP_READER";
 	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
 	public static final String APP_DFA = "APP_DFA";
-	
-	//ol
-	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";	
-	
-	
-	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO, Propiedades.INFORMATIVE_DATA,
-			Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
+
+	// ol
+	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
+
+	public static final String[] DEPENDENT_PROPS = { Propiedades.DEPENDE, Propiedades.MODIFICAR_CAMPO,
+			Propiedades.INFORMATIVE_DATA, Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
 			Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
 
 	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
@@ -321,9 +320,10 @@ public class Propiedades {
 			return false;
 		return validateScheduleTime(property.getBloqueo(), new Date());
 	}
-	
+
 	public static Date getNextDateTimeSchedule(String blockText, Date dateToValidate) {
-		if(validateScheduleTime(blockText, dateToValidate))return dateToValidate;
+		if (validateScheduleTime(blockText, dateToValidate))
+			return dateToValidate;
 		String[] grupos = transformBlockTextToArray(blockText);
 		if (grupos.length == 0)
 			return dateToValidate;
@@ -550,16 +550,18 @@ public class Propiedades {
 		}
 		return pCampo.getPropiedades();
 	}
-	
+
 	public static boolean isFunctionNotFreeMarker(String value) {
-		if (value == null) return true;
+		if (value == null)
+			return true;
 		value = SoftureUtil.cleanStartEndSpaces(value);
 		return (value.toLowerCase().startsWith("declare") || value.toLowerCase().startsWith("begin"));
 	}
 
 	public static void clearPropertiesToOut(List<PropiedadDTO> props) {
-		if(props==null) return;
-		for(PropiedadDTO iProp : props) {
+		if (props == null)
+			return;
+		for (PropiedadDTO iProp : props) {
 			iProp.setBloqueo(null);
 			iProp.setUsuarioCreacion(null);
 			iProp.setUsuarioEliminacion(null);
@@ -574,8 +576,9 @@ public class Propiedades {
 			iProp.setUsuario(null);
 			iProp.setUsuarioExcluyenteNombre(null);
 			iProp.setUsuarioNombre(null);
-			if(iProp.getKey().contains("SQL"))iProp.setValor("OK");		
+			if (iProp.getKey().contains("SQL"))
+				iProp.setValor("OK");
 		}
 	}
-	
+
 }

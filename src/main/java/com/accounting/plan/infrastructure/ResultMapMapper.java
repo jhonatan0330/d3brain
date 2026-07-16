@@ -14,7 +14,7 @@ public interface ResultMapMapper {
 	ResultMapDTO update(ResultMapDTO dto);
 
 	int count(ResultMapFilterDTO filter);
-	
+
 	ResultMapDTO getOne(ResultMapFilterDTO filter);
 
 	List<ResultMapDTO> getMany(ResultMapFilterDTO filter);

@@ -2,7 +2,6 @@ package com.accounting.voucher.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,21 +22,18 @@ import com.softure.webservice.application.WebServiceExecuteAPI;
 @Service
 public class VoucherRangeService {
 
-	@Autowired
-	@Lazy
-	private VoucherDeleteService deleteService;
+	private final VoucherDeleteService deleteService;
+	private final WebServiceExecuteAPI apiService;
+	private final PropertyGetWithCacheService cacheService;
+	private final VoucherExtendMapper voucherExtendMapper;
 
-	@Autowired
-	@Lazy
-	private WebServiceExecuteAPI apiService;
-
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
-
-	@Autowired
-	@Lazy
-	private VoucherExtendMapper voucherExtendMapper;
+	public VoucherRangeService(@Lazy VoucherDeleteService deleteService, @Lazy WebServiceExecuteAPI apiService,
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy VoucherExtendMapper voucherExtendMapper) {
+		this.deleteService = deleteService;
+		this.apiService = apiService;
+		this.cacheService = cacheService;
+		this.voucherExtendMapper = voucherExtendMapper;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse clear(VoucherRangeRequest pItem, SharedToken pToken) throws ServerException {

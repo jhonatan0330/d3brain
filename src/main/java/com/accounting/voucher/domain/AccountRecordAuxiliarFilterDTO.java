@@ -1,6 +1,5 @@
 package com.accounting.voucher.domain;
 
-
 import org.apache.ibatis.type.Alias;
 
 import com.shared.domain.SharedDataObjectFilter;

@@ -2,7 +2,6 @@ package com.softure.inventory.application;
 
 import java.util.List;
 
-// BEGIN region interImport
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -15,7 +14,7 @@ import com.softure.inventory.domain.TrazabilidadProductoInventarioDTO;
 import com.softure.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import com.softure.inventory.infrastructure.TrazabilidadProductoInventarioMapper;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,20 +22,24 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.logisticpymes.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("trazabilidadProductoInventarioService")
 public class TrazabilidadProductoInventarioSvc
 		extends BasicSvc<TrazabilidadProductoInventarioDTO, TrazabilidadProductoInventarioFilterDTO> {
 
-	@Autowired @Lazy 
-	private TrazabilidadProductoInventarioMapper trazabilidadProductoInventarioMapper;
+	private final TrazabilidadProductoInventarioMapper trazabilidadProductoInventarioMapper;
+	private final ProductoInventarioSvc productoInventarioService;
+	private final ProductoSvc productoService;
 
-	// BEGIN region servicesTrazabilidadProductoInventario
-	@Autowired @Lazy 
-	ProductoInventarioSvc productoInventarioService;
-	@Autowired @Lazy 
-	ProductoSvc productoService;
-	// END region servicesTrazabilidadProductoInventario
+	public TrazabilidadProductoInventarioSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy TrazabilidadProductoInventarioMapper trazabilidadProductoInventarioMapper,
+			@Lazy ProductoInventarioSvc productoInventarioService, @Lazy ProductoSvc productoService) {
+		super(usuarioSesionService);
+		this.trazabilidadProductoInventarioMapper = trazabilidadProductoInventarioMapper;
+		this.productoInventarioService = productoInventarioService;
+		this.productoService = productoService;
+	}
 
 	@Override
 	public TrazabilidadProductoInventarioDTO consultaXId(String llave) throws ServerException {
@@ -55,27 +58,21 @@ public class TrazabilidadProductoInventarioSvc
 	@Override
 	public TrazabilidadProductoInventarioDTO activar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
-		// BEGIN TrazabilidadProductoInventario_activar
 		return super.activar(dto, token);
-		// END TrazabilidadProductoInventario_activar
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TrazabilidadProductoInventarioDTO actualizar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
-		// BEGIN TrazabilidadProductoInventario_actualizar
 		return super.actualizar(dto, token);
-		// END TrazabilidadProductoInventario_actualizar
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TrazabilidadProductoInventarioDTO inactivar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
-		// BEGIN TrazabilidadProductoInventario_inactivar
 		return super.inactivar(dto, token);
-		// END TrazabilidadProductoInventario_inactivar
 	}
 
 	@Override
@@ -98,7 +95,6 @@ public class TrazabilidadProductoInventarioSvc
 	@Override
 	public TrazabilidadProductoInventarioDTO guardar(TrazabilidadProductoInventarioDTO dto, String token)
 			throws ServerException {
-		// BEGIN TrazabilidadProductoInventario_guardar
 		TrazabilidadProductoInventarioDTO trazabilidad = dto;
 		if (trazabilidad.getCantidad() == null)
 			throw new ServerException("La cantidad del movimiento de producto no puede ser null");
@@ -113,8 +109,10 @@ public class TrazabilidadProductoInventarioSvc
 		// de bodegas del tipo campo, por motivos desconocidos si hago una consultar
 		// unica no me trae el inventario acabado de crear tocaba con el listar
 		List<ProductoInventarioDTO> inventarios = productoInventarioService.listarConsulta(inventarioFilter);
-		if(inventarios==null || inventarios.size()== 0) return trazabilidad;
-		//ProductoInventarioDTO inventario = productoInventarioService.consultaUnica(inventarioFilter);
+		if (inventarios == null || inventarios.size() == 0)
+			return trazabilidad;
+		// ProductoInventarioDTO inventario =
+		// productoInventarioService.consultaUnica(inventarioFilter);
 		ProductoInventarioDTO inventario = inventarios.get(0);
 		// LOGICA DE INVENTARIOS
 		if (inventario != null) {
@@ -140,10 +138,7 @@ public class TrazabilidadProductoInventarioSvc
 			inventario = productoInventarioService.actualizar(inventario, token);
 		}
 		return trazabilidad;
-		// END TrazabilidadProductoInventario_guardar
 	}
 
-// BEGIN region aditionalMethods
-// END region aditionalMethods
 
 }

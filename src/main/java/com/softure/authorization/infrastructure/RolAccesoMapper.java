@@ -10,9 +10,10 @@ import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
 @SoftureSqlConnMapper(value = "RolAccesoMapper")
-public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFilterDTO>{
+public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFilterDTO> {
 
-	List<RolAccesoDTO> consultaUsuarioDocumento(@Param("userId")String userId);
+	List<RolAccesoDTO> consultaUsuarioDocumento(@Param("userId") String userId);
+
 	List<RolAccesoDTO> getFullToSynchronize(@Param("process") List<String> process);
 
 }

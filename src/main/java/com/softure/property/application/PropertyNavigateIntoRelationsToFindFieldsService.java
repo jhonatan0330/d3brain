@@ -3,7 +3,6 @@ package com.softure.property.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -16,25 +15,31 @@ import com.softure.document_execution.domain.DocumentoRelacionExpedienteFilterDT
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class PropertyNavigateIntoRelationsToFindFieldsService {
 
-	@Autowired @Lazy 
-	private DocumentoRelacionExpedienteSvc documentRelationService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relationService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc fieldService;
-	
+	private final DocumentoRelacionExpedienteSvc documentRelationService;
+	private final RelacionInternaSvc relationService;
+	private final PedidoVentaCaracteristicaSvc fieldService;
+
+	public PropertyNavigateIntoRelationsToFindFieldsService(
+			@Lazy DocumentoRelacionExpedienteSvc documentRelationService, @Lazy RelacionInternaSvc relationService,
+			@Lazy PedidoVentaCaracteristicaSvc fieldService) {
+		this.documentRelationService = documentRelationService;
+		this.relationService = relationService;
+		this.fieldService = fieldService;
+	}
+
 	public List<PedidoVentaCaracteristicaDTO> call(String propertyId, List<PedidoVentaCaracteristicaDTO> fields)
 			throws ServerException {
 		List<RelacionInternaDTO> relations = relationService.relacionesPropiedad(propertyId);
 		return searchFieldText(relations, fields);
 	}
-	
-	private List<PedidoVentaCaracteristicaDTO> searchFieldText(List<RelacionInternaDTO> relations, List<PedidoVentaCaracteristicaDTO> fields)
-			throws ServerException {
+
+	private List<PedidoVentaCaracteristicaDTO> searchFieldText(List<RelacionInternaDTO> relations,
+			List<PedidoVentaCaracteristicaDTO> fields) throws ServerException {
 		if (relations == null || relations.isEmpty() || fields == null || fields.isEmpty())
 			return null;
 		List<PedidoVentaCaracteristicaDTO> valueOfFieldsToResult = null;
@@ -97,5 +102,5 @@ public class PropertyNavigateIntoRelationsToFindFieldsService {
 		}
 		return valueOfFieldsToResult;
 	}
-	
+
 }

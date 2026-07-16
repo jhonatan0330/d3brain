@@ -2,7 +2,6 @@ package com.softure.document_execution.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,19 +13,24 @@ import com.softure.document_execution.infrastructure.PedidoVentaTiempoMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaTiempoService")
 public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoVentaTiempoFilterDTO> {
-	
-	@Autowired @Lazy 
-	private PedidoVentaTiempoMapper pedidoVentaTiempoMapper;
-	
-	// BEGIN region servicesPedidoVentaTiempo
-	// END region servicesPedidoVentaTiempo
+
+	private final PedidoVentaTiempoMapper pedidoVentaTiempoMapper;
+
+	public PedidoVentaTiempoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy PedidoVentaTiempoMapper pedidoVentaTiempoMapper) {
+		super(usuarioSesionService);
+		this.pedidoVentaTiempoMapper = pedidoVentaTiempoMapper;
+	}
 
 	@Override
 	public PedidoVentaTiempoDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. PedidoVentaTiempo");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. PedidoVentaTiempo");
 		PedidoVentaTiempoFilterDTO dto = new PedidoVentaTiempoFilterDTO();
 		dto.setLlaveTabla(llave);
 		return pedidoVentaTiempoMapper.consultar(dto);
@@ -34,58 +38,46 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = pedidoVentaTiempoMapper;
+		this.mapper = pedidoVentaTiempoMapper;
 	}
-	
+
 	@Override
 	public PedidoVentaTiempoDTO activar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaTiempo_activar
 		return super.activar(dto, token);
-		// END PedidoVentaTiempo_activar
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public PedidoVentaTiempoDTO actualizar( PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaTiempo_actualizar
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public PedidoVentaTiempoDTO actualizar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
 		return super.actualizar(dto, token);
-		// END PedidoVentaTiempo_actualizar
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaTiempoDTO inactivar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaTiempo_inactivar
 		return super.inactivar(dto, token);
-		// END PedidoVentaTiempo_inactivar
 	}
-	
+
 	@Override
 	public PedidoVentaTiempoDTO consultaUnica(PedidoVentaTiempoFilterDTO dto) throws ServerException {
 		return super.consultaUnica(dto);
 	}
-	
+
 	@Override
 	public int contarResultados(PedidoVentaTiempoFilterDTO dto) throws ServerException {
 		return super.contarResultados(dto);
 	}
-	
+
 	@Override
-	public List<PedidoVentaTiempoDTO> listarConsulta(PedidoVentaTiempoFilterDTO dto)
-			throws ServerException {
+	public List<PedidoVentaTiempoDTO> listarConsulta(PedidoVentaTiempoFilterDTO dto) throws ServerException {
 		return super.listarConsulta(dto);
 	}
-	
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaTiempoDTO guardar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaTiempo_guardar
 		return super.guardar(dto, token);
-		// END PedidoVentaTiempo_guardar
 	}
 
-// BEGIN region aditionalMethods
-// END region aditionalMethods
 
 }

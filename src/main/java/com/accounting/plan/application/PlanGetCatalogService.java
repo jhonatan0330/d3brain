@@ -2,7 +2,6 @@ package com.accounting.plan.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.application.base.CatalogService;
@@ -10,14 +9,18 @@ import com.accounting.plan.domain.CatalogDTO;
 import com.accounting.plan.domain.CatalogFilterDTO;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("PlanGetCatalogAccountingService")
 public class PlanGetCatalogService {
 
-	@Autowired @Lazy 
-	private CatalogService catalogService;
-	
-	public List<CatalogDTO> getActive() throws ServerException{
+	private final CatalogService catalogService;
+
+	public PlanGetCatalogService(@Lazy CatalogService catalogService) {
+		this.catalogService = catalogService;
+	}
+
+	public List<CatalogDTO> getActive() throws ServerException {
 		CatalogFilterDTO filter = new CatalogFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		return catalogService.getMany(filter);

@@ -2,7 +2,6 @@ package com.softure.process_form.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,21 +29,34 @@ import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.property.domain.RelacionInternaFilterDTO;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/template")
 public class TemplateController {
 
-	@Autowired @Lazy  private CampoAdaptador adaptador;
-	@Autowired @Lazy  private DocumentoPlantillaSvc documentoplantillaService;
-	@Autowired @Lazy  private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired @Lazy  private DocumentoRelacionGestorSvc gestionService;
-	@Autowired @Lazy  private RelacionInternaSvc relacionesService;
-	@Autowired @Lazy  private PedidoVentaCaracteristicaSvc fieldsService;
-	
-	@GetMapping(value="/getTemplates/{profile}")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token, @PathVariable(name="profile") String pProfile)  throws ServerException  {
+	private final CampoAdaptador adaptador;
+	private final DocumentoPlantillaSvc documentoplantillaService;
+	private final DocumentoPlantillaCaracteristicaSvc campoService;
+	private final DocumentoRelacionGestorSvc gestionService;
+	private final RelacionInternaSvc relacionesService;
+	private final PedidoVentaCaracteristicaSvc fieldsService;
+
+	public TemplateController(@Lazy CampoAdaptador adaptador, @Lazy DocumentoPlantillaSvc documentoplantillaService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy DocumentoRelacionGestorSvc gestionService,
+			@Lazy RelacionInternaSvc relacionesService, @Lazy PedidoVentaCaracteristicaSvc fieldsService) {
+		this.adaptador = adaptador;
+		this.documentoplantillaService = documentoplantillaService;
+		this.campoService = campoService;
+		this.gestionService = gestionService;
+		this.relacionesService = relacionesService;
+		this.fieldsService = fieldsService;
+	}
+
+	@GetMapping(value = "/getTemplates/{profile}")
+	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token,
+			@PathVariable(name = "profile") String pProfile) throws ServerException {
 		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
 		filter.setSecurityToken(token);
 		switch (pProfile) {
@@ -58,42 +70,50 @@ public class TemplateController {
 			return documentoplantillaService.consultaUsuario(filter);
 		}
 	}
-	
-	@GetMapping(value="/getFields")
-	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token) throws ServerException {
+
+	@GetMapping(value = "/getFields")
+	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token)
+			throws ServerException {
 		DocumentoPlantillaDTO filterTemplate = new DocumentoPlantillaDTO();
 		filterTemplate.setLlaveTabla(id);
 		return documentoplantillaService.obtenerCampos(filterTemplate, token, true);
 	}
-	
-	@PostMapping(value="/getFieldData")
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/getFieldData")
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(
+			@RequestBody PedidoVentaCaracteristicaFilterDTO filterField, @RequestHeader("Authorization") String token)
+			throws ServerException {
 		filterField.setSecurityToken(token);
 		return adaptador.consultarDatosBase(filterField);
 	}
-	
-	@PostMapping(value="/getTrace")
-	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/getTrace")
+	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		filterField.setSecurityToken(token);
 		return gestionService.listarExpedientesGestionadores(filterField);
 	}
-	
-	@GetMapping(value="/getTraceFields/{documentId}/{transaction}")
-	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable(name="documentId") String pDocumentId, @PathVariable(name="transaction") String pTransaction, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@GetMapping(value = "/getTraceFields/{documentId}/{transaction}")
+	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable(name = "documentId") String pDocumentId,
+			@PathVariable(name = "transaction") String pTransaction, @RequestHeader("Authorization") String token)
+			throws ServerException {
 		return fieldsService.listar2Gestor(pDocumentId, pTransaction);
 	}
-	
-	@PostMapping(value="/getPropertyRelations")
-	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/getPropertyRelations")
+	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		filter.setSecurityToken(token);
 		return relacionesService.listarConsulta(filter);
 	}
-	
-	@PostMapping(value="/validateLoad")
-	public DocumentoPlantillaCaracteristicaDTO validateLoad(@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter, @RequestHeader("Authorization") String token)  throws ServerException  {
+
+	@PostMapping(value = "/validateLoad")
+	public DocumentoPlantillaCaracteristicaDTO validateLoad(
+			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter, @RequestHeader("Authorization") String token)
+			throws ServerException {
 		filter.setSecurityToken(token);
 		return campoService.listarCarga(filter);
 	}
-	
-	
+
 }

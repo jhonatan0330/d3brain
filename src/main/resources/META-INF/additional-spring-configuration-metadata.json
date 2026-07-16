@@ -30,17 +30,17 @@
     "description": "A description for 'db.password'"
   },
   {
-    "name": "fixedDelayApi.in.milliseconds",
+    "name": "cron.fixedDelayApi",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayApi.in.milliseconds'"
   },
   {
-    "name": "fixedDelayMail.in.milliseconds",
+    "name": "cron.fixedDelayMail",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayMail.in.milliseconds'"
   },
   {
-    "name": "fixedDelayTask.in.milliseconds",
+    "name": "cron.fixedDelayTask",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayTask.in.milliseconds'"
   },
@@ -55,24 +55,6 @@
     "description": "A description for 'cron.account'"
   },
   {
-    "name": "fixedDelayAccount",
-    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
-  },
-  {
-    "name": "fixedDelayAccount.in",
-    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
-  },
-  {
-    "name": "fixedDelayAccount.in.milliseconds",
-    "type": "java.lang.Integer",
-    "description": "A description for 'fixedDelayAccount.in.milliseconds'"
-  },
-  {
-    "name": "fixedDelayMail.in.milliseconds",
-    "type": "java.lang.String",
-    "description": "A description for 'fixedDelayMail.in.milliseconds'"
-  },
-  {
     "name": "app",
     "description": "A description for 'pathFiles'"
   },
@@ -82,7 +64,7 @@
     "description": "A description for 'app.pathFiles'"
   },
   {
-    "name": "fixedDelayAccount.in.milliseconds",
+    "name": "tenant.default-id",
     "type": "java.lang.String",
     "description": "A description for 'fixedDelayAccount.in.milliseconds'"
   }

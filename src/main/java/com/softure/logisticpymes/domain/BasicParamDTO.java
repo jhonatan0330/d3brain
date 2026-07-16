@@ -15,6 +15,6 @@ public abstract class BasicParamDTO extends BasicDTO {
 
 	public void setPropiedades(List<PropiedadDTO> propiedades) {
 		this.propiedades = propiedades;
-	}	
+	}
 
 }

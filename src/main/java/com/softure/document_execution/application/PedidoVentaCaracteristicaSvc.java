@@ -16,7 +16,6 @@ import com.softure.java.services.SoftureUtil;
 import jakarta.annotation.PostConstruct;
 import com.softure.logisticpymes.application.BasicSvc;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,27 +30,30 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_execution.infrastructure.PedidoVentaCaracteristicaMapper;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaCaracteristicaService")
 public class PedidoVentaCaracteristicaSvc
 		extends BasicSvc<PedidoVentaCaracteristicaDTO, PedidoVentaCaracteristicaFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper;
-	@Autowired
-	@Lazy
-	private ProcessTemplate templatesService;
+	private final PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper;
+	private final ProcessTemplate templatesService;
+	private final CampoAdaptador adaptador;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
 
-	@Autowired
-	@Lazy
-	private CampoAdaptador adaptador;
-	@Autowired
-	@Lazy
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
+	public PedidoVentaCaracteristicaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper,
+			@Lazy ProcessTemplate templatesService, @Lazy CampoAdaptador adaptador,
+			@Lazy DetallePedidoVentaSvc detallePedidoVentaService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc campoDocumentoService) {
+		super(usuarioSesionService);
+		this.pedidoVentaCaracteristicaMapper = pedidoVentaCaracteristicaMapper;
+		this.templatesService = templatesService;
+		this.adaptador = adaptador;
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.campoDocumentoService = campoDocumentoService;
+	}
 
 	@Override
 	public PedidoVentaCaracteristicaDTO consultaXId(String llave) throws ServerException {
@@ -71,40 +73,33 @@ public class PedidoVentaCaracteristicaSvc
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO actualizar(PedidoVentaCaracteristicaDTO dto, String token)
 			throws ServerException {
-		// BEGIN PedidoVentaCaracteristica_actualizar
 		if (dto.getValorNumero() != null && dto.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 			dto.setValorNumero(null);
 		return update(dto);
 		// pues si lo uso, pero lo debo qutar
 		// throw new ServerException("En teoria no se usa este metodo");
-		// END PedidoVentaCaracteristica_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO dto, String token)
 			throws ServerException {
-		// BEGIN PedidoVentaCaracteristica_inactivar
 		if (dto.getTransaccionInactivo() == null)
 			throw new ServerException("Se encesita la transaccion de inactivar");
 		if (dto.getPrincipal() == null)
 			throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");
 		return pedidoVentaCaracteristicaMapper.inactivarCampoHistorico(dto.getLlaveTabla(),
 				dto.getTransaccionInactivo(), (dto.getPrincipal().getHistorico() == null) ? null : "Historico");
-		// END PedidoVentaCaracteristica_inactivar
 	}
 
 	public PedidoVentaCaracteristicaDTO completarDatosBase(PedidoVentaCaracteristicaFilterDTO dto)
 			throws ServerException {
-		// BEGIN region completarDatosBase
 		return transformFilter2VO(adaptador.consultarDatosBase(dto));
-		// END region completarDatosBase
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PedidoVentaCaracteristicaDTO guardar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
-		// BEGIN PedidoVentaCaracteristica_guardar
 		if (dto.getPrincipal() == null)
 			throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");
 		if (dto.getValorText() != null && dto.getValorText().length() > 4000)
@@ -122,7 +117,6 @@ public class PedidoVentaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaDTO base = dto.getCampoDTO();
 		dto.setCampoDTO(base);
 		return dto;
-		// END PedidoVentaCaracteristica_guardar
 	}
 
 	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico)
@@ -152,7 +146,8 @@ public class PedidoVentaCaracteristicaSvc
 				if (iFieldTemplateDTO.getLlaveTabla().compareTo(iCurrentField.getCampo()) == 0) {
 					iCurrentField.setCampoDTO(iFieldTemplateDTO);
 					if (iFieldTemplateDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
-						iCurrentField.setDetalles(detallePedidoVentaService.listar2Documento(documentId, iCurrentField.getLlaveTabla()));
+						iCurrentField.setDetalles(
+								detallePedidoVentaService.listar2Documento(documentId, iCurrentField.getLlaveTabla()));
 						for (DetallePedidoVentaDTO detalleDocumento : iCurrentField.getDetalles()) {
 							detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
 									Propiedades.obtenerValor(iFieldTemplateDTO, Propiedades.ITEM_DETAIL_FORM_VISIBLE));
@@ -244,7 +239,8 @@ public class PedidoVentaCaracteristicaSvc
 	}
 
 	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, String token,
-			List<PedidoVentaCaracteristicaDTO> dependientes, DocumentoPlantillaCaracteristicaDTO pCampoDTO) throws ServerException {
+			List<PedidoVentaCaracteristicaDTO> dependientes, DocumentoPlantillaCaracteristicaDTO pCampoDTO)
+			throws ServerException {
 		if (propFunction == null)
 			return BigDecimal.ZERO;
 		if (Propiedades.isFunctionNotFreeMarker(propFunction.getValor())) {
@@ -265,15 +261,16 @@ public class PedidoVentaCaracteristicaSvc
 						SoftureUtil.formatFunction(propFunction.getLlaveTabla()), documento, token,
 						dependientesOrdenados);
 			} catch (Exception e) {
-				String _log = "El campo " + pCampoDTO.getNombre()+ " de la plantilla " + pCampoDTO.getPlantillaNombre()
-				+ " envia el siguiente error";
-				throw new ServerException( e.getMessage(), _log);
+				String _log = "El campo " + pCampoDTO.getNombre() + " de la plantilla " + pCampoDTO.getPlantillaNombre()
+						+ " envia el siguiente error";
+				throw new ServerException(e.getMessage(), _log);
 			}
 		} else {
 			String parameters = templatesService.transformDependsToParams(dependientes);
 			try {
 				String _calculateValue = templatesService.generateOutputFile(propFunction.getValor(), parameters);
-				if(_calculateValue==null) return BigDecimal.ONE.negate();
+				if (_calculateValue == null)
+					return BigDecimal.ONE.negate();
 				_calculateValue = _calculateValue.replaceAll("\\s+", "");
 				return new BigDecimal(_calculateValue);
 			} catch (NumberFormatException nf) {
@@ -331,8 +328,6 @@ public class PedidoVentaCaracteristicaSvc
 		}
 
 	}
-
-	
 
 	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId) throws ServerException {
 		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);
@@ -496,7 +491,7 @@ public class PedidoVentaCaracteristicaSvc
 		try {
 			return pedidoVentaCaracteristicaMapper.getCodeKeyOfTemplate(pTemplate, pCode);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble");
 		}
 	}
 
@@ -506,7 +501,7 @@ public class PedidoVentaCaracteristicaSvc
 		try {
 			return pedidoVentaCaracteristicaMapper.getKeyOfDocumentBase(pCodeKey, pValue);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble");
 		}
 	}
 
@@ -514,11 +509,11 @@ public class PedidoVentaCaracteristicaSvc
 			throws ServerException {
 		if (pKeyBase == null || pKeyBase.isEmpty() || pCodeTemplate == null || pCodeTemplate.isEmpty())
 			return null;
-		
+
 		try {
 			return pedidoVentaCaracteristicaMapper.getKeyToReplace(pKeyBase, pTemplate, pCodeTemplate);
 		} catch (Exception e) {
-			throw new ServerException(e.getMessage(), " : Configuracion contable doble" );
+			throw new ServerException(e.getMessage(), " : Configuracion contable doble");
 		}
 	}
 

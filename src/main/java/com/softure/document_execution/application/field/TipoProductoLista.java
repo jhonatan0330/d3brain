@@ -2,8 +2,6 @@ package com.softure.document_execution.application.field;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -18,16 +16,21 @@ import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoProductoLista {
 
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy 
-	private ProductoSvc productoService;
-	@Autowired @Lazy 
-	private UsuarioRolProductoSvc usuarioRolProductoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final ProductoSvc productoService;
+	private final UsuarioRolProductoSvc usuarioRolProductoService;
+
+	public TipoProductoLista(@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService,
+			@Lazy ProductoSvc productoService, @Lazy UsuarioRolProductoSvc usuarioRolProductoService) {
+		this.caracteristicaService = caracteristicaService;
+		this.productoService = productoService;
+		this.usuarioRolProductoService = usuarioRolProductoService;
+	}
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		UsuarioRolProductoFilterDTO urp = new UsuarioRolProductoFilterDTO();
@@ -36,7 +39,8 @@ public class TipoProductoLista {
 		pCampo.setProductosExclusivos(usuarioRolProductoService.listarConsulta(urp));
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getProductosExclusivos() == null || pCampo.getProductosExclusivos().size() == 0))
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
@@ -84,7 +88,8 @@ public class TipoProductoLista {
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
-		if(pCampo.getProductosExclusivos()==null) return pCampo;
+		if (pCampo.getProductosExclusivos() == null)
+			return pCampo;
 		for (UsuarioRolProductoDTO producto : pCampo.getProductosExclusivos()) {
 			if (producto.getLlaveTabla() == null) {
 				producto.setDocumento(pCampo.getDocumento());
@@ -112,7 +117,8 @@ public class TipoProductoLista {
 		entityFilt.setFiltroParametro(pCampo.getFiltroParametro());
 		pBase.setProductos(productoService.listarConsulta(entityFilt));
 
-		// Creo que solo lo uso para branding box que es dar promociones por paquetes de 30
+		// Creo que solo lo uso para branding box que es dar promociones por paquetes de
+		// 30
 		if (pBase.getProductos() != null && !pBase.getProductos().isEmpty()) {
 			for (ProductoDTO productoDTO : pBase.getProductos()) {
 				productoDTO.setCantidadPromocionBase(30);

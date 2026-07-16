@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.softure.tariff.domain.TarifarioDTO;
@@ -13,12 +11,16 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 import com.softure.tariff.infrastructure.TarifarioMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("TarifarioSoftureService")
 public class TarifarioService {
 
-	@Autowired @Lazy
-	private TarifarioMapper mapper;
+	private final TarifarioMapper mapper;
+
+	public TarifarioService(@Lazy TarifarioMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public TarifarioDTO getById(String id) throws ServerException {
 		if (id == null)

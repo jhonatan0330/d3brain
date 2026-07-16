@@ -6,7 +6,7 @@ import java.security.KeyStoreException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +24,16 @@ import xades4j.XAdES4jException;
 @RequestMapping("fe")
 public class FERest {
 
-	@Autowired @Lazy 
-	SignerService signerService;
-	
-	@Autowired @Lazy 
-	DianWsSecuritySigner headerService;
+	private final SignerService signerService;
+	private final DianWsSecuritySigner headerService;
+
+	public FERest(@Lazy SignerService signerService, @Lazy DianWsSecuritySigner headerService) {
+		this.signerService = signerService;
+		this.headerService = headerService;
+	}
 
 	@PostMapping("/sign")
-	public FEResponse transformXML(@RequestBody String xml) throws ServerException {	
+	public FEResponse transformXML(@RequestBody String xml) throws ServerException {
 		FEResponse responseFe = new FEResponse();
 		try {
 			signerService.sign(xml, responseFe, false);
@@ -57,9 +59,9 @@ public class FERest {
 		}
 		return responseFe;
 	}
-	
+
 	@PostMapping("/signWithZip")
-	public FEResponse transformXMLWithZip(@RequestBody String xml) throws ServerException {	
+	public FEResponse transformXMLWithZip(@RequestBody String xml) throws ServerException {
 		FEResponse responseFe = new FEResponse();
 		try {
 			signerService.sign(xml, responseFe, true);
@@ -85,9 +87,9 @@ public class FERest {
 		}
 		return responseFe;
 	}
-	
+
 	@PostMapping("/signNE")
-	public FEResponse transformXMLNE(@RequestBody String xml) throws ServerException {	
+	public FEResponse transformXMLNE(@RequestBody String xml) throws ServerException {
 		FEResponse responseFe = new FEResponse();
 		try {
 			signerService.signNE(xml, responseFe, false);
@@ -113,9 +115,9 @@ public class FERest {
 		}
 		return responseFe;
 	}
-	
+
 	@PostMapping("/signNEWithZip")
-	public FEResponse transformXMLNEWithZip(@RequestBody String xml) throws ServerException {	
+	public FEResponse transformXMLNEWithZip(@RequestBody String xml) throws ServerException {
 		FEResponse responseFe = new FEResponse();
 		try {
 			signerService.signNE(xml, responseFe, true);
@@ -141,14 +143,14 @@ public class FERest {
 		}
 		return responseFe;
 	}
-	
+
 	@PostMapping("/generateCU")
 	public FEResponse generateCUFE(@RequestBody String xml) throws ServerException {
 		return signerService.generateCodigo(xml);
 	}
-	
+
 	@PostMapping("/signHeader")
-	public FEResponse transformHeaderXML(@RequestBody String xml) throws ServerException {	
+	public FEResponse transformHeaderXML(@RequestBody String xml) throws ServerException {
 		FEResponse responseFe = new FEResponse();
 		try {
 			headerService.signHeader(xml, responseFe, false);

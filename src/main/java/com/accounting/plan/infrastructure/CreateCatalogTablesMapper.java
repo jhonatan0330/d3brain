@@ -8,13 +8,13 @@ import com.softure.SoftureSqlConnMapper;
 public interface CreateCatalogTablesMapper {
 
 	void createTemporal(@Param("code") String code);
-	
+
 	void createPuntual(@Param("code") String code);
-	
+
 	void createVoucher(@Param("code") String code);
-	
+
 	void createRegister(@Param("code") String code);
-	
+
 	void createAuxiliar(@Param("code") String code);
-	
+
 }

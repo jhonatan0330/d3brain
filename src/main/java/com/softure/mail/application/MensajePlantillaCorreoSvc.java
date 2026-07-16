@@ -2,7 +2,6 @@ package com.softure.mail.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,14 +14,21 @@ import com.softure.mail.infrastructure.MensajePlantillaCorreoMapper;
 import com.softure.property.application.PropiedadSvc;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("mensajePlantillaCorreoService")
 public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDTO, MensajePlantillaCorreoFilterDTO> {
 
-	@Autowired @Lazy 
-	private MensajePlantillaCorreoMapper mensajePlantillaCorreoMapper;
-	@Autowired @Lazy 
-	private PropiedadSvc paramService;
+	private final MensajePlantillaCorreoMapper mensajePlantillaCorreoMapper;
+	private final PropiedadSvc paramService;
+
+	public MensajePlantillaCorreoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy MensajePlantillaCorreoMapper mensajePlantillaCorreoMapper, @Lazy PropiedadSvc paramService) {
+		super(usuarioSesionService);
+		this.mensajePlantillaCorreoMapper = mensajePlantillaCorreoMapper;
+		this.paramService = paramService;
+	}
 
 	@Override
 	public MensajePlantillaCorreoDTO consultaXId(String llave) throws ServerException {
@@ -40,26 +46,20 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 
 	@Override
 	public MensajePlantillaCorreoDTO activar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
-		// BEGIN MensajePlantillaCorreo_activar
 		return super.activar(dto, token);
-		// END MensajePlantillaCorreo_activar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO actualizar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
-		// BEGIN MensajePlantillaCorreo_actualizar
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return super.actualizar(dto, token);
-		// END MensajePlantillaCorreo_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO inactivar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
-		// BEGIN MensajePlantillaCorreo_inactivar
 		return super.inactivar(dto, token);
-		// END MensajePlantillaCorreo_inactivar
 	}
 
 	@Override
@@ -80,16 +80,12 @@ public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDT
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MensajePlantillaCorreoDTO guardar(MensajePlantillaCorreoDTO dto, String token) throws ServerException {
-		// BEGIN MensajePlantillaCorreo_guardar
 		return super.guardar(dto, token);
-		// END MensajePlantillaCorreo_guardar
 	}
 
 	public List<MensajePlantillaCorreoDTO> getFullToSynchronize(List<String> process) {
 		return mensajePlantillaCorreoMapper.getFullToSynchronize(process);
 	}
 
-// BEGIN region aditionalMethods
-// END region aditionalMethods
 
 }

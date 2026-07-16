@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,21 +13,30 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 import com.softure.gps.domain.GPSDispositivoDTO;
 import com.softure.gps.domain.GPSLocalizacionDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class GPSReportLocationsService {
-	
-	@Autowired @Lazy  private GPSGetDevicesByTokenService getDevicesByTokenService;
-	@Autowired @Lazy  private GPSLocalizacionSvc locationService;
-	@Autowired @Lazy  private GPSEnrollDeviceService enrollDeviceService;
+
+	private final GPSGetDevicesByTokenService getDevicesByTokenService;
+	private final GPSLocalizacionSvc locationService;
+	private final GPSEnrollDeviceService enrollDeviceService;
+
+	public GPSReportLocationsService(@Lazy GPSGetDevicesByTokenService getDevicesByTokenService,
+			@Lazy GPSLocalizacionSvc locationService, @Lazy GPSEnrollDeviceService enrollDeviceService) {
+		this.getDevicesByTokenService = getDevicesByTokenService;
+		this.locationService = locationService;
+		this.enrollDeviceService = enrollDeviceService;
+	}
 
 	@Transactional
 	public SharedIdResponse call(String token, List<GPSLocalizacionDTO> locations) throws ServerException {
 		GPSDispositivoDTO device = getDevicesByTokenService.call(token);
-		//if(name ==null || name.isEmpty()) throw new ServerException("El identificador del dispositivo viene vacio");
-		if(device == null) {
+		// if(name ==null || name.isEmpty()) throw new ServerException("El identificador
+		// del dispositivo viene vacio");
+		if (device == null) {
 			device = new GPSDispositivoDTO();
-			device.setLlaveTabla( enrollDeviceService.call(token).getId());
+			device.setLlaveTabla(enrollDeviceService.call(token).getId());
 		}
 		for (GPSLocalizacionDTO gpsLocalizacionDTO : locations) {
 			gpsLocalizacionDTO.setDispositivo(device.getLlaveTabla());
@@ -41,26 +49,32 @@ public class GPSReportLocationsService {
 		// algun dia guardare las transacciones de envio
 		return new SharedIdResponse(device.getLlaveTabla());
 	}
-	
+
 	public void callByForm(String token, String location, String documento, String codigo) throws ServerException {
 		GPSDispositivoDTO device = getDevicesByTokenService.call(token);
-		//if(name ==null || name.isEmpty()) throw new ServerException("El identificador del dispositivo viene vacio");
-		if(device == null) return;
+		// if(name ==null || name.isEmpty()) throw new ServerException("El identificador
+		// del dispositivo viene vacio");
+		if (device == null)
+			return;
 		GPSLocalizacionDTO gpsLocalizacionDTO = new GPSLocalizacionDTO();
 		gpsLocalizacionDTO.setDispositivo(device.getLlaveTabla());
 		gpsLocalizacionDTO.setDocumento(documento);
 		gpsLocalizacionDTO.setCodigo(codigo);
 		gpsLocalizacionDTO.setFecha(new Date());
 		gpsLocalizacionDTO.setFechaReporte(new Date());
-		Pattern pat = Pattern.compile("^([-+])?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*([-+])?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$");
-	    Matcher mat = pat.matcher(location);                                                                           
-	    if (!mat.matches()) return;
-	    
+		Pattern pat = Pattern.compile(
+				"^([-+])?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?),\\s*([-+])?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$");
+		Matcher mat = pat.matcher(location);
+		if (!mat.matches())
+			return;
+
 		gpsLocalizacionDTO.setLatitud(new BigDecimal(mat.group(2)));
-		if(mat.group(1)!=null)gpsLocalizacionDTO.setLatitud(gpsLocalizacionDTO.getLatitud().negate());
+		if (mat.group(1) != null)
+			gpsLocalizacionDTO.setLatitud(gpsLocalizacionDTO.getLatitud().negate());
 		gpsLocalizacionDTO.setLongitud(new BigDecimal(mat.group(6)));
-		if(mat.group(5)!=null)gpsLocalizacionDTO.setLongitud(gpsLocalizacionDTO.getLongitud().negate());
+		if (mat.group(5) != null)
+			gpsLocalizacionDTO.setLongitud(gpsLocalizacionDTO.getLongitud().negate());
 		locationService.saveSimple(gpsLocalizacionDTO);
-		
+
 	}
 }

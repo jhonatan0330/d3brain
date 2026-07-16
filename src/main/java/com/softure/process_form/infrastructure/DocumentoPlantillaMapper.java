@@ -10,13 +10,14 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
 @SoftureSqlConnMapper(value = "DocumentoPlantillaMapper")
-public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO>{
-	
+public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO> {
 
 	List<DocumentoPlantillaDTO> listarMenu(DocumentoPlantillaFilterDTO dto);
+
 	List<DocumentoPlantillaDTO> getProcessBoardsToMenu(DocumentoPlantillaFilterDTO dto);
+
 	List<DocumentoPlantillaDTO> getFullToSynchronize(@Param("process") List<String> process);
+
 	List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace();
 
-	
 }

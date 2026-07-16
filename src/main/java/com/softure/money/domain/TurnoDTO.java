@@ -9,8 +9,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("TurnoDTO")
 public class TurnoDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 	public static final String ESTADO_INACTIVO = "I";
 	public static final String ESTADO_EJECUCION = "E";
@@ -32,67 +30,73 @@ public class TurnoDTO extends BasicDTO
 	public void setFechaApertura(Date fechaApertura) {
 		this.fechaApertura = fechaApertura;
 	}
-	
+
 	public Date getFechaApertura() {
 		return fechaApertura;
 	}
+
 	public void setFechaEntrega(Date fechaEntrega) {
 		this.fechaEntrega = fechaEntrega;
 	}
-	
+
 	public Date getFechaEntrega() {
 		return fechaEntrega;
 	}
+
 	public void setMontoInicial(BigDecimal montoInicial) {
 		this.montoInicial = montoInicial;
 	}
-	
+
 	public BigDecimal getMontoInicial() {
 		return montoInicial;
 	}
+
 	public void setMontoFinal(BigDecimal montoFinal) {
 		this.montoFinal = montoFinal;
 	}
-	
+
 	public BigDecimal getMontoFinal() {
 		return montoFinal;
 	}
+
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
+
 	public String getUsuario() {
 		return usuario;
 	}
+
 	public void setUsuarioNombre(String usuarioNombre) {
 		this.usuarioNombre = usuarioNombre;
 	}
-	
+
 	public String getUsuarioNombre() {
 		return usuarioNombre;
 	}
+
 	public void setCuenta(String cuenta) {
 		this.cuenta = cuenta;
 	}
-	
+
 	public String getCuenta() {
 		return cuenta;
 	}
+
 	public void setCuentaNombre(String cuentaNombre) {
 		this.cuentaNombre = cuentaNombre;
 	}
-	
+
 	public String getCuentaNombre() {
 		return cuentaNombre;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

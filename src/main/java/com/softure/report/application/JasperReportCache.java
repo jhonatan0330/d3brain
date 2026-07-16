@@ -24,41 +24,42 @@ import net.sf.jasperreports.engine.JasperReport;
 @Component
 public class JasperReportCache {
 
-    private final Map<String, JasperReport> cache = new ConcurrentHashMap<>();
+	private final Map<String, JasperReport> cache = new ConcurrentHashMap<>();
 
-    public JasperReport getReport(String reportejrxml, String pReportKey) throws ServerException {
-    	 try {
-             // 1. Extraer UUID
-             String reportName = SoftureUtil.formatFunction(pReportKey + readUUID(new ByteArrayInputStream(reportejrxml.getBytes("UTF-8"))));
+	public JasperReport getReport(String reportejrxml, String pReportKey) throws ServerException {
+		try {
+			// 1. Extraer UUID
+			String reportName = SoftureUtil
+					.formatFunction(pReportKey + readUUID(new ByteArrayInputStream(reportejrxml.getBytes("UTF-8"))));
 
-             // 2. Compilar y cachear si no existe
-             return cache.computeIfAbsent(reportName, key -> {
-                 try (InputStream compileStream = new ByteArrayInputStream(reportejrxml.getBytes("UTF-8"))) {
-                     return JasperCompileManager.compileReport(compileStream);
-                 } catch (Exception e) {
-                	 throw new RuntimeException("Error compiling report", e);
-                 }
-             });
+			// 2. Compilar y cachear si no existe
+			return cache.computeIfAbsent(reportName, key -> {
+				try (InputStream compileStream = new ByteArrayInputStream(reportejrxml.getBytes("UTF-8"))) {
+					return JasperCompileManager.compileReport(compileStream);
+				} catch (Exception e) {
+					throw new RuntimeException("Error compiling report", e);
+				}
+			});
 
-         } catch (Exception e) {
-             throw new ServerException(e.getMessage(), "Error reading report UUID");
-         }
-    }
+		} catch (Exception e) {
+			throw new ServerException(e.getMessage(), "Error reading report UUID");
+		}
+	}
 
-    public void clearCache() {
-        cache.clear();
-    }
+	public void clearCache() {
+		cache.clear();
+	}
 
-    public void removeReport(String reportName) {
-        cache.remove(reportName);
-    }
-    
-    private String readUUID(InputStream pIoStream) throws ParserConfigurationException, SAXException, IOException {
-    	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true); // Jasper usa xmlns
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(pIoStream);
-        Element jasperReport = doc.getDocumentElement();
-        return jasperReport.getAttribute("uuid");
-    }
+	public void removeReport(String reportName) {
+		cache.remove(reportName);
+	}
+
+	private String readUUID(InputStream pIoStream) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true); // Jasper usa xmlns
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(pIoStream);
+		Element jasperReport = doc.getDocumentElement();
+		return jasperReport.getAttribute("uuid");
+	}
 }

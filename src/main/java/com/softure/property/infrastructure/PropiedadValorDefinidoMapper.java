@@ -8,12 +8,10 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.PropiedadValorDefinidoFilterDTO;
 
 @SoftureSqlConnMapper(value = "PropiedadValorDefinidoMapper")
-public interface PropiedadValorDefinidoMapper extends IBasicMapper<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO>{
-	
+public interface PropiedadValorDefinidoMapper
+		extends IBasicMapper<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO> {
 
-// BEGIN region aditionalMethods  
 	List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto);
-// END region aditionalMethods
 
 	List<PropiedadValorDefinidoDTO> getFullToSynchronize();
 }

@@ -1,11 +1,10 @@
 package com.configuration.homologate.domain;
 
-
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("ConfigTemplateRelationDTO")
-public class ConfigTemplateRelationDTO extends SharedDataObject{
+public class ConfigTemplateRelationDTO extends SharedDataObject {
 
 	private String entity;
 	private String entityField;

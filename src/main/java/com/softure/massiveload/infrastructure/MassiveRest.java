@@ -5,37 +5,37 @@ import com.shared.domain.SharedIdResponse;
 import com.softure.massiveload.application.MassiveItemSincronizeService;
 import com.softure.massiveload.application.MassiveSincronizeService;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.annotation.Lazy;
 // End of user code
 
 @RestController
 @RequestMapping("massiveload")
 public class MassiveRest {
 
+	private final MassiveItemSincronizeService cargaMasivaItemsincronizeService;
 
-	@Autowired @Lazy 
-	private MassiveItemSincronizeService cargaMasivaItemsincronizeService;
+	public MassiveRest(@Lazy MassiveItemSincronizeService cargaMasivaItemsincronizeService,
+			@Lazy MassiveSincronizeService cargaMasivasincronizeService) {
+		this.cargaMasivaItemsincronizeService = cargaMasivaItemsincronizeService;
+		this.cargaMasivasincronizeService = cargaMasivasincronizeService;
+	}
 
 	@PostMapping("/sincronizeCargaMasivaItem")
-	public SharedIdResponse sincronizeCargaMasivaItem(@RequestHeader(name = "Authorization") String token
-			,@RequestBody String itemId
-		) throws ServerException {
+	public SharedIdResponse sincronizeCargaMasivaItem(@RequestHeader(name = "Authorization") String token,
+			@RequestBody String itemId) throws ServerException {
 		return cargaMasivaItemsincronizeService.call(token, itemId);
 	}
 
-	@Autowired @Lazy 
-	private MassiveSincronizeService cargaMasivasincronizeService;
+	private final MassiveSincronizeService cargaMasivasincronizeService;
 
 	@PostMapping("/sincronizeCargaMasiva")
-	public SharedIdResponse sincronizeCargaMasiva(@RequestHeader(name = "Authorization") String token
-			,@RequestBody String fileUrl
-			,@RequestBody String template
-		) throws ServerException {
+	public SharedIdResponse sincronizeCargaMasiva(@RequestHeader(name = "Authorization") String token,
+			@RequestBody String fileUrl, @RequestBody String template) throws ServerException {
 		return cargaMasivasincronizeService.call(token, fileUrl, template);
 	}
 

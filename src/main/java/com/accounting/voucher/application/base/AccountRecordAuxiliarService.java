@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.voucher.domain.AccountRecordAuxiliarDTO;
@@ -13,12 +11,16 @@ import com.accounting.voucher.domain.AccountRecordAuxiliarFilterDTO;
 import com.accounting.voucher.infrastructure.AccountRecordAuxiliarMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("AccountRecordAuxiliarAccountingService")
 public class AccountRecordAuxiliarService {
 
-	@Autowired @Lazy
-	private AccountRecordAuxiliarMapper mapper;
+	private final AccountRecordAuxiliarMapper mapper;
+
+	public AccountRecordAuxiliarService(@Lazy AccountRecordAuxiliarMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public AccountRecordAuxiliarDTO getById(String id) throws ServerException {
 		if (id == null)

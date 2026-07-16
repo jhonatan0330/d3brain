@@ -9,7 +9,6 @@ import com.softure.logisticpymes.application.BasicSvc;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +19,22 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.infrastructure.ConsecutivoMapper;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("consecutivoService")
 public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDTO> {
 
-	@Autowired @Lazy 
-	private ConsecutivoMapper consecutivoMapper;
+	private final ConsecutivoMapper consecutivoMapper;
 
-	// BEGIN region servicesConsecutivo
-	@Autowired @Lazy 
-	private DocumentoPlantillaSvc plantillaService;
-	// END region servicesConsecutivo
+	public ConsecutivoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ConsecutivoMapper consecutivoMapper,
+			@Lazy DocumentoPlantillaSvc plantillaService) {
+		super(usuarioSesionService);
+		this.consecutivoMapper = consecutivoMapper;
+		this.plantillaService = plantillaService;
+	}
+
+	private final DocumentoPlantillaSvc plantillaService;
 
 	@Override
 	public ConsecutivoDTO consultaXId(String llave) throws ServerException {
@@ -48,25 +52,19 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 
 	@Override
 	public ConsecutivoDTO activar(ConsecutivoDTO dto, String token) throws ServerException {
-		// BEGIN Consecutivo_activar
 		return super.activar(dto, token);
-		// END Consecutivo_activar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ConsecutivoDTO actualizar(ConsecutivoDTO dto, String token) throws ServerException {
-		// BEGIN Consecutivo_actualizar
 		return super.actualizar(dto, token);
-		// END Consecutivo_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ConsecutivoDTO inactivar(ConsecutivoDTO dto, String token) throws ServerException {
-		// BEGIN Consecutivo_inactivar
 		return super.inactivar(dto, token);
-		// END Consecutivo_inactivar
 	}
 
 	@Override
@@ -86,7 +84,6 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ConsecutivoDTO asignarConsecutivo(ConsecutivoDTO dto, String token) throws ServerException {
-		// BEGIN region asignarConsecutivo
 		if (dto.getLlaveTabla() == null)
 			throw new ServerException("Para asignar el consecutivo se debe enviar la clave del consecutivo");
 		ConsecutivoDTO consecutivoBD = consultaXId(dto.getLlaveTabla());
@@ -121,25 +118,21 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			if (!consecutivoBD.getPadding().contains("%"))
 				throw new ServerException("El padding del consecutivo " + consecutivoBD.getNombre()
 						+ " no es correcto sigue este ejemplo : %07d (rellena con ceros en 7 espacios)");
-			cons = cons + consecutivoBD.getPadding().toLowerCase().formatted(
-				consecutivoBD.getNumeroActual().toBigInteger());
+			cons = cons + consecutivoBD.getPadding().toLowerCase()
+					.formatted(consecutivoBD.getNumeroActual().toBigInteger());
 		}
 		if (consecutivoBD.getSufijo() != null)
 			cons = cons + consecutivoBD.getSufijo();
 		consecutivoBD.setConsecutivoActual(cons);
 		return consecutivoBD;
-		// END region asignarConsecutivo
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ConsecutivoDTO guardar(ConsecutivoDTO dto, String token) throws ServerException {
-		// BEGIN Consecutivo_guardar
 		return super.guardar(dto, token);
-		// END Consecutivo_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public void crear(DocumentoPlantillaDTO plantilla, String token) throws ServerException {
 		// A veces el numero del consecutivo se repetia en ese caso toca evitar para las
 		// automaticas que se cree error
@@ -178,8 +171,8 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			consecutivoDocumento = consecutivoDocumento + actual.getPrefijo();
 		if (!consecutivoDocumento.isEmpty()) {
 			consecutivoDocumento = consecutivoDocumento.replace("-", "");
-			nuevo.setPrefijo(consecutivoDocumento );
-			nuevo.setNombre(nuevo.getNombre() +  consecutivoDocumento);
+			nuevo.setPrefijo(consecutivoDocumento);
+			nuevo.setNombre(nuevo.getNombre() + consecutivoDocumento);
 		}
 		if (actual.getNumeroFinal().compareTo(BigDecimal.ZERO) == 0) {
 			nuevo.setNumeroInicial(new BigDecimal(100));
@@ -202,6 +195,5 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		return manuales.get(0);
 	}
 
-// END region aditionalMethods
 
 }

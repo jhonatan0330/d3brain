@@ -14,7 +14,7 @@ public interface TaskMapper {
 	TaskDTO update(TaskDTO dto);
 
 	int count(TaskFilterDTO filter);
-	
+
 	TaskDTO getOne(TaskFilterDTO filter);
 
 	List<TaskDTO> getMany(TaskFilterDTO filter);

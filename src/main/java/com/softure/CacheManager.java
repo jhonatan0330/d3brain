@@ -1,270 +1,327 @@
 package com.softure;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
 import com.softure.authentication.domain.UsuarioSesionDTO;
 import com.softure.authorization.domain.RolAccesoDTO;
+import com.softure.multitenancy.TenantContext;
+import com.softure.multitenancy.TenantDataSourcesConfigurationProperties;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
+/**
+ * Tenant-scoped in-memory cache. Resolves the active bucket from
+ * {@link TenantContext}; when absent (scheduled tasks, startup), uses
+ * {@link TenantDataSourcesConfigurationProperties#getDefaultTenantId()}.
+ */
 @Component
 public class CacheManager {
 
-	private List<PropiedadValorDefinidoDTO> types;
+	private final ConcurrentHashMap<String, TenantCacheState> byTenant = new ConcurrentHashMap<>();
+	private final String defaultTenantId;
+	private final int maxCachedTenants;
+	private final Object evictionLock = new Object();
 
-	private Map<String, List<PropiedadDTO>> propByTypeMap = new HashMap<>();
-	private Map<String, List<String>> userRoleMap = new HashMap<>();
-	private Map<String, List<PropiedadDTO>> propByKey = new HashMap<>();
+	public CacheManager(TenantDataSourcesConfigurationProperties tenantProperties) {
+		this.defaultTenantId = tenantProperties.getDefaultTenantId();
+		this.maxCachedTenants = tenantProperties.getCacheMaxEntries();
+	}
 
-	private String mainOrganization;
-	private String mainUser;
-	private String mainUserMail;
+	private String resolveTenantId() {
+		String tenantId = TenantContext.getCurrentTenant();
+		if (tenantId == null || tenantId.isBlank()) {
+			return defaultTenantId;
+		}
+		return tenantId;
+	}
 
-	private Map<String, UsuarioSesionDTO> sessionMap = new HashMap<>();
-	private Map<String, Integer> sessionTimeMap = new HashMap<>();
+	private TenantCacheState current() {
+		String tenantId = resolveTenantId();
+		enforceCacheLimitBeforeNewTenant(tenantId);
+		return byTenant.computeIfAbsent(tenantId, id -> new TenantCacheState());
+	}
 
-	private Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new HashMap<>();
+	private void enforceCacheLimitBeforeNewTenant(String tenantId) {
+		if (maxCachedTenants <= 0 || byTenant.containsKey(tenantId)) {
+			return;
+		}
+		while (maxCachedTenants > 0 && byTenant.size() >= maxCachedTenants && !byTenant.containsKey(tenantId)) {
+			synchronized (evictionLock) {
+				if (byTenant.size() < maxCachedTenants || byTenant.containsKey(tenantId)) {
+					break;
+				}
+				if (!evictOneNonDefaultTenant()) {
+					break;
+				}
+			}
+		}
+	}
 
-	private Map<String, RolAccesoDTO> rolesMap = new HashMap<>();
+	private boolean evictOneNonDefaultTenant() {
+		for (String key : byTenant.keySet()) {
+			if (!key.equals(defaultTenantId)) {
+				byTenant.remove(key);
+				return true;
+			}
+		}
+		return false;
+	}
 
 	// ---------------------------------------------
-	// GETTERS & SETTERS
+	// GETTERS & SETTERS (tenant-scoped)
 	// ---------------------------------------------
 
 	public List<PropiedadValorDefinidoDTO> getTypes() {
-		return types;
+		return current().getTypes();
 	}
 
 	public void setTypes(List<PropiedadValorDefinidoDTO> types) {
-		this.types = types;
+		current().setTypes(types);
 	}
 
 	public Map<String, List<PropiedadDTO>> getPropByTypeMap() {
-		return propByTypeMap;
+		return current().getPropByTypeMap();
 	}
 
 	public void setPropByTypeMap(Map<String, List<PropiedadDTO>> propByTypeMap) {
-		this.propByTypeMap = propByTypeMap;
+		current().getPropByTypeMap().clear();
+		if (propByTypeMap != null) {
+			current().getPropByTypeMap().putAll(propByTypeMap);
+		}
 	}
 
 	public Map<String, List<String>> getUserRoleMap() {
-		return userRoleMap;
+		return current().getUserRoleMap();
 	}
 
 	public void setUserRoleMap(Map<String, List<String>> userRoleMap) {
-		this.userRoleMap = userRoleMap;
+		current().getUserRoleMap().clear();
+		if (userRoleMap != null) {
+			current().getUserRoleMap().putAll(userRoleMap);
+		}
 	}
 
 	public Map<String, List<PropiedadDTO>> getPropByKey() {
-		return propByKey;
+		return current().getPropByKey();
 	}
 
 	public void setPropByKey(Map<String, List<PropiedadDTO>> propByKey) {
-		this.propByKey = propByKey;
+		current().getPropByKey().clear();
+		if (propByKey != null) {
+			current().getPropByKey().putAll(propByKey);
+		}
 	}
 
 	public String getMainOrganization() {
-		return mainOrganization;
+		return current().getMainOrganization();
 	}
 
 	public void setMainOrganization(String mainOrganization) {
-		this.mainOrganization = mainOrganization;
+		current().setMainOrganization(mainOrganization);
 	}
 
 	public String getMainUser() {
-		return mainUser;
+		return current().getMainUser();
 	}
 
 	public void setMainUser(String mainUser) {
-		this.mainUser = mainUser;
+		current().setMainUser(mainUser);
 	}
 
 	public String getMainUserMail() {
-		return mainUserMail;
+		return current().getMainUserMail();
 	}
 
 	public void setMainUserMail(String mainUserMail) {
-		this.mainUserMail = mainUserMail;
+		current().setMainUserMail(mainUserMail);
 	}
 
 	public Map<String, UsuarioSesionDTO> getSessionMap() {
-		return sessionMap;
+		return current().getSessionMap();
 	}
 
 	public void setSessionMap(Map<String, UsuarioSesionDTO> sessionMap) {
-		this.sessionMap = sessionMap;
+		current().getSessionMap().clear();
+		if (sessionMap != null) {
+			current().getSessionMap().putAll(sessionMap);
+		}
 	}
 
 	public Map<String, Integer> getSessionTimeMap() {
-		return sessionTimeMap;
+		return current().getSessionTimeMap();
 	}
 
 	public void setSessionTimeMap(Map<String, Integer> sessionTimeMap) {
-		this.sessionTimeMap = sessionTimeMap;
+		current().getSessionTimeMap().clear();
+		if (sessionTimeMap != null) {
+			current().getSessionTimeMap().putAll(sessionTimeMap);
+		}
 	}
 
 	public Map<String, DocumentoPlantillaCaracteristicaDTO> getFieldsMap() {
-		return fieldsMap;
+		return current().getFieldsMap();
 	}
 
 	public void setFieldsMap(Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap) {
-		this.fieldsMap = fieldsMap;
+		current().getFieldsMap().clear();
+		if (fieldsMap != null) {
+			current().getFieldsMap().putAll(fieldsMap);
+		}
 	}
 
 	public Map<String, RolAccesoDTO> getRolesMap() {
-		return rolesMap;
+		return current().getRolesMap();
 	}
 
 	public void setRolesMap(Map<String, RolAccesoDTO> rolesMap) {
-		this.rolesMap = rolesMap;
+		current().getRolesMap().clear();
+		if (rolesMap != null) {
+			current().getRolesMap().putAll(rolesMap);
+		}
 	}
 
 	// ---------------------------------------------
-	// CLEAR FUNCTIONS (por campo)
+	// CLEAR FUNCTIONS (current tenant)
 	// ---------------------------------------------
 
 	public void clearTypes() {
-		this.types = null;
+		current().setTypes(null);
 	}
 
 	public void clearPropByTypeMap() {
-		this.propByTypeMap.clear();
+		current().getPropByTypeMap().clear();
 	}
 
 	public void clearUserRoleMap() {
-		this.userRoleMap.clear();
+		current().getUserRoleMap().clear();
 	}
 
 	public void clearPropByKey() {
-		this.propByKey.clear();
+		current().getPropByKey().clear();
 	}
 
 	public void clearMainOrganization() {
-		this.mainOrganization = null;
+		current().setMainOrganization(null);
 	}
 
 	public void clearMainUser() {
-		this.mainUser = null;
+		current().setMainUser(null);
 	}
 
 	public void clearMainUserMail() {
-		this.mainUserMail = null;
+		current().setMainUserMail(null);
 	}
 
 	public void clearSessionMap() {
-		this.sessionMap.clear();
+		current().getSessionMap().clear();
 	}
 
 	public void clearSessionTimeMap() {
-		this.sessionTimeMap.clear();
+		current().getSessionTimeMap().clear();
 	}
 
 	public void clearFieldsMap() {
-		this.fieldsMap.clear();
+		current().getFieldsMap().clear();
 	}
 
 	public void clearRolesMap() {
-		this.rolesMap.clear();
+		current().getRolesMap().clear();
 	}
 
 	// ----------------------------------------------------------
 	// MÉTODOS PUT / GET PERSONALIZADOS
 	// ----------------------------------------------------------
 
-	// ---- propByTypeMap ----
 	public void putPropByType(String type, List<PropiedadDTO> propiedades) {
-		propByTypeMap.put(type, propiedades);
+		current().getPropByTypeMap().put(type, propiedades);
 	}
 
 	public List<PropiedadDTO> getPropByType(String type) {
-		return propByTypeMap.get(type);
+		return current().getPropByTypeMap().get(type);
 	}
 
-	// ---- userRoleMap ----
 	public void putUserRoles(String user, List<String> roles) {
-		userRoleMap.put(user, roles);
+		current().getUserRoleMap().put(user, roles);
 	}
 
 	public List<String> getUserRoles(String user) {
-		return userRoleMap.get(user);
+		return current().getUserRoleMap().get(user);
 	}
 
-	// ---- propByKey ----
 	public void putPropByKey(String key, List<PropiedadDTO> propiedades) {
-		propByKey.put(key, propiedades);
+		current().getPropByKey().put(key, propiedades);
 	}
 
 	public List<PropiedadDTO> getPropByKeyValue(String key) {
-		return propByKey.get(key);
+		return current().getPropByKey().get(key);
 	}
 
-	// ---- sessionMap ----
 	public void putSession(String sessionId, UsuarioSesionDTO session) {
-		sessionMap.put(sessionId, session);
-		System.out.println(new Date().toString() + "SESSION ***************** CACHE token: " + sessionMap.size());
+		TenantCacheState state = current();
+		state.getSessionMap().put(sessionId, session);
+		System.out.println(new Date().toString() + " SESSION tenant=" + resolveTenantId() + " CACHE token: "
+				+ state.getSessionMap().size());
 	}
 
 	public void removeSession(String sessionId) {
-		sessionMap.remove(sessionId);
-		System.out.println(new Date().toString() + "SESSION ***************** RETIRANDO token: " + sessionMap.size());
+		TenantCacheState state = current();
+		state.getSessionMap().remove(sessionId);
+		System.out.println(new Date().toString() + " SESSION tenant=" + resolveTenantId() + " RETIRANDO token: "
+				+ state.getSessionMap().size());
 	}
 
 	public UsuarioSesionDTO getSession(String sessionId) {
-		return sessionMap.get(sessionId);
+		return current().getSessionMap().get(sessionId);
 	}
 
-	// ---- sessionTimeMap ----
 	public void putSessionTime(String sessionId, Integer time) {
-		sessionTimeMap.put(sessionId, time);
+		current().getSessionTimeMap().put(sessionId, time);
 	}
 
 	public Integer getSessionTime(String sessionId) {
-		return sessionTimeMap.get(sessionId);
+		return current().getSessionTimeMap().get(sessionId);
 	}
 
-	// ---- fieldsMap ----
 	public void putField(String key, DocumentoPlantillaCaracteristicaDTO field) {
-		fieldsMap.put(key, field);
+		current().getFieldsMap().put(key, field);
 	}
 
 	public DocumentoPlantillaCaracteristicaDTO getField(String key) {
-		return fieldsMap.get(key);
+		return current().getFieldsMap().get(key);
 	}
 
-	// ---- fieldsMap ----
 	public void putRole(String key, RolAccesoDTO field) {
-		rolesMap.put(key, field);
+		current().getRolesMap().put(key, field);
 	}
 
 	public RolAccesoDTO getRole(String key) {
-		return rolesMap.get(key);
+		return current().getRolesMap().get(key);
 	}
 
 	// ---------------------------------------------
-	// CLEAR ALL (LIMPIA)
+	// CLEAR ALL
 	// ---------------------------------------------
 
+	/** Clears cache for the current tenant only. */
 	public void clearAll() {
-		this.types = null;
+		current().clearAll();
+	}
 
-		this.propByTypeMap.clear();
-		this.userRoleMap.clear();
-		this.propByKey.clear();
+	/** Clears cache for a specific tenant (e.g. after metadata sync). */
+	public void clearTenant(String tenantId) {
+		if (tenantId != null) {
+			byTenant.remove(tenantId);
+		}
+	}
 
-		this.mainOrganization = null;
-		this.mainUser = null;
-		this.mainUserMail = null;
-
-		this.sessionMap.clear();
-		this.sessionTimeMap.clear();
-
-		this.fieldsMap.clear();
-		this.rolesMap.clear();
+	/** Clears in-memory cache for every tenant. */
+	public void clearAllTenants() {
+		byTenant.clear();
 	}
 }

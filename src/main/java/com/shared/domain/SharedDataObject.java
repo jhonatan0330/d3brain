@@ -3,7 +3,7 @@ package com.shared.domain;
 public abstract class SharedDataObject {
 
 	private String key;
-	
+
 	private String state;
 
 	public String getKey() {

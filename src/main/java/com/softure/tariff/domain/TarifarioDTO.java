@@ -7,7 +7,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("TarifarioDTO")
-public class TarifarioDTO extends SharedDataObject{
+public class TarifarioDTO extends SharedDataObject {
 
 	private String nombre;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")

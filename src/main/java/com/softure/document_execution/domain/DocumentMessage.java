@@ -11,44 +11,52 @@ public class DocumentMessage {
 	private String documentId;
 	private String documenttemplate;
 
-	
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
+
 	public Date getDate() {
 		return date;
 	}
+
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+
 	public String getDocumentId() {
 		return documentId;
 	}
+
 	public void setDocumentId(String documentId) {
 		this.documentId = documentId;
 	}
+
 	public String getDocumentCode() {
 		return documentCode;
 	}
+
 	public void setDocumentCode(String documentCode) {
 		this.documentCode = documentCode;
 	}
+
 	public String getDocumenttemplate() {
 		return documenttemplate;
 	}
+
 	public void setDocumenttemplate(String documenttemplate) {
 		this.documenttemplate = documenttemplate;
 	}
-	
-	
+
 }

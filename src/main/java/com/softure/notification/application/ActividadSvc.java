@@ -2,7 +2,6 @@ package com.softure.notification.application;
 
 import java.util.List;
 
-// BEGIN region interImport
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -12,14 +11,11 @@ import com.softure.document_execution.application.CallDocumentListWithFilters;
 import com.softure.document_execution.application.PedidoVentaSvc;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.mail.application.MailGenerateMessageService;
-// END region interImport
 import com.softure.notification.domain.ActividadDTO;
 import com.softure.notification.domain.ActividadFilterDTO;
 import com.softure.notification.infrastructure.ActividadMapper;
 
 import jakarta.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,23 +24,29 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softure.logisticpymes.application.BasicSvc;
 import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("actividadService")
 public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 
-	@Autowired @Lazy 
-	private ActividadMapper actividadMapper;
+	private final ActividadMapper actividadMapper;
 
-	// BEGIN region servicesActividad
-	@Autowired @Lazy 
-	private MailGenerateMessageService generateMessageService;
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
-	private UsuarioSvc usuarioService;
-	@Autowired @Lazy 
-	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	// END region servicesActividad
+	public ActividadSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ActividadMapper actividadMapper,
+			@Lazy MailGenerateMessageService generateMessageService, @Lazy PedidoVentaSvc pedidoService,
+			@Lazy UsuarioSvc usuarioService, @Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction) {
+		super(usuarioSesionService);
+		this.actividadMapper = actividadMapper;
+		this.generateMessageService = generateMessageService;
+		this.pedidoService = pedidoService;
+		this.usuarioService = usuarioService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+	}
+
+	private final MailGenerateMessageService generateMessageService;
+	private final PedidoVentaSvc pedidoService;
+	private final UsuarioSvc usuarioService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
 
 	@Override
 	public ActividadDTO consultaXId(String llave) throws ServerException {
@@ -62,28 +64,22 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 
 	@Override
 	public ActividadDTO activar(ActividadDTO dto, String token) throws ServerException {
-		// BEGIN Actividad_activar
 		return super.activar(dto, token);
-		// END Actividad_activar
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ActividadDTO actualizar(ActividadDTO dto, String token) throws ServerException {
-		// BEGIN Actividad_actualizar
 		return super.update(dto);
-		// END Actividad_actualizar
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ActividadDTO inactivar(ActividadDTO dto, String token) throws ServerException {
-		// BEGIN Actividad_inactivar
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		dto.setFechaInactivo(new Date());
 		dto.setUsuarioInactivo(getUserFlex(token));
 		return super.update(dto);
-		// END Actividad_inactivar
 	}
 
 	@Override
@@ -102,9 +98,8 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 	}
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ActividadDTO guardar(ActividadDTO dto, String token) throws ServerException {
-		// BEGIN Actividad_guardar
 		// Esto solo se usa para cuando cambio de responsable un documento, puede que si
 		// no se usa bien se duplique el mensaje
 		crearActividad(dto, token);
@@ -117,10 +112,8 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		generateMessageService.call(pedido, null, usuarioService.consultaXId(dto.getResponsable()), pedidoModificador,
 				token);
 		return dto;
-		// END Actividad_guardar
 	}
 
-// BEGIN region aditionalMethods
 	public UsuarioDTO crearActividad(ActividadDTO dto, String token) throws ServerException {
 		if (dto.getDocumento() == null)
 			throw new ServerException("Al guardar el responsable no viene el documento");
@@ -190,25 +183,24 @@ public class ActividadSvc extends BasicSvc<ActividadDTO, ActividadFilterDTO> {
 		bd.setDocumentoDTO(pedidoService.consultaXId(bd.getDocumento()));
 		return bd;
 	}
-	
+
 	public void validateActivitiesToInactivateUser(String userId) throws ServerException {
 		ActividadFilterDTO filtro = new ActividadFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setResponsable(userId);
 		int cont = contarResultados(filtro);
-		if(cont!=0) {
+		if (cont != 0) {
 			List<PedidoVentaDTO> tareasActuales = pedidoService.listarTareasOtroUsuario(userId);
-			String mensaje = "No se puede inactivar debido a que tiene asignaciones. " + cont ;
+			String mensaje = "No se puede inactivar debido a que tiene asignaciones. " + cont;
 			for (PedidoVentaDTO iTarea : tareasActuales) {
-				if(iTarea.getDescripcion()!=null) {
+				if (iTarea.getDescripcion() != null) {
 					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") " + iTarea.getDescripcion();
-				}else {
+				} else {
 					mensaje = mensaje + "\n(" + iTarea.getNombre() + ") ";
 				}
 			}
 			throw new ServerException(mensaje);
 		}
 	}
-// END region aditionalMethods
 
 }

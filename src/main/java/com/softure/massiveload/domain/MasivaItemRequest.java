@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.shared.domain.SharedDataObject;
 
 public class MasivaItemRequest extends SharedDataObject {
-	
+
 	private String carga;
 	private String documento;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -18,13 +18,12 @@ public class MasivaItemRequest extends SharedDataObject {
 	private String modelo;
 	private String nombre;
 	private String progreso;
-    private Date createdAt;
-    private String createdUser;
-    private Date updatedAt;
-    private String updatedUser;
+	private Date createdAt;
+	private String createdUser;
+	private Date updatedAt;
+	private String updatedUser;
 	@JsonProperty(access = Access.READ_ONLY)
 	private String state;
-	
 
 	public String getCarga() {
 		return carga;

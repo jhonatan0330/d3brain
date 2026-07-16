@@ -32,7 +32,7 @@ public class SharedConstants {
 	public static final String INCOMPLETE = "INCOMPLETE";
 
 	public static final String USER = "USR";
-	
+
 	public static final String LOGO = "https://fs.softwareparati.com/modulo.png";
 	public static final String AVATAR = "https://fs.softwareparati.com/avatar.png";
 }

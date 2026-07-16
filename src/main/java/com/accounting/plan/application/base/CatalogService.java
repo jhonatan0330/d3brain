@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.CatalogDTO;
@@ -13,12 +11,16 @@ import com.accounting.plan.domain.CatalogFilterDTO;
 import com.accounting.plan.infrastructure.CatalogMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("CatalogAccountingService")
 public class CatalogService {
 
-	@Autowired @Lazy
-	private CatalogMapper mapper;
+	private final CatalogMapper mapper;
+
+	public CatalogService(@Lazy CatalogMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public CatalogDTO getById(String id) throws ServerException {
 		if (id == null)

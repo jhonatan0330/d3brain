@@ -14,7 +14,7 @@ public interface StackVoucherMapper {
 	StackVoucherDTO update(StackVoucherDTO dto);
 
 	int count(StackVoucherFilterDTO filter);
-	
+
 	StackVoucherDTO getOne(StackVoucherFilterDTO filter);
 
 	List<StackVoucherDTO> getMany(StackVoucherFilterDTO filter);

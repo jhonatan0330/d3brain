@@ -14,7 +14,7 @@ public interface ConfigTemplateRelationMapper {
 	ConfigTemplateRelationDTO update(ConfigTemplateRelationDTO dto);
 
 	int count(ConfigTemplateRelationFilterDTO filter);
-	
+
 	ConfigTemplateRelationDTO getOne(ConfigTemplateRelationFilterDTO filter);
 
 	List<ConfigTemplateRelationDTO> getMany(ConfigTemplateRelationFilterDTO filter);

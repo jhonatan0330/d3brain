@@ -3,8 +3,6 @@ package com.softure.document_execution.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -18,21 +16,27 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class CallDocumentListFromFieldProcess {
 
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relationService;
-	@Autowired @Lazy 
-	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy 
-	private CallDocumentListBySQLFunction listDocumentBySQLFunction;
-	@Autowired @Lazy 
-	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	
+	private final PedidoVentaSvc pedidoService;
+	private final RelacionInternaSvc relationService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final CallDocumentListBySQLFunction listDocumentBySQLFunction;
+	private final DocumentoRelacionExpedienteSvc relacionExpedienteService;
+
+	public CallDocumentListFromFieldProcess(@Lazy PedidoVentaSvc pedidoService,
+			@Lazy RelacionInternaSvc relationService, @Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy CallDocumentListBySQLFunction listDocumentBySQLFunction,
+			@Lazy DocumentoRelacionExpedienteSvc relacionExpedienteService) {
+		this.pedidoService = pedidoService;
+		this.relationService = relationService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.listDocumentBySQLFunction = listDocumentBySQLFunction;
+		this.relacionExpedienteService = relacionExpedienteService;
+	}
 
 	// Es muy importante que venga el campo con todas las propiedadses
 	public PedidoVentaCaracteristicaFilterDTO execute(PedidoVentaCaracteristicaFilterDTO pCampo,
@@ -46,9 +50,10 @@ public class CallDocumentListFromFieldProcess {
 		List<PedidoVentaDTO> resultados = null;
 		if (multiple.isEmpty() && campoHeredado1.isEmpty()) {// Consulto opciones de combo
 			// Esto es de los tipo bodega
-			//String bodegaFija = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_FIJA);
-			//if (!bodegaFija.isEmpty())
-				//pCampo.setValorOpcion(tipoBodega.consultarBodegaBaseFija(bodegaFija));
+			// String bodegaFija = Propiedades.obtenerValor(pCampo.getCampoDTO(),
+			// Propiedades.BODEGA_FIJA);
+			// if (!bodegaFija.isEmpty())
+			// pCampo.setValorOpcion(tipoBodega.consultarBodegaBaseFija(bodegaFija));
 			// Movi esto porque simpre que tenga opcion va a consultar uno creo que tengo un
 			// problema con los que dependen o algo asi
 			if (pCampo.getValorOpcion() != null) {// Si tiene valor opcion es porque ya esta seleccionado
@@ -86,9 +91,8 @@ public class CallDocumentListFromFieldProcess {
 					if (plantillasAuxiliares != null && !plantillasAuxiliares.isEmpty()) {
 						if (pBase != null) {// Esto aplica para autoload de los productos con ocion de seleccion
 							if (codigoDepende != null) {// Coloco las dependencias
-								if (codigoDepende.get(0).getValor().compareTo(SharedConstants.USER) != 0
-										&& Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO)
-												.isEmpty()) {
+								if (codigoDepende.get(0).getValor().compareTo(SharedConstants.USER) != 0 && Propiedades
+										.obtenerValor(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO).isEmpty()) {
 									// Valido que la cantidad de dependientes este correcta
 									if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
 										throw new ServerException("En el campo " + pBase.getNombre()
@@ -110,7 +114,8 @@ public class CallDocumentListFromFieldProcess {
 														if (entityFilter.getCaracteristicas() == null)
 															entityFilter.setCaracteristicas(
 																	new ArrayList<PedidoVentaCaracteristicaDTO>());
-														if(pCampo.getDependientes().get(0).getValorOpcion()==null) return null;
+														if (pCampo.getDependientes().get(0).getValorOpcion() == null)
+															return null;
 														entityFilter.getCaracteristicas()
 																.add(colocarFiltroDocumentoAuxiliar(pCampo
 																		.getDependientes().get(0).getValorOpcion()));
@@ -163,12 +168,12 @@ public class CallDocumentListFromFieldProcess {
 					try {
 						resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getCampoDTO(),
 								pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor,
-								pCampo.getSecurityToken());	
-					}catch(ServerException ex) {
-						throw new ServerException("En el campo " + pBase.getNombre() + " de la plantilla " +pBase.getPlantillaNombre() + " se muestra este mensaje: "
-						+ ex.getMessage());
+								pCampo.getSecurityToken());
+					} catch (ServerException ex) {
+						throw new ServerException("En el campo " + pBase.getNombre() + " de la plantilla "
+								+ pBase.getPlantillaNombre() + " se muestra este mensaje: " + ex.getMessage());
 					}
-					
+
 				}
 			}
 			if (pBase != null) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -21,23 +20,30 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class CallDocumentUpdateFromAutomatic {
 
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy 
-	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired @Lazy 
-	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
+	private final PedidoVentaSvc pedidoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final RelacionInternaSvc relacionService;
+	private final DocumentoRelacionGestorSvc relacionGestorService;
+	private final CallDocumentCRUD saveUpdateInactivateDocumentFunction;
 
+	public CallDocumentUpdateFromAutomatic(@Lazy PedidoVentaSvc pedidoService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy RelacionInternaSvc relacionService,
+			@Lazy DocumentoRelacionGestorSvc relacionGestorService,
+			@Lazy CallDocumentCRUD saveUpdateInactivateDocumentFunction) {
+		this.pedidoService = pedidoService;
+		this.caracteristicaService = caracteristicaService;
+		this.campoService = campoService;
+		this.relacionService = relacionService;
+		this.relacionGestorService = relacionGestorService;
+		this.saveUpdateInactivateDocumentFunction = saveUpdateInactivateDocumentFunction;
+	}
 	/*
 	 * aqui tengo mil cosas mal, deberia priero armar lso campos y despues mandarlos
 	 * con als relaciones la propiedad le modifico el valor porque esta pegado la
@@ -58,7 +64,8 @@ public class CallDocumentUpdateFromAutomatic {
 	 * @throws ServerException
 	 */
 	public void executeFromAPIExtraction(PedidoVentaDTO modificador, List<PropiedadDTO> propertiesToSearchFieldDestiny,
-			String token, String extractionText, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument) throws ServerException {
+			String token, String extractionText, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument)
+			throws ServerException {
 		// Cuando son servicios asincronos no hay un documento modificador?? de pronto
 		// afecte las extracciones
 		if (modificador == null)
@@ -86,7 +93,7 @@ public class CallDocumentUpdateFromAutomatic {
 						}
 						generateFieldsFromPropertyModificator.add(newField);
 					}
-					if (iterador!=null && iRelation.getPlantilla().compareTo(iterador.getPlantilla()) == 0) {
+					if (iterador != null && iRelation.getPlantilla().compareTo(iterador.getPlantilla()) == 0) {
 						newField.setCampo(iRelation.getCampo());
 						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
 						if (generateFieldsFromPropertyIterator == null) {
@@ -94,8 +101,9 @@ public class CallDocumentUpdateFromAutomatic {
 						}
 						generateFieldsFromPropertyIterator.add(newField);
 					}
-					if (pMainDocument!=null && modificador.getLlaveTabla().compareTo(pMainDocument.getLlaveTabla())!=0 
-							&&  iRelation.getPlantilla().compareTo(pMainDocument.getPlantilla()) == 0) {
+					if (pMainDocument != null
+							&& modificador.getLlaveTabla().compareTo(pMainDocument.getLlaveTabla()) != 0
+							&& iRelation.getPlantilla().compareTo(pMainDocument.getPlantilla()) == 0) {
 						newField.setCampo(iRelation.getCampo());
 						propiedadDTO.setValor(iRelation.getCampo()); // Para que hago esto??
 						if (generateFieldsFromPropertyMain == null) {
@@ -106,21 +114,22 @@ public class CallDocumentUpdateFromAutomatic {
 				}
 			}
 		}
-		if(generateFieldsFromPropertyModificator != null && !generateFieldsFromPropertyModificator.isEmpty()) {
-			execute(generateFieldsFromPropertyModificator, modificador.getLlaveTabla(), modificador.getTransaccion(), modificador,
+		if (generateFieldsFromPropertyModificator != null && !generateFieldsFromPropertyModificator.isEmpty()) {
+			execute(generateFieldsFromPropertyModificator, modificador.getLlaveTabla(), modificador.getTransaccion(),
+					modificador, token, propertiesToSearchFieldDestiny);
+		}
+
+		if (iterador != null && generateFieldsFromPropertyIterator != null
+				&& !generateFieldsFromPropertyIterator.isEmpty()) {
+			execute(generateFieldsFromPropertyIterator, iterador.getLlaveTabla(), iterador.getTransaccion(), iterador,
 					token, propertiesToSearchFieldDestiny);
 		}
-		
-		if(iterador != null && generateFieldsFromPropertyIterator != null && !generateFieldsFromPropertyIterator.isEmpty()) {
-					execute(generateFieldsFromPropertyIterator, iterador.getLlaveTabla(), iterador.getTransaccion(), iterador,
-							token, propertiesToSearchFieldDestiny);
+
+		if (generateFieldsFromPropertyMain != null && !generateFieldsFromPropertyMain.isEmpty()) {
+			execute(generateFieldsFromPropertyMain, pMainDocument.getLlaveTabla(), pMainDocument.getTransaccion(),
+					pMainDocument, token, propertiesToSearchFieldDestiny);
 		}
-		
-		if(generateFieldsFromPropertyMain != null && !generateFieldsFromPropertyMain.isEmpty()) {
-			execute(generateFieldsFromPropertyMain, pMainDocument.getLlaveTabla(), pMainDocument.getTransaccion(), pMainDocument,
-					token, propertiesToSearchFieldDestiny);
-		}
-		
+
 	}
 
 	/*
@@ -129,21 +138,22 @@ public class CallDocumentUpdateFromAutomatic {
 	 */
 	public void executeFromBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token,
 			List<PropiedadDTO> modificarCampo, List<PedidoVentaCaracteristicaDTO> pNewFields) throws ServerException {
-		// pNewFields se usa porque los tipo vinculo tienen sql y no quiero dañar los dependientes
-		
+		// pNewFields se usa porque los tipo vinculo tienen sql y no quiero dañar los
+		// dependientes
+
 		List<PedidoVentaCaracteristicaDTO> dependientesUnificados = new ArrayList<>();
 
-	    if (pCampo.getDependientes() != null) {
-	        dependientesUnificados.addAll(pCampo.getDependientes());
-	    }
+		if (pCampo.getDependientes() != null) {
+			dependientesUnificados.addAll(pCampo.getDependientes());
+		}
 
-	    if (pNewFields != null) {
-	        dependientesUnificados.addAll(pNewFields);
-	    }
-	    
+		if (pNewFields != null) {
+			dependientesUnificados.addAll(pNewFields);
+		}
+
 		execute(dependientesUnificados, pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, token,
 				modificarCampo);
-		CallDocumentCommons.copyMessages( procesoDTO, pCampo.getDocumentsToBPM());
+		CallDocumentCommons.copyMessages(procesoDTO, pCampo.getDocumentsToBPM());
 	}
 
 	/**
@@ -259,8 +269,8 @@ public class CallDocumentUpdateFromAutomatic {
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);
 
-							
-							if(camposActualesDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO)==0) {
+							if (camposActualesDTO.getFormato()
+									.compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 								organizeDependsNumberToUpdate(newField, currentFields);
 							}
 							// Tengo que actualizar el modificador por un tema en el api que no guarda los
@@ -390,26 +400,27 @@ public class CallDocumentUpdateFromAutomatic {
 		return false;
 	}
 
-	//OJO SE DUPLICO EN TipoProceso
-		private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
-				List<PedidoVentaCaracteristicaDTO> _currentFieldsOfMainDocument) {
-			for(PedidoVentaCaracteristicaDTO iFieldUpdateDocument : _currentFieldsOfMainDocument) {
-				List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(), Propiedades.DEPENDENT_PROPS);
-				if(dependents!=null && !dependents.isEmpty()) {
-					for (PropiedadDTO iDependent : dependents) {
-							if(iDependent.getValor().compareTo(campoDestino.getCampo())==0) {
-								if(!iFieldUpdateDocument.getModificado()) {
-									iFieldUpdateDocument.setValorNumero(null);
-									iFieldUpdateDocument.setModificado(true);
-									//Lo repirto para que se calculen los que dependen de estos
-									organizeDependsNumberToUpdate(iFieldUpdateDocument,	 _currentFieldsOfMainDocument);
-								}
-								break;
-							}	
+	// OJO SE DUPLICO EN TipoProceso
+	private void organizeDependsNumberToUpdate(PedidoVentaCaracteristicaDTO campoDestino,
+			List<PedidoVentaCaracteristicaDTO> _currentFieldsOfMainDocument) {
+		for (PedidoVentaCaracteristicaDTO iFieldUpdateDocument : _currentFieldsOfMainDocument) {
+			List<PropiedadDTO> dependents = Propiedades.obtenerVariosParametro(iFieldUpdateDocument.getCampoDTO(),
+					Propiedades.DEPENDENT_PROPS);
+			if (dependents != null && !dependents.isEmpty()) {
+				for (PropiedadDTO iDependent : dependents) {
+					if (iDependent.getValor().compareTo(campoDestino.getCampo()) == 0) {
+						if (!iFieldUpdateDocument.getModificado()) {
+							iFieldUpdateDocument.setValorNumero(null);
+							iFieldUpdateDocument.setModificado(true);
+							// Lo repirto para que se calculen los que dependen de estos
+							organizeDependsNumberToUpdate(iFieldUpdateDocument, _currentFieldsOfMainDocument);
+						}
+						break;
 					}
-					
-				}	
+				}
+
 			}
-			
 		}
+
+	}
 }

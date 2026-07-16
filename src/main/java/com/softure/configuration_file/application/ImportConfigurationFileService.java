@@ -1,18 +1,15 @@
 package com.softure.configuration_file.application;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shared.domain.ServerException;
 import com.softure.configuration_file.domain.FileVO;
@@ -24,46 +21,51 @@ import com.softure.upload.application.UploadSvc;
 @Service
 public class ImportConfigurationFileService {
 
-	@Autowired @Lazy 
-	private SynchronizeTypePropertiesService sincronizeTypeService;
-	@Autowired @Lazy 
-	private SynchronizeMessageService sincronizeMessageService;
-	@Autowired @Lazy 
-	private SynchronizeApiService sincronizeApiService;
-	@Autowired @Lazy 
-	private SynchronizeOrganizationService sincronizeOrganizationService;
-	@Autowired @Lazy 
-	private SynchronizeProcessService sincronizeProcessService;
-	@Autowired @Lazy 
-	private SynchronizeProcessStateService sincronizeProcessStateService;
-	@Autowired @Lazy 
-	private SynchronizeProcessTransitionService sincronizeProcessTransitionService;
-	@Autowired @Lazy 
-	private SynchronizeTemplateService sincronizeTemplateService;
-	@Autowired @Lazy 
-	private SynchronizeRelationService sincronizeRelationService;
-	@Autowired @Lazy 
-	private SynchronizeRolService sincronizeRolService;
-	@Autowired @Lazy 
-	private UploadSvc uploadService;
+	private final SynchronizeTypePropertiesService sincronizeTypeService;
+	private final SynchronizeMessageService sincronizeMessageService;
+	private final SynchronizeApiService sincronizeApiService;
+	private final SynchronizeOrganizationService sincronizeOrganizationService;
+	private final SynchronizeProcessService sincronizeProcessService;
+	private final SynchronizeProcessStateService sincronizeProcessStateService;
+	private final SynchronizeProcessTransitionService sincronizeProcessTransitionService;
+	private final SynchronizeTemplateService sincronizeTemplateService;
+	private final SynchronizeRelationService sincronizeRelationService;
+	private final SynchronizeRolService sincronizeRolService;
+	private final UploadSvc uploadService;
+	private final ObjectMapper mapper;
+
+	public ImportConfigurationFileService(@Lazy SynchronizeTypePropertiesService sincronizeTypeService,
+			@Lazy SynchronizeMessageService sincronizeMessageService, @Lazy SynchronizeApiService sincronizeApiService,
+			@Lazy SynchronizeOrganizationService sincronizeOrganizationService,
+			@Lazy SynchronizeProcessService sincronizeProcessService,
+			@Lazy SynchronizeProcessStateService sincronizeProcessStateService,
+			@Lazy SynchronizeProcessTransitionService sincronizeProcessTransitionService,
+			@Lazy SynchronizeTemplateService sincronizeTemplateService,
+			@Lazy SynchronizeRelationService sincronizeRelationService,
+			@Lazy SynchronizeRolService sincronizeRolService, @Lazy UploadSvc uploadService, ObjectMapper mapper) {
+		this.sincronizeTypeService = sincronizeTypeService;
+		this.sincronizeMessageService = sincronizeMessageService;
+		this.sincronizeApiService = sincronizeApiService;
+		this.sincronizeOrganizationService = sincronizeOrganizationService;
+		this.sincronizeProcessService = sincronizeProcessService;
+		this.sincronizeProcessStateService = sincronizeProcessStateService;
+		this.sincronizeProcessTransitionService = sincronizeProcessTransitionService;
+		this.sincronizeTemplateService = sincronizeTemplateService;
+		this.sincronizeRelationService = sincronizeRelationService;
+		this.sincronizeRolService = sincronizeRolService;
+		this.uploadService = uploadService;
+		this.mapper = mapper;
+	}
 
 	public FileVO call(String token, FileVO file) throws ServerException {
 
-		ObjectMapper mapper = new ObjectMapper();
+		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
-		// JSON from file to Object
-		try {
-			HierarchyExporterDTO hierarchy = mapper.readValue(new URI(file.getUrl()).toURL(), HierarchyExporterDTO.class);
+			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+
 			return uploadFile(token, sincronize(token, hierarchy).getLogs());
-		} catch (StreamReadException e) {
-			throw new ServerException(e.getMessage());
-		} catch (DatabindException e) {
-			throw new ServerException(e.getMessage());
-		} catch (MalformedURLException e) {
-			throw new ServerException(e.getMessage());
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		} catch (URISyntaxException e) {
+
+		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
@@ -72,19 +74,13 @@ public class ImportConfigurationFileService {
 
 		ObjectMapper mapper = new ObjectMapper();
 
-		// JSON from file to Object
-		try {
-			HierarchyExporterDTO hierarchy = mapper.readValue(new URI(file.getUrl()).toURL(), HierarchyExporterDTO.class);
+		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
+
+			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+
 			return uploadFile(token, compareFile(token, hierarchy).getLogs());
-		} catch (StreamReadException e) {
-			throw new ServerException(e.getMessage());
-		} catch (DatabindException e) {
-			throw new ServerException(e.getMessage());
-		} catch (MalformedURLException e) {
-			throw new ServerException(e.getMessage());
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		} catch (URISyntaxException e) {
+
+		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}

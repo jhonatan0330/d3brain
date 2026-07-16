@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -36,33 +34,42 @@ import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class CallDocumentListWithFilters {
 
-	@Autowired @Lazy 
-	private PedidoVentaMapper pedidoVentaMapper;
-	@Autowired @Lazy 
-	private PropiedadSvc propiedadService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relationService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoVentaService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired @Lazy 
-	private RolAccesoSvc rolService;
-	@Autowired @Lazy 
-	private CuentaSvc cuentaService;
-	@Autowired @Lazy 
-	private PedidoVentaDineroSvc dineroService;
-	@Autowired @Lazy 
-	private ProcesoTransicionSvc transicionService;
-	
+	private final PedidoVentaMapper pedidoVentaMapper;
+	private final PropiedadSvc propiedadService;
+	private final RelacionInternaSvc relationService;
+	private final PropertyGetWithCacheService cacheService;
+	private final PedidoVentaSvc pedidoVentaService;
+	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
+	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final RolAccesoSvc rolService;
+	private final CuentaSvc cuentaService;
+	private final PedidoVentaDineroSvc dineroService;
+	private final ProcesoTransicionSvc transicionService;
+
+	public CallDocumentListWithFilters(@Lazy PedidoVentaMapper pedidoVentaMapper, @Lazy PropiedadSvc propiedadService,
+			@Lazy RelacionInternaSvc relationService, @Lazy PropertyGetWithCacheService cacheService,
+			@Lazy PedidoVentaSvc pedidoVentaService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
+			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, @Lazy RolAccesoSvc rolService,
+			@Lazy CuentaSvc cuentaService, @Lazy PedidoVentaDineroSvc dineroService,
+			@Lazy ProcesoTransicionSvc transicionService) {
+		this.pedidoVentaMapper = pedidoVentaMapper;
+		this.propiedadService = propiedadService;
+		this.relationService = relationService;
+		this.cacheService = cacheService;
+		this.pedidoVentaService = pedidoVentaService;
+		this.documentoPlantillaCaracteristicaService = documentoPlantillaCaracteristicaService;
+		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
+		this.rolService = rolService;
+		this.cuentaService = cuentaService;
+		this.dineroService = dineroService;
+		this.transicionService = transicionService;
+	}
 
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto == null)
@@ -101,15 +108,15 @@ public class CallDocumentListWithFilters {
 				// plantillas
 				// por el momento excusas por este remache, lo copie de propiedadsc
 				// identificador campo
-				//ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
-					//	.consultaXId(dto.getCampoOrigen());
-				//if (filtroProducto == null) {
-					throw new ServerException("Revise porque el campo enviado de filtro no es correcto");
-				//} else {
-					//campoPlantilla = new DocumentoPlantillaCaracteristicaDTO();
-					//campoPlantilla.setLlaveTabla(filtroProducto.getLlaveTabla());
-					//campoPlantilla.setCodigo(filtroProducto.getCodigo());
-				//}
+				// ProductoCaracteristicaDTO filtroProducto = productoCaracteristicaService
+				// .consultaXId(dto.getCampoOrigen());
+				// if (filtroProducto == null) {
+				throw new ServerException("Revise porque el campo enviado de filtro no es correcto");
+				// } else {
+				// campoPlantilla = new DocumentoPlantillaCaracteristicaDTO();
+				// campoPlantilla.setLlaveTabla(filtroProducto.getLlaveTabla());
+				// campoPlantilla.setCodigo(filtroProducto.getCodigo());
+				// }
 			}
 			campoPlantilla = documentoPlantillaCaracteristicaService.cargarComplementos(campoPlantilla,
 					dto.getSecurityToken());
@@ -126,8 +133,9 @@ public class CallDocumentListWithFilters {
 
 				// Cuando es desde el buscador generarl busca todos los estaos
 				if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-					dto.setEstado(SharedConstants.STATE_ACTIVE  + SharedConstants.PUNTO_COMA +SharedConstants.STATE_COMPLETE);
-				
+					dto.setEstado(
+							SharedConstants.STATE_ACTIVE + SharedConstants.PUNTO_COMA + SharedConstants.STATE_COMPLETE);
+
 				List<String> generalState = generateFiltersByGeneralState(dto);
 				List<String> estadosFiltro = generateFiltersByStateFromProcess(dto);
 				List<String> textoFiltroComas = organizarFiltroComas(dto);
@@ -137,12 +145,13 @@ public class CallDocumentListWithFilters {
 					if (relacionesPropiedadHeredable == null || relacionesPropiedadHeredable.isEmpty())
 						throw new ServerException("Este campo de heredable no tiene relaciones de campos");
 
-					if(estadosFiltro!=null) dto.setEstado(null);
+					if (estadosFiltro != null)
+						dto.setEstado(null);
 					return listadoCompleto(
 							// Consulto las realaciones del campo para saber cuales campos heredan con la
 							// funcion de
-							listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable,
-									dto.getTextoFiltro(), null, null, textoFiltroComas, generalState, null),
+							listarPermitidos(dto, estadosFiltro, relacionesPropiedadHeredable, dto.getTextoFiltro(),
+									null, null, textoFiltroComas, generalState, null),
 							tokenHeredable, null);
 				} catch (Exception e) {
 					throw new ServerException(e.getMessage());
@@ -158,17 +167,18 @@ public class CallDocumentListWithFilters {
 						String campoValor = Propiedades.obtenerValor(campoPlantilla, Propiedades.PROCESO_VALOR);
 						if (campoValor.isEmpty() || campoValor.compareTo("1") == 0 || campoValor.compareTo("2") == 0)
 							campoValor = null;
-						// En Roa recibo de caja no llegaban parametros de un nueov documenot espero que vengan en orden
-						/*List<PedidoVentaCaracteristicaDTO> parametros = null;
-						if (dto.getLlaveTabla() != null) { // asumo que viene el dependiente relacionado
-							PedidoVentaCaracteristicaDTO param = new PedidoVentaCaracteristicaDTO();
-							param.setValorOpcion(dto.getLlaveTabla());
-							parametros = new ArrayList<PedidoVentaCaracteristicaDTO>();
-							parametros.add(param);
-						}*/
+						// En Roa recibo de caja no llegaban parametros de un nueov documenot espero que
+						// vengan en orden
+						/*
+						 * List<PedidoVentaCaracteristicaDTO> parametros = null; if (dto.getLlaveTabla()
+						 * != null) { // asumo que viene el dependiente relacionado
+						 * PedidoVentaCaracteristicaDTO param = new PedidoVentaCaracteristicaDTO();
+						 * param.setValorOpcion(dto.getLlaveTabla()); parametros = new
+						 * ArrayList<PedidoVentaCaracteristicaDTO>(); parametros.add(param); }
+						 */
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto,
-								(propiedadFuncion == null) ? null : propiedadFuncion.getLlaveTabla(), dto.getCaracteristicas()),
-								dto.getSecurityToken(), campoValor);
+								(propiedadFuncion == null) ? null : propiedadFuncion.getLlaveTabla(),
+								dto.getCaracteristicas()), dto.getSecurityToken(), campoValor);
 					} else {// hay casos que quiero que filtre solo por la fuente de datos
 						if (dto.getLlaveTabla() != null) { // el filtro viene en la llave tabla
 							dto.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
@@ -198,84 +208,82 @@ public class CallDocumentListWithFilters {
 					resultManyTemplates.addAll(readResultByTemplate(dto, iTransition.getPlantilla(), null));
 				}
 			} else {
-				return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto, dto.getProceso(), null), dto.getSecurityToken(), null);
+				return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(dto, dto.getProceso(), null),
+						dto.getSecurityToken(), null);
 			}
 			return resultManyTemplates;
 		}
 		return readResultByTemplate(dto, dto.getPlantilla(), null);
 	}
-	
-	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO pFilter,
-			List<String> filtroEstados, List<String> campoFiltro,
-			String valorFiltro, String ordenNombre,
-			String ordenDescendente, List<String> filtroTexto,
-			List<String> filtroEstadosGeneralesMultiple, PropiedadDTO pProperty)throws ServerException {
-		
+
+	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO pFilter, List<String> filtroEstados,
+			List<String> campoFiltro, String valorFiltro, String ordenNombre, String ordenDescendente,
+			List<String> filtroTexto, List<String> filtroEstadosGeneralesMultiple, PropiedadDTO pProperty)
+			throws ServerException {
+
 		List<String> _filterIdsByToRelations = getFieldsValueToFilter(pFilter);
-		
-		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
+
+		if (_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
 			return new ArrayList<>();
 		} else {
-			if(pFilter.getCampoOrigen()!=null) {
-				// En faseta no traia el turno porque filtraba  por los creados por el mismo funcionario
-				if(pFilter.getCaracteristicas()!=null && !pFilter.getCaracteristicas().isEmpty() && pFilter.getCaracteristicas().get(0).getValorOpcion()==null
-						&& pFilter.getFuncionario()==null) {
+			if (pFilter.getCampoOrigen() != null) {
+				// En faseta no traia el turno porque filtraba por los creados por el mismo
+				// funcionario
+				if (pFilter.getCaracteristicas() != null && !pFilter.getCaracteristicas().isEmpty()
+						&& pFilter.getCaracteristicas().get(0).getValorOpcion() == null
+						&& pFilter.getFuncionario() == null) {
 					pFilter.setCaracteristicas(null);
-				}	
+				}
 			}
 		}
-		
+
 		List<RelacionInternaDTO> _relations = null;
-		if(pProperty!=null && pProperty.getRelaciones()!=null && pProperty.getRelaciones()!= 0) {
+		if (pProperty != null && pProperty.getRelaciones() != null && pProperty.getRelaciones() != 0) {
 			_relations = relationService.relacionesPropiedad(pProperty.getLlaveTabla());
 		}
-		
-		return pedidoVentaMapper.listarPermitidos(pFilter,
-				filtroEstados,  campoFiltro,
-				 valorFiltro,  ordenNombre,
-				 ordenDescendente, filtroTexto,
-				 filtroEstadosGeneralesMultiple, _filterIdsByToRelations, _relations);
+
+		return pedidoVentaMapper.listarPermitidos(pFilter, filtroEstados, campoFiltro, valorFiltro, ordenNombre,
+				ordenDescendente, filtroTexto, filtroEstadosGeneralesMultiple, _filterIdsByToRelations, _relations);
 	}
 
 	private List<String> getFieldsValueToFilter(PedidoVentaFilterDTO pFilter) throws ServerException {
 		List<String> _filterIdsByToRelations = null;
-		if(pFilter.getFiltersByFields()!=null && !pFilter.getFiltersByFields().isEmpty()) {
+		if (pFilter.getFiltersByFields() != null && !pFilter.getFiltersByFields().isEmpty()) {
 			for (PedidoVentaCaracteristicaFilterDTO _iFilter : pFilter.getFiltersByFields()) {
-				if(_iFilter.getValorOpcion()!=null) {
+				if (_iFilter.getValorOpcion() != null) {
 					try {
-						//List<String> _resultFilter = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter, (_filterIdsByToRelations==null)?pFilter:null, _filterIdsByToRelations);
-						_filterIdsByToRelations = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter, (_filterIdsByToRelations==null)?pFilter:null, _filterIdsByToRelations);
-						/*if(_filterIdsByToRelations ==null) {
-							_filterIdsByToRelations = _resultFilter;
-						}else {
-							List<String> menor  = _filterIdsByToRelations.size() < _resultFilter.size() ? _filterIdsByToRelations : _resultFilter;
-							List<String> mayor = _filterIdsByToRelations.size() < _resultFilter.size() ? _resultFilter : _filterIdsByToRelations;
-
-					        Set<String> setMenor = new HashSet<>(menor);
-
-					        _filterIdsByToRelations = new ArrayList<>();
-					        
-					        for (String val : mayor) {
-					            if (setMenor.contains(val)) {
-					            	_filterIdsByToRelations.add(val);
-					            }
-					            if (_filterIdsByToRelations.size() >= MAX_SIZE) {
-                                    break;
-                                }
-					        }
-						}*/
+						// List<String> _resultFilter =
+						// pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter,
+						// (_filterIdsByToRelations==null)?pFilter:null, _filterIdsByToRelations);
+						_filterIdsByToRelations = pedidoVentaMapper.obtenerFiltrosPorRelacion(_iFilter,
+								(_filterIdsByToRelations == null) ? pFilter : null, _filterIdsByToRelations);
+						/*
+						 * if(_filterIdsByToRelations ==null) { _filterIdsByToRelations = _resultFilter;
+						 * }else { List<String> menor = _filterIdsByToRelations.size() <
+						 * _resultFilter.size() ? _filterIdsByToRelations : _resultFilter; List<String>
+						 * mayor = _filterIdsByToRelations.size() < _resultFilter.size() ? _resultFilter
+						 * : _filterIdsByToRelations;
+						 * 
+						 * Set<String> setMenor = new HashSet<>(menor);
+						 * 
+						 * _filterIdsByToRelations = new ArrayList<>();
+						 * 
+						 * for (String val : mayor) { if (setMenor.contains(val)) {
+						 * _filterIdsByToRelations.add(val); } if (_filterIdsByToRelations.size() >=
+						 * MAX_SIZE) { break; } } }
+						 */
 					} catch (Exception e) {
 						throw new ServerException(e.getMessage());
 					}
 				}
 			}
-			
+
 		}
 		return _filterIdsByToRelations;
 	}
 
-	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter, PropiedadDTO pProperty)
-			throws ServerException {
+	private List<PedidoVentaDTO> readResultByTemplate(PedidoVentaFilterDTO dtoFilter, String templateFilter,
+			PropiedadDTO pProperty) throws ServerException {
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setFechaRegistroMax(dtoFilter.getFechaRegistroMax());
 		filterDTO.setFechaRegistroMin(dtoFilter.getFechaRegistroMin());
@@ -316,7 +324,7 @@ public class CallDocumentListWithFilters {
 				verTodos = true;
 			} else {
 				plantilla = new DocumentoPlantillaDTO();
-				plantilla.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
+				plantilla.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 						templateFilter, null, pedidoVentaService.getUserFlex(token)));
 				List<PropiedadDTO> propiedadesVerTodos = Propiedades.obtenerVariosParametro(plantilla,
 						Propiedades.PERMISO_PLANTILLA_VER_TODOS);
@@ -330,7 +338,8 @@ public class CallDocumentListWithFilters {
 						return listadoCompleto(listarExpedientesDisponiblesDocumentoFuncion(filterDTO,
 								propiedadFuncion.getLlaveTabla(), null), token, null);
 					}
-					if (dtoFilter.getCampoOrigen() == null || (dtoFilter.getCaracteristicas()==null && dtoFilter.getFiltersByFields()==null))
+					if (dtoFilter.getCampoOrigen() == null
+							|| (dtoFilter.getCaracteristicas() == null && dtoFilter.getFiltersByFields() == null))
 						propiedadesFiltro = Propiedades.obtenerVariosParametro(plantilla,
 								Propiedades.PERMISO_PLANTILLA_CAMPO_FILTRO);
 				}
@@ -376,15 +385,16 @@ public class CallDocumentListWithFilters {
 			if (propiedadesFiltro == null) {
 				try {
 					return listadoCompleto(
-							listarPermitidos(filtro, null, null, null, null, null, null, generalState, pProperty), token,
-							null);
+							listarPermitidos(filtro, null, null, null, null, null, null, generalState, pProperty),
+							token, null);
 				} catch (ServerException e) {
 					throw new ServerException(e.getMessage());
 				} catch (Exception e) {
 					throw new ServerException(e.getCause().getMessage());
 				}
 			} else {
-				return filtrarConRestriccionEnCampo(filtro, propiedadesFiltro, token, null, null, null, null, pProperty);
+				return filtrarConRestriccionEnCampo(filtro, propiedadesFiltro, token, null, null, null, null,
+						pProperty);
 			}
 		} else {
 			String orden = null;
@@ -403,9 +413,8 @@ public class CallDocumentListWithFilters {
 					// de la plantilla porque no se encuentra");
 					if (plantilla == null) {
 						plantilla = new DocumentoPlantillaDTO();
-						plantilla
-								.setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.PLANTILLA,
-										templateFilter, null, pedidoVentaService.getUserFlex(token)));
+						plantilla.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+								templateFilter, null, pedidoVentaService.getUserFlex(token)));
 					}
 					// Quito los filtros para las consultas campos que vienen de un campo tipo
 					// proceso
@@ -444,18 +453,20 @@ public class CallDocumentListWithFilters {
 				filterDTO.setFiltroParametro(null);
 			if (filterDTO.getFuncionarioNombre() == null)
 				filterDTO.setSecurityToken(secToken); // Cuando viene un depende no se filtra por el permiso del usuario
-			if(estadosFiltro!=null) filterDTO.setEstado(null);
+			if (estadosFiltro != null)
+				filterDTO.setEstado(null);
 			if (propiedadesFiltro != null)
 				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
 						estadosFiltro, textoFiltroComas, pProperty);
-			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden,
-					ordenAscendente, textoFiltroComas, null, pProperty), token, null);
+			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden, ordenAscendente,
+					textoFiltroComas, null, pProperty), token, null);
 		}
 	}
 
 	private List<PedidoVentaDTO> filtrarConRestriccionEnCampo(PedidoVentaFilterDTO filterDTO,
 			List<PropiedadDTO> camposFiltro, String token, String orden, String ordenAscendente,
-			List<String> estadosFiltro, List<String> textoFiltroComas, PropiedadDTO pPropiedadDTO) throws ServerException {
+			List<String> estadosFiltro, List<String> textoFiltroComas, PropiedadDTO pPropiedadDTO)
+			throws ServerException {
 		// Estoy revisando el tema coloco las relaciones de todos los campos, hasta
 		// ahora estoy colocando multiple, pero la idea
 		// es mejorar el codigo con arq hexagonal y creando uan calse de dominio que
@@ -473,15 +484,17 @@ public class CallDocumentListWithFilters {
 		if (options == null || options.isEmpty())
 			return new ArrayList<>();
 		List<String> _filterIdsByToRelations = getFieldsValueToFilter(filterDTO);
-		if(_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
+		if (_filterIdsByToRelations != null && _filterIdsByToRelations.isEmpty()) {
 			return new ArrayList<>();
 		}
 		List<RelacionInternaDTO> _relations = null;
-		if(pPropiedadDTO!=null && pPropiedadDTO.getRelaciones()!= 0) {
+		if (pPropiedadDTO != null && pPropiedadDTO.getRelaciones() != 0) {
 			_relations = relationService.relacionesPropiedad(pPropiedadDTO.getLlaveTabla());
 		}
-		return listadoCompleto(pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden,
-				ordenAscendente, textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations, _relations), token, null);
+		return listadoCompleto(
+				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente,
+						textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations, _relations),
+				token, null);
 	}
 
 	private List<String> organizarFiltroComas(PedidoVentaFilterDTO dto) {
@@ -556,8 +569,9 @@ public class CallDocumentListWithFilters {
 			}
 		}
 		// Esto lo quite y lo puse en la funcion que llama a esta generacion
-		//if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
-			//result = List.of(SharedConstants.STATE_ACTIVE, SharedConstants.STATE_COMPLETE);
+		// if (dto.getEstado() == null && dto.getEstadoExpediente() == null)
+		// result = List.of(SharedConstants.STATE_ACTIVE,
+		// SharedConstants.STATE_COMPLETE);
 		return result;
 	}
 
@@ -574,26 +588,27 @@ public class CallDocumentListWithFilters {
 			if (base != null && !base.isEmpty()) {
 				List<String> _ids = new ArrayList<>();
 				for (PedidoVentaCaracteristicaDTO d : base) {
-				    if (DocumentoPlantillaCaracteristicaDTO.VINCULO.equals(d.getEstado())) {
-				        _ids.add(d.getValorOpcion());
-				    }
+					if (DocumentoPlantillaCaracteristicaDTO.VINCULO.equals(d.getEstado())) {
+						_ids.add(d.getValorOpcion());
+					}
 				}
-				
-				
-				if(_ids !=null && !_ids.isEmpty()) {
+
+				if (_ids != null && !_ids.isEmpty()) {
 					List<PedidoVentaDTO> _documentsVinculo = pedidoVentaMapper.listar2Ids(_ids);
 					for (PedidoVentaCaracteristicaDTO _fieldBase : base) {
-						if(_fieldBase.getValorOpcion()!=null) {
+						if (_fieldBase.getValorOpcion() != null) {
 							for (PedidoVentaDTO _document : _documentsVinculo) {
-								if(_fieldBase.getValorOpcion().equals(_document.getLlaveTabla()) && _document.getEstadoNombre()!=null) {
-									_fieldBase.setValorText(_document.getEstadoNombre() + " - " + _fieldBase.getValorText());
+								if (_fieldBase.getValorOpcion().equals(_document.getLlaveTabla())
+										&& _document.getEstadoNombre() != null) {
+									_fieldBase.setValorText(
+											_document.getEstadoNombre() + " - " + _fieldBase.getValorText());
 									_fieldBase.setValorAuxiliar(_document.getEstadoExpediente());
 								}
-							}	
+							}
 						}
 					}
 				}
-					
+
 				hijos = pedidoVentaMapper.listarVisibleRenderNivel2(result);
 				if (hijos != null && !hijos.isEmpty()) {
 					List<PedidoVentaCaracteristicaDTO> visibleHijos = pedidoVentaCaracteristicaService
@@ -608,15 +623,14 @@ public class CallDocumentListWithFilters {
 				if (campoValor == null || campoValor.compareTo("0") == 0) {
 					if (hmap.get(iterador.getPlantilla()) == null) {
 						PropiedadDTO propiedadCuenta = cacheService.obtenerPropiedad(
-								 PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
+								PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
 								Propiedades.PLANTILLA_TIPO_CUENTA, null);
 						if (propiedadCuenta != null) {
 							// Para que los tipo cuenta muestre el saldo
 							hmap.put(iterador.getPlantilla(), "TIPO_CUENTA_VALOR");
 						} else {
-							PropiedadDTO propiedad = cacheService.obtenerPropiedad(
-									PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(), Propiedades.TOTAL,
-									null);
+							PropiedadDTO propiedad = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+									iterador.getPlantilla(), Propiedades.TOTAL, null);
 							if (propiedad == null) {
 								hmap.put(iterador.getPlantilla(), "");
 							} else {
@@ -699,9 +713,9 @@ public class CallDocumentListWithFilters {
 				}
 				// Campos especiales de una lista
 				if (hmapCamposEspeciales.get(iterador.getPlantilla()) == null) {
-					PropiedadDTO propiedadRender = cacheService.obtenerPropiedad(
-							PropiedadValorDefinidoDTO.PLANTILLA, iterador.getPlantilla(),
-							Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL, pedidoVentaService.getUserFlex(securityToken));
+					PropiedadDTO propiedadRender = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
+							iterador.getPlantilla(), Propiedades.PLANTILLA_RENDER_ESPECIAL_SQL,
+							pedidoVentaService.getUserFlex(securityToken));
 					if (propiedadRender == null) {
 						hmapCamposEspeciales.put(iterador.getPlantilla(), "");
 					} else {
@@ -721,7 +735,8 @@ public class CallDocumentListWithFilters {
 								campo.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 										null, Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 								pvrDTO.setCampoDTO(campo);
-								if (iterador.getCaracteristicas()==null) iterador.setCaracteristicas(new ArrayList<>());
+								if (iterador.getCaracteristicas() == null)
+									iterador.setCaracteristicas(new ArrayList<>());
 								iterador.getCaracteristicas().add(pvrDTO);
 							}
 						}
@@ -742,10 +757,9 @@ public class CallDocumentListWithFilters {
 			return listadoCompleto(pedidoVentaMapper.listarExpedientesPertenecenCampo(dto), token, campoValor);
 		} catch (ServerException ex) {
 			throw new ServerException(ex.getMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
-		} 
+		}
 	}
 
 	public List<PedidoVentaDTO> listar2Activity(List<String> ids, String token) throws ServerException {
@@ -782,7 +796,7 @@ public class CallDocumentListWithFilters {
 						Propiedades.PERMISO_CAMPO_RENDER, Propiedades.TRUE, null));
 				campo.setLlaveTabla(pvrDTO.getTransaccionRegistro());
 				campo.setCodigo(pvrDTO.getTransaccionInactivo());
-				//pvrDTO.setTransaccionRegistro(null);
+				// pvrDTO.setTransaccionRegistro(null);
 				pvrDTO.setCampoDTO(campo);
 				dto.getCaracteristicas().add(pvrDTO);
 				if ((pvrDTO.getEstado().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
@@ -806,8 +820,6 @@ public class CallDocumentListWithFilters {
 		}
 		return dto;
 	}
-	
-	
 
 	public List<PedidoVentaDTO> listarUsuario(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto.getFuncionario() == null)

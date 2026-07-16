@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -20,7 +20,6 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
-import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
@@ -31,39 +30,43 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 @Component
 public class WebServiceCallPrepare {
 
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired @Lazy 
-	private UploadSvc uploadService;
-	@Autowired @Lazy 
-	private ProcessTemplate templatesService;
-	@Autowired @Lazy 
-	private WebServiceSvc webServiceSvc;
-	@Autowired @Lazy 
-	private PropiedadSvc propiedadesSvc;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final WebServiceEjecucionSvc webServiceEjecucionSvc;
+	private final RelacionInternaSvc relacionService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+	private final UploadSvc uploadService;
+	private final ProcessTemplate templatesService;
+	private final WebServiceSvc webServiceSvc;
 
-	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
-			String token, String initialPameters) throws ServerException {
+	public WebServiceCallPrepare(@Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy WebServiceEjecucionSvc webServiceEjecucionSvc, @Lazy RelacionInternaSvc relacionService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc fieldService, @Lazy UploadSvc uploadService,
+			@Lazy ProcessTemplate templatesService, @Lazy WebServiceSvc webServiceSvc) {
+		this.campoService = campoService;
+		this.webServiceEjecucionSvc = webServiceEjecucionSvc;
+		this.relacionService = relacionService;
+		this.fieldService = fieldService;
+		this.uploadService = uploadService;
+		this.templatesService = templatesService;
+		this.webServiceSvc = webServiceSvc;
+	}
+
+	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+			PedidoVentaDTO iterador, String token, String initialPameters) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
 		String userId = webServiceSvc.getUserFlex(token);
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
-		//aqui ya viene con todoas las properties
-		String parameters = getParameters(service, document, modificador, iterador,  token);
+		// aqui ya viene con todoas las properties
+		String parameters = getParameters(service, document, modificador, iterador, token);
 		if (initialPameters != null) {
 			parameters = parameters + initialPameters;
 		}
 		callWS.setParametros(parameters);
 		if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
-			callWS.setParametros(
-					uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt", token, "webservice", "private"));
+			callWS.setParametros(uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt", token,
+					"webservice", "private"));
 		}
 		callWS.setDocumento(document.getLlaveTabla());
 		callWS.setTransaccion(document.getTransaccion());
@@ -90,28 +93,28 @@ public class WebServiceCallPrepare {
 	 * @return
 	 * @throws ServerException
 	 */
-	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
-			String token) throws ServerException {
+	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+			PedidoVentaDTO iterador, String token) throws ServerException {
 		if (service.getPropiedades() == null || service.getPropiedades().isEmpty())
 			return null;
 		String parameters = "";
 		parameters = getDirectParameters(service, document, parameters);
 		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
-		if (parameters == "") 			
+		if (parameters == "")
 			return null;
-        String[] partes = parameters.split(";;");
-        // 2. Usar HashSet para quitar duplicados
-        Set<String> sinDuplicados = new HashSet<>();
-        for (String parte : partes) {
-            sinDuplicados.add(parte.trim());
-        }
-        // 3. Convertir a lista y ordenar
-        List<String> ordenadas = new ArrayList<>(sinDuplicados);
-        Collections.sort(ordenadas);
-        // 4. Unir nuevamente con ";;"
-        return  String.join(";;", ordenadas);
-	}	
+		String[] partes = parameters.split(";;");
+		// 2. Usar HashSet para quitar duplicados
+		Set<String> sinDuplicados = new HashSet<>();
+		for (String parte : partes) {
+			sinDuplicados.add(parte.trim());
+		}
+		// 3. Convertir a lista y ordenar
+		List<String> ordenadas = new ArrayList<>(sinDuplicados);
+		Collections.sort(ordenadas);
+		// 4. Unir nuevamente con ";;"
+		return String.join(";;", ordenadas);
+	}
 
 	private String getReferedParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
 			String parameters, PedidoVentaDTO iterador) throws ServerException {
@@ -153,7 +156,8 @@ public class WebServiceCallPrepare {
 									parameters = templatesService.addParameterString(parameters, iRelacion, campo,
 											campo.getCampoDTO().getCodigo(), "M", iRelacion.getAuxiliar(),
 											Propiedades.obtenerVariosParametro(service,
-													Propiedades.API_CODE_REFERENCE_LIST), SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
+													Propiedades.API_CODE_REFERENCE_LIST),
+											SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
 								}
 							}
 						}
@@ -164,13 +168,14 @@ public class WebServiceCallPrepare {
 		return parameters;
 	}
 
-	private String getSpecialParameter(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador, PedidoVentaDTO iterator,
-			String token, String parameters) throws ServerException {
+	private String getSpecialParameter(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
+			PedidoVentaDTO iterator, String token, String parameters) throws ServerException {
 		// Especiales
 		List<PropiedadDTO> especiales = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_ESPECIAL);
 		if (especiales != null && !especiales.isEmpty()) {
 			for (PropiedadDTO iProp : especiales) {
-				if (iProp.getTexto() == null)iProp.setTexto(iProp.getValor());
+				if (iProp.getTexto() == null)
+					iProp.setTexto(iProp.getValor());
 				if (iProp.getTexto().startsWith("E_FECHA_")) {
 					Date fieldDate = templatesService.getDateWithTransformations(new Date(), iProp.getTexto());
 					parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
@@ -185,30 +190,30 @@ public class WebServiceCallPrepare {
 					case "E_CODE":
 						if (document != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
-									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
-									+ SharedConstants.IGUAL + document.getLlaveTabla();
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ iProp.getTexto() + "_ID" + SharedConstants.IGUAL + document.getLlaveTabla();
 						if (modificador != null)
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE +  "E_CODE_MODIFICATOR"
-									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
-									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_MODIFICATOR"
+									+ SharedConstants.IGUAL + modificador.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_MODIFICATOR" + SharedConstants.IGUAL + modificador.getLlaveTabla();
 						if (iterator != null)
-							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE +  "E_CODE_ITERATOR"
-									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
-									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ITERATOR"
+									+ SharedConstants.IGUAL + iterator.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_ITERADOR" + SharedConstants.IGUAL + iterator.getLlaveTabla();
 						break;
 					case "E_CODE_MODIFICATOR":
 						if (modificador != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
-									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
-									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+									+ SharedConstants.IGUAL + modificador.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_MODIFICATOR" + SharedConstants.IGUAL + modificador.getLlaveTabla();
 						if (iterator != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ITERATOR"
-									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
-									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
+									+ SharedConstants.IGUAL + iterator.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_ITERADOR" + SharedConstants.IGUAL + iterator.getLlaveTabla();
 						if (document != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
-									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto() + "_ID"
-									+ SharedConstants.IGUAL + document.getLlaveTabla();
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ iProp.getTexto() + "_ID" + SharedConstants.IGUAL + document.getLlaveTabla();
 						break;
 					case "E_TOKEN":
 						if (token != null)
@@ -218,21 +223,22 @@ public class WebServiceCallPrepare {
 					case "E_ALL":
 						if (modificador != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_MODIFICATOR"
-									+ SharedConstants.IGUAL + modificador.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_MODIFICATOR"
-									+ SharedConstants.IGUAL + modificador.getLlaveTabla();
+									+ SharedConstants.IGUAL + modificador.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_MODIFICATOR" + SharedConstants.IGUAL + modificador.getLlaveTabla();
 						if (iterator != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ITERATOR"
-									+ SharedConstants.IGUAL + iterator.getNombre()+ SharedConstants.PUNTO_COMA_DOBLE + "E_ID_ITERADOR"
-									+ SharedConstants.IGUAL + iterator.getLlaveTabla();
+									+ SharedConstants.IGUAL + iterator.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_ID_ITERADOR" + SharedConstants.IGUAL + iterator.getLlaveTabla();
 						if (document != null) {
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE"
-									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_ID"
-									+ SharedConstants.IGUAL + document.getLlaveTabla();
-							if(document.getFecha()!=null)
+									+ SharedConstants.IGUAL + document.getNombre() + SharedConstants.PUNTO_COMA_DOBLE
+									+ "E_CODE_ID" + SharedConstants.IGUAL + document.getLlaveTabla();
+							if (document.getFecha() != null)
 								parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "E_CODE_FECHA"
-										+ SharedConstants.IGUAL +  SoftureUtil.formatDatePattern(document.getFecha(), "LOCAL_API");
+										+ SharedConstants.IGUAL
+										+ SoftureUtil.formatDatePattern(document.getFecha(), "LOCAL_API");
 						}
-							
+
 						break;
 					default:
 						parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
@@ -275,8 +281,10 @@ public class WebServiceCallPrepare {
 										? campo.getCampoDTO().getCodigo()
 										: campo.getTransaccionRegistro();
 								parameters = templatesService.addParameterString(parameters, iRelacion, campo,
-										codeReplace, "D", iRelacion.getAuxiliar(), Propiedades
-												.obtenerVariosParametro(service, Propiedades.API_CODE_REFERENCE_LIST), SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
+										codeReplace, "D", iRelacion.getAuxiliar(),
+										Propiedades.obtenerVariosParametro(service,
+												Propiedades.API_CODE_REFERENCE_LIST),
+										SharedConstants.PUNTO_COMA_DOBLE, SharedConstants.IGUAL);
 							}
 						}
 					}

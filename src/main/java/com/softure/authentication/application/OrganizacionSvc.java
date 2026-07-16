@@ -2,7 +2,6 @@ package com.softure.authentication.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +19,15 @@ import jakarta.annotation.PostConstruct;
 @Service("organizacionService")
 public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private OrganizacionMapper organizacionMapper;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
+	private final OrganizacionMapper organizacionMapper;
+	private final PropertyGetWithCacheService cacheService;
+
+	public OrganizacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy OrganizacionMapper organizacionMapper,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		super(usuarioSesionService);
+		this.organizacionMapper = organizacionMapper;
+		this.cacheService = cacheService;
+	}
 
 	private OrganizacionDTO mainOrganization;
 
@@ -116,7 +118,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
 				Propiedades.APP_ADMIN, user) != null);
 	}
-	
+
 	// Esto toca unirlo con lo anterior lo estoy haciendo rapido
 	public boolean permisosAuditor(String user) throws ServerException {
 		OrganizacionDTO _main = obtenerPrincipal();

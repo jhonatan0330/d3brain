@@ -10,7 +10,7 @@ import com.softure.document_execution.domain.DetallePedidoVentaFilterDTO;
 import com.softure.java.domain.IBasicMapper;
 
 @SoftureSqlConnMapper(value = "DetallePedidoVentaMapper")
-public interface DetallePedidoVentaMapper extends IBasicMapper<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO>{
-	
-	List<DetallePedidoVentaDTO> listar2Documento(@Param("documento")String pDocumento, @Param("campo")String pCampo);
+public interface DetallePedidoVentaMapper extends IBasicMapper<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO> {
+
+	List<DetallePedidoVentaDTO> listar2Documento(@Param("documento") String pDocumento, @Param("campo") String pCampo);
 }

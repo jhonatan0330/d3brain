@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softure.java.domain.BasicFilterDTO;
 
 import org.apache.ibatis.type.Alias;
+
 @Alias("PropiedadFilterDTO")
-public class PropiedadFilterDTO extends BasicFilterDTO
-{
+public class PropiedadFilterDTO extends BasicFilterDTO {
 
 	private String propiedadValor;
 	private String tipo;
@@ -45,188 +45,171 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	private Date fechaEliminacionMax;
 	private String usuarioCreacion;
 	private String usuarioEliminacion;
-	
+
 	public void setPropiedadValor(String propiedadValor) {
 		this.propiedadValor = propiedadValor;
 	}
-	
+
 	public String getPropiedadValor() {
 		return propiedadValor;
 	}
-	
-	
+
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-	
+
 	public String getTipo() {
 		return tipo;
 	}
-	
-	
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	
+
 	public String getNombre() {
 		return nombre;
 	}
-	
-	
+
 	public void setKey(String key) {
 		this.key = key;
 	}
-	
+
 	public String getKey() {
 		return key;
 	}
-	
-	
+
 	public void setCampo(String campo) {
 		this.campo = campo;
 	}
-	
+
 	public String getCampo() {
 		return campo;
 	}
-	
-	
+
 	public void setTexto(String texto) {
 		this.texto = texto;
 	}
-	
+
 	public String getTexto() {
 		return texto;
 	}
-	
-	
+
 	public void setFechaDefinicionMin(Date fechaDefinicionMin) {
 		this.fechaDefinicionMin = fechaDefinicionMin;
 	}
-	
+
 	public Date getFechaDefinicionMin() {
 		return fechaDefinicionMin;
 	}
-	
+
 	public void setFechaDefinicionMax(Date fechaDefinicionMax) {
 		this.fechaDefinicionMax = fechaDefinicionMax;
 	}
-	
+
 	public Date getFechaDefinicionMax() {
 		return fechaDefinicionMax;
 	}
-	
-	
+
 	public void setRol(String rol) {
 		this.rol = rol;
 	}
-	
+
 	public String getRol() {
 		return rol;
 	}
-	
-	
+
 	public void setRolNombre(String rolNombre) {
 		this.rolNombre = rolNombre;
 	}
-	
+
 	public String getRolNombre() {
 		return rolNombre;
 	}
-	
-	
+
 	public void setRolExcluyente(String rolExcluyente) {
 		this.rolExcluyente = rolExcluyente;
 	}
-	
+
 	public String getRolExcluyente() {
 		return rolExcluyente;
 	}
-	
-	
+
 	public void setRolExcluyenteNombre(String rolExcluyenteNombre) {
 		this.rolExcluyenteNombre = rolExcluyenteNombre;
 	}
-	
+
 	public String getRolExcluyenteNombre() {
 		return rolExcluyenteNombre;
 	}
-	
-	
+
 	public void setFechaInicialMin(Date fechaInicialMin) {
 		this.fechaInicialMin = fechaInicialMin;
 	}
-	
+
 	public Date getFechaInicialMin() {
 		return fechaInicialMin;
 	}
-	
+
 	public void setFechaInicialMax(Date fechaInicialMax) {
 		this.fechaInicialMax = fechaInicialMax;
 	}
-	
+
 	public Date getFechaInicialMax() {
 		return fechaInicialMax;
 	}
-	
-	
+
 	public void setFechaFinalMin(Date fechaFinalMin) {
 		this.fechaFinalMin = fechaFinalMin;
 	}
-	
+
 	public Date getFechaFinalMin() {
 		return fechaFinalMin;
 	}
-	
+
 	public void setFechaFinalMax(Date fechaFinalMax) {
 		this.fechaFinalMax = fechaFinalMax;
 	}
-	
+
 	public Date getFechaFinalMax() {
 		return fechaFinalMax;
 	}
-	
-	
+
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
+
 	public String getUsuario() {
 		return usuario;
 	}
-	
-	
+
 	public void setUsuarioNombre(String usuarioNombre) {
 		this.usuarioNombre = usuarioNombre;
 	}
-	
+
 	public String getUsuarioNombre() {
 		return usuarioNombre;
 	}
-	
-	
+
 	public void setUsuarioExcluyente(String usuarioExcluyente) {
 		this.usuarioExcluyente = usuarioExcluyente;
 	}
-	
+
 	public String getUsuarioExcluyente() {
 		return usuarioExcluyente;
 	}
-	
-	
+
 	public void setUsuarioExcluyenteNombre(String usuarioExcluyenteNombre) {
 		this.usuarioExcluyenteNombre = usuarioExcluyenteNombre;
 	}
-	
+
 	public String getUsuarioExcluyenteNombre() {
 		return usuarioExcluyenteNombre;
 	}
-	
-	
+
 	public void setBloqueo(String bloqueo) {
 		this.bloqueo = bloqueo;
 	}
-	
+
 	public String getBloqueo() {
 		return bloqueo;
 	}
@@ -278,6 +261,5 @@ public class PropiedadFilterDTO extends BasicFilterDTO
 	public void setUsuarioEliminacion(String usuarioEliminacion) {
 		this.usuarioEliminacion = usuarioEliminacion;
 	}
-	
 
 }

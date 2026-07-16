@@ -7,7 +7,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("StackVoucherDTO")
-public class StackVoucherDTO extends SharedDataObject{
+public class StackVoucherDTO extends SharedDataObject {
 
 	private String voucher;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")

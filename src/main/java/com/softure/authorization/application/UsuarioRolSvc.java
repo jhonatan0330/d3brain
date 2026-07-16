@@ -1,10 +1,7 @@
 package com.softure.authorization.application;
 
-
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +18,31 @@ import com.softure.logisticpymes.application.UsuarioSvc;
 import com.softure.logisticpymes.domain.UsuarioDTO;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("usuarioRolService")
 public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> {
-	
-	@Autowired @Lazy 
-	private UsuarioRolMapper usuarioRolMapper;
-	
-	@Autowired @Lazy private UsuarioSvc usuarioService;
-	@Autowired @Lazy private UsuarioAutenticacionSvc autenticacionService;
-	@Autowired @Lazy private CacheManager cacheService;
+
+	private final UsuarioRolMapper usuarioRolMapper;
+	private final UsuarioSvc usuarioService;
+	private final UsuarioAutenticacionSvc autenticacionService;
+	private final CacheManager cacheService;
+
+	public UsuarioRolSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy UsuarioRolMapper usuarioRolMapper,
+			@Lazy UsuarioSvc usuarioService, @Lazy UsuarioAutenticacionSvc autenticacionService,
+			@Lazy CacheManager cacheService) {
+		super(usuarioSesionService);
+		this.usuarioRolMapper = usuarioRolMapper;
+		this.usuarioService = usuarioService;
+		this.autenticacionService = autenticacionService;
+		this.cacheService = cacheService;
+	}
 
 	@Override
 	public UsuarioRolDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. UsuarioRol");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. UsuarioRol");
 		UsuarioRolFilterDTO dto = new UsuarioRolFilterDTO();
 		dto.setLlaveTabla(llave);
 		return usuarioRolMapper.consultar(dto);
@@ -42,36 +50,36 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = usuarioRolMapper;
+		this.mapper = usuarioRolMapper;
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public UsuarioRolDTO actualizar( UsuarioRolDTO dto, String token) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public UsuarioRolDTO actualizar(UsuarioRolDTO dto, String token) throws ServerException {
 		throw new ServerException("Lo que se debe actualizar es el documento");
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public UsuarioRolDTO inactivar(UsuarioRolDTO dto, String token) throws ServerException {
 		dto.setFechaFinal(new Date());
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
-		dto= super.update(dto);
+		dto = super.update(dto);
 		UsuarioRolFilterDTO filtro = new UsuarioRolFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setUsuario(dto.getUsuario());
 		int cont = contarResultados(filtro);
-		if(cont==0) {
+		if (cont == 0) {
 			UsuarioDTO usuario = usuarioService.consultaXId(dto.getUsuario());
-			if(usuario.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0)
+			if (usuario.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0)
 				usuarioService.inactivar(usuario, token);
 		}
 		cacheService.clearUserRoleMap();
 		return dto;
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public UsuarioRolDTO guardar(UsuarioRolDTO dto, String token) throws ServerException {
 		dto.setFechaInicial(new Date());
 		dto = super.guardar(dto, token);
@@ -79,6 +87,5 @@ public class UsuarioRolSvc extends BasicSvc<UsuarioRolDTO, UsuarioRolFilterDTO> 
 		cacheService.clearUserRoleMap();
 		return dto;
 	}
-	
 
 }

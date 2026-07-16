@@ -1,7 +1,5 @@
 package com.softure.process_designer.infrastructure;
 
-
-// BEGIN region interImport  
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,13 +11,22 @@ import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_designer.domain.ProcesoTransicionFilterDTO;
 
 @SoftureSqlConnMapper(value = "ProcesoTransicionMapper")
-public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionDTO, ProcesoTransicionFilterDTO>{
-	
+public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionDTO, ProcesoTransicionFilterDTO> {
+
 	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);
+
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
-	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision, @Param("llaveTablaDocumento") String llaveTablaDocumento, @Param("llaveTablaModificador") String llaveTablaModificador, @Param("ramdom") String ramdom);
-	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento, @Param("expediente") String expediente);
+
+	String decision(@Param("sqlFuncionDecision") String sqlFuncionDecision,
+			@Param("llaveTablaDocumento") String llaveTablaDocumento,
+			@Param("llaveTablaModificador") String llaveTablaModificador, @Param("ramdom") String ramdom);
+
+	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento,
+			@Param("expediente") String expediente);
+
 	List<ProcesoTransicionDTO> getFullToSynchronize(@Param("process") List<String> process);
+
 	int funcionRegresarTablaHistoricos(@Param("documentId") String documentId);
+
 	void clearStateOfDocumentsProcess(@Param("templateId") String templateId);
 }

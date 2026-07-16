@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -25,26 +24,24 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Service
 public class CallUpdateByRelations {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final RelacionInternaSvc relacionService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
+	private final PedidoVentaSvc pedidoService;
+	private final DocumentoRelacionExpedienteSvc relacionExpedienteService;
 
-	@Autowired
-	@Lazy
-	private RelacionInternaSvc relacionService;
-
-	@Autowired
-	@Lazy
-	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc pedidoService;
-	@Autowired
-	@Lazy
-	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
+	public CallUpdateByRelations(@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
+			@Lazy RelacionInternaSvc relacionService, @Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
+			@Lazy PedidoVentaSvc pedidoService, @Lazy DocumentoRelacionExpedienteSvc relacionExpedienteService) {
+		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
+		this.relacionService = relacionService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.documentoPlantillaCaracteristicaService = documentoPlantillaCaracteristicaService;
+		this.pedidoService = pedidoService;
+		this.relacionExpedienteService = relacionExpedienteService;
+	}
 
 	private String[] props = { Propiedades.RELACIONAR_MISMOS, Propiedades.RELACIONAR_DOCUMENTOS,
 			Propiedades.RETIRAR_DOCUMENTOS };
@@ -92,12 +89,12 @@ public class CallUpdateByRelations {
 			if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_MISMOS) == 0) {
 				dependientes = new ArrayList<>();
 				var pc = new PedidoVentaCaracteristicaDTO();
-				//pc.setValorOpcion(pCampo.getPrincipal().getLlaveTabla());
+				// pc.setValorOpcion(pCampo.getPrincipal().getLlaveTabla());
 				pc.setExpedientes(pCampo.getExpedientes());
 				pc.setCampo(propiedadDTO.getValor());
 				pc.setPrincipal(pCampo.getPrincipal());
 				dependientes.add(pc);
-				//dependientes = pCampo.getExpedientes();
+				// dependientes = pCampo.getExpedientes();
 			} else {
 				if (pCampo.getDependientes() == null)
 					throw new ServerException(
@@ -326,7 +323,8 @@ public class CallUpdateByRelations {
 
 										}
 									} else {
-										throw new ServerException("Por favor avisa a los desarrolladores la propiedad RETIRAR de un campo no MULTIPLE esta sin desarrollar");
+										throw new ServerException(
+												"Por favor avisa a los desarrolladores la propiedad RETIRAR de un campo no MULTIPLE esta sin desarrollar");
 									}
 
 								}

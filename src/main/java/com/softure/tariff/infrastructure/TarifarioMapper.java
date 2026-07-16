@@ -14,7 +14,7 @@ public interface TarifarioMapper {
 	TarifarioDTO update(TarifarioDTO dto);
 
 	int count(TarifarioFilterDTO filter);
-	
+
 	TarifarioDTO getOne(TarifarioFilterDTO filter);
 
 	List<TarifarioDTO> getMany(TarifarioFilterDTO filter);

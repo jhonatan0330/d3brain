@@ -6,6 +6,6 @@ import com.softure.massiveload.domain.MassiveMasterDTO;
 import com.softure.massiveload.domain.MassiveMasterFilter;
 
 @SoftureSqlConnMapper(value = "MassiveMasterMapper")
-public interface MassiveMasterMapper extends SharedCRUDMapperMybatis<MassiveMasterDTO, MassiveMasterFilter>{
-	
+public interface MassiveMasterMapper extends SharedCRUDMapperMybatis<MassiveMasterDTO, MassiveMasterFilter> {
+
 }

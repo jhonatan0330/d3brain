@@ -2,13 +2,10 @@ package com.softure.process_designer.application;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-// BEGIN region interImport
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,26 +35,45 @@ import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.upload.application.UploadSvc;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
 
 @Service("procesoTransicionAutomaticaService")
-public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {
-	
-	@Autowired @Lazy 
-	private ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
-	
-	@Autowired @Lazy  private MailSendMessageToAdminService sendMessageToAdminSvc;
-	@Autowired @Lazy  private PropiedadSvc propiedadService;
-	@Autowired @Lazy  private CallDocumentNewFromAutomatic createDocumentSinceProperties;
-	@Autowired @Lazy  private UsuarioSesionSvc autenticacionService;
-	@Autowired @Lazy  private RelacionInternaSvc relacionService;
-	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy  private UploadSvc uploadService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
+public class ProcesoTransicionAutomaticaSvc
+		extends BasicSvc<ProcesoTransicionAutomaticaDTO, ProcesoTransicionAutomaticaFilterDTO> {
+
+	private final ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper;
+	private final MailSendMessageToAdminService sendMessageToAdminSvc;
+	private final PropiedadSvc propiedadService;
+	private final CallDocumentNewFromAutomatic createDocumentSinceProperties;
+	private final UsuarioSesionSvc autenticacionService;
+	private final RelacionInternaSvc relacionService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final UploadSvc uploadService;
+	private final PropertyGetWithCacheService cacheService;
+
+	public ProcesoTransicionAutomaticaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper,
+			@Lazy MailSendMessageToAdminService sendMessageToAdminSvc, @Lazy PropiedadSvc propiedadService,
+			@Lazy CallDocumentNewFromAutomatic createDocumentSinceProperties,
+			@Lazy UsuarioSesionSvc autenticacionService, @Lazy RelacionInternaSvc relacionService,
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction, @Lazy UploadSvc uploadService,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		super(usuarioSesionService);
+		this.procesoTransicionAutomaticaMapper = procesoTransicionAutomaticaMapper;
+		this.sendMessageToAdminSvc = sendMessageToAdminSvc;
+		this.propiedadService = propiedadService;
+		this.createDocumentSinceProperties = createDocumentSinceProperties;
+		this.autenticacionService = autenticacionService;
+		this.relacionService = relacionService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.uploadService = uploadService;
+		this.cacheService = cacheService;
+	}
 
 	@Override
 	public ProcesoTransicionAutomaticaDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. ProcesoTransicionAutomatica");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. ProcesoTransicionAutomatica");
 		ProcesoTransicionAutomaticaFilterDTO dto = new ProcesoTransicionAutomaticaFilterDTO();
 		dto.setLlaveTabla(llave);
 		return procesoTransicionAutomaticaMapper.consultar(dto);
@@ -65,45 +81,54 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = procesoTransicionAutomaticaMapper;
+		this.mapper = procesoTransicionAutomaticaMapper;
 	}
-	
-	
-	//@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
-		// BEGIN region ejecutar
+
+	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
+	// propagation=Propagation.REQUIRED)
+	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)
+			throws ServerException {
 		ProcesoTransicionAutomaticaDTO bd = consultaXId(dto.getLlaveTabla());
-		if(bd==null) throw new ServerException("Esta tarea autoamtica ya no se encuentra activo o valida en la bd");
+		if (bd == null)
+			throw new ServerException("Esta tarea autoamtica ya no se encuentra activo o valida en la bd");
 		return gestionaEjecucion(bd);
-		// END region ejecutar
 	}
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO programar(ProcesoTransicionAutomaticaDTO dto, String token)throws ServerException{
+
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public ProcesoTransicionAutomaticaDTO programar(ProcesoTransicionAutomaticaDTO dto, String token)
+			throws ServerException {
 		programateAll();
 		return null;
 	}
 
 	public int lanzarTransaccionesTemporizadas() {
 		List<ProcesoTransicionAutomaticaDTO> transiciones = procesoTransicionAutomaticaMapper.consultarPendientes();
-		if(transiciones ==null || transiciones.isEmpty()) return 0;
+		if (transiciones == null || transiciones.isEmpty())
+			return 0;
 		List<ProcesoTransicionAutomaticaDTO> transaccionesEjecutadas = new ArrayList<ProcesoTransicionAutomaticaDTO>();
 		for (ProcesoTransicionAutomaticaDTO procesoTransicionAutomaticaDTO : transiciones) {
-			ProcesoTransicionAutomaticaDTO previousValidate = containsTransicion(transaccionesEjecutadas, procesoTransicionAutomaticaDTO);
+			ProcesoTransicionAutomaticaDTO previousValidate = containsTransicion(transaccionesEjecutadas,
+					procesoTransicionAutomaticaDTO);
 			procesoTransicionAutomaticaDTO.setEjecucion(new Date());
-			if(previousValidate !=null) {
-				procesoTransicionAutomaticaDTO.setMensaje("Ejecucion Anterior: " + previousValidate.getMensaje() + "\nFecha : " + SoftureUtil.formatDateTime(previousValidate.getEjecucion()) + "\nId: " + previousValidate.getLlaveTabla());
+			if (previousValidate != null) {
+				procesoTransicionAutomaticaDTO.setMensaje("Ejecucion Anterior: " + previousValidate.getMensaje()
+						+ "\nFecha : " + SoftureUtil.formatDateTime(previousValidate.getEjecucion()) + "\nId: "
+						+ previousValidate.getLlaveTabla());
 				try {
-					procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);	
+					procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);
 				} catch (Exception e) {
 				}
-			}else {
+			} else {
 				try {
 					gestionaEjecucion(procesoTransicionAutomaticaDTO);
 				} catch (ServerException e) {
 					procesoTransicionAutomaticaDTO.setMensaje("ERROR : " + e.getMessage());
 					try {
 						try {
-							sendMessageToAdminSvc.call("Error en ejecucion de transaccion " + procesoTransicionAutomaticaDTO.getPlantillaNombre(), e.getMessage()+ "\n\n(" +procesoTransicionAutomaticaDTO.getLlaveTabla() + ")");
+							sendMessageToAdminSvc.call(
+									"Error en ejecucion de transaccion "
+											+ procesoTransicionAutomaticaDTO.getPlantillaNombre(),
+									e.getMessage() + "\n\n(" + procesoTransicionAutomaticaDTO.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 						procesoTransicionAutomaticaDTO = update(procesoTransicionAutomaticaDTO);
@@ -111,65 +136,73 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 					}
 				}
 			}
-			if(previousValidate == null) 
+			if (previousValidate == null)
 				transaccionesEjecutadas.add(procesoTransicionAutomaticaDTO);
 		}
 		return transaccionesEjecutadas.size();
 	}
-	
-	// Con el objetivo que no se duplique la ejecucion de una transicion se mira que ese tipo no se ejecutara antes
+
+	// Con el objetivo que no se duplique la ejecucion de una transicion se mira que
+	// ese tipo no se ejecutara antes
 	// Como coloque unas sin transicion eas si no se validan
-	private ProcesoTransicionAutomaticaDTO containsTransicion(List<ProcesoTransicionAutomaticaDTO> review, ProcesoTransicionAutomaticaDTO view) {
-		if(review == null || review.isEmpty()) return null;
+	private ProcesoTransicionAutomaticaDTO containsTransicion(List<ProcesoTransicionAutomaticaDTO> review,
+			ProcesoTransicionAutomaticaDTO view) {
+		if (review == null || review.isEmpty())
+			return null;
 		for (ProcesoTransicionAutomaticaDTO procesoTransicionAutomaticaDTO : review) {
-			if(view.getTransicion()!=null) {
-				if(procesoTransicionAutomaticaDTO.getTransicion()!= null && 
-						procesoTransicionAutomaticaDTO.getTransicion().compareTo(view.getTransicion())==0)
+			if (view.getTransicion() != null) {
+				if (procesoTransicionAutomaticaDTO.getTransicion() != null
+						&& procesoTransicionAutomaticaDTO.getTransicion().compareTo(view.getTransicion()) == 0)
 					return procesoTransicionAutomaticaDTO;
 			} else {
-				if(procesoTransicionAutomaticaDTO.getPropiedad()!= null && 
-						procesoTransicionAutomaticaDTO.getPropiedad().compareTo(view.getPropiedad())==0)
+				if (procesoTransicionAutomaticaDTO.getPropiedad() != null
+						&& procesoTransicionAutomaticaDTO.getPropiedad().compareTo(view.getPropiedad()) == 0)
 					return procesoTransicionAutomaticaDTO;
 			}
 		}
 		return null;
 	}
-	
+
 	public int programateAll() throws ServerException {
-		int _count= 0;
+		int _count = 0;
 		List<PropiedadDTO> faltantes = propiedadService.consultarTemporizadoresPendientes();
-		if(faltantes==null || faltantes.isEmpty()) return _count;
+		if (faltantes == null || faltantes.isEmpty())
+			return _count;
 		for (PropiedadDTO propiedadDTO : faltantes) {
 			Date fechaProgramada = null;
 			String error = null;
-			if(propiedadDTO.getFechaInicial()==null) {
-				error = "*****ERROR***** No tiene fecha inicial Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) ";
-			}else {
-				if(propiedadDTO.getFechaInicial().compareTo(new Date())>0) {
+			if (propiedadDTO.getFechaInicial() == null) {
+				error = "*****ERROR***** No tiene fecha inicial Fecha , revisa temporizador : ("
+						+ propiedadService.ubicarPropiedad(propiedadDTO) + " ) ";
+			} else {
+				if (propiedadDTO.getFechaInicial().compareTo(new Date()) > 0) {
 					fechaProgramada = propiedadDTO.getFechaInicial();
-				}else {
-					Date ultimaEjecucion = procesoTransicionAutomaticaMapper.obtenerFechaUltimaEjecucion(propiedadDTO.getCampo());
+				} else {
+					Date ultimaEjecucion = procesoTransicionAutomaticaMapper
+							.obtenerFechaUltimaEjecucion(propiedadDTO.getCampo());
 					try {
-						if(ultimaEjecucion==null) {
+						if (ultimaEjecucion == null) {
 							fechaProgramada = calcularFecha(propiedadDTO.getFechaInicial(), propiedadDTO.getTexto());
-						}else {
+						} else {
 							fechaProgramada = calcularFecha(ultimaEjecucion, propiedadDTO.getTexto());
 						}
 					} catch (ServerException e) {
-						error = "*****ERROR***** Calculando Fecha , revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + " ) " + e.getMessage();
-					} 
+						error = "*****ERROR***** Calculando Fecha , revisa temporizador : ("
+								+ propiedadService.ubicarPropiedad(propiedadDTO) + " ) " + e.getMessage();
+					}
 				}
 			}
-			
+
 			ProcesoTransicionAutomaticaDTO programar = new ProcesoTransicionAutomaticaDTO();
-			if(propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR)==0 && propiedadDTO.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION)==0) {
-				programar.setTransicion(propiedadDTO.getCampo());	
+			if (propiedadDTO.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0
+					&& propiedadDTO.getTipo().compareTo(PropiedadValorDefinidoDTO.TRANSICION) == 0) {
+				programar.setTransicion(propiedadDTO.getCampo());
 			}
 			programar.setFecha(fechaProgramada);
-			if(error == null) {
-				if(propiedadDTO.getMotivo()==null) {
+			if (error == null) {
+				if (propiedadDTO.getMotivo() == null) {
 					programar.setMensaje(propiedadDTO.getNombre());
-				}else {
+				} else {
 					programar.setMensaje(propiedadDTO.getMotivo());
 				}
 				_count++;
@@ -177,9 +210,12 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 				programar.setFecha(new Date());
 				programar.setEjecucion(new Date());
 				try {
-					sendMessageToAdminSvc.call("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador " + error + ". ( "+ propiedadService.ubicarPropiedad(propiedadDTO) + " )");					
+					sendMessageToAdminSvc.call("TEMPORIZADOR ERROR", "Se ha presenstado error en el temporizador "
+							+ error + ". ( " + propiedadService.ubicarPropiedad(propiedadDTO) + " )");
 				} catch (Exception e) {
-					error = "*****ERROR SERVIDOR DE CORREO PARA MENSAJE***** revisa temporizador : (" + propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " +  propiedadDTO.getTexto() + " ) " + e.getMessage() + " ERROR =" + error;
+					error = "*****ERROR SERVIDOR DE CORREO PARA MENSAJE***** revisa temporizador : ("
+							+ propiedadService.ubicarPropiedad(propiedadDTO) + "  -  " + propiedadDTO.getTexto() + " ) "
+							+ e.getMessage() + " ERROR =" + error;
 				}
 				programar.setMensaje(error);
 			}
@@ -190,106 +226,132 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 	}
 
 	private Date calcularFecha(Date ultimaEjecucion, String valor) throws ServerException {
-		if (valor==null) throw new ServerException("La propiedad no tiene el valor de temporizador");
-		String[]temporizador = valor.split(":");
+		if (valor == null)
+			throw new ServerException("La propiedad no tiene el valor de temporizador");
+		String[] temporizador = valor.split(":");
 		Calendar fechaCalculada = new GregorianCalendar();
 		fechaCalculada.setTime(ultimaEjecucion);
 		try {
-			int years = Integer.parseInt( temporizador[0]);
-			int month = Integer.parseInt( temporizador[1]);
-			int days = Integer.parseInt( temporizador[2]);
-			int hours = Integer.parseInt( temporizador[3]);
-			int minutes = Integer.parseInt( temporizador[4]);
-			while (fechaCalculada.getTime().compareTo(new Date())<0) {
-				if(years!=0)fechaCalculada.add(Calendar.YEAR, years);
-				if(month!=0)fechaCalculada.add(Calendar.MONTH, month);
-				if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, days);
-				if(hours!=0)fechaCalculada.add(Calendar.HOUR_OF_DAY, hours);
-				if(minutes!=0)fechaCalculada.add(Calendar.MINUTE, minutes);			
+			int years = Integer.parseInt(temporizador[0]);
+			int month = Integer.parseInt(temporizador[1]);
+			int days = Integer.parseInt(temporizador[2]);
+			int hours = Integer.parseInt(temporizador[3]);
+			int minutes = Integer.parseInt(temporizador[4]);
+			while (fechaCalculada.getTime().compareTo(new Date()) < 0) {
+				if (years != 0)
+					fechaCalculada.add(Calendar.YEAR, years);
+				if (month != 0)
+					fechaCalculada.add(Calendar.MONTH, month);
+				if (days != 0)
+					fechaCalculada.add(Calendar.DAY_OF_MONTH, days);
+				if (hours != 0)
+					fechaCalculada.add(Calendar.HOUR_OF_DAY, hours);
+				if (minutes != 0)
+					fechaCalculada.add(Calendar.MINUTE, minutes);
 			}
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
 		return fechaCalculada.getTime();
 	}
-	
+
 	public void inactivarPropiedad(String propiedad) throws ServerException {
 		procesoTransicionAutomaticaMapper.inactivarPropiedad(propiedad);
 	}
-	
-	public ProcesoTransicionAutomaticaDTO gestionaEjecucion(ProcesoTransicionAutomaticaDTO dto)throws ServerException{
+
+	public ProcesoTransicionAutomaticaDTO gestionaEjecucion(ProcesoTransicionAutomaticaDTO dto) throws ServerException {
 		PropiedadDTO pTemporizador = propiedadService.consultaXId(dto.getPropiedad());
-		if(Propiedades.validarBloqueo(pTemporizador)) {
-			if(pTemporizador.getKey().compareTo(Propiedades.TEMPORIZADOR)==0) {
+		if (Propiedades.validarBloqueo(pTemporizador)) {
+			if (pTemporizador.getKey().compareTo(Propiedades.TEMPORIZADOR) == 0) {
 				List<PedidoVentaDTO> documentos = null;
-				documentos = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
-				if(documentos ==null || documentos.isEmpty()) {
-					//Este mensaje va unido a el query de validacion, tener cuidado
+				documentos = listDocumentWithFiltersFunction.listarExpedientesDisponiblesDocumentoFuncion(
+						new PedidoVentaFilterDTO(), dto.getPropiedad(), null);
+				if (documentos == null || documentos.isEmpty()) {
+					// Este mensaje va unido a el query de validacion, tener cuidado
 					dto.setMensaje("Sin documentos a gestionar");
-					if (dto.getTransicion()!=null && procesoTransicionAutomaticaMapper.countExecutionInLastMonth(dto.getTransicion(), dto.getPropiedad())==0) {
+					if (dto.getTransicion() != null && procesoTransicionAutomaticaMapper
+							.countExecutionInLastMonth(dto.getTransicion(), dto.getPropiedad()) == 0) {
 						try {
-							sendMessageToAdminSvc.call("Proceso automatico que no se genera desde hace un mes " + dto.getPlantillaNombre(),
-									"Proceso automatico que no se genera desde hace un mes" + "\n\n(" +dto.getLlaveTabla() + ")."
-									+ " En caso de estar correcto te recomiendo que actualices la propiedad puede ser el motivo para que se vuelva a validar en un mes"
-									+ "(Ubicacion: "+propiedadService.ubicarPropiedad(pTemporizador) +")");
+							sendMessageToAdminSvc.call(
+									"Proceso automatico que no se genera desde hace un mes " + dto.getPlantillaNombre(),
+									"Proceso automatico que no se genera desde hace un mes" + "\n\n("
+											+ dto.getLlaveTabla() + ")."
+											+ " En caso de estar correcto te recomiendo que actualices la propiedad puede ser el motivo para que se vuelva a validar en un mes"
+											+ "(Ubicacion: " + propiedadService.ubicarPropiedad(pTemporizador) + ")");
 						} catch (ServerException e1) {
 						}
-						dto.setMensaje("Sin documentos a gestionar y avisado al administrador por tiempo sin generar documentos");
+						dto.setMensaje(
+								"Sin documentos a gestionar y avisado al administrador por tiempo sin generar documentos");
 					}
-				}else {
+				} else {
 					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
-					if(campoDestino==null) throw new ServerException("No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
+					if (campoDestino == null)
+						throw new ServerException(
+								"No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "
+										+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-					String propiedadMultiple = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
-					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();//Esto lo hago para ahorrarme una consulta ala BD
+					String propiedadMultiple = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino,
+							Propiedades.MULTIPLE, tokenSystem.getUsuario());
+					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();// Esto lo hago para ahorrarme una
+																					// consulta ala BD
 					transicion.setLlaveTabla(dto.getTransicion());
 
 					String transaccionDocumento = null;
-					
+
 					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
-					if(relaciones==null || relaciones.isEmpty()|| relaciones.size()>1) {
-						throw new ServerException("La transicion debe tener una unica (1) relacion que indique en que campo de la plantilla se va a guardar el documento resultado del temporizador. Revisar.  ( Ubicacion: "+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
-					}else {
+					if (relaciones == null || relaciones.isEmpty() || relaciones.size() > 1) {
+						throw new ServerException(
+								"La transicion debe tener una unica (1) relacion que indique en que campo de la plantilla se va a guardar el documento resultado del temporizador. Revisar.  ( Ubicacion: "
+										+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
+					} else {
 						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
 						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
 						transicion.setPlantilla(relaciones.get(0).getPlantilla());
-						if(propiedadMultiple==null) {
+						if (propiedadMultiple == null) {
 							dto.setMensaje("");
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
-								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
+								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
+										transicion, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(),
+										campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
-						}else {
+						} else {
 							campoPrinicipal.setExpedientes(documentos);
-							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(transicion, null, transaccionDocumento, tokenSystem.getLlaveTabla(), campoPrinicipal);
-							if(nuevo !=null) {
-								dto.setMensaje(nuevo.getNombre());	
-							}else {
+							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
+									transicion, null, transaccionDocumento, tokenSystem.getLlaveTabla(),
+									campoPrinicipal);
+							if (nuevo != null) {
+								dto.setMensaje(nuevo.getNombre());
+							} else {
 								dto.setMensaje("Generar documentos no genera. Revisar");
 							}
 						}
 					}
 				}
 			} else {
-				if(pTemporizador.getKey().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO)==0) {
+				if (pTemporizador.getKey().compareTo(Propiedades.PERIODO_LIMPIEZA_HISTORICO) == 0) {
 					try {
 						int days = Integer.parseInt(pTemporizador.getValor());
 						Calendar fechaCalculada = new GregorianCalendar();
-						if(days!=0)fechaCalculada.add(Calendar.DAY_OF_MONTH, -days);
-						int migrados =procesoTransicionAutomaticaMapper.funcionPasarTablaHistoricos(pTemporizador.getCampo(), fechaCalculada.getTime());
+						if (days != 0)
+							fechaCalculada.add(Calendar.DAY_OF_MONTH, -days);
+						int migrados = procesoTransicionAutomaticaMapper
+								.funcionPasarTablaHistoricos(pTemporizador.getCampo(), fechaCalculada.getTime());
 						dto.setMensaje(String.valueOf(migrados));
 					} catch (Exception e) {
 						dto.setMensaje("ERROR : " + e.getMessage());
 						try {
-							sendMessageToAdminSvc.call("Error en ejecucion de transaccion de limpieza de datos" + dto.getPlantillaNombre(), e.getMessage() + "\n\n(" +dto.getLlaveTabla() + ")");
+							sendMessageToAdminSvc.call(
+									"Error en ejecucion de transaccion de limpieza de datos" + dto.getPlantillaNombre(),
+									e.getMessage() + "\n\n(" + dto.getLlaveTabla() + ")");
 						} catch (ServerException e1) {
 						}
 					}
 				}
 			}
-		}else {
+		} else {
 			dto.setMensaje("La propiedad temporizador esta bloqueada a esta horas");
 		}
 		dto.setEjecucion(new Date());
@@ -299,6 +361,5 @@ public class ProcesoTransicionAutomaticaSvc extends BasicSvc<ProcesoTransicionAu
 		}
 		return update(dto);
 	}
-	
 
 }

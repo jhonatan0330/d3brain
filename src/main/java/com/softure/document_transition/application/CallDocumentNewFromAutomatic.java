@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -32,30 +31,31 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Component
 public class CallDocumentNewFromAutomatic {
 
-	@Autowired
-	@Lazy
-	private RelacionInternaSvc relacionService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
-	@Autowired
-	@Lazy
-	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
-	@Lazy
-	private UsuarioSesionSvc autenticacionService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc fieldsOfTemplateService;
-	@Autowired
-	@Lazy
-	private PedidoVentaDineroSvc dineroService;
+	private final RelacionInternaSvc relacionService;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final PropertyGetWithCacheService cacheService;
+	private final CallDocumentCRUD saveUpdateInactivateDocumentFunction;
+	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final UsuarioSesionSvc autenticacionService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldsOfTemplateService;
+	private final PedidoVentaDineroSvc dineroService;
+
+	public CallDocumentNewFromAutomatic(@Lazy RelacionInternaSvc relacionService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy PropertyGetWithCacheService cacheService,
+			@Lazy CallDocumentCRUD saveUpdateInactivateDocumentFunction,
+			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
+			@Lazy UsuarioSesionSvc autenticacionService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc fieldsOfTemplateService,
+			@Lazy PedidoVentaDineroSvc dineroService) {
+		this.relacionService = relacionService;
+		this.plantillaService = plantillaService;
+		this.cacheService = cacheService;
+		this.saveUpdateInactivateDocumentFunction = saveUpdateInactivateDocumentFunction;
+		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
+		this.autenticacionService = autenticacionService;
+		this.fieldsOfTemplateService = fieldsOfTemplateService;
+		this.dineroService = dineroService;
+	}
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion,
 			PedidoVentaDTO expedienteDTO, String transaccion, String token,
@@ -120,14 +120,14 @@ public class CallDocumentNewFromAutomatic {
 					if (expedienteDTO != null) {
 						PedidoVentaCaracteristicaDTO campoPrincipal = CallDocumentCommons.copyFieldDocument(null,
 								iPropiedadDTO.getValor());
-						if(cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.CAMPO, campoPrincipal.getCampo(), Propiedades.MULTIPLE, null)==null) {
+						if (cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.CAMPO,
+								campoPrincipal.getCampo(), Propiedades.MULTIPLE, null) == null) {
 							campoPrincipal.setValorOpcion(expedienteDTO.getLlaveTabla());
 						} else {
 							campoPrincipal.setExpedientes(new ArrayList<>());
 							campoPrincipal.getExpedientes().add(expedienteDTO);
 						}
-						
-						
+
 						if (expedienteDTO.getDinero() != null)
 							campoPrincipal.setValorNumero(expedienteDTO.getDinero().getValorTotal());
 						campoPrincipal.setPrincipal(expedienteDTO);

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -31,63 +30,80 @@ import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class CallBPM {
 
-	@Autowired @Lazy 
-	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired @Lazy 
-	private DocumentoRelacionGestorSvc relacionGestorService;
-	@Autowired @Lazy 
-	private ProcesoEstadoSvc estadoService;
-	@Autowired @Lazy 
-	private ProcesoTransicionSvc expedienteTransicionService;
-	@Autowired @Lazy 
-	private CallManageTransition manageTransitionFunction;
-	@Autowired @Lazy 
-	private CallDocumentUpdateFromAutomatic updateDocumentFunction;
-	@Autowired @Lazy 
-	private DocumentoRelacionExpedienteSvc relacionExpedienteService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private PedidoVentaSvc pedidoService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy 
-	private PropiedadSvc propiedadService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
+	private final CallDocumentCRUD saveUpdateInactivateDocumentFunction;
+	private final DocumentoRelacionGestorSvc relacionGestorService;
+	private final ProcesoEstadoSvc estadoService;
+	private final ProcesoTransicionSvc expedienteTransicionService;
+	private final CallManageTransition manageTransitionFunction;
+	private final CallDocumentUpdateFromAutomatic updateDocumentFunction;
+	private final DocumentoRelacionExpedienteSvc relacionExpedienteService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final PedidoVentaSvc pedidoService;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final PropiedadSvc propiedadService;
+	private final PropertyGetWithCacheService cacheService;
+
+	public CallBPM(@Lazy CallDocumentCRUD saveUpdateInactivateDocumentFunction,
+			@Lazy DocumentoRelacionGestorSvc relacionGestorService, @Lazy ProcesoEstadoSvc estadoService,
+			@Lazy ProcesoTransicionSvc expedienteTransicionService, @Lazy CallManageTransition manageTransitionFunction,
+			@Lazy CallDocumentUpdateFromAutomatic updateDocumentFunction,
+			@Lazy DocumentoRelacionExpedienteSvc relacionExpedienteService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy PedidoVentaSvc pedidoService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy PropiedadSvc propiedadService,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		this.saveUpdateInactivateDocumentFunction = saveUpdateInactivateDocumentFunction;
+		this.relacionGestorService = relacionGestorService;
+		this.estadoService = estadoService;
+		this.expedienteTransicionService = expedienteTransicionService;
+		this.manageTransitionFunction = manageTransitionFunction;
+		this.updateDocumentFunction = updateDocumentFunction;
+		this.relacionExpedienteService = relacionExpedienteService;
+		this.campoService = campoService;
+		this.pedidoService = pedidoService;
+		this.plantillaService = plantillaService;
+		this.propiedadService = propiedadService;
+		this.cacheService = cacheService;
+	}
 
 	public void execute(PedidoVentaDTO pDocument, String token, PedidoVentaDTO pGeneratorToBPM) throws ServerException {
 		if (pDocument == null || pDocument.getCaracteristicas() == null || pDocument.getCaracteristicas().isEmpty())
 			return;
 		for (PedidoVentaCaracteristicaDTO iField : pDocument.getCaracteristicas()) {
 			if (iField.getDocumentsToBPM() != null) {
-				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token, pGeneratorToBPM);
-				CallDocumentCommons.copyMessages( iField.getDocumentsToBPM(), pDocument);
-				PropiedadDTO _propMake = Propiedades.obtenerParametro(iField.getCampoDTO(), Propiedades.VINCULO_MAKE_IN_OTHER_FORM); 
-				if(_propMake!=null) {
+				administrarExpedientes(iField, iField.getDocumentsToBPM(), iField.isModificadoBPM(), token,
+						pGeneratorToBPM);
+				CallDocumentCommons.copyMessages(iField.getDocumentsToBPM(), pDocument);
+				PropiedadDTO _propMake = Propiedades.obtenerParametro(iField.getCampoDTO(),
+						Propiedades.VINCULO_MAKE_IN_OTHER_FORM);
+				if (_propMake != null) {
 					List<String> _relationIds = propiedadService.camposRelacionados(_propMake);
-					if(_relationIds==null || _relationIds.isEmpty()) 
-						throw new ServerException("La propiedad VINCULO_MAKE_IN_OTHER_FORM no tiene relaciones. Campo: " +iField.getCampoDTO().getNombre() );
-					if(iField.getValorOpcion()!=null) {
+					if (_relationIds == null || _relationIds.isEmpty())
+						throw new ServerException("La propiedad VINCULO_MAKE_IN_OTHER_FORM no tiene relaciones. Campo: "
+								+ iField.getCampoDTO().getNombre());
+					if (iField.getValorOpcion() != null) {
 						PedidoVentaDTO _expediente = pedidoService.consultaXId(iField.getValorOpcion());
 						if (_expediente == null)
 							throw new ServerException("No se identifico el expediente");
 						_expediente = pedidoService.obtenerCamposCompletos(_expediente, token);
 						for (String _iIdField : _relationIds) {
 							for (PedidoVentaCaracteristicaDTO _iFieldToReview : _expediente.getCaracteristicas()) {
-								if(_iFieldToReview.getCampo().compareTo(_iIdField)==0) {
+								if (_iFieldToReview.getCampo().compareTo(_iIdField) == 0) {
 									_iFieldToReview.setPrincipal(_expediente);
 									_iFieldToReview.setTransaccionRegistro(pDocument.getTransaccion());
-									if(_iFieldToReview.getCampoDTO().getPropiedades()==null) {
-										_iFieldToReview.getCampoDTO().setPropiedades(cacheService.obtenerPropiedades( PropiedadValorDefinidoDTO.CAMPO,
-												_iFieldToReview.getCampo(), null, null)); 
+									if (_iFieldToReview.getCampoDTO().getPropiedades() == null) {
+										_iFieldToReview.getCampoDTO().setPropiedades(
+												cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
+														_iFieldToReview.getCampo(), null, null));
 									}
-									saveUpdateInactivateDocumentFunction.organizeDepends(_expediente.getCaracteristicas(), _iFieldToReview);
-									saveUpdateInactivateDocumentFunction.createDocumentOfVinculateField(token, _iFieldToReview);
+									saveUpdateInactivateDocumentFunction
+											.organizeDepends(_expediente.getCaracteristicas(), _iFieldToReview);
+									saveUpdateInactivateDocumentFunction.createDocumentOfVinculateField(token,
+											_iFieldToReview);
 									break;
 								}
 							}
@@ -120,7 +136,7 @@ public class CallBPM {
 			for (PropiedadDTO iCamino : caminos) {
 				if (iCamino.getValor().compareTo("*") == 0 || iCamino.getValor().compareTo("+") == 0) {
 					caminosGestionar.add(iCamino.getValor());
-					System.out.format(" Camino ("+iCamino.getValor()+")");
+					System.out.format(" Camino (" + iCamino.getValor() + ")");
 				} else {
 					caminosGestionar.add(iCamino.getValor() + ";");
 					System.out.format(", Camino (%s)", iCamino.getValor());
@@ -147,32 +163,34 @@ public class CallBPM {
 		if (expediente == null)
 			throw new ServerException("No se identifico el expediente");
 
-		if(caminosValidados.get(0).compareTo("+") != 0) {
+		if (caminosValidados.get(0).compareTo("+") != 0) {
 			System.out.format("\n[%s] Gestionando por accion en documento: %s", expediente.getNombre(),
 					documento.getNombre());
 			if (procesoDTO.getEstadoExpediente() != null) {
 				ProcesoTransicionDTO transicion = consultarTransicion(documento.getPlantilla(),
 						procesoDTO.getEstadoExpediente(), null, procesoDTO.getNombre());
 				if (expediente.getEstadoExpediente() == null)
-					throw new ServerException("Revise el estado del expediente que no es NULO : " + expediente.getNombre());
-				if (expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente()) != 0)
 					throw new ServerException(
-							"Revise el expediente " + procesoDTO.getNombre() + " el cual tiene un estado desactualizado");
+							"Revise el estado del expediente que no es NULO : " + expediente.getNombre());
+				if (expediente.getEstadoExpediente().compareTo(procesoDTO.getEstadoExpediente()) != 0)
+					throw new ServerException("Revise el expediente " + procesoDTO.getNombre()
+							+ " el cual tiene un estado desactualizado");
 				// Manejo de los saldos de los procesos
 				if (transicion != null) {
 					ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
 					// Esto lo hice solamente para una transicion inicial que gneraba un ciclo con
 					// iteraciones
-					if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0 ) {
-						manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento, saldoDocumento,
-								null, null, securityToken, transaccion, null, pGenerator);
+					if (pState.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0) {
+						manageTransitionFunction.execute(transicion, expediente.getLlaveTabla(), documento,
+								saldoDocumento, null, null, securityToken, transaccion, null, pGenerator);
 					}
 					// Para evitar que se generen ciclos validando los mismos documentos
 					if (documentosGestionados == null)
 						documentosGestionados = new ArrayList<String>();
 					documentosGestionados.add(expediente.getLlaveTabla());
-					// NO se porque en las transiciones activo o inactivo roles, es una mala practica a cada rato revisa esto
-					//saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
+					// NO se porque en las transiciones activo o inactivo roles, es una mala
+					// practica a cada rato revisa esto
+					// saveUpdateInactivateDocumentFunction.saveRole(expediente, securityToken);
 				} else {
 					if (primerLlamado) {
 						ProcesoEstadoDTO pState = estadoService.consultaXId(procesoDTO.getEstadoExpediente());
@@ -190,22 +208,25 @@ public class CallBPM {
 						throw new ServerException(mensajeFault);
 					}
 				}
-			}	
+			}
 		} else {
 			caminosValidados.remove(0);// Elimina el + que es para todos los estados
 			caminosValidados.add(0, "*");// Agrega el * para todos los estados
 		}
-		
+
 		plantillasRevisadas.add(procesoDTO.getPlantilla());
 		doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), documento, securityToken, saldoDocumento, plantillasRevisadas,
 				documentosGestionados, transaccion, caminosValidados, expediente.getNombre(), pGenerator);
 	}
 
-	//Va a existir algun problema en el futuro en casos que los documentos no hagan parte de procesos cya arregle cuando 
-	// es al inciiar pero cuando es por la mitad de una transicion larga no se como se comporte
-	private void doBpmInInnerDocuments(String currentDocumentId , PedidoVentaDTO startDocument, String securityToken,
+	// Va a existir algun problema en el futuro en casos que los documentos no hagan
+	// parte de procesos cya arregle cuando
+	// es al inciiar pero cuando es por la mitad de una transicion larga no se como
+	// se comporte
+	private void doBpmInInnerDocuments(String currentDocumentId, PedidoVentaDTO startDocument, String securityToken,
 			BigDecimal saldoDocumento, List<String> plantillasRevisadas, List<String> documentosGestionados,
-			String transaccion, List<String> caminosValidados, String currentDocumentName, PedidoVentaDTO pGenerator) throws ServerException {
+			String transaccion, List<String> caminosValidados, String currentDocumentName, PedidoVentaDTO pGenerator)
+			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> gestionables = campoService.listarGestionables(currentDocumentId);
 		if (gestionables != null && !gestionables.isEmpty()) {
 			System.out.format("\n[%s] Gestionando documentos que esten relacionados", currentDocumentName,
@@ -282,10 +303,10 @@ public class CallBPM {
 		List<String> caminosValidados = validarCamino(caminosGestionables, procesoDTO.getPlantilla());
 		if (caminosValidados.size() == 0)
 			return;
-		if(caminosValidados.get(0).compareTo("+") == 0) {
-				caminosValidados.remove(0);// Elimina el + que es para todos los estados
-				caminosValidados.add(0, "*");// Agrega el * para todos los estados
-				return;
+		if (caminosValidados.get(0).compareTo("+") == 0) {
+			caminosValidados.remove(0);// Elimina el + que es para todos los estados
+			caminosValidados.add(0, "*");// Agrega el * para todos los estados
+			return;
 		}
 		DocumentoRelacionGestorFilterDTO filtroGestor = new DocumentoRelacionGestorFilterDTO();
 		filtroGestor.setEstado(SharedConstants.STATE_ACTIVE);
@@ -401,7 +422,8 @@ public class CallBPM {
 	}
 
 	private PedidoVentaCaracteristicaDTO administrarExpedientes(PedidoVentaCaracteristicaDTO pCampo,
-			PedidoVentaDTO updaterDTO, boolean modificacion, String token, PedidoVentaDTO pGenerator) throws ServerException {
+			PedidoVentaDTO updaterDTO, boolean modificacion, String token, PedidoVentaDTO pGenerator)
+			throws ServerException {
 
 		if (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty())
 			return pCampo;
@@ -460,34 +482,35 @@ public class CallBPM {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
 						String usuarioToken = (token == null) ? null : propiedadService.getUserFlex(token);
-						PropiedadDTO prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.PLANTILLA,
+						PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 								procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ANULAR, usuarioToken);
 						if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
 							procesoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 							saveUpdateInactivateDocumentFunction.inactivateDocumentWithProcess(procesoDTO, updaterDTO,
 									token);
 							relacionarGestor(procesoDTO, updaterDTO, "ANULAR DOCUMENTO", token);
-							
-							// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
+
+							// En fiel unos campos no seguian el bpm porque solo eran formularios que
+							// anulaban
 							// Estas lineas las copie de la opcion maquina de estados con gestionar estados
-						
+
 							bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO, pGenerator);
-						}else {
-							prop = cacheService.obtenerPropiedad( PropiedadValorDefinidoDTO.PLANTILLA,
+						} else {
+							prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 									procesoDTO.getPlantilla(), Propiedades.PLANTILLA_ACTIVAR, usuarioToken);
 							if (prop != null && updaterDTO.getPlantilla().compareTo(prop.getValor()) == 0) {
 								procesoDTO.setEstado(SharedConstants.STATE_INACTIVE);
-								saveUpdateInactivateDocumentFunction.activateDocument(procesoDTO, updaterDTO,
-										token);
+								saveUpdateInactivateDocumentFunction.activateDocument(procesoDTO, updaterDTO, token);
 								relacionarGestor(procesoDTO, updaterDTO, "ACTIVAR DOCUMENTO", token);
-								
-								// En fiel unos campos no seguian el bpm porque solo eran formularios que anulaban
+
+								// En fiel unos campos no seguian el bpm porque solo eran formularios que
+								// anulaban
 								// Estas lineas las copie de la opcion maquina de estados con gestionar estados
-							
+
 								bpmToDocumentWithoutStateMAchine(pCampo, updaterDTO, token, procesoDTO, pGenerator);
 							}
 						}
-					}else {
+					} else {
 						// Ya que gestionando bpm no se hizo nada lo quito
 						pCampo.setDocumentsToBPM(null);
 					}
@@ -539,11 +562,9 @@ public class CallBPM {
 					if (updaterDTO.getDinero() != null)
 						saldoDoc = updaterDTO.getDinero().getValorTotal();
 				}
-				doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, token, saldoDoc, 
-						caminosGestionar, documentosGestionados, 
-						pCampo.getTransaccionRegistro(),
-						caminosValidados,
-						procesoDTO.getNombre(), pGenerator);	
+				doBpmInInnerDocuments(procesoDTO.getLlaveTabla(), updaterDTO, token, saldoDoc, caminosGestionar,
+						documentosGestionados, pCampo.getTransaccionRegistro(), caminosValidados,
+						procesoDTO.getNombre(), pGenerator);
 			}
 		}
 	}
@@ -579,7 +600,7 @@ public class CallBPM {
 				 */
 				if (nuevo.getDinero() != null) {
 					relacionCargueNuevo.setValor(nuevo.getDinero().getValorTotal());
-					relacion.setValor(anterior.getDinero().getValorTotal());//.subtract(nuevo.getDinero().getValorTotal()));
+					relacion.setValor(anterior.getDinero().getValorTotal());// .subtract(nuevo.getDinero().getValorTotal()));
 					relacionExpedienteService.update(relacion);
 					relacionExpedienteService.guardar(relacionCargueNuevo, securityToken);
 				}

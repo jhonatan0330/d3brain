@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
@@ -17,17 +15,22 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.domain.PropiedadDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoGPSMap {
 
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	
-	@Autowired @Lazy  private PedidoVentaSvc pedidoVentaService;
-	
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaSvc pedidoVentaService;
+
+	public TipoGPSMap(@Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService, @Lazy PedidoVentaSvc pedidoVentaService) {
+		this.campoService = campoService;
+		this.caracteristicaService = caracteristicaService;
+		this.pedidoVentaService = pedidoVentaService;
+	}
+
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
@@ -45,8 +48,7 @@ public class TipoGPSMap {
 					PedidoVentaDTO pv = pedidoVentaService.consultaXId(iOcupado.getDocumento());
 					pv.setCaracteristicas(new ArrayList<>());
 					if (!hmap.containsKey(iOcupado.getCampo())) {
-						hmap.put(iOcupado.getCampo(),
-								caracteristicaService.consultaXId(iOcupado.getCampo()));
+						hmap.put(iOcupado.getCampo(), caracteristicaService.consultaXId(iOcupado.getCampo()));
 					}
 					iOcupado.setCampoDTO(hmap.get(iOcupado.getCampo()));
 					pv.getCaracteristicas().add(iOcupado);

@@ -2,7 +2,6 @@ package com.softure.process_form.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -12,12 +11,16 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class CallSearchProcessFromText {
 
-	@Autowired @Lazy 
-	private CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
+	private final CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction;
+
+	public CallSearchProcessFromText(@Lazy CallDocumentListFromFieldProcess listDocumentFromFieldProcessFunction) {
+		this.listDocumentFromFieldProcessFunction = listDocumentFromFieldProcessFunction;
+	}
 
 	public String getValueOptionFromText(String token, String valueText,
 			DocumentoPlantillaCaracteristicaDTO fieldTemplate) throws ServerException {
@@ -52,7 +55,7 @@ public class CallSearchProcessFromText {
 	}
 
 	public String getDocumentFromManyResults(String valueText, List<PedidoVentaDTO> documents) throws ServerException {
-		
+
 		String keyOfDocument = null;
 		if (documents.size() > 1) {
 			String textToCompare = null;
@@ -68,8 +71,8 @@ public class CallSearchProcessFromText {
 				} else {
 					textToCompare = SharedConstants.COMA + pedidoVentaDTO.getTextoFiltro();
 				}
-				if (SoftureUtil.formatFunction(textToCompare).toUpperCase()
-						.contains(SharedConstants.COMA + SoftureUtil.formatFunction(valueText).toUpperCase() + SharedConstants.COMA)) {
+				if (SoftureUtil.formatFunction(textToCompare).toUpperCase().contains(SharedConstants.COMA
+						+ SoftureUtil.formatFunction(valueText).toUpperCase() + SharedConstants.COMA)) {
 					keyOfDocument = pedidoVentaDTO.getLlaveTabla();
 					break;
 				}

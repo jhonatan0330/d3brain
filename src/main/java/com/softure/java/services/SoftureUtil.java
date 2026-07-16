@@ -72,11 +72,12 @@ public class SoftureUtil {
 	}
 
 	public static String formatDatePattern(Date fecha, String patternFormat) {
-		if(patternFormat.compareTo("LOCAL_API")==0) {
-			return formatDatePattern(fecha, "yyyy-MM-dd") + "T" + formatDatePattern(fecha, "HH:mm:ss") +  ".000-0500";
+		if (patternFormat.compareTo("LOCAL_API") == 0) {
+			return formatDatePattern(fecha, "yyyy-MM-dd") + "T" + formatDatePattern(fecha, "HH:mm:ss") + ".000-0500";
 		}
 		DateFormat format = new SimpleDateFormat(patternFormat);
-		if (fecha == null) return "";
+		if (fecha == null)
+			return "";
 		return format.format(fecha);
 	}
 
@@ -139,7 +140,8 @@ public class SoftureUtil {
 
 	public static Timestamp verificarFechaHora(String texto) {
 		Date dateParse = toDate(texto);
-		if(dateParse ==null) return null;
+		if (dateParse == null)
+			return null;
 		return new Timestamp(dateParse.getTime());
 	}
 
@@ -152,7 +154,7 @@ public class SoftureUtil {
 			}
 		}
 		return null;
-		
+
 	}
 
 	public static String getURL(String url, String serverPath) throws IOException {
@@ -198,12 +200,12 @@ public class SoftureUtil {
 
 		currentFunction = Normalizer.normalize(currentFunction, Normalizer.Form.NFD);
 		currentFunction = currentFunction.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
-		
-	    currentFunction = currentFunction.replaceAll("[^a-z0-9\\_]", "_");
-	    currentFunction = currentFunction.replaceAll("_+", "_");
-	    
-	    currentFunction = currentFunction.replaceAll("^_+|_+$", "");
-	    
+
+		currentFunction = currentFunction.replaceAll("[^a-z0-9\\_]", "_");
+		currentFunction = currentFunction.replaceAll("_+", "_");
+
+		currentFunction = currentFunction.replaceAll("^_+|_+$", "");
+
 		return currentFunction;
 	}
 
@@ -220,7 +222,7 @@ public class SoftureUtil {
 		return currentFunction.toUpperCase();
 	}
 
-	public static String cleanStartEndSpaces(String str){
+	public static String cleanStartEndSpaces(String str) {
 		if (str == null)
 			return null;
 		return str.replaceAll("^\\s*", "").replaceAll("\\s*$", "");
@@ -251,13 +253,15 @@ public class SoftureUtil {
 				textoReemplazar = iParametro.substring(posIgual + 1, iParametro.length());
 				if (codigo.contains("[")) {
 					String newCode = codigo.substring(0, codigo.indexOf("["));
-					if(textoReemplazar.contains(SharedConstants.LINEA_MEDIA_DOBLE)) {
-						result.put(newCode, generateItemsFromParameters((ArrayList<Object>) result.get(newCode), textoReemplazar));
-					}else {
+					if (textoReemplazar.contains(SharedConstants.LINEA_MEDIA_DOBLE)) {
+						result.put(newCode,
+								generateItemsFromParameters((ArrayList<Object>) result.get(newCode), textoReemplazar));
+					} else {
 						ArrayList<String> arrayObjectsString = (ArrayList<String>) result.get(newCode);
-						if (arrayObjectsString == null)	arrayObjectsString = new ArrayList<>();
+						if (arrayObjectsString == null)
+							arrayObjectsString = new ArrayList<>();
 						arrayObjectsString.add(textoReemplazar);
-						result.put(newCode, arrayObjectsString);	
+						result.put(newCode, arrayObjectsString);
 					}
 				} else {
 					result.put(codigo, textoReemplazar);
@@ -266,11 +270,12 @@ public class SoftureUtil {
 		}
 		return result;
 	}
-	
-	private static ArrayList<Object> generateItemsFromParameters(ArrayList<Object> arrayObjects , String str){
+
+	private static ArrayList<Object> generateItemsFromParameters(ArrayList<Object> arrayObjects, String str) {
 		String[] params = str.split(SharedConstants.LINEA_MEDIA_DOBLE);
-		if (arrayObjects == null) arrayObjects = new ArrayList<>();
-		Map<String, String> parametersItem =  new HashMap<String, String>();
+		if (arrayObjects == null)
+			arrayObjects = new ArrayList<>();
+		Map<String, String> parametersItem = new HashMap<String, String>();
 		int posIgual = -1;
 		String codigo = null;
 		String textoReemplazar = null;
@@ -280,30 +285,32 @@ public class SoftureUtil {
 				codigo = iParametro.substring(0, posIgual);
 				textoReemplazar = iParametro.substring(posIgual + 2, iParametro.length());
 				parametersItem.put(codigo, textoReemplazar);
-				//Esto casi lo copie de process template
-				if(codigo.contains("(")) {
-		        	String newKey = codigo;
-		        	while (newKey.contains("(")) {
-						newKey = codigo.replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_").replace("-", "_");
+				// Esto casi lo copie de process template
+				if (codigo.contains("(")) {
+					String newKey = codigo;
+					while (newKey.contains("(")) {
+						newKey = codigo.replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_")
+								.replace("-", "_");
 					}
-		        	parametersItem.put(newKey, textoReemplazar);
-		        	//mapParams.remove(entry.getKey());
-		        	//Por el momento no borro las entradas para una proxima
-		        }
+					parametersItem.put(newKey, textoReemplazar);
+					// mapParams.remove(entry.getKey());
+					// Por el momento no borro las entradas para una proxima
+				}
 			}
 		}
-		if(!parametersItem.isEmpty()) arrayObjects.add(parametersItem);
+		if (!parametersItem.isEmpty())
+			arrayObjects.add(parametersItem);
 		return arrayObjects;
 	}
-	
-    public static String encrypt(String data, String secretKey) throws Exception {
-        SecretKey key = new SecretKeySpec(secretKey.getBytes(), "AES");
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encryptedBytes = cipher.doFinal(data.getBytes());
-        return Base64.getEncoder().encodeToString(encryptedBytes);
-    }
-    
+
+	public static String encrypt(String data, String secretKey) throws Exception {
+		SecretKey key = new SecretKeySpec(secretKey.getBytes(), "AES");
+		Cipher cipher = Cipher.getInstance("AES");
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		byte[] encryptedBytes = cipher.doFinal(data.getBytes());
+		return Base64.getEncoder().encodeToString(encryptedBytes);
+	}
+
 	public static String encryptSHA384(String input) throws ServerException {
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-384");
@@ -329,7 +336,7 @@ public class SoftureUtil {
 		gen = gen.replaceAll("-", "");
 		return gen;
 	}
-	
+
 	public static boolean isUUID(String value) {
 		if (value == null)
 			return false;
@@ -344,25 +351,26 @@ public class SoftureUtil {
 
 	public static String getRequestUrl(HttpServletRequest request) {
 		String baseUrl = request.getScheme() + "://" + request.getServerName();
-		if (!(request.getScheme().equals("http") && request.getServerPort() == 80) &&
-		    !(request.getScheme().equals("https") && request.getServerPort() == 443)) {
-		    baseUrl += ":" + request.getServerPort();
+		if (!(request.getScheme().equals("http") && request.getServerPort() == 80)
+				&& !(request.getScheme().equals("https") && request.getServerPort() == 443)) {
+			baseUrl += ":" + request.getServerPort();
 		}
 		return baseUrl;
 	}
-	
-	public static Date agregarMinutos(Date pFecha, int pMinutos) {
-        
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(pFecha);
-        cal.add(Calendar.MINUTE, pMinutos); 
-        return cal.getTime();
 
-    }
-	
+	public static Date agregarMinutos(Date pFecha, int pMinutos) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(pFecha);
+		cal.add(Calendar.MINUTE, pMinutos);
+		return cal.getTime();
+
+	}
+
 	public static String maskError(String pMessage) {
-		if (pMessage.indexOf("Where:")!=-1) {
-			return pMessage.substring( ((pMessage.indexOf("ERROR:")!=-1)?pMessage.indexOf("ERROR"):0 ), pMessage.indexOf("Where:"));
+		if (pMessage.indexOf("Where:") != -1) {
+			return pMessage.substring(((pMessage.indexOf("ERROR:") != -1) ? pMessage.indexOf("ERROR") : 0),
+					pMessage.indexOf("Where:"));
 		}
 		return pMessage;
 	}

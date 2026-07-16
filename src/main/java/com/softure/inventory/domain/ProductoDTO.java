@@ -1,8 +1,6 @@
 package com.softure.inventory.domain;
 
 import java.math.BigDecimal;
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 

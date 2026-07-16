@@ -11,8 +11,7 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaDineroDTO")
 @JsonInclude(Include.NON_NULL)
-public class PedidoVentaDineroDTO extends BasicDTO
-{
+public class PedidoVentaDineroDTO extends BasicDTO {
 
 	private String documento;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -26,35 +25,39 @@ public class PedidoVentaDineroDTO extends BasicDTO
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	
+
 	public Date getFecha() {
 		return fecha;
 	}
+
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-	
+
 	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
+
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
 	}
-	
+
 	public BigDecimal getSaldo() {
 		return saldo;
 	}
+
 	public void setValorCampo(BigDecimal valorCampo) {
 		this.valorCampo = valorCampo;
 	}
-	
+
 	public BigDecimal getValorCampo() {
 		return valorCampo;
 	}

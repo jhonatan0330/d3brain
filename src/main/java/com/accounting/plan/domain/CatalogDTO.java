@@ -7,7 +7,7 @@ import com.shared.domain.SharedParamObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("CatalogDTO")
-public class CatalogDTO extends SharedParamObject{
+public class CatalogDTO extends SharedParamObject {
 
 	private String name;
 	private String code;

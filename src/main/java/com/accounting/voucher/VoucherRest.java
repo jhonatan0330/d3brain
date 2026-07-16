@@ -2,8 +2,6 @@ package com.accounting.voucher;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,35 +26,41 @@ import com.shared.domain.ServerException;
 import com.shared.domain.SharedIdResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("acc/voucher")
 public class VoucherRest {
 
-	@Autowired @Lazy 
-	private SharedAuthenticateService tokenService;
-	@Autowired @Lazy 
-	private VoucherCreateService createService;
-	@Autowired @Lazy 
-	private VoucherDeleteService deleteService;
-	@Autowired @Lazy 
-	private VoucherGetService getVoucherService;
-	@Autowired @Lazy 
-	private VoucherReCreateService recreateService;
-	@Autowired @Lazy 
-	private VoucherRangeService range;
+	private final SharedAuthenticateService tokenService;
+	private final VoucherCreateService createService;
+	private final VoucherDeleteService deleteService;
+	private final VoucherGetService getVoucherService;
+	private final VoucherReCreateService recreateService;
+	private final VoucherRangeService range;
+
+	public VoucherRest(@Lazy SharedAuthenticateService tokenService, @Lazy VoucherCreateService createService,
+			@Lazy VoucherDeleteService deleteService, @Lazy VoucherGetService getVoucherService,
+			@Lazy VoucherReCreateService recreateService, @Lazy VoucherRangeService range) {
+		this.tokenService = tokenService;
+		this.createService = createService;
+		this.deleteService = deleteService;
+		this.getVoucherService = getVoucherService;
+		this.recreateService = recreateService;
+		this.range = range;
+	}
 
 	@GetMapping("/{catalog}")
 	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@PathVariable(name="catalog") String pCatalog) throws ServerException {
+			@PathVariable(name = "catalog") String pCatalog) throws ServerException {
 		return getVoucherService.call(pCatalog);
 	}
-	
+
 	@GetMapping("/one/{voucherId}")
 	public Voucher getVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			 @PathVariable(name="voucherId") String pVoucherId) throws ServerException {
-		return getVoucherService.getById( pVoucherId);
+			@PathVariable(name = "voucherId") String pVoucherId) throws ServerException {
+		return getVoucherService.getById(pVoucherId);
 	}
 
 	@PostMapping("/manual")
@@ -64,36 +68,35 @@ public class VoucherRest {
 			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
 		return createService.call(voucher, tokenService.validate(token, request));
 	}
-	
+
 	@DeleteMapping("/manual/{voucherId}")
 	public SharedIdResponse deleteManualVoucher(HttpServletRequest request,
-			@RequestHeader("Authorization") String token, @PathVariable(name="voucherId") String pVoucherId) throws ServerException {
+			@RequestHeader("Authorization") String token, @PathVariable(name = "voucherId") String pVoucherId)
+			throws ServerException {
 		return deleteService.callById(pVoucherId, token);
 	}
-	
 
 	@PostMapping("/generate-voucher")
-	public SharedIdResponse generateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token, 
-			@RequestBody VoucherPrepareRequest item
-		) throws ServerException {
+	public SharedIdResponse generateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
+			@RequestBody VoucherPrepareRequest item) throws ServerException {
 		return recreateService.call(item, tokenService.validate(token, request));
 	}
-	
+
 	@PostMapping("/document")
 	public SharedIdResponse getVoucherId(HttpServletRequest request, @RequestHeader("Authorization") String token,
 			@RequestBody VoucherPrepareRequest item) throws ServerException {
-		return getVoucherService.getByDocument( item, tokenService.validate(token, request));
+		return getVoucherService.getByDocument(item, tokenService.validate(token, request));
 	}
-	
+
 	@PostMapping("/range-clear-voucher")
 	public SharedIdResponse rangeClearVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
 			@RequestBody VoucherRangeRequest item) throws ServerException {
-		return range.clear( item, tokenService.validate(token, request));
+		return range.clear(item, tokenService.validate(token, request));
 	}
 
 	@PostMapping("/range-create-voucher")
 	public SharedIdResponse rangeCreateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
 			@RequestBody VoucherRangeRequest item) throws ServerException {
-		return range.create( item, tokenService.validate(token, request));
+		return range.create(item, tokenService.validate(token, request));
 	}
 }

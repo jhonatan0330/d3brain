@@ -2,7 +2,6 @@ package com.softure.logisticpymes.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -16,15 +15,20 @@ import com.softure.logisticpymes.domain.ServidorFilterDTO;
 import com.softure.logisticpymes.infrastructure.ServidorMapper;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("servidorService")
 public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private ServidorMapper servidorMapper;
-	@Autowired
-	public Environment env;
+	private final ServidorMapper servidorMapper;
+	private final Environment env;
+
+	public ServidorSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ServidorMapper servidorMapper,
+			Environment env) {
+		super(usuarioSesionService);
+		this.servidorMapper = servidorMapper;
+		this.env = env;
+	}
 
 	private ServidorDTO localServer;
 

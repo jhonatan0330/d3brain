@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,16 +20,21 @@ import com.accounting.plan.domain.TimeFrameDTO;
 import com.accounting.plan.domain.TimeFrameFilterDTO;
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
+import org.springframework.context.annotation.Lazy;
 
 @Service("PlanCreateCatalogTemplateAccountingService")
 public class PlanCreateCatalogService {
 
-	@Autowired @Lazy 
-	private CatalogService catalogService;
-	@Autowired @Lazy 
-	private ResultMapExtendService mapService;
-	@Autowired @Lazy 
-	private TimeFrameService timeFrameService;
+	private final CatalogService catalogService;
+	private final ResultMapExtendService mapService;
+	private final TimeFrameService timeFrameService;
+
+	public PlanCreateCatalogService(@Lazy CatalogService catalogService, @Lazy ResultMapExtendService mapService,
+			@Lazy TimeFrameService timeFrameService) {
+		this.catalogService = catalogService;
+		this.mapService = mapService;
+		this.timeFrameService = timeFrameService;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public CatalogDTO call(CatalogDTO catalog) throws ServerException {
@@ -53,29 +56,26 @@ public class PlanCreateCatalogService {
 		if (catalog.getTemplate() == null)
 			throw new ServerException("La plantilla del catalogo es obligatorio");
 		if (!catalog.getCode().matches("[0-9A-Za-z]+"))
-			throw new ServerException(
-					"El codigo solo puede tener letras y numeros y no puede tener espacios.");
-		if (catalog.getCode().length() >20)
-			throw new ServerException(
-					"El codigo menos de 20 digitos");
+			throw new ServerException("El codigo solo puede tener letras y numeros y no puede tener espacios.");
+		if (catalog.getCode().length() > 20)
+			throw new ServerException("El codigo menos de 20 digitos");
 		if (catalog.getName() == null)
 			throw new ServerException("El nombre del catalogo es obligatorio");
-		//if (catalog.getInitialDate() == null ) //|| catalog.getFinalDate() == null
-		//	throw new ServerException("La fecha de inicio del catalogo es obligatorio");
-		
-		
-		if(catalog.getFinalDate()!=null) {
-			
+		// if (catalog.getInitialDate() == null ) //|| catalog.getFinalDate() == null
+		// throw new ServerException("La fecha de inicio del catalogo es obligatorio");
+
+		if (catalog.getFinalDate() != null) {
+
 			if (catalog.getInitialDate().compareTo(catalog.getFinalDate()) > 0)
 				throw new ServerException("La fecha de inicio debe ser menor a la fecha de fin del catalogo");
-			
+
 			Calendar fecha = Calendar.getInstance();
-		    fecha.setTime(catalog.getFinalDate());
+			fecha.setTime(catalog.getFinalDate());
 			int ultimoDiaDelMes = fecha.getActualMaximum(Calendar.DAY_OF_MONTH);
-	        if(fecha.get(Calendar.DAY_OF_MONTH) != ultimoDiaDelMes)
-	        	throw new ServerException("La fecha de fin del catalogo debe ser el último día del mes");	
+			if (fecha.get(Calendar.DAY_OF_MONTH) != ultimoDiaDelMes)
+				throw new ServerException("La fecha de fin del catalogo debe ser el último día del mes");
 		}
-               
+
 		CatalogFilterDTO filter = new CatalogFilterDTO();
 		filter.setCode(catalog.getCode());
 		CatalogDTO catalogDB = catalogService.getOne(filter);
@@ -86,29 +86,27 @@ public class PlanCreateCatalogService {
 	public CatalogDTO callDelete(String catalogId) throws ServerException {
 		return catalogService.delete(catalogId);
 	}
-	
+
 	public void validateTemporalFrame(Date pDate) throws ServerException {
 		TimeFrameFilterDTO _filter = new TimeFrameFilterDTO();
 		_filter.setLevel(1);
-		LocalDate localDate = pDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+		LocalDate localDate = pDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		_filter.setCode(String.valueOf(localDate.getYear()));
 		_filter.setState(SharedConstants.STATE_ACTIVE);
 		TimeFrameDTO _year = timeFrameService.getOne(_filter);
-		if(_year == null) {
-			
+		if (_year == null) {
+
 			createTemporalFrame(pDate, null);
 		}
-		
+
 	}
 
 	private void createTemporalFrame(Date initialDate, Date finalDate) throws ServerException {
 
-		if (initialDate == null )
+		if (initialDate == null)
 			throw new ServerException("La fecha de inicio del catalogo es obligatorio");
-		
+
 		Calendar _date = Calendar.getInstance();
 		_date.setTime(initialDate);
 		_date.set(Calendar.MONTH, 0);
@@ -117,35 +115,37 @@ public class PlanCreateCatalogService {
 		_date.set(Calendar.MINUTE, 0);
 		_date.set(Calendar.SECOND, 0);
 		initialDate = _date.getTime();
-		
-		if(finalDate == null) {
+
+		if (finalDate == null) {
 			Calendar fecha = Calendar.getInstance();
 			fecha.setTime(initialDate);
 			fecha.add(Calendar.YEAR, 1);
 			finalDate = fecha.getTime();
 		}
-		//Esta pensado para tener 5 niveles de detalle sino que los niveles 4 y 5 traen muchos registros
+		// Esta pensado para tener 5 niveles de detalle sino que los niveles 4 y 5 traen
+		// muchos registros
 		// La idea es colocar una propiedad que permita aumentar o reducir los niveles
 		int maxLevel = 4;
 
 		TimeFrameDTO timeFrame = mapService.getTimeFrameLevel(0);
-		if (timeFrame.getStartDate() == null) {			
+		if (timeFrame.getStartDate() == null) {
 			createLevel0(initialDate, finalDate);
 		} else {
-			//Esta parte es para actualizar el rango de fechas del nivel 0
+			// Esta parte es para actualizar el rango de fechas del nivel 0
 			boolean updateFlag = false;
-			if(initialDate.getTime()< timeFrame.getStartDate().getTime()) {
+			if (initialDate.getTime() < timeFrame.getStartDate().getTime()) {
 				timeFrame.setStartDate(initialDate);
 				updateFlag = true;
 			}
 			Calendar date = Calendar.getInstance();
 			date.setTime(timeFrame.getEndDate());
 			date.add(Calendar.DATE, 1);
-			if(finalDate.getTime()< date.getTime().getTime()) {
+			if (finalDate.getTime() < date.getTime().getTime()) {
 				timeFrame.setEndDate(date.getTime());
 				updateFlag = true;
 			}
-			if(updateFlag) timeFrameService.update(timeFrame);
+			if (updateFlag)
+				timeFrameService.update(timeFrame);
 		}
 		if (maxLevel >= 1)
 			getDateToCreateLevel(initialDate, finalDate, 1);
@@ -232,9 +232,9 @@ public class PlanCreateCatalogService {
 			date.set(Calendar.MONTH, 0);
 			date.set(Calendar.DAY_OF_MONTH, 1);
 			map.setEndDate(date.getTime());
-			timeFrameService.save(map);	
+			timeFrameService.save(map);
 		}
-		
+
 	}
 
 	private void createLevel2(Date initialDate, Date endDate) throws ServerException {
@@ -247,14 +247,13 @@ public class PlanCreateCatalogService {
 			map.setStartDate(date.getTime());
 			map.setYear(date.get(Calendar.YEAR));
 			map.setMonth(date.get(Calendar.MONTH));
-			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1));
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1));
 			date.add(Calendar.MONTH, 1);
 			date.set(Calendar.DAY_OF_MONTH, 1);
 			map.setEndDate(date.getTime());
-			timeFrameService.save(map);	
+			timeFrameService.save(map);
 		}
-		
+
 	}
 
 	private void createLevel3(Date initialDate, Date endDate) throws ServerException {
@@ -274,7 +273,7 @@ public class PlanCreateCatalogService {
 					+ "-" + "%02d".formatted(date.get(Calendar.DATE)));
 			date.add(Calendar.DATE, 1);
 			map.setEndDate(date.getTime());
-			items.add(map);	
+			items.add(map);
 		}
 		mapService.saveAll(items);
 	}
@@ -291,11 +290,10 @@ public class PlanCreateCatalogService {
 			map.setMonth(date.get(Calendar.MONTH));
 			map.setDay(date.get(Calendar.DATE));
 			map.setHour(date.get(Calendar.HOUR_OF_DAY));
-			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
-							+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
-							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":00 - "
-							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":59");
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
+					+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
+					+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":00 - "
+					+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":59");
 			date.add(Calendar.HOUR, 1);
 			map.setEndDate(date.getTime());
 			items.add(map);
@@ -316,13 +314,12 @@ public class PlanCreateCatalogService {
 			map.setDay(date.get(Calendar.DATE));
 			map.setHour(date.get(Calendar.HOUR_OF_DAY));
 			map.setMinute(date.get(Calendar.MINUTE));
-			map.setCode(
-					String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
-							+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
-							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
-							+ "%02d".formatted(date.get(Calendar.MINUTE)) + " - "
-							+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
-							+ "%02d".formatted(date.get(Calendar.MINUTE) + 9));
+			map.setCode(String.valueOf(date.get(Calendar.YEAR)) + "-" + "%02d".formatted(date.get(Calendar.MONTH) + 1)
+					+ "-" + "%02d".formatted(date.get(Calendar.DATE)) + " "
+					+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
+					+ "%02d".formatted(date.get(Calendar.MINUTE)) + " - "
+					+ "%02d".formatted(date.get(Calendar.HOUR_OF_DAY)) + ":"
+					+ "%02d".formatted(date.get(Calendar.MINUTE) + 9));
 			date.add(Calendar.MINUTE, 10);
 			map.setEndDate(date.getTime());
 			items.add(map);

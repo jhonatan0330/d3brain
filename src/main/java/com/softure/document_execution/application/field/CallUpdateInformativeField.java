@@ -2,7 +2,6 @@ package com.softure.document_execution.application.field;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -15,37 +14,41 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.property.application.RelacionInternaSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.RelacionInternaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class CallUpdateInformativeField {
 
-	@Autowired @Lazy 
-	private TipoInformativo informativeField;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relacionService;
-	@Autowired @Lazy  
-	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy  
-	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	
-	
-	//EWsto lo hago por urgencia que modifico de una el valor del dependiente
+	private final TipoInformativo informativeField;
+	private final RelacionInternaSvc relacionService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+
+	public CallUpdateInformativeField(@Lazy TipoInformativo informativeField, @Lazy RelacionInternaSvc relacionService,
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy DocumentoPlantillaCaracteristicaSvc fieldService) {
+		this.informativeField = informativeField;
+		this.relacionService = relacionService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.fieldService = fieldService;
+	}
+
+	// EWsto lo hago por urgencia que modifico de una el valor del dependiente
 	public void call(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		List<PropiedadDTO> updateProperties = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 				Propiedades.UPDATE_INFORMATIVE_FIELD);
-		if (updateProperties == null) return;
+		if (updateProperties == null)
+			return;
 		if (pCampo.getDependientes() == null)
-			throw new ServerException(
-					"Error al consultar dependientes");
+			throw new ServerException("Error al consultar dependientes");
 		for (PropiedadDTO propiedadDTO : updateProperties) {
-			List<RelacionInternaDTO> relaciones = relacionService
-					.relacionesPropiedad(propiedadDTO.getLlaveTabla());
+			List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(propiedadDTO.getLlaveTabla());
 			if (relaciones == null || relaciones.isEmpty())
 				throw new ServerException("Revisa las relaciones de la propiedad " + propiedadDTO.getNombre()
 						+ " del campo " + pCampo.getCampoDTO().getNombre());
 			for (PedidoVentaCaracteristicaDTO dependiente : pCampo.getDependientes()) {
 				if (dependiente.getCampo().compareTo(propiedadDTO.getValor()) == 0) {
-					if(dependiente.getExpedientes()==null || dependiente.getExpedientes().isEmpty()) {
+					if (dependiente.getExpedientes() == null || dependiente.getExpedientes().isEmpty()) {
 						PedidoVentaFilterDTO filter = new PedidoVentaFilterDTO();
 						filter.setCampoOrigen(dependiente.getCampo());
 						filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -53,13 +56,13 @@ public class CallUpdateInformativeField {
 						filter.setSecurityToken(token);
 						dependiente.setCampoDTO(fieldService.cargarComplementos(dependiente.getCampoDTO(), token));
 						dependiente.setExpedientes(listDocumentWithFiltersFunction.listarAvanzado(filter));
-						
-						if(dependiente.getExpedientes()==null || dependiente.getExpedientes().isEmpty())
+
+						if (dependiente.getExpedientes() == null || dependiente.getExpedientes().isEmpty())
 							break;
 					}
 					for (PedidoVentaDTO iDocument : dependiente.getExpedientes()) {
 						for (RelacionInternaDTO iRelacion : relaciones) {
-							if(iDocument.getPlantilla().compareTo(iRelacion.getPlantilla())==0) {
+							if (iDocument.getPlantilla().compareTo(iRelacion.getPlantilla()) == 0) {
 								PedidoVentaCaracteristicaDTO pInformativeField = new PedidoVentaCaracteristicaDTO();
 								pInformativeField.setCampo(iRelacion.getCampo());
 								pInformativeField.setDocumento(iDocument.getLlaveTabla());
@@ -67,11 +70,11 @@ public class CallUpdateInformativeField {
 								pInformativeField.setValorOpcion(pCampo.getValorOpcion());
 								pInformativeField.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 								pInformativeField.setPrincipal(iDocument);
-								//informativeField.validarPrepararCampo(pInformativeField, token);
+								// informativeField.validarPrepararCampo(pInformativeField, token);
 								informativeField.guardarCampo(pInformativeField, token);
 							}
-						}	
-					}					
+						}
+					}
 					break;
 				}
 			}

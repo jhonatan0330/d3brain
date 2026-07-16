@@ -14,7 +14,7 @@ public interface CatalogMapper {
 	CatalogDTO update(CatalogDTO dto);
 
 	int count(CatalogFilterDTO filter);
-	
+
 	CatalogDTO getOne(CatalogFilterDTO filter);
 
 	List<CatalogDTO> getMany(CatalogFilterDTO filter);

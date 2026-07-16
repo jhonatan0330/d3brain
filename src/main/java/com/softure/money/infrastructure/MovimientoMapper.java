@@ -8,13 +8,10 @@ import com.softure.money.domain.MovimientoDTO;
 import com.softure.money.domain.MovimientoFilterDTO;
 
 @SoftureSqlConnMapper(value = "MovimientoMapper")
-public interface MovimientoMapper extends IBasicMapper<MovimientoDTO, MovimientoFilterDTO>{
-	
+public interface MovimientoMapper extends IBasicMapper<MovimientoDTO, MovimientoFilterDTO> {
 
 	List<MovimientoDTO> obtenerMovimientoAnteriorFecha(MovimientoFilterDTO dto);
 
 	List<MovimientoDTO> obtenerMovimientoSiguienteFecha(MovimientoFilterDTO dto);
 
-// BEGIN region aditionalMethods  
-// END region aditionalMethods
 }

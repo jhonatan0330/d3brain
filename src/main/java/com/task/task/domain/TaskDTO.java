@@ -7,7 +7,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("TaskDTO")
-public class TaskDTO extends SharedDataObject{
+public class TaskDTO extends SharedDataObject {
 
 	private String user;
 	private String title;

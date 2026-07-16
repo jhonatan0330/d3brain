@@ -16,7 +16,6 @@ public class ServerException extends Exception {
 		logger.log(Level.SEVERE, message, this);
 	}
 
-
 	public ServerException(String message, String origen) {
 		super(prepareMessage(message, origen));
 		logger.log(Level.SEVERE, message, this);
@@ -27,7 +26,7 @@ public class ServerException extends Exception {
 		if (_print)
 			logger.log(Level.SEVERE, message, this);
 	}
-	
+
 	public ServerException(String message, Throwable cause) {
 		super(prepareMessage(message, null), cause);
 		logger.log(Level.SEVERE, message, cause);
@@ -35,18 +34,18 @@ public class ServerException extends Exception {
 
 	public String getOrigen() {
 		String msg = getMessage();
-        if (msg != null && msg.startsWith(OPEN)) {
-            return msg.substring(2, msg.lastIndexOf(CLOSE));
-        }
-        return null;
+		if (msg != null && msg.startsWith(OPEN)) {
+			return msg.substring(2, msg.lastIndexOf(CLOSE));
+		}
+		return null;
 	}
 
 	public String getTextMessage() {
 		String msg = getMessage();
-        if (msg != null && msg.startsWith(OPEN)) {
-            return msg.substring(msg.lastIndexOf(CLOSE) + 2);
-        }
-        return msg;
+		if (msg != null && msg.startsWith(OPEN)) {
+			return msg.substring(msg.lastIndexOf(CLOSE) + 2);
+		}
+		return msg;
 	}
 
 	private static String prepareMessage(String message, String origen) {

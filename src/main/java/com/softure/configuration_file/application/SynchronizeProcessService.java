@@ -2,7 +2,6 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.SharedConstants;
@@ -16,14 +15,19 @@ import com.softure.process_designer.domain.ProcesoFilterDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SynchronizeProcessService {
 
-	@Autowired @Lazy 
-	private ProcesoSvc processService;
-	@Autowired @Lazy 
-	private SynchronizePropertiesService propertiesSynchronizeService;
+	private final ProcesoSvc processService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeProcessService(@Lazy ProcesoSvc processService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.processService = processService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
@@ -46,7 +50,8 @@ public class SynchronizeProcessService {
 							local.getLlaveTabla());
 				} else {
 					if (compare) {
-						log.error("COMPARE NOT EXIST PROCESS " + remoteProcess.getCodigo() + " - " + remoteProcess.getNombre());
+						log.error("COMPARE NOT EXIST PROCESS " + remoteProcess.getCodigo() + " - "
+								+ remoteProcess.getNombre());
 					} else {
 						ProcesoDTO newProcess = new ProcesoDTO();
 						newProcess.setCodigo(remoteProcess.getCodigo());
@@ -90,9 +95,9 @@ public class SynchronizeProcessService {
 					throw new ServerException("Corrige los codigos de los procesos no pueden ser duplicados, el codigo "
 							+ remote.getCodigo() + " esta duplicado");
 				}
-				if(db!=null) {
+				if (db != null) {
 					db.setMacroproceso(remote.getMacroproceso());
-					processService.update(db);	
+					processService.update(db);
 				}
 			}
 		}

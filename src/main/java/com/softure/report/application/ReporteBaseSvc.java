@@ -1,6 +1,5 @@
 package com.softure.report.application;
 
-// BEGIN region interImport
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -49,43 +47,40 @@ import jakarta.annotation.PostConstruct;
 @Service("reporteBaseService")
 public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private ReporteBaseMapper reporteBaseMapper;
+	private final ReporteBaseMapper reporteBaseMapper;
+	private final DataSource dataSource;
+	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final PedidoVentaSvc pedidoVentaService;
+	private final PropiedadSvc propiedadService;
+	private final PropertyGetWithCacheService cachePropertyService;
+	private final UsuarioSesionSvc autenticacionService;
+	private final UsuarioSvc usuarioService;
+	private final ReporteEjecucionSvc ejecucionService;
+	private final UploadSvc uploadService;
+	private final MailSendMessageToAdminService mensajeToAdminService;
+	private final JasperReportCache cacheService;
 
-	@Autowired
-	@Lazy
-	DataSource dataSource;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc pedidoVentaService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cachePropertyService;
-
-	@Autowired
-	@Lazy
-	private UsuarioSesionSvc autenticacionService;
-	@Autowired
-	@Lazy
-	private UsuarioSvc usuarioService;
-	@Autowired
-	@Lazy
-	private ReporteEjecucionSvc ejecucionService;
-	@Autowired
-	@Lazy
-	private UploadSvc uploadService;
-	@Autowired
-	@Lazy
-	private MailSendMessageToAdminService mensajeToAdminService;
-	@Autowired
-	@Lazy
-	private JasperReportCache cacheService;
+	public ReporteBaseSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ReporteBaseMapper reporteBaseMapper,
+			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
+			@Lazy PedidoVentaSvc pedidoVentaService, @Lazy PropiedadSvc propiedadService,
+			@Lazy PropertyGetWithCacheService cachePropertyService, @Lazy UsuarioSesionSvc autenticacionService,
+			@Lazy UsuarioSvc usuarioService, @Lazy ReporteEjecucionSvc ejecucionService, @Lazy UploadSvc uploadService,
+			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy JasperReportCache cacheService,
+			@Lazy DataSource dataSource) {
+		super(usuarioSesionService);
+		this.reporteBaseMapper = reporteBaseMapper;
+		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
+		this.pedidoVentaService = pedidoVentaService;
+		this.propiedadService = propiedadService;
+		this.cachePropertyService = cachePropertyService;
+		this.autenticacionService = autenticacionService;
+		this.usuarioService = usuarioService;
+		this.ejecucionService = ejecucionService;
+		this.uploadService = uploadService;
+		this.mensajeToAdminService = mensajeToAdminService;
+		this.cacheService = cacheService;
+		this.dataSource = dataSource;
+	}
 
 	public static final String P_KEY = "P_KEY";
 
@@ -105,27 +100,21 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
 	@Override
 	public ReporteBaseDTO activar(ReporteBaseDTO dto, String token) throws ServerException {
-		// BEGIN ReporteBase_activar
 		return super.activar(dto, token);
-		// END ReporteBase_activar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ReporteBaseDTO actualizar(ReporteBaseDTO dto, String token) throws ServerException {
-		// BEGIN ReporteBase_actualizar
 		validateUnique(dto);
 		propiedadService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return super.update(dto);
-		// END ReporteBase_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ReporteBaseDTO inactivar(ReporteBaseDTO dto, String token) throws ServerException {
-		// BEGIN ReporteBase_inactivar
 		return super.inactivar(dto, token);
-		// END ReporteBase_inactivar
 	}
 
 	@Override
@@ -146,10 +135,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ReporteBaseDTO guardar(ReporteBaseDTO dto, String token) throws ServerException {
-		// BEGIN ReporteBase_guardar
 		validateUnique(dto);
 		return super.save(dto);
-		// END ReporteBase_guardar
 	}
 
 	private void validateUnique(ReporteBaseDTO dto) throws ServerException {
@@ -168,7 +155,6 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			throw new ServerException("Existe un reporte con el mismo nombre");
 	}
 
-// BEGIN region aditionalMethods
 	public List<ReporteBaseDTO> listarDisponiblesDocumento(String documento) throws ServerException {
 		ReporteBaseFilterDTO filtro = new ReporteBaseFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -241,8 +227,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				case Propiedades.REPORTE_ENCABEZADO:
 				case Propiedades.REPORTE_PIE_PAGINA:
 				case Propiedades.REPORTE_ENCABEZADO_EXCEL: {
-					PropiedadDTO subreporteJRXML = cachePropertyService.obtenerPropiedad( PropiedadValorDefinidoDTO.REPORTE,
-							propiedadDTO.getValor(), Propiedades.REPORTE_JRXML, usuario);// getUserFlex(token)
+					PropiedadDTO subreporteJRXML = cachePropertyService.obtenerPropiedad(
+							PropiedadValorDefinidoDTO.REPORTE, propiedadDTO.getValor(), Propiedades.REPORTE_JRXML,
+							usuario);// getUserFlex(token)
 					if (subreporteJRXML == null)
 						throw new ServerException(
 								"El reporte " + reporte + "no encuentra el subreporte " + propiedadDTO.getValor());
@@ -284,8 +271,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			if (base == null)
 				throw new ServerException("Reporte base no encontrado");
 		}
-		base.setPropiedades(cachePropertyService.obtenerPropiedades( PropiedadValorDefinidoDTO.REPORTE, base.getLlaveTabla(), null,
-				getUserFromParameters(token)));// getUserFlex(token)
+		base.setPropiedades(cachePropertyService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE,
+				base.getLlaveTabla(), null, getUserFromParameters(token)));// getUserFlex(token)
 		return base;
 	}
 
@@ -344,9 +331,11 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			// Seccion del reporte
 			GeneradorReportes generadorReporte = null;
 			if (Propiedades.obtenerParametro(reporte, Propiedades.CONNECTION_STRING_DB) != null) {
-				generadorReporte = new GeneradorReportes(Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB));
-			}else {
-				generadorReporte = new GeneradorReportes(dataSource.getConnection(), cacheService, reporte.getLlaveTabla());
+				generadorReporte = new GeneradorReportes(
+						Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB));
+			} else {
+				generadorReporte = new GeneradorReportes(dataSource.getConnection(), cacheService,
+						reporte.getLlaveTabla());
 			}
 			byte[] resultado = null;
 			if (tipoReporte == null) {
@@ -424,7 +413,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				if (e.getMessage().startsWith("OOM ERROR"))
 					mensajeToAdminService.call("Error de memoria en reporte " + reporte.getNombre(),
 							ejecucion.getError());
-			}catch (Exception ex) {
+			} catch (Exception ex) {
 			}
 			throw new Exception(e.getMessage());
 		}
@@ -435,6 +424,5 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return reporteBaseMapper.getFullToSynchronize(process);
 	}
 
-// END region aditionalMethods
 
 }

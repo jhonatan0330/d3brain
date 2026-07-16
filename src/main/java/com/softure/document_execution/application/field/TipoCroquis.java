@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -19,18 +18,24 @@ import com.softure.logisticpymes.domain.PuestoDTO;
 import com.softure.logisticpymes.domain.PuestoFilterDTO;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoCroquis {
 
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private PuestoSvc puestoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final PuestoSvc puestoService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
+	public TipoCroquis(@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy PuestoSvc puestoService) {
+		this.caracteristicaService = caracteristicaService;
+		this.campoService = campoService;
+		this.puestoService = puestoService;
+	}
+
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()))
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
@@ -119,12 +124,14 @@ public class TipoCroquis {
 		if (pCampo.getExpedientes() != null) {
 			if (pCampo.getLlaveTabla() == null)
 				throw new ServerException("Revise porque la llave del campo es nula. Tipo Croquis");
-			// PAra poder validar que no existan puestos con el mismo nombre se deben anular primero
+			// PAra poder validar que no existan puestos con el mismo nombre se deben anular
+			// primero
 			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {
-				if (componente.getEstado() != null && componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-						PuestoDTO inactivar = new PuestoDTO();
-						inactivar.setLlaveTabla(componente.getLlaveTabla());
-						puestoService.inactivar(inactivar, token);
+				if (componente.getEstado() != null
+						&& componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
+					PuestoDTO inactivar = new PuestoDTO();
+					inactivar.setLlaveTabla(componente.getLlaveTabla());
+					puestoService.inactivar(inactivar, token);
 				}
 			}
 			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {

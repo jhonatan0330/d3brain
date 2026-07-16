@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -56,30 +55,31 @@ import freemarker.template.Template;
 @Component
 public class ProcessTemplate {
 
-	@Autowired
-	@Lazy
-	private DocumentoRelacionExpedienteSvc documentsInFieldService;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
-	@Lazy
-	private RelacionInternaSvc relacionService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc documentService;
-	@Autowired
-	@Lazy
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
-	@Lazy
-	private MailSendMessageToAdminService sendToAdminService;
+	private final DocumentoRelacionExpedienteSvc documentsInFieldService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+	private final RelacionInternaSvc relacionService;
+	private final PedidoVentaSvc documentService;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final MailSendMessageToAdminService sendToAdminService;
+
+	public ProcessTemplate(@Lazy DocumentoRelacionExpedienteSvc documentsInFieldService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
+			@Lazy RelacionInternaSvc relacionService, @Lazy PedidoVentaSvc documentService,
+			@Lazy DetallePedidoVentaSvc detallePedidoVentaService,
+			@Lazy MailSendMessageToAdminService sendToAdminService) {
+		this.documentsInFieldService = documentsInFieldService;
+		this.campoService = campoService;
+		this.fieldService = fieldService;
+		this.relacionService = relacionService;
+		this.documentService = documentService;
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.sendToAdminService = sendToAdminService;
+	}
 
 	public String generateOutputFile(String plantilla, String parametros) {
-		if(plantilla==null || plantilla.isEmpty()) return plantilla;
+		if (plantilla == null || plantilla.isEmpty())
+			return plantilla;
 		if (parametros != null && !parametros.isEmpty()) {
 			Map<String, Object> mapParams = SoftureUtil.createMaptoString(parametros);
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
@@ -124,8 +124,8 @@ public class ProcessTemplate {
 						e.printStackTrace();
 						e1.printStackTrace();
 					}
-					result =  e.getFTLInstructionStack();
-				}catch (Exception ex) {
+					result = e.getFTLInstructionStack();
+				} catch (Exception ex) {
 					try {
 						sendToAdminService.call("Error procesando una pantilla",
 								ex.getMessage() + SharedConstants.NEW_LINE + plantilla);
@@ -140,7 +140,7 @@ public class ProcessTemplate {
 		}
 		return plantilla;
 	}
-	
+
 	public String transformDependsToParams(List<PedidoVentaCaracteristicaDTO> dependientes) {
 		String parameters = "";
 		for (PedidoVentaCaracteristicaDTO iProp : dependientes) {
@@ -148,8 +148,7 @@ public class ProcessTemplate {
 					+ SharedConstants.IGUAL;
 
 			if (iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-				parameters = parameters
-						+ ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
+				parameters = parameters + ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
 			} else {
 				parameters = parameters + ((iProp.getValorText() == null) ? "0" : iProp.getValorText());
 			}
@@ -160,7 +159,8 @@ public class ProcessTemplate {
 	public String extractParameterTypeR(List<PropiedadDTO> referidas, PedidoVentaDTO document,
 			PedidoVentaDTO modificador, String parameters, PropiedadDTO iProp, PedidoVentaDTO iterador)
 			throws ServerException {
-		// Estas relaciones ten cuidado si se te ocurre meterla a cache, pos la opcion JUMP de los auxiliar de relacion Interna
+		// Estas relaciones ten cuidado si se te ocurre meterla a cache, pos la opcion
+		// JUMP de los auxiliar de relacion Interna
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(iProp.getLlaveTabla());
 		if (relaciones != null && !relaciones.isEmpty()) {
 			List<PedidoVentaCaracteristicaDTO> camposOpcionReferidos = new ArrayList<>();
@@ -216,7 +216,7 @@ public class ProcessTemplate {
 		if (campo.getValorOpcion() != null) {
 			parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_KEY" + pEqualChar
 					+ campo.getValorOpcion();
-			if (campo.getValorAuxiliar() != null ) {
+			if (campo.getValorAuxiliar() != null) {
 				parameters = parameters + pSeparatorChar + tipo + "_" + codeReplace + valueAuxToCode + "_ID"
 						+ pEqualChar + campo.getValorAuxiliar();
 			}
@@ -227,7 +227,7 @@ public class ProcessTemplate {
 							+ pEqualChar + iElement.getNombre();
 				}
 			}
-			
+
 		} else {
 			if (referidas != null && !referidas.isEmpty()) {
 				Map<String, List<RelacionInternaDTO>> relations = null;
@@ -304,11 +304,10 @@ public class ProcessTemplate {
 									parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "I_" + codeReplace
 											+ valueAuxToCode + "[" + String.valueOf(i + 1) + "]="
 											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_NUM" + SharedConstants.COMA_DOBLE
-											+ String.valueOf(i + 1) 
-											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
+											+ String.valueOf(i + 1) + SharedConstants.LINEA_MEDIA_DOBLE + "L_VAL"
 											+ SharedConstants.COMA_DOBLE + iRelation.getValorTotal().intValue()
-											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_CANT"
-											+ SharedConstants.COMA_DOBLE + iRelation.getCantidad().intValue();
+											+ SharedConstants.LINEA_MEDIA_DOBLE + "L_CANT" + SharedConstants.COMA_DOBLE
+											+ iRelation.getCantidad().intValue();
 									for (PropiedadDTO iProp : propertiesWithRelationField) {
 										if (iProp.getMotivo() != null) {
 											parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_"
@@ -353,17 +352,22 @@ public class ProcessTemplate {
 
 														// Aqui posiblementen nunca coja los expedientes
 														if (iCampo.getValorOpcion() != null) {
-															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList
-																	//+ valueAuxToCode
+															parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE
+																	+ "L" + "_" + codeReplaceList
+																	// + valueAuxToCode
 																	+ "_KEY" + SharedConstants.COMA_DOBLE
 																	+ iCampo.getValorOpcion();
-															if (iCampo.getExpedientes() != null && !iCampo.getExpedientes().isEmpty()) {
-																PedidoVentaDTO iElement = iCampo.getExpedientes().get(0);
+															if (iCampo.getExpedientes() != null
+																	&& !iCampo.getExpedientes().isEmpty()) {
+																PedidoVentaDTO iElement = iCampo.getExpedientes()
+																		.get(0);
 																if (iElement != null && iElement.getNombre() != null) {
-																	parameters = parameters + SharedConstants.LINEA_MEDIA_DOBLE + "L" + "_" + codeReplaceList 
-																			//+ valueAuxToCode 
-																			+ "_ID"
-																			+ SharedConstants.COMA_DOBLE + iElement.getNombre();
+																	parameters = parameters
+																			+ SharedConstants.LINEA_MEDIA_DOBLE + "L"
+																			+ "_" + codeReplaceList
+																			// + valueAuxToCode
+																			+ "_ID" + SharedConstants.COMA_DOBLE
+																			+ iElement.getNombre();
 																}
 															}
 														}
@@ -443,12 +447,13 @@ public class ProcessTemplate {
 		// de paso les coloco el codigo en setTransaccionRegistro
 		// No puedo borrarlos de una vez toca agregarlos a validadas para borrar despues
 		for (RelacionInternaDTO iRelacion : relaciones) {
-			
-			//HAgo revision de todos los campos porque en nota credito me di cuenta que 
+
+			// HAgo revision de todos los campos porque en nota credito me di cuenta que
 			// Nos inventamos con Dani la opcion de JUMP_
-			if(iRelacion.getAuxiliar()!=null && iRelacion.getAuxiliar().startsWith("JUMP_")) {
+			if (iRelacion.getAuxiliar() != null && iRelacion.getAuxiliar().startsWith("JUMP_")) {
 				iRelacion.setAuxiliar(iRelacion.getAuxiliar().replace("JUMP_", ""));
-				if(iRelacion.getAuxiliar().isEmpty()) iRelacion.setAuxiliar(null);
+				if (iRelacion.getAuxiliar().isEmpty())
+					iRelacion.setAuxiliar(null);
 			} else {
 				for (PedidoVentaCaracteristicaDTO iField : fields) {
 					// Si son el mismo campos
@@ -470,7 +475,7 @@ public class ProcessTemplate {
 					}
 				}
 			}
-			
+
 		}
 		// fieldsInternal Tiene los campos que cumplen con las relaciones
 		if (fieldsInternal != null) {
@@ -549,7 +554,8 @@ public class ProcessTemplate {
 			 */
 			if (iCampo.getValorNumero() == null)
 				return iCampo.getValorText();
-			return new DecimalFormat("#.######",DecimalFormatSymbols.getInstance(Locale.US)).format(iCampo.getValorNumero());
+			return new DecimalFormat("#.######", DecimalFormatSymbols.getInstance(Locale.US))
+					.format(iCampo.getValorNumero());
 		// Creo que la mejor solucion es mirar la propiedad de redondeo pero lo hare
 		// despues
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO:
@@ -654,11 +660,10 @@ public class ProcessTemplate {
 			Set<String> unicos = new HashSet<>();
 
 			while (matcher.find()) {
-				unicos.add(matcher.group(1)); 
+				unicos.add(matcher.group(1));
 			}
-			
-			Map<String, Map<String, Map<String, Set<String>>>> _groupText = new TreeMap<>();
 
+			Map<String, Map<String, Map<String, Set<String>>>> _groupText = new TreeMap<>();
 
 			for (String entrada : unicos) {
 				String[] partes = entrada.split("\\.");
@@ -675,46 +680,58 @@ public class ProcessTemplate {
 				}
 			}
 
-	        for (var _iForm : _groupText.entrySet()) {
-	            for (var _iField : _iForm.getValue().entrySet()) {
-	            	String _fieldBaseFromDocument = campoService.getCodeKeyOfTemplate(_iForm.getKey(), _iField.getKey());
-	            	if(_fieldBaseFromDocument != null) {
-	            		// Aqui obtengo el campo del formulario
-		                for (var _iKey : _iField.getValue().entrySet()) {
-		                	String _keyOfDocumentBase = campoService.getKeyOfDocumentBase(_fieldBaseFromDocument, _iKey.getKey());
-		                	if(_keyOfDocumentBase != null) {
-			                	for (var _iCodeToReplace : _iKey.getValue()) {
-			                		// Aquie puede mejorar para los campos fecha y demas pero no se como :(, puede ser un quinto campo de formato
-			                		PedidoVentaCaracteristicaDTO _field = campoService.getKeyToReplace(_keyOfDocumentBase, _iForm.getKey(), _iCodeToReplace);
-			                		// En roa coloque una estructura para SIIGo que no necesitaba el ID sino el codigo de la cuenta
-			                		if(_field!= null) {
-			                			//key
-			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + ".KEY]]",
-				                				_field.getValorOpcion());
-			                			//code / Aqui cuadre para que se obtenga el id en llavetabla 
-			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + ".ID]]",
-			                					_field.getLlaveTabla());
-			                			//nombre
-			                			template = replaceCodeInTemplate(template, "[[" + _iForm.getKey() +"."+ _iField.getKey() +"."+ _iKey.getKey() +"."+ _iCodeToReplace + "]]",
-			                				_field.getValorText());
-			                		}
-			                		
-			                	}		                		
-		                	}
-		                }	
-	            	}
-	            }
-	        }
+			for (var _iForm : _groupText.entrySet()) {
+				for (var _iField : _iForm.getValue().entrySet()) {
+					String _fieldBaseFromDocument = campoService.getCodeKeyOfTemplate(_iForm.getKey(),
+							_iField.getKey());
+					if (_fieldBaseFromDocument != null) {
+						// Aqui obtengo el campo del formulario
+						for (var _iKey : _iField.getValue().entrySet()) {
+							String _keyOfDocumentBase = campoService.getKeyOfDocumentBase(_fieldBaseFromDocument,
+									_iKey.getKey());
+							if (_keyOfDocumentBase != null) {
+								for (var _iCodeToReplace : _iKey.getValue()) {
+									// Aquie puede mejorar para los campos fecha y demas pero no se como :(, puede
+									// ser un quinto campo de formato
+									PedidoVentaCaracteristicaDTO _field = campoService
+											.getKeyToReplace(_keyOfDocumentBase, _iForm.getKey(), _iCodeToReplace);
+									// En roa coloque una estructura para SIIGo que no necesitaba el ID sino el
+									// codigo de la cuenta
+									if (_field != null) {
+										// key
+										template = replaceCodeInTemplate(
+												template, "[[" + _iForm.getKey() + "." + _iField.getKey() + "."
+														+ _iKey.getKey() + "." + _iCodeToReplace + ".KEY]]",
+												_field.getValorOpcion());
+										// code / Aqui cuadre para que se obtenga el id en llavetabla
+										template = replaceCodeInTemplate(
+												template, "[[" + _iForm.getKey() + "." + _iField.getKey() + "."
+														+ _iKey.getKey() + "." + _iCodeToReplace + ".ID]]",
+												_field.getLlaveTabla());
+										// nombre
+										template = replaceCodeInTemplate(
+												template, "[[" + _iForm.getKey() + "." + _iField.getKey() + "."
+														+ _iKey.getKey() + "." + _iCodeToReplace + "]]",
+												_field.getValorText());
+									}
+
+								}
+							}
+						}
+					}
+				}
+			}
 			template = template.replaceAll("\\[\\[[A-Za-z0-9_/():\\-\\.\\_]*\\]\\]", "");
 		}
 
 		return template;
 	}
 
-	private String replaceCodeInTemplate(String template, String codeToEvaluate , String _iCodeToReplace) {
+	private String replaceCodeInTemplate(String template, String codeToEvaluate, String _iCodeToReplace) {
 
-		if(_iCodeToReplace ==null)_iCodeToReplace = "";
-		
+		if (_iCodeToReplace == null)
+			_iCodeToReplace = "";
+
 		while (template.contains(codeToEvaluate)) {
 			template = template.replace(codeToEvaluate, _iCodeToReplace);
 		}

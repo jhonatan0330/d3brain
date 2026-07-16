@@ -1,30 +1,36 @@
 package com.softure.document_execution.application.field;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoArchivo {
 
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
+	private final PedidoVentaCaracteristicaSvc campoService;
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
-		if(pCampo.getValorText() == null || pCampo.getValorText().isEmpty()) {
+	public TipoArchivo(@Lazy PedidoVentaCaracteristicaSvc campoService) {
+		this.campoService = campoService;
+	}
+
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
+		if (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()) {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
 						+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
-						+ pCampo.getCampoDTO().getCodigo() + ")");	
-			if(pCampo.getValorText() != null && pCampo.getValorText().isEmpty())pCampo.setValorText(null);
-		}else {
+						+ pCampo.getCampoDTO().getCodigo() + ")");
+			if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
+				pCampo.setValorText(null);
+		} else {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.MULTIPLE_FILE) == null) {
-				if(pCampo.getValorText().contains(";;"))
+				if (pCampo.getValorText().contains(";;"))
 					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
-							+ " revisa el campo " + pCampo.getCampoDTO().getNombre() + " el permite un solo adjunto y esta enviando varios adjuntos ");	
+							+ " revisa el campo " + pCampo.getCampoDTO().getNombre()
+							+ " el permite un solo adjunto y esta enviando varios adjuntos ");
 			}
 		}
 	}

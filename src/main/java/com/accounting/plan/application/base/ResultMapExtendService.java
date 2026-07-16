@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,11 @@ import com.shared.domain.ServerException;
 @Service("ResultMapExtendAccountingService")
 public class ResultMapExtendService {
 
-	@Autowired
-	@Lazy
-	private ResultMapExtendMapper mapper;
+	private final ResultMapExtendMapper mapper;
+
+	public ResultMapExtendService(@Lazy ResultMapExtendMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public void saveAll(List<TimeFrameDTO> maps) throws ServerException {
 		if (maps == null || maps.isEmpty())
@@ -56,7 +57,7 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-	
+
 	public BigDecimal getPreviousBalance(String accountId, String timeFrameId) throws ServerException {
 		try {
 			return mapper.getPreviousBalance(accountId, timeFrameId);
@@ -66,7 +67,6 @@ public class ResultMapExtendService {
 			throw new ServerException(e.getCause().getMessage());
 		}
 	}
-
 
 	public ResultMapDTO updateBalance(String accountId, Date startDate, int level, BigDecimal value)
 			throws ServerException {

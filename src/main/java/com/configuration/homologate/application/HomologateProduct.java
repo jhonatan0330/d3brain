@@ -3,7 +3,6 @@ package com.configuration.homologate.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +25,13 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class HomologateProduct {
 
-	@Autowired
-	@Lazy
-	private ProductoSvc productService;
-	@Autowired
-	@Lazy
-	private UsuarioRolProductoSvc usuarioRolProductoSvc;
+	private final ProductoSvc productService;
+	private final UsuarioRolProductoSvc usuarioRolProductoSvc;
+
+	public HomologateProduct(@Lazy ProductoSvc productService, @Lazy UsuarioRolProductoSvc usuarioRolProductoSvc) {
+		this.productService = productService;
+		this.usuarioRolProductoSvc = usuarioRolProductoSvc;
+	}
 
 	public void createProductFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService) throws ServerException {

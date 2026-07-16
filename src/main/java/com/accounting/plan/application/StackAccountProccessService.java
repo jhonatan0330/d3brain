@@ -3,7 +3,6 @@ package com.accounting.plan.application;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +16,16 @@ import com.shared.domain.SharedConstants;
 @Service("StackAccountProccessService")
 public class StackAccountProccessService {
 
-	@Lazy @Autowired
-	private StackVoucherExtendMapper stackMapper;
-	@Lazy @Autowired
-	private StackVoucherMapper stackBasicMapper;
-	@Lazy @Autowired
-	private VoucherCalculateService calculateService;
+	private final StackVoucherExtendMapper stackMapper;
+	private final StackVoucherMapper stackBasicMapper;
+	private final VoucherCalculateService calculateService;
+
+	public StackAccountProccessService(@Lazy StackVoucherExtendMapper stackMapper,
+			@Lazy StackVoucherMapper stackBasicMapper, @Lazy VoucherCalculateService calculateService) {
+		this.stackMapper = stackMapper;
+		this.stackBasicMapper = stackBasicMapper;
+		this.calculateService = calculateService;
+	}
 
 	public String call() throws ServerException {
 		List<StackVoucherDTO> stack = stackMapper.stackAvailable();
@@ -36,7 +39,7 @@ public class StackAccountProccessService {
 		for (StackVoucherDTO stackVoucherDTO : stack) {
 			calculateService.call(stackVoucherDTO.getVoucher(), stackVoucherDTO.getAction());
 			stackVoucherDTO.setFinishDate(new Date());
-			stackBasicMapper.update(stackVoucherDTO);			
+			stackBasicMapper.update(stackVoucherDTO);
 		}
 		return String.valueOf(stack.size());
 	}

@@ -4,7 +4,7 @@ public abstract class BasicDTO {
 
 	private String llaveTabla;
 	private String estado;
-	
+
 	public String getLlaveTabla() {
 		return llaveTabla;
 	}

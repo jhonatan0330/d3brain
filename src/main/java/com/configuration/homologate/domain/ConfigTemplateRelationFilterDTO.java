@@ -1,6 +1,5 @@
 package com.configuration.homologate.domain;
 
-
 import org.apache.ibatis.type.Alias;
 
 import com.shared.domain.SharedDataObjectFilter;

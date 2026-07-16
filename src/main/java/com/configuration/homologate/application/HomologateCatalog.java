@@ -3,7 +3,6 @@ package com.configuration.homologate.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -24,38 +23,43 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class HomologateCatalog {
 
-	@Autowired @Lazy CatalogService catalogService;
-	@Autowired @Lazy PlanCreateCatalogService createCatalogService;
-	
-	public void createCatalogFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService, PropiedadSvc propertyService) throws ServerException {
+	private final CatalogService catalogService;
+	private final PlanCreateCatalogService createCatalogService;
+
+	public HomologateCatalog(@Lazy CatalogService catalogService, @Lazy PlanCreateCatalogService createCatalogService) {
+		this.catalogService = catalogService;
+		this.createCatalogService = createCatalogService;
+	}
+
+	public void createCatalogFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+			PropiedadSvc propertyService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
 		fieldsTemplate.add(
 				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateId,
-				Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
 		// Crear el campo tipo recurso nombre
-		fieldsTemplate.add(campoService.createField(templateId, "CODIGO",
-						DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-	
+		fieldsTemplate.add(
+				campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+
 		// fecha inicial
 		fieldsTemplate.add(campoService.createField(templateId, "FECHA_INICIAL",
 				DocumentoPlantillaCaracteristicaDTO.FECHA, 3, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		// fecha final
 		fieldsTemplate.add(campoService.createField(templateId, "FECHA_FINAL",
 				DocumentoPlantillaCaracteristicaDTO.FECHA, 4, token));
-		//propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-				//Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		// propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+		// fieldsTemplate.get(3),
+		// Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 	}
-	
-	
 
 	public void createCatalog(PedidoVentaDTO document) throws ServerException {
 		CatalogFilterDTO filter = new CatalogFilterDTO();

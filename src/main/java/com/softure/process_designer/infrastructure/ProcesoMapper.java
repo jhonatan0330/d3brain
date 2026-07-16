@@ -10,11 +10,9 @@ import com.softure.process_designer.domain.ProcesoDTO;
 import com.softure.process_designer.domain.ProcesoFilterDTO;
 
 @SoftureSqlConnMapper(value = "ProcesoMapper")
-public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO>{
-	
+public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO> {
 
-// BEGIN region aditionalMethods  
 	List<ProcesoDTO> noUsoSoloQuitoErrorList();
-	List<ProcesoDTO> getFullToSynchronize(@Param("process")List<String> process);
-// END region aditionalMethods
+
+	List<ProcesoDTO> getFullToSynchronize(@Param("process") List<String> process);
 }

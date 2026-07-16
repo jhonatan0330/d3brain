@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface SoftureSqlConnMapper {
 
-	@AliasFor(annotation=Component.class)
-    String value() default "";
+	@AliasFor(annotation = Component.class)
+	String value() default "";
 }

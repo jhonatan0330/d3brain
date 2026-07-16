@@ -3,21 +3,25 @@ package com.softure.document_execution.application.field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.ServerException;
 import com.softure.document_execution.application.PedidoVentaCaracteristicaSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.gps.application.GPSReportLocationsService;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoGPS {
 
-	@Autowired @Lazy 
-	private GPSReportLocationsService gpsReportLocationService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
+	private final GPSReportLocationsService gpsReportLocationService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+
+	public TipoGPS(@Lazy GPSReportLocationsService gpsReportLocationService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService) {
+		this.gpsReportLocationService = gpsReportLocationService;
+		this.campoService = campoService;
+	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())

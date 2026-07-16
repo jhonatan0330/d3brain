@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,14 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.shared.domain.ServerException;
 import com.shared.domain.SharedConstants;
-import com.softure.document_execution.application.CallDocumentListWithFilters;
+import com.softure.authentication.application.UsuarioSesionSvc;
 import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.inventory.application.ProductoSvc;
 import com.softure.inventory.domain.ProductoDTO;
 import com.softure.inventory.domain.ProductoFilterDTO;
 import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
-import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 import com.softure.tariff.domain.TarifarioDTO;
@@ -31,22 +29,17 @@ import jakarta.annotation.PostConstruct;
 @Service("tarifaService")
 public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private TarifaMapper tarifaMapper;
+	private final TarifaMapper tarifaMapper;
+	private final TarifarioService tarifarioService;
+	private final ProductoSvc productoService;
 
-	@Autowired
-	@Lazy
-	private TarifarioService tarifarioService;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired
-	@Lazy
-	private CallSearchProcessFromText searchDocumentService;
+	public TarifaSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy TarifaMapper tarifaMapper,
+			@Lazy TarifarioService tarifarioService, @Lazy ProductoSvc productoService) {
+		super(usuarioSesionService);
+		this.tarifaMapper = tarifaMapper;
+		this.tarifarioService = tarifarioService;
+		this.productoService = productoService;
+	}
 
 	@Override
 	public TarifaDTO consultaXId(String llave) throws ServerException {
@@ -64,9 +57,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
 	@Override
 	public TarifaDTO activar(TarifaDTO dto, String token) throws ServerException {
-		// BEGIN Tarifa_activar
 		return super.activar(dto, token);
-		// END Tarifa_activar
 	}
 
 	@Override
@@ -254,6 +245,5 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			throw new ServerException("El tarifario no existe con ese identificador");
 		return tariffDTO;
 	}
-// END region aditionalMethods
 
 }

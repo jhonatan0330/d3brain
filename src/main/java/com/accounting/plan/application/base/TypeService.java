@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.TypeDTO;
@@ -13,12 +11,16 @@ import com.accounting.plan.domain.TypeFilterDTO;
 import com.accounting.plan.infrastructure.TypeMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("TypeAccountingService")
 public class TypeService {
 
-	@Autowired @Lazy
-	private TypeMapper mapper;
+	private final TypeMapper mapper;
+
+	public TypeService(@Lazy TypeMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public TypeDTO getById(String id) throws ServerException {
 		if (id == null)

@@ -1,11 +1,9 @@
 package com.softure.massiveload.application;
 
-
 // Start of user code imports
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,24 +13,31 @@ import com.shared.domain.SharedIdResponse;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.massiveload.domain.MassiveMasterDTO;
 import com.softure.massiveload.domain.MassiveItemDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class MassiveSincronizeService {
 
-	@Autowired @Lazy  private MassiveCRUDMasterService cargaMasivaService;
-	@Autowired @Lazy  private MassiveCRUDItemService cargaMasivaItemService;
-	
+	private final MassiveCRUDMasterService cargaMasivaService;
+	private final MassiveCRUDItemService cargaMasivaItemService;
+
+	public MassiveSincronizeService(@Lazy MassiveCRUDMasterService cargaMasivaService,
+			@Lazy MassiveCRUDItemService cargaMasivaItemService) {
+		this.cargaMasivaService = cargaMasivaService;
+		this.cargaMasivaItemService = cargaMasivaItemService;
+	}
+
 	public SharedIdResponse call(String token, String fileUrl, String template) throws ServerException {
 		MassiveMasterDTO newLoadMassive = new MassiveMasterDTO();
 		newLoadMassive.setArchivo(fileUrl);
 		newLoadMassive.setPlantilla(template);
 		List<PedidoVentaDTO> documents = generateDocuments(fileUrl, template);
-		if(documents==null || documents.isEmpty()) {
+		if (documents == null || documents.isEmpty()) {
 			newLoadMassive.setState(MassiveMasterDTO.ERROR);
 			newLoadMassive.setMensaje("No se generaron items para cargar");
 			newLoadMassive.setFecha(new Date());
-			newLoadMassive = cargaMasivaService.saveAndFindById(newLoadMassive);	
-		}else {
+			newLoadMassive = cargaMasivaService.saveAndFindById(newLoadMassive);
+		} else {
 			newLoadMassive = cargaMasivaService.saveAndFindById(newLoadMassive);
 			saveItems(token, newLoadMassive.getKey(), documents);
 			newLoadMassive.setState(MassiveMasterDTO.SERIALIZADA);
@@ -43,7 +48,7 @@ public class MassiveSincronizeService {
 	private List<PedidoVentaDTO> generateDocuments(String fileUrl, String template) {
 		return null;
 	}
-	
+
 	private void saveItems(String token, String loadId, List<PedidoVentaDTO> documents) throws ServerException {
 		for (PedidoVentaDTO pedidoVentaDTO : documents) {
 			var item = new MassiveItemDTO();
@@ -51,16 +56,15 @@ public class MassiveSincronizeService {
 			item.setFechaSerializacion(new Date());
 			ObjectMapper mapper = new ObjectMapper();
 			try {
-			  String json = mapper.writeValueAsString(pedidoVentaDTO);
-			  item.setModelo(json);
-			  item.setProgreso(MassiveItemDTO.SERIALIZADA);
+				String json = mapper.writeValueAsString(pedidoVentaDTO);
+				item.setModelo(json);
+				item.setProgreso(MassiveItemDTO.SERIALIZADA);
 			} catch (JsonProcessingException e) {
-			  item.setNombre(loadId);
-			  item.setProgreso(MassiveItemDTO.ERROR);
+				item.setNombre(loadId);
+				item.setProgreso(MassiveItemDTO.ERROR);
 			}
-			cargaMasivaItemService.save(item);	
+			cargaMasivaItemService.save(item);
 		}
 	}
 
 }
-

@@ -3,7 +3,7 @@ package com.softure.configuration_file.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -12,13 +12,15 @@ import com.softure.authorization.domain.RolAccesoDTO;
 import com.softure.configuration_file.domain.HierarchyExporterDTO;
 import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.domain.PropiedadDTO;
+
 @Service
 public class SynchronizeRolService {
 
-	@Autowired @Lazy 
-	RolAccesoSvc rolService;
-	@Autowired @Lazy 
-	SynchronizePropertiesService propertiesSynchronizeService;
+	private final RolAccesoSvc rolService;
+
+	public SynchronizeRolService(@Lazy RolAccesoSvc rolService) {
+		this.rolService = rolService;
+	}
 
 	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
@@ -33,7 +35,8 @@ public class SynchronizeRolService {
 				if (local != null) {
 					localListToErase.remove(local);
 					log.info("EXIST ROL " + remote.getCodigo() + " - " + remote.getNombre());
-					//propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(), PropiedadValorDefinidoDTO.ROL,	local.getLlaveTabla(), token, log, compare);
+					// propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
+					// PropiedadValorDefinidoDTO.ROL, local.getLlaveTabla(), token, log, compare);
 					boolean isToMigrate = false;
 					for (PropiedadDTO iProperty : propierties) {
 						isToMigrate = false;

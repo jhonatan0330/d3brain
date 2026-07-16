@@ -12,5 +12,5 @@ public class SharedParamObject extends SharedDataObject {
 
 	public void setPropiedades(List<SharedPropertyDTO> propiedades) {
 		this.propiedades = propiedades;
-	}	
+	}
 }

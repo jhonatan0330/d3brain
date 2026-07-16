@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("CargaArchivoDTO")
 public class CargaArchivoDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String servidor;
@@ -25,53 +23,57 @@ public class CargaArchivoDTO extends BasicDTO
 	public void setServidor(String servidor) {
 		this.servidor = servidor;
 	}
-	
+
 	public String getServidor() {
 		return servidor;
 	}
+
 	public void setSize(Integer size) {
 		this.size = size;
 	}
-	
+
 	public Integer getSize() {
 		return size;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
+
 	public String getUrl() {
 		return url;
 	}
+
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
-	
+
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}
+
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
-	
+
 	public Date getFechaFin() {
 		return fechaFin;
 	}
+
 	public void setError(String error) {
 		this.error = error;
 	}
-	
+
 	public String getError() {
 		return error;
 	}
+
 	public void setUsuario(String usuario) {
 		this.usuario = usuario;
 	}
-	
+
 	public String getUsuario() {
 		return usuario;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

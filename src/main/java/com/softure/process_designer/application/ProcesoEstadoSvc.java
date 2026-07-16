@@ -3,7 +3,6 @@ package com.softure.process_designer.application;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,21 +22,22 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("procesoEstadoService")
 public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private ProcesoEstadoMapper procesoEstadoMapper;
+	private final ProcesoEstadoMapper procesoEstadoMapper;
+	private final ProcesoTransicionSvc procesoTransicionService;
+	private final PropiedadSvc parametroService;
 
-	@Autowired
-	@Lazy
-	private ProcesoTransicionSvc procesoTransicionService;
-
-	@Autowired
-	@Lazy
-	private PropiedadSvc parametroService;
+	public ProcesoEstadoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ProcesoEstadoMapper procesoEstadoMapper,
+			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc parametroService) {
+		super(usuarioSesionService);
+		this.procesoEstadoMapper = procesoEstadoMapper;
+		this.procesoTransicionService = procesoTransicionService;
+		this.parametroService = parametroService;
+	}
 
 	@Override
 	public ProcesoEstadoDTO consultaXId(String llave) throws ServerException {
@@ -182,17 +182,17 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
 		}
 		// En Fiel a veces no me retornaba valor porque el campo es opcional
-		/*if (responsable == null) {
-			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
-			throw new ServerException("Revise porque la funcion de asignacion no trae ningun responsable",
-					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
-		}*/
+		/*
+		 * if (responsable == null) { ProcesoEstadoDTO pes =
+		 * consultaXId(propiedad.getCampo()); throw new
+		 * ServerException("Revise porque la funcion de asignacion no trae ningun responsable"
+		 * , "Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre()); }
+		 */
 		return responsable;
 	}
 
 	public List<ProcesoEstadoDTO> getFullToSynchronize(List<String> process) {
 		return procesoEstadoMapper.getFullToSynchronize(process);
 	}
-// END region aditionalMethods
 
 }

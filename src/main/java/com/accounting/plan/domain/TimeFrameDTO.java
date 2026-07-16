@@ -7,7 +7,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("TimeFrameDTO")
-public class TimeFrameDTO extends SharedDataObject{
+public class TimeFrameDTO extends SharedDataObject {
 
 	private Integer level;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")

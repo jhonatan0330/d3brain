@@ -15,8 +15,7 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaCaracteristicaDTO")
 @JsonInclude(Include.NON_NULL)
-public class PedidoVentaCaracteristicaDTO extends BasicDTO
-{
+public class PedidoVentaCaracteristicaDTO extends BasicDTO {
 
 	private String documento;
 	private String campo;
@@ -42,116 +41,131 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setCampo(String campo) {
 		this.campo = campo;
 	}
-	
+
 	public String getCampo() {
 		return campo;
 	}
+
 	public void setCampoDTO(DocumentoPlantillaCaracteristicaDTO campoDTO) {
 		this.campoDTO = campoDTO;
 	}
-	
+
 	public DocumentoPlantillaCaracteristicaDTO getCampoDTO() {
 		return campoDTO;
 	}
+
 	public void setValorText(String valorText) {
 		this.valorText = valorText;
 	}
-	
+
 	public String getValorText() {
 		return valorText;
 	}
+
 	public void setValorFecha(Date valorFecha) {
 		this.valorFecha = valorFecha;
 	}
-	
+
 	public Date getValorFecha() {
 		return valorFecha;
 	}
+
 	public void setValorOpcion(String valorOpcion) {
 		this.valorOpcion = valorOpcion;
 	}
-	
+
 	public String getValorOpcion() {
 		return valorOpcion;
 	}
+
 	public void setValorAuxiliar(String valorAuxiliar) {
 		this.valorAuxiliar = valorAuxiliar;
 	}
-	
+
 	public String getValorAuxiliar() {
 		return valorAuxiliar;
 	}
+
 	public void setValorNumero(BigDecimal valorNumero) {
 		this.valorNumero = valorNumero;
 	}
-	
+
 	public BigDecimal getValorNumero() {
 		return valorNumero;
 	}
+
 	public void setPrincipal(PedidoVentaDTO principal) {
 		this.principal = principal;
 	}
-	
+
 	public PedidoVentaDTO getPrincipal() {
 		return principal;
 	}
+
 	public void setDetalles(List<DetallePedidoVentaDTO> detalles) {
 		this.detalles = detalles;
 	}
-	
+
 	public List<DetallePedidoVentaDTO> getDetalles() {
 		return detalles;
 	}
+
 	public void setProductosExclusivos(List<UsuarioRolProductoDTO> productosExclusivos) {
 		this.productosExclusivos = productosExclusivos;
 	}
-	
+
 	public List<UsuarioRolProductoDTO> getProductosExclusivos() {
 		return productosExclusivos;
 	}
+
 	public void setDependientes(List<PedidoVentaCaracteristicaDTO> dependientes) {
 		this.dependientes = dependientes;
 	}
-	
+
 	public List<PedidoVentaCaracteristicaDTO> getDependientes() {
 		return dependientes;
 	}
+
 	public void setExpedientes(List<PedidoVentaDTO> expedientes) {
 		this.expedientes = expedientes;
 	}
-	
+
 	public List<PedidoVentaDTO> getExpedientes() {
 		return expedientes;
 	}
+
 	public void setModificado(boolean modificado) {
 		this.modificado = modificado;
 	}
-	
+
 	public boolean getModificado() {
 		return modificado;
 	}
+
 	public void setTransaccionRegistro(String transaccionRegistro) {
 		this.transaccionRegistro = transaccionRegistro;
 	}
-	
+
 	public String getTransaccionRegistro() {
 		return transaccionRegistro;
 	}
+
 	public void setTransaccionInactivo(String transaccionInactivo) {
 		this.transaccionInactivo = transaccionInactivo;
 	}
-	
+
 	public String getTransaccionInactivo() {
 		return transaccionInactivo;
 	}
-	
+
 	public PedidoVentaDTO getDocumentsToBPM() {
 		return documentsToBPM;
 	}
@@ -167,17 +181,17 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 	public void setModificadoBPM(boolean modificadoBPM) {
 		this.modificadoBPM = modificadoBPM;
 	}
-	
+
 	public void setDifference(PedidoVentaCaracteristicaDTO difference) {
 		this.difference = difference;
 	}
-	
+
 	public PedidoVentaCaracteristicaDTO getDifference() {
 		return difference;
 	}
-// BEGIN region metodoInterfaces
+
 	public PedidoVentaCaracteristicaDTO clone() {
-		PedidoVentaCaracteristicaDTO cloneNew =  new PedidoVentaCaracteristicaDTO();
+		PedidoVentaCaracteristicaDTO cloneNew = new PedidoVentaCaracteristicaDTO();
 		cloneNew.setDocumento(this.documento);
 		cloneNew.setCampo(this.campo);
 		cloneNew.setCampoDTO(this.campoDTO);
@@ -196,6 +210,5 @@ public class PedidoVentaCaracteristicaDTO extends BasicDTO
 		cloneNew.setTransaccionInactivo(this.transaccionInactivo);
 		return cloneNew;
 	}
-// END region metodoInterfaces
 
 }

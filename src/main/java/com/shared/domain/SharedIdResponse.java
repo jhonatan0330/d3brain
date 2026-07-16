@@ -6,16 +6,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.softure.document_execution.domain.DocumentMessage;
 
-
 @JsonInclude(Include.NON_NULL)
 public class SharedIdResponse {
-	
+
 	private String id;
 	private String code;
 	private String state;
 	private String comment;
 	private List<DocumentMessage> messages;
-	
+
 	public SharedIdResponse(String id) {
 		this.id = id;
 	}
@@ -24,14 +23,14 @@ public class SharedIdResponse {
 		this.id = llaveTabla;
 		this.code = nombre;
 	}
-	
+
 	public SharedIdResponse(String llaveTabla, String nombre, String state, String comment) {
 		this.id = llaveTabla;
 		this.code = nombre;
 		this.setState(state);
 		this.comment = comment;
 	}
-	
+
 	public SharedIdResponse(String llaveTabla, String nombre, String state, List<DocumentMessage> messages) {
 		this.id = llaveTabla;
 		this.code = nombre;
@@ -78,6 +77,5 @@ public class SharedIdResponse {
 	public void setMessages(List<DocumentMessage> messages) {
 		this.messages = messages;
 	}
-	
-	
+
 }

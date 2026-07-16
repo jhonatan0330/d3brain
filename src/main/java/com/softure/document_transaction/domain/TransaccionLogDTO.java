@@ -7,8 +7,7 @@ import com.softure.java.domain.BasicDTO;
 import org.apache.ibatis.type.Alias;
 
 @Alias("TransaccionLogDTO")
-public class TransaccionLogDTO extends BasicDTO
-{
+public class TransaccionLogDTO extends BasicDTO {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicio;
@@ -19,7 +18,6 @@ public class TransaccionLogDTO extends BasicDTO
 	private String usuario;
 	private String entrada;
 	private String salida;
-	
 
 	public String getEntrada() {
 		return entrada;
@@ -40,21 +38,23 @@ public class TransaccionLogDTO extends BasicDTO
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
-	
+
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}
+
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
-	
+
 	public Date getFechaFin() {
 		return fechaFin;
 	}
+
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;
 	}
-	
+
 	public String getTransaccion() {
 		return transaccion;
 	}

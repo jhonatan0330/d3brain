@@ -17,49 +17,57 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 
 public class CallDocumentCommons {
 
-	public static PedidoVentaCaracteristicaDTO obtenerValor(List<PedidoVentaCaracteristicaDTO> caracteristicas, String campoValor) {
-		if(caracteristicas==null || caracteristicas.size()==0) return null;
+	public static PedidoVentaCaracteristicaDTO obtenerValor(List<PedidoVentaCaracteristicaDTO> caracteristicas,
+			String campoValor) {
+		if (caracteristicas == null || caracteristicas.size() == 0)
+			return null;
 		for (PedidoVentaCaracteristicaDTO pvc : caracteristicas) {
-			if(pvc.getCampo().compareTo(campoValor)==0){
+			if (pvc.getCampo().compareTo(campoValor) == 0) {
 				return pvc;
 			}
 		}
 		return null;
 	}
-	
-	public static PedidoVentaCaracteristicaFilterDTO calcularValoresTotalesCampo(PedidoVentaCaracteristicaFilterDTO pCampo, String valorTomar, DocumentoRelacionExpedienteSvc relacionExpedienteService) throws ServerException{
-		if(pCampo.getExpedientes()==null) pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
-		//Calculo el valor de los expedientes y la cantidad
+
+	public static PedidoVentaCaracteristicaFilterDTO calcularValoresTotalesCampo(
+			PedidoVentaCaracteristicaFilterDTO pCampo, String valorTomar,
+			DocumentoRelacionExpedienteSvc relacionExpedienteService) throws ServerException {
+		if (pCampo.getExpedientes() == null)
+			pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
+		// Calculo el valor de los expedientes y la cantidad
 		int cantidad = 0;
-		//Esto llena los valores de la tabla relacion expediente
-		BigDecimal valor =BigDecimal.ZERO;
+		// Esto llena los valores de la tabla relacion expediente
+		BigDecimal valor = BigDecimal.ZERO;
 		List<DocumentoRelacionExpedienteDTO> relaciones;
-		if(pCampo.getLlaveTabla()!=null) {
-			relaciones = relacionExpedienteService.listByField(pCampo.getLlaveTabla());			
-		}else {
-			relaciones = new ArrayList<DocumentoRelacionExpedienteDTO>();	
+		if (pCampo.getLlaveTabla() != null) {
+			relaciones = relacionExpedienteService.listByField(pCampo.getLlaveTabla());
+		} else {
+			relaciones = new ArrayList<DocumentoRelacionExpedienteDTO>();
 		}
 		boolean ValorNuevo = true;
 		for (PedidoVentaDTO expediente : pCampo.getExpedientes()) {
-			if((expediente.getEstado()==null || expediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE)!=0)) {
-				cantidad ++;
-				if(expediente.getDinero()!=null) {
+			if ((expediente.getEstado() == null
+					|| expediente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0)) {
+				cantidad++;
+				if (expediente.getDinero() != null) {
 					ValorNuevo = true;
 					for (DocumentoRelacionExpedienteDTO iRelacion : relaciones) {
-						if(iRelacion.getExpedienteDetalle().compareTo(expediente.getLlaveTabla())==0) {
-							if(expediente.getDinero()!=null)expediente.getDinero().setValorCampo(iRelacion.getValor());
+						if (iRelacion.getExpedienteDetalle().compareTo(expediente.getLlaveTabla()) == 0) {
+							if (expediente.getDinero() != null)
+								expediente.getDinero().setValorCampo(iRelacion.getValor());
 							valor = valor.add(iRelacion.getValor());
 							ValorNuevo = false;
 							break;
 						}
 					}
-					if(ValorNuevo && valorTomar!=null && expediente.getDinero()!=null){
-						if(valorTomar.compareTo("2")==0) {
-							expediente.getDinero().setValorCampo( expediente.getDinero().getSaldo());
-						}else {//Aqui falta que lo tome de la caracteristica
-							expediente.getDinero().setValorCampo( expediente.getDinero().getValorTotal());
+					if (ValorNuevo && valorTomar != null && expediente.getDinero() != null) {
+						if (valorTomar.compareTo("2") == 0) {
+							expediente.getDinero().setValorCampo(expediente.getDinero().getSaldo());
+						} else {// Aqui falta que lo tome de la caracteristica
+							expediente.getDinero().setValorCampo(expediente.getDinero().getValorTotal());
 						}
-						if(expediente.getDinero().getValorCampo()!=null) valor = valor.add(expediente.getDinero().getValorCampo());
+						if (expediente.getDinero().getValorCampo() != null)
+							valor = valor.add(expediente.getDinero().getValorCampo());
 					}
 				}
 			}
@@ -68,39 +76,42 @@ public class CallDocumentCommons {
 		pCampo.setValorNumeroMax(valor);
 		return pCampo;
 	}
-	
+
 	public static void addMessageError(PedidoVentaDTO document, String message) {
-		if(document==null || message == null) return;
-		if(document.getMessages()==null) document.setMessages(new ArrayList<>());
+		if (document == null || message == null)
+			return;
+		if (document.getMessages() == null)
+			document.setMessages(new ArrayList<>());
 		DocumentMessage msg = new DocumentMessage();
 		msg.setDate(new Date());
-		if(message.toUpperCase().startsWith("ERROR")) {
+		if (message.toUpperCase().startsWith("ERROR")) {
 			msg.setType("ERROR");
-		}else {
+		} else {
 			msg.setType("INFO");
 		}
 		msg.setMessage(message);
 		document.getMessages().add(msg);
 	}
-	
+
 	public static void copyMessages(PedidoVentaDTO pSince, PedidoVentaDTO pTo) {
-		if(pSince==null || pTo == null || pSince.getMessages() == null || pSince.getMessages().size() == 0) return;
-		if(pTo.getMessages()==null) pTo.setMessages(new ArrayList<>());
-		
-		for (DocumentMessage iMsgSince: pSince.getMessages()) {
+		if (pSince == null || pTo == null || pSince.getMessages() == null || pSince.getMessages().size() == 0)
+			return;
+		if (pTo.getMessages() == null)
+			pTo.setMessages(new ArrayList<>());
+
+		for (DocumentMessage iMsgSince : pSince.getMessages()) {
 			boolean found = false;
-			for (DocumentMessage iMsgTo: pTo.getMessages()) {
-				//Solo necesito ver que no sea el mismo objeto, por el momento no el mensaje
-				if(iMsgSince == iMsgTo) {
+			for (DocumentMessage iMsgTo : pTo.getMessages()) {
+				// Solo necesito ver que no sea el mismo objeto, por el momento no el mensaje
+				if (iMsgSince == iMsgTo) {
 					found = true;
 					break;
 				}
 			}
-			if(!found)
+			if (!found)
 				pTo.getMessages().add(iMsgSince);
 		}
 	}
-	
 
 	public static Date getValueDate(PedidoVentaDTO document, String code) {
 		PedidoVentaCaracteristicaDTO field = getField(document, code);
@@ -131,14 +142,14 @@ public class CallDocumentCommons {
 			return false;
 		return field.getValorNumero().compareTo(BigDecimal.ONE) == 0;
 	}
-	
+
 	public static BigDecimal getValueNumber(PedidoVentaDTO document, String code) {
 		PedidoVentaCaracteristicaDTO field = getField(document, code);
 		if (field == null)
 			return null;
 		return field.getValorNumero();
 	}
-	
+
 	public static Integer getValueNumberInt(PedidoVentaDTO document, String code) {
 		PedidoVentaCaracteristicaDTO field = getField(document, code);
 		if (field == null)
@@ -157,9 +168,9 @@ public class CallDocumentCommons {
 		}
 		return null;
 	}
-	
-	public static PedidoVentaDTO generateNewDocument(DocumentoPlantillaDTO pPlantilla, String transaccion, String token, List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin)
-			throws ServerException {
+
+	public static PedidoVentaDTO generateNewDocument(DocumentoPlantillaDTO pPlantilla, String transaccion, String token,
+			List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin) throws ServerException {
 		PedidoVentaDTO nuevo = new PedidoVentaDTO();
 		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		nuevo.setPlantilla(pPlantilla.getLlaveTabla());

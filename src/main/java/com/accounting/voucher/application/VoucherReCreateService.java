@@ -1,6 +1,5 @@
 package com.accounting.voucher.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,35 +23,36 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 @Service
 public class VoucherReCreateService {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc pedidoVentaService;
-	@Autowired
-	@Lazy
-	private WebServiceExecuteAPI apiService;
-	@Autowired
-	@Lazy
-	private VoucherService voucherService;
-	@Autowired
-	@Lazy
-	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired
-	@Lazy
-	private PrepareTypeToCatalogService typeFindSvc;
+	private final PedidoVentaSvc pedidoVentaService;
+	private final WebServiceExecuteAPI apiService;
+	private final VoucherService voucherService;
+	private final WebServiceEjecucionSvc webServiceEjecucionSvc;
+	private final PrepareTypeToCatalogService typeFindSvc;
+
+	public VoucherReCreateService(@Lazy PedidoVentaSvc pedidoVentaService, @Lazy WebServiceExecuteAPI apiService,
+			@Lazy VoucherService voucherService, @Lazy WebServiceEjecucionSvc webServiceEjecucionSvc,
+			@Lazy PrepareTypeToCatalogService typeFindSvc) {
+		this.pedidoVentaService = pedidoVentaService;
+		this.apiService = apiService;
+		this.voucherService = voucherService;
+		this.webServiceEjecucionSvc = webServiceEjecucionSvc;
+		this.typeFindSvc = typeFindSvc;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
 
 		TypeDTO type = typeFindSvc.call(pItem.getServiceId(), null, pToken);
-			
+
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pItem.getDocumentId());
 		_filter.setType(type.getKey());
 		_filter.setState(SharedConstants.STATE_ACTIVE);
 		if (voucherService.count(_filter) != 0)
 			throw new ServerException("Este documento ya tiene un comprobante");
-		
-		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.getServiceVoucherActive(pItem.getServiceId(), pItem.getDocumentId());
+
+		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.getServiceVoucherActive(pItem.getServiceId(),
+				pItem.getDocumentId());
 		if (_service != null)
 			return new SharedIdResponse(pItem.getDocumentId(), null, null,
 					apiService.applyScheduleToExecute(_service, pToken.getToken()));

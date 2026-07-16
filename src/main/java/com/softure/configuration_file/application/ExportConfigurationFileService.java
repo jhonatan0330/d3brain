@@ -3,7 +3,6 @@ package com.softure.configuration_file.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,38 +28,48 @@ import com.softure.property.application.RelacionInternaSvc;
 import com.softure.report.application.ReporteBaseSvc;
 import com.softure.upload.application.UploadSvc;
 import com.softure.webservice.application.WebServiceSvc;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class ExportConfigurationFileService {
 
-	@Autowired @Lazy 
-	private PropiedadValorDefinidoSvc typePropertiesService;
-	@Autowired @Lazy 
-	private OrganizacionSvc organizationService;
-	@Autowired @Lazy 
-	private UploadSvc uploadService;
-	@Autowired @Lazy 
-	private PropiedadSvc propertyService;
-	@Autowired @Lazy 
-	private RelacionInternaSvc relationService;
-	@Autowired @Lazy 
-	private RolAccesoSvc rolService;
-	@Autowired @Lazy 
-	private ProcesoSvc procesoService;
-	@Autowired @Lazy 
-	private ProcesoEstadoSvc stateService;
-	@Autowired @Lazy 
-	private ProcesoTransicionSvc transitionService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaSvc templateService;
-	@Autowired @Lazy 
-	private ReporteBaseSvc reportService;
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired @Lazy 
-	private MensajePlantillaCorreoSvc messageService;
-	@Autowired @Lazy 
-	private WebServiceSvc apiService;
+	private final PropiedadValorDefinidoSvc typePropertiesService;
+	private final OrganizacionSvc organizationService;
+	private final UploadSvc uploadService;
+	private final PropiedadSvc propertyService;
+	private final RelacionInternaSvc relationService;
+	private final RolAccesoSvc rolService;
+	private final ProcesoSvc procesoService;
+	private final ProcesoEstadoSvc stateService;
+	private final ProcesoTransicionSvc transitionService;
+	private final DocumentoPlantillaSvc templateService;
+	private final ReporteBaseSvc reportService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+	private final MensajePlantillaCorreoSvc messageService;
+	private final WebServiceSvc apiService;
+
+	public ExportConfigurationFileService(@Lazy PropiedadValorDefinidoSvc typePropertiesService,
+			@Lazy OrganizacionSvc organizationService, @Lazy UploadSvc uploadService,
+			@Lazy PropiedadSvc propertyService, @Lazy RelacionInternaSvc relationService, @Lazy RolAccesoSvc rolService,
+			@Lazy ProcesoSvc procesoService, @Lazy ProcesoEstadoSvc stateService,
+			@Lazy ProcesoTransicionSvc transitionService, @Lazy DocumentoPlantillaSvc templateService,
+			@Lazy ReporteBaseSvc reportService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
+			@Lazy MensajePlantillaCorreoSvc messageService, @Lazy WebServiceSvc apiService) {
+		this.typePropertiesService = typePropertiesService;
+		this.organizationService = organizationService;
+		this.uploadService = uploadService;
+		this.propertyService = propertyService;
+		this.relationService = relationService;
+		this.rolService = rolService;
+		this.procesoService = procesoService;
+		this.stateService = stateService;
+		this.transitionService = transitionService;
+		this.templateService = templateService;
+		this.reportService = reportService;
+		this.fieldService = fieldService;
+		this.messageService = messageService;
+		this.apiService = apiService;
+	}
 
 	public FileVO call(String token) throws ServerException {
 		rolService.getUserFlex(token);
@@ -89,7 +98,7 @@ public class ExportConfigurationFileService {
 		List<String> processToInclude = new ArrayList<>();
 
 		rolService.getUserFlex(token);
-		
+
 		for (String iModule : modules.getModulesCode()) {
 			ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
 			filterProcess.setEstado(SharedConstants.STATE_ACTIVE);

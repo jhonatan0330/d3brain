@@ -2,7 +2,6 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -11,14 +10,19 @@ import com.softure.configuration_file.domain.LogConfigurationDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SynchronizeApiService {
 
-	@Autowired @Lazy 
-	private WebServiceSvc apisService;
-	@Autowired @Lazy 
-	private SynchronizePropertiesService propertiesSynchronizeService;
+	private final WebServiceSvc apisService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeApiService(@Lazy WebServiceSvc apisService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.apisService = apisService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {

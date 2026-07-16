@@ -3,7 +3,6 @@ package com.configuration.homologate.application;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,6 @@ import com.softure.authorization.domain.RolAccesoFilterDTO;
 import com.softure.document_execution.application.CallDocumentCRUD;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.document_execution.domain.PedidoVentaDTO;
-import com.softure.inventory.application.ProductoSvc;
 import com.softure.money.application.CuentaSvc;
 import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
@@ -32,56 +30,46 @@ import com.softure.report.domain.ReporteBaseFilterDTO;
 @Service("HomologatePrepareService")
 public class HomologateAdapterService {
 
-	@Autowired
-	@Lazy
-	private PropiedadSvc propertyService;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private ReporteBaseSvc reporteService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private RolAccesoSvc rolService;
-	@Autowired
-	@Lazy
-	private CallDocumentCRUD crudService;
+	private final PropiedadSvc propertyService;
+	private final ReporteBaseSvc reporteService;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final DocumentoPlantillaCaracteristicaSvc campoService;
+	private final RolAccesoSvc rolService;
+	private final CallDocumentCRUD crudService;
+	private final CuentaSvc cuentaService;
+	private final HomologateTariff tariffHomologate;
+	private final HomologateFee feeHomologate;
+	private final HomologateFaq faqHomologate;
+	private final HomologateAccount accountHomologate;
+	private final HomologateCatalog catalogHomologate;
+	private final HomologateProduct productHomologate;
+	private final HomologateProductStock productStockHomologate;
+	private final HomologateProductStockDeduction productStockDeductionHomologate;
 
-	@Autowired
-	@Lazy
-	private CuentaSvc cuentaService;
-
-	@Autowired
-	@Lazy
-	private HomologateTariff tariffHomologate;
-	@Autowired
-	@Lazy
-	private HomologateFee feeHomologate;
-	@Autowired
-	@Lazy
-	private HomologateFaq faqHomologate;
-	@Autowired
-	@Lazy
-	private HomologateCatalog catalogHomologate;
-	@Autowired
-	@Lazy
-	private HomologateAccount accountHomologate;
-	@Autowired
-	@Lazy
-	private HomologateProduct productHomologate;
-	@Autowired
-	@Lazy
-	private HomologateProductStock productStockHomologate;
-	@Autowired
-	@Lazy
-	private HomologateProductStockDeduction productStockDeductionHomologate;
+	public HomologateAdapterService(@Lazy PropiedadSvc propertyService, @Lazy ReporteBaseSvc reporteService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy DocumentoPlantillaCaracteristicaSvc campoService,
+			@Lazy RolAccesoSvc rolService, @Lazy CallDocumentCRUD crudService, @Lazy CuentaSvc cuentaService,
+			@Lazy HomologateTariff tariffHomologate, @Lazy HomologateFee feeHomologate,
+			@Lazy HomologateFaq faqHomologate, @Lazy HomologateCatalog catalogHomologate,
+			@Lazy HomologateAccount accountHomologate, @Lazy HomologateProduct productHomologate,
+			@Lazy HomologateProductStock productStockHomologate,
+			@Lazy HomologateProductStockDeduction productStockDeductionHomologate) {
+		this.propertyService = propertyService;
+		this.reporteService = reporteService;
+		this.plantillaService = plantillaService;
+		this.campoService = campoService;
+		this.rolService = rolService;
+		this.crudService = crudService;
+		this.cuentaService = cuentaService;
+		this.tariffHomologate = tariffHomologate;
+		this.feeHomologate = feeHomologate;
+		this.faqHomologate = faqHomologate;
+		this.catalogHomologate = catalogHomologate;
+		this.accountHomologate = accountHomologate;
+		this.productHomologate = productHomologate;
+		this.productStockHomologate = productStockHomologate;
+		this.productStockDeductionHomologate = productStockDeductionHomologate;
+	}
 
 	public void call(PropiedadDTO dto, String token) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());

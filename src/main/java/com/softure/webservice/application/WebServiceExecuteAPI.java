@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -66,47 +65,40 @@ public class WebServiceExecuteAPI {
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
 
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc templateService;
-	@Autowired
-	@Lazy
-	private CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadesSvc;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc documentSvc;
-	@Autowired
-	@Lazy
-	private UploadSvc uploadService;
-	@Autowired
-	@Lazy
-	private WebServiceSvc webServiceSvc;
-	@Autowired
-	@Lazy
-	private WebServiceEjecucionSvc webServiceEjecucionSvc;
-	@Autowired
-	@Lazy
-	private MailSendMessageToAdminService mensajeToAdminService;
-	@Autowired
-	@Lazy
-	private WebServiceCallPrepare prepareDataService;
-	@Autowired
-	@Lazy
-	private RelacionInternaSvc relacionService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired
-	@Lazy
-	private ProcessTemplate templatesService;
-
+	private final DocumentoPlantillaSvc templateService;
+	private final CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
+	private final PropiedadSvc propiedadesSvc;
+	private final PedidoVentaSvc documentSvc;
+	private final UploadSvc uploadService;
+	private final WebServiceSvc webServiceSvc;
+	private final WebServiceEjecucionSvc webServiceEjecucionSvc;
+	private final MailSendMessageToAdminService mensajeToAdminService;
+	private final WebServiceCallPrepare prepareDataService;
+	private final RelacionInternaSvc relacionService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+	private final ProcessTemplate templatesService;
 	private final WebClient webClient;
 
-	public WebServiceExecuteAPI(WebClient webClient) {
+	public WebServiceExecuteAPI(@Lazy WebClient webClient, @Lazy DocumentoPlantillaSvc templateService,
+			@Lazy CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction, @Lazy PropiedadSvc propiedadesSvc,
+			@Lazy PedidoVentaSvc documentSvc, @Lazy UploadSvc uploadService, @Lazy WebServiceSvc webServiceSvc,
+			@Lazy WebServiceEjecucionSvc webServiceEjecucionSvc,
+			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy WebServiceCallPrepare prepareDataService,
+			@Lazy RelacionInternaSvc relacionService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
+			@Lazy ProcessTemplate templatesService) {
 		this.webClient = webClient;
+		this.templateService = templateService;
+		this.documentAutomaticUpdateFunction = documentAutomaticUpdateFunction;
+		this.propiedadesSvc = propiedadesSvc;
+		this.documentSvc = documentSvc;
+		this.uploadService = uploadService;
+		this.webServiceSvc = webServiceSvc;
+		this.webServiceEjecucionSvc = webServiceEjecucionSvc;
+		this.mensajeToAdminService = mensajeToAdminService;
+		this.prepareDataService = prepareDataService;
+		this.relacionService = relacionService;
+		this.fieldService = fieldService;
+		this.templatesService = templatesService;
 	}
 
 	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId,
@@ -595,7 +587,7 @@ public class WebServiceExecuteAPI {
 			} else {
 				String newValue = matcher.group(1);
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
-					var extension = (propiedadDTO.getMotivo()==null)?"txt":propiedadDTO.getMotivo();
+					var extension = (propiedadDTO.getMotivo() == null) ? "txt" : propiedadDTO.getMotivo();
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
 							Propiedades.API_EXTRACTION_TO_BASE_64 + "." + extension, token, "webservice", "private");
 				}

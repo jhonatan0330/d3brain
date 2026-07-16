@@ -1,11 +1,8 @@
 package com.softure.inventory.application;
 
-// BEGIN region interImport
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +17,23 @@ import com.softure.java.services.SoftureUtil;
 import com.softure.logisticpymes.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("productoService")
 public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
-	
-	@Autowired @Lazy 
-	private ProductoMapper productoMapper;
-	
+
+	private final ProductoMapper productoMapper;
+
+	public ProductoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ProductoMapper productoMapper) {
+		super(usuarioSesionService);
+		this.productoMapper = productoMapper;
+	}
 
 	@Override
 	public ProductoDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. Producto");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. Producto");
 		ProductoFilterDTO dto = new ProductoFilterDTO();
 		dto.setLlaveTabla(llave);
 		return productoMapper.consultar(dto);
@@ -38,94 +41,93 @@ public class ProductoSvc extends BasicSvc<ProductoDTO, ProductoFilterDTO> {
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = productoMapper;
+		this.mapper = productoMapper;
 	}
-	
+
 	@Override
 	public ProductoDTO activar(ProductoDTO dto, String token) throws ServerException {
-		// BEGIN Producto_activar
 		return super.activar(dto, token);
-		// END Producto_activar
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
-	public ProductoDTO actualizar( ProductoDTO dto, String token) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public ProductoDTO actualizar(ProductoDTO dto, String token) throws ServerException {
 		throw new ServerException("La modificacion de productos se debe realizar por los fomularios");
 	}
-	
+
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ProductoDTO inactivar(ProductoDTO dto, String token) throws ServerException {
 		throw new ServerException("La inactivacion de productos se debe realizar por los fomularios");
 	}
-	
+
 	@Override
 	public ProductoDTO consultaUnica(ProductoFilterDTO dto) throws ServerException {
 		return super.consultaUnica(dto);
 	}
-	
+
 	@Override
 	public int contarResultados(ProductoFilterDTO dto) throws ServerException {
 		return super.contarResultados(dto);
 	}
-	
-	@Override
-	public List<ProductoDTO> listarConsulta(ProductoFilterDTO dto)
-			throws ServerException {
-		return super.listarConsulta(dto);
-	}
-	
 
 	@Override
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public List<ProductoDTO> listarConsulta(ProductoFilterDTO dto) throws ServerException {
+		return super.listarConsulta(dto);
+	}
+
+	@Override
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ProductoDTO guardar(ProductoDTO dto, String token) throws ServerException {
 		throw new ServerException("La creacion de productos se debe realizar por los fomularios");
 	}
 
-// BEGIN region aditionalMethods
-		
-	public List<ProductoDTO> listarProductoPlantillaResponsable(ProductoFilterDTO dto)throws ServerException{
-		if(dto.getUsuarioRol()==null)
+
+	public List<ProductoDTO> listarProductoPlantillaResponsable(ProductoFilterDTO dto) throws ServerException {
+		if (dto.getUsuarioRol() == null)
 			throw new ServerException("Se necesita el usuariorol en la plantillaproducto");
-		if(dto!=null && dto.getFiltroParametro()!=null && dto.getFiltroParametro().compareTo("*")==0)dto.setFiltroParametro(null);
+		if (dto != null && dto.getFiltroParametro() != null && dto.getFiltroParametro().compareTo("*") == 0)
+			dto.setFiltroParametro(null);
 		return productoMapper.listarProductoPlantillaResponsable(dto);
 	}
-	
-	public List<ProductoDTO> listarProductoFuncion(String funcion, String documento, String filtro, String token ,List<PedidoVentaCaracteristicaDTO> parametros)throws ServerException{
+
+	public List<ProductoDTO> listarProductoFuncion(String funcion, String documento, String filtro, String token,
+			List<PedidoVentaCaracteristicaDTO> parametros) throws ServerException {
 		return productoMapper.listarProductoFuncion(funcion, documento, filtro, token, parametros);
-	} 
-	
-	public List<ProductoDTO> listarProductoCampo(String campo, String filtro)throws ServerException{
-		if(filtro!=null) filtro = SoftureUtil.formatFunction(filtro).toUpperCase();
+	}
+
+	public List<ProductoDTO> listarProductoCampo(String campo, String filtro) throws ServerException {
+		if (filtro != null)
+			filtro = SoftureUtil.formatFunction(filtro).toUpperCase();
 		return productoMapper.listarProductoCampo(campo, filtro);
 	}
-	
-	public List<ProductoDTO> listarProductoSimplificar(List<ProductoDTO> productos)throws ServerException{
-		if(productos==null || productos.isEmpty()) return new ArrayList<ProductoDTO>();
+
+	public List<ProductoDTO> listarProductoSimplificar(List<ProductoDTO> productos) throws ServerException {
+		if (productos == null || productos.isEmpty())
+			return new ArrayList<ProductoDTO>();
 		return productoMapper.listarProductoSimplificado(productos);
 	}
-	
-	public ProductoDTO getProduct2Document(String document)throws ServerException{
+
+	public ProductoDTO getProduct2Document(String document) throws ServerException {
 		ProductoFilterDTO p = new ProductoFilterDTO();
 		p.setDocumento(document);
 		p.setEstado(SharedConstants.STATE_ACTIVE);
 		ProductoDTO pr = consultaUnica(p);
-		if(pr!=null && pr.getProductoBase()!=null) {
+		if (pr != null && pr.getProductoBase() != null) {
 			ProductoDTO pb = consultaXId(pr.getProductoBase());
 			pr.setBaseNombre(pb.getNombre());
 		}
 		return pr;
 	}
-	
-	public List<ProductoDTO> getProducts2Filter(String filter)throws ServerException{
+
+	public List<ProductoDTO> getProducts2Filter(String filter) throws ServerException {
 		ProductoFilterDTO p = new ProductoFilterDTO();
 		p.setFiltroParametro(filter);
 		p.setEstado(SharedConstants.STATE_ACTIVE);
 		return listarConsulta(p);
 	}
-	
-	public ProductoDTO filtrarPorCodigo(String codigo)throws ServerException{
+
+	public ProductoDTO filtrarPorCodigo(String codigo) throws ServerException {
 		return productoMapper.filtrarPorCodigo(codigo);
 	}
 

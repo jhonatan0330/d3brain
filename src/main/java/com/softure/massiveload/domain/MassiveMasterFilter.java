@@ -4,9 +4,7 @@ import java.util.Date;
 
 import com.shared.domain.SharedDataObjectFilter;
 
-
-public class MassiveMasterFilter extends SharedDataObjectFilter
-{
+public class MassiveMasterFilter extends SharedDataObjectFilter {
 
 	private String archivo;
 	private Date fechaMin;
@@ -15,11 +13,11 @@ public class MassiveMasterFilter extends SharedDataObjectFilter
 	private String plantilla;
 	private String progreso;
 	private String usuario;
-	
+
 	public MassiveMasterFilter(String state, int page, int size) {
 		this.setState(state);
-		this.setStartRow( page*size );
-		this.setEndRow( (page*size) + size - 1 );
+		this.setStartRow(page * size);
+		this.setEndRow((page * size) + size - 1);
 	}
 
 	public MassiveMasterFilter() {

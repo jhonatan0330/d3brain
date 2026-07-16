@@ -1,6 +1,6 @@
 package com.softure.configuration_file.application;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -13,10 +13,14 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service
 public class SynchronizeOrganizationService {
 
-	@Autowired @Lazy 
-	OrganizacionSvc organizationService;
-	@Autowired @Lazy 
-	SynchronizePropertiesService propertiesSynchronizeService;
+	private final OrganizacionSvc organizationService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeOrganizationService(@Lazy OrganizacionSvc organizationService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.organizationService = organizationService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {

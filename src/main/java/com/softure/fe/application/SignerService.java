@@ -33,8 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.xml.security.utils.XMLUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,12 +73,16 @@ import xades4j.providers.SignaturePropertiesCollector;
 import xades4j.providers.SignaturePropertiesProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.verification.SigningCertificateReferenceNotFoundException;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SignerService {
 
-	@Autowired @Lazy 
-	private UploadSvc uploadService;
+	private final UploadSvc uploadService;
+
+	public SignerService(@Lazy UploadSvc uploadService) {
+		this.uploadService = uploadService;
+	}
 
 	private XadesSigner signer;
 	private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
@@ -107,25 +109,24 @@ public class SignerService {
 				.storePassword(new DirectPasswordProvider(password)).entryPassword(new DirectPasswordProvider(password))
 				.build();
 
-		//sobreescribe las propiedades de signer para agregar "supplier" como rol para cumplir con la DIAN
+		// sobreescribe las propiedades de signer para agregar "supplier" como rol para
+		// cumplir con la DIAN
 		XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider)
-	    	.withSignaturePropertiesProvider(new SignaturePropertiesProvider() {
-	        @Override
-	        public void provideProperties(SignaturePropertiesCollector arg0) {
-                SigningTimeProperty sigTime = new SigningTimeProperty();
-                arg0.setSignerRole(new SignerRoleProperty().withClaimedRole("supplier"));
-                arg0.setSigningTime(sigTime);
-            }
-	      })
-	    	.withBasicSignatureOptions(
-                  new BasicSignatureOptions()
-                  .includePublicKey(true)
-                  .includeSubjectName(false)
-                  //.signKeyInfo(true)
-                  .includeSigningCertificate(SigningCertificateMode.SIGNING_CERTIFICATE)
-          ).withSignatureAlgorithms(new SignatureAlgorithms().withSignatureAlgorithm("RSA", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));
-	    //
-		//XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
+				.withSignaturePropertiesProvider(new SignaturePropertiesProvider() {
+					@Override
+					public void provideProperties(SignaturePropertiesCollector arg0) {
+						SigningTimeProperty sigTime = new SigningTimeProperty();
+						arg0.setSignerRole(new SignerRoleProperty().withClaimedRole("supplier"));
+						arg0.setSigningTime(sigTime);
+					}
+				})
+				.withBasicSignatureOptions(new BasicSignatureOptions().includePublicKey(true).includeSubjectName(false)
+						// .signKeyInfo(true)
+						.includeSigningCertificate(SigningCertificateMode.SIGNING_CERTIFICATE))
+				.withSignatureAlgorithms(new SignatureAlgorithms().withSignatureAlgorithm("RSA",
+						"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"));
+		//
+		// XadesSigningProfile p = new XadesEpesSigningProfile(kp, policyInfoProvider);
 		signer = p.newSigner();
 	}
 
@@ -193,22 +194,20 @@ public class SignerService {
 	}
 
 	private DataObjectDesc createDataObjectToSign() {
-		return new DataObjectReference("")
-				.withTransform(new EnvelopedSignatureTransform())
+		return new DataObjectReference("").withTransform(new EnvelopedSignatureTransform())
 				.withDataObjectFormat(new DataObjectFormatProperty("text/xml"));
 	}
 
 	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException, ServerException {
 
 		try {
-			
+
 			signer.sign(new SignedDataObjects(dataObjRef), elemToSign, SignatureAppendingStrategies.AsFirstChild);
-		}catch (SigningCertificateReferenceNotFoundException enf) {
-            throw new ServerException("Certificado no encontrado");
+		} catch (SigningCertificateReferenceNotFoundException enf) {
+			throw new ServerException("Certificado no encontrado");
 		} catch (XAdES4jException exa) {
 			throw new ServerException(exa.getMessage());
-		}
-		catch(Exception ex) {
+		} catch (Exception ex) {
 			throw new ServerException("Certificado vencido");
 		}
 	}
@@ -230,8 +229,8 @@ public class SignerService {
 		// Hay algo similar en mailsendmessage
 		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml", "private"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
-		
-		if(generateZip) {
+
+		if (generateZip) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
@@ -253,32 +252,32 @@ public class SignerService {
 		}
 	}
 
-	public void sign(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException, XAdES4jException,
-			ParserConfigurationException, TransformerException, SAXException, ServerException {
+	public void sign(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException,
+			XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
-		//removeEmptyNodes(doc);
+		// removeEmptyNodes(doc);
 		doc = processCUFE(doc, responseFe);
 		doc = processSoftwareSecurityCode(doc);
-		//Primero tomo la informacion de los archivos adjuntos
+		// Primero tomo la informacion de los archivos adjuntos
 		doc = decriptFilesBase64(doc);
 		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
-		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc),generateZip);
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc), generateZip);
 	}
 
-	public void signNE(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException, XAdES4jException,
-			ParserConfigurationException, TransformerException, SAXException, ServerException {
+	public void signNE(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException,
+			XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
-		//removeEmptyNodes(doc);
+		// removeEmptyNodes(doc);
 		doc = processCUNE(doc, responseFe);
 		doc = processSoftwareSecurityCodeNE(doc);
-		//Primero tomo la informacion de los archivos adjuntos
+		// Primero tomo la informacion de los archivos adjuntos
 		doc = decriptFilesBase64(doc);
 		doc = processExtensionContent(doc);
 		getSignatureValue(doc, responseFe);
-		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc),generateZip);
+		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc), generateZip);
 	}
-	
+
 	public FEResponse generateCodigo(String xmlIn) throws ServerException {
 		FEResponse response = new FEResponse();
 		response.setCufe(encryptThisString(xmlIn));
@@ -331,7 +330,7 @@ public class SignerService {
 		responseFe.setCufe(CUFEencrypt);
 		return processQR(doc, CUFEencrypt);
 	}
-	
+
 	private Document processCUNE(Document doc, FEResponse responseFe) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("InformacionGeneral");
 		if (tags.getLength() == 0)
@@ -341,12 +340,12 @@ public class SignerService {
 			throw new ServerException("El texto del CUFE esta vacio");
 		String CUFEencrypt = encryptThisString(CUFEplain);
 		for (int i = 0; i < tags.getLength(); i++) {
-			tags.item(i).getAttributes().getNamedItem("CUNE").setTextContent(CUFEencrypt);	
+			tags.item(i).getAttributes().getNamedItem("CUNE").setTextContent(CUFEencrypt);
 		}
 		responseFe.setCufe(CUFEencrypt);
 		return processQRNE(doc, CUFEencrypt);
 	}
-	
+
 	private Document processQRNE(Document doc, String cufe) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("CodigoQR");
 		if (tags.getLength() == 0)
@@ -382,14 +381,14 @@ public class SignerService {
 		tags.item(0).setTextContent(encrypt);
 		return doc;
 	}
-	
+
 	private Document processSoftwareSecurityCodeNE(Document doc) throws ServerException {
 		NodeList tags = doc.getElementsByTagName("ProveedorXML");
 		if (tags.getLength() == 0)
-			return doc; 
+			return doc;
 		String plain = tags.item(0).getAttributes().getNamedItem("SoftwareSC").getNodeValue();
 		if (plain == null || plain.isEmpty())
-			return doc; 
+			return doc;
 		String encrypt = encryptThisString(plain);
 		tags.item(0).getAttributes().getNamedItem("SoftwareSC").setTextContent(encrypt);
 		return doc;
@@ -412,9 +411,9 @@ public class SignerService {
 					tags.item(i).setTextContent("");
 					tags.item(i).appendChild(cdata);
 				} else {
-					//Node cdata = doc.createCDATASection(plain);
-					//tags.item(i).setTextContent("");
-					//tags.item(i).appendChild(plain);
+					// Node cdata = doc.createCDATASection(plain);
+					// tags.item(i).setTextContent("");
+					// tags.item(i).appendChild(plain);
 				}
 			}
 		}
@@ -440,32 +439,37 @@ public class SignerService {
 		}
 	}
 
-/*	private void removeEmptyNodes(Node node) {
-		NodeList nodeList = node.getChildNodes();
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node childNode = nodeList.item(i);
-			if (childNode.getTextContent().equals("") && childNode.getAttributes().getLength()==0) {
-				childNode.getParentNode().removeChild(childNode);
-				i--;
-			}
-			removeEmptyNodes(childNode);
-		}
-	}*/
+	/*
+	 * private void removeEmptyNodes(Node node) { NodeList nodeList =
+	 * node.getChildNodes(); for (int i = 0; i < nodeList.getLength(); i++) { Node
+	 * childNode = nodeList.item(i); if (childNode.getTextContent().equals("") &&
+	 * childNode.getAttributes().getLength()==0) {
+	 * childNode.getParentNode().removeChild(childNode); i--; }
+	 * removeEmptyNodes(childNode); } }
+	 */
 
 	private String getHtmlContent(String _url) {
-		// Instantiating the URL class
 		URL url;
+
 		try {
-			url = new URL(_url);
-		} catch (MalformedURLException e) {
+			url = new URI(_url).toURL();
+		} catch (URISyntaxException | MalformedURLException e) {
 			return _url;
 		}
+
+		/*
+		 * try (Scanner sc = new Scanner(url.openStream(), StandardCharsets.UTF_8)) {
+		 * return sc.useDelimiter("\\A").next(); }
+		 */
 		try (Scanner sc = new Scanner(url.openStream())) {
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
+
 			while (sc.hasNext()) {
 				sb.append(sc.next());
 			}
+
 			return sb.toString();
+
 		} catch (IOException e) {
 			return e.getLocalizedMessage();
 		}

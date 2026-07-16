@@ -3,7 +3,7 @@ package com.softure.configuration_file.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -17,10 +17,14 @@ import com.softure.property.domain.RelacionInternaDTO;
 @Service
 public class SynchronizeTemplateFieldService {
 
-	@Autowired @Lazy 
-	DocumentoPlantillaCaracteristicaSvc fieldService;
-	@Autowired @Lazy 
-	SynchronizePropertiesService propertiesSynchronizeService;
+	private final DocumentoPlantillaCaracteristicaSvc fieldService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeTemplateFieldService(@Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.fieldService = fieldService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
@@ -39,7 +43,8 @@ public class SynchronizeTemplateFieldService {
 					log.info("EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
 				} else {
 					if (compare) {
-						log.error("COMPARE NOT EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
+						log.error(
+								"COMPARE NOT EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
 					} else {
 						DocumentoPlantillaCaracteristicaDTO newField = new DocumentoPlantillaCaracteristicaDTO();
 						newField.setPlantilla(localTemplate);
@@ -86,7 +91,7 @@ public class SynchronizeTemplateFieldService {
 				DocumentoPlantillaCaracteristicaDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local != null) {
-					log.setRoot(templateRoot + ".... Campo ->" + remote.getNombre() );
+					log.setRoot(templateRoot + ".... Campo ->" + remote.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log, compare);

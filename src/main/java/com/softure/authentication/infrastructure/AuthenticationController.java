@@ -2,7 +2,6 @@ package com.softure.authentication.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,28 +19,38 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadFilterDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/authentication")
 public class AuthenticationController {
-	
-	@Autowired @Lazy  private OrganizacionSvc organizationSvc;
-	@Autowired @Lazy  private PropiedadSvc propertiesService;
-	
+
+	private final OrganizacionSvc organizationSvc;
+	private final PropiedadSvc propertiesService;
+
+	public AuthenticationController(@Lazy OrganizacionSvc organizationSvc, @Lazy PropiedadSvc propertiesService) {
+		this.organizationSvc = organizationSvc;
+		this.propertiesService = propertiesService;
+	}
+
 	@GetMapping(value = "getLinkedOrganizations")
-	public List<OrganizacionDTO> getLinkedOrganizations(@RequestHeader("Authorization") String token)throws ServerException  {
+	public List<OrganizacionDTO> getLinkedOrganizations(@RequestHeader("Authorization") String token)
+			throws ServerException {
 		return organizationSvc.obtenerUsuario(organizationSvc.getUserFlex(token));
 	}
-	
-	@GetMapping(value="/obtenerPrincipalOrganizacion")
+
+	@GetMapping(value = "/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion(HttpServletRequest request) throws ServerException {
-		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
-		return organizationSvc.obtenerPrincipalPublic( HttpUtils.getRequestIP(request));
+		// Este metodo se usa para obtener los datos de la organizacion pero despues se
+		// vuelve a utilizar para obtener las propiedades
+		return organizationSvc.obtenerPrincipalPublic(HttpUtils.getRequestIP(request));
 	}
-	
-	@GetMapping(value="/properties/{type}/{field}")
-	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token, @PathVariable(name="type") String pType, @PathVariable(name="field") String pField) throws ServerException {
+
+	@GetMapping(value = "/properties/{type}/{field}")
+	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token,
+			@PathVariable(name = "type") String pType, @PathVariable(name = "field") String pField)
+			throws ServerException {
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setTipo(pType);
 		filter.setCampo(pField);

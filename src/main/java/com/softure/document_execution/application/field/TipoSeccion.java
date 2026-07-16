@@ -3,7 +3,6 @@ package com.softure.document_execution.application.field;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -18,12 +17,14 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoSeccion {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+
+	public TipoSeccion(@Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService) {
+		this.campoService = campoService;
+		this.caracteristicaService = caracteristicaService;
+	}
 
 	// Copiado de Tipo numero
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
@@ -45,8 +46,8 @@ public class TipoSeccion {
 				}
 			}
 			try {
-				pCampo.setValorNumeroMax(
-						campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
+				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
+						pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

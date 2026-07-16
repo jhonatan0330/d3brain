@@ -1,6 +1,5 @@
 package com.softure.webservice.application;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,19 +11,23 @@ import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.domain.WebServiceDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class WebServiceCopyAPI {
 
-	@Autowired @Lazy 
-	private WebServiceSvc webServiceSvc;
-	@Autowired @Lazy 
-	private PropiedadSvc propiedadesSvc;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
+	private final WebServiceSvc webServiceSvc;
+	private final PropiedadSvc propiedadesSvc;
+	private final PropertyGetWithCacheService cacheService;
 
-	
-	@Transactional(value = "transactionManager", rollbackFor=Exception.class, propagation=Propagation.REQUIRED)
+	public WebServiceCopyAPI(@Lazy WebServiceSvc webServiceSvc, @Lazy PropiedadSvc propiedadesSvc,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		this.webServiceSvc = webServiceSvc;
+		this.propiedadesSvc = propiedadesSvc;
+		this.cacheService = cacheService;
+	}
+
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(String serviceId, String token) throws ServerException {
 
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
@@ -36,16 +39,18 @@ public class WebServiceCopyAPI {
 		String userId = webServiceSvc.getUserFlex(token);
 		service.setPropiedades(
 				cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
-		
+
 		WebServiceDTO newAPi = new WebServiceDTO();
 		newAPi.setCodigo(service.getCodigo() + "COPY");
 		newAPi.setNombre(service.getNombre() + "COPY");
 		newAPi.setProceso(service.getProceso());
-		
+
 		newAPi = webServiceSvc.save(newAPi);
-		if(service.getPropiedades()==null) return new SharedIdResponse(newAPi.getLlaveTabla());
-		
-		newAPi.setPropiedades(propiedadesSvc.copiarPropiedades(service.getPropiedades(), newAPi.getLlaveTabla(), token));
+		if (service.getPropiedades() == null)
+			return new SharedIdResponse(newAPi.getLlaveTabla());
+
+		newAPi.setPropiedades(
+				propiedadesSvc.copiarPropiedades(service.getPropiedades(), newAPi.getLlaveTabla(), token));
 
 		return new SharedIdResponse(newAPi.getLlaveTabla());
 	}

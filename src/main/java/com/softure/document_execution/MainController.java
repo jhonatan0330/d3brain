@@ -2,7 +2,6 @@ package com.softure.document_execution;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,77 +31,101 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaFilterDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/main")
 public class MainController {
 
-	@Autowired @Lazy  private DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
-	@Autowired @Lazy  private UsuarioSesionSvc usuarioSessionService;
-	@Autowired @Lazy  private CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	@Autowired @Lazy  private OrganizacionSvc organizacionService;
-	@Autowired @Lazy  private UsuarioOrganizacionSvc organizacionUsuarioService;
-	
-	@GetMapping(value="/test")
+	private final DocumentoPlantillaSvc plantillaService;
+	private final UsuarioAutenticacionSvc usuarioAutenticacionService;
+	private final UsuarioSesionSvc usuarioSessionService;
+	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
+	private final OrganizacionSvc organizacionService;
+	private final UsuarioOrganizacionSvc organizacionUsuarioService;
+
+	public MainController(@Lazy DocumentoPlantillaSvc plantillaService,
+			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy UsuarioSesionSvc usuarioSessionService,
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy OrganizacionSvc organizacionService, @Lazy UsuarioOrganizacionSvc organizacionUsuarioService) {
+		this.plantillaService = plantillaService;
+		this.usuarioAutenticacionService = usuarioAutenticacionService;
+		this.usuarioSessionService = usuarioSessionService;
+		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
+		this.organizacionService = organizacionService;
+		this.organizacionUsuarioService = organizacionUsuarioService;
+	}
+
+	@GetMapping(value = "/test")
 	public String test() {
 		return "OK";
 	}
-	
-	@GetMapping(value="/obtenerPrincipalOrganizacion")
+
+	@GetMapping(value = "/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion(HttpServletRequest request) throws ServerException {
-		// Este metodo se usa para obtener los datos de la organizacion pero despues se vuelve a utilizar para obtener las propiedades
+		// Este metodo se usa para obtener los datos de la organizacion pero despues se
+		// vuelve a utilizar para obtener las propiedades
 		return organizacionService.obtenerPrincipalPublic(HttpUtils.getRequestIP(request));
 	}
-	
-	@PostMapping(value="/autenticarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request, @RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
+
+	@PostMapping(value = "/autenticarUsuarioAutenticacion")
+	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request,
+			@RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior()==null), SoftureUtil.getRequestUrl(request));
+		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior() == null),
+				SoftureUtil.getRequestUrl(request));
 	}
-	
-	@PostMapping(value="/checkToken")
-	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request, @RequestHeader(name="Authorization", required = false) String token) throws ServerException {
+
+	@PostMapping(value = "/checkToken")
+	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request,
+			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
 		return usuarioAutenticacionService.checkToken(token, HttpUtils.getRequestIP(request));
 	}
-	
-	@PostMapping(value="/cambiarClave")
-	public UsuarioAutenticacionDTO cambiarClave(HttpServletRequest request, @RequestHeader(name="Authorization", required = false) String token, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+
+	@PostMapping(value = "/cambiarClave")
+	public UsuarioAutenticacionDTO cambiarClave(HttpServletRequest request,
+			@RequestHeader(name = "Authorization", required = false) String token,
+			@RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
 		return usuarioAutenticacionService.cambiarClave(filter, token);
 	}
-	
-	@PostMapping(value="/solicitarNuevaClave")
-	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
+
+	@PostMapping(value = "/solicitarNuevaClave")
+	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(HttpServletRequest request,
+			@RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
 		filter.setIp(HttpUtils.getRequestIP(request));
 		return usuarioAutenticacionService.solicitarNuevaClave(filter, SoftureUtil.getRequestUrl(request));
 	}
-	
-	@PostMapping(value="/cambiarClaveOtherSystem")
-	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestHeader("Authorization") String token, @RequestBody UsuarioOrganizacionDTO dto) throws ServerException {
+
+	@PostMapping(value = "/cambiarClaveOtherSystem")
+	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestHeader("Authorization") String token,
+			@RequestBody UsuarioOrganizacionDTO dto) throws ServerException {
 		return organizacionUsuarioService.reloadPassword(dto, token);
 	}
-	
-	@GetMapping(value="/checkToken")
+
+	@GetMapping(value = "/checkToken")
 	public UsuarioSesionDTO checkToken(@RequestHeader("Authorization") String token) throws ServerException {
 		return usuarioSessionService.checkToken(token);
 	}
-	
-	@PostMapping(value="/consultaUsuarioDocumentoPlantilla")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO filter)  throws ServerException  {
-		return plantillaService.consultaUsuario(filter);	
+
+	@PostMapping(value = "/consultaUsuarioDocumentoPlantilla")
+	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(
+			@RequestBody DocumentoPlantillaFilterDTO filter) throws ServerException {
+		return plantillaService.consultaUsuario(filter);
 	}
-	
-	@PostMapping(value="/listarUsuarioPedidoVenta")
-	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto)  throws ServerException  {
+
+	@PostMapping(value = "/listarUsuarioPedidoVenta")
+	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws ServerException {
 		return listDocumentWithFiltersFunction.listarUsuario(dto);
 	}
-	
-	/*@GetMapping(value="/getAdministratorTemplates")
-	public List<DocumentoPlantillaDTO> consultaAdministrador(@RequestHeader("Authorization") String token)  throws ServerException  {
-		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
-		filter.setSecurityToken(token);
-		return plantillaService.consultaAdministrador(filter);	
-	}*/
+
+	/*
+	 * @GetMapping(value="/getAdministratorTemplates") public
+	 * List<DocumentoPlantillaDTO>
+	 * consultaAdministrador(@RequestHeader("Authorization") String token) throws
+	 * ServerException { DocumentoPlantillaFilterDTO filter = new
+	 * DocumentoPlantillaFilterDTO(); filter.setSecurityToken(token); return
+	 * plantillaService.consultaAdministrador(filter); }
+	 */
 }

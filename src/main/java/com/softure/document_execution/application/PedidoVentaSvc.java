@@ -3,7 +3,6 @@ package com.softure.document_execution.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,38 +33,38 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaMapper pedidoVentaMapper;
+	private final PedidoVentaMapper pedidoVentaMapper;
+	private final CampoAdaptador adaptador;
+	private final DocumentoPlantillaSvc documentoPlantillaService;
+	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
+	private final PedidoVentaDineroSvc dineroService;
+	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
+	private final PropiedadSvc propiedadService;
+	private final PropertyGetWithCacheService cacheService;
+	private final RolAccesoSvc rolService;
 
-	@Autowired
-	@Lazy
-	private CampoAdaptador adaptador;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc documentoPlantillaService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
-	@Autowired
-	@Lazy
-	private PedidoVentaDineroSvc dineroService;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadService;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
-	@Autowired
-	@Lazy
-	private RolAccesoSvc rolService;
+	public PedidoVentaSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy PedidoVentaMapper pedidoVentaMapper,
+			@Lazy CampoAdaptador adaptador, @Lazy DocumentoPlantillaSvc documentoPlantillaService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
+			@Lazy PedidoVentaDineroSvc dineroService,
+			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, @Lazy PropiedadSvc propiedadService,
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy RolAccesoSvc rolService) {
+		super(usuarioSesionService);
+		this.pedidoVentaMapper = pedidoVentaMapper;
+		this.adaptador = adaptador;
+		this.documentoPlantillaService = documentoPlantillaService;
+		this.documentoPlantillaCaracteristicaService = documentoPlantillaCaracteristicaService;
+		this.dineroService = dineroService;
+		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
+		this.propiedadService = propiedadService;
+		this.cacheService = cacheService;
+		this.rolService = rolService;
+	}
 
 	@Override
 	public PedidoVentaDTO consultaXId(String llave) throws ServerException {
@@ -354,7 +353,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 
 	// Creo que esto puede ir en un mapper diferente de solo el crud
-	public List<PedidoVentaDTO> getByNameTemplateAndConsecutive(String pName, String pTemplate, String pConsecutive) throws ServerException {
+	public List<PedidoVentaDTO> getByNameTemplateAndConsecutive(String pName, String pTemplate, String pConsecutive)
+			throws ServerException {
 		try {
 			return pedidoVentaMapper.getByNameTemplateAndConsecutive(pName, pTemplate, pConsecutive);
 		} catch (Exception e) {

@@ -8,8 +8,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("PedidoVentaAjusteDTO")
 public class PedidoVentaAjusteDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documento;
@@ -23,46 +21,49 @@ public class PedidoVentaAjusteDTO extends BasicDTO
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	
+
 	public Date getFecha() {
 		return fecha;
 	}
+
 	public void setEstadoInicial(String estadoInicial) {
 		this.estadoInicial = estadoInicial;
 	}
-	
+
 	public String getEstadoInicial() {
 		return estadoInicial;
 	}
+
 	public void setEstadoFinal(String estadoFinal) {
 		this.estadoFinal = estadoFinal;
 	}
-	
+
 	public String getEstadoFinal() {
 		return estadoFinal;
 	}
+
 	public void setMotivo(String motivo) {
 		this.motivo = motivo;
 	}
-	
+
 	public String getMotivo() {
 		return motivo;
 	}
+
 	public void setResponsable(String responsable) {
 		this.responsable = responsable;
 	}
-	
+
 	public String getResponsable() {
 		return responsable;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

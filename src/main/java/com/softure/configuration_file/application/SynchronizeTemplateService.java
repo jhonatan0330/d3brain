@@ -2,7 +2,6 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -15,18 +14,25 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.property.domain.RelacionInternaDTO;
 import com.softure.report.domain.ReporteBaseDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SynchronizeTemplateService {
 
-	@Autowired @Lazy 
-	private DocumentoPlantillaSvc templateService;
-	@Autowired @Lazy 
-	private SynchronizeReportService reportSynchronizeService;
-	@Autowired @Lazy 
-	private SynchronizeTemplateFieldService fieldSynchronizeService;
-	@Autowired @Lazy 
-	private SynchronizePropertiesService propertiesSynchronizeService;
+	private final DocumentoPlantillaSvc templateService;
+	private final SynchronizeReportService reportSynchronizeService;
+	private final SynchronizeTemplateFieldService fieldSynchronizeService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeTemplateService(@Lazy DocumentoPlantillaSvc templateService,
+			@Lazy SynchronizeReportService reportSynchronizeService,
+			@Lazy SynchronizeTemplateFieldService fieldSynchronizeService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.templateService = templateService;
+		this.reportSynchronizeService = reportSynchronizeService;
+		this.fieldSynchronizeService = fieldSynchronizeService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
@@ -108,10 +114,12 @@ public class SynchronizeTemplateService {
 				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
-					log.setRoot("Sincronizando los campos de la plantilla " + local.getNombre() + "(Cod:"+local.getCodigo()+" )" );
+					log.setRoot("Sincronizando los campos de la plantilla " + local.getNombre() + "(Cod:"
+							+ local.getCodigo() + " )");
 					fieldSynchronizeService.call(token, hierarchy, remote.getLlaveTabla(), local.getLlaveTabla(), log,
 							compare);
-					log.setRoot("Sincronizando las propiedades de la plantilla " + local.getNombre() + "(Cod:"+local.getCodigo()+" )");
+					log.setRoot("Sincronizando las propiedades de la plantilla " + local.getNombre() + "(Cod:"
+							+ local.getCodigo() + " )");
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
 							PropiedadValorDefinidoDTO.PLANTILLA, local.getLlaveTabla(), token, log, compare);
 					// synchronizeFieldReport(token, hierarchy, remote.getLlaveTabla(),

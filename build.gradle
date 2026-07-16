@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '3.5.14'
+	id 'org.springframework.boot' version '3.5.16'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'java'
 	id 'com.github.ben-manes.versions' version '0.52.0'
@@ -7,7 +7,11 @@ plugins {
 
 group = 'com.softure'
 version = '2.0.3'
-sourceCompatibility = '17'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 bootJar {
     mainClass = 'com.Sw42WebApplication'

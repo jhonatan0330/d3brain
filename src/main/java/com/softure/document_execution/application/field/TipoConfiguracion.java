@@ -3,7 +3,6 @@ package com.softure.document_execution.application.field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -36,27 +35,26 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 @Component
 public class TipoConfiguracion {
 
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private ProcesoSvc procesoService;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private RolAccesoSvc rolService;
-	@Autowired
-	@Lazy
-	private TarifarioService tarifarioService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final ProcesoSvc procesoService;
+	private final ProductoSvc productoService;
+	private final RolAccesoSvc rolService;
+	private final TarifarioService tarifarioService;
+
+	public TipoConfiguracion(@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy ProcesoSvc procesoService, @Lazy ProductoSvc productoService, @Lazy RolAccesoSvc rolService,
+			@Lazy TarifarioService tarifarioService) {
+		this.caracteristicaService = caracteristicaService;
+		this.plantillaService = plantillaService;
+		this.campoService = campoService;
+		this.procesoService = procesoService;
+		this.productoService = productoService;
+		this.rolService = rolService;
+		this.tarifarioService = tarifarioService;
+	}
 
 	public static final String CATEGORIA_PRODUCTOS = "CATEGORIA_PRODUCTOS";
 	public static final String PROCESO = "PROCESO";
@@ -172,9 +170,8 @@ public class TipoConfiguracion {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
 			throws ServerException {
 		// Para las transiciones ponemos el texto
-		if(pCampo.getValorOpcion()==null && pCampo.getValorText()!=null) {
-			List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
-					Propiedades.OPCIONES);
+		if (pCampo.getValorOpcion() == null && pCampo.getValorText() != null) {
+			List<PropiedadDTO> options = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
 			if (options != null) {
 				for (PropiedadDTO propiedadDTO : options) {
 					if (propiedadDTO.getValor().compareTo(pCampo.getValorText()) == 0
@@ -187,7 +184,7 @@ public class TipoConfiguracion {
 				}
 			}
 		}
-		//Aqui sigo normal
+		// Aqui sigo normal
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorOpcion() == null || pCampo.getValorOpcion().isEmpty())) {
 			List<PropiedadDTO> visibleValueOK = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),

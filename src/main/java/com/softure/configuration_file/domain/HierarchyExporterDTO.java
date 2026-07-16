@@ -135,5 +135,5 @@ public class HierarchyExporterDTO {
 	public void setTransitions(List<ProcesoTransicionDTO> transitions) {
 		this.transitions = transitions;
 	}
-	
+
 }

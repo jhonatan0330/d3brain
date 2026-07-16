@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.accounting.plan.domain.ResultMapDTO;
@@ -13,12 +11,16 @@ import com.accounting.plan.domain.ResultMapFilterDTO;
 import com.accounting.plan.infrastructure.ResultMapMapper;
 import com.shared.domain.SharedConstants;
 import com.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
 
 @Service("ResultMapAccountingService")
 public class ResultMapService {
 
-	@Autowired @Lazy
-	private ResultMapMapper mapper;
+	private final ResultMapMapper mapper;
+
+	public ResultMapService(@Lazy ResultMapMapper mapper) {
+		this.mapper = mapper;
+	}
 
 	public ResultMapDTO getById(String id) throws ServerException {
 		if (id == null)

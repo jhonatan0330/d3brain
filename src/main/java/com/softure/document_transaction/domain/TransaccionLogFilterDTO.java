@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softure.java.domain.BasicFilterDTO;
 
 import org.apache.ibatis.type.Alias;
+
 @Alias("TransaccionLogFilterDTO")
-public class TransaccionLogFilterDTO extends BasicFilterDTO
-{
+public class TransaccionLogFilterDTO extends BasicFilterDTO {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaInicioMin;
@@ -20,45 +20,42 @@ public class TransaccionLogFilterDTO extends BasicFilterDTO
 	private String transaccion;
 	private String sesion;
 
-	
 	public void setFechaInicioMin(Date fechaInicioMin) {
 		this.fechaInicioMin = fechaInicioMin;
 	}
-	
+
 	public Date getFechaInicioMin() {
 		return fechaInicioMin;
 	}
-	
+
 	public void setFechaInicioMax(Date fechaInicioMax) {
 		this.fechaInicioMax = fechaInicioMax;
 	}
-	
+
 	public Date getFechaInicioMax() {
 		return fechaInicioMax;
 	}
-	
-	
+
 	public void setFechaFinMin(Date fechaFinMin) {
 		this.fechaFinMin = fechaFinMin;
 	}
-	
+
 	public Date getFechaFinMin() {
 		return fechaFinMin;
 	}
-	
+
 	public void setFechaFinMax(Date fechaFinMax) {
 		this.fechaFinMax = fechaFinMax;
 	}
-	
+
 	public Date getFechaFinMax() {
 		return fechaFinMax;
 	}
-	
-	
+
 	public void setTransaccion(String transaccion) {
 		this.transaccion = transaccion;
 	}
-	
+
 	public String getTransaccion() {
 		return transaccion;
 	}
@@ -70,6 +67,5 @@ public class TransaccionLogFilterDTO extends BasicFilterDTO
 	public void setSesion(String sesion) {
 		this.sesion = sesion;
 	}
-	
 
 }

@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.BindingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
@@ -71,79 +70,72 @@ import com.softure.webservice.domain.WebServiceDTO;
 import com.softure.webservice.domain.WebServiceFilterDTO;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
+	public PropiedadSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy CatalogService catalogService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy DocumentoPlantillaSvc plantillaService,
+			@Lazy MensajePlantillaCorreoSvc mensajeService, @Lazy ProcesoSvc procesoService,
+			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
+			@Lazy ProcesoTransicionAutomaticaSvc automatizadorService, @Lazy ProductoSvc productoService,
+			@Lazy PropiedadValorDefinidoSvc valorDefinidoService, @Lazy TarifarioService tarifarioService,
+			@Lazy ReporteBaseSvc reporteService, @Lazy RolAccesoSvc rolService,
+			@Lazy RelacionInternaSvc relacionService, @Lazy UsuarioSvc usuarioService, @Lazy WebServiceSvc apiService,
+			@Lazy HomologateAdapterService homologateService, @Lazy JasperReportCache reportCacheService,
+			@Lazy ProcessTemplate templatesService, @Lazy PropertyGetWithCacheService cacheService,
+			@Lazy PropiedadMapper propiedadMapper) {
+		super(usuarioSesionService);
+		this.catalogService = catalogService;
+		this.campoService = campoService;
+		this.plantillaService = plantillaService;
+		this.mensajeService = mensajeService;
+		this.procesoService = procesoService;
+		this.estadoService = estadoService;
+		this.transicionService = transicionService;
+		this.automatizadorService = automatizadorService;
+		this.productoService = productoService;
+		this.valorDefinidoService = valorDefinidoService;
+		this.tarifarioService = tarifarioService;
+		this.reporteService = reporteService;
+		this.rolService = rolService;
+		this.relacionService = relacionService;
+		this.usuarioService = usuarioService;
+		this.apiService = apiService;
+		this.homologateService = homologateService;
+		this.reportCacheService = reportCacheService;
+		this.templatesService = templatesService;
+		this.cacheService = cacheService;
+		this.propiedadMapper = propiedadMapper;
+	}
 
 	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
 
-	@Autowired
-	@Lazy
-	PropiedadMapper propiedadMapper;
+	private final PropiedadMapper propiedadMapper;
 
-	@Autowired
-	@Lazy
-	private CatalogService catalogService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaSvc plantillaService;
-	@Autowired
-	@Lazy
-	private MensajePlantillaCorreoSvc mensajeService;
-	@Autowired
-	@Lazy
-	private ProcesoSvc procesoService;
-	@Autowired
-	@Lazy
-	private ProcesoEstadoSvc estadoService;
-	@Autowired
-	@Lazy
-	private ProcesoTransicionSvc transicionService;
-	@Autowired
-	@Lazy
-	private ProcesoTransicionAutomaticaSvc automatizadorService;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private PropiedadValorDefinidoSvc valorDefinidoService;
-	@Autowired
-	@Lazy
-	private TarifarioService tarifarioService;
-	@Autowired
-	@Lazy
-	private ReporteBaseSvc reporteService;
-	@Autowired
-	@Lazy
-	private RolAccesoSvc rolService;
-	@Autowired
-	@Lazy
-	private RelacionInternaSvc relacionService;
-	@Autowired
-	@Lazy
-	private UsuarioSvc usuarioService;
-	@Autowired
-	@Lazy
-	private WebServiceSvc apiService;
+	private final CatalogService catalogService;
+	private final DocumentoPlantillaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final MensajePlantillaCorreoSvc mensajeService;
+	private final ProcesoSvc procesoService;
+	private final ProcesoEstadoSvc estadoService;
+	private final ProcesoTransicionSvc transicionService;
+	private final ProcesoTransicionAutomaticaSvc automatizadorService;
+	private final ProductoSvc productoService;
+	private final PropiedadValorDefinidoSvc valorDefinidoService;
+	private final TarifarioService tarifarioService;
+	private final ReporteBaseSvc reporteService;
+	private final RolAccesoSvc rolService;
+	private final RelacionInternaSvc relacionService;
+	private final UsuarioSvc usuarioService;
+	private final WebServiceSvc apiService;
 
-	@Autowired
-	@Lazy
-	private HomologateAdapterService homologateService;
+	private final HomologateAdapterService homologateService;
 
-	@Autowired
-	@Lazy
-	private JasperReportCache reportCacheService;
-	@Autowired
-	@Lazy
-	private ProcessTemplate templatesService;
+	private final JasperReportCache reportCacheService;
+	private final ProcessTemplate templatesService;
 
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
+	private final PropertyGetWithCacheService cacheService;
 
 	@Override
 	public PropiedadDTO consultaXId(String llave) throws ServerException {
@@ -153,7 +145,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setLlaveTabla(llave);
 		return propiedadMapper.consultar(dto);
 	}
-	
 
 	@PostConstruct
 	public void initIt() throws Exception {
@@ -275,7 +266,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public PropiedadDTO guardar(PropiedadDTO dto, String token) throws ServerException {
-		// BEGIN Propiedad_guardar
 		if (dto.getUsuarioExcluyente() != null && (dto.getUsuario() != null || dto.getRol() != null))
 			throw new ServerException("Cuando colocas USUARIO Excluyente no puedes colocar usuario o rol");
 		if (dto.getRolExcluyente() != null && (dto.getUsuario() != null || dto.getRol() != null))
@@ -1249,32 +1239,41 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return respuestaValidacion;
 
 	}
-	
-	public boolean canCreateFielVinculo(PropiedadDTO pProperty, List<PedidoVentaCaracteristicaDTO> campos, String documento,
-			String token) throws ServerException {
+
+	public boolean canCreateFielVinculo(PropiedadDTO pProperty, List<PedidoVentaCaracteristicaDTO> campos,
+			String documento, String token) throws ServerException {
 		String _result = null;
 		try {
 			if (Propiedades.isFunctionNotFreeMarker(pProperty.getValor())) {
-				_result = propiedadMapper.funcionPrevalidacionPlantillaReturnString(SoftureUtil.formatFunction(pProperty.getLlaveTabla()),
-						documento, token, campos);
+				_result = propiedadMapper.funcionPrevalidacionPlantillaReturnString(
+						SoftureUtil.formatFunction(pProperty.getLlaveTabla()), documento, token, campos);
 			} else {
 				String parameters = "";
-				if(campos!=null) {
+				if (campos != null) {
 					for (PedidoVentaCaracteristicaDTO iPedidoVentaCaracteristicaDTO : campos) {
-						if(iPedidoVentaCaracteristicaDTO.getCampoDTO()!=null && iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo()!=null && iPedidoVentaCaracteristicaDTO.getValorText()!=null)
-							parameters= parameters+ SharedConstants.PUNTO_COMA_DOBLE +"R_"+ iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() + SharedConstants.IGUAL + iPedidoVentaCaracteristicaDTO.getValorText();
+						if (iPedidoVentaCaracteristicaDTO.getCampoDTO() != null
+								&& iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() != null
+								&& iPedidoVentaCaracteristicaDTO.getValorText() != null)
+							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_"
+									+ iPedidoVentaCaracteristicaDTO.getCampoDTO().getCodigo() + SharedConstants.IGUAL
+									+ iPedidoVentaCaracteristicaDTO.getValorText();
 					}
 				}
 				_result = templatesService.generateOutputFile(pProperty.getValor(), parameters);
 			}
-			
+
 		} catch (Exception e) {
 			return false;
 		}
-		if(_result == null) throw new ServerException("En la validacion del campo vinculo para generarse obtienen un valor nulo");
-		if(_result.compareToIgnoreCase(SharedConstants.OK)==0) return true;
-		if(_result.compareToIgnoreCase(SharedConstants.NO_STRING)==0) return false;
-		throw new ServerException("En la validacion del campo vinculo para generarse obtienen un valor diferente a OK o a NO, el valor es :\n" + _result ); 
+		if (_result == null)
+			throw new ServerException("En la validacion del campo vinculo para generarse obtienen un valor nulo");
+		if (_result.compareToIgnoreCase(SharedConstants.OK) == 0)
+			return true;
+		if (_result.compareToIgnoreCase(SharedConstants.NO_STRING) == 0)
+			return false;
+		throw new ServerException(
+				"En la validacion del campo vinculo para generarse obtienen un valor diferente a OK o a NO, el valor es :\n"
+						+ _result);
 	}
 
 	public List<PropiedadDTO> copiarPropiedades(List<PropiedadDTO> propiedadedBase, String entidad, String token)
@@ -1419,7 +1418,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	public List<PropiedadDTO> getFullPropertiesToConfiguration() throws ServerException {
 		return propiedadMapper.getFullPropertiesToConfiguration();
 	}
-	
+
 	public PropiedadDTO getByIdWithType(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. Propiedad");

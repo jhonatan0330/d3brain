@@ -1,6 +1,5 @@
 package com.accounting.plan.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,21 +23,21 @@ import com.softure.process_designer.domain.ProcesoEstadoDTO;
 @Service("PlanCreateAccountTemplateAccountingService")
 public class PlanCreateAccountService {
 
-	@Autowired
-	@Lazy
-	private AccountService accountService;
-	@Autowired
-	@Lazy
-	private PlanGetAccountService planGetAccountService;
-	@Autowired
-	@Lazy
-	private CatalogService catalogService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc documentService;
-	@Autowired
-	@Lazy
-	private ProcesoEstadoSvc stateProcessService;
+	private final AccountService accountService;
+	private final PlanGetAccountService planGetAccountService;
+	private final CatalogService catalogService;
+	private final PedidoVentaSvc documentService;
+	private final ProcesoEstadoSvc stateProcessService;
+
+	public PlanCreateAccountService(@Lazy AccountService accountService,
+			@Lazy PlanGetAccountService planGetAccountService, @Lazy CatalogService catalogService,
+			@Lazy PedidoVentaSvc documentService, @Lazy ProcesoEstadoSvc stateProcessService) {
+		this.accountService = accountService;
+		this.planGetAccountService = planGetAccountService;
+		this.catalogService = catalogService;
+		this.documentService = documentService;
+		this.stateProcessService = stateProcessService;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO call(AccountDTO account) throws ServerException {
@@ -46,7 +45,9 @@ public class PlanCreateAccountService {
 			CatalogFilterDTO filter = new CatalogFilterDTO();
 			filter.setDocument(account.getCatalogDocument());
 			CatalogDTO _catalog = catalogService.getOne(filter);
-			if(_catalog==null) throw new ServerException("Vamos a crear una cuenta pero no llego un documento que se relacione a un catalogo :(");
+			if (_catalog == null)
+				throw new ServerException(
+						"Vamos a crear una cuenta pero no llego un documento que se relacione a un catalogo :(");
 			account.setCatalog(_catalog.getKey());
 		}
 		if (account.getParentDocument() != null) {
@@ -60,9 +61,11 @@ public class PlanCreateAccountService {
 			account.setParent(null);
 		if (account.getCode() != null && account.getCode().isEmpty())
 			account.setCode(null);
-		if(account.getType()==null)account.setType(AccountConst.TYPE_OPERATIONAL);
-		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
-		
+		if (account.getType() == null)
+			account.setType(AccountConst.TYPE_OPERATIONAL);
+		if (account.getOperation() == null)
+			account.setOperation(AccountConst.OPERATION_ADD);
+
 		AccountFilterDTO filter = new AccountFilterDTO();
 		String prefixWBS = "";
 		if (account.getParent() == null) {
@@ -78,7 +81,8 @@ public class PlanCreateAccountService {
 				throw new ServerException("La cuenta" + parentAccount.getName() + " no se encuentra activa");
 			prefixWBS = parentAccount.getWbs() + ".";
 			account.setLevel(parentAccount.getLevel() + 1);
-			if (parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL) == 0 && account.getType().compareTo(AccountConst.TYPE_AUXILIAR)!= 0) {
+			if (parentAccount.getType().compareTo(AccountConst.TYPE_OPERATIONAL) == 0
+					&& account.getType().compareTo(AccountConst.TYPE_AUXILIAR) != 0) {
 				parentAccount.setType(AccountConst.TYPE_GROUP);
 				accountService.update(parentAccount);
 			}
@@ -86,7 +90,7 @@ public class PlanCreateAccountService {
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		int countAccount = accountService.count(filter);
 		account.setWbs(prefixWBS + "%1$4s".formatted((countAccount + 1)));
-		
+
 		if (account.getCode() == null)
 			account.setCode(account.getWbs());
 		accountService.save(account);
@@ -107,7 +111,8 @@ public class PlanCreateAccountService {
 		if (account.getCode() != null && account.getCode().isEmpty())
 			account.setCode(null);
 		account.setState(bd.getState());
-		if(account.getOperation()==null) account.setOperation(AccountConst.OPERATION_ADD);
+		if (account.getOperation() == null)
+			account.setOperation(AccountConst.OPERATION_ADD);
 		accountService.update(account);
 		return accountService.getById(account.getKey());
 	}
@@ -115,12 +120,14 @@ public class PlanCreateAccountService {
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public AccountDTO callDelete(String accountId) throws ServerException {
 		AccountDTO result = accountService.delete(accountId);
-		if(result.getParent()== null ) return result;
-		if(result.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0) return result;
+		if (result.getParent() == null)
+			return result;
+		if (result.getType().compareTo(AccountConst.TYPE_OPERATIONAL) != 0)
+			return result;
 		AccountFilterDTO filter = new AccountFilterDTO();
 		filter.setParent(result.getParent());
 		filter.setState(SharedConstants.STATE_ACTIVE);
-		if(accountService.count(filter)==0) {
+		if (accountService.count(filter) == 0) {
 			AccountDTO parent = accountService.getById(result.getParent());
 			parent.setType(AccountConst.TYPE_OPERATIONAL);
 			accountService.update(parent);
@@ -128,40 +135,42 @@ public class PlanCreateAccountService {
 		return result;
 	}
 
-	public AccountDTO createAuxiliarAccount(VoucherRequest _item, String accountParentId,
-			String documentId) throws ServerException {
+	public AccountDTO createAuxiliarAccount(VoucherRequest _item, String accountParentId, String documentId)
+			throws ServerException {
 		AccountDTO accountReference = new AccountDTO();
 		accountReference.setDocument(documentId);
 		accountReference.setCatalog(_item.getCatalog());
 		AccountDTO _parentAccount = accountService.getById(accountParentId);
 		if (_parentAccount == null)
 			throw new ServerException("No se identifica la cuenta");
-		
+
 		PedidoVentaDTO _document = null;
-		if(documentId.compareTo(AccountConst.AUXILIAR_EMPTY)==0) {
+		if (documentId.compareTo(AccountConst.AUXILIAR_EMPTY) == 0) {
 			_document = new PedidoVentaDTO();
-			_document.setNombre((_parentAccount==null)?"_0":(_parentAccount.getCode()+"_0"));
+			_document.setNombre((_parentAccount == null) ? "_0" : (_parentAccount.getCode() + "_0"));
 			_document.setDescripcion("Cuenta auxiliar sin documento");
-		}else {
+		} else {
 			_document = documentService.consultaXId(documentId);
 			// Mis auxiliares esperados son documentos o estados para el catalogo principal
 			ProcesoEstadoDTO _pes = stateProcessService.consultaXId(documentId);
-			if(_pes != null) {
+			if (_pes != null) {
 				_document = new PedidoVentaDTO();
 				_document.setNombre(_pes.getCodigo());
 				_document.setDescripcion(_pes.getNombre());
 			}
 		}
-		if(_document == null)
+		if (_document == null)
 			throw new ServerException("No se encuentra el documento con id " + documentId);
 		accountReference.setCode(_document.getNombre());
-		accountReference.setName((_document.getDescripcion()==null)? _document.getNombre() : _document.getDescripcion());
+		accountReference
+				.setName((_document.getDescripcion() == null) ? _document.getNombre() : _document.getDescripcion());
 		accountReference.setParent(accountParentId);
 		accountReference.setType(AccountConst.TYPE_AUXILIAR);
 		accountReference = call(accountReference);
-		if(_parentAccount.getParent()!=null) {
-			AccountDTO accountAuxParent = planGetAccountService.findAccountByDocumentId(_item.getCatalog(), documentId, _parentAccount.getParent());
-			if (accountAuxParent == null) 
+		if (_parentAccount.getParent() != null) {
+			AccountDTO accountAuxParent = planGetAccountService.findAccountByDocumentId(_item.getCatalog(), documentId,
+					_parentAccount.getParent());
+			if (accountAuxParent == null)
 				createAuxiliarAccount(_item, _parentAccount.getParent(), documentId);
 		}
 		return accountReference;

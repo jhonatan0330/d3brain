@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,30 +31,29 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoDetallePedido {
 
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
-	@Autowired
-	@Lazy
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc pedidoService;
-	@Autowired
-	@Lazy
-	private CallDocumentCRUD saveUpdateInactivateDocumentFunction;
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc configuracionSvc;
-	@Autowired
-	@Lazy
-	private CallProductValidateAndSave validateAndSave;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final ProductoSvc productoService;
+	private final PedidoVentaSvc pedidoService;
+	private final CallDocumentCRUD saveUpdateInactivateDocumentFunction;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final PropiedadSvc configuracionSvc;
+	private final CallProductValidateAndSave validateAndSave;
+
+	public TipoDetallePedido(@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService,
+			@Lazy DetallePedidoVentaSvc detallePedidoVentaService, @Lazy ProductoSvc productoService,
+			@Lazy PedidoVentaSvc pedidoService, @Lazy CallDocumentCRUD saveUpdateInactivateDocumentFunction,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy PropiedadSvc configuracionSvc,
+			@Lazy CallProductValidateAndSave validateAndSave) {
+		this.caracteristicaService = caracteristicaService;
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.productoService = productoService;
+		this.pedidoService = pedidoService;
+		this.saveUpdateInactivateDocumentFunction = saveUpdateInactivateDocumentFunction;
+		this.campoService = campoService;
+		this.configuracionSvc = configuracionSvc;
+		this.validateAndSave = validateAndSave;
+	}
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
 		if (pCampo.getDocumento() != null) {
@@ -68,9 +66,7 @@ public class TipoDetallePedido {
 				pCampo.setDetalles(
 						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), tarifario, null, null, token,
 								Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
-								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO()), pCampo.getLlaveTabla()
-						)
-				);
+								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO()), pCampo.getLlaveTabla()));
 			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 				pCampo.setValorNumero(BigDecimal.ZERO);
 				for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
@@ -129,12 +125,9 @@ public class TipoDetallePedido {
 					Propiedades.DETALLE_TARIFARIO);
 			if (tarifario != null && tarifario.isEmpty())
 				tarifario = null;
-			pCampo.setDetalles(
-					validateAndSave.validateWithExistProducts(
-							agrupados, pCampo.getDocumento(), tarifario,
-							token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE), pCampo.getLlaveTabla()
-					)
-			);
+			pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), tarifario,
+					token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
+					pCampo.getLlaveTabla()));
 		} else {
 			pCampo.setDetalles(agrupados);
 		}

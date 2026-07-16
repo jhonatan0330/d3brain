@@ -2,7 +2,7 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -14,10 +14,11 @@ import com.softure.mail.domain.MensajePlantillaCorreoDTO;
 @Service
 public class SynchronizeMessageService {
 
-	@Autowired @Lazy 
-	private MensajePlantillaCorreoSvc messagesService;
-	@Autowired @Lazy 
-	SynchronizePropertiesService propertiesSynchronizeService;
+	private final MensajePlantillaCorreoSvc messagesService;
+
+	public SynchronizeMessageService(@Lazy MensajePlantillaCorreoSvc messagesService) {
+		this.messagesService = messagesService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {

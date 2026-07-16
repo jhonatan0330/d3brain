@@ -3,7 +3,6 @@ package com.softure.logisticpymes.application;
 import java.util.List;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,9 +20,11 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	protected IBasicMapper<T, TFilter> mapper;
 
-	@Autowired
-	@Lazy
-	private UsuarioSesionSvc usuarioSesionService;
+	private final UsuarioSesionSvc usuarioSesionService;
+
+	public BasicSvc(@Lazy UsuarioSesionSvc usuarioSesionService) {
+		this.usuarioSesionService = usuarioSesionService;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public T actualizar(T dto, String token) throws ServerException {
@@ -99,7 +100,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 			mapper.insertar(dto);
 		} catch (DuplicateKeyException e) {
 			throw e;
-		}catch (Exception e) {
+		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		dto = consultaXId(dto.getLlaveTabla());
@@ -168,7 +169,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		dto = consultaXId(dto.getLlaveTabla());
 		return dto;
 	}
-	
+
 	public T saveSimple(T dto) throws ServerException {
 		dto.setLlaveTabla(generarLlave());
 		try {
@@ -187,11 +188,11 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		}
 		return dto;
 	}
-	
+
 	public String getUserFlex(String token) throws ServerException {
 		return usuarioSesionService.getUserFlex(token);
 	}
-	
+
 	public boolean isPublicToken(String token) throws ServerException {
 		return usuarioSesionService.isPublicToken(token);
 	}

@@ -2,7 +2,6 @@ package com.softure.api.infrastructure;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,38 +35,35 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("api")
 public class ApiRest {
 
-	@Autowired
-	@Lazy
-	ApiAuthorizeService apiAuthorizeService;
-	@Autowired
-	@Lazy
-	ApiGetService apiGetService;
-	@Autowired
-	@Lazy
-	ApiGetReportService apiGetReportService;
-	@Autowired
-	@Lazy
-	ApiGetFieldDataService apiGetFieldDataService;
-	@Autowired
-	@Lazy
-	ApiLoginService apiLoginService;
-	@Autowired
-	@Lazy
-	ApiSendService apiSendService;
+	private final TransactionLogger transactionLogger;
+	private final ApiAuthorizeService apiAuthorizeService;
+	private final ApiGetService apiGetService;
+	private final ApiGetReportService apiGetReportService;
+	private final ApiGetFieldDataService apiGetFieldDataService;
+	private final ApiLoginService apiLoginService;
+	private final ApiSendService apiSendService;
 
-
-    @Autowired @Lazy
-    private TransactionLogger transactionLogger;
+	public ApiRest(@Lazy TransactionLogger transactionLogger, @Lazy ApiAuthorizeService apiAuthorizeService,
+			@Lazy ApiGetService apiGetService, @Lazy ApiGetReportService apiGetReportService,
+			@Lazy ApiGetFieldDataService apiGetFieldDataService, @Lazy ApiLoginService apiLoginService,
+			@Lazy ApiSendService apiSendService) {
+		this.transactionLogger = transactionLogger;
+		this.apiAuthorizeService = apiAuthorizeService;
+		this.apiGetService = apiGetService;
+		this.apiGetReportService = apiGetReportService;
+		this.apiGetFieldDataService = apiGetFieldDataService;
+		this.apiLoginService = apiLoginService;
+		this.apiSendService = apiSendService;
+	}
 
 	@PostMapping("/get")
 	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token,
 			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentFilterRequest filter)
 			throws ServerException {
 		apiAuthorizeService.call(apiKey, token);
-		
-		return transactionLogger.executeWithLogging(token, filter,
-                () -> apiGetService.call(token, filter));
-		
+
+		return transactionLogger.executeWithLogging(token, filter, () -> apiGetService.call(token, filter));
+
 	}
 
 	@PostMapping("/getReport")
@@ -86,7 +82,7 @@ public class ApiRest {
 		apiAuthorizeService.call(apiKey, token.getId());
 
 		return transactionLogger.executeWithLogging(token.getId(), filter.getDocument(),
-                () -> apiGetService.call(token.getId(), filter.getDocument()));
+				() -> apiGetService.call(token.getId(), filter.getDocument()));
 
 	}
 
@@ -97,9 +93,9 @@ public class ApiRest {
 
 		SharedIdResponse token = apiLoginService.call(filter.getLogin(), request);
 		apiAuthorizeService.call(apiKey, token.getId());
-		
+
 		return transactionLogger.executeWithLogging(token.getId(), filter.getField(),
-	                () -> apiGetFieldDataService.call(token.getId(), filter.getField()));
+				() -> apiGetFieldDataService.call(token.getId(), filter.getField()));
 
 	}
 
@@ -115,9 +111,8 @@ public class ApiRest {
 			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentRequest item)
 			throws ServerException {
 		apiAuthorizeService.call(apiKey, token);
-		
-		return transactionLogger.executeWithLogging(token, item,
-                () -> apiSendService.call(token, item));
+
+		return transactionLogger.executeWithLogging(token, item, () -> apiSendService.call(token, item));
 	}
 
 	@PostMapping("/sendWithLogin")
@@ -125,9 +120,9 @@ public class ApiRest {
 			@RequestBody DocumentWithLoginRequest item) throws ServerException {
 		SharedIdResponse token = apiLoginService.call(item.getLogin(), request);
 		apiAuthorizeService.call(apiKey, token.getId());
-		
+
 		return transactionLogger.executeWithLogging(token.getId(), item.getDocument(),
-                () -> apiSendService.call(token.getId(), item.getDocument()));
+				() -> apiSendService.call(token.getId(), item.getDocument()));
 	}
 
 	@GetMapping("/ok")

@@ -3,7 +3,7 @@ package com.softure.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -23,12 +23,21 @@ import com.softure.process_form.domain.DocumentoPlantillaDTO;
 @Service
 public class ApiSendService {
 
-	@Autowired @Lazy  DocumentoPlantillaSvc plantillaService;
-	@Autowired @Lazy  CallDocumentCRUD saveDocumentService;
-	
-	@Autowired @Lazy  private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy  private ProductoSvc productoService;
-	@Autowired @Lazy  private CallSearchProcessFromText searchProcessFromText;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final ProductoSvc productoService;
+	private final CallSearchProcessFromText searchProcessFromText;
+	private final DocumentoPlantillaSvc plantillaService;
+	private final CallDocumentCRUD saveDocumentService;
+
+	public ApiSendService(@Lazy DetallePedidoVentaSvc detallePedidoVentaService, @Lazy ProductoSvc productoService,
+			@Lazy CallSearchProcessFromText searchProcessFromText, @Lazy DocumentoPlantillaSvc plantillaService,
+			@Lazy CallDocumentCRUD saveDocumentService) {
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.productoService = productoService;
+		this.searchProcessFromText = searchProcessFromText;
+		this.plantillaService = plantillaService;
+		this.saveDocumentService = saveDocumentService;
+	}
 
 	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);
@@ -40,7 +49,8 @@ public class ApiSendService {
 		assignateValue(document, item.getFields(), token);
 		// Envio a guardar el documento
 		document = saveDocumentService.save(document, token, null);
-		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre(), document.getEstadoNombre(), document.getMessages());
+		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre(), document.getEstadoNombre(),
+				document.getMessages());
 	}
 
 	private void validateItem(DocumentRequest item) throws ServerException {
@@ -58,18 +68,21 @@ public class ApiSendService {
 		}
 	}
 
-	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields, String token) throws ServerException {
+	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields, String token)
+			throws ServerException {
 		if (fields == null || fields.isEmpty())
 			return;
 		for (FieldRequest fieldVO : fields) {
 			for (PedidoVentaCaracteristicaDTO iCampo : document.getCaracteristicas()) {
 				if (iCampo.getCampoDTO().getCodigo().compareTo(fieldVO.getField()) == 0) {
 					ApiCommon.chooseValueToField(fieldVO, iCampo, productoService, detallePedidoVentaService);
-					if (iCampo.getValorOpcion()==null && iCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
-						if(fieldVO.getParentDocument()!=null) {
-							String keyExists =  searchProcessFromText.findOptionFromText(token, iCampo.getValorText(), iCampo.getCampoDTO());
-							if(keyExists ==null) {
-								SharedIdResponse responseId =  call(token, fieldVO.getParentDocument());
+					if (iCampo.getValorOpcion() == null && iCampo.getCampoDTO().getFormato()
+							.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+						if (fieldVO.getParentDocument() != null) {
+							String keyExists = searchProcessFromText.findOptionFromText(token, iCampo.getValorText(),
+									iCampo.getCampoDTO());
+							if (keyExists == null) {
+								SharedIdResponse responseId = call(token, fieldVO.getParentDocument());
 								iCampo.setValorOpcion(responseId.getId());
 							}
 						}

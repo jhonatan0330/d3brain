@@ -3,8 +3,6 @@ package com.accounting.voucher.application;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,41 +22,45 @@ import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 import com.softure.webservice.application.WebServiceEjecucionSvc;
 import com.softure.webservice.domain.WebServiceEjecucionDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class VoucherDeleteService {
 
-	@Autowired @Lazy 
-	private VoucherService voucherService;
-	@Autowired
-	@Lazy
-	private StackVoucherService stackBasicService;
-	@Autowired
-	@Lazy
-	private WebServiceEjecucionSvc taskService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
-	
+	private final VoucherService voucherService;
+	private final StackVoucherService stackBasicService;
+	private final WebServiceEjecucionSvc taskService;
+	private final PropertyGetWithCacheService cacheService;
+
+	public VoucherDeleteService(@Lazy VoucherService voucherService, @Lazy StackVoucherService stackBasicService,
+			@Lazy WebServiceEjecucionSvc taskService, @Lazy PropertyGetWithCacheService cacheService) {
+		this.voucherService = voucherService;
+		this.stackBasicService = stackBasicService;
+		this.taskService = taskService;
+		this.cacheService = cacheService;
+	}
+
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse callById(String pVoucherId, String pToken) throws ServerException {
 		VoucherDTO _voucher = voucherService.getById(pVoucherId);
-		if(_voucher ==null) throw new ServerException("No se encontro un voucher con el id " + pVoucherId);
+		if (_voucher == null)
+			throw new ServerException("No se encontro un voucher con el id " + pVoucherId);
 		_voucher.setDeleteDate(new Date());
 		_voucher.setState(SharedConstants.STATE_INACTIVE);
 		voucherService.update(_voucher);
-		
+
 		StackVoucherFilterDTO _filter = new StackVoucherFilterDTO();
 		_filter.setVoucher(pVoucherId);
 		_filter.setState(SharedConstants.STATE_ACTIVE);
 		StackVoucherDTO stack = stackBasicService.getOne(_filter);
-		
-		if(stack==null) {
+
+		if (stack == null) {
 			stack = new StackVoucherDTO();
 			stack.setVoucher(pVoucherId);
 			stack.setAction(SharedConstants.STATE_INACTIVE);
 			stack.setCreationDate(new Date());
 			stackBasicService.save(stack);
-			
+
 		} else {
 			stack.setState(SharedConstants.STATE_INACTIVE);
 			stackBasicService.update(stack);
@@ -68,10 +70,12 @@ public class VoucherDeleteService {
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public void callByDocument(String pDocumentId, String pTemplate, String pToken) throws ServerException {
-		
-		List<PropiedadDTO> _prop = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE, Propiedades.TEMPLATE_VOUCHER, pTemplate, null);
-		if(_prop == null || _prop.isEmpty()) return;
-		
+
+		List<PropiedadDTO> _prop = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE,
+				Propiedades.TEMPLATE_VOUCHER, pTemplate, null);
+		if (_prop == null || _prop.isEmpty())
+			return;
+
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pDocumentId);
 		_filter.setState(SharedConstants.STATE_ACTIVE);
@@ -79,17 +83,17 @@ public class VoucherDeleteService {
 		for (VoucherDTO voucherDTO : _vouchers) {
 			callById(voucherDTO.getKey(), pToken);
 		}
-		
+
 		for (PropiedadDTO propiedadDTO : _prop) {
-			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive( propiedadDTO.getCampo(), pDocumentId);
+			WebServiceEjecucionDTO _service = taskService.getServiceVoucherActive(propiedadDTO.getCampo(), pDocumentId);
 			if (_service != null) {
 				_service.setEstado(SharedConstants.STATE_INACTIVE);
 				_service.setFechaEjecucion(new Date());
 				_service.setError("Documento eliminado, se inactiva el servicio de voucher asociado");
-				taskService.update(_service);	
+				taskService.update(_service);
 			}
 		}
-		
+
 	}
-	
+
 }

@@ -2,8 +2,6 @@ package com.softure.logisticpymes.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,59 +25,76 @@ import com.softure.property.application.PropertyGetWithCacheService;
 import com.softure.property.domain.PropiedadDTO;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-	
-	@Autowired @Lazy  private RolAccesoSvc roleService;
-	@Autowired @Lazy  private UsuarioSvc userService;
-	@Autowired @Lazy  private UsuarioAutenticacionSvc usuarioAutenticacionService;
-	@Autowired @Lazy  private RolAccesoSvc rolAccesoService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
 
+	private final RolAccesoSvc roleService;
+	private final UsuarioSvc userService;
+	private final UsuarioAutenticacionSvc usuarioAutenticacionService;
+	private final RolAccesoSvc rolAccesoService;
+	private final PropertyGetWithCacheService cacheService;
 
-	@GetMapping(value="/getRole")
-	public List<RolAccesoDTO> getRole(@RequestHeader(name="Authorization") String token) throws ServerException {
+	public UserController(@Lazy RolAccesoSvc roleService, @Lazy UsuarioSvc userService,
+			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy RolAccesoSvc rolAccesoService,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		this.roleService = roleService;
+		this.userService = userService;
+		this.usuarioAutenticacionService = usuarioAutenticacionService;
+		this.rolAccesoService = rolAccesoService;
+		this.cacheService = cacheService;
+	}
+
+	@GetMapping(value = "/getRole")
+	public List<RolAccesoDTO> getRole(@RequestHeader(name = "Authorization") String token) throws ServerException {
 		RolAccesoFilterDTO _filter = new RolAccesoFilterDTO();
 		_filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return roleService.listarConsulta(_filter);
 	}
-	
-	@PostMapping(value="/getUsers")
-	public List<UsuarioDTO> getUsers(@RequestHeader(name="Authorization") String token, @RequestBody UsuarioFilterDTO pFilter) throws ServerException {
+
+	@PostMapping(value = "/getUsers")
+	public List<UsuarioDTO> getUsers(@RequestHeader(name = "Authorization") String token,
+			@RequestBody UsuarioFilterDTO pFilter) throws ServerException {
 		return userService.listarRol(pFilter);
 	}
-	
+
 	@GetMapping("/{userId}")
-	public UsuarioDTO getUserById(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId) throws ServerException {
+	public UsuarioDTO getUserById(@RequestHeader(name = "Authorization") String token,
+			@PathVariable(name = "userId") String pUserId) throws ServerException {
 		return userService.consultaXId(pUserId);
 	}
-	
+
 	@PostMapping("/dfa")
-	public void validateDFA(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO pAuth) throws ServerException {
-		usuarioAutenticacionService.dobleFactorAutenticacion(pAuth.getUsuario(), pAuth.getToken(), HttpUtils.getRequestIP(request));
+	public void validateDFA(HttpServletRequest request, @RequestBody UsuarioAutenticacionDTO pAuth)
+			throws ServerException {
+		usuarioAutenticacionService.dobleFactorAutenticacion(pAuth.getUsuario(), pAuth.getToken(),
+				HttpUtils.getRequestIP(request));
 	}
-	
+
 	@GetMapping("/document/{documentId}")
-	public UsuarioDTO getUserByDocument(@RequestHeader(name="Authorization") String token, @PathVariable(name="documentId") String pDocumentId) throws ServerException {
+	public UsuarioDTO getUserByDocument(@RequestHeader(name = "Authorization") String token,
+			@PathVariable(name = "documentId") String pDocumentId) throws ServerException {
 		return userService.getUserByDocument(pDocumentId);
 	}
-	
-	@PostMapping(value="/cambiarClaveUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto, @RequestHeader("Authorization") String token)throws ServerException {
+
+	@PostMapping(value = "/cambiarClaveUsuarioAutenticacion")
+	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
+			@RequestHeader("Authorization") String token) throws ServerException {
 		return usuarioAutenticacionService.cambiarClave(dto, token);
 	}
-	
-	@GetMapping(value="/roles/{userId}")
-	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId)throws ServerException {
-			return rolAccesoService.consultaUsuarioDocumento(pUserId);
+
+	@GetMapping(value = "/roles/{userId}")
+	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name = "Authorization") String token,
+			@PathVariable(name = "userId") String pUserId) throws ServerException {
+		return rolAccesoService.consultaUsuarioDocumento(pUserId);
 	}
-	
-	@GetMapping(value="/properties/{userId}")
-	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name="Authorization") String token, @PathVariable(name="userId") String pUserId)throws ServerException {
+
+	@GetMapping(value = "/properties/{userId}")
+	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name = "Authorization") String token,
+			@PathVariable(name = "userId") String pUserId) throws ServerException {
 		return cacheService.getToUser(pUserId);
 	}
-	
+
 }

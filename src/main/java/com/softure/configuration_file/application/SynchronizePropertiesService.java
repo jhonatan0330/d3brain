@@ -3,7 +3,6 @@ package com.softure.configuration_file.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -15,20 +14,25 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.application.PropiedadValorDefinidoSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SynchronizePropertiesService {
 
-	@Autowired @Lazy 
-	private PropiedadSvc propertiesService;
-	@Autowired @Lazy 
-	private PropertyGetWithCacheService cacheService;
-	@Autowired @Lazy 
-	private PropiedadValorDefinidoSvc typeService;
+	private final PropiedadSvc propertiesService;
+	private final PropertyGetWithCacheService cacheService;
+	private final PropiedadValorDefinidoSvc typeService;
+
+	public SynchronizePropertiesService(@Lazy PropiedadSvc propertiesService,
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy PropiedadValorDefinidoSvc typeService) {
+		this.propertiesService = propertiesService;
+		this.cacheService = cacheService;
+		this.typeService = typeService;
+	}
 
 	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal, String token,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
-		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades( type, entityLocal, null, null);
+		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades(type, entityLocal, null, null);
 		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type,
 				entityRemote);
 		// Saco un listado de las propiedades nuevas
@@ -46,15 +50,16 @@ public class SynchronizePropertiesService {
 					remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
 				} else {
 					if (compare) {
-						PropiedadValorDefinidoDTO typeVD=  typeService.consultaXId(remoteProperty.getPropiedadValor());
-						if(typeVD ==null) {
+						PropiedadValorDefinidoDTO typeVD = typeService.consultaXId(remoteProperty.getPropiedadValor());
+						if (typeVD == null) {
 							log.error("COMPARE NOT EXIST PROPERTY TYPE VALUE " + remoteProperty.getPropiedadValor());
-						}else {
-							log.error("COMPARE NOT EXIST PROPERTY " + remoteProperty.getPropiedadValor() + " - " + typeVD.getNombre() 
-							+ " val: " + SoftureUtil.recortar(remoteProperty.getValor(), 20) + " mot: "
-									+ remoteProperty.getMotivo());	
+						} else {
+							log.error("COMPARE NOT EXIST PROPERTY " + remoteProperty.getPropiedadValor() + " - "
+									+ typeVD.getNombre() + " val: "
+									+ SoftureUtil.recortar(remoteProperty.getValor(), 20) + " mot: "
+									+ remoteProperty.getMotivo());
 						}
-						
+
 					} else {
 						PropiedadDTO newProperty = new PropiedadDTO();
 						newProperty.setCampo(entityLocal);
@@ -101,7 +106,7 @@ public class SynchronizePropertiesService {
 							case "PROP_224":
 							case "PROP_249":
 							case "PROP_273":
-							case "PROP_297":{
+							case "PROP_297": {
 								newProperty.setValor(remoteProperty.getValor());
 								newProperty.setTexto(remoteProperty.getTexto());
 								break;
@@ -116,15 +121,17 @@ public class SynchronizePropertiesService {
 							remoteProperty.setUsuarioEliminacion("YA");
 							remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
 						} catch (Exception e) {
-							String _msgError = "La propiedad " + remoteProperty.getNombre() +"("+ remoteProperty.getPropiedadValor() + ") ";
-							if(remoteProperty.getTexto()!=null) {
-								_msgError = _msgError + " Con texto "  +remoteProperty.getTexto();
-							}else {
-								_msgError = _msgError + " Con valor "  + SoftureUtil.recortar(remoteProperty.getValor(), 20);
+							String _msgError = "La propiedad " + remoteProperty.getNombre() + "("
+									+ remoteProperty.getPropiedadValor() + ") ";
+							if (remoteProperty.getTexto() != null) {
+								_msgError = _msgError + " Con texto " + remoteProperty.getTexto();
+							} else {
+								_msgError = _msgError + " Con valor "
+										+ SoftureUtil.recortar(remoteProperty.getValor(), 20);
 							}
 							_msgError = _msgError + " Genera el siguiente error : " + e.getMessage();
 							log.error(_msgError);
-							
+
 							if (remoteProperty.getPropiedadValor().compareTo("PROP_242") == 0) {
 								log.error("NUL");
 							}

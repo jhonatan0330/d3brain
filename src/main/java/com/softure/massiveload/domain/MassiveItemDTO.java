@@ -7,13 +7,12 @@ import org.apache.ibatis.type.Alias;
 import com.shared.domain.SharedDataObject;
 
 @Alias("CargaMasivaItemDTO")
-public class MassiveItemDTO extends SharedDataObject
-{
-	
+public class MassiveItemDTO extends SharedDataObject {
+
 	public static final String ERROR = "E";
 	public static final String FINALIZADA = "F";
 	public static final String SERIALIZADA = "S";
-	
+
 	private String carga;
 	private String documento;
 	private Date fechaSerializacion;
@@ -22,49 +21,33 @@ public class MassiveItemDTO extends SharedDataObject
 	private String nombre;
 	private String progreso;
 
-
-
 	public String getCarga() {
 		return carga;
 	}
-
-
 
 	public void setCarga(String carga) {
 		this.carga = carga;
 	}
 
-
-
 	public String getDocumento() {
 		return documento;
 	}
-
-
 
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
 
-
-
 	public Date getFechaSerializacion() {
 		return fechaSerializacion;
 	}
-
-
 
 	public void setFechaSerializacion(Date fechaSerializacion) {
 		this.fechaSerializacion = fechaSerializacion;
 	}
 
-
-
 	public Date getFechaSincronizacion() {
 		return fechaSincronizacion;
 	}
-
-
 
 	public void setFechaSincronizacion(Date fechaSincronizacion) {
 		this.fechaSincronizacion = fechaSincronizacion;
@@ -93,7 +76,6 @@ public class MassiveItemDTO extends SharedDataObject
 	public void setProgreso(String progreso) {
 		this.progreso = progreso;
 	}
-	
 
 	public MasivaItemRequest toValueObject() {
 		var cargaMasivaItem = new MasivaItemRequest();
@@ -108,7 +90,5 @@ public class MassiveItemDTO extends SharedDataObject
 		cargaMasivaItem.setState(this.getState());
 		return cargaMasivaItem;
 	}
-
-
 
 }

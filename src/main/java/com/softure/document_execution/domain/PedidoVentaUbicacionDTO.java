@@ -8,8 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.softure.java.domain.BasicDTO;
 
 @Alias("PedidoVentaUbicacionDTO")
-public class PedidoVentaUbicacionDTO extends BasicDTO
-{
+public class PedidoVentaUbicacionDTO extends BasicDTO {
 
 	private String documento;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -20,14 +19,15 @@ public class PedidoVentaUbicacionDTO extends BasicDTO
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	
+
 	public Date getFecha() {
 		return fecha;
 	}
@@ -47,6 +47,5 @@ public class PedidoVentaUbicacionDTO extends BasicDTO
 	public void setModificador(String modificador) {
 		this.modificador = modificador;
 	}
-
 
 }

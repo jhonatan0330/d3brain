@@ -87,7 +87,8 @@ public class ApiCommon {
 	}
 
 	private static List<DetallePedidoVentaDTO> assignateValueToProducts(List<ProductRequest> products,
-			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService, String token) throws ServerException {
+			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService, String token)
+			throws ServerException {
 		if (products == null || products.isEmpty())
 			return null;
 		List<DetallePedidoVentaDTO> result = new ArrayList<>();
@@ -129,8 +130,6 @@ public class ApiCommon {
 		return result;
 	}
 
-	
-
 	public static List<DocumentResponse> transformPedidoVentaToDocument(String token,
 			PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, List<PedidoVentaDTO> results,
 			DocumentoPlantillaDTO template) throws ServerException {
@@ -138,7 +137,7 @@ public class ApiCommon {
 		if (results == null)
 			return documents;
 		for (PedidoVentaDTO pedidoVentaDTO : results) {
-			if(template!=null && pedidoVentaDTO.getPlantilla()!=null) {
+			if (template != null && pedidoVentaDTO.getPlantilla() != null) {
 				pedidoVentaDTO.setCaracteristicas(pedidoVentaCaracteristicaService
 						.listar2Documento(pedidoVentaDTO.getLlaveTabla(), pedidoVentaDTO.getHistorico()));
 				for (PedidoVentaCaracteristicaDTO field : pedidoVentaDTO.getCaracteristicas()) {
@@ -148,7 +147,7 @@ public class ApiCommon {
 							break;
 						}
 					}
-				}	
+				}
 			}
 			DocumentResponse document = new DocumentResponse();
 			document.setTemplate(pedidoVentaDTO.getPlantilla());
@@ -158,10 +157,12 @@ public class ApiCommon {
 			document.setStateId(pedidoVentaDTO.getEstadoExpediente());
 			document.setStateName(pedidoVentaDTO.getEstadoNombre());
 			document.setFields(generateFields(pedidoVentaDTO.getCaracteristicas()));
-			if(pedidoVentaDTO.getDinero() != null) {
-				if(pedidoVentaDTO.getDinero().getValorTotal()!=null && pedidoVentaDTO.getDinero().getValorTotal().compareTo(BigDecimal.ZERO)!=0)
+			if (pedidoVentaDTO.getDinero() != null) {
+				if (pedidoVentaDTO.getDinero().getValorTotal() != null
+						&& pedidoVentaDTO.getDinero().getValorTotal().compareTo(BigDecimal.ZERO) != 0)
 					document.setFullValue(pedidoVentaDTO.getDinero().getValorTotal());
-				if(pedidoVentaDTO.getDinero().getSaldo()!=null && pedidoVentaDTO.getDinero().getSaldo().compareTo(BigDecimal.ZERO)!=0)
+				if (pedidoVentaDTO.getDinero().getSaldo() != null
+						&& pedidoVentaDTO.getDinero().getSaldo().compareTo(BigDecimal.ZERO) != 0)
 					document.setPendingValue(pedidoVentaDTO.getDinero().getSaldo());
 			}
 			documents.add(document);

@@ -3,7 +3,6 @@ package com.configuration.homologate.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -24,12 +23,13 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Component
 public class HomologateAccount {
 
-	@Autowired
-	@Lazy
-	AccountService accountService;
-	@Autowired
-	@Lazy
-	PlanCreateAccountService createAccountService;
+	private final AccountService accountService;
+	private final PlanCreateAccountService createAccountService;
+
+	public HomologateAccount(@Lazy AccountService accountService, @Lazy PlanCreateAccountService createAccountService) {
+		this.accountService = accountService;
+		this.createAccountService = createAccountService;
+	}
 
 	public void createAccountFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService) throws ServerException {
@@ -52,8 +52,8 @@ public class HomologateAccount {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(2), token), token);
 
-		fieldsTemplate.add(campoService.createField(templateId, "PARENT",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
+		fieldsTemplate.add(
+				campoService.createField(templateId, "PARENT", DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -61,8 +61,8 @@ public class HomologateAccount {
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "NATURALEZA", DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 5, token));
+		fieldsTemplate.add(campoService.createField(templateId, "NATURALEZA",
+				DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 5, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,

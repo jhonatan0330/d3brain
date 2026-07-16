@@ -148,7 +148,6 @@ public class TarifaDTO extends BasicDTO {
 		return dimension4;
 	}
 
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}

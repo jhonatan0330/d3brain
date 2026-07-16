@@ -14,7 +14,7 @@ public interface AccountRecordAuxiliarMapper {
 	AccountRecordAuxiliarDTO update(AccountRecordAuxiliarDTO dto);
 
 	int count(AccountRecordAuxiliarFilterDTO filter);
-	
+
 	AccountRecordAuxiliarDTO getOne(AccountRecordAuxiliarFilterDTO filter);
 
 	List<AccountRecordAuxiliarDTO> getMany(AccountRecordAuxiliarFilterDTO filter);

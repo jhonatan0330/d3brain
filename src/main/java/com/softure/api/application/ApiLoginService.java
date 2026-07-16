@@ -1,6 +1,6 @@
 package com.softure.api.application;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -15,16 +15,24 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service
 public class ApiLoginService {
 
-	@Autowired @Lazy  UsuarioAutenticacionSvc authenticationService;
-	
+	private final UsuarioAutenticacionSvc authenticationService;
+
+	public ApiLoginService(@Lazy UsuarioAutenticacionSvc authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+
 	public SharedIdResponse call(LoginRequest login, HttpServletRequest request) throws ServerException {
-		if(login == null) throw new ServerException("No se enviaron datos");
-		if(login.getUser() == null) throw new ServerException("Por favor ingrese el usuario");
-		if(login.getPassword() == null) throw new ServerException("Por favor ingrese la clave");
+		if (login == null)
+			throw new ServerException("No se enviaron datos");
+		if (login.getUser() == null)
+			throw new ServerException("Por favor ingrese el usuario");
+		if (login.getPassword() == null)
+			throw new ServerException("Por favor ingrese la clave");
 		UsuarioAutenticacionFilterDTO user = new UsuarioAutenticacionFilterDTO();
 		user.setSesion(login.getUser());
 		user.setClave(login.getPassword());
-		return new SharedIdResponse( authenticationService.autenticar(user, true, SoftureUtil.getRequestUrl(request)).getToken());
+		return new SharedIdResponse(
+				authenticationService.autenticar(user, true, SoftureUtil.getRequestUrl(request)).getToken());
 	}
 
 }

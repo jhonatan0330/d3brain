@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +19,14 @@ import com.softure.property.domain.PropiedadDTO;
 @Service
 public class CallProductValidateAndSave {
 
-	@Autowired
-	@Lazy
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+
+	public CallProductValidateAndSave(@Lazy DetallePedidoVentaSvc detallePedidoVentaService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService) {
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.caracteristicaService = caracteristicaService;
+	}
 
 	public List<DetallePedidoVentaDTO> orderToValidate(List<DetallePedidoVentaDTO> products) throws ServerException {
 

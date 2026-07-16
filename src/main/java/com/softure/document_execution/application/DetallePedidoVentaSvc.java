@@ -28,7 +28,6 @@ import com.softure.tariff.application.base.TarifaSvc;
 import com.softure.tariff.domain.TarifaDTO;
 import com.softure.tariff.domain.TarifaFilterDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 import jakarta.annotation.PostConstruct;
@@ -37,34 +36,35 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("detallePedidoVentaService")
 public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private DetallePedidoVentaMapper detallePedidoVentaMapper;
-	@Autowired
-	@Lazy
-	private ProductoSvc productoService;
-	@Autowired
-	@Lazy
-	private PedidoVentaSvc documentoService;
-	@Autowired
-	@Lazy
-	private UsuarioRolProductoSvc usuarioRolProductoService;
-	@Autowired
-	@Lazy
-	private TarifaSvc tarifaService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc configuracionSvc;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
-	@Autowired
-	@Lazy
-	private CallDocumentCRUD crudservice;
+	private final DetallePedidoVentaMapper detallePedidoVentaMapper;
+	private final ProductoSvc productoService;
+	private final PedidoVentaSvc documentoService;
+	private final UsuarioRolProductoSvc usuarioRolProductoService;
+	private final TarifaSvc tarifaService;
+	private final PropiedadSvc configuracionSvc;
+	private final PropertyGetWithCacheService cacheService;
+	private final CallDocumentCRUD crudservice;
+
+	public DetallePedidoVentaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy DetallePedidoVentaMapper detallePedidoVentaMapper, @Lazy ProductoSvc productoService,
+			@Lazy PedidoVentaSvc documentoService, @Lazy UsuarioRolProductoSvc usuarioRolProductoService,
+			@Lazy TarifaSvc tarifaService, @Lazy PropiedadSvc configuracionSvc,
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy CallDocumentCRUD crudservice) {
+		super(usuarioSesionService);
+		this.detallePedidoVentaMapper = detallePedidoVentaMapper;
+		this.productoService = productoService;
+		this.documentoService = documentoService;
+		this.usuarioRolProductoService = usuarioRolProductoService;
+		this.tarifaService = tarifaService;
+		this.configuracionSvc = configuracionSvc;
+		this.cacheService = cacheService;
+		this.crudservice = crudservice;
+	}
 
 	@Override
 	public DetallePedidoVentaDTO consultaXId(String llave) throws ServerException {
@@ -499,7 +499,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			throws ServerException {
 		if (tarifario == null || tarifario.isEmpty())
 			return null;
-		if(tercero!=null && tercero.isEmpty()) tercero = null;
+		if (tercero != null && tercero.isEmpty())
+			tercero = null;
 		List<TarifaDTO> result = new ArrayList<TarifaDTO>();
 		for (PropiedadDTO propiedadDTO : tarifario) {
 			TarifaFilterDTO filter = new TarifaFilterDTO();
@@ -629,6 +630,5 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		return productos;
 	}
 
-	// END region aditionalMethods
 
 }

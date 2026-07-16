@@ -14,7 +14,7 @@ public interface TimeFrameMapper {
 	TimeFrameDTO update(TimeFrameDTO dto);
 
 	int count(TimeFrameFilterDTO filter);
-	
+
 	TimeFrameDTO getOne(TimeFrameFilterDTO filter);
 
 	List<TimeFrameDTO> getMany(TimeFrameFilterDTO filter);

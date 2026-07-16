@@ -14,7 +14,7 @@ public interface AccountMapper {
 	AccountDTO update(AccountDTO dto);
 
 	int count(AccountFilterDTO filter);
-	
+
 	AccountDTO getOne(AccountFilterDTO filter);
 
 	List<AccountDTO> getMany(AccountFilterDTO filter);

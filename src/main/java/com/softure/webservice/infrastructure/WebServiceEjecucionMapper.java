@@ -8,8 +8,7 @@ import com.softure.webservice.domain.WebServiceEjecucionDTO;
 import com.softure.webservice.domain.WebServiceEjecucionFilterDTO;
 
 @SoftureSqlConnMapper(value = "WebServiceEjecucionMapper")
-public interface WebServiceEjecucionMapper extends IBasicMapper<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO>{
-	
+public interface WebServiceEjecucionMapper extends IBasicMapper<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO> {
 
 	List<WebServiceEjecucionDTO> apisTransaccion();
 }

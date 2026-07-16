@@ -7,8 +7,7 @@ import org.apache.ibatis.type.Alias;
 import com.shared.domain.SharedDataObject;
 
 @Alias("CargaMasivaDTO")
-public class MassiveMasterDTO extends SharedDataObject
-{
+public class MassiveMasterDTO extends SharedDataObject {
 	public static final String ERROR = "E";
 	public static final String FINALIZADA = "F";
 	public static final String SERIALIZADA = "S";
@@ -21,7 +20,7 @@ public class MassiveMasterDTO extends SharedDataObject
 	private String plantilla;
 	private String progreso;
 	private String usuario;
-    
+
 	public MassiveMasterRequest toValueObject() {
 		var cargaMasiva = new MassiveMasterRequest();
 		cargaMasiva.setCargaMasivaId(this.getKey());

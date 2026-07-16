@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -40,20 +39,26 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>
 		implements SharedAuthenticateService {
 
-	@Autowired @Lazy 
-	private UsuarioAutenticacionMapper usuarioAutenticacionMapper;
+	private final UsuarioAutenticacionMapper usuarioAutenticacionMapper;
+	private final UsuarioAutenticacionAutorizacionSvc authorizationService;
+	private final OrganizacionSvc organizacionService;
+	private final UsuarioSesionSvc usuarioSesionService;
+	private final UsuarioSvc usuarioService;
+	private final UsuarioSesionErrorSvc errorService;
 
-	@Autowired @Lazy 
-	private UsuarioAutenticacionAutorizacionSvc authorizationService;
-	@Autowired @Lazy 
-	private OrganizacionSvc organizacionService;
-	@Autowired @Lazy 
-	private UsuarioSesionSvc usuarioSesionService;
-	@Autowired @Lazy 
-	private UsuarioSvc usuarioService;
-	@Autowired @Lazy 
-	private UsuarioSesionErrorSvc errorService;
-	
+	public UsuarioAutenticacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy UsuarioAutenticacionMapper usuarioAutenticacionMapper,
+			@Lazy UsuarioAutenticacionAutorizacionSvc authorizationService, @Lazy OrganizacionSvc organizacionService,
+			@Lazy UsuarioSvc usuarioService, @Lazy UsuarioSesionErrorSvc errorService) {
+		super(usuarioSesionService);
+		this.usuarioAutenticacionMapper = usuarioAutenticacionMapper;
+		this.authorizationService = authorizationService;
+		this.organizacionService = organizacionService;
+		this.usuarioSesionService = usuarioSesionService;
+		this.usuarioService = usuarioService;
+		this.errorService = errorService;
+	}
+
 	// Cache
 	private String fechaMinima;
 
@@ -71,42 +76,39 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		this.mapper = usuarioAutenticacionMapper;
 	}
 
-
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public UsuarioAutenticacionDTO cambiarClave(UsuarioAutenticacionDTO dto, String token) throws ServerException {
-		// BEGIN region cambiarClave
 		UsuarioAutenticacionAutorizacionDTO autho = null;
 		UsuarioAutenticacionDTO user = null;
 		// Se envia por el administrador por el momento solo flex
-		/*if (dto.getClaveAnterior().compareTo("ADMIN$123") == 0) {
-			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
-			filtro.setEstado(SharedConstants.STATE_ACTIVE);
-			filtro.setUsuario(dto.getUsuario());
-			user = consultaUnica(filtro);
-			if (user == null)
-				throw new ServerException("El usuario no tiene una autenticacion");
-			if (user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-				throw new ServerException(
-						"Por favor consulte con su administrador, sus credenciales se encuentran inactivas");
-			// if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new
-			// ServerException("No concuerda la clave anterior");
-			
-		} else {*/
-			// La validacion de la autorizacion la retiro para que funcione flex
-			if (dto.getLlaveTabla() != null)
-				autho = authorizationService.validateLink(dto.getLlaveTabla(),
-						dto.getIp());
-			UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
-			if (autho != null) {
-				filtro.setUsuario(autho.getUsuario());
-			} else {
-				filtro.setUsuario(getUserFlex(token));
-			}
-			filtro.setEstado(SharedConstants.STATE_ACTIVE);
-			user = consultaUnica(filtro);
-			if (autho == null && user.getClave().compareTo(dto.getClaveAnterior()) != 0)
-				throw new ServerException("No concuerda la clave anterior");
-		//}
+		/*
+		 * if (dto.getClaveAnterior().compareTo("ADMIN$123") == 0) {
+		 * UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
+		 * filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		 * filtro.setUsuario(dto.getUsuario()); user = consultaUnica(filtro); if (user
+		 * == null) throw new ServerException("El usuario no tiene una autenticacion");
+		 * if (user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0) throw new
+		 * ServerException(
+		 * "Por favor consulte con su administrador, sus credenciales se encuentran inactivas"
+		 * ); // if(user.getClave().compareTo(dto.getClaveAnterior())!=0) throw new //
+		 * ServerException("No concuerda la clave anterior");
+		 * 
+		 * } else {
+		 */
+		// La validacion de la autorizacion la retiro para que funcione flex
+		if (dto.getLlaveTabla() != null)
+			autho = authorizationService.validateLink(dto.getLlaveTabla(), dto.getIp());
+		UsuarioAutenticacionFilterDTO filtro = new UsuarioAutenticacionFilterDTO();
+		if (autho != null) {
+			filtro.setUsuario(autho.getUsuario());
+		} else {
+			filtro.setUsuario(getUserFlex(token));
+		}
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		user = consultaUnica(filtro);
+		if (autho == null && user.getClave().compareTo(dto.getClaveAnterior()) != 0)
+			throw new ServerException("No concuerda la clave anterior");
+		// }
 
 		if (autho != null)
 			user.setAutorizacionElimina(autho.getLlaveTabla());
@@ -117,12 +119,13 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		filterPassword.setUsuario(user.getUsuario());
 		filterPassword.setClave(dto.getClave());
 		filterPassword.setFechaCreacionMin(null);
-		
+
 		List<UsuarioAutenticacionDTO> repeatPassword = listarConsulta(filterPassword);
-		
-		if(repeatPassword!=null && !repeatPassword.isEmpty())
-			throw new ServerException("La clave que estas usando ya la habias usado y la cambiaste. Por seguridad no vuelvas a usar las mismas claves");
-		
+
+		if (repeatPassword != null && !repeatPassword.isEmpty())
+			throw new ServerException(
+					"La clave que estas usando ya la habias usado y la cambiaste. Por seguridad no vuelvas a usar las mismas claves");
+
 		UsuarioAutenticacionDTO newAuth = new UsuarioAutenticacionDTO();
 		newAuth.setUsuario(user.getUsuario());
 		newAuth.setClave(dto.getClave());
@@ -136,7 +139,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 		usuarioSesionService.closeAllSession(user.getUsuario(), token);
 		return user;
-		// END region cambiarClave
 	}
 
 	@Override
@@ -147,7 +149,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return super.guardar(dto, token);
 	}
 
-// BEGIN region aditionalMethods
 	public void crearAutenticacion(String usuario, String token) throws ServerException {
 		UsuarioAutenticacionFilterDTO filtro1 = new UsuarioAutenticacionFilterDTO();
 		filtro1.setUsuario(usuario);
@@ -185,7 +186,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		reportarError(uaf, error);
 	}
 
-	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer) throws ServerException {
+	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer)
+			throws ServerException {
 		if (dto == null || dto.getUsuarioDTO() == null)
 			throw new ServerException("Faltan los datos de recuperacion");
 		if (dto.getUsuarioDTO().getCorreo() == null)
@@ -208,7 +210,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
 					"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
 		try {
-			return authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
+			return authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(),
+					urlServer);
 		} catch (Exception e) {
 			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
 		}
@@ -223,12 +226,12 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (!fromApi) {
 			if (dto.getClaveAnterior() == null)
 				reportarError(dto, "Por favor actualice su version de software");
-			if(fechaMinima==null) {
+			if (fechaMinima == null) {
 				try {
 					fechaMinima = usuarioAutenticacionMapper.fechaMinima();
 				} catch (Exception e) {
 					reportarError(dto, e.getMessage());
-				}	
+				}
 			}
 			if (fechaMinima != null) {
 				if (dto.getClaveAnterior().length() > 13)
@@ -247,23 +250,24 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioSesionDTO sesion = null;
 		if (dto.getSecurityToken() != null && dto.getClave() == null) {
 			// Tengo que arreglar el tema del número de sesiones
-			/*if(dto.getUsuario()!=null) {
-				sesion = usuarioSesionService.getSessionCacheByUser(dto.getUsuario());
-				if(sesion != null) {
-					if(sesion.getLlaveTabla().compareTo(dto.getSecurityToken())!=0)reportarError(dto, "Usuario perdio autenticacion por maximo numero de sesiones.");
-				}	
-			}*/
-			//if(sesion == null) {
-				sesion = usuarioSesionService.getUserSession(dto.getSecurityToken());
-				if (sesion == null)
-					reportarError(dto, "Autenticacion incorrecta por token");
-				if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-					reportarError(dto, "Se encuentra inactiva la sesion");
-				if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
-					reportarError(dto, "Usuario perdio autenticacion por tiempo.");
-			//}
+			/*
+			 * if(dto.getUsuario()!=null) { sesion =
+			 * usuarioSesionService.getSessionCacheByUser(dto.getUsuario()); if(sesion !=
+			 * null) {
+			 * if(sesion.getLlaveTabla().compareTo(dto.getSecurityToken())!=0)reportarError(
+			 * dto, "Usuario perdio autenticacion por maximo numero de sesiones."); } }
+			 */
+			// if(sesion == null) {
+			sesion = usuarioSesionService.getUserSession(dto.getSecurityToken());
+			if (sesion == null)
+				reportarError(dto, "Autenticacion incorrecta por token");
+			if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+				reportarError(dto, "Se encuentra inactiva la sesion");
+			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
+				reportarError(dto, "Usuario perdio autenticacion por tiempo.");
+			// }
 			autenticacion = new UsuarioAutenticacionDTO();
-			autenticacion.setUsuario(sesion.getUsuario());	
+			autenticacion.setUsuario(sesion.getUsuario());
 		} else {
 			if (dto.getClave() != null && dto.getSesion() == null && dto.getSecurityToken() != null) {
 				autenticacion = consultaXId(dto.getClave());
@@ -282,8 +286,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			if (autenticacion == null)
 				reportarError(dto, "Autenticacion incorrecta");
 			if (autenticacion.getFechaMaxima() != null) {
-				if( ((autenticacion.getFechaMaxima().getTime() - new Date().getTime()) / (24 * 3600000)) <= -7) {
-					reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");	
+				if (((autenticacion.getFechaMaxima().getTime() - new Date().getTime()) / (24 * 3600000)) <= -7) {
+					reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");
 				}
 			}
 		}
@@ -295,81 +299,76 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 		if (!fromApi) {
 			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
-		}else {
+		} else {
 			sesion = usuarioSesionService.getSessionCacheByUser(usuario.getLlaveTabla());
 		}
 
 		if (sesion == null) {
 			sesion = new UsuarioSesionDTO();
-			
+
 			if (sesion.getFechaCierre() == null && autenticacion.getFechaMaxima() != null)
 				sesion.setFechaCierre(autenticacion.getFechaMaxima());
 			sesion.setUsuario(autenticacion.getUsuario());
 			sesion.setIp(dto.getIp());
 			sesion.setPrivada(true);
 			sesion = usuarioSesionService.guardar(sesion);
-			if(autenticacion.getOrganizacion()!=null) {
-				if(Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.APP_DFA)!=null) {
+			if (autenticacion.getOrganizacion() != null) {
+				if (Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.APP_DFA) != null) {
 					// Mientras terminamos lo del flex
-					if(dto.getIp()!=null)			
-						authorizationService.makeTokenNumber(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(), urlServer);
+					if (dto.getIp() != null)
+						authorizationService.makeTokenNumber(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(),
+								urlServer);
 				}
 			}
 		}
 		autenticacion.setToken(sesion.getLlaveTabla());
 
 		if (!fromApi) {
-			
-			PropiedadDTO _propLicence = Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.OCULTAR_MENSAJE_LICENCIA);
-			if(_propLicence ==null) {
+
+			PropiedadDTO _propLicence = Propiedades.obtenerParametro(autenticacion.getOrganizacion(),
+					Propiedades.OCULTAR_MENSAJE_LICENCIA);
+			if (_propLicence == null) {
 				String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
 				if (fechaTrial == null)
 					reportarError(dto, "El sistema no tiene configurada la fecha de la licencia");
 
-				/*SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+				/*
+				 * SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd"); try { Date
+				 * date = formatter.parse(fechaTrial); diasVigencia = (date.getTime() - new
+				 * Date().getTime()) / (24 * 3600000); if (diasVigencia < 0) reportarError(dto,
+				 * "Se ha vencido la licencia del sistema. " + fechaTrial); } catch
+				 * (ParseException e) { reportarError(dto,
+				 * "El formato de la fecha de licencia esta incorrecto"); }
+				 */
+
 				try {
-					Date date = formatter.parse(fechaTrial);
-					diasVigencia = (date.getTime() - new Date().getTime()) / (24 * 3600000);
-					if (diasVigencia < 0)
-						reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
-				} catch (ParseException e) {
-					reportarError(dto, "El formato de la fecha de licencia esta incorrecto");
-				}*/
-				
-				try {
-				    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-				    // Fecha con vencimiento a las 12:00 PM
-				    LocalDateTime fechaVencimiento = LocalDate
-				            .parse(fechaTrial, formatter)
-				            .atTime(12, 0); // 12:00 PM
+					// Fecha con vencimiento a las 12:00 PM
+					LocalDateTime fechaVencimiento = LocalDate.parse(fechaTrial, formatter).atTime(12, 0); // 12:00 PM
 
-				    long millisVencimiento = fechaVencimiento
-				            .atZone(ZoneId.systemDefault())
-				            .toInstant()
-				            .toEpochMilli();
+					long millisVencimiento = fechaVencimiento.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-				    diasVigencia = (millisVencimiento - System.currentTimeMillis()) / (24 * 3600000);
+					diasVigencia = (millisVencimiento - System.currentTimeMillis()) / (24 * 3600000);
 
 				} catch (Exception e) {
-				    reportarError(dto, "El formato de la fecha de licencia está incorrecto");
+					reportarError(dto, "El formato de la fecha de licencia está incorrecto");
 				}
-				
+
 				if (diasVigencia < 0)
-			        reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
+					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 
 				if (diasVigencia >= 0 && diasVigencia <= 5)
 					autenticacion.setMensaje(
 							"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
 			}
 			// Esto lo uso en la app mobile la idea es cambiarlo
-			//autenticacion
-			//		.setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
+			// autenticacion
+			// .setTableroControl(usuarioAutenticacionMapper.cantidadAsignaciones(autenticacion.getUsuario()));
 		}
 		return autenticacion;
 	}
 
-	
 	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
 		UsuarioSesionDTO sesion = usuarioSesionService.checkToken(token);
 		if (sesion == null || sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0
@@ -390,30 +389,30 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 	}
 
 	private Date getNewMaximunDate(String user) throws ServerException {
-		if(user ==null) throw new ServerException("No se identifica el usuario para calcular el tiempo de recuperacion de clave");
+		if (user == null)
+			throw new ServerException("No se identifica el usuario para calcular el tiempo de recuperacion de clave");
 		OrganizacionDTO org = organizacionService.obtenerPrincipalPropiedades(user);
 		String timeToNewPassword = Propiedades.obtenerValor(org, Propiedades.TIEMPO_NUEVA_CLAVE);
-		if (timeToNewPassword==null || timeToNewPassword.isEmpty()) {
+		if (timeToNewPassword == null || timeToNewPassword.isEmpty()) {
 			Calendar newDate = Calendar.getInstance();
 			newDate.add(Calendar.MONTH, 2);
-			return newDate.getTime();	
+			return newDate.getTime();
 		} else {
 			try {
 				int days = Integer.parseInt(timeToNewPassword);
-				if(days == 0) {
+				if (days == 0) {
 					return null;
 				}
 				Calendar newDate = Calendar.getInstance();
 				newDate.add(Calendar.DAY_OF_MONTH, days);
 				return newDate.getTime();
 			} catch (NumberFormatException e) {
-				throw new ServerException("Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : " + timeToNewPassword);
+				throw new ServerException(
+						"Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : "
+								+ timeToNewPassword);
 			}
 		}
-		
 
-		
-		
 	}
 
 	@Override

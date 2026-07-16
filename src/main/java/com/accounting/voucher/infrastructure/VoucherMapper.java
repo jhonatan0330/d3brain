@@ -14,7 +14,7 @@ public interface VoucherMapper {
 	VoucherDTO update(VoucherDTO dto);
 
 	int count(VoucherFilterDTO filter);
-	
+
 	VoucherDTO getOne(VoucherFilterDTO filter);
 
 	List<VoucherDTO> getMany(VoucherFilterDTO filter);

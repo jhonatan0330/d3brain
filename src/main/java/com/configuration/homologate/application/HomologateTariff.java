@@ -3,7 +3,6 @@ package com.configuration.homologate.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -25,34 +24,39 @@ import com.softure.tariff.domain.TarifarioFilterDTO;
 @Component
 public class HomologateTariff {
 
-	@Autowired @Lazy TarifarioService tariffService;
-	
-	public void createTariffFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService, PropiedadSvc propertyService, CallDocumentCRUD crudService, String funcionario) throws ServerException {
+	private final TarifarioService tariffService;
+
+	public HomologateTariff(@Lazy TarifarioService tariffService) {
+		this.tariffService = tariffService;
+	}
+
+	public void createTariffFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+			PropiedadSvc propertyService, CallDocumentCRUD crudService, String funcionario) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
 		fieldsTemplate.add(
 				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(0),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateId,
-				Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
 		// fecha inicial
 		fieldsTemplate.add(campoService.createField(templateId, "FECHA_INICIAL",
 				DocumentoPlantillaCaracteristicaDTO.FECHA, 2, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(1),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		// fecha final
 		fieldsTemplate.add(campoService.createField(templateId, "FECHA_FINAL",
 				DocumentoPlantillaCaracteristicaDTO.FECHA, 3, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-				Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-				Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-	
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+
 		sincronizeTariff(templateId, fieldsTemplate, token, crudService, funcionario);
 	}
-	
 
-	private void sincronizeTariff(String templateId, List<String> fieldsTemplate, String token, CallDocumentCRUD crudService, String funcionario) throws ServerException {
+	private void sincronizeTariff(String templateId, List<String> fieldsTemplate, String token,
+			CallDocumentCRUD crudService, String funcionario) throws ServerException {
 		TarifarioFilterDTO filter = new TarifarioFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		List<TarifarioDTO> tariffs = tariffService.getMany(filter);
@@ -86,7 +90,6 @@ public class HomologateTariff {
 			}
 		}
 	}
-	
 
 	public void createTariff(PedidoVentaDTO document) throws ServerException {
 		TarifarioFilterDTO filter = new TarifarioFilterDTO();

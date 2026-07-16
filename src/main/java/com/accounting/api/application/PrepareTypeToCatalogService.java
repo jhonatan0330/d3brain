@@ -1,7 +1,5 @@
 package com.accounting.api.application;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,62 +14,63 @@ import com.shared.domain.SharedToken;
 import com.softure.document_execution.application.field.Propiedades;
 import com.softure.webservice.application.WebServiceSvc;
 import com.softure.webservice.domain.WebServiceDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class PrepareTypeToCatalogService {
 
-	@Autowired
-	@Lazy
-	private WebServiceSvc webServiceSvc;
-	
-	@Autowired @Lazy 
-	private TypeService typeService;
+	private final WebServiceSvc webServiceSvc;
+	private final TypeService typeService;
+
+	public PrepareTypeToCatalogService(@Lazy WebServiceSvc webServiceSvc, @Lazy TypeService typeService) {
+		this.webServiceSvc = webServiceSvc;
+		this.typeService = typeService;
+	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public TypeDTO call(String pServiceId, String pCatalogId, SharedToken pToken) throws ServerException {
 
 		// Aqui creo un type por defecto para la parametrizacion en la organizacion
-		if(pServiceId == null ) {
-			if(pCatalogId!=null) {
+		if (pServiceId == null) {
+			if (pCatalogId != null) {
 				TypeFilterDTO _typeDefaultFilter = new TypeFilterDTO();
 				_typeDefaultFilter.setCatalog(pCatalogId);
 				_typeDefaultFilter.setState(SharedConstants.STATE_ACTIVE);
 				_typeDefaultFilter.setPattern(AccountConst.TYPE_PATTERN_INDICATOR);
-				TypeDTO _default = typeService.getOne(_typeDefaultFilter); 
-				if(_default ==null) 
-					throw new ServerException("El catalogo no tiene un tipo por defecto que elpatron sea indicador");	
+				TypeDTO _default = typeService.getOne(_typeDefaultFilter);
+				if (_default == null)
+					throw new ServerException("El catalogo no tiene un tipo por defecto que elpatron sea indicador");
 				return _default;
 			} else {
 				throw new ServerException("El servicio no puede ser nulo");
 			}
 		}
-		
+
 		TypeFilterDTO _typeFilter = new TypeFilterDTO();
 		_typeFilter.setService(pServiceId);
-		
+
 		TypeDTO _type = typeService.getOne(_typeFilter);
 		if (_type == null) {
 			WebServiceDTO ws = webServiceSvc.getByIdFullProperties(pServiceId, pToken.getToken());
-			if(Propiedades.obtenerParametro(ws,Propiedades.API_ACCOUNT_CATALOG) == null)
-				throw new ServerException("No se encontro un tipo de comprobante con ese identificador y el api no tiene un catalogo para crear el tipo");
+			if (Propiedades.obtenerParametro(ws, Propiedades.API_ACCOUNT_CATALOG) == null)
+				throw new ServerException(
+						"No se encontro un tipo de comprobante con ese identificador y el api no tiene un catalogo para crear el tipo");
 			_type = new TypeDTO();
 			_type.setService(pServiceId);
 			_type.setName(ws.getNombre());
 			_type.setCode(ws.getCodigo());
 			_type.setPattern(AccountConst.TYPE_PATTERN_COMPROBANTE);
-			_type.setCatalog(Propiedades.obtenerValor(ws,Propiedades.API_ACCOUNT_CATALOG));
+			_type.setCatalog(Propiedades.obtenerValor(ws, Propiedades.API_ACCOUNT_CATALOG));
 			typeService.save(_type);
-			//Esto evita un null ya que el guardar no me vuelve a colocar el activo
+			// Esto evita un null ya que el guardar no me vuelve a colocar el activo
 			_type.setState(SharedConstants.STATE_ACTIVE);
 		}
-		
-		if(_type.getState().compareTo(SharedConstants.STATE_ACTIVE)!=0)
+
+		if (_type.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El tipo de comprobante no se encuentra activo");
-		
+
 		return _type;
 
 	}
-
-
 
 }

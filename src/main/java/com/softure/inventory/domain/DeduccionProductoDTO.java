@@ -9,8 +9,6 @@ import org.apache.ibatis.type.Alias;
 
 @Alias("DeduccionProductoDTO")
 public class DeduccionProductoDTO extends BasicDTO
-// BEGIN region interfaces  
-// END region interfaces
 {
 
 	private String documento;
@@ -27,67 +25,73 @@ public class DeduccionProductoDTO extends BasicDTO
 	public void setDocumento(String documento) {
 		this.documento = documento;
 	}
-	
+
 	public String getDocumento() {
 		return documento;
 	}
+
 	public void setProducto(String producto) {
 		this.producto = producto;
 	}
-	
+
 	public String getProducto() {
 		return producto;
 	}
+
 	public void setProductoNombre(String productoNombre) {
 		this.productoNombre = productoNombre;
 	}
-	
+
 	public String getProductoNombre() {
 		return productoNombre;
 	}
+
 	public void setProductoCodigo(String productoCodigo) {
 		this.productoCodigo = productoCodigo;
 	}
-	
+
 	public String getProductoCodigo() {
 		return productoCodigo;
 	}
+
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	
+
 	public Date getFecha() {
 		return fecha;
 	}
+
 	public void setCantidad(BigDecimal cantidad) {
 		this.cantidad = cantidad;
 	}
-	
+
 	public BigDecimal getCantidad() {
 		return cantidad;
 	}
+
 	public void setResponsable(String responsable) {
 		this.responsable = responsable;
 	}
-	
+
 	public String getResponsable() {
 		return responsable;
 	}
+
 	public void setResponsableNombre(String responsableNombre) {
 		this.responsableNombre = responsableNombre;
 	}
-	
+
 	public String getResponsableNombre() {
 		return responsableNombre;
 	}
+
 	public void setBodega(String bodega) {
 		this.bodega = bodega;
 	}
-	
+
 	public String getBodega() {
 		return bodega;
 	}
-// BEGIN region metodoInterfaces
-// END region metodoInterfaces
 
 }

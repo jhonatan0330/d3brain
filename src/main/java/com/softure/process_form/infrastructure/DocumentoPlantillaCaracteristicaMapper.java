@@ -10,11 +10,15 @@ import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 
 @SoftureSqlConnMapper(value = "DocumentoPlantillaCaracteristicaMapper")
-public interface DocumentoPlantillaCaracteristicaMapper extends IBasicMapper<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO>{
-	
+public interface DocumentoPlantillaCaracteristicaMapper
+		extends IBasicMapper<DocumentoPlantillaCaracteristicaDTO, DocumentoPlantillaCaracteristicaFilterDTO> {
+
 	void actualizarFiltros(String llaveTabla);
-	void actualizarDescripcion(@Param("pTemplate")String pTemplate, @Param("pField")String pField);
+
+	void actualizarDescripcion(@Param("pTemplate") String pTemplate, @Param("pField") String pField);
+
 	List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(@Param("process") List<String> process);
+
 	int countDependentsOfField(DocumentoPlantillaCaracteristicaFilterDTO pFilter);
-	
+
 }

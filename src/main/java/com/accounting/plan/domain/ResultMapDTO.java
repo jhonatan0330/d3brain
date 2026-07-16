@@ -6,7 +6,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("ResultMapDTO")
-public class ResultMapDTO extends SharedDataObject{
+public class ResultMapDTO extends SharedDataObject {
 
 	private String account;
 	private String accountName;

@@ -8,7 +8,7 @@ import java.util.Date;
 //End of user code
 
 public class MassiveMasterRequest {
-	
+
 	private String cargaMasivaId;
 	private String archivo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -19,7 +19,7 @@ public class MassiveMasterRequest {
 	private String usuario;
 	@JsonProperty(access = Access.READ_ONLY)
 	private String estado;
-	
+
 	public MassiveMasterDTO toModel() {
 		var cargaMasivaModel = new MassiveMasterDTO();
 		cargaMasivaModel.setKey(this.cargaMasivaId);

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -28,12 +27,14 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoNumero {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+
+	public TipoNumero(@Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService) {
+		this.campoService = campoService;
+		this.caracteristicaService = caracteristicaService;
+	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
 			throws ServerException {
@@ -173,7 +174,7 @@ public class TipoNumero {
 		String formato = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.FORMATO);
 		if (formato.isEmpty()) {
 			BigDecimal valor = pCampo.getValorNumero().stripTrailingZeros();
-            pCampo.setValorText(valor.toPlainString());
+			pCampo.setValorText(valor.toPlainString());
 		} else {
 			pCampo.setValorText(SoftureUtil.formatNumberPattern(pCampo.getValorNumero(), formato));
 		}

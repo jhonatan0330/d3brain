@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,23 +21,24 @@ import com.softure.money.domain.TurnoDTO;
 import com.softure.money.infrastructure.MovimientoMapper;
 
 import jakarta.annotation.PostConstruct;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("movimientoService")
 public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private MovimientoMapper movimientoMapper;
+	private final MovimientoMapper movimientoMapper;
+	private final TurnoSvc turnoService;
+	private final CuentaSvc cuentaService;
+	private final RolAccesoSvc rolService;
 
-	@Autowired
-	@Lazy
-	private TurnoSvc turnoService;
-	@Autowired
-	@Lazy
-	private CuentaSvc cuentaService;
-	@Autowired
-	@Lazy
-	private RolAccesoSvc rolService;
+	public MovimientoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy MovimientoMapper movimientoMapper,
+			@Lazy TurnoSvc turnoService, @Lazy CuentaSvc cuentaService, @Lazy RolAccesoSvc rolService) {
+		super(usuarioSesionService);
+		this.movimientoMapper = movimientoMapper;
+		this.turnoService = turnoService;
+		this.cuentaService = cuentaService;
+		this.rolService = rolService;
+	}
 
 	@Override
 	public MovimientoDTO consultaXId(String llave) throws ServerException {
@@ -62,20 +62,17 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MovimientoDTO actualizar(MovimientoDTO dto, String token) throws ServerException {
-		// BEGIN Movimiento_actualizar
 		MovimientoDTO movimiento = consultaXId(dto.getLlaveTabla());
 //		movimiento.setAnterior(dto.getAnterior());
 //		movimiento.setSiguiente(dto.getSiguiente());
 //		movimiento.setSaldoInicial(dto.getSaldoInicial());
 //		movimiento.setSaldoFinal(dto.getSaldoFinal());
 		return super.actualizar(movimiento, token);
-		// END Movimiento_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public MovimientoDTO inactivar(MovimientoDTO dto, String token) throws ServerException {
-		// BEGIN Movimiento_inactivar
 		MovimientoDTO movimiento = super.inactivar(dto, token);
 		if (movimiento.getTipo().compareTo(MovimientoDTO.ENTRADA_INGRESO) == 0 && movimiento.getRelacionado() != null) {
 			if (consultaXId(movimiento.getRelacionado()).getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
@@ -133,10 +130,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		movimiento.setSaldoInicial(BigDecimal.ZERO);
 		movimiento.setSaldoFinal(BigDecimal.ZERO);
 		return super.actualizar(movimiento, token);
-		// END Movimiento_inactivar
 	}
-
-
 
 	public List<MovimientoDTO> obtenerMovimientoAnteriorFecha(MovimientoFilterDTO dto) throws ServerException {
 		dto.setPaginacionRegistroInicial(0);
@@ -192,8 +186,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 							+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
 				if (dto.getFechaEvento().compareTo(turno.getFechaApertura()) < 0)
-					throw new ServerException("Iniciaste turno de la cuenta " +turno.getCuentaNombre() + " en esta fecha "
-							+ SoftureUtil.formatDateTime(turno.getFechaApertura())
+					throw new ServerException("Iniciaste turno de la cuenta " + turno.getCuentaNombre()
+							+ " en esta fecha " + SoftureUtil.formatDateTime(turno.getFechaApertura())
 							+ ", te agradecemos que cambies la fecha de tu documento a una fecha que sea mayor");
 			} else {
 				if (cuenta.getValidarTurno())

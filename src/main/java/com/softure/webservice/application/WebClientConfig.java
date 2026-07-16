@@ -17,35 +17,23 @@ import reactor.netty.resources.ConnectionProvider;
 @Configuration
 public class WebClientConfig {
 
-    @Bean
-    WebClient webClient() {
+	@Bean
+	WebClient webClient() {
 
-        ConnectionProvider provider = ConnectionProvider.builder("api-pool")
-            .maxConnections(50)
-            .pendingAcquireMaxCount(100)
-            .pendingAcquireTimeout(Duration.ofSeconds(5))
-            .maxIdleTime(Duration.ofSeconds(30))
-            .build();
+		ConnectionProvider provider = ConnectionProvider.builder("api-pool").maxConnections(50)
+				.pendingAcquireMaxCount(100).pendingAcquireTimeout(Duration.ofSeconds(5))
+				.maxIdleTime(Duration.ofSeconds(30)).build();
 
-        HttpClient httpClient = HttpClient.create(provider)
-            .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
-            .responseTimeout(Duration.ofSeconds(30))
-            .doOnConnected(conn ->
-                conn.addHandlerLast(new ReadTimeoutHandler(30))
-                    .addHandlerLast(new WriteTimeoutHandler(10))
-            );
-        
-        int maxSize = 20 * 1024 * 1024; // 20 MB (ajusta según necesidad)
+		HttpClient httpClient = HttpClient.create(provider).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+				.responseTimeout(Duration.ofSeconds(30)).doOnConnected(conn -> conn
+						.addHandlerLast(new ReadTimeoutHandler(30)).addHandlerLast(new WriteTimeoutHandler(10)));
 
-        ExchangeStrategies strategies = ExchangeStrategies.builder()
-            .codecs(configurer ->
-                configurer.defaultCodecs().maxInMemorySize(maxSize)
-            )
-            .build();
+		int maxSize = 20 * 1024 * 1024; // 20 MB (ajusta según necesidad)
 
-        return WebClient.builder()
-            .clientConnector(new ReactorClientHttpConnector(httpClient))
-            .exchangeStrategies(strategies)
-            .build();
-    }
+		ExchangeStrategies strategies = ExchangeStrategies.builder()
+				.codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(maxSize)).build();
+
+		return WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient))
+				.exchangeStrategies(strategies).build();
+	}
 }

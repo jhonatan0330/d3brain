@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +24,14 @@ import com.softure.property.domain.PropiedadDTO;
 @Component
 public class TipoFecha {
 
-	@Autowired
-	@Lazy
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired
-	@Lazy
-	private DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DocumentoPlantillaCaracteristicaSvc caracteristicaService;
+
+	public TipoFecha(@Lazy PedidoVentaCaracteristicaSvc campoService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService) {
+		this.campoService = campoService;
+		this.caracteristicaService = caracteristicaService;
+	}
 
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
 			throws ServerException {

@@ -8,7 +8,7 @@ import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("VoucherDTO")
-public class VoucherDTO extends SharedDataObject{
+public class VoucherDTO extends SharedDataObject {
 
 	private String catalog;
 	private String catalogCode;

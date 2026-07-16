@@ -2,8 +2,6 @@ package com.softure.document_transaction.application;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -14,16 +12,24 @@ import com.softure.document_transaction.infrastructure.TransaccionLogMapper;
 import com.softure.logisticpymes.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.annotation.Lazy;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("transaccionLogService")
 public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLogFilterDTO> {
-	
-	@Autowired @Lazy 
-	private TransaccionLogMapper transaccionLogMapper;
-	
+
+	private final TransaccionLogMapper transaccionLogMapper;
+
+	public TransaccionLogSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+			@Lazy TransaccionLogMapper transaccionLogMapper) {
+		super(usuarioSesionService);
+		this.transaccionLogMapper = transaccionLogMapper;
+	}
+
 	@Override
 	public TransaccionLogDTO consultaXId(String llave) throws ServerException {
-		if(llave==null) throw new ServerException("La llave del DTO se encuentra vacia. TransaccionLog");
+		if (llave == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. TransaccionLog");
 		TransaccionLogFilterDTO dto = new TransaccionLogFilterDTO();
 		dto.setLlaveTabla(llave);
 		return transaccionLogMapper.consultar(dto);
@@ -31,7 +37,7 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 
 	@PostConstruct
 	public void initIt() throws Exception {
-	  this.mapper = transaccionLogMapper;
+		this.mapper = transaccionLogMapper;
 	}
 
 	public TransaccionLogDTO finalizar(Date startDate, String transactionId, String session) throws ServerException {
@@ -42,13 +48,14 @@ public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLo
 		newLog.setSesion(session);
 		return saveSimple(newLog);
 	}
-	
-	public TransaccionLogDTO endToAPI(DocumentoTransaccionDTO pTransaction, String pInput, String pOutput) throws ServerException {
+
+	public TransaccionLogDTO endToAPI(DocumentoTransaccionDTO pTransaction, String pInput, String pOutput)
+			throws ServerException {
 		TransaccionLogDTO newLog = new TransaccionLogDTO();
 		newLog.setFechaInicio(pTransaction.getFecha());
 		newLog.setFechaFin(new Date());
 		newLog.setTransaccion(pTransaction.getLlaveTabla());
-		//newLog.setSesion(session);
+		// newLog.setSesion(session);
 		newLog.setUsuario(pTransaction.getUsuario());
 		newLog.setEntrada(pInput);
 		newLog.setSalida(pOutput);

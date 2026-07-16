@@ -1,11 +1,10 @@
 package com.accounting.voucher.domain;
 
-
 import com.shared.domain.SharedDataObject;
 import org.apache.ibatis.type.Alias;
 
 @Alias("AccountRecordAuxiliarDTO")
-public class AccountRecordAuxiliarDTO extends SharedDataObject{
+public class AccountRecordAuxiliarDTO extends SharedDataObject {
 
 	private String voucher;
 	private String recordLine;

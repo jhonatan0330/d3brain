@@ -3,7 +3,6 @@ package com.softure.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -21,21 +20,26 @@ import com.softure.process_form.application.CallSearchProcessFromText;
 import com.softure.process_form.application.DocumentoPlantillaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.process_form.domain.DocumentoPlantillaDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class ApiGetFieldDataService {
 
-	@Autowired @Lazy 
-	private DocumentoPlantillaSvc templateService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc fieldService;
+	private final DocumentoPlantillaSvc templateService;
+	private final PedidoVentaCaracteristicaSvc fieldService;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final ProductoSvc productoService;
+	private final CallSearchProcessFromText searchProcessFromText;
 
-	@Autowired @Lazy 
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy 
-	private ProductoSvc productoService;
-	@Autowired @Lazy 
-	private CallSearchProcessFromText searchProcessFromText;
+	public ApiGetFieldDataService(@Lazy DocumentoPlantillaSvc templateService,
+			@Lazy PedidoVentaCaracteristicaSvc fieldService, @Lazy DetallePedidoVentaSvc detallePedidoVentaService,
+			@Lazy ProductoSvc productoService, @Lazy CallSearchProcessFromText searchProcessFromText) {
+		this.templateService = templateService;
+		this.fieldService = fieldService;
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.productoService = productoService;
+		this.searchProcessFromText = searchProcessFromText;
+	}
 
 	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {
 		validateFilter(token, filter);
@@ -52,40 +56,42 @@ public class ApiGetFieldDataService {
 				PedidoVentaCaracteristicaDTO dependent = new PedidoVentaCaracteristicaDTO();
 				dependent.setCampo(fieldDependent.getLlaveTabla());
 				dependent.setCampoDTO(fieldDependent);
-				ApiCommon.chooseValueToField(
-						iPrecondition, dependent,
-						productoService, detallePedidoVentaService);
+				ApiCommon.chooseValueToField(iPrecondition, dependent, productoService, detallePedidoVentaService);
 				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
-					if(ApiCommon.isUUID(iPrecondition.getValue())) {
+					if (ApiCommon.isUUID(iPrecondition.getValue())) {
 						dependent.setValorOpcion(iPrecondition.getValue());
-					}else {
-						dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,iPrecondition.getValue(), fieldDependent));
+					} else {
+						dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,
+								iPrecondition.getValue(), fieldDependent));
 					}
-					
+
 				}
-					
+
 				fieldFilter.getDependientes().add(dependent);
 			}
 		}
 		fieldFilter.setSecurityToken(token);
 		PedidoVentaCaracteristicaDTO fieldData = fieldService.completarDatosBase(fieldFilter);
-		//Los tipo numero lo quitan pero lso tipo proceso lo dejan
-		if(fieldData.getCampoDTO()==null)fieldData.setCampoDTO(fieldBD);
+		// Los tipo numero lo quitan pero lso tipo proceso lo dejan
+		if (fieldData.getCampoDTO() == null)
+			fieldData.setCampoDTO(fieldBD);
 		DataFieldResponse result = new DataFieldResponse();
 		result.setField(fieldData.getCampoDTO().getCodigo());
 		result.setInternalId(fieldData.getValorOpcion());
 		result.setValue(fieldData.getValorText());
-		if(result.getValue()==null && fieldData.getValorNumero()!=null ) result.setValue(SoftureUtil.formatNumber(fieldData.getValorNumero()));
+		if (result.getValue() == null && fieldData.getValorNumero() != null)
+			result.setValue(SoftureUtil.formatNumber(fieldData.getValorNumero()));
 		List<DocumentResponse> docs = new ArrayList<>();
-		if(fieldData.getCampoDTO().getDocumentos()!=null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
-			//Para obtener los puestos de un pasaje no se llenaba plantilla
+		if (fieldData.getCampoDTO().getDocumentos() != null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
+			// Para obtener los puestos de un pasaje no se llenaba plantilla
 			DocumentoPlantillaDTO templateList = null;
-			if(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla()!=null) {
-				templateList = templateService.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
-				templateList = templateService.obtenerCampos(templateList, token, true);	
+			if (fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla() != null) {
+				templateList = templateService
+						.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
+				templateList = templateService.obtenerCampos(templateList, token, true);
 			}
-			docs = ApiCommon
-			.transformPedidoVentaToDocument(token, fieldService, fieldData.getCampoDTO().getDocumentos(), templateList);
+			docs = ApiCommon.transformPedidoVentaToDocument(token, fieldService,
+					fieldData.getCampoDTO().getDocumentos(), templateList);
 		}
 		result.setDocuments(docs);
 		return result;

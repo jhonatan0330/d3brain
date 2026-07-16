@@ -11,8 +11,10 @@ import com.softure.document_execution.domain.PedidoVentaDTO;
 @SoftureSqlConnMapper(value = "VoucherExtendAccountingMapper")
 public interface VoucherExtendMapper {
 
-	List<PedidoVentaDTO> itemsToRecreateVoucher(@Param("pTemplateId") String pTemplateId, @Param("pStartDate") Date pStartDate, @Param("pEndDate") Date pEndDate);
-	
-	List<PedidoVentaDTO> itemsToDeleteVoucher(@Param("pTemplateId") String pTemplateId, @Param("pStartDate") Date pStartDate, @Param("pEndDate") Date pEndDate);
+	List<PedidoVentaDTO> itemsToRecreateVoucher(@Param("pTemplateId") String pTemplateId,
+			@Param("pStartDate") Date pStartDate, @Param("pEndDate") Date pEndDate);
+
+	List<PedidoVentaDTO> itemsToDeleteVoucher(@Param("pTemplateId") String pTemplateId,
+			@Param("pStartDate") Date pStartDate, @Param("pEndDate") Date pEndDate);
 
 }

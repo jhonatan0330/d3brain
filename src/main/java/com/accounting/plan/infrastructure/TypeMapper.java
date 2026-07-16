@@ -14,7 +14,7 @@ public interface TypeMapper {
 	TypeDTO update(TypeDTO dto);
 
 	int count(TypeFilterDTO filter);
-	
+
 	TypeDTO getOne(TypeFilterDTO filter);
 
 	List<TypeDTO> getMany(TypeFilterDTO filter);

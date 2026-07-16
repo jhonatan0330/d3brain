@@ -1,7 +1,5 @@
 package com.softure.inventory.domain;
 
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.shared.domain.SharedConstants;
@@ -23,24 +22,32 @@ import com.softure.process_form.application.DocumentoPlantillaCaracteristicaSvc;
 import com.softure.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
 import com.softure.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
 import com.softure.property.domain.PropiedadDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Component
 public class TipoDisponibilidad {
 
-	@Autowired @Lazy 
-	private DocumentoPlantillaCaracteristicaSvc baseService;
-	@Autowired @Lazy 
-	private PedidoVentaCaracteristicaSvc campoService;
-	@Autowired @Lazy 
-	private DetallePedidoVentaSvc inventoryService;
-	@Autowired @Lazy 
-	private PuestoSvc puestoService;
-	@Autowired @Lazy 
-	private CallProductValidateAndSave validateAndSave;
-	@Autowired @Lazy 
-	private DetallePedidoVentaSvc detallePedidoVentaService;
-	@Autowired @Lazy 
-	private PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
+	private final DocumentoPlantillaCaracteristicaSvc baseService;
+	private final PedidoVentaCaracteristicaSvc campoService;
+	private final DetallePedidoVentaSvc inventoryService;
+	private final PuestoSvc puestoService;
+	private final CallProductValidateAndSave validateAndSave;
+	private final DetallePedidoVentaSvc detallePedidoVentaService;
+	private final PropertyNavigateIntoRelationsToFindFieldsService findFieldService;
+
+	public TipoDisponibilidad(@Lazy DocumentoPlantillaCaracteristicaSvc baseService,
+			@Lazy PedidoVentaCaracteristicaSvc campoService, @Lazy DetallePedidoVentaSvc inventoryService,
+			@Lazy PuestoSvc puestoService, @Lazy CallProductValidateAndSave validateAndSave,
+			@Lazy DetallePedidoVentaSvc detallePedidoVentaService,
+			@Lazy PropertyNavigateIntoRelationsToFindFieldsService findFieldService) {
+		this.baseService = baseService;
+		this.campoService = campoService;
+		this.inventoryService = inventoryService;
+		this.puestoService = puestoService;
+		this.validateAndSave = validateAndSave;
+		this.detallePedidoVentaService = detallePedidoVentaService;
+		this.findFieldService = findFieldService;
+	}
 
 	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
 			throws ServerException {
@@ -79,8 +86,8 @@ public class TipoDisponibilidad {
 		String producto = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.PRODUCTO_PUESTO);
 		if (!producto.isEmpty()) {
 			if (!pCampo.getModificado())
-				pCampo.setDetalles(
-						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null, token, null, null, pCampo.getLlaveTabla()));
+				pCampo.setDetalles(detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null,
+						token, null, null, pCampo.getLlaveTabla()));
 		}
 	}
 
@@ -132,14 +139,16 @@ public class TipoDisponibilidad {
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
 		PropiedadDTO estructura = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
 		if (estructura == null)
-			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +
-					"Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
-		 if (dependents == null || dependents.isEmpty())
-					 throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +"Revise los dependientes. Tipo Disponibilidad");
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+					+ "Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
+		if (dependents == null || dependents.isEmpty())
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+					+ "Revise los dependientes. Tipo Disponibilidad");
 		PedidoVentaCaracteristicaDTO vCroquis = null;
-		
-		List<PedidoVentaCaracteristicaDTO> fieldsInRelations = findFieldService.call(estructura.getLlaveTabla(), dependents);
-		if(fieldsInRelations!=null && !fieldsInRelations.isEmpty()) {
+
+		List<PedidoVentaCaracteristicaDTO> fieldsInRelations = findFieldService.call(estructura.getLlaveTabla(),
+				dependents);
+		if (fieldsInRelations != null && !fieldsInRelations.isEmpty()) {
 			vCroquis = fieldsInRelations.get(0);
 		} else {
 			// Proximamente vamos a retirar esta funcionalidad se maneja solopor el camino
@@ -152,12 +161,14 @@ public class TipoDisponibilidad {
 			}
 
 			if (dependienteCroquis == null)
-				throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() +"No se encontro en los dependientes la estructura del croquis");
+				throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla "
+						+ pBase.getPlantillaNombre() + "No se encontro en los dependientes la estructura del croquis");
 			vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
 		}
-		
+
 		if (vCroquis == null)
-			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre() + "La estructura no tiene un campo croquis que se encuentre activo");
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+					+ "La estructura no tiene un campo croquis que se encuentre activo");
 
 		pBase.setImagen(vCroquis.getValorText());
 		PuestoFilterDTO filtro = new PuestoFilterDTO();
@@ -177,7 +188,8 @@ public class TipoDisponibilidad {
 		return componente;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic) throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+			throws ServerException {
 		String[] locations = null;
 		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 			pCampo.setValorText(null);
@@ -185,18 +197,22 @@ public class TipoDisponibilidad {
 		// Valido obligatoriedad
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorText() == null)
-			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() +"Es necesario registrar el campo ");
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
+					+ pCampo.getCampoDTO().getPlantillaNombre() + "Es necesario registrar el campo ");
 
 		if (pCampo.getValorText() != null)
 			locations = pCampo.getValorText().split("-");
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (locations == null || locations.length == 0))
-			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " Es necesario registrar el campo ");
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
+					+ pCampo.getCampoDTO().getPlantillaNombre() + " Es necesario registrar el campo ");
 		if (locations != null) {
 
 			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
 			if (currentItems == null || currentItems.isEmpty())
-				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + "No hay opciones para seleccionar una posicion del croquis");
+				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
+						+ pCampo.getCampoDTO().getPlantillaNombre()
+						+ "No hay opciones para seleccionar una posicion del croquis");
 			int positionCount = 0;
 			for (String actual : locations) {
 				if (actual != null && !actual.isEmpty()) {
@@ -250,8 +266,8 @@ public class TipoDisponibilidad {
 				pCampo.setDetalles(agrupados);
 			}
 			if (pCampo.getDocumento() != null) {
-				pCampo.setDetalles(
-						validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null, token, null, pCampo.getLlaveTabla()));
+				pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null,
+						token, null, pCampo.getLlaveTabla()));
 			} else {
 				pCampo.setDetalles(agrupados);
 			}

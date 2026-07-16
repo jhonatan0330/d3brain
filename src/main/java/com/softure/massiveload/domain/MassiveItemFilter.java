@@ -4,9 +4,7 @@ import java.util.Date;
 
 import com.shared.domain.SharedDataObjectFilter;
 
-
-public class MassiveItemFilter extends SharedDataObjectFilter
-{
+public class MassiveItemFilter extends SharedDataObjectFilter {
 	private String carga;
 	private String documento;
 	private Date fechaSerializacionMin;
@@ -16,11 +14,11 @@ public class MassiveItemFilter extends SharedDataObjectFilter
 	private String modelo;
 	private String nombre;
 	private String progreso;
-	
+
 	public MassiveItemFilter(String state, int page, int size) {
 		this.setState(state);
-		this.setStartRow( page*size );
-		this.setEndRow( (page*size) + size - 1 );
+		this.setStartRow(page * size);
+		this.setEndRow((page * size) + size - 1);
 	}
 
 	public MassiveItemFilter() {

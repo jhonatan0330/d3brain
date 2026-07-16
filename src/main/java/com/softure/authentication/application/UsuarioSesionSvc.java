@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -25,15 +24,16 @@ import com.softure.property.domain.PropiedadValorDefinidoDTO;
 @Service("usuarioSesionService")
 public class UsuarioSesionSvc {
 
-	@Autowired
-	@Lazy
-	private UsuarioSesionMapper usuarioSesionMapper;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService getPropertyService;
-	@Autowired
-	@Lazy
-	private CacheManager cacheService;
+	private final UsuarioSesionMapper usuarioSesionMapper;
+	private final PropertyGetWithCacheService getPropertyService;
+	private final CacheManager cacheService;
+
+	public UsuarioSesionSvc(@Lazy UsuarioSesionMapper usuarioSesionMapper,
+			@Lazy PropertyGetWithCacheService getPropertyService, @Lazy CacheManager cacheService) {
+		this.usuarioSesionMapper = usuarioSesionMapper;
+		this.getPropertyService = getPropertyService;
+		this.cacheService = cacheService;
+	}
 
 	public UsuarioSesionDTO consultaXId(String llave) throws ServerException {
 		if (llave == null)

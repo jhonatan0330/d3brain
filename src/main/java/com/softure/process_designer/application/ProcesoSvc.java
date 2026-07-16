@@ -19,7 +19,6 @@ import com.softure.property.application.PropiedadSvc;
 import com.softure.property.domain.PropiedadDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
 import jakarta.annotation.PostConstruct;
@@ -28,29 +27,30 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softure.logisticpymes.application.BasicSvc;
+import com.softure.authentication.application.UsuarioSesionSvc;
 
 @Service("procesoService")
 public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 
-	@Autowired
-	@Lazy
-	private ProcesoMapper procesoMapper;
+	private final ProcesoMapper procesoMapper;
+	private final ProcesoEstadoSvc estadoService;
+	private final ProcesoTransicionSvc transicionService;
+	private final PropiedadSvc propiedadService;
+	private final PropiedadSvc paramService;
+	private final PropertyGetWithCacheService cacheService;
 
-	@Autowired
-	@Lazy
-	private ProcesoEstadoSvc estadoService;
-	@Autowired
-	@Lazy
-	private ProcesoTransicionSvc transicionService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc propiedadService;
-	@Autowired
-	@Lazy
-	private PropiedadSvc paramService;
-	@Autowired
-	@Lazy
-	private PropertyGetWithCacheService cacheService;
+	public ProcesoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ProcesoMapper procesoMapper,
+			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
+			@Lazy PropiedadSvc propiedadService, @Lazy PropiedadSvc paramService,
+			@Lazy PropertyGetWithCacheService cacheService) {
+		super(usuarioSesionService);
+		this.procesoMapper = procesoMapper;
+		this.estadoService = estadoService;
+		this.transicionService = transicionService;
+		this.propiedadService = propiedadService;
+		this.paramService = paramService;
+		this.cacheService = cacheService;
+	}
 
 	@Override
 	public ProcesoDTO consultaXId(String llave) throws ServerException {
@@ -69,27 +69,22 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ProcesoDTO actualizar(ProcesoDTO dto, String token) throws ServerException {
-		// BEGIN Proceso_actualizar
 		validarMacroproceso(dto.getMacroproceso());
 		dto = super.actualizar(dto, token);
 		organizar(dto, token);
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;
-		// END Proceso_actualizar
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ProcesoDTO inactivar(ProcesoDTO dto, String token) throws ServerException {
-		// BEGIN Proceso_inactivar
 		dto = super.inactivar(dto, token);
 		organizar(dto, token);
 		return dto;
-		// END Proceso_inactivar
 	}
 
 	public List<ProcesoDTO> consultarArbol(ProcesoFilterDTO dto) throws ServerException {
-		// BEGIN region consultarArbol
 		boolean onlyOne2ShowClient = false;
 		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().compareTo("*") == 0) {
 			onlyOne2ShowClient = true;
@@ -108,7 +103,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 			result.add(resulDTO);
 		}
 		return result;
-		// END region consultarArbol
 	}
 
 	public ProcesoDTO obtenerProcesoParaGraficar(ProcesoFilterDTO dto) throws ServerException {
@@ -227,16 +221,18 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 					break;
 			}
 			if (padre == null) {
-				//En universal sucedio que se creo una llamada al mismo proceso y se generaba un ciclo infinito
-				if(ultimo.getLlaveTabla().compareTo(ultimo.getMacroproceso())!=0) {
+				// En universal sucedio que se creo una llamada al mismo proceso y se generaba
+				// un ciclo infinito
+				if (ultimo.getLlaveTabla().compareTo(ultimo.getMacroproceso()) != 0) {
 					ProcesoDTO categoria = consultaXId(ultimo.getMacroproceso());
 					if (categoria == null)
-						throw new ServerException("No se encuentra la categoria principal. " + ultimo.getMacroproceso());
-					 procesos.add(categoria);	
-				}else {
-					procesos.remove(ultimo);	
+						throw new ServerException(
+								"No se encuentra la categoria principal. " + ultimo.getMacroproceso());
+					procesos.add(categoria);
+				} else {
+					procesos.remove(ultimo);
 				}
-				
+
 			} else {
 				if (padre.getHijos() == null)
 					padre.setHijos(new ArrayList<ProcesoDTO>());
@@ -264,7 +260,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 
 	public ProcesoDTO crearDesdePlantilla(String plantilla, String codigo, String nombre, String objetivo, String token)
 			throws ServerException {
-		// BEGIN Proceso_guardar
 		ProcesoFilterDTO filtroCantidad = new ProcesoFilterDTO();
 		int cantidad = contarResultados(filtroCantidad);
 		cantidad = cantidad + 1;
@@ -277,7 +272,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		dto = super.guardar(dto, token);
 		crearBasico(dto, plantilla, token);
 		return dto;
-		// END Proceso_guardar
 	}
 
 	private void validarMacroproceso(String macroproceso) throws ServerException {

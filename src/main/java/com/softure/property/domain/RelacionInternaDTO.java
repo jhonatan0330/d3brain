@@ -2,8 +2,6 @@ package com.softure.property.domain;
 
 import java.util.Date;
 
-// BEGIN region interImport
-// END region interImport
 
 import org.apache.ibatis.type.Alias;
 
@@ -14,8 +12,7 @@ import com.softure.java.domain.BasicDTO;
 
 @Alias("RelacionInternaDTO")
 @JsonInclude(Include.NON_NULL)
-public class RelacionInternaDTO extends BasicDTO
-{
+public class RelacionInternaDTO extends BasicDTO {
 
 	private String propiedad;
 	private String propiedadNombre;
@@ -36,63 +33,71 @@ public class RelacionInternaDTO extends BasicDTO
 	public void setPropiedad(String propiedad) {
 		this.propiedad = propiedad;
 	}
-	
+
 	public String getPropiedad() {
 		return propiedad;
 	}
+
 	public void setPropiedadNombre(String propiedadNombre) {
 		this.propiedadNombre = propiedadNombre;
 	}
-	
+
 	public String getPropiedadNombre() {
 		return propiedadNombre;
 	}
+
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
 	}
-	
+
 	public String getPlantilla() {
 		return plantilla;
 	}
+
 	public void setPlantillaNombre(String plantillaNombre) {
 		this.plantillaNombre = plantillaNombre;
 	}
-	
+
 	public String getPlantillaNombre() {
 		return plantillaNombre;
 	}
+
 	public void setPlantillaCodigo(String plantillaCodigo) {
 		this.plantillaCodigo = plantillaCodigo;
 	}
-	
+
 	public String getPlantillaCodigo() {
 		return plantillaCodigo;
 	}
+
 	public void setCampo(String campo) {
 		this.campo = campo;
 	}
-	
+
 	public String getCampo() {
 		return campo;
 	}
+
 	public void setCampoNombre(String campoNombre) {
 		this.campoNombre = campoNombre;
 	}
-	
+
 	public String getCampoNombre() {
 		return campoNombre;
 	}
+
 	public void setAuxiliar(String auxiliar) {
 		this.auxiliar = auxiliar;
 	}
-	
+
 	public String getAuxiliar() {
 		return auxiliar;
 	}
+
 	public void setFechaInicio(Date fechaInicio) {
 		this.fechaInicio = fechaInicio;
 	}
-	
+
 	public Date getFechaInicio() {
 		return fechaInicio;
 	}
@@ -128,6 +133,5 @@ public class RelacionInternaDTO extends BasicDTO
 	public void setCampoCodigo(String campoCodigo) {
 		this.campoCodigo = campoCodigo;
 	}
-	
 
 }

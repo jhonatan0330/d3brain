@@ -2,7 +2,6 @@ package com.softure.configuration_file.application;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.shared.domain.ServerException;
@@ -12,21 +11,26 @@ import com.softure.process_designer.application.ProcesoEstadoSvc;
 import com.softure.process_designer.domain.ProcesoEstadoDTO;
 import com.softure.process_designer.domain.ProcesoTransicionDTO;
 import com.softure.property.domain.PropiedadValorDefinidoDTO;
+import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SynchronizeProcessStateService {
 
-	@Autowired @Lazy 
-	private ProcesoEstadoSvc processStateService;
-	@Autowired @Lazy 
-	private SynchronizePropertiesService propertiesSynchronizeService;
+	private final ProcesoEstadoSvc processStateService;
+	private final SynchronizePropertiesService propertiesSynchronizeService;
+
+	public SynchronizeProcessStateService(@Lazy ProcesoEstadoSvc processStateService,
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.processStateService = processStateService;
+		this.propertiesSynchronizeService = propertiesSynchronizeService;
+	}
 
 	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
 		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
-			
+
 			for (ProcesoEstadoDTO remote : remoteTocompare) {
 				log.setRoot("SynchronizeProcessStateService " + remote.getProcesoNombre());
 				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
