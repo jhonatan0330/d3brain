@@ -38,6 +38,7 @@ import com.softure.document_execution.domain.PedidoVentaCaracteristicaDTO;
 import com.softure.document_execution.domain.PedidoVentaDTO;
 import com.softure.document_transaction.application.DocumentoTransaccionSvc;
 import com.softure.document_transition.application.CallDocumentUpdateFromAutomatic;
+import com.softure.fe.application.DianSoapSecurityHeader;
 import com.softure.java.services.ProcessTemplate;
 import com.softure.java.services.SoftureUtil;
 import com.softure.mail.application.MailSendMessageToAdminService;
@@ -78,6 +79,7 @@ public class WebServiceExecuteAPI {
 	private final DocumentoPlantillaCaracteristicaSvc fieldService;
 	private final ProcessTemplate templatesService;
 	private final WebClient webClient;
+	private final DianSoapSecurityHeader headerSigner;
 
 	public WebServiceExecuteAPI(@Lazy WebClient webClient, @Lazy DocumentoPlantillaSvc templateService,
 			@Lazy CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction, @Lazy PropiedadSvc propiedadesSvc,
@@ -85,7 +87,8 @@ public class WebServiceExecuteAPI {
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionSvc,
 			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy WebServiceCallPrepare prepareDataService,
 			@Lazy RelacionInternaSvc relacionService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
-			@Lazy ProcessTemplate templatesService) {
+			@Lazy ProcessTemplate templatesService,
+			@Lazy DianSoapSecurityHeader headerSigner) {
 		this.webClient = webClient;
 		this.templateService = templateService;
 		this.documentAutomaticUpdateFunction = documentAutomaticUpdateFunction;
@@ -99,6 +102,7 @@ public class WebServiceExecuteAPI {
 		this.relacionService = relacionService;
 		this.fieldService = fieldService;
 		this.templatesService = templatesService;
+		this.headerSigner = headerSigner;
 	}
 
 	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId,
@@ -228,7 +232,7 @@ public class WebServiceExecuteAPI {
 				callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()));
 			}
 		} else {
-			callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()) + extractionApiPrecondition);
+			callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()) + getParametersWithHttp(extractionApiPrecondition));
 		}
 		Map<String, String> headers = getHeaderProperties(service, callWS.getParametersInexecution());
 		// Execution
@@ -252,17 +256,23 @@ public class WebServiceExecuteAPI {
 
 	private String getParametersWithHttp(String pParameters) {
 		// Cuando los parametros son muy grandes y estan con http
-		if (pParameters != null && pParameters.startsWith("http")) {
-			try {
-				File file = File.createTempFile("PARAMETER_", ".txt");
-
-				FileUtils.copyURLToFile(new URI(pParameters).toURL(), file);
-
-				pParameters = FileUtils.readFileToString(file, Charset.defaultCharset());
-			} catch (IOException e) {
-				pParameters = pParameters + e.getMessage();
-			} catch (URISyntaxException e) {
-				pParameters = pParameters + e.getMessage();
+		if (pParameters != null) {	
+			Map<String, Object> mapParams = SoftureUtil.createMaptoString(pParameters);
+			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
+				if (entry.getValue() != null
+						&& entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
+					if(entry.getValue().toString().startsWith("http")) {
+						try {
+							File file = File.createTempFile("PARAMETER_", ".txt");
+							FileUtils.copyURLToFile(new URI(entry.getValue().toString()).toURL(), file);
+							pParameters = pParameters.replaceAll(entry.getValue().toString(), FileUtils.readFileToString(file, Charset.defaultCharset()));
+						} catch (IOException e) {
+							pParameters.replaceAll(entry.getValue().toString(), e.getMessage());
+						} catch (URISyntaxException e) {
+							pParameters.replaceAll(entry.getValue().toString(), e.getMessage());
+						}
+					}
+				}
 			}
 		}
 		return pParameters;
@@ -368,15 +378,6 @@ public class WebServiceExecuteAPI {
 		if (template.contains("[["))
 			template = templatesService.addParametersFromTemplateLink(template);
 
-		// Para los GET no se envia template todo esta en la url
-		/*
-		 * if (template == null || template.isEmpty()) { callWS.setFechaEjecucion(new
-		 * Date()); // Creo que se necesita para ver el hisotoria //
-		 * callWS.setEstado(SharedConstants.STATE_INACTIVE); callWS.setParametros(null);
-		 * callWS.setError("NOT_TEMPLATE"); callWS =
-		 * webServiceEjecucionSvc.update(callWS); callWS.setError(null);
-		 * callWS.setParametros("NOT_TEMPLATE"); return callWS; }
-		 */
 		String urlWithParameters = templatesService.generateOutputFile(
 				Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
 		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una
@@ -392,10 +393,15 @@ public class WebServiceExecuteAPI {
 			return callWS;
 		}
 
+		if(Propiedades.obtenerParametro(service, Propiedades.API_FE_HEADER)!=null)
+			template = headerSigner.signHeaderTest(template);
+		
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
 				callWS.getExtracciones(), service.getNombre()) + template;
+		
+		
 		callWS.setEntrada(
 				uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice", "private"));
 		String responseApi = null;

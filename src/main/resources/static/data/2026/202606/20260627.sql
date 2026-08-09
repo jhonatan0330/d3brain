@@ -1,6 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2026-06-27';
 
-CREATE TABLE tenant_ten (
+CREATE TABLE if not exists tenant_ten (
     cten_llave varchar(32) NOT NULL,
     cten_nombre varchar(255)    NOT NULL,
     cten_url varchar(500)    NOT NULL,

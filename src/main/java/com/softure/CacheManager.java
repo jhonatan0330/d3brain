@@ -263,6 +263,7 @@ public class CacheManager {
 	}
 
 	public void putSession(String sessionId, UsuarioSesionDTO session) {
+		if(session == null) return;
 		TenantCacheState state = current();
 		state.getSessionMap().put(sessionId, session);
 		System.out.println(new Date().toString() + " SESSION tenant=" + resolveTenantId() + " CACHE token: "

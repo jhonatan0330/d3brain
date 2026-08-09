@@ -31,6 +31,10 @@ public class SynchronizeApiService {
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeApi");
 			for (WebServiceDTO remote : remoteList) {
+				if (remote.getCodigo() == null || remote.getCodigo().isEmpty()) {
+					log.error("API CODE IS NULL " + remote.getNombre());
+					continue;
+				}
 				WebServiceDTO local = findTemplateInList(localListToErase, remote.getCodigo());
 				// Creo el nuevo proceso
 				if (local != null) {
@@ -73,7 +77,7 @@ public class SynchronizeApiService {
 	}
 
 	private WebServiceDTO findTemplateInList(List<WebServiceDTO> array, String code) {
-		if (array == null)
+		if (array == null || array.isEmpty() || code == null)
 			return null;
 		for (WebServiceDTO localProcess : array) {
 			if (localProcess != null && code.compareTo(localProcess.getCodigo()) == 0) {

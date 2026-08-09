@@ -654,3 +654,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_textoculto)
 	VALUES('PROP_307' , 'C', 'VALIDAR SI SE GENERA EL VINCULO SEGUN CONDICIONES', 'VINCULO_VALIDATE_PREVIOUS_SQL', 'REQUISITO', 'C', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
+	VALUES('PROP_308' , 'W', 'FIRMAR HEADER FACTURA ELECTRONICA', 'API_FE_HEADER', 'REQUISITO');

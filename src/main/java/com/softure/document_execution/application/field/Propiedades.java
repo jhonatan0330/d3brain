@@ -38,6 +38,7 @@ public class Propiedades {
 	public static final String API_BASE = "API_BASE";
 	public static final String API_TEMPLATE = "API_TEMPLATE";
 	public static final String API_URL = "API_URL";
+	public static final String API_FE_HEADER = "API_FE_HEADER";
 
 	public static final String API_EXTRACTION = "API_EXTRACTION";
 	public static final String API_EXTRACTION_NO_ERROR = "API_EXTRACTION_NO_ERROR";
@@ -298,7 +299,7 @@ public class Propiedades {
 	public static final String APP_READER = "APP_READER";
 	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
 	public static final String APP_DFA = "APP_DFA";
-
+	
 	// ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
 

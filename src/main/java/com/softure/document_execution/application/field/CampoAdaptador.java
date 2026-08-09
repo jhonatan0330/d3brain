@@ -22,7 +22,6 @@ public class CampoAdaptador {
 	private final TipoDisponibilidad tipoDisponibilidad;
 	private final TipoFecha tipoFecha;
 	private final TipoInformativo tipoInformativo;
-	private final TipoGPS tipoGPS;
 	private final TipoGPSMap tipoGPSMap;
 	private final TipoNumero tipoNumero;
 	private final TipoProceso tipoProceso;
@@ -34,7 +33,7 @@ public class CampoAdaptador {
 	public CampoAdaptador(@Lazy DocumentoPlantillaCaracteristicaSvc fieldService, @Lazy TipoArchivo tipoArchivo,
 			@Lazy TipoBinario tipoBinario, @Lazy TipoConfiguracion tipoConfiguracion, @Lazy TipoCroquis tipoCroquis,
 			@Lazy TipoDetallePedido tipoDetallePedido, @Lazy TipoDisponibilidad tipoDisponibilidad,
-			@Lazy TipoFecha tipoFecha, @Lazy TipoInformativo tipoInformativo, @Lazy TipoGPS tipoGPS,
+			@Lazy TipoFecha tipoFecha, @Lazy TipoInformativo tipoInformativo,
 			@Lazy TipoGPSMap tipoGPSMap, @Lazy TipoNumero tipoNumero, @Lazy TipoProceso tipoProceso,
 			@Lazy TipoProductoLista tipoProductoLista, @Lazy TipoSeccion tipoSeccion, @Lazy TipoTexto tipoTexto,
 			@Lazy TipoVinculo tipoVinculo) {
@@ -47,7 +46,6 @@ public class CampoAdaptador {
 		this.tipoDisponibilidad = tipoDisponibilidad;
 		this.tipoFecha = tipoFecha;
 		this.tipoInformativo = tipoInformativo;
-		this.tipoGPS = tipoGPS;
 		this.tipoGPSMap = tipoGPSMap;
 		this.tipoNumero = tipoNumero;
 		this.tipoProceso = tipoProceso;
@@ -186,10 +184,6 @@ public class CampoAdaptador {
 		}
 		case DocumentoPlantillaCaracteristicaDTO.FECHA: {
 			vResultado = tipoFecha.guardarCampo(pCampo, token);
-			break;
-		}
-		case DocumentoPlantillaCaracteristicaDTO.GPS: {
-			vResultado = tipoGPS.guardarCampo(pCampo, token);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO: {

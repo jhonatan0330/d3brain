@@ -1,1 +1,0 @@
-COMMENT ON TABLE catalogo_ctg IS '2023-10-02';
