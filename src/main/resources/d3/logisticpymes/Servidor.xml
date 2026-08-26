@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.logisticpymes.infrastructure.ServidorMapper">
+
+	<sql id="selectServidorFragment">
+		select
+			cser_llave as  llaveTabla
+			,cser_tipo as  tipo
+			,nser_orden as  orden
+			,cser_nombre as  nombre
+			,cser_url as  url
+			,cser_puerto as  puerto
+			,cser_usuario as  usuario
+			,cser_clave as  clave
+			,cser_base as  base
+			,cser_urlconexion as  urlConexion
+			,cser_servidorrespaldo as  servidorRespaldo
+			,cser_estado as estado
+		from servidor_serp a
+	</sql>
+
+	<sql id="whereServidorFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cser_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cser_estado = #{estado}
+			</if>
+			<if test="tipo!=null">
+				and cser_tipo = #{tipo}
+			</if>
+			<if test="nombre!=null">
+				and cser_nombre = #{nombre}
+			</if>
+			<if test="puerto!=null">
+				and cser_puerto = #{puerto}
+			</if>
+			<if test="servidorRespaldo!=null">
+				and cser_servidorrespaldo = #{servidorRespaldo}
+			</if>
+	</sql>
+
+	<sql id="paginationServidorFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereServidorPrimaryKeyFragment">
+		where
+			cser_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ServidorDTO" resultType="ServidorDTO">
+		<include refid="selectServidorFragment" />
+		<include refid="whereServidorFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ServidorDTO" resultType="ServidorDTO">
+		<include refid="selectServidorFragment" />
+		<include refid="whereServidorFragment" />
+		order by cser_tipo 
+		, nser_orden 
+		<include refid="paginationServidorFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ServidorDTO" resultType="int">
+		select count(*)
+		from servidor_serp
+		<include refid="whereServidorFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ServidorDTO" resultType="ServidorDTO">
+		insert into servidor_serp(
+			cser_llave
+		<if test="tipo!=null">
+			,cser_tipo
+		</if>
+		<if test="orden!=null">
+			,nser_orden
+		</if>
+		<if test="nombre!=null">
+			,cser_nombre
+		</if>
+		<if test="url!=null">
+			,cser_url
+		</if>
+		<if test="puerto!=null">
+			,cser_puerto
+		</if>
+		<if test="usuario!=null">
+			,cser_usuario
+		</if>
+		<if test="clave!=null">
+			,cser_clave
+		</if>
+		<if test="base!=null">
+			,cser_base
+		</if>
+		<if test="urlConexion!=null">
+			,cser_urlconexion
+		</if>
+		<if test="servidorRespaldo!=null">
+			,cser_servidorrespaldo
+		</if>
+		<if test="estado!=null">
+			,cser_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="orden!=null">
+			,#{orden}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="url!=null">
+			,#{url}
+		</if>
+		<if test="puerto!=null">
+			,#{puerto}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="clave!=null">
+			,#{clave}
+		</if>
+		<if test="base!=null">
+			,#{base}
+		</if>
+		<if test="urlConexion!=null">
+			,#{urlConexion}
+		</if>
+		<if test="servidorRespaldo!=null">
+			,#{servidorRespaldo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ServidorDTO" resultType="ServidorDTO">
+		update servidor_serp
+			set
+				cser_tipo = #{tipo},
+				nser_orden = #{orden},
+				cser_nombre = #{nombre},
+				cser_url = #{url},
+				cser_puerto = #{puerto},
+				cser_usuario = #{usuario},
+				cser_clave = #{clave},
+				cser_base = #{base},
+				cser_urlconexion = #{urlConexion},
+				cser_servidorrespaldo = #{servidorRespaldo},
+				cser_estado =#{estado}
+		<include refid="whereServidorPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleServidorFragment">
+		select
+			cser_llave as  llaveTabla
+			,cser_tipo as  tipo
+			,nser_orden as  orden
+			,cser_nombre as  nombre
+			,cser_url as  url
+			,cser_puerto as  puerto
+			,cser_usuario as  usuario
+			,cser_clave as  clave
+			,cser_base as  base
+			,cser_urlconexion as  urlConexion
+			,cser_servidorrespaldo as  servidorRespaldo
+			,cser_estado as estado
+		from servidor_serp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ServidorDTO">
+		<include refid="selectSimpleServidorFragment" />
+		<include refid="whereServidorFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ServidorDTO">
+		<include refid="selectSimpleServidorFragment" />
+		<include refid="whereServidorFragment" />
+		order by cser_tipo 
+		, nser_orden 
+		<include refid="paginationServidorFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

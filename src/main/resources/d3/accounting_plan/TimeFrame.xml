@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.accounting_plan.infrastructure.TimeFrameMapper">
+
+	<sql id="selectTimeFrameFragment">
+		select
+			cptm_llave as key
+			,nptm_nivel as level
+			,dptm_fechainicio as startDate
+			,dptm_fechafin as endDate
+			,cptm_codigo as code
+			,nptm_ano as year
+			,nptm_mes as month
+			,nptm_dia as day
+			,nptm_hora as hour
+			,nptm_minuto as minute
+			,cptm_estado as state
+		from account.periodotiempo_ptm a
+	</sql>
+
+	<sql id="whereTimeFrameFragment">
+		where 1=1<if test="key!=null">
+		and cptm_llave = #{key}</if><if test="state!=null">
+		and cptm_estado = #{state}</if>
+<if test="level!=null">		and nptm_nivel = #{level}</if>
+<if test="startDateMin!=null">		and dptm_fechainicio >= #{startDateMin}</if><if test="startDateMax!=null">		and dptm_fechainicio <![CDATA[ < ]]> #{startDateMax}</if>
+<if test="endDateMin!=null">		and dptm_fechafin >= #{endDateMin}</if><if test="endDateMax!=null">		and dptm_fechafin <![CDATA[ < ]]> #{endDateMax}</if>
+<if test="code!=null">		and cptm_codigo = #{code}</if>
+<if test="year!=null">		and nptm_ano = #{year}</if>
+<if test="month!=null">		and nptm_mes = #{month}</if>
+<if test="day!=null">		and nptm_dia = #{day}</if>
+<if test="hour!=null">		and nptm_hora = #{hour}</if>
+<if test="minute!=null">		and nptm_minuto = #{minute}</if>
+
+	</sql>
+
+	<sql id="paginationTimeFrameFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereTimeFramePrimaryKeyFragment">
+		where cptm_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="TimeFrameFilterDTO" resultType="TimeFrameDTO">
+		<include refid="selectTimeFrameFragment" />
+		<include refid="whereTimeFrameFragment" />
+		LIMIT 2
+	</select>
+	
+	<select id="getMany" parameterType="TimeFrameFilterDTO" resultType="TimeFrameDTO">
+		<include refid="selectTimeFrameFragment" />
+		<include refid="whereTimeFrameFragment" />
+		order by dptm_fechainicio 
+		<include refid="paginationTimeFrameFragment" />
+	</select>
+
+	<select id="count" parameterType="TimeFrameFilterDTO" resultType="int">
+		select count(*)
+		from account.periodotiempo_ptm
+		<include refid="whereTimeFrameFragment" />
+	</select>
+
+	<select id="insert" parameterType="TimeFrameDTO" resultType="TimeFrameDTO">
+		insert into account.periodotiempo_ptm(cptm_llave
+		<if test="level!=null">,nptm_nivel</if>
+		<if test="startDate!=null">,dptm_fechainicio</if>
+		<if test="endDate!=null">,dptm_fechafin</if>
+		<if test="code!=null">,cptm_codigo</if>
+		<if test="year!=null">,nptm_ano</if>
+		<if test="month!=null">,nptm_mes</if>
+		<if test="day!=null">,nptm_dia</if>
+		<if test="hour!=null">,nptm_hora</if>
+		<if test="minute!=null">,nptm_minuto</if>
+		<if test="state!=null">,cptm_estado</if>
+		) values (#{key}
+		<if test="level!=null">,#{level}</if>
+		<if test="startDate!=null">,#{startDate}</if>
+		<if test="endDate!=null">,#{endDate}</if>
+		<if test="code!=null">,#{code}</if>
+		<if test="year!=null">,#{year}</if>
+		<if test="month!=null">,#{month}</if>
+		<if test="day!=null">,#{day}</if>
+		<if test="hour!=null">,#{hour}</if>
+		<if test="minute!=null">,#{minute}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="TimeFrameDTO" resultType="TimeFrameDTO">
+		update account.periodotiempo_ptm
+		set
+		nptm_nivel = #{level},
+		dptm_fechainicio = #{startDate},
+		dptm_fechafin = #{endDate},
+		cptm_codigo = #{code},
+		nptm_ano = #{year},
+		nptm_mes = #{month},
+		nptm_dia = #{day},
+		nptm_hora = #{hour},
+		nptm_minuto = #{minute},
+		cptm_estado =#{state}
+		<include refid="whereTimeFramePrimaryKeyFragment" />
+	</select>
+	
+</mapper>

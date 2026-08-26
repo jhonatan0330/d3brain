@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.document_execution.infrastructure.PedidoVentaTiempoMapper">
+
+	<sql id="selectPedidoVentaTiempoFragment">
+		select
+			cpvt_llave as  llaveTabla
+			,cpvt_estado as estado
+		from pedidoventatiempo_pvtp a
+	</sql>
+
+	<sql id="wherePedidoVentaTiempoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpvt_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpvt_estado = #{estado}
+			</if>
+	</sql>
+
+	<sql id="paginationPedidoVentaTiempoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePedidoVentaTiempoPrimaryKeyFragment">
+		where
+			cpvt_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PedidoVentaTiempoDTO" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectPedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PedidoVentaTiempoDTO" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectPedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+		<include refid="paginationPedidoVentaTiempoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PedidoVentaTiempoDTO" resultType="int">
+		select count(*)
+		from pedidoventatiempo_pvtp
+		<include refid="wherePedidoVentaTiempoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PedidoVentaTiempoDTO" resultType="PedidoVentaTiempoDTO">
+		insert into pedidoventatiempo_pvtp(
+			cpvt_llave
+		<if test="estado!=null">
+			,cpvt_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PedidoVentaTiempoDTO" resultType="PedidoVentaTiempoDTO">
+		update pedidoventatiempo_pvtp
+			set
+				cpvt_estado =#{estado}
+		<include refid="wherePedidoVentaTiempoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimplePedidoVentaTiempoFragment">
+		select
+			cpvt_llave as  llaveTabla
+			,cpvt_estado as estado
+		from pedidoventatiempo_pvtp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectSimplePedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="PedidoVentaTiempoDTO">
+		<include refid="selectSimplePedidoVentaTiempoFragment" />
+		<include refid="wherePedidoVentaTiempoFragment" />
+		<include refid="paginationPedidoVentaTiempoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

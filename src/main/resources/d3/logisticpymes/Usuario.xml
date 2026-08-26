@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.logisticpymes.infrastructure.UsuarioMapper">
+
+	<sql id="selectUsuarioFragment">
+		select
+			cusr_llave as  llaveTabla
+			,cusr_identificacion as  identificacion
+			,cusr_nombre as  nombre
+			,cusr_imagen as  imagen
+			,cusr_correo as  correo
+			,cusr_telefono as  telefono
+			,cusr_estado as estado
+		from usuario_usrp a
+	</sql>
+
+	<sql id="whereUsuarioFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cusr_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cusr_estado = #{estado}
+			</if>
+			<if test="identificacion!=null">
+				and cusr_identificacion = #{identificacion}
+			</if>
+			<if test="nombre!=null">
+				and cusr_nombre = #{nombre}
+			</if>
+			<if test="telefono!=null">
+				and cusr_telefono = #{telefono}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))
+			</if>
+	</sql>
+
+	<sql id="paginationUsuarioFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereUsuarioPrimaryKeyFragment">
+		where
+			cusr_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
+		<include refid="selectUsuarioFragment" />
+		<include refid="whereUsuarioFragment" />
+	</select>
+	
+	<select id="listar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
+		<include refid="selectUsuarioFragment" />
+		<include refid="whereUsuarioFragment" />
+		order by cusr_nombre 
+		<include refid="paginationUsuarioFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="UsuarioDTO" resultType="int">
+		select count(*)
+		from usuario_usrp
+		<include refid="whereUsuarioFragment" />
+	</select>
+
+	<select id="insertar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
+		insert into usuario_usrp(
+			cusr_llave
+		<if test="identificacion!=null">
+			,cusr_identificacion
+		</if>
+		<if test="nombre!=null">
+			,cusr_nombre
+		</if>
+		<if test="imagen!=null">
+			,cusr_imagen
+		</if>
+		<if test="correo!=null">
+			,cusr_correo
+		</if>
+		<if test="telefono!=null">
+			,cusr_telefono
+		</if>
+		<if test="estado!=null">
+			,cusr_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="identificacion!=null">
+			,#{identificacion}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="correo!=null">
+			,#{correo}
+		</if>
+		<if test="telefono!=null">
+			,#{telefono}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="UsuarioDTO" resultType="UsuarioDTO">
+		update usuario_usrp
+			set
+				cusr_identificacion = #{identificacion},
+				cusr_nombre = #{nombre},
+				cusr_imagen = #{imagen},
+				cusr_correo = #{correo},
+				cusr_telefono = #{telefono},
+				cusr_estado =#{estado}
+		<include refid="whereUsuarioPrimaryKeyFragment" />
+	</select>
+
+	<select id="listarRol" parameterType="UsuarioDTO" resultType="UsuarioDTO">
+		select
+			cusr_llave as  llaveTabla
+			,cusr_identificacion as  identificacion
+			,cusr_nombre as  nombre
+			,cusr_imagen as  imagen
+			,cusr_correo as  correo
+			,cusr_telefono as  telefono
+			,cusr_estado as estado
+		from usuario_usrp a
+			inner join usuariorol_erlp on (cerl_usuario = cusr_llave and  cerl_estado='A' )
+		where 
+			cusr_estado = 'A'
+		    and cerl_rolacceso = #{rol}
+		   	<if test="filtroParametro!=null">and (upper(cusr_nombre) like upper('%' || #{filtroParametro} || '%') or upper(cusr_identificacion) = upper( #{filtroParametro}))</if>
+		<include refid="paginationUsuarioFragment" />
+	</select>
+	
+
+	<select id="getUsersState" resultType="UsuarioDTO">
+		<include refid="selectUsuarioFragment" />
+		inner join pedidoventa_pdvp on (cpdv_llave = #{document})
+		inner join propiedad_ppdp on (cppd_propiedadvalor = 'PROP_89' and cppd_estado = 'A')
+		inner join usuariorol_erlp on (cerl_rolacceso = cppd_valor and cerl_estado = 'A')
+		left join actividad_actp on (cact_estado = 'A' and cact_documento = cpdv_llave)
+	where cppd_campo = cpdv_estadoexpediente
+		and cusr_llave = cerl_usuario 
+		and cusr_estado = 'A'
+		and (cact_responsable is null or cusr_llave != cact_responsable)
+	</select>
+	
+	<select id="getUserByDocument" resultType="UsuarioDTO">
+		<include refid="selectUsuarioFragment" />
+		inner join usuariorol_erlp on (cerl_usuario = cusr_llave and cerl_estado = 'A')
+		where cerl_documento =  #{pDocument}
+	</select>
+
+
+</mapper>

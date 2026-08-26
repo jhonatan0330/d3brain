@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.document_transaction.infrastructure.TransaccionLogMapper">
+
+	<sql id="selectTransaccionLogFragment">
+		select
+			ctlg_llave as  llaveTabla
+			,dtlg_fechainicio as  fechaInicio
+			,dtlg_fechafin as  fechaFin
+			,ctlg_transaccion as  transaccion
+			,ctlg_sesion as sesion
+			,ctlg_usuario as usuario
+			,ctlg_entrada as entrada
+			,ctlg_salida as salida
+			,ctlg_estado as estado
+		from transaccionlog_tlgp a
+	</sql>
+
+	<sql id="whereTransaccionLogFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ctlg_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ctlg_estado = #{estado}
+			</if>
+			<if test="fechaInicioMin!=null">
+				and dtlg_fechainicio >= #{fechaInicioMin}
+			</if>
+			<if test="fechaInicioMax!=null">
+				and dtlg_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+			</if>
+			<if test="fechaFinMin!=null">
+				and dtlg_fechafin >= #{fechaFinMin}
+			</if>
+			<if test="fechaFinMax!=null">
+				and dtlg_fechafin <![CDATA[ < ]]>  #{fechaFinMax}
+			</if>
+			<if test="transaccion!=null">
+				and ctlg_transaccion = #{transaccion}
+			</if>
+			<if test="sesion!=null">
+				and ctlg_sesion = #{sesion}
+			</if>
+	</sql>
+
+	<sql id="paginationTransaccionLogFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTransaccionLogPrimaryKeyFragment">
+		where
+			ctlg_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TransaccionLogDTO" resultType="TransaccionLogDTO">
+		<include refid="selectTransaccionLogFragment" />
+		<include refid="whereTransaccionLogFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TransaccionLogDTO" resultType="TransaccionLogDTO">
+		<include refid="selectTransaccionLogFragment" />
+		<include refid="whereTransaccionLogFragment" />
+		<include refid="paginationTransaccionLogFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TransaccionLogDTO" resultType="int">
+		select count(*)
+		from transaccionlog_tlgp
+		<include refid="whereTransaccionLogFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TransaccionLogDTO" resultType="TransaccionLogDTO">
+		insert into transaccionlog_tlgp(
+			ctlg_llave
+		<if test="fechaInicio!=null">
+			,dtlg_fechainicio
+		</if>
+		<if test="fechaFin!=null">
+			,dtlg_fechafin
+		</if>
+		<if test="transaccion!=null">
+			,ctlg_transaccion
+		</if>
+		<if test="sesion!=null">
+			,ctlg_sesion
+		</if>
+		<if test="usuario!=null">
+			,ctlg_usuario
+		</if>
+		<if test="entrada!=null">
+			,ctlg_entrada
+		</if>
+		<if test="salida!=null">
+			,ctlg_salida
+		</if>
+		<if test="estado!=null">
+			,ctlg_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="fechaInicio!=null">
+			,#{fechaInicio}
+		</if>
+		<if test="fechaFin!=null">
+			,#{fechaFin}
+		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
+		<if test="sesion!=null">
+			,#{sesion}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="entrada!=null">
+			,#{entrada}
+		</if>
+		<if test="salida!=null">
+			,#{salida}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TransaccionLogDTO" resultType="TransaccionLogDTO">
+		update transaccionlog_tlgp
+			set
+				dtlg_fechainicio = #{fechaInicio},
+				dtlg_fechafin = #{fechaFin},
+				ctlg_transaccion = #{transaccion},
+				ctlg_sesion = #{sesion},
+				ctlg_usuario = #{usuario},
+				ctlg_entrada = #{entrada},
+				ctlg_salida = #{salida},
+				ctlg_estado =#{estado}
+		<include refid="whereTransaccionLogPrimaryKeyFragment" />
+	</select>
+
+</mapper>

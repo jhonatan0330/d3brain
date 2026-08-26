@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.money.infrastructure.CuentaMapper">
+
+	<sql id="selectCuentaFragment">
+		select
+			ccue_llave as  llaveTabla
+			,ccue_codigo as  codigo
+			,ccue_nombre as  nombre
+			,(select mmov_saldofinal from movimiento_movp where cmov_cuenta = ccue_llave and cmov_estado = 'A' and cmov_siguiente is null) as  saldo
+			,ccue_documento as  documento
+			,dcue_fechaconciliacion as  fechaConciliacion
+			,bcue_validarturno as  validarTurno
+			,ccue_estado as estado
+		from cuenta_cuep a
+	</sql>
+
+	<sql id="whereCuentaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccue_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccue_estado = #{estado}
+			</if>
+			<if test="codigo!=null">
+				and ccue_codigo = #{codigo}
+			</if>
+			<if test="nombre!=null">
+				and ccue_nombre = #{nombre}
+			</if>
+			<if test="documento!=null">
+				and ccue_documento = #{documento}
+			</if>
+			<if test="fechaConciliacionMin!=null">
+				and dcue_fechaconciliacion >= #{fechaConciliacionMin}
+			</if>
+			<if test="fechaConciliacionMax!=null">
+				and dcue_fechaconciliacion <![CDATA[ < ]]>  #{fechaConciliacionMax}
+			</if>
+			<if test="validarTurnoFilter!=null">
+				and bcue_validarturno = #{validarTurnoFilter}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(ccue_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationCuentaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereCuentaPrimaryKeyFragment">
+		where
+			ccue_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		<include refid="selectCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		<include refid="selectCuentaFragment" />
+		<include refid="whereCuentaFragment" />
+		order by ccue_nombre 
+		<include refid="paginationCuentaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="CuentaDTO" resultType="int">
+		select count(*)
+		from cuenta_cuep
+		<include refid="whereCuentaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		insert into cuenta_cuep(
+			ccue_llave
+		<if test="codigo!=null">
+			,ccue_codigo
+		</if>
+		<if test="nombre!=null">
+			,ccue_nombre
+		</if>
+		<if test="documento!=null">
+			,ccue_documento
+		</if>
+		<if test="fechaConciliacion!=null">
+			,dcue_fechaconciliacion
+		</if>
+		<if test="validarTurno!=null">
+			,bcue_validarturno
+		</if>
+		<if test="estado!=null">
+			,ccue_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="fechaConciliacion!=null">
+			,#{fechaConciliacion}
+		</if>
+		<if test="validarTurno!=null">
+			,#{validarTurno}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="CuentaDTO" resultType="CuentaDTO">
+		update cuenta_cuep
+			set
+				ccue_codigo = #{codigo},
+				ccue_nombre = #{nombre},
+				ccue_documento = #{documento},
+				dcue_fechaconciliacion = #{fechaConciliacion},
+				bcue_validarturno = #{validarTurno},
+				ccue_estado =#{estado}
+		<include refid="whereCuentaPrimaryKeyFragment" />
+	</select>
+
+	<select id="sobregiro" resultType="java.lang.Long">
+		select 
+			coalesce(sum(mpvc_valornumero),0) 
+		from 
+			cuenta_cuep 
+			inner join pedidoventa_pdvp on (cpdv_llave = ccue_documento)
+			inner join propiedad_ppdp on (cppd_campo = cpdv_plantilla and cppd_estado = 'A')
+			inner join campo4id(cpdv_llave, cppd_valor, npdv_historico) on 1=1
+		where ccue_documento = #{documento}
+			and cppd_propiedadvalor = 'PROP_99'
+	</select>
+	
+	<select id="turnomultiple" resultType="java.lang.Boolean">
+	select exists (
+		select 1
+		from 
+			cuenta_cuep 
+			inner join pedidoventa_pdvp on (cpdv_llave = ccue_documento)
+			inner join campo_documento on cdrc_documento = cpdv_llave and cdpf_codigo = 'TURNO_MULTIPLE'
+		where ccue_documento = #{documento}
+	)
+	</select>
+
+</mapper>

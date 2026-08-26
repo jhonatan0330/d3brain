@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.tariff.infrastructure.TarifaMapper">
+
+	<sql id="selectTarifaFragment">
+		select
+			ctar_llave as  llaveTabla
+			,ctar_tarifario as  tarifario
+			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
+			,(select ctrf_documento from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioDocumento
+			,ctar_documento as  documento
+			,ctar_producto as  producto
+			,ctar_productodocumento as productoDocumento
+			,descripcion(ctar_productodocumento) as  productoNombre
+			,ctar_recurso as  recurso
+			,mtar_valorminimo as  valorMinimo
+			,mtar_valor as  valor
+			,mtar_valormaximo as  valorMaximo
+			,ntar_cantidadminima as  cantidadMinima
+			,ntar_cantidadmaxima as  cantidadMaxima
+			,mtar_totalminimo as  totalMinimo
+			,ctar_dimension2 as  dimension2
+			,ctar_dimension3 as  dimension3
+			,ctar_dimension4 as  dimension4
+			,ctar_creacionusuario as createdUser
+			,dtar_modificacionfecha as updatedAt
+			,ctar_modificacionusuario as updatedUser
+			,ctar_estado as estado
+		from tarifa_tarp a
+	</sql>
+
+	<sql id="whereTarifaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ctar_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ctar_estado = #{estado}
+			</if>
+			<if test="tarifario!=null">
+				and ctar_tarifario = #{tarifario}
+			</if>
+			<if test="documento!=null">
+				and ctar_documento = #{documento}
+			</if>
+			<if test="producto!=null">
+				and ctar_producto = #{producto}
+			</if>
+			<if test="productoDocumento!=null">
+				and ctar_productodocumento = #{productoDocumento}
+			</if>
+			<if test="recurso!=null">
+				and ctar_recurso = #{recurso}
+			</if>
+			<if test="dimension2!=null">
+				and ctar_dimension2 = #{dimension2}
+			</if>
+			<if test="dimension3!=null">
+				and ctar_dimension3 = #{dimension3}
+			</if>
+			<if test="dimension4!=null">
+				and ctar_dimension4 = #{dimension4}
+			</if>
+			<if test="filtroParametro!=null">
+				and (  upper(descripcion(ctar_recurso)) like upper('%' || #{filtroParametro} || '%') or  
+						upper(descripcion(ctar_dimension2)) like upper('%' || #{filtroParametro} || '%')or
+						upper(descripcion(ctar_dimension3)) like upper('%' || #{filtroParametro} || '%') or
+						upper(descripcion(ctar_dimension4)) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationTarifaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereTarifaPrimaryKeyFragment">
+		where
+			ctar_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="TarifaDTO" resultType="TarifaDTO">
+		<include refid="selectTarifaFragment" />
+		<include refid="whereTarifaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="TarifaDTO" resultType="TarifaDTO">
+		<include refid="selectTarifaFragment" />
+		<include refid="whereTarifaFragment" />
+		order by ctar_tarifario 
+		, productonombre 
+		, ntar_cantidadminima 
+		<include refid="paginationTarifaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="TarifaDTO" resultType="int">
+		select count(*)
+		from tarifa_tarp
+		<include refid="whereTarifaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="TarifaDTO" resultType="TarifaDTO">
+		insert into tarifa_tarp(
+			ctar_llave
+		<if test="tarifario!=null">
+			,ctar_tarifario
+		</if>
+		<if test="documento!=null">
+			,ctar_documento
+		</if>
+		<if test="producto!=null">
+			,ctar_producto
+		</if>
+		<if test="productoDocumento!=null">
+			,ctar_productodocumento
+		</if>
+		<if test="recurso!=null">
+			,ctar_recurso
+		</if>
+		<if test="valorMinimo!=null">
+			,mtar_valorminimo
+		</if>
+		<if test="valor!=null">
+			,mtar_valor
+		</if>
+		<if test="valorMaximo!=null">
+			,mtar_valormaximo
+		</if>
+		<if test="cantidadMinima!=null">
+			,ntar_cantidadminima
+		</if>
+		<if test="cantidadMaxima!=null">
+			,ntar_cantidadmaxima
+		</if>
+		<if test="totalMinimo!=null">
+			,mtar_totalminimo
+		</if>
+		<if test="dimension2!=null">
+			,ctar_dimension2
+		</if>
+		<if test="dimension3!=null">
+			,ctar_dimension3
+		</if>
+		<if test="dimension4!=null">
+			,ctar_dimension4
+		</if>
+		<if test="createdUser!=null">
+			,ctar_creacionusuario
+		</if>
+		<if test="estado!=null">
+			,ctar_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="tarifario!=null">
+			,#{tarifario}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="producto!=null">
+			,#{producto}
+		</if>
+		<if test="productoDocumento!=null">
+			,#{productoDocumento}
+		</if>
+		<if test="recurso!=null">
+			,#{recurso}
+		</if>
+		<if test="valorMinimo!=null">
+			,#{valorMinimo}
+		</if>
+		<if test="valor!=null">
+			,#{valor}
+		</if>
+		<if test="valorMaximo!=null">
+			,#{valorMaximo}
+		</if>
+		<if test="cantidadMinima!=null">
+			,#{cantidadMinima}
+		</if>
+		<if test="cantidadMaxima!=null">
+			,#{cantidadMaxima}
+		</if>
+		<if test="totalMinimo!=null">
+			,#{totalMinimo}
+		</if>
+		<if test="dimension2!=null">
+			,#{dimension2}
+		</if>
+		<if test="dimension3!=null">
+			,#{dimension3}
+		</if>
+		<if test="dimension4!=null">
+			,#{dimension4}
+		</if>
+		<if test="createdUser!=null">
+			,#{createdUser}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="TarifaDTO" resultType="TarifaDTO">
+		update tarifa_tarp
+			set
+				ctar_tarifario = #{tarifario},
+				ctar_documento = #{documento},
+				ctar_producto = #{producto},
+				ctar_productodocumento = #{productoDocumento},
+				ctar_recurso = #{recurso},
+				mtar_valorminimo = #{valorMinimo},
+				mtar_valor = #{valor},
+				mtar_valormaximo = #{valorMaximo},
+				ntar_cantidadminima = #{cantidadMinima},
+				ntar_cantidadmaxima = #{cantidadMaxima},
+				mtar_totalminimo = #{totalMinimo},
+				ctar_dimension2 = #{dimension2},
+				ctar_dimension3 = #{dimension3},
+				dtar_modificacionfecha = #{updatedAt},
+				ctar_modificacionusuario = #{updatedUser},
+				ctar_estado =#{estado}
+		<include refid="whereTarifaPrimaryKeyFragment" />
+	</select>
+
+
+
+	<select id="obtenerTarifa" parameterType="TarifaDTO" resultType="TarifaDTO">
+	  <include refid="selectTarifaFragment" />
+	  <include refid="whereTarifaFragment" />
+	  <choose><when test="recurso!=null"></when><otherwise>and ctar_recurso is null</otherwise></choose>
+	  <choose><when test="dimension2!=null"></when><otherwise>and ctar_dimension2 is null</otherwise></choose>
+	  <choose><when test="dimension3!=null"></when><otherwise>and ctar_dimension3 is null</otherwise></choose>
+	  <choose><when test="dimension4!=null"></when><otherwise>and ctar_dimension4 is null</otherwise></choose>
+	  <if test="cantidadMinima!=null">and ((#{cantidadMinima} between ntar_cantidadminima and ntar_cantidadmaxima) or (#{cantidadMaxima} between ntar_cantidadminima and ntar_cantidadmaxima))</if>
+	  and ctar_estado = 'A'
+	  order by tarifarioNombre, productoNombre, ntar_cantidadminima
+	</select>
+
+	<select id="obtenerTarifaFuncion" resultType="TarifaDTO">
+		select
+			ctar_llave as  llaveTabla
+			,ctar_tarifario as  tarifario
+			,(select ctrf_nombre from tarifario_trfp where ctrf_llave = ctar_tarifario) as  tarifarioNombre
+			,ctar_documento as  documento
+			,ctar_producto as  producto
+			,ctar_productodocumento as  productoDocumento
+			,descripcion(ctar_productodocumento)  as  productoNombre
+			,ctar_recurso as  recurso
+			,ctar_dimension2 as  dimension2
+			,ctar_dimension3 as  dimension3
+			,ctar_dimension4 as  dimension4
+			,mtar_valorminimo as  valorMinimo
+			,mtar_valor as  valor
+			,mtar_valormaximo as  valorMaximo
+			,ntar_cantidadminima as  cantidadMinima
+			,ntar_cantidadmaxima as  cantidadMaxima
+			,mtar_totalminimo as  totalMinimo
+			,ctar_estado as estado
+		from propiedad_${propiedad} (#{producto}, #{productoBase}, <choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," >#{item.valorOpcion}</foreach>]</when><otherwise>null</otherwise></choose>)
+	</select>
+
+</mapper>

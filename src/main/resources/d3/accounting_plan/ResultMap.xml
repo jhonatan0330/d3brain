@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.accounting_plan.infrastructure.ResultMapMapper">
+
+	<sql id="selectResultMapFragment">
+		select
+			crmp_llave as key
+			,crmp_cuenta as account
+			,(select ccue_nombre from account.cuenta_cue where ccue_llave = crmp_cuenta) as accountName
+			,(select ccue_codigo from account.cuenta_cue where ccue_llave = crmp_cuenta) as accountCode
+			,crmp_periodo as timeFrame
+			,(select cptm_codigo from account.periodotiempo_ptm where cptm_llave = crmp_periodo) as timeFrameName
+			,nrmp_cantidad as quantity
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,crmp_estado as state
+		from account.maparesultados_rmp a
+	</sql>
+
+	<sql id="whereResultMapFragment">
+		where 1=1<if test="key!=null">
+		and crmp_llave = #{key}</if><if test="state!=null">
+		and crmp_estado = #{state}</if>
+<if test="account!=null">		and crmp_cuenta = #{account}</if>
+<if test="timeFrame!=null">		and crmp_periodo = #{timeFrame}</if>
+<if test="quantity!=null">		and nrmp_cantidad = #{quantity}</if>
+<if test="lastBalance!=null">		and mrmp_saldoanterior = #{lastBalance}</if>
+<if test="nextBalance!=null">		and mrmp_saldosiguiente = #{nextBalance}</if>
+<if test="positive!=null">		and mrmp_positivo = #{positive}</if>
+<if test="negative!=null">		and mrmp_negativo = #{negative}</if>
+<if test="value!=null">		and mrmp_valor = #{value}</if>
+
+	</sql>
+
+	<sql id="paginationResultMapFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereResultMapPrimaryKeyFragment">
+		where crmp_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+		LIMIT 2
+	</select>
+	
+	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+		
+		<include refid="paginationResultMapFragment" />
+	</select>
+
+	<select id="count" parameterType="ResultMapFilterDTO" resultType="int">
+		select count(*)
+		from account.maparesultados_rmp
+		<include refid="whereResultMapFragment" />
+	</select>
+
+	<select id="insert" parameterType="ResultMapDTO" resultType="ResultMapDTO">
+		insert into account.maparesultados_rmp(crmp_llave
+		<if test="account!=null">,crmp_cuenta</if>
+		<if test="timeFrame!=null">,crmp_periodo</if>
+		<if test="quantity!=null">,nrmp_cantidad</if>
+		<if test="lastBalance!=null">,mrmp_saldoanterior</if>
+		<if test="nextBalance!=null">,mrmp_saldosiguiente</if>
+		<if test="positive!=null">,mrmp_positivo</if>
+		<if test="negative!=null">,mrmp_negativo</if>
+		<if test="value!=null">,mrmp_valor</if>
+		<if test="state!=null">,crmp_estado</if>
+		) values (#{key}
+		<if test="account!=null">,#{account}</if>
+		<if test="timeFrame!=null">,#{timeFrame}</if>
+		<if test="quantity!=null">,#{quantity}</if>
+		<if test="lastBalance!=null">,#{lastBalance}</if>
+		<if test="nextBalance!=null">,#{nextBalance}</if>
+		<if test="positive!=null">,#{positive}</if>
+		<if test="negative!=null">,#{negative}</if>
+		<if test="value!=null">,#{value}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="ResultMapDTO" resultType="ResultMapDTO">
+		update account.maparesultados_rmp
+		set
+		crmp_cuenta = #{account},
+		crmp_periodo = #{timeFrame},
+		nrmp_cantidad = #{quantity},
+		mrmp_saldoanterior = #{lastBalance},
+		mrmp_saldosiguiente = #{nextBalance},
+		mrmp_positivo = #{positive},
+		mrmp_negativo = #{negative},
+		mrmp_valor = #{value},
+		crmp_estado =#{state}
+		<include refid="whereResultMapPrimaryKeyFragment" />
+	</select>
+	
+</mapper>

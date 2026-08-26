@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.accounting_plan.infrastructure.ResultMapExtendMapper">
+
+	<sql id="selectResultMapFragment">
+		select
+			crmp_llave as key
+			,crmp_cuenta as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
+			,crmp_periodo as timeFrame
+			,(select cptm_codigo from account.periodotiempo_ptm where cptm_llave = crmp_periodo) as timeFrameName
+			,nrmp_cantidad as quantity
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,crmp_estado as state
+		from x_${catalog}_${type}_rmp
+			inner join cuenta_cue on (ccue_llave = crmp_cuenta)
+	</sql>
+
+	<sql id="whereResultMapFragment">
+		where 1=1
+			<if test="key!=null">
+				and crmp_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and crmp_estado = #{state}
+			</if>
+			<if test="account!=null">
+				and crmp_cuenta = #{account}
+			</if>
+			<if test="level!=null">
+				and crmp_periodo = #{timeFrame}
+			</if>
+			<if test="quantity!=null">
+				and nrmp_cantidad = #{quantity}
+			</if>
+			<if test="lastBalance!=null">
+				and mrmp_saldoanterior = #{lastBalance}
+			</if>
+			<if test="positive!=null">
+				and mrmp_positivo = #{positive}
+			</if>
+			<if test="negative!=null">
+				and mrmp_negativo = #{negative}
+			</if>
+			<if test="value!=null">
+				and mrmp_valor = #{value}
+			</if>
+	</sql>
+
+	<sql id="paginationResultMapFragment">
+			<if test="indexStart!=null">
+				LIMIT #{indexStart}
+			</if>
+			<if test="indexEnd!=null">
+				OFFSET #{indexEnd}
+			</if>
+	</sql>
+
+	<sql id="whereResultMapPrimaryKeyFragment">
+		where
+			crmp_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+	</select>
+	
+	<select id="getMany" parameterType="ResultMapFilterDTO" resultType="ResultMapDTO">
+		<include refid="selectResultMapFragment" />
+		<include refid="whereResultMapFragment" />
+		<include refid="paginationResultMapFragment" />
+	</select>
+
+	<select id="count" parameterType="ResultMapFilterDTO" resultType="int">
+		select count(*)
+		from x_${catalog}_${type}_rmp
+		<include refid="whereResultMapFragment" />
+	</select>
+	
+	<select id="getPreviousBalance" >
+		select mrmp_saldosiguiente from account.periodotiempo_ptm pts
+			inner join account.periodotiempo_ptm pt_ant on (pt_ant.nptm_nivel = pts.nptm_nivel and pt_ant.dptm_fechainicio <![CDATA[ < ]]>  pts.dptm_fechainicio)
+			inner join account.maparesultados_rmp rmp on (crmp_periodo = pt_ant.cptm_llave and crmp_cuenta = '${accountId}') 
+		where pts.cptm_llave = '${timeFrameId}'
+		order by pt_ant.dptm_fechainicio desc limit 1
+	</select>
+	
+	
+	
+	<select id="insertAll" parameterType="java.util.List">
+		insert into account.periodotiempo_ptm(
+			cptm_llave
+			,nptm_nivel
+			,dptm_fechainicio
+			,dptm_fechafin
+			,cptm_codigo
+			,nptm_ano
+			,nptm_mes
+			,nptm_dia
+			,nptm_hora
+			,nptm_minuto)
+		VALUES
+	    <foreach collection="list" item="element" index="index" open="(" separator="),("  close=")">
+	    	#{element.key},
+	        #{element.level},
+	        #{element.startDate},
+	        #{element.endDate},
+	        #{element.code},
+	        #{element.year},
+	        #{element.month},
+	        #{element.day},
+	        #{element.hour},
+	        #{element.minute}
+	    </foreach>
+	</select>
+	
+	<select id="getBalance" resultType="ResultMapDTO">
+		select 
+			crmp_llave as key
+			,ccue_llave as account
+			,ccue_nombre as accountName
+			,ccue_codigo as accountCode
+			,cptm_llave as timeFrame
+			,cptm_codigo as timeFrameName
+			,nrmp_cantidad as quantity
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+			,crmp_estado as state 
+		from account.cuenta_cue
+			left join account.periodotiempo_ptm on ( nptm_nivel = 0) 
+			left join account.maparesultados_rmp on (crmp_cuenta = ccue_llave and crmp_periodo = cptm_llave)
+		where 
+			ccue_catalogo = '${catalogId}'
+			and ncue_nivel = 1
+			and ccue_estado = 'A'
+		order by ccue_wbs
+	</select>
+	
+	<select id="getItemsAccount" resultType="ResultMapDTO">
+		select 
+			crmp_llave as key
+			,crmp_cuenta as account
+			,cptm_llave as timeFrame
+			,cptm_codigo as timeFrameName
+			,nrmp_cantidad as quantity
+			,mrmp_saldoanterior as lastBalance
+			,mrmp_saldosiguiente as nextBalance
+			,mrmp_positivo as positive
+			,mrmp_negativo as negative
+			,mrmp_valor as value
+		from account.periodotiempo_ptm
+			left join account.maparesultados_rmp on ( crmp_periodo = cptm_llave and (crmp_cuenta = '${accountId}' or crmp_cuenta is null)) 
+		where (nptm_nivel = 0
+				or (nptm_nivel = 1 and nptm_ano = ${year})
+				or (nptm_nivel = 2 and nptm_ano = ${year} and nptm_mes = ${month})
+				or (nptm_nivel = 3 and nptm_ano = ${year} and nptm_mes = ${month} and nptm_dia = ${day})
+				or (nptm_nivel = 4 and nptm_ano = ${year} and nptm_mes = ${month} and nptm_dia = ${day} and nptm_hora = ${hour})
+				or (nptm_nivel = 5 and nptm_ano = ${year} and nptm_mes = ${month} and nptm_dia = ${day} and nptm_hora = ${hour} and nptm_minuto = ${minute})
+			)
+	</select>
+	
+	<select id="updateItem" >
+		update account.maparesultados_rmp
+			set
+				nrmp_cantidad = #{item.quantity},
+				mrmp_positivo = #{item.positive},
+				mrmp_negativo = #{item.negative},
+				mrmp_valor = #{item.value},
+				mrmp_saldosiguiente = #{item.nextBalance}
+		where
+			crmp_llave =#{item.key}
+	</select>
+	
+	
+	<select id="updateBalance" >
+		update account.maparesultados_rmp
+			set
+				mrmp_saldoanterior = mrmp_saldoanterior + #{value},
+				mrmp_saldosiguiente = mrmp_saldosiguiente + #{value}
+		where crmp_cuenta = #{accountId} and crmp_estado = 'A'
+			 and crmp_periodo in (
+			 	select cptm_llave from account.periodotiempo_ptm where nptm_nivel = #{level} and dptm_fechainicio > #{startDate})
+	</select>
+	
+	
+	<select id="selectTimeFrameLevel" resultType="TimeFrameDTO">
+		select ${level} as key
+			,(select min(dptm_fechainicio) from account.periodotiempo_ptm where nptm_nivel = ${level}) as startDate
+			,(select max(dptm_fechafin) from account.periodotiempo_ptm where nptm_nivel = ${level}) as endDate;
+	</select>
+</mapper>

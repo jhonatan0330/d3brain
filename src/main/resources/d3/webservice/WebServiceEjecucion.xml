@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.webservice.infrastructure.WebServiceEjecucionMapper">
+
+	<sql id="selectWebServiceEjecucionFragment">
+		select
+			cwse_llave as  llaveTabla
+			,cwse_servicio as  servicio
+			,cwse_usuario as  usuario
+			,dwse_fecha as  fecha
+			,cwse_documento as  documento
+			,cwse_modificador as  modificador
+			,cwse_transaccion as  transaccion
+			,cwse_parametros as  parametros
+			,dwse_fechaejecucion as  fechaEjecucion
+			,cwse_entrada as  entrada
+			,cwse_salida as  salida
+			,cwse_error as  error
+			,cwse_masivo as  masivo
+			,cwse_sincrona as  sincrona
+			,cwse_estado as estado
+		from webserviceejecucion_wsep a
+	</sql>
+
+	<sql id="whereWebServiceEjecucionFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cwse_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cwse_estado = #{estado}
+			</if>
+			<if test="servicio!=null">
+				and cwse_servicio = #{servicio}
+			</if>
+			<if test="usuario!=null">
+				and cwse_usuario = #{usuario}
+			</if>
+			<if test="fechaMin!=null">
+				and dwse_fecha >= #{fechaMin}
+			</if>
+			<if test="fechaMax!=null">
+				and dwse_fecha <![CDATA[ < ]]>  #{fechaMax}
+			</if>
+			<if test="documento!=null">
+				and cwse_documento = #{documento}
+			</if>
+			<if test="modificador!=null">
+				and cwse_modificador = #{modificador}
+			</if>
+			<if test="transaccion!=null">
+				and cwse_transaccion = #{transaccion}
+			</if>
+			<if test="fechaEjecucionMin!=null">
+				and dwse_fechaejecucion >= #{fechaEjecucionMin}
+			</if>
+			<if test="fechaEjecucionMax!=null">
+				and dwse_fechaejecucion <![CDATA[ < ]]>  #{fechaEjecucionMax}
+			</if>
+			<if test="sincrona!=null">
+				and cwse_sincrona = #{sincrona}
+			</if>
+	</sql>
+
+	<sql id="paginationWebServiceEjecucionFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereWebServiceEjecucionPrimaryKeyFragment">
+		where
+			cwse_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="WebServiceEjecucionDTO" resultType="WebServiceEjecucionDTO">
+		<include refid="selectWebServiceEjecucionFragment" />
+		<include refid="whereWebServiceEjecucionFragment" />
+	</select>
+	
+	<select id="listar" parameterType="WebServiceEjecucionDTO" resultType="WebServiceEjecucionDTO">
+		<include refid="selectWebServiceEjecucionFragment" />
+		<include refid="whereWebServiceEjecucionFragment" />
+		order by dwse_fecha desc
+		, dwse_fechaejecucion desc
+		<include refid="paginationWebServiceEjecucionFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="WebServiceEjecucionDTO" resultType="int">
+		select count(*)
+		from webserviceejecucion_wsep
+		<include refid="whereWebServiceEjecucionFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="WebServiceEjecucionDTO" resultType="WebServiceEjecucionDTO">
+		insert into webserviceejecucion_wsep(
+			cwse_llave
+		<if test="servicio!=null">
+			,cwse_servicio
+		</if>
+		<if test="usuario!=null">
+			,cwse_usuario
+		</if>
+		<if test="fecha!=null">
+			,dwse_fecha
+		</if>
+		<if test="documento!=null">
+			,cwse_documento
+		</if>
+		<if test="modificador!=null">
+			,cwse_modificador
+		</if>
+		<if test="transaccion!=null">
+			,cwse_transaccion
+		</if>
+		<if test="parametros!=null">
+			,cwse_parametros
+		</if>
+		<if test="fechaEjecucion!=null">
+			,dwse_fechaejecucion
+		</if>
+		<if test="entrada!=null">
+			,cwse_entrada
+		</if>
+		<if test="salida!=null">
+			,cwse_salida
+		</if>
+		<if test="error!=null">
+			,cwse_error
+		</if>
+		<if test="masivo!=null">
+			,cwse_masivo
+		</if>
+		<if test="sincrona!=null">
+			,cwse_sincrona
+		</if>
+		<if test="estado!=null">
+			,cwse_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="servicio!=null">
+			,#{servicio}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="fecha!=null">
+			,#{fecha}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="modificador!=null">
+			,#{modificador}
+		</if>
+		<if test="transaccion!=null">
+			,#{transaccion}
+		</if>
+		<if test="parametros!=null">
+			,#{parametros}
+		</if>
+		<if test="fechaEjecucion!=null">
+			,#{fechaEjecucion}
+		</if>
+		<if test="entrada!=null">
+			,#{entrada}
+		</if>
+		<if test="salida!=null">
+			,#{salida}
+		</if>
+		<if test="error!=null">
+			,#{error}
+		</if>
+		<if test="masivo!=null">
+			,#{masivo}
+		</if>
+		<if test="sincrona!=null">
+			,#{sincrona}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="WebServiceEjecucionDTO" resultType="WebServiceEjecucionDTO">
+		update webserviceejecucion_wsep
+			set
+				cwse_servicio = #{servicio},
+				cwse_usuario = #{usuario},
+				dwse_fecha = #{fecha},
+				cwse_documento = #{documento},
+				cwse_modificador = #{modificador},
+				cwse_transaccion = #{transaccion},
+				cwse_parametros = #{parametros},
+				dwse_fechaejecucion = #{fechaEjecucion},
+				cwse_entrada = #{entrada},
+				cwse_salida = #{salida},
+				cwse_error = #{error},
+				cwse_masivo = #{masivo},
+				cwse_sincrona = #{sincrona},
+				cwse_estado =#{estado}
+		<include refid="whereWebServiceEjecucionPrimaryKeyFragment" />
+	</select>
+
+
+
+	<select id="apisTransaccion" resultType="WebServiceEjecucionDTO">
+		select
+			cwse_llave as  llaveTabla
+			,cwse_servicio as  servicio
+			,cwse_usuario as  usuario
+			,dwse_fecha as  fecha
+			,cwse_documento as  documento
+			,cwse_modificador as  modificador
+			,cwse_transaccion as  transaccion
+			,cwse_parametros as  parametros
+			,dwse_fechaejecucion as  fechaEjecucion
+			,cwse_entrada as  entrada
+			,cwse_salida as  salida
+			,cwse_error as  error
+			,cwse_masivo as  masivo
+			,cwse_sincrona as  sincrona
+			,cwse_estado as estado
+		from webserviceejecucion_wsep a
+		where cwse_estado = 'A' 
+			and dwse_fecha >= now() - interval '1200 minutes'
+			and dwse_fecha <![CDATA[ < ]]> now()
+			and dwse_fechaejecucion is null 
+			and cwse_sincrona is not null
+		order by dwse_fecha
+		limit 50
+	</select>
+	
+</mapper>

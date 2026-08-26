@@ -6,7 +6,7 @@ Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/exp
 ## Comandos
 - Compilar: `gradlew build` (o `./gradlew.bat` en Windows)
 - Compilar sin tests: `gradlew build -x test`
-- Clase principal: `com.Sw42WebApplication`
+- Clase principal: `d3.Sw42WebApplication`
 - No hay linter/typecheck adicional; el compilador de Java es la verificación.
 - Config: `src/main/resources/application.properties` (BD, tenant, JWT, Google).
 
@@ -14,23 +14,23 @@ Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/exp
 - Código en **español** (mensajes de error, métodos, comentarios). No agregar comentarios salvo que se pidan.
 - Sin Spring Security. Autenticación propia por token (ver sección Seguridad).
 - Layering por paquete: `domain` (DTO con `@Alias` de MyBatis), `infrastructure` (Mapper/Controller), `application` (Svc).
-- Servicios extienden `com.softure.logisticpymes.application.BasicSvc<T, TFilter>`; sobreescriben `consultaXId`, e inyectan el mapper y `@PostConstruct initIt()`.
+- Servicios extienden `d3.logisticpymes.application.BasicSvc<T, TFilter>`; sobreescriben `consultaXId`, e inyectan el mapper y `@PostConstruct initIt()`.
 - Inyección con `@Lazy` en constructores (evitar ciclos). Anotaciones `@Service("nombre")`/`@RestController`.
-- Mappers: interfaz anotada `@SoftureSqlConnMapper(value = "X")` + XML en `src/main/resources/com/...` con el mismo namespace. Columnas BD `cxxx_...` mapeadas a camelCase (`llaveTabla`, `fechaCierre`, etc.).
+- Mappers: interfaz anotada `@D3SqlConnMapper(value = "X")` + XML en `src/main/resources/com/...` con el mismo namespace. Columnas BD `cxxx_...` mapeadas a camelCase (`llaveTabla`, `fechaCierre`, etc.).
 - Transacciones: `@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)`.
-- Errores de dominio: `com.shared.domain.ServerException` (se serializa al cliente). Estado: `SharedConstants.STATE_ACTIVE` (`A`) / `STATE_INACTIVE` (`I`).
+- Errores de dominio: `d3.shared.domain.ServerException` (se serializa al cliente). Estado: `SharedConstants.STATE_ACTIVE` (`A`) / `STATE_INACTIVE` (`I`).
 - La sesión/token viaja por header `Authorization` o campo `securityToken` de los DTO.
 
 ## Seguridad (arquitectura actual y objetivos)
 
 ### Modelo actual
-- Login: `UsuarioAutenticacionSvc.autenticar()` valida credenciales y crea una fila en `usuariosesion_ussp` (tabla de sesiones) con llave generada (`SoftureUtil.generarLlave()`, UUID hex de 32). Ese id era el bearer token opaco.
+- Login: `UsuarioAutenticacionSvc.autenticar()` valida credenciales y crea una fila en `usuariosesion_ussp` (tabla de sesiones) con llave generada (`D3Utils.generarLlave()`, UUID hex de 32). Ese id era el bearer token opaco.
 - Validación por request: `UsuarioSesionSvc.checkToken/getUserFlex` (revisa caché por tenant → BD → estado y `fechaCierre`) y `SharedAuthenticateService.validate/getUser` (implementado por `UsuarioAutenticacionSvc`, usado en `TaskRest`, `VoucherRest`, `AccountApiRest`).
 
 ### Objetivo: JWT (en curso)
 - **Decisión**: JWT firmado + tabla de sesiones como fuente de verdad para revocación. JWT lleva `jti` = `cuss_llave` de la sesión.
 - Librería: **JJWT 0.12.x** (`io.jsonwebtoken:jjwt-api/impl/jackson`).
-- `JwtService` (`com.softure.authentication.application`): genera/parsea/valida JWT HS256.
+- `JwtService` (`d3.authentication.application`): genera/parsea/valida JWT HS256.
   - Claims: `sub`/`user` (llave de usuario), `userId`, `userName`, `org`, `tenant`, `jti` (id de sesión), `iat`, `exp`.
   - Config: `jwt.secret` (mínimo 32 bytes), `jwt.expiration` (fallback en ms cuando la sesión no tiene `fechaCierre`), `jwt.issuer`.
 - Generación: en `autenticar()` (y flujo Google) después de `usuarioSesionService.guardar(sesion)` → `autenticacion.setToken(jwtService.generate(...))`.

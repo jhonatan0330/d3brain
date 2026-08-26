@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.property.infrastructure.PropiedadMapper">
+
+	<sql id="selectPropiedadFragment">
+		select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,cppd_tipo as  tipo
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,dppd_fechadefinicion as  fechaDefinicion
+			,dppd_fechaeliminacion as  fechaEliminacion
+			,cppd_usuariocreacion as  usuarioCreacion
+			,cppd_usuarioeliminacion as  usuarioEliminacion
+			,cppd_rol as  rol
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
+			,cppd_estado as estado
+		from propiedad_ppdp a
+	</sql>
+
+	<sql id="wherePropiedadFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cppd_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cppd_estado = #{estado}
+			</if>
+			<if test="propiedadValor!=null">
+				and cppd_propiedadvalor = #{propiedadValor}
+			</if>
+			<if test="tipo!=null">
+				and cppd_tipo = #{tipo}
+			</if>
+			<if test="campo!=null">
+				and cppd_campo = #{campo}
+			</if>
+			<if test="texto!=null">
+				and cppd_texto = #{texto}
+			</if>
+			<if test="fechaDefinicionMin!=null">
+				and dppd_fechadefinicion >= #{fechaDefinicionMin}
+			</if>
+			<if test="fechaDefinicionMax!=null">
+				and dppd_fechadefinicion <![CDATA[ < ]]>  #{fechaDefinicionMax}
+			</if>
+			<if test="fechaEliminacionMin!=null">
+				and dppd_fechaeliminacion >= #{fechaEliminacionMin}
+			</if>
+			<if test="fechaEliminacionMax!=null">
+				and dppd_fechaeliminacion <![CDATA[ < ]]>  #{fechaEliminacionMax}
+			</if>
+			<if test="usuarioCreacion!=null">
+				and cppd_usuariocreacion = #{usuarioCreacion}
+			</if>
+			<if test="usuarioEliminacion!=null">
+				and cppd_usuarioeliminacion = #{usuarioEliminacion}
+			</if>
+			<if test="rol!=null">
+				and cppd_rol = #{rol}
+			</if>
+			<if test="rolExcluyente!=null">
+				and cppd_rolexcluyente = #{rolExcluyente}
+			</if>
+			<if test="fechaInicialMin!=null">
+				and dppd_fechainicial >= #{fechaInicialMin}
+			</if>
+			<if test="fechaInicialMax!=null">
+				and dppd_fechainicial <![CDATA[ < ]]>  #{fechaInicialMax}
+			</if>
+			<if test="fechaFinalMin!=null">
+				and dppd_fechafinal >= #{fechaFinalMin}
+			</if>
+			<if test="fechaFinalMax!=null">
+				and dppd_fechafinal <![CDATA[ < ]]>  #{fechaFinalMax}
+			</if>
+			<if test="usuario!=null">
+				and cppd_usuario = #{usuario}
+			</if>
+			<if test="usuarioExcluyente!=null">
+				and cppd_usuarioexcluyente = #{usuarioExcluyente}
+			</if>
+			<if test="bloqueo!=null">
+				and cppd_bloqueo = #{bloqueo}
+			</if>
+			<if test="motivo!=null">
+				and cppd_motivo = #{motivo}
+			</if>
+			<if test="valor!=null">
+				and cppd_valor = #{valor}
+			</if>
+			<if test="filtroParametro!=null">
+				and ((select upper(cpvd_nombre) from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationPropiedadFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="wherePropiedadPrimaryKeyFragment">
+		where
+			cppd_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="PropiedadDTO" resultType="PropiedadDTO">
+		<include refid="selectPropiedadFragment" />
+		<include refid="wherePropiedadFragment" />
+	</select>
+	
+	<select id="listar" parameterType="PropiedadDTO" resultType="PropiedadDTO">
+		<include refid="selectPropiedadFragment" />
+		<include refid="wherePropiedadFragment" />
+		order by nombre, key, texto, motivo
+		<include refid="paginationPropiedadFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="PropiedadDTO" resultType="int">
+		select count(*)
+		from propiedad_ppdp
+		<include refid="wherePropiedadFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="PropiedadDTO" resultType="PropiedadDTO">
+		insert into propiedad_ppdp(
+			cppd_llave
+		<if test="propiedadValor!=null">
+			,cppd_propiedadvalor
+		</if>
+		<if test="tipo!=null">
+			,cppd_tipo
+		</if>
+		<if test="campo!=null">
+			,cppd_campo
+		</if>
+		<if test="valor!=null">
+			,cppd_valor
+		</if>
+		<if test="texto!=null">
+			,cppd_texto
+		</if>
+		<if test="fechaDefinicion!=null">
+			,dppd_fechadefinicion
+		</if>
+		<if test="fechaEliminacion!=null">
+			,dppd_fechaeliminacion
+		</if>
+		<if test="usuarioCreacion!=null">
+			,cppd_usuariocreacion
+		</if>
+		<if test="usuarioEliminacion!=null">
+			,cppd_usuarioeliminacion
+		</if>
+		<if test="rol!=null">
+			,cppd_rol
+		</if>
+		<if test="rolExcluyente!=null">
+			,cppd_rolexcluyente
+		</if>
+		<if test="fechaInicial!=null">
+			,dppd_fechainicial
+		</if>
+		<if test="fechaFinal!=null">
+			,dppd_fechafinal
+		</if>
+		<if test="usuario!=null">
+			,cppd_usuario
+		</if>
+		<if test="usuarioExcluyente!=null">
+			,cppd_usuarioexcluyente
+		</if>
+		<if test="motivo!=null">
+			,cppd_motivo
+		</if>
+		<if test="bloqueo!=null">
+			,cppd_bloqueo
+		</if>
+		<if test="estado!=null">
+			,cppd_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="propiedadValor!=null">
+			,#{propiedadValor}
+		</if>
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="campo!=null">
+			,#{campo}
+		</if>
+		<if test="valor!=null">
+			,#{valor}
+		</if>
+		<if test="texto!=null">
+			,#{texto}
+		</if>
+		<if test="fechaDefinicion!=null">
+			,#{fechaDefinicion}
+		</if>
+		<if test="fechaEliminacion!=null">
+			,#{fechaEliminacion}
+		</if>
+		<if test="usuarioCreacion!=null">
+			,#{usuarioCreacion}
+		</if>
+		<if test="usuarioEliminacion!=null">
+			,#{usuarioEliminacion}
+		</if>
+		<if test="rol!=null">
+			,#{rol}
+		</if>
+		<if test="rolExcluyente!=null">
+			,#{rolExcluyente}
+		</if>
+		<if test="fechaInicial!=null">
+			,#{fechaInicial}
+		</if>
+		<if test="fechaFinal!=null">
+			,#{fechaFinal}
+		</if>
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="usuarioExcluyente!=null">
+			,#{usuarioExcluyente}
+		</if>
+		<if test="motivo!=null">
+			,#{motivo}
+		</if>
+		<if test="bloqueo!=null">
+			,#{bloqueo}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="PropiedadDTO" resultType="PropiedadDTO">
+		update propiedad_ppdp
+			set
+				cppd_propiedadvalor = #{propiedadValor},
+				cppd_tipo = #{tipo},
+				cppd_campo = #{campo},
+				cppd_valor = #{valor},
+				cppd_texto = #{texto},
+				dppd_fechadefinicion = #{fechaDefinicion},
+				dppd_fechaeliminacion = #{fechaEliminacion},
+				cppd_usuariocreacion = #{usuarioCreacion},
+				cppd_usuarioeliminacion = #{usuarioEliminacion},
+				cppd_rol = #{rol},
+				cppd_rolexcluyente = #{rolExcluyente},
+				dppd_fechainicial = #{fechaInicial},
+				dppd_fechafinal = #{fechaFinal},
+				cppd_usuario = #{usuario},
+				cppd_usuarioexcluyente = #{usuarioExcluyente},
+				cppd_motivo = #{motivo},
+				cppd_bloqueo = #{bloqueo},
+				cppd_estado =#{estado}
+		<include refid="wherePropiedadPrimaryKeyFragment" />
+	</select>
+
+<!--// BEGIN region script-->
+    <select id="crearFuncion" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS character varying AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+
+    <select id="eliminarFuncion" parameterType="PropiedadDTO" >
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, varchar);
+    </select>
+    
+    <select id="crearFuncionPrevalidacionReturnString" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS character varying AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+        
+    <select id="crearFuncionPrevalidacion" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS void AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+
+    <select id="eliminarFuncionPrevalidacion" parameterType="PropiedadDTO" >
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(character varying, character varying , character varying[]);
+    </select>
+    
+    <select id="crearFuncionPrevalidateAPI" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, parametros character varying) RETURNS void AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+
+    <select id="eliminarFuncionPrevalidateAPI" parameterType="PropiedadDTO" >
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar, varchar, character varying);
+    </select>
+
+    <select id="crearFuncionFiltros" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, cant integer, pagina integer, fechaminima timestamp with time zone, fechamaxima timestamp with time zone, filtro character varying, codigo_exacto character varying, token character varying, parametros character varying[])
+RETURNS SETOF pedidoventa_pdvp AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+
+    <select id="crearFuncionProductos" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, filtro character varying, token character varying, parametros character varying[])
+RETURNS SETOF producto_prop AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+
+    <select id="eliminarFuncionProductos" parameterType="PropiedadDTO" >
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar,varchar,varchar, character varying[]);
+    </select>
+
+    <select id="eliminarFuncionFiltros" parameterType="PropiedadDTO" >
+        DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(varchar,int4,int4,timestamptz,timestamptz,varchar,varchar,varchar, character varying[]);
+    </select>
+
+    <select id="crearFuncionMail" parameterType="PropiedadDTO" >
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, token character varying) RETURNS TABLE (usuario character varying, correo character varying) AS
+$BODY$
+${valor}
+$BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100;
+    </select>
+    
+    <select id="crearFuncionDecision">
+CREATE OR REPLACE FUNCTION decision_${llaveTabla}(documento character varying, modificador character varying, ramdom character varying) RETURNS character varying AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="crearFuncionIteracion">
+CREATE OR REPLACE FUNCTION iteracion_${llaveTabla}(documento character varying, modificador character varying, ramdom character varying) RETURNS SETOF pedidoventa_pdvp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="crearFuncionTarifas">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[])  RETURNS SETOF tarifa_tarp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="crearFuncionNumerica">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[])  RETURNS numeric AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="crearFuncionFecha">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[])  RETURNS timestamp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="crearFuncionParametros">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="eliminarFuncionNumerica" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, token character varying, parametros character varying[]);
+	</select>
+
+	<select id="crearFuncionCampoGenerar">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying, modificador character varying, iterador character varying, token character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="eliminarFuncionCampoGenerar" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying, modificador character varying, iterador character varying, token character varying);
+	</select>
+		
+	<select id="eliminarFuncionTarifas" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(producto character varying, producto_base character varying, parametros character varying[]);
+	</select>
+	
+	<select id="eliminarFuncionDecision" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		DROP FUNCTION IF EXISTS decision_${llaveTabla}(varchar, varchar, varchar);
+	</select>
+	
+	<select id="eliminarFuncionIteracion" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		DROP FUNCTION IF EXISTS iteracion_${llaveTabla}(varchar, varchar, varchar);
+	</select>
+	
+		<select id="crearFuncionCamposEspecialesPlantilla">
+CREATE OR REPLACE FUNCTION propiedad_${llaveTabla}(documento character varying) RETURNS SETOF pedidoventacaracteristica_pvcp AS
+$BODY$
+${valor}
+$BODY$ 
+LANGUAGE plpgsql VOLATILE
+COST 100;
+	</select>
+	
+	<select id="eliminarFuncionCamposEspecialesPlantilla" parameterType="PropiedadDTO" >
+		DROP FUNCTION IF EXISTS propiedad_${llaveTabla}(documento character varying);
+	</select>
+	
+
+    <select id="funcionAsignacion" resultType="java.lang.String">
+        select propiedad_${estado} (#{documento}, #{modificador}, #{token})
+    </select>
+    
+    <select id="funcionPrevalidacionPlantilla" resultType="java.lang.String">
+        select propiedad_${funcion} (#{documento}, #{token}, <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+    </select>
+    
+     <select id="funcionPrevalidacionPlantillaReturnString" resultType="java.lang.String">
+        select propiedad_${funcion} (#{documento}, #{token}, <choose><when test="campos!=null">array[<foreach item="item" collection="campos" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
+    </select>
+    
+    <select id="funcionPrevalidateAPI" resultType="int">
+        select 1 from propiedad_${funcion} (#{documento}, #{modificador}, #{extracciones})
+    </select>
+    
+    <select id="actualizarValorPropiedad" parameterType="PropiedadDTO" resultType="PropiedadDTO">
+    update propiedad_ppdp set cppd_texto  = #{texto} where cppd_valor = #{valor} and cppd_estado = 'A' and cppd_texto is not null
+	</select>   
+
+	<select id="consultarTemporizadoresPendientes" resultType="PropiedadDTO">
+        <include refid="selectPropiedadFragment" />
+			inner join procesotransicion_ptrp on (cppd_campo = cptr_llave and cptr_estado  = 'A')
+			inner join documentoplantilla_dplp on (cdpl_llave = cptr_plantilla and cdpl_estado = 'A')
+		where cppd_propiedadvalor = 'PROP_140' and cppd_estado = 'A'
+			and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
+		        		where cpta_estado = 'A' and dpta_ejecucion is null)
+		 union
+		<include refid="selectPropiedadFragment" />
+			inner join documentoplantilla_dplp on (cdpl_llave = cppd_campo and cdpl_estado = 'A')
+		where cppd_propiedadvalor in ('PROP_185','PROP_189') and cppd_estado = 'A'
+			and cppd_llave not in (select cpta_propiedad from procesotransicionautomatica_ptap 
+			     		where cpta_estado = 'A' and dpta_ejecucion is null)
+     </select>
+     
+     <select id="listarProductoSimplificado" resultType="PropiedadDTO">
+		<include refid="selectPropiedadFragment" /> 
+		where cppd_estado = 'A' and cppd_tipo = 'L' and  cppd_campo in (
+			select pp.cpro_categoria from producto_prop pp 
+			where pp.cpro_estado = 'A'
+			and pp.cpro_llave in (<foreach item="item"  separator="," collection="productos" >#{item.llaveTabla}</foreach>)
+		)
+	</select>
+    
+    <select id="getFullPropertiesToConfiguration" resultType="PropiedadDTO">
+        select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+        where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+        	and cppd_propiedadvalor != 'PROP_117'--MENSAJE DESTINATARIO
+        	and cppd_propiedadvalor != 'PROP_136'--ESTADO ASIGNAR
+        	and cppd_propiedadvalor != 'PROP_243'--CAMPOS DIFERENCIAS --Estos se sincronizan con la propiedad de la plantilla
+        	and cppd_propiedadvalor != 'PROP_219'--API KEY --No copio el api key para generar la necesidad de una nueva API
+        	and cppd_propiedadvalor != 'PROP_220'--COVERAGE IMAGEN --Es para no copiar las imagenes
+        	and (rr.crac_estado = 'A' or rr.crac_estado is null)
+        	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+        where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+	        and cppd_propiedadvalor = 'PROP_117' and cppd_valor = '*'
+    	    and (rr.crac_estado = 'A' or rr.crac_estado is null)
+    	    and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_rol as  rol
+			,cppd_rolexcluyente as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+        where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+        	and cppd_propiedadvalor = 'PROP_136' and cppd_valor = '*'
+        	and (rr.crac_estado = 'A' or rr.crac_estado is null)
+        	and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+    </select>
+    
+    <select id="getTemplateWithoutUpdate" resultType="PropiedadDTO">
+		select 
+			distinct dd.cdpl_llave as campo 
+		from documentoplantilla_dplp dd
+			inner join propiedad_ppdp prop_modificar on (prop_modificar.cppd_campo =dd.cdpl_llave and prop_modificar.cppd_estado = 'A' and prop_modificar.cppd_propiedadvalor= 'PROP_78')
+		where dd.cdpl_estado = 'A' 
+			and dd.cdpl_llave not in (select prop_plantilla.cppd_campo from propiedad_ppdp prop_plantilla where prop_plantilla.cppd_estado = 'A' and prop_plantilla.cppd_propiedadvalor= 'PROP_242')
+	</select>
+	
+	<select id="getByIdWithType" resultType="PropiedadDTO">
+		select
+			cppd_llave as  llaveTabla
+			,cppd_propiedadvalor as  propiedadValor
+			,case cppd_tipo 
+				when 'P' then 'Proceso : ' || (select cprc_nombre from proceso_prcp where cprc_llave = cppd_campo)
+				when 'A' then 'Estado : ' || (select cpes_nombre from procesoestado_pesp where cpes_llave = cppd_campo)
+				when 'T' then 'Transicion : ' || (select cptr_nombre from procesotransicion_ptrp where cptr_llave = cppd_campo)
+				when 'L' then 'Plantilla : ' || (select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cppd_campo)
+				when 'C' then 'Campo : ' || (select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = cppd_campo)
+				when 'E' then 'Reporte : ' || (select crpb_nombre from reportebase_rpbp where crpb_llave = cppd_campo)
+				when 'O' then 'Organizacion : ' || (select corg_nombre from organizacion_orgp where corg_llave = cppd_campo)
+				when 'W' then 'API : ' || (select cwbs_nombre from webservice_wbsp where cwbs_llave = cppd_campo)
+				when 'S' then 'Servidor : ' || (select cser_nombre from servidor_serp where cser_llave = cppd_campo)
+				when 'G' then 'Catalogo : ' || (select cctg_nombre from account.catalogo_ctg where cctg_llave = cppd_campo)
+				when 'K' then 'Cuenta : ' || (select ccue_nombre from account.cuenta_cue where ccue_llave = cppd_campo)
+				else cppd_campo 
+			end as  tipo
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,dppd_fechadefinicion as  fechaDefinicion
+			,dppd_fechaeliminacion as  fechaEliminacion
+			,cppd_usuariocreacion as  usuarioCreacion
+			,cppd_usuarioeliminacion as  usuarioEliminacion
+			,cppd_rol as  rol
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
+			,cppd_rolexcluyente as  rolExcluyente
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rolexcluyente)) as  rolExcluyenteNombre
+			,dppd_fechainicial as  fechaInicial
+			,dppd_fechafinal as  fechaFinal
+			,cppd_usuario as  usuario
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuario) as  usuarioNombre
+			,cppd_usuarioexcluyente as  usuarioExcluyente
+			,(select cusr_nombre from usuario_usrp where cusr_llave = cppd_usuarioexcluyente) as  usuarioExcluyenteNombre
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,nppd_relaciones as  relaciones
+			,cppd_estado as estado
+		from propiedad_ppdp a
+		where cppd_llave = #{key}
+	</select>
+
+
+</mapper>

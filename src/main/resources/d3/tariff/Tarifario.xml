@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.tariff.infrastructure.TarifarioMapper">
+
+	<sql id="selectTarifarioFragment">
+		select
+			ctrf_llave as key
+			,ctrf_nombre as nombre
+			,dtrf_fechainicial as fechaInicial
+			,dtrf_fechafinal as fechaFinal
+			,ctrf_documento as documento
+			,ctrf_estado as state
+		from tarifario_trfp a
+	</sql>
+
+	<sql id="whereTarifarioFragment">
+		where 1=1<if test="key!=null">
+		and ctrf_llave = #{key}</if><if test="state!=null">
+		and ctrf_estado = #{state}</if>
+<if test="nombre!=null">		and ctrf_nombre = #{nombre}</if>
+<if test="fechaInicialMin!=null">		and dtrf_fechainicial >= #{fechaInicialMin}</if><if test="fechaInicialMax!=null">		and dtrf_fechainicial <![CDATA[ < ]]> #{fechaInicialMax}</if>
+<if test="fechaFinalMin!=null">		and dtrf_fechafinal >= #{fechaFinalMin}</if><if test="fechaFinalMax!=null">		and dtrf_fechafinal <![CDATA[ < ]]> #{fechaFinalMax}</if>
+<if test="documento!=null">		and ctrf_documento = #{documento}</if>
+
+	</sql>
+
+	<sql id="paginationTarifarioFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereTarifarioPrimaryKeyFragment">
+		where ctrf_llave =#{key}
+	</sql>
+
+	<select id="getOne" parameterType="TarifarioFilterDTO" resultType="TarifarioDTO">
+		<include refid="selectTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+		LIMIT 2
+	</select>
+	
+	<select id="getMany" parameterType="TarifarioFilterDTO" resultType="TarifarioDTO">
+		<include refid="selectTarifarioFragment" />
+		<include refid="whereTarifarioFragment" />
+		order by ctrf_nombre 
+		<include refid="paginationTarifarioFragment" />
+	</select>
+
+	<select id="count" parameterType="TarifarioFilterDTO" resultType="int">
+		select count(*)
+		from tarifario_trfp
+		<include refid="whereTarifarioFragment" />
+	</select>
+
+	<select id="insert" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		insert into tarifario_trfp(ctrf_llave
+		<if test="nombre!=null">,ctrf_nombre</if>
+		<if test="fechaInicial!=null">,dtrf_fechainicial</if>
+		<if test="fechaFinal!=null">,dtrf_fechafinal</if>
+		<if test="documento!=null">,ctrf_documento</if>
+		<if test="state!=null">,ctrf_estado</if>
+		) values (#{key}
+		<if test="nombre!=null">,#{nombre}</if>
+		<if test="fechaInicial!=null">,#{fechaInicial}</if>
+		<if test="fechaFinal!=null">,#{fechaFinal}</if>
+		<if test="documento!=null">,#{documento}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="TarifarioDTO" resultType="TarifarioDTO">
+		update tarifario_trfp
+		set
+		ctrf_nombre = #{nombre},
+		dtrf_fechainicial = #{fechaInicial},
+		dtrf_fechafinal = #{fechaFinal},
+		ctrf_documento = #{documento},
+		ctrf_estado =#{state}
+		<include refid="whereTarifarioPrimaryKeyFragment" />
+	</select>
+	
+</mapper>
