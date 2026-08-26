@@ -84,6 +84,8 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 		dto.setKey(generateIdUUID());
 		try {
 			mapper.insert(dto);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}

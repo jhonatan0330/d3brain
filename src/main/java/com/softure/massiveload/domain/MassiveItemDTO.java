@@ -6,12 +6,13 @@ import org.apache.ibatis.type.Alias;
 
 import com.shared.domain.SharedDataObject;
 
-@Alias("CargaMasivaItemDTO")
+@Alias("MassiveItemDTO")
 public class MassiveItemDTO extends SharedDataObject {
 
 	public static final String ERROR = "E";
 	public static final String FINALIZADA = "F";
 	public static final String SERIALIZADA = "S";
+	public static final String VALIDADO = "V";
 
 	private String carga;
 	private String documento;

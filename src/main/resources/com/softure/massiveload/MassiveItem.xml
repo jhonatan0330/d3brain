@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.softure.massiveload.infrastructure.MassiveItemMapper">
+
+	<sql id="selectMassiveItemFragment">
+		select
+			ccmi_llave as  key
+			,ccmi_carga as  carga
+			,ccmi_modelo as  modelo
+			,ccmi_progreso as  progreso
+			,ccmi_estado as state
+			,ccmi_documento as documento
+			,ccmi_nombre as nombre
+			,ccmi_fechaserializacion as fechaSerializacion
+			,ccmi_fechasincronizacion as fechaSincronizacion
+		from cargamasivaitem_cmip a
+	</sql>
+
+	<sql id="whereMassiveItemFragment">
+		where 1=1
+			<if test="key!=null">
+				and ccmi_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and ccmi_estado = #{state}
+			</if>
+			<if test="carga!=null">
+				and ccmi_carga = #{carga}
+			</if>
+			<if test="progreso!=null">
+				and ccmi_progreso = #{progreso}
+			</if>
+			<if test="documento!=null">
+				and ccmi_documento = #{documento}
+			</if>
+			<if test="nombre!=null">
+				and ccmi_nombre = #{nombre}
+			</if>
+			<if test="fechaSerializacionMin!=null">
+				and ccmi_fechaserializacion >= #{fechaSerializacionMin}
+			</if>
+			<if test="fechaSerializacionMax!=null">
+				and ccmi_fechaserializacion <![CDATA[ < ]]> #{fechaSerializacionMax}
+			</if>
+			<if test="fechaSincronizacionMin!=null">
+				and ccmi_fechasincronizacion >= #{fechaSincronizacionMin}
+			</if>
+			<if test="fechaSincronizacionMax!=null">
+				and ccmi_fechasincronizacion <![CDATA[ < ]]> #{fechaSincronizacionMax}
+			</if>
+	</sql>
+
+	<sql id="paginationMassiveItemFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereMassiveItemPrimaryKeyFragment">
+		where
+			ccmi_llave	=#{key}
+	</sql>
+
+	<select id="selectOne" parameterType="com.softure.massiveload.domain.MassiveItemFilter" resultType="MassiveItemDTO">
+		<include refid="selectMassiveItemFragment" />
+		<include refid="whereMassiveItemFragment" />
+	</select>
+	
+	<select id="selectMany" parameterType="com.softure.massiveload.domain.MassiveItemFilter" resultType="MassiveItemDTO">
+		<include refid="selectMassiveItemFragment" />
+		<include refid="whereMassiveItemFragment" />
+		<include refid="paginationMassiveItemFragment" />
+	</select>
+
+	<select id="count" parameterType="com.softure.massiveload.domain.MassiveItemFilter" resultType="int">
+		select count(*)
+		from cargamasivaitem_cmip
+		<include refid="whereMassiveItemFragment" />
+	</select>
+
+
+	<select id="insert" parameterType="MassiveItemDTO">
+		insert into cargamasivaitem_cmip(
+			ccmi_llave
+		<if test="carga!=null">
+			,ccmi_carga
+		</if>
+		<if test="modelo!=null">
+			,ccmi_modelo
+		</if>
+		<if test="progreso!=null">
+			,ccmi_progreso
+		</if>
+		<if test="state!=null">
+			,ccmi_estado
+		</if>
+		<if test="documento!=null">
+			,ccmi_documento
+		</if>
+		<if test="nombre!=null">
+			,ccmi_nombre
+		</if>
+		<if test="fechaSerializacion!=null">
+			,ccmi_fechaserializacion
+		</if>
+		<if test="fechaSincronizacion!=null">
+			,ccmi_fechasincronizacion
+		</if>
+		) values (
+			#{key}
+		<if test="carga!=null">
+			,#{carga}
+		</if>
+		<if test="modelo!=null">
+			,#{modelo}
+		</if>
+		<if test="progreso!=null">
+			,#{progreso}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		<if test="documento!=null">
+			,#{documento}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="fechaSerializacion!=null">
+			,#{fechaSerializacion}
+		</if>
+		<if test="fechaSincronizacion!=null">
+			,#{fechaSincronizacion}
+		</if>
+		)
+	</select>
+
+	<select id="update" parameterType="MassiveItemDTO">
+		update cargamasivaitem_cmip
+			set
+				ccmi_carga = #{carga},
+				ccmi_modelo = #{modelo},
+				ccmi_progreso = #{progreso},
+				ccmi_estado =#{state},
+				ccmi_documento = #{documento},
+				ccmi_nombre = #{nombre},
+				ccmi_fechaserializacion = #{fechaSerializacion},
+				ccmi_fechasincronizacion = #{fechaSincronizacion}
+		<include refid="whereMassiveItemPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleMassiveItemFragment">
+		select
+			ccmi_llave as  key
+			,ccmi_carga as  carga
+			,ccmi_modelo as  modelo
+			,ccmi_progreso as  progreso
+			,ccmi_estado as state
+			,ccmi_documento as documento
+			,ccmi_nombre as nombre
+			,ccmi_fechaserializacion as fechaSerializacion
+			,ccmi_fechasincronizacion as fechaSincronizacion
+		from cargamasivaitem_cmip a
+	</sql>
+	
+	<select id="consultarSimple" resultType="MassiveItemDTO">
+		<include refid="selectSimpleMassiveItemFragment" />
+		<include refid="whereMassiveItemFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="MassiveItemDTO">
+		<include refid="selectSimpleMassiveItemFragment" />
+		<include refid="whereMassiveItemFragment" />
+		<include refid="paginationMassiveItemFragment" />
+	</select>
+	
+</mapper>

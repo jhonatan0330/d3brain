@@ -155,7 +155,4 @@
 		<if test="process!=null">and (pes.cpes_llave is not null or tra.cptr_llave is not null or dd.cdpl_llave is not null)</if>
 	</select>
 
-<!--// BEGIN region script-->
-<!--// END region script-->
-
 </mapper>

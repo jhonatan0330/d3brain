@@ -1,15 +1,15 @@
 package com.softure.massiveload.domain;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-// Start of user code imports
-import com.fasterxml.jackson.annotation.JsonFormat;
-import java.util.Date;
-//End of user code
+
 
 public class MassiveMasterRequest {
 
-	private String cargaMasivaId;
+	private String key;
 	private String archivo;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fecha;
@@ -22,7 +22,7 @@ public class MassiveMasterRequest {
 
 	public MassiveMasterDTO toModel() {
 		var cargaMasivaModel = new MassiveMasterDTO();
-		cargaMasivaModel.setKey(this.cargaMasivaId);
+		cargaMasivaModel.setKey(this.getKey());
 		cargaMasivaModel.setFecha(this.fecha);
 		cargaMasivaModel.setUsuario(this.usuario);
 		cargaMasivaModel.setArchivo(this.archivo);
@@ -30,14 +30,6 @@ public class MassiveMasterRequest {
 		cargaMasivaModel.setMensaje(this.mensaje);
 		cargaMasivaModel.setPlantilla(this.plantilla);
 		return cargaMasivaModel;
-	}
-
-	public String getCargaMasivaId() {
-		return cargaMasivaId;
-	}
-
-	public void setCargaMasivaId(String cargaMasivaId) {
-		this.cargaMasivaId = cargaMasivaId;
 	}
 
 	public String getArchivo() {
@@ -94,6 +86,14 @@ public class MassiveMasterRequest {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
 	}
 
 }
