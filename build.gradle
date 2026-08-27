@@ -14,7 +14,7 @@ java {
 }
 
 bootJar {
-    mainClass = 'd3.Sw42WebApplication'
+    mainClass = 'd3.WebApplication'
 }
 
 repositories {
