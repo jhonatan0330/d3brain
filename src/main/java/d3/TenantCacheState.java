@@ -6,9 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authorization.domain.RolAccesoDTO;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 /**
  * In-memory cache state for a single tenant. One instance per tenant id in

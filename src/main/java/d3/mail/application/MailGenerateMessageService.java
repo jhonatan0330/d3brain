@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropertyNavigateIntoRelationsToFindFieldsService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
@@ -23,11 +28,7 @@ import d3.users.domain.UsuarioDTO;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Service

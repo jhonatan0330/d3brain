@@ -1,4 +1,4 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
 public class ConfigEnum {
 

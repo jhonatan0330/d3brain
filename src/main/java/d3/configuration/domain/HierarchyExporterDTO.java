@@ -10,9 +10,6 @@ import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-import d3.property.domain.RelacionInternaDTO;
 import d3.report.domain.ReporteBaseDTO;
 import d3.webservice.domain.WebServiceDTO;
 

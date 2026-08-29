@@ -1,4 +1,4 @@
-package d3.property.application;
+package d3.configuration.application;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,16 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import d3.CacheManager;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadFilterDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
+import d3.configuration.infrastructure.PropertyCacheMapper;
+import d3.configuration.infrastructure.PropiedadValorDefinidoMapper;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.document.application.field.Propiedades;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadFilterDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-import d3.property.domain.PropiedadValorDefinidoFilterDTO;
-import d3.property.infrastructure.PropertyCacheMapper;
-import d3.property.infrastructure.PropiedadValorDefinidoMapper;
+
 import org.springframework.context.annotation.Lazy;
 
 @Service

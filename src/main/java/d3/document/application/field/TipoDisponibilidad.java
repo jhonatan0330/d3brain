@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import d3.configuration.application.PropertyNavigateIntoRelationsToFindFieldsService;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.DetallePedidoVentaSvc;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.DetallePedidoVentaDTO;
@@ -16,8 +18,6 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropertyNavigateIntoRelationsToFindFieldsService;
-import d3.property.domain.PropiedadDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.users.application.PuestoSvc;

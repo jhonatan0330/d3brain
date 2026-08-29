@@ -1,4 +1,4 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,11 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.Propiedades;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 @Component
 public class HomologateFaq {

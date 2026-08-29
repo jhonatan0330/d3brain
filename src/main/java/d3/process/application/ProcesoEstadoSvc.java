@@ -17,12 +17,11 @@ import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoEstadoMapper;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-
 import jakarta.annotation.PostConstruct;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service("procesoEstadoService")
 public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFilterDTO> {

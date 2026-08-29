@@ -1,4 +1,4 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import d3.accounting.application.PlanCreateAccountService;
 import d3.accounting.application.base.AccountService;
 import d3.accounting.domain.AccountDTO;
 import d3.accounting.domain.AccountFilterDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.document.application.CallDocumentCommons;
@@ -17,8 +18,6 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 @Component
 public class HomologateAccount {

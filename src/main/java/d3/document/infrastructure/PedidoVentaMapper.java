@@ -4,13 +4,13 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.RelacionInternaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.shared.domain.IBasicMapper;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.RelacionInternaDTO;
 
 @D3SqlConnMapper(value = "PedidoVentaMapper")
 public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVentaFilterDTO> {

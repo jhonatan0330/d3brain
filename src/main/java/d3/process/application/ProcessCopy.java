@@ -10,15 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Component

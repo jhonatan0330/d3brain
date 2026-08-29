@@ -1,4 +1,4 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import d3.shared.domain.SharedConstants;
 import d3.authorization.application.UsuarioRolProductoSvc;
 import d3.authorization.domain.UsuarioRolProductoDTO;
 import d3.authorization.domain.UsuarioRolProductoFilterDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCommons;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaDTO;
@@ -19,8 +20,6 @@ import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 @Component
 public class HomologateProduct {

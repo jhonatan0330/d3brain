@@ -1,4 +1,4 @@
-package d3.property.domain;
+package d3.configuration.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;

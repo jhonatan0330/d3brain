@@ -2,7 +2,7 @@ package d3.shared.domain;
 
 import java.util.List;
 
-import d3.property.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadDTO;
 
 public abstract class BasicParamDTO extends BasicDTO {
 

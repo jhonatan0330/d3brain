@@ -11,7 +11,7 @@ import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
-import d3.property.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadDTO;
 
 @Service
 public class SynchronizeRolService {

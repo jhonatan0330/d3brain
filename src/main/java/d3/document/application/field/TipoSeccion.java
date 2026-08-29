@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.domain.PropiedadDTO;
 
 @Component
 public class TipoSeccion {

@@ -6,10 +6,10 @@ import java.util.Properties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import d3.shared.domain.ServerException;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.users.domain.ServidorDTO;
-import d3.property.domain.PropiedadDTO;
 
 public class MailUtils {
 

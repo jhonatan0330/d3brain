@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.webservice.domain.WebServiceDTO;
 import org.springframework.context.annotation.Lazy;
 

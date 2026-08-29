@@ -6,14 +6,15 @@ import org.springframework.stereotype.Component;
 
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
+import d3.configuration.application.RelacionInternaSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.RelacionInternaDTO;
 import d3.document.application.CallDocumentListWithFilters;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.property.application.RelacionInternaSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.RelacionInternaDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Component

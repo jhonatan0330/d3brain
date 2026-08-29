@@ -24,14 +24,13 @@ import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authentication.domain.UsuarioSesionErrorDTO;
 import d3.authentication.infrastructure.UsuarioAutenticacionMapper;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.HttpUtils;
 import d3.shared.application.BasicSvc;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
-import d3.property.domain.PropiedadDTO;
-
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 

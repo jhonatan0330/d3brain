@@ -1,4 +1,4 @@
-package d3.property;
+package d3.configuration;
 
 import java.util.List;
 
@@ -13,12 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.property.application.PropiedadSvc;
-import d3.property.application.PropiedadValorDefinidoSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadFilterDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-import d3.property.domain.PropiedadValorDefinidoFilterDTO;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.application.PropiedadValorDefinidoSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadFilterDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @RestController

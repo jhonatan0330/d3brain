@@ -9,16 +9,15 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.RelacionInternaDTO;
 import d3.shared.application.D3Utils;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.application.RelacionInternaSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.RelacionInternaDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Service

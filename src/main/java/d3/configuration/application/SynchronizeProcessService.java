@@ -8,13 +8,14 @@ import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.application.ProcesoSvc;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Service

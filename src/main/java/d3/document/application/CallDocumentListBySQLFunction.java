@@ -6,13 +6,14 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.shared.application.D3Utils;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.domain.PropiedadDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @Component

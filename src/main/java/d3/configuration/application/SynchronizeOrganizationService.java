@@ -8,7 +8,7 @@ import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service
 public class SynchronizeOrganizationService {

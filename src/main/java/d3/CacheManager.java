@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authorization.domain.RolAccesoDTO;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.multitenancy.TenantContext;
 import d3.multitenancy.TenantDataSourcesConfigurationProperties;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 /**
  * Tenant-scoped in-memory cache. Resolves the active bucket from

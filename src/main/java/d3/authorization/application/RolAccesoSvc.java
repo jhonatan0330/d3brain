@@ -14,9 +14,8 @@ import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
 import d3.authorization.domain.UsuarioRolFilterDTO;
 import d3.authorization.infrastructure.RolAccesoMapper;
+import d3.configuration.application.PropertyCRUDSvc;
 import d3.shared.application.BasicSvc;
-import d3.property.application.PropertyCRUDSvc;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;

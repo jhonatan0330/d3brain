@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.CampoAdaptador;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.DocumentMessage;
@@ -27,11 +31,6 @@ import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-
 import jakarta.annotation.PostConstruct;
 import d3.authentication.application.UsuarioSesionSvc;
 

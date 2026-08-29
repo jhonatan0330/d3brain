@@ -17,13 +17,12 @@ import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.domain.PropiedadDTO;
 import d3.shared.application.HttpUtils;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.domain.PropiedadDTO;
-
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
 

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.DetallePedidoVentaSvc;
 import d3.document.domain.DetallePedidoVentaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.domain.ProductoDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.property.domain.PropiedadDTO;
 
 @Service
 public class CallProductValidateAndSave {

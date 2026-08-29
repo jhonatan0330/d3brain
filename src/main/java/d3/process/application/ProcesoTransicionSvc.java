@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
@@ -18,7 +19,6 @@ import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoTransicionMapper;
-import d3.property.domain.PropiedadDTO;
 import d3.shared.application.BasicSvc;
 import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;

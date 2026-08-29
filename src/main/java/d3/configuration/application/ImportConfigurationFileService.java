@@ -15,7 +15,7 @@ import d3.shared.domain.ServerException;
 import d3.configuration.domain.FileVO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
-import d3.property.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadDTO;
 import d3.upload.application.UploadSvc;
 
 @Service

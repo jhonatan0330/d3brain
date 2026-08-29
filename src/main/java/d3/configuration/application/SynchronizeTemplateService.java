@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.RelacionInternaDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-import d3.property.domain.RelacionInternaDTO;
 import d3.report.domain.ReporteBaseDTO;
 import org.springframework.context.annotation.Lazy;
 

@@ -11,11 +11,10 @@ import d3.shared.application.BasicSvc;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
 import d3.mail.infrastructure.MensajePlantillaCorreoMapper;
-import d3.property.application.PropiedadSvc;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropiedadSvc;
 
 @Service("mensajePlantillaCorreoService")
 public class MensajePlantillaCorreoSvc extends BasicSvc<MensajePlantillaCorreoDTO, MensajePlantillaCorreoFilterDTO> {

@@ -1,4 +1,4 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
 import java.util.Date;
 import java.util.List;
@@ -11,6 +11,8 @@ import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaDTO;
@@ -19,9 +21,6 @@ import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;

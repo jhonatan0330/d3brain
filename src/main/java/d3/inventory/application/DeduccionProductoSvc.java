@@ -23,13 +23,12 @@ import d3.inventory.domain.TrazabilidadProductoInventarioFilterDTO;
 import d3.inventory.infrastructure.DeduccionProductoMapper;
 import d3.shared.application.BasicSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service("deduccionProductoService")
 public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, DeduccionProductoFilterDTO> {

@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCommons;
 import d3.document.application.CallDocumentListBySQLFunction;
 import d3.document.application.CallDocumentListFromFieldProcess;
@@ -36,9 +39,6 @@ import d3.money.domain.TurnoDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 @Component
 public class TipoProceso {

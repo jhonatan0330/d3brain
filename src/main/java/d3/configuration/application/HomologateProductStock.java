@@ -1,39 +1,37 @@
-package d3.homologate.application;
+package d3.configuration.application;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentCommons;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.inventory.application.ProductoInventarioDescuentoSvc;
+import d3.inventory.application.ProductoInventarioSvc;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
-import d3.inventory.domain.ProductoInventarioDescuentoDTO;
-import d3.inventory.domain.ProductoInventarioDescuentoFilterDTO;
+import d3.inventory.domain.ProductoInventarioDTO;
+import d3.inventory.domain.ProductoInventarioFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+
+import org.springframework.context.annotation.Lazy;
 
 @Component
-public class HomologateProductStockDeduction {
+public class HomologateProductStock {
 
+	private final ProductoInventarioSvc stockService;
 	private final ProductoSvc productService;
-	private final ProductoInventarioDescuentoSvc discountStockService;
 
-	public HomologateProductStockDeduction(@Lazy ProductoSvc productService,
-			@Lazy ProductoInventarioDescuentoSvc discountStockService) {
+	public HomologateProductStock(@Lazy ProductoInventarioSvc stockService, @Lazy ProductoSvc productService) {
+		this.stockService = stockService;
 		this.productService = productService;
-		this.discountStockService = discountStockService;
 	}
 
 	public void createFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
@@ -41,22 +39,21 @@ public class HomologateProductStockDeduction {
 		List<String> fieldsTemplate = new ArrayList<>();
 		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO,
 				1, token));
-		// Crear el campo tipo recurso nombre
-		fieldsTemplate.add(campoService.createField(templateId, "DESCONTAR",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 2, token));
+
+		fieldsTemplate.add(
+				campoService.createField(templateId, "BODEGA", DocumentoPlantillaCaracteristicaDTO.PROCESO, 2, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 
-		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
 		fieldsTemplate.add(
-				campoService.createField(templateId, "CANTIDAD", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
+				campoService.createField(templateId, "MINIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-
-		fieldsTemplate.add(campoService.createField(templateId, "CARACTERISTICA",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+
+		fieldsTemplate.add(
+				campoService.createField(templateId, "MAXIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4, token));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -67,14 +64,14 @@ public class HomologateProductStockDeduction {
 
 	private void sincronize(String templateId, List<String> fieldsTemplate, String token, CallDocumentCRUD crudService)
 			throws ServerException {
-		ProductoInventarioDescuentoFilterDTO filter = new ProductoInventarioDescuentoFilterDTO();
+		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		filter.setPaginacionRegistroFinal(20000);
-		List<ProductoInventarioDescuentoDTO> pids = discountStockService.listarConsulta(filter);
+		List<ProductoInventarioDTO> pids = stockService.listarConsulta(filter);
 		if (pids == null || pids.isEmpty())
 			return;
-		for (ProductoInventarioDescuentoDTO iPid : pids) {
-			if (iPid.getDocumento() == null && iPid.getCantidadProductoDescontar().compareTo(BigDecimal.ZERO) != 0) {
+		for (ProductoInventarioDTO iPid : pids) {
+			if (iPid.getDocumento() == null) {
 				PedidoVentaDTO document = new PedidoVentaDTO();
 				document.setPlantilla(templateId);
 				document.setCaracteristicas(new ArrayList<>());
@@ -86,54 +83,53 @@ public class HomologateProductStockDeduction {
 
 				PedidoVentaCaracteristicaDTO fieldProductDiscount = new PedidoVentaCaracteristicaDTO();
 				fieldProductDiscount.setCampo(fieldsTemplate.get(1));
-				fieldProductDiscount.setValorOpcion(getKey(iPid.getProductoDescontar()));
+				fieldProductDiscount.setValorOpcion(iPid.getBodega());
 				document.getCaracteristicas().add(fieldProductDiscount);
 
 				PedidoVentaCaracteristicaDTO fieldCantidad = new PedidoVentaCaracteristicaDTO();
 				fieldCantidad.setCampo(fieldsTemplate.get(2));
-				fieldCantidad.setValorNumero(iPid.getCantidadProductoDescontar());
+				fieldCantidad.setValorNumero(iPid.getCantidadMinima());
 				document.getCaracteristicas().add(fieldCantidad);
 
 				PedidoVentaCaracteristicaDTO fieldDim2 = new PedidoVentaCaracteristicaDTO();
 				fieldDim2.setCampo(fieldsTemplate.get(3));
-				if (iPid.getCaracteristica() != null)
-					fieldDim2.setValorOpcion(iPid.getCaracteristica());
+				fieldDim2.setValorNumero(iPid.getCantidadMaxima());
 				document.getCaracteristicas().add(fieldDim2);
 
-				document.setFuncionario(discountStockService.getUserFlex(token));
+				document.setFuncionario(stockService.getUserFlex(token));
 				document = crudService.saveWithoutTransaction(document, token, true);
 				iPid.setDocumento(document.getLlaveTabla());
-				discountStockService.update(iPid);
+				stockService.update(iPid);
 			}
 
 		}
 	}
 
-	public void create(PedidoVentaDTO document) throws ServerException {
-		ProductoInventarioDescuentoFilterDTO filter = new ProductoInventarioDescuentoFilterDTO();
+	public void create(PedidoVentaDTO document, String token) throws ServerException {
+		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
 		filter.setDocumento(document.getLlaveTabla());
-		ProductoInventarioDescuentoDTO newItem = discountStockService.consultaUnica(filter);
+		ProductoInventarioDTO newItem = stockService.consultaUnica(filter);
 		if (newItem == null) {
-			newItem = new ProductoInventarioDescuentoDTO();
+			newItem = new ProductoInventarioDTO();
 			newItem.setDocumento(document.getLlaveTabla());
 			newItem.setProducto(getBase(CallDocumentCommons.getValueOption(document, "PRODUCTO")));
-			newItem.setProductoDescontar(getBase(CallDocumentCommons.getValueOption(document, "DESCONTAR")));
-			newItem.setCantidadProductoDescontar(CallDocumentCommons.getValueNumber(document, "CANTIDAD"));
-			newItem.setCaracteristica(CallDocumentCommons.getValueOption(document, "CARACTERISTICA"));
-			discountStockService.saveSimple(newItem);
+			newItem.setBodega(CallDocumentCommons.getValueOption(document, "BODEGA"));
+			newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
+			newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
+			stockService.guardar(newItem, token);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				if (newItem.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 					newItem.setEstado(SharedConstants.STATE_INACTIVE);
-					discountStockService.update(newItem);
+					stockService.update(newItem);
 				}
 			} else {
 				newItem.setProducto(getBase(CallDocumentCommons.getValueOption(document, "PRODUCTO")));
-				newItem.setProductoDescontar(getBase(CallDocumentCommons.getValueOption(document, "DESCONTAR")));
-				newItem.setCantidadProductoDescontar(CallDocumentCommons.getValueNumber(document, "CANTIDAD"));
-				newItem.setCaracteristica(CallDocumentCommons.getValueOption(document, "CARACTERISTICA"));
+				newItem.setBodega(CallDocumentCommons.getValueOption(document, "BODEGA"));
+				newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
+				newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
 				newItem.setEstado(SharedConstants.STATE_ACTIVE);
-				discountStockService.update(newItem);
+				stockService.actualizar(newItem, token);
 			}
 		}
 	}
@@ -155,4 +151,5 @@ public class HomologateProductStockDeduction {
 			return null;
 		return prod.getDocumento();
 	}
+
 }

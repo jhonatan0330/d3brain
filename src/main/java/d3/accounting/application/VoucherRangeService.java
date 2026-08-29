@@ -9,14 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.accounting.domain.VoucherRangeRequest;
 import d3.accounting.infrastructure.VoucherExtendMapper;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
 import d3.shared.domain.SharedToken;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaDTO;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 import d3.webservice.application.WebServiceExecuteAPI;
 
 @Service

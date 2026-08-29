@@ -11,10 +11,6 @@ import d3.shared.domain.SharedConstants;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.D3Utils;
 import d3.shared.application.BasicSvc;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceFilterDTO;
 import d3.webservice.infrastructure.WebServiceMapper;
@@ -22,6 +18,10 @@ import d3.webservice.infrastructure.WebServiceMapper;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service("webServiceService")
 public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> {

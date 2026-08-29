@@ -1,4 +1,4 @@
-package d3.property.application;
+package d3.configuration.application;
 
 import java.util.Date;
 import java.util.List;
@@ -10,13 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.application.BasicSvc;
-import d3.property.domain.RelacionInternaDTO;
-import d3.property.domain.RelacionInternaFilterDTO;
-import d3.property.infrastructure.RelacionInternaMapper;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.domain.RelacionInternaDTO;
+import d3.configuration.domain.RelacionInternaFilterDTO;
+import d3.configuration.infrastructure.RelacionInternaMapper;
 
 @Service("relacionInternaService")
 public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInternaFilterDTO> {

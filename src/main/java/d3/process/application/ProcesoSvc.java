@@ -14,10 +14,6 @@ import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoMapper;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
 
 import org.springframework.context.annotation.Lazy;
 
@@ -28,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.application.BasicSvc;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service("procesoService")
 public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {

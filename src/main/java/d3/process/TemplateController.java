@@ -17,6 +17,9 @@ import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.field.CampoAdaptador;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
+import d3.configuration.application.RelacionInternaSvc;
+import d3.configuration.domain.RelacionInternaDTO;
+import d3.configuration.domain.RelacionInternaFilterDTO;
 import d3.document.application.DocumentoRelacionGestorSvc;
 import d3.document.domain.DocumentoRelacionGestorDTO;
 import d3.document.domain.DocumentoRelacionGestorFilterDTO;
@@ -26,9 +29,7 @@ import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
-import d3.property.application.RelacionInternaSvc;
-import d3.property.domain.RelacionInternaDTO;
-import d3.property.domain.RelacionInternaFilterDTO;
+
 import org.springframework.context.annotation.Lazy;
 
 @RestController

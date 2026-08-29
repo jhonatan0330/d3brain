@@ -13,11 +13,10 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadFilterDTO;
 import d3.shared.application.HttpUtils;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadFilterDTO;
-
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
 

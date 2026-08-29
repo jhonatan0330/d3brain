@@ -1,4 +1,4 @@
-package d3.property.application;
+package d3.configuration.application;
 
 import java.util.List;
 
@@ -8,13 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
 import d3.shared.application.BasicSvc;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-import d3.property.domain.PropiedadValorDefinidoFilterDTO;
-import d3.property.infrastructure.PropiedadValorDefinidoMapper;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
+import d3.configuration.infrastructure.PropiedadValorDefinidoMapper;
 
 @Service("propiedadValorDefinidoService")
 public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO> {

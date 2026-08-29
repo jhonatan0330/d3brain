@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 

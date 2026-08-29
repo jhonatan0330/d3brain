@@ -19,13 +19,12 @@ import d3.shared.application.BasicSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.infrastructure.DocumentoPlantillaCaracteristicaMapper;
-import d3.property.application.PropertyGetWithCacheService;
-import d3.property.application.PropiedadSvc;
-import d3.property.domain.PropiedadDTO;
-import d3.property.domain.PropiedadValorDefinidoDTO;
-
 import jakarta.annotation.PostConstruct;
 import d3.authentication.application.UsuarioSesionSvc;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc

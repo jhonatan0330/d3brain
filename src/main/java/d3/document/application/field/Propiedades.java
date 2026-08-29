@@ -8,8 +8,8 @@ import java.util.List;
 
 import d3.shared.application.D3Utils;
 import d3.shared.domain.BasicParamDTO;
+import d3.configuration.domain.PropiedadDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.property.domain.PropiedadDTO;
 
 public class Propiedades {
 	// GENERALES
