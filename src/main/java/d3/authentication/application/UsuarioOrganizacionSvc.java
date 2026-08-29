@@ -17,9 +17,9 @@ import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
 import d3.authentication.domain.UsuarioOrganizacionDTO;
 import d3.authentication.domain.UsuarioOrganizacionFilterDTO;
 import d3.authentication.infrastructure.UsuarioOrganizacionMapper;
-import d3.logisticpymes.application.BasicSvc;
-import d3.logisticpymes.application.UsuarioSvc;
-import d3.logisticpymes.domain.UsuarioDTO;
+import d3.shared.application.BasicSvc;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 
 import jakarta.annotation.PostConstruct;
 

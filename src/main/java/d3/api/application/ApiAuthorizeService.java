@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import d3.shared.domain.ServerException;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
-import d3.document_execution.application.field.Propiedades;
+import d3.document.application.field.Propiedades;
 
 @Service
 public class ApiAuthorizeService {

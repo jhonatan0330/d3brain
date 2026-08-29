@@ -4,7 +4,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 import org.apache.ibatis.type.Alias;
 

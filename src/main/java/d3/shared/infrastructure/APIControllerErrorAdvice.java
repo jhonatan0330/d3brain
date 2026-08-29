@@ -8,10 +8,9 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import d3.shared.domain.SharedApiErrorResponse;
+import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
-import d3.java.dto.exception.FlexException;
-import d3.java.services.D3Utils;
+import d3.shared.domain.SharedApiErrorResponse;
 
 @ControllerAdvice
 public class APIControllerErrorAdvice {
@@ -21,14 +20,6 @@ public class APIControllerErrorAdvice {
 		SharedApiErrorResponse response = new SharedApiErrorResponse.ApiErrorResponseBuilder()
 				.withStatus(HttpStatus.INTERNAL_SERVER_ERROR).withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
 				.withMessage(D3Utils.maskError(e.getTextMessage())).withDetail(e.getOrigen()).build();
-		return new ResponseEntity<SharedApiErrorResponse>(response, response.getStatus());
-	}
-
-	@ExceptionHandler({ FlexException.class })
-	public ResponseEntity<SharedApiErrorResponse> handle(FlexException e) {
-		SharedApiErrorResponse response = new SharedApiErrorResponse.ApiErrorResponseBuilder().withStatus(HttpStatus.OK)
-				.withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name()).withMessage(e.getLocalizedMessage()).build();
-
 		return new ResponseEntity<SharedApiErrorResponse>(response, response.getStatus());
 	}
 

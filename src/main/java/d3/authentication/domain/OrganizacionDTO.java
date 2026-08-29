@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.logisticpymes.domain.BasicParamDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.shared.domain.BasicParamDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 
 @Alias("OrganizacionDTO")
 public class OrganizacionDTO extends BasicParamDTO {

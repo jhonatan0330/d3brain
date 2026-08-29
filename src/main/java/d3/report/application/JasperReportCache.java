@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import d3.shared.domain.ServerException;
-import d3.java.services.D3Utils;
+import d3.shared.application.D3Utils;
 
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperReport;

@@ -5,7 +5,7 @@ import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import d3.logisticpymes.domain.BasicParamDTO;
+import d3.shared.domain.BasicParamDTO;
 
 @Alias("ReporteBaseDTO")
 @JsonInclude(Include.NON_NULL)

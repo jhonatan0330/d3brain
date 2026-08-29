@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.BasicSvc;
 import d3.upload.domain.CargaArchivoDTO;
 import d3.upload.domain.CargaArchivoFilterDTO;
 import d3.upload.infrastructure.CargaArchivoMapper;

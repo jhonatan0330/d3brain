@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Lazy;
 
-import d3.java.services.D3Utils;
+import d3.shared.application.D3Utils;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;

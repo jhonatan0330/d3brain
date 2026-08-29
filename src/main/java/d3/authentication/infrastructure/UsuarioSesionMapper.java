@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import d3.D3SqlConnMapper;
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authentication.domain.UsuarioSesionFilterDTO;
-import d3.java.domain.IBasicMapper;
+import d3.shared.domain.IBasicMapper;
 
 @D3SqlConnMapper(value = "UsuarioSesionMapper")
 public interface UsuarioSesionMapper extends IBasicMapper<UsuarioSesionDTO, UsuarioSesionFilterDTO> {

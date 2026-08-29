@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.BasicSvc;
 import d3.property.domain.RelacionInternaDTO;
 import d3.property.domain.RelacionInternaFilterDTO;
 import d3.property.infrastructure.RelacionInternaMapper;

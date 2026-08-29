@@ -24,12 +24,12 @@ import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authentication.domain.UsuarioSesionErrorDTO;
 import d3.authentication.infrastructure.UsuarioAutenticacionMapper;
-import d3.document_execution.application.field.Propiedades;
-import d3.java.services.HttpUtils;
-import d3.logisticpymes.application.BasicSvc;
-import d3.logisticpymes.application.UsuarioSvc;
-import d3.logisticpymes.domain.UsuarioDTO;
-import d3.logisticpymes.domain.UsuarioFilterDTO;
+import d3.document.application.field.Propiedades;
+import d3.shared.application.HttpUtils;
+import d3.shared.application.BasicSvc;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
+import d3.users.domain.UsuarioFilterDTO;
 import d3.property.domain.PropiedadDTO;
 
 import jakarta.annotation.PostConstruct;

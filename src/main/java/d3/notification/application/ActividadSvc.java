@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
-import d3.document_execution.application.CallDocumentListWithFilters;
-import d3.document_execution.application.PedidoVentaSvc;
-import d3.document_execution.domain.PedidoVentaDTO;
+import d3.document.application.CallDocumentListWithFilters;
+import d3.document.application.PedidoVentaSvc;
+import d3.document.domain.PedidoVentaDTO;
 import d3.mail.application.MailGenerateMessageService;
 import d3.notification.domain.ActividadDTO;
 import d3.notification.domain.ActividadFilterDTO;
@@ -21,9 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.logisticpymes.application.BasicSvc;
-import d3.logisticpymes.application.UsuarioSvc;
-import d3.logisticpymes.domain.UsuarioDTO;
+import d3.shared.application.BasicSvc;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 import org.springframework.context.annotation.Lazy;
 import d3.authentication.application.UsuarioSesionSvc;
 

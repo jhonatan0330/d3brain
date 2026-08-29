@@ -3,7 +3,7 @@ package d3.mail.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.java.domain.BasicFilterDTO;
+import d3.shared.domain.BasicFilterDTO;
 
 @Alias("MensajePlantillaCorreoFilterDTO")
 public class MensajePlantillaCorreoFilterDTO extends BasicFilterDTO {

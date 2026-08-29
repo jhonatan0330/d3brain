@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.process.infrastructure.DocumentoPlantillaCaracteristicaMapper">
+
+	<sql id="selectDocumentoPlantillaCaracteristicaFragment">
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_objetivo as  objetivo
+			,cdpc_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cdpc_plantilla) as  plantillaNombre
+			,cdpc_formato as  formato
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  orden
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
+	</sql>
+
+	<sql id="whereDocumentoPlantillaCaracteristicaFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cdpc_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cdpc_estado = #{estado}
+			</if>
+			<if test="plantilla!=null">
+				and cdpc_plantilla = #{plantilla}
+			</if>
+			<if test="formato!=null">
+				and cdpc_formato = #{formato}
+			</if>
+			<if test="nombre!=null">
+				and cdpc_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cdpc_codigo = #{codigo}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cdpc_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationDocumentoPlantillaCaracteristicaFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment">
+		where
+			cdpc_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+	
+	<select id="listar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		<include refid="selectDocumentoPlantillaCaracteristicaFragment" />
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+		order by ndpc_orden 
+		<include refid="paginationDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
+		select count(*)
+		from documentoplantillacaracteristica_dpcp
+		<include refid="whereDocumentoPlantillaCaracteristicaFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		insert into documentoplantillacaracteristica_dpcp(
+			cdpc_llave
+		<if test="objetivo!=null">
+			,cdpc_objetivo
+		</if>
+		<if test="plantilla!=null">
+			,cdpc_plantilla
+		</if>
+		<if test="formato!=null">
+			,cdpc_formato
+		</if>
+		<if test="nombre!=null">
+			,cdpc_nombre
+		</if>
+		<if test="codigo!=null">
+			,cdpc_codigo
+		</if>
+		<if test="orden!=null">
+			,ndpc_orden
+		</if>
+		<if test="imagen!=null">
+			,cdpc_imagen
+		</if>
+		<if test="usuarioCreacion!=null">
+			,cdpc_usuariocreacion
+		</if>
+		<if test="estado!=null">
+			,cdpc_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="objetivo!=null">
+			,#{objetivo}
+		</if>
+		<if test="plantilla!=null">
+			,#{plantilla}
+		</if>
+		<if test="formato!=null">
+			,#{formato}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="orden!=null">
+			,#{orden}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="usuarioCreacion!=null">
+			,#{usuarioCreacion}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
+		update documentoplantillacaracteristica_dpcp
+			set
+				cdpc_objetivo = #{objetivo},
+				cdpc_plantilla = #{plantilla},
+				cdpc_formato = #{formato},
+				cdpc_nombre = #{nombre},
+				cdpc_codigo = #{codigo},
+				ndpc_orden = #{orden},
+				cdpc_imagen = #{imagen},
+				cdpc_usuarioeliminacion = #{usuarioEliminacion},
+				ddpc_fechaeliminacion = #{fechaEliminacion},
+				cdpc_estado =#{estado}
+		<include refid="whereDocumentoPlantillaCaracteristicaPrimaryKeyFragment" />
+	</select>
+
+	<update id="actualizarFiltros" parameterType="java.lang.String" >
+	update pedidoventa_pdvp set cpdv_textofiltro = (SELECT array_to_string(ARRAY( SELECT upper(pvc.cpvc_valortext::text)
+		FROM pedidoventacaracteristica_pvcp pvc, documentoplantillacaracteristica_dpcp dpc_a, propiedad_ppdp ppd
+		WHERE pvc.cpvc_campo = dpc_a.cdpc_llave AND pvc.cpvc_documento = cpdv_llave AND pvc.cpvc_estado = 'A' 
+		and dpc_a.cdpc_estado = 'A' and dpc_a.cdpc_llave = ppd.cppd_campo and ppd.cppd_propiedadvalor = 'PROP_94' and ppd.cppd_estado = 'A'), ',', ''))
+	where cpdv_plantilla = (select cdpc_plantilla from documentoplantillacaracteristica_dpcp  where cdpc_llave = #{llaveTabla})
+	</update >
+	
+	<update id="actualizarDescripcion"  >
+	update pedidoventa_pdvp 
+	set cpdv_descripcion = <choose><when test="pField!=null">(select cpvc_valortext from pedidoventacaracteristica_pvcp where cpvc_documento = cpdv_llave and cpvc_estado = 'A' and cpvc_campo = #{pField} limit 1)</when><otherwise>null</otherwise></choose>
+	where cpdv_plantilla = #{pTemplate}
+	</update >
+	
+	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_objetivo as  objetivo
+			,cdpc_plantilla as  plantilla
+			,cdpc_formato as  formato
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  orden
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
+			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)
+		where cdpc_estado = 'A' and cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by cdpc_plantilla, ndpc_orden 
+	</select>
+	
+	<select id="countDependentsOfField" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
+		select count(*) from documentoplantillacaracteristica_dpcp dd 
+			inner join propiedad_ppdp pp on pp.cppd_campo = dd.cdpc_llave and pp.cppd_estado = 'A'
+		where dd.cdpc_plantilla = #{plantilla} and dd.cdpc_estado = 'A'
+			and pp.cppd_propiedadvalor = 'PROP_96'
+			and pp.cppd_valor = #{llaveTabla}
+			and dd.cdpc_llave != #{llaveTabla}
+	</select>
+
+</mapper>

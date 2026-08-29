@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
-import d3.document_execution.application.field.Propiedades;
-import d3.process_form.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.document.application.field.Propiedades;
+import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.property.application.PropiedadSvc;
 import d3.property.domain.PropiedadValorDefinidoDTO;
 

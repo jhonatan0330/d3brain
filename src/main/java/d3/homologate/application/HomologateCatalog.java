@@ -6,17 +6,17 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.accounting_plan.application.PlanCreateCatalogService;
-import d3.accounting_plan.application.base.CatalogService;
-import d3.accounting_plan.domain.CatalogDTO;
-import d3.accounting_plan.domain.CatalogFilterDTO;
+import d3.accounting.application.PlanCreateCatalogService;
+import d3.accounting.application.base.CatalogService;
+import d3.accounting.domain.CatalogDTO;
+import d3.accounting.domain.CatalogFilterDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.document_execution.application.CallDocumentCommons;
-import d3.document_execution.application.field.Propiedades;
-import d3.document_execution.domain.PedidoVentaDTO;
-import d3.process_form.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.document.application.CallDocumentCommons;
+import d3.document.application.field.Propiedades;
+import d3.document.domain.PedidoVentaDTO;
+import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.property.application.PropiedadSvc;
 import d3.property.domain.PropiedadValorDefinidoDTO;
 

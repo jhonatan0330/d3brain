@@ -70,14 +70,7 @@ dependencies {
 	implementation 'com.sun.activation:jakarta.activation:2.0.1'
 	
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	
-	
-	//Copn openai no pudo por presion, estoy con hugging
-	//implementation "org.springframework.ai:spring-ai-huggingface:1.1.0"
-	//implementation "org.springframework.ai:spring-ai-transformers:1.1.0"
-	//implementation("org.springframework.ai:spring-ai-client-chat:1.1.0")
 
-	
 	
 }
 

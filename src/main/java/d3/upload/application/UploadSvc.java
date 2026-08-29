@@ -22,8 +22,8 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.stereotype.Service;
 
 import d3.shared.domain.ServerException;
-import d3.logisticpymes.application.ServidorSvc;
-import d3.logisticpymes.domain.ServidorDTO;
+import d3.users.application.ServidorSvc;
+import d3.users.domain.ServidorDTO;
 import d3.upload.domain.CargaArchivoDTO;
 import org.springframework.context.annotation.Lazy;
 

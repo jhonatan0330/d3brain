@@ -9,8 +9,8 @@ import d3.shared.domain.ServerException;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authentication.infrastructure.OrganizacionMapper;
-import d3.document_execution.application.field.Propiedades;
-import d3.logisticpymes.application.BasicSvc;
+import d3.document.application.field.Propiedades;
+import d3.shared.application.BasicSvc;
 import d3.property.application.PropertyGetWithCacheService;
 import d3.property.domain.PropiedadValorDefinidoDTO;
 

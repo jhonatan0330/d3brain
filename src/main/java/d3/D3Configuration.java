@@ -20,11 +20,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import d3.accounting_plan.application.StackAccountProccessService;
+import d3.accounting.application.StackAccountProccessService;
 import d3.shared.domain.ServerException;
 import d3.mail.application.MailReleaseMessageQueueService;
 import d3.multitenancy.TenantIteratorService;
-import d3.process_designer.application.ProcesoTransicionAutomaticaSvc;
+import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.report.ReporteServlet;
 import d3.report.application.ReporteBaseSvc;
 import d3.webservice.application.WebServiceEjecucionSvc;

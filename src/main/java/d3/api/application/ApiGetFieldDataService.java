@@ -10,16 +10,16 @@ import d3.api.domain.DataFieldRequest;
 import d3.api.domain.DataFieldResponse;
 import d3.api.domain.DocumentResponse;
 import d3.api.domain.FieldRequest;
-import d3.document_execution.application.DetallePedidoVentaSvc;
-import d3.document_execution.application.PedidoVentaCaracteristicaSvc;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.document_execution.domain.PedidoVentaCaracteristicaFilterDTO;
+import d3.document.application.DetallePedidoVentaSvc;
+import d3.document.application.PedidoVentaCaracteristicaSvc;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.inventory.application.ProductoSvc;
-import d3.java.services.D3Utils;
-import d3.process_form.application.CallSearchProcessFromText;
-import d3.process_form.application.DocumentoPlantillaSvc;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.shared.application.D3Utils;
+import d3.process.application.CallSearchProcessFromText;
+import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 import org.springframework.context.annotation.Lazy;
 
 @Service

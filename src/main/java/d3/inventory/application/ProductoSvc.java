@@ -9,12 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
 import d3.inventory.infrastructure.ProductoMapper;
-import d3.java.services.D3Utils;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;

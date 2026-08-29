@@ -3,7 +3,7 @@ package d3.inventory.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.java.domain.BasicFilterDTO;
+import d3.shared.domain.BasicFilterDTO;
 
 @Alias("ProductoInventarioDescuentoFilterDTO")
 public class ProductoInventarioDescuentoFilterDTO extends BasicFilterDTO {

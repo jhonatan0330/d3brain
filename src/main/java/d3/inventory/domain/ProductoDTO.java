@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.document_execution.domain.DetallePedidoVentaDTO;
-import d3.logisticpymes.domain.BasicParamDTO;
+import d3.document.domain.DetallePedidoVentaDTO;
+import d3.shared.domain.BasicParamDTO;
 
 @Alias("ProductoDTO")
 public class ProductoDTO extends BasicParamDTO {

@@ -8,7 +8,7 @@ import d3.shared.domain.SharedIdResponse;
 import d3.api.domain.LoginRequest;
 import d3.authentication.application.UsuarioAutenticacionSvc;
 import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
-import d3.java.services.D3Utils;
+import d3.shared.application.D3Utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 

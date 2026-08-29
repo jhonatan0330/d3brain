@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
-import d3.java.domain.IBasicMapper;
+import d3.shared.domain.IBasicMapper;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajeFilterDTO;
 

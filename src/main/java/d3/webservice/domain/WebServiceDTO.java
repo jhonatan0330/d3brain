@@ -3,7 +3,7 @@ package d3.webservice.domain;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import d3.logisticpymes.domain.BasicParamDTO;
+import d3.shared.domain.BasicParamDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Alias("WebServiceDTO")

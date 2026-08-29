@@ -13,18 +13,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import d3.shared.domain.ServerException;
 import d3.authorization.application.RolAccesoSvc;
-import d3.document_execution.application.CallDocumentCRUD;
-import d3.document_execution.application.PedidoVentaSvc;
-import d3.document_execution.domain.DocumentMessage;
-import d3.document_execution.domain.PedidoVentaDTO;
+import d3.document.application.CallDocumentCRUD;
+import d3.document.application.PedidoVentaSvc;
+import d3.document.domain.DocumentMessage;
+import d3.document.domain.PedidoVentaDTO;
 import d3.massiveload.domain.MasivaItemRequest;
 import d3.massiveload.domain.MassiveItemDTO;
 import d3.massiveload.domain.MassiveItemFilter;
 import d3.massiveload.domain.MassiveMasterDTO;
 import d3.massiveload.domain.MassiveMasterRequest;
-import d3.process_form.application.DocumentoPlantillaSvc;
-import d3.process_form.domain.DocumentoPlantillaDTO;
-import d3.process_form.domain.DocumentoPlantillaFilterDTO;
+import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.DocumentoPlantillaFilterDTO;
 
 @Service
 public class MassiveLoadOrchestratorService {

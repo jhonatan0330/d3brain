@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import d3.authentication.application.UsuarioSesionSvc;

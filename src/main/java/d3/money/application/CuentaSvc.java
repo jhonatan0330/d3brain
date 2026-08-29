@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.document_execution.domain.PedidoVentaDTO;
-import d3.logisticpymes.application.BasicSvc;
+import d3.document.domain.PedidoVentaDTO;
+import d3.shared.application.BasicSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.CuentaFilterDTO;
 import d3.money.infrastructure.CuentaMapper;

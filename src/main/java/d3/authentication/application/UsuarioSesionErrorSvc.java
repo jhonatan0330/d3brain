@@ -11,7 +11,7 @@ import d3.shared.domain.ServerException;
 import d3.authentication.domain.UsuarioSesionErrorDTO;
 import d3.authentication.domain.UsuarioSesionErrorFilterDTO;
 import d3.authentication.infrastructure.UsuarioSesionErrorMapper;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 

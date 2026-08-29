@@ -12,10 +12,10 @@ import d3.shared.domain.SharedConstants;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.domain.OrganizacionDTO;
-import d3.java.services.MailUtils;
-import d3.logisticpymes.application.ServidorSvc;
-import d3.logisticpymes.domain.ServidorDTO;
-import d3.logisticpymes.domain.ServidorFilterDTO;
+import d3.shared.application.MailUtils;
+import d3.users.application.ServidorSvc;
+import d3.users.domain.ServidorDTO;
+import d3.users.domain.ServidorFilterDTO;
 import org.springframework.context.annotation.Lazy;
 
 @Service

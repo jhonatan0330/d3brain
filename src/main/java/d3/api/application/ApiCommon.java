@@ -8,20 +8,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import d3.shared.domain.ServerException;
 import d3.api.domain.DocumentResponse;
 import d3.api.domain.FieldRequest;
 import d3.api.domain.FieldResponse;
 import d3.api.domain.ProductRequest;
-import d3.document_execution.application.DetallePedidoVentaSvc;
-import d3.document_execution.application.PedidoVentaCaracteristicaSvc;
-import d3.document_execution.domain.DetallePedidoVentaDTO;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.document_execution.domain.PedidoVentaDTO;
+import d3.document.application.DetallePedidoVentaSvc;
+import d3.document.application.PedidoVentaCaracteristicaSvc;
+import d3.document.domain.DetallePedidoVentaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
+import d3.shared.domain.ServerException;
 
 public class ApiCommon {
 

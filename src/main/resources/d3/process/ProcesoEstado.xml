@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.process.infrastructure.ProcesoEstadoMapper">
+
+	<sql id="selectProcesoEstadoFragment">
+		select
+			cpes_llave as  llaveTabla
+			,cpes_tipo as  tipo
+			,cpes_estadodocumento as  estadoDocumento
+			,npes_avance as  avance
+			,cpes_nombre as  nombre
+			,cpes_codigo as  codigo
+			,cpes_proceso as  proceso
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  procesoNombre
+			,cpes_estado as estado
+		from procesoestado_pesp a
+	</sql>
+
+	<sql id="whereProcesoEstadoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cpes_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cpes_estado = #{estado}
+			</if>
+			<if test="tipo!=null">
+				and cpes_tipo = #{tipo}
+			</if>
+			<if test="estadoDocumento!=null">
+				and cpes_estadodocumento = #{estadoDocumento}
+			</if>
+			<if test="nombre!=null">
+				and cpes_nombre = #{nombre}
+			</if>
+			<if test="codigo!=null">
+				and cpes_codigo = #{codigo}
+			</if>
+			<if test="proceso!=null">
+				and cpes_proceso = #{proceso}
+			</if>
+			<if test="filtroParametro!=null">
+				and (upper(cpes_nombre) like upper('%' || #{filtroParametro} || '%'))
+			</if>
+	</sql>
+
+	<sql id="paginationProcesoEstadoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereProcesoEstadoPrimaryKeyFragment">
+		where
+			cpes_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		<include refid="selectProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+	</select>
+	
+	<select id="listar" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		<include refid="selectProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+		order by npes_avance 
+		<include refid="paginationProcesoEstadoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="ProcesoEstadoDTO" resultType="int">
+		select count(*)
+		from procesoestado_pesp
+		<include refid="whereProcesoEstadoFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		insert into procesoestado_pesp(
+			cpes_llave
+		<if test="tipo!=null">
+			,cpes_tipo
+		</if>
+		<if test="estadoDocumento!=null">
+			,cpes_estadodocumento
+		</if>
+		<if test="avance!=null">
+			,npes_avance
+		</if>
+		<if test="nombre!=null">
+			,cpes_nombre
+		</if>
+		<if test="codigo!=null">
+			,cpes_codigo
+		</if>
+		<if test="proceso!=null">
+			,cpes_proceso
+		</if>
+		<if test="estado!=null">
+			,cpes_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="estadoDocumento!=null">
+			,#{estadoDocumento}
+		</if>
+		<if test="avance!=null">
+			,#{avance}
+		</if>
+		<if test="nombre!=null">
+			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
+		<if test="proceso!=null">
+			,#{proceso}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		update procesoestado_pesp
+			set
+				cpes_tipo = #{tipo},
+				cpes_estadodocumento = #{estadoDocumento},
+				npes_avance = #{avance},
+				cpes_nombre = #{nombre},
+				cpes_codigo = #{codigo},
+				cpes_proceso = #{proceso},
+				cpes_estado =#{estado}
+		<include refid="whereProcesoEstadoPrimaryKeyFragment" />
+	</select>
+	
+	<sql id="selectSimpleProcesoEstadoFragment">
+		select
+			cpes_llave as  llaveTabla
+			,cpes_tipo as  tipo
+			,cpes_estadodocumento as  estadoDocumento
+			,npes_avance as  avance
+			,cpes_nombre as  nombre
+			,cpes_codigo as  codigo
+			,cpes_proceso as  proceso
+			,cpes_estado as estado
+		from procesoestado_pesp a
+	</sql>
+	
+	<select id="consultarSimple" resultType="ProcesoEstadoDTO">
+		<include refid="selectSimpleProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+	</select>
+	
+	<select id="listarSimple" resultType="ProcesoEstadoDTO">
+		<include refid="selectSimpleProcesoEstadoFragment" />
+		<include refid="whereProcesoEstadoFragment" />
+		order by npes_avance 
+		<include refid="paginationProcesoEstadoFragment" />
+	</select>
+	
+
+
+<!--// BEGIN region script-->
+	<update id="actualizarEstados" parameterType="ProcesoEstadoDTO" >
+		update pedidoventa_pdvp set cpdv_estado = #{estadoDocumento} where cpdv_estadoexpediente = #{llaveTabla}
+	</update >
+	<select id="actualizarCierreResponsable" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		update actividad_actp 
+		set cact_estado = 'I', 
+		cact_usuarioinactivo = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}), 
+		dact_fechainactivo = now() 
+		where 
+		cact_estado = 'A' 
+		and cact_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_estadoexpediente = #{llaveTabla})
+		<if test="encargado!=null"> and cact_responsable = (select cerl_usuario from usuariorol_erlp where cerl_documento = #{encargado} and cerl_estado = 'A')</if>
+	</select>
+	<select id="actualizarIngresoResponsable" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
+		insert into actividad_actp (cact_llave, cact_documento, cact_responsable, cact_usuarioregistro, dact_fecharegistro) 		
+		select 
+			replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''), 
+			cpdv_llave,
+			(select cerl_usuario from usuariorol_erlp where cerl_documento = #{encargado} and cerl_estado = 'A'), 
+			(select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}),
+			now()
+		from pedidoventa_pdvp 
+		where 
+			cpdv_estadoexpediente = #{llaveTabla}
+				and (select cact_llave from actividad_actp where cact_documento = cpdv_llave and cact_estado = 'A') is null
+	</select>
+	
+	<select id="funcionAsignacion" resultType="java.lang.String">
+		select propiedad_${estado} (#{documento}, #{modificador}, #{token})
+	</select>
+	
+	<select id="getFullToSynchronize" resultType="ProcesoEstadoDTO">
+		select
+			cpes_llave as  llaveTabla
+			,cpes_tipo as  tipo
+			,cpes_estadodocumento as  estadoDocumento
+			,npes_avance as  avance
+			,cpes_nombre as  nombre
+			,cpes_codigo as  codigo
+			,cpes_proceso as  proceso
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  procesoNombre
+		from procesoestado_pesp a
+		inner join proceso_prcp on (cprc_llave =cpes_proceso)
+		where cpes_estado = 'A' and cprc_estado = 'A'
+		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by procesoNombre
+	</select>
+	
+	
+<!--// END region script-->
+
+</mapper>

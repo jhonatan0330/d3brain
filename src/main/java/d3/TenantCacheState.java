@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authorization.domain.RolAccesoDTO;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.property.domain.PropiedadDTO;
 import d3.property.domain.PropiedadValorDefinidoDTO;
 

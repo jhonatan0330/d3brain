@@ -14,7 +14,7 @@ import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoInventarioDTO;
 import d3.inventory.domain.ProductoInventarioFilterDTO;
 import d3.inventory.infrastructure.ProductoInventarioMapper;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;

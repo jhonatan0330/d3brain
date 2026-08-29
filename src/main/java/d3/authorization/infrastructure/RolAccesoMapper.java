@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import d3.D3SqlConnMapper;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
-import d3.java.domain.IBasicMapper;
+import d3.shared.domain.IBasicMapper;
 
 @D3SqlConnMapper(value = "RolAccesoMapper")
 public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFilterDTO> {

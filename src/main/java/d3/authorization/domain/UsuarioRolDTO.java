@@ -2,7 +2,7 @@ package d3.authorization.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 import org.apache.ibatis.type.Alias;
 

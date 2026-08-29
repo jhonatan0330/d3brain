@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.ServerException;
-import d3.document_execution.application.DocumentoRelacionExpedienteSvc;
-import d3.document_execution.application.PedidoVentaCaracteristicaSvc;
-import d3.document_execution.application.field.Propiedades;
-import d3.document_execution.domain.DocumentoRelacionExpedienteDTO;
-import d3.document_execution.domain.DocumentoRelacionExpedienteFilterDTO;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.document.application.DocumentoRelacionExpedienteSvc;
+import d3.document.application.PedidoVentaCaracteristicaSvc;
+import d3.document.application.field.Propiedades;
+import d3.document.domain.DocumentoRelacionExpedienteDTO;
+import d3.document.domain.DocumentoRelacionExpedienteFilterDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.property.domain.RelacionInternaDTO;
 import org.springframework.context.annotation.Lazy;
 

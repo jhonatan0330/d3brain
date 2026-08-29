@@ -6,10 +6,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import d3.shared.domain.ServerException;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.document_execution.domain.PedidoVentaDTO;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 
 @Service
 public class MassiveDocumentBuilderService {

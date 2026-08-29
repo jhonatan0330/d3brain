@@ -13,7 +13,7 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
-import d3.java.services.HttpUtils;
+import d3.shared.application.HttpUtils;
 import d3.property.application.PropiedadSvc;
 import d3.property.domain.PropiedadDTO;
 import d3.property.domain.PropiedadFilterDTO;

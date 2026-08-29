@@ -5,7 +5,7 @@ import org.apache.ibatis.type.Alias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Alias("RolAccesoDTO")

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import d3.document_execution.domain.DocumentMessage;
+import d3.document.domain.DocumentMessage;
 
 @JsonInclude(Include.NON_NULL)
 public class SharedIdResponse {

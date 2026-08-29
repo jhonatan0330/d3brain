@@ -5,7 +5,7 @@ import java.util.Date;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 @Alias("WebServiceEjecucionDTO")
 public class WebServiceEjecucionDTO extends BasicDTO {

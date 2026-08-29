@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import d3.shared.domain.ServerException;
-import d3.logisticpymes.application.ServidorSvc;
-import d3.logisticpymes.domain.ServidorDTO;
+import d3.users.application.ServidorSvc;
+import d3.users.domain.ServidorDTO;
 import org.springframework.context.annotation.Lazy;
 
 @RestController

@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import d3.document_execution.application.field.CampoAdaptador;
-import d3.document_execution.application.field.Propiedades;
-import d3.document_execution.domain.DocumentMessage;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.document_execution.domain.PedidoVentaDTO;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.document.application.field.CampoAdaptador;
+import d3.document.application.field.Propiedades;
+import d3.document.domain.DocumentMessage;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 import d3.shared.domain.ServerException;
 
 import org.springframework.context.annotation.Lazy;

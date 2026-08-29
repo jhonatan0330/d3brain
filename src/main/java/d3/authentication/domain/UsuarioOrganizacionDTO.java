@@ -3,7 +3,7 @@ package d3.authentication.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 @Alias("UsuarioOrganizacionDTO")
 public class UsuarioOrganizacionDTO extends BasicDTO

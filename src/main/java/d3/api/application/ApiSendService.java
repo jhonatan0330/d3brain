@@ -10,15 +10,15 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
 import d3.api.domain.DocumentRequest;
 import d3.api.domain.FieldRequest;
-import d3.document_execution.application.CallDocumentCRUD;
-import d3.document_execution.application.DetallePedidoVentaSvc;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
-import d3.document_execution.domain.PedidoVentaDTO;
+import d3.document.application.CallDocumentCRUD;
+import d3.document.application.DetallePedidoVentaSvc;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaDTO;
 import d3.inventory.application.ProductoSvc;
-import d3.process_form.application.CallSearchProcessFromText;
-import d3.process_form.application.DocumentoPlantillaSvc;
-import d3.process_form.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.process.application.CallSearchProcessFromText;
+import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 
 @Service
 public class ApiSendService {

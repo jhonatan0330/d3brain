@@ -13,9 +13,9 @@ import d3.authentication.application.UsuarioAutenticacionSvc;
 import d3.authorization.domain.UsuarioRolDTO;
 import d3.authorization.domain.UsuarioRolFilterDTO;
 import d3.authorization.infrastructure.UsuarioRolMapper;
-import d3.logisticpymes.application.BasicSvc;
-import d3.logisticpymes.application.UsuarioSvc;
-import d3.logisticpymes.domain.UsuarioDTO;
+import d3.shared.application.BasicSvc;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;

@@ -1,4 +1,16 @@
-# AGENTS.md — d3brain
+﻿# AGENTS.md — d3brain
+
+## Documentación SDD
+
+Este proyecto se está desarrollando mediante **SDD (Spec-Driven Development)**. La
+documentación de especificaciones (requisitos, diseño, casos de uso, tareas) vive en
+la carpeta **`sdd/`** (raíz del monorepo, al mismo nivel que `d3brain/` y `d3_front/`).
+
+- Estructura: `sdd/specs/domains/<dominio>/` (`requirements.md`, `design.md`,
+  `use-cases-back.md` [contratos/endpoints], `use-cases-front.md` [pasos de UI, si aplica],
+  `tasks.md`) y `sdd/docs/`.
+- Al implementar o modificar funcionalidades, mantener la documentación SDD
+  sincronizada con el código (nombres de clases, endpoints y DTOs reales).
 
 ## Descripción
 Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/expedientes (software D3). Backend REST monolítico con multi-tenancy por catálogo JDBC externo (`TenantContext` + `CacheManager` por tenant) y persistencia con MyBatis 3.0.5 sobre PostgreSQL/SQL Server.
@@ -14,7 +26,7 @@ Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/exp
 - Código en **español** (mensajes de error, métodos, comentarios). No agregar comentarios salvo que se pidan.
 - Sin Spring Security. Autenticación propia por token (ver sección Seguridad).
 - Layering por paquete: `domain` (DTO con `@Alias` de MyBatis), `infrastructure` (Mapper/Controller), `application` (Svc).
-- Servicios extienden `d3.logisticpymes.application.BasicSvc<T, TFilter>`; sobreescriben `consultaXId`, e inyectan el mapper y `@PostConstruct initIt()`.
+- Servicios extienden `d3.shared.application.BasicSvc<T, TFilter>`; sobreescriben `consultaXId`, e inyectan el mapper y `@PostConstruct initIt()`.
 - Inyección con `@Lazy` en constructores (evitar ciclos). Anotaciones `@Service("nombre")`/`@RestController`.
 - Mappers: interfaz anotada `@D3SqlConnMapper(value = "X")` + XML en `src/main/resources/com/...` con el mismo namespace. Columnas BD `cxxx_...` mapeadas a camelCase (`llaveTabla`, `fechaCierre`, etc.).
 - Transacciones: `@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)`.
@@ -48,3 +60,4 @@ Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/exp
 - Nunca loguear tokens, secretos o claves. `jwt.secret` y `google.client-id` van en `application.properties` (o variables de entorno) y **no** deben committearse con valores reales.
 - Firmar JWT con clave ≥ 32 bytes. No incluir datos sensibles como claims.
 - No guardar la clave del usuario en texto plano en flujos nuevos.
+

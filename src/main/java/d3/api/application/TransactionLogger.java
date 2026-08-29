@@ -6,10 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import d3.shared.domain.ServerException;
-import d3.document_transaction.application.DocumentoTransaccionSvc;
-import d3.document_transaction.application.TransaccionErrorSvc;
-import d3.document_transaction.application.TransaccionLogSvc;
-import d3.document_transaction.domain.DocumentoTransaccionDTO;
+import d3.document.application.DocumentoTransaccionSvc;
+import d3.document.application.TransaccionErrorSvc;
+import d3.document.application.TransaccionLogSvc;
+import d3.document.domain.DocumentoTransaccionDTO;
 import d3.upload.application.UploadSvc;
 import org.springframework.context.annotation.Lazy;
 

@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.document_execution.application.field.Propiedades;
-import d3.java.services.D3Utils;
-import d3.logisticpymes.application.BasicSvc;
+import d3.document.application.field.Propiedades;
+import d3.shared.application.D3Utils;
+import d3.shared.application.BasicSvc;
 import d3.property.application.PropertyGetWithCacheService;
 import d3.property.application.PropiedadSvc;
 import d3.property.domain.PropiedadDTO;

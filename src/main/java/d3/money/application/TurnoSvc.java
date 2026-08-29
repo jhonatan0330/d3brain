@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import d3.shared.domain.ServerException;
-import d3.java.services.D3Utils;
-import d3.logisticpymes.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.BasicSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.CuentaFilterDTO;
 import d3.money.domain.TurnoDTO;

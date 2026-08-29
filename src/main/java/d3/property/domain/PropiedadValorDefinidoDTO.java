@@ -2,7 +2,7 @@ package d3.property.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.java.domain.BasicDTO;
+import d3.shared.domain.BasicDTO;
 
 @Alias("PropiedadValorDefinidoDTO")
 public class PropiedadValorDefinidoDTO extends BasicDTO {

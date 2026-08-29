@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.document.infrastructure.DocumentoRelacionExpedienteMapper">
+
+	<sql id="selectDocumentoRelacionExpedienteFragment">
+		select
+			cdex_llave as  llaveTabla
+			,cdex_campomaestro as  campoMaestro
+			,cdex_expedientedetalle as  expedienteDetalle
+			,cdex_documentoregistro as  documentoRegistro
+			,cdex_documentoinactivo as  documentoInactivo
+			,mdex_valor as  valor
+			,cdex_estado as estado
+		from documentorelacionexpediente_dexp a
+	</sql>
+
+	<sql id="whereDocumentoRelacionExpedienteFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cdex_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cdex_estado = #{estado}
+			</if>
+			<if test="campoMaestro!=null">
+				and cdex_campomaestro = #{campoMaestro}
+			</if>
+			<if test="expedienteDetalle!=null">
+				and cdex_expedientedetalle = #{expedienteDetalle}
+			</if>
+			<if test="documentoRegistro!=null">
+				and cdex_documentoregistro = #{documentoRegistro}
+			</if>
+			<if test="documentoInactivo!=null">
+				and cdex_documentoinactivo = #{documentoInactivo}
+			</if>
+	</sql>
+
+	<sql id="paginationDocumentoRelacionExpedienteFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereDocumentoRelacionExpedientePrimaryKeyFragment">
+		where
+			cdex_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="DocumentoRelacionExpedienteDTO" resultType="DocumentoRelacionExpedienteDTO">
+		<include refid="selectDocumentoRelacionExpedienteFragment" />
+		<include refid="whereDocumentoRelacionExpedienteFragment" />
+	</select>
+	
+	<select id="listar" parameterType="DocumentoRelacionExpedienteDTO" resultType="DocumentoRelacionExpedienteDTO">
+		<include refid="selectDocumentoRelacionExpedienteFragment" />
+		<include refid="whereDocumentoRelacionExpedienteFragment" />
+		<include refid="paginationDocumentoRelacionExpedienteFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="DocumentoRelacionExpedienteDTO" resultType="int">
+		select count(*)
+		from documentorelacionexpediente_dexp
+		<include refid="whereDocumentoRelacionExpedienteFragment" />
+	</select>
+
+
+	<select id="insertar" parameterType="DocumentoRelacionExpedienteDTO" resultType="DocumentoRelacionExpedienteDTO">
+		insert into documentorelacionexpediente_dexp(
+			cdex_llave
+		<if test="campoMaestro!=null">
+			,cdex_campomaestro
+		</if>
+		<if test="expedienteDetalle!=null">
+			,cdex_expedientedetalle
+		</if>
+		<if test="documentoRegistro!=null">
+			,cdex_documentoregistro
+		</if>
+		<if test="documentoInactivo!=null">
+			,cdex_documentoinactivo
+		</if>
+		<if test="valor!=null">
+			,mdex_valor
+		</if>
+		<if test="estado!=null">
+			,cdex_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="campoMaestro!=null">
+			,#{campoMaestro}
+		</if>
+		<if test="expedienteDetalle!=null">
+			,#{expedienteDetalle}
+		</if>
+		<if test="documentoRegistro!=null">
+			,#{documentoRegistro}
+		</if>
+		<if test="documentoInactivo!=null">
+			,#{documentoInactivo}
+		</if>
+		<if test="valor!=null">
+			,#{valor}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="DocumentoRelacionExpedienteDTO" resultType="DocumentoRelacionExpedienteDTO">
+		update documentorelacionexpediente_dexp
+			set
+				cdex_campomaestro = #{campoMaestro},
+				cdex_expedientedetalle = #{expedienteDetalle},
+				cdex_documentoregistro = #{documentoRegistro},
+				cdex_documentoinactivo = #{documentoInactivo},
+				mdex_valor = #{valor},
+				cdex_estado =#{estado}
+		<include refid="whereDocumentoRelacionExpedientePrimaryKeyFragment" />
+	</select>
+	
+	<select id="listarHeredados" resultType="DocumentoRelacionExpedienteDTO">
+		select
+			cpdv_llave as  expedienteDetalle
+		from pedidoventa_pdvp a
+		where cpdv_plantilla = #{plantilla}
+		and cpdv_llave in (select cdrc_documento from campo_documento where cpvc_campo = #{campoMaestro} and cpvc_valoropcion = #{llaveOpcion})
+		and (cpdv_estadoexpediente is null or cpdv_estadoexpediente in (select cptr_estadopartida from procesotransicion_ptrp  where cptr_plantilla  = #{plantillaTransicion} and cptr_estado = 'A'))
+	</select>
+
+</mapper>

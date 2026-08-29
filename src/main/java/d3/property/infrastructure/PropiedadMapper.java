@@ -5,9 +5,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
-import d3.document_execution.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.domain.ProductoDTO;
-import d3.java.domain.IBasicMapper;
+import d3.shared.domain.IBasicMapper;
 import d3.property.domain.PropiedadDTO;
 import d3.property.domain.PropiedadFilterDTO;
 

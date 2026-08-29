@@ -6,7 +6,7 @@ import java.util.Date;
 import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import d3.java.domain.BasicFilterDTO;
+import d3.shared.domain.BasicFilterDTO;
 
 @Alias("RelacionInternaFilterDTO")
 public class RelacionInternaFilterDTO extends BasicFilterDTO {

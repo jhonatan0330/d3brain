@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.java.services.MailUtils;
-import d3.logisticpymes.application.ServidorSvc;
-import d3.logisticpymes.domain.ServidorDTO;
-import d3.logisticpymes.domain.ServidorFilterDTO;
+import d3.shared.application.MailUtils;
+import d3.users.application.ServidorSvc;
+import d3.users.domain.ServidorDTO;
+import d3.users.domain.ServidorFilterDTO;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

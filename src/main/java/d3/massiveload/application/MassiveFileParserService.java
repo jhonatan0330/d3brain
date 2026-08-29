@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import d3.shared.domain.ServerException;
-import d3.process_form.domain.DocumentoPlantillaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 
 @Service
 public class MassiveFileParserService {
