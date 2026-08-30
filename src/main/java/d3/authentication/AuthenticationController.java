@@ -2,23 +2,19 @@ package d3.authentication;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.configuration.application.PropiedadSvc;
-import d3.configuration.domain.PropiedadDTO;
-import d3.configuration.domain.PropiedadFilterDTO;
 import d3.shared.application.HttpUtils;
+import d3.shared.domain.ServerException;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -26,11 +22,9 @@ import org.springframework.context.annotation.Lazy;
 public class AuthenticationController {
 
 	private final OrganizacionSvc organizationSvc;
-	private final PropiedadSvc propertiesService;
 
 	public AuthenticationController(@Lazy OrganizacionSvc organizationSvc, @Lazy PropiedadSvc propertiesService) {
 		this.organizationSvc = organizationSvc;
-		this.propertiesService = propertiesService;
 	}
 
 	@GetMapping(value = "getLinkedOrganizations")
@@ -46,14 +40,5 @@ public class AuthenticationController {
 		return organizationSvc.obtenerPrincipalPublic(HttpUtils.getRequestIP(request));
 	}
 
-	@GetMapping(value = "/properties/{type}/{field}")
-	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token,
-			@PathVariable(name = "type") String pType, @PathVariable(name = "field") String pField)
-			throws ServerException {
-		PropiedadFilterDTO filter = new PropiedadFilterDTO();
-		filter.setTipo(pType);
-		filter.setCampo(pField);
-		filter.setEstado(SharedConstants.STATE_ACTIVE);
-		return propertiesService.listarConsulta(filter);
-	}
+
 }

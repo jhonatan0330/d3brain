@@ -2,6 +2,7 @@ package d3.users;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,21 +11,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.application.UsuarioAutenticacionSvc;
 import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
 import d3.configuration.application.PropertyGetWithCacheService;
-import d3.configuration.domain.PropiedadDTO;
 import d3.shared.application.HttpUtils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Lazy;
 
 @RestController
 @RequestMapping("/user")
@@ -34,7 +33,6 @@ public class UserController {
 	private final UsuarioSvc userService;
 	private final UsuarioAutenticacionSvc usuarioAutenticacionService;
 	private final RolAccesoSvc rolAccesoService;
-	private final PropertyGetWithCacheService cacheService;
 
 	public UserController(@Lazy RolAccesoSvc roleService, @Lazy UsuarioSvc userService,
 			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy RolAccesoSvc rolAccesoService,
@@ -43,7 +41,6 @@ public class UserController {
 		this.userService = userService;
 		this.usuarioAutenticacionService = usuarioAutenticacionService;
 		this.rolAccesoService = rolAccesoService;
-		this.cacheService = cacheService;
 	}
 
 	@GetMapping(value = "/getRole")
@@ -78,11 +75,6 @@ public class UserController {
 		return userService.getUserByDocument(pDocumentId);
 	}
 
-	@PostMapping(value = "/cambiarClaveUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO cambiarClaveUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return usuarioAutenticacionService.cambiarClave(dto, token);
-	}
 
 	@GetMapping(value = "/roles/{userId}")
 	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name = "Authorization") String token,
@@ -90,10 +82,5 @@ public class UserController {
 		return rolAccesoService.consultaUsuarioDocumento(pUserId);
 	}
 
-	@GetMapping(value = "/properties/{userId}")
-	public List<PropiedadDTO> getPropertiesToUser(@RequestHeader(name = "Authorization") String token,
-			@PathVariable(name = "userId") String pUserId) throws ServerException {
-		return cacheService.getToUser(pUserId);
-	}
 
 }
