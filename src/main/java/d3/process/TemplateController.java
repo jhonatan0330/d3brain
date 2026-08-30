@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
+import d3.process.application.ProcessCopy;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.field.CampoAdaptador;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
@@ -43,16 +45,19 @@ public class TemplateController {
 	private final DocumentoRelacionGestorSvc gestionService;
 	private final RelacionInternaSvc relacionesService;
 	private final PedidoVentaCaracteristicaSvc fieldsService;
+	private final ProcessCopy copyService;
 
 	public TemplateController(@Lazy CampoAdaptador adaptador, @Lazy DocumentoPlantillaSvc documentoplantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy DocumentoRelacionGestorSvc gestionService,
-			@Lazy RelacionInternaSvc relacionesService, @Lazy PedidoVentaCaracteristicaSvc fieldsService) {
+			@Lazy RelacionInternaSvc relacionesService, @Lazy PedidoVentaCaracteristicaSvc fieldsService,
+			@Lazy ProcessCopy copyService) {
 		this.adaptador = adaptador;
 		this.documentoplantillaService = documentoplantillaService;
 		this.campoService = campoService;
 		this.gestionService = gestionService;
 		this.relacionesService = relacionesService;
 		this.fieldsService = fieldsService;
+		this.copyService = copyService;
 	}
 
 	@GetMapping(value = "/getTemplates/{profile}")
@@ -115,6 +120,14 @@ public class TemplateController {
 			throws ServerException {
 		filter.setSecurityToken(token);
 		return campoService.listarCarga(filter);
+	}
+
+	// ==================== PROCESS DESIGNER (antes /process_designer/*) ====================
+
+	@PostMapping(value = "/designer/copy")
+	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam String processId)
+			throws ServerException {
+		return copyService.call(processId, token);
 	}
 
 }

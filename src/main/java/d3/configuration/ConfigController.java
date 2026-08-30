@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,11 @@ import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
 import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.configuration.application.ExportConfigurationFileService;
+import d3.configuration.application.ImportConfigurationFileService;
+import d3.configuration.domain.ExportListRequest;
+import d3.configuration.domain.FileVO;
 import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
@@ -83,6 +89,9 @@ public class ConfigController {
 	private final ProcesoTransicionSvc procesoTransicionService;
 	private final PropiedadSvc propiedadService;
 	private final RelacionInternaSvc relacionInternaService;
+	private final ExportConfigurationFileService exportService;
+	private final ImportConfigurationFileService importService;
+	private final PropiedadValorDefinidoSvc propertyTypeService;
 
 	public ConfigController(
 			@Lazy ConsecutivoSvc consecutivoService,
@@ -101,7 +110,9 @@ public class ConfigController {
 			@Lazy ProcesoSvc procesoService,
 			@Lazy ProcesoTransicionSvc procesoTransicionService,
 			@Lazy PropiedadSvc propiedadService,
-			@Lazy RelacionInternaSvc relacionInternaService) {
+			@Lazy RelacionInternaSvc relacionInternaService,
+			@Lazy ExportConfigurationFileService exportService,
+			@Lazy ImportConfigurationFileService importService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
 		this.organizacionService = organizacionService;
@@ -119,6 +130,9 @@ public class ConfigController {
 		this.procesoTransicionService = procesoTransicionService;
 		this.propiedadService = propiedadService;
 		this.relacionInternaService = relacionInternaService;
+		this.exportService = exportService;
+		this.importService = importService;
+		this.propertyTypeService = propiedadValorDefinidoService;
 	}
 
 	private void limpiarFiltro(Object filter) {
@@ -875,5 +889,66 @@ public class ConfigController {
 			@RequestBody RelacionInternaDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return relacionInternaService.inactivar(dto, token);
+	}
+
+	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*) ====================
+
+	@GetMapping("/configuration/export")
+	private FileVO generateFileWithConfiguration(@RequestHeader("Authorization") String token) throws ServerException {
+		return exportService.call(token);
+	}
+
+	@PostMapping("/configuration/module")
+	private FileVO generateFileWithConfigurationModule(@RequestHeader("Authorization") String token,
+			@RequestBody ExportListRequest modules) throws ServerException {
+		return exportService.call(token, modules);
+	}
+
+	@PostMapping("/configuration/import")
+	private FileVO loadConfiguration(@RequestHeader("Authorization") String token, @RequestBody FileVO file)
+			throws ServerException {
+		return importService.call(token, file);
+	}
+
+	@PostMapping("/configuration/compare")
+	private FileVO compare(@RequestHeader("Authorization") String token, @RequestBody FileVO file)
+			throws ServerException {
+		return importService.compare(token, file);
+	}
+
+	// ==================== PROPERTY LOOKUP (antes /property/*) ====================
+
+	@GetMapping("/property/{type}/{field}")
+	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token,
+			@PathVariable(name = "type") String pType, @PathVariable(name = "field") String pField)
+			throws ServerException {
+		PropiedadFilterDTO filter = new PropiedadFilterDTO();
+		filter.setTipo(pType);
+		filter.setCampo(pField);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
+		return propiedadService.listarConsulta(filter);
+	}
+
+	@GetMapping("/property/type/{type}/{filterName}")
+	public List<PropiedadValorDefinidoDTO> getTypeProperty(@RequestHeader("Authorization") String token,
+			@PathVariable(name = "type") String pType, @PathVariable(name = "filterName") String pFilterName)
+			throws ServerException {
+		PropiedadValorDefinidoFilterDTO filter = new PropiedadValorDefinidoFilterDTO();
+		filter.setOrigen(pType);
+		filter.setFiltroParametro(pFilterName);
+		filter.setEstado(SharedConstants.STATE_ACTIVE);
+		return propertyTypeService.listarConsulta(filter);
+	}
+
+	@GetMapping("/property/{key}")
+	public PropiedadDTO getPropertyByKey(@RequestHeader("Authorization") String token,
+			@PathVariable(name = "key") String pKey) throws ServerException {
+		return propiedadService.consultaXId(pKey);
+	}
+
+	@PostMapping("/property/")
+	public PropiedadDTO createProperty(@RequestHeader("Authorization") String token, @RequestBody PropiedadDTO property)
+			throws ServerException {
+		return propiedadService.guardar(property, token);
 	}
 }
