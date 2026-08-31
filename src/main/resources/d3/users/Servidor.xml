@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="d3.shared.infrastructure.ServidorMapper">
+<mapper namespace="d3.users.infrastructure.ServidorMapper">
 
 	<sql id="selectServidorFragment">
 		select
