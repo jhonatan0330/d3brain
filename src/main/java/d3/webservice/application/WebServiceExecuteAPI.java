@@ -261,7 +261,7 @@ public class WebServiceExecuteAPI {
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 				if (entry.getValue() != null
 						&& entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
-					if(entry.getValue().toString().startsWith("http") && !entry.getValue().toString().endsWith(".txt")) {
+					if(entry.getValue().toString().startsWith("http") && entry.getValue().toString().endsWith(".txt")) {
 						try {
 							File file = File.createTempFile("PARAMETER_", ".txt");
 							FileUtils.copyURLToFile(new URI(entry.getValue().toString()).toURL(), file);

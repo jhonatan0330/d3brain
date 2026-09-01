@@ -159,7 +159,7 @@ public class DianSoapSecurityHeader {
 				+ " EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\""
 				+ " ValueType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3\""
 				+ " wsu:Id=\"" + bstId + "\">PLACEHOLDER_CERTIFICATE</wsse:BinarySecurityToken>" + "</wsse:Security>"
-				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/GetAcquirer</wsa:Action>"
+				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/SendBillSync</wsa:Action>"
 				+ "<wsa:To wsu:Id=\"" + toId + "\" xmlns:wsu=\"" + WSU_NS
 				+ "\">https://vpfe.dian.gov.co/WcfDianCustomerServices.svc</wsa:To>" + "</soap:Header>";
 		fullXml = fullXml.replaceFirst("<soap:Header.*?</soap:Header>", soapXml);
