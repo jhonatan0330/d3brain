@@ -152,6 +152,7 @@ public class DianSoapSecurityHeader {
 		Instant expiration = created.plusSeconds(300);
 		String now = ISO_FORMATTER.format(created);
 		String expires = ISO_FORMATTER.format(expiration);
+		String action = getAction(fullXml);
 		String soapXml = "<soap:Header xmlns:wsa=\"" + WSA_NS + "\">" + "<wsse:Security xmlns:wsse=\"" + WSSE_NS
 				+ "\" xmlns:wsu=\"" + WSU_NS + "\">" + "<wsu:Timestamp wsu:Id=\"" + timestampId + "\">"
 				+ "<wsu:Created>" + now + "</wsu:Created>" + "<wsu:Expires>" + expires + "</wsu:Expires>"
@@ -159,13 +160,24 @@ public class DianSoapSecurityHeader {
 				+ " EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\""
 				+ " ValueType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3\""
 				+ " wsu:Id=\"" + bstId + "\">PLACEHOLDER_CERTIFICATE</wsse:BinarySecurityToken>" + "</wsse:Security>"
-				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/SendBillSync</wsa:Action>"
+				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/"+action+"</wsa:Action>"
 				+ "<wsa:To wsu:Id=\"" + toId + "\" xmlns:wsu=\"" + WSU_NS
 				+ "\">https://vpfe.dian.gov.co/WcfDianCustomerServices.svc</wsa:To>" + "</soap:Header>";
 		fullXml = fullXml.replaceFirst("<soap:Header.*?</soap:Header>", soapXml);
 		Document doc = loadDocument(fullXml);
 		markAllWsuidAsId(doc);
 		return doc;
+	}
+
+	private String getAction(String soapRequest) {
+		String inicio = "<wcf:";
+		String fin = ">";
+
+		int posInicio = soapRequest.indexOf(inicio) + inicio.length();
+		int posFin = soapRequest.indexOf(fin, posInicio);
+
+		String action = soapRequest.substring(posInicio, posFin);
+		return action;
 	}
 
 	private Document loadDocument(String xmlInPath) throws IOException, SAXException, ParserConfigurationException {
