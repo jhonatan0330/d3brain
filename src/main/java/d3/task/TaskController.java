@@ -2,6 +2,7 @@ package d3.task;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import d3.shared.application.SharedAuthenticateService;
@@ -22,9 +22,7 @@ import d3.task.application.TaskUpdateService;
 import d3.task.application.base.TaskService;
 import d3.task.domain.TaskDTO;
 import d3.task.domain.TaskRequest;
-
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -57,9 +55,9 @@ public class TaskController {
 
 	@GetMapping(value = "/{id}")
 	public TaskDTO getById(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@RequestParam String id) throws ServerException {
+			@PathVariable(name = "id") String pId) throws ServerException {
 		tokenService.getUser(token, request);
-		return taskService.getById(id);
+		return taskService.getById(pId);
 	}
 
 	@PostMapping(value = "/create")
