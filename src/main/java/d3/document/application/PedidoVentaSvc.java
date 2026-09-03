@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
+import d3.authentication.application.UsuarioSesionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
@@ -23,16 +22,17 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.document.infrastructure.PedidoVentaMapper;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaService")
 public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDTO> {
@@ -124,7 +124,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(bd.getPlantilla());
 		plantillaFilter.setSecurityToken(securityToken);
-		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(securityToken));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, securityToken, false);
 		if (plantilla.getCaracteristicas() != null & plantilla.getCaracteristicas().size() != 0) {

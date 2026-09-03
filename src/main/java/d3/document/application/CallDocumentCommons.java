@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.document.domain.DocumentMessage;
 import d3.document.domain.DocumentoRelacionExpedienteDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 public class CallDocumentCommons {
 
@@ -169,7 +169,7 @@ public class CallDocumentCommons {
 		return null;
 	}
 
-	public static PedidoVentaDTO generateNewDocument(DocumentoPlantillaDTO pPlantilla, String transaccion, String token,
+	public static PedidoVentaDTO generateNewDocument(TemplateDTO pPlantilla, String transaccion, String token,
 			List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin) throws ServerException {
 		PedidoVentaDTO nuevo = new PedidoVentaDTO();
 		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());

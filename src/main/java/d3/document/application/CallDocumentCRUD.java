@@ -49,6 +49,7 @@ import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.PlantillaConsecutivoDTO;
 import d3.process.domain.PlantillaConsecutivoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.domain.TemplateDTO;
 import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
@@ -235,7 +236,7 @@ public class CallDocumentCRUD {
 		plantillaFilter.setLlaveTabla(documentDTO.getPlantilla());
 		plantillaFilter.setSecurityToken(token);
 
-		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 
@@ -280,7 +281,7 @@ public class CallDocumentCRUD {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		plantillaFilter.setSecurityToken(token);
-		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
 		if (!isUpdateAutomatic
@@ -372,7 +373,7 @@ public class CallDocumentCRUD {
 		return dto;
 	}
 
-	private PedidoVentaDTO generateUpdateDocument(DocumentoPlantillaDTO template, PedidoVentaDTO dto,
+	private PedidoVentaDTO generateUpdateDocument(TemplateDTO template, PedidoVentaDTO dto,
 			String transaccion, String token) throws ServerException {
 		if (dto == null || dto.getCaracteristicas() == null || dto.getCaracteristicas().isEmpty())
 			return null;
@@ -399,7 +400,7 @@ public class CallDocumentCRUD {
 		if (fieldsDifference.isEmpty())
 			return null;
 
-		DocumentoPlantillaDTO updateTemplate = new DocumentoPlantillaDTO();
+		TemplateDTO updateTemplate = new TemplateDTO();
 		updateTemplate.setLlaveTabla(propertyDiference.getValor());
 		updateTemplate.setCaracteristicas(
 				documentoPlantillaCaracteristicaService.listarCamposPlantilla(updateTemplate.getLlaveTabla(), token));
@@ -448,7 +449,7 @@ public class CallDocumentCRUD {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		plantillaFilter.setSecurityToken(token);
-		DocumentoPlantillaDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				(isAutomatic) ? true : rolService.usuarioPermisosCompletos(token));
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
@@ -595,7 +596,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void generateNotifications(PedidoVentaDTO dto, String token, DocumentoPlantillaDTO plantilla,
+	private void generateNotifications(PedidoVentaDTO dto, String token, TemplateDTO plantilla,
 			PedidoVentaDTO pedido) throws ServerException {
 		List<PropiedadDTO> _propertyListToNotify = Propiedades.obtenerVariosParametro(plantilla,
 				Propiedades.TEMPLATE_MESSAGE_SQL);
@@ -628,7 +629,7 @@ public class CallDocumentCRUD {
 		// return inicial;
 	}
 
-	private void validateBalance(PedidoVentaDTO pedido, DocumentoPlantillaDTO plantilla) throws ServerException {
+	private void validateBalance(PedidoVentaDTO pedido, TemplateDTO plantilla) throws ServerException {
 		PropiedadDTO total = Propiedades.obtenerParametro(plantilla, Propiedades.TOTAL);
 		if (total != null) {
 			PedidoVentaCaracteristicaDTO campoValor = CallDocumentCommons.obtenerValor(pedido.getCaracteristicas(),
@@ -681,7 +682,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void validateFields(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token,
+	private void validateFields(PedidoVentaDTO dto, TemplateDTO plantilla, String token,
 			boolean isUpdateAutomatic) throws ServerException {
 		if (plantilla != null && plantilla.getCaracteristicas() != null && !plantilla.getCaracteristicas().isEmpty()) {
 			String filtroTexto = "";
@@ -800,7 +801,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void validateConsecutiveNumber(PedidoVentaDTO pedido, DocumentoPlantillaDTO plantilla, String token)
+	private void validateConsecutiveNumber(PedidoVentaDTO pedido, TemplateDTO plantilla, String token)
 			throws ServerException {
 		String codigoNuevo = null;
 		List<PropiedadDTO> fieldsConsecutive = Propiedades.obtenerVariosParametro(plantilla, Propiedades.CONSECUTIVO);
@@ -901,7 +902,7 @@ public class CallDocumentCRUD {
 				// plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL,
 				// getUserFlex(token));
 				// if(consecProperty ==null)
-				consecutivoService.crear(plantilla, token);
+				consecutivoService.crear(plantilla.getLlaveTabla(), token);
 			}
 
 		}
@@ -1030,11 +1031,11 @@ public class CallDocumentCRUD {
 		return null;
 	}
 
-	public void manageTemplateTypes(PedidoVentaDTO dto, DocumentoPlantillaDTO plantilla, String token)
+	public void manageTemplateTypes(PedidoVentaDTO dto, TemplateDTO plantilla, String token)
 			throws ServerException {
 		// Viene de inactivar
 		if (plantilla == null) {
-			plantilla = new DocumentoPlantillaDTO();
+			plantilla = new TemplateDTO();
 			plantilla.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 					dto.getPlantilla(), null, null));
 		}

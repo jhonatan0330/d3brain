@@ -2,13 +2,13 @@ package d3.shared;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.application.UsuarioAutenticacionAutorizacionSvc;
 import d3.authentication.application.UsuarioAutenticacionSvc;
@@ -30,30 +30,29 @@ import d3.authorization.domain.UsuarioRolDTO;
 import d3.authorization.domain.UsuarioRolFilterDTO;
 import d3.authorization.domain.UsuarioRolProductoDTO;
 import d3.authorization.domain.UsuarioRolProductoFilterDTO;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.application.PropiedadValorDefinidoSvc;
+import d3.configuration.application.RelacionInternaSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadFilterDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
+import d3.configuration.domain.RelacionInternaDTO;
+import d3.configuration.domain.RelacionInternaFilterDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentListWithFilters;
 import d3.document.application.DocumentoRelacionExpedienteSvc;
+import d3.document.application.DocumentoRelacionGestorSvc;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.DocumentoRelacionExpedienteDTO;
 import d3.document.domain.DocumentoRelacionExpedienteFilterDTO;
+import d3.document.domain.DocumentoRelacionGestorDTO;
+import d3.document.domain.DocumentoRelacionGestorFilterDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.document.application.DocumentoRelacionGestorSvc;
-import d3.document.domain.DocumentoRelacionGestorDTO;
-import d3.document.domain.DocumentoRelacionGestorFilterDTO;
-import d3.shared.application.*;
-import d3.users.application.PuestoSvc;
-import d3.users.application.ServidorSvc;
-import d3.users.application.UsuarioSvc;
-import d3.users.domain.PuestoDTO;
-import d3.users.domain.PuestoFilterDTO;
-import d3.users.domain.ServidorDTO;
-import d3.users.domain.ServidorFilterDTO;
-import d3.users.domain.UsuarioDTO;
-import d3.users.domain.UsuarioFilterDTO;
 import d3.mail.application.MailUserSendMessage;
 import d3.mail.application.MensajePlantillaCorreoSvc;
 import d3.mail.application.MensajeSvc;
@@ -70,22 +69,14 @@ import d3.money.domain.MovimientoFilterDTO;
 import d3.notification.application.ActividadSvc;
 import d3.notification.domain.ActividadDTO;
 import d3.notification.domain.ActividadFilterDTO;
-import d3.process.application.ProcesoEstadoSvc;
-import d3.process.application.ProcesoSvc;
-import d3.process.application.ProcesoTransicionAutomaticaSvc;
-import d3.process.application.ProcesoTransicionSvc;
-import d3.process.domain.ProcesoDTO;
-import d3.process.domain.ProcesoEstadoDTO;
-import d3.process.domain.ProcesoEstadoFilterDTO;
-import d3.process.domain.ProcesoFilterDTO;
-import d3.process.domain.ProcesoTransicionAutomaticaDTO;
-import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
-import d3.process.domain.ProcesoTransicionDTO;
-import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.PlantillaConsecutivoSvc;
+import d3.process.application.ProcesoEstadoSvc;
+import d3.process.application.ProcesoSvc;
+import d3.process.application.ProcesoTransicionAutomaticaSvc;
+import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.ConsecutivoDTO;
 import d3.process.domain.ConsecutivoFilterDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -94,30 +85,39 @@ import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.PlantillaConsecutivoDTO;
 import d3.process.domain.PlantillaConsecutivoFilterDTO;
-import d3.configuration.application.PropiedadSvc;
-import d3.configuration.application.PropiedadValorDefinidoSvc;
-import d3.configuration.application.RelacionInternaSvc;
-import d3.configuration.domain.PropiedadDTO;
-import d3.configuration.domain.PropiedadFilterDTO;
-import d3.configuration.domain.PropiedadValorDefinidoDTO;
-import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
-import d3.configuration.domain.RelacionInternaDTO;
-import d3.configuration.domain.RelacionInternaFilterDTO;
+import d3.process.domain.ProcesoDTO;
+import d3.process.domain.ProcesoEstadoDTO;
+import d3.process.domain.ProcesoEstadoFilterDTO;
+import d3.process.domain.ProcesoFilterDTO;
+import d3.process.domain.ProcesoTransicionAutomaticaDTO;
+import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
+import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.domain.ProcesoTransicionFilterDTO;
+import d3.process.domain.TemplateDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.application.ReporteEjecucionSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
 import d3.report.domain.ReporteEjecucionDTO;
 import d3.report.domain.ReporteEjecucionFilterDTO;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.users.application.PuestoSvc;
+import d3.users.application.ServidorSvc;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.PuestoDTO;
+import d3.users.domain.PuestoFilterDTO;
+import d3.users.domain.ServidorDTO;
+import d3.users.domain.ServidorFilterDTO;
+import d3.users.domain.UsuarioDTO;
+import d3.users.domain.UsuarioFilterDTO;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
 import d3.webservice.domain.WebServiceEjecucionFilterDTO;
 import d3.webservice.domain.WebServiceFilterDTO;
-
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Lazy;
 
 @RestController
 @RequestMapping("/flex")
@@ -1042,7 +1042,7 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/consultaUsuarioDocumentoPlantilla")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
 			throws FlexException {
 		try {
 			return documentoPlantillaService.consultaUsuario(dto);
@@ -1052,7 +1052,7 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/obtenerCamposDocumentoPlantilla")
-	public DocumentoPlantillaDTO obtenerCamposDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
+	public TemplateDTO obtenerCamposDocumentoPlantilla(@RequestBody TemplateDTO dto,
 			@RequestHeader("Authorization") String token) throws FlexException {
 		try {
 			return documentoPlantillaService.obtenerCampos(dto, token, true);
@@ -1072,7 +1072,7 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/consultaAdministradorDocumentoPlantilla")
-	public List<DocumentoPlantillaDTO> consultaAdministradorDocumentoPlantilla(
+	public List<TemplateDTO> consultaAdministradorDocumentoPlantilla(
 			@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException {
 		try {
 			return documentoPlantillaService.consultaAdministrador(dto);

@@ -20,7 +20,7 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 
 public class ApiCommon {
@@ -132,7 +132,7 @@ public class ApiCommon {
 
 	public static List<DocumentResponse> transformPedidoVentaToDocument(String token,
 			PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, List<PedidoVentaDTO> results,
-			DocumentoPlantillaDTO template) throws ServerException {
+			TemplateDTO template) throws ServerException {
 		List<DocumentResponse> documents = new ArrayList<>();
 		if (results == null)
 			return documents;

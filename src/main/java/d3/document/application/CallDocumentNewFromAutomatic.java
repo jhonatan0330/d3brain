@@ -20,8 +20,8 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 
 @Component
@@ -272,7 +272,7 @@ public class CallDocumentNewFromAutomatic {
 			String userAdmin = autenticacionService.getUserSystemKey();
 			if (userAdmin == null)
 				throw new ServerException("Es indispensable configurar el usuario administrador");
-			DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
+			TemplateDTO pPlantilla = new TemplateDTO();
 			pPlantilla.setLlaveTabla(transicion.getPlantilla());
 			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token, false);
 			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion, token, camposNuevos,

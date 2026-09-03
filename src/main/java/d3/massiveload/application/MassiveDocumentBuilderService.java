@@ -5,16 +5,16 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class MassiveDocumentBuilderService {
 
-	public PedidoVentaDTO build(Map<String, String> row, DocumentoPlantillaDTO template) throws ServerException {
+	public PedidoVentaDTO build(Map<String, String> row, TemplateDTO template) throws ServerException {
 		PedidoVentaDTO pedido = new PedidoVentaDTO();
 		pedido.setPlantilla(template.getLlaveTabla());
 		pedido.setCaracteristicas(new ArrayList<>());

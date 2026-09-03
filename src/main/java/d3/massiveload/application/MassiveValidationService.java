@@ -11,7 +11,7 @@ import d3.document.domain.DocumentMessage;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 
 import org.springframework.context.annotation.Lazy;
@@ -25,7 +25,7 @@ public class MassiveValidationService {
 		this.adaptador = adaptador;
 	}
 
-	public List<DocumentMessage> validate(PedidoVentaDTO document, DocumentoPlantillaDTO template, String token) {
+	public List<DocumentMessage> validate(PedidoVentaDTO document, TemplateDTO template, String token) {
 		List<DocumentMessage> messages = new ArrayList<>();
 		if (document.getCaracteristicas() == null) {
 			messages.add(message("Es necesario registrar informacion adicional."));

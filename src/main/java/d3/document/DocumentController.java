@@ -43,8 +43,8 @@ import d3.notification.application.ActividadSvc;
 import d3.notification.domain.ActividadDTO;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
+import d3.process.domain.TemplateDTO;
 import d3.shared.application.D3Utils;
 import d3.shared.application.HttpUtils;
 import d3.shared.domain.ServerException;
@@ -242,7 +242,7 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/main/consultaUsuarioDocumentoPlantilla")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(
 			@RequestBody DocumentoPlantillaFilterDTO filter) throws ServerException {
 		return plantillaService.consultaUsuario(filter);
 	}
@@ -337,7 +337,7 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/api/obtenerCampos")
-	public DocumentoPlantillaDTO obtenerCampos(@RequestBody DocumentoPlantillaDTO documentoFiltro,
+	public TemplateDTO obtenerCampos(@RequestBody TemplateDTO documentoFiltro,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return plantillaService.obtenerCampos(documentoFiltro, token, true);
 	}

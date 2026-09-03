@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.shared.domain.ServerException;
 import d3.authorization.application.RolAccesoSvc;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.PedidoVentaSvc;
@@ -23,8 +22,9 @@ import d3.massiveload.domain.MassiveItemFilter;
 import d3.massiveload.domain.MassiveMasterDTO;
 import d3.massiveload.domain.MassiveMasterRequest;
 import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class MassiveLoadOrchestratorService {
@@ -61,7 +61,7 @@ public class MassiveLoadOrchestratorService {
 	}
 
 	public MassiveMasterRequest uploadFile(MultipartFile file, String templateId, String token) throws ServerException {
-		DocumentoPlantillaDTO plantilla = obtenerPlantilla(templateId, token);
+		TemplateDTO plantilla = obtenerPlantilla(templateId, token);
 		MassiveMasterDTO master = new MassiveMasterDTO();
 		master.setArchivo(file.getOriginalFilename());
 		master.setPlantilla(templateId);
@@ -125,7 +125,7 @@ public class MassiveLoadOrchestratorService {
 		if (MassiveMasterDTO.FINALIZADA.equals(master.getState())
 				|| MassiveMasterDTO.TERMINADA_CON_FALLAS.equals(master.getState()))
 			throw new ServerException("La carga masiva ya fue ejecutada, no se puede validar nuevamente");
-		DocumentoPlantillaDTO plantilla = obtenerPlantilla(master.getPlantilla(), token);
+		TemplateDTO plantilla = obtenerPlantilla(master.getPlantilla(), token);
 		int validados = 0;
 		int conError = 0;
 		for (MassiveItemDTO item : listItems(loadId)) {
@@ -223,11 +223,11 @@ public class MassiveLoadOrchestratorService {
 		return cargaMasivaItemService.findMany(filter);
 	}
 
-	private DocumentoPlantillaDTO obtenerPlantilla(String templateId, String token) throws ServerException {
+	private TemplateDTO obtenerPlantilla(String templateId, String token) throws ServerException {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(templateId);
 		plantillaFilter.setSecurityToken(token);
-		DocumentoPlantillaDTO plantilla = plantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
+		TemplateDTO plantilla = plantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
 				rolService.usuarioPermisosCompletos(token));
 		plantilla = plantillaService.obtenerCampos(plantilla, token, false);
 		return plantilla;

@@ -18,6 +18,7 @@ import d3.document.domain.PedidoVentaFilterDTO;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
+import d3.process.domain.TemplateDTO;
 import d3.process.application.CallSearchProcessFromText;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -49,9 +50,10 @@ public class ApiGetService {
 			throw new ServerException("Es obligatorio enviar un token valido");
 		if (filter == null)
 			throw new ServerException("Por el momento es necesario que envies el nodo de document :( ");
-		DocumentoPlantillaDTO templateBD = templateService.consultarPorCodigo(filter.getTemplate());
-		if (templateBD == null)
+		DocumentoPlantillaDTO pTemplate = templateService.consultarPorCodigo(filter.getTemplate());
+		if (pTemplate == null)
 			throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
+		TemplateDTO templateBD = TemplateDTO.fromDocumentoPlantilla(pTemplate);
 		templateBD = templateService.obtenerCampos(templateBD, token, true);
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
 		filterDTO.setSecurityToken(token);
@@ -101,7 +103,7 @@ public class ApiGetService {
 	}
 
 	private PedidoVentaCaracteristicaFilterDTO getFieldValue(String token, FieldRequest fieldRequest,
-			DocumentoPlantillaDTO template) throws ServerException {
+			TemplateDTO template) throws ServerException {
 		if (fieldRequest.getField() == null || fieldRequest.getField().isEmpty())
 			throw new ServerException("Existe un campo sin Field");
 		if (fieldRequest.getValue() == null || fieldRequest.getValue().isEmpty())

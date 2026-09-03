@@ -24,13 +24,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
-import d3.process.domain.DocumentoPlantillaDTO;
 
 @Service
 public class MassiveFileParserService {
 
-	public List<Map<String, String>> parse(MultipartFile file, DocumentoPlantillaDTO template) throws ServerException {
+	public List<Map<String, String>> parse(MultipartFile file, TemplateDTO template) throws ServerException {
 		String name = (file.getOriginalFilename() == null) ? "" : file.getOriginalFilename().toLowerCase();
 		try {
 			if (name.endsWith(".json"))
@@ -78,7 +79,7 @@ public class MassiveFileParserService {
 		return result;
 	}
 
-	private List<Map<String, String>> parseExcel(Workbook wb, DocumentoPlantillaDTO template) {
+	private List<Map<String, String>> parseExcel(Workbook wb, TemplateDTO template) {
 		Sheet sheet = wb.getSheetAt(0);
 		List<Map<String, String>> result = new ArrayList<>();
 		Row header = sheet.getRow(0);
@@ -107,7 +108,7 @@ public class MassiveFileParserService {
 		return result;
 	}
 
-	private List<Map<String, String>> parseCsv(MultipartFile file, DocumentoPlantillaDTO template) throws IOException {
+	private List<Map<String, String>> parseCsv(MultipartFile file, TemplateDTO template) throws IOException {
 		CSVFormat fmt = CSVFormat.Builder.create(CSVFormat.DEFAULT).setHeader().setSkipHeaderRecord(true)
 				.setIgnoreHeaderCase(true).build();
 		try (CSVParser parser = CSVParser.parse(file.getInputStream(), java.nio.charset.StandardCharsets.UTF_8, fmt)) {

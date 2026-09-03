@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 import d3.api.domain.DocumentRequest;
 import d3.api.domain.FieldRequest;
 import d3.document.application.CallDocumentCRUD;
@@ -19,6 +17,9 @@ import d3.process.application.CallSearchProcessFromText;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiSendService {
@@ -42,7 +43,7 @@ public class ApiSendService {
 	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
 		validateItem(item);
 		// Con el codigo de la plantilla consultar la plantilla completa
-		DocumentoPlantillaDTO template = findTemplate(item.getTemplate(), token);
+		TemplateDTO template = findTemplate(item.getTemplate(), token);
 		// crear el documento con todos los campos vacios
 		PedidoVentaDTO document = createDocument(template);
 		// Por cada campo con el codigo del campo colocar
@@ -92,7 +93,7 @@ public class ApiSendService {
 		}
 	}
 
-	private PedidoVentaDTO createDocument(DocumentoPlantillaDTO template) {
+	private PedidoVentaDTO createDocument(TemplateDTO template) {
 		PedidoVentaDTO document = new PedidoVentaDTO();
 		document.setPlantilla(template.getLlaveTabla());
 		if (template.getCaracteristicas() == null)
@@ -107,11 +108,11 @@ public class ApiSendService {
 		return document;
 	}
 
-	private DocumentoPlantillaDTO findTemplate(String template, String token) throws ServerException {
+	private TemplateDTO findTemplate(String template, String token) throws ServerException {
 		DocumentoPlantillaDTO templateDTO = plantillaService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return plantillaService.obtenerCampos(templateDTO, token, true);
+		return plantillaService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), token, true);
 	}
 
 }

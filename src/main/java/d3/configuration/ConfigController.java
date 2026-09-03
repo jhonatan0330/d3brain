@@ -49,6 +49,7 @@ import d3.process.domain.ProcesoTransicionAutomaticaDTO;
 import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
+import d3.process.domain.TemplateDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
@@ -599,7 +600,7 @@ public class ConfigController {
 	}
 
 	@PostMapping("/document-templates/admin")
-	public List<DocumentoPlantillaDTO> listarPlantillasAdministrador(
+	public List<TemplateDTO> listarPlantillasAdministrador(
 			@RequestBody DocumentoPlantillaFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
 		return documentoPlantillaService.consultaAdministrador(filter);
@@ -632,8 +633,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/document-templates/{key}/fields-complete")
-	public DocumentoPlantillaDTO obtenerCamposPlantilla(@PathVariable String key,
-			@RequestBody DocumentoPlantillaDTO dto,
+	public TemplateDTO obtenerCamposPlantilla(@PathVariable String key,
+			@RequestBody TemplateDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return documentoPlantillaService.obtenerCampos(dto, token, true);
 	}

@@ -3,9 +3,9 @@ package d3.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.api.domain.DataFieldRequest;
 import d3.api.domain.DataFieldResponse;
 import d3.api.domain.DocumentResponse;
@@ -15,12 +15,13 @@ import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.inventory.application.ProductoSvc;
-import d3.shared.application.D3Utils;
 import d3.process.application.CallSearchProcessFromText;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.process.domain.TemplateDTO;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
 
 @Service
 public class ApiGetFieldDataService {
@@ -43,7 +44,7 @@ public class ApiGetFieldDataService {
 
 	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {
 		validateFilter(token, filter);
-		DocumentoPlantillaDTO templateBD = findTemplate(filter.getTemplate(), token);
+		TemplateDTO templateBD = findTemplate(filter.getTemplate(), token);
 		DocumentoPlantillaCaracteristicaDTO fieldBD = findField(filter.getCode(), templateBD);
 
 		PedidoVentaCaracteristicaFilterDTO fieldFilter = new PedidoVentaCaracteristicaFilterDTO();
@@ -84,10 +85,11 @@ public class ApiGetFieldDataService {
 		List<DocumentResponse> docs = new ArrayList<>();
 		if (fieldData.getCampoDTO().getDocumentos() != null && !fieldData.getCampoDTO().getDocumentos().isEmpty()) {
 			// Para obtener los puestos de un pasaje no se llenaba plantilla
-			DocumentoPlantillaDTO templateList = null;
+			TemplateDTO templateList = null;
 			if (fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla() != null) {
-				templateList = templateService
+				DocumentoPlantillaDTO pTemplateBD = templateService
 						.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
+				templateList = TemplateDTO.fromDocumentoPlantilla(pTemplateBD);
 				templateList = templateService.obtenerCampos(templateList, token, true);
 			}
 			docs = ApiCommon.transformPedidoVentaToDocument(token, fieldService,
@@ -97,7 +99,7 @@ public class ApiGetFieldDataService {
 		return result;
 	}
 
-	private DocumentoPlantillaCaracteristicaDTO findField(String code, DocumentoPlantillaDTO templateBD)
+	private DocumentoPlantillaCaracteristicaDTO findField(String code, TemplateDTO templateBD)
 			throws ServerException {
 		if (templateBD.getCaracteristicas() != null && !templateBD.getCaracteristicas().isEmpty()) {
 			for (DocumentoPlantillaCaracteristicaDTO iField : templateBD.getCaracteristicas()) {
@@ -121,11 +123,11 @@ public class ApiGetFieldDataService {
 					"El codigo del campo es null, recuerda usar el campo code para colocar el codigo del campo a consultar");
 	}
 
-	private DocumentoPlantillaDTO findTemplate(String template, String token) throws ServerException {
+	private TemplateDTO findTemplate(String template, String token) throws ServerException {
 		DocumentoPlantillaDTO templateDTO = templateService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return templateService.obtenerCampos(templateDTO, token, true);
+		return templateService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), token, true);
 	}
 
 }

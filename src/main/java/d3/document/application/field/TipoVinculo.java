@@ -7,22 +7,22 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.document.application.CallDocumentCommons;
 import d3.document.application.CallDocumentListBySQLFunction;
+import d3.document.application.CallDocumentUpdateFromAutomatic;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.document.application.CallDocumentUpdateFromAutomatic;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class TipoVinculo {
@@ -178,7 +178,7 @@ public class TipoVinculo {
 	private PedidoVentaDTO generateDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken,
 			PropiedadDTO _templateId, String pDocumentToRelationMain) throws ServerException {
 
-		DocumentoPlantillaDTO pPlantilla = new DocumentoPlantillaDTO();
+		TemplateDTO pPlantilla = new TemplateDTO();
 		pPlantilla.setLlaveTabla(_templateId.getValor());
 		pPlantilla = plantillaService.obtenerCampos(pPlantilla, ptoken, false);
 

@@ -7,7 +7,8 @@
 	<sql id="selectDocumentoPlantillaFragment">
 		select
 			cdpl_llave as  llaveTabla
-			,cdpl_objetivo as  objetivo
+			,cdpl_tipo as  tipo
+			,cdpl_padre as  padre
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
@@ -78,8 +79,11 @@
 	<select id="insertar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
 		insert into documentoplantilla_dplp(
 			cdpl_llave
-		<if test="objetivo!=null">
-			,cdpl_objetivo
+		<if test="tipo!=null">
+			,cdpl_tipo
+		</if>
+		<if test="padre!=null">
+			,cdpl_padre
 		</if>
 		<if test="nombre!=null">
 			,cdpl_nombre
@@ -101,8 +105,11 @@
 		</if>
 		) values (
 			#{llaveTabla}
-		<if test="objetivo!=null">
-			,#{objetivo}
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="padre!=null">
+			,#{padre}
 		</if>
 		<if test="nombre!=null">
 			,#{nombre}
@@ -128,7 +135,8 @@
 	<select id="actualizar" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
 		update documentoplantilla_dplp
 			set
-				cdpl_objetivo = #{objetivo},
+				cdpl_tipo = #{tipo},
+				cdpl_padre = #{padre},
 				cdpl_nombre = #{nombre},
 				cdpl_consecutivo = #{consecutivo},
 				cdpl_imagen = #{imagen},
@@ -153,7 +161,8 @@
 		union
 		select
 			null as  llaveTabla
-			,null as  objetivo
+			,null as  tipo
+			,null as  padre
 			,cprc_nombre as  nombre
 			,null as  consecutivo
 			,cprc_imagen as  imagen
@@ -173,7 +182,8 @@
 		union
 		select 
 			null as  llaveTabla
-			,null as  objetivo
+			,null as  tipo
+			,null as  padre
 			,cppd_texto as  nombre
 			,null as  consecutivo
 			,cppd_motivo as  imagen
@@ -230,7 +240,8 @@
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
 		select
 			cdpl_llave as  llaveTabla
-			,cdpl_objetivo as  objetivo
+			,cdpl_tipo as  tipo
+			,cdpl_padre as  padre
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
@@ -246,7 +257,8 @@
 	<select id="getTemplateofCategoriesReplace" resultType="DocumentoPlantillaDTO">
 		select
 			cdpl_llave as  llaveTabla
-			,cdpl_objetivo as  objetivo
+			,cdpl_tipo as  tipo
+			,cdpl_padre as  padre
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen

@@ -637,7 +637,7 @@ public class CallManageTransition {
 	}
 
 	public UsuarioDTO assignResponsibleToActivity(String pedido, ProcesoEstadoDTO pState, String modificador,
-			String token) throws ServerException {// , DocumentoPlantillaDTO plantilla
+			String token) throws ServerException {
 		if (pState == null)
 			return null;
 		if (pState.getPropiedades() == null) {

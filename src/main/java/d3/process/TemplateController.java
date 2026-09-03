@@ -2,6 +2,7 @@ package d3.process;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,27 +13,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
-import d3.process.application.ProcessCopy;
-import d3.document.application.PedidoVentaCaracteristicaSvc;
-import d3.document.application.field.CampoAdaptador;
-import d3.document.domain.PedidoVentaCaracteristicaDTO;
-import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
 import d3.document.application.DocumentoRelacionGestorSvc;
+import d3.document.application.PedidoVentaCaracteristicaSvc;
+import d3.document.application.field.CampoAdaptador;
 import d3.document.domain.DocumentoRelacionGestorDTO;
 import d3.document.domain.DocumentoRelacionGestorFilterDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
+import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.application.ProcessCopy;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.process.domain.TemplateDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -61,7 +60,7 @@ public class TemplateController {
 	}
 
 	@GetMapping(value = "/getTemplates/{profile}")
-	public List<DocumentoPlantillaDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token,
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token,
 			@PathVariable(name = "profile") String pProfile) throws ServerException {
 		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
 		filter.setSecurityToken(token);
@@ -78,9 +77,9 @@ public class TemplateController {
 	}
 
 	@GetMapping(value = "/getFields")
-	public DocumentoPlantillaDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token)
+	public TemplateDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token)
 			throws ServerException {
-		DocumentoPlantillaDTO filterTemplate = new DocumentoPlantillaDTO();
+		TemplateDTO filterTemplate = new TemplateDTO();
 		filterTemplate.setLlaveTabla(id);
 		return documentoplantillaService.obtenerCampos(filterTemplate, token, true);
 	}

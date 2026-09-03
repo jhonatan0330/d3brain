@@ -26,6 +26,7 @@ import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
+import d3.process.domain.TemplateDTO;
 import d3.process.infrastructure.DocumentoPlantillaMapper;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
@@ -125,11 +126,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return super.inactivar(dto, token);
 	}
 
-	public List<DocumentoPlantillaDTO> consultaUsuario(DocumentoPlantillaFilterDTO dto) throws ServerException {
+	public List<TemplateDTO> consultaUsuario(DocumentoPlantillaFilterDTO dto) throws ServerException {
 		return listarPlantillasUsuario(dto, null);
 	}
 
-	public DocumentoPlantillaDTO obtenerCampos(DocumentoPlantillaDTO dto, String token, boolean external)
+	public TemplateDTO obtenerCampos(TemplateDTO dto, String token, boolean external)
 			throws ServerException {
 		if (dto == null)
 			return null;
@@ -165,25 +166,21 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		DocumentoPlantillaDTO copy = new DocumentoPlantillaDTO();
 		copy.setProceso(bd.getProceso());
 		copy.setNombre("COPY_" + bd.getNombre());
-		// copy.setImagen(bd.getImagen());
-		copy.setObjetivo(".");
 
 		configurarInicioPlantilla(copy);
 		copy = super.save(copy);
 		// Copio campos
-		bd.setCaracteristicas(
-				caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null, false));
-		copy.setCaracteristicas(new ArrayList<>());
-		for (DocumentoPlantillaCaracteristicaDTO iCampo : bd.getCaracteristicas()) {
+		List<DocumentoPlantillaCaracteristicaDTO> pFieldsBD = 
+				caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null, false);
+		List<DocumentoPlantillaCaracteristicaDTO> pFieldsCopy =  new ArrayList<>();
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : pFieldsBD) {
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
 			newCampo.setFormato(iCampo.getFormato());
-			// newCampo.setImagen(iCampo.getImagen());
 			newCampo.setNombre(iCampo.getNombre());
-			// newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(copy.getLlaveTabla());
-			copy.getCaracteristicas().add(caracteristicaService.guardar(newCampo, token));
+			pFieldsCopy.add(caracteristicaService.guardar(newCampo, token));
 		}
 		// Primero las propiedades de rol para evitar duplicar
 		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
@@ -204,8 +201,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		bd.setPropiedades(obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null));
 		copy.setPropiedades(configuracionSvc.copiarPropiedades(bd.getPropiedades(), copy.getLlaveTabla(), token));
 		// Copio reportes
-		bd.setReportes(reporteService.listarDisponiblesDocumento(bd.getLlaveTabla()));
-		for (ReporteBaseDTO iReporte : bd.getReportes()) {
+		List<ReporteBaseDTO> pReportes = reporteService.listarDisponiblesDocumento(bd.getLlaveTabla());
+		for (ReporteBaseDTO iReporte : pReportes) {
 			ReporteBaseDTO newReporte = new ReporteBaseDTO();
 			String newCode = copy.getCodigo() + "-" + iReporte.getCodigo();
 			newReporte.setCodigo(newCode.substring(0, Math.min(newCode.length(), 16)));
@@ -219,8 +216,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newReporte = reporteService.guardar(newReporte, token);
 			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla(), token);
 		}
-		for (DocumentoPlantillaCaracteristicaDTO iCampo : copy.getCaracteristicas()) {
-			for (DocumentoPlantillaCaracteristicaDTO source : bd.getCaracteristicas()) {
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : pFieldsCopy) {
+			for (DocumentoPlantillaCaracteristicaDTO source : pFieldsBD) {
 				if (source.getCodigo().compareTo(iCampo.getCodigo()) == 0) {
 					iCampo.setPropiedades(
 							configuracionSvc.copiarPropiedades(source.getPropiedades(), iCampo.getLlaveTabla(), token));
@@ -231,7 +228,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return copy;
 	}
 
-	public List<DocumentoPlantillaDTO> consultaAdministrador(DocumentoPlantillaFilterDTO dto) throws ServerException {
+	public List<TemplateDTO> consultaAdministrador(DocumentoPlantillaFilterDTO dto) throws ServerException {
 		boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
 		if (!todosPermisos)
 			throw new ServerException(
@@ -239,7 +236,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return listarPlantillasUsuario(dto, "ADMIN");
 	}
 
-	public List<DocumentoPlantillaDTO> consultaAuditor(DocumentoPlantillaFilterDTO dto) throws ServerException {
+	public List<TemplateDTO> consultaAuditor(DocumentoPlantillaFilterDTO dto) throws ServerException {
 		boolean todosPermisos = rolService.usuarioPermisosAuditor(dto.getSecurityToken());
 		if (!todosPermisos)
 			throw new ServerException("En los roles que tienes asignados no tienes el permiso de auditor");
@@ -278,7 +275,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 	}
 
-	public DocumentoPlantillaDTO obtenerConfiguracionSinCampos(DocumentoPlantillaFilterDTO dto, boolean fullPermisos)
+	public TemplateDTO obtenerConfiguracionSinCampos(DocumentoPlantillaFilterDTO dto, boolean fullPermisos)
 			throws ServerException {
 		if (dto.getLlaveTabla() == null)
 			throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
@@ -295,7 +292,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		if (plantilla.getPropiedades() == null || plantilla.getPropiedades().isEmpty())
 			throw new ServerException("El usuario no tiene permiso sobre el documento " + plantilla.getNombre());
-		return plantilla;
+		return TemplateDTO.fromDocumentoPlantilla(plantilla);
 	}
 
 	public List<PropiedadDTO> obtenerPropiedadesPlantilla(String plantilla, String token) throws ServerException {
@@ -365,7 +362,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		DocumentoPlantillaDTO templateUpdate = new DocumentoPlantillaDTO();
 		templateUpdate.setProceso(principalTemplate.getProceso());
 		templateUpdate.setNombre(principalTemplate.getNombre() + " - UPDATE");
-		templateUpdate.setObjetivo(".");
 		templateUpdate.setCodigo(principalTemplate.getCodigo() + "_U");
 		templateUpdate = guardar(templateUpdate, token);
 
@@ -380,9 +376,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				campoProceso.getLlaveTabla(), Propiedades.PLANTILLA_AUXILIAR, templateReferenceId, token), token);
 		// Copio campos
-		principalTemplate.setCaracteristicas(
-				caracteristicaService.listarCamposPlantilla(principalTemplate.getLlaveTabla(), null));
-		for (DocumentoPlantillaCaracteristicaDTO iCampo : principalTemplate.getCaracteristicas()) {
+		List<DocumentoPlantillaCaracteristicaDTO> camposOriginales = 
+				caracteristicaService.listarCamposPlantilla(principalTemplate.getLlaveTabla(), null);
+		for (DocumentoPlantillaCaracteristicaDTO iCampo : camposOriginales) {
 			caracteristicaService.createFieldDifference(iCampo, templateUpdate.getLlaveTabla(), token);
 			// newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(),
 			// newCampo.getLlaveTabla(), token));
@@ -421,16 +417,17 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return estados;
 	}
 
-	private List<DocumentoPlantillaDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO pDTO, String pProfile)
+	private List<TemplateDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO pDTO, String pProfile)
 			throws ServerException {
 
 		String _user = null;
 		if (pDTO.getSecurityToken() != null)
 			_user = getUserFlex(pDTO.getSecurityToken());
-		List<DocumentoPlantillaDTO> plantillasPermitidas = listarPlantillaRol(pDTO, (pProfile != null));
-		List<DocumentoPlantillaDTO> _resultTemplates = new ArrayList<DocumentoPlantillaDTO>();
+		List<DocumentoPlantillaDTO> pTemplatesRol= listarPlantillaRol(pDTO, (pProfile != null));
+		
+		List<TemplateDTO> _resultTemplates = new ArrayList<TemplateDTO>();
 		boolean nuevaPlantilla = true;
-		if (plantillasPermitidas != null && plantillasPermitidas.size() != 0) {
+		if (pTemplatesRol != null && pTemplatesRol.size() != 0) {
 			// obtengo todo y didtribuyo para evitar tantas consultas a la BD y para
 			// optimizar tiempo
 
@@ -455,11 +452,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			// usuario
 			if (pProfile != null && _user != null) {
 				todasPropiedadesEvitandoConsultaBD = cacheService
-						.obtenerEspecialFullPermisosSimplificandoBD(plantillasPermitidas, pProfile, _user);
+						.obtenerEspecialFullPermisosSimplificandoBD(pTemplatesRol, pProfile, _user);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc
 						.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
 			} else {
-				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar(plantillasPermitidas,
+				todasPropiedadesEvitandoConsultaBD = cacheService.listarPlantillasSimplificar(pTemplatesRol,
 						_user);
 				todasPropiedadesEvitandoConsultaBD = configuracionSvc
 						.clearResponseProperties(todasPropiedadesEvitandoConsultaBD);
@@ -491,9 +488,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					PropiedadValorDefinidoDTO.API_SERVICE, null, Propiedades.TEMPLATE_VOUCHER, _user);
 			_propAccountTemplate = configuracionSvc.clearResponseProperties(_propAccountTemplate);
 
-			for (DocumentoPlantillaDTO iplantillaPermitida : plantillasPermitidas) {
+			List<TemplateDTO> plantillasPermitidas = pTemplatesRol.stream()
+					.map(TemplateDTO::fromDocumentoPlantilla)
+					.toList();
+					
+			for (TemplateDTO iplantillaPermitida : plantillasPermitidas) {
 				nuevaPlantilla = true;
-				for (DocumentoPlantillaDTO iBD : _resultTemplates) {
+				for (TemplateDTO iBD : _resultTemplates) {
 					if (iplantillaPermitida.getLlaveTabla() == null
 							|| iplantillaPermitida.getLlaveTabla().compareTo(iBD.getLlaveTabla()) == 0) {
 						nuevaPlantilla = false;
@@ -563,7 +564,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				}
 			}
 			for (int i = plantillasPermitidas.size() - 1; i >= 0; i--) {
-				DocumentoPlantillaDTO iplantillaPermitida = plantillasPermitidas.get(i);
+				TemplateDTO iplantillaPermitida = plantillasPermitidas.get(i);
 				if (iplantillaPermitida.getLlaveTabla() == null) {
 					statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
 							iplantillaPermitida.getProceso());
@@ -576,7 +577,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	private void statesFromProcess(List<ProcesoEstadoDTO> estados, List<ProcesoTransicionDTO> transiciones,
-			List<PropiedadDTO> todasPropiedadesEstados, DocumentoPlantillaDTO iplantillaPermitida,
+			List<PropiedadDTO> todasPropiedadesEstados, TemplateDTO iplantillaPermitida,
 			String procesoInicial) {
 		// Los tableros de control por el momento no tienen estado
 		if (procesoInicial == null)
