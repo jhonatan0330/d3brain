@@ -23,6 +23,12 @@
 			<if test="llaveTabla!=null">
 				and cdpl_llave = #{llaveTabla}
 			</if>
+			<if test="tipo!=null">
+				and cdpl_tipo = #{tipo}
+			</if>
+			<if test="padre!=null">
+				and cdpl_padre = #{padre}
+			</if>
 			<if test="estado!=null">
 				and cdpl_estado = #{estado}
 			</if>
@@ -146,7 +152,6 @@
 		<include refid="whereDocumentoPlantillaPrimaryKeyFragment" />
 	</select>
 
-<!--// BEGIN region script-->
 	<select id="listarMenu" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
 		<include refid="selectDocumentoPlantillaFragment" />
 		where cdpl_estado = 'A'
@@ -206,6 +211,8 @@
 			cdpl_llave as  llaveTabla
 			,cdpl_nombre as  nombre
 			,cdpl_imagen as  imagen
+			,cdpl_tipo as  tipo
+			,cdpl_padre as  padre
 			,cdpl_codigo as  codigo
 			,cdpl_proceso as  proceso
 			,cdpl_estado as estado
@@ -216,6 +223,8 @@
 			null as  llaveTabla
 			,cprc_nombre as  nombre
 			,cprc_imagen as  imagen
+			,'C' as  tipo
+			,cprc_llave as  padre
 			,cprc_codigo as  codigo
 			,cprc_llave as  proceso
 			,cprc_estado as estado
@@ -229,6 +238,8 @@
 			,cppd_texto as  nombre
 			,cppd_motivo as  imagen
 			,cppd_llave as  codigo
+			,null as  tipo
+			,null as  padre
 			,null as  proceso
 			,null as estado 
 		from propiedad_ppdp 
@@ -270,6 +281,12 @@
 		where pp.cppd_propiedadvalor = 'PROP_144'
 			and cppd_estado  ='A'
 	</select>
-<!--// END region script-->
+	<update id="actualizarTipoPadre">
+		update documentoplantilla_dplp
+			set cdpl_tipo = #{tipo},
+				cdpl_padre = #{padre}
+		where cdpl_llave = #{llaveTabla}
+	</update>
+
 
 </mapper>

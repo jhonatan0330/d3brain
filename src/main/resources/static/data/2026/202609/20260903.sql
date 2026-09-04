@@ -27,14 +27,12 @@ set cdpl_padre = (select cppd_campo from propiedad_ppdp pp  where pp.cppd_propie
 where cdpl_tipo = 'I';
 
 update documentoplantilla_dplp dd 
-set cdpl_tipo = 'P', cdpl_padre = dd.cdpl_proceso
+set cdpl_tipo = 'T', cdpl_padre = dd.cdpl_proceso
 where dd.cdpl_llave in (select cppd_campo from propiedad_ppdp pp  where pp.cppd_propiedadvalor = 'PROP_142' and pp.cppd_estado ='A');
 
-
 update documentoplantilla_dplp dd 
-set cdpl_tipo = 'T',  cdpl_padre = dd.cdpl_proceso 
+set cdpl_tipo = 'R',  cdpl_padre = dd.cdpl_proceso 
 where dd.cdpl_llave in (select cppd_campo from propiedad_ppdp pp  where pp.cppd_propiedadvalor = 'PROP_141' and pp.cppd_estado ='A');
-
 
 update documentoplantilla_dplp dd 
 set cdpl_tipo = 'U'

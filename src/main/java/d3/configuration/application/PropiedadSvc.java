@@ -332,6 +332,16 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setFechaDefinicion(new Date());
 		dto.setUsuarioCreacion(getUserFlex(token));
 		dto = super.guardar(dto, token);
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_TIPO_REPORTE) == 0) {
+			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(dto.getCampo());
+			if (plantilla != null)
+				plantillaService.actualizarTipoPadre(dto.getCampo(), "T", plantilla.getProceso());
+		}
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_TIPO_ROL) == 0) {
+			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(dto.getCampo());
+			if (plantilla != null)
+				plantillaService.actualizarTipoPadre(dto.getCampo(), "R", plantilla.getProceso());
+		}
 		try {
 			if (dto.getKey().contains("SQL")) {
 				dto.setLlaveTabla(D3Utils.formatFunction(dto.getLlaveTabla()));
@@ -444,11 +454,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
 						"DELETE");
+				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "I", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
 						"ACTIVATE");
+				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "A", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.REPORT_MODULE_REFERENCE) == 0) {
@@ -457,6 +469,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createUpdateTemplate(dto.getCampo(), token);
+				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "U", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 				createDocument = true;
 			}

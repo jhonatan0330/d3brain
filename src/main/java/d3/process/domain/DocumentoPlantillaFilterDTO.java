@@ -13,6 +13,8 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO {
 	private String imagen;
 	private String codigo;
 	private String proceso;
+	private String tipo;
+	private String padre;
 
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
@@ -52,6 +54,22 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO {
 
 	public String getProceso() {
 		return proceso;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setPadre(String padre) {
+		this.padre = padre;
+	}
+
+	public String getPadre() {
+		return padre;
 	}
 
 }

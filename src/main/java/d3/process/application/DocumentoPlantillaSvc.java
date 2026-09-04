@@ -329,6 +329,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			}
 		}
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
+		if (dto.getTipo() == null)
+			dto.setTipo("P");
+		if (dto.getPadre() == null)
+			dto.setPadre(dto.getProceso());
+	}
+
+	public void actualizarTipoPadre(String plantillaId, String tipo, String padre) {
+		documentoPlantillaMapper.actualizarTipoPadre(plantillaId, tipo, padre);
 	}
 
 	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token, String action)

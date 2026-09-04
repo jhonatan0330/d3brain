@@ -109,7 +109,7 @@ public class TemplateDTO extends BasicParamDTO
 		}
 
 		TemplateDTO template = new TemplateDTO();
-
+		template.setLlaveTabla(documento.getLlaveTabla());
 		template.setTipo(documento.getTipo());
 		template.setPadre(documento.getPadre());
 		template.setNombre(documento.getNombre());
@@ -117,7 +117,8 @@ public class TemplateDTO extends BasicParamDTO
 		template.setImagen(documento.getImagen());
 		template.setCodigo(documento.getCodigo());
 		template.setProceso(documento.getProceso());
-
+		template.setEstado(documento.getEstado());
+		
 		return template;
 	}
 
