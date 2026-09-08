@@ -6,10 +6,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
@@ -24,18 +23,18 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.document.infrastructure.PedidoVentaMapper;
-import d3.shared.application.D3Utils;
 import d3.money.application.CuentaSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.CuentaFilterDTO;
-import d3.process.application.ProcesoTransicionSvc;
-import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.domain.TemplateDTO;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class CallDocumentListWithFilters {
@@ -317,14 +316,14 @@ public class CallDocumentListWithFilters {
 		pedidoVentaService.paginar(filterDTO);
 		// Es para almacenar las propiedades soloque tengo que pasar un BasicaPAram
 		// porque iba a pasar solo las propiedades
-		DocumentoPlantillaDTO plantilla = null;
+		TemplateDTO plantilla = null;
 		// Consulto que la plantilla solicitada tenga permisos
 		if (templateFilter != null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
 			boolean verTodos = false;
 			if (rolService.usuarioPermisosCompletos(token)) {
 				verTodos = true;
 			} else {
-				plantilla = new DocumentoPlantillaDTO();
+				plantilla = new TemplateDTO();
 				plantilla.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 						templateFilter, null, pedidoVentaService.getUserFlex(token)));
 				List<PropiedadDTO> propiedadesVerTodos = Propiedades.obtenerVariosParametro(plantilla,
@@ -413,7 +412,7 @@ public class CallDocumentListWithFilters {
 					// if(plantillaFiltro==null) throw new ServerException("Por favor revise el id
 					// de la plantilla porque no se encuentra");
 					if (plantilla == null) {
-						plantilla = new DocumentoPlantillaDTO();
+						plantilla = new TemplateDTO();
 						plantilla.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
 								templateFilter, null, pedidoVentaService.getUserFlex(token)));
 					}

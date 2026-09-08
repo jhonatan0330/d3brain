@@ -1,6 +1,5 @@
 package d3.process.application;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.authentication.application.UsuarioSesionSvc;
-import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
@@ -267,9 +265,10 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		plantilla.setProceso(dto.getProceso());
 		plantilla.setCodigo(codigoFormulario);
 		plantilla.setNombre(dto.getNombre());
-		if (dto.getEstadoPartida() == null)
-			plantilla.setPropiedades(new ArrayList<PropiedadDTO>());// Esta es la estrategia para que se cree listable
-																	// el formularios
+		// Esta es la estrategia para que se cree listable el formularios
+		// Esto no se porque aplica
+		//if (dto.getEstadoPartida() == null)
+		//	plantilla.setPropiedades(new ArrayList<PropiedadDTO>());
 		plantilla = plantillaService.guardar(plantilla, token);
 		if (dto.getEstadoPartida() != null)
 			plantillaService.crearCampoProcesos(plantilla.getLlaveTabla(), token);

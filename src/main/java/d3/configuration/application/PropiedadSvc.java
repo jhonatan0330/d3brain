@@ -489,10 +489,8 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			List<DocumentoPlantillaCaracteristicaDTO> fields = campoService
 					.listarCamposPlantillaConComplementos(dto.getCampo(), null, false);
 			for (DocumentoPlantillaCaracteristicaDTO iCampo : fields) {
-				if (Propiedades.obtenerParametro(plantilla, Propiedades.CAMPO_DIFERENCIAS) == null)
+				if (Propiedades.obtenerParametro(iCampo, Propiedades.CAMPO_DIFERENCIAS) == null)
 					campoService.createFieldDifference(iCampo, plantilla.getLlaveTabla(), token);
-				// newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(),
-				// newCampo.getLlaveTabla(), token));
 			}
 		}
 

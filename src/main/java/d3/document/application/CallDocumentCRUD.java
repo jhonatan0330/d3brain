@@ -1056,9 +1056,8 @@ public class CallDocumentCRUD {
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, noRollbackFor = DuplicateKeyException.class)
 	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
 
-		DocumentoPlantillaDTO dp = new DocumentoPlantillaDTO();
+		TemplateDTO dp = new TemplateDTO();
 		dp.setPropiedades(documentoPlantillaService.obtenerPropiedadesPlantilla(dto.getPlantilla(), token));
-
 		if (Propiedades.obtenerParametro(dp, Propiedades.PLANTILLA_TIPO_ROL) == null)
 			return;
 

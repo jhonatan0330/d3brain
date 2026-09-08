@@ -198,8 +198,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			// newRol.getLlaveTabla(), token);
 		}
 		// Copio propiedades plantilla
-		bd.setPropiedades(obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null));
-		copy.setPropiedades(configuracionSvc.copiarPropiedades(bd.getPropiedades(), copy.getLlaveTabla(), token));
+		List<PropiedadDTO> propiedadesBD = obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null);
+		configuracionSvc.copiarPropiedades(propiedadesBD, copy.getLlaveTabla(), token);
 		// Copio reportes
 		List<ReporteBaseDTO> pReportes = reporteService.listarDisponiblesDocumento(bd.getLlaveTabla());
 		for (ReporteBaseDTO iReporte : pReportes) {
@@ -284,15 +284,15 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			throw new ServerException("Consulta de la plantilla incorrecta");
 		if (plantilla.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La plantilla " + plantilla.getNombre() + "se encuentra inactiva");
-		// plantilla.setSecurityToken(dto.getSecurityToken());
+		TemplateDTO template = TemplateDTO.fromDocumentoPlantilla(plantilla);
 		if (fullPermisos) {
-			plantilla.setPropiedades(cacheService.obtenerEspecialFullPermisos(dto.getLlaveTabla()));
+			template.setPropiedades(cacheService.obtenerEspecialFullPermisos(dto.getLlaveTabla()));
 		} else {
-			plantilla.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), dto.getSecurityToken()));
+			template.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), dto.getSecurityToken()));
 		}
-		if (plantilla.getPropiedades() == null || plantilla.getPropiedades().isEmpty())
+		if (template.getPropiedades() == null || template.getPropiedades().isEmpty())
 			throw new ServerException("El usuario no tiene permiso sobre el documento " + plantilla.getNombre());
-		return TemplateDTO.fromDocumentoPlantilla(plantilla);
+		return template;
 	}
 
 	public List<PropiedadDTO> obtenerPropiedadesPlantilla(String plantilla, String token) throws ServerException {
