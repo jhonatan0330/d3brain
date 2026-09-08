@@ -40,6 +40,11 @@ public class UploadSvc {
 
 	public String uploadFile(byte[] bytes, String name, String token, String typeFile, String pVisibility)
 			throws ServerException {
+		return uploadFileDTO(bytes, name, token, typeFile, pVisibility).getUrl();
+	}
+	
+	public CargaArchivoDTO uploadFileDTO(byte[] bytes, String name, String token, String typeFile, String pVisibility)
+			throws ServerException {
 		if (typeFile == null)
 			typeFile = "files";
 		CargaArchivoDTO registro = new CargaArchivoDTO();
@@ -59,7 +64,7 @@ public class UploadSvc {
 		} finally {
 			cargaService.guardar(registro, null);
 		}
-		return registro.getUrl();
+		return registro;
 	}
 
 	private String uploadWithServer(ServidorDTO pServer, byte[] pBytes, String pName, String pType, String pVisibility)

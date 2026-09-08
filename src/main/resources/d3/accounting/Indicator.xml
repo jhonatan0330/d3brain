@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.accounting.infrastructure.IndicatorMapper">
+
+	<sql id="selectIndicatorFragment">
+		select
+			cind_llave as key
+			,cind_nombre as nombre
+			,cind_codigo as codigo
+			,cind_proceso as proceso
+			,cind_imagen as imagen
+			,cind_estado as state
+		from account.indicador_ind a
+	</sql>
+
+	<sql id="whereIndicatorFragment">
+		where 1=1
+		<if test="key!=null">
+			and cind_llave = #{key}
+		</if>
+		<if test="state!=null">
+			and cind_estado = #{state}
+		</if>
+		<if test="nombre!=null">
+			and cind_nombre = #{nombre}
+		</if>
+		<if test="codigo!=null">
+			and cind_codigo = #{codigo}
+		</if>
+		<if test="proceso!=null">
+			and cind_proceso = #{proceso}
+		</if>
+		<if test="filter!=null">
+			and (upper(cind_nombre) like upper('%' || #{filter} || '%') or upper(cind_codigo) like upper('%' || #{filter} || '%'))
+		</if>
+	</sql>
+
+	<sql id="paginationIndicatorFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<sql id="whereIndicatorPrimaryKeyFragment">
+		where cind_llave = #{key}
+	</sql>
+
+	<select id="getOne" parameterType="IndicatorFilterDTO" resultType="IndicatorDTO">
+		<include refid="selectIndicatorFragment" />
+		<include refid="whereIndicatorFragment" />
+		LIMIT 2
+	</select>
+
+	<select id="getMany" parameterType="IndicatorFilterDTO" resultType="IndicatorDTO">
+		<include refid="selectIndicatorFragment" />
+		<include refid="whereIndicatorFragment" />
+		order by cind_nombre
+		<include refid="paginationIndicatorFragment" />
+	</select>
+
+	<select id="count" parameterType="IndicatorFilterDTO" resultType="int">
+		select count(*)
+		from account.indicador_ind
+		<include refid="whereIndicatorFragment" />
+	</select>
+
+	<select id="insert" parameterType="IndicatorDTO" resultType="IndicatorDTO">
+		insert into account.indicador_ind(cind_llave
+		<if test="nombre!=null">,cind_nombre</if>
+		<if test="codigo!=null">,cind_codigo</if>
+		<if test="proceso!=null">,cind_proceso</if>
+		<if test="imagen!=null">,cind_imagen</if>
+		<if test="state!=null">,cind_estado</if>
+		) values (#{key}
+		<if test="nombre!=null">,#{nombre}</if>
+		<if test="codigo!=null">,#{codigo}</if>
+		<if test="proceso!=null">,#{proceso}</if>
+		<if test="imagen!=null">,#{imagen}</if>
+		<if test="state!=null">,#{state}</if>
+		)
+	</select>
+
+	<select id="update" parameterType="IndicatorDTO" resultType="IndicatorDTO">
+		update account.indicador_ind
+		set
+			cind_nombre = #{nombre},
+			cind_codigo = #{codigo},
+			cind_proceso = #{proceso},
+			cind_imagen = #{imagen},
+			cind_estado = #{state}
+		<include refid="whereIndicatorPrimaryKeyFragment" />
+	</select>
+
+</mapper>

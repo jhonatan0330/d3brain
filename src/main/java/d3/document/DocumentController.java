@@ -1,6 +1,5 @@
 package d3.document;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.application.UsuarioAutenticacionSvc;
@@ -48,9 +44,8 @@ import d3.process.domain.TemplateDTO;
 import d3.shared.application.D3Utils;
 import d3.shared.application.HttpUtils;
 import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedApiErrorResponse;
 import d3.shared.domain.SharedIdResponse;
-import d3.upload.application.UploadSvc;
+import d3.upload.domain.CargaArchivoDTO;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
@@ -63,7 +58,6 @@ import jakarta.servlet.http.HttpServletRequest;
 public class DocumentController {
 
 	private final PedidoVentaSvc pedidoVentaService;
-	private final UploadSvc uploadService;
 	private final CallDocumentCRUD saveUpdateDocumentFunction;
 	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
 	private final ActividadSvc actividadService;
@@ -82,7 +76,6 @@ public class DocumentController {
 
 	public DocumentController(
 			@Lazy PedidoVentaSvc pedidoVentaService,
-			@Lazy UploadSvc uploadService,
 			@Lazy CallDocumentCRUD saveUpdateDocumentFunction,
 			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
 			@Lazy ActividadSvc actividadService,
@@ -99,7 +92,6 @@ public class DocumentController {
 			@Lazy PedidoVentaAjusteSvc pedidoVentaAjusteService,
 			@Lazy CampoAdaptador adaptador) {
 		this.pedidoVentaService = pedidoVentaService;
-		this.uploadService = uploadService;
 		this.saveUpdateDocumentFunction = saveUpdateDocumentFunction;
 		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
 		this.actividadService = actividadService;
@@ -168,18 +160,6 @@ public class DocumentController {
 		result.setEstadoExpediente(document.getEstadoExpediente());
 		result.setEstadoNombre(document.getEstadoNombre());
 		return result;
-	}
-
-	@PostMapping(value = "/upload")
-	public @ResponseBody String handleFileUpload(@RequestParam("file") MultipartFile pFile,
-			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-		if (pFile.isEmpty())
-			throw new ServerException("You failed to upload because the file was empty.");
-		try {
-			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public");
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		}
 	}
 
 	@PostMapping(value = "/readActivity")
@@ -342,44 +322,12 @@ public class DocumentController {
 		return plantillaService.obtenerCampos(documentoFiltro, token, true);
 	}
 
-	@PostMapping(value = "/api/upload")
-	public SharedApiErrorResponse handleFileUploadApi(@RequestParam("file") MultipartFile pFile,
-			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-		if (pFile.isEmpty())
-			throw new ServerException("You failed to upload because the file was empty.");
-		try {
-			String url = uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public");
-			SharedApiErrorResponse response = new SharedApiErrorResponse.ApiErrorResponseBuilder().withMessage(url)
-					.build();
-			return response;
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/api/uploadResponseString")
-	public String handleFileUploadFlex(@RequestParam("file") MultipartFile pFile) throws ServerException {
-		if (pFile.isEmpty())
-			throw new ServerException("You failed to upload because the file was empty.");
-		try {
-			return uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), null, "config", "public");
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		}
-	}
-
 	@PostMapping(value = "/api/changePicture")
-	public UsuarioDTO cambiarImagen(@RequestParam("file") MultipartFile pFile,
+	public UsuarioDTO cambiarImagen(@RequestBody CargaArchivoDTO request,
 			@RequestHeader("Authorization") String token) throws ServerException {
-		if (pFile.isEmpty())
-			throw new ServerException("You failed to upload because the file was empty.");
-		try {
-			String url = uploadService.uploadFile(pFile.getBytes(), pFile.getOriginalFilename(), token, "config",
-					"public");
-			return usuarioService.changePicture(url, token);
-		} catch (IOException e) {
-			throw new ServerException(e.getMessage());
-		}
+		if (request == null || request.getUrl() == null || request.getUrl().isEmpty())
+			throw new ServerException("La url de la imagen se encuentra vacia");
+		return usuarioService.changePicture(request.getUrl(), token);
 	}
 
 	@PostMapping(value = "/api/changeState")

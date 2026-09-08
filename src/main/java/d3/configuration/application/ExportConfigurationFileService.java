@@ -3,29 +3,30 @@ package d3.configuration.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
+
 import d3.authentication.application.OrganizacionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.domain.ExportListRequest;
-import d3.configuration.domain.FileVO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.mail.application.MensajePlantillaCorreoSvc;
+import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.application.ProcesoSvc;
 import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoFilterDTO;
-import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process.application.DocumentoPlantillaSvc;
 import d3.report.application.ReporteBaseSvc;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
+import d3.upload.domain.CargaArchivoDTO;
 import d3.webservice.application.WebServiceSvc;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class ExportConfigurationFileService {
@@ -68,7 +69,11 @@ public class ExportConfigurationFileService {
 		this.apiService = apiService;
 	}
 
-	public FileVO call(String token) throws ServerException {
+	public CargaArchivoDTO call(String token) throws ServerException {
+		return uploadFile(token, construirHierarchy(token));
+	}
+
+	public HierarchyExporterDTO construirHierarchy(String token) throws ServerException {
 		rolService.getUserFlex(token);
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
@@ -85,10 +90,10 @@ public class ExportConfigurationFileService {
 		hierarchy.setReports(reportService.getFullToSynchronize(null));
 		hierarchy.setFields(fieldService.getFullToSynchronize(null));
 
-		return uploadFile(token, hierarchy);
+		return hierarchy;
 	}
 
-	public FileVO call(String token, ExportListRequest modules) throws ServerException {
+	public CargaArchivoDTO call(String token, ExportListRequest modules) throws ServerException {
 
 		if (modules == null || modules.getModulesCode() == null || modules.getModulesCode().isEmpty())
 			throw new ServerException("No hay modulos");
@@ -122,10 +127,8 @@ public class ExportConfigurationFileService {
 		return uploadFile(token, hierarchy);
 	}
 
-	private FileVO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		FileVO result = new FileVO();
-		result.setUrl(uploadService.uploadFile(convert(hierarchy), "Entrada.txt", token, "export", "private"));
-		return result;
+	private CargaArchivoDTO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", token, "export", "private");
 	}
 
 	private byte[] convert(HierarchyExporterDTO hierarchy) throws ServerException {

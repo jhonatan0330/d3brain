@@ -29,11 +29,6 @@ public class WebServiceDTO extends BasicParamDTO {
 		this.codigo = codigo;
 	}
 
-	/*
-	 * public String getTemplate() { return template; } public void
-	 * setTemplate(String template) { this.template = template; } public String
-	 * getUrl() { return url; } public void setUrl(String url) { this.url = url; }
-	 */
 	public String getProceso() {
 		return proceso;
 	}

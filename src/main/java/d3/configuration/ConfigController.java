@@ -12,18 +12,33 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import d3.accounting.application.base.IndicatorService;
+import d3.accounting.domain.DatoTablaDTO;
+import d3.accounting.domain.IndicatorDTO;
+import d3.accounting.domain.IndicatorFilterDTO;
+import d3.accounting.domain.IndicatorResultadoDTO;
+import d3.accounting.domain.PeriodoDTO;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
+import d3.configuration.application.ExportConfigurationFileService;
+import d3.configuration.application.ImportConfigurationFileService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.PropiedadValorDefinidoSvc;
 import d3.configuration.application.RelacionInternaSvc;
+import d3.configuration.application.SincronizacionArbolSvc;
+import d3.configuration.domain.ArbolConfiguracionFilterDTO;
+import d3.configuration.domain.CompararArbolRequestDTO;
+import d3.configuration.domain.DiferenciaDTO;
+import d3.configuration.domain.ExportListRequest;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
+import d3.configuration.domain.SincronizacionSeleccionadaDTO;
+import d3.configuration.domain.TreeNodeDTO;
 import d3.mail.application.MailUserSendMessage;
 import d3.mail.application.MensajePlantillaCorreoSvc;
 import d3.mail.application.MensajeSvc;
@@ -55,10 +70,7 @@ import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.configuration.application.ExportConfigurationFileService;
-import d3.configuration.application.ImportConfigurationFileService;
-import d3.configuration.domain.ExportListRequest;
-import d3.configuration.domain.FileVO;
+import d3.upload.domain.CargaArchivoDTO;
 import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
@@ -92,7 +104,9 @@ public class ConfigController {
 	private final RelacionInternaSvc relacionInternaService;
 	private final ExportConfigurationFileService exportService;
 	private final ImportConfigurationFileService importService;
+	private final SincronizacionArbolSvc sincronizacionArbolService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
+	private final IndicatorService indicadorService;
 
 	public ConfigController(
 			@Lazy ConsecutivoSvc consecutivoService,
@@ -113,7 +127,9 @@ public class ConfigController {
 			@Lazy PropiedadSvc propiedadService,
 			@Lazy RelacionInternaSvc relacionInternaService,
 			@Lazy ExportConfigurationFileService exportService,
-			@Lazy ImportConfigurationFileService importService) {
+			@Lazy ImportConfigurationFileService importService,
+			@Lazy SincronizacionArbolSvc sincronizacionArbolService,
+			@Lazy IndicatorService indicadorService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
 		this.organizacionService = organizacionService;
@@ -131,9 +147,11 @@ public class ConfigController {
 		this.procesoTransicionService = procesoTransicionService;
 		this.propiedadService = propiedadService;
 		this.relacionInternaService = relacionInternaService;
-		this.exportService = exportService;
+this.exportService = exportService;
 		this.importService = importService;
+		this.sincronizacionArbolService = sincronizacionArbolService;
 		this.propertyTypeService = propiedadValorDefinidoService;
+		this.indicadorService = indicadorService;
 	}
 
 	private void limpiarFiltro(Object filter) {
@@ -174,8 +192,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/consecutives/{key}")
-	public ConsecutivoDTO consultarConsecutivo(@PathVariable String key) throws ServerException {
-		return consecutivoService.consultaXId(key);
+	public ConsecutivoDTO consultarConsecutivo(@PathVariable("key") String pKey) throws ServerException {
+		return consecutivoService.consultaXId(pKey);
 	}
 
 	@PostMapping("/consecutives/create")
@@ -212,8 +230,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/property-values/{key}")
-	public PropiedadValorDefinidoDTO consultarValorDefinido(@PathVariable String key) throws ServerException {
-		return propiedadValorDefinidoService.consultaXId(key);
+	public PropiedadValorDefinidoDTO consultarValorDefinido(@PathVariable("key") String pKey) throws ServerException {
+		return propiedadValorDefinidoService.consultaXId(pKey);
 	}
 
 	@PostMapping("/property-values/by-origen")
@@ -251,8 +269,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/organizations/{key}")
-	public OrganizacionDTO consultarOrganizacion(@PathVariable String key) throws ServerException {
-		return organizacionService.consultaXId(key);
+	public OrganizacionDTO consultarOrganizacion(@PathVariable("key") String pKey) throws ServerException {
+		return organizacionService.consultaXId(pKey);
 	}
 
 	@PostMapping("/organizations/principal")
@@ -287,8 +305,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/servers/{key}")
-	public ServidorDTO consultarServidor(@PathVariable String key) throws ServerException {
-		return servidorService.consultaXId(key);
+	public ServidorDTO consultarServidor(@PathVariable("key") String pKey) throws ServerException {
+		return servidorService.consultaXId(pKey);
 	}
 
 	@PostMapping("/servers/create")
@@ -318,8 +336,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/web-services/{key}")
-	public WebServiceDTO consultarWebService(@PathVariable String key) throws ServerException {
-		return webServiceService.consultaXId(key);
+	public WebServiceDTO consultarWebService(@PathVariable("key") String pKey) throws ServerException {
+		return webServiceService.consultaXId(pKey);
 	}
 
 	@PostMapping("/web-services/create")
@@ -347,11 +365,11 @@ public class ConfigController {
 	}
 
 	@PostMapping("/web-services/{key}/execute")
-	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable String key,
+	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable("key") String pKey,
 			@RequestBody EjecutarWSRequest request,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		WebServiceEjecucionDTO ejecucion = new WebServiceEjecucionDTO();
-		ejecucion.setServicio(key);
+		ejecucion.setServicio(pKey);
 		ejecucion.setParametros(request.getParametros());
 		ejecucion.setSincrona("A");
 		ejecucion = webServiceEjecucionService.guardar(ejecucion, token);
@@ -371,10 +389,10 @@ public class ConfigController {
 
 	@PostMapping("/web-services/{webServiceKey}/executions")
 	public List<WebServiceEjecucionDTO> listarEjecucionesPorWebService(
-			@PathVariable String webServiceKey,
+			@PathVariable("webServiceKey") String pWebServiceKey,
 			@RequestBody WebServiceEjecucionFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
-		filter.setServicio(webServiceKey);
+		filter.setServicio(pWebServiceKey);
 		return webServiceEjecucionService.listarConsulta(filter);
 	}
 
@@ -428,15 +446,15 @@ public class ConfigController {
 	}
 
 	@PostMapping("/messages/{key}")
-	public MensajeDTO consultarMensaje(@PathVariable String key) throws ServerException {
-		return mensajeService.consultaXId(key);
+	public MensajeDTO consultarMensaje(@PathVariable("key") String pKey) throws ServerException {
+		return mensajeService.consultaXId(pKey);
 	}
 
 	@PostMapping("/messages/{key}/resend")
-	public MensajeDTO reenviarMensaje(@PathVariable String key,
+	public MensajeDTO reenviarMensaje(@PathVariable("key") String pKey,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		MensajeFilterDTO filter = new MensajeFilterDTO();
-		filter.setLlaveTabla(key);
+		filter.setLlaveTabla(pKey);
 		filter.setSecurityToken(token);
 		return mailUserSendMessage.call(filter);
 	}
@@ -451,8 +469,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/message-templates/{key}")
-	public MensajePlantillaCorreoDTO consultarPlantillaCorreo(@PathVariable String key) throws ServerException {
-		return mensajePlantillaCorreoService.consultaXId(key);
+	public MensajePlantillaCorreoDTO consultarPlantillaCorreo(@PathVariable("key") String pKey) throws ServerException {
+		return mensajePlantillaCorreoService.consultaXId(pKey);
 	}
 
 	@PostMapping("/message-templates/create")
@@ -526,8 +544,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/auto-tasks/{key}")
-	public ProcesoTransicionAutomaticaDTO consultarTareaAutomatica(@PathVariable String key) throws ServerException {
-		return procesoTransicionAutomaticaService.consultaXId(key);
+	public ProcesoTransicionAutomaticaDTO consultarTareaAutomatica(@PathVariable("key") String pKey) throws ServerException {
+		return procesoTransicionAutomaticaService.consultaXId(pKey);
 	}
 
 	@PostMapping("/auto-tasks/create")
@@ -565,11 +583,11 @@ public class ConfigController {
 
 	@PostMapping("/auto-tasks/{key}/schedule")
 	public ProcesoTransicionAutomaticaDTO programarTareaAutomatica(
-			@PathVariable String key,
+			@PathVariable("key") String pKey,
 			@RequestBody ProgramarRequest request,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		ProcesoTransicionAutomaticaDTO dto = new ProcesoTransicionAutomaticaDTO();
-		dto.setLlaveTabla(key);
+		dto.setLlaveTabla(pKey);
 		dto.setPropiedad(request.getTipo());
 		dto.setPlantilla(request.getCron());
 		dto.setFecha(request.getFecha());
@@ -578,10 +596,10 @@ public class ConfigController {
 
 	@PostMapping("/auto-tasks/{key}/execute")
 	public ProcesoTransicionAutomaticaDTO ejecutarTareaAutomatica(
-			@PathVariable String key,
+			@PathVariable("key") String pKey,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		ProcesoTransicionAutomaticaDTO dto = new ProcesoTransicionAutomaticaDTO();
-		dto.setLlaveTabla(key);
+		dto.setLlaveTabla(pKey);
 		return procesoTransicionAutomaticaService.ejecutar(dto, token);
 	}
 
@@ -595,8 +613,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/document-templates/{key}")
-	public DocumentoPlantillaDTO consultarPlantilla(@PathVariable String key) throws ServerException {
-		return documentoPlantillaService.consultaXId(key);
+	public DocumentoPlantillaDTO consultarPlantilla(@PathVariable("key") String pKey) throws ServerException {
+		return documentoPlantillaService.consultaXId(pKey);
 	}
 
 	@PostMapping("/document-templates/admin")
@@ -625,15 +643,15 @@ public class ConfigController {
 	}
 
 	@PostMapping("/document-templates/{key}/duplicate")
-	public DocumentoPlantillaDTO duplicarPlantilla(@PathVariable String key,
+	public DocumentoPlantillaDTO duplicarPlantilla(@PathVariable("key") String pKey,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		DocumentoPlantillaDTO dto = new DocumentoPlantillaDTO();
-		dto.setLlaveTabla(key);
+		dto.setLlaveTabla(pKey);
 		return documentoPlantillaService.duplicar(dto, token);
 	}
 
 	@PostMapping("/document-templates/{key}/fields-complete")
-	public TemplateDTO obtenerCamposPlantilla(@PathVariable String key,
+	public TemplateDTO obtenerCamposPlantilla(@PathVariable("key") String pKey,
 			@RequestBody TemplateDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return documentoPlantillaService.obtenerCampos(dto, token, true);
@@ -643,17 +661,17 @@ public class ConfigController {
 
 	@PostMapping("/document-templates/{templateKey}/fields")
 	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantilla(
-			@PathVariable String templateKey,
+			@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
-		filter.setPlantilla(templateKey);
+		filter.setPlantilla(pTemplateKey);
 		filter.setPaginacionRegistroFinal(500);
 		return documentoPlantillaCaracteristicaService.listarConsulta(filter);
 	}
 
 	@PostMapping("/document-templates/fields/{key}")
-	public DocumentoPlantillaCaracteristicaDTO consultarCampo(@PathVariable String key) throws ServerException {
-		return documentoPlantillaCaracteristicaService.consultaXId(key);
+	public DocumentoPlantillaCaracteristicaDTO consultarCampo(@PathVariable("key") String pKey) throws ServerException {
+		return documentoPlantillaCaracteristicaService.consultaXId(pKey);
 	}
 
 	@PostMapping("/document-templates/fields")
@@ -681,16 +699,16 @@ public class ConfigController {
 
 	@PostMapping("/document-templates/{templateKey}/reports")
 	public List<ReporteBaseDTO> listarReportesPlantilla(
-			@PathVariable String templateKey,
+			@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody ReporteBaseFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
-		filter.setPlantilla(templateKey);
+		filter.setPlantilla(pTemplateKey);
 		return reporteBaseService.listarConsulta(filter);
 	}
 
 	@PostMapping("/document-templates/reports/{key}")
-	public ReporteBaseDTO consultarReporte(@PathVariable String key) throws ServerException {
-		return reporteBaseService.consultaXId(key);
+	public ReporteBaseDTO consultarReporte(@PathVariable("key") String pKey) throws ServerException {
+		return reporteBaseService.consultaXId(pKey);
 	}
 
 	@PostMapping("/document-templates/reports")
@@ -720,8 +738,8 @@ public class ConfigController {
 	}
 
 	@PostMapping("/processes/{key}")
-	public ProcesoDTO consultarProceso(@PathVariable String key) throws ServerException {
-		return procesoService.consultaXId(key);
+	public ProcesoDTO consultarProceso(@PathVariable("key") String pKey) throws ServerException {
+		return procesoService.consultaXId(pKey);
 	}
 
 	@PostMapping("/processes/tree")
@@ -731,9 +749,9 @@ public class ConfigController {
 	}
 
 	@PostMapping("/processes/{key}/graph")
-	public ProcesoDTO obtenerProcesoParaGraficar(@PathVariable String key) throws ServerException {
+	public ProcesoDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
 		ProcesoFilterDTO filter = new ProcesoFilterDTO();
-		filter.setLlaveTabla(key);
+		filter.setLlaveTabla(pKey);
 		return procesoService.obtenerProcesoParaGraficar(filter);
 	}
 
@@ -759,16 +777,16 @@ public class ConfigController {
 
 	@PostMapping("/processes/{processKey}/transitions")
 	public List<ProcesoTransicionDTO> listarTransiciones(
-			@PathVariable String processKey,
+			@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
-		filter.setProceso(processKey);
+		filter.setProceso(pProcessKey);
 		return procesoTransicionService.listarConsulta(filter);
 	}
 
 	@PostMapping("/processes/transitions/{key}")
-	public ProcesoTransicionDTO consultarTransicion(@PathVariable String key) throws ServerException {
-		return procesoTransicionService.consultaXId(key);
+	public ProcesoTransicionDTO consultarTransicion(@PathVariable("key") String pKey) throws ServerException {
+		return procesoTransicionService.consultaXId(pKey);
 	}
 
 	@PostMapping("/processes/transitions")
@@ -865,28 +883,28 @@ public class ConfigController {
 	// --- Relations ---
 
 	@PostMapping("/properties/{propiedad}/relations")
-	public List<RelacionInternaDTO> listarRelaciones(@PathVariable String propiedad,
+	public List<RelacionInternaDTO> listarRelaciones(@PathVariable("propiedad") String pPropiedad,
 			@RequestBody RelacionInternaFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
-		return relacionInternaService.relacionesPropiedad(propiedad);
+		return relacionInternaService.relacionesPropiedad(pPropiedad);
 	}
 
 	@PostMapping("/properties/{propiedad}/relations/create")
-	public RelacionInternaDTO guardarRelacion(@PathVariable String propiedad,
+	public RelacionInternaDTO guardarRelacion(@PathVariable("propiedad") String pPropiedad,
 			@RequestBody RelacionInternaDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return relacionInternaService.guardar(dto, token);
 	}
 
 	@PostMapping("/properties/{propiedad}/relations/update")
-	public RelacionInternaDTO actualizarRelacion(@PathVariable String propiedad,
+	public RelacionInternaDTO actualizarRelacion(@PathVariable("propiedad") String pPropiedad,
 			@RequestBody RelacionInternaDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return relacionInternaService.actualizar(dto, token);
 	}
 
 	@PostMapping("/properties/{propiedad}/relations/inactivate")
-	public RelacionInternaDTO inactivarRelacion(@PathVariable String propiedad,
+	public RelacionInternaDTO inactivarRelacion(@PathVariable("propiedad") String pPropiedad,
 			@RequestBody RelacionInternaDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return relacionInternaService.inactivar(dto, token);
@@ -895,26 +913,52 @@ public class ConfigController {
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*) ====================
 
 	@GetMapping("/configuration/export")
-	private FileVO generateFileWithConfiguration(@RequestHeader("Authorization") String token) throws ServerException {
+	private CargaArchivoDTO generateFileWithConfiguration(@RequestHeader("Authorization") String token) throws ServerException {
 		return exportService.call(token);
 	}
 
 	@PostMapping("/configuration/module")
-	private FileVO generateFileWithConfigurationModule(@RequestHeader("Authorization") String token,
+	private CargaArchivoDTO generateFileWithConfigurationModule(@RequestHeader("Authorization") String token,
 			@RequestBody ExportListRequest modules) throws ServerException {
 		return exportService.call(token, modules);
 	}
 
 	@PostMapping("/configuration/import")
-	private FileVO loadConfiguration(@RequestHeader("Authorization") String token, @RequestBody FileVO file)
+	private CargaArchivoDTO loadConfiguration(@RequestHeader("Authorization") String token, @RequestBody CargaArchivoDTO file)
 			throws ServerException {
 		return importService.call(token, file);
 	}
 
 	@PostMapping("/configuration/compare")
-	private FileVO compare(@RequestHeader("Authorization") String token, @RequestBody FileVO file)
+	private CargaArchivoDTO compare(@RequestHeader("Authorization") String token, @RequestBody CargaArchivoDTO file)
 			throws ServerException {
 		return importService.compare(token, file);
+	}
+
+	// ==================== CONFIGURATION TREE (arbol generico) ====================
+
+	@PostMapping("/tree")
+	private TreeNodeDTO getConfigTree(@RequestHeader("Authorization") String token,
+			@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return sincronizacionArbolService.obtenerArbol(token, filter);
+	}
+
+	@PostMapping("/tree/export")
+	private CargaArchivoDTO exportConfigTree(@RequestHeader("Authorization") String token,
+			@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return sincronizacionArbolService.exportarArbol(token, filter);
+	}
+
+	@PostMapping("/tree/compare")
+	private List<DiferenciaDTO> compareTree(@RequestHeader("Authorization") String token,
+			@RequestBody CompararArbolRequestDTO request) throws ServerException {
+		return sincronizacionArbolService.compararArbol(token, request.getArbol(), request.getFilter());
+	}
+
+	@PostMapping("/tree/sync")
+	private CargaArchivoDTO syncTree(@RequestHeader("Authorization") String token,
+			@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
+		return sincronizacionArbolService.sincronizar(token, request);
 	}
 
 	// ==================== PROPERTY LOOKUP (antes /property/*) ====================
@@ -951,5 +995,57 @@ public class ConfigController {
 	public PropiedadDTO createProperty(@RequestHeader("Authorization") String token, @RequestBody PropiedadDTO property)
 			throws ServerException {
 		return propiedadService.guardar(property, token);
+	}
+
+	// ==================== INDICATORS ====================
+
+	@PostMapping("/indicators/list")
+	public List<IndicatorDTO> listarIndicadores(@RequestBody IndicatorFilterDTO filter) throws ServerException {
+		limpiarFiltro(filter);
+		return indicadorService.getMany(filter);
+	}
+
+	@PostMapping("/indicators/{key}")
+	public IndicatorDTO consultarIndicador(@PathVariable("key") String pKey) throws ServerException {
+		return indicadorService.getById(pKey);
+	}
+
+	public static class IndicadorResultadoRequest {
+		private String indicadorId;
+		private PeriodoDTO periodo;
+		public String getIndicadorId() { return indicadorId; }
+		public void setIndicadorId(String indicadorId) { this.indicadorId = indicadorId; }
+		public PeriodoDTO getPeriodo() { return periodo; }
+		public void setPeriodo(PeriodoDTO periodo) { this.periodo = periodo; }
+	}
+
+	@PostMapping("/indicators/result")
+	public IndicatorResultadoDTO obtenerResultadoIndicador(@RequestBody IndicadorResultadoRequest request)
+			throws ServerException {
+		return indicadorService.getResultado(request.getIndicadorId(), request.getPeriodo());
+	}
+
+	@PostMapping("/indicators/{key}/table")
+	public List<DatoTablaDTO> obtenerTablaIndicador(@PathVariable("key") String pKey) throws ServerException {
+		return indicadorService.getTabla(pKey);
+	}
+
+	@PostMapping("/indicators/create")
+	public IndicatorDTO crearIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
+		indicadorService.save(dto);
+		return dto;
+	}
+
+	@PostMapping("/indicators/update")
+	public IndicatorDTO actualizarIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
+		indicadorService.update(dto);
+		return dto;
+	}
+
+	@PostMapping("/indicators/{key}/inactivate")
+	public IndicatorDTO inactivarIndicador(@PathVariable("key") String pKey, @RequestBody IndicatorDTO dto) throws ServerException {
+		if (dto == null || dto.getKey() == null)
+			throw new ServerException("La llave del indicador se encuentra vacia");
+		return indicadorService.delete(dto.getKey());
 	}
 }

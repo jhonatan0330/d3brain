@@ -11,12 +11,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import d3.shared.domain.ServerException;
-import d3.configuration.domain.FileVO;
+
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
+import d3.shared.domain.ServerException;
 import d3.upload.application.UploadSvc;
+import d3.upload.domain.CargaArchivoDTO;
 
 @Service
 public class ImportConfigurationFileService {
@@ -57,7 +58,7 @@ public class ImportConfigurationFileService {
 		this.mapper = mapper;
 	}
 
-	public FileVO call(String token, FileVO file) throws ServerException {
+	public CargaArchivoDTO call(String token, CargaArchivoDTO file) throws ServerException {
 
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
@@ -70,7 +71,7 @@ public class ImportConfigurationFileService {
 		}
 	}
 
-	public FileVO compare(String token, FileVO file) throws ServerException {
+	public CargaArchivoDTO compare(String token, CargaArchivoDTO file) throws ServerException {
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -85,7 +86,7 @@ public class ImportConfigurationFileService {
 		}
 	}
 
-	private LogConfigurationDTO sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	public LogConfigurationDTO sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException {
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
@@ -206,10 +207,8 @@ public class ImportConfigurationFileService {
 		return logs;
 	}
 
-	private FileVO uploadFile(String token, String logs) throws ServerException {
-		FileVO result = new FileVO();
-		result.setUrl(uploadService.uploadFile(logs.getBytes(), "Entrada.txt", token, "import", "private"));
-		return result;
+	private CargaArchivoDTO uploadFile(String token, String logs) throws ServerException {
+		return uploadService.uploadFileDTO(logs.getBytes(), "Entrada.txt", token, "import", "private");
 	}
 
 }
