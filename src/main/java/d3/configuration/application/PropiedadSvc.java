@@ -17,8 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.accounting.application.base.CatalogService;
 import d3.accounting.domain.CatalogDTO;
 import d3.accounting.domain.CatalogFilterDTO;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
+import d3.authentication.application.UsuarioSesionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -32,44 +31,43 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
-import d3.shared.application.ProcessTemplate;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
-import d3.users.application.UsuarioSvc;
-import d3.shared.domain.BasicParamDTO;
-import d3.users.domain.UsuarioDTO;
-import d3.users.domain.UsuarioFilterDTO;
 import d3.mail.application.MensajePlantillaCorreoSvc;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
+import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.application.ProcesoSvc;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.process.application.ProcesoTransicionSvc;
-import d3.process.domain.ProcesoDTO;
-import d3.process.domain.ProcesoEstadoDTO;
-import d3.process.domain.ProcesoEstadoFilterDTO;
-import d3.process.domain.ProcesoFilterDTO;
-import d3.process.domain.ProcesoTransicionDTO;
-import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
+import d3.process.domain.ProcesoDTO;
+import d3.process.domain.ProcesoEstadoDTO;
+import d3.process.domain.ProcesoEstadoFilterDTO;
+import d3.process.domain.ProcesoTransicionDTO;
 import d3.report.application.JasperReportCache;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.domain.BasicParamDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.tariff.application.base.TarifarioService;
 import d3.tariff.domain.TarifarioDTO;
 import d3.tariff.domain.TarifarioFilterDTO;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
+import d3.users.domain.UsuarioFilterDTO;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceFilterDTO;
-
 import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
@@ -584,7 +582,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						if (filtroPlantilla == null)
 							throw new ServerException(
 									"Este campo no tiene una plantilla de diferencias y validar el campo.\nValor : "
-											+ dto.getValor() + "\nMotivo: " + dto.getMotivo());
+											+ dto.getValor());
 						plantillaId = filtroPlantilla.getValor();
 						break;
 					}
@@ -766,24 +764,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setTexto(tarifario.getNombre());
 	}
 
-	private void identificadorProceso(PropiedadDTO dto) throws ServerException {
-		if (dto.getValor().compareTo("*") == 0) {
-			DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
-			dto.setValor(plantillaPrincipal.getProceso());
-		}
-		ProcesoDTO _process = procesoService.consultaXId(dto.getValor());
-		if (_process == null) {
-			ProcesoFilterDTO _processFilter = new ProcesoFilterDTO();
-			_processFilter.setNombre(dto.getValor().toUpperCase());
-			_processFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			_process = procesoService.consultaUnica(_processFilter);
-			if (_process == null)
-				throw new ServerException("No se encontro proceso con Id, nombre o Codigo que concuerde");
-		}
-		dto.setValor(_process.getLlaveTabla());
-		dto.setTexto(_process.getNombre());
-	}
-
 	private void identificadorReporte(PropiedadDTO dto) throws ServerException {
 		ReporteBaseDTO reporte = reporteService.consultaXId(dto.getValor());
 		if (reporte == null) {
@@ -940,15 +920,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.ENCABEZADO: {
 			break;
 		}
-		case Propiedades.ORDEN: {
-			if (dto.getValor().compareTo("D") == 0) {
-				dto.setTexto("POR DESCRIPCION");
-			} else {
-				dto.setValor("N");
-				dto.setTexto("POR NOMBRE");
-			}
-			return false;
-		}
 		case Propiedades.CUENTA_SOBREGIRO:
 		case Propiedades.PRODUCTOS_FUNCION_CAMPO:
 		case Propiedades.PRODUCTOS_TERCERO: {
@@ -1038,10 +1009,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case Propiedades.API_ACCOUNT_CATALOG:
 		case Propiedades.PLANTILLA_MONITOR: {
 			identificadorCatalogo(dto);
-			break;
-		}
-		case Propiedades.PERMISO_PLANTILLA_LISTAR_MENU: {
-			identificadorProceso(dto);
 			break;
 		}
 		}
@@ -1138,7 +1105,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (validaciones == null || validaciones.isEmpty())
 			return;
 		for (PropiedadDTO pPropiedad : validaciones) {
-			System.out.format("\nValidando funcion SQL (%s)", pPropiedad.getMotivo());
 			validarFuncion(pPropiedad, documento, modificador, token);
 		}
 	}
@@ -1164,7 +1130,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (validaciones == null || validaciones.isEmpty())
 			return;
 		for (PropiedadDTO pPropiedad : validaciones) {
-			log.debug("\nPre validando funcion SQL (%s)", pPropiedad.getMotivo());
 			try {
 				propiedadMapper.funcionPrevalidacionPlantilla(D3Utils.formatFunction(pPropiedad.getLlaveTabla()),
 						documento, token, campos);
@@ -1183,7 +1148,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (validaciones == null || validaciones.isEmpty())
 			return null;
 		for (PropiedadDTO pPropiedad : validaciones) {
-			log.debug("Pre validando APIfuncion SQL (%s)", pPropiedad.getMotivo());
 			try {
 				String extractionsWithEnd = extractions;
 				if (extractionsWithEnd != null)
@@ -1228,12 +1192,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					documento, modificador, token);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(),
-					" Motivo: " + dto.getMotivo() + " Propiedad : " + dto.getNombre());
+					" Propiedad : " + dto.getNombre());
 		}
 		if (respuestaValidacion == null)
-			throw new ServerException("El resultado ha sido nulo de la validacion\nDecision : " + dto.getMotivo());
+			throw new ServerException("El resultado ha sido nulo de la validacion" );
 		if (respuestaValidacion.compareTo("S") != 0)
-			throw new ServerException(respuestaValidacion, " Motivo: " + dto.getMotivo());
+			throw new ServerException(respuestaValidacion);
 	}
 
 	public String validarFuncionSQL2(PropiedadDTO dto, String template, String token) throws ServerException {

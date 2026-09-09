@@ -35,6 +35,8 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO {
 	private String campoOrigen;
 	private String campoPropiedad;
 	private List<PedidoVentaCaracteristicaFilterDTO> filtersByFields;
+	private String ordenNombre;
+	private String ascendente;
 
 	public void setFechaRegistroMin(Date fechaRegistroMin) {
 		this.fechaRegistroMin = fechaRegistroMin;
@@ -194,6 +196,22 @@ public class PedidoVentaFilterDTO extends BasicFilterDTO {
 
 	public void setFiltersByFields(List<PedidoVentaCaracteristicaFilterDTO> filtersByFields) {
 		this.filtersByFields = filtersByFields;
+	}
+
+	public String getOrdenNombre() {
+		return ordenNombre;
+	}
+
+	public void setOrdenNombre(String ordenNombre) {
+		this.ordenNombre = ordenNombre;
+	}
+
+	public String getAscendente() {
+		return ascendente;
+	}
+
+	public void setAscendente(String ascendente) {
+		this.ascendente = ascendente;
 	}
 
 }

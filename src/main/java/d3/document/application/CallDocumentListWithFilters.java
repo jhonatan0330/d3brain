@@ -217,7 +217,7 @@ public class CallDocumentListWithFilters {
 	}
 
 	private List<PedidoVentaDTO> listarPermitidos(PedidoVentaFilterDTO pFilter, List<String> filtroEstados,
-			List<String> campoFiltro, String valorFiltro, String ordenNombre, String ordenDescendente,
+			List<String> campoFiltro, String valorFiltro, String ordenNombre, String ascendente,
 			List<String> filtroTexto, List<String> filtroEstadosGeneralesMultiple, PropiedadDTO pProperty)
 			throws ServerException {
 
@@ -243,7 +243,7 @@ public class CallDocumentListWithFilters {
 		}
 
 		return pedidoVentaMapper.listarPermitidos(pFilter, filtroEstados, campoFiltro, valorFiltro, ordenNombre,
-				ordenDescendente, filtroTexto, filtroEstadosGeneralesMultiple, _filterIdsByToRelations, _relations);
+				ascendente, filtroTexto, filtroEstadosGeneralesMultiple, _filterIdsByToRelations, _relations);
 	}
 
 	private List<String> getFieldsValueToFilter(PedidoVentaFilterDTO pFilter) throws ServerException {
@@ -397,8 +397,12 @@ public class CallDocumentListWithFilters {
 						pProperty);
 			}
 		} else {
-			String orden = null;
-			String ordenAscendente = null;
+			String orden = dtoFilter.getOrdenNombre();
+			String ascendente = dtoFilter.getAscendente();
+			if (orden != null && orden.isEmpty())
+				orden = null;
+			if (ascendente != null && ascendente.isEmpty())
+				ascendente = null;
 			// Esto filtra los resultados por estado, pero si va a consultar un solo
 			// registro mejor lo dejo solo para que sea consulta por id
 			List<String> estadosFiltro = generateFiltersByStateFromProcess(dtoFilter);
@@ -435,12 +439,6 @@ public class CallDocumentListWithFilters {
 										"Revisa las fechas, la fecha minima no puede ser menor a la fecha maxima");
 						}
 					}
-					orden = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN);
-					if (orden.isEmpty())
-						orden = null;
-					ordenAscendente = Propiedades.obtenerValor(plantilla, Propiedades.ORDEN_DESCENDENTE);
-					if (ordenAscendente.isEmpty())
-						ordenAscendente = null;
 				}
 
 			} else {
@@ -456,15 +454,15 @@ public class CallDocumentListWithFilters {
 			if (estadosFiltro != null)
 				filterDTO.setEstado(null);
 			if (propiedadesFiltro != null)
-				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ordenAscendente,
+				return filtrarConRestriccionEnCampo(filterDTO, propiedadesFiltro, token, orden, ascendente,
 						estadosFiltro, textoFiltroComas, pProperty);
-			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden, ordenAscendente,
+			return listadoCompleto(listarPermitidos(filterDTO, estadosFiltro, null, null, orden, ascendente,
 					textoFiltroComas, null, pProperty), token, null);
 		}
 	}
 
 	private List<PedidoVentaDTO> filtrarConRestriccionEnCampo(PedidoVentaFilterDTO filterDTO,
-			List<PropiedadDTO> camposFiltro, String token, String orden, String ordenAscendente,
+			List<PropiedadDTO> camposFiltro, String token, String orden, String ascendente,
 			List<String> estadosFiltro, List<String> textoFiltroComas, PropiedadDTO pPropiedadDTO)
 			throws ServerException {
 		// Estoy revisando el tema coloco las relaciones de todos los campos, hasta
@@ -492,7 +490,7 @@ public class CallDocumentListWithFilters {
 			_relations = relationService.relacionesPropiedad(pPropiedadDTO.getLlaveTabla());
 		}
 		return listadoCompleto(
-				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ordenAscendente,
+				pedidoVentaMapper.listarPermitidosPorCampoFiltro(filterDTO, estadosFiltro, orden, ascendente,
 						textoFiltroComas, camposFiltro, null, options, _filterIdsByToRelations, _relations),
 				token, null);
 	}

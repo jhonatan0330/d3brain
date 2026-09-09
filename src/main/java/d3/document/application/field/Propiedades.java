@@ -186,8 +186,6 @@ public class Propiedades {
 	public static final String PLANTILLA_FECHA_INICIO = "PLANTILLA_FECHA_INICIO";
 	public static final String PLANTILLA_FECHA_FINAL = "PLANTILLA_FECHA_FINAL";
 	public static final String RESPONSABLE = "RESPONSABLE";
-	public static final String ORDEN = "ORDEN";
-	public static final String ORDEN_DESCENDENTE = "ORDEN_DESCENDENTE";
 	public static final String SOLICITAR_FECHAS = "SOLICITAR_FECHAS";
 	public static final String COPY_TEXT = "COPY_TEXT";
 	public static final String AYUDA = "AYUDA";

@@ -1,6 +1,5 @@
 package d3.configuration.application;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -91,12 +90,7 @@ public class HomologateAdapterService {
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
 						reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1", token), token);
 				campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
-				PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "15", token);
-				historico.setFechaInicial(new Date());
-				historico.setMotivo("Pasar a tabla historico");
-				historico.setTexto("00:00:07:00:00");
-				propertyService.guardar(historico, token);
+
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 				// Esto es un truco para crear un query report de una plantilla
@@ -117,8 +111,6 @@ public class HomologateAdapterService {
 				RolAccesoDTO nuevo = new RolAccesoDTO();
 				nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
 				nuevo = rolService.guardar(nuevo, token);
-				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.ORDEN, "N", token), token);
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 						plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*", token), token);
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,

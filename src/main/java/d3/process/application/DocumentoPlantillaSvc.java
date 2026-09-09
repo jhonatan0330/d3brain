@@ -392,12 +392,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			// newCampo.getLlaveTabla(), token));
 		}
 
-		PropiedadDTO historico = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateUpdate.getLlaveTabla(), Propiedades.PERIODO_LIMPIEZA_HISTORICO, "60", token);
-		historico.setFechaInicial(new Date());
-		historico.setMotivo("Historico " + templateUpdate.getNombre());
-		historico.setTexto("00:00:07:00:00");
-		configuracionSvc.guardar(historico, token);
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
 				templateUpdate.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
 		return templateUpdate;

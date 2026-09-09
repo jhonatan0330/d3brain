@@ -22,7 +22,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("campoFiltro") List<String> campoFiltro,
 			@Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
-			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
+			@Param("ascendente") String ascendente, @Param("filtroTexto") List<String> filtroTexto,
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
 			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones,
 			@Param("pStaticRelation") List<RelacionInternaDTO> pStaticRelation);
@@ -31,7 +31,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 
 	List<PedidoVentaDTO> listarPermitidosPorCampoFiltro(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("filtroEstados") List<String> filtroEstados, @Param("ordenNombre") String ordenNombre,
-			@Param("ordenDescendente") String ordenDescendente, @Param("filtroTexto") List<String> filtroTexto,
+			@Param("ascendente") String ascendente, @Param("filtroTexto") List<String> filtroTexto,
 			@Param("camposFiltro") List<PropiedadDTO> camposFiltro,
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
 			@Param("optionsToFilter") List<String> optionsToFilter,
