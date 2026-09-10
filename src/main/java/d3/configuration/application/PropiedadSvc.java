@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.binding.BindingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.stereotype.Service;
@@ -106,8 +104,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		this.propiedadMapper = propiedadMapper;
 	}
 
-	private static Logger log = LoggerFactory.getLogger(PropiedadSvc.class);
-
 	private final PropiedadMapper propiedadMapper;
 
 	private final CatalogService catalogService;
@@ -176,6 +172,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd = super.update(bd);
+		volverTipoPrincipalPlantilla(bd);
 		if (bd.getKey().contains("SQL")) {
 			bd.setLlaveTabla(D3Utils.formatFunction(bd.getLlaveTabla()));
 			switch (bd.getKey()) {
@@ -299,7 +296,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 								+ existe.get(0).getNombre()
 								+ getLocationError(existe.get(0).getTipo(), existe.get(0).getCampo()));
 		}
-		if (valorDefinido.getSolicitaMotivo() && dto.getMotivo() == null)
+		if (valorDefinido.getUsoMotivo()!=null && dto.getMotivo() == null)
 			throw new ServerException("La propiedad necesita tener motivo. \n" + valorDefinido.getNombre()
 					+ getLocationError(dto.getTipo(), dto.getCampo()));
 		if (!valorDefinido.getMultiple() && dto.getLlaveTabla() == null) {// Por el momento solo valida las nuevas
@@ -333,12 +330,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (dto.getKey().compareTo(Propiedades.PLANTILLA_TIPO_REPORTE) == 0) {
 			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(dto.getCampo());
 			if (plantilla != null)
-				plantillaService.actualizarTipoPadre(dto.getCampo(), "T", plantilla.getProceso());
+				plantillaService.actualizarTipoPadre(dto.getCampo(), DocumentoPlantillaDTO.REPORTE, plantilla.getProceso());
 		}
 		if (dto.getKey().compareTo(Propiedades.PLANTILLA_TIPO_ROL) == 0) {
 			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(dto.getCampo());
 			if (plantilla != null)
-				plantillaService.actualizarTipoPadre(dto.getCampo(), "R", plantilla.getProceso());
+				plantillaService.actualizarTipoPadre(dto.getCampo(), DocumentoPlantillaDTO.ROL, plantilla.getProceso());
 		}
 		try {
 			if (dto.getKey().contains("SQL")) {
@@ -452,13 +449,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
 						"DELETE");
-				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "I", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createDeleteTemplate(dto.getCampo(), token,
 						"ACTIVATE");
-				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "A", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 			}
 			if (dto.getKey().compareTo(Propiedades.REPORT_MODULE_REFERENCE) == 0) {
@@ -467,7 +462,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 			if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
 				DocumentoPlantillaDTO plantilla = plantillaService.createUpdateTemplate(dto.getCampo(), token);
-				plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), "U", dto.getCampo());
 				dto.setValor(plantilla.getLlaveTabla());
 				createDocument = true;
 			}
@@ -490,6 +484,17 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 				if (Propiedades.obtenerParametro(iCampo, Propiedades.CAMPO_DIFERENCIAS) == null)
 					campoService.createFieldDifference(iCampo, plantilla.getLlaveTabla(), token);
 			}
+		}
+		
+		// ACtualizar el tipo padre
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0) {
+			plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), DocumentoPlantillaDTO.ANULACION, dto.getCampo());
+		}
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0) {
+			plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), DocumentoPlantillaDTO.ACTIVACION, dto.getCampo());
+		}
+		if (dto.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0) {
+			plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), DocumentoPlantillaDTO.MODIFICACION, dto.getCampo());
 		}
 
 	}
@@ -514,6 +519,48 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			}
 		}
 		return plantilla;
+	}
+
+	private void volverTipoPrincipalPlantilla(PropiedadDTO bd) throws ServerException {
+		String templateId = plantillaClasificada(bd);
+		if (templateId == null)
+			return;
+		if (existeOtraPropiedadClasificacionActiva(bd.getKey(), bd.getPropiedadValor(), templateId))
+			return;
+		DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(templateId);
+		if (plantilla != null) {
+			plantillaService.actualizarTipoPadre(plantilla.getLlaveTabla(), DocumentoPlantillaDTO.PRINCIPAL,
+					plantilla.getProceso());
+		}
+	}
+
+	private String plantillaClasificada(PropiedadDTO bd) {
+		if (bd.getKey() == null)
+			return null;
+		if (bd.getKey().compareTo(Propiedades.PLANTILLA_TIPO_REPORTE) == 0
+				|| bd.getKey().compareTo(Propiedades.PLANTILLA_TIPO_ROL) == 0)
+			return bd.getCampo();
+		if (bd.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0
+				|| bd.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0
+				|| bd.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0)
+			return bd.getValor();
+		return null;
+	}
+
+	private boolean existeOtraPropiedadClasificacionActiva(String key, String propiedadValor, String templateId)
+			throws ServerException {
+		PropiedadFilterDTO filtro = new PropiedadFilterDTO();
+		filtro.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
+		filtro.setEstado(SharedConstants.STATE_ACTIVE);
+		filtro.setPropiedadValor(propiedadValor);
+		if (key.compareTo(Propiedades.PLANTILLA_TIPO_REPORTE) == 0
+				|| key.compareTo(Propiedades.PLANTILLA_TIPO_ROL) == 0) {
+			filtro.setCampo(templateId);
+		} else {
+			filtro.setValor(templateId);
+		}
+		List<PropiedadDTO> propiedades = listarConsulta(filtro);
+		return propiedades != null && !propiedades.isEmpty();
 	}
 
 	private boolean identificadorCampo(PropiedadDTO dto, String token) throws ServerException {

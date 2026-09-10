@@ -52,7 +52,9 @@ public class SynchronizeTypePropertiesService {
 						newType.setPideTiempoBloqueo(remote.getPideTiempoBloqueo());
 						newType.setPideUsuario(remote.getPideUsuario());
 						newType.setPropiedadBoolean(remote.getPropiedadBoolean());
-						newType.setSolicitaMotivo(remote.getSolicitaMotivo());
+						newType.setUsoMotivo(remote.getUsoMotivo());
+						newType.setUsoRelaciones(remote.getUsoRelaciones());
+						newType.setImagen(remote.getImagen());
 						newType.setTextOculto(remote.getTextOculto());
 						newType = typesService.save(newType);
 						changePropertiesIdCode(hierarchy.getProperties(), remote.getLlaveTabla(),

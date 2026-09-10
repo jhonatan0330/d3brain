@@ -119,6 +119,16 @@ public class D3Configuration {
 
 	}
 
+	@Scheduled(cron = "${cron.cronHistorico}")
+	public void sendHistorico() throws ServerException {
+		if (!"true".equals(env.getProperty("cron.historico")))
+			return;
+		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println(
+				"******* HISTORICO tenant=" + tenantId + " (" + transicionservice.moverDatosHistoricos() + ") ***"
+						+ new Date()));
+
+	}
+
 	@Bean
 	ServletRegistrationBean<HttpServlet> reporteServlet() {
 		ServletRegistrationBean<HttpServlet> servRegBean = new ServletRegistrationBean<>();

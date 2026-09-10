@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -161,6 +162,19 @@ public class ProcesoTransicionAutomaticaSvc
 			}
 		}
 		return null;
+	}
+
+	public List<Map<String, Object>> moverDatosHistoricos() throws ServerException {
+		try {
+			return procesoTransicionAutomaticaMapper.moverDatosHistoricos();
+		} catch (Exception e) {
+			try {
+				sendMessageToAdminSvc.call("Error en ejecucion de mover datos historico",
+						e.getMessage() + "\n\n(tarea diaria historic.mover_datos_historico)");
+			} catch (ServerException e1) {
+			}
+			throw new ServerException(e.getMessage());
+		}
 	}
 
 	public int programateAll() throws ServerException {

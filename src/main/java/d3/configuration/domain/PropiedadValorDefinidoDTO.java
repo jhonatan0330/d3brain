@@ -31,7 +31,9 @@ public class PropiedadValorDefinidoDTO extends BasicDTO {
 	private boolean pideTiempoBloqueo;
 	private boolean propiedadBoolean;
 	private boolean pideUsuario;
-	private boolean solicitaMotivo;
+	private String usoMotivo;
+	private String imagen;
+	private String usoRelaciones;
 	private boolean pideFechas;
 	private boolean privada;
 
@@ -139,12 +141,28 @@ public class PropiedadValorDefinidoDTO extends BasicDTO {
 		return pideUsuario;
 	}
 
-	public void setSolicitaMotivo(boolean solicitaMotivo) {
-		this.solicitaMotivo = solicitaMotivo;
+	public void setUsoMotivo(String usoMotivo) {
+		this.usoMotivo = usoMotivo;
 	}
 
-	public boolean getSolicitaMotivo() {
-		return solicitaMotivo;
+	public String getUsoMotivo() {
+		return usoMotivo;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setUsoRelaciones(String usoRelaciones) {
+		this.usoRelaciones = usoRelaciones;
+	}
+
+	public String getUsoRelaciones() {
+		return usoRelaciones;
 	}
 
 	public void setPideFechas(boolean pideFechas) {

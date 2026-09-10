@@ -2,6 +2,7 @@ package d3.process.infrastructure;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -25,4 +26,6 @@ public interface ProcesoTransicionAutomaticaMapper
 	int funcionPasarTablaHistoricos(@Param("plantilla") String plantilla, @Param("fechaCorte") Date fechaCorte);
 
 	int countExecutionInLastMonth(@Param("transition") String transition, @Param("property") String property);
+
+	List<Map<String, Object>> moverDatosHistoricos();
 }

@@ -21,7 +21,9 @@ public class PropiedadValorDefinidoFilterDTO extends BasicFilterDTO {
 	private Boolean pideTiempoBloqueoFilter = null;
 	private Boolean propiedadBooleanFilter = null;
 	private Boolean pideUsuarioFilter = null;
-	private Boolean solicitaMotivoFilter = null;
+	private String usoMotivoFilter = null;
+	private String imagenFilter = null;
+	private String usoRelacionesFilter = null;
 	private Boolean pideFechasFilter = null;
 	private Boolean privadaFilter = null;
 
@@ -129,12 +131,28 @@ public class PropiedadValorDefinidoFilterDTO extends BasicFilterDTO {
 		return pideUsuarioFilter;
 	}
 
-	public void setSolicitaMotivoFilter(Boolean solicitaMotivoFilter) {
-		this.solicitaMotivoFilter = solicitaMotivoFilter;
+	public void setUsoMotivoFilter(String usoMotivoFilter) {
+		this.usoMotivoFilter = usoMotivoFilter;
 	}
 
-	public Boolean getSolicitaMotivoFilter() {
-		return solicitaMotivoFilter;
+	public String getUsoMotivoFilter() {
+		return usoMotivoFilter;
+	}
+
+	public void setImagenFilter(String imagenFilter) {
+		this.imagenFilter = imagenFilter;
+	}
+
+	public String getImagenFilter() {
+		return imagenFilter;
+	}
+
+	public void setUsoRelacionesFilter(String usoRelacionesFilter) {
+		this.usoRelacionesFilter = usoRelacionesFilter;
+	}
+
+	public String getUsoRelacionesFilter() {
+		return usoRelacionesFilter;
 	}
 
 	public void setPideFechasFilter(Boolean pideFechasFilter) {

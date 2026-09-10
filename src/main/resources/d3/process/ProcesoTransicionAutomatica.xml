@@ -166,6 +166,10 @@
 		select * from migrar_campos(#{plantilla}, #{fechaCorte})
 	</select>
 	
+	<select id="moverDatosHistoricos" resultType="map">
+		select * from historic.mover_datos_historico()
+	</select>
+	
 	<select id="countExecutionInLastMonth" resultType="int">
 		select count(*)
 		from procesotransicionautomatica_ptap 

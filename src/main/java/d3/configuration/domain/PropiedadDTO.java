@@ -33,6 +33,7 @@ public class PropiedadDTO extends BasicDTO {
 	private String usuarioExcluyenteNombre;
 	private String motivo;
 	private String bloqueo;
+	private String imagen;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaDefinicion;
@@ -203,6 +204,14 @@ public class PropiedadDTO extends BasicDTO {
 		return bloqueo;
 	}
 
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
 	public PropiedadDTO() {
 		// Constructor vacío requerido por frameworks o para instanciar manualmente
 	}
@@ -235,6 +244,7 @@ public class PropiedadDTO extends BasicDTO {
 		this.usuarioExcluyenteNombre = other.usuarioExcluyenteNombre;
 		this.motivo = other.motivo;
 		this.bloqueo = other.bloqueo;
+		this.imagen = other.imagen;
 		this.relaciones = other.relaciones;
 		this.setLlaveTabla(other.getLlaveTabla());
 		this.setEstado(other.getEstado());

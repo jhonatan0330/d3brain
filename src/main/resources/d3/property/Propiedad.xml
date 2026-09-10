@@ -11,6 +11,7 @@
 			,cppd_tipo as  tipo
 			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
 			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,(select cpvd_imagen from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  imagen
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
@@ -606,6 +607,7 @@ union
 			end as  tipo
 			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
 			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
+			,(select cpvd_imagen from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  imagen
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto

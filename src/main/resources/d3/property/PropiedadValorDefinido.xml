@@ -20,7 +20,9 @@
 			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
 			,bpvd_propiedadboolean as  propiedadBoolean
 			,bpvd_pideusuario as  pideUsuario
-			,bpvd_solicitamotivo as  solicitaMotivo
+			,cpvd_uso_motivo as  usoMotivo
+			,cpvd_imagen as  imagen
+			,cpvd_uso_relaciones as  usoRelaciones
 			,bpvd_pidefechas as  pideFechas
 			,bpvd_privada as  privada
 			,cpvd_estado as estado
@@ -74,8 +76,14 @@
 			<if test="pideUsuarioFilter!=null">
 				and bpvd_pideusuario = #{pideUsuarioFilter}
 			</if>
-			<if test="solicitaMotivoFilter!=null">
-				and bpvd_solicitamotivo = #{solicitaMotivoFilter}
+			<if test="usoMotivoFilter!=null">
+				and cpvd_uso_motivo = #{usoMotivoFilter}
+			</if>
+			<if test="imagenFilter!=null">
+				and cpvd_imagen = #{imagenFilter}
+			</if>
+			<if test="usoRelacionesFilter!=null">
+				and cpvd_uso_relaciones = #{usoRelacionesFilter}
 			</if>
 			<if test="pideFechasFilter!=null">
 				and bpvd_pidefechas = #{pideFechasFilter}
@@ -163,8 +171,14 @@
 		<if test="pideUsuario!=null">
 			,bpvd_pideusuario
 		</if>
-		<if test="solicitaMotivo!=null">
-			,bpvd_solicitamotivo
+		<if test="usoMotivo!=null">
+			,cpvd_uso_motivo
+		</if>
+		<if test="imagen!=null">
+			,cpvd_imagen
+		</if>
+		<if test="usoRelaciones!=null">
+			,cpvd_uso_relaciones
 		</if>
 		<if test="pideFechas!=null">
 			,bpvd_pidefechas
@@ -216,8 +230,14 @@
 		<if test="pideUsuario!=null">
 			,#{pideUsuario}
 		</if>
-		<if test="solicitaMotivo!=null">
-			,#{solicitaMotivo}
+		<if test="usoMotivo!=null">
+			,#{usoMotivo}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
+		</if>
+		<if test="usoRelaciones!=null">
+			,#{usoRelaciones}
 		</if>
 		<if test="pideFechas!=null">
 			,#{pideFechas}
@@ -247,7 +267,9 @@
 				bpvd_pidetiempobloqueo = #{pideTiempoBloqueo},
 				bpvd_propiedadboolean = #{propiedadBoolean},
 				bpvd_pideusuario = #{pideUsuario},
-				bpvd_solicitamotivo = #{solicitaMotivo},
+				cpvd_uso_motivo = #{usoMotivo},
+				cpvd_imagen = #{imagen},
+				cpvd_uso_relaciones = #{usoRelaciones},
 				bpvd_pidefechas = #{pideFechas},
 				bpvd_privada = #{privada},
 				cpvd_estado =#{estado}
@@ -300,7 +322,9 @@
 			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
 			,bpvd_propiedadboolean as  propiedadBoolean
 			,bpvd_pideusuario as  pideUsuario
-			,bpvd_solicitamotivo as  solicitaMotivo
+			,cpvd_uso_motivo as  usoMotivo
+			,cpvd_imagen as  imagen
+			,cpvd_uso_relaciones as  usoRelaciones
 			,bpvd_pidefechas as  pideFechas
 			,cpvd_estado as estado
 		from propiedadvalordefinido_pvdp a

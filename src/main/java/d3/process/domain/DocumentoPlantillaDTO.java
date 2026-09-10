@@ -12,6 +12,13 @@ import d3.shared.domain.BasicDTO;
 public class DocumentoPlantillaDTO extends BasicDTO
 {
 
+	public static final String PRINCIPAL = "P";
+	public static final String REPORTE = "T";
+	public static final String ROL = "R";
+	public static final String MODIFICACION = "U";
+	public static final String ANULACION = "I";
+	public static final String ACTIVACION = "A";
+	
 	private String tipo;
 	private String padre;
 	private String nombre;

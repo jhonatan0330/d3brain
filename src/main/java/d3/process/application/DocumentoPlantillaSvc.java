@@ -325,18 +325,61 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			filtroCantidad = new DocumentoPlantillaFilterDTO();
 			filtroCantidad.setCodigo(dto.getCodigo());
 			if (consultaUnica(filtroCantidad) != null) {
-				dto.setCodigo("P" + cantidadCampos);
+				dto.setCodigo(DocumentoPlantillaDTO.PRINCIPAL + cantidadCampos);
 			}
 		}
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		if (dto.getTipo() == null)
-			dto.setTipo("P");
+			dto.setTipo(DocumentoPlantillaDTO.PRINCIPAL);
 		if (dto.getPadre() == null)
 			dto.setPadre(dto.getProceso());
 	}
 
-	public void actualizarTipoPadre(String plantillaId, String tipo, String padre) {
+	public void actualizarTipoPadre(String plantillaId, String tipo, String padre) throws ServerException {
+		if (plantillaId == null)
+			throw new ServerException("Debe indicar la plantilla a actualizar");
+		if (tipo == null)
+			throw new ServerException("Debe indicar el tipo de la plantilla");
+		DocumentoPlantillaDTO plantilla = consultaXId(plantillaId);
+		if (plantilla == null)
+			throw new ServerException("No se encontro la plantilla para actualizar el tipo y padre");
+		String tipoActual = plantilla.getTipo();
+		if (tipoActual != null && tipoActual.compareTo(DocumentoPlantillaDTO.PRINCIPAL) != 0
+				&& tipo.compareTo(tipoActual) != 0 && tipo.compareTo(DocumentoPlantillaDTO.PRINCIPAL) != 0)
+			throw new ServerException("La plantilla " + plantilla.getNombre() + " es de tipo "
+					+ nombreTipoPlantilla(tipoActual)
+					+ " y solo puede cambiar a Principal de proceso (P)");
+		if (esTipoPadreProceso(tipo)) {
+			if (padre == null || procesoService.consultaXId(padre) == null)
+				throw new ServerException("Para el tipo " + nombreTipoPlantilla(tipo)
+						+ " el padre debe ser el proceso al cual pertenece la plantilla");
+		} else {
+			if (padre == null || consultaXId(padre) == null)
+				throw new ServerException(
+						"Para el tipo " + nombreTipoPlantilla(tipo) + " el padre debe ser el formulario que lo origina");
+		}
 		documentoPlantillaMapper.actualizarTipoPadre(plantillaId, tipo, padre);
+	}
+
+	private boolean esTipoPadreProceso(String tipo) {
+		return tipo.equals(DocumentoPlantillaDTO.PRINCIPAL) || tipo.equals(DocumentoPlantillaDTO.REPORTE)
+				|| tipo.equals(DocumentoPlantillaDTO.ROL);
+	}
+
+	private String nombreTipoPlantilla(String tipo) {
+		if (tipo.equals(DocumentoPlantillaDTO.PRINCIPAL))
+			return "Principal de proceso";
+		if (tipo.equals(DocumentoPlantillaDTO.REPORTE))
+			return "Reporte";
+		if (tipo.equals(DocumentoPlantillaDTO.ROL))
+			return "Rol";
+		if (tipo.equals(DocumentoPlantillaDTO.MODIFICACION))
+			return "Modificaciones";
+		if (tipo.equals(DocumentoPlantillaDTO.ANULACION))
+			return "Anulacion";
+		if (tipo.equals(DocumentoPlantillaDTO.ACTIVACION))
+			return "Activacion";
+		return "";
 	}
 
 	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token, String action)
