@@ -77,8 +77,8 @@ begin
 
 	-- 6. Elimino la información de la fuente principal
 	delete from detallepedidoventa_dpvp where cdpv_llave = any(items_documento);
-	delete from webserviceejecucion_wsep where cmsj_documento = any(documentos);
-	delete from mensaje_msjp where cwse_documento = any(documentos);
+	delete from webserviceejecucion_wsep where cwse_documento = any(documentos);
+	delete from mensaje_msjp where cmsj_documento = any(documentos);
 	delete from reporteejecucion_rejp where crej_documento = any(documentos);
 	delete from pedidoventaubicacion_pvup where cpvu_documento = any(documentos);
 	delete from documentorelaciongestor_drgp where cdrg_documentoprincipal = any(documentos);
