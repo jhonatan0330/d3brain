@@ -8,4 +8,6 @@ import d3.upload.domain.CargaArchivoFilterDTO;
 @D3SqlConnMapper(value = "CargaArchivoMapper")
 public interface CargaArchivoMapper extends IBasicMapper<CargaArchivoDTO, CargaArchivoFilterDTO> {
 
+	Long sumarSizeEntreFechas(CargaArchivoFilterDTO dto);
+
 }

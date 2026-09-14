@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.usage.infrastructure.SaldoConsumoMapper">
+
+	<sql id="selectSaldoConsumoFragment">
+		select
+			ccup_llave as  llaveTabla
+			,ncup_saldo as  saldo
+			,dcup_fechaactualizacion as  fechaActualizacion
+			,ccup_estado as estado
+		from consumounidad_cup a
+	</sql>
+
+	<sql id="whereSaldoConsumoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and ccup_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and ccup_estado = #{estado}
+			</if>
+	</sql>
+
+	<sql id="paginationSaldoConsumoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereSaldoConsumoPrimaryKeyFragment">
+		where
+			ccup_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="SaldoConsumoDTO" resultType="SaldoConsumoDTO">
+		<include refid="selectSaldoConsumoFragment" />
+		<include refid="whereSaldoConsumoFragment" />
+	</select>
+
+	<select id="listar" parameterType="SaldoConsumoDTO" resultType="SaldoConsumoDTO">
+		<include refid="selectSaldoConsumoFragment" />
+		<include refid="whereSaldoConsumoFragment" />
+		order by dcup_fechaactualizacion desc
+		<include refid="paginationSaldoConsumoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="SaldoConsumoDTO" resultType="int">
+		select count(*)
+		from consumounidad_cup
+		<include refid="whereSaldoConsumoFragment" />
+	</select>
+
+	<select id="insertar" parameterType="SaldoConsumoDTO" resultType="SaldoConsumoDTO">
+		insert into consumounidad_cup(
+			ccup_llave
+		<if test="saldo!=null">
+			,ncup_saldo
+		</if>
+		<if test="fechaActualizacion!=null">
+			,dcup_fechaactualizacion
+		</if>
+		<if test="estado!=null">
+			,ccup_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="saldo!=null">
+			,#{saldo}
+		</if>
+		<if test="fechaActualizacion!=null">
+			,#{fechaActualizacion}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="SaldoConsumoDTO" resultType="SaldoConsumoDTO">
+		update consumounidad_cup
+			set
+				ncup_saldo = #{saldo},
+				dcup_fechaactualizacion = #{fechaActualizacion},
+				ccup_estado =#{estado}
+		<include refid="whereSaldoConsumoPrimaryKeyFragment" />
+	</select>
+
+	<select id="consultarSimple" resultType="SaldoConsumoDTO">
+		<include refid="selectSaldoConsumoFragment" />
+		<include refid="whereSaldoConsumoFragment" />
+	</select>
+
+	<select id="listarSimple" resultType="SaldoConsumoDTO">
+		<include refid="selectSaldoConsumoFragment" />
+		<include refid="whereSaldoConsumoFragment" />
+		order by dcup_fechaactualizacion desc
+		<include refid="paginationSaldoConsumoFragment" />
+	</select>
+
+	<select id="obtenerSaldoActivo" parameterType="SaldoConsumoDTO" resultType="SaldoConsumoDTO">
+		<include refid="selectSaldoConsumoFragment" />
+			where ccup_estado = 'A'
+			order by dcup_fechaactualizacion desc
+			LIMIT 1
+	</select>
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

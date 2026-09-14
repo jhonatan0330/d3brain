@@ -29,6 +29,7 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.ProcessTemplate;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.mail.application.MailSendMessageToAdminService;
@@ -59,6 +60,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	private final UploadSvc uploadService;
 	private final MailSendMessageToAdminService mensajeToAdminService;
 	private final JasperReportCache cacheService;
+	private final ProcessTemplate processesTemplate;
 
 	public ReporteBaseSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ReporteBaseMapper reporteBaseMapper,
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
@@ -66,7 +68,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			@Lazy PropertyGetWithCacheService cachePropertyService, @Lazy UsuarioSesionSvc autenticacionService,
 			@Lazy UsuarioSvc usuarioService, @Lazy ReporteEjecucionSvc ejecucionService, @Lazy UploadSvc uploadService,
 			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy JasperReportCache cacheService,
-			@Lazy DataSource dataSource) {
+			@Lazy ProcessTemplate processesTemplate, @Lazy DataSource dataSource) {
 		super(usuarioSesionService);
 		this.reporteBaseMapper = reporteBaseMapper;
 		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
@@ -79,6 +81,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		this.uploadService = uploadService;
 		this.mensajeToAdminService = mensajeToAdminService;
 		this.cacheService = cacheService;
+		this.processesTemplate = processesTemplate;
 		this.dataSource = dataSource;
 	}
 
@@ -332,10 +335,10 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			GeneradorReportes generadorReporte = null;
 			if (Propiedades.obtenerParametro(reporte, Propiedades.CONNECTION_STRING_DB) != null) {
 				generadorReporte = new GeneradorReportes(
-						Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB));
+						Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB), processesTemplate);
 			} else {
 				generadorReporte = new GeneradorReportes(dataSource.getConnection(), cacheService,
-						reporte.getLlaveTabla());
+						reporte.getLlaveTabla(), processesTemplate);
 			}
 			byte[] resultado = null;
 			if (tipoReporte == null) {
@@ -377,6 +380,22 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				resultado = ReportGenerateFromSql.call(Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY),
 						parametrosJasper, generadorReporte.getConexion());
 				generadorReporte.closeConnection();
+				break;
+			}
+			case "FREEMARKER": {
+				String templateFTL = Propiedades.obtenerValor(reporte, Propiedades.REPORTE_JRXML);
+				if (templateFTL.isEmpty())
+					throw new ServerException(
+							"No se ha definido el template FreeMarker del reporte (propiedad REPORTE_FREEMARKER)");
+				String query = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY);
+				String queryEncabezado = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY_ENCABEZADO);
+				if (query.isEmpty() && queryEncabezado.isEmpty())
+					throw new ServerException(
+							"No se ha definido ninguna consulta SQL del reporte (REPORT_QUERY o REPORT_QUERY_ENCABEZADO)");
+				resultado = generadorReporte.generarReporteFreeMarker(templateFTL, query, queryEncabezado,
+						parametrosJasper);
+				tipoReporte = "html";
+				parametrosJasper.put("P_JASPERTIPO", "HTML");
 				break;
 			}
 			default: {

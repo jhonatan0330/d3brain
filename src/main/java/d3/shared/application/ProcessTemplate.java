@@ -110,34 +110,49 @@ public class ProcessTemplate {
 				mapParams.putAll(newMap);
 				String result;
 				try {
-					StringWriter out = new StringWriter();
-					Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
-					Template t = new Template("templateName", plantilla, cfg);
-					t.process(mapParams, out);
-					result = out.toString();
+					result = ejecutarFreeMarker(plantilla, mapParams);
 				} catch (InvalidReferenceException e) {
-					try {
-						sendToAdminService.call("Error procesando una pantilla",
-								e.getMessage() + SharedConstants.NEW_LINE + plantilla);
-					} catch (ServerException e1) {
-						e.printStackTrace();
-						e1.printStackTrace();
-					}
+					notificarErrorPlantilla(e, plantilla);
 					result = e.getFTLInstructionStack();
 				} catch (Exception ex) {
-					try {
-						sendToAdminService.call("Error procesando una pantilla",
-								ex.getMessage() + SharedConstants.NEW_LINE + plantilla);
-					} catch (ServerException e1) {
-						ex.printStackTrace();
-						e1.printStackTrace();
-					}
+					notificarErrorPlantilla(ex, plantilla);
 					result = ex.getMessage();
 				}
 				return result;
 			}
 		}
 		return plantilla;
+	}
+
+	private String ejecutarFreeMarker(String plantilla, Map<String, Object> mapParams) throws Exception {
+		StringWriter out = new StringWriter();
+		Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+		Template t = new Template("templateName", plantilla, cfg);
+		t.process(mapParams, out);
+		return out.toString();
+	}
+
+	private void notificarErrorPlantilla(Exception e, String plantilla) {
+		try {
+			sendToAdminService.call("Error procesando una pantilla", e.getMessage() + SharedConstants.NEW_LINE + plantilla);
+		} catch (ServerException e1) {
+			e.printStackTrace();
+			e1.printStackTrace();
+		}
+	}
+
+	public String generateOutputFile(String plantilla, Map<String, Object> parametros) throws ServerException {
+		if (plantilla == null || plantilla.isEmpty())
+			return plantilla;
+		try {
+			return ejecutarFreeMarker(plantilla, parametros);
+		} catch (InvalidReferenceException e) {
+			notificarErrorPlantilla(e, plantilla);
+			throw new ServerException("Error procesando el template FreeMarker del reporte: " + e.getMessage());
+		} catch (Exception e) {
+			notificarErrorPlantilla(e, plantilla);
+			throw new ServerException("Error procesando el template FreeMarker del reporte: " + e.getMessage());
+		}
 	}
 
 	public String transformDependsToParams(List<PedidoVentaCaracteristicaDTO> dependientes) {

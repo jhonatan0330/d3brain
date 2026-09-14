@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.usage.infrastructure.MovimientoConsumoMapper">
+
+	<sql id="selectMovimientoConsumoFragment">
+		select
+			cmco_llave as  llaveTabla
+			,cmco_tipo as  tipo
+			,dmco_fecharegistro as  fechaRegistro
+			,dmco_fechaevento as  fechaEvento
+			,mmco_cantidad as  cantidad
+			,mmco_saldoinicial as  saldoInicial
+			,mmco_saldofinal as  saldoFinal
+			,cmco_anterior as  anterior
+			,cmco_siguiente as  siguiente
+			,cmco_referencia as  referencia
+			,cmco_estado as estado
+		from movimientoconsumo_mcop a
+	</sql>
+
+	<sql id="whereMovimientoConsumoFragment">
+		where 1=1
+			<if test="llaveTabla!=null">
+				and cmco_llave = #{llaveTabla}
+			</if>
+			<if test="estado!=null">
+				and cmco_estado = #{estado}
+			</if>
+			<if test="tipo!=null">
+				and cmco_tipo = #{tipo}
+			</if>
+			<if test="fechaRegistroMin!=null">
+				and dmco_fecharegistro >= #{fechaRegistroMin}
+			</if>
+			<if test="fechaRegistroMax!=null">
+				and dmco_fecharegistro <![CDATA[ < ]]>  #{fechaRegistroMax}
+			</if>
+			<if test="fechaEventoMin!=null">
+				and dmco_fechaevento >= #{fechaEventoMin}
+			</if>
+			<if test="fechaEventoMax!=null">
+				and dmco_fechaevento <![CDATA[ < ]]>  #{fechaEventoMax}
+			</if>
+			<if test="referencia!=null">
+				and cmco_referencia = #{referencia}
+			</if>
+	</sql>
+
+	<sql id="paginationMovimientoConsumoFragment">
+			<if test="paginacionRegistroFinal!=null">
+				LIMIT #{paginacionRegistroFinal}
+			</if>
+			<if test="paginacionRegistroInicial!=null">
+				OFFSET #{paginacionRegistroInicial}
+			</if>
+	</sql>
+
+	<sql id="whereMovimientoConsumoPrimaryKeyFragment">
+		where
+			cmco_llave	=#{llaveTabla}
+	</sql>
+
+	<select id="consultar" parameterType="MovimientoConsumoDTO" resultType="MovimientoConsumoDTO">
+		<include refid="selectMovimientoConsumoFragment" />
+		<include refid="whereMovimientoConsumoFragment" />
+	</select>
+
+	<select id="listar" parameterType="MovimientoConsumoDTO" resultType="MovimientoConsumoDTO">
+		<include refid="selectMovimientoConsumoFragment" />
+		<include refid="whereMovimientoConsumoFragment" />
+		order by dmco_fecharegistro desc
+		, dmco_fechaevento desc
+		<include refid="paginationMovimientoConsumoFragment" />
+	</select>
+
+	<select id="cantidadRegistros" parameterType="MovimientoConsumoDTO" resultType="int">
+		select count(*)
+		from movimientoconsumo_mcop
+		<include refid="whereMovimientoConsumoFragment" />
+	</select>
+
+	<select id="insertar" parameterType="MovimientoConsumoDTO" resultType="MovimientoConsumoDTO">
+		insert into movimientoconsumo_mcop(
+			cmco_llave
+		<if test="tipo!=null">
+			,cmco_tipo
+		</if>
+		<if test="fechaRegistro!=null">
+			,dmco_fecharegistro
+		</if>
+		<if test="fechaEvento!=null">
+			,dmco_fechaevento
+		</if>
+		<if test="cantidad!=null">
+			,mmco_cantidad
+		</if>
+		<if test="saldoInicial!=null">
+			,mmco_saldoinicial
+		</if>
+		<if test="saldoFinal!=null">
+			,mmco_saldofinal
+		</if>
+		<if test="anterior!=null">
+			,cmco_anterior
+		</if>
+		<if test="siguiente!=null">
+			,cmco_siguiente
+		</if>
+		<if test="referencia!=null">
+			,cmco_referencia
+		</if>
+		<if test="estado!=null">
+			,cmco_estado
+		</if>
+		) values (
+			#{llaveTabla}
+		<if test="tipo!=null">
+			,#{tipo}
+		</if>
+		<if test="fechaRegistro!=null">
+			,#{fechaRegistro}
+		</if>
+		<if test="fechaEvento!=null">
+			,#{fechaEvento}
+		</if>
+		<if test="cantidad!=null">
+			,#{cantidad}
+		</if>
+		<if test="saldoInicial!=null">
+			,#{saldoInicial}
+		</if>
+		<if test="saldoFinal!=null">
+			,#{saldoFinal}
+		</if>
+		<if test="anterior!=null">
+			,#{anterior}
+		</if>
+		<if test="siguiente!=null">
+			,#{siguiente}
+		</if>
+		<if test="referencia!=null">
+			,#{referencia}
+		</if>
+		<if test="estado!=null">
+			,#{estado}
+		</if>
+		)
+	</select>
+
+	<select id="actualizar" parameterType="MovimientoConsumoDTO" resultType="MovimientoConsumoDTO">
+		update movimientoconsumo_mcop
+			set
+				cmco_tipo = #{tipo},
+				dmco_fecharegistro = #{fechaRegistro},
+				dmco_fechaevento = #{fechaEvento},
+				mmco_cantidad = #{cantidad},
+				mmco_saldoinicial = #{saldoInicial},
+				mmco_saldofinal = #{saldoFinal},
+				cmco_anterior = #{anterior},
+				cmco_siguiente = #{siguiente},
+				cmco_referencia = #{referencia},
+				cmco_estado =#{estado}
+		<include refid="whereMovimientoConsumoPrimaryKeyFragment" />
+	</select>
+
+	<select id="consultarSimple" resultType="MovimientoConsumoDTO">
+		<include refid="selectMovimientoConsumoFragment" />
+		<include refid="whereMovimientoConsumoFragment" />
+	</select>
+
+	<select id="listarSimple" resultType="MovimientoConsumoDTO">
+		<include refid="selectMovimientoConsumoFragment" />
+		<include refid="whereMovimientoConsumoFragment" />
+		order by dmco_fecharegistro desc
+		, dmco_fechaevento desc
+		<include refid="paginationMovimientoConsumoFragment" />
+	</select>
+
+<!--// BEGIN region script-->
+<!--// END region script-->
+
+</mapper>

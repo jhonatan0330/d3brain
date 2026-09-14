@@ -657,3 +657,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo) 
 	VALUES('PROP_308' , 'W', 'FIRMAR HEADER FACTURA ELECTRONICA', 'API_FE_HEADER', 'REQUISITO');
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
+	VALUES('PROP_309' , 'E', 'QUERY REPORTE MAESTRO', 'REPORT_QUERY_ENCABEZADO', 'REQUISITO', true);

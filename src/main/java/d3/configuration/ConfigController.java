@@ -21,6 +21,9 @@ import d3.accounting.domain.PeriodoDTO;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
+import d3.authorization.application.RolAccesoSvc;
+import d3.authorization.domain.RolAccesoDTO;
+import d3.authorization.domain.RolAccesoFilterDTO;
 import d3.configuration.application.ExportConfigurationFileService;
 import d3.configuration.application.ImportConfigurationFileService;
 import d3.configuration.application.PropiedadSvc;
@@ -72,8 +75,11 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.upload.domain.CargaArchivoDTO;
 import d3.users.application.ServidorSvc;
+import d3.users.application.UsuarioSvc;
 import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
+import d3.users.domain.UsuarioDTO;
+import d3.users.domain.UsuarioFilterDTO;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
@@ -107,6 +113,8 @@ public class ConfigController {
 	private final SincronizacionArbolSvc sincronizacionArbolService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
 	private final IndicatorService indicadorService;
+	private final RolAccesoSvc rolAccesoService;
+	private final UsuarioSvc usuarioService;
 
 	public ConfigController(
 			@Lazy ConsecutivoSvc consecutivoService,
@@ -129,7 +137,9 @@ public class ConfigController {
 			@Lazy ExportConfigurationFileService exportService,
 			@Lazy ImportConfigurationFileService importService,
 			@Lazy SincronizacionArbolSvc sincronizacionArbolService,
-			@Lazy IndicatorService indicadorService) {
+			@Lazy IndicatorService indicadorService,
+			@Lazy RolAccesoSvc rolAccesoService,
+			@Lazy UsuarioSvc usuarioService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
 		this.organizacionService = organizacionService;
@@ -152,6 +162,8 @@ this.exportService = exportService;
 		this.sincronizacionArbolService = sincronizacionArbolService;
 		this.propertyTypeService = propiedadValorDefinidoService;
 		this.indicadorService = indicadorService;
+		this.rolAccesoService = rolAccesoService;
+		this.usuarioService = usuarioService;
 	}
 
 	private void limpiarFiltro(Object filter) {
@@ -383,6 +395,9 @@ this.exportService = exportService;
 	@PostMapping("/web-services/executions")
 	public List<WebServiceEjecucionDTO> listarEjecuciones(
 			@RequestBody WebServiceEjecucionFilterDTO filter) throws ServerException {
+		if (filter.getFechaEjecucionMin() == null || filter.getFechaEjecucionMax() == null) {
+			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar ejecuciones");
+		}
 		limpiarFiltro(filter);
 		return webServiceEjecucionService.listarConsulta(filter);
 	}
@@ -427,6 +442,9 @@ this.exportService = exportService;
 
 	@PostMapping("/messages/list")
 	public List<MensajeDTO> listarMensajes(@RequestBody MensajesUsuarioRequest request) throws ServerException {
+		if (request.getFechaDesde() == null || request.getFechaHasta() == null) {
+			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar mensajes");
+		}
 		limpiarFiltro(request);
 		MensajeFilterDTO filter = new MensajeFilterDTO();
 		filter.setEstado(request.getEstado());
@@ -908,6 +926,33 @@ this.exportService = exportService;
 			@RequestBody RelacionInternaDTO dto,
 			@RequestHeader("Authorization") String token) throws ServerException {
 		return relacionInternaService.inactivar(dto, token);
+	}
+
+	// ==================== ROLES (acceso) ====================
+
+	@PostMapping("/roles/list")
+	public List<RolAccesoDTO> listarRoles(@RequestBody RolAccesoFilterDTO filter) throws ServerException {
+		limpiarFiltro(filter);
+		if (filter.getEstado() == null || filter.getEstado().isEmpty()) {
+			filter.setEstado(SharedConstants.STATE_ACTIVE);
+		}
+		return rolAccesoService.listarConsulta(filter);
+	}
+
+	// ==================== USERS (búsqueda usuario propietario) ====================
+
+	@PostMapping("/users/search")
+	public List<UsuarioDTO> listarUsuarios(@RequestBody UsuarioFilterDTO filter) throws ServerException {
+		limpiarFiltro(filter);
+		if (filter.getEstado() == null || filter.getEstado().isEmpty()) {
+			filter.setEstado(SharedConstants.STATE_ACTIVE);
+		}
+		return usuarioService.listarConsulta(filter);
+	}
+
+	@PostMapping("/users/by-id")
+	public UsuarioDTO consultarUsuario(@RequestBody String key) throws ServerException {
+		return usuarioService.consultaXId(key);
 	}
 
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*) ====================

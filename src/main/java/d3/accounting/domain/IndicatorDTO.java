@@ -4,10 +4,10 @@ import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import d3.shared.domain.SharedDataObject;
+import d3.shared.domain.SharedParamObject;
 
 @Alias("IndicatorDTO")
-public class IndicatorDTO extends SharedDataObject {
+public class IndicatorDTO extends SharedParamObject {
 
 	private String nombre;
 	private String codigo;

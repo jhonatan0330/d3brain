@@ -172,10 +172,12 @@
 		<include refid="whereCargaArchivoFragment" />
 		<include refid="paginationCargaArchivoFragment" />
 	</select>
-	
 
-
-<!--// BEGIN region script-->
-<!--// END region script-->
+	<select id="sumarSizeEntreFechas" parameterType="CargaArchivoFilterDTO" resultType="long">
+		select coalesce(sum(ncar_size), 0)
+		from cargaarchivo_carp
+		where dcar_fechainicio >= #{fechaInicioMin}
+		  and dcar_fechainicio <![CDATA[ < ]]>  #{fechaInicioMax}
+	</select>
 
 </mapper>

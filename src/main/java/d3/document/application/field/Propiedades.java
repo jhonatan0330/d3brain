@@ -257,6 +257,7 @@ public class Propiedades {
 	public static final String REP_AUTOPRINT = "REP_AUTOPRINT";
 	public static final String REP_TYPE_EXPORT = "REP_TYPE_EXPORT";
 	public static final String REPORT_QUERY = "REPORT_QUERY";
+	public static final String REPORT_QUERY_ENCABEZADO = "REPORT_QUERY_ENCABEZADO";
 	public static final String CONNECTION_STRING_DB = "CONNECTION_STRING_DB";
 
 	public static final String ROL = "ROL";

@@ -17,6 +17,7 @@ public class PropiedadValorDefinidoDTO extends BasicDTO {
 
 	public static final String CATALOG = "G";
 	public static final String ACCOUNT = "K";
+	public static final String INDICATOR = "I";
 
 	private String origen;
 	private String origenCategoria;

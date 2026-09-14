@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import d3.accounting.application.StackAccountProccessService;
+import d3.usage.application.ConsumoUnidadProcesoService;
 import d3.shared.domain.ServerException;
 import d3.mail.application.MailReleaseMessageQueueService;
 import d3.multitenancy.TenantIteratorService;
@@ -50,10 +51,12 @@ public class D3Configuration {
 	private final TenantIteratorService tenantIteratorService;
 	private final AutowireCapableBeanFactory beanFactory;
 
+	private final ConsumoUnidadProcesoService consumoProcesoService;
+
 	public D3Configuration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto,
 			@Lazy WebServiceEjecucionSvc apis, @Lazy ReporteBaseSvc report, @Lazy StackAccountProccessService stack,
 			Environment env, @Lazy TenantIteratorService tenantIteratorService,
-			AutowireCapableBeanFactory beanFactory) {
+			AutowireCapableBeanFactory beanFactory, @Lazy ConsumoUnidadProcesoService consumoProcesoService) {
 		this.releaseQueueService = mail;
 		this.transicionservice = auto;
 		this.apiService = apis;
@@ -62,6 +65,7 @@ public class D3Configuration {
 		this.env = env;
 		this.tenantIteratorService = tenantIteratorService;
 		this.beanFactory = beanFactory;
+		this.consumoProcesoService = consumoProcesoService;
 	}
 
 	@Bean(name = "sqlSessionFactory")
@@ -126,6 +130,27 @@ public class D3Configuration {
 		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println(
 				"******* HISTORICO tenant=" + tenantId + " (" + transicionservice.moverDatosHistoricos() + ") ***"
 						+ new Date()));
+
+	}
+
+	@Scheduled(cron = "${cron.cronConsumo}")
+	public void sendConsumo() throws ServerException {
+		if (!"true".equals(env.getProperty("cron.consumo")))
+			return;
+		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println(
+				"******* CONSUMO UNIDADES tenant=" + tenantId + " (" + consumoProcesoService.procesarConsumoHorario()
+						+ ") ***" + new Date()));
+
+	}
+
+	@Scheduled(cron = "${cron.cronDiario}")
+	public void sendConsumoDiario() throws ServerException {
+		if (!"true".equals(env.getProperty("cron.diario")))
+			return;
+		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println(
+				"******* CONSUMO DIARIO tenant=" + tenantId + " ("
+						+ consumoProcesoService.procesarIncrementoDiario()
+						+ ") ***" + new Date()));
 
 	}
 

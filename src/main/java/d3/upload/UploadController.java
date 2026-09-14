@@ -27,12 +27,12 @@ import d3.users.domain.ServidorDTO;
 
 @RestController
 @RequestMapping("/files")
-public class FileController {
+public class UploadController {
 
 	private final ServidorSvc servidorService;
 	private final UploadSvc uploadService;
 
-	public FileController(@Lazy ServidorSvc servidorService, @Lazy UploadSvc uploadService) {
+	public UploadController(@Lazy ServidorSvc servidorService, @Lazy UploadSvc uploadService) {
 		this.servidorService = servidorService;
 		this.uploadService = uploadService;
 	}
@@ -56,7 +56,6 @@ public class FileController {
 
 		ServidorDTO _server = servidorService.resolveLocalServer();
 
-		// Construye la ruta absoluta
 		File file = new File(_server.getBase() + File.separator + pVisibility + File.separator + pType + File.separator
 				+ pYear + File.separator + pMonth + File.separator + pDay + File.separator + pFilename);
 
