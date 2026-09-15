@@ -60,7 +60,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO dto = new DocumentoPlantillaCaracteristicaFilterDTO();
 		dto.setLlaveTabla(llave);
 		_db = documentoPlantillaCaracteristicaMapper.consultar(dto);
-		cacheService.putField(llave, _db);
+		if(_db != null) cacheService.putField(llave, _db);
 		return _db;
 	}
 

@@ -20,7 +20,7 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.domain.ProcesoEstadoDTO;
 
-@Service("PlanCreateAccountTemplateAccountingService")
+@Service("PlanCreateAccountAccountingService")
 public class PlanCreateAccountService {
 
 	private final AccountService accountService;
@@ -175,5 +175,5 @@ public class PlanCreateAccountService {
 		}
 		return accountReference;
 	}
-
+	
 }

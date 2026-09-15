@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import d3.accounting.application.PlanCreateAccountTemplateService;
 import d3.accounting.application.base.CatalogService;
 import d3.accounting.domain.CatalogDTO;
 import d3.accounting.domain.CatalogFilterDTO;
@@ -69,6 +70,7 @@ import jakarta.annotation.PostConstruct;
 
 @Service("propiedadService")
 public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
+	
 	public PropiedadSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy CatalogService catalogService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy DocumentoPlantillaSvc plantillaService,
 			@Lazy MensajePlantillaCorreoSvc mensajeService, @Lazy ProcesoSvc procesoService,
@@ -78,7 +80,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			@Lazy ReporteBaseSvc reporteService, @Lazy RolAccesoSvc rolService,
 			@Lazy RelacionInternaSvc relacionService, @Lazy UsuarioSvc usuarioService, @Lazy WebServiceSvc apiService,
 			@Lazy HomologateAdapterService homologateService, @Lazy JasperReportCache reportCacheService,
-			@Lazy ProcessTemplate templatesService, @Lazy PropertyGetWithCacheService cacheService,
+			@Lazy ProcessTemplate templatesService, @Lazy PropertyGetWithCacheService cacheService, @Lazy PlanCreateAccountTemplateService createAccountService,
 			@Lazy PropiedadMapper propiedadMapper) {
 		super(usuarioSesionService);
 		this.catalogService = catalogService;
@@ -97,6 +99,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		this.relacionService = relacionService;
 		this.usuarioService = usuarioService;
 		this.apiService = apiService;
+		this.createAccountService = createAccountService;
 		this.homologateService = homologateService;
 		this.reportCacheService = reportCacheService;
 		this.templatesService = templatesService;
@@ -122,6 +125,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private final RelacionInternaSvc relacionService;
 	private final UsuarioSvc usuarioService;
 	private final WebServiceSvc apiService;
+	private final PlanCreateAccountTemplateService createAccountService;
 
 	private final HomologateAdapterService homologateService;
 
@@ -271,11 +275,15 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			throw new ServerException("No se encuentra la propiedad con Id " + dto.getPropiedadValor());
 		dto.setTipo(valorDefinido.getOrigen());
 		dto.setKey(valorDefinido.getCodigo());
-		if (dto.getValor() != null)
-			dto.setValor(D3Utils.cleanStartEndSpaces(dto.getValor()));
+		
+		if(valorDefinido.getPropiedadBoolean()) {
+			dto.setValor(SharedConstants.PUNTO);
+		}else {
+			if (dto.getValor() != null)
+				dto.setValor(D3Utils.cleanStartEndSpaces(dto.getValor()));	
+		}
 		if (!rolService.usuarioPermisosCompletos(token))
 			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
-
 		if (dto.getMotivo() != null && dto.getMotivo().isEmpty())
 			dto.setMotivo(null);
 		if (valorDefinido.getMultiple()) {
@@ -1053,14 +1061,20 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			validarTemporizador(dto);
 			break;
 		}
-		case Propiedades.API_ACCOUNT_CATALOG:
-		case Propiedades.PLANTILLA_MONITOR: {
+		case Propiedades.API_ACCOUNT_CATALOG: {
 			identificadorCatalogo(dto);
+			break;
+		}
+
+		case Propiedades.PLANTILLA_MONITOR:{
+			this.createAccountService.call(dto.getCampo());
 			break;
 		}
 		}
 		return false;
 	}
+
+
 
 	private void validateTemplateDifference(PropiedadDTO dto, String token) throws ServerException {
 		if (getPropertyDifferenceTemplate(dto.getCampo()) == null)
@@ -1090,20 +1104,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					"Cuando registras una propiedad de temporizador debes colocar en el texto la clave de tiempo de repeticion. Observa la ayuda");
 	}
 
-	/*
-	 * private void relacionarCampo(PropiedadDTO dto, String token) throws
-	 * ServerException { switch (dto.getKey()) { case Propiedades.TERCERO: { break;
-	 * } case Propiedades.DESCRIPCION: { break; } case
-	 * Propiedades.DESCRIPCION_NIVEL2: { break; } case Propiedades.TOTAL: { break; }
-	 * case Propiedades.CONSECUTIVO: { break; } case Propiedades.FECHA: { break; }
-	 * case Propiedades.RESPONSABLE: { break; } case Propiedades.DEPENDE: { break; }
-	 * case Propiedades.MODIFICAR_CAMPO: { break; } case
-	 * Propiedades.INFORMATIVE_DATA: { break; } default: { return; } }
-	 * RelacionInternaDTO relacion = new RelacionInternaDTO();
-	 * relacion.setPropiedad(dto.getLlaveTabla());
-	 * relacion.setCampo(dto.getValor()); relacionService.guardar(relacion, token);
-	 * }
-	 */
 
 	private void identificadorMensaje(PropiedadDTO dto) throws ServerException {
 		MensajePlantillaCorreoDTO bd = mensajeService.consultaXId(dto.getValor());

@@ -67,13 +67,13 @@ public class VoucherCreateService {
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public SharedIdResponse call(Voucher _voucher, SharedToken token) throws ServerException {
-		CatalogDTO catalogDTO = getCatalog(_voucher.getHeader());
-		validateInfoHeaderAndRecords(_voucher, token, catalogDTO.getCode());
+		String catalogCode = getCatalogCode(_voucher.getHeader());
+		validateInfoHeaderAndRecords(_voucher, token, catalogCode);
 
-		configureAccounts(_voucher, catalogDTO);
+		configureAccounts(_voucher, _voucher.getHeader().getCatalog());
 		voucherService.save(_voucher.getHeader());
-		VoucherDTO headerDTO = getVoucherById(catalogDTO.getCode(), _voucher.getHeader().getKey());
-		saveRecords(catalogDTO.getCode(), _voucher, headerDTO.getKey());
+		VoucherDTO headerDTO = getVoucherById(catalogCode, _voucher.getHeader().getKey());
+		saveRecords(catalogCode, _voucher, headerDTO.getKey());
 		stackVoucher(headerDTO.getKey());
 		createCatalogService.validateTemporalFrame(_voucher.getHeader().getFactDate());
 		// Esto lo retiro por el momenot miestras esten junto //el codigo al final para
@@ -89,12 +89,12 @@ public class VoucherCreateService {
 		stackBasicService.save(stack);
 	}
 
-	private void configureAccounts(Voucher _voucher, CatalogDTO catalogDTO) throws ServerException {
+	private void configureAccounts(Voucher _voucher, String catalogKey) throws ServerException {
 		for (VoucherLine item : _voucher.getRecords()) {
 			AccountDTO account = accountService.getById(item.getLine().getAccount());
 			if (account == null)
 				throw new ServerException("La cuenta no existe en la base de datos");
-			if (account.getCatalog().compareTo(catalogDTO.getKey()) != 0)
+			if (catalogKey!=null && account.getCatalog().compareTo(catalogKey) != 0)
 				throw new ServerException("La cuenta no pertenece al catalogo. " + account.getName());
 			if (account.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				throw new ServerException("La cuenta no se encuentra activa. " + account.getName());
@@ -106,7 +106,7 @@ public class VoucherCreateService {
 					if (third == null)
 						throw new ServerException(
 								"El auxiliar " + iAuxiliar.getAuxiliarType() + " no existe en la base de datos");
-					if (third.getCatalog().compareTo(catalogDTO.getKey()) != 0)
+					if (catalogKey!=null && third.getCatalog().compareTo(catalogKey) != 0)
 						throw new ServerException("El auxiliar " + iAuxiliar.getAuxiliarType()
 								+ " no pertenece al catalogo. " + third.getName());
 					if (third.getState().compareTo(SharedConstants.STATE_ACTIVE) != 0)
@@ -198,38 +198,44 @@ public class VoucherCreateService {
 			}
 		}
 
-		TypeDTO type = typeService.getById(_voucher.getHeader().getType());
-		if (type == null)
-			throw new ServerException("No se reconoce el tipo de documento");
-		if (type.getService() != null && _voucher.getHeader().getDocument() == null)
-			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
+		if (_voucher.getHeader().getType() == null || _voucher.getHeader().getType().isEmpty()){
+			
+		}else {
+			TypeDTO type = typeService.getById(_voucher.getHeader().getType());
+			if (type == null)
+				throw new ServerException("No se reconoce el tipo de documento");
+			if (type.getService() != null && _voucher.getHeader().getDocument() == null)
+				throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");
 
-		if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE) == 0) {
-			if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
-				throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
-						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords
-						+ "), sin tener en cuenta los de reclasificacion");
-			if (valueAllRecordsNegative.compareTo(valueAllRecordsPositive) != 0)
-				throw new ServerException("El valor de los valores negativos (" + valueAllRecordsNegative
-						+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive
-						+ "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
-		}
+			if (type.getPattern().compareTo(AccountConst.TYPE_PATTERN_COMPROBANTE) == 0) {
+				if (_voucher.getHeader().getValue().compareTo(valueAllRecords) != 0)
+					throw new ServerException("El valor total del comprobante (" + _voucher.getHeader().getValue()
+							+ ") no concuerda con los valores positivos de los registros (" + valueAllRecords
+							+ "), sin tener en cuenta los de reclasificacion");
+				if (valueAllRecordsNegative.compareTo(valueAllRecordsPositive) != 0)
+					throw new ServerException("El valor de los valores negativos (" + valueAllRecordsNegative
+							+ ") no concuerda con los valores positivos de los registros (" + valueAllRecordsPositive
+							+ "), hay una diferencia de " + valueAllRecordsPositive.add(valueAllRecordsNegative.negate()));
+			}
 
-		ConsecutivoDTO consecutive = null;
-		if (type.getConsecutive() == null) {
-			ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
-			newConsecutive.setNombre(type.getName());
-			newConsecutive.setPrefijo(catalogoCode + "_" + type.getCode() + "_");
-			newConsecutive.setNumeroInicial(new BigDecimal(1000));
-			newConsecutive.setNumeroActual(new BigDecimal(1000));
-			consecutive = consecutiveService.guardar(newConsecutive, token.getToken());
-			type.setConsecutive(newConsecutive.getLlaveTabla());
-			typeService.update(type);
-		} else {
-			consecutive = consecutiveService.consultaXId(type.getConsecutive());
+			ConsecutivoDTO consecutive = null;
+			if (type.getConsecutive() == null) {
+				ConsecutivoDTO newConsecutive = new ConsecutivoDTO();
+				newConsecutive.setNombre(type.getName());
+				newConsecutive.setPrefijo(catalogoCode + "_" + type.getCode() + "_");
+				newConsecutive.setNumeroInicial(new BigDecimal(1000));
+				newConsecutive.setNumeroActual(new BigDecimal(1000));
+				consecutive = consecutiveService.guardar(newConsecutive, token.getToken());
+				type.setConsecutive(newConsecutive.getLlaveTabla());
+				typeService.update(type);
+			} else {
+				consecutive = consecutiveService.consultaXId(type.getConsecutive());
+			}
+			consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
+			_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
 		}
-		consecutive = consecutiveService.asignarConsecutivo(consecutive, token.getToken());
-		_voucher.getHeader().setCode(consecutive.getConsecutivoActual());
+		
+		
 		_voucher.getHeader().setCreationDate(new Date());
 		_voucher.getHeader()
 				.setDeleteDate(Date.from(LocalDate.of(1990, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -239,22 +245,27 @@ public class VoucherCreateService {
 		}
 	}
 
-	private CatalogDTO getCatalog(VoucherDTO _voucher) throws ServerException {
-		if (_voucher.getCatalog() == null)
-			throw new ServerException("Es importante identificar el catalogo para guardar el comprobante");
+	private String getCatalogCode(VoucherDTO _voucher) throws ServerException {
 		if (_voucher.getFactDate() == null)
 			throw new ServerException("El comprobante debe tener una fecha");
-		CatalogDTO catalogDTO = catalogService.getById(_voucher.getCatalog());
-		if (catalogDTO == null)
-			throw new ServerException("No se encontro un catalogo con ese identificador");
-		_voucher.setCatalogCode(catalogDTO.getCode());
-		if (catalogDTO.getInitialDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
-			throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
-					+ catalogDTO.getInitialDate().toString());
-		if (catalogDTO.getFinalDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
-			throw new ServerException("La fecha del comprobante debe ser menor al periodo del catalogo. Fecha final "
-					+ catalogDTO.getFinalDate().toString());
-		return catalogDTO;
+		if (_voucher.getCatalog() == null) {
+			if (_voucher.getCode() == null || _voucher.getCode().isEmpty())
+				throw new ServerException("El comprobante debe tener un catalogo o un codigo de catalogo");
+			return _voucher.getCode();
+		} else {
+			CatalogDTO catalogDTO = catalogService.getById(_voucher.getCatalog());
+			if (catalogDTO == null)
+				throw new ServerException("No se encontro un catalogo con ese identificador");
+			_voucher.setCatalogCode(catalogDTO.getCode());
+			if (catalogDTO.getInitialDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getInitialDate()) < 0)
+				throw new ServerException("La fecha del comprobante debe ser mayor al periodo del catalogo. Fecha inicial "
+						+ catalogDTO.getInitialDate().toString());
+			if (catalogDTO.getFinalDate() != null && _voucher.getFactDate().compareTo(catalogDTO.getFinalDate()) > 0)
+				throw new ServerException("La fecha del comprobante debe ser menor al periodo del catalogo. Fecha final "
+						+ catalogDTO.getFinalDate().toString());
+			return catalogDTO.getCode();	
+		}
+		
 	}
 
 	private VoucherDTO getVoucherById(String catalogCode, String voucherId) throws ServerException {

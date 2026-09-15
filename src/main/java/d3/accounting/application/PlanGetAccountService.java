@@ -70,4 +70,10 @@ public class PlanGetAccountService {
 	public AccountDTO getById(String id) throws ServerException {
 		return accountService.getById(id);
 	}
+	
+	public AccountDTO findAccountByTemplateId(String templateId) throws ServerException {
+		AccountFilterDTO filterA = new AccountFilterDTO();
+		filterA.setTemplate(templateId);
+		return accountService.getOne(filterA);
+	}
 }
