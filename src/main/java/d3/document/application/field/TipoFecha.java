@@ -33,8 +33,7 @@ public class TipoFecha {
 		this.caracteristicaService = caracteristicaService;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
-			throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// System.out.format("\n[%s - %s] Validando.....",
 		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
 		if (pCampo.getValorFecha() == null) {
@@ -42,8 +41,8 @@ public class TipoFecha {
 			// viene vacio
 			if (pCampo.getDocumento() == null
 					&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_BLOQUEAR) != null) {
-				pCampo.setValorFecha(calcularFechaPorFuncion(pCampo.getCampoDTO(), pCampo.getDependientes(),
-						pCampo.getDocumento(), token));
+				pCampo.setValorFecha(
+						calcularFechaPorFuncion(pCampo.getCampoDTO(), pCampo.getDependientes(), pCampo.getDocumento()));
 				if (pCampo.getValorFecha() == null)
 					pCampo.setValorFecha(new Date());
 			} else {
@@ -100,11 +99,11 @@ public class TipoFecha {
 							}
 
 							if (lt.toMinutesPart() != 0) {
-								fechaInicial.add(Calendar.MINUTE, (int) lt.toMinutesPart());
+								fechaInicial.add(Calendar.MINUTE, lt.toMinutesPart());
 								difference = difference + lt.toMinutesPart() + " minutos, ";
 							}
 							if (lt.toSecondsPart() != 0) {
-								fechaInicial.add(Calendar.SECOND, (int) lt.toSecondsPart());
+								fechaInicial.add(Calendar.SECOND, lt.toSecondsPart());
 								difference = difference + lt.toSecondsPart() + " segundos, ";
 							}
 						}
@@ -198,9 +197,9 @@ public class TipoFecha {
 								throw new ServerException(
 										"Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
 												+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
-							} else {
-								pCampo.setValorFecha(null);
 							}
+							pCampo.setValorFecha(null);
+
 						}
 
 					}
@@ -310,66 +309,46 @@ public class TipoFecha {
 		}
 	}
 
-	/*
-	 * private Date getTimeBlock(PedidoVentaCaracteristicaDTO pCampo) throws
-	 * ServerException { PropiedadDTO funcionCalculo =
-	 * Propiedades.obtenerParametro(pCampo.getCampoDTO(),Propiedades.
-	 * FECHA_FUNCION_SQL); if (funcionCalculo != null) {
-	 * PedidoVentaCaracteristicaFilterDTO filter = new
-	 * PedidoVentaCaracteristicaFilterDTO();
-	 * filter.setDependientes(pCampo.getDependientes());
-	 * filter.setCampo(pCampo.getCampo());
-	 * filter.setDocumento(pCampo.getDocumento()); filter =
-	 * consultarDatosBase(filter); if(filter !=null &&
-	 * filter.getValorFechaMax()!=null) return filter.getValorFechaMax(); } return
-	 * new Date(); }
-	 */
-
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorFecha() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
 				pCampo.getDifference().setValorFecha(bd.getValorFecha());
 				return pCampo;
-			} else {
-				if (pCampo.getValorFecha().compareTo(bd.getValorFecha()) == 0 && (pCampo.getValorNumero() == null
-						|| pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0)) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-					pCampo.getDifference().setValorFecha(bd.getValorFecha());
-				}
 			}
+			if (pCampo.getValorFecha().compareTo(bd.getValorFecha()) == 0 && (pCampo.getValorNumero() == null
+					|| pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0)) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+			pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+			pCampo.getDifference().setValorFecha(bd.getValorFecha());
+
 		}
 		if (pCampo.getValorFecha() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
-
-		pCampo.setValorFechaMax(calcularFechaPorFuncion(pBase, pCampo.getDependientes(), pCampo.getDocumento(),
-				pCampo.getSecurityToken()));
-
+				.consultaUnicaConComplementos(pCampo.getCampo());
+		pCampo.setValorFechaMax(calcularFechaPorFuncion(pBase, pCampo.getDependientes(), pCampo.getDocumento()));
 		pCampo.setCampoDTO(pBase);
 		return pCampo;
 	}
 
 	private Date calcularFechaPorFuncion(DocumentoPlantillaCaracteristicaDTO pBase,
-			List<PedidoVentaCaracteristicaDTO> dependientes, String documento, String token) throws ServerException {
+			List<PedidoVentaCaracteristicaDTO> dependientes, String documento) throws ServerException {
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.FECHA_FUNCION_SQL);
 		if (funcionCalculo == null)
 			return null;
@@ -384,7 +363,7 @@ public class TipoFecha {
 			}
 		}
 		try {
-			return campoService.calcularFechaFuncion(funcionCalculo, documento, token, newDependientes);
+			return campoService.calcularFechaFuncion(funcionCalculo, documento, newDependientes);
 		} catch (ServerException e) {
 			throw new ServerException(e.getMessage(), "Campo: " + pBase.getNombre());
 		}

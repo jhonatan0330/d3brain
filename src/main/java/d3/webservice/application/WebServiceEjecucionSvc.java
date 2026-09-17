@@ -3,38 +3,32 @@ package d3.webservice.application;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
-import d3.authentication.application.UsuarioSesionSvc;
-import d3.authentication.domain.UsuarioSesionDTO;
 import d3.document.application.DocumentoTransaccionSvc;
 import d3.shared.application.BasicSvc;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
 import d3.webservice.domain.WebServiceEjecucionFilterDTO;
 import d3.webservice.infrastructure.WebServiceEjecucionMapper;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
 
 @Service("webServiceEjecucionService")
 public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, WebServiceEjecucionFilterDTO> {
 
 	private final WebServiceEjecucionMapper webServiceEjecucionMapper;
-	private final UsuarioSesionSvc autenticacionService;
 	private final WebServiceExecuteAPI executeAPIFunction;
 	private final WebServiceSvc webServiceSvc;
 
-	public WebServiceEjecucionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
-			@Lazy WebServiceEjecucionMapper webServiceEjecucionMapper, @Lazy UsuarioSesionSvc autenticacionService,
+	public WebServiceEjecucionSvc(
+			@Lazy WebServiceEjecucionMapper webServiceEjecucionMapper, 
 			@Lazy WebServiceExecuteAPI executeAPIFunction, @Lazy WebServiceSvc webServiceSvc) {
-		super(usuarioSesionService);
 		this.webServiceEjecucionMapper = webServiceEjecucionMapper;
-		this.autenticacionService = autenticacionService;
 		this.executeAPIFunction = executeAPIFunction;
 		this.webServiceSvc = webServiceSvc;
 	}
@@ -60,18 +54,18 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		if (bd.getSincrona() == null)
 			throw new ServerException("Este API no es asincrono");
 		if (bd.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC) == 0) {
-			executeAPIFunction.applyScheduleToExecute(consultaXId(dto.getLlaveTabla()), dto.getSecurityToken());
+			executeAPIFunction.applyScheduleToExecute(consultaXId(dto.getLlaveTabla()));
 		} else {
 			WebServiceDTO service = webServiceSvc.consultaXId(bd.getServicio());
-			executeAPIFunction.executeApi(service, bd, dto.getSecurityToken(), null, null, null);
+			executeAPIFunction.executeApi(service, bd,  null, null, null);
 		}
 		return consultaXId(dto.getLlaveTabla());
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public WebServiceEjecucionDTO guardar(WebServiceEjecucionDTO dto, String token) throws ServerException {
-		return super.guardar(dto, token);
+	public WebServiceEjecucionDTO guardar(WebServiceEjecucionDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
 	public String apiToTransaction() throws ServerException {
@@ -79,16 +73,18 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 
 		if (tareasPendientes == null || tareasPendientes.isEmpty())
 			return "*******APIS ASYNC (0) ****" + new Date().toString();
-		UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
+		//TODO : UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
 			if (iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC) == 0) {
-				executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
+				//executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
+				executeAPIFunction.applyScheduleToExecute(iMessage );
 			} else {
 
 				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
 				if (service == null)
 					throw new ServerException("El id del servicio no se encuentra en la BD.");
-				executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
+				//executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
+				executeAPIFunction.executeApi(service, iMessage,  null, null, null);
 			}
 		}
 		return "*******APIS ASYNC (" + tareasPendientes.size() + ") ****" + new Date().toString();

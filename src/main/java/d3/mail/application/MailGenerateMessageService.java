@@ -7,10 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropertyNavigateIntoRelationsToFindFieldsService;
 import d3.configuration.application.PropiedadSvc;
@@ -20,16 +19,17 @@ import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.MailUtils;
-import d3.shared.application.ProcessTemplate;
-import d3.shared.application.D3Utils;
-import d3.users.application.UsuarioSvc;
-import d3.users.domain.UsuarioDTO;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.D3Utils;
+import d3.shared.application.MailUtils;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 
 @Service
 public class MailGenerateMessageService {
@@ -59,12 +59,12 @@ public class MailGenerateMessageService {
 	}
 
 	public void call(PedidoVentaDTO pedido, ProcesoTransicionDTO transicionDTO, UsuarioDTO responsable,
-			PedidoVentaDTO modificador, String token) throws ServerException {
+			PedidoVentaDTO modificador) throws ServerException {
 		// Se puede mejorar con un solo query
 		PropiedadDTO mensaje = null;
 		String campo = modificador.getPlantilla();
 		String tipo = null;
-		String usuarioToken = (token == null) ? null : usuarioService.getUserFlex(token);
+		String usuarioToken = SessionContext.getCurrentUserOrNull();
 		if (modificador.getLlaveTabla() == null || modificador.getLlaveTabla().compareTo(pedido.getLlaveTabla()) == 0) {
 			// El tema es que si coloco mensaje a la plantilla, pero es parte de una
 			// transicion se duplica el mensaje
@@ -129,20 +129,20 @@ public class MailGenerateMessageService {
 					}
 				}
 			}
-			colocarMensajes(mensaje, pedido, responsable, modificador, fijos, correosFijos, token);
+			colocarMensajes(mensaje, pedido, responsable, modificador, fijos, correosFijos);
 		}
 	}
 
 	private void colocarMensajes(PropiedadDTO plantillaCorreo, PedidoVentaDTO documento, UsuarioDTO responsable,
-			PedidoVentaDTO modificador, List<UsuarioDTO> destinosFijos, List<String> destinatariosExternos,
-			String token) throws ServerException {
+			PedidoVentaDTO modificador, List<UsuarioDTO> destinosFijos, List<String> destinatariosExternos)
+			throws ServerException {
 		Map<String, String> destinatarios = new HashMap<String, String>();// PAra para evitar duplicados de usuarios
 		List<MensajeDTO> destinatariosXFuncion = null;
 		MensajePlantillaCorreoDTO formatosPlantilla = mailTemplateService.consultaXId(plantillaCorreo.getValor());
 		if (formatosPlantilla == null)
 			throw new ServerException("Revisa porque el identificador del mensaje no aparece en BD." + plantillaCorreo);
 		// No envio mensaje al que creo el documento
-		String usuarioGenerador = (token == null) ? null : usuarioService.getUserFlex(token);
+		String usuarioGenerador = SessionContext.getCurrentUserOrNull();
 		PropiedadDTO mensajeFuncion = cacheService.obtenerPropiedad(plantillaCorreo.getTipo(),
 				plantillaCorreo.getCampo(), Propiedades.MENSAJE_DESTINATARIOS_SQL, usuarioGenerador);
 		PropiedadDTO mensajeReporte = cacheService.obtenerPropiedad(plantillaCorreo.getTipo(),
@@ -165,7 +165,7 @@ public class MailGenerateMessageService {
 				String keyF = D3Utils.formatFunction(mensajeFuncion.getLlaveTabla());
 				String documentF = documento.getLlaveTabla();
 				String modificadorF = modificador.getLlaveTabla();
-				destinatariosXFuncion = messageService.correosMensaje(keyF, documentF, modificadorF, token);
+				destinatariosXFuncion = messageService.correosMensaje(keyF, documentF, modificadorF);
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(),
 						propiedadUbicacion + "\nDOCUMENTO : " + documento.getNombre() + " - "
@@ -209,7 +209,7 @@ public class MailGenerateMessageService {
 				documento.getPlantilla(), plantillaCorreo.getLlaveTabla(),
 				(modificador == null) ? null : modificador.getLlaveTabla());
 
-		String parametros = MailUtils.generateParameters(plantillaCorreo, documento,
+		String parametros = MailUtils.generateParameters(documento,
 				(responsable == null) ? null : responsable.getNombre(), modificador, camposMensaje);
 		parametros = templatesService.extractParameterTypeR(null, documento, modificador, parametros, plantillaCorreo,
 				null);
@@ -220,8 +220,8 @@ public class MailGenerateMessageService {
 
 		String attachLink = null;
 		if (mensajeAdjuntoURL != null) {
-			List<PedidoVentaCaracteristicaDTO> fieldsEmailToSend = findFieldService
-					.call(mensajeAdjuntoURL.getLlaveTabla(), modificador.getCaracteristicas());
+			List<PedidoVentaCaracteristicaDTO> fieldsEmailToSend = findFieldService.call(
+					mensajeAdjuntoURL.getLlaveTabla(), (modificador == null) ? null : modificador.getCaracteristicas());
 			if (fieldsEmailToSend != null && !fieldsEmailToSend.isEmpty()) {
 				for (PedidoVentaCaracteristicaDTO iFieldsEmailToSend : fieldsEmailToSend) {
 					if (attachLink == null) {

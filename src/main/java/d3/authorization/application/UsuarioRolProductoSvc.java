@@ -13,19 +13,18 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("usuarioRolProductoService")
 public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, UsuarioRolProductoFilterDTO> {
 
 	private final UsuarioRolProductoMapper usuarioRolProductoMapper;
 
-	public UsuarioRolProductoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public UsuarioRolProductoSvc(
 			@Lazy UsuarioRolProductoMapper usuarioRolProductoMapper) {
-		super(usuarioSesionService);
 		this.usuarioRolProductoMapper = usuarioRolProductoMapper;
 	}
 
@@ -44,22 +43,22 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 	}
 
 	@Override
-	public UsuarioRolProductoDTO activar(UsuarioRolProductoDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public UsuarioRolProductoDTO activar(UsuarioRolProductoDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioRolProductoDTO actualizar(UsuarioRolProductoDTO dto, String token) throws ServerException {
+	public UsuarioRolProductoDTO actualizar(UsuarioRolProductoDTO dto) throws ServerException {
 		dto.setCantidadPromocionBase(30);
-		dto.setModificador(getUserFlex(token));
-		return super.actualizar(dto, token);
+		dto.setModificador(SessionContext.getCurrentUser());
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioRolProductoDTO inactivar(UsuarioRolProductoDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public UsuarioRolProductoDTO inactivar(UsuarioRolProductoDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -79,7 +78,7 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioRolProductoDTO guardar(UsuarioRolProductoDTO dto, String token) throws ServerException {
+	public UsuarioRolProductoDTO guardar(UsuarioRolProductoDTO dto) throws ServerException {
 		UsuarioRolProductoFilterDTO existeFilter = new UsuarioRolProductoFilterDTO();
 		existeFilter.setProducto(dto.getProducto());
 		existeFilter.setDocumento(dto.getDocumento());
@@ -90,8 +89,8 @@ public class UsuarioRolProductoSvc extends BasicSvc<UsuarioRolProductoDTO, Usuar
 					"Este producto ya tiene promocion para este usuario. " + existe.getProductoNombre());
 		if (dto.getNombre() != null && dto.getNombre().isEmpty())
 			dto.setNombre(null);
-		dto.setModificador(getUserFlex(token));
-		return super.guardar(dto, token);
+		dto.setModificador(SessionContext.getCurrentUser());
+		return super.guardar(dto);
 	}
 
 

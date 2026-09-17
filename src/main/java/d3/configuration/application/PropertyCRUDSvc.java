@@ -3,14 +3,13 @@ package d3.configuration.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class PropertyCRUDSvc {
@@ -21,7 +20,7 @@ public class PropertyCRUDSvc {
 		this.propertyService = propertyService;
 	}
 
-	public void inactivateAllPropertiesOfUser(String userId, String token) throws ServerException {
+	public void inactivateAllPropertiesOfUser(String userId) throws ServerException {
 
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setUsuario(userId);
@@ -40,11 +39,11 @@ public class PropertyCRUDSvc {
 			return;
 
 		for (PropiedadDTO iProperty : propertiesToInactivate) {
-			propertyService.inactivar(iProperty, token);
+			propertyService.inactivar(iProperty);
 		}
 	}
 
-	public void inactivateAllPropertiesOfRol(String rolId, String token) throws ServerException {
+	public void inactivateAllPropertiesOfRol(String rolId) throws ServerException {
 
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setRol(rolId);
@@ -63,7 +62,7 @@ public class PropertyCRUDSvc {
 			return;
 
 		for (PropiedadDTO iProperty : propertiesToInactivate) {
-			propertyService.inactivar(iProperty, token);
+			propertyService.inactivar(iProperty);
 		}
 	}
 }

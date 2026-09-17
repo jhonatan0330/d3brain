@@ -3,10 +3,9 @@ package d3.document.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
@@ -16,8 +15,8 @@ import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class CallDocumentListFromFieldProcess {
@@ -65,7 +64,7 @@ public class CallDocumentListFromFieldProcess {
 				resultados.add(documentoActual);
 				if (!campoValor.isEmpty()) {
 					// Coloco valores
-					listDocumentWithFiltersFunction.listadoCompleto(resultados, pCampo.getSecurityToken(),
+					listDocumentWithFiltersFunction.listadoCompleto(resultados,
 							(campoValor.isEmpty()) ? null : campoValor);
 					// Para las cuentas les lleno el valor aqui
 					if (campoValor.compareTo("0") == 0 && resultados.get(0) != null
@@ -76,7 +75,6 @@ public class CallDocumentListFromFieldProcess {
 			} else {
 				PedidoVentaFilterDTO entityFilter = new PedidoVentaFilterDTO();
 
-				entityFilter.setSecurityToken(pCampo.getSecurityToken());
 				entityFilter.setFiltroParametro(pCampo.getFiltroParametro());// Coloco los filtros necesarios
 				if (entityFilter.getFiltroParametro() != null && entityFilter.getFiltroParametro().compareTo("*") == 0)
 					entityFilter.setFiltroParametro(null);
@@ -167,9 +165,8 @@ public class CallDocumentListFromFieldProcess {
 
 				} else {
 					try {
-						resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getCampoDTO(),
-								pCampo.getDependientes(), entityFilter, funcionConsulta, campoValor,
-								pCampo.getSecurityToken());
+						resultados = listDocumentBySQLFunction.execute(pBase, pCampo.getDependientes(), entityFilter,
+								funcionConsulta, campoValor);
 					} catch (ServerException ex) {
 						throw new ServerException("En el campo " + pBase.getNombre() + " de la plantilla "
 								+ pBase.getPlantillaNombre() + " se muestra este mensaje: " + ex.getMessage());
@@ -187,20 +184,20 @@ public class CallDocumentListFromFieldProcess {
 				throw new ServerException(
 						"Comuniquese con el desarrollador los documentos resultado de la consulta completa no pueden ser nulos");
 			return pCampo;
-		} else {
-			if (pCampo.getDocumento() == null) {// Si es multiple y es nuevo no consulte nada
-
-				pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
-			} else {// Aqui solo van los documentos actuales
-				if (campoValor.isEmpty() || campoValor == "1" || campoValor == "2")
-					campoValor = null;
-				resultados = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(),
-						pCampo.getSecurityToken(), campoValor);
-				pCampo.setExpedientes(resultados);
-				CallDocumentCommons.calcularValoresTotalesCampo(pCampo, campoValor, relacionExpedienteService);
-			}
-			return pCampo;
 		}
+		if (pCampo.getDocumento() == null) {// Si es multiple y es nuevo no consulte nada
+
+			pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
+		} else {// Aqui solo van los documentos actuales
+			if (campoValor.isEmpty() || campoValor == "1" || campoValor == "2")
+				campoValor = null;
+			resultados = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(),
+					campoValor);
+			pCampo.setExpedientes(resultados);
+			CallDocumentCommons.calcularValoresTotalesCampo(pCampo, campoValor, relacionExpedienteService);
+		}
+		return pCampo;
+
 	}
 
 	private PedidoVentaCaracteristicaDTO colocarFiltroDocumentoAuxiliar(String documento) {

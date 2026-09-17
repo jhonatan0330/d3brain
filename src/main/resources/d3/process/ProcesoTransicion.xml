@@ -219,7 +219,7 @@
 
 
 <!--// BEGIN region script-->
-	<select id="listarTransicionesRol" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
+	<select id="listarTransicionesRol" resultType="ProcesoTransicionDTO">
 		select
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
@@ -241,10 +241,9 @@
 			,cptr_estado as estado
 		from procesotransicion_ptrp a
 		where bptr_documentador = true and cptr_estado ='A'
-		<if test="securityToken!=null">
+		<if test="sesionUsuario!=null">
 		and cptr_plantilla in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_77' 
-		and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
-			select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))))
+		and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{sesionUsuario})))
 		</if>
 		order by estadopartidaorden 
 		, estadollegadaorden 

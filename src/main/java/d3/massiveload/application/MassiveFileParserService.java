@@ -25,23 +25,22 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 
 @Service
 public class MassiveFileParserService {
 
-	public List<Map<String, String>> parse(MultipartFile file, TemplateDTO template) throws ServerException {
+	public List<Map<String, String>> parse(MultipartFile file) throws ServerException {
 		String name = (file.getOriginalFilename() == null) ? "" : file.getOriginalFilename().toLowerCase();
 		try {
 			if (name.endsWith(".json"))
 				return parseJson(file.getInputStream());
 			if (name.endsWith(".xlsx"))
-				return parseExcel(new XSSFWorkbook(file.getInputStream()), template);
+				return parseExcel(new XSSFWorkbook(file.getInputStream()));// , template);
 			if (name.endsWith(".xls"))
-				return parseExcel(new HSSFWorkbook(file.getInputStream()), template);
+				return parseExcel(new HSSFWorkbook(file.getInputStream()));// , template);
 			if (name.endsWith(".csv"))
-				return parseCsv(file, template);
+				return parseCsv(file);// , template);
 			throw new ServerException(
 					"Formato de archivo no soportado. Use .xlsx, .xls, .csv o .json para la carga masiva");
 		} catch (ServerException e) {
@@ -79,7 +78,7 @@ public class MassiveFileParserService {
 		return result;
 	}
 
-	private List<Map<String, String>> parseExcel(Workbook wb, TemplateDTO template) {
+	private List<Map<String, String>> parseExcel(Workbook wb) {
 		Sheet sheet = wb.getSheetAt(0);
 		List<Map<String, String>> result = new ArrayList<>();
 		Row header = sheet.getRow(0);
@@ -108,7 +107,7 @@ public class MassiveFileParserService {
 		return result;
 	}
 
-	private List<Map<String, String>> parseCsv(MultipartFile file, TemplateDTO template) throws IOException {
+	private List<Map<String, String>> parseCsv(MultipartFile file) throws IOException {
 		CSVFormat fmt = CSVFormat.Builder.create(CSVFormat.DEFAULT).setHeader().setSkipHeaderRecord(true)
 				.setIgnoreHeaderCase(true).build();
 		try (CSVParser parser = CSVParser.parse(file.getInputStream(), java.nio.charset.StandardCharsets.UTF_8, fmt)) {

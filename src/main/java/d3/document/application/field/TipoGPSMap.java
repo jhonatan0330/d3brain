@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.PedidoVentaSvc;
@@ -15,8 +15,7 @@ import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Component
 public class TipoGPSMap {
@@ -35,13 +34,13 @@ public class TipoGPSMap {
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		PropiedadDTO funcionConsulta = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_FUNCION_SQL);
 		if (funcionConsulta != null) {
 			HashMap<String, DocumentoPlantillaCaracteristicaDTO> hmap = new HashMap<String, DocumentoPlantillaCaracteristicaDTO>();
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
 			List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-					funcionConsulta.getLlaveTabla(), pCampo.getDocumento(), pCampo.getSecurityToken(),
+					funcionConsulta.getLlaveTabla(), pCampo.getDocumento(),
 					campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			if (ocupados != null && !ocupados.isEmpty()) {
 				pCampo.setExpedientes(new ArrayList<>());

@@ -3,13 +3,11 @@ package d3.process.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -19,8 +17,10 @@ import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.shared.domain.SharedIdResponse;
 
 @Component
 public class ProcessCopy {
@@ -42,7 +42,7 @@ public class ProcessCopy {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(String processId, String token) throws ServerException {
+	public SharedIdResponse call(String processId) throws ServerException {
 
 		ProcesoDTO process = processService.consultaXId(processId);
 		if (process == null)
@@ -50,11 +50,11 @@ public class ProcessCopy {
 		if (process.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El proceso " + process.getNombre() + " no se encuentra Activo." + processId);
 		// Obtengo propiedades del servicio
-		String userId = processService.getUserFlex(token);
+		String userId = SessionContext.getCurrentUser();
 
 		process = getFullProccessToCopy(process, userId);
 
-		return new SharedIdResponse(guardarProceso(process, token).getLlaveTabla());
+		return new SharedIdResponse(guardarProceso(process).getLlaveTabla());
 	}
 
 	private ProcesoDTO getFullProccessToCopy(ProcesoDTO proceso, String userId) throws ServerException {
@@ -117,7 +117,7 @@ public class ProcessCopy {
 		return proceso;
 	}
 
-	private ProcesoDTO guardarProceso(ProcesoDTO proceso, String token) throws ServerException {
+	private ProcesoDTO guardarProceso(ProcesoDTO proceso) throws ServerException {
 
 		ProcesoDTO newProcess = new ProcesoDTO();
 		newProcess.setCodigo(proceso.getCodigo() + "COPY");
@@ -132,7 +132,7 @@ public class ProcessCopy {
 			for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
 				iEstado.setLlaveTabla(null);
 				iEstado.setProceso(newProcess.getLlaveTabla());
-				iEstado.setLlaveTabla(estadoService.guardar(iEstado, token).getLlaveTabla());
+				iEstado.setLlaveTabla(estadoService.guardar(iEstado).getLlaveTabla());
 			}
 		}
 		/*
@@ -160,7 +160,7 @@ public class ProcessCopy {
 			List<ProcesoDTO> newNodes = new ArrayList<>();
 			for (ProcesoDTO iProceso : proceso.getHijos()) {
 				iProceso.setMacroproceso(proceso.getLlaveTabla());
-				newNodes.add(guardarProceso(iProceso, token));
+				newNodes.add(guardarProceso(iProceso));
 			}
 			proceso.setHijos(newNodes);
 		}
@@ -185,23 +185,23 @@ public class ProcessCopy {
 					}
 				}
 				if (iTransicion.getEstadoPartida() != null)
-					iTransicion.setLlaveTabla(transicionService.guardar(iTransicion, token).getLlaveTabla());
+					iTransicion.setLlaveTabla(transicionService.guardar(iTransicion).getLlaveTabla());
 			}
 		}
 		// Empiezo a gestionar propiedades al final para evitar errores de referencia
 		newProcess.setPropiedades(
-				propiedadService.copiarPropiedades(proceso.getPropiedades(), newProcess.getLlaveTabla(), token));
+				propiedadService.copiarPropiedades(proceso.getPropiedades(), newProcess.getLlaveTabla()));
 
 		if (proceso.getEstados() != null) {
 			for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
 				iEstado.setPropiedades(
-						propiedadService.copiarPropiedades(iEstado.getPropiedades(), iEstado.getLlaveTabla(), token));
+						propiedadService.copiarPropiedades(iEstado.getPropiedades(), iEstado.getLlaveTabla()));
 			}
 		}
 		if (proceso.getTransiciones() != null) {
 			for (ProcesoTransicionDTO iTransicion : proceso.getTransiciones()) {
-				iTransicion.setPropiedades(propiedadService.copiarPropiedades(iTransicion.getPropiedades(),
-						iTransicion.getLlaveTabla(), token));
+				iTransicion.setPropiedades(
+						propiedadService.copiarPropiedades(iTransicion.getPropiedades(), iTransicion.getLlaveTabla()));
 			}
 		}
 		return newProcess;

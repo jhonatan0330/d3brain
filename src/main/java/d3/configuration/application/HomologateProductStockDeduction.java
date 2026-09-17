@@ -7,8 +7,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentCommons;
@@ -22,6 +20,9 @@ import d3.inventory.domain.ProductoInventarioDescuentoDTO;
 import d3.inventory.domain.ProductoInventarioDescuentoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class HomologateProductStockDeduction {
@@ -35,36 +36,36 @@ public class HomologateProductStockDeduction {
 		this.discountStockService = discountStockService;
 	}
 
-	public void createFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService, CallDocumentCRUD crudService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
-		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO,
-				1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO, 1));
 		// Crear el campo tipo recurso nombre
-		fieldsTemplate.add(campoService.createField(templateId, "DESCONTAR",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "DESCONTAR", DocumentoPlantillaCaracteristicaDTO.PROCESO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
 		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
+		fieldsTemplate
+				.add(campoService.createField(templateId, "CANTIDAD", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+
 		fieldsTemplate.add(
-				campoService.createField(templateId, "CANTIDAD", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
+				campoService.createField(templateId, "CARACTERISTICA", DocumentoPlantillaCaracteristicaDTO.PROCESO, 4));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_RENDER, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
-		fieldsTemplate.add(campoService.createField(templateId, "CARACTERISTICA",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-
-		sincronize(templateId, fieldsTemplate, token, crudService);
+		sincronize(templateId, fieldsTemplate, crudService);
 	}
 
-	private void sincronize(String templateId, List<String> fieldsTemplate, String token, CallDocumentCRUD crudService)
+	private void sincronize(String templateId, List<String> fieldsTemplate, CallDocumentCRUD crudService)
 			throws ServerException {
 		ProductoInventarioDescuentoFilterDTO filter = new ProductoInventarioDescuentoFilterDTO();
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -99,8 +100,8 @@ public class HomologateProductStockDeduction {
 					fieldDim2.setValorOpcion(iPid.getCaracteristica());
 				document.getCaracteristicas().add(fieldDim2);
 
-				document.setFuncionario(discountStockService.getUserFlex(token));
-				document = crudService.saveWithoutTransaction(document, token, true);
+				document.setFuncionario(SessionContext.getCurrentUser());
+				document = crudService.saveWithoutTransaction(document, true);
 				iPid.setDocumento(document.getLlaveTabla());
 				discountStockService.update(iPid);
 			}

@@ -12,9 +12,9 @@ import d3.process.domain.DocumentoPlantillaFilterDTO;
 @D3SqlConnMapper(value = "DocumentoPlantillaMapper")
 public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantillaDTO, DocumentoPlantillaFilterDTO> {
 
-	List<DocumentoPlantillaDTO> listarMenu(DocumentoPlantillaFilterDTO dto);
+	List<DocumentoPlantillaDTO> listarMenu(@Param("sesionUsuario") String sesionUsuario);
 
-	List<DocumentoPlantillaDTO> getProcessBoardsToMenu(DocumentoPlantillaFilterDTO dto);
+	List<DocumentoPlantillaDTO> getProcessBoardsToMenu();
 
 	List<DocumentoPlantillaDTO> getFullToSynchronize(@Param("process") List<String> process);
 

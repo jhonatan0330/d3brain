@@ -42,9 +42,9 @@ public class ApiGetFieldDataService {
 		this.searchProcessFromText = searchProcessFromText;
 	}
 
-	public DataFieldResponse call(String token, DataFieldRequest filter) throws ServerException {
-		validateFilter(token, filter);
-		TemplateDTO templateBD = findTemplate(filter.getTemplate(), token);
+	public DataFieldResponse call(DataFieldRequest filter) throws ServerException {
+		validateFilter(filter);
+		TemplateDTO templateBD = findTemplate(filter.getTemplate());
 		DocumentoPlantillaCaracteristicaDTO fieldBD = findField(filter.getCode(), templateBD);
 
 		PedidoVentaCaracteristicaFilterDTO fieldFilter = new PedidoVentaCaracteristicaFilterDTO();
@@ -62,8 +62,8 @@ public class ApiGetFieldDataService {
 					if (ApiCommon.isUUID(iPrecondition.getValue())) {
 						dependent.setValorOpcion(iPrecondition.getValue());
 					} else {
-						dependent.setValorOpcion(searchProcessFromText.getValueOptionFromText(token,
-								iPrecondition.getValue(), fieldDependent));
+						dependent.setValorOpcion(
+								searchProcessFromText.getValueOptionFromText(iPrecondition.getValue(), fieldDependent));
 					}
 
 				}
@@ -71,7 +71,7 @@ public class ApiGetFieldDataService {
 				fieldFilter.getDependientes().add(dependent);
 			}
 		}
-		fieldFilter.setSecurityToken(token);
+
 		PedidoVentaCaracteristicaDTO fieldData = fieldService.completarDatosBase(fieldFilter);
 		// Los tipo numero lo quitan pero lso tipo proceso lo dejan
 		if (fieldData.getCampoDTO() == null)
@@ -90,17 +90,16 @@ public class ApiGetFieldDataService {
 				DocumentoPlantillaDTO pTemplateBD = templateService
 						.consultaXId(fieldData.getCampoDTO().getDocumentos().get(0).getPlantilla());
 				templateList = TemplateDTO.fromDocumentoPlantilla(pTemplateBD);
-				templateList = templateService.obtenerCampos(templateList, token, true);
+				templateList = templateService.obtenerCampos(templateList, true);
 			}
-			docs = ApiCommon.transformPedidoVentaToDocument(token, fieldService,
-					fieldData.getCampoDTO().getDocumentos(), templateList);
+			docs = ApiCommon.transformPedidoVentaToDocument(fieldService, fieldData.getCampoDTO().getDocumentos(),
+					templateList);
 		}
 		result.setDocuments(docs);
 		return result;
 	}
 
-	private DocumentoPlantillaCaracteristicaDTO findField(String code, TemplateDTO templateBD)
-			throws ServerException {
+	private DocumentoPlantillaCaracteristicaDTO findField(String code, TemplateDTO templateBD) throws ServerException {
 		if (templateBD.getCaracteristicas() != null && !templateBD.getCaracteristicas().isEmpty()) {
 			for (DocumentoPlantillaCaracteristicaDTO iField : templateBD.getCaracteristicas()) {
 				if (iField.getCodigo().compareTo(code) == 0)
@@ -111,9 +110,8 @@ public class ApiGetFieldDataService {
 				"No se identifica un campo de codigo " + code + " en la plantilla " + templateBD.getNombre());
 	}
 
-	private void validateFilter(String token, DataFieldRequest filter) throws ServerException {
-		if (token == null || token.isEmpty())
-			throw new ServerException("Es obligatorio enviar un token valido");
+	private void validateFilter(DataFieldRequest filter) throws ServerException {
+
 		if (filter == null)
 			throw new ServerException("Revisa el Body del request esta llegando vacio");
 		if (filter.getTemplate() == null || filter.getTemplate().isEmpty())
@@ -123,11 +121,11 @@ public class ApiGetFieldDataService {
 					"El codigo del campo es null, recuerda usar el campo code para colocar el codigo del campo a consultar");
 	}
 
-	private TemplateDTO findTemplate(String template, String token) throws ServerException {
+	private TemplateDTO findTemplate(String template) throws ServerException {
 		DocumentoPlantillaDTO templateDTO = templateService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return templateService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), token, true);
+		return templateService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), true);
 	}
 
 }

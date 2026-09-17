@@ -3,10 +3,9 @@ package d3.api.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.api.domain.DocumentFilterRequest;
 import d3.api.domain.DocumentResponse;
 import d3.api.domain.FieldRequest;
@@ -15,15 +14,16 @@ import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
+import d3.process.application.CallSearchProcessFromText;
+import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.TemplateDTO;
-import d3.process.application.CallSearchProcessFromText;
-import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class ApiGetService {
@@ -44,19 +44,18 @@ public class ApiGetService {
 		this.stateService = stateService;
 	}
 
-	public List<DocumentResponse> call(String token, DocumentFilterRequest filter) throws ServerException {
+	public List<DocumentResponse> call(DocumentFilterRequest filter) throws ServerException {
 
-		if (token == null || token.isEmpty())
-			throw new ServerException("Es obligatorio enviar un token valido");
+		// if (token == null || token.isEmpty())
+		// throw new ServerException("Es obligatorio enviar un token valido");
 		if (filter == null)
 			throw new ServerException("Por el momento es necesario que envies el nodo de document :( ");
 		DocumentoPlantillaDTO pTemplate = templateService.consultarPorCodigo(filter.getTemplate());
 		if (pTemplate == null)
 			throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
 		TemplateDTO templateBD = TemplateDTO.fromDocumentoPlantilla(pTemplate);
-		templateBD = templateService.obtenerCampos(templateBD, token, true);
+		templateBD = templateService.obtenerCampos(templateBD, true);
 		PedidoVentaFilterDTO filterDTO = new PedidoVentaFilterDTO();
-		filterDTO.setSecurityToken(token);
 		if (filter.getId() == null) {
 			filterDTO.setPlantilla(templateBD.getLlaveTabla());
 			filterDTO.setNombre(filter.getCode());
@@ -87,7 +86,7 @@ public class ApiGetService {
 			if (filter.getFilters() != null && !filter.getFilters().isEmpty()) {
 				filterDTO.setFiltersByFields(new ArrayList<>());
 				for (FieldRequest iField : filter.getFilters()) {
-					PedidoVentaCaracteristicaFilterDTO fieldValueToAdd = getFieldValue(token, iField, templateBD);
+					PedidoVentaCaracteristicaFilterDTO fieldValueToAdd = getFieldValue(iField, templateBD);
 					if (fieldValueToAdd == null)
 						throw new ServerException("Estas usando un filtro por el campo con codigo " + iField.getField()
 								+ " pero este campo no hace parte de la plantilla de documentos "
@@ -99,11 +98,11 @@ public class ApiGetService {
 			filterDTO.setLlaveTabla(filter.getId());
 		}
 		List<PedidoVentaDTO> results = listService.listarAvanzado(filterDTO);
-		return ApiCommon.transformPedidoVentaToDocument(token, pedidoVentaCaracteristicaService, results, templateBD);
+		return ApiCommon.transformPedidoVentaToDocument(pedidoVentaCaracteristicaService, results, templateBD);
 	}
 
-	private PedidoVentaCaracteristicaFilterDTO getFieldValue(String token, FieldRequest fieldRequest,
-			TemplateDTO template) throws ServerException {
+	private PedidoVentaCaracteristicaFilterDTO getFieldValue(FieldRequest fieldRequest, TemplateDTO template)
+			throws ServerException {
 		if (fieldRequest.getField() == null || fieldRequest.getField().isEmpty())
 			throw new ServerException("Existe un campo sin Field");
 		if (fieldRequest.getValue() == null || fieldRequest.getValue().isEmpty())
@@ -114,8 +113,8 @@ public class ApiGetService {
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
 				if (fieldTemplate.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
-					result.setValorOpcion(searchProcessFromText.getValueOptionFromText(token, fieldRequest.getValue(),
-							fieldTemplate));
+					result.setValorOpcion(
+							searchProcessFromText.getValueOptionFromText(fieldRequest.getValue(), fieldTemplate));
 				return result;
 			}
 		}

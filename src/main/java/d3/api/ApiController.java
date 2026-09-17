@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 import d3.api.application.ApiAuthorizeService;
 import d3.api.application.ApiGetFieldDataService;
 import d3.api.application.ApiGetReportService;
@@ -28,7 +26,8 @@ import d3.api.domain.DocumentResponse;
 import d3.api.domain.DocumentWithLoginRequest;
 import d3.api.domain.LoginRequest;
 import d3.api.domain.ReportRequest;
-
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -57,82 +56,67 @@ public class ApiController {
 	}
 
 	@PostMapping("/get")
-	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "Authorization") String token,
-			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentFilterRequest filter)
-			throws ServerException {
-		apiAuthorizeService.call(apiKey, token);
-
-		return transactionLogger.executeWithLogging(token, filter, () -> apiGetService.call(token, filter));
+	public List<DocumentResponse> getDocumentFromApi(@RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody DocumentFilterRequest filter) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return transactionLogger.executeWithLogging(filter, () -> apiGetService.call(filter));
 
 	}
 
 	@PostMapping("/getReport")
-	public SharedIdResponse getReportFromApi(@RequestHeader(name = "Authorization") String token,
-			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody ReportRequest filter)
-			throws ServerException {
-		apiAuthorizeService.call(apiKey, token);
-		return apiGetReportService.call(token, filter);
+	public SharedIdResponse getReportFromApi(@RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody ReportRequest filter) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return apiGetReportService.call(filter);
 	}
 
 	@PostMapping("/getWithLogin")
-	public List<DocumentResponse> getDocumentFromWithLoginApi(HttpServletRequest request,
-			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentFilterWithLoginRequest filter)
-			throws ServerException {
-		SharedIdResponse token = apiLoginService.call(filter.getLogin(), request);
-		apiAuthorizeService.call(apiKey, token.getId());
-
-		return transactionLogger.executeWithLogging(token.getId(), filter.getDocument(),
-				() -> apiGetService.call(token.getId(), filter.getDocument()));
+	public List<DocumentResponse> getDocumentFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody DocumentFilterWithLoginRequest filter) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return transactionLogger.executeWithLogging(filter.getDocument(),
+				() -> apiGetService.call(filter.getDocument()));
 
 	}
 
 	@PostMapping("/getDataFieldWithLogin")
-	public DataFieldResponse getDataFieldFromWithLoginApi(HttpServletRequest request,
-			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DataFieldWithLoginRequest filter)
-			throws ServerException {
-
-		SharedIdResponse token = apiLoginService.call(filter.getLogin(), request);
-		apiAuthorizeService.call(apiKey, token.getId());
-
-		return transactionLogger.executeWithLogging(token.getId(), filter.getField(),
-				() -> apiGetFieldDataService.call(token.getId(), filter.getField()));
+	public DataFieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey,
+			@RequestBody DataFieldWithLoginRequest filter) throws ServerException {
+		apiAuthorizeService.call(apiKey);
+		return transactionLogger.executeWithLogging(filter.getField(),
+				() -> apiGetFieldDataService.call(filter.getField()));
 
 	}
 
 	@PostMapping("/login")
 	public SharedIdResponse login(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
 			@RequestBody LoginRequest login) throws ServerException {
-		apiAuthorizeService.call(apiKey, null);
+		apiAuthorizeService.call(apiKey);
 		return apiLoginService.call(login, request);
 	}
 
 	@PostMapping("/send")
-	public SharedIdResponse send(@RequestHeader(name = "Authorization") String token,
-			@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentRequest item)
+	public SharedIdResponse send(@RequestHeader(name = "x-api-key") String apiKey, @RequestBody DocumentRequest item)
 			throws ServerException {
-		apiAuthorizeService.call(apiKey, token);
-
-		return transactionLogger.executeWithLogging(token, item, () -> apiSendService.call(token, item));
+		apiAuthorizeService.call(apiKey);
+		return transactionLogger.executeWithLogging(item, () -> apiSendService.call(item));
 	}
 
 	@PostMapping("/sendWithLogin")
-	public SharedIdResponse sendWithLogin(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
+	public SharedIdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey,
 			@RequestBody DocumentWithLoginRequest item) throws ServerException {
-		SharedIdResponse token = apiLoginService.call(item.getLogin(), request);
-		apiAuthorizeService.call(apiKey, token.getId());
-
-		return transactionLogger.executeWithLogging(token.getId(), item.getDocument(),
-				() -> apiSendService.call(token.getId(), item.getDocument()));
+		apiAuthorizeService.call(apiKey);
+		return transactionLogger.executeWithLogging(item.getDocument(), () -> apiSendService.call(item.getDocument()));
 	}
 
 	@GetMapping("/ok")
 	public String ok(@RequestHeader(name = "x-api-key") String apiKey) throws ServerException {
-		apiAuthorizeService.call(apiKey, null);
+		apiAuthorizeService.call(apiKey);
 		return "OK";
 	}
 
 	@GetMapping("/ping")
-	public String ping() throws ServerException {
+	public String ping() {
 		return "PING";
 	}
 

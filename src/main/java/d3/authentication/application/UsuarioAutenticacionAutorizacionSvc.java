@@ -8,15 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionFilterDTO;
 import d3.authentication.infrastructure.UsuarioAutenticacionAutorizacionMapper;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
 import d3.mail.application.MailRecoverPasswordService;
-
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
 
 @Service("usuarioAutenticacionAutorizacionService")
@@ -26,10 +25,9 @@ public class UsuarioAutenticacionAutorizacionSvc
 	private final UsuarioAutenticacionAutorizacionMapper usuarioAutenticacionAutorizacionMapper;
 	private final MailRecoverPasswordService mailRecoverPasswordService;
 
-	public UsuarioAutenticacionAutorizacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public UsuarioAutenticacionAutorizacionSvc(
 			@Lazy UsuarioAutenticacionAutorizacionMapper usuarioAutenticacionAutorizacionMapper,
 			@Lazy MailRecoverPasswordService mailRecoverPasswordService) {
-		super(usuarioSesionService);
 		this.usuarioAutenticacionAutorizacionMapper = usuarioAutenticacionAutorizacionMapper;
 		this.mailRecoverPasswordService = mailRecoverPasswordService;
 	}
@@ -49,23 +47,22 @@ public class UsuarioAutenticacionAutorizacionSvc
 	}
 
 	@Override
-	public UsuarioAutenticacionAutorizacionDTO activar(UsuarioAutenticacionAutorizacionDTO dto, String token)
-			throws ServerException {
-		return super.activar(dto, token);
+	public UsuarioAutenticacionAutorizacionDTO activar(UsuarioAutenticacionAutorizacionDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionAutorizacionDTO actualizar(UsuarioAutenticacionAutorizacionDTO dto, String token)
+	public UsuarioAutenticacionAutorizacionDTO actualizar(UsuarioAutenticacionAutorizacionDTO dto)
 			throws ServerException {
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionAutorizacionDTO inactivar(UsuarioAutenticacionAutorizacionDTO dto, String token)
+	public UsuarioAutenticacionAutorizacionDTO inactivar(UsuarioAutenticacionAutorizacionDTO dto)
 			throws ServerException {
-		return super.inactivar(dto, token);
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -87,15 +84,14 @@ public class UsuarioAutenticacionAutorizacionSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionAutorizacionDTO guardar(UsuarioAutenticacionAutorizacionDTO dto, String token)
-			throws ServerException {
-		return super.guardar(dto, token);
+	public UsuarioAutenticacionAutorizacionDTO guardar(UsuarioAutenticacionAutorizacionDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
 	public UsuarioAutenticacionAutorizacionDTO makeTokenLink(String usuario, String correo, String ip, String urlServer)
 			throws ServerException {
 		UsuarioAutenticacionAutorizacionDTO dto = makeToken(usuario, correo, ip);
-		mailRecoverPasswordService.callLink(correo, dto.getLlaveTabla(), dto.getCodigo(), urlServer);
+		mailRecoverPasswordService.callLink(correo, dto.getLlaveTabla(), urlServer);
 		UsuarioAutenticacionAutorizacionDTO _response = new UsuarioAutenticacionAutorizacionDTO();
 		// Aqui despues oculto parte del correo
 		_response.setCorreo(correo);
@@ -104,7 +100,7 @@ public class UsuarioAutenticacionAutorizacionSvc
 
 	public void makeTokenNumber(String usuario, String correo, String ip, String urlServer) throws ServerException {
 		UsuarioAutenticacionAutorizacionDTO dto = makeToken(usuario, correo, ip);
-		mailRecoverPasswordService.callNumber(correo, dto.getLlaveTabla(), dto.getCodigo(), urlServer);
+		mailRecoverPasswordService.callNumber(correo, dto.getCodigo(), urlServer);
 	}
 
 	private UsuarioAutenticacionAutorizacionDTO makeToken(String usuario, String correo, String ip)

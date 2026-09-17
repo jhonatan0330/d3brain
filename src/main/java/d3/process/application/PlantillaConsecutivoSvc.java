@@ -16,16 +16,14 @@ import d3.process.infrastructure.PlantillaConsecutivoMapper;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("plantillaConsecutivoService")
 public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, PlantillaConsecutivoFilterDTO> {
 
 	private final PlantillaConsecutivoMapper plantillaConsecutivoMapper;
 
-	public PlantillaConsecutivoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PlantillaConsecutivoSvc(
 			@Lazy PlantillaConsecutivoMapper plantillaConsecutivoMapper) {
-		super(usuarioSesionService);
 		this.plantillaConsecutivoMapper = plantillaConsecutivoMapper;
 	}
 
@@ -44,20 +42,20 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 	}
 
 	@Override
-	public PlantillaConsecutivoDTO activar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public PlantillaConsecutivoDTO activar(PlantillaConsecutivoDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PlantillaConsecutivoDTO actualizar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public PlantillaConsecutivoDTO actualizar(PlantillaConsecutivoDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PlantillaConsecutivoDTO inactivar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public PlantillaConsecutivoDTO inactivar(PlantillaConsecutivoDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -77,7 +75,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PlantillaConsecutivoDTO guardar(PlantillaConsecutivoDTO dto, String token) throws ServerException {
+	public PlantillaConsecutivoDTO guardar(PlantillaConsecutivoDTO dto) throws ServerException {
 		PlantillaConsecutivoFilterDTO bdFilter = new PlantillaConsecutivoFilterDTO();
 		bdFilter.setCaracteristica(dto.getCaracteristica());
 		bdFilter.setValorOpcion(dto.getValorOpcion());
@@ -85,7 +83,7 @@ public class PlantillaConsecutivoSvc extends BasicSvc<PlantillaConsecutivoDTO, P
 		PlantillaConsecutivoDTO bd = consultaUnica(bdFilter);
 		if (bd != null)
 			throw new ServerException("Ya existe una relacion entre caracteristica y opcion");
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 

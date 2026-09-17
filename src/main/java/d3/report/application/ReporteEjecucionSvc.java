@@ -3,28 +3,25 @@ package d3.report.application;
 import java.util.List;
 
 import org.apache.ibatis.binding.BindingException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.application.BasicSvc;
 import d3.report.domain.ReporteEjecucionDTO;
 import d3.report.domain.ReporteEjecucionFilterDTO;
 import d3.report.infrastructure.ReporteEjecucionMapper;
-
+import d3.shared.application.BasicSvc;
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("reporteEjecucionService")
 public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEjecucionFilterDTO> {
 
 	private final ReporteEjecucionMapper reporteEjecucionMapper;
 
-	public ReporteEjecucionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public ReporteEjecucionSvc(
 			@Lazy ReporteEjecucionMapper reporteEjecucionMapper) {
-		super(usuarioSesionService);
 		this.reporteEjecucionMapper = reporteEjecucionMapper;
 	}
 
@@ -43,20 +40,20 @@ public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEj
 	}
 
 	@Override
-	public ReporteEjecucionDTO activar(ReporteEjecucionDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public ReporteEjecucionDTO activar(ReporteEjecucionDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteEjecucionDTO actualizar(ReporteEjecucionDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public ReporteEjecucionDTO actualizar(ReporteEjecucionDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteEjecucionDTO inactivar(ReporteEjecucionDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public ReporteEjecucionDTO inactivar(ReporteEjecucionDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -76,7 +73,7 @@ public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEj
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteEjecucionDTO guardar(ReporteEjecucionDTO dto, String token) throws ServerException {
+	public ReporteEjecucionDTO guardar(ReporteEjecucionDTO dto) throws ServerException {
 		throw new ServerException("No se esta usando");
 	}
 
@@ -88,17 +85,17 @@ public class ReporteEjecucionSvc extends BasicSvc<ReporteEjecucionDTO, ReporteEj
 	public ReporteEjecucionDTO saveWithHistoric(ReporteEjecucionDTO dto, Integer historico) throws ServerException {
 		if (historico == null || historico == 0) {
 			return super.save(dto);
-		} else {
-			dto.setLlaveTabla(generarLlave());
-			try {
-				reporteEjecucionMapper.insertarHistorico(dto);
-			} catch (BindingException ex) {
-				throw new ServerException(ex.getMessage());
-			} catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
-			return consultaXId(dto.getLlaveTabla());
 		}
+		dto.setLlaveTabla(generarLlave());
+		try {
+			reporteEjecucionMapper.insertarHistorico(dto);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+		return consultaXId(dto.getLlaveTabla());
+
 	}
 
 }

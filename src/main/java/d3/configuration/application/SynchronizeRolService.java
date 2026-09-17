@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
@@ -22,8 +21,8 @@ public class SynchronizeRolService {
 		this.rolService = rolService;
 	}
 
-	public List<PropiedadDTO> call(String token, HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties,
-			LogConfigurationDTO log, boolean compare) throws ServerException {
+	public List<PropiedadDTO> call(HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties,
+			LogConfigurationDTO log) {
 		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize(null);
 		List<RolAccesoDTO> remoteList = hierarchy.getRoles();
 		List<PropiedadDTO> propertiesWithReplaceRol = new ArrayList<>();

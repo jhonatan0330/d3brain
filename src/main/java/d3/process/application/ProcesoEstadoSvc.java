@@ -12,13 +12,13 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
 import d3.shared.application.BasicSvc;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoEstadoMapper;
 import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -30,9 +30,8 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	private final ProcesoTransicionSvc procesoTransicionService;
 	private final PropiedadSvc parametroService;
 
-	public ProcesoEstadoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ProcesoEstadoMapper procesoEstadoMapper,
+	public ProcesoEstadoSvc(@Lazy ProcesoEstadoMapper procesoEstadoMapper,
 			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc parametroService) {
-		super(usuarioSesionService);
 		this.procesoEstadoMapper = procesoEstadoMapper;
 		this.procesoTransicionService = procesoTransicionService;
 		this.parametroService = parametroService;
@@ -54,20 +53,20 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoEstadoDTO actualizar(ProcesoEstadoDTO dto, String token) throws ServerException {
+	public ProcesoEstadoDTO actualizar(ProcesoEstadoDTO dto) throws ServerException {
 		colocarSignoPregunta(dto);
 		ProcesoEstadoDTO bd = consultaXId(dto.getLlaveTabla());
 		if (bd.getEstadoDocumento().compareTo(dto.getEstadoDocumento()) != 0) {
 			procesoEstadoMapper.actualizarEstados(dto);
 		}
-		dto = super.actualizar(dto, token);
-		organizar(dto, token);
+		dto = super.actualizar(dto);
+		organizar(dto);
 		return dto;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoEstadoDTO inactivar(ProcesoEstadoDTO dto, String token) throws ServerException {
+	public ProcesoEstadoDTO inactivar(ProcesoEstadoDTO dto) throws ServerException {
 		ProcesoTransicionFilterDTO transicion = new ProcesoTransicionFilterDTO();
 		transicion.setEstadoLLegada(dto.getLlaveTabla());
 		transicion.setEstado(SharedConstants.STATE_ACTIVE);
@@ -80,14 +79,14 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		if (procesoTransicionService.contarResultados(transicion) != 0)
 			throw new ServerException("Este estado es usada en varias transacciones activas como estado de partida");
 
-		dto = super.inactivar(dto, token);
-		organizar(dto, token);
+		dto = super.inactivar(dto);
+		organizar(dto);
 		return dto;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoEstadoDTO guardar(ProcesoEstadoDTO dto, String token) throws ServerException {
+	public ProcesoEstadoDTO guardar(ProcesoEstadoDTO dto) throws ServerException {
 		colocarSignoPregunta(dto);
 		ProcesoEstadoFilterDTO filtroCantidad = new ProcesoEstadoFilterDTO();
 		filtroCantidad.setProceso(dto.getProceso());
@@ -99,18 +98,18 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 			cantidadCampos = cantidadCampos + 1;
 		}
 		dto.setAvance(cantidadCampos);
-		ProcesoEstadoDTO result = super.guardar(dto, token);
+		ProcesoEstadoDTO result = super.guardar(dto);
 		// Esto hace fallar el sincronizador
 		/*
 		 * if (dto.getTipo().compareTo(ProcesoEstadoDTO.TIPO_API) == 0) {
 		 * createTransicionAPI(result, SharedConstants.OK, token);
 		 * createTransicionAPI(result, SharedConstants.ERROR, token); }
 		 */
-		colorHexAleatorio(result, token);
+		colorHexAleatorio(result);
 		return result;
 	}
 
-	private void organizar(ProcesoEstadoDTO pDTO, String pToken) throws ServerException {
+	private void organizar(ProcesoEstadoDTO pDTO) throws ServerException {
 		// Consulto todas las caracteristicas del documento
 		ProcesoEstadoFilterDTO _filtro = new ProcesoEstadoFilterDTO();
 		_filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -127,7 +126,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 						cont++;
 					if (_iEstado.getAvance() != cont) {
 						_iEstado.setAvance(cont);
-						super.actualizar(_iEstado, pToken);
+						super.actualizar(_iEstado);
 					}
 					cont++;
 				} else {
@@ -156,7 +155,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		estado.setCodigo(D3Utils.formatFunction(estado.getCodigo()).toUpperCase());
 	}
 
-	public void colorHexAleatorio(ProcesoEstadoDTO pState, String pToken) throws ServerException {
+	public void colorHexAleatorio(ProcesoEstadoDTO pState) throws ServerException {
 		if (pState == null)
 			throw new ServerException("No se puede colocar el signo porque el dto es nulo");
 		if (pState.getTipo() == null)
@@ -166,27 +165,21 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		Random _random = new Random();
 		int color = _random.nextInt(0x1000000); // 0x1000000 = 16777216
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.ESTADO, pState.getLlaveTabla(),
-				Propiedades.COLOR, String.format("#%06X", color), pToken), pToken);
+				Propiedades.COLOR, String.format("#%06X", color)));
 	}
 
-	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador, String token)
+	public String obtenerResponsable(PropiedadDTO propiedad, String documento, String modificador)
 			throws ServerException {
 		String responsable = null;
 		try {
 			responsable = procesoEstadoMapper.funcionAsignacion(D3Utils.formatFunction(propiedad.getLlaveTabla()),
-					documento, modificador, token);
+					documento, modificador, SessionContext.getCurrentToken());
 		} catch (Exception e) {
 			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
 			throw new ServerException(e.getMessage(),
 					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
 		}
 		// En Fiel a veces no me retornaba valor porque el campo es opcional
-		/*
-		 * if (responsable == null) { ProcesoEstadoDTO pes =
-		 * consultaXId(propiedad.getCampo()); throw new
-		 * ServerException("Revise porque la funcion de asignacion no trae ningun responsable"
-		 * , "Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre()); }
-		 */
 		return responsable;
 	}
 

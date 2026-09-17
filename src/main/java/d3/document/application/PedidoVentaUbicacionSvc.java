@@ -4,28 +4,25 @@ import java.util.Date;
 
 import org.apache.ibatis.binding.BindingException;
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
 import d3.document.domain.PedidoVentaUbicacionDTO;
 import d3.document.domain.PedidoVentaUbicacionFilterDTO;
 import d3.document.infrastructure.PedidoVentaUbicacionMapper;
 import d3.shared.application.BasicSvc;
-
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaUbicacionService")
 public class PedidoVentaUbicacionSvc extends BasicSvc<PedidoVentaUbicacionDTO, PedidoVentaUbicacionFilterDTO> {
 
 	private final PedidoVentaUbicacionMapper pedidoVentaUbicacionMapper;
 
-	public PedidoVentaUbicacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PedidoVentaUbicacionSvc(
 			@Lazy PedidoVentaUbicacionMapper pedidoVentaUbicacionMapper) {
-		super(usuarioSesionService);
 		this.pedidoVentaUbicacionMapper = pedidoVentaUbicacionMapper;
 	}
 
@@ -45,19 +42,19 @@ public class PedidoVentaUbicacionSvc extends BasicSvc<PedidoVentaUbicacionDTO, P
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaUbicacionDTO actualizar(PedidoVentaUbicacionDTO dto, String token) throws ServerException {
+	public PedidoVentaUbicacionDTO actualizar(PedidoVentaUbicacionDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar guardar");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaUbicacionDTO inactivar(PedidoVentaUbicacionDTO dto, String token) throws ServerException {
+	public PedidoVentaUbicacionDTO inactivar(PedidoVentaUbicacionDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar inactivar ConHistorial");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaUbicacionDTO guardar(PedidoVentaUbicacionDTO dto, String token) throws ServerException {
+	public PedidoVentaUbicacionDTO guardar(PedidoVentaUbicacionDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar guardar con historial");
 	}
 
@@ -84,20 +81,19 @@ public class PedidoVentaUbicacionSvc extends BasicSvc<PedidoVentaUbicacionDTO, P
 		dto.setFecha(new Date());
 		if (historico == null) {
 			return save(dto);
-		} else {
-			dto.setLlaveTabla(generarLlave());
-			try {
-				pedidoVentaUbicacionMapper.insertarHistorico(dto);
-			} catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
-			return dto;
 		}
+		dto.setLlaveTabla(generarLlave());
+		try {
+			pedidoVentaUbicacionMapper.insertarHistorico(dto);
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+		return dto;
+
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaUbicacionDTO inactivarConHistorial(PedidoVentaUbicacionDTO dto, Integer historico)
-			throws ServerException {
+	public PedidoVentaUbicacionDTO inactivarConHistorial(PedidoVentaUbicacionDTO dto, Integer historico) {
 		return pedidoVentaUbicacionMapper.inactivarHistorico(dto.getLlaveTabla(),
 				(historico == null) ? null : "Historico");
 	}

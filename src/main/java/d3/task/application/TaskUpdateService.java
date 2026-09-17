@@ -2,6 +2,7 @@ package d3.task.application;
 
 import java.util.Date;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,7 +12,6 @@ import d3.shared.domain.SharedIdResponse;
 import d3.task.application.base.TaskService;
 import d3.task.domain.TaskDTO;
 import d3.task.domain.TaskRequest;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class TaskUpdateService {
@@ -23,7 +23,7 @@ public class TaskUpdateService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(TaskRequest task, String user) throws ServerException {
+	public SharedIdResponse call(TaskRequest task) throws ServerException {
 		if (task == null)
 			throw new ServerException("Es importante enviar los datos de la tarea");
 		if (task.getKey() == null || task.getKey().isEmpty())

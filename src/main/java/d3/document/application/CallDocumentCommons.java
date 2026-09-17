@@ -169,8 +169,8 @@ public class CallDocumentCommons {
 		return null;
 	}
 
-	public static PedidoVentaDTO generateNewDocument(TemplateDTO pPlantilla, String transaccion, String token,
-			List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin) throws ServerException {
+	public static PedidoVentaDTO generateNewDocument(TemplateDTO pPlantilla, String transaccion,
+			List<PedidoVentaCaracteristicaDTO> camposNuevos, String userAdmin) {
 		PedidoVentaDTO nuevo = new PedidoVentaDTO();
 		nuevo.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		nuevo.setPlantilla(pPlantilla.getLlaveTabla());

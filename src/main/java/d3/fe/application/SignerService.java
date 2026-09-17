@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -33,6 +32,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.xml.security.utils.XMLUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,13 +41,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import d3.shared.domain.ServerException;
 import d3.fe.domain.DirectPasswordProvider;
 import d3.fe.domain.FEResponse;
 import d3.fe.domain.FirstCertificateSelector;
 import d3.fe.domain.KeyStoreDataProvider;
+import d3.shared.domain.ServerException;
 import d3.upload.application.UploadSvc;
-
 import xades4j.XAdES4jException;
 import xades4j.algorithms.EnvelopedSignatureTransform;
 import xades4j.production.BasicSignatureOptions;
@@ -73,7 +72,6 @@ import xades4j.providers.SignaturePropertiesCollector;
 import xades4j.providers.SignaturePropertiesProvider;
 import xades4j.utils.XadesProfileResolutionException;
 import xades4j.verification.SigningCertificateReferenceNotFoundException;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class SignerService {
@@ -87,8 +85,7 @@ public class SignerService {
 	private XadesSigner signer;
 	private String policyUrl = "https://facturaelectronica.dian.gov.co/politicadefirma/v2/politicadefirmav2.pdf";
 
-	private void initialize(String certificate, String password)
-			throws KeyStoreException, XadesProfileResolutionException {
+	private void initialize(String certificate, String password) throws XadesProfileResolutionException {
 
 		SignaturePolicyInfoProvider policyInfoProvider = new SignaturePolicyInfoProvider() {
 			public SignaturePolicyBase getSignaturePolicy() {
@@ -198,7 +195,7 @@ public class SignerService {
 				.withDataObjectFormat(new DataObjectFormatProperty("text/xml"));
 	}
 
-	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws XAdES4jException, ServerException {
+	private void sign(DataObjectDesc dataObjRef, Node elemToSign) throws ServerException {
 
 		try {
 
@@ -227,7 +224,7 @@ public class SignerService {
 			throws IOException, ServerException {
 
 		// Hay algo similar en mailsendmessage
-		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", null, "fe_xml", "private"));
+		responseFe.setXmlUrl(uploadService.uploadFile(data.getBytes(), "fe.xml", "fe_xml", "private"));
 		responseFe.setXml(Base64.getEncoder().encodeToString(data.getBytes()));
 
 		if (generateZip) {
@@ -247,13 +244,13 @@ public class SignerService {
 				zos.closeEntry();
 			}
 			byte[] bytes = baos.toByteArray();
-			responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", null, "fe_zip", "private"));
+			responseFe.setZipUrl(uploadService.uploadFile(bytes, "fe.zip", "fe_zip", "private"));
 			responseFe.setZipBase64(Base64.getEncoder().encodeToString(bytes));
 		}
 	}
 
-	public void sign(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException,
-			XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
+	public void sign(String xmlIn, FEResponse responseFe, boolean generateZip) throws IOException, XAdES4jException,
+			ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
 		// removeEmptyNodes(doc);
 		doc = processCUFE(doc, responseFe);
@@ -265,8 +262,8 @@ public class SignerService {
 		zipFileWithoutSaveLocal(saveDocument(doc), responseFe, getName(doc), generateZip);
 	}
 
-	public void signNE(String xmlIn, FEResponse responseFe, boolean generateZip) throws KeyStoreException, IOException,
-			XAdES4jException, ParserConfigurationException, TransformerException, SAXException, ServerException {
+	public void signNE(String xmlIn, FEResponse responseFe, boolean generateZip) throws IOException, XAdES4jException,
+			ParserConfigurationException, TransformerException, SAXException, ServerException {
 		Document doc = loadDocument(xmlIn);
 		// removeEmptyNodes(doc);
 		doc = processCUNE(doc, responseFe);
@@ -306,8 +303,7 @@ public class SignerService {
 		return name;
 	}
 
-	private Document processExtensionContent(Document doc) throws KeyStoreException, IOException, XAdES4jException,
-			ParserConfigurationException, TransformerException, SAXException, ServerException {
+	private Document processExtensionContent(Document doc) throws XAdES4jException, ServerException {
 		Node elemToSign = selectNode(doc);
 		String certificate = getValueInNode(elemToSign, "ext:Certificate");
 		String password = getValueInNode(elemToSign, "ext:Password");
@@ -346,7 +342,7 @@ public class SignerService {
 		return processQRNE(doc, CUFEencrypt);
 	}
 
-	private Document processQRNE(Document doc, String cufe) throws ServerException {
+	private Document processQRNE(Document doc, String cufe) {
 		NodeList tags = doc.getElementsByTagName("CodigoQR");
 		if (tags.getLength() == 0)
 			return doc;// throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
@@ -357,7 +353,7 @@ public class SignerService {
 		return doc;
 	}
 
-	private Document processQR(Document doc, String cufe) throws ServerException {
+	private Document processQR(Document doc, String cufe) {
 		NodeList tags = doc.getElementsByTagName("sts:QRCode");
 		if (tags.getLength() == 0)
 			return doc;// throw new ServerException("No se identifico el tag del CUFE sts:QRCode");
@@ -395,7 +391,7 @@ public class SignerService {
 	}
 
 	// Esto lo uso para el attachment
-	private Document decriptFilesBase64(Document doc) throws ServerException {
+	private Document decriptFilesBase64(Document doc) {
 		NodeList tags = doc.getElementsByTagName("cbc:Description");
 		if (tags.getLength() == 0)
 			return doc;

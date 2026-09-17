@@ -76,9 +76,9 @@ public class CallProductValidateAndSave {
 	}
 
 	public List<DetallePedidoVentaDTO> validateWithExistProducts(List<DetallePedidoVentaDTO> products, String document,
-			List<PropiedadDTO> tarrifs, String token, String newOnlyFormProcess, String pCampo) throws ServerException {
+			List<PropiedadDTO> tarrifs,  String newOnlyFormProcess, String pCampo) throws ServerException {
 		List<DetallePedidoVentaDTO> detallesActuales = detallePedidoVentaService.listarCompleto(document, tarrifs, null,
-				null, token, newOnlyFormProcess, null, pCampo);
+				null,  newOnlyFormProcess, null, pCampo);
 
 		if (products != null) {
 			for (DetallePedidoVentaDTO detalle : products) {
@@ -122,7 +122,7 @@ public class CallProductValidateAndSave {
 		return products;
 	}
 
-	public List<DetallePedidoVentaDTO> save(List<DetallePedidoVentaDTO> products, String token, String document,
+	public List<DetallePedidoVentaDTO> save(List<DetallePedidoVentaDTO> products, String document,
 			String template, String transaction, String fieldId) throws ServerException {
 
 		List<DetallePedidoVentaDTO> result = new ArrayList<>();
@@ -132,20 +132,20 @@ public class CallProductValidateAndSave {
 			detalle.setCampo(fieldId);
 			detalle.setTransaccionRegistro(transaction);
 			if (detalle.getLlaveTabla() == null) {
-				detalle = detallePedidoVentaService.guardar(detalle, token);
+				detalle = detallePedidoVentaService.guardar(detalle);
 				// En inventario se debe tener primero el campo bodega y evitar agregar
 				// result.add(detalle);
 			} else {
 				if (detalle.getEstado() != null && detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					detalle.setTransaccionInactivo(transaction);
-					detallePedidoVentaService.inactivar(detalle, token);
+					detallePedidoVentaService.inactivar(detalle);
 				} else {
 					// NO he entendido porque el estado llega null
 					if (detalle.getEstado() == null)
 						detalle.setEstado(SharedConstants.STATE_ACTIVE);
 					// aqui seria bueno validar que el detalle si se el correcto
 
-					detallePedidoVentaService.actualizar(detalle, token);
+					detallePedidoVentaService.actualizar(detalle);
 					result.add(detalle);
 				}
 			}

@@ -59,12 +59,12 @@ public class AuxiliarProcesoBodega {
 		this.relacionService = relacionService;
 	}
 
-	public void aplicarMovimientosBodega(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void aplicarMovimientosBodega(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// OJO: Primero tiene que estar el campo de bodega y despues del de prouctos
-		gestionarInventario(validarInventario(pCampo, token), token);
+		gestionarInventario(validarInventario(pCampo));
 	}
 
-	public List<DeduccionProductoDTO> validarInventario(PedidoVentaCaracteristicaDTO pCampo, String token)
+	public List<DeduccionProductoDTO> validarInventario(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 		if (pCampo.getValorOpcion() == null)
 			throw new ServerException("Por favor revise la configuracion de inventarios");
@@ -96,7 +96,7 @@ public class AuxiliarProcesoBodega {
 
 			List<DeduccionProductoDTO> acumulado = inventarioDirecto(dependiente, iParam.getValor(),
 					pCampo.getValorOpcion(), pCampo.getDocumento(),
-					relacionService.relacionesPropiedad(iParam.getLlaveTabla()), token);
+					relacionService.relacionesPropiedad(iParam.getLlaveTabla()));
 
 			if (acumulado != null && !acumulado.isEmpty()) {
 				if (result == null) {
@@ -114,55 +114,55 @@ public class AuxiliarProcesoBodega {
 	}
 
 	public List<DeduccionProductoDTO> inventarioDirecto(PedidoVentaCaracteristicaDTO pCampo, String operacion,
-			String pStoreId, String documentoInicial, List<RelacionInternaDTO> relaciones, String token)
+			String pStoreId, String documentoInicial, List<RelacionInternaDTO> relaciones)
 			throws ServerException {
 		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
-			return inventariarDetalle(pCampo, operacion, pStoreId, documentoInicial, token);
-		} else {
-			if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
-				if (relaciones == null || relaciones.isEmpty())
-					throw new ServerException(
-							"Coloca el camino de profundidad de consulta de inventario en las relaciones de la propiedad"
-									+ "\nPlantilla: " + pCampo.getCampoDTO().getPlantillaNombre() + "\nCampo: "
-									+ pCampo.getCampoDTO().getNombre());
-				return inventariarProceso(pCampo, operacion, pStoreId, documentoInicial, relaciones, token);
-			} else {
-				if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-					List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
-							Propiedades.DEPENDE);
-					if (codigoDepende != null) {
-						if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
-							throw new ServerException(
-									"Por favor revise la configuracion del dependiente de tipo numero "
-											+ pCampo.getCampoDTO().getNombre());
-						List<DeduccionProductoDTO> acumulado = inventarioDirecto(pCampo.getDependientes().get(0),
-								operacion, pStoreId, documentoInicial, relaciones, token);
-						if (acumulado != null && !acumulado.isEmpty()) {
-							for (DeduccionProductoDTO iDeduccion : acumulado) {
-								iDeduccion.setCantidad(iDeduccion.getCantidad().multiply(pCampo.getValorNumero()));
-							}
-						}
-						return acumulado;
+			return inventariarDetalle(pCampo, operacion, pStoreId, documentoInicial);
+		}
+
+		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+			if (relaciones == null || relaciones.isEmpty())
+				throw new ServerException(
+						"Coloca el camino de profundidad de consulta de inventario en las relaciones de la propiedad"
+								+ "\nPlantilla: " + pCampo.getCampoDTO().getPlantillaNombre() + "\nCampo: "
+								+ pCampo.getCampoDTO().getNombre());
+			return inventariarProceso(pCampo, operacion, pStoreId, documentoInicial, relaciones);
+		}
+
+		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+			List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
+					Propiedades.DEPENDE);
+			if (codigoDepende != null) {
+				if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty())
+					throw new ServerException("Por favor revise la configuracion del dependiente de tipo numero "
+							+ pCampo.getCampoDTO().getNombre());
+				List<DeduccionProductoDTO> acumulado = inventarioDirecto(pCampo.getDependientes().get(0), operacion,
+						pStoreId, documentoInicial, relaciones);
+				if (acumulado != null && !acumulado.isEmpty()) {
+					for (DeduccionProductoDTO iDeduccion : acumulado) {
+						iDeduccion.setCantidad(iDeduccion.getCantidad().multiply(pCampo.getValorNumero()));
 					}
 				}
+				return acumulado;
 			}
 		}
+
 		return null;
 	}
 
-	private void gestionarInventario(List<DeduccionProductoDTO> deduccionesFinales, String securityToken)
+	private void gestionarInventario(List<DeduccionProductoDTO> deduccionesFinales)
 			throws ServerException {
 		if (deduccionesFinales != null && !deduccionesFinales.isEmpty()) {
 			for (DeduccionProductoDTO deduccion : deduccionesFinales) {
 				if (deduccion.getCantidad().compareTo(BigDecimal.ZERO) != 0) {
-					deduccion = deduccionProductoService.guardar(deduccion, securityToken);
+					deduccion = deduccionProductoService.guardar(deduccion);
 				}
 			}
 		}
 	}
 
 	public List<DeduccionProductoDTO> inventariarProceso(PedidoVentaCaracteristicaDTO pCampo, String operacion,
-			String pStoreId, String documentoInicial, List<RelacionInternaDTO> relaciones, String token)
+			String pStoreId, String documentoInicial, List<RelacionInternaDTO> relaciones)
 			throws ServerException {
 		if (pCampo.getExpedientes() != null && !pCampo.getExpedientes().isEmpty()) {
 			List<DeduccionProductoDTO> result = new ArrayList<DeduccionProductoDTO>();
@@ -170,7 +170,7 @@ public class AuxiliarProcesoBodega {
 
 			for (PedidoVentaDTO expediente : pCampo.getExpedientes()) {
 				// El tipo proceso cuando gestiona me lo envia vacio
-				expediente = pedidoService.obtenerCamposCompletos(expediente, token);
+				expediente = pedidoService.obtenerCamposCompletos(expediente);
 				for (PedidoVentaCaracteristicaDTO campoExpediente : expediente.getCaracteristicas()) {
 					for (RelacionInternaDTO rit : relaciones) {
 						if (campoExpediente.getCampo().compareTo(rit.getCampo()) == 0) {
@@ -185,7 +185,7 @@ public class AuxiliarProcesoBodega {
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
 									&& campoExpediente.getLlaveTabla() != null) {
 								campoExpediente.setCampoDTO(
-										caracteristicaService.cargarComplementos(campoExpediente.getCampoDTO(), token));
+										caracteristicaService.cargarComplementos(campoExpediente.getCampoDTO()));
 								if (Propiedades.obtenerParametro(campoExpediente.getCampoDTO(),
 										Propiedades.MULTIPLE) == null) {
 									campoExpediente.setExpedientes(new ArrayList<PedidoVentaDTO>());
@@ -194,11 +194,11 @@ public class AuxiliarProcesoBodega {
 								} else {
 									campoExpediente.setExpedientes(
 											listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(
-													campoExpediente.getLlaveTabla(), token, null));
+													campoExpediente.getLlaveTabla(),  null));
 								}
 							}
 							acumulado = inventarioDirecto(campoExpediente, operacion, pStoreId, documentoInicial,
-									relaciones, token);
+									relaciones);
 							if (acumulado != null) {
 								for (DeduccionProductoDTO iAcumulado : acumulado) {
 									adicionarDeduccion(result, iAcumulado);
@@ -215,7 +215,7 @@ public class AuxiliarProcesoBodega {
 	}
 
 	public List<DeduccionProductoDTO> inventariarDetalle(PedidoVentaCaracteristicaDTO pCampo, String operacion,
-			String pStoreId, String documentoInicial, String token) throws ServerException {
+			String pStoreId, String documentoInicial) throws ServerException {
 		if (operacion == null)
 			throw new ServerException("La operacion de inventarios no puede ser vacia");
 		BigDecimal factor = null;

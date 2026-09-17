@@ -20,6 +20,10 @@ import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.SharedToken;
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 
 @Service("usuarioSesionService")
 public class UsuarioSesionSvc {
@@ -27,12 +31,15 @@ public class UsuarioSesionSvc {
 	private final UsuarioSesionMapper usuarioSesionMapper;
 	private final PropertyGetWithCacheService getPropertyService;
 	private final CacheManager cacheService;
+	private final UsuarioSvc usuarioService;
 
 	public UsuarioSesionSvc(@Lazy UsuarioSesionMapper usuarioSesionMapper,
-			@Lazy PropertyGetWithCacheService getPropertyService, @Lazy CacheManager cacheService) {
+			@Lazy PropertyGetWithCacheService getPropertyService, @Lazy CacheManager cacheService,
+			@Lazy UsuarioSvc usuarioService) {
 		this.usuarioSesionMapper = usuarioSesionMapper;
 		this.getPropertyService = getPropertyService;
 		this.cacheService = cacheService;
+		this.usuarioService = usuarioService;
 	}
 
 	public UsuarioSesionDTO consultaXId(String llave) throws ServerException {
@@ -59,8 +66,8 @@ public class UsuarioSesionSvc {
 		return dto;
 	}
 
-	public String actualizarSesion(String token) throws ServerException {
-		UsuarioSesionDTO bd = consultaXId(token);
+	public String actualizarSesion() throws ServerException {
+		UsuarioSesionDTO bd = consultaXId(SessionContext.getCurrentToken());
 		if (bd != null) {
 			int tiempo = getUserSessionTime(bd.getUsuario());
 			if (tiempo != 0) {
@@ -73,7 +80,7 @@ public class UsuarioSesionSvc {
 			}
 			return bd.getUsuario();
 		}
-		return getUserFlex(token);
+		return getUserToken(SessionContext.getCurrentToken()).getUser();
 	}
 
 	public Date getFechaCierre(String usuario) throws ServerException {
@@ -105,16 +112,15 @@ public class UsuarioSesionSvc {
 		return _time;
 	}
 
-	public UsuarioSesionDTO checkToken(String token) throws ServerException {
-		UsuarioSesionDTO result = getSessionCache(token);
-		if (result == null)
-			result = consultaXId(token);
-		if (result != null && result.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0
-				&& (result.getFechaCierre() == null || result.getFechaCierre().getTime() > new Date().getTime())) {
-			return result;
-		}
-		return null;
-
+	public UsuarioSesionDTO checkToken() throws ServerException {
+		SharedToken st = getSessionCache(SessionContext.getCurrentToken());
+		UsuarioSesionDTO result = new UsuarioSesionDTO();
+		result.setLlaveTabla(st.getToken());
+		result.setUsuario(st.getUser());
+		result.setFechaCierre(st.getFechaCierre());
+		result.setPrivada(st.getPrivada());
+		result.setEstado(SharedConstants.STATE_ACTIVE);
+		return result;
 	}
 
 	public void closeAllSession(String userId, String token) throws ServerException {
@@ -160,19 +166,25 @@ public class UsuarioSesionSvc {
 
 	public UsuarioSesionDTO generateAdministratorToken() throws ServerException {
 		String usuarioSystem = getUserSystemKey();
-		UsuarioSesionDTO sesion = cacheService.getSession(usuarioSystem);
-		if (sesion != null)
-			return sesion;
-
-		sesion = new UsuarioSesionDTO();
+		SharedToken st = cacheService.getSession(usuarioSystem);
+		if (st == null) {
+			UsuarioDTO user = usuarioService.consultaXId(usuarioSystem);
+			st = new SharedToken();
+			st.setToken(usuarioSystem);
+			st.setUser(usuarioSystem);
+			if (user != null) {
+				st.setUserId(user.getIdentificacion());
+				st.setUserName(user.getNombre());
+			}
+			st.setPrivada(true);
+			cacheService.putSession(usuarioSystem, st);
+		}
+		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
 		sesion.setFecha(new Date());
 		sesion.setUsuario(usuarioSystem);
-		sesion.setPrivada(true);
-		// Aqui la idea es no guardar en base de datos la clave del administrador
-		sesion.setLlaveTabla(usuarioSystem);
+		sesion.setPrivada(st.getPrivada());
+		sesion.setLlaveTabla(st.getToken());
 		sesion.setEstado(SharedConstants.STATE_ACTIVE);
-		cacheService.putSession(sesion.getLlaveTabla(), sesion);
-		// sesion = usuarioSesionService.save(sesion);
 		return sesion;
 	}
 
@@ -199,42 +211,51 @@ public class UsuarioSesionSvc {
 		cacheService.getSessionMap().remove(token);
 	}
 
-	public String getUserFlex(String token) throws ServerException {
-		UsuarioSesionDTO sesion = getSessionCache(token);
-		return sesion.getUsuario();
+	public SharedToken getUserToken(String token) throws ServerException {
+		return getSessionCache(token);
 	}
 
-	public boolean isPublicToken(String token) throws ServerException {
-		UsuarioSesionDTO sesion = getSessionCache(token);
-		return !sesion.getPrivada();
-	}
-
-	private UsuarioSesionDTO getSessionCache(String token) throws ServerException {
+	private SharedToken getSessionCache(String token) throws ServerException {
 		if (token == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		UsuarioSesionDTO sesion = cacheService.getSession(token);
-		if (sesion == null)
-			sesion = getUserSession(token);
+		SharedToken cached = cacheService.getSession(token);
+		if (cached != null) {
+			if (cached.getFechaCierre() != null && cached.getFechaCierre().compareTo(new Date()) < 0) {
+				cacheService.removeSession(token);
+			} else {
+				return cached;
+			}
+		}
+		UsuarioSesionDTO sesion = getUserSession(token);
 		if (sesion == null)
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		if (sesion.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-			cacheService.getSessionMap().remove(token);
+			cacheService.removeSession(token);
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
 		if (sesion.getFechaCierre() != null && sesion.getFechaCierre().compareTo(new Date()) < 0) {
-			cacheService.getSessionMap().remove(token);
+			cacheService.removeSession(token);
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
 		}
-		return sesion;
+		UsuarioDTO user = usuarioService.consultaXId(sesion.getUsuario());
+		if (user == null || user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
+		SharedToken st = new SharedToken();
+		st.setToken(token);
+		st.setUser(user.getLlaveTabla());
+		st.setUserId(user.getIdentificacion());
+		st.setUserName(user.getNombre());
+		st.setFechaCierre(sesion.getFechaCierre());
+		st.setPrivada(sesion.getPrivada());
+		cacheService.putSession(token, st);
+		return st;
 	}
 
 	public UsuarioSesionDTO getUserSession(String token) throws ServerException {
 		try {
 			UsuarioSesionFilterDTO filter = new UsuarioSesionFilterDTO();
 			filter.setLlaveTabla(token);
-			UsuarioSesionDTO _sesion = usuarioSesionMapper.consultar(filter);
-			cacheService.putSession(token, _sesion);
-			return _sesion;
+			return usuarioSesionMapper.consultar(filter);
 		} catch (BindingException ex) {
 			throw new ServerException(ex.getMessage());
 		} catch (Exception e) {
@@ -243,17 +264,16 @@ public class UsuarioSesionSvc {
 	}
 
 	// TEngo que mejorar el tema de las sesiones por el momento esta pausado
-	public UsuarioSesionDTO getSessionCacheByUser(String userId) {
+	public SharedToken getSessionCacheByUser(String userId) {
 		if (userId == null || userId.isEmpty())
 			return null;
-		for (Map.Entry<String, UsuarioSesionDTO> entry : cacheService.getSessionMap().entrySet()) {
-			UsuarioSesionDTO dto = entry.getValue();
-			if (dto != null && userId.equals(dto.getUsuario())) {
-				if (dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0
-						|| (dto.getFechaCierre() != null && dto.getFechaCierre().compareTo(new Date()) < 0)) {
+		for (Map.Entry<String, SharedToken> entry : cacheService.getSessionMap().entrySet()) {
+			SharedToken st = entry.getValue();
+			if (st != null && userId.equals(st.getUser())) {
+				if (st.getFechaCierre() != null && st.getFechaCierre().compareTo(new Date()) < 0) {
 					cacheService.removeSession(entry.getKey());
 				} else {
-					return dto;
+					return st;
 				}
 			}
 		}

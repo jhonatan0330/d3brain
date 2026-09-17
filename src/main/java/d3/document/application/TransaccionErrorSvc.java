@@ -15,7 +15,6 @@ import d3.upload.application.UploadSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("transaccionErrorService")
 public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, TransaccionErrorFilterDTO> {
@@ -23,9 +22,8 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	private final TransaccionErrorMapper transaccionErrorMapper;
 	private final UploadSvc uploadService;
 
-	public TransaccionErrorSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public TransaccionErrorSvc(
 			@Lazy TransaccionErrorMapper transaccionErrorMapper, @Lazy UploadSvc uploadService) {
-		super(usuarioSesionService);
 		this.transaccionErrorMapper = transaccionErrorMapper;
 		this.uploadService = uploadService;
 	}
@@ -45,7 +43,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.NOT_SUPPORTED)
-	public TransaccionErrorDTO finalizar(Date startDate, String error, String userId, String dto, String token)
+	public TransaccionErrorDTO finalizar(Date startDate, String error, String userId, String dto)
 			throws ServerException {
 		TransaccionErrorDTO newLog = new TransaccionErrorDTO();
 		newLog.setFechaInicio(startDate);
@@ -54,7 +52,7 @@ public class TransaccionErrorSvc extends BasicSvc<TransaccionErrorDTO, Transacci
 		newLog.setUsuario(userId);
 		if (dto != null) {
 			try {
-				newLog.setEntrada(uploadService.uploadFile(dto.getBytes(), "Parameter.txt", token, "logs", "private"));
+				newLog.setEntrada(uploadService.uploadFile(dto.getBytes(), "Parameter.txt", "logs", "private"));
 			} catch (Exception e) {
 
 			}

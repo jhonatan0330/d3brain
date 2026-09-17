@@ -2,15 +2,15 @@ package d3.configuration.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeTypePropertiesService {
@@ -21,9 +21,9 @@ public class SynchronizeTypePropertiesService {
 		this.typesService = typesService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+	public void call( HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		typesService.getUserFlex(token);
+		SessionContext.getCurrentUser();
 		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();
 		List<PropiedadValorDefinidoDTO> remoteList = hierarchy.getPropertyTypes();
 		if (remoteList != null && !remoteList.isEmpty()) {

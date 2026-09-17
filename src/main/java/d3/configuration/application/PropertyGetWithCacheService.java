@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import d3.CacheManager;
@@ -14,12 +15,10 @@ import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
 import d3.configuration.infrastructure.PropertyCacheMapper;
 import d3.configuration.infrastructure.PropiedadValorDefinidoMapper;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.document.application.field.Propiedades;
 import d3.process.domain.DocumentoPlantillaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class PropertyGetWithCacheService {
@@ -106,12 +105,12 @@ public class PropertyGetWithCacheService {
 		return _propertiesType;
 	}
 
-	public void clearProperties() throws ServerException {
+	public void clearProperties() {
 		cacheService.clearPropByTypeMap();
 		cacheService.clearPropByKey();
 	}
 
-	public void clearRole() throws ServerException {
+	public void clearRole() {
 		cacheService.clearUserRoleMap();
 	}
 
@@ -176,18 +175,18 @@ public class PropertyGetWithCacheService {
 	}
 
 	public List<PropiedadDTO> obtenerEspecialFullPermisosSimplificandoBD(List<DocumentoPlantillaDTO> plantillas,
-			String pProfile, String pUser) throws ServerException {
+			String pProfile, String pUser) {
 		return propiedadMapper.obtenerEspecialFullPermisosSimplificandoBD(plantillas, pProfile, pUser);
 	}
 
-	public List<PropiedadDTO> obtenerEspecialFullPermisos(String plantilla) throws ServerException {
+	public List<PropiedadDTO> obtenerEspecialFullPermisos(String plantilla) {
 		PropiedadDTO filtroOrden = new PropiedadDTO();
 		filtroOrden.setTipo(PropiedadValorDefinidoDTO.PLANTILLA);
 		filtroOrden.setCampo(plantilla);
 		return propiedadMapper.consultarPermisosFullPlantilla(filtroOrden);
 	}
 
-	public List<PropiedadDTO> getToUser(String usuario) throws ServerException {
+	public List<PropiedadDTO> getToUser(String usuario) {
 		return propiedadMapper.consultarPermisosUsuario(usuario);
 	}
 
@@ -213,8 +212,7 @@ public class PropertyGetWithCacheService {
 		return filtroOrden.getValor();
 	}
 
-	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario)
-			throws ServerException {
+	public List<PropiedadDTO> listarPlantillasSimplificar(List<DocumentoPlantillaDTO> plantillas, String usuario) {
 
 		List<PropiedadDTO> consultadas = propiedadMapper.listarPlantillasSimplificar(plantillas, usuario, new Date());
 		return cleanPropertiesFromTimeAndExclusion(consultadas);

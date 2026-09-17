@@ -2,27 +2,25 @@ package d3.mail.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.application.BasicSvc;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajeFilterDTO;
 import d3.mail.infrastructure.MensajeMapper;
-
+import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("mensajeService")
 public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 
 	private final MensajeMapper mensajeMapper;
 
-	public MensajeSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy MensajeMapper mensajeMapper) {
-		super(usuarioSesionService);
+	public MensajeSvc(@Lazy MensajeMapper mensajeMapper) {
 		this.mensajeMapper = mensajeMapper;
 	}
 
@@ -41,20 +39,20 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 	}
 
 	@Override
-	public MensajeDTO activar(MensajeDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public MensajeDTO activar(MensajeDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MensajeDTO actualizar(MensajeDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public MensajeDTO actualizar(MensajeDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MensajeDTO inactivar(MensajeDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public MensajeDTO inactivar(MensajeDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -81,13 +79,13 @@ public class MensajeSvc extends BasicSvc<MensajeDTO, MensajeFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MensajeDTO guardar(MensajeDTO dto, String token) throws ServerException {
-		return super.guardar(dto, token);
+	public MensajeDTO guardar(MensajeDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
-	public List<MensajeDTO> correosMensaje(String estado, String documento, String modificador, String token)
+	public List<MensajeDTO> correosMensaje(String estado, String documento, String modificador)
 			throws ServerException {
-		return mensajeMapper.correosMensaje(estado, documento, modificador, token);
+		return mensajeMapper.correosMensaje(estado, documento, modificador, SessionContext.getCurrentToken());
 	}
 
 

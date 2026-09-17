@@ -30,46 +30,46 @@ public class HomologateAccount {
 		this.createAccountService = createAccountService;
 	}
 
-	public void createAccountFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createAccountFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
 
-		fieldsTemplate.add(campoService.createField(templateId, "CATALOGO", DocumentoPlantillaCaracteristicaDTO.PROCESO,
-				1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "CATALOGO", DocumentoPlantillaCaracteristicaDTO.PROCESO, 1));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_RENDER, "1"));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 3, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 3));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(2), token), token);
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(2)));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "PARENT", DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "PARENT", DocumentoPlantillaCaracteristicaDTO.PROCESO, 4));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PLANTILLA_AUXILIAR, templateId, token), token);
+				fieldsTemplate.get(3), Propiedades.PLANTILLA_AUXILIAR, templateId));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
 		fieldsTemplate.add(campoService.createField(templateId, "NATURALEZA",
-				DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 5, token));
+				DocumentoPlantillaCaracteristicaDTO.CONFIGURACION, 5));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.OPCIONES, "C", token), token);
+				fieldsTemplate.get(4), Propiedades.OPCIONES, "C"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.OPCIONES, "D", token), token);
+				fieldsTemplate.get(4), Propiedades.OPCIONES, "D"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 	}
 
 	public void createAccount(PedidoVentaDTO document) throws ServerException {

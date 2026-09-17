@@ -2,26 +2,25 @@ package d3.webservice.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
-import d3.document.application.field.Propiedades;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
-import d3.webservice.domain.WebServiceDTO;
-import d3.webservice.domain.WebServiceFilterDTO;
-import d3.webservice.infrastructure.WebServiceMapper;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.document.application.field.Propiedades;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.webservice.domain.WebServiceDTO;
+import d3.webservice.domain.WebServiceFilterDTO;
+import d3.webservice.infrastructure.WebServiceMapper;
+import jakarta.annotation.PostConstruct;
 
 @Service("webServiceService")
 public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> {
@@ -30,9 +29,8 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	private final PropiedadSvc paramService;
 	private final PropertyGetWithCacheService cacheService;
 
-	public WebServiceSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy WebServiceMapper webServiceMapper,
+	public WebServiceSvc(@Lazy WebServiceMapper webServiceMapper,
 			@Lazy PropiedadSvc paramService, @Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
 		this.webServiceMapper = webServiceMapper;
 		this.paramService = paramService;
 		this.cacheService = cacheService;
@@ -54,17 +52,17 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public WebServiceDTO actualizar(WebServiceDTO dto, String token) throws ServerException {
+	public WebServiceDTO actualizar(WebServiceDTO dto) throws ServerException {
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public WebServiceDTO guardar(WebServiceDTO dto, String token) throws ServerException {
+	public WebServiceDTO guardar(WebServiceDTO dto) throws ServerException {
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	public List<WebServiceDTO> getFullToSynchronize(List<String> process) throws ServerException {
@@ -76,15 +74,13 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		return webServiceMapper.getFullToSynchronize(process);
 	}
 
-	public WebServiceDTO getByIdFullProperties(String pKey, String pToken) throws ServerException {
+	public WebServiceDTO getByIdFullProperties(String pKey) throws ServerException {
 		WebServiceDTO _service = consultaXId(pKey);
 		if (_service == null)
 			throw new ServerException("El id del servicio no se encuentra en la BD." + pKey);
 		if (_service.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El servicio " + _service.getNombre() + " no se encuentra Activo." + pKey);
-		String userId = null;
-		if (pToken != null)
-			userId = getUserFlex(pToken);
+		String userId = SessionContext.getCurrentUserOrNull();
 		_service.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE,
 				_service.getLlaveTabla(), null, userId));
 		List<PropiedadDTO> properties = Propiedades.obtenerVariosParametro(_service, Propiedades.API_BASE);

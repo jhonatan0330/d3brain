@@ -149,4 +149,6 @@ public class UsuarioAutenticacionDTO extends BasicDTO {
 		this.fechaCreacion = fechaCreacion;
 	}
 
+	
+
 }

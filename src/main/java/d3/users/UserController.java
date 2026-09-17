@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +15,6 @@ import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
-import d3.configuration.application.PropertyGetWithCacheService;
 import d3.shared.application.HttpUtils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
@@ -35,8 +33,7 @@ public class UserController {
 	private final RolAccesoSvc rolAccesoService;
 
 	public UserController(@Lazy RolAccesoSvc roleService, @Lazy UsuarioSvc userService,
-			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy RolAccesoSvc rolAccesoService,
-			@Lazy PropertyGetWithCacheService cacheService) {
+			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy RolAccesoSvc rolAccesoService) {
 		this.roleService = roleService;
 		this.userService = userService;
 		this.usuarioAutenticacionService = usuarioAutenticacionService;
@@ -44,21 +41,19 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/getRole")
-	public List<RolAccesoDTO> getRole(@RequestHeader(name = "Authorization") String token) throws ServerException {
+	public List<RolAccesoDTO> getRole() throws ServerException {
 		RolAccesoFilterDTO _filter = new RolAccesoFilterDTO();
 		_filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return roleService.listarConsulta(_filter);
 	}
 
 	@PostMapping(value = "/getUsers")
-	public List<UsuarioDTO> getUsers(@RequestHeader(name = "Authorization") String token,
-			@RequestBody UsuarioFilterDTO pFilter) throws ServerException {
+	public List<UsuarioDTO> getUsers(@RequestBody UsuarioFilterDTO pFilter) throws ServerException {
 		return userService.listarRol(pFilter);
 	}
 
 	@GetMapping("/{userId}")
-	public UsuarioDTO getUserById(@RequestHeader(name = "Authorization") String token,
-			@PathVariable(name = "userId") String pUserId) throws ServerException {
+	public UsuarioDTO getUserById(@PathVariable(name = "userId") String pUserId) throws ServerException {
 		return userService.consultaXId(pUserId);
 	}
 
@@ -70,17 +65,14 @@ public class UserController {
 	}
 
 	@GetMapping("/document/{documentId}")
-	public UsuarioDTO getUserByDocument(@RequestHeader(name = "Authorization") String token,
-			@PathVariable(name = "documentId") String pDocumentId) throws ServerException {
+	public UsuarioDTO getUserByDocument(@PathVariable(name = "documentId") String pDocumentId) {
 		return userService.getUserByDocument(pDocumentId);
 	}
 
-
 	@GetMapping(value = "/roles/{userId}")
-	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@RequestHeader(name = "Authorization") String token,
-			@PathVariable(name = "userId") String pUserId) throws ServerException {
+	public List<RolAccesoDTO> consultaUsuarioDocumentoRolAcceso(@PathVariable(name = "userId") String pUserId)
+			throws ServerException {
 		return rolAccesoService.consultaUsuarioDocumento(pUserId);
 	}
-
 
 }

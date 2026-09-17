@@ -12,11 +12,10 @@ import d3.accounting.infrastructure.VoucherExtendMapper;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
-import d3.shared.domain.SharedToken;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
 import d3.webservice.application.WebServiceExecuteAPI;
 
 @Service
@@ -36,7 +35,7 @@ public class VoucherRangeService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse clear(VoucherRangeRequest pItem, SharedToken pToken) throws ServerException {
+	public SharedIdResponse clear(VoucherRangeRequest pItem) throws ServerException {
 
 		List<PedidoVentaDTO> _documents = voucherExtendMapper.itemsToDeleteVoucher(pItem.getTemplateId(),
 				pItem.getStartDate(), pItem.getEndDate());
@@ -45,13 +44,13 @@ public class VoucherRangeService {
 			return null;
 
 		for (PedidoVentaDTO _iDocument : _documents) {
-			deleteService.callByDocument(_iDocument.getLlaveTabla(), _iDocument.getPlantilla(), pToken.getToken());
+			deleteService.callByDocument(_iDocument.getLlaveTabla(), _iDocument.getPlantilla());
 		}
 		return new SharedIdResponse(pItem.getTemplateId());
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse create(VoucherRangeRequest pItem, SharedToken pToken) throws ServerException {
+	public SharedIdResponse create(VoucherRangeRequest pItem) throws ServerException {
 
 		// Mejorar la consulta, mejorar la consultar del servicio
 		List<PropiedadDTO> _prop = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE,
@@ -66,8 +65,7 @@ public class VoucherRangeService {
 			return null;
 		for (PropiedadDTO _iProp : _prop) {
 			for (PedidoVentaDTO _iDocument : _documents) {
-				apiService.programateExecution(_iProp.getCampo(), _iDocument.getLlaveTabla(), null, null,
-						pToken.getToken());
+				apiService.programateExecution(_iProp.getCampo(), _iDocument.getLlaveTabla(), null, null);
 			}
 		}
 

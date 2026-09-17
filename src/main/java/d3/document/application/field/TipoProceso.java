@@ -8,8 +8,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -39,6 +37,9 @@ import d3.money.domain.TurnoDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class TipoProceso {
@@ -92,7 +93,7 @@ public class TipoProceso {
 			pCampo.setPrincipal(pedidoService.consultaXId(pCampo.getValorOpcion()));// Consulto el Id por proceso
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		if (campoHeredado1.isEmpty()) {// Los heredados trabajan solos
@@ -101,9 +102,9 @@ public class TipoProceso {
 			if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 				pCampo.setValorText(null);
 			String multiple = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.MULTIPLE);
-			autosave(multiple, pCampo, token);
+			autosave(multiple, pCampo);
 			if (!multiple.isEmpty()) {
-				validarMultiple(pCampo, token);
+				validarMultiple(pCampo);
 			} else {
 				// DEsde las automaticas vienen un listado pero si es unico entonces debo
 				// agregarlo
@@ -120,7 +121,6 @@ public class TipoProceso {
 							PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 							filter.setCampo(pCampo.getCampo());
 							filter.setCampoDTO(pCampo.getCampoDTO());
-							filter.setSecurityToken(token);
 							filter.setDependientes(pCampo.getDependientes());
 							filter.setFiltroParametro(pCampo.getValorText());
 							PedidoVentaCaracteristicaFilterDTO result = listDocumentFromFieldProcessFunction
@@ -156,7 +156,7 @@ public class TipoProceso {
 				}
 				String _defaultValue = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.DEFAULT);
 				if (_defaultValue != null && !_defaultValue.isEmpty() && pCampo.getValorOpcion() == null) {
-					PedidoVentaCaracteristicaFilterDTO _filter = toFilter(pCampo, token);
+					PedidoVentaCaracteristicaFilterDTO _filter = toFilter(pCampo);
 					_filter.setFiltroParametro(_defaultValue);
 					_filter = consultarDatosBase(_filter);
 					if (_filter.getCampoDTO().getDocumentos() != null
@@ -198,10 +198,10 @@ public class TipoProceso {
 								throw new ServerException("El documento " + cuentaDocumento.getNombre()
 										+ " es de la plantilla " + plantillaError.getNombre()
 										+ " y esta plantilla no tiene propiedad configurada la propiedad cuenta que le permite manejar un seguimiento a los movimientos");
-							} else {
-								caja = cuentaService.crearCuenta(cuentaDocumento, token);
-								pCampo.setValorAuxiliar(caja.getLlaveTabla());
 							}
+							caja = cuentaService.crearCuenta(cuentaDocumento);
+							pCampo.setValorAuxiliar(caja.getLlaveTabla());
+
 						} else {
 							if (caja.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 								throw new ServerException("La caja no esta activa");
@@ -216,7 +216,7 @@ public class TipoProceso {
 		}
 	}
 
-	private void autosave(String multiple, PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void autosave(String multiple, PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// Solo para los auload save
 		if (pCampo.getValorOpcion() == null) {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE) != null) {
@@ -226,8 +226,8 @@ public class TipoProceso {
 							Propiedades.PROCESO_FUNCION_SQL);
 					if (funcionConsulta == null)
 						throw new ServerException("Se debe definir la funcion para obtener los datos del autosave");
-					pCampo.setExpedientes(listDocumentBySQLFunction.execute(pCampo.getCampoDTO(), pCampo.getCampoDTO(),
-							pCampo.getDependientes(), null, funcionConsulta, null, token));
+					pCampo.setExpedientes(listDocumentBySQLFunction.execute(pCampo.getCampoDTO(),
+							pCampo.getDependientes(), null, funcionConsulta, null));
 					if (pCampo.getModificado()
 							&& Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 									Propiedades.PERMISO_CAMPO_OPCIONAL) == null
@@ -235,7 +235,7 @@ public class TipoProceso {
 						throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
 								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
 				} else {
-					PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo, token);
+					PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo);
 					PedidoVentaCaracteristicaFilterDTO documentosFuncion = consultarDatosBase(filter);
 					if (documentosFuncion.getCampoDTO().getDocumentos() != null
 							&& !documentosFuncion.getCampoDTO().getDocumentos().isEmpty()) {
@@ -253,7 +253,7 @@ public class TipoProceso {
 		}
 	}
 
-	private PedidoVentaCaracteristicaFilterDTO toFilter(PedidoVentaCaracteristicaDTO pCampo, String token) {
+	private PedidoVentaCaracteristicaFilterDTO toFilter(PedidoVentaCaracteristicaDTO pCampo) {
 		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 		filter.setCampo(pCampo.getCampo());
 		filter.setCampoDTO(pCampo.getCampoDTO());
@@ -262,7 +262,6 @@ public class TipoProceso {
 		filter.setEstado(pCampo.getEstado());
 		filter.setExpedientes(pCampo.getExpedientes());
 		filter.setLlaveTabla(pCampo.getLlaveTabla());
-		filter.setSecurityToken(token);
 		filter.setValorAuxiliar(pCampo.getValorAuxiliar());
 		filter.setValorOpcion(pCampo.getValorOpcion());
 		// filter.setValorText(pCampo.getValorText());
@@ -292,7 +291,7 @@ public class TipoProceso {
 		pCampo.getExpedientes().add(vActual);
 	}
 
-	private void validarMultiple(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void validarMultiple(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getExpedientes() == null)
 			pCampo.setExpedientes(new ArrayList<PedidoVentaDTO>());
 		// Valido obligatoriedad
@@ -307,7 +306,7 @@ public class TipoProceso {
 		// Consulto los procesos que estan en BD
 		if (pCampo.getDocumento() != null)
 			procesosActuales = listDocumentWithFiltersFunction.listarExpedientesPertenecenCampo(pCampo.getLlaveTabla(),
-					token, null);
+					null);
 		if (procesosActuales == null)
 			procesosActuales = new ArrayList<PedidoVentaDTO>();
 		// En caso que sea modificacion comparo que proceso estan retirandose, cambiando
@@ -319,7 +318,6 @@ public class TipoProceso {
 				if (procesoDTO.getLlaveTabla() == null && procesoDTO.getNombre() != null) {
 					PedidoVentaFilterDTO filterMultiple = new PedidoVentaFilterDTO();
 					filterMultiple.setCampoOrigen(pCampo.getCampo());
-					filterMultiple.setSecurityToken(token);
 					filterMultiple.setFiltroParametro(procesoDTO.getNombre());
 					if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty()) {
 						filterMultiple.setLlaveTabla(pCampo.getDependientes().get(0).getValorOpcion());
@@ -409,14 +407,13 @@ public class TipoProceso {
 				}
 			}
 		}
-		PedidoVentaCaracteristicaFilterDTO calculado = CallDocumentCommons
-				.calcularValoresTotalesCampo(toFilter(pCampo, token), campoValor, relacionExpedienteService);
+		PedidoVentaCaracteristicaFilterDTO calculado = CallDocumentCommons.calcularValoresTotalesCampo(toFilter(pCampo),
+				campoValor, relacionExpedienteService);
 		pCampo.setValorText(calculado.getValorText());
 		pCampo.setValorNumero(calculado.getValorNumeroMax());
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		String campoHeredado1 = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CAMPO_HEREDADO_1);
 		boolean modificacion = false;
 		if (campoHeredado1.isEmpty()) {
@@ -432,75 +429,72 @@ public class TipoProceso {
 						bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 						if (bd.getLlaveTabla() != null) {
 							bd.setPrincipal(pCampo.getPrincipal());
-							campoService.inactivar(bd, token);
+							campoService.inactivar(bd);
 						}
-						updateInformativeService.call(pCampo, token);
-						return inactivar(bd, null, token);// Se inactiva el anterior, toca revisar el inactivar
-					} else {
-						if (bd.getValorOpcion() != null
-								&& pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
-							if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
-									Propiedades.BODEGA_MOVIMIENTO) != null)
-								tipoBodega.aplicarMovimientosBodega(pCampo, token);
-							return pCampo;
-						} else {
-							bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-							if (bd.getLlaveTabla() != null) {
-								bd.setPrincipal(pCampo.getPrincipal());
-								campoService.inactivar(bd, token);
-							}
-							inactivar(bd, null, token);// comentario anterior
-							modificacion = true;
-						}
+						updateInformativeService.call(pCampo);
+						return inactivar(bd, null);// Se inactiva el anterior, toca revisar el inactivar
 					}
+					if (bd.getValorOpcion() != null && pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
+						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
+							tipoBodega.aplicarMovimientosBodega(pCampo);
+						return pCampo;
+					}
+					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+					if (bd.getLlaveTabla() != null) {
+						bd.setPrincipal(pCampo.getPrincipal());
+						campoService.inactivar(bd);
+					}
+					inactivar(bd, null);// comentario anterior
+					modificacion = true;
+
 				}
 				if (pCampo.getValorOpcion() == null) {
-					cerrarCaja(pCampo, token);
-					updateInformativeService.call(pCampo, token);
+					cerrarCaja(pCampo);
+					updateInformativeService.call(pCampo);
 					return pCampo;
-				} else {
-					// System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",
-					// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-					// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
-					// pCampo.getValorOpcion());
-					bd = campoService.guardar(pCampo, token);
-					pCampo.setLlaveTabla(bd.getLlaveTabla());
-
-					// administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
-					addDocumentToBPM(pCampo, pCampo.getPrincipal(), modificacion);
-					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.CUENTA_ABRIR_CAJA) != null) {
-						TurnoDTO turno = new TurnoDTO();
-						turno.setCuenta(pCampo.getValorOpcion());
-						turno.setUsuario(campoService.getUserFlex(token));
-						turno.setDocumento(pCampo.getDocumento());
-						turno.setFechaApertura(pCampo.getPrincipal().getFecha());
-						turno = turnoService.iniciarTurno(turno, token);
-					}
-					// relacionExternaDocumentos(pCampo, token);
-					cerrarCaja(pCampo, token);
-					generarPagos(pCampo, token);
-					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
-						tipoBodega.aplicarMovimientosBodega(pCampo, token);
-					// System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )",
-					// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
-					// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
-					// pCampo.getValorOpcion());
-					// throw new ServerException("Probando");
-					updateInformativeService.call(pCampo, token);
 				}
+				// System.out.format("\n\n[%s (%s) - %s] START Guardando en bd %s ( %s )",
+				// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+				// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
+				// pCampo.getValorOpcion());
+				bd = campoService.guardar(pCampo);
+				pCampo.setLlaveTabla(bd.getLlaveTabla());
+
+				// administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
+				addDocumentToBPM(pCampo, pCampo.getPrincipal(), modificacion);
+				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.CUENTA_ABRIR_CAJA) != null) {
+					TurnoDTO turno = new TurnoDTO();
+					turno.setCuenta(pCampo.getValorOpcion());
+					turno.setUsuario(SessionContext.getCurrentUser());
+					turno.setDocumento(pCampo.getDocumento());
+					turno.setFechaApertura(pCampo.getPrincipal().getFecha());
+					turno = turnoService.iniciarTurno(turno);
+				}
+				// relacionExternaDocumentos(pCampo, token);
+				cerrarCaja(pCampo);
+				generarPagos(pCampo);
+				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.BODEGA_MOVIMIENTO) != null)
+					tipoBodega.aplicarMovimientosBodega(pCampo);
+				// System.out.format("\n[%s (%s) - %s] END.. Guardando en bd %s ( %s )",
+				// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+				// pCampo.getCampoDTO().getNombre(), pCampo.getValorText(),
+				// pCampo.getValorOpcion());
+				// throw new ServerException("Probando");
+				updateInformativeService.call(pCampo);
+
 			} else {
 				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getPlantillaNombre(),
 						pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), multiple);
 				if (bd == null) {
-					bd = campoService.guardar(pCampo, token);
+					bd = campoService.guardar(pCampo);
 					pCampo.setLlaveTabla(bd.getLlaveTabla());
 				} else {
 					bd.setValorNumero(pCampo.getValorNumero());
 					bd.setValorText(pCampo.getValorText());
-					bd = campoService.actualizar(bd, token);
+					bd = campoService.actualizar(bd);
 					modificacion = true;
 				}
-				relacionarExpedientes(pCampo, token);
+				relacionarExpedientes(pCampo);
 				// administrarExpedientes(pCampo, pCampo.getPrincipal(), modificacion, token);
 				addDocumentToBPM(pCampo, pCampo.getPrincipal(), modificacion);
 				// relacionExternaDocumentos(pCampo, token);
@@ -524,9 +518,9 @@ public class TipoProceso {
 	}
 
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo,
-			PedidoVentaDTO documentoModificadorDTO, String token) throws ServerException {
+			PedidoVentaDTO documentoModificadorDTO) throws ServerException {
 		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
-			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO(), token));
+			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO()));
 		// if(pCampo.getLlaveTabla()!=null) campoService.inactivar(pCampo);
 		// anularMovimiento(pCampo); //OJO esto qe como estoy haciendo para anular
 		// movimeintos
@@ -535,7 +529,7 @@ public class TipoProceso {
 			for (PedidoVentaDTO procesoInactivar : pCampo.getExpedientes()) {
 				procesoInactivar.setEstado(SharedConstants.STATE_INACTIVE);
 			}
-			relacionarExpedientes(pCampo, token);
+			relacionarExpedientes(pCampo);
 		} else {
 			if (documentoModificadorDTO != null)
 				loadActualOptionToDocumentList(pCampo);
@@ -545,14 +539,14 @@ public class TipoProceso {
 		return pCampo;
 	}
 
-	private void relacionarExpedientes(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void relacionarExpedientes(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty())
 			return;
 		for (PedidoVentaDTO procesoDTO : pCampo.getExpedientes()) {
 			if (procesoDTO.getEstado() != null
 					&& procesoDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				retirarExpedienteDocumento(pCampo, procesoDTO,
-						(pCampo.getPrincipal() == null) ? null : pCampo.getPrincipal().getLlaveTabla(), token);
+						(pCampo.getPrincipal() == null) ? null : pCampo.getPrincipal().getLlaveTabla());
 			} else {
 				BigDecimal _processValue = null;
 				if (procesoDTO.getDinero() != null) {
@@ -564,14 +558,14 @@ public class TipoProceso {
 					}
 				}
 				relacionExpedienteService.relacionarExpedienteDocumento(pCampo.getLlaveTabla(),
-						procesoDTO.getLlaveTabla(), token, pCampo.getCampoDTO().getNombre(), _processValue,
+						procesoDTO.getLlaveTabla(), pCampo.getCampoDTO().getNombre(), _processValue,
 						pCampo.getPrincipal().getLlaveTabla());
 			}
 		}
 	}
 
 	private boolean retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
-			String pDocumentMainRetire, String token) throws ServerException {
+			String pDocumentMainRetire) throws ServerException {
 		// Si es inactivo, busco la relacion del expediente y el campo
 		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
 		filtroExpFilter.setCampoMaestro(pCampo.getLlaveTabla());
@@ -580,7 +574,7 @@ public class TipoProceso {
 		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
 		if (filtroExp != null) {
 			filtroExp.setDocumentoInactivo(pDocumentMainRetire);
-			relacionExpedienteService.inactivar(filtroExp, token);
+			relacionExpedienteService.inactivar(filtroExp);
 			return true;
 		}
 		return false;
@@ -589,10 +583,10 @@ public class TipoProceso {
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		return listDocumentFromFieldProcessFunction.execute(pCampo,
-				caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken()));
+				caracteristicaService.consultaUnicaConComplementos(pCampo.getCampo()));
 	}
 
-	private void cerrarCaja(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void cerrarCaja(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		String catalogoCierre = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CUENTA_CERRAR_CAJA);
 		if (!catalogoCierre.isEmpty()) {
 			TurnoDTO turno = new TurnoDTO();
@@ -625,7 +619,7 @@ public class TipoProceso {
 				// movimiento.setCuentaPermisoUsuario(turno.getCuentaPermiso());
 				movimiento.setDocumento(pCampo.getDocumento());
 				movimiento.setTurno(turno.getLlaveTabla());
-				movimiento = movimientoService.guardar(movimiento, token);
+				movimiento = movimientoService.guardar(movimiento);
 				saldo = saldo.add(movimiento.getMontoAplicado());
 			}
 			// if(permiso.getEstado().compareTo(TurnoDTO.ESTADO_ACTIVO)!=0) throw new
@@ -639,13 +633,13 @@ public class TipoProceso {
 			turno.setFechaEntrega(new Date());
 			turno.setEstado(TurnoDTO.ESTADO_FINALIZADO);
 			turno.setMontoFinal(saldo);
-			turno = turnoService.actualizar(turno, token);
+			turno = turnoService.actualizar(turno);
 			caja.setFechaConciliacion(turno.getFechaEntrega());
-			caja = cuentaService.actualizar(caja, token);
+			caja = cuentaService.actualizar(caja);
 		}
 	}
 
-	private void generarPagos(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void generarPagos(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		String catalogoMovimiento = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.CUENTA_MOVIMIENTO);
 		if (!catalogoMovimiento.isEmpty()) {
 			PedidoVentaDTO documento = pCampo.getPrincipal();
@@ -667,9 +661,7 @@ public class TipoProceso {
 				movimiento.setMonto(documento.getDinero().getValorTotal());
 				movimiento.setCuenta(pCampo.getValorAuxiliar());
 				movimiento.setDocumento(pCampo.getDocumento());
-				movimiento = movimientoService.guardar(movimiento, token);
-				// pedidoService.actualizarSaldo(pCampo.getDocumento(), movimiento.getMonto(),
-				// pCampo.getSecurityToken());
+				movimiento = movimientoService.guardar(movimiento);
 				pCampo.setValorAuxiliar(movimiento.getLlaveTabla());
 				pCampo.setValorFecha(movimiento.getFechaEvento());
 				pCampo.setValorNumero(movimiento.getMonto());
@@ -685,7 +677,7 @@ public class TipoProceso {
 		if (movimientos == null || movimientos.isEmpty())
 			throw new ServerException("Estas anulando un movimiento y no se encuentra en la tabla de movimientos");
 		for (MovimientoDTO movimientoDTO : movimientos) {
-			movimientoService.inactivar(movimientoDTO, token);
+			movimientoService.inactivar(movimientoDTO);
 		}
 
 	}

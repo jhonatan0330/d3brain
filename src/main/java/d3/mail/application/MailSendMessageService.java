@@ -13,6 +13,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -20,25 +21,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
-import d3.shared.application.MailUtils;
-import d3.shared.application.ProcessTemplate;
-import d3.users.application.ServidorSvc;
-import d3.users.domain.ServidorDTO;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.mail.infrastructure.MensajeMapper;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;
-
+import d3.shared.application.MailUtils;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.users.application.ServidorSvc;
+import d3.users.domain.ServidorDTO;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class MailSendMessageService {
@@ -62,7 +61,7 @@ public class MailSendMessageService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MensajeDTO call(MensajeDTO dto, String usuario, String token) throws ServerException {
+	public MensajeDTO call(MensajeDTO dto) throws ServerException {
 		if (dto.getCorreo() == null || dto.getCorreo().isEmpty()) {
 			dto.setCorreoError("No se envia correo debido a que no se tiene registrado el mail de correo");
 			dto.setCorreoEnviado(new Date());
@@ -88,7 +87,7 @@ public class MailSendMessageService {
 
 			String mailSubject = dto.getTitulo();
 			String mailText = construirCuerpoCorreo(dto, plantilla);
-			Map<String, DataSource> attachmentsFiles = construirAdjuntos(dto, token);
+			Map<String, DataSource> attachmentsFiles = construirAdjuntos(dto);
 
 			if (plantilla.getNombre().contains("ZIP") && attachmentsFiles != null && !attachmentsFiles.isEmpty()) {
 				attachmentsFiles = comprimirAdjuntos(attachmentsFiles, dto.getLlaveTabla());
@@ -128,12 +127,12 @@ public class MailSendMessageService {
 		return MailUtils.replaceParameterInBodyMessage(mailText, dto.getParametros());
 	}
 
-	private Map<String, DataSource> construirAdjuntos(MensajeDTO dto, String token) throws Exception {
+	private Map<String, DataSource> construirAdjuntos(MensajeDTO dto) throws Exception {
 		Map<String, DataSource> adjuntos = new HashMap<>();
 
 		if (dto.getReporte() != null) {
-			ReportDTO reporte = reporteBaseService.generarReporte(
-					reporteBaseService.validateReport(dto.getReporte(), token), dto.getDocumento(), null, token);
+			ReportDTO reporte = reporteBaseService.generarReporte(reporteBaseService.validateReport(dto.getReporte()),
+					dto.getDocumento(), null);
 			if (reporte != null) {
 				ReporteBaseDTO base = reporteBaseService.consultaXId(dto.getReporte());
 				adjuntos.put(base.getNombre() + ".pdf",

@@ -41,7 +41,7 @@ public class TipoInformativo {
 		this.documentService = documentService;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 		filter.setCampoDTO(pCampo.getCampoDTO());
@@ -68,36 +68,34 @@ public class TipoInformativo {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorText() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		PropiedadDTO dataToGetInformation = Propiedades.obtenerParametro(pBase, Propiedades.INFORMATIVE_DATA);
 		if (dataToGetInformation == null)
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " En el campo "

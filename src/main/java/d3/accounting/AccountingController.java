@@ -3,6 +3,7 @@ package d3.accounting;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,24 +30,21 @@ import d3.accounting.domain.CatalogDTO;
 import d3.accounting.domain.ResultMapDTO;
 import d3.accounting.domain.Voucher;
 import d3.accounting.domain.VoucherDTO;
+import d3.accounting.domain.VoucherPrepareRequest;
 import d3.accounting.domain.VoucherRangeRequest;
 import d3.accounting.domain.VoucherRequest;
-import d3.accounting.domain.VoucherPrepareRequest;
 import d3.api.application.ApiAuthorizeService;
 import d3.authentication.application.UsuarioSesionSvc;
-import d3.shared.application.SharedAuthenticateService;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
-
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.SharedToken;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/acc")
 public class AccountingController {
 
-	private final SharedAuthenticateService tokenService;
 	private final VoucherCreateService createService;
 	private final VoucherDeleteService deleteService;
 	private final VoucherGetService getVoucherService;
@@ -60,21 +58,12 @@ public class AccountingController {
 	private final StackAccountProccessService accountService;
 	private final UsuarioSesionSvc autenticacionService;
 
-	public AccountingController(
-			@Lazy SharedAuthenticateService tokenService,
-			@Lazy VoucherCreateService createService,
-			@Lazy VoucherDeleteService deleteService,
-			@Lazy VoucherGetService getVoucherService,
-			@Lazy VoucherReCreateService recreateService,
-			@Lazy VoucherRangeService range,
-			@Lazy PlanGetCatalogService getCatalogService,
-			@Lazy PlanGetAccountService getAccountService,
-			@Lazy PlanGetBalanceService getBalanceService,
-			@Lazy ApiAuthorizeService apiAuthorizeService,
-			@Lazy ApiAccountVoucherService voucherService,
-			@Lazy StackAccountProccessService accountService,
-			@Lazy UsuarioSesionSvc autenticacionService) {
-		this.tokenService = tokenService;
+	public AccountingController(@Lazy VoucherCreateService createService, @Lazy VoucherDeleteService deleteService,
+			@Lazy VoucherGetService getVoucherService, @Lazy VoucherReCreateService recreateService,
+			@Lazy VoucherRangeService range, @Lazy PlanGetCatalogService getCatalogService,
+			@Lazy PlanGetAccountService getAccountService, @Lazy PlanGetBalanceService getBalanceService,
+			@Lazy ApiAuthorizeService apiAuthorizeService, @Lazy ApiAccountVoucherService voucherService,
+			@Lazy StackAccountProccessService accountService, @Lazy UsuarioSesionSvc autenticacionService) {
 		this.createService = createService;
 		this.deleteService = deleteService;
 		this.getVoucherService = getVoucherService;
@@ -92,100 +81,95 @@ public class AccountingController {
 	// ==================== VOUCHER ENDPOINTS ====================
 
 	@GetMapping("/voucher/{catalog}")
-	public List<VoucherDTO> getVouchers(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@PathVariable(name = "catalog") String pCatalog) throws ServerException {
+	public List<VoucherDTO> getVouchers(@PathVariable(name = "catalog") String pCatalog) throws ServerException {
 		return getVoucherService.call(pCatalog);
 	}
 
 	@GetMapping("/voucher/one/{voucherId}")
-	public Voucher getVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@PathVariable(name = "voucherId") String pVoucherId) throws ServerException {
+	public Voucher getVoucher(@PathVariable(name = "voucherId") String pVoucherId) throws ServerException {
 		return getVoucherService.getById(pVoucherId);
 	}
 
 	@PostMapping("/voucher/manual")
-	public SharedIdResponse createManualVoucher(HttpServletRequest request,
-			@RequestHeader("Authorization") String token, @RequestBody Voucher voucher) throws ServerException {
-		return createService.call(voucher, tokenService.validate(token, request));
+	public SharedIdResponse createManualVoucher(@RequestBody Voucher voucher) throws ServerException {
+		return createService.call(voucher);
 	}
 
 	@DeleteMapping("/voucher/manual/{voucherId}")
-	public SharedIdResponse deleteManualVoucher(HttpServletRequest request,
-			@RequestHeader("Authorization") String token, @PathVariable(name = "voucherId") String pVoucherId)
+	public SharedIdResponse deleteManualVoucher(@PathVariable(name = "voucherId") String pVoucherId)
 			throws ServerException {
-		return deleteService.callById(pVoucherId, token);
+		return deleteService.callById(pVoucherId);
 	}
 
 	@PostMapping("/voucher/generate-voucher")
-	public SharedIdResponse generateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@RequestBody VoucherPrepareRequest item) throws ServerException {
-		return recreateService.call(item, tokenService.validate(token, request));
+	public SharedIdResponse generateVoucher(@RequestBody VoucherPrepareRequest item) throws ServerException {
+		return recreateService.call(item);
 	}
 
 	@PostMapping("/voucher/document")
-	public SharedIdResponse getVoucherId(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@RequestBody VoucherPrepareRequest item) throws ServerException {
-		return getVoucherService.getByDocument(item, tokenService.validate(token, request));
+	public SharedIdResponse getVoucherId(@RequestBody VoucherPrepareRequest item) throws ServerException {
+		return getVoucherService.getByDocument(item);
 	}
 
 	@PostMapping("/voucher/range-clear-voucher")
-	public SharedIdResponse rangeClearVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@RequestBody VoucherRangeRequest item) throws ServerException {
-		return range.clear(item, tokenService.validate(token, request));
+	public SharedIdResponse rangeClearVoucher(@RequestBody VoucherRangeRequest item) throws ServerException {
+		return range.clear(item);
 	}
 
 	@PostMapping("/voucher/range-create-voucher")
-	public SharedIdResponse rangeCreateVoucher(HttpServletRequest request, @RequestHeader("Authorization") String token,
-			@RequestBody VoucherRangeRequest item) throws ServerException {
-		return range.create(item, tokenService.validate(token, request));
+	public SharedIdResponse rangeCreateVoucher(@RequestBody VoucherRangeRequest item) throws ServerException {
+		return range.create(item);
 	}
 
 	// ==================== PLAN ENDPOINTS ====================
 
 	@GetMapping("/plan/balance/{catalog}")
-	public List<ResultMapDTO> getBalance(@PathVariable(name = "catalog") String pCatalog,
-			@RequestHeader(name = "Authorization") String token) throws ServerException {
+	public List<ResultMapDTO> getBalance(@PathVariable(name = "catalog") String pCatalog) throws ServerException {
 		return getBalanceService.getBalance(pCatalog);
 	}
 
 	@GetMapping("/plan/account/{catalog}")
 	public List<AccountDTO> getAccount(@PathVariable(name = "catalog") String pCatalog,
-			@RequestHeader(name = "Authorization") String token,
 			@RequestParam(name = "filter", required = false) String pFilter) throws ServerException {
 		return getAccountService.getActive(pCatalog, pFilter);
 	}
 
 	@GetMapping(value = "/plan/account/{catalog}/{id}")
 	public AccountDTO getAccountById(@PathVariable(name = "catalog") String pCatalog,
-			@PathVariable(name = "id") String pId, @RequestHeader(name = "Authorization") String token)
-			throws ServerException {
+			@PathVariable(name = "id") String pId) throws ServerException {
 		return getAccountService.getByCatalogAndId(pCatalog, pId);
 	}
 
 	@GetMapping(value = "/plan/catalog/{id}")
-	public CatalogDTO getCatalogById(@PathVariable(name = "id") String pId,
-			@RequestHeader(name = "Authorization") String token) throws ServerException {
+	public CatalogDTO getCatalogById(@PathVariable(name = "id") String pId) throws ServerException {
 		return getCatalogService.getById(pId);
 	}
 
 	@GetMapping("/plan/catalog")
-	public List<CatalogDTO> getCatalog(@RequestHeader(name = "Authorization") String token) throws ServerException {
+	public List<CatalogDTO> getCatalog() throws ServerException {
 		return getCatalogService.getActive();
 	}
 
 	// ==================== API ENDPOINTS (antes api_account) ====================
 
 	@PostMapping("/api/voucher")
-	public SharedIdResponse send(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
-			@RequestBody VoucherRequest item) throws ServerException {
+	public SharedIdResponse send(@RequestHeader(name = "x-api-key") String apiKey, @RequestBody VoucherRequest item)
+			throws ServerException {
 		String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-		apiAuthorizeService.call(apiKey, token);
-		return voucherService.call(tokenService.validate(token, request), item);
+		SharedToken adminToken = autenticacionService.getUserToken(token);
+		apiAuthorizeService.call(apiKey);
+		SharedToken previous = SessionContext.getCurrent();
+		try {
+			SessionContext.setCurrent(adminToken);
+			return voucherService.call(item);
+		} finally {
+			SessionContext.setCurrent(previous);
+		}
 	}
 
 	@GetMapping("/api/ok")
 	public String ok(@RequestHeader(name = "x-api-key") String apiKey) throws ServerException {
-		apiAuthorizeService.call(apiKey, null);
+		apiAuthorizeService.call(apiKey);
 		return "OK";
 	}
 

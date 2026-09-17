@@ -1,11 +1,11 @@
 package d3.document.application.field;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Component
 public class TipoArchivo {
@@ -16,8 +16,7 @@ public class TipoArchivo {
 		this.campoService = campoService;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
-			throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()) {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
@@ -35,30 +34,28 @@ public class TipoArchivo {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorText() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 }

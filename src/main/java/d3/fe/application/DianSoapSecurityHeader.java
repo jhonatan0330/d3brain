@@ -54,8 +54,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import d3.shared.domain.ServerException;
-
 @Service
 public class DianSoapSecurityHeader {
 
@@ -73,8 +71,7 @@ public class DianSoapSecurityHeader {
 	private static final DateTimeFormatter ISO_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 			.withZone(ZoneOffset.UTC);
 
-	
-	public String signHeaderTest(String xmlIn) throws ServerException {
+	public String signHeaderTest(String xmlIn) {
 
 		// Desactivar warnings de XML Security
 		try {
@@ -126,7 +123,6 @@ public class DianSoapSecurityHeader {
 		return null;
 	}
 
-	
 	private Document buildSignedSoapEnvelope(String bodyXml, String certificateUrl, String certificatePassword)
 			throws Exception {
 
@@ -160,7 +156,7 @@ public class DianSoapSecurityHeader {
 				+ " EncodingType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\""
 				+ " ValueType=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3\""
 				+ " wsu:Id=\"" + bstId + "\">PLACEHOLDER_CERTIFICATE</wsse:BinarySecurityToken>" + "</wsse:Security>"
-				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/"+action+"</wsa:Action>"
+				+ "<wsa:Action>http://wcf.dian.colombia/IWcfDianCustomerServices/" + action + "</wsa:Action>"
 				+ "<wsa:To wsu:Id=\"" + toId + "\" xmlns:wsu=\"" + WSU_NS
 				+ "\">https://vpfe.dian.gov.co/WcfDianCustomerServices.svc</wsa:To>" + "</soap:Header>";
 		fullXml = fullXml.replaceFirst("<soap:Header.*?</soap:Header>", soapXml);
@@ -261,7 +257,6 @@ public class DianSoapSecurityHeader {
 		return doc;
 	}
 
-	
 	private KeyInfo createDianKeyInfo(XMLSignatureFactory sigFactory, Document doc, String bstId, String strId,
 			String keyInfoId) {
 		KeyInfoFactory keyInfoFactory = sigFactory.getKeyInfoFactory();

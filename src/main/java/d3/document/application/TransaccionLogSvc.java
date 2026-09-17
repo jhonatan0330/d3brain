@@ -13,16 +13,14 @@ import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("transaccionLogService")
 public class TransaccionLogSvc extends BasicSvc<TransaccionLogDTO, TransaccionLogFilterDTO> {
 
 	private final TransaccionLogMapper transaccionLogMapper;
 
-	public TransaccionLogSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public TransaccionLogSvc(
 			@Lazy TransaccionLogMapper transaccionLogMapper) {
-		super(usuarioSesionService);
 		this.transaccionLogMapper = transaccionLogMapper;
 	}
 

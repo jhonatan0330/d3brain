@@ -39,10 +39,10 @@ import d3.notification.application.ActividadSvc;
 import d3.notification.domain.ActividadDTO;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
-import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.application.D3Utils;
 import d3.shared.application.HttpUtils;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
 import d3.upload.domain.CargaArchivoDTO;
@@ -74,23 +74,15 @@ public class DocumentController {
 	private final PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	private final CampoAdaptador adaptador;
 
-	public DocumentController(
-			@Lazy PedidoVentaSvc pedidoVentaService,
+	public DocumentController(@Lazy PedidoVentaSvc pedidoVentaService,
 			@Lazy CallDocumentCRUD saveUpdateDocumentFunction,
-			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
-			@Lazy ActividadSvc actividadService,
-			@Lazy ProductoInventarioSvc inventoryService,
-			@Lazy MailReleaseMessageQueueService releaseQueueService,
-			@Lazy ProcesoTransicionAutomaticaSvc transicionservice,
-			@Lazy WebServiceEjecucionSvc apiService,
-			@Lazy DocumentoPlantillaSvc plantillaService,
-			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService,
-			@Lazy UsuarioSesionSvc usuarioSessionService,
-			@Lazy OrganizacionSvc organizacionService,
-			@Lazy UsuarioOrganizacionSvc organizacionUsuarioService,
-			@Lazy UsuarioSvc usuarioService,
-			@Lazy PedidoVentaAjusteSvc pedidoVentaAjusteService,
-			@Lazy CampoAdaptador adaptador) {
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction, @Lazy ActividadSvc actividadService,
+			@Lazy ProductoInventarioSvc inventoryService, @Lazy MailReleaseMessageQueueService releaseQueueService,
+			@Lazy ProcesoTransicionAutomaticaSvc transicionservice, @Lazy WebServiceEjecucionSvc apiService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy UsuarioAutenticacionSvc usuarioAutenticacionService,
+			@Lazy UsuarioSesionSvc usuarioSessionService, @Lazy OrganizacionSvc organizacionService,
+			@Lazy UsuarioOrganizacionSvc organizacionUsuarioService, @Lazy UsuarioSvc usuarioService,
+			@Lazy PedidoVentaAjusteSvc pedidoVentaAjusteService, @Lazy CampoAdaptador adaptador) {
 		this.pedidoVentaService = pedidoVentaService;
 		this.saveUpdateDocumentFunction = saveUpdateDocumentFunction;
 		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
@@ -132,26 +124,22 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/getDocument")
-	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter, String token)
-			throws ServerException {
-		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla(), token);
+	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
+		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla());
 	}
 
 	@PostMapping(value = "/getDocuments")
-	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		filter.setSecurityToken(token);
+	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
 		return listDocumentWithFiltersFunction.listarAvanzado(filter);
 	}
 
 	@PostMapping(value = "/saveDocument")
-	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document, @RequestBody String token)
-			throws ServerException {
+	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if (document.getLlaveTabla() == null) {
-			document = saveUpdateDocumentFunction.save(document, token, null);
+			document = saveUpdateDocumentFunction.save(document, null);
 		} else {
-			document = saveUpdateDocumentFunction.update(document, null, token);
+			document = saveUpdateDocumentFunction.update(document, null);
 		}
 		result.setNombre(document.getNombre());
 		result.setPlantilla(document.getPlantilla());
@@ -163,22 +151,20 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/readActivity")
-	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		return actividadService.readActivity(activity.getLlaveTabla(), token);
+	public ActividadDTO readActivity(@RequestBody ActividadDTO activity) throws ServerException {
+		return actividadService.readActivity(activity.getLlaveTabla());
 	}
 
 	@GetMapping(value = "/getInventory/{id}")
-	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String pId,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String pId) throws ServerException {
 		return inventoryService.getByProducto(pId);
 	}
 
 	// ==================== MAIN ENDPOINTS (antes /main/*) ====================
 
 	@GetMapping(value = "/main/obtenerPrincipalOrganizacion")
-	public OrganizacionDTO obtenerPrincipalOrganizacion(HttpServletRequest request) throws ServerException {
-		return organizacionService.obtenerPrincipalPublic(HttpUtils.getRequestIP(request));
+	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
+		return organizacionService.obtenerPrincipalPublic();
 	}
 
 	@PostMapping(value = "/main/autenticarUsuarioAutenticacion")
@@ -190,9 +176,8 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/main/checkToken")
-	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request,
-			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
-		return usuarioAutenticacionService.checkToken(token, HttpUtils.getRequestIP(request));
+	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request) throws ServerException {
+		return usuarioAutenticacionService.checkToken(HttpUtils.getRequestIP(request));
 	}
 
 	@PostMapping(value = "/main/cambiarClave")
@@ -211,20 +196,20 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/main/cambiarClaveOtherSystem")
-	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestHeader("Authorization") String token,
-			@RequestBody UsuarioOrganizacionDTO dto) throws ServerException {
-		return organizacionUsuarioService.reloadPassword(dto, token);
+	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestBody UsuarioOrganizacionDTO dto)
+			throws ServerException {
+		return organizacionUsuarioService.reloadPassword(dto);
 	}
 
 	@GetMapping(value = "/main/checkSession")
-	public UsuarioSesionDTO checkToken(@RequestHeader("Authorization") String token) throws ServerException {
-		return usuarioSessionService.checkToken(token);
+	public UsuarioSesionDTO checkToken() throws ServerException {
+		return usuarioSessionService.checkToken();
 	}
 
-	@PostMapping(value = "/main/consultaUsuarioDocumentoPlantilla")
-	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(
-			@RequestBody DocumentoPlantillaFilterDTO filter) throws ServerException {
-		return plantillaService.consultaUsuario(filter);
+	@GetMapping(value = "/main/consultaUsuarioDocumentoPlantilla")
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla()
+			throws ServerException {
+		return plantillaService.consultaUsuario();
 	}
 
 	@PostMapping(value = "/main/listarUsuarioPedidoVenta")
@@ -235,38 +220,33 @@ public class DocumentController {
 	// ==================== API ENDPOINTS (antes /rest/*) ====================
 
 	@PostMapping(value = "/api/logOut")
-	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion) throws ServerException {
 		if (autenticacion == null)
 			throw new ServerException("Los datos de autenticacion son nulos");
-		usuarioAutenticacionService.inactivar(autenticacion, token);
+		usuarioAutenticacionService.inactivar(autenticacion);
 		return null;
 	}
 
 	@PostMapping(value = "/api/consultarDocumento")
-	public PedidoVentaDTO apiConsultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		documentoFiltro.setSecurityToken(token);
-		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla(), token);
+	public PedidoVentaDTO apiConsultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro)
+			throws ServerException {
+		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla());
 		pedidoVentaService.clearPedidoResponse(_result);
 		return _result;
 	}
 
 	@PostMapping(value = "/api/validateBeforeNew")
-	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		documentoFiltro.setSecurityToken(token);
+	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro) throws ServerException {
 		return pedidoVentaService.validateBeforeNew(documentoFiltro);
 	}
 
 	@PostMapping(value = "/api/guardarDocumento")
 	public PedidoVentaDTO apiGuardarDocumento(@RequestBody PedidoVentaDTO documento,
-			@RequestHeader("Authorization") String token,
 			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
 		if (documento.getLlaveTabla() == null) {
-			documento = saveUpdateDocumentFunction.save(documento, token, session);
+			documento = saveUpdateDocumentFunction.save(documento, session);
 		} else {
-			documento = saveUpdateDocumentFunction.update(documento, null, token);
+			documento = saveUpdateDocumentFunction.update(documento, null);
 		}
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		result.setNombre(documento.getNombre());
@@ -281,9 +261,8 @@ public class DocumentController {
 
 	@PostMapping(value = "/api/saveByMassive")
 	public PedidoVentaDTO saveByMassive(@RequestBody PedidoVentaDTO documento,
-			@RequestHeader("Authorization") String token,
 			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
-		documento = saveUpdateDocumentFunction.massive(documento, token, session);
+		documento = saveUpdateDocumentFunction.massive(documento, session);
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		result.setNombre(documento.getNombre());
 		result.setPlantilla(documento.getPlantilla());
@@ -296,52 +275,44 @@ public class DocumentController {
 	}
 
 	@PostMapping(value = "/api/consultarUsuario")
-	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		dto.setSecurityToken(token);
+	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto) throws ServerException {
 		return usuarioService.consultaUnica(dto);
 	}
 
 	@PostMapping(value = "/api/consultarDatosBase")
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		dto.setSecurityToken(token);
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto)
+			throws ServerException {
 		return adaptador.consultarDatosBase(dto);
 	}
 
 	@PostMapping(value = "/api/listarDocumentos")
-	public List<PedidoVentaDTO> apiListarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		documentoFiltro.setSecurityToken(token);
+	public List<PedidoVentaDTO> apiListarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro)
+			throws ServerException {
 		return listDocumentWithFiltersFunction.listarAvanzado(documentoFiltro);
 	}
 
 	@PostMapping(value = "/api/obtenerCampos")
-	public TemplateDTO obtenerCampos(@RequestBody TemplateDTO documentoFiltro,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return plantillaService.obtenerCampos(documentoFiltro, token, true);
+	public TemplateDTO obtenerCampos(@RequestBody TemplateDTO documentoFiltro) throws ServerException {
+		return plantillaService.obtenerCampos(documentoFiltro, true);
 	}
 
 	@PostMapping(value = "/api/changePicture")
-	public UsuarioDTO cambiarImagen(@RequestBody CargaArchivoDTO request,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public UsuarioDTO cambiarImagen(@RequestBody CargaArchivoDTO request) throws ServerException {
 		if (request == null || request.getUrl() == null || request.getUrl().isEmpty())
 			throw new ServerException("La url de la imagen se encuentra vacia");
-		return usuarioService.changePicture(request.getUrl(), token);
+		return usuarioService.changePicture(request.getUrl());
 	}
 
 	@PostMapping(value = "/api/changeState")
-	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return pedidoVentaAjusteService.guardar(ajuste, token);
+	public PedidoVentaAjusteDTO changeState(@RequestBody PedidoVentaAjusteDTO ajuste) throws ServerException {
+		return pedidoVentaAjusteService.guardar(ajuste);
 	}
 
 	@GetMapping(value = "/api/getMessageToProcessField/{property}/{fieldValue}")
 	public SharedIdResponse message(@PathVariable(name = "property") String pProperty,
-			@PathVariable(name = "fieldValue") String pFieldValue, @RequestHeader("Authorization") String token)
-			throws ServerException {
+			@PathVariable(name = "fieldValue") String pFieldValue) throws ServerException {
 		return new SharedIdResponse(null, null, null,
-				pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, token));
+				pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, SessionContext.getCurrentToken()));
 	}
 
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authorization.application.UsuarioRolProductoSvc;
 import d3.authorization.domain.UsuarioRolProductoDTO;
 import d3.authorization.domain.UsuarioRolProductoFilterDTO;
@@ -20,6 +18,8 @@ import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class HomologateProduct {
@@ -32,31 +32,31 @@ public class HomologateProduct {
 		this.usuarioRolProductoSvc = usuarioRolProductoSvc;
 	}
 
-	public void createProductFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createProductFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
-		fieldsTemplate.add(
-				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0)));
 
-		fieldsTemplate.add(campoService.createField(templateId, "DESCRIPCION",
-				DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "DESCRIPCION", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "BASE", DocumentoPlantillaCaracteristicaDTO.PROCESO, 10, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "BASE", DocumentoPlantillaCaracteristicaDTO.PROCESO, 10));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
 	}
 
-	public ProductoDTO crearDesdeDocumento(PedidoVentaDTO documento, String token) throws ServerException {
+	public ProductoDTO crearDesdeDocumento(PedidoVentaDTO documento) throws ServerException {
 		ProductoFilterDTO newProductoFilter = new ProductoFilterDTO();
 		newProductoFilter.setDocumento(documento.getLlaveTabla());
 		ProductoDTO newProducto = productService.consultaUnica(newProductoFilter);
@@ -76,7 +76,7 @@ public class HomologateProduct {
 				newProducto.setEstado(SharedConstants.STATE_ACTIVE);
 			} else {
 				newProducto.setEstado(SharedConstants.STATE_INACTIVE);
-				inactivateUsuarioRolProduct(newProducto, token);
+				inactivateUsuarioRolProduct(newProducto);
 			}
 			newProducto = productService.update(newProducto);
 
@@ -93,7 +93,7 @@ public class HomologateProduct {
 		return prod.getLlaveTabla();
 	}
 
-	private void inactivateUsuarioRolProduct(ProductoDTO dto, String token) throws ServerException {
+	private void inactivateUsuarioRolProduct(ProductoDTO dto) throws ServerException {
 
 		UsuarioRolProductoFilterDTO filtro = new UsuarioRolProductoFilterDTO();
 		filtro.setProducto(dto.getLlaveTabla());
@@ -101,7 +101,7 @@ public class HomologateProduct {
 		List<UsuarioRolProductoDTO> relacionados = usuarioRolProductoSvc.listarConsulta(filtro);
 		if (relacionados != null && !relacionados.isEmpty()) {
 			for (UsuarioRolProductoDTO iProducto : relacionados) {
-				usuarioRolProductoSvc.inactivar(iProducto, token);
+				usuarioRolProductoSvc.inactivar(iProducto);
 			}
 		}
 	}

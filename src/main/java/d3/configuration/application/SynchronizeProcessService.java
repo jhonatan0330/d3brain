@@ -2,21 +2,20 @@ package d3.configuration.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.application.ProcesoSvc;
+import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class SynchronizeProcessService {
@@ -30,8 +29,7 @@ public class SynchronizeProcessService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize(null);
 
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
@@ -44,7 +42,7 @@ public class SynchronizeProcessService {
 					localProcessToErase.remove(local);
 					log.info("EXIST PROCESS " + local.getCodigo() + " - " + local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), log, compare);
 					changeMacroProcesoField(processRemote, remoteProcess.getLlaveTabla(), local.getLlaveTabla());
 					changeProcessInStates(hierarchy.getStates(), remoteProcess.getLlaveTabla(), local.getLlaveTabla());
 					changeProcessInTransition(hierarchy.getTransitions(), remoteProcess.getLlaveTabla(),
@@ -65,7 +63,7 @@ public class SynchronizeProcessService {
 						local = processService.save(newProcess);
 						log.info("new process" + local.getCodigo() + " - " + local.getNombre());
 						propertiesSynchronizeService.call(hierarchy, remoteProcess.getLlaveTabla(),
-								PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), token, log, compare);
+								PropiedadValorDefinidoDTO.PROCESO, local.getLlaveTabla(), log, compare);
 					}
 
 				}

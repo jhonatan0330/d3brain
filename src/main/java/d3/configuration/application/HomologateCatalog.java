@@ -30,34 +30,34 @@ public class HomologateCatalog {
 		this.createCatalogService = createCatalogService;
 	}
 
-	public void createCatalogFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createCatalogFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
-		fieldsTemplate.add(
-				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0)));
 		// Crear el campo tipo recurso nombre
-		fieldsTemplate.add(
-				campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "CODIGO", DocumentoPlantillaCaracteristicaDTO.TEXTO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
 		// fecha inicial
-		fieldsTemplate.add(campoService.createField(templateId, "FECHA_INICIAL",
-				DocumentoPlantillaCaracteristicaDTO.FECHA, 3, token));
+		fieldsTemplate.add(
+				campoService.createField(templateId, "FECHA_INICIAL", DocumentoPlantillaCaracteristicaDTO.FECHA, 3));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		// fecha final
-		fieldsTemplate.add(campoService.createField(templateId, "FECHA_FINAL",
-				DocumentoPlantillaCaracteristicaDTO.FECHA, 4, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "FECHA_FINAL", DocumentoPlantillaCaracteristicaDTO.FECHA, 4));
 		// propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 		// fieldsTemplate.get(3),
-		// Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+		// Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 	}
 
 	public void createCatalog(PedidoVentaDTO document) throws ServerException {

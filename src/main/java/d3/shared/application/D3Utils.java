@@ -1,7 +1,6 @@
 package d3.shared.application;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -25,11 +24,9 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import d3.shared.domain.SharedConstants;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class D3Utils {
 
@@ -157,7 +154,7 @@ public class D3Utils {
 
 	}
 
-	public static String getURL(String url, String serverPath) throws IOException {
+	public static String getURL(String url, String serverPath) {
 		if (!url.contains("http")) {
 			// String serverPath = "D:\\Temp\\LOGISTICPYMES_WEB";
 			// serverPath = serverPath + req.getContextPath();

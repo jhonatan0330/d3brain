@@ -24,7 +24,7 @@ public class SynchronizeApiService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+	public void call( HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
 		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
@@ -55,10 +55,10 @@ public class SynchronizeApiService {
 				}
 			}
 		}
-		callAfterCreateAllTemplate(token, hierarchy, log, compare);
+		callAfterCreateAllTemplate( hierarchy, log, compare);
 	}
 
-	private void callAfterCreateAllTemplate(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
+	private void callAfterCreateAllTemplate( HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
 			boolean compare) throws ServerException {
 		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
@@ -70,7 +70,7 @@ public class SynchronizeApiService {
 					log.setRoot("SynchronizeApi " + local.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.API_SERVICE, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.API_SERVICE, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}

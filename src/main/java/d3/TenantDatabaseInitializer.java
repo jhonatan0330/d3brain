@@ -57,7 +57,7 @@ public class TenantDatabaseInitializer implements ApplicationRunner {
 	private void doSomethingAfterStartup(String tenantId) {
 
 		// ── 1. Obtener DataSource del tenant ──────────────────────────────────
-		DataSource tenantDs = metadataProvider.resolve(tenantId).map(dto -> (DataSource) routingDataSource)
+		DataSource tenantDs = metadataProvider.resolve(tenantId).map(dto -> routingDataSource)
 				.orElseThrow(() -> new IllegalStateException("Tenant no encontrado: " + tenantId));
 
 		// ── 2. Leer fecha actual de la BD del tenant ──────────────────────────

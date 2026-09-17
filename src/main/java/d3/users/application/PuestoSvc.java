@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.shared.application.BasicSvc;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
@@ -19,8 +18,7 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 
 	private final PuestoMapper puestoMapper;
 
-	public PuestoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy PuestoMapper puestoMapper) {
-		super(usuarioSesionService);
+	public PuestoSvc(@Lazy PuestoMapper puestoMapper) {
 		this.puestoMapper = puestoMapper;
 	}
 
@@ -40,16 +38,16 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PuestoDTO actualizar(PuestoDTO dto, String token) throws ServerException {
+	public PuestoDTO actualizar(PuestoDTO dto) throws ServerException {
 		// Validar
 		if (dto.getFila().compareTo(0) < 0)
 			throw new ServerException("Revisa la posicion de no puede estar por encima del espacio visible");
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PuestoDTO guardar(PuestoDTO dto, String token) throws ServerException {
+	public PuestoDTO guardar(PuestoDTO dto) throws ServerException {
 		if (dto.getFila().compareTo(0) < 0)
 			throw new ServerException("Revisa la posicion de no puede estar por encima del espacio visible");
 		if (dto.getCampo() == null)
@@ -62,7 +60,7 @@ public class PuestoSvc extends BasicSvc<PuestoDTO, PuestoFilterDTO> {
 		_filter.setEstado(SharedConstants.STATE_ACTIVE);
 		if (contarResultados(_filter) != 0)
 			throw new ServerException("Ya existe un puesto con este mismo nombre " + _filter.getNombre());
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 }

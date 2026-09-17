@@ -14,10 +14,6 @@ public interface ProcesoEstadoMapper extends IBasicMapper<ProcesoEstadoDTO, Proc
 
 	void actualizarEstados(ProcesoEstadoDTO dto);
 
-	List<ProcesoEstadoDTO> actualizarCierreResponsable(ProcesoEstadoDTO dto);
-
-	List<ProcesoEstadoDTO> actualizarIngresoResponsable(ProcesoEstadoDTO dto);
-
 	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento,
 			@Param("modificador") String modificador, @Param("token") String token);
 

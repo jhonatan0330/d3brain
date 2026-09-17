@@ -14,15 +14,13 @@ import d3.upload.infrastructure.CargaArchivoMapper;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("cargaArchivoService")
 public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilterDTO> {
 
 	private final CargaArchivoMapper cargaArchivoMapper;
 
-	public CargaArchivoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy CargaArchivoMapper cargaArchivoMapper) {
-		super(usuarioSesionService);
+	public CargaArchivoSvc(@Lazy CargaArchivoMapper cargaArchivoMapper) {
 		this.cargaArchivoMapper = cargaArchivoMapper;
 	}
 
@@ -42,7 +40,7 @@ public class CargaArchivoSvc extends BasicSvc<CargaArchivoDTO, CargaArchivoFilte
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public CargaArchivoDTO guardar(CargaArchivoDTO dto, String token) throws ServerException {
+	public CargaArchivoDTO guardar(CargaArchivoDTO dto) throws ServerException {
 		dto.setFechaFin(new Date());
 		return super.saveSimple(dto);
 	}

@@ -35,7 +35,7 @@ public class CallUpdateInformativeField {
 	}
 
 	// EWsto lo hago por urgencia que modifico de una el valor del dependiente
-	public void call(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void call(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		List<PropiedadDTO> updateProperties = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 				Propiedades.UPDATE_INFORMATIVE_FIELD);
 		if (updateProperties == null)
@@ -54,8 +54,7 @@ public class CallUpdateInformativeField {
 						filter.setCampoOrigen(dependiente.getCampo());
 						filter.setEstado(SharedConstants.STATE_ACTIVE);
 						filter.setTextoFiltro(dependiente.getDocumento());
-						filter.setSecurityToken(token);
-						dependiente.setCampoDTO(fieldService.cargarComplementos(dependiente.getCampoDTO(), token));
+						dependiente.setCampoDTO(fieldService.cargarComplementos(dependiente.getCampoDTO()));
 						dependiente.setExpedientes(listDocumentWithFiltersFunction.listarAvanzado(filter));
 
 						if (dependiente.getExpedientes() == null || dependiente.getExpedientes().isEmpty())
@@ -72,7 +71,7 @@ public class CallUpdateInformativeField {
 								pInformativeField.setTransaccionRegistro(pCampo.getTransaccionRegistro());
 								pInformativeField.setPrincipal(iDocument);
 								// informativeField.validarPrepararCampo(pInformativeField, token);
-								informativeField.guardarCampo(pInformativeField, token);
+								informativeField.guardarCampo(pInformativeField);
 							}
 						}
 					}

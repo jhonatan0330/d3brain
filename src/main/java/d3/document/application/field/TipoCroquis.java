@@ -34,8 +34,7 @@ public class TipoCroquis {
 		this.puestoService = puestoService;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
-			throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()))
 			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
@@ -90,37 +89,36 @@ public class TipoCroquis {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
-					actualizarExpedientes(pCampo, token);
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
+				actualizarExpedientes(pCampo);
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorText() == null) {
 			return pCampo;
-		} else {
-			PedidoVentaCaracteristicaDTO result = campoService.guardar(pCampo, token);
-			pCampo.setLlaveTabla(result.getLlaveTabla());
-			actualizarExpedientes(pCampo, token);
-			return result;
 		}
+		PedidoVentaCaracteristicaDTO result = campoService.guardar(pCampo);
+		pCampo.setLlaveTabla(result.getLlaveTabla());
+		actualizarExpedientes(pCampo);
+		return result;
+
 	}
 
-	private void actualizarExpedientes(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	private void actualizarExpedientes(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getExpedientes() != null) {
 			if (pCampo.getLlaveTabla() == null)
 				throw new ServerException("Revise porque la llave del campo es nula. Tipo Croquis");
@@ -131,7 +129,7 @@ public class TipoCroquis {
 						&& componente.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					PuestoDTO inactivar = new PuestoDTO();
 					inactivar.setLlaveTabla(componente.getLlaveTabla());
-					puestoService.inactivar(inactivar, token);
+					puestoService.inactivar(inactivar);
 				}
 			}
 			for (PedidoVentaDTO componente : pCampo.getExpedientes()) {
@@ -142,7 +140,7 @@ public class TipoCroquis {
 					nuevo.setCampo(pCampo.getLlaveTabla());
 					nuevo.setNombre(componente.getNombre());
 					nuevo.setImagen(componente.getImagen());
-					puestoService.guardar(nuevo, token);
+					puestoService.guardar(nuevo);
 				}
 			}
 		}

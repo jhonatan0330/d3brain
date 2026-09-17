@@ -9,19 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.MovimientoDTO;
 import d3.money.domain.MovimientoFilterDTO;
 import d3.money.domain.TurnoDTO;
 import d3.money.infrastructure.MovimientoMapper;
-
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("movimientoService")
 public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> {
@@ -31,9 +30,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	private final CuentaSvc cuentaService;
 	private final RolAccesoSvc rolService;
 
-	public MovimientoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy MovimientoMapper movimientoMapper,
+	public MovimientoSvc(@Lazy MovimientoMapper movimientoMapper,
 			@Lazy TurnoSvc turnoService, @Lazy CuentaSvc cuentaService, @Lazy RolAccesoSvc rolService) {
-		super(usuarioSesionService);
 		this.movimientoMapper = movimientoMapper;
 		this.turnoService = turnoService;
 		this.cuentaService = cuentaService;
@@ -55,25 +53,25 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	}
 
 	@Override
-	public MovimientoDTO activar(MovimientoDTO dto, String token) throws ServerException {
+	public MovimientoDTO activar(MovimientoDTO dto) throws ServerException {
 		throw new ServerException("Los movimientos de dinero no se pueden activar");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MovimientoDTO actualizar(MovimientoDTO dto, String token) throws ServerException {
+	public MovimientoDTO actualizar(MovimientoDTO dto) throws ServerException {
 		MovimientoDTO movimiento = consultaXId(dto.getLlaveTabla());
 //		movimiento.setAnterior(dto.getAnterior());
 //		movimiento.setSiguiente(dto.getSiguiente());
 //		movimiento.setSaldoInicial(dto.getSaldoInicial());
 //		movimiento.setSaldoFinal(dto.getSaldoFinal());
-		return super.actualizar(movimiento, token);
+		return super.actualizar(movimiento);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MovimientoDTO inactivar(MovimientoDTO dto, String token) throws ServerException {
-		MovimientoDTO movimiento = super.inactivar(dto, token);
+	public MovimientoDTO inactivar(MovimientoDTO dto) throws ServerException {
+		MovimientoDTO movimiento = super.inactivar(dto);
 		if (movimiento.getTipo().compareTo(MovimientoDTO.ENTRADA_INGRESO) == 0 && movimiento.getRelacionado() != null) {
 			if (consultaXId(movimiento.getRelacionado()).getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
 				throw new ServerException("Se debe anular el movimiento que origino la transferencia");
@@ -96,7 +94,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 						"No puede registrar un movimiento con fecha inferior a la fecha de conciliacion");
 		if (anterior != null) {
 			anterior.setSiguiente(movimiento.getSiguiente());
-			anterior = super.actualizar(anterior, token);
+			anterior = super.actualizar(anterior);
 		}
 		if (siguiente != null) {
 			siguiente.setAnterior(movimiento.getAnterior());
@@ -106,8 +104,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 				siguiente.setSaldoInicial(anterior.getSaldoFinal());
 			}
 			siguiente.setSaldoFinal(siguiente.getSaldoInicial().add(siguiente.getMontoAplicado()));
-			siguiente = super.actualizar(siguiente, token);
-			siguiente = recalcular(siguiente, sobregiro, token);
+			siguiente = super.actualizar(siguiente);
+			siguiente = recalcular(siguiente, sobregiro);
 		}
 		// No se usa porque anula
 		// if(dto.getSaldo().compareTo(dto.getSobregiro().negate())<0) throw new
@@ -122,14 +120,14 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		List<MovimientoDTO> relacionados = listarConsulta(relacionadoFilter);
 		if (relacionados != null && relacionados.size() != 0) {
 			for (MovimientoDTO movimientoDTO : relacionados) {
-				inactivar(movimientoDTO, token);
+				inactivar(movimientoDTO);
 			}
 		}
 		movimiento.setAnterior(null);
 		movimiento.setSiguiente(null);
 		movimiento.setSaldoInicial(BigDecimal.ZERO);
 		movimiento.setSaldoFinal(BigDecimal.ZERO);
-		return super.actualizar(movimiento, token);
+		return super.actualizar(movimiento);
 	}
 
 	public List<MovimientoDTO> obtenerMovimientoAnteriorFecha(MovimientoFilterDTO dto) throws ServerException {
@@ -158,7 +156,7 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public MovimientoDTO guardar(MovimientoDTO dto, String token) throws ServerException {
+	public MovimientoDTO guardar(MovimientoDTO dto) throws ServerException {
 		if (dto.getFechaEvento() == null)
 			throw new ServerException("Registra la fecha del movimiento");
 		dto.setFechaRegistro(new Date());
@@ -180,8 +178,8 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 			TurnoDTO turno = turnoService.consultarTurnoActual(turnoFilter);
 			if (turno != null) {
 				// hay un usuario automatico que debo dejar que haga el registro del turno
-				if (cuenta.getValidarTurno() && !rolService.usuarioPermisosCompletos(token)
-						&& turno.getUsuario().compareTo(getUserFlex(token)) != 0)
+				if (cuenta.getValidarTurno() && !rolService.usuarioPermisosCompletos()
+						&& turno.getUsuario().compareTo(SessionContext.getCurrentUser()) != 0)
 					throw new ServerException("Esta cuenta " + cuenta.getNombre() + " se encuentra ocupada por "
 							+ turno.getUsuarioNombre());
 				dto.setTurno(turno.getLlaveTabla());
@@ -249,38 +247,14 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 		dto.setSaldoInicial(BigDecimal.ZERO);
 		dto.setSaldoFinal(BigDecimal.ZERO);
 
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 
-		dto = reorganizar(dto, sobregiro, token);
-		recalcular(dto, sobregiro, token);
-		/*
-		 * if(dto.getTipo().compareTo(MovimientoDTO.TRANSFERENCIA)==0){ //Debo crear
-		 * otro movimiento para la cuenta destino con los valores contrarios
-		 * MovimientoDTO contra = new MovimientoDTO();
-		 * contra.setCuenta(dto.getCuentaDestino());
-		 * contra.setCuentaDestino(dto.getCuenta());
-		 * //contra.setDescripcion(dto.getDescripcion());
-		 * contra.setFechaEvento(dto.getFechaEvento());
-		 * contra.setFechaRegistro(dto.getFechaRegistro());
-		 * contra.setMonto(dto.getMonto()); contra.setMontoAplicado(dto.getMonto());
-		 * contra.setTipo(MovimientoDTO.ENTRADA_INGRESO);
-		 * contra.setTurno(dto.getTurno()); contra.setRelacionado(dto.getLlaveTabla());
-		 * 
-		 * contra.setCuentaPermisoUsuario(dto.getCuentaPermisoUsuarioDestino());
-		 * 
-		 * CuentaDTO cuentaDestino =cuentaService.consultaXId(dto.getCuentaDestino());
-		 * contra.setSaldoInicial(BigDecimal.ZERO);
-		 * contra.setSaldoFinal(BigDecimal.ZERO);
-		 * contra.setSecurityToken(dto.getSecurityToken());
-		 * 
-		 * contra = super.guardar(contra); contra = reorganizar(contra,
-		 * cuentaDestino.getSobregiro()); recalcular(contra,
-		 * cuentaDestino.getSobregiro()); }
-		 */
+		dto = reorganizar(dto, sobregiro);
+		recalcular(dto, sobregiro);
 		return dto;
 	}
 
-	private MovimientoDTO recalcular(MovimientoDTO inicial, BigDecimal valorMinimoCuenta, String token)
+	private MovimientoDTO recalcular(MovimientoDTO inicial, BigDecimal valorMinimoCuenta)
 			throws ServerException {
 		MovimientoDTO siguiente = null;
 		boolean modificado = false;// Para evitar en la audotria muchos cambios
@@ -301,14 +275,14 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 					throw new ServerException("La cuenta sobrepasa el limite de sobregiro. Saldo: "
 							+ siguiente.getSaldoFinal() + ". Sobregiro:" + valorMinimoCuenta + ". Fecha:"
 							+ siguiente.getFechaEvento() + ". Cuenta:" + inicial.getCuenta());
-				siguiente = super.actualizar(siguiente, token);
+				siguiente = super.actualizar(siguiente);
 			}
 			inicial = siguiente;
 		}
 		return inicial;
 	}
 
-	private MovimientoDTO reorganizar(MovimientoDTO inicial, BigDecimal valorMinimoCuenta, String token)
+	private MovimientoDTO reorganizar(MovimientoDTO inicial, BigDecimal valorMinimoCuenta)
 			throws ServerException {
 		// Busco el ultimo movimiento de la empresa
 		MovimientoFilterDTO anteriorFilter = new MovimientoFilterDTO();
@@ -336,10 +310,10 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 			if (ultimo.getSiguiente() != null) {
 				siguiente = consultaXId(ultimo.getSiguiente());
 				siguiente.setAnterior(inicial.getLlaveTabla());
-				siguiente = super.actualizar(siguiente, token);
+				siguiente = super.actualizar(siguiente);
 			}
 			ultimo.setSiguiente(inicial.getLlaveTabla());
-			ultimo = super.actualizar(ultimo, token);
+			ultimo = super.actualizar(ultimo);
 		} else {
 			MovimientoFilterDTO inicialFilter = new MovimientoFilterDTO();
 			inicialFilter.setCuenta(inicial.getCuenta());
@@ -353,10 +327,10 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 				siguiente = siguientes.get(0);
 				siguiente.setAnterior(inicial.getLlaveTabla());
 				inicial.setSiguiente(siguiente.getLlaveTabla());
-				super.actualizar(siguiente, token);
+				super.actualizar(siguiente);
 			}
 		}
-		return super.actualizar(inicial, token);
+		return super.actualizar(inicial);
 	}
 
 }

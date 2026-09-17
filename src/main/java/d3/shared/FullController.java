@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -237,40 +236,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPlantillaConsecutivo")
-	public PlantillaConsecutivoDTO activarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PlantillaConsecutivoDTO activarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto)
+			throws FlexException {
 		try {
-			return plantillaConsecutivoService.activar(dto, token);
+			return plantillaConsecutivoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarPlantillaConsecutivo")
-	public PlantillaConsecutivoDTO inactivarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PlantillaConsecutivoDTO inactivarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto)
+			throws FlexException {
 		try {
-			return plantillaConsecutivoService.inactivar(dto, token);
+			return plantillaConsecutivoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarPlantillaConsecutivo")
-	public PlantillaConsecutivoDTO actualizarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PlantillaConsecutivoDTO actualizarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto)
+			throws FlexException {
 		try {
-			return plantillaConsecutivoService.actualizar(dto, token);
+			return plantillaConsecutivoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPlantillaConsecutivo")
-	public PlantillaConsecutivoDTO guardarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PlantillaConsecutivoDTO guardarPlantillaConsecutivo(@RequestBody PlantillaConsecutivoDTO dto)
+			throws FlexException {
 		try {
-			return plantillaConsecutivoService.guardar(dto, token);
+			return plantillaConsecutivoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -306,40 +305,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarProceso")
-	public ProcesoDTO activarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ProcesoDTO activarProceso(@RequestBody ProcesoDTO dto) throws FlexException {
 		try {
-			return procesoService.activar(dto, token);
+			return procesoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarProceso")
-	public ProcesoDTO inactivarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ProcesoDTO inactivarProceso(@RequestBody ProcesoDTO dto) throws FlexException {
 		try {
-			return procesoService.inactivar(dto, token);
+			return procesoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarProceso")
-	public ProcesoDTO actualizarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ProcesoDTO actualizarProceso(@RequestBody ProcesoDTO dto) throws FlexException {
 		try {
-			return procesoService.actualizar(dto, token);
+			return procesoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarProceso")
-	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto) throws FlexException {
 		try {
-			return procesoService.guardar(dto, token);
+			return procesoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -394,40 +389,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarProcesoEstado")
-	public ProcesoEstadoDTO activarProcesoEstado(@RequestBody ProcesoEstadoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoEstadoDTO activarProcesoEstado(@RequestBody ProcesoEstadoDTO dto) throws FlexException {
 		try {
-			return procesoEstadoService.activar(dto, token);
+			return procesoEstadoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarProcesoEstado")
-	public ProcesoEstadoDTO inactivarProcesoEstado(@RequestBody ProcesoEstadoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoEstadoDTO inactivarProcesoEstado(@RequestBody ProcesoEstadoDTO dto) throws FlexException {
 		try {
-			return procesoEstadoService.inactivar(dto, token);
+			return procesoEstadoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarProcesoEstado")
-	public ProcesoEstadoDTO actualizarProcesoEstado(@RequestBody ProcesoEstadoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoEstadoDTO actualizarProcesoEstado(@RequestBody ProcesoEstadoDTO dto) throws FlexException {
 		try {
-			return procesoEstadoService.actualizar(dto, token);
+			return procesoEstadoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarProcesoEstado")
-	public ProcesoEstadoDTO guardarProcesoEstado(@RequestBody ProcesoEstadoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoEstadoDTO guardarProcesoEstado(@RequestBody ProcesoEstadoDTO dto) throws FlexException {
 		try {
-			return procesoEstadoService.guardar(dto, token);
+			return procesoEstadoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -467,10 +458,9 @@ public class FullController {
 
 	@PostMapping(value = "/activarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO activarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody ProcesoTransicionAutomaticaDTO dto) throws FlexException {
 		try {
-			return procesoTransicionAutomaticaService.activar(dto, token);
+			return procesoTransicionAutomaticaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -478,10 +468,9 @@ public class FullController {
 
 	@PostMapping(value = "/inactivarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO inactivarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody ProcesoTransicionAutomaticaDTO dto) throws FlexException {
 		try {
-			return procesoTransicionAutomaticaService.inactivar(dto, token);
+			return procesoTransicionAutomaticaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -489,10 +478,9 @@ public class FullController {
 
 	@PostMapping(value = "/actualizarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO actualizarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody ProcesoTransicionAutomaticaDTO dto) throws FlexException {
 		try {
-			return procesoTransicionAutomaticaService.actualizar(dto, token);
+			return procesoTransicionAutomaticaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -500,10 +488,9 @@ public class FullController {
 
 	@PostMapping(value = "/guardarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO guardarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody ProcesoTransicionAutomaticaDTO dto) throws FlexException {
 		try {
-			return procesoTransicionAutomaticaService.guardar(dto, token);
+			return procesoTransicionAutomaticaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -511,21 +498,9 @@ public class FullController {
 
 	@PostMapping(value = "/ejecutarProcesoTransicionAutomatica")
 	public ProcesoTransicionAutomaticaDTO ejecutarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody ProcesoTransicionAutomaticaDTO dto) throws FlexException {
 		try {
-			return procesoTransicionAutomaticaService.ejecutar(dto, token);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/programarProcesoTransicionAutomatica")
-	public ProcesoTransicionAutomaticaDTO programarProcesoTransicionAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
-		try {
-			return procesoTransicionAutomaticaService.programar(dto, token);
+			return procesoTransicionAutomaticaService.ejecutar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -565,10 +540,9 @@ public class FullController {
 
 	@PostMapping(value = "/activarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO activarDocumentoRelacionExpediente(
-			@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoRelacionExpedienteDTO dto) throws FlexException {
 		try {
-			return documentoRelacionExpedienteService.activar(dto, token);
+			return documentoRelacionExpedienteService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -576,10 +550,9 @@ public class FullController {
 
 	@PostMapping(value = "/inactivarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO inactivarDocumentoRelacionExpediente(
-			@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoRelacionExpedienteDTO dto) throws FlexException {
 		try {
-			return documentoRelacionExpedienteService.inactivar(dto, token);
+			return documentoRelacionExpedienteService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -587,10 +560,9 @@ public class FullController {
 
 	@PostMapping(value = "/actualizarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO actualizarDocumentoRelacionExpediente(
-			@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoRelacionExpedienteDTO dto) throws FlexException {
 		try {
-			return documentoRelacionExpedienteService.actualizar(dto, token);
+			return documentoRelacionExpedienteService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -598,10 +570,9 @@ public class FullController {
 
 	@PostMapping(value = "/guardarDocumentoRelacionExpediente")
 	public DocumentoRelacionExpedienteDTO guardarDocumentoRelacionExpediente(
-			@RequestBody DocumentoRelacionExpedienteDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoRelacionExpedienteDTO dto) throws FlexException {
 		try {
-			return documentoRelacionExpedienteService.guardar(dto, token);
+			return documentoRelacionExpedienteService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -630,10 +601,10 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/guardarDocumentoRelacionGestor")
-	public DocumentoRelacionGestorDTO guardarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoRelacionGestorDTO guardarDocumentoRelacionGestor(@RequestBody DocumentoRelacionGestorDTO dto)
+			throws FlexException {
 		try {
-			return documentoRelacionGestorService.guardar(dto, token);
+			return documentoRelacionGestorService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -684,10 +655,9 @@ public class FullController {
 
 	@PostMapping(value = "/activarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO activarDocumentoPlantillaCaracteristica(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoPlantillaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return documentoPlantillaCaracteristicaService.activar(dto, token);
+			return documentoPlantillaCaracteristicaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -695,10 +665,9 @@ public class FullController {
 
 	@PostMapping(value = "/inactivarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO inactivarDocumentoPlantillaCaracteristica(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoPlantillaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return documentoPlantillaCaracteristicaService.inactivar(dto, token);
+			return documentoPlantillaCaracteristicaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -706,10 +675,9 @@ public class FullController {
 
 	@PostMapping(value = "/actualizarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO actualizarDocumentoPlantillaCaracteristica(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoPlantillaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return documentoPlantillaCaracteristicaService.actualizar(dto, token);
+			return documentoPlantillaCaracteristicaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -717,10 +685,9 @@ public class FullController {
 
 	@PostMapping(value = "/guardarDocumentoPlantillaCaracteristica")
 	public DocumentoPlantillaCaracteristicaDTO guardarDocumentoPlantillaCaracteristica(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody DocumentoPlantillaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return documentoPlantillaCaracteristicaService.guardar(dto, token);
+			return documentoPlantillaCaracteristicaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -756,40 +723,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPedidoVenta")
-	public PedidoVentaDTO activarPedidoVenta(@RequestBody PedidoVentaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaDTO activarPedidoVenta(@RequestBody PedidoVentaDTO dto) throws FlexException {
 		try {
-			return pedidoVentaService.activar(dto, token);
+			return pedidoVentaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarPedidoVenta")
-	public PedidoVentaDTO inactivarPedidoVenta(@RequestBody PedidoVentaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaDTO inactivarPedidoVenta(@RequestBody PedidoVentaDTO dto) throws FlexException {
 		try {
-			return pedidoVentaService.inactivar(dto, token);
+			return pedidoVentaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarPedidoVenta")
-	public PedidoVentaDTO actualizarPedidoVenta(@RequestBody PedidoVentaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaDTO actualizarPedidoVenta(@RequestBody PedidoVentaDTO dto) throws FlexException {
 		try {
-			return crudService.update(dto, dto.getLlaveTabla(), token);
+			return crudService.update(dto, dto.getLlaveTabla());
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPedidoVenta")
-	public PedidoVentaDTO guardarPedidoVenta(@RequestBody PedidoVentaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaDTO guardarPedidoVenta(@RequestBody PedidoVentaDTO dto) throws FlexException {
 		try {
-			return crudService.save(dto, token, null);
+			return crudService.save(dto, null);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -798,7 +761,7 @@ public class FullController {
 	@PostMapping(value = "/consultaCompletaPedidoVenta")
 	public PedidoVentaDTO consultaCompletaPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws FlexException {
 		try {
-			return pedidoVentaService.consultaCompleta(dto.getLlaveTabla(), dto.getSecurityToken());
+			return pedidoVentaService.consultaCompleta(dto.getLlaveTabla());
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -848,10 +811,10 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPedidoVentaCaracteristica")
-	public PedidoVentaCaracteristicaDTO activarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaCaracteristicaDTO activarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto)
+			throws FlexException {
 		try {
-			return pedidoVentaCaracteristicaService.activar(dto, token);
+			return pedidoVentaCaracteristicaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -859,10 +822,9 @@ public class FullController {
 
 	@PostMapping(value = "/inactivarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO inactivarPedidoVentaCaracteristica(
-			@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody PedidoVentaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return pedidoVentaCaracteristicaService.inactivar(dto, token);
+			return pedidoVentaCaracteristicaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -870,20 +832,19 @@ public class FullController {
 
 	@PostMapping(value = "/actualizarPedidoVentaCaracteristica")
 	public PedidoVentaCaracteristicaDTO actualizarPedidoVentaCaracteristica(
-			@RequestBody PedidoVentaCaracteristicaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody PedidoVentaCaracteristicaDTO dto) throws FlexException {
 		try {
-			return pedidoVentaCaracteristicaService.actualizar(dto, token);
+			return pedidoVentaCaracteristicaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPedidoVentaCaracteristica")
-	public PedidoVentaCaracteristicaDTO guardarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PedidoVentaCaracteristicaDTO guardarPedidoVentaCaracteristica(@RequestBody PedidoVentaCaracteristicaDTO dto)
+			throws FlexException {
 		try {
-			return pedidoVentaCaracteristicaService.guardar(dto, token);
+			return pedidoVentaCaracteristicaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -931,40 +892,37 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarProcesoTransicion")
-	public ProcesoTransicionDTO activarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoTransicionDTO activarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto) throws FlexException {
 		try {
-			return procesoTransicionService.activar(dto, token);
+			return procesoTransicionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarProcesoTransicion")
-	public ProcesoTransicionDTO inactivarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoTransicionDTO inactivarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto) throws FlexException {
 		try {
-			return procesoTransicionService.inactivar(dto, token);
+			return procesoTransicionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarProcesoTransicion")
-	public ProcesoTransicionDTO actualizarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoTransicionDTO actualizarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto)
+			throws FlexException {
 		try {
-			return procesoTransicionService.actualizar(dto, token);
+			return procesoTransicionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarProcesoTransicion")
-	public ProcesoTransicionDTO guardarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ProcesoTransicionDTO guardarProcesoTransicion(@RequestBody ProcesoTransicionDTO dto) throws FlexException {
 		try {
-			return procesoTransicionService.guardar(dto, token);
+			return procesoTransicionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1002,40 +960,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarDocumentoPlantilla")
-	public DocumentoPlantillaDTO activarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoPlantillaDTO activarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.activar(dto, token);
+			return documentoPlantillaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarDocumentoPlantilla")
-	public DocumentoPlantillaDTO inactivarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoPlantillaDTO inactivarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.inactivar(dto, token);
+			return documentoPlantillaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarDocumentoPlantilla")
-	public DocumentoPlantillaDTO actualizarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoPlantillaDTO actualizarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.actualizar(dto, token);
+			return documentoPlantillaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarDocumentoPlantilla")
-	public DocumentoPlantillaDTO guardarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoPlantillaDTO guardarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.guardar(dto, token);
+			return documentoPlantillaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1045,37 +1003,36 @@ public class FullController {
 	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
 			throws FlexException {
 		try {
-			return documentoPlantillaService.consultaUsuario(dto);
+			return documentoPlantillaService.consultaUsuario();
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/obtenerCamposDocumentoPlantilla")
-	public TemplateDTO obtenerCamposDocumentoPlantilla(@RequestBody TemplateDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public TemplateDTO obtenerCamposDocumentoPlantilla(@RequestBody TemplateDTO dto) throws FlexException {
 		try {
-			return documentoPlantillaService.obtenerCampos(dto, token, true);
+			return documentoPlantillaService.obtenerCampos(dto, true);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/duplicarDocumentoPlantilla")
-	public DocumentoPlantillaDTO duplicarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public DocumentoPlantillaDTO duplicarDocumentoPlantilla(@RequestBody DocumentoPlantillaDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.duplicar(dto, token);
+			return documentoPlantillaService.duplicar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/consultaAdministradorDocumentoPlantilla")
-	public List<TemplateDTO> consultaAdministradorDocumentoPlantilla(
-			@RequestBody DocumentoPlantillaFilterDTO dto) throws FlexException {
+	public List<TemplateDTO> consultaAdministradorDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
+			throws FlexException {
 		try {
-			return documentoPlantillaService.consultaAdministrador(dto);
+			return documentoPlantillaService.consultaAdministrador();
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1111,40 +1068,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarMovimiento")
-	public MovimientoDTO activarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MovimientoDTO activarMovimiento(@RequestBody MovimientoDTO dto) throws FlexException {
 		try {
-			return movimientoService.activar(dto, token);
+			return movimientoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarMovimiento")
-	public MovimientoDTO inactivarMovimiento(@RequestBody MovimientoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MovimientoDTO inactivarMovimiento(@RequestBody MovimientoDTO dto) throws FlexException {
 		try {
-			return movimientoService.inactivar(dto, token);
+			return movimientoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarMovimiento")
-	public MovimientoDTO actualizarMovimiento(@RequestBody MovimientoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MovimientoDTO actualizarMovimiento(@RequestBody MovimientoDTO dto) throws FlexException {
 		try {
-			return movimientoService.actualizar(dto, token);
+			return movimientoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarMovimiento")
-	public MovimientoDTO guardarMovimiento(@RequestBody MovimientoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MovimientoDTO guardarMovimiento(@RequestBody MovimientoDTO dto) throws FlexException {
 		try {
-			return movimientoService.guardar(dto, token);
+			return movimientoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1200,40 +1153,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarCuenta")
-	public CuentaDTO activarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public CuentaDTO activarCuenta(@RequestBody CuentaDTO dto) throws FlexException {
 		try {
-			return cuentaService.activar(dto, token);
+			return cuentaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarCuenta")
-	public CuentaDTO inactivarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public CuentaDTO inactivarCuenta(@RequestBody CuentaDTO dto) throws FlexException {
 		try {
-			return cuentaService.inactivar(dto, token);
+			return cuentaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarCuenta")
-	public CuentaDTO actualizarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public CuentaDTO actualizarCuenta(@RequestBody CuentaDTO dto) throws FlexException {
 		try {
-			return cuentaService.actualizar(dto, token);
+			return cuentaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarCuenta")
-	public CuentaDTO guardarCuenta(@RequestBody CuentaDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public CuentaDTO guardarCuenta(@RequestBody CuentaDTO dto) throws FlexException {
 		try {
-			return cuentaService.guardar(dto, token);
+			return cuentaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1269,40 +1218,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarActividad")
-	public ActividadDTO activarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ActividadDTO activarActividad(@RequestBody ActividadDTO dto) throws FlexException {
 		try {
-			return actividadService.activar(dto, token);
+			return actividadService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarActividad")
-	public ActividadDTO inactivarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ActividadDTO inactivarActividad(@RequestBody ActividadDTO dto) throws FlexException {
 		try {
-			return actividadService.inactivar(dto, token);
+			return actividadService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarActividad")
-	public ActividadDTO actualizarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ActividadDTO actualizarActividad(@RequestBody ActividadDTO dto) throws FlexException {
 		try {
-			return actividadService.actualizar(dto, token);
+			return actividadService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarActividad")
-	public ActividadDTO guardarActividad(@RequestBody ActividadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ActividadDTO guardarActividad(@RequestBody ActividadDTO dto) throws FlexException {
 		try {
-			return actividadService.guardar(dto, token);
+			return actividadService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1338,40 +1283,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPropiedad")
-	public PropiedadDTO activarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PropiedadDTO activarPropiedad(@RequestBody PropiedadDTO dto) throws FlexException {
 		try {
-			return propiedadService.activar(dto, token);
+			return propiedadService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarPropiedad")
-	public PropiedadDTO inactivarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PropiedadDTO inactivarPropiedad(@RequestBody PropiedadDTO dto) throws FlexException {
 		try {
-			return propiedadService.inactivar(dto, token);
+			return propiedadService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarPropiedad")
-	public PropiedadDTO actualizarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PropiedadDTO actualizarPropiedad(@RequestBody PropiedadDTO dto) throws FlexException {
 		try {
-			return propiedadService.actualizar(dto, token);
+			return propiedadService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPropiedad")
-	public PropiedadDTO guardarPropiedad(@RequestBody PropiedadDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PropiedadDTO guardarPropiedad(@RequestBody PropiedadDTO dto) throws FlexException {
 		try {
-			return propiedadService.guardar(dto, token);
+			return propiedadService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1409,40 +1350,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarRelacionInterna")
-	public RelacionInternaDTO activarRelacionInterna(@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public RelacionInternaDTO activarRelacionInterna(@RequestBody RelacionInternaDTO dto) throws FlexException {
 		try {
-			return relacionInternaService.activar(dto, token);
+			return relacionInternaService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarRelacionInterna")
-	public RelacionInternaDTO inactivarRelacionInterna(@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public RelacionInternaDTO inactivarRelacionInterna(@RequestBody RelacionInternaDTO dto) throws FlexException {
 		try {
-			return relacionInternaService.inactivar(dto, token);
+			return relacionInternaService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarRelacionInterna")
-	public RelacionInternaDTO actualizarRelacionInterna(@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public RelacionInternaDTO actualizarRelacionInterna(@RequestBody RelacionInternaDTO dto) throws FlexException {
 		try {
-			return relacionInternaService.actualizar(dto, token);
+			return relacionInternaService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarRelacionInterna")
-	public RelacionInternaDTO guardarRelacionInterna(@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public RelacionInternaDTO guardarRelacionInterna(@RequestBody RelacionInternaDTO dto) throws FlexException {
 		try {
-			return relacionInternaService.guardar(dto, token);
+			return relacionInternaService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1480,40 +1417,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPropiedadValorDefinido")
-	public PropiedadValorDefinidoDTO activarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PropiedadValorDefinidoDTO activarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws FlexException {
 		try {
-			return propiedadValorDefinidoService.activar(dto, token);
+			return propiedadValorDefinidoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarPropiedadValorDefinido")
-	public PropiedadValorDefinidoDTO inactivarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PropiedadValorDefinidoDTO inactivarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws FlexException {
 		try {
-			return propiedadValorDefinidoService.inactivar(dto, token);
+			return propiedadValorDefinidoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarPropiedadValorDefinido")
-	public PropiedadValorDefinidoDTO actualizarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PropiedadValorDefinidoDTO actualizarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws FlexException {
 		try {
-			return propiedadValorDefinidoService.actualizar(dto, token);
+			return propiedadValorDefinidoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPropiedadValorDefinido")
-	public PropiedadValorDefinidoDTO guardarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public PropiedadValorDefinidoDTO guardarPropiedadValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws FlexException {
 		try {
-			return propiedadValorDefinidoService.guardar(dto, token);
+			return propiedadValorDefinidoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1521,12 +1458,8 @@ public class FullController {
 
 	@PostMapping(value = "/listarPorOrigenPropiedadValorDefinido")
 	public List<PropiedadValorDefinidoDTO> listarPorOrigenPropiedadValorDefinido(
-			@RequestBody PropiedadValorDefinidoFilterDTO dto) throws FlexException {
-		try {
-			return propiedadValorDefinidoService.listarPorOrigen(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
+			@RequestBody PropiedadValorDefinidoFilterDTO dto) {
+		return propiedadValorDefinidoService.listarPorOrigen(dto);
 	}
 
 	private final UsuarioRolSvc usuarioRolService;
@@ -1559,40 +1492,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarUsuarioRol")
-	public UsuarioRolDTO activarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public UsuarioRolDTO activarUsuarioRol(@RequestBody UsuarioRolDTO dto) throws FlexException {
 		try {
-			return usuarioRolService.activar(dto, token);
+			return usuarioRolService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarUsuarioRol")
-	public UsuarioRolDTO inactivarUsuarioRol(@RequestBody UsuarioRolDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolDTO inactivarUsuarioRol(@RequestBody UsuarioRolDTO dto) throws FlexException {
 		try {
-			return usuarioRolService.inactivar(dto, token);
+			return usuarioRolService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarUsuarioRol")
-	public UsuarioRolDTO actualizarUsuarioRol(@RequestBody UsuarioRolDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolDTO actualizarUsuarioRol(@RequestBody UsuarioRolDTO dto) throws FlexException {
 		try {
-			return usuarioRolService.actualizar(dto, token);
+			return usuarioRolService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarUsuarioRol")
-	public UsuarioRolDTO guardarUsuarioRol(@RequestBody UsuarioRolDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public UsuarioRolDTO guardarUsuarioRol(@RequestBody UsuarioRolDTO dto) throws FlexException {
 		try {
-			return usuarioRolService.guardar(dto, token);
+			return usuarioRolService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1628,40 +1557,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarPuesto")
-	public PuestoDTO activarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PuestoDTO activarPuesto(@RequestBody PuestoDTO dto) throws FlexException {
 		try {
-			return puestoService.activar(dto, token);
+			return puestoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarPuesto")
-	public PuestoDTO inactivarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PuestoDTO inactivarPuesto(@RequestBody PuestoDTO dto) throws FlexException {
 		try {
-			return puestoService.inactivar(dto, token);
+			return puestoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarPuesto")
-	public PuestoDTO actualizarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PuestoDTO actualizarPuesto(@RequestBody PuestoDTO dto) throws FlexException {
 		try {
-			return puestoService.actualizar(dto, token);
+			return puestoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarPuesto")
-	public PuestoDTO guardarPuesto(@RequestBody PuestoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public PuestoDTO guardarPuesto(@RequestBody PuestoDTO dto) throws FlexException {
 		try {
-			return puestoService.guardar(dto, token);
+			return puestoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1697,40 +1622,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarRolAcceso")
-	public RolAccesoDTO activarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public RolAccesoDTO activarRolAcceso(@RequestBody RolAccesoDTO dto) throws FlexException {
 		try {
-			return rolAccesoService.activar(dto, token);
+			return rolAccesoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarRolAcceso")
-	public RolAccesoDTO inactivarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public RolAccesoDTO inactivarRolAcceso(@RequestBody RolAccesoDTO dto) throws FlexException {
 		try {
-			return rolAccesoService.inactivar(dto, token);
+			return rolAccesoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarRolAcceso")
-	public RolAccesoDTO actualizarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public RolAccesoDTO actualizarRolAcceso(@RequestBody RolAccesoDTO dto) throws FlexException {
 		try {
-			return rolAccesoService.actualizar(dto, token);
+			return rolAccesoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarRolAcceso")
-	public RolAccesoDTO guardarRolAcceso(@RequestBody RolAccesoDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public RolAccesoDTO guardarRolAcceso(@RequestBody RolAccesoDTO dto) throws FlexException {
 		try {
-			return rolAccesoService.guardar(dto, token);
+			return rolAccesoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1766,40 +1687,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarWebService")
-	public WebServiceDTO activarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public WebServiceDTO activarWebService(@RequestBody WebServiceDTO dto) throws FlexException {
 		try {
-			return webServiceService.activar(dto, token);
+			return webServiceService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarWebService")
-	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto) throws FlexException {
 		try {
-			return webServiceService.inactivar(dto, token);
+			return webServiceService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarWebService")
-	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto) throws FlexException {
 		try {
-			return webServiceService.actualizar(dto, token);
+			return webServiceService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarWebService")
-	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto) throws FlexException {
 		try {
-			return webServiceService.guardar(dto, token);
+			return webServiceService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1835,40 +1752,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarMensaje")
-	public MensajeDTO activarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MensajeDTO activarMensaje(@RequestBody MensajeDTO dto) throws FlexException {
 		try {
-			return mensajeService.activar(dto, token);
+			return mensajeService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarMensaje")
-	public MensajeDTO inactivarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MensajeDTO inactivarMensaje(@RequestBody MensajeDTO dto) throws FlexException {
 		try {
-			return mensajeService.inactivar(dto, token);
+			return mensajeService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarMensaje")
-	public MensajeDTO actualizarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MensajeDTO actualizarMensaje(@RequestBody MensajeDTO dto) throws FlexException {
 		try {
-			return mensajeService.actualizar(dto, token);
+			return mensajeService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarMensaje")
-	public MensajeDTO guardarMensaje(@RequestBody MensajeDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public MensajeDTO guardarMensaje(@RequestBody MensajeDTO dto) throws FlexException {
 		try {
-			return mensajeService.guardar(dto, token);
+			return mensajeService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -1926,40 +1839,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarWebServiceEjecucion")
-	public WebServiceEjecucionDTO activarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceEjecucionDTO activarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto)
+			throws FlexException {
 		try {
-			return webServiceEjecucionService.activar(dto, token);
+			return webServiceEjecucionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarWebServiceEjecucion")
-	public WebServiceEjecucionDTO inactivarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceEjecucionDTO inactivarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto)
+			throws FlexException {
 		try {
-			return webServiceEjecucionService.inactivar(dto, token);
+			return webServiceEjecucionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarWebServiceEjecucion")
-	public WebServiceEjecucionDTO actualizarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceEjecucionDTO actualizarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto)
+			throws FlexException {
 		try {
-			return webServiceEjecucionService.actualizar(dto, token);
+			return webServiceEjecucionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarWebServiceEjecucion")
-	public WebServiceEjecucionDTO guardarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public WebServiceEjecucionDTO guardarWebServiceEjecucion(@RequestBody WebServiceEjecucionDTO dto)
+			throws FlexException {
 		try {
-			return webServiceEjecucionService.guardar(dto, token);
+			return webServiceEjecucionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2005,40 +1918,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarServidor")
-	public ServidorDTO activarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ServidorDTO activarServidor(@RequestBody ServidorDTO dto) throws FlexException {
 		try {
-			return servidorService.activar(dto, token);
+			return servidorService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarServidor")
-	public ServidorDTO inactivarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ServidorDTO inactivarServidor(@RequestBody ServidorDTO dto) throws FlexException {
 		try {
-			return servidorService.inactivar(dto, token);
+			return servidorService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarServidor")
-	public ServidorDTO actualizarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ServidorDTO actualizarServidor(@RequestBody ServidorDTO dto) throws FlexException {
 		try {
-			return servidorService.actualizar(dto, token);
+			return servidorService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarServidor")
-	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto) throws FlexException {
 		try {
-			return servidorService.guardar(dto, token);
+			return servidorService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2076,40 +1985,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO activarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MensajePlantillaCorreoDTO activarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws FlexException {
 		try {
-			return mensajePlantillaCorreoService.activar(dto, token);
+			return mensajePlantillaCorreoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO inactivarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MensajePlantillaCorreoDTO inactivarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws FlexException {
 		try {
-			return mensajePlantillaCorreoService.inactivar(dto, token);
+			return mensajePlantillaCorreoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO actualizarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MensajePlantillaCorreoDTO actualizarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws FlexException {
 		try {
-			return mensajePlantillaCorreoService.actualizar(dto, token);
+			return mensajePlantillaCorreoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO guardarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public MensajePlantillaCorreoDTO guardarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws FlexException {
 		try {
-			return mensajePlantillaCorreoService.guardar(dto, token);
+			return mensajePlantillaCorreoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2147,40 +2056,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarUsuarioRolProducto")
-	public UsuarioRolProductoDTO activarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolProductoDTO activarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto)
+			throws FlexException {
 		try {
-			return usuarioRolProductoService.activar(dto, token);
+			return usuarioRolProductoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarUsuarioRolProducto")
-	public UsuarioRolProductoDTO inactivarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolProductoDTO inactivarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto)
+			throws FlexException {
 		try {
-			return usuarioRolProductoService.inactivar(dto, token);
+			return usuarioRolProductoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarUsuarioRolProducto")
-	public UsuarioRolProductoDTO actualizarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolProductoDTO actualizarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto)
+			throws FlexException {
 		try {
-			return usuarioRolProductoService.actualizar(dto, token);
+			return usuarioRolProductoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarUsuarioRolProducto")
-	public UsuarioRolProductoDTO guardarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioRolProductoDTO guardarUsuarioRolProducto(@RequestBody UsuarioRolProductoDTO dto)
+			throws FlexException {
 		try {
-			return usuarioRolProductoService.guardar(dto, token);
+			return usuarioRolProductoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2216,40 +2125,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarReporteBase")
-	public ReporteBaseDTO activarReporteBase(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteBaseDTO activarReporteBase(@RequestBody ReporteBaseDTO dto) throws FlexException {
 		try {
-			return reporteBaseService.activar(dto, token);
+			return reporteBaseService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarReporteBase")
-	public ReporteBaseDTO inactivarReporteBase(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteBaseDTO inactivarReporteBase(@RequestBody ReporteBaseDTO dto) throws FlexException {
 		try {
-			return reporteBaseService.inactivar(dto, token);
+			return reporteBaseService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarReporteBase")
-	public ReporteBaseDTO actualizarReporteBase(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteBaseDTO actualizarReporteBase(@RequestBody ReporteBaseDTO dto) throws FlexException {
 		try {
-			return reporteBaseService.actualizar(dto, token);
+			return reporteBaseService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarReporteBase")
-	public ReporteBaseDTO guardarReporteBase(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteBaseDTO guardarReporteBase(@RequestBody ReporteBaseDTO dto) throws FlexException {
 		try {
-			return reporteBaseService.guardar(dto, token);
+			return reporteBaseService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2287,50 +2192,50 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO activarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioOrganizacionDTO activarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioOrganizacionService.activar(dto, token);
+			return usuarioOrganizacionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO inactivarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioOrganizacionDTO inactivarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioOrganizacionService.inactivar(dto, token);
+			return usuarioOrganizacionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO actualizarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioOrganizacionDTO actualizarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioOrganizacionService.actualizar(dto, token);
+			return usuarioOrganizacionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO guardarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioOrganizacionDTO guardarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioOrganizacionService.guardar(dto, token);
+			return usuarioOrganizacionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/sincronizarUsuariosUsuarioOrganizacion")
-	public List<UsuarioOrganizacionDTO> sincronizarUsuariosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public List<UsuarioOrganizacionDTO> sincronizarUsuariosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioOrganizacionService.sincronizarUsuarios(dto, token);
+			return usuarioOrganizacionService.sincronizarUsuarios(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2370,10 +2275,9 @@ public class FullController {
 
 	@PostMapping(value = "/activarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO activarUsuarioAutenticacionAutorizacion(
-			@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody UsuarioAutenticacionAutorizacionDTO dto) throws FlexException {
 		try {
-			return usuarioAutenticacionAutorizacionService.activar(dto, token);
+			return usuarioAutenticacionAutorizacionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2381,10 +2285,9 @@ public class FullController {
 
 	@PostMapping(value = "/inactivarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO inactivarUsuarioAutenticacionAutorizacion(
-			@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody UsuarioAutenticacionAutorizacionDTO dto) throws FlexException {
 		try {
-			return usuarioAutenticacionAutorizacionService.inactivar(dto, token);
+			return usuarioAutenticacionAutorizacionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2392,10 +2295,9 @@ public class FullController {
 
 	@PostMapping(value = "/actualizarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO actualizarUsuarioAutenticacionAutorizacion(
-			@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody UsuarioAutenticacionAutorizacionDTO dto) throws FlexException {
 		try {
-			return usuarioAutenticacionAutorizacionService.actualizar(dto, token);
+			return usuarioAutenticacionAutorizacionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2403,10 +2305,9 @@ public class FullController {
 
 	@PostMapping(value = "/guardarUsuarioAutenticacionAutorizacion")
 	public UsuarioAutenticacionAutorizacionDTO guardarUsuarioAutenticacionAutorizacion(
-			@RequestBody UsuarioAutenticacionAutorizacionDTO dto, @RequestHeader("Authorization") String token)
-			throws FlexException {
+			@RequestBody UsuarioAutenticacionAutorizacionDTO dto) throws FlexException {
 		try {
-			return usuarioAutenticacionAutorizacionService.guardar(dto, token);
+			return usuarioAutenticacionAutorizacionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2444,40 +2345,36 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarReporteEjecucion")
-	public ReporteEjecucionDTO activarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteEjecucionDTO activarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto) throws FlexException {
 		try {
-			return reporteEjecucionService.activar(dto, token);
+			return reporteEjecucionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarReporteEjecucion")
-	public ReporteEjecucionDTO inactivarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteEjecucionDTO inactivarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto) throws FlexException {
 		try {
-			return reporteEjecucionService.inactivar(dto, token);
+			return reporteEjecucionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarReporteEjecucion")
-	public ReporteEjecucionDTO actualizarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteEjecucionDTO actualizarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto) throws FlexException {
 		try {
-			return reporteEjecucionService.actualizar(dto, token);
+			return reporteEjecucionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarReporteEjecucion")
-	public ReporteEjecucionDTO guardarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ReporteEjecucionDTO guardarReporteEjecucion(@RequestBody ReporteEjecucionDTO dto) throws FlexException {
 		try {
-			return reporteEjecucionService.guardar(dto, token);
+			return reporteEjecucionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2513,50 +2410,45 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarConsecutivo")
-	public ConsecutivoDTO activarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ConsecutivoDTO activarConsecutivo(@RequestBody ConsecutivoDTO dto) throws FlexException {
 		try {
-			return consecutivoService.activar(dto, token);
+			return consecutivoService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarConsecutivo")
-	public ConsecutivoDTO inactivarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ConsecutivoDTO inactivarConsecutivo(@RequestBody ConsecutivoDTO dto) throws FlexException {
 		try {
-			return consecutivoService.inactivar(dto, token);
+			return consecutivoService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarConsecutivo")
-	public ConsecutivoDTO actualizarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ConsecutivoDTO actualizarConsecutivo(@RequestBody ConsecutivoDTO dto) throws FlexException {
 		try {
-			return consecutivoService.actualizar(dto, token);
+			return consecutivoService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarConsecutivo")
-	public ConsecutivoDTO guardarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ConsecutivoDTO guardarConsecutivo(@RequestBody ConsecutivoDTO dto) throws FlexException {
 		try {
-			return consecutivoService.guardar(dto, token);
+			return consecutivoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/asignarConsecutivoConsecutivo")
-	public ConsecutivoDTO asignarConsecutivoConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public ConsecutivoDTO asignarConsecutivoConsecutivo(@RequestBody ConsecutivoDTO dto) throws FlexException {
 		try {
-			return consecutivoService.asignarConsecutivo(dto, token);
+			return consecutivoService.asignarConsecutivo(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2594,40 +2486,40 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO activarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioAutenticacionDTO activarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioAutenticacionService.activar(dto, token);
+			return usuarioAutenticacionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO inactivarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioAutenticacionDTO inactivarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioAutenticacionService.inactivar(dto, token);
+			return usuarioAutenticacionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO actualizarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioAutenticacionDTO actualizarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioAutenticacionService.actualizar(dto, token);
+			return usuarioAutenticacionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO guardarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public UsuarioAutenticacionDTO guardarUsuarioAutenticacion(@RequestBody UsuarioAutenticacionDTO dto)
+			throws FlexException {
 		try {
-			return usuarioAutenticacionService.guardar(dto, token);
+			return usuarioAutenticacionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
@@ -2674,47 +2566,43 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/activarOrganizacion")
-	public OrganizacionDTO activarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public OrganizacionDTO activarOrganizacion(@RequestBody OrganizacionDTO dto) throws FlexException {
 		try {
-			return organizacionService.activar(dto, token);
+			return organizacionService.activar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/inactivarOrganizacion")
-	public OrganizacionDTO inactivarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public OrganizacionDTO inactivarOrganizacion(@RequestBody OrganizacionDTO dto) throws FlexException {
 		try {
-			return organizacionService.inactivar(dto, token);
+			return organizacionService.inactivar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/actualizarOrganizacion")
-	public OrganizacionDTO actualizarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public OrganizacionDTO actualizarOrganizacion(@RequestBody OrganizacionDTO dto) throws FlexException {
 		try {
-			return organizacionService.actualizar(dto, token);
+			return organizacionService.actualizar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/guardarOrganizacion")
-	public OrganizacionDTO guardarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws FlexException {
+	public OrganizacionDTO guardarOrganizacion(@RequestBody OrganizacionDTO dto) throws FlexException {
 		try {
-			return organizacionService.guardar(dto, token);
+			return organizacionService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}
 	}
 
 	@PostMapping(value = "/obtenerPrincipalOrganizacion")
-	public OrganizacionDTO obtenerPrincipalOrganizacion(@RequestBody OrganizacionFilterDTO dto) throws FlexException {
+	public OrganizacionDTO obtenerPrincipalOrganizacion() throws FlexException {
 		try {
 			return organizacionService.obtenerPrincipal();
 		} catch (ServerException e) {

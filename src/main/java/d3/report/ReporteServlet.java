@@ -10,11 +10,12 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Lazy;
 
-import d3.shared.application.D3Utils;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;
-
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.application.SharedTokenService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,9 +25,11 @@ public class ReporteServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private final ReporteBaseSvc reporteBaseService;
+	private final SharedTokenService sharedTokenService;
 
-	public ReporteServlet(@Lazy ReporteBaseSvc reportingSvc) {
+	public ReporteServlet(@Lazy ReporteBaseSvc reportingSvc, SharedTokenService sharedTokenService) {
 		this.reporteBaseService = reportingSvc;
+		this.sharedTokenService = sharedTokenService;
 	}
 
 	public void downloadFile(HttpServletResponse response, byte[] pInputStream, String fileName) {
@@ -82,13 +85,17 @@ public class ReporteServlet extends HttpServlet {
 			String nombreReporte = request.getParameter("nombre");
 			if (nombreReporte == null)
 				nombreReporte = request.getParameter("n");
-			ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombreReporte, request.getParameter("P_TOKEN"));
+			String pTokenInUrl = request.getParameter("P_TOKEN");
+			if(pTokenInUrl != null){
+				SessionContext.setCurrent(sharedTokenService.validate(pTokenInUrl, request));
+			}
+			ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombreReporte);
 			// Esto debo cambiarlo despues con una validacion de permisos del usuario, por
 			// el momento deje asi
 			Map<String, Object> parametrosJasper = new HashMap<String, Object>();
 			// seccion de parametros
 			for (Enumeration<String> parametros = request.getParameterNames(); parametros.hasMoreElements();) {
-				String parametro = (String) parametros.nextElement();
+				String parametro = parametros.nextElement();
 				Timestamp date = D3Utils.verificarFechaHora(request.getParameter(parametro));
 				if (date == null) {
 					String parametroUpper = parametro.toUpperCase();
@@ -103,8 +110,7 @@ public class ReporteServlet extends HttpServlet {
 			}
 			String key = request.getParameter(ReporteBaseSvc.P_KEY);
 
-			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper,
-					request.getParameter("P_TOKEN"));
+			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametrosJasper);
 			if (resultado != null && resultado.getContent() != null) {
 				// InputStream input = new ByteArrayInputStream(resultado.getContent());
 				String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");

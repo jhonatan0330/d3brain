@@ -41,7 +41,7 @@ public class VoucherDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse callById(String pVoucherId, String pToken) throws ServerException {
+	public SharedIdResponse callById(String pVoucherId) throws ServerException {
 		VoucherDTO _voucher = voucherService.getById(pVoucherId);
 		if (_voucher == null)
 			throw new ServerException("No se encontro un voucher con el id " + pVoucherId);
@@ -69,7 +69,7 @@ public class VoucherDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public void callByDocument(String pDocumentId, String pTemplate, String pToken) throws ServerException {
+	public void callByDocument(String pDocumentId, String pTemplate) throws ServerException {
 
 		List<PropiedadDTO> _prop = cacheService.getByValueWithoutField(PropiedadValorDefinidoDTO.API_SERVICE,
 				Propiedades.TEMPLATE_VOUCHER, pTemplate, null);
@@ -81,7 +81,7 @@ public class VoucherDeleteService {
 		_filter.setState(SharedConstants.STATE_ACTIVE);
 		List<VoucherDTO> _vouchers = voucherService.getMany(_filter);
 		for (VoucherDTO voucherDTO : _vouchers) {
-			callById(voucherDTO.getKey(), pToken);
+			callById(voucherDTO.getKey());
 		}
 
 		for (PropiedadDTO propiedadDTO : _prop) {

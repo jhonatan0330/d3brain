@@ -49,7 +49,7 @@ public class TipoDisponibilidad {
 		this.findFieldService = findFieldService;
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
@@ -57,44 +57,42 @@ public class TipoDisponibilidad {
 			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorText() == null) {
 			return pCampo;
-		} else {
-			pCampo = campoService.guardar(pCampo, token);
-			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
-				pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-						pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
-			}
-			return pCampo;
 		}
+		pCampo = campoService.guardar(pCampo);
+		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
+			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
+					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+		}
+		return pCampo;
+
 	}
 
-	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// Retire algo que tenia que ver con el valor opcion ver hisotiral
 		String producto = Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.PRODUCTO_PUESTO);
 		if (!producto.isEmpty()) {
 			if (!pCampo.getModificado())
 				pCampo.setDetalles(detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), null, null, null,
-						token, null, null, pCampo.getLlaveTabla()));
+						null, null, pCampo.getLlaveTabla()));
 		}
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
-		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo(),
-				pCampo.getSecurityToken());
+		DocumentoPlantillaCaracteristicaDTO pBase = baseService.consultaUnicaConComplementos(pCampo.getCampo());
 		List<PuestoDTO> componentesActuales = getOptionsToSelect(pCampo.getDependientes(), pBase);
 		if (componentesActuales != null && !componentesActuales.isEmpty()) {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
@@ -105,7 +103,7 @@ public class TipoDisponibilidad {
 			if (funcion != null) {
 				campoService.validarDependientes(pBase, pCampo.getDependientes());
 				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-						funcion.getLlaveTabla(), pCampo.getDocumento(), pCampo.getSecurityToken(),
+						funcion.getLlaveTabla(), pCampo.getDocumento(),
 						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
@@ -129,7 +127,7 @@ public class TipoDisponibilidad {
 		}
 		String producto = Propiedades.obtenerValor(pBase, Propiedades.PRODUCTO_PUESTO);
 		if (!producto.isEmpty()) {
-			pBase.setProductos(inventoryService.getCompleteDetailFromProductId(producto, pCampo.getSecurityToken()));
+			pBase.setProductos(inventoryService.getCompleteDetailFromProductId(producto));
 		}
 		pCampo.setCampoDTO(pBase);
 		return pCampo;
@@ -188,8 +186,7 @@ public class TipoDisponibilidad {
 		return componente;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
-			throws ServerException {
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		String[] locations = null;
 		if (pCampo.getValorText() != null && pCampo.getValorText().isEmpty())
 			pCampo.setValorText(null);
@@ -236,7 +233,7 @@ public class TipoDisponibilidad {
 			if (funcion != null) {
 				campoService.validarDependientes(pCampo.getCampoDTO(), pCampo.getDependientes());
 				List<PedidoVentaCaracteristicaDTO> ocupados = campoService.camposOcupadosCroquis(
-						funcion.getLlaveTabla(), pCampo.getLlaveTabla(), token,
+						funcion.getLlaveTabla(), pCampo.getLlaveTabla(),
 						campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 				if (ocupados != null && !ocupados.isEmpty()) {
 					for (PedidoVentaCaracteristicaDTO iOcupado : ocupados) {
@@ -267,7 +264,7 @@ public class TipoDisponibilidad {
 			}
 			if (pCampo.getDocumento() != null) {
 				pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), null,
-						token, null, pCampo.getLlaveTabla()));
+						null, pCampo.getLlaveTabla()));
 			} else {
 				pCampo.setDetalles(agrupados);
 			}

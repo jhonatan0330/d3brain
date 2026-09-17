@@ -3,6 +3,7 @@ package d3.massiveload.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import d3.document.application.field.CampoAdaptador;
@@ -14,8 +15,6 @@ import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 
-import org.springframework.context.annotation.Lazy;
-
 @Service
 public class MassiveValidationService {
 
@@ -25,7 +24,7 @@ public class MassiveValidationService {
 		this.adaptador = adaptador;
 	}
 
-	public List<DocumentMessage> validate(PedidoVentaDTO document, TemplateDTO template, String token) {
+	public List<DocumentMessage> validate(PedidoVentaDTO document, TemplateDTO template) {
 		List<DocumentMessage> messages = new ArrayList<>();
 		if (document.getCaracteristicas() == null) {
 			messages.add(message("Es necesario registrar informacion adicional."));
@@ -52,7 +51,7 @@ public class MassiveValidationService {
 				continue;
 			}
 			try {
-				adaptador.validarPrepararCampo(campo, token, false);
+				adaptador.validarPrepararCampo(campo, false);
 			} catch (ServerException e) {
 				messages.add(message("Campo " + campoPlantilla.getNombre() + ": " + e.getMessage()));
 			}

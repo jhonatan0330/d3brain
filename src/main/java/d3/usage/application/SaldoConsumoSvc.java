@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.PostConstruct;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.usage.domain.ConsumoUnidadConstantes;
 import d3.usage.domain.SaldoConsumoDTO;
 import d3.usage.domain.SaldoConsumoFilterDTO;
@@ -25,9 +24,8 @@ public class SaldoConsumoSvc extends BasicSvc<SaldoConsumoDTO, SaldoConsumoFilte
 	private final SaldoConsumoMapper saldoConsumoMapper;
 	private final MovimientoConsumoSvc movimientoConsumoService;
 
-	public SaldoConsumoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public SaldoConsumoSvc(
 			@Lazy SaldoConsumoMapper saldoConsumoMapper, @Lazy MovimientoConsumoSvc movimientoConsumoService) {
-		super(usuarioSesionService);
 		this.saldoConsumoMapper = saldoConsumoMapper;
 		this.movimientoConsumoService = movimientoConsumoService;
 	}

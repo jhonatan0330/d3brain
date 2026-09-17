@@ -28,12 +28,12 @@ public class CallDocumentListBySQLFunction {
 		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
 	}
 
-	public List<PedidoVentaDTO> execute(DocumentoPlantillaCaracteristicaDTO pBase,
+	public List<PedidoVentaDTO> execute(
 			DocumentoPlantillaCaracteristicaDTO campo, List<PedidoVentaCaracteristicaDTO> dependientes,
-			PedidoVentaFilterDTO entityFilter, PropiedadDTO funcionConsulta, String campoValor, String token)
+			PedidoVentaFilterDTO entityFilter, PropiedadDTO funcionConsulta, String campoValor)
 			throws ServerException {
 		List<PedidoVentaDTO> result = executeWithoutDetailDocument(campo, dependientes, entityFilter, funcionConsulta);
-		return listDocumentWithFiltersFunction.listadoCompleto(result, token, campoValor);
+		return listDocumentWithFiltersFunction.listadoCompleto(result,  campoValor);
 	}
 
 	public List<PedidoVentaDTO> executeWithoutDetailDocument(DocumentoPlantillaCaracteristicaDTO campo,

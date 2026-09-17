@@ -173,29 +173,7 @@
 	<update id="actualizarEstados" parameterType="ProcesoEstadoDTO" >
 		update pedidoventa_pdvp set cpdv_estado = #{estadoDocumento} where cpdv_estadoexpediente = #{llaveTabla}
 	</update >
-	<select id="actualizarCierreResponsable" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
-		update actividad_actp 
-		set cact_estado = 'I', 
-		cact_usuarioinactivo = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}), 
-		dact_fechainactivo = now() 
-		where 
-		cact_estado = 'A' 
-		and cact_documento in (select cpdv_llave from pedidoventa_pdvp where cpdv_estadoexpediente = #{llaveTabla})
-		<if test="encargado!=null"> and cact_responsable = (select cerl_usuario from usuariorol_erlp where cerl_documento = #{encargado} and cerl_estado = 'A')</if>
-	</select>
-	<select id="actualizarIngresoResponsable" parameterType="ProcesoEstadoDTO" resultType="ProcesoEstadoDTO">
-		insert into actividad_actp (cact_llave, cact_documento, cact_responsable, cact_usuarioregistro, dact_fecharegistro) 		
-		select 
-			replace((md5(random()::text || clock_timestamp()::text)::uuid)::text, '-',''), 
-			cpdv_llave,
-			(select cerl_usuario from usuariorol_erlp where cerl_documento = #{encargado} and cerl_estado = 'A'), 
-			(select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}),
-			now()
-		from pedidoventa_pdvp 
-		where 
-			cpdv_estadoexpediente = #{llaveTabla}
-				and (select cact_llave from actividad_actp where cact_documento = cpdv_llave and cact_estado = 'A') is null
-	</select>
+
 	
 	<select id="funcionAsignacion" resultType="java.lang.String">
 		select propiedad_${estado} (#{documento}, #{modificador}, #{token})

@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -23,6 +21,9 @@ import d3.process.domain.DocumentoPlantillaDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.report.domain.ReporteBaseFilterDTO;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service("HomologatePrepareService")
 public class HomologateAdapterService {
@@ -68,14 +69,13 @@ public class HomologateAdapterService {
 		this.productStockDeductionHomologate = productStockDeductionHomologate;
 	}
 
-	public void call(PropiedadDTO dto, String token) throws ServerException {
+	public void call(PropiedadDTO dto) throws ServerException {
 		DocumentoPlantillaDTO plantillaPrincipal = plantillaService.consultaXId(dto.getCampo());
 		switch (dto.getKey()) {
 		case Propiedades.PLANTILLA_TIPO_CUENTA:
 			break;
 		case Propiedades.PLANTILLA_TIPO_PRODUCTO:
-			productHomologate.createProductFields(plantillaPrincipal.getLlaveTabla(), token, campoService,
-					propertyService);
+			productHomologate.createProductFields(plantillaPrincipal.getLlaveTabla(), campoService, propertyService);
 			break;
 		case Propiedades.PLANTILLA_TIPO_REPORTE:
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
@@ -86,19 +86,18 @@ public class HomologateAdapterService {
 				reporte.setDescripcion("PENDIENTE");
 				reporte.setNombre(plantillaPrincipal.getNombre());
 				reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
-				reporte = reporteService.guardar(reporte, token);
+				reporte = reporteService.guardar(reporte);
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
-						reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1", token), token);
-				campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), token, true);
+						reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1"));
+				campoService.crearCampoTiempoReporte(plantillaPrincipal.getLlaveTabla(), true);
 
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
+						plantillaPrincipal.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1"));
 				// Esto es un truco para crear un query report de una plantilla
 				// Quedo pendiente
 				if (dto.getUsuarioExcluyenteNombre() != null) {
 					propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
-							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY,
-							generateScriptToTemplate(dto.getUsuarioExcluyenteNombre()), token), token);
+							reporte.getLlaveTabla(), Propiedades.REPORT_QUERY, generateScriptToTemplate(dto.getUsuarioExcluyenteNombre())));
 				}
 			}
 			break;
@@ -110,19 +109,19 @@ public class HomologateAdapterService {
 			if (rolFiltro == null) {// Si la propiedad ya se genero no hay que duplicar
 				RolAccesoDTO nuevo = new RolAccesoDTO();
 				nuevo.setPlantilla(plantillaPrincipal.getLlaveTabla());
-				nuevo = rolService.guardar(nuevo, token);
+				nuevo = rolService.guardar(nuevo);
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*", token), token);
+						plantillaPrincipal.getLlaveTabla(), Propiedades.DESCRIPCION, "*"));
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.CONSECUTIVO, "*", token), token);
+						plantillaPrincipal.getLlaveTabla(), Propiedades.CONSECUTIVO, "*"));
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.CORREO_ROL, "*", token), token);
+						plantillaPrincipal.getLlaveTabla(), Propiedades.CORREO_ROL, "*"));
 				propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-						plantillaPrincipal.getLlaveTabla(), Propiedades.CELULAR_ROL, "*", token), token);
+						plantillaPrincipal.getLlaveTabla(), Propiedades.CELULAR_ROL, "*"));
 			}
 			break;
 		case Propiedades.PLANTILLA_TIPO_CONFIGURATION:
-			adapterConfiguration(plantillaPrincipal.getLlaveTabla(), dto.getValor(), token);
+			adapterConfiguration(plantillaPrincipal.getLlaveTabla(), dto.getValor());
 			break;
 		}
 	}
@@ -130,7 +129,7 @@ public class HomologateAdapterService {
 	private String generateScriptToTemplate(String templateId) throws ServerException {
 		DocumentoPlantillaDTO dp = plantillaService.consultaXId(templateId);
 		String result = "select d.cpdv_nombre as \"CODIGO\"";
-		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId, null);
+		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId);
 		for (DocumentoPlantillaCaracteristicaDTO iField : fields) {
 
 			switch (iField.getFormato()) {
@@ -162,37 +161,37 @@ public class HomologateAdapterService {
 		return result;
 	}
 
-	private void adapterConfiguration(String templateId, String propValue, String token) throws ServerException {
+	private void adapterConfiguration(String templateId, String propValue) throws ServerException {
 		if (propValue == null)
 			return;
 		switch (propValue) {
 		case ConfigEnum.TARIFARIO: {
-			tariffHomologate.createTariffFields(templateId, token, campoService, propertyService, crudService,
-					campoService.getUserFlex(token));
+			tariffHomologate.createTariffFields(templateId, campoService, propertyService, crudService,
+					SessionContext.getCurrentUser());
 			break;
 		}
 		case ConfigEnum.TARIFA: {
-			feeHomologate.createFeeFields(templateId, token, campoService, propertyService, crudService);
+			feeHomologate.createFeeFields(templateId, campoService, propertyService, crudService);
 			break;
 		}
 		case ConfigEnum.FAQ: {
-			faqHomologate.createFaqFields(templateId, token, campoService, propertyService);
+			faqHomologate.createFaqFields(templateId, campoService, propertyService);
 			break;
 		}
 		case ConfigEnum.CATALOG: {
-			catalogHomologate.createCatalogFields(templateId, token, campoService, propertyService);
+			catalogHomologate.createCatalogFields(templateId, campoService, propertyService);
 			break;
 		}
 		case ConfigEnum.ACCOUNT: {
-			accountHomologate.createAccountFields(templateId, token, campoService, propertyService);
+			accountHomologate.createAccountFields(templateId, campoService, propertyService);
 			break;
 		}
 		case ConfigEnum.PRODUCTO_COMPOSICION: {
-			productStockDeductionHomologate.createFields(templateId, token, campoService, propertyService, crudService);
+			productStockDeductionHomologate.createFields(templateId, campoService, propertyService, crudService);
 			break;
 		}
 		case ConfigEnum.PRODUCTO_INVENTARIO: {
-			productStockHomologate.createFields(templateId, token, campoService, propertyService, crudService);
+			productStockHomologate.createFields(templateId, campoService, propertyService, crudService);
 			break;
 		}
 		default:
@@ -200,14 +199,14 @@ public class HomologateAdapterService {
 		}
 	}
 
-	public void createFromDocument(PedidoVentaDTO document, String propValue, String token) throws ServerException {
+	public void createFromDocument(PedidoVentaDTO document, String propValue) throws ServerException {
 		switch (propValue) {
 		case ConfigEnum.TARIFARIO: {
 			tariffHomologate.createTariff(document);
 			break;
 		}
 		case ConfigEnum.TARIFA: {
-			feeHomologate.createFee(document, token, crudService);
+			feeHomologate.createFee(document);
 			break;
 		}
 		case ConfigEnum.CATALOG: {
@@ -223,7 +222,7 @@ public class HomologateAdapterService {
 			break;
 		}
 		case ConfigEnum.PRODUCTO_INVENTARIO: {
-			productStockHomologate.create(document, token);
+			productStockHomologate.create(document);
 			break;
 		}
 		default:
@@ -231,13 +230,13 @@ public class HomologateAdapterService {
 		}
 	}
 
-	public void crearProducto(PedidoVentaDTO documento, String token) throws ServerException {
-		productHomologate.crearDesdeDocumento(documento, token);
+	public void crearProducto(PedidoVentaDTO documento) throws ServerException {
+		productHomologate.crearDesdeDocumento(documento);
 	}
 
 	// Este metodo habia desaparecido pero es necesario para poder abrir los turnos
 	// de una caja
-	public void crearCuenta(PedidoVentaDTO dto, String token) throws ServerException {
-		cuentaService.crearCuenta(dto, token);
+	public void crearCuenta(PedidoVentaDTO dto) throws ServerException {
+		cuentaService.crearCuenta(dto);
 	}
 }

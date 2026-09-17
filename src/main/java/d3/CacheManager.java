@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
-import d3.authentication.domain.UsuarioSesionDTO;
+import d3.shared.domain.SharedToken;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -142,11 +142,11 @@ public class CacheManager {
 		current().setMainUserMail(mainUserMail);
 	}
 
-	public Map<String, UsuarioSesionDTO> getSessionMap() {
+	public Map<String, SharedToken> getSessionMap() {
 		return current().getSessionMap();
 	}
 
-	public void setSessionMap(Map<String, UsuarioSesionDTO> sessionMap) {
+	public void setSessionMap(Map<String, SharedToken> sessionMap) {
 		current().getSessionMap().clear();
 		if (sessionMap != null) {
 			current().getSessionMap().putAll(sessionMap);
@@ -262,7 +262,7 @@ public class CacheManager {
 		return current().getPropByKey().get(key);
 	}
 
-	public void putSession(String sessionId, UsuarioSesionDTO session) {
+	public void putSession(String sessionId, SharedToken session) {
 		if(session == null) return;
 		TenantCacheState state = current();
 		state.getSessionMap().put(sessionId, session);
@@ -277,7 +277,7 @@ public class CacheManager {
 				+ state.getSessionMap().size());
 	}
 
-	public UsuarioSesionDTO getSession(String sessionId) {
+	public SharedToken getSession(String sessionId) {
 		return current().getSessionMap().get(sessionId);
 	}
 

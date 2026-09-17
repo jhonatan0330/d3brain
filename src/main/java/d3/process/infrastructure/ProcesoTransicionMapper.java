@@ -13,7 +13,7 @@ import d3.process.domain.ProcesoTransicionFilterDTO;
 @D3SqlConnMapper(value = "ProcesoTransicionMapper")
 public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionDTO, ProcesoTransicionFilterDTO> {
 
-	List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto);
+	List<ProcesoTransicionDTO> listarTransicionesRol(@Param("sesionUsuario") String sesionUsuario);
 
 	List<ProcesoTransicionDTO> listarTransaccionInicial(ProcesoTransicionFilterDTO dto);
 

@@ -38,31 +38,31 @@ public class SincronizacionArbolSvc {
 		this.mapper = mapper;
 	}
 
-	public TreeNodeDTO obtenerArbol(String token, ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return arbolConfiguracionSvc.construirArbolActual(token, filter);
+	public TreeNodeDTO obtenerArbol(ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return arbolConfiguracionSvc.construirArbolActual(filter);
 	}
 
-	public CargaArchivoDTO exportarArbol(String token, ArbolConfiguracionFilterDTO filter) throws ServerException {
-		TreeNodeDTO arbol = obtenerArbol(token, filter);
+	public CargaArchivoDTO exportarArbol(ArbolConfiguracionFilterDTO filter) throws ServerException {
+		TreeNodeDTO arbol = obtenerArbol(filter);
 		try {
 			byte[] bytes = mapper.writeValueAsBytes(arbol);
-			return uploadSvc.uploadFileDTO(bytes, "ArbolConfiguracion.json", token, "export", "private");
+			return uploadSvc.uploadFileDTO(bytes, "ArbolConfiguracion.json", "export", "private");
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}
-		
+
 	}
 
-	public List<DiferenciaDTO> compararArbol(String token, TreeNodeDTO remoto, ArbolConfiguracionFilterDTO filter)
+	public List<DiferenciaDTO> compararArbol(TreeNodeDTO remoto, ArbolConfiguracionFilterDTO filter)
 			throws ServerException {
-		TreeNodeDTO local = arbolConfiguracionSvc.construirArbolActual(token, filter);
+		TreeNodeDTO local = arbolConfiguracionSvc.construirArbolActual(filter);
 		return comparacionArbolSvc.comparar(local, remoto);
 	}
 
-	public CargaArchivoDTO sincronizar(String token, SincronizacionSeleccionadaDTO request) throws ServerException {
+	public CargaArchivoDTO sincronizar(SincronizacionSeleccionadaDTO request) throws ServerException {
 		if (request == null || request.getArbol() == null)
 			throw new ServerException("Árbol requerido");
-		TreeNodeDTO local = arbolConfiguracionSvc.construirArbolActual(token, filtroCompleto());
+		TreeNodeDTO local = arbolConfiguracionSvc.construirArbolActual(filtroCompleto());
 		try {
 			actualizacionEntidadSvc.actualizarArbol(request.getArbol(), local);
 		} catch (Exception e) {
@@ -71,10 +71,9 @@ public class SincronizacionArbolSvc {
 		TreeNodeDTO filtrado = arbolConfiguracionSvc.filtrarArbolPorSeleccion(request.getArbol(),
 				request.getSelecciones());
 		HierarchyExporterDTO hierarchy = arbolConfiguracionSvc.convertirArbolAHierarchy(filtrado);
-		LogConfigurationDTO logs = importService.sincronize(token, hierarchy);
+		LogConfigurationDTO logs = importService.sincronize(hierarchy);
 
-		return uploadSvc.uploadFileDTO(logs.getLogs().getBytes(), "Sincronizacion.txt", token, "import",
-				"private");
+		return uploadSvc.uploadFileDTO(logs.getLogs().getBytes(), "Sincronizacion.txt", "import", "private");
 	}
 
 	private ArbolConfiguracionFilterDTO filtroCompleto() {

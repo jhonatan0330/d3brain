@@ -3,20 +3,18 @@ package d3.money.application;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.CuentaFilterDTO;
 import d3.money.domain.TurnoDTO;
 import d3.money.domain.TurnoFilterDTO;
 import d3.money.infrastructure.TurnoMapper;
-
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("turnoService")
 public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
@@ -24,9 +22,8 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 	private final TurnoMapper turnoMapper;
 	private final CuentaSvc cuentaService;
 
-	public TurnoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy TurnoMapper turnoMapper,
+	public TurnoSvc(@Lazy TurnoMapper turnoMapper,
 			@Lazy CuentaSvc cuentaService) {
-		super(usuarioSesionService);
 		this.turnoMapper = turnoMapper;
 		this.cuentaService = cuentaService;
 	}
@@ -61,7 +58,7 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		return null;
 	}
 
-	public TurnoDTO iniciarTurno(TurnoDTO dto, String token) throws ServerException {
+	public TurnoDTO iniciarTurno(TurnoDTO dto) throws ServerException {
 		CuentaFilterDTO cajaFilter = new CuentaFilterDTO();
 		cajaFilter.setDocumento(dto.getCuenta());
 		CuentaDTO caja = cuentaService.consultaUnica(cajaFilter);
@@ -90,9 +87,9 @@ public class TurnoSvc extends BasicSvc<TurnoDTO, TurnoFilterDTO> {
 		dto.setEstado(TurnoDTO.ESTADO_EJECUCION);
 		dto.setMontoInicial(caja.getSaldo());
 		if (dto.getLlaveTabla() == null) {
-			dto = guardar(dto, token);
+			dto = guardar(dto);
 		} else {
-			dto = actualizar(dto, token);
+			dto = actualizar(dto);
 		}
 		return dto;
 	}

@@ -58,20 +58,20 @@ public class ImportConfigurationFileService {
 		this.mapper = mapper;
 	}
 
-	public CargaArchivoDTO call(String token, CargaArchivoDTO file) throws ServerException {
+	public CargaArchivoDTO call(CargaArchivoDTO file) throws ServerException {
 
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
 			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
 
-			return uploadFile(token, sincronize(token, hierarchy).getLogs());
+			return uploadFile(sincronize(hierarchy).getLogs());
 
 		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
 
-	public CargaArchivoDTO compare(String token, CargaArchivoDTO file) throws ServerException {
+	public CargaArchivoDTO compare(CargaArchivoDTO file) throws ServerException {
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -79,14 +79,14 @@ public class ImportConfigurationFileService {
 
 			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
 
-			return uploadFile(token, compareFile(token, hierarchy).getLogs());
+			return uploadFile(compareFile(hierarchy).getLogs());
 
 		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
 
-	public LogConfigurationDTO sincronize(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	public LogConfigurationDTO sincronize(HierarchyExporterDTO hierarchy) throws ServerException {
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
@@ -114,41 +114,41 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
-		sincronizeTypeService.call(token, hierarchy, logs, false);
-		sincronizeMessageService.call(token, hierarchy, logs, false);
-		sincronizeApiService.call(token, hierarchy, logs, false);
-		sincronizeOrganizationService.call(token, hierarchy, logs, false);
-		sincronizeProcessService.call(token, hierarchy, logs, false);
-		sincronizeProcessStateService.call(token, hierarchy, logs, false);
-		sincronizeTemplateService.call(token, hierarchy, logs, false);
-		sincronizeProcessTransitionService.call(token, hierarchy, logs, false);
-		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, false);
-		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs, false);
-		sincronizeProcessStateService.callAfter(token, hierarchy, logs, false);
-		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, false);
+		sincronizeTypeService.call(hierarchy, logs, false);
+		sincronizeMessageService.call(hierarchy, logs, false);
+		sincronizeApiService.call(hierarchy, logs, false);
+		sincronizeOrganizationService.call(hierarchy, logs, false);
+		sincronizeProcessService.call(hierarchy, logs, false);
+		sincronizeProcessStateService.call(hierarchy, logs, false);
+		sincronizeTemplateService.call(hierarchy, logs, false);
+		sincronizeProcessTransitionService.call(hierarchy, logs, false);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, false);
+		sincronizeTemplateService.callCreateRol(hierarchy, propertiesToCreateRoles, logs, false);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, false);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, false);
 		logs.setRoot("");
-		sincronizeRelationService.call(token, hierarchy, logs, false);
-		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs, false);
+		sincronizeRelationService.call(hierarchy, logs, false);
+		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
 		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
-		sincronizeApiService.call(token, hierarchy, logs, false);
-		sincronizeOrganizationService.call(token, hierarchy, logs, false);
-		sincronizeProcessService.call(token, hierarchy, logs, false);
-		sincronizeProcessStateService.call(token, hierarchy, logs, false);
-		sincronizeTemplateService.call(token, hierarchy, logs, false);
-		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, false);
-		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, false);
-		sincronizeProcessStateService.callAfter(token, hierarchy, logs, false);
-		sincronizeTemplateService.call(token, hierarchy, logs, false);
+		sincronizeApiService.call(hierarchy, logs, false);
+		sincronizeOrganizationService.call(hierarchy, logs, false);
+		sincronizeProcessService.call(hierarchy, logs, false);
+		sincronizeProcessStateService.call(hierarchy, logs, false);
+		sincronizeTemplateService.call(hierarchy, logs, false);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, false);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, false);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, false);
+		sincronizeTemplateService.call(hierarchy, logs, false);
 		logs.setRoot("");
-		sincronizeRelationService.call(token, hierarchy, logs, false);
+		sincronizeRelationService.call(hierarchy, logs, false);
 		// No sincornizamos propiedades de rol
 		// sincronizeMessageService.call(token, hierarchy);
 		// sincronizeRolService.callAfterRol(token, hierarchy);
 		return logs;
 	}
 
-	private LogConfigurationDTO compareFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
+	private LogConfigurationDTO compareFile(HierarchyExporterDTO hierarchy) throws ServerException {
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
@@ -176,39 +176,39 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
-		sincronizeTypeService.call(token, hierarchy, logs, true);
-		sincronizeMessageService.call(token, hierarchy, logs, true);
-		sincronizeApiService.call(token, hierarchy, logs, true);
-		sincronizeOrganizationService.call(token, hierarchy, logs, true);
-		sincronizeProcessService.call(token, hierarchy, logs, true);
-		sincronizeProcessStateService.call(token, hierarchy, logs, true);
-		sincronizeTemplateService.call(token, hierarchy, logs, true);
-		sincronizeProcessTransitionService.call(token, hierarchy, logs, true);
-		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, true);
-		sincronizeTemplateService.callCreateRol(token, hierarchy, propertiesToCreateRoles, logs, true);
-		sincronizeProcessStateService.callAfter(token, hierarchy, logs, true);
-		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, true);
+		sincronizeTypeService.call(hierarchy, logs, true);
+		sincronizeMessageService.call(hierarchy, logs, true);
+		sincronizeApiService.call(hierarchy, logs, true);
+		sincronizeOrganizationService.call(hierarchy, logs, true);
+		sincronizeProcessService.call(hierarchy, logs, true);
+		sincronizeProcessStateService.call(hierarchy, logs, true);
+		sincronizeTemplateService.call(hierarchy, logs, true);
+		sincronizeProcessTransitionService.call(hierarchy, logs, true);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, true);
+		sincronizeTemplateService.callCreateRol(hierarchy, propertiesToCreateRoles, logs, true);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, true);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, true);
 		logs.setRoot("");
-		sincronizeRelationService.call(token, hierarchy, logs, true);
-		rolInProperties = sincronizeRolService.call(token, hierarchy, rolInProperties, logs, true);
+		sincronizeRelationService.call(hierarchy, logs, true);
+		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
 		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
-		sincronizeApiService.call(token, hierarchy, logs, true);
-		sincronizeOrganizationService.call(token, hierarchy, logs, true);
-		sincronizeProcessService.call(token, hierarchy, logs, true);
-		sincronizeProcessStateService.call(token, hierarchy, logs, true);
-		sincronizeTemplateService.call(token, hierarchy, logs, true);
-		sincronizeProcessTransitionService.callAfterCreateAll(token, hierarchy, logs, true);
-		sincronizeTemplateService.callAfterCreateAllTemplate(token, hierarchy, logs, true);
-		sincronizeProcessStateService.callAfter(token, hierarchy, logs, true);
-		sincronizeTemplateService.call(token, hierarchy, logs, true);
+		sincronizeApiService.call(hierarchy, logs, true);
+		sincronizeOrganizationService.call(hierarchy, logs, true);
+		sincronizeProcessService.call(hierarchy, logs, true);
+		sincronizeProcessStateService.call(hierarchy, logs, true);
+		sincronizeTemplateService.call(hierarchy, logs, true);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, true);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, true);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, true);
+		sincronizeTemplateService.call(hierarchy, logs, true);
 		logs.setRoot("");
-		sincronizeRelationService.call(token, hierarchy, logs, true);
+		sincronizeRelationService.call(hierarchy, logs, true);
 		return logs;
 	}
 
-	private CargaArchivoDTO uploadFile(String token, String logs) throws ServerException {
-		return uploadService.uploadFileDTO(logs.getBytes(), "Entrada.txt", token, "import", "private");
+	private CargaArchivoDTO uploadFile(String logs) throws ServerException {
+		return uploadService.uploadFileDTO(logs.getBytes(), "Entrada.txt", "import", "private");
 	}
 
 }

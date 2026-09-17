@@ -14,16 +14,14 @@ import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaTiempoService")
 public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoVentaTiempoFilterDTO> {
 
 	private final PedidoVentaTiempoMapper pedidoVentaTiempoMapper;
 
-	public PedidoVentaTiempoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PedidoVentaTiempoSvc(
 			@Lazy PedidoVentaTiempoMapper pedidoVentaTiempoMapper) {
-		super(usuarioSesionService);
 		this.pedidoVentaTiempoMapper = pedidoVentaTiempoMapper;
 	}
 
@@ -42,20 +40,20 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 	}
 
 	@Override
-	public PedidoVentaTiempoDTO activar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public PedidoVentaTiempoDTO activar(PedidoVentaTiempoDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaTiempoDTO actualizar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public PedidoVentaTiempoDTO actualizar(PedidoVentaTiempoDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaTiempoDTO inactivar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public PedidoVentaTiempoDTO inactivar(PedidoVentaTiempoDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -75,8 +73,8 @@ public class PedidoVentaTiempoSvc extends BasicSvc<PedidoVentaTiempoDTO, PedidoV
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaTiempoDTO guardar(PedidoVentaTiempoDTO dto, String token) throws ServerException {
-		return super.guardar(dto, token);
+	public PedidoVentaTiempoDTO guardar(PedidoVentaTiempoDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
 

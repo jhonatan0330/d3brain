@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +27,6 @@ import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcessCopy;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
-import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
@@ -60,73 +58,62 @@ public class TemplateController {
 	}
 
 	@GetMapping(value = "/getTemplates/{profile}")
-	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(@RequestHeader("Authorization") String token,
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(
 			@PathVariable(name = "profile") String pProfile) throws ServerException {
-		DocumentoPlantillaFilterDTO filter = new DocumentoPlantillaFilterDTO();
-		filter.setSecurityToken(token);
 		switch (pProfile) {
 		case "ADMIN": {
-			return documentoplantillaService.consultaAdministrador(filter);
+			return documentoplantillaService.consultaAdministrador();
 		}
 		case "READER": {
-			return documentoplantillaService.consultaAuditor(filter);
+			return documentoplantillaService.consultaAuditor();
 		}
 		default:
-			return documentoplantillaService.consultaUsuario(filter);
+			return documentoplantillaService.consultaUsuario();
 		}
 	}
 
 	@GetMapping(value = "/getFields")
-	public TemplateDTO obtenerCampos(@RequestParam String id, @RequestHeader("Authorization") String token)
-			throws ServerException {
+	public TemplateDTO obtenerCampos(@RequestParam String id) throws ServerException {
 		TemplateDTO filterTemplate = new TemplateDTO();
 		filterTemplate.setLlaveTabla(id);
-		return documentoplantillaService.obtenerCampos(filterTemplate, token, true);
+		return documentoplantillaService.obtenerCampos(filterTemplate, true);
 	}
 
 	@PostMapping(value = "/getFieldData")
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(
-			@RequestBody PedidoVentaCaracteristicaFilterDTO filterField, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		filterField.setSecurityToken(token);
+			@RequestBody PedidoVentaCaracteristicaFilterDTO filterField) throws ServerException {
 		return adaptador.consultarDatosBase(filterField);
 	}
 
 	@PostMapping(value = "/getTrace")
-	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		filterField.setSecurityToken(token);
+	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField)
+			throws ServerException {
 		return gestionService.listarExpedientesGestionadores(filterField);
 	}
 
 	@GetMapping(value = "/getTraceFields/{documentId}/{transaction}")
 	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable(name = "documentId") String pDocumentId,
-			@PathVariable(name = "transaction") String pTransaction, @RequestHeader("Authorization") String token)
-			throws ServerException {
+			@PathVariable(name = "transaction") String pTransaction) {
 		return fieldsService.listar2Gestor(pDocumentId, pTransaction);
 	}
 
 	@PostMapping(value = "/getPropertyRelations")
-	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		filter.setSecurityToken(token);
+	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter)
+			throws ServerException {
 		return relacionesService.listarConsulta(filter);
 	}
 
 	@PostMapping(value = "/validateLoad")
 	public DocumentoPlantillaCaracteristicaDTO validateLoad(
-			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		filter.setSecurityToken(token);
+			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter) throws ServerException {
 		return campoService.listarCarga(filter);
 	}
 
 	// ==================== PROCESS DESIGNER (antes /process_designer/*) ====================
 
 	@PostMapping(value = "/designer/copy")
-	public SharedIdResponse copy(@RequestHeader("Authorization") String token, @RequestParam String processId)
-			throws ServerException {
-		return copyService.call(processId, token);
+	public SharedIdResponse copy(@RequestParam String processId) throws ServerException {
+		return copyService.call(processId);
 	}
 
 }

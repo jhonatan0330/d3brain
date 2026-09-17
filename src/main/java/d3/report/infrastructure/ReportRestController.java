@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,16 +35,13 @@ public class ReportRestController {
 
 	@GetMapping("/generate")
 	public ResponseEntity<byte[]> generate(@RequestParam Map<String, String> allParams,
-			@RequestParam(name = "P_KEY", required = false) String key,
-			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+			@RequestParam(name = "P_KEY", required = false) String key) throws ServerException {
 		String nombre = allParams.get("nombre");
 		if (nombre == null)
 			nombre = allParams.get("n");
 		if (nombre == null || nombre.isEmpty())
 			throw new ServerException("Es obligatorio enviar el nombre del reporte");
-		if (token == null)
-			token = allParams.get("P_TOKEN");
-		ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombre, token);
+		ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombre);
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		for (Map.Entry<String, String> entry : allParams.entrySet()) {
 			String parametro = entry.getKey();
@@ -63,7 +59,7 @@ public class ReportRestController {
 			}
 		}
 		try {
-			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametros, token);
+			ReportDTO resultado = reporteBaseService.generarReporte(reportBD, key, parametros);
 			if (resultado == null || resultado.getContent() == null)
 				throw new ServerException("No se pudo generar el reporte");
 			String tipoReporte = (String) parametros.get("P_JASPERTIPO");
@@ -77,8 +73,7 @@ public class ReportRestController {
 					+ extension;
 			return ResponseEntity.ok().header("Pragma", "No-cache").header("Cache-Control", "no-cache")
 					.header("Content-Disposition", "inline; filename=\"" + fileName + "\"").header("filename", fileName)
-					.contentType(MediaType.parseMediaType(obtenerContentType(extension)))
-					.body(resultado.getContent());
+					.contentType(MediaType.parseMediaType(obtenerContentType(extension))).body(resultado.getContent());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}

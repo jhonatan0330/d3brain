@@ -60,8 +60,7 @@ public class CallDocumentUpdateFromAutomatic {
 	 * @throws ServerException
 	 */
 	public void executeFromAPIExtraction(PedidoVentaDTO modificador, List<PropiedadDTO> propertiesToSearchFieldDestiny,
-			String token, String extractionText, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument)
-			throws ServerException {
+			String extractionText, PedidoVentaDTO iterador, PedidoVentaDTO pMainDocument) throws ServerException {
 		// Cuando son servicios asincronos no hay un documento modificador?? de pronto
 		// afecte las extracciones
 		if (modificador == null)
@@ -112,18 +111,20 @@ public class CallDocumentUpdateFromAutomatic {
 		}
 		if (generateFieldsFromPropertyModificator != null && !generateFieldsFromPropertyModificator.isEmpty()) {
 			execute(generateFieldsFromPropertyModificator, modificador.getLlaveTabla(), modificador.getTransaccion(),
-					modificador, token, propertiesToSearchFieldDestiny);
+					modificador,  propertiesToSearchFieldDestiny);
 		}
 
 		if (iterador != null && generateFieldsFromPropertyIterator != null
 				&& !generateFieldsFromPropertyIterator.isEmpty()) {
 			execute(generateFieldsFromPropertyIterator, iterador.getLlaveTabla(), iterador.getTransaccion(), iterador,
-					token, propertiesToSearchFieldDestiny);
+					 propertiesToSearchFieldDestiny);
 		}
 
 		if (generateFieldsFromPropertyMain != null && !generateFieldsFromPropertyMain.isEmpty()) {
-			execute(generateFieldsFromPropertyMain, pMainDocument.getLlaveTabla(), pMainDocument.getTransaccion(),
-					pMainDocument, token, propertiesToSearchFieldDestiny);
+			if(pMainDocument!=null) {				
+				execute(generateFieldsFromPropertyMain, pMainDocument.getLlaveTabla(), pMainDocument.getTransaccion(),
+						pMainDocument,  propertiesToSearchFieldDestiny);
+			}
 		}
 
 	}
@@ -132,7 +133,7 @@ public class CallDocumentUpdateFromAutomatic {
 	 * TEngo que buscar de donde viene esta funcion, creo que de generar reuniones o
 	 * tambien de las facturas al aprobarlas en Sw42
 	 */
-	public void executeFromBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO, String token,
+	public void executeFromBPM(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
 			List<PropiedadDTO> modificarCampo, List<PedidoVentaCaracteristicaDTO> pNewFields) throws ServerException {
 		// pNewFields se usa porque los tipo vinculo tienen sql y no quiero dañar los
 		// dependientes
@@ -147,7 +148,7 @@ public class CallDocumentUpdateFromAutomatic {
 			dependientesUnificados.addAll(pNewFields);
 		}
 
-		execute(dependientesUnificados, pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, token,
+		execute(dependientesUnificados, pCampo.getDocumento(), pCampo.getTransaccionRegistro(), procesoDTO, 
 				modificarCampo);
 		CallDocumentCommons.copyMessages(procesoDTO, pCampo.getDocumentsToBPM());
 	}
@@ -168,8 +169,8 @@ public class CallDocumentUpdateFromAutomatic {
 	 * @throws ServerException
 	 */
 	private void execute(List<PedidoVentaCaracteristicaDTO> fieldsNewToInclude, String updaterDocumentId,
-			String transaction, PedidoVentaDTO procesoDTO, String token,
-			List<PropiedadDTO> propertiesToSearchFieldDestiny) throws ServerException {
+			String transaction, PedidoVentaDTO procesoDTO, List<PropiedadDTO> propertiesToSearchFieldDestiny)
+			throws ServerException {
 
 		// hay un escenario en el que se modifica un campo del mismo formulario, ver
 		// logimax con guias blu
@@ -188,10 +189,10 @@ public class CallDocumentUpdateFromAutomatic {
 		updateDocument.setEstadoExpediente(procesoDTO.getEstadoExpediente());
 
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = caracteristicaService
-				.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), token, false);
+				.listarCamposPlantillaConComplementos(procesoDTO.getPlantilla(), false);
 
 		List<PedidoVentaCaracteristicaDTO> currentFields = campoService.readCompleteFields(procesoDTO.getLlaveTabla(),
-				camposPlantilla, procesoDTO.getHistorico(), token);
+				camposPlantilla, procesoDTO.getHistorico());
 
 		List<PedidoVentaCaracteristicaDTO> newFields = getNewValues(fieldsNewToIncludeActiveModify, procesoDTO,
 				propertiesToSearchFieldDestiny, camposPlantilla, currentFields);
@@ -201,12 +202,12 @@ public class CallDocumentUpdateFromAutomatic {
 			updateDocument.setCaracteristicas(newFields);
 
 			PedidoVentaDTO pedidoActualizado = saveUpdateInactivateDocumentFunction
-					.updateWithoutTransaction(updateDocument, updaterDocumentId, token, true);
+					.updateWithoutTransaction(updateDocument, updaterDocumentId, true);
 			procesoDTO.setNombre(pedidoActualizado.getNombre());
 			CallDocumentCommons.copyMessages(pedidoActualizado, procesoDTO);
 			// Cambie pCampo.getPrincipal().getLlaveTabla() x el que esta modificadndo creo
 			// que eso funciona
-			relacionarGestor(procesoDTO, updaterDocumentId, token, transaction);
+			relacionarGestor(procesoDTO, updaterDocumentId, transaction);
 		}
 	}
 
@@ -309,14 +310,14 @@ public class CallDocumentUpdateFromAutomatic {
 	}
 
 	// Esto deberia ir en save
-	private void relacionarGestor(PedidoVentaDTO anterior, String updaterDocumentId, String securityToken,
-			String transaction) throws ServerException {
+	private void relacionarGestor(PedidoVentaDTO anterior, String updaterDocumentId, String transaction)
+			throws ServerException {
 		anterior = pedidoService.consultaXId(anterior.getLlaveTabla());
 		System.out.format("\n(Colocar traza a documento...... %s)", anterior.getNombre());
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), updaterDocumentId, "Modificar Campos",
-				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, securityToken, null,
-				anterior.getHistorico(), transaction, true);
+				anterior.getEstadoExpediente(), anterior.getEstadoExpediente(), null, null, anterior.getHistorico(),
+				transaction);
 	}
 
 	private boolean hasChanges(List<PedidoVentaCaracteristicaDTO> caracteristicasActuales,
@@ -346,25 +347,24 @@ public class CallDocumentUpdateFromAutomatic {
 				} else {
 					if (campoComparar.getValorOpcion() == null) {
 						return true;
-					} else {
-						if (iCampoModificado.getValorOpcion().compareTo(campoComparar.getValorOpcion()) != 0) {
-							return true;
-						}
 					}
+					if (iCampoModificado.getValorOpcion().compareTo(campoComparar.getValorOpcion()) != 0) {
+						return true;
+					}
+
 				}
 				if (iCampoModificado.getValorNumero() == null) {
 					if (campoComparar.getValorNumero() != null) {
 						return true;
 					}
-				} else {
-					if (campoComparar.getValorNumero() == null) {
-						return true;
-					} else {
-						if (iCampoModificado.getValorNumero().compareTo(campoComparar.getValorNumero()) != 0) {
-							return true;
-						}
-					}
 				}
+				if (campoComparar.getValorNumero() == null) {
+					return true;
+				}
+				if (iCampoModificado.getValorNumero().compareTo(campoComparar.getValorNumero()) != 0) {
+					return true;
+				}
+
 				if (iCampoModificado.getValorFecha() == null) {
 					if (campoComparar.getValorFecha() != null) {
 						return true;
@@ -372,25 +372,24 @@ public class CallDocumentUpdateFromAutomatic {
 				} else {
 					if (campoComparar.getValorFecha() == null) {
 						return true;
-					} else {
-						if (iCampoModificado.getValorFecha().compareTo(campoComparar.getValorFecha()) != 0) {
-							return true;
-						}
 					}
+					if (iCampoModificado.getValorFecha().compareTo(campoComparar.getValorFecha()) != 0) {
+						return true;
+					}
+
 				}
 				if (iCampoModificado.getValorAuxiliar() == null) {
 					if (campoComparar.getValorAuxiliar() != null) {
 						return true;
 					}
-				} else {
-					if (campoComparar.getValorAuxiliar() == null) {
-						return true;
-					} else {
-						if (iCampoModificado.getValorAuxiliar().compareTo(campoComparar.getValorAuxiliar()) != 0) {
-							return true;
-						}
-					}
 				}
+				if (campoComparar.getValorAuxiliar() == null) {
+					return true;
+				}
+				if (iCampoModificado.getValorAuxiliar().compareTo(campoComparar.getValorAuxiliar()) != 0) {
+					return true;
+				}
+
 			}
 		}
 		return false;

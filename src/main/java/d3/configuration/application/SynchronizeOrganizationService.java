@@ -3,12 +3,12 @@ package d3.configuration.application;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeOrganizationService {
@@ -22,16 +22,14 @@ public class SynchronizeOrganizationService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		if (hierarchy.getOrganization() == null)
 			return;
 		log.setRoot("SynchronizeOrganization");
 		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipal();
 		// hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
 		propertiesSynchronizeService.call(hierarchy, mainOrganization.getLlaveTabla(),
-				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), token, log,
-				compare);
+				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), log, compare);
 	}
 
 }

@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.authentication.application.UsuarioAutenticacionSvc;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
 import d3.configuration.application.PropertyCRUDSvc;
 import d3.notification.application.ActividadSvc;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.users.domain.UsuarioDTO;
@@ -29,10 +29,9 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	private final UsuarioAutenticacionSvc usuarioAutenticacionSvc;
 	private final PropertyCRUDSvc propertySvc;
 
-	public UsuarioSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy UsuarioMapper usuarioMapper,
+	public UsuarioSvc(@Lazy UsuarioMapper usuarioMapper,
 			@Lazy ActividadSvc actividadSvc, @Lazy UsuarioAutenticacionSvc usuarioAutenticacionSvc,
 			@Lazy PropertyCRUDSvc propertySvc) {
-		super(usuarioSesionService);
 		this.usuarioMapper = usuarioMapper;
 		this.actividadSvc = actividadSvc;
 		this.usuarioAutenticacionSvc = usuarioAutenticacionSvc;
@@ -54,13 +53,8 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 
 	@Override
-	public UsuarioDTO activar(UsuarioDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
-	}
-
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioDTO actualizar(UsuarioDTO dto, String token) throws ServerException {
+	public UsuarioDTO actualizar(UsuarioDTO dto) throws ServerException {
 		UsuarioDTO bd = consultaXId(dto.getLlaveTabla());
 		// Cambio la clave en caso que el rol tenga credenciales
 		if (bd.getIdentificacion().compareTo(dto.getIdentificacion()) != 0) {
@@ -72,45 +66,31 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 				if (autenticacion.getClave().compareTo(autenticacion.getSesion()) == 0)
 					autenticacion.setClave(dto.getIdentificacion());
 				autenticacion.setSesion(dto.getIdentificacion());
-				usuarioAutenticacionSvc.actualizar(autenticacion, token);
+				usuarioAutenticacionSvc.actualizar(autenticacion);
 			}
 		}
 		if (dto.getCorreo() != null)
 			dto.setCorreo(dto.getCorreo().toLowerCase());
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioDTO inactivar(UsuarioDTO dto, String token) throws ServerException {
-		dto = super.inactivar(dto, token);
+	public UsuarioDTO inactivar(UsuarioDTO dto) throws ServerException {
+		dto = super.inactivar(dto);
 		actividadSvc.validateActivitiesToInactivateUser(dto.getLlaveTabla());
-		propertySvc.inactivateAllPropertiesOfUser(dto.getLlaveTabla(), token);
+		propertySvc.inactivateAllPropertiesOfUser(dto.getLlaveTabla());
 		UsuarioAutenticacionFilterDTO autenticacionFilter = new UsuarioAutenticacionFilterDTO();
 		autenticacionFilter.setUsuario(dto.getLlaveTabla());
 		autenticacionFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		List<UsuarioAutenticacionDTO> autenticaciones = usuarioAutenticacionSvc.listarConsulta(autenticacionFilter);
 		for (UsuarioAutenticacionDTO autenticacion : autenticaciones) {
 			autenticacion.setEstado(SharedConstants.STATE_INACTIVE);
-			usuarioAutenticacionSvc.inactivar(autenticacion, token);
+			usuarioAutenticacionSvc.inactivar(autenticacion);
 		}
 		return dto;
 	}
 
-	@Override
-	public UsuarioDTO consultaUnica(UsuarioFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(UsuarioFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<UsuarioDTO> listarConsulta(UsuarioFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
-	}
 
 	public List<UsuarioDTO> listarRol(UsuarioFilterDTO dto) throws ServerException {
 		if (dto.getRol() == null) {
@@ -127,7 +107,7 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 	}
 
 	@Override
-	public UsuarioDTO guardar(UsuarioDTO dto, String token) throws ServerException {
+	public UsuarioDTO guardar(UsuarioDTO dto) throws ServerException {
 		UsuarioFilterDTO filtro = new UsuarioFilterDTO();
 		filtro.setIdentificacion(dto.getIdentificacion());
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -137,20 +117,20 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 			dto.setImagen(SharedConstants.AVATAR);
 		if (dto.getCorreo() != null)
 			dto.setCorreo(dto.getCorreo().toLowerCase());
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
-	public List<UsuarioDTO> getUsersState(String document) throws ServerException {
+	public List<UsuarioDTO> getUsersState(String document)  {
 		return usuarioMapper.getUsersState(document);
 	}
 
-	public UsuarioDTO changePicture(String url, String token) throws ServerException {
-		UsuarioDTO bd = consultaXId(getUserFlex(token));
+	public UsuarioDTO changePicture(String url) throws ServerException {
+		UsuarioDTO bd = consultaXId(SessionContext.getCurrentUser());
 		bd.setImagen(url);
 		return update(bd);
 	}
 
-	public UsuarioDTO getUserByDocument(String pDocument) throws ServerException {
+	public UsuarioDTO getUserByDocument(String pDocument) {
 		return usuarioMapper.getUserByDocument(pDocument);
 	}
 

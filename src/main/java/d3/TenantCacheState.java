@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import d3.authentication.domain.UsuarioSesionDTO;
+import d3.shared.domain.SharedToken;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -26,7 +26,7 @@ final class TenantCacheState {
 	private volatile String mainUser;
 	private volatile String mainUserMail;
 
-	private final Map<String, UsuarioSesionDTO> sessionMap = new ConcurrentHashMap<>();
+	private final Map<String, SharedToken> sessionMap = new ConcurrentHashMap<>();
 	private final Map<String, Integer> sessionTimeMap = new ConcurrentHashMap<>();
 
 	private final Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new ConcurrentHashMap<>();
@@ -76,7 +76,7 @@ final class TenantCacheState {
 		this.mainUserMail = mainUserMail;
 	}
 
-	Map<String, UsuarioSesionDTO> getSessionMap() {
+	Map<String, SharedToken> getSessionMap() {
 		return sessionMap;
 	}
 

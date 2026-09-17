@@ -1,35 +1,31 @@
 package d3.document.application;
 
-import java.util.List;
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.ibatis.binding.BindingException;
 import org.mybatis.spring.MyBatisSystemException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.document.domain.PedidoVentaDineroFilterDTO;
 import d3.document.infrastructure.PedidoVentaDineroMapper;
 import d3.shared.application.BasicSvc;
-
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("pedidoVentaDineroService")
 public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoVentaDineroFilterDTO> {
 
 	private final PedidoVentaDineroMapper pedidoVentaDineroMapper;
 
-	public PedidoVentaDineroSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PedidoVentaDineroSvc(
 			@Lazy PedidoVentaDineroMapper pedidoVentaDineroMapper) {
-		super(usuarioSesionService);
 		this.pedidoVentaDineroMapper = pedidoVentaDineroMapper;
 	}
 
@@ -49,19 +45,19 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDineroDTO actualizar(PedidoVentaDineroDTO dto, String token) throws ServerException {
+	public PedidoVentaDineroDTO actualizar(PedidoVentaDineroDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar guardar");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDineroDTO inactivar(PedidoVentaDineroDTO dto, String token) throws ServerException {
+	public PedidoVentaDineroDTO inactivar(PedidoVentaDineroDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar inactivar ConHistorial");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDineroDTO guardar(PedidoVentaDineroDTO dto, String token) throws ServerException {
+	public PedidoVentaDineroDTO guardar(PedidoVentaDineroDTO dto) throws ServerException {
 		throw new ServerException("Metodo inactivo usar guardar con historial");
 	}
 
@@ -81,16 +77,7 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 		}
 	}
 
-	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos) throws ServerException {// La
-																														// plantilla
-																														// es
-																														// para
-																														// optimizar
-																														// la
-																														// consultas
-																														// de
-																														// la
-																														// particion
+	public List<PedidoVentaDineroDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos) {
 		if (documentos == null || documentos.isEmpty())
 			return null;
 		List<PedidoVentaDTO> produccion = null;
@@ -115,20 +102,19 @@ public class PedidoVentaDineroSvc extends BasicSvc<PedidoVentaDineroDTO, PedidoV
 		dto.setFecha(new Date());
 		if (historico == null) {
 			return save(dto);
-		} else {
-			dto.setLlaveTabla(generarLlave());
-			try {
-				pedidoVentaDineroMapper.insertarHistorico(dto);
-			} catch (Exception e) {
-				throw new ServerException(e.getCause().getMessage());
-			}
-			return dto;
 		}
+		dto.setLlaveTabla(generarLlave());
+		try {
+			pedidoVentaDineroMapper.insertarHistorico(dto);
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
+		return dto;
+
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDineroDTO inactivarConHistorial(PedidoVentaDineroDTO dto, Integer historico)
-			throws ServerException {
+	public PedidoVentaDineroDTO inactivarConHistorial(PedidoVentaDineroDTO dto, Integer historico) {
 		return pedidoVentaDineroMapper.inactivarHistorico(dto.getLlaveTabla(),
 				(historico == null) ? null : "Historico");
 	}

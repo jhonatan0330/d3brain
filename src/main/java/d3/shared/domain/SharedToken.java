@@ -1,11 +1,15 @@
 package d3.shared.domain;
 
+import java.util.Date;
+
 public class SharedToken {
 
 	private String token;
 	private String user;
 	private String userId;
 	private String userName;
+	private Date fechaCierre;
+	private Boolean privada = null;
 
 	public String getToken() {
 		return token;
@@ -37,6 +41,22 @@ public class SharedToken {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Date getFechaCierre() {
+		return fechaCierre;
+	}
+
+	public void setFechaCierre(Date fechaCierre) {
+		this.fechaCierre = fechaCierre;
+	}
+
+	public Boolean getPrivada() {
+		return privada;
+	}
+
+	public void setPrivada(Boolean privada) {
+		this.privada = privada;
 	}
 
 }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -32,6 +31,8 @@ import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.shared.application.BasicSvc;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.application.SharedTokenService;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
@@ -48,14 +49,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	private final ProcesoEstadoSvc estadoService;
 	private final ProcesoTransicionSvc transicionService;
 	private final PropertyGetWithCacheService cacheService;
+	private final SharedTokenService sharedTokenService;
 
-	public DocumentoPlantillaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
-			@Lazy DocumentoPlantillaMapper documentoPlantillaMapper,
+	public DocumentoPlantillaSvc(@Lazy DocumentoPlantillaMapper documentoPlantillaMapper,
 			@Lazy DocumentoPlantillaCaracteristicaSvc caracteristicaService, @Lazy PropiedadSvc configuracionSvc,
 			@Lazy RolAccesoSvc rolService, @Lazy ReporteBaseSvc reporteService, @Lazy ProcesoSvc procesoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
-			@Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy SharedTokenService sharedTokenService) {
 		this.documentoPlantillaMapper = documentoPlantillaMapper;
 		this.caracteristicaService = caracteristicaService;
 		this.configuracionSvc = configuracionSvc;
@@ -65,6 +65,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		this.estadoService = estadoService;
 		this.transicionService = transicionService;
 		this.cacheService = cacheService;
+		this.sharedTokenService = sharedTokenService;
 	}
 
 	@Override
@@ -82,33 +83,33 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	@Override
-	public DocumentoPlantillaDTO activar(DocumentoPlantillaDTO dto, String token) throws ServerException {
+	public DocumentoPlantillaDTO activar(DocumentoPlantillaDTO dto) throws ServerException {
 		RolAccesoFilterDTO rolFilter = new RolAccesoFilterDTO();
 		rolFilter.setPlantilla(dto.getLlaveTabla());
 		rolFilter.setEstado(SharedConstants.STATE_INACTIVE);
 		RolAccesoDTO rol = rolService.consultaUnica(rolFilter);
 		if (rol != null)
-			rolService.activar(rol, token);
-		return super.activar(dto, token);
+			rolService.activar(rol);
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaDTO actualizar(DocumentoPlantillaDTO dto, String token) throws ServerException {
+	public DocumentoPlantillaDTO actualizar(DocumentoPlantillaDTO dto) throws ServerException {
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
-		dto = super.actualizar(dto, token);
+		dto = super.actualizar(dto);
 		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto, String token) throws ServerException {
+	public DocumentoPlantillaDTO inactivar(DocumentoPlantillaDTO dto) throws ServerException {
 		ProcesoTransicionFilterDTO validar = new ProcesoTransicionFilterDTO();
 		validar.setEstado(SharedConstants.STATE_ACTIVE);
 		validar.setPlantilla(dto.getLlaveTabla());
 		List<ProcesoTransicionDTO> pUsados = transicionService.listarConsulta(validar);
-		if (pUsados == null || !pUsados.isEmpty()) {
+		if (pUsados != null && !pUsados.isEmpty()) {
 			String mensaje = "La plantilla se esta usando en las siguientes transiciones : \n";
 			for (ProcesoTransicionDTO iUsado : pUsados) {
 				mensaje = mensaje + "Proceso: " + iUsado.getProcesoNombre() + "  -> Transicion: " + iUsado.getNombre()
@@ -121,21 +122,21 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		rolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		RolAccesoDTO rol = rolService.consultaUnica(rolFilter);
 		if (rol != null) {
-			rolService.inactivar(rol, token);
+			rolService.inactivar(rol);
 		}
-		return super.inactivar(dto, token);
+		return super.inactivar(dto);
 	}
 
-	public List<TemplateDTO> consultaUsuario(DocumentoPlantillaFilterDTO dto) throws ServerException {
-		return listarPlantillasUsuario(dto, null);
+	public List<TemplateDTO> consultaUsuario() throws ServerException {
+		return listarPlantillasUsuario( null);
 	}
 
-	public TemplateDTO obtenerCampos(TemplateDTO dto, String token, boolean external)
+	public TemplateDTO obtenerCampos(TemplateDTO dto, boolean external)
 			throws ServerException {
 		if (dto == null)
 			return null;
 		dto.setCaracteristicas(
-				caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(), token, external));
+				caracteristicaService.listarCamposPlantillaConComplementos(dto.getLlaveTabla(),  external));
 		int order = 0;
 		boolean modificar = !Propiedades.obtenerValor(dto, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty();
 		// En caso que busca desde la interfaz
@@ -160,7 +161,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaDTO duplicar(DocumentoPlantillaDTO dto, String token) throws ServerException {
+	public DocumentoPlantillaDTO duplicar(DocumentoPlantillaDTO dto) throws ServerException {
 		DocumentoPlantillaDTO bd = consultaXId(dto.getLlaveTabla());
 		// Copio plantilla
 		DocumentoPlantillaDTO copy = new DocumentoPlantillaDTO();
@@ -171,7 +172,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		copy = super.save(copy);
 		// Copio campos
 		List<DocumentoPlantillaCaracteristicaDTO> pFieldsBD = 
-				caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(), null, false);
+				caracteristicaService.listarCamposPlantillaConComplementos(bd.getLlaveTabla(),  false);
 		List<DocumentoPlantillaCaracteristicaDTO> pFieldsCopy =  new ArrayList<>();
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : pFieldsBD) {
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
@@ -180,7 +181,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newCampo.setNombre(iCampo.getNombre());
 			newCampo.setOrden(iCampo.getOrden());
 			newCampo.setPlantilla(copy.getLlaveTabla());
-			pFieldsCopy.add(caracteristicaService.guardar(newCampo, token));
+			pFieldsCopy.add(caracteristicaService.guardar(newCampo));
 		}
 		// Primero las propiedades de rol para evitar duplicar
 		RolAccesoFilterDTO rolFiltroFilter = new RolAccesoFilterDTO();
@@ -190,7 +191,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if (rolFiltro != null) {
 			RolAccesoDTO newRol = new RolAccesoDTO();
 			newRol.setPlantilla(copy.getLlaveTabla());
-			newRol = rolService.guardar(newRol, token);
+			newRol = rolService.guardar(newRol);
 			// rolFiltro.setPropiedades(
 			// configuracionSvc.obtenerPropiedades(PropiedadValorDefinidoDTO.ROL,
 			// rolFiltro.getLlaveTabla(),null, null));
@@ -199,7 +200,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		// Copio propiedades plantilla
 		List<PropiedadDTO> propiedadesBD = obtenerPropiedadesPlantilla(bd.getLlaveTabla(), null);
-		configuracionSvc.copiarPropiedades(propiedadesBD, copy.getLlaveTabla(), token);
+		configuracionSvc.copiarPropiedades(propiedadesBD, copy.getLlaveTabla());
 		// Copio reportes
 		List<ReporteBaseDTO> pReportes = reporteService.listarDisponiblesDocumento(bd.getLlaveTabla());
 		for (ReporteBaseDTO iReporte : pReportes) {
@@ -213,14 +214,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			newReporte.setPlantilla(copy.getLlaveTabla());
 			newReporte.setSoloExistente(iReporte.getSoloExistente());
 			newReporte.setVariables(iReporte.getVariables());
-			newReporte = reporteService.guardar(newReporte, token);
-			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla(), token);
+			newReporte = reporteService.guardar(newReporte);
+			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla());
 		}
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : pFieldsCopy) {
 			for (DocumentoPlantillaCaracteristicaDTO source : pFieldsBD) {
 				if (source.getCodigo().compareTo(iCampo.getCodigo()) == 0) {
 					iCampo.setPropiedades(
-							configuracionSvc.copiarPropiedades(source.getPropiedades(), iCampo.getLlaveTabla(), token));
+							configuracionSvc.copiarPropiedades(source.getPropiedades(), iCampo.getLlaveTabla()));
 					break;
 				}
 			}
@@ -228,26 +229,26 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return copy;
 	}
 
-	public List<TemplateDTO> consultaAdministrador(DocumentoPlantillaFilterDTO dto) throws ServerException {
-		boolean todosPermisos = rolService.usuarioPermisosCompletos(dto.getSecurityToken());
+	public List<TemplateDTO> consultaAdministrador() throws ServerException {
+		boolean todosPermisos = rolService.usuarioPermisosCompletos();
 		if (!todosPermisos)
 			throw new ServerException(
 					"En los roles que tienes asignados no tienes un rol que tenga permisos de consultar todas las plantillas");
-		return listarPlantillasUsuario(dto, "ADMIN");
+		return listarPlantillasUsuario( "ADMIN");
 	}
 
-	public List<TemplateDTO> consultaAuditor(DocumentoPlantillaFilterDTO dto) throws ServerException {
-		boolean todosPermisos = rolService.usuarioPermisosAuditor(dto.getSecurityToken());
+	public List<TemplateDTO> consultaAuditor() throws ServerException {
+		boolean todosPermisos = rolService.usuarioPermisosAuditor();
 		if (!todosPermisos)
 			throw new ServerException("En los roles que tienes asignados no tienes el permiso de auditor");
-		return listarPlantillasUsuario(dto, "READER");
+		return listarPlantillasUsuario( "READER");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaDTO guardar(DocumentoPlantillaDTO dto, String token) throws ServerException {
+	public DocumentoPlantillaDTO guardar(DocumentoPlantillaDTO dto) throws ServerException {
 		configurarInicioPlantilla(dto);
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 		return dto;
 	}
 
@@ -260,16 +261,16 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return consultaUnica(filtro);
 	}
 
-	public List<DocumentoPlantillaDTO> listarPlantillaRol(DocumentoPlantillaFilterDTO dto, boolean todosPermisos)
+	public List<DocumentoPlantillaDTO> listarPlantillaRol(boolean todosPermisos)
 			throws ServerException {
-		if (dto == null || dto.getSecurityToken() == null)
-			throw new ServerException("Revise la configuracion del dto filtro");
+		
 		try {
 			if (todosPermisos) {
-				return documentoPlantillaMapper.getProcessBoardsToMenu(dto);
-			} else {
-				return documentoPlantillaMapper.listarMenu(dto);
-			}
+				return documentoPlantillaMapper.getProcessBoardsToMenu();
+			} 
+			
+			return documentoPlantillaMapper.listarMenu(SessionContext.getCurrentToken());
+			
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
@@ -288,7 +289,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if (fullPermisos) {
 			template.setPropiedades(cacheService.obtenerEspecialFullPermisos(dto.getLlaveTabla()));
 		} else {
-			template.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), dto.getSecurityToken()));
+			template.setPropiedades(obtenerPropiedadesPlantilla(plantilla.getLlaveTabla(), SessionContext.getCurrentTokenOrNull()));
 		}
 		if (template.getPropiedades() == null || template.getPropiedades().isEmpty())
 			throw new ServerException("El usuario no tiene permiso sobre el documento " + plantilla.getNombre());
@@ -297,9 +298,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 
 	public List<PropiedadDTO> obtenerPropiedadesPlantilla(String plantilla, String token) throws ServerException {
 		// si el token es null que traiga todos principalmente para copiar
-		String usuario = null;
-		if (token != null)
-			usuario = getUserFlex(token);
+		String usuario = (token == null) ? null : sharedTokenService.getToken(token).getUser();
 		List<PropiedadDTO> propiedades = cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA, plantilla,
 				null, usuario);
 		if (propiedades == null)
@@ -382,39 +381,39 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return "";
 	}
 
-	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId, String token, String action)
+	public DocumentoPlantillaDTO createDeleteTemplate(String templateReferenceId,  String action)
 			throws ServerException {
 		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
 		DocumentoPlantillaDTO templateDelete = new DocumentoPlantillaDTO();
 		templateDelete.setProceso(principalTemplate.getProceso());
 		templateDelete.setNombre(principalTemplate.getNombre() + " - " + action.toString());
-		templateDelete = guardar(templateDelete, token);
-		crearCampoProcesos(templateDelete.getLlaveTabla(), token);
-		crearCampoNombre(templateDelete.getLlaveTabla(), token);
+		templateDelete = guardar(templateDelete);
+		crearCampoProcesos(templateDelete.getLlaveTabla());
+		crearCampoNombre(templateDelete.getLlaveTabla());
 		return templateDelete;
 	}
 
-	public DocumentoPlantillaDTO createReportTemplate(String templateReferenceId, String token) throws ServerException {
+	public DocumentoPlantillaDTO createReportTemplate(String templateReferenceId) throws ServerException {
 		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
 		DocumentoPlantillaDTO templateNew = new DocumentoPlantillaDTO();
 		templateNew.setProceso(principalTemplate.getProceso());
 		templateNew.setNombre(principalTemplate.getNombre() + " - INFORME");
 		// templateDelete.setObjetivo(".");
-		templateNew = guardar(templateNew, token);
+		templateNew = guardar(templateNew);
 		PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA, templateNew.getLlaveTabla(),
-				Propiedades.PLANTILLA_TIPO_REPORTE, templateReferenceId, token);
+				Propiedades.PLANTILLA_TIPO_REPORTE, templateReferenceId);
 		prop.setUsuarioExcluyenteNombre(principalTemplate.getLlaveTabla());
-		configuracionSvc.guardar(prop, token);
+		configuracionSvc.guardar(prop);
 		return templateNew;
 	}
 
-	public DocumentoPlantillaDTO createUpdateTemplate(String templateReferenceId, String token) throws ServerException {
+	public DocumentoPlantillaDTO createUpdateTemplate(String templateReferenceId) throws ServerException {
 		DocumentoPlantillaDTO principalTemplate = consultaXId(templateReferenceId);
 		DocumentoPlantillaDTO templateUpdate = new DocumentoPlantillaDTO();
 		templateUpdate.setProceso(principalTemplate.getProceso());
 		templateUpdate.setNombre(principalTemplate.getNombre() + " - UPDATE");
 		templateUpdate.setCodigo(principalTemplate.getCodigo() + "_U");
-		templateUpdate = guardar(templateUpdate, token);
+		templateUpdate = guardar(templateUpdate);
 
 		DocumentoPlantillaCaracteristicaDTO campoProceso = new DocumentoPlantillaCaracteristicaDTO();
 		campoProceso.setCodigo("DOCUMENTO_DIFF");
@@ -423,32 +422,32 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		campoProceso.setOrden(1);
 		campoProceso.setPlantilla(templateUpdate.getLlaveTabla());
 		campoProceso.setObjetivo(".");
-		campoProceso = caracteristicaService.guardar(campoProceso, token);
+		campoProceso = caracteristicaService.guardar(campoProceso);
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				campoProceso.getLlaveTabla(), Propiedades.PLANTILLA_AUXILIAR, templateReferenceId, token), token);
+				campoProceso.getLlaveTabla(), Propiedades.PLANTILLA_AUXILIAR, templateReferenceId));
 		// Copio campos
 		List<DocumentoPlantillaCaracteristicaDTO> camposOriginales = 
-				caracteristicaService.listarCamposPlantilla(principalTemplate.getLlaveTabla(), null);
+				caracteristicaService.listarCamposPlantilla(principalTemplate.getLlaveTabla());
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : camposOriginales) {
-			caracteristicaService.createFieldDifference(iCampo, templateUpdate.getLlaveTabla(), token);
+			caracteristicaService.createFieldDifference(iCampo, templateUpdate.getLlaveTabla());
 			// newCampo.setPropiedades(configuracionSvc.copiarPropiedades(iCampo.getPropiedades(),
 			// newCampo.getLlaveTabla(), token));
 		}
 
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateUpdate.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1", token), token);
+				templateUpdate.getLlaveTabla(), Propiedades.SOLICITAR_FECHAS, "1"));
 		return templateUpdate;
 	}
 
-	public String crearCampoProcesos(String plantilla, String token) throws ServerException {
-		return caracteristicaService.crearCampoProcesos(plantilla, token);
+	public String crearCampoProcesos(String plantilla) throws ServerException {
+		return caracteristicaService.crearCampoProcesos(plantilla);
 	}
 
-	private String crearCampoNombre(String plantilla, String token) throws ServerException {
-		return caracteristicaService.crearCampoMotivo(plantilla, token);
+	private String crearCampoNombre(String plantilla) throws ServerException {
+		return caracteristicaService.crearCampoMotivo(plantilla);
 	}
 
-	private List<ProcesoEstadoDTO> crearEstadosBasicos() throws ServerException {
+	private List<ProcesoEstadoDTO> crearEstadosBasicos() {
 		List<ProcesoEstadoDTO> estados;
 		ProcesoEstadoDTO activo = new ProcesoEstadoDTO();
 		activo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
@@ -462,13 +461,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return estados;
 	}
 
-	private List<TemplateDTO> listarPlantillasUsuario(DocumentoPlantillaFilterDTO pDTO, String pProfile)
+	private List<TemplateDTO> listarPlantillasUsuario(String pProfile)
 			throws ServerException {
 
-		String _user = null;
-		if (pDTO.getSecurityToken() != null)
-			_user = getUserFlex(pDTO.getSecurityToken());
-		List<DocumentoPlantillaDTO> pTemplatesRol= listarPlantillaRol(pDTO, (pProfile != null));
+		String _user = SessionContext.getCurrentUserOrNull();
+		List<DocumentoPlantillaDTO> pTemplatesRol= listarPlantillaRol((pProfile != null));
 		
 		List<TemplateDTO> _resultTemplates = new ArrayList<TemplateDTO>();
 		boolean nuevaPlantilla = true;
@@ -484,11 +481,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			filtroEstado.setPaginacionRegistroFinal(5000);
 			List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(filtroEstado);
 
-			ProcesoTransicionFilterDTO filtroTransicion = new ProcesoTransicionFilterDTO();
-			filtroTransicion.setSecurityToken((pProfile != null) ? null : pDTO.getSecurityToken());
-			filtroTransicion.setEstado(SharedConstants.STATE_ACTIVE);
-
-			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol(filtroTransicion);
+			String tokenTransicion = (pProfile != null) ? null : SessionContext.getCurrentToken();
+			
+			List<ProcesoTransicionDTO> transiciones = transicionService.listarTransicionesRol((tokenTransicion == null) ? null : sharedTokenService.getToken(tokenTransicion).getUser());
 			List<ProcesoTransicionDTO> transicionesIniciales = transicionService.listarTransaccionesIniciales(null,
 					null);
 
@@ -547,7 +542,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					}
 				}
 				if (nuevaPlantilla) {
-					// iplantillaPermitida.setSecurityToken(dto.getSecurityToken());
 					if (iplantillaPermitida.getLlaveTabla() == null)
 						throw new ServerException("No se puede realizar la consulta sin id de la plantilla");
 					if (iplantillaPermitida.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
@@ -657,7 +651,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		return documentoPlantillaMapper.getFullToSynchronize(process);
 	}
 
-	public List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace() throws ServerException {
+	public List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace()  {
 		return documentoPlantillaMapper.getTemplateofCategoriesReplace();
 	}
 

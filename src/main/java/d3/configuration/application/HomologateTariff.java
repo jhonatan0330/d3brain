@@ -29,33 +29,33 @@ public class HomologateTariff {
 		this.tariffService = tariffService;
 	}
 
-	public void createTariffFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createTariffFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService, CallDocumentCRUD crudService, String funcionario) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
-		fieldsTemplate.add(
-				campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "NOMBRE", DocumentoPlantillaCaracteristicaDTO.TEXTO, 1));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.PLANTILLA,
-				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0), token), token);
+				templateId, Propiedades.DESCRIPCION, fieldsTemplate.get(0)));
 		// fecha inicial
-		fieldsTemplate.add(campoService.createField(templateId, "FECHA_INICIAL",
-				DocumentoPlantillaCaracteristicaDTO.FECHA, 2, token));
+		fieldsTemplate.add(
+				campoService.createField(templateId, "FECHA_INICIAL", DocumentoPlantillaCaracteristicaDTO.FECHA, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		// fecha final
-		fieldsTemplate.add(campoService.createField(templateId, "FECHA_FINAL",
-				DocumentoPlantillaCaracteristicaDTO.FECHA, 3, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "FECHA_FINAL", DocumentoPlantillaCaracteristicaDTO.FECHA, 3));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
-		sincronizeTariff(templateId, fieldsTemplate, token, crudService, funcionario);
+		sincronizeTariff(templateId, fieldsTemplate, crudService, funcionario);
 	}
 
-	private void sincronizeTariff(String templateId, List<String> fieldsTemplate, String token,
-			CallDocumentCRUD crudService, String funcionario) throws ServerException {
+	private void sincronizeTariff(String templateId, List<String> fieldsTemplate, CallDocumentCRUD crudService,
+			String funcionario) throws ServerException {
 		TarifarioFilterDTO filter = new TarifarioFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		List<TarifarioDTO> tariffs = tariffService.getMany(filter);
@@ -82,7 +82,7 @@ public class HomologateTariff {
 					document.getCaracteristicas().add(fieldFinalDate);
 
 					document.setFuncionario(funcionario);
-					document = crudService.saveWithoutTransaction(document, token, true);
+					document = crudService.saveWithoutTransaction(document, true);
 					iTariff.setDocumento(document.getLlaveTabla());
 					tariffService.update(iTariff);
 				}

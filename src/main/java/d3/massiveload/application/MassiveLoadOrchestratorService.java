@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import d3.authorization.application.RolAccesoSvc;
 import d3.document.application.CallDocumentCRUD;
-import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.DocumentMessage;
 import d3.document.domain.PedidoVentaDTO;
 import d3.massiveload.domain.MasivaItemRequest;
@@ -24,6 +23,7 @@ import d3.massiveload.domain.MassiveMasterRequest;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.TemplateDTO;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 
 @Service
@@ -39,7 +39,6 @@ public class MassiveLoadOrchestratorService {
 	private final DocumentoPlantillaSvc plantillaService;
 	private final RolAccesoSvc rolService;
 	private final CallDocumentCRUD callDocumentCRUD;
-	private final PedidoVentaSvc pedidoService;
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
@@ -47,8 +46,7 @@ public class MassiveLoadOrchestratorService {
 			@Lazy MassiveDocumentBuilderService builderService, @Lazy MassiveValidationService validationService,
 			@Lazy MassiveCRUDMasterService cargaMasivaService, @Lazy MassiveCRUDItemService cargaMasivaItemService,
 			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy RolAccesoSvc rolService,
-			@Lazy CallDocumentCRUD callDocumentCRUD,
-			@Lazy PedidoVentaSvc pedidoService) {
+			@Lazy CallDocumentCRUD callDocumentCRUD) {
 		this.parserService = parserService;
 		this.builderService = builderService;
 		this.validationService = validationService;
@@ -57,22 +55,21 @@ public class MassiveLoadOrchestratorService {
 		this.plantillaService = plantillaService;
 		this.rolService = rolService;
 		this.callDocumentCRUD = callDocumentCRUD;
-		this.pedidoService = pedidoService;
 	}
 
-	public MassiveMasterRequest uploadFile(MultipartFile file, String templateId, String token) throws ServerException {
-		TemplateDTO plantilla = obtenerPlantilla(templateId, token);
+	public MassiveMasterRequest uploadFile(MultipartFile file, String templateId) throws ServerException {
+		TemplateDTO plantilla = obtenerPlantilla(templateId);
 		MassiveMasterDTO master = new MassiveMasterDTO();
 		master.setArchivo(file.getOriginalFilename());
 		master.setPlantilla(templateId);
-		master.setUsuario(pedidoService.getUserFlex(token));
+		master.setUsuario(SessionContext.getCurrentUser());
 		master.setFecha(new Date());
 		master.setState(MassiveMasterDTO.CARGANDO);
 		master = cargaMasivaService.saveAndFindById(master);
 
 		List<MassiveItemDTO> items = new ArrayList<>();
 		try {
-			List<java.util.Map<String, String>> rows = parserService.parse(file, plantilla);
+			List<java.util.Map<String, String>> rows = parserService.parse(file);
 			if (rows == null || rows.isEmpty()) {
 				master.setState(MassiveMasterDTO.ERROR);
 				master.setMensaje("No se generaron registros a partir del archivo");
@@ -120,19 +117,19 @@ public class MassiveLoadOrchestratorService {
 		return master.toValueObject();
 	}
 
-	public MassiveMasterRequest validateLoad(String loadId, String token) throws ServerException {
+	public MassiveMasterRequest validateLoad(String loadId) throws ServerException {
 		MassiveMasterDTO master = cargaMasivaService.findById(loadId);
 		if (MassiveMasterDTO.FINALIZADA.equals(master.getState())
 				|| MassiveMasterDTO.TERMINADA_CON_FALLAS.equals(master.getState()))
 			throw new ServerException("La carga masiva ya fue ejecutada, no se puede validar nuevamente");
-		TemplateDTO plantilla = obtenerPlantilla(master.getPlantilla(), token);
+		TemplateDTO plantilla = obtenerPlantilla(master.getPlantilla());
 		int validados = 0;
 		int conError = 0;
 		for (MassiveItemDTO item : listItems(loadId)) {
 			if (!MassiveItemDTO.SERIALIZADA.equals(item.getState()))
 				continue;
 			PedidoVentaDTO pedido = deserialize(item.getModelo());
-			List<DocumentMessage> messages = validationService.validate(pedido, plantilla, token);
+			List<DocumentMessage> messages = validationService.validate(pedido, plantilla);
 			if (messages.isEmpty()) {
 				item.setState(MassiveItemDTO.VALIDADO);
 				validados++;
@@ -158,7 +155,7 @@ public class MassiveLoadOrchestratorService {
 		return master.toValueObject();
 	}
 
-	public MassiveMasterRequest executeLoad(String loadId, String token) throws ServerException {
+	public MassiveMasterRequest executeLoad(String loadId) throws ServerException {
 		MassiveMasterDTO master = cargaMasivaService.findById(loadId);
 		if (!MassiveMasterDTO.VALIDADO.equals(master.getState()))
 			throw new ServerException(
@@ -171,7 +168,7 @@ public class MassiveLoadOrchestratorService {
 				continue;
 			PedidoVentaDTO pedido = deserialize(item.getModelo());
 			try {
-				PedidoVentaDTO result = callDocumentCRUD.massive(pedido, token, null);
+				PedidoVentaDTO result = callDocumentCRUD.massive(pedido, null);
 				item.setDocumento(result.getLlaveTabla());
 				item.setNombre(result.getNombre());
 				item.setFechaSincronizacion(new Date());
@@ -205,11 +202,11 @@ public class MassiveLoadOrchestratorService {
 		return master.toValueObject();
 	}
 
-	public MassiveMasterRequest getLoad(String loadId, String token) throws ServerException {
+	public MassiveMasterRequest getLoad(String loadId) throws ServerException {
 		return cargaMasivaService.findById(loadId).toValueObject();
 	}
 
-	public List<MasivaItemRequest> getItems(String loadId, String token) throws ServerException {
+	public List<MasivaItemRequest> getItems(String loadId) throws ServerException {
 		List<MasivaItemRequest> result = new ArrayList<>();
 		for (MassiveItemDTO item : listItems(loadId)) {
 			result.add(item.toValueObject());
@@ -223,13 +220,12 @@ public class MassiveLoadOrchestratorService {
 		return cargaMasivaItemService.findMany(filter);
 	}
 
-	private TemplateDTO obtenerPlantilla(String templateId, String token) throws ServerException {
+	private TemplateDTO obtenerPlantilla(String templateId) throws ServerException {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(templateId);
-		plantillaFilter.setSecurityToken(token);
 		TemplateDTO plantilla = plantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos(token));
-		plantilla = plantillaService.obtenerCampos(plantilla, token, false);
+				rolService.usuarioPermisosCompletos());
+		plantilla = plantillaService.obtenerCampos(plantilla, false);
 		return plantilla;
 	}
 

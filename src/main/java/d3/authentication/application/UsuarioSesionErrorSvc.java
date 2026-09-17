@@ -20,9 +20,8 @@ public class UsuarioSesionErrorSvc extends BasicSvc<UsuarioSesionErrorDTO, Usuar
 
 	private final UsuarioSesionErrorMapper usuarioSesionErrorMapper;
 
-	public UsuarioSesionErrorSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public UsuarioSesionErrorSvc(
 			@Lazy UsuarioSesionErrorMapper usuarioSesionErrorMapper) {
-		super(usuarioSesionService);
 		this.usuarioSesionErrorMapper = usuarioSesionErrorMapper;
 	}
 
@@ -41,20 +40,20 @@ public class UsuarioSesionErrorSvc extends BasicSvc<UsuarioSesionErrorDTO, Usuar
 	}
 
 	@Override
-	public UsuarioSesionErrorDTO activar(UsuarioSesionErrorDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public UsuarioSesionErrorDTO activar(UsuarioSesionErrorDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioSesionErrorDTO actualizar(UsuarioSesionErrorDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public UsuarioSesionErrorDTO actualizar(UsuarioSesionErrorDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioSesionErrorDTO inactivar(UsuarioSesionErrorDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public UsuarioSesionErrorDTO inactivar(UsuarioSesionErrorDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -74,8 +73,8 @@ public class UsuarioSesionErrorSvc extends BasicSvc<UsuarioSesionErrorDTO, Usuar
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioSesionErrorDTO guardar(UsuarioSesionErrorDTO dto, String token) throws ServerException {
-		return super.guardar(dto, token);
+	public UsuarioSesionErrorDTO guardar(UsuarioSesionErrorDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
 

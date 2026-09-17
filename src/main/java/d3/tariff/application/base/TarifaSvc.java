@@ -9,21 +9,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
-import d3.shared.application.D3Utils;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.tariff.domain.TarifaDTO;
 import d3.tariff.domain.TarifaFilterDTO;
 import d3.tariff.domain.TarifarioDTO;
 import d3.tariff.domain.TarifarioFilterDTO;
 import d3.tariff.infrastructure.TarifaMapper;
-
 import jakarta.annotation.PostConstruct;
 
 @Service("tarifaService")
@@ -33,9 +32,8 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	private final TarifarioService tarifarioService;
 	private final ProductoSvc productoService;
 
-	public TarifaSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy TarifaMapper tarifaMapper,
+	public TarifaSvc(@Lazy TarifaMapper tarifaMapper,
 			@Lazy TarifarioService tarifarioService, @Lazy ProductoSvc productoService) {
-		super(usuarioSesionService);
 		this.tarifaMapper = tarifaMapper;
 		this.tarifarioService = tarifarioService;
 		this.productoService = productoService;
@@ -56,13 +54,13 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 	}
 
 	@Override
-	public TarifaDTO activar(TarifaDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public TarifaDTO activar(TarifaDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TarifaDTO actualizar(TarifaDTO dto, String token) throws ServerException {
+	public TarifaDTO actualizar(TarifaDTO dto) throws ServerException {
 		clean(dto);
 		if (dto.getLlaveTabla() == null)
 			throw new ServerException("No podemos actualizar una tarifa sin su id");
@@ -74,18 +72,18 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 		TarifaDTO tariff = consultaXId(dto.getLlaveTabla());
 		tariff.setEstado(SharedConstants.STATE_INACTIVE);
 		tariff.setUpdatedAt(new Date());
-		tariff.setUpdatedUser(getUserFlex(token));
-		super.actualizar(tariff, token);
+		tariff.setUpdatedUser(SessionContext.getCurrentUser());
+		super.actualizar(tariff);
 		// Para el historial
 		dto.setLlaveTabla(null);
-		dto.setCreatedUser(getUserFlex(token));
-		return super.guardar(dto, token);
+		dto.setCreatedUser(SessionContext.getCurrentUser());
+		return super.guardar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TarifaDTO inactivar(TarifaDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public TarifaDTO inactivar(TarifaDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -105,7 +103,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TarifaDTO guardar(TarifaDTO dto, String token) throws ServerException {
+	public TarifaDTO guardar(TarifaDTO dto) throws ServerException {
 		clean(dto);
 		if (dto.getTarifario() == null)
 			dto.setTarifario(getByDocumentService(dto.getTarifarioDocumento()).getKey());
@@ -140,8 +138,8 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 			throw new ServerException(
 					"Existe una tarifa con las mismas condiciones de tarifario, origen y destino activa, por favor revise su configuracion");
 
-		dto.setCreatedUser(getUserFlex(token));
-		return super.guardar(dto, token);
+		dto.setCreatedUser(SessionContext.getCurrentUser());
+		return super.guardar(dto);
 
 	}
 
@@ -173,7 +171,7 @@ public class TarifaSvc extends BasicSvc<TarifaDTO, TarifaFilterDTO> {
 
 	}
 
-	public List<TarifaDTO> obtenerTarifa(TarifaFilterDTO dto) throws ServerException {
+	public List<TarifaDTO> obtenerTarifa(TarifaFilterDTO dto) {
 		List<TarifaDTO> resultado = null;
 		if (dto.getRecurso() != null) {
 			resultado = tarifaMapper.obtenerTarifa(dto);

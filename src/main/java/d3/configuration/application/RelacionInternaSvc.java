@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
 import d3.configuration.infrastructure.RelacionInternaMapper;
@@ -23,9 +23,8 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 	private final RelacionInternaMapper relacionInternaMapper;
 	private final PropertyGetWithCacheService cacheService;
 
-	public RelacionInternaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public RelacionInternaSvc(
 			@Lazy RelacionInternaMapper relacionInternaMapper, @Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
 		this.relacionInternaMapper = relacionInternaMapper;
 		this.cacheService = cacheService;
 	}
@@ -46,23 +45,23 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public RelacionInternaDTO actualizar(RelacionInternaDTO pDTO, String pToken) throws ServerException {
+	public RelacionInternaDTO actualizar(RelacionInternaDTO pDTO) throws ServerException {
 		String llaveTabla = pDTO.getLlaveTabla();
-		RelacionInternaDTO _newRelation = guardar(pDTO, pToken);
+		RelacionInternaDTO _newRelation = guardar(pDTO);
 		if (_newRelation.getLlaveTabla().equals(llaveTabla))
 			return _newRelation;
 		RelacionInternaDTO _deleteRelation = new RelacionInternaDTO();
 		_deleteRelation.setLlaveTabla(llaveTabla);
-		inactivar(_deleteRelation, pToken);
+		inactivar(_deleteRelation);
 		relacionInternaMapper.updatePropertyRelations(pDTO.getPropiedad());
 		return pDTO;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public RelacionInternaDTO inactivar(RelacionInternaDTO dto, String token) throws ServerException {
+	public RelacionInternaDTO inactivar(RelacionInternaDTO dto) throws ServerException {
 		RelacionInternaDTO bd = consultaXId(dto.getLlaveTabla());
-		bd.setUsuarioEliminacion(getUserFlex(token));
+		bd.setUsuarioEliminacion(SessionContext.getCurrentUser());
 		bd.setFechaEliminacion(new Date());
 		bd.setEstado(SharedConstants.STATE_INACTIVE);
 		bd = super.update(bd);
@@ -73,7 +72,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public RelacionInternaDTO guardar(RelacionInternaDTO dto, String token) throws ServerException {
+	public RelacionInternaDTO guardar(RelacionInternaDTO dto) throws ServerException {
 		if (dto.getPlantilla() == null)
 			throw new ServerException("Es obligatorio registrar la plantilla de la relacion");
 		if (dto.getCampo() == null)
@@ -99,7 +98,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 			}
 		}
 		if (dto.getUsuarioCreacion() == null)
-			dto.setUsuarioCreacion(getUserFlex(token));
+			dto.setUsuarioCreacion(SessionContext.getCurrentUser());
 		if (dto.getFechaInicio() == null)
 			dto.setFechaInicio(new Date());
 
@@ -132,21 +131,21 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 
 		if (pOptionalTemplateId == null || pOptionalTemplateId.isEmpty()) {
 			return _relations.get(0);
-		} else {
-			for (RelacionInternaDTO iRelation : _relations) {
-				if (iRelation.getPlantilla().compareTo(pOptionalTemplateId) == 0) {
-					return iRelation;
-				}
+		}
+		for (RelacionInternaDTO iRelation : _relations) {
+			if (iRelation.getPlantilla().compareTo(pOptionalTemplateId) == 0) {
+				return iRelation;
 			}
 		}
+
 		return null;
 	}
 
-	public List<RelacionInternaDTO> getRelationsFullToSynchronize() throws ServerException {
+	public List<RelacionInternaDTO> getRelationsFullToSynchronize() {
 		return relacionInternaMapper.getRelationsFullToSynchronize();
 	}
 
-	public void copyFromProperty(String propertyIdOld, String propertyIdNew, String token, String pUserCreation,
+	public void copyFromProperty(String propertyIdOld, String propertyIdNew, String pUserCreation,
 			boolean mantainDateInitial) throws ServerException {
 		List<RelacionInternaDTO> relations = relacionesPropiedad(propertyIdOld);
 		if (relations != null && !relations.isEmpty()) {
@@ -160,7 +159,7 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 					newRelation.setFechaInicio(iRelation.getFechaInicio());
 					newRelation.setUsuarioCreacion(pUserCreation);
 				}
-				guardar(newRelation, token);
+				guardar(newRelation);
 			}
 		} else {
 			relacionInternaMapper.updatePropertyRelations(propertyIdNew);

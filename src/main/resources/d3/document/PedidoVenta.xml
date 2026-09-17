@@ -252,15 +252,14 @@
 				and ((
 						<choose><when test="item.campo!=null">select cpvc_valoropcion from campo4id (cpdv_llave, #{item.campo}, npdv_historico)</when><otherwise>cpdv_llave</otherwise></choose>
 					)in(
-					<if test="dto.securityToken!=null">
+					<if test="sesionUsuario!=null">
 					select cpvc_valoropcion from campo_documento where cpvc_valoropcion is not null and cdrc_documento 
-							in (select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
-								select cuss_usuario from usuariosesion_ussp where cuss_llave = #{dto.securityToken}))
+							in (select cerl_documento from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{sesionUsuario})
 					union
-					select cerl_documento from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{dto.securityToken})
+					select cerl_documento from usuariorol_erlp where cerl_estado = 'A' and cerl_usuario = #{sesionUsuario}
 					</if>
 					<if test="dto.funcionarioNombre!=null">
-					<if test="dto.securityToken!=null">union</if>
+					<if test="sesionUsuario!=null">union</if>
 					select cdrc_documento from campo_documento where cpvc_valoropcion = #{dto.funcionarioNombre}
 						and cpvc_campo in (select cdpc_llave from documentoplantillacaracteristica_dpcp where cdpc_plantilla = #{dto.plantilla})
 					union
@@ -409,7 +408,7 @@
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cpdv_estadoexpediente) as  estadoNombre
 			,cpdv_estado as estado
 		from propiedad_${funcionBusqueda} (#{dto.llaveTabla}, #{dto.paginacionRegistroFinal}, #{dto.paginacionRegistroInicial}
-			, #{dto.fechaMin}, #{dto.fechaMax}, #{dto.filtroParametro}, #{dto.nombre}, #{dto.securityToken}
+			, #{dto.fechaMin}, #{dto.fechaMax}, #{dto.filtroParametro}, #{dto.nombre}, #{sesionUsuario}
 			,<choose><when test="parametros!=null">array[<foreach item="item" collection="parametros" separator="," ><choose><when test="item.valorOpcion!=null">#{item.valorOpcion}</when><otherwise>#{item.valorText}</otherwise></choose></foreach>]</when><otherwise>null</otherwise></choose>)
 		where 1=1
 		<if test="filtroEstados!=null">

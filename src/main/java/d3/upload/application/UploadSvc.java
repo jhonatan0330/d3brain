@@ -19,13 +19,14 @@ import java.util.UUID;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
+import d3.upload.domain.CargaArchivoDTO;
 import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
-import d3.upload.domain.CargaArchivoDTO;
-import org.springframework.context.annotation.Lazy;
 
 @Service("uploadService")
 public class UploadSvc {
@@ -38,21 +39,18 @@ public class UploadSvc {
 		this.servidorService = servidorService;
 	}
 
-	public String uploadFile(byte[] bytes, String name, String token, String typeFile, String pVisibility)
-			throws ServerException {
-		return uploadFileDTO(bytes, name, token, typeFile, pVisibility).getUrl();
+	public String uploadFile(byte[] bytes, String name, String typeFile, String pVisibility) throws ServerException {
+		return uploadFileDTO(bytes, name, typeFile, pVisibility).getUrl();
 	}
-	
-	public CargaArchivoDTO uploadFileDTO(byte[] bytes, String name, String token, String typeFile, String pVisibility)
+
+	public CargaArchivoDTO uploadFileDTO(byte[] bytes, String name, String typeFile, String pVisibility)
 			throws ServerException {
 		if (typeFile == null)
 			typeFile = "files";
 		CargaArchivoDTO registro = new CargaArchivoDTO();
 		registro.setFechaInicio(new Date());
 		registro.setSize(bytes.length);
-		if (token != null)
-			registro.setUsuario(cargaService.getUserFlex(token));
-
+		registro.setUsuario(SessionContext.getCurrentUser());
 		ServidorDTO _server = servidorService.resolveServer();
 		registro.setServidor(_server.getLlaveTabla());
 
@@ -62,7 +60,7 @@ public class UploadSvc {
 			registro.setError(e.getMessage());
 			throw new ServerException(e.getMessage(), e);
 		} finally {
-			cargaService.guardar(registro, null);
+			cargaService.guardar(registro);
 		}
 		return registro;
 	}
@@ -73,9 +71,9 @@ public class UploadSvc {
 			return null;
 		if (pServer.getTipo().equals(ServidorDTO.FTP)) {
 			return uploadToFTP(pServer, pBytes, pName, pType);
-		} else {
-			return uploadToLocal(pServer, pBytes, pName, pType, pVisibility);
 		}
+		return uploadToLocal(pServer, pBytes, pName, pType, pVisibility);
+
 	}
 
 	private String uploadToLocal(ServidorDTO pServer, byte[] pBytes, String pName, String pType, String pVisibility)
@@ -258,8 +256,7 @@ public class UploadSvc {
 	// --------------------------------------------------------
 	// CREAR DIRECTORIOS EN FTP
 	// --------------------------------------------------------
-	private String buildFTPDirectory(FTPClient ftpClient, String base, String type)
-			throws IOException, ServerException {
+	private String buildFTPDirectory(FTPClient ftpClient, String base, String type) throws IOException {
 
 		Calendar cal = Calendar.getInstance();
 		String year = String.valueOf(cal.get(Calendar.YEAR));

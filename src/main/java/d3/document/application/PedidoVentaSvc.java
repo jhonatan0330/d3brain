@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
@@ -30,6 +29,7 @@ import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.application.BasicSvc;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
@@ -47,13 +47,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	private final PropertyGetWithCacheService cacheService;
 	private final RolAccesoSvc rolService;
 
-	public PedidoVentaSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy PedidoVentaMapper pedidoVentaMapper,
+	public PedidoVentaSvc(@Lazy PedidoVentaMapper pedidoVentaMapper,
 			@Lazy CampoAdaptador adaptador, @Lazy DocumentoPlantillaSvc documentoPlantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
 			@Lazy PedidoVentaDineroSvc dineroService,
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, @Lazy PropiedadSvc propiedadService,
 			@Lazy PropertyGetWithCacheService cacheService, @Lazy RolAccesoSvc rolService) {
-		super(usuarioSesionService);
 		this.pedidoVentaMapper = pedidoVentaMapper;
 		this.adaptador = adaptador;
 		this.documentoPlantillaService = documentoPlantillaService;
@@ -80,33 +79,32 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	}
 
 	@Override
-	public PedidoVentaDTO activar(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO activar(PedidoVentaDTO dto) throws ServerException {
 		throw new ServerException("Un documento que fue inactivado no se puede volver a activar.");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO actualizar(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO actualizar(PedidoVentaDTO dto) throws ServerException {
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction update");
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO inactivar(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO inactivar(PedidoVentaDTO dto) throws ServerException {
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction inactivate");
 	}
 
-	public PedidoVentaDTO consultaCompleta(String documentId, String token) throws ServerException {
+	public PedidoVentaDTO consultaCompleta(String documentId) throws ServerException {
 		if (documentId == null)
 			throw new ServerException("En el desarrollo se debe crear el objeto desde la plantilla");
-		String securityToken = token;
 		PedidoVentaDTO bd = consultaXIdConDinero(documentId);
 		if (bd == null)
 			throw new ServerException("El identificador del DTO es incorrecto");
 		// VAlido que el estado del pedido me permita modificaciones
 		boolean modificable = true;
 		if (bd.getEstadoExpediente() != null) {
-			String usuarioToken = (securityToken == null) ? null : getUserFlex(securityToken);
+			String usuarioToken = SessionContext.getCurrentUserOrNull();
 			modificable = (cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO, bd.getEstadoExpediente(),
 					Propiedades.MODIFICABLE, usuarioToken) == null) ? false : true;
 		} else {
@@ -123,10 +121,8 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(bd.getPlantilla());
-		plantillaFilter.setSecurityToken(securityToken);
-		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos(securityToken));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, securityToken, false);
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos());
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 		if (plantilla.getCaracteristicas() != null & plantilla.getCaracteristicas().size() != 0) {
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(bd.getLlaveTabla(), bd.getHistorico());
@@ -169,7 +165,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 					// Esto es muy riesgoso hacerlo toca despues con calma hacer pruebas
 					// campoDocumento.setDependientes(pedidoVentaCaracteristicaService.ordenarAlfabeticaDepende(campoDocumento.getDependientes()));
 				}
-				adaptador.cargarConsultaCampo(_iField, securityToken);
+				adaptador.cargarConsultaCampo(_iField);
 			}
 		}
 		return bd;
@@ -178,12 +174,12 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	public PedidoVentaDTO validateBeforeNew(PedidoVentaFilterDTO filter) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		List<PropiedadDTO> prop = cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
-				filter.getPlantilla(), Propiedades.FUNCION_SQL_NEW_ANTES, filter.getSecurityToken());
+				filter.getPlantilla(), Propiedades.FUNCION_SQL_NEW_ANTES, SessionContext.getCurrentToken());
 		if (prop.isEmpty() || prop.size() != 1)
 			return result;
 		for (PropiedadDTO propiedadDTO : prop) {
 			String resultString = propiedadService.validarFuncionSQL2(propiedadDTO, filter.getPlantilla(),
-					filter.getSecurityToken());
+					SessionContext.getCurrentToken());
 			if (resultString != null && resultString.compareTo(SharedConstants.OK) != 0) {
 				if (result.getMessages() == null)
 					result.setMessages(new ArrayList<>());
@@ -198,7 +194,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO guardar(PedidoVentaDTO dto, String token) throws ServerException {
+	public PedidoVentaDTO guardar(PedidoVentaDTO dto) throws ServerException {
 		throw new ServerException("Usa la funcion SaveUpdateInactivateDocumentFunction save");
 	}
 
@@ -217,7 +213,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		return result;
 	}
 
-	public PedidoVentaDTO obtenerCamposCompletos(PedidoVentaDTO pedido, String token) throws ServerException {
+	public PedidoVentaDTO obtenerCamposCompletos(PedidoVentaDTO pedido) throws ServerException {
 		// Caracteristicas
 		if (pedido == null || pedido.getPlantilla() == null)
 			throw new ServerException("Desarrollador el pedido y su plantilla no deben venir nulos");
@@ -226,7 +222,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		rcDTOFilter.setPlantilla(pedido.getPlantilla());
 		List<DocumentoPlantillaCaracteristicaDTO> camposBase = documentoPlantillaCaracteristicaService
 				.listarConsulta(rcDTOFilter);
-		if (camposBase != null & camposBase.size() != 0) {
+		if (camposBase != null && camposBase.size() != 0) {
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
 					.listar2Documento(pedido.getLlaveTabla(), pedido.getHistorico());
 			pedido.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
@@ -247,7 +243,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 				// documentoCaracteristicaDTO.setRol(pedido.getRol());
 				uc.setCampoDTO(documentoCaracteristicaDTO);
 				uc.setDocumento(pedido.getLlaveTabla());
-				adaptador.cargarConsultaCampo(uc, token);
+				adaptador.cargarConsultaCampo(uc);
 				pedido.getCaracteristicas().add(uc);
 			}
 		}
@@ -313,7 +309,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			if (dto.getFiltroParametro() != null)
 				dto.setFiltroParametro(D3Utils.formatSimpleFunction(dto.getFiltroParametro()).toUpperCase());
 			return pedidoVentaMapper.listarExpedientesDisponiblesDocumentoFuncion(dto, funcionBusqueda, null,
-					parametros);
+					parametros, SessionContext.getCurrentTokenOrNull());
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), e);
 		}

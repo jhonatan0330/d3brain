@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
@@ -18,9 +16,10 @@ import d3.authentication.domain.UsuarioOrganizacionDTO;
 import d3.authentication.domain.UsuarioOrganizacionFilterDTO;
 import d3.authentication.infrastructure.UsuarioOrganizacionMapper;
 import d3.shared.application.BasicSvc;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
-
 import jakarta.annotation.PostConstruct;
 
 @Service("usuarioOrganizacionService")
@@ -28,10 +27,9 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 
 	private final UsuarioOrganizacionMapper usuarioOrganizacionMapper;
 
-	public UsuarioOrganizacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public UsuarioOrganizacionSvc(
 			@Lazy UsuarioOrganizacionMapper usuarioOrganizacionMapper, @Lazy OrganizacionSvc organizacionService,
 			@Lazy UsuarioSvc usuarioService, @Lazy UsuarioAutenticacionSvc autenticacionService) {
-		super(usuarioSesionService);
 		this.usuarioOrganizacionMapper = usuarioOrganizacionMapper;
 		this.organizacionService = organizacionService;
 		this.usuarioService = usuarioService;
@@ -57,22 +55,22 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	}
 
 	@Override
-	public UsuarioOrganizacionDTO activar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
+	public UsuarioOrganizacionDTO activar(UsuarioOrganizacionDTO dto) throws ServerException {
 		validateNotMainOrganization(dto.getOrganizacion());
-		return super.activar(dto, token);
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioOrganizacionDTO actualizar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
+	public UsuarioOrganizacionDTO actualizar(UsuarioOrganizacionDTO dto) throws ServerException {
 		validateNotMainOrganization(dto.getOrganizacion());
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioOrganizacionDTO inactivar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public UsuarioOrganizacionDTO inactivar(UsuarioOrganizacionDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public List<UsuarioOrganizacionDTO> sincronizarUsuarios(UsuarioOrganizacionDTO dto, String token)
+	public List<UsuarioOrganizacionDTO> sincronizarUsuarios(UsuarioOrganizacionDTO dto)
 			throws ServerException {
 		OrganizacionDTO organizacion = organizacionService.consultaXId(dto.getOrganizacion());
 		RestTemplate restTemplate = new RestTemplate();
@@ -110,8 +108,8 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 				UsuarioDTO usuarioNuevo = new UsuarioDTO();
 				usuarioNuevo.setIdentificacion(iterador.getOrganizacion());
 				usuarioNuevo.setNombre(iterador.getUsuario());
-				usuarioNuevo = usuarioService.guardar(usuarioNuevo, token);
-				autenticacionService.crearAutenticacion(usuarioNuevo.getLlaveTabla(), token);
+				usuarioNuevo = usuarioService.guardar(usuarioNuevo);
+				autenticacionService.crearAutenticacion(usuarioNuevo.getLlaveTabla());
 			} else {
 				UsuarioOrganizacionFilterDTO actualFilter = new UsuarioOrganizacionFilterDTO();
 				actualFilter.setOrganizacion(organizacion.getLlaveTabla());
@@ -124,11 +122,11 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 					actual.setOrganizacion(organizacion.getLlaveTabla());
 					actual.setUsuario(autenticacionLocal.getUsuario());
 					actual.setTokenServer(iterador.getLlaveTabla());
-					actual = guardar(actual, token);
+					actual = guardar(actual);
 				} else {
 					if (actual.getTokenServer().compareTo(iterador.getTokenServer()) != 0) {
 						actual.setTokenServer(iterador.getTokenServer());
-						actualizar(actual, token);
+						actualizar(actual);
 					}
 				}
 			}
@@ -138,9 +136,9 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioOrganizacionDTO guardar(UsuarioOrganizacionDTO dto, String token) throws ServerException {
+	public UsuarioOrganizacionDTO guardar(UsuarioOrganizacionDTO dto) throws ServerException {
 		validateNotMainOrganization(dto.getOrganizacion());
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	public List<UsuarioOrganizacionDTO> getHumanResource() throws ServerException {
@@ -151,7 +149,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		}
 	}
 
-	public UsuarioOrganizacionDTO reloadPassword(UsuarioOrganizacionDTO dto, String token) throws ServerException {
+	public UsuarioOrganizacionDTO reloadPassword(UsuarioOrganizacionDTO dto) throws ServerException {
 		if (dto.getTokenServer() == null)
 			throw new ServerException("Es necesario incluir la nueva clave");
 		UsuarioOrganizacionFilterDTO filter = new UsuarioOrganizacionFilterDTO();
@@ -161,10 +159,10 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		filter.setUsuario(dto.getUsuario());
 		UsuarioOrganizacionDTO unique = consultaUnica(filter);
 		if (unique != null) {
-			inactivar(unique, token);
+			inactivar(unique);
 		}
 		dto.setLlaveTabla(null);
-		return guardar(dto, token);
+		return guardar(dto);
 	}
 
 	private void validateNotMainOrganization(String organizationId) throws ServerException {

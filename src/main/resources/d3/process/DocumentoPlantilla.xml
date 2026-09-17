@@ -158,8 +158,8 @@
 		and cdpl_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
 			and cppd_propiedadvalor in ('PROP_77', 'PROP_78', 'PROP_107', 'PROP_108', 'PROP_114') 
 			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
-				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
-			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario}))
 			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
 			and (dppd_fechafinal is null or dppd_fechafinal > now())
 			)
@@ -179,8 +179,8 @@
 			and cprc_llave in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' 
 			and cppd_propiedadvalor = 'PROP_183'
 			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
-				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
-			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario}))
 			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
 			and (dppd_fechafinal is null or dppd_fechafinal > now())
 			)
@@ -199,14 +199,14 @@
 		where cppd_estado = 'A' 
 			and cppd_propiedadvalor = 'PROP_182'
 			and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = (
-				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken})))
-			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{securityToken}))
+				select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario})))
+			and (cppd_usuario is null or cppd_usuario = (select cuss_usuario from usuariosesion_ussp where cuss_llave = #{sesionUsuario}))
 			and (dppd_fechainicial is null or dppd_fechainicial  <![CDATA[ < ]]>  now())
 			and (dppd_fechafinal is null or dppd_fechafinal > now())	
 		order by nombre;
 	</select>
 	
-	<select id="getProcessBoardsToMenu" parameterType="DocumentoPlantillaDTO" resultType="DocumentoPlantillaDTO">
+	<select id="getProcessBoardsToMenu"  resultType="DocumentoPlantillaDTO">
 	select
 			cdpl_llave as  llaveTabla
 			,cdpl_nombre as  nombre

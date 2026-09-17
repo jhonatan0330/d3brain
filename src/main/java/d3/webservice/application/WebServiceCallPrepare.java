@@ -10,8 +10,6 @@ import java.util.Set;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
@@ -20,9 +18,12 @@ import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.ProcessTemplate;
-import d3.shared.application.D3Utils;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
@@ -36,36 +37,35 @@ public class WebServiceCallPrepare {
 	private final DocumentoPlantillaCaracteristicaSvc fieldService;
 	private final UploadSvc uploadService;
 	private final ProcessTemplate templatesService;
-	private final WebServiceSvc webServiceSvc;
 
 	public WebServiceCallPrepare(@Lazy PedidoVentaCaracteristicaSvc campoService,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionSvc, @Lazy RelacionInternaSvc relacionService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc fieldService, @Lazy UploadSvc uploadService,
-			@Lazy ProcessTemplate templatesService, @Lazy WebServiceSvc webServiceSvc) {
+			@Lazy ProcessTemplate templatesService) {
 		this.campoService = campoService;
 		this.webServiceEjecucionSvc = webServiceEjecucionSvc;
 		this.relacionService = relacionService;
 		this.fieldService = fieldService;
 		this.uploadService = uploadService;
 		this.templatesService = templatesService;
-		this.webServiceSvc = webServiceSvc;
+
 	}
 
 	public WebServiceEjecucionDTO call(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			PedidoVentaDTO iterador, String token, String initialPameters) throws ServerException {
+			PedidoVentaDTO iterador, String initialPameters) throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(service.getLlaveTabla());
-		String userId = webServiceSvc.getUserFlex(token);
+		String userId = SessionContext.getCurrentUserOrNull();
 		callWS.setUsuario(userId);
 		callWS.setFecha(new Date());
 		// aqui ya viene con todoas las properties
-		String parameters = getParameters(service, document, modificador, iterador, token);
+		String parameters = getParameters(service, document, modificador, iterador);
 		if (initialPameters != null) {
 			parameters = parameters + initialPameters;
 		}
 		callWS.setParametros(parameters);
 		if (callWS.getParametros() != null && callWS.getParametros().length() > 4000) {
-			callWS.setParametros(uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt", token,
+			callWS.setParametros(uploadService.uploadFile(callWS.getParametros().getBytes(), "Parameter.txt",
 					"webservice", "private"));
 		}
 		callWS.setDocumento(document.getLlaveTabla());
@@ -94,12 +94,12 @@ public class WebServiceCallPrepare {
 	 * @throws ServerException
 	 */
 	private String getParameters(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			PedidoVentaDTO iterador, String token) throws ServerException {
+			PedidoVentaDTO iterador) throws ServerException {
 		if (service.getPropiedades() == null || service.getPropiedades().isEmpty())
 			return null;
 		String parameters = "";
 		parameters = getDirectParameters(service, document, parameters);
-		parameters = getSpecialParameter(service, document, modificador, iterador, token, parameters);
+		parameters = getSpecialParameter(service, document, modificador, iterador, parameters);
 		parameters = getReferedParameters(service, document, modificador, parameters, iterador);
 		if (parameters == "")
 			return null;
@@ -169,7 +169,7 @@ public class WebServiceCallPrepare {
 	}
 
 	private String getSpecialParameter(WebServiceDTO service, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			PedidoVentaDTO iterator, String token, String parameters) throws ServerException {
+			PedidoVentaDTO iterator, String parameters) throws ServerException {
 		// Especiales
 		List<PropiedadDTO> especiales = Propiedades.obtenerVariosParametro(service, Propiedades.API_CODE_ESPECIAL);
 		if (especiales != null && !especiales.isEmpty()) {
@@ -216,9 +216,9 @@ public class WebServiceCallPrepare {
 									+ iProp.getTexto() + "_ID" + SharedConstants.IGUAL + document.getLlaveTabla();
 						break;
 					case "E_TOKEN":
-						if (token != null)
+						if (SessionContext.getCurrentToken() != null)
 							parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + iProp.getTexto()
-									+ SharedConstants.IGUAL + token;
+									+ SharedConstants.IGUAL + SessionContext.getCurrentToken();
 						break;
 					case "E_ALL":
 						if (modificador != null)

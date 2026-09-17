@@ -5,10 +5,9 @@ import java.util.Properties;
 
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import d3.shared.domain.ServerException;
-import d3.configuration.domain.PropiedadDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
+import d3.shared.domain.ServerException;
 import d3.users.domain.ServidorDTO;
 
 public class MailUtils {
@@ -48,8 +47,8 @@ public class MailUtils {
 		return template;
 	}
 
-	public static String generateParameters(PropiedadDTO plantillaCorreo, PedidoVentaDTO documento, String pResponsable,
-			PedidoVentaDTO modificador, List<PedidoVentaCaracteristicaDTO> camposMensaje) throws ServerException {
+	public static String generateParameters(PedidoVentaDTO documento, String pResponsable, PedidoVentaDTO modificador,
+			List<PedidoVentaCaracteristicaDTO> camposMensaje) throws ServerException {
 		String parametros = generarParametros(documento, "D_");
 		if (pResponsable != null)
 			parametros = parametros + MailUtils.SEPARADOR + "D_RESPONSABLE=" + pResponsable;
@@ -67,7 +66,7 @@ public class MailUtils {
 		return parametros;
 	}
 
-	private static String generarParametros(PedidoVentaDTO documento, String prefijo) throws ServerException {
+	private static String generarParametros(PedidoVentaDTO documento, String prefijo) {
 		String parametros = prefijo + "CODE=" + documento.getNombre();
 		if (documento.getDescripcion() != null)
 			parametros = parametros + MailUtils.SEPARADOR + prefijo + "DESC="

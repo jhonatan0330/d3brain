@@ -71,5 +71,14 @@ public class DocumentoPlantillaFilterDTO extends BasicFilterDTO {
 	public String getPadre() {
 		return padre;
 	}
+	
+	private String sesionUsuario;
+	public void setSesionUsuario(String sesionUsuario) {
+		this.sesionUsuario = sesionUsuario;
+	}
+
+	public String getSesionUsuario() {
+		return sesionUsuario;
+	}
 
 }

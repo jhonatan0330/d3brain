@@ -39,7 +39,7 @@ public class TipoProductoLista {
 		pCampo.setProductosExclusivos(usuarioRolProductoService.listarConsulta(urp));
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getProductosExclusivos() == null || pCampo.getProductosExclusivos().size() == 0))
@@ -86,19 +86,19 @@ public class TipoProductoLista {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 		if (pCampo.getProductosExclusivos() == null)
 			return pCampo;
 		for (UsuarioRolProductoDTO producto : pCampo.getProductosExclusivos()) {
 			if (producto.getLlaveTabla() == null) {
 				producto.setDocumento(pCampo.getDocumento());
-				producto = usuarioRolProductoService.guardar(producto, token);
+				producto = usuarioRolProductoService.guardar(producto);
 			} else {
 				if (producto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-					producto = usuarioRolProductoService.inactivar(producto, token);
+					producto = usuarioRolProductoService.inactivar(producto);
 				} else {
-					producto = usuarioRolProductoService.actualizar(producto, token);
+					producto = usuarioRolProductoService.actualizar(producto);
 				}
 			}
 		}

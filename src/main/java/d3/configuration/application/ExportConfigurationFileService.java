@@ -22,6 +22,7 @@ import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.report.application.ReporteBaseSvc;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
@@ -69,12 +70,12 @@ public class ExportConfigurationFileService {
 		this.apiService = apiService;
 	}
 
-	public CargaArchivoDTO call(String token) throws ServerException {
-		return uploadFile(token, construirHierarchy(token));
+	public CargaArchivoDTO call() throws ServerException {
+		return uploadFile(construirHierarchy());
 	}
 
-	public HierarchyExporterDTO construirHierarchy(String token) throws ServerException {
-		rolService.getUserFlex(token);
+	public HierarchyExporterDTO construirHierarchy() throws ServerException {
+		SessionContext.getCurrentUser();
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setMessages(messageService.getFullToSynchronize(null));
@@ -93,13 +94,13 @@ public class ExportConfigurationFileService {
 		return hierarchy;
 	}
 
-	public CargaArchivoDTO call(String token, ExportListRequest modules) throws ServerException {
+	public CargaArchivoDTO call(ExportListRequest modules) throws ServerException {
 
 		if (modules == null || modules.getModulesCode() == null || modules.getModulesCode().isEmpty())
 			throw new ServerException("No hay modulos");
 		List<String> processToInclude = new ArrayList<>();
 
-		rolService.getUserFlex(token);
+		SessionContext.getCurrentUser();
 
 		for (String iModule : modules.getModulesCode()) {
 			ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
@@ -124,11 +125,11 @@ public class ExportConfigurationFileService {
 		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
 		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
 
-		return uploadFile(token, hierarchy);
+		return uploadFile(hierarchy);
 	}
 
-	private CargaArchivoDTO uploadFile(String token, HierarchyExporterDTO hierarchy) throws ServerException {
-		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", token, "export", "private");
+	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy) throws ServerException {
+		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", "export", "private");
 	}
 
 	private byte[] convert(HierarchyExporterDTO hierarchy) throws ServerException {

@@ -2,16 +2,16 @@ package d3.process.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.document.application.CallDocumentListFromFieldProcess;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.D3Utils;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class CallSearchProcessFromText {
@@ -22,9 +22,9 @@ public class CallSearchProcessFromText {
 		this.listDocumentFromFieldProcessFunction = listDocumentFromFieldProcessFunction;
 	}
 
-	public String getValueOptionFromText(String token, String valueText,
+	public String getValueOptionFromText( String valueText,
 			DocumentoPlantillaCaracteristicaDTO fieldTemplate) throws ServerException {
-		String key = findOptionFromText(token, valueText, fieldTemplate);
+		String key = findOptionFromText( valueText, fieldTemplate);
 		if (key == null)
 			throw new ServerException(
 					"Revisando el campo " + fieldTemplate.getNombre() + " No se encuentra el documento con codigo : "
@@ -32,12 +32,11 @@ public class CallSearchProcessFromText {
 		return key;
 	}
 
-	public String findOptionFromText(String token, String valueText, DocumentoPlantillaCaracteristicaDTO fieldTemplate)
+	public String findOptionFromText( String valueText, DocumentoPlantillaCaracteristicaDTO fieldTemplate)
 			throws ServerException {
 		PedidoVentaCaracteristicaFilterDTO filter = new PedidoVentaCaracteristicaFilterDTO();
 		filter.setCampo(fieldTemplate.getLlaveTabla());
 		filter.setCampoDTO(fieldTemplate);
-		filter.setSecurityToken(token);
 		filter.setFiltroParametro(valueText);
 		PedidoVentaCaracteristicaFilterDTO resultField = listDocumentFromFieldProcessFunction.execute(filter,
 				fieldTemplate);

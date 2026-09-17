@@ -49,30 +49,29 @@ public class TipoVinculo {
 		this.caracteristicaService = caracteristicaService;
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorOpcion() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorOpcion() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
@@ -82,7 +81,7 @@ public class TipoVinculo {
 		pCampo.getExpedientes().add(documentService.consultaXIdConDinero(pCampo.getValorOpcion()));
 	}
 
-	public PedidoVentaDTO doDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken)
+	public PedidoVentaDTO doDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 
 		PropiedadDTO _functionSQl = Propiedades.obtenerParametro(pCampo.getCampoDTO(),
@@ -106,17 +105,17 @@ public class TipoVinculo {
 		if (_templateId == null || _templateId.getValor().isEmpty()) {
 			if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) != null) {
 				return null; // Si el campo es opcional, no se genera un documento, para los update
-			} else {
-				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-						+ pCampo.getCampoDTO().getPlantillaNombre()
-						+ "No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
 			}
+			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
+					+ pCampo.getCampoDTO().getPlantillaNombre()
+					+ "No encontramos la plantilla de vinculo, por favor valide la configuracion del campo");
+
 		}
-		return generateDocumentToVinculate(pCampo, ptoken, _templateId, pCampo.getPrincipal().getLlaveTabla());
+		return generateDocumentToVinculate(pCampo,  _templateId, pCampo.getPrincipal().getLlaveTabla());
 
 	}
 
-	public void updateDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken) throws ServerException {
+	public void updateDocumentVinculate(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getValorOpcion() == null)
 			return;
 		if (!pCampo.getModificado())
@@ -156,7 +155,7 @@ public class TipoVinculo {
 				_newFieldSql.setCampo(_relationSql.getLlaveTabla()); // Aqui intento ajustar el campo para nuevos campos
 				_newFieldSql.setModificado(true);
 				_newFieldSql.setCampoDTO(
-						caracteristicaService.consultaUnicaConComplementos(_relationSql.getCampo(), ptoken));
+						caracteristicaService.consultaUnicaConComplementos(_relationSql.getCampo()));
 				if (!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(), Propiedades.MULTIPLE).isEmpty()) {
 					_newFieldSql.setExpedientes(_resultsFunction);
 				} else {
@@ -172,15 +171,15 @@ public class TipoVinculo {
 			}
 		}
 
-		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO, ptoken, _properties, _fieldsFunctionSql);
+		updateDocumentFunction.executeFromBPM(pCampo, procesoDTO,  _properties, _fieldsFunctionSql);
 	}
 
-	private PedidoVentaDTO generateDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, String ptoken,
-			PropiedadDTO _templateId, String pDocumentToRelationMain) throws ServerException {
+	private PedidoVentaDTO generateDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, PropiedadDTO _templateId,
+			String pDocumentToRelationMain) throws ServerException {
 
 		TemplateDTO pPlantilla = new TemplateDTO();
 		pPlantilla.setLlaveTabla(_templateId.getValor());
-		pPlantilla = plantillaService.obtenerCampos(pPlantilla, ptoken, false);
+		pPlantilla = plantillaService.obtenerCampos(pPlantilla, false);
 
 		List<PedidoVentaCaracteristicaDTO> _newFields = new ArrayList<PedidoVentaCaracteristicaDTO>();
 
@@ -233,8 +232,7 @@ public class TipoVinculo {
 
 				List<PedidoVentaDTO> _resultsFunction = documentService.listarExpedientesDisponiblesDocumentoFuncion(
 						_filter, _iSqlProperty.getLlaveTabla(), pCampo.getDependientes());
-				_newFieldSql.setCampoDTO(
-						caracteristicaService.consultaUnicaConComplementos(_newFieldSql.getCampo(), ptoken));
+				_newFieldSql.setCampoDTO(caracteristicaService.consultaUnicaConComplementos(_newFieldSql.getCampo()));
 				if (!Propiedades.obtenerValor(_newFieldSql.getCampoDTO(), Propiedades.MULTIPLE).isEmpty()) {
 					_newFieldSql.setExpedientes(_resultsFunction);
 				} else {
@@ -249,12 +247,11 @@ public class TipoVinculo {
 				_newFields.add(_newFieldSql);
 			}
 		}
-		return CallDocumentCommons.generateNewDocument(pPlantilla, pCampo.getTransaccionRegistro(), ptoken, _newFields,
+		return CallDocumentCommons.generateNewDocument(pPlantilla, pCampo.getTransaccionRegistro(), _newFields,
 				pCampo.getPrincipal().getFuncionario());
 	}
 
-	public PedidoVentaDTO deleteDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaDTO deleteDocumentToVinculate(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd == null)
@@ -266,13 +263,13 @@ public class TipoVinculo {
 			return null;
 
 		if (pCampo.getCampoDTO().getPropiedades() == null || pCampo.getCampoDTO().getPropiedades().isEmpty())
-			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO(), token));
+			pCampo.setCampoDTO(caracteristicaService.cargarComplementos(pCampo.getCampoDTO()));
 		PropiedadDTO _templateId = Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.VINCULO_DELETE);
 		if (_templateId == null) {
 			throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
 					+ pCampo.getCampoDTO().getPlantillaNombre()
 					+ "No encontramos la plantilla de ELIMINAR vinculo, por favor valide la configuracion del campo");
 		}
-		return generateDocumentToVinculate(pCampo, token, _templateId, bd.getValorOpcion());
+		return generateDocumentToVinculate(pCampo, _templateId, bd.getValorOpcion());
 	}
 }

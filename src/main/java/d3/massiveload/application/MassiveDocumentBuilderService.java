@@ -9,12 +9,11 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.TemplateDTO;
-import d3.shared.domain.ServerException;
 
 @Service
 public class MassiveDocumentBuilderService {
 
-	public PedidoVentaDTO build(Map<String, String> row, TemplateDTO template) throws ServerException {
+	public PedidoVentaDTO build(Map<String, String> row, TemplateDTO template) {
 		PedidoVentaDTO pedido = new PedidoVentaDTO();
 		pedido.setPlantilla(template.getLlaveTabla());
 		pedido.setCaracteristicas(new ArrayList<>());

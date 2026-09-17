@@ -52,6 +52,7 @@ import d3.process.domain.PlantillaConsecutivoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.users.application.UsuarioSvc;
@@ -88,10 +89,10 @@ public class CallDocumentCRUD {
 	private final HomologateAdapterService homologateService;
 	private final TipoVinculo tipoVinculoService;
 	private final CallUpdateByRelations createUpdateByRelationFields;
-	
+
 	private final VoucherDeleteService voucherDeleteService;
 	private final VoucherCreateFromTemplateService voucherCreateFromTemplateService;
-	
+
 	public CallDocumentCRUD(@Lazy CampoAdaptador adaptador, @Lazy PedidoVentaSvc pedidoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy DocumentoTransaccionSvc transaccionSvc,
 			@Lazy TransaccionLogSvc logSvc, @Lazy TransaccionErrorSvc errorSvc,
@@ -105,9 +106,9 @@ public class CallDocumentCRUD {
 			@Lazy UsuarioSvc usuarioService, @Lazy UsuarioRolSvc usuarioRolService, @Lazy RolAccesoSvc rolService,
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
 			@Lazy PedidoVentaDineroSvc dineroService, @Lazy CallBPM bpmService,
-			@Lazy HomologateAdapterService homologateService, 
-			@Lazy TipoVinculo tipoVinculoService, @Lazy CallUpdateByRelations createUpdateByRelationFields,
-			@Lazy VoucherDeleteService voucherDeleteService, @Lazy VoucherCreateFromTemplateService voucherCreateFromTemplateService) {
+			@Lazy HomologateAdapterService homologateService, @Lazy TipoVinculo tipoVinculoService,
+			@Lazy CallUpdateByRelations createUpdateByRelationFields, @Lazy VoucherDeleteService voucherDeleteService,
+			@Lazy VoucherCreateFromTemplateService voucherCreateFromTemplateService) {
 		this.adaptador = adaptador;
 		this.pedidoService = pedidoService;
 		this.estadoService = estadoService;
@@ -139,18 +140,18 @@ public class CallDocumentCRUD {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO massive(PedidoVentaDTO pDocument, String pToken, String pSession) throws ServerException {
+	public PedidoVentaDTO massive(PedidoVentaDTO pDocument, String pSession) throws ServerException {
 		// Este metodo es igual al de guardar pero debi colocar una logica del modificar
 		// La idea es despues mejorar las cargas masivas
 		// Para almacenar el archivo y crear los registros desde el back
 		if (pDocument.getNombre() == null)
-			return save(pDocument, pToken, pSession);
+			return save(pDocument, pSession);
 		// Camino del Update
 		PedidoVentaDTO bd = pedidoService.findByCode(pDocument.getNombre(), pDocument.getPlantilla());
 		if (bd == null)
 			throw new ServerException("No se encontro el documento con nombre " + pDocument.getNombre()
 					+ " para la plantilla " + pDocument.getPlantilla());
-		bd = pedidoService.obtenerCamposCompletos(bd, pToken);
+		bd = pedidoService.obtenerCamposCompletos(bd);
 		for (PedidoVentaCaracteristicaDTO iterador : pDocument.getCaracteristicas()) {
 			if (iterador.getValorText() != null || iterador.getValorOpcion() != null || iterador.getValorFecha() != null
 					|| iterador.getValorNumero() != null) {
@@ -173,12 +174,12 @@ public class CallDocumentCRUD {
 				}
 			}
 		}
-		return update(bd, null, pToken);
+		return update(bd, null);
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO save(PedidoVentaDTO dto, String token, String session) throws ServerException {
-		String userId = getUserID(token);
+	public PedidoVentaDTO save(PedidoVentaDTO dto, String session) throws ServerException {
+		String userId = SessionContext.getCurrentUser();
 		if (session != null) {
 			TransaccionLogFilterDTO validateDuplicate = new TransaccionLogFilterDTO();
 			validateDuplicate.setSesion(session + "-" + userId);
@@ -186,7 +187,7 @@ public class CallDocumentCRUD {
 				throw new ServerException(
 						"Identificamos que esta informacion ya esta almacenada por favor valida si ya se guardo el registro o sino cierra el formulario y vuelve a registrar. Gracias por tu comprension");
 		}
-		DocumentoTransaccionDTO tran = transaccionSvc.crear(token);
+		DocumentoTransaccionDTO tran = transaccionSvc.crear();
 		dto.setTransaccion(tran.getLlaveTabla());
 		dto.setFuncionario(userId);
 		String dtoToJson = null;
@@ -196,87 +197,84 @@ public class CallDocumentCRUD {
 		} catch (JsonProcessingException e1) {
 		}
 		try {
-			PedidoVentaDTO result = saveWithoutTransaction(dto, token, false);
+			PedidoVentaDTO result = saveWithoutTransaction(dto, false);
 			logSvc.finalizar(tran.getFecha(), dto.getTransaccion(), session + "-" + userId);
 			return result;
 		} catch (Exception e) {
-			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(), dtoToJson, token);
+			errorSvc.finalizar(tran.getFecha(), e.getMessage(), tran.getUsuario(), dtoToJson);
 			throw new ServerException(e.getMessage(), false);
 		}
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO inactivateDocumentWithProcess(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO,
-			String token) throws ServerException {
+	public PedidoVentaDTO inactivateDocumentWithProcess(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO)
+			throws ServerException {
 		PedidoVentaDTO bd = pedidoService.consultaXId(documentDTO.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null)
 			throw new ServerException("Para inactivar el expediente se debe usar un documento de transicion de estado");
-		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO, token);
+		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO);
 		String transaccion = documentDTO.getTransaccion();
 		if (transaccion == null)
-			transaccion = transaccionSvc.crear(token).getLlaveTabla();
+			transaccion = transaccionSvc.crear().getLlaveTabla();
 		for (PedidoVentaCaracteristicaDTO iterador : documentDTO.getCaracteristicas()) {
 			if (iterador.getCampoDTO() == null)
 				iterador.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(iterador.getCampo()));
 			iterador.setTransaccionInactivo(transaccion);
-			adaptador.inactivar(iterador, updaterDTO, token);
+			adaptador.inactivar(iterador, updaterDTO);
 		} // El inactivar va e intenta gestionar los productos y proceso ()
 
 		documentDTO = pedidoService.inactivate(documentDTO);
-		manageTemplateTypes(documentDTO, null, token);
-		deleteVinculateDocument(documentDTO, token);
-		voucherDeleteService.callByDocument(bd.getLlaveTabla(), bd.getPlantilla(), token);
+		manageTemplateTypes(documentDTO, null);
+		deleteVinculateDocument(documentDTO);
+		voucherDeleteService.callByDocument(bd.getLlaveTabla(), bd.getPlantilla());
 		return documentDTO;
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO activateDocument(PedidoVentaDTO documentDTO, PedidoVentaDTO updaterDTO, String token)
-			throws ServerException {
+	public PedidoVentaDTO activateDocument(PedidoVentaDTO documentDTO) throws ServerException {
 		PedidoVentaDTO bd = pedidoService.consultaXId(documentDTO.getLlaveTabla());
 		if (bd.getEstadoExpediente() != null)
 			throw new ServerException("Para activar el expediente se debe usar un documento de transicion de estado");
-		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO, token);
+		documentDTO = pedidoService.obtenerCamposCompletos(documentDTO);
 
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(documentDTO.getPlantilla());
-		plantillaFilter.setSecurityToken(token);
 
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
+				rolService.usuarioPermisosCompletos());
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 
 		// if (!isUpdateAutomatic)
-		propiedadService.prevalidate(plantilla, documentDTO.getCaracteristicas(), documentDTO.getLlaveTabla(), token);
+		propiedadService.prevalidate(plantilla, documentDTO.getCaracteristicas(), documentDTO.getLlaveTabla());
 
 		documentDTO = pedidoService.activate(documentDTO);
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, documentDTO.getLlaveTabla(), null,
-				documentDTO.getFuncionario(), token);
-		manageTemplateTypes(documentDTO, null, token);
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, documentDTO.getLlaveTabla(), null);
+		manageTemplateTypes(documentDTO, null);
 		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
 		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
 			for (PropiedadDTO _iApi : _PropertyListToAPis) {
-				apiService.prepareApiToExecution(_iApi.getValor(), documentDTO, null, null, token, null);
+				apiService.prepareApiToExecution(_iApi.getValor(), documentDTO, null, null, null);
 			}
 		}
-		voucherCreate(bd, token);
-		makeVinculateDocument(bd, token);
-		generateNotifications(documentDTO, token, plantilla, documentDTO);
+		voucherCreate(bd);
+		makeVinculateDocument(bd);
+		generateNotifications(documentDTO, plantilla, documentDTO);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		// if (crearTraza)
 		relacionGestorService.trazar(documentDTO.getLlaveTabla(), null, plantilla.getNombre(),
 				documentDTO.getEstadoExpediente(), documentDTO.getEstadoExpediente(),
-				(documentDTO.getDinero() == null) ? null : documentDTO.getDinero().getLlaveTabla(), token, null,
-				documentDTO.getHistorico(), documentDTO.getTransaccion(), true);
+				(documentDTO.getDinero() == null) ? null : documentDTO.getDinero().getLlaveTabla(), null,
+				documentDTO.getHistorico(), documentDTO.getTransaccion());
 		return documentDTO;
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId, String token) throws ServerException {
-		return updateWithoutTransaction(dto, modificadorId, token, false);
+	public PedidoVentaDTO update(PedidoVentaDTO dto, String modificadorId) throws ServerException {
+		return updateWithoutTransaction(dto, modificadorId, false);
 	}
 
-	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, String token,
-			boolean isUpdateAutomatic) throws ServerException {
+	public PedidoVentaDTO updateWithoutTransaction(PedidoVentaDTO dto, String modificadorId, boolean isUpdateAutomatic)
+			throws ServerException {
 		PedidoVentaDTO bd = pedidoService.consultaXId(dto.getLlaveTabla());
 		dto.setHistorico(bd.getHistorico()); // para evitatr errores en el calculo de valores
 		dto.setPlantilla(bd.getPlantilla());
@@ -285,10 +283,9 @@ public class CallDocumentCRUD {
 		// dto.setTransaccion(null);
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
-		plantillaFilter.setSecurityToken(token);
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos(token));
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
+				rolService.usuarioPermisosCompletos());
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 		if (!isUpdateAutomatic
 				&& Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para modificar un " + plantilla.getNombre());
@@ -308,10 +305,10 @@ public class CallDocumentCRUD {
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 			iterador.setPrincipal(bd);
 		}
-		validateFields(dto, plantilla, token, isUpdateAutomatic);
+		validateFields(dto, plantilla, isUpdateAutomatic);
 
 		if (!isUpdateAutomatic)
-			propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), dto.getLlaveTabla(), token);
+			propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), dto.getLlaveTabla());
 
 		if (dto.getNombre() == null) {
 			dto.setNombre(bd.getNombre());// Cuando envio modificar lo envio vacio
@@ -327,7 +324,7 @@ public class CallDocumentCRUD {
 				}
 			}
 		}
-		validateConsecutiveNumber(dto, plantilla, token);
+		validateConsecutiveNumber(dto, plantilla);
 		dto.setFecha(bd.getFecha()); // Copio la fecha para que no me la modifiquen desde el cliente sin un campo
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validateBalance(dto, plantilla);
@@ -337,7 +334,7 @@ public class CallDocumentCRUD {
 		boolean crearTraza = false;
 		// Si son diferetnes vienen de otro proceso
 		if (transaccion == null || bd.getTransaccion().compareTo(transaccion) == 0) {
-			transaccion = transaccionSvc.crear(token).getLlaveTabla();
+			transaccion = transaccionSvc.crear().getLlaveTabla();
 			crearTraza = true;
 		}
 		if (dto.getEstado() == null) {
@@ -352,34 +349,33 @@ public class CallDocumentCRUD {
 		dto.setFuncionario(bd.getFuncionario());// Siempre tiene que mantenerse la funcionario de registro
 		dto.setHistorico(bd.getHistorico());
 		bd = pedidoService.update(dto);
-		bd.setDinero(saveBalance(dto, token));
+		bd.setDinero(saveBalance(dto));
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
 			iterador.setTransaccionRegistro(transaccion);// Le quite el igual a null asumo que va a modificar los nuevos
 			iterador.setPrincipal(bd);
 		}
-		dto.setCaracteristicas(saveInternalFields(dto, token));
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId,
-				dto.getFuncionario(), token);
-		bpmService.execute(dto, token, null);
-		manageTemplateTypes(dto, plantilla, token);
-		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion, token);
-		voucherDeleteService.callByDocument(dto.getLlaveTabla(), plantilla.getLlaveTabla(), token);
-		voucherCreate(dto, token);
-		updateVinculateDocument(dto, token);
-		generateNotifications(dto, token, plantilla, dto);
+		dto.setCaracteristicas(saveInternalFields(dto));
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), modificadorId);
+		bpmService.execute(dto, null);
+		manageTemplateTypes(dto, plantilla);
+		PedidoVentaDTO updateDocument = generateUpdateDocument(plantilla, dto, transaccion);
+		voucherDeleteService.callByDocument(dto.getLlaveTabla(), plantilla.getLlaveTabla());
+		voucherCreate(dto);
+		updateVinculateDocument(dto);
+		generateNotifications(dto, plantilla, dto);
 		// Para los tipo cuenta al actualizar no estoy mirando los sobregiros
 		if (crearTraza)
 			relacionGestorService.trazar(dto.getLlaveTabla(),
 					(updateDocument == null) ? null : updateDocument.getLlaveTabla(), plantilla.getNombre(),
 					dto.getEstadoExpediente(), dto.getEstadoExpediente(),
-					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), token, null, dto.getHistorico(),
-					transaccion, true);
+					(dto.getDinero() == null) ? null : dto.getDinero().getLlaveTabla(), null, dto.getHistorico(),
+					transaccion);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return dto;
 	}
 
-	private PedidoVentaDTO generateUpdateDocument(TemplateDTO template, PedidoVentaDTO dto,
-			String transaccion, String token) throws ServerException {
+	private PedidoVentaDTO generateUpdateDocument(TemplateDTO template, PedidoVentaDTO dto, String transaccion)
+			throws ServerException {
 		if (dto == null || dto.getCaracteristicas() == null || dto.getCaracteristicas().isEmpty())
 			return null;
 		PropiedadDTO propertyDiference = Propiedades.obtenerParametro(template, Propiedades.PLANTILLA_DIFERENCIAS);
@@ -408,13 +404,13 @@ public class CallDocumentCRUD {
 		TemplateDTO updateTemplate = new TemplateDTO();
 		updateTemplate.setLlaveTabla(propertyDiference.getValor());
 		updateTemplate.setCaracteristicas(
-				documentoPlantillaCaracteristicaService.listarCamposPlantilla(updateTemplate.getLlaveTabla(), token));
+				documentoPlantillaCaracteristicaService.listarCamposPlantilla(updateTemplate.getLlaveTabla()));
 
 		PedidoVentaDTO updateDocument = new PedidoVentaDTO();
 		updateDocument.setCaracteristicas(new ArrayList<PedidoVentaCaracteristicaDTO>());
 		updateDocument.setPlantilla(updateTemplate.getLlaveTabla());
 		updateDocument.setTransaccion(transaccion);
-		updateDocument.setFuncionario(getUserID(token));
+		updateDocument.setFuncionario(SessionContext.getCurrentUser());
 		String documentId = dto.getLlaveTabla();
 		for (DocumentoPlantillaCaracteristicaDTO iField : updateTemplate.getCaracteristicas()) {
 			PedidoVentaCaracteristicaDTO newField = null;
@@ -437,50 +433,49 @@ public class CallDocumentCRUD {
 			}
 			updateDocument.getCaracteristicas().add(newField);
 		}
-		return saveWithoutTransaction(updateDocument, token, true);
+		return saveWithoutTransaction(updateDocument, true);
 	}
 
-	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic)
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, boolean isAutomatic) throws ServerException {
+		return saveWithoutTransaction(dto, isAutomatic, null);
+	}
+
+	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, boolean isAutomatic, PedidoVentaDTO pGenerator)
 			throws ServerException {
-		return saveWithoutTransaction(dto, token, isAutomatic, null);
-	}
-
-	public PedidoVentaDTO saveWithoutTransaction(PedidoVentaDTO dto, String token, boolean isAutomatic,
-			PedidoVentaDTO pGenerator) throws ServerException {
 		if (dto.getLlaveTabla() != null)
 			throw new ServerException("Envio un pedido a guardar con llave existente");
 		if (dto.getFuncionario() == null)
 			throw new ServerException("Para crear el documento debes enviar el funcionario");
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
-		plantillaFilter.setSecurityToken(token);
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				(isAutomatic) ? true : rolService.usuarioPermisosCompletos(token));
+				(isAutomatic) ? true : rolService.usuarioPermisosCompletos());
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
 
 		// Hay que optimizar el tema de los token para que no se consulte tantas veces
 		// la base de datos
-		if (pedidoService.isPublicToken(token)
+
+		if (!SessionContext.getCurrent().getPrivada()
 				&& Propiedades.obtenerValor(plantilla, Propiedades.PLANTILLA_PERMISO_PUBLICO).isEmpty())
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:private_user");
 
-		plantilla = documentoPlantillaService.obtenerCampos(plantilla, token, false);
-		validateFields(dto, plantilla, token, isAutomatic);
+		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
+		validateFields(dto, plantilla, isAutomatic);
 
-		propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), null, token);
+		propiedadService.prevalidate(plantilla, dto.getCaracteristicas(), null);
 
-		validateConsecutiveNumber(dto, plantilla, token);
+		validateConsecutiveNumber(dto, plantilla);
 		validateDates(dto, Propiedades.obtenerValor(plantilla, Propiedades.FECHA));
 		validateBalance(dto, plantilla);
 		if (dto.getTransaccion() == null)
-			dto.setTransaccion(transaccionSvc.crear(token).getLlaveTabla());
+			dto.setTransaccion(transaccionSvc.crear().getLlaveTabla());
 
 		dto.setFechaRegistro(new Date());
 		dto.setHistorico(null);
 		PedidoVentaDTO pedido = pedidoService.save(dto);
 		dto.setLlaveTabla(pedido.getLlaveTabla());
-		saveBalance(dto, token);
+		saveBalance(dto);
 		pedido.setDinero(dto.getDinero());
 		String campoDescripcion = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);
 		for (PedidoVentaCaracteristicaDTO iterador : dto.getCaracteristicas()) {
@@ -494,85 +489,83 @@ public class CallDocumentCRUD {
 				pedido.setDescripcion(iterador.getValorText());
 			}
 		}
-		pedido.setCaracteristicas(saveInternalFields(dto, token));
-		createUpdateByRelationFields.call(this, pedido, token);
+		pedido.setCaracteristicas(saveInternalFields(dto));
+		createUpdateByRelationFields.call(this, pedido);
 		if (dto.getDinero() != null && pedido.getDinero() == null)
 			pedido.setDinero(dto.getDinero());// Error al generar documentos en la iteracion que se borra
 		// Al crear un documento que va a un API se estaba ejecutando el api y despues
 		// decia que fallaba :(
-		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null, dto.getFuncionario(),
-				token);
-		bpmService.execute(pedido, token, pGenerator);
-		manageState(pedido, plantilla.getNombre(), token, dto.getTransaccion());
+		propiedadService.validarFuncionConsultandoPropiedad(plantilla, dto.getLlaveTabla(), null);
+		bpmService.execute(pedido, pGenerator);
+		manageState(pedido, plantilla.getNombre(), dto.getTransaccion());
 		// Aqui envio el pedido porque necesito saber si es un documento incial de
 		// estado o simple para el tema de los roles
-		manageTemplateTypes(pedido, plantilla, token);
+		manageTemplateTypes(pedido, plantilla);
 		List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(plantilla, Propiedades.API);
 		if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
 			for (PropiedadDTO _iApi : _PropertyListToAPis) {
-				apiService.prepareApiToExecution(_iApi.getValor(), dto, null, null, token, null);
+				apiService.prepareApiToExecution(_iApi.getValor(), dto, null, null, null);
 			}
 		}
-		monitoringVoucher(pedido, token, plantilla);
-		voucherCreate(dto, token);
-		makeVinculateDocument(dto, token);
-		generateNotifications(dto, token, plantilla, pedido);
+		monitoringVoucher(pedido, plantilla);
+		voucherCreate(dto);
+		makeVinculateDocument(dto);
+		generateNotifications(dto, plantilla, pedido);
 		dto.setCaracteristicas(null);// Por error al serializar
 		return pedido;
 	}
 
 	// Porque lo hago hasta el final
-	private void makeVinculateDocument(PedidoVentaDTO pDTO, String pToken) throws ServerException {
+	private void makeVinculateDocument(PedidoVentaDTO pDTO) throws ServerException {
 		if (pDTO.getCaracteristicas() == null)
 			return;
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
 			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
 					&& Propiedades.obtenerParametro(_iField.getCampoDTO(),
 							Propiedades.PERMISO_CAMPO_BLOQUEAR) == null) {
-				createDocumentOfVinculateField(pToken, _iField);
+				createDocumentOfVinculateField(_iField);
 			}
 		}
 	}
 
-	public void createDocumentOfVinculateField(String pToken, PedidoVentaCaracteristicaDTO _iField)
-			throws ServerException {
+	public void createDocumentOfVinculateField(PedidoVentaCaracteristicaDTO _iField) throws ServerException {
 
 		PropiedadDTO vPreviousValidation = Propiedades.obtenerParametro(_iField.getCampoDTO(),
 				Propiedades.VINCULO_VALIDATE_PREVIOUS_SQL);
 		if (vPreviousValidation != null) {
 			if (!propiedadService.canCreateFielVinculo(vPreviousValidation, _iField.getDependientes(),
-					_iField.getDocumento(), pToken))
+					_iField.getDocumento()))
 				return;
 		}
 
-		PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField, pToken);
+		PedidoVentaDTO _vinculateDocument = tipoVinculoService.doDocumentVinculate(_iField);
 		if (_vinculateDocument != null) {
 			if (_vinculateDocument.getLlaveTabla() == null)
-				_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
+				_vinculateDocument = saveWithoutTransaction(_vinculateDocument, true);
 			_iField.setValorOpcion(_vinculateDocument.getLlaveTabla());
 			_iField.setValorText(_vinculateDocument.getNombre());
-			tipoVinculoService.guardarCampo(_iField, pToken);
+			tipoVinculoService.guardarCampo(_iField);
 		}
 	}
 
-	private void updateVinculateDocument(PedidoVentaDTO pDTO, String pToken) throws ServerException {
+	private void updateVinculateDocument(PedidoVentaDTO pDTO) throws ServerException {
 		if (pDTO.getCaracteristicas() == null)
 			return;
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
 			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
-				tipoVinculoService.updateDocumentVinculate(_iField, pToken);
+				tipoVinculoService.updateDocumentVinculate(_iField);
 			}
 		}
 	}
 
 	// Porque lo hago hasta el final
-	public void deleteVinculateDocument(PedidoVentaDTO pDTO, String pToken) throws ServerException {
+	public void deleteVinculateDocument(PedidoVentaDTO pDTO) throws ServerException {
 		if (pDTO.getCaracteristicas() == null) {
 			if (documentoPlantillaCaracteristicaService.countFieldsVinculo(pDTO.getPlantilla()) != 0) {
 				pDTO.setCaracteristicas(pedidoVentaCaracteristicaService.readCompleteFields(
 						pDTO.getLlaveTabla(), documentoPlantillaCaracteristicaService
-								.listarCamposPlantillaConComplementos(pDTO.getPlantilla(), pToken, false),
-						pDTO.getHistorico(), pToken));
+								.listarCamposPlantillaConComplementos(pDTO.getPlantilla(), false),
+						pDTO.getHistorico()));
 			} else {
 				return; // No hay campos de vinculo
 			}
@@ -581,63 +574,60 @@ public class CallDocumentCRUD {
 			if (_iField.getCampoDTO() != null
 					&& _iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
 				_iField.setPrincipal(pDTO);// PAra evitar errores en lafuncion de delete vinculo
-				PedidoVentaDTO _vinculateDocument = tipoVinculoService.deleteDocumentToVinculate(_iField, pToken);
+				PedidoVentaDTO _vinculateDocument = tipoVinculoService.deleteDocumentToVinculate(_iField);
 				if (_vinculateDocument != null) {
-					_vinculateDocument = saveWithoutTransaction(_vinculateDocument, pToken, true);
+					_vinculateDocument = saveWithoutTransaction(_vinculateDocument, true);
 				}
 			}
 		}
 	}
-	
-	
-	private void monitoringVoucher(PedidoVentaDTO dto, String token, TemplateDTO plantilla) throws ServerException {
-		PropiedadDTO _property= Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_MONITOR);
-		if (_property == null )		return;
-		voucherCreateFromTemplateService.call(token, dto);
+
+	private void monitoringVoucher(PedidoVentaDTO dto, TemplateDTO plantilla) throws ServerException {
+		PropiedadDTO _property = Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_MONITOR);
+		if (_property == null)
+			return;
+		voucherCreateFromTemplateService.call(dto);
 	}
 
-	private void voucherCreate(PedidoVentaDTO dto, String token) throws ServerException {
+	private void voucherCreate(PedidoVentaDTO dto) throws ServerException {
 		List<PropiedadDTO> _PropertyListToAPis = cacheService.getByValueWithoutField(
 				PropiedadValorDefinidoDTO.API_SERVICE, Propiedades.TEMPLATE_VOUCHER, dto.getPlantilla(),
-				getUserID(token));
+				SessionContext.getCurrentUser());
 		if (_PropertyListToAPis == null || _PropertyListToAPis.isEmpty())
 			return;
 
 		for (PropiedadDTO _iVoucher : _PropertyListToAPis) {
-			apiService.programateExecution(_iVoucher.getCampo(), dto.getLlaveTabla(), null, dto.getTransaccion(),
-					token);
+			apiService.programateExecution(_iVoucher.getCampo(), dto.getLlaveTabla(), null, dto.getTransaccion());
 		}
 	}
 
-	private void generateNotifications(PedidoVentaDTO dto, String token, TemplateDTO plantilla,
-			PedidoVentaDTO pedido) throws ServerException {
+	private void generateNotifications(PedidoVentaDTO dto, TemplateDTO plantilla, PedidoVentaDTO pedido)
+			throws ServerException {
 		List<PropiedadDTO> _propertyListToNotify = Propiedades.obtenerVariosParametro(plantilla,
 				Propiedades.TEMPLATE_MESSAGE_SQL);
 		if (_propertyListToNotify == null || _propertyListToNotify.isEmpty())
 			return;
 		for (PropiedadDTO _iValidation : _propertyListToNotify) {
 			CallDocumentCommons.addMessageError(pedido, propiedadService.templateNotifications(
-					_iValidation.getLlaveTabla(), dto.getCaracteristicas(), token, dto.getLlaveTabla()));
+					_iValidation.getLlaveTabla(), dto.getCaracteristicas(), dto.getLlaveTabla()));
 		}
 	}
 
-	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String token, String transaccion)
-			throws ServerException {
+	private void manageState(PedidoVentaDTO pedido, String plantillaNombre, String transaccion) throws ServerException {
 		ProcesoTransicionDTO inicial = transicionService.consultarTransaccionInicial(pedido.getPlantilla());
 		if (inicial != null) {
 			manageTransitionFunction.execute(inicial, pedido.getLlaveTabla(), pedido,
 					(pedido.getDinero() == null) ? null : pedido.getDinero().getValorTotal(), pedido.getDinero(), null,
-					token, transaccion, null, null);
+					transaccion, null, null);
 		} else {// Cuando son transacciones que no inician un proceso (aqui traza del documento
 				// en tipo proceso traza al proceso)
 				// cundo son solo documetnos sin transciones se envian mensajes
-			generateMessageService.call(pedido, null, usuarioService.consultaXId(pedido.getFuncionario()), pedido,
-					token);
+			generateMessageService.call(pedido, null, usuarioService.consultaXId(pedido.getFuncionario()), pedido);
 			// Pase aqui la traza ya que debo integrar
 			relacionGestorService.trazar(pedido.getLlaveTabla(), null, plantillaNombre, null,
 					pedido.getEstadoExpediente(),
-					(pedido.getDinero() == null) ? null : pedido.getDinero().getLlaveTabla(), token, null,
-					pedido.getHistorico(), transaccion, false);
+					(pedido.getDinero() == null) ? null : pedido.getDinero().getLlaveTabla(), null,
+					pedido.getHistorico(), transaccion);
 		}
 		// return inicial;
 	}
@@ -667,9 +657,9 @@ public class CallDocumentCRUD {
 							BigDecimal diferencia = campoValor.getValorNumero().subtract(anterior.getValorTotal());
 							dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
 							/*
-							 * // En el proceso de facturacion  el saldo sube en el momento que se
-							 * // aprueba la factura y desde el inicial no es afecta saldo if (anterior !=
-							 * null) { BigDecimal diferencia =
+							 * // En el proceso de facturacion el saldo sube en el momento que se // aprueba
+							 * la factura y desde el inicial no es afecta saldo if (anterior != null) {
+							 * BigDecimal diferencia =
 							 * campoValor.getValorNumero().subtract(anterior.getValorTotal());
 							 * dineroCalculado.setSaldo(dineroCalculado.getSaldo().add(diferencia));
 							 * 
@@ -695,8 +685,8 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void validateFields(PedidoVentaDTO dto, TemplateDTO plantilla, String token,
-			boolean isUpdateAutomatic) throws ServerException {
+	private void validateFields(PedidoVentaDTO dto, TemplateDTO plantilla, boolean isUpdateAutomatic)
+			throws ServerException {
 		if (plantilla != null && plantilla.getCaracteristicas() != null && !plantilla.getCaracteristicas().isEmpty()) {
 			String filtroTexto = "";
 			String propDescription = Propiedades.obtenerValor(plantilla, Propiedades.DESCRIPCION);
@@ -741,7 +731,8 @@ public class CallDocumentCRUD {
 								mensajeError = mensajeError + " de la plantilla "
 										+ iCampoDocumento.getCampoDTO().getPlantillaNombre()
 										+ " se envia a modificar pero el usuario ";
-								mensajeError = mensajeError + usuarioService.consultaXId(getUserID(token)).getNombre()
+								mensajeError = mensajeError
+										+ usuarioService.consultaXId(SessionContext.getCurrentUser()).getNombre()
 										+ " no tiene permisos de modificar ese campo";
 								throw new ServerException(mensajeError);
 							}
@@ -760,7 +751,7 @@ public class CallDocumentCRUD {
 			}
 			// 3. valido cada campo
 			for (PedidoVentaCaracteristicaDTO campoDocumento : dto.getCaracteristicas()) {
-				adaptador.validarPrepararCampo(campoDocumento, token, isUpdateAutomatic);
+				adaptador.validarPrepararCampo(campoDocumento, isUpdateAutomatic);
 				// Como no es el mismo documento y no quiero forzarlo a que sea el mimso le
 				// copioe los mensajes
 				CallDocumentCommons.copyMessages(campoDocumento.getPrincipal(), dto);
@@ -814,8 +805,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private void validateConsecutiveNumber(PedidoVentaDTO pedido, TemplateDTO plantilla, String token)
-			throws ServerException {
+	private void validateConsecutiveNumber(PedidoVentaDTO pedido, TemplateDTO plantilla) throws ServerException {
 		String codigoNuevo = null;
 		List<PropiedadDTO> fieldsConsecutive = Propiedades.obtenerVariosParametro(plantilla, Propiedades.CONSECUTIVO);
 
@@ -886,18 +876,17 @@ public class CallDocumentCRUD {
 							throw new ServerException(
 									"No es posible crear el consecutivo, dado que no tenemos un consecutivo base para generar en el formulario, coloca el consecutivo base. "
 											+ plantilla.getNombre());
-						} else {
-							ConsecutivoDTO nuevo = consecutivoService.crear2Opcion(plantilla.getConsecutivo(),
-									fieldFirstValueConsecutive.getCampo(), fieldFirstValueConsecutive.getValorOpcion(),
-									token);
-							relacionConsecutivo = new PlantillaConsecutivoDTO();
-							relacionConsecutivo.setCaracteristica(fieldFirstValueConsecutive.getCampo());
-							relacionConsecutivo.setValorOpcion(fieldFirstValueConsecutive.getValorOpcion());
-							relacionConsecutivo.setConsecutivo(nuevo.getLlaveTabla());
-							plantillaConsecutivoSvc.guardar(relacionConsecutivo, token);
-
-							plantilla.setConsecutivo(nuevo.getLlaveTabla());
 						}
+						ConsecutivoDTO nuevo = consecutivoService.crear2Opcion(plantilla.getConsecutivo(),
+								fieldFirstValueConsecutive.getValorOpcion());
+						relacionConsecutivo = new PlantillaConsecutivoDTO();
+						relacionConsecutivo.setCaracteristica(fieldFirstValueConsecutive.getCampo());
+						relacionConsecutivo.setValorOpcion(fieldFirstValueConsecutive.getValorOpcion());
+						relacionConsecutivo.setConsecutivo(nuevo.getLlaveTabla());
+						plantillaConsecutivoSvc.guardar(relacionConsecutivo);
+
+						plantilla.setConsecutivo(nuevo.getLlaveTabla());
+
 					} else {
 						plantilla.setConsecutivo(relacionConsecutivo.getConsecutivo());
 					}
@@ -915,7 +904,7 @@ public class CallDocumentCRUD {
 				// plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL,
 				// getUserFlex(token));
 				// if(consecProperty ==null)
-				consecutivoService.crear(plantilla.getLlaveTabla(), token);
+				consecutivoService.crear(plantilla.getLlaveTabla());
 			}
 
 		}
@@ -928,7 +917,7 @@ public class CallDocumentCRUD {
 
 			consecutivoManual = consecutivoService.consultaXId(plantilla.getConsecutivo());
 			if (consecutivoManual.getManual() || (!consecutivoManual.getManual() && pedido.getLlaveTabla() == null)) {
-				codigoNuevo = asignateConsecutive(pedido, plantilla.getConsecutivo(), token);
+				codigoNuevo = asignateConsecutive(pedido, plantilla.getConsecutivo());
 			} else {
 				codigoNuevo = pedido.getNombre();
 			}
@@ -947,13 +936,12 @@ public class CallDocumentCRUD {
 
 	}
 
-	private String asignateConsecutive(PedidoVentaDTO pedido, String consecutiveId, String token)
-			throws ServerException {
+	private String asignateConsecutive(PedidoVentaDTO pedido, String consecutiveId) throws ServerException {
 
 		ConsecutivoDTO consecutivo = new ConsecutivoDTO();
 		consecutivo.setLlaveTabla(consecutiveId);
 		consecutivo.setNumeroActual(pedido.getConsecutivo());
-		consecutivo = consecutivoService.asignarConsecutivo(consecutivo, token);
+		consecutivo = consecutivoService.asignarConsecutivo(consecutivo);
 		pedido.setConsecutivo(consecutivo.getNumeroActual());
 		if (pedido.getConsecutivo().compareTo(new BigDecimal(9999999999999999.0)) > 0)
 			throw new ServerException("Se excedio del numero maximo para el consecutivo 1exp16");
@@ -973,31 +961,30 @@ public class CallDocumentCRUD {
 				if (igualNombre.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
 					// Se hace para evitar el error de concurrencia con los consecutivos automaticos
 					if (pConsecutive != null && !pConsecutive.getManual()) {
-						pNewCode = asignateConsecutive(pDocument, pConsecutive.getLlaveTabla(), null);
+						pNewCode = asignateConsecutive(pDocument, pConsecutive.getLlaveTabla());
 						return validateDoubleCodeIdActive(pDocument, pNewCode, pConsecutive);
-					} else {
-						DocumentoPlantillaDTO plantilla = documentoPlantillaService
-								.consultaXId(igualNombre.getPlantilla());
-						throw new ServerException("Ya existe un " + plantilla.getNombre() + " con el mismo codigo ("
-								+ igualNombre.getNombre() + "). Creado el "
-								+ D3Utils.formatDateTime(igualNombre.getFechaRegistro()) + " con estado "
-								+ igualNombre.getEstado());
 					}
+
+					DocumentoPlantillaDTO plantilla = documentoPlantillaService.consultaXId(igualNombre.getPlantilla());
+					throw new ServerException(
+							"Ya existe un " + plantilla.getNombre() + " con el mismo codigo (" + igualNombre.getNombre()
+									+ "). Creado el " + D3Utils.formatDateTime(igualNombre.getFechaRegistro())
+									+ " con estado " + igualNombre.getEstado());
+
 				}
 			}
 		}
 		return pNewCode;
 	}
 
-	private List<PedidoVentaCaracteristicaDTO> saveInternalFields(PedidoVentaDTO dto, String token)
-			throws ServerException {
+	private List<PedidoVentaCaracteristicaDTO> saveInternalFields(PedidoVentaDTO dto) throws ServerException {
 		if (dto.getCaracteristicas() == null)
 			return null;
 		List<PedidoVentaCaracteristicaDTO> result = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		for (PedidoVentaCaracteristicaDTO iterable : dto.getCaracteristicas()) {
 			if (iterable.getModificado()) {
 				iterable.setDocumento(dto.getLlaveTabla());
-				result.add(adaptador.guardarCampo(iterable, token));
+				result.add(adaptador.guardarCampo(iterable));
 			} else {// Antes solo devolvia las que iteraba pero no se porque
 				result.add(iterable);
 			}
@@ -1023,7 +1010,7 @@ public class CallDocumentCRUD {
 		}
 	}
 
-	private PedidoVentaDineroDTO saveBalance(PedidoVentaDTO documento, String token) throws ServerException {
+	private PedidoVentaDineroDTO saveBalance(PedidoVentaDTO documento) throws ServerException {
 		if (documento != null && documento.getDinero() != null) {
 			PedidoVentaDineroDTO anterior = dineroService.consultaPorDocumento(documento.getLlaveTabla(),
 					documento.getHistorico(), documento.getNombre());
@@ -1044,8 +1031,7 @@ public class CallDocumentCRUD {
 		return null;
 	}
 
-	public void manageTemplateTypes(PedidoVentaDTO dto, TemplateDTO plantilla, String token)
-			throws ServerException {
+	public void manageTemplateTypes(PedidoVentaDTO dto, TemplateDTO plantilla) throws ServerException {
 		// Viene de inactivar
 		if (plantilla == null) {
 			plantilla = new TemplateDTO();
@@ -1053,27 +1039,27 @@ public class CallDocumentCRUD {
 					dto.getPlantilla(), null, null));
 		}
 
-		saveRole(dto, token);
+		saveRole(dto);
 
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_PRODUCTO) != null)
-			homologateService.crearProducto(dto, token);
+			homologateService.crearProducto(dto);
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CUENTA) != null)
-			homologateService.crearCuenta(dto, token);
+			homologateService.crearCuenta(dto);
 		// Queda pendiente que las cuentas contables se activen En cuenta auxiliar
 		if (Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION) != null)
 			homologateService.createFromDocument(dto,
-					Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor(),
-					token);
+					Propiedades.obtenerParametro(plantilla, Propiedades.PLANTILLA_TIPO_CONFIGURATION).getValor());
 	}
 
 	@Transactional(value = "transactionManager", propagation = Propagation.REQUIRES_NEW, noRollbackFor = DuplicateKeyException.class)
-	public void saveRole(PedidoVentaDTO dto, String token) throws ServerException {
+	public void saveRole(PedidoVentaDTO dto) throws ServerException {
 
 		TemplateDTO dp = new TemplateDTO();
-		dp.setPropiedades(documentoPlantillaService.obtenerPropiedadesPlantilla(dto.getPlantilla(), token));
+		dp.setPropiedades(documentoPlantillaService.obtenerPropiedadesPlantilla(dto.getPlantilla(), null));
 		if (Propiedades.obtenerParametro(dp, Propiedades.PLANTILLA_TIPO_ROL) == null)
 			return;
 
+		String userIdToken = SessionContext.getCurrentUser();
 		// Valido que tenga relacion de plantilla
 		RolAccesoFilterDTO dpiRolFilter = new RolAccesoFilterDTO();
 		dpiRolFilter.setPlantilla(dto.getPlantilla());
@@ -1100,14 +1086,14 @@ public class CallDocumentCRUD {
 			String usrPhone = null;
 
 			String campoCorreo = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
-					Propiedades.CORREO_ROL, getUserID(token));
+					Propiedades.CORREO_ROL, userIdToken);
 			String campoCelular = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
-					Propiedades.CELULAR_ROL, getUserID(token));
+					Propiedades.CELULAR_ROL, userIdToken);
 
 			// En casos que el mismo usuario se coloque varias veces en un mismo formulario
 			// x ejemplo contactos de varios proyectos
 			String campoConsecutivo = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.PLANTILLA, dto.getPlantilla(),
-					Propiedades.CONSECUTIVO, getUserID(token));
+					Propiedades.CONSECUTIVO, userIdToken);
 			if (campoConsecutivo == null)
 				throw new ServerException("Se debe configurar la propiedad consecutivo para obtener el id del usuario");
 			// Cuando se gestiona el proceso para activar el usuario pasa que no vienen las
@@ -1153,7 +1139,7 @@ public class CallDocumentCRUD {
 			// Cuando se modifica un contacto que tenia mal el id salia un errro de forgin
 			// key
 			if (ur != null && ur.getUsuarioIdentificacion().compareTo(usrId) != 0) {
-				inactivateRolOfDocument(ur.getDocumento(), token);
+				inactivateRolOfDocument(ur.getDocumento());
 				ur = null;
 			}
 			if (ur == null) {
@@ -1169,7 +1155,7 @@ public class CallDocumentCRUD {
 					usr.setTelefono(usrPhone);
 					usr.setEstado(SharedConstants.STATE_ACTIVE);
 					try {
-						usr = usuarioService.guardar(usr, token);
+						usr = usuarioService.guardar(usr);
 					} catch (DuplicateKeyException e) {
 						return; // Si dos procesos intentan crear el mismo usuario esto sucede en cisrtos casos
 								// remotos de apis
@@ -1181,7 +1167,7 @@ public class CallDocumentCRUD {
 						usr.setCorreo(usrMail);
 						usr.setTelefono(usrPhone);
 						usr.setEstado(SharedConstants.STATE_ACTIVE);
-						usr = usuarioService.actualizar(usr, token);
+						usr = usuarioService.actualizar(usr);
 					}
 				}
 				// Creo la reacion del rol con el documento
@@ -1189,7 +1175,7 @@ public class CallDocumentCRUD {
 				ur.setUsuario(usr.getLlaveTabla());
 				ur.setRolAcceso(dpiRol.getLlaveTabla());
 				ur.setDocumento(dto.getLlaveTabla());
-				ur = usuarioRolService.guardar(ur, token);
+				ur = usuarioRolService.guardar(ur);
 			} else {
 				usr = usuarioService.consultaXId(ur.getUsuario());
 			}
@@ -1215,25 +1201,21 @@ public class CallDocumentCRUD {
 				}
 				usrActualizar.setLlaveTabla(usr.getLlaveTabla());
 				usrActualizar.setImagen(usr.getImagen());
-				usuarioService.actualizar(usrActualizar, token);
+				usuarioService.actualizar(usrActualizar);
 			}
 		} else {
-			inactivateRolOfDocument(dto.getLlaveTabla(), token);
+			inactivateRolOfDocument(dto.getLlaveTabla());
 		}
 	}
 
-	private void inactivateRolOfDocument(String document, String token) throws ServerException {
+	private void inactivateRolOfDocument(String document) throws ServerException {
 		UsuarioRolFilterDTO rolFilter = new UsuarioRolFilterDTO();
 		rolFilter.setDocumento(document);
 		rolFilter.setEstado(SharedConstants.STATE_ACTIVE);
 		UsuarioRolDTO rol = usuarioRolService.consultaUnica(rolFilter);
 		if (rol != null) {
-			usuarioRolService.inactivar(rol, token);
+			usuarioRolService.inactivar(rol);
 		}
-	}
-
-	private String getUserID(String token) throws ServerException {
-		return pedidoService.getUserFlex(token);
 	}
 
 }

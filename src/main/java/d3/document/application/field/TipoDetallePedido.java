@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.CallDocumentCRUD;
@@ -27,6 +25,9 @@ import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class TipoDetallePedido {
@@ -55,7 +56,7 @@ public class TipoDetallePedido {
 		this.validateAndSave = validateAndSave;
 	}
 
-	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getDocumento() != null) {
 			List<PropiedadDTO> tarifario = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 					Propiedades.DETALLE_TARIFARIO);
@@ -63,10 +64,9 @@ public class TipoDetallePedido {
 				tarifario = null;
 
 			if (!pCampo.getModificado())
-				pCampo.setDetalles(
-						detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), tarifario, null, null, token,
-								Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
-								getTercero(pCampo.getDependientes(), pCampo.getCampoDTO()), pCampo.getLlaveTabla()));
+				pCampo.setDetalles(detallePedidoVentaService.listarCompleto(pCampo.getDocumento(), tarifario, null,
+						null, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
+						getTercero(pCampo.getDependientes(), pCampo.getCampoDTO()), pCampo.getLlaveTabla()));
 			if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 				pCampo.setValorNumero(BigDecimal.ZERO);
 				for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
@@ -81,7 +81,7 @@ public class TipoDetallePedido {
 		}
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo)
 			throws ServerException {
 
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
@@ -96,7 +96,7 @@ public class TipoDetallePedido {
 					throw new ServerException("Revise los dependientes del tipo detalle");
 				if (pCampo.getDependientes().size() != 1)
 					throw new ServerException("Los tipo bodega permiten solo 1 dependientes para sumar o restar");
-				novedadParcial(pCampo, token);
+				novedadParcial(pCampo);
 			}
 			agrupados = validateAndSave.orderToValidate(pCampo.getDetalles());
 			pCampo.setDetalles(agrupados);
@@ -126,7 +126,7 @@ public class TipoDetallePedido {
 			if (tarifario != null && tarifario.isEmpty())
 				tarifario = null;
 			pCampo.setDetalles(validateAndSave.validateWithExistProducts(agrupados, pCampo.getDocumento(), tarifario,
-					token, Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
+					Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE),
 					pCampo.getLlaveTabla()));
 		} else {
 			pCampo.setDetalles(agrupados);
@@ -193,8 +193,7 @@ public class TipoDetallePedido {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 
@@ -223,31 +222,28 @@ public class TipoDetallePedido {
 
 			if (pCampo.getValorText() == null) {
 				return pCampo;
-			} else {
-				PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo,
-						pCampo.getPrincipal().getHistorico());
-				if (bd != null) {
-					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(),
-							pCampo.getLlaveTabla()));
-					if (pCampo.getValorText().compareTo(bd.getValorText()) == 0
-							&& ((bd.getValorNumero() == null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
-									|| (bd.getValorNumero() != null
-											&& pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0))) {
-						return bd;
-					} else {
-						bd.setValorText(pCampo.getValorText());
-						bd.setValorNumero(pCampo.getValorNumero());
-						return campoService.actualizar(bd, token);
-					}
-				} else {
-					bd = campoService.guardar(pCampo, token);
-					pCampo.setLlaveTabla(bd.getLlaveTabla());
-					pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), token, pCampo.getDocumento(),
-							pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(),
-							pCampo.getLlaveTabla()));
-				}
 			}
+
+			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
+			if (bd != null) {
+				pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
+						pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0
+						&& ((bd.getValorNumero() == null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
+								|| (bd.getValorNumero() != null
+										&& pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0))) {
+					return bd;
+				}
+				bd.setValorText(pCampo.getValorText());
+				bd.setValorNumero(pCampo.getValorNumero());
+				return campoService.actualizar(bd);
+
+			}
+			bd = campoService.guardar(pCampo);
+			pCampo.setLlaveTabla(bd.getLlaveTabla());
+			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
+					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+
 		}
 
 		return pCampo;
@@ -261,7 +257,7 @@ public class TipoDetallePedido {
 		if (pCampo.getFiltroParametro() != null && pCampo.getFiltroParametro().length() == 0)
 			pCampo.setFiltroParametro(null);
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		if (pBase == null)
 			throw new ServerException("Error en el identificador de la caracteristica");
 		String tercero = getTercero(pCampo.getDependientes(), pBase);
@@ -302,7 +298,7 @@ public class TipoDetallePedido {
 			if (pCampo.getDependientes() != null && !pCampo.getDependientes().isEmpty())
 				pCampo.setDependientes(campoService.ordenarAlfabeticaDepende(pCampo.getDependientes()));
 			pBase.setProductos(productoService.listarProductoFuncion(funcionProductos.getLlaveTabla(), valorCampo,
-					pCampo.getFiltroParametro(), pCampo.getSecurityToken(), pCampo.getDependientes()));
+					pCampo.getFiltroParametro(), SessionContext.getCurrentToken(), pCampo.getDependientes()));
 		}
 		if (pBase.getProductos() != null && !pBase.getProductos().isEmpty()) {
 
@@ -313,7 +309,6 @@ public class TipoDetallePedido {
 			}
 			pBase.setProductos(detallarProductos2Plantilla(pBase.getProductos(), pCampo.getCampoDTO(), tercero,
 					(tarifarioFuncion != null) ? tarifarioFuncion.getLlaveTabla() : null, pCampo.getDependientes(),
-					pCampo.getSecurityToken(),
 					Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE)));
 		}
 		pCampo.setCampoDTO(pBase);
@@ -342,7 +337,7 @@ public class TipoDetallePedido {
 
 	private List<ProductoDTO> detallarProductos2Plantilla(List<ProductoDTO> productos,
 			DocumentoPlantillaCaracteristicaDTO pCampo, String tercero, String propiedadFuncionTarifario,
-			List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token, String newOnlyFormProcess)
+			List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String newOnlyFormProcess)
 			throws ServerException {
 		if (productos != null && !productos.isEmpty()) {
 			List<PropiedadDTO> tarifario = Propiedades.obtenerVariosParametro(pCampo, Propiedades.DETALLE_TARIFARIO);
@@ -358,7 +353,7 @@ public class TipoDetallePedido {
 				filtroPlantilla.setPlantilla(pCampo.getPlantilla());
 				filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
 				productoDTO.setDetallePlantilla(detallePedidoVentaService.consultaCompleta(filtroPlantilla, tarifario,
-						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados, token,
+						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados,
 						newOnlyFormProcess));
 				if (imagenes != null) {
 					productoDTO.setImagen(null);
@@ -371,18 +366,17 @@ public class TipoDetallePedido {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 			for (DetallePedidoVentaDTO detalle : pCampo.getDetalles()) {
 				detalle.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-				detallePedidoVentaService.inactivar(detalle, token);
+				detallePedidoVentaService.inactivar(detalle);
 			}
 		}
 		return pCampo;
 	}
 
-	public void novedadParcial(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void novedadParcial(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// al expediente anterior modificarle el documento quitandole las diferencias
 		if (pCampo != null) {
 			// Obtengo los detalles del documento y del expediente
@@ -390,7 +384,7 @@ public class TipoDetallePedido {
 			PedidoVentaDTO documentoPrincipal = pCampo.getDependientes().get(0).getPrincipal();
 			if (documentoPrincipal == null)
 				documentoPrincipal = pedidoService.consultaXId(pCampo.getDependientes().get(0).getValorOpcion());
-			PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(documentoPrincipal, token);
+			PedidoVentaDTO expediente = pedidoService.obtenerCamposCompletos(documentoPrincipal);
 			List<DetallePedidoVentaDTO> detallesExpediente = detallePedidoVentaService
 					.listar2Documento(expediente.getLlaveTabla(), pCampo.getLlaveTabla());
 			// Expediente: Como queda el expediente
@@ -403,7 +397,7 @@ public class TipoDetallePedido {
 
 					if (detalleDocumento.getProducto().compareTo(detalleExpediente.getProducto()) == 0) {
 						if (detalleDocumento.getCantidad().compareTo(detalleExpediente.getCantidad()) == 0) {
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, Propiedades
 									.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
@@ -434,7 +428,7 @@ public class TipoDetallePedido {
 							detallesFinalNuevo.add(detalleDocumento);
 							detalleExpediente.setCantidad(detalleExpediente.getCantidad().add(nuevoTotal.negate()));
 							// Aqui porque antes no me actualiza la cantidad en las novedades parciales
-							detallePedidoVentaService.createFieldsProduct(detalleExpediente, token, Propiedades
+							detallePedidoVentaService.createFieldsProduct(detalleExpediente, Propiedades
 									.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 							detallesFinalExpediente.add(detalleExpediente);
 							detallesExpediente.remove(detalleExpediente);
@@ -461,16 +455,15 @@ public class TipoDetallePedido {
 					detalleDocumento.setValorMinimo(detalleExpediente.getValorMinimo());
 					detalleDocumento.setValorTotal(detalleExpediente.getValorTotal());
 					detalleDocumento.setPlantilla(detalleExpediente.getPlantilla());
-					detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
+					detallePedidoVentaService.createFieldsProduct(detalleDocumento,
 							Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 					detallesFinalNuevo.add(detalleDocumento);
 				}
 			}
 			if (detallesFinalNuevo.isEmpty()) {
 				throw new ServerException("se debe modificar la cantidad de productos");
-			} else {
-				pCampo.setDetalles(detallesFinalNuevo);
 			}
+			pCampo.setDetalles(detallesFinalNuevo);
 
 			String fieldWithDetails = null;
 			for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
@@ -488,8 +481,8 @@ public class TipoDetallePedido {
 				for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
 					if (iCampoExpediente.getCampoDTO().getFormato()
 							.compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
-						iCampoExpediente.setCampoDTO(
-								caracteristicaService.cargarComplementos(iCampoExpediente.getCampoDTO(), token));
+						iCampoExpediente
+								.setCampoDTO(caracteristicaService.cargarComplementos(iCampoExpediente.getCampoDTO()));
 						List<PropiedadDTO> propsDependent = Propiedades
 								.obtenerVariosParametro(iCampoExpediente.getCampoDTO(), Propiedades.DEPENDE);
 						if (propsDependent != null && !propsDependent.isEmpty()
@@ -512,8 +505,7 @@ public class TipoDetallePedido {
 			if (expediente.getEstado() == null)
 				expediente.setEstado(SharedConstants.STATE_ACTIVE);
 			// Cuando revise lo del documento modificador veo como arreglo esto
-			saveUpdateInactivateDocumentFunction.updateWithoutTransaction(expediente, pCampo.getDocumento(), token,
-					true);
+			saveUpdateInactivateDocumentFunction.updateWithoutTransaction(expediente, pCampo.getDocumento(), true);
 			// Necesito que el expediente quede en estado null para que se tramite
 			expediente.setEstado(null);// Esto es crazy pero me toca hacerlo por el momento
 		}

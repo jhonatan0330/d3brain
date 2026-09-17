@@ -72,4 +72,5 @@ public class ProcesoEstadoFilterDTO extends BasicFilterDTO {
 		this.procesoNombre = procesoNombre;
 	}
 
+
 }

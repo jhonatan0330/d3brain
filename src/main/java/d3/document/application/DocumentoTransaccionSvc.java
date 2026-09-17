@@ -20,9 +20,8 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 	private final DocumentoTransaccionMapper documentoTransaccionMapper;
 	private final UsuarioSesionSvc sesionSvc;
 
-	public DocumentoTransaccionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public DocumentoTransaccionSvc(
 			@Lazy DocumentoTransaccionMapper documentoTransaccionMapper, @Lazy UsuarioSesionSvc sesionSvc) {
-		super(usuarioSesionService);
 		this.documentoTransaccionMapper = documentoTransaccionMapper;
 		this.sesionSvc = sesionSvc;
 	}
@@ -45,9 +44,9 @@ public class DocumentoTransaccionSvc extends BasicSvc<DocumentoTransaccionDTO, D
 		this.mapper = documentoTransaccionMapper;
 	}
 
-	public DocumentoTransaccionDTO crear(String token) throws ServerException {
+	public DocumentoTransaccionDTO crear() throws ServerException {
 		DocumentoTransaccionDTO nuevo = new DocumentoTransaccionDTO();
-		nuevo.setUsuario(sesionSvc.actualizarSesion(token));
+		nuevo.setUsuario(sesionSvc.actualizarSesion());
 		nuevo.setFecha(new Date());
 		return saveSimple(nuevo);
 	}

@@ -3,32 +3,31 @@ package d3.accounting.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.accounting.domain.VoucherPrepareRequest;
-import d3.accounting.application.base.CatalogService;
-import d3.accounting.application.base.TypeService;
-import d3.accounting.domain.CatalogDTO;
-import d3.accounting.domain.TypeDTO;
-import d3.accounting.domain.TypeFilterDTO;
 import d3.accounting.application.base.AccountRecordAuxiliarService;
 import d3.accounting.application.base.AccountRecordService;
+import d3.accounting.application.base.CatalogService;
+import d3.accounting.application.base.TypeService;
 import d3.accounting.application.base.VoucherService;
 import d3.accounting.domain.AccountRecordAuxiliarDTO;
 import d3.accounting.domain.AccountRecordAuxiliarFilterDTO;
 import d3.accounting.domain.AccountRecordDTO;
 import d3.accounting.domain.AccountRecordFilterDTO;
+import d3.accounting.domain.CatalogDTO;
+import d3.accounting.domain.TypeDTO;
+import d3.accounting.domain.TypeFilterDTO;
 import d3.accounting.domain.Voucher;
 import d3.accounting.domain.VoucherDTO;
 import d3.accounting.domain.VoucherFilterDTO;
 import d3.accounting.domain.VoucherLine;
+import d3.accounting.domain.VoucherPrepareRequest;
+import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.SharedIdResponse;
-import d3.shared.domain.SharedToken;
-import d3.shared.domain.ServerException;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class VoucherGetService {
@@ -75,7 +74,7 @@ public class VoucherGetService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse getByDocument(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
+	public SharedIdResponse getByDocument(VoucherPrepareRequest pItem) throws ServerException {
 
 		TypeFilterDTO _typeFilter = new TypeFilterDTO();
 		_typeFilter.setService(pItem.getServiceId());

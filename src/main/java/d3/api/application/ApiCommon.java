@@ -44,7 +44,7 @@ public class ApiCommon {
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
 			iCampo.setDetalles(
-					assignateValueToProducts(fieldVO.getProducts(), productoService, detallePedidoVentaService, null));
+					assignateValueToProducts(fieldVO.getProducts(), productoService, detallePedidoVentaService));
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
@@ -87,8 +87,7 @@ public class ApiCommon {
 	}
 
 	private static List<DetallePedidoVentaDTO> assignateValueToProducts(List<ProductRequest> products,
-			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService, String token)
-			throws ServerException {
+			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService) throws ServerException {
 		if (products == null || products.isEmpty())
 			return null;
 		List<DetallePedidoVentaDTO> result = new ArrayList<>();
@@ -124,15 +123,15 @@ public class ApiCommon {
 					break;
 				}
 			}
-			detallePedidoVentaService.createFieldsProduct(detalle, token, null);
+			detallePedidoVentaService.createFieldsProduct(detalle, null);
 		}
 
 		return result;
 	}
 
-	public static List<DocumentResponse> transformPedidoVentaToDocument(String token,
+	public static List<DocumentResponse> transformPedidoVentaToDocument(
 			PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, List<PedidoVentaDTO> results,
-			TemplateDTO template) throws ServerException {
+			TemplateDTO template) {
 		List<DocumentResponse> documents = new ArrayList<>();
 		if (results == null)
 			return documents;

@@ -29,32 +29,32 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.document.application.CallDocumentCommons;
+import d3.document.application.CallDocumentUpdateFromAutomatic;
+import d3.document.application.DocumentoTransaccionSvc;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.document.application.DocumentoTransaccionSvc;
-import d3.document.application.CallDocumentUpdateFromAutomatic;
 import d3.fe.application.DianSoapSecurityHeader;
-import d3.shared.application.ProcessTemplate;
-import d3.shared.application.D3Utils;
 import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
+import d3.shared.application.D3Utils;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
-
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutException;
 import reactor.core.publisher.Mono;
@@ -87,8 +87,7 @@ public class WebServiceExecuteAPI {
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionSvc,
 			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy WebServiceCallPrepare prepareDataService,
 			@Lazy RelacionInternaSvc relacionService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
-			@Lazy ProcessTemplate templatesService,
-			@Lazy DianSoapSecurityHeader headerSigner) {
+			@Lazy ProcessTemplate templatesService, @Lazy DianSoapSecurityHeader headerSigner) {
 		this.webClient = webClient;
 		this.templateService = templateService;
 		this.documentAutomaticUpdateFunction = documentAutomaticUpdateFunction;
@@ -105,12 +104,11 @@ public class WebServiceExecuteAPI {
 		this.headerSigner = headerSigner;
 	}
 
-	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId,
-			String pToken) throws ServerException {
+	public void programateExecution(String pServiceId, String pDocumentId, String pModificadorId, String pTransactionId)
+			throws ServerException {
 		WebServiceEjecucionDTO callWS = new WebServiceEjecucionDTO();
 		callWS.setServicio(pServiceId);
-		String userId = webServiceSvc.getUserFlex(pToken);
-		callWS.setUsuario(userId);
+		callWS.setUsuario(SessionContext.getCurrentUser());
 		callWS.setFecha(new Date());
 		callWS.setDocumento(pDocumentId);
 		callWS.setTransaccion(pTransactionId);
@@ -120,13 +118,9 @@ public class WebServiceExecuteAPI {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public String applyScheduleToExecute(WebServiceEjecucionDTO dto, String pToken) throws ServerException {
-
-		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, null, pToken, null);
+	public String applyScheduleToExecute(WebServiceEjecucionDTO dto) throws ServerException {
+		prepareApiToExecution(dto.getServicio(), documentSvc.consultaXId(dto.getDocumento()), null, null, null);
 		dto.setFechaEjecucion(new Date());
-		// if (dto.getSincrona() != null) {
-		// dto.setSincrona(null);
-		// }
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		webServiceEjecucionSvc.update(dto);
 		return dto.getLlaveTabla();
@@ -145,12 +139,12 @@ public class WebServiceExecuteAPI {
 	 * @throws ServerException
 	 */
 	public String prepareApiToExecution(String serviceId, PedidoVentaDTO document, PedidoVentaDTO modificador,
-			PedidoVentaDTO pIterador, String token, String previousParameter) throws ServerException {
+			PedidoVentaDTO pIterador, String previousParameter) throws ServerException {
 		// Valido existencia del servicio
-		WebServiceDTO service = webServiceSvc.getByIdFullProperties(serviceId, token);
+		WebServiceDTO service = webServiceSvc.getByIdFullProperties(serviceId);
 		// Inicia ejecucion
 		log.info("[" + document.getNombre() + "] Procesando API (" + service.getNombre() + ")");
-		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador, token,
+		WebServiceEjecucionDTO apiBasic = prepareDataService.call(service, document, modificador, pIterador,
 				previousParameter);
 		String preValidation = propiedadesSvc.prevalidateAPI(service, apiBasic.getDocumento(),
 				apiBasic.getModificador(), apiBasic.getParametros());
@@ -158,7 +152,7 @@ public class WebServiceExecuteAPI {
 			apiBasic.setFechaEjecucion(new Date());
 			apiBasic.setError(preValidation);
 			if (apiBasic.getError() != null && apiBasic.getError().length() > 4000) {
-				apiBasic.setError(uploadService.uploadFile(apiBasic.getError().getBytes(), "Parameter.txt", token,
+				apiBasic.setError(uploadService.uploadFile(apiBasic.getError().getBytes(), "Parameter.txt",
 						"webservice", "private"));
 			}
 			webServiceEjecucionSvc.update(apiBasic);
@@ -171,7 +165,7 @@ public class WebServiceExecuteAPI {
 		String result = SharedConstants.OK;
 		// En caso que la ejecucion sea asincrona omito call api
 		if (Propiedades.obtenerParametro(service, Propiedades.API_ASYNCHRONOUS) == null) {
-			result = executeApi(service, apiBasic, token, modificador, document, pIterador);
+			result = executeApi(service, apiBasic,  modificador, document, pIterador);
 		} else {
 			apiBasic.setSincrona(DocumentoTransaccionSvc.API_ASYNC);
 			applyScheduleToExecute(apiBasic, service);
@@ -180,7 +174,7 @@ public class WebServiceExecuteAPI {
 			if (apiBasic.getParametros() != null && apiBasic.getParametros().length() > 4000) {
 				parameterHelperToLong = apiBasic.getParametros();
 				apiBasic.setParametros(uploadService.uploadFile(parameterHelperToLong.getBytes(), "Parameter.txt",
-						token, "webservice", "private"));
+						"webservice", "private"));
 			}
 
 			webServiceEjecucionSvc.update(apiBasic);
@@ -197,17 +191,17 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
+	public String executeApi(WebServiceDTO service, WebServiceEjecucionDTO callWS, 
 			PedidoVentaDTO modificador, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador) throws ServerException {
 		if (callWS.getFechaEjecucion() != null)
 			return SharedConstants.OK;
 		if (service.getPropiedades() == null) {
-			service = webServiceSvc.getByIdFullProperties(service.getLlaveTabla(), token);
+			service = webServiceSvc.getByIdFullProperties(service.getLlaveTabla());
 		}
 		// Realizo la autenticacion
 		String result = SharedConstants.OK;
-		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service, callWS.getUsuario(),
-				callWS.getDocumento(), token, modificador, documentMain, pIterador, callWS.getParametersInexecution());
+		WebServiceEjecucionDTO preconditionWS = executePreviousWebService(service,
+				callWS.getDocumento(), modificador, documentMain, pIterador, callWS.getParametersInexecution());
 		String extractionApiPrecondition = null;
 		if (preconditionWS != null) {
 			if (preconditionWS.getError() != null) {
@@ -232,20 +226,21 @@ public class WebServiceExecuteAPI {
 				callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()));
 			}
 		} else {
-			callWS.setParametersInexecution(getParametersWithHttp(callWS.getParametros()) + getParametersWithHttp(extractionApiPrecondition));
+			callWS.setParametersInexecution(
+					getParametersWithHttp(callWS.getParametros()) + getParametersWithHttp(extractionApiPrecondition));
 		}
 		Map<String, String> headers = getHeaderProperties(service, callWS.getParametersInexecution());
 		// Execution
-		callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, documentMain);
+		callWS = launchWebService(service, callWS, headers, modificador, pIterador, documentMain);
 		// Primero intento de nuevo ejecutarlo
 		if (callWS.getError() != null)
-			callWS = tryAgain(service, callWS, token, 1, headers, modificador, pIterador, documentMain);
+			callWS = tryAgain(service, callWS, 1, headers, modificador, pIterador, documentMain);
 		// Si despues de todos los intentos no funciona ya se responde error
 		if (callWS.getError() != null) {
 			result = SharedConstants.ERROR;
 			publishErrorMessage(service, callWS, modificador);
 		} else {
-			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta(), token));
+			callWS.setMasivo(generateDocuments(service, callWS.getTextoRespuesta()));
 			if (callWS.getMasivo() != null && callWS.getMasivo().compareTo("") != 0) {
 				webServiceEjecucionSvc.update(callWS);
 			}
@@ -256,16 +251,18 @@ public class WebServiceExecuteAPI {
 
 	private String getParametersWithHttp(String pParameters) {
 		// Cuando los parametros son muy grandes y estan con http
-		if (pParameters != null) {	
+		if (pParameters != null) {
 			Map<String, Object> mapParams = D3Utils.createMaptoString(pParameters);
 			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
 				if (entry.getValue() != null
 						&& entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
-					if(entry.getValue().toString().startsWith("http") && entry.getValue().toString().endsWith(".txt")) {
+					if (entry.getValue().toString().startsWith("http")
+							&& entry.getValue().toString().endsWith(".txt")) {
 						try {
 							File file = File.createTempFile("PARAMETER_", ".txt");
 							FileUtils.copyURLToFile(new URI(entry.getValue().toString()).toURL(), file);
-							pParameters = pParameters.replace(entry.getValue().toString(), FileUtils.readFileToString(file, Charset.defaultCharset()));
+							pParameters = pParameters.replace(entry.getValue().toString(),
+									FileUtils.readFileToString(file, Charset.defaultCharset()));
 						} catch (IOException e) {
 							pParameters.replaceAll(entry.getValue().toString(), e.getMessage());
 						} catch (URISyntaxException e) {
@@ -326,13 +323,13 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSUser,
-			String callWSDocument, String token, PedidoVentaDTO updater, PedidoVentaDTO documentMain,
-			PedidoVentaDTO pIterador, String parentParameters) throws ServerException {
+	private WebServiceEjecucionDTO executePreviousWebService(WebServiceDTO service, String callWSDocument,
+			PedidoVentaDTO updater, PedidoVentaDTO documentMain, PedidoVentaDTO pIterador, String parentParameters)
+			throws ServerException {
 		PropiedadDTO previousProp = Propiedades.obtenerParametro(service, Propiedades.API_AUTHENTICATION);
 		if (previousProp == null)
 			return null;
-		WebServiceDTO previousEndPoint = webServiceSvc.getByIdFullProperties(previousProp.getValor(), token);
+		WebServiceDTO previousEndPoint = webServiceSvc.getByIdFullProperties(previousProp.getValor());
 		Map<String, String> headers = getHeaderProperties(previousEndPoint, null);
 		// *****Execute
 		if (documentMain == null) {
@@ -342,11 +339,11 @@ public class WebServiceExecuteAPI {
 		if (updater != null && updater.getLlaveTabla().compareTo(documentMain.getLlaveTabla()) == 0)
 			documentMain.setNombre(updater.getNombre());
 		WebServiceEjecucionDTO previousWS = prepareDataService.call(previousEndPoint, documentMain, updater, pIterador,
-				token, parentParameters);
-		previousWS = launchWebService(previousEndPoint, previousWS, token, headers, updater, pIterador, documentMain);
+				 parentParameters);
+		previousWS = launchWebService(previousEndPoint, previousWS, headers, updater, pIterador, documentMain);
 		// Primero intento de nuevo ejecutarlo
 		if (previousWS.getError() != null)
-			previousWS = tryAgain(previousEndPoint, previousWS, token, 1, headers, updater, pIterador, documentMain);
+			previousWS = tryAgain(previousEndPoint, previousWS, 1, headers, updater, pIterador, documentMain);
 		return previousWS;
 	}
 
@@ -362,7 +359,7 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
+	private WebServiceEjecucionDTO launchWebService(WebServiceDTO service, WebServiceEjecucionDTO callWS,
 			Map<String, String> headerProperties, PedidoVentaDTO modificador, PedidoVentaDTO iterador,
 			PedidoVentaDTO pMainDocument) throws ServerException {
 
@@ -393,17 +390,15 @@ public class WebServiceExecuteAPI {
 			return callWS;
 		}
 
-		if(Propiedades.obtenerParametro(service, Propiedades.API_FE_HEADER)!=null)
+		if (Propiedades.obtenerParametro(service, Propiedades.API_FE_HEADER) != null)
 			template = headerSigner.signHeaderTest(template);
-		
+
 		// Se encontraba un error de codificacion asi que se debe pasar a UTF-8
 		// if(template!=null) template = codifyToHTML(template);
 		String fullOutput = writeHeadersAndUrl(headerProperties, urlWithParameters, callWS.getParametersInexecution(),
 				callWS.getExtracciones(), service.getNombre()) + template;
-		
-		
-		callWS.setEntrada(
-				uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", token, "webservice", "private"));
+
+		callWS.setEntrada(uploadService.uploadFile(fullOutput.getBytes(), "Entrada.txt", "webservice", "private"));
 		String responseApi = null;
 		try {
 			responseApi = callApi(service, urlWithParameters, template, headerProperties);
@@ -419,7 +414,7 @@ public class WebServiceExecuteAPI {
 				extractionProperties = Propiedades.obtenerVariosParametro(service, props);
 			}
 
-			List<String> resultExtraction = extractionResultAPI(responseApi, extractionProperties, token);
+			List<String> resultExtraction = extractionResultAPI(responseApi, extractionProperties);
 			String extractionString = "";
 			for (String iExtraction : resultExtraction) {
 				if (iExtraction.toUpperCase().startsWith("ERROR")) {
@@ -445,7 +440,7 @@ public class WebServiceExecuteAPI {
 				callWS.setExtracciones(SharedConstants.PUNTO_COMA_DOBLE + extractionString);
 				// Esto lo puedo quitar con lso apis locales
 				if (modificador != null)
-					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties, token,
+					documentAutomaticUpdateFunction.executeFromAPIExtraction(modificador, extractionProperties,
 							extractionString, iterador, pMainDocument);
 
 			}
@@ -463,13 +458,12 @@ public class WebServiceExecuteAPI {
 
 		if (callWS.getExtracciones() != null)
 			responseApi = "Extracciones\n\n" + callWS.getExtracciones() + "\n\n" + responseApi;
-		callWS.setSalida(
-				uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", token, "webservice", "private"));
+		callWS.setSalida(uploadService.uploadFile(responseApi.getBytes(), "Salida.txt", "webservice", "private"));
 		callWS.setFechaEjecucion(new Date());
 		String extractionHelperToLong = null;
 		if (callWS.getExtracciones() != null && callWS.getExtracciones().length() > 4000) {
 			extractionHelperToLong = callWS.getExtracciones();
-			callWS.setExtracciones(uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt", token,
+			callWS.setExtracciones(uploadService.uploadFile(extractionHelperToLong.getBytes(), "Extraction.txt",
 					"webservice", "private"));
 		}
 		if (callWS.getError() == null)
@@ -509,8 +503,8 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, String token,
-			int countIteration, Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
+	private WebServiceEjecucionDTO tryAgain(WebServiceDTO service, WebServiceEjecucionDTO callWS, int countIteration,
+			Map<String, String> headers, PedidoVentaDTO modificador, PedidoVentaDTO pIterador,
 			PedidoVentaDTO pMainDocument) throws ServerException {
 		PropiedadDTO tryProp = Propiedades.obtenerParametro(service, Propiedades.API_MAX_TRY);
 		if (tryProp == null)
@@ -531,9 +525,9 @@ public class WebServiceExecuteAPI {
 					callWS.setParametersInexecution(callWS.getParametersInexecution() + SharedConstants.PUNTO_COMA_DOBLE
 							+ "API_TRY" + SharedConstants.IGUAL + countIteration);
 				}
-				callWS = launchWebService(service, callWS, token, headers, modificador, pIterador, pMainDocument);
+				callWS = launchWebService(service, callWS, headers, modificador, pIterador, pMainDocument);
 				if (callWS.getError() != null)
-					callWS = tryAgain(service, callWS, token, countIteration + 1, headers, modificador, pIterador,
+					callWS = tryAgain(service, callWS, countIteration + 1, headers, modificador, pIterador,
 							pMainDocument);
 			}
 		} catch (NumberFormatException e) {
@@ -558,9 +552,9 @@ public class WebServiceExecuteAPI {
 				if (propiedadDTO.getMotivo() == null) {
 					return "Error validando el siguiente regular pattern (mira la funcion matches de Java String): "
 							+ propiedadDTO.getValor();
-				} else {
-					return "Error : " + propiedadDTO.getMotivo();
 				}
+				return "Error : " + propiedadDTO.getMotivo();
+
 			}
 		}
 		return null;
@@ -575,7 +569,7 @@ public class WebServiceExecuteAPI {
 	 * @return
 	 * @throws ServerException
 	 */
-	private List<String> extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList, String token)
+	private List<String> extractionResultAPI(String responseApi, List<PropiedadDTO> extractionList)
 			throws ServerException {
 		if (extractionList == null || extractionList.isEmpty())
 			return new ArrayList<>();
@@ -595,11 +589,11 @@ public class WebServiceExecuteAPI {
 				if (propiedadDTO.getKey().compareTo(Propiedades.API_EXTRACTION_TO_BASE_64) == 0) {
 					var extension = (propiedadDTO.getMotivo() == null) ? "txt" : propiedadDTO.getMotivo();
 					newValue = uploadService.uploadFile(uploadService.transformBase64ToPDF(newValue),
-							Propiedades.API_EXTRACTION_TO_BASE_64 + "." + extension, token, "webservice", "private");
+							Propiedades.API_EXTRACTION_TO_BASE_64 + "." + extension, "webservice", "private");
 				}
 				if (newValue != null && newValue.length() > 4000) {
-					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL + uploadService
-							.uploadFile(newValue.getBytes(), "Extraction.txt", token, "webservice", "private"));
+					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL
+							+ uploadService.uploadFile(newValue.getBytes(), "Extraction.txt", "webservice", "private"));
 				} else {
 					result.add(propiedadDTO.getLlaveTabla() + SharedConstants.IGUAL + newValue);
 				}
@@ -709,11 +703,10 @@ public class WebServiceExecuteAPI {
 	 * 
 	 * @param service
 	 * @param responseWS
-	 * @param token
 	 * @return
 	 * @throws ServerException
 	 */
-	private String generateDocuments(WebServiceDTO service, String responseWS, String token) throws ServerException {
+	private String generateDocuments(WebServiceDTO service, String responseWS) throws ServerException {
 		List<PropiedadDTO> newTemplates = Propiedades.obtenerVariosParametro(service, Propiedades.API_NEW_DOCUMENT);
 		List<PropiedadDTO> secondaryTemplates = Propiedades.obtenerVariosParametro(service,
 				Propiedades.API_SECONDARY_DOCUMENT);
@@ -729,7 +722,7 @@ public class WebServiceExecuteAPI {
 			while (matcher.find()) {
 				iteratorPrimary++;
 				addDocumentoToMap(mapWithDocuments, createNewDocument(hmapTemplate, hmapRelaciones, iProp.getValor(),
-						iProp.getLlaveTabla(), matcher.group(1), token, null));
+						iProp.getLlaveTabla(), matcher.group(1), null));
 				// Envio a guardar los documentos secundarios
 				if (secondaryTemplates != null && !secondaryTemplates.isEmpty()) {
 					for (PropiedadDTO iProp2 : secondaryTemplates) {
@@ -737,7 +730,7 @@ public class WebServiceExecuteAPI {
 						while (matcherSecond.find()) {
 							addDocumentoToMap(mapWithDocuments,
 									createNewDocument(hmapTemplate, hmapRelaciones, iProp2.getValor(),
-											iProp2.getLlaveTabla(), matcherSecond.group(1), token,
+											iProp2.getLlaveTabla(), matcherSecond.group(1),
 											String.valueOf(iteratorPrimary)));
 						}
 					}
@@ -773,8 +766,8 @@ public class WebServiceExecuteAPI {
 				storageMassiveString = storageMassiveString + "</root>";
 				log.info("[" + templateDTO.getCodigo() + "] Escribiendo documento de carga masiva ("
 						+ documentFromMap.size() + ")");
-				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", token,
-						"webservice", "private") + ";;";
+				result = result + uploadService.uploadFile(storageMassiveString.getBytes(), "Masiva.xml", "webservice",
+						"private") + ";;";
 			}
 		}
 		if (result.endsWith(";;"))
@@ -820,11 +813,11 @@ public class WebServiceExecuteAPI {
 	 */
 	private PedidoVentaDTO createNewDocument(HashMap<String, List<DocumentoPlantillaCaracteristicaDTO>> hmapTemplate,
 			HashMap<String, List<RelacionInternaDTO>> hmapRelaciones, String templateId, String propId, String textoApi,
-			String token, String parentId) throws ServerException {
+			String parentId) throws ServerException {
 		// optimizando la consulta de campos de una plantilla
 		List<DocumentoPlantillaCaracteristicaDTO> camposPlantilla = hmapTemplate.get(templateId);
 		if (camposPlantilla == null) {
-			camposPlantilla = fieldService.listarCamposPlantillaConComplementos(templateId, token, false);
+			camposPlantilla = fieldService.listarCamposPlantillaConComplementos(templateId, false);
 			hmapTemplate.put(templateId, camposPlantilla);
 		}
 		// optimizando la consulta de relaciones de propiedades

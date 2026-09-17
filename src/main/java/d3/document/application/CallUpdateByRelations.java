@@ -7,8 +7,6 @@ import java.util.Map;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
@@ -20,6 +18,8 @@ import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class CallUpdateByRelations {
@@ -46,7 +46,7 @@ public class CallUpdateByRelations {
 	private String[] props = { Propiedades.RELACIONAR_MISMOS, Propiedades.RELACIONAR_DOCUMENTOS,
 			Propiedades.RETIRAR_DOCUMENTOS };
 
-	public void call(CallDocumentCRUD pCrud, PedidoVentaDTO pDTO, String pToken) throws ServerException {
+	public void call(CallDocumentCRUD pCrud, PedidoVentaDTO pDTO) throws ServerException {
 
 		if (pDTO.getCaracteristicas() == null)
 			return;
@@ -63,16 +63,16 @@ public class CallUpdateByRelations {
 
 		Map<String, PedidoVentaDTO> _documentsToUpdate = new java.util.HashMap<String, PedidoVentaDTO>();
 		for (PedidoVentaCaracteristicaDTO _fieldOfDTO : pDTO.getCaracteristicas()) {
-			relacionExternaDocumentos(_fieldOfDTO, pToken, _documentsToUpdate);
+			relacionExternaDocumentos(_fieldOfDTO, _documentsToUpdate);
 		}
 
 		for (PedidoVentaDTO updateDocument : _documentsToUpdate.values()) {
-			pCrud.updateWithoutTransaction(updateDocument, pDTO.getLlaveTabla(), pToken, true);
+			pCrud.updateWithoutTransaction(updateDocument, pDTO.getLlaveTabla(), true);
 		}
 
 	}
 
-	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo, String token,
+	private void relacionExternaDocumentos(PedidoVentaCaracteristicaDTO pCampo,
 			Map<String, PedidoVentaDTO> pDocumentsToUpdate) throws ServerException {
 
 		List<PropiedadDTO> relacionExternaAgregar = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), props);
@@ -130,7 +130,7 @@ public class CallUpdateByRelations {
 								_fieldToReplace.setCampoDTO(documentoPlantillaCaracteristicaService
 										.consultaXId(_fieldToReplace.getCampo()));
 								_fieldToReplace.setCampoDTO(documentoPlantillaCaracteristicaService
-										.cargarComplementos(_fieldToReplace.getCampoDTO(), token));
+										.cargarComplementos(_fieldToReplace.getCampoDTO()));
 								String campoValor = Propiedades.obtenerValor(_fieldToReplace.getCampoDTO(),
 										Propiedades.PROCESO_VALOR);
 
@@ -142,7 +142,7 @@ public class CallUpdateByRelations {
 									if (_fieldToReplace.getLlaveTabla() != null) {
 										List<PedidoVentaDTO> actualDocuments = listDocumentWithFiltersFunction
 												.listarExpedientesPertenecenCampo(_fieldToReplace.getLlaveTabla(),
-														token, campoValor);
+														campoValor);
 										if (actualDocuments != null && !actualDocuments.isEmpty())
 											_fieldToReplace.getExpedientes().addAll(actualDocuments);
 									} else {
@@ -163,7 +163,7 @@ public class CallUpdateByRelations {
 											if (campoValor.isEmpty())
 												relacionExpedienteService.relacionarExpedienteDocumento(
 														_fieldToReplace.getLlaveTabla(), _same_document.getLlaveTabla(),
-														token, _fieldToReplace.getCampoDTO().getNombre(),
+														_fieldToReplace.getCampoDTO().getNombre(),
 														(_same_document.getDinero() == null) ? null
 																: _same_document.getDinero().getSaldo(),
 														pCampo.getPrincipal().getLlaveTabla());
@@ -179,8 +179,7 @@ public class CallUpdateByRelations {
 														retirarExpedienteDocumento(_fieldToReplace,
 																iDocumentoRelacionar,
 																(pCampo.getPrincipal() == null) ? null
-																		: pCampo.getPrincipal().getLlaveTabla(),
-																token);
+																		: pCampo.getPrincipal().getLlaveTabla());
 													break;
 
 												}
@@ -196,7 +195,7 @@ public class CallUpdateByRelations {
 												.get(dependiente.getValorOpcion());
 										if (updateDocument == null) {
 											updateDocument = pedidoService
-													.consultaCompleta(dependiente.getValorOpcion(), token);
+													.consultaCompleta(dependiente.getValorOpcion());
 										}
 
 										for (PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument
@@ -275,7 +274,7 @@ public class CallUpdateByRelations {
 														.get(_fieldToReplace.getDocumento());
 												if (updateDocument == null) {
 													updateDocument = pedidoService
-															.consultaCompleta(_fieldToReplace.getDocumento(), token);
+															.consultaCompleta(_fieldToReplace.getDocumento());
 												}
 
 												for (PedidoVentaCaracteristicaDTO iFieldUpdateDocument : updateDocument
@@ -365,7 +364,7 @@ public class CallUpdateByRelations {
 
 	// copiado de tipo proceso
 	private boolean retirarExpedienteDocumento(PedidoVentaCaracteristicaDTO pCampo, PedidoVentaDTO procesoDTO,
-			String pDocumentMainRetire, String token) throws ServerException {
+			String pDocumentMainRetire) throws ServerException {
 		// Si es inactivo, busco la relacion del expediente y el campo
 		DocumentoRelacionExpedienteFilterDTO filtroExpFilter = new DocumentoRelacionExpedienteFilterDTO();
 		filtroExpFilter.setCampoMaestro(pCampo.getLlaveTabla());
@@ -374,7 +373,7 @@ public class CallUpdateByRelations {
 		DocumentoRelacionExpedienteDTO filtroExp = relacionExpedienteService.consultaUnica(filtroExpFilter);
 		if (filtroExp != null) {
 			filtroExp.setDocumentoInactivo(pDocumentMainRetire);
-			relacionExpedienteService.inactivar(filtroExp, token);
+			relacionExpedienteService.inactivar(filtroExp);
 			return true;
 		}
 		return false;
@@ -400,10 +399,10 @@ public class CallUpdateByRelations {
 			_newFieldToRelation.setDocumento(pDocumentId);
 			_newFieldToRelation.setCampo(pRelation.getCampo());
 			return _newFieldToRelation;
-		} else {
-			// A veces no entiendo porque se creaban muchos campos u eso generaba un error
-			// dificil de ideintificar
-			return _fieldsDestinyToreplace.get(0);
 		}
+		// A veces no entiendo porque se creaban muchos campos u eso generaba un error
+		// dificil de ideintificar
+		return _fieldsDestinyToreplace.get(0);
+
 	}
 }

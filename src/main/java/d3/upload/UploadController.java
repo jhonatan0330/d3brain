@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,12 +37,11 @@ public class UploadController {
 	}
 
 	@PostMapping("/upload")
-	public CargaArchivoDTO subirArchivo(@RequestParam("file") MultipartFile pFile,
-			@RequestHeader(name = "Authorization", required = false) String token) throws ServerException {
+	public CargaArchivoDTO subirArchivo(@RequestParam("file") MultipartFile pFile) throws ServerException {
 		if (pFile.isEmpty())
 			throw new ServerException("You failed to upload because the file was empty.");
 		try {
-			return uploadService.uploadFileDTO(pFile.getBytes(), pFile.getOriginalFilename(), token, null, "public"); 
+			return uploadService.uploadFileDTO(pFile.getBytes(), pFile.getOriginalFilename(),  null, "public"); 
 		} catch (IOException e) {
 			throw new ServerException(e.getMessage());
 		}

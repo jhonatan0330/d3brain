@@ -31,8 +31,6 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.application.RelacionInternaSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
@@ -47,6 +45,8 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import freemarker.core.InvalidReferenceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -134,7 +134,8 @@ public class ProcessTemplate {
 
 	private void notificarErrorPlantilla(Exception e, String plantilla) {
 		try {
-			sendToAdminService.call("Error procesando una pantilla", e.getMessage() + SharedConstants.NEW_LINE + plantilla);
+			sendToAdminService.call("Error procesando una pantilla",
+					e.getMessage() + SharedConstants.NEW_LINE + plantilla);
 		} catch (ServerException e1) {
 			e.printStackTrace();
 			e1.printStackTrace();
@@ -611,34 +612,33 @@ public class ProcessTemplate {
 					}
 
 					if (lt.toMinutesPart() != 0) {
-						fechaInicial.add(Calendar.MINUTE, (int) lt.toMinutesPart());
+						fechaInicial.add(Calendar.MINUTE, lt.toMinutesPart());
 					}
 					if (lt.toSecondsPart() != 0) {
-						fechaInicial.add(Calendar.SECOND, (int) lt.toSecondsPart());
+						fechaInicial.add(Calendar.SECOND, lt.toSecondsPart());
 					}
 				}
 				return fechaInicial.getTime();
 			} catch (DateTimeParseException e) {
 				throw new ServerException("La fecha " + texto + " nose configura correctamente. e = " + e.getMessage());
 			}
-		} else {
-
-			if (formulaTime.endsWith("D"))
-				formulaTime = formulaTime.substring(0, formulaTime.length() - 1);
-			long timeToAdd = 0;
-			try {
-				timeToAdd = Long.parseLong(formulaTime.substring(1));
-			} catch (Exception e) {
-				timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
-			}
-			if (formulaTime.contains("-"))
-				timeToAdd = timeToAdd * -1; // Si es negativo
-			if (texto.substring(texto.indexOf("(") + 1, texto.length() - 1).endsWith("D"))// Esto es para ese calculo de
-																							// dias
-				timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
-			return new Date(result.getTime() + timeToAdd);
-
 		}
+
+		if (formulaTime.endsWith("D"))
+			formulaTime = formulaTime.substring(0, formulaTime.length() - 1);
+		long timeToAdd = 0;
+		try {
+			timeToAdd = Long.parseLong(formulaTime.substring(1));
+		} catch (Exception e) {
+			timeToAdd = 365 * 10 * 24 * 60 * 60 * 1000; // Si hay error le sumo 10 years
+		}
+		if (formulaTime.contains("-"))
+			timeToAdd = timeToAdd * -1; // Si es negativo
+		if (texto.substring(texto.indexOf("(") + 1, texto.length() - 1).endsWith("D"))// Esto es para ese calculo de
+																						// dias
+			timeToAdd = timeToAdd * 24 * 60 * 60 * 1000;
+		return new Date(result.getTime() + timeToAdd);
+
 	}
 
 	private String getFileTransformation(String textField, String nameTransformation) throws ServerException {

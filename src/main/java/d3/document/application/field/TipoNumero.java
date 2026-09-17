@@ -11,18 +11,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.DetallePedidoVentaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.CalculatorUtil;
-import d3.shared.application.D3Utils;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.application.CalculatorUtil;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class TipoNumero {
@@ -36,7 +36,7 @@ public class TipoNumero {
 		this.caracteristicaService = caracteristicaService;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		// System.out.format("\n[%s - %s] Validando.....",
 		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
@@ -52,7 +52,7 @@ public class TipoNumero {
 			} else {
 				if (funcionCalculo != null) {
 					BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
-							pCampo.getDocumento(), token, pCampo.getDependientes(), pCampo.getCampoDTO());
+							pCampo.getDocumento(), pCampo.getDependientes(), pCampo.getCampoDTO());
 					if (valorCalculado == null)
 						valorCalculado = BigDecimal.ZERO;
 					pCampo.setValorNumero(valorCalculado);
@@ -95,7 +95,7 @@ public class TipoNumero {
 								|| (pCampo.getLlaveTabla() != null && Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 										Propiedades.PERMISO_CAMPO_MODIFICABLE) == null)) {
 							BigDecimal valorCalculado = campoService.calcularNumeroFuncion(funcionCalculo,
-									pCampo.getDocumento(), token, pCampo.getDependientes(), pCampo.getCampoDTO());
+									pCampo.getDocumento(), pCampo.getDependientes(), pCampo.getCampoDTO());
 							// Algunas funciones no traen el valor del cero
 							if (valorCalculado == null)
 								valorCalculado = BigDecimal.ZERO;
@@ -180,8 +180,7 @@ public class TipoNumero {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// La idea es calcular unos campos al finalizar el docuemtno
 		// eso si ya se debieron guardar todas las precondiciones o depende
 		// Coloque null los dependientes solo con esa condicion se calculan al final
@@ -194,7 +193,7 @@ public class TipoNumero {
 								Propiedades.FUNCION_NUMBER_ALL_CALCULATE_SAVE) != null)) {
 			if (pCampo.getDependientes() == null)
 				pCampo.setDependientes(new ArrayList<PedidoVentaCaracteristicaDTO>());
-			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(), token,
+			pCampo.setValorNumero(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
 					pCampo.getDependientes(), pCampo.getCampoDTO()));
 			if (pCampo.getValorNumero() == null)
 				pCampo.setValorNumero(BigDecimal.ZERO);
@@ -205,36 +204,36 @@ public class TipoNumero {
 			if (pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
 				pCampo.getDifference().setValorNumero(bd.getValorNumero().negate());
 				return pCampo;
-			} else {
-				if (bd.getValorNumero() != null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-					if (bd.getValorNumero() == null) {
-						pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
-					} else {
-						pCampo.getDifference()
-								.setValorNumero(pCampo.getValorNumero().add(bd.getValorNumero().negate()));
-					}
-				}
 			}
+
+			if (bd.getValorNumero() != null && pCampo.getValorNumero().compareTo(bd.getValorNumero()) == 0) {
+				return pCampo;
+			}
+
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+			pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+			if (bd.getValorNumero() == null) {
+				pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
+			} else {
+				pCampo.getDifference().setValorNumero(pCampo.getValorNumero().add(bd.getValorNumero().negate()));
+			}
+
 		}
 		if (pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0) {
 			return pCampo;
-		} else {
-			if (pCampo.getDifference() == null) {
-				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-				pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
-			}
-			return campoService.guardar(pCampo, token);
 		}
+		if (pCampo.getDifference() == null) {
+			pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+			pCampo.getDifference().setValorNumero(pCampo.getValorNumero());
+		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	private BigDecimal calcular(PedidoVentaCaracteristicaDTO pCampo, String formula) throws ServerException {
@@ -304,11 +303,12 @@ public class TipoNumero {
 										if (iCaracteristica.getCampoDTO().getCodigo() == null) {
 											code = code + D3Utils.formatFunction(iCaracteristica.getCampo()) + "_";
 										} else {
-											code = code + D3Utils
-													.formatFunction(iCaracteristica.getCampoDTO().getCodigo()) + "_";
+											code = code
+													+ D3Utils.formatFunction(iCaracteristica.getCampoDTO().getCodigo())
+													+ "_";
 										}
-										code = code + D3Utils.formatFunction(iCaracteristica.getValorText())
-												.toUpperCase();
+										code = code
+												+ D3Utils.formatFunction(iCaracteristica.getValorText()).toUpperCase();
 										BigDecimal acumulado = valoresDetallesCampo.get(code);
 										if (acumulado == null) {
 											valoresDetallesCampo.put(code, iDetalle.getDinero().getValorTotal());
@@ -346,7 +346,7 @@ public class TipoNumero {
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.NUMERO_FUNCION_SQL);
 		if (funcionCalculo != null) {
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
@@ -363,7 +363,7 @@ public class TipoNumero {
 			}
 			try {
 				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
-						pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
+						newDependientes, pCampo.getCampoDTO()));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

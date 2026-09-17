@@ -1,5 +1,6 @@
 package d3.accounting.application;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,13 +9,11 @@ import d3.accounting.application.base.TypeService;
 import d3.accounting.domain.AccountConst;
 import d3.accounting.domain.TypeDTO;
 import d3.accounting.domain.TypeFilterDTO;
+import d3.document.application.field.Propiedades;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.shared.domain.SharedToken;
-import d3.document.application.field.Propiedades;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class PrepareTypeToCatalogService {
@@ -28,7 +27,7 @@ public class PrepareTypeToCatalogService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TypeDTO call(String pServiceId, String pCatalogId, SharedToken pToken) throws ServerException {
+	public TypeDTO call(String pServiceId, String pCatalogId) throws ServerException {
 
 		// Aqui creo un type por defecto para la parametrizacion en la organizacion
 		if (pServiceId == null) {
@@ -41,9 +40,9 @@ public class PrepareTypeToCatalogService {
 				if (_default == null)
 					throw new ServerException("El catalogo no tiene un tipo por defecto que elpatron sea indicador");
 				return _default;
-			} else {
-				throw new ServerException("El servicio no puede ser nulo");
 			}
+			throw new ServerException("El servicio no puede ser nulo");
+
 		}
 
 		TypeFilterDTO _typeFilter = new TypeFilterDTO();
@@ -51,7 +50,7 @@ public class PrepareTypeToCatalogService {
 
 		TypeDTO _type = typeService.getOne(_typeFilter);
 		if (_type == null) {
-			WebServiceDTO ws = webServiceSvc.getByIdFullProperties(pServiceId, pToken.getToken());
+			WebServiceDTO ws = webServiceSvc.getByIdFullProperties(pServiceId);
 			if (Propiedades.obtenerParametro(ws, Propiedades.API_ACCOUNT_CATALOG) == null)
 				throw new ServerException(
 						"No se encontro un tipo de comprobante con ese identificador y el api no tiene un catalogo para crear el tipo");

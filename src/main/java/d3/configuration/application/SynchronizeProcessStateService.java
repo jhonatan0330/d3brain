@@ -2,17 +2,16 @@ package d3.configuration.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeProcessStateService {
@@ -26,8 +25,7 @@ public class SynchronizeProcessStateService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
@@ -62,7 +60,7 @@ public class SynchronizeProcessStateService {
 		}
 	}
 
-	public void callAfter(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+	public void callAfter(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
 		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
@@ -73,7 +71,7 @@ public class SynchronizeProcessStateService {
 				if (local != null) {
 					localToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.ESTADO, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}

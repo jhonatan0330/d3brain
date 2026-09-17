@@ -52,7 +52,9 @@ public class APIControllerErrorAdvice {
 	protected ResponseEntity<SharedApiErrorResponse> handleCustomAPIException(NullPointerException e) {
 		SharedApiErrorResponse response = new SharedApiErrorResponse.ApiErrorResponseBuilder()
 				.withStatus(HttpStatus.INTERNAL_SERVER_ERROR).withError_code(HttpStatus.INTERNAL_SERVER_ERROR.name())
-				.withMessage("NullPointerException").build();
+				.withMessage("NullPointerException")
+				.withDetail(e.getMessage())
+				.build();
 		return new ResponseEntity<>(response, response.getStatus());
 	}
 

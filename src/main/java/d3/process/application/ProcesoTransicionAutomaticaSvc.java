@@ -7,11 +7,11 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
 import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.configuration.application.PropertyGetWithCacheService;
@@ -21,22 +21,23 @@ import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.document.application.CallDocumentListWithFilters;
+import d3.document.application.CallDocumentNewFromAutomatic;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.document.application.CallDocumentNewFromAutomatic;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
 import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.domain.ProcesoTransicionAutomaticaDTO;
 import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.infrastructure.ProcesoTransicionAutomaticaMapper;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedToken;
 import d3.upload.application.UploadSvc;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
 
 @Service("procesoTransicionAutomaticaService")
 public class ProcesoTransicionAutomaticaSvc
@@ -52,14 +53,13 @@ public class ProcesoTransicionAutomaticaSvc
 	private final UploadSvc uploadService;
 	private final PropertyGetWithCacheService cacheService;
 
-	public ProcesoTransicionAutomaticaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public ProcesoTransicionAutomaticaSvc(
 			@Lazy ProcesoTransicionAutomaticaMapper procesoTransicionAutomaticaMapper,
 			@Lazy MailSendMessageToAdminService sendMessageToAdminSvc, @Lazy PropiedadSvc propiedadService,
 			@Lazy CallDocumentNewFromAutomatic createDocumentSinceProperties,
 			@Lazy UsuarioSesionSvc autenticacionService, @Lazy RelacionInternaSvc relacionService,
 			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction, @Lazy UploadSvc uploadService,
 			@Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
 		this.procesoTransicionAutomaticaMapper = procesoTransicionAutomaticaMapper;
 		this.sendMessageToAdminSvc = sendMessageToAdminSvc;
 		this.propiedadService = propiedadService;
@@ -87,8 +87,7 @@ public class ProcesoTransicionAutomaticaSvc
 
 	// @Transactional(value = "transactionManager", rollbackFor=Exception.class,
 	// propagation=Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto, String token)
-			throws ServerException {
+	public ProcesoTransicionAutomaticaDTO ejecutar(ProcesoTransicionAutomaticaDTO dto) throws ServerException {
 		ProcesoTransicionAutomaticaDTO bd = consultaXId(dto.getLlaveTabla());
 		if (bd == null)
 			throw new ServerException("Esta tarea autoamtica ya no se encuentra activo o valida en la bd");
@@ -96,8 +95,7 @@ public class ProcesoTransicionAutomaticaSvc
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoTransicionAutomaticaDTO programar(ProcesoTransicionAutomaticaDTO dto, String token)
-			throws ServerException {
+	public ProcesoTransicionAutomaticaDTO programar() throws ServerException {
 		programateAll();
 		return null;
 	}
@@ -269,7 +267,7 @@ public class ProcesoTransicionAutomaticaSvc
 		return fechaCalculada.getTime();
 	}
 
-	public void inactivarPropiedad(String propiedad) throws ServerException {
+	public void inactivarPropiedad(String propiedad) {
 		procesoTransicionAutomaticaMapper.inactivarPropiedad(propiedad);
 	}
 
@@ -298,26 +296,30 @@ public class ProcesoTransicionAutomaticaSvc
 								"Sin documentos a gestionar y avisado al administrador por tiempo sin generar documentos");
 					}
 				} else {
-					String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
-					if (campoDestino == null)
-						throw new ServerException(
-								"No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "
-										+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
 					UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
-					String propiedadMultiple = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO, campoDestino,
-							Propiedades.MULTIPLE, tokenSystem.getUsuario());
-					ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();// Esto lo hago para ahorrarme una
-																					// consulta ala BD
-					transicion.setLlaveTabla(dto.getTransicion());
+					SharedToken adminSession = autenticacionService.getUserToken(tokenSystem.getLlaveTabla());
+					SharedToken previousSession = SessionContext.getCurrent();
+					try {
+						SessionContext.setCurrent(adminSession);
+						String campoDestino = procesoTransicionAutomaticaMapper.getFieldPlantilla(dto.getPropiedad());
+						if (campoDestino == null)
+							throw new ServerException(
+									"No se identifica el campo en donde se van a almacenar los documentos ( Ubicacion: "
+											+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
+						String propiedadMultiple = cacheService.obtenerUnica(PropiedadValorDefinidoDTO.CAMPO,
+								campoDestino, Propiedades.MULTIPLE, tokenSystem.getUsuario());
+						ProcesoTransicionDTO transicion = new ProcesoTransicionDTO();// Esto lo hago para ahorrarme una
+						// consulta ala BD
+						transicion.setLlaveTabla(dto.getTransicion());
 
-					String transaccionDocumento = null;
+						String transaccionDocumento = null;
 
-					List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
-					if (relaciones == null || relaciones.isEmpty() || relaciones.size() > 1) {
-						throw new ServerException(
-								"La transicion debe tener una unica (1) relacion que indique en que campo de la plantilla se va a guardar el documento resultado del temporizador. Revisar.  ( Ubicacion: "
-										+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
-					} else {
+						List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(dto.getPropiedad());
+						if (relaciones == null || relaciones.isEmpty() || relaciones.size() > 1) {
+							throw new ServerException(
+									"La transicion debe tener una unica (1) relacion que indique en que campo de la plantilla se va a guardar el documento resultado del temporizador. Revisar.  ( Ubicacion: "
+											+ propiedadService.ubicarPropiedad(pTemporizador) + ")");
+						}
 						PedidoVentaCaracteristicaDTO campoPrinicipal = new PedidoVentaCaracteristicaDTO();
 						campoPrinicipal.setCampo(relaciones.get(0).getCampo());
 						transicion.setPlantilla(relaciones.get(0).getPlantilla());
@@ -326,22 +328,23 @@ public class ProcesoTransicionAutomaticaSvc
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
 								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
-										transicion, iPedido, transaccionDocumento, tokenSystem.getLlaveTabla(),
-										campoPrinicipal);
+										transicion, iPedido, transaccionDocumento, campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
 						} else {
 							campoPrinicipal.setExpedientes(documentos);
 							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
-									transicion, null, transaccionDocumento, tokenSystem.getLlaveTabla(),
-									campoPrinicipal);
+									transicion, null, transaccionDocumento, campoPrinicipal);
 							if (nuevo != null) {
 								dto.setMensaje(nuevo.getNombre());
 							} else {
 								dto.setMensaje("Generar documentos no genera. Revisar");
 							}
 						}
+
+					} finally {
+						SessionContext.setCurrent(previousSession);
 					}
 				}
 			} else {
@@ -370,8 +373,7 @@ public class ProcesoTransicionAutomaticaSvc
 		}
 		dto.setEjecucion(new Date());
 		if (dto.getMensaje() != null && dto.getMensaje().length() > 4000) {
-			dto.setMensaje(
-					uploadService.uploadFile(dto.getMensaje().getBytes(), "Parameter.txt", null, "task", "private"));
+			dto.setMensaje(uploadService.uploadFile(dto.getMensaje().getBytes(), "Parameter.txt", "task", "private"));
 		}
 		return update(dto);
 	}

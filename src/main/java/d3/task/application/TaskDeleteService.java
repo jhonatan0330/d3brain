@@ -1,5 +1,6 @@
 package d3.task.application;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
 import d3.task.application.base.TaskService;
-import org.springframework.context.annotation.Lazy;
 
 @Service
 public class TaskDeleteService {
@@ -19,7 +19,7 @@ public class TaskDeleteService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(String id, String user) throws ServerException {
+	public SharedIdResponse call(String id) throws ServerException {
 		taskService.delete(id);
 		return new SharedIdResponse(id);
 	}

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
@@ -28,10 +27,9 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 
 	private final ProcesoTransicionMapper procesoTransicionMapper;
 
-	public ProcesoTransicionSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public ProcesoTransicionSvc(
 			@Lazy ProcesoTransicionMapper procesoTransicionMapper, @Lazy PedidoVentaSvc pedidoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy DocumentoPlantillaSvc plantillaService) {
-		super(usuarioSesionService);
 		this.procesoTransicionMapper = procesoTransicionMapper;
 		this.pedidoService = pedidoService;
 		this.estadoService = estadoService;
@@ -57,20 +55,15 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	}
 
 	@Override
-	public ProcesoTransicionDTO activar(ProcesoTransicionDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
-	}
-
-	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoTransicionDTO actualizar(ProcesoTransicionDTO dto, String token) throws ServerException {
+	public ProcesoTransicionDTO actualizar(ProcesoTransicionDTO dto) throws ServerException {
 		validarTransicion(dto);
 		return super.update(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoTransicionDTO inactivar(ProcesoTransicionDTO dto, String token) throws ServerException {
+	public ProcesoTransicionDTO inactivar(ProcesoTransicionDTO dto) throws ServerException {
 		ProcesoTransicionDTO bd = consultaXId(dto.getLlaveTabla());
 		if (bd.getEstadoPartida() == null) {
 			PedidoVentaFilterDTO contar = new PedidoVentaFilterDTO();
@@ -85,27 +78,12 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			}
 			procesoTransicionMapper.clearStateOfDocumentsProcess(bd.getPlantilla());
 		}
-		return super.inactivar(dto, token);
-	}
-
-	@Override
-	public ProcesoTransicionDTO consultaUnica(ProcesoTransicionFilterDTO dto) throws ServerException {
-		return super.consultaUnica(dto);
-	}
-
-	@Override
-	public int contarResultados(ProcesoTransicionFilterDTO dto) throws ServerException {
-		return super.contarResultados(dto);
-	}
-
-	@Override
-	public List<ProcesoTransicionDTO> listarConsulta(ProcesoTransicionFilterDTO dto) throws ServerException {
-		return super.listarConsulta(dto);
+		return super.inactivar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoTransicionDTO guardar(ProcesoTransicionDTO dto, String token) throws ServerException {
+	public ProcesoTransicionDTO guardar(ProcesoTransicionDTO dto) throws ServerException {
 		if (dto.getEstadoLLegada() == null)
 			dto.setEstadoLLegada(dto.getEstadoPartida());
 		if (dto.getPlantilla() == null && dto.getDocumentador()) {
@@ -113,15 +91,15 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 			if (dto.getEstadoPartida() != null)
 				inicial = estadoService.consultaXId(dto.getEstadoPartida());
 			if (inicial == null || inicial.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0)
-				dto.setPlantilla(crearPlantilla(dto, null, token));
+				dto.setPlantilla(crearPlantilla(dto, null));
 		}
 		validarTransicion(dto);
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 		return dto;
 	}
 
-	public List<ProcesoTransicionDTO> listarTransicionesRol(ProcesoTransicionFilterDTO dto) throws ServerException {
-		return procesoTransicionMapper.listarTransicionesRol(dto);
+	public List<ProcesoTransicionDTO> listarTransicionesRol(String sesionUsuario) {
+		return procesoTransicionMapper.listarTransicionesRol(sesionUsuario);
 	}
 
 	public String consultarProceso(String plantilla) throws ServerException {
@@ -131,8 +109,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		return null;
 	}
 
-	public List<ProcesoTransicionDTO> listarTransaccionesIniciales(String plantilla, String proceso)
-			throws ServerException {
+	public List<ProcesoTransicionDTO> listarTransaccionesIniciales(String plantilla, String proceso) {
 		ProcesoTransicionFilterDTO filtro = new ProcesoTransicionFilterDTO();
 		filtro.setPlantilla(plantilla);
 		filtro.setProceso(proceso);
@@ -144,10 +121,10 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		if (result != null && !result.isEmpty()) {
 			if (result.size() == 1) {
 				return result.get(0);
-			} else {
-				throw new ServerException(
-						"Revisar porq esta plantilla genera varios procesos.\n" + result.get(0).getPlantillaNombre());
 			}
+			throw new ServerException(
+					"Revisar porq esta plantilla genera varios procesos.\n" + result.get(0).getPlantillaNombre());
+
 		}
 		return null;
 	}
@@ -258,8 +235,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 	}
 
-	private String crearPlantilla(ProcesoTransicionDTO dto, String codigoFormulario, String token)
-			throws ServerException {
+	private String crearPlantilla(ProcesoTransicionDTO dto, String codigoFormulario) throws ServerException {
 		DocumentoPlantillaDTO plantilla = new DocumentoPlantillaDTO();
 
 		plantilla.setProceso(dto.getProceso());
@@ -267,29 +243,28 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		plantilla.setNombre(dto.getNombre());
 		// Esta es la estrategia para que se cree listable el formularios
 		// Esto no se porque aplica
-		//if (dto.getEstadoPartida() == null)
-		//	plantilla.setPropiedades(new ArrayList<PropiedadDTO>());
-		plantilla = plantillaService.guardar(plantilla, token);
+		// if (dto.getEstadoPartida() == null)
+		// plantilla.setPropiedades(new ArrayList<PropiedadDTO>());
+		plantilla = plantillaService.guardar(plantilla);
 		if (dto.getEstadoPartida() != null)
-			plantillaService.crearCampoProcesos(plantilla.getLlaveTabla(), token);
+			plantillaService.crearCampoProcesos(plantilla.getLlaveTabla());
 		return plantilla.getLlaveTabla();
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoTransicionDTO guardarConCodigo(ProcesoTransicionDTO dto, String codigoFormulario, String plantilla,
-			String token) throws ServerException {
+	public ProcesoTransicionDTO guardarConCodigo(ProcesoTransicionDTO dto, String codigoFormulario, String plantilla)
+			throws ServerException {
 		if (plantilla == null) {
-			dto.setPlantilla(crearPlantilla(dto, codigoFormulario, token));
+			dto.setPlantilla(crearPlantilla(dto, codigoFormulario));
 		} else {
 			dto.setPlantilla(plantilla);
 		}
 		validarTransicion(dto);
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	public List<ProcesoTransicionDTO> getFullToSynchronize(List<String> process) {
 		return procesoTransicionMapper.getFullToSynchronize(process);
 	}
-
 
 }

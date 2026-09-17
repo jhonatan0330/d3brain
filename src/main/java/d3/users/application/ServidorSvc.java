@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.shared.application.BasicSvc;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
@@ -23,9 +22,8 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 	private final ServidorMapper servidorMapper;
 	private final Environment env;
 
-	public ServidorSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ServidorMapper servidorMapper,
+	public ServidorSvc(@Lazy ServidorMapper servidorMapper,
 			Environment env) {
-		super(usuarioSesionService);
 		this.servidorMapper = servidorMapper;
 		this.env = env;
 	}
@@ -50,28 +48,28 @@ public class ServidorSvc extends BasicSvc<ServidorDTO, ServidorFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ServidorDTO actualizar(ServidorDTO dto, String token) throws ServerException {
+	public ServidorDTO actualizar(ServidorDTO dto) throws ServerException {
 		validateDTO(dto);
 		localServer = null;
 		ftpServer = null;
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ServidorDTO inactivar(ServidorDTO dto, String token) throws ServerException {
+	public ServidorDTO inactivar(ServidorDTO dto) throws ServerException {
 		localServer = null;
 		ftpServer = null;
-		return super.inactivar(dto, token);
+		return super.inactivar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ServidorDTO guardar(ServidorDTO dto, String token) throws ServerException {
+	public ServidorDTO guardar(ServidorDTO dto) throws ServerException {
 		validateDTO(dto);
 		localServer = null;
 		ftpServer = null;
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	public ServidorDTO obtenerServidorPrincipal(String tipo) throws ServerException {

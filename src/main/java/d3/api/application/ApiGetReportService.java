@@ -3,10 +3,9 @@ package d3.api.application;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 import d3.api.domain.ReportParameterRequest;
 import d3.api.domain.ReportRequest;
 import d3.document.application.PedidoVentaSvc;
@@ -16,7 +15,8 @@ import d3.process.domain.DocumentoPlantillaDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedIdResponse;
 
 @Service
 public class ApiGetReportService {
@@ -32,10 +32,8 @@ public class ApiGetReportService {
 		this.documentService = documentService;
 	}
 
-	public SharedIdResponse call(String token, ReportRequest filter) throws ServerException {
+	public SharedIdResponse call(ReportRequest filter) throws ServerException {
 
-		if (token == null || token.isEmpty())
-			throw new ServerException("Es obligatorio enviar un token valido");
 		DocumentoPlantillaDTO templateBD = templateService.consultarPorCodigo(filter.getTemplate());
 		if (templateBD == null)
 			throw new ServerException("No se encontro una plantilla con el codigo " + filter.getTemplate());
@@ -53,7 +51,7 @@ public class ApiGetReportService {
 		// new ServerException("El documento seleccionado no concuerda con la plantilla
 		// seleccionada");
 
-		reportBD = reportService.validateReport(reportBD.getLlaveTabla(), token);
+		reportBD = reportService.validateReport(reportBD.getLlaveTabla());
 
 		ReportDTO resultado;
 		try {
@@ -64,7 +62,7 @@ public class ApiGetReportService {
 					jasperParameters.put(element.getParameter(), element.getValue());
 				}
 			}
-			resultado = reportService.generarReporte(reportBD, filter.getDocumentId(), jasperParameters, token);
+			resultado = reportService.generarReporte(reportBD, filter.getDocumentId(), jasperParameters);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
 		}

@@ -3,10 +3,10 @@ package d3.api.application;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.document.application.field.Propiedades;
+import d3.shared.domain.ServerException;
 
 @Service
 public class ApiAuthorizeService {
@@ -19,12 +19,10 @@ public class ApiAuthorizeService {
 
 	private String apiKeyOrganization;
 
-	public void call(String apiKey, String token) throws ServerException {
+	public void call(String apiKey) throws ServerException {
 		String user = null; // queda pendiente el tema de validar el usuario
 		if (apiKey == null || apiKey.isEmpty())
 			throw new ServerException("Ingresa el codigo de la app asignado");
-		if (token != null)
-			user = organizationService.getUserFlex(token);
 		if (apiKeyOrganization == null)
 			getApiKeyHeader(user);
 		if (apiKeyOrganization == null)

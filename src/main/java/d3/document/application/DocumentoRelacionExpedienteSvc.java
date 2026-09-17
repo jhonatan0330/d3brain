@@ -18,7 +18,6 @@ import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("documentoRelacionExpedienteService")
 public class DocumentoRelacionExpedienteSvc
@@ -26,9 +25,8 @@ public class DocumentoRelacionExpedienteSvc
 
 	private final DocumentoRelacionExpedienteMapper documentoRelacionExpedienteMapper;
 
-	public DocumentoRelacionExpedienteSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public DocumentoRelacionExpedienteSvc(
 			@Lazy DocumentoRelacionExpedienteMapper documentoRelacionExpedienteMapper) {
-		super(usuarioSesionService);
 		this.documentoRelacionExpedienteMapper = documentoRelacionExpedienteMapper;
 	}
 
@@ -47,24 +45,24 @@ public class DocumentoRelacionExpedienteSvc
 	}
 
 	@Override
-	public DocumentoRelacionExpedienteDTO activar(DocumentoRelacionExpedienteDTO dto, String token)
+	public DocumentoRelacionExpedienteDTO activar(DocumentoRelacionExpedienteDTO dto)
 			throws ServerException {
-		return super.activar(dto, token);
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoRelacionExpedienteDTO actualizar(DocumentoRelacionExpedienteDTO dto, String token)
+	public DocumentoRelacionExpedienteDTO actualizar(DocumentoRelacionExpedienteDTO dto)
 			throws ServerException {
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoRelacionExpedienteDTO inactivar(DocumentoRelacionExpedienteDTO dto, String token)
+	public DocumentoRelacionExpedienteDTO inactivar(DocumentoRelacionExpedienteDTO dto)
 			throws ServerException {
 		dto.setEstado(SharedConstants.STATE_INACTIVE);
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
@@ -86,13 +84,13 @@ public class DocumentoRelacionExpedienteSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoRelacionExpedienteDTO guardar(DocumentoRelacionExpedienteDTO dto, String token)
+	public DocumentoRelacionExpedienteDTO guardar(DocumentoRelacionExpedienteDTO dto)
 			throws ServerException {
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	public List<DocumentoRelacionExpedienteDTO> listarHeredados(String plantilla, String campoMaestro,
-			String llaveOpcion, String plantillaTransicion, List<String> plantillasGestionadas) throws ServerException {
+			String llaveOpcion, String plantillaTransicion, List<String> plantillasGestionadas) {
 		if (plantillasGestionadas != null && !plantillasGestionadas.isEmpty()) {
 			for (String iPlantilla : plantillasGestionadas) {
 				if (iPlantilla.compareTo(plantilla) == 0)
@@ -111,7 +109,7 @@ public class DocumentoRelacionExpedienteSvc
 		return listarConsulta(filter);
 	}
 
-	public boolean relacionarExpedienteDocumento(String pFieldId, String pProcessId, String token, String pFieldName,
+	public boolean relacionarExpedienteDocumento(String pFieldId, String pProcessId, String pFieldName,
 			BigDecimal pProcessValue, String pKeyDocumentRelation) throws ServerException {
 		if (pProcessId == null)
 			throw new ServerException(
@@ -132,7 +130,7 @@ public class DocumentoRelacionExpedienteSvc
 			// if (procesoDTO.getDinero() != null)
 			// docExpediente.setValor(procesoDTO.getDinero().getSaldo());
 			_relation.setDocumentoRegistro(pKeyDocumentRelation);
-			_relation = guardar(_relation, token);
+			_relation = guardar(_relation);
 			return true;
 		}
 		return false;

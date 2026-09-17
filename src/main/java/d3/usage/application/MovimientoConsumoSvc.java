@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.PostConstruct;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.usage.domain.MovimientoConsumoDTO;
 import d3.usage.domain.MovimientoConsumoFilterDTO;
 import d3.usage.infrastructure.MovimientoConsumoMapper;
@@ -24,9 +23,8 @@ public class MovimientoConsumoSvc extends BasicSvc<MovimientoConsumoDTO, Movimie
 
 	private final MovimientoConsumoMapper movimientoConsumoMapper;
 
-	public MovimientoConsumoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public MovimientoConsumoSvc(
 			@Lazy MovimientoConsumoMapper movimientoConsumoMapper) {
-		super(usuarioSesionService);
 		this.movimientoConsumoMapper = movimientoConsumoMapper;
 	}
 

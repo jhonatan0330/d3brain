@@ -25,7 +25,7 @@ public class TipoTexto {
 		this.processTemplate = processTemplate;
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		// System.out.format("\n[%s - %s] Validando.....",
 		// pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre());
@@ -141,8 +141,7 @@ public class TipoTexto {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		// Esto lo pase de validar aqui porque necesito a veces el ID y asumo que si es
 		// bloqueado se va a calcular bien
 		if (pCampo.getLlaveTabla() == null
@@ -155,27 +154,26 @@ public class TipoTexto {
 			if (pCampo.getValorText() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
 				pCampo.getDifference().setValorText(bd.getValorText());
 				return pCampo;
-			} else {
-				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-					pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
-					pCampo.getDifference().setValorText(bd.getValorText());
-				}
 			}
+			if (pCampo.getValorText().compareTo(bd.getValorText()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+			pCampo.setDifference(new PedidoVentaCaracteristicaDTO());
+			pCampo.getDifference().setValorText(bd.getValorText());
+
 		}
 		if (pCampo.getValorText() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	private void calcularValorFormula(PedidoVentaCaracteristicaDTO pCampo) {

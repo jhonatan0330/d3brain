@@ -64,8 +64,8 @@ public class CompressionUtils {
 		int width = buffImage.getWidth();
 		int height = buffImage.getHeight();
 
-		int nWidth = (int) Math.floor((double) width * cos + (double) height * sin);
-		int nHeight = (int) Math.floor((double) height * cos + (double) width * sin);
+		int nWidth = (int) Math.floor(width * cos + height * sin);
+		int nHeight = (int) Math.floor(height * cos + width * sin);
 
 		BufferedImage rotatedImage = new BufferedImage(nWidth, nHeight, buffImage.getType());
 
@@ -75,7 +75,7 @@ public class CompressionUtils {
 
 		graphics.translate((nWidth - width) / 2, (nHeight - height) / 2);
 		// rotation around the center point
-		graphics.rotate(radian, (double) (width / 2), (double) (height / 2));
+		graphics.rotate(radian, (width / 2), (height / 2));
 		graphics.drawImage(buffImage, 0, 0, null);
 		graphics.dispose();
 

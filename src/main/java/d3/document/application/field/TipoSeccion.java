@@ -6,13 +6,13 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.domain.ServerException;
 
 @Component
 public class TipoSeccion {
@@ -30,7 +30,7 @@ public class TipoSeccion {
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		PropiedadDTO funcionCalculo = Propiedades.obtenerParametro(pBase, Propiedades.SECCION_FUNCION_SQL);
 		if (funcionCalculo != null) {
 			campoService.validarDependientes(pBase, pCampo.getDependientes());
@@ -47,7 +47,7 @@ public class TipoSeccion {
 			}
 			try {
 				pCampo.setValorNumeroMax(campoService.calcularNumeroFuncion(funcionCalculo, pCampo.getDocumento(),
-						pCampo.getSecurityToken(), newDependientes, pCampo.getCampoDTO()));
+						newDependientes, pCampo.getCampoDTO()));
 			} catch (ServerException e) {
 				throw new ServerException(e.getMessage(), "Campo: " + pCampo.getCampoDTO().getNombre());
 			}

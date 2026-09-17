@@ -3,12 +3,10 @@ package d3.shared.application;
 import java.util.List;
 
 import org.apache.ibatis.binding.BindingException;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.shared.domain.BasicDTO;
 import d3.shared.domain.BasicFilterDTO;
 import d3.shared.domain.IBasicMapper;
@@ -19,15 +17,9 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 
 	protected IBasicMapper<T, TFilter> mapper;
 
-	private final UsuarioSesionSvc usuarioSesionService;
-
-	public BasicSvc(@Lazy UsuarioSesionSvc usuarioSesionService) {
-		this.usuarioSesionService = usuarioSesionService;
-	}
-
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public T actualizar(T dto, String token) throws ServerException {
-		usuarioSesionService.getUserFlex(token);
+	public T actualizar(T dto) throws ServerException {
+		SessionContext.getCurrentToken();
 		try {
 			mapper.actualizar(dto);
 		} catch (Exception e) {
@@ -48,6 +40,7 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	public T consultaXId(String llave) throws ServerException {
 		throw new ServerException("Este metodo debe ser sobreescrito en cada servicio");
 	}
@@ -60,8 +53,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		}
 	}
 
-	public T inactivar(T dto, String token) throws ServerException {
-		usuarioSesionService.getUserFlex(token);
+	public T inactivar(T dto) throws ServerException {
+		SessionContext.getCurrentToken();
 		dto = consultaXId(dto.getLlaveTabla());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
@@ -76,8 +69,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 
-	public T activar(T dto, String token) throws ServerException {
-		usuarioSesionService.getUserFlex(token);
+	public T activar(T dto) throws ServerException {
+		SessionContext.getCurrentToken();
 		dto = consultaXId(dto.getLlaveTabla());
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a Activar");
@@ -92,8 +85,8 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 		return dto;
 	}
 
-	public T guardar(T dto, String token) throws ServerException {
-		usuarioSesionService.getUserFlex(token);
+	public T guardar(T dto) throws ServerException {
+		SessionContext.getCurrentToken();
 		dto.setLlaveTabla(generarLlave());
 		try {
 			mapper.insertar(dto);
@@ -186,13 +179,5 @@ public class BasicSvc<T extends BasicDTO, TFilter extends BasicFilterDTO> {
 			throw new ServerException(e.getCause().getMessage());
 		}
 		return dto;
-	}
-
-	public String getUserFlex(String token) throws ServerException {
-		return usuarioSesionService.getUserFlex(token);
-	}
-
-	public boolean isPublicToken(String token) throws ServerException {
-		return usuarioSesionService.isPublicToken(token);
 	}
 }

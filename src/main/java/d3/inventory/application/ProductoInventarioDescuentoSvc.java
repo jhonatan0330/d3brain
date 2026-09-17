@@ -14,7 +14,6 @@ import d3.shared.application.BasicSvc;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("productoInventarioDescuentoService")
 public class ProductoInventarioDescuentoSvc
@@ -22,9 +21,8 @@ public class ProductoInventarioDescuentoSvc
 
 	private final ProductoInventarioDescuentoMapper productoInventarioDescuentoMapper;
 
-	public ProductoInventarioDescuentoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public ProductoInventarioDescuentoSvc(
 			@Lazy ProductoInventarioDescuentoMapper productoInventarioDescuentoMapper) {
-		super(usuarioSesionService);
 		this.productoInventarioDescuentoMapper = productoInventarioDescuentoMapper;
 	}
 
@@ -43,25 +41,25 @@ public class ProductoInventarioDescuentoSvc
 	}
 
 	@Override
-	public ProductoInventarioDescuentoDTO activar(ProductoInventarioDescuentoDTO dto, String token)
+	public ProductoInventarioDescuentoDTO activar(ProductoInventarioDescuentoDTO dto)
 			throws ServerException {
-		return super.activar(dto, token);
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProductoInventarioDescuentoDTO actualizar(ProductoInventarioDescuentoDTO dto, String token)
+	public ProductoInventarioDescuentoDTO actualizar(ProductoInventarioDescuentoDTO dto)
 			throws ServerException {
 		if (dto.getProducto().compareTo(dto.getProductoDescontar()) == 0)
 			throw new ServerException("No se puede generar una composición del mismo producto");
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProductoInventarioDescuentoDTO inactivar(ProductoInventarioDescuentoDTO dto, String token)
+	public ProductoInventarioDescuentoDTO inactivar(ProductoInventarioDescuentoDTO dto)
 			throws ServerException {
-		return super.inactivar(dto, token);
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -83,9 +81,9 @@ public class ProductoInventarioDescuentoSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProductoInventarioDescuentoDTO guardar(ProductoInventarioDescuentoDTO dto, String token)
+	public ProductoInventarioDescuentoDTO guardar(ProductoInventarioDescuentoDTO dto)
 			throws ServerException {
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 		if (dto.getProducto().compareTo(dto.getProductoDescontar()) == 0)
 			throw new ServerException("No se puede generar una composición del mismo producto");
 		return dto;

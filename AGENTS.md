@@ -31,7 +31,8 @@ Aplicación Spring Boot 3.5 (Java 17, Gradle) para la gestión de documentos/exp
 - Mappers: interfaz anotada `@D3SqlConnMapper(value = "X")` + XML en `src/main/resources/com/...` con el mismo namespace. Columnas BD `cxxx_...` mapeadas a camelCase (`llaveTabla`, `fechaCierre`, etc.).
 - Transacciones: `@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)`.
 - Errores de dominio: `d3.shared.domain.ServerException` (se serializa al cliente). Estado: `SharedConstants.STATE_ACTIVE` (`A`) / `STATE_INACTIVE` (`I`).
-- La sesión/token viaja por header `Authorization` o campo `securityToken` de los DTO.
+- La sesión/token viaja por header `Authorization` (preferido).
+- El filtrado por permisos (menú plantillas/procesos/transiciones, `listarPermitidos`) usa `sesionUsuario` como parámetro explícito de los Mappers, resuelto por el backend desde `SessionContext`/`getUserToken`; no se envía desde el cliente.
 
 ## Seguridad (arquitectura actual y objetivos)
 

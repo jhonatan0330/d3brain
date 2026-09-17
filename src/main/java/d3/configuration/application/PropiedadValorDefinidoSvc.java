@@ -10,7 +10,6 @@ import d3.shared.domain.ServerException;
 import d3.shared.application.BasicSvc;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
 import d3.configuration.infrastructure.PropiedadValorDefinidoMapper;
@@ -20,9 +19,8 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 
 	private final PropiedadValorDefinidoMapper propiedadValorDefinidoMapper;
 
-	public PropiedadValorDefinidoSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PropiedadValorDefinidoSvc(
 			@Lazy PropiedadValorDefinidoMapper propiedadValorDefinidoMapper) {
-		super(usuarioSesionService);
 		this.propiedadValorDefinidoMapper = propiedadValorDefinidoMapper;
 	}
 
@@ -42,20 +40,20 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PropiedadValorDefinidoDTO actualizar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
+	public PropiedadValorDefinidoDTO actualizar(PropiedadValorDefinidoDTO dto) throws ServerException {
 		dto = validarPropiedad(dto);
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
-	public List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto) throws ServerException {
+	public List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto) {
 		return propiedadValorDefinidoMapper.listarPorOrigen(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PropiedadValorDefinidoDTO guardar(PropiedadValorDefinidoDTO dto, String token) throws ServerException {
+	public PropiedadValorDefinidoDTO guardar(PropiedadValorDefinidoDTO dto) throws ServerException {
 		dto = validarPropiedad(dto);
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
 	private PropiedadValorDefinidoDTO validarPropiedad(PropiedadValorDefinidoDTO dto) {

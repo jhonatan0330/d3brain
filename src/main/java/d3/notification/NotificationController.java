@@ -2,20 +2,19 @@ package d3.notification;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import d3.notification.application.ActividadSvc;
+import d3.notification.domain.ActividadDTO;
 import d3.shared.domain.ServerException;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
-import d3.notification.application.ActividadSvc;
-import d3.notification.domain.ActividadDTO;
-import org.springframework.context.annotation.Lazy;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -31,25 +30,22 @@ public class NotificationController {
 	}
 
 	@GetMapping(value = "/getNotifications")
-	public List<ActividadDTO> listUserActivities(@RequestHeader("Authorization") String token) throws ServerException {
-		return actividadService.listUserActivities(token);
+	public List<ActividadDTO> listUserActivities() throws ServerException {
+		return actividadService.listUserActivities();
 	}
 
 	@PostMapping(value = "/readActivity")
-	public ActividadDTO readActivity(@RequestBody ActividadDTO activity, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		return actividadService.readActivity(activity.getLlaveTabla(), token);
+	public ActividadDTO readActivity(@RequestBody ActividadDTO activity) throws ServerException {
+		return actividadService.readActivity(activity.getLlaveTabla());
 	}
 
 	@PostMapping(value = "/transfer")
-	public ActividadDTO transfer(@RequestBody ActividadDTO asignacion, @RequestHeader("Authorization") String token)
-			throws ServerException {
-		return actividadService.guardar(asignacion, token);
+	public ActividadDTO transfer(@RequestBody ActividadDTO asignacion) throws ServerException {
+		return actividadService.guardar(asignacion);
 	}
 
 	@PostMapping(value = "/userToTransfer")
-	public List<UsuarioDTO> usuariosXRol(@RequestBody ActividadDTO activity,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public List<UsuarioDTO> usuariosXRol(@RequestBody ActividadDTO activity) throws ServerException {
 		if (activity == null)
 			throw new ServerException("Porfavor envie el objeto documento");
 		if (activity.getDocumento() == null)

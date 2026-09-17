@@ -7,7 +7,6 @@ public abstract class BasicFilterDTO {
 	private String filtroParametro;
 	private String llaveTabla;
 	private String estado;
-	private String securityToken;
 
 	public Integer getPaginacionRegistroInicial() {
 		return paginacionRegistroInicial;
@@ -47,14 +46,6 @@ public abstract class BasicFilterDTO {
 
 	public String getFiltroParametro() {
 		return filtroParametro;
-	}
-
-	public void setSecurityToken(String securityToken) {
-		this.securityToken = securityToken;
-	}
-
-	public String getSecurityToken() {
-		return securityToken;
 	}
 
 }

@@ -1,14 +1,14 @@
 package d3.document.application.field;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Component
 public class CampoAdaptador {
@@ -33,10 +33,9 @@ public class CampoAdaptador {
 	public CampoAdaptador(@Lazy DocumentoPlantillaCaracteristicaSvc fieldService, @Lazy TipoArchivo tipoArchivo,
 			@Lazy TipoBinario tipoBinario, @Lazy TipoConfiguracion tipoConfiguracion, @Lazy TipoCroquis tipoCroquis,
 			@Lazy TipoDetallePedido tipoDetallePedido, @Lazy TipoDisponibilidad tipoDisponibilidad,
-			@Lazy TipoFecha tipoFecha, @Lazy TipoInformativo tipoInformativo,
-			@Lazy TipoGPSMap tipoGPSMap, @Lazy TipoNumero tipoNumero, @Lazy TipoProceso tipoProceso,
-			@Lazy TipoProductoLista tipoProductoLista, @Lazy TipoSeccion tipoSeccion, @Lazy TipoTexto tipoTexto,
-			@Lazy TipoVinculo tipoVinculo) {
+			@Lazy TipoFecha tipoFecha, @Lazy TipoInformativo tipoInformativo, @Lazy TipoGPSMap tipoGPSMap,
+			@Lazy TipoNumero tipoNumero, @Lazy TipoProceso tipoProceso, @Lazy TipoProductoLista tipoProductoLista,
+			@Lazy TipoSeccion tipoSeccion, @Lazy TipoTexto tipoTexto, @Lazy TipoVinculo tipoVinculo) {
 		this.fieldService = fieldService;
 		this.tipoArchivo = tipoArchivo;
 		this.tipoBinario = tipoBinario;
@@ -55,7 +54,7 @@ public class CampoAdaptador {
 		this.tipoVinculo = tipoVinculo;
 	}
 
-	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo, String token) throws ServerException {
+	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		switch (pCampo.getCampoDTO().getFormato()) {
@@ -68,11 +67,11 @@ public class CampoAdaptador {
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
-			tipoDetallePedido.cargarConsultaCampo(pCampo, token);
+			tipoDetallePedido.cargarConsultaCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD: {
-			tipoDisponibilidad.cargarConsultaCampo(pCampo, token);
+			tipoDisponibilidad.cargarConsultaCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO: {
@@ -93,57 +92,57 @@ public class CampoAdaptador {
 		}
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		switch (pCampo.getCampoDTO().getFormato()) {
 		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO: {
-			tipoArchivo.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoArchivo.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.BINARIO: {
-			tipoBinario.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoBinario.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
-			tipoConfiguracion.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoConfiguracion.validarPrepararCampo(pCampo, isUpdateAutomatic);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.CROQUIS: {
-			tipoCroquis.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoCroquis.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
-			tipoDetallePedido.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoDetallePedido.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD: {
-			tipoDisponibilidad.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoDisponibilidad.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.FECHA: {
-			tipoFecha.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoFecha.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO: {
-			tipoInformativo.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoInformativo.validarPrepararCampo(pCampo, isUpdateAutomatic);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
-			tipoNumero.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoNumero.validarPrepararCampo(pCampo, isUpdateAutomatic);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO: {
-			tipoProceso.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoProceso.validarPrepararCampo(pCampo, isUpdateAutomatic);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA: {
-			tipoProductoLista.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoProductoLista.validarPrepararCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.TEXTO: {
-			tipoTexto.validarPrepararCampo(pCampo, token, isUpdateAutomatic);
+			tipoTexto.validarPrepararCampo(pCampo, isUpdateAutomatic);
 			break;
 		}
 		default: {
@@ -152,54 +151,53 @@ public class CampoAdaptador {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado = null;
 		switch (pCampo.getCampoDTO().getFormato()) {
 		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO: {
-			vResultado = tipoArchivo.guardarCampo(pCampo, token);
+			vResultado = tipoArchivo.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.BINARIO: {
-			vResultado = tipoBinario.guardarCampo(pCampo, token);
+			vResultado = tipoBinario.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
-			vResultado = tipoConfiguracion.guardarCampo(pCampo, token);
+			vResultado = tipoConfiguracion.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.CROQUIS: {
-			vResultado = tipoCroquis.guardarCampo(pCampo, token);
+			vResultado = tipoCroquis.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
-			vResultado = tipoDetallePedido.guardarCampo(pCampo, token);
+			vResultado = tipoDetallePedido.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.DISPONIBILIDAD: {
-			vResultado = tipoDisponibilidad.guardarCampo(pCampo, token);
+			vResultado = tipoDisponibilidad.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.FECHA: {
-			vResultado = tipoFecha.guardarCampo(pCampo, token);
+			vResultado = tipoFecha.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.INFORMATIVO: {
-			vResultado = tipoInformativo.guardarCampo(pCampo, token);
+			vResultado = tipoInformativo.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
-			vResultado = tipoNumero.guardarCampo(pCampo, token);
+			vResultado = tipoNumero.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO: {
-			vResultado = tipoProceso.guardarCampo(pCampo, token);
+			vResultado = tipoProceso.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO_LISTA: {
-			vResultado = tipoProductoLista.guardarCampo(pCampo, token);
+			vResultado = tipoProductoLista.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.SECCION: {
@@ -207,7 +205,7 @@ public class CampoAdaptador {
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.TEXTO: {
-			vResultado = tipoTexto.guardarCampo(pCampo, token);
+			vResultado = tipoTexto.guardarCampo(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.VINCULO: {
@@ -230,7 +228,7 @@ public class CampoAdaptador {
 		if (pCampo.getCampo() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		pCampo.setCampoDTO(fieldService.consultaXId(pCampo.getCampo()));
-		pCampo.setCampoDTO(fieldService.cargarComplementos(pCampo.getCampoDTO(), pCampo.getSecurityToken()));
+		pCampo.setCampoDTO(fieldService.cargarComplementos(pCampo.getCampoDTO()));
 		PedidoVentaCaracteristicaFilterDTO vResultado = null;
 		switch (pCampo.getCampoDTO().getFormato()) {
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
@@ -285,17 +283,17 @@ public class CampoAdaptador {
 	}
 
 	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO pCampo,
-			PedidoVentaDTO documentoModificadorDTO, String token) throws ServerException {
+			PedidoVentaDTO documentoModificadorDTO) throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado = null;
 		switch (pCampo.getCampoDTO().getFormato()) {
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
-			vResultado = tipoDetallePedido.inactivar(pCampo, token);
+			vResultado = tipoDetallePedido.inactivar(pCampo);
 			break;
 		}
 		case DocumentoPlantillaCaracteristicaDTO.PROCESO: {
-			vResultado = tipoProceso.inactivar(pCampo, documentoModificadorDTO, token);
+			vResultado = tipoProceso.inactivar(pCampo, documentoModificadorDTO);
 			break;
 		}
 		default: {

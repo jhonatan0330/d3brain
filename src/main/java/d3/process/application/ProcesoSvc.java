@@ -1,11 +1,17 @@
 package d3.process.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
+import d3.configuration.application.PropertyGetWithCacheService;
+import d3.configuration.application.PropiedadSvc;
+import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.Propiedades;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoEstadoDTO;
@@ -14,20 +20,10 @@ import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoMapper;
-
-import org.springframework.context.annotation.Lazy;
-
-import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import d3.shared.application.BasicSvc;
-import d3.authentication.application.UsuarioSesionSvc;
-import d3.configuration.application.PropertyGetWithCacheService;
-import d3.configuration.application.PropiedadSvc;
-import d3.configuration.domain.PropiedadDTO;
-import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import jakarta.annotation.PostConstruct;
 
 @Service("procesoService")
 public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
@@ -39,11 +35,10 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	private final PropiedadSvc paramService;
 	private final PropertyGetWithCacheService cacheService;
 
-	public ProcesoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ProcesoMapper procesoMapper,
+	public ProcesoSvc(@Lazy ProcesoMapper procesoMapper,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
 			@Lazy PropiedadSvc propiedadService, @Lazy PropiedadSvc paramService,
 			@Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
 		this.procesoMapper = procesoMapper;
 		this.estadoService = estadoService;
 		this.transicionService = transicionService;
@@ -68,19 +63,19 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoDTO actualizar(ProcesoDTO dto, String token) throws ServerException {
+	public ProcesoDTO actualizar(ProcesoDTO dto) throws ServerException {
 		validarMacroproceso(dto.getMacroproceso());
-		dto = super.actualizar(dto, token);
-		organizar(dto, token);
+		dto = super.actualizar(dto);
+		organizar(dto);
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoDTO inactivar(ProcesoDTO dto, String token) throws ServerException {
-		dto = super.inactivar(dto, token);
-		organizar(dto, token);
+	public ProcesoDTO inactivar(ProcesoDTO dto) throws ServerException {
+		dto = super.inactivar(dto);
+		organizar(dto);
 		return dto;
 	}
 
@@ -94,7 +89,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		for (ProcesoDTO procesoDTO : result) {
 			if (procesoDTO.getTipo().compareTo(ProcesoDTO.EJECUTOR) == 0
 					&& procesoDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0) {
-				procesoDTO = completarProceso(procesoDTO, dto.getSecurityToken());
+				procesoDTO = completarProceso(procesoDTO);
 			}
 		}
 		if (dto.getFiltroParametro() == null && !onlyOne2ShowClient) {
@@ -117,22 +112,22 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 				bd = consultaXId(estado.getProceso());
 			}
 		}
-		bd = completarProceso(bd, dto.getSecurityToken());
+		bd = completarProceso(bd);
 		return bd;
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ProcesoDTO guardar(ProcesoDTO dto, String token) throws ServerException {
+	public ProcesoDTO guardar(ProcesoDTO dto) throws ServerException {
 		preConfigurar(dto);
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 		if (dto.getTipo().compareTo(ProcesoDTO.EJECUTOR) == 0)
-			crearBasico(dto, null, token);
+			crearBasico(dto, null);
 		return dto;
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	private void organizar(ProcesoDTO dto, String token) throws ServerException {
+	private void organizar(ProcesoDTO dto) throws ServerException {
 		// Consulto todas las caracteristicas del documento
 		ProcesoFilterDTO filtro = new ProcesoFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -147,7 +142,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 						cont++;
 					if (campo.getPrioridad() != cont) {
 						campo.setPrioridad(cont);
-						super.actualizar(campo, token);
+						super.actualizar(campo);
 					}
 					cont++;
 				} else {
@@ -159,14 +154,14 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		// Debo validar que las dependencias si se puedan
 	}
 
-	private void crearBasico(ProcesoDTO dto, String plantillainicial, String token) throws ServerException {
+	private void crearBasico(ProcesoDTO dto, String plantillainicial) throws ServerException {
 		ProcesoEstadoDTO estadoActivo = new ProcesoEstadoDTO();
 		estadoActivo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
 		estadoActivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
 		estadoActivo.setProceso(dto.getLlaveTabla());
 		estadoActivo.setNombre(dto.getNombre() + " ACTIVO");
 		estadoActivo.setAvance(1);
-		estadoActivo = estadoService.guardar(estadoActivo, token);
+		estadoActivo = estadoService.guardar(estadoActivo);
 
 		PropiedadDTO propiedadModifcable = new PropiedadDTO();
 		propiedadModifcable.setCampo(estadoActivo.getLlaveTabla());
@@ -174,7 +169,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		propiedadModifcable.setTipo(PropiedadValorDefinidoDTO.ESTADO);
 		propiedadModifcable.setValor("T");
 		propiedadModifcable.setMotivo("Permitir modificar los activos");
-		propiedadService.guardar(propiedadModifcable, token);
+		propiedadService.guardar(propiedadModifcable);
 
 		ProcesoEstadoDTO estadoInactivo = new ProcesoEstadoDTO();
 		estadoInactivo.setEstadoDocumento(SharedConstants.STATE_INACTIVE);
@@ -182,14 +177,14 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		estadoInactivo.setAvance(2);
 		estadoInactivo.setProceso(dto.getLlaveTabla());
 		estadoInactivo.setNombre(dto.getNombre() + "INACTIVO");
-		estadoInactivo = estadoService.guardar(estadoInactivo, token);
+		estadoInactivo = estadoService.guardar(estadoInactivo);
 
 		ProcesoTransicionDTO inicial = new ProcesoTransicionDTO();
 		inicial.setEstadoLLegada(estadoActivo.getLlaveTabla());
 		inicial.setNombre(dto.getNombre());
 		inicial.setDocumentador(true);
 		inicial.setProceso(dto.getLlaveTabla());
-		transicionService.guardarConCodigo(inicial, dto.getCodigo(), plantillainicial, token);
+		transicionService.guardarConCodigo(inicial, dto.getCodigo(), plantillainicial);
 
 		ProcesoTransicionDTO anular = new ProcesoTransicionDTO();
 		anular.setEstadoPartida(estadoActivo.getLlaveTabla());
@@ -197,7 +192,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		anular.setNombre(dto.getNombre() + " - ANULAR");
 		anular.setDocumentador(true);
 		anular.setProceso(dto.getLlaveTabla());
-		transicionService.guardarConCodigo(anular, "X" + dto.getCodigo(), null, token);
+		transicionService.guardarConCodigo(anular, "X" + dto.getCodigo(), null);
 
 	}
 
@@ -246,19 +241,19 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	private ProcesoDTO esPadre(ProcesoDTO categoria, String llavePadre) {
 		if (categoria.getLlaveTabla().compareTo(llavePadre) == 0) {
 			return categoria;
-		} else {
-			if (categoria.getHijos() == null)
-				return null;
-			for (ProcesoDTO iCategoria : categoria.getHijos()) {
-				ProcesoDTO busqueda = esPadre(iCategoria, llavePadre);
-				if (busqueda != null)
-					return busqueda;
-			}
 		}
+		if (categoria.getHijos() == null)
+			return null;
+		for (ProcesoDTO iCategoria : categoria.getHijos()) {
+			ProcesoDTO busqueda = esPadre(iCategoria, llavePadre);
+			if (busqueda != null)
+				return busqueda;
+		}
+
 		return null;
 	}
 
-	public ProcesoDTO crearDesdePlantilla(String plantilla, String codigo, String nombre, String objetivo, String token)
+	public ProcesoDTO crearDesdePlantilla(String plantilla, String codigo, String nombre, String objetivo)
 			throws ServerException {
 		ProcesoFilterDTO filtroCantidad = new ProcesoFilterDTO();
 		int cantidad = contarResultados(filtroCantidad);
@@ -269,8 +264,8 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		dto.setTipo(ProcesoDTO.EJECUTOR);
 		dto.setObjetivo(objetivo);
 		dto.setPrioridad(cantidad);
-		dto = super.guardar(dto, token);
-		crearBasico(dto, plantilla, token);
+		dto = super.guardar(dto);
+		crearBasico(dto, plantilla);
 		return dto;
 	}
 
@@ -294,7 +289,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		validarMacroproceso(dto.getMacroproceso());
 	}
 
-	private ProcesoDTO completarProceso(ProcesoDTO proceso, String token) throws ServerException {
+	private ProcesoDTO completarProceso(ProcesoDTO proceso) throws ServerException {
 		ProcesoEstadoFilterDTO filtroEstadoDTO = new ProcesoEstadoFilterDTO();
 		filtroEstadoDTO.setEstado(SharedConstants.STATE_ACTIVE);
 		filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
@@ -320,7 +315,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		return proceso;
 	}
 
-	public List<ProcesoDTO> getFullToSynchronize(List<String> process) throws ServerException {
+	public List<ProcesoDTO> getFullToSynchronize(List<String> process) {
 		return procesoMapper.getFullToSynchronize(process);
 	}
 

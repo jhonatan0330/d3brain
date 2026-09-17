@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeReportService {
@@ -24,8 +24,7 @@ public class SynchronizeReportService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 
@@ -59,11 +58,11 @@ public class SynchronizeReportService {
 				}
 			}
 		}
-		callAfterCreateAll(token, hierarchy, log, compare);
+		callAfterCreateAll(hierarchy, log, compare);
 	}
 
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
-			boolean compare) throws ServerException {
+	private void callAfterCreateAll(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
@@ -73,7 +72,7 @@ public class SynchronizeReportService {
 				if (local != null) {
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}
@@ -87,7 +86,7 @@ public class SynchronizeReportService {
 	 * .collect(Collectors.toList()); }
 	 */
 
-	public void callAfterRol(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+	public void callAfterRol(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
 		List<ReporteBaseDTO> localToErase = reportService.getFullToSynchronize(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
@@ -98,7 +97,7 @@ public class SynchronizeReportService {
 				if (local != null) {
 					localToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.REPORTE, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}

@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.mail.application.MensajePlantillaCorreoSvc;
 import d3.mail.domain.MensajePlantillaCorreoDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeMessageService {
@@ -20,8 +20,7 @@ public class SynchronizeMessageService {
 		this.messagesService = messagesService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<MensajePlantillaCorreoDTO> localListToErase = messagesService.getFullToSynchronize(null);
 		List<MensajePlantillaCorreoDTO> remoteList = hierarchy.getMessages();
 		if (remoteList != null && !remoteList.isEmpty()) {

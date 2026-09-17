@@ -43,8 +43,8 @@ public class ArbolConfiguracionSvc {
 		this.mapper = mapper;
 	}
 
-	public TreeNodeDTO construirArbolActual(String token, ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return construirArbol(exportService.construirHierarchy(token), filter);
+	public TreeNodeDTO construirArbolActual( ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return construirArbol(exportService.construirHierarchy(), filter);
 	}
 
 	public TreeNodeDTO construirArbol(HierarchyExporterDTO hierarchy) {
@@ -189,7 +189,7 @@ public class ArbolConfiguracionSvc {
 			if (!llaveProceso.equals(plantilla.getProceso()) || plantilla.getTipo() == null
 					|| !plantilla.getTipo().equals("P"))
 				continue;
-			TreeNodeDTO nodoPlantilla = (TreeNodeDTO) nodoBase(plantilla.getLlaveTabla(), plantilla.getEstado(),
+			TreeNodeDTO nodoPlantilla = nodoBase(plantilla.getLlaveTabla(), plantilla.getEstado(),
 					plantilla.getNombre(), plantilla.getCodigo(), plantilla.getImagen(), TreeNodeDTO.PLANTILLA,
 					caminoPadre, plantilla, listarPropiedades,
 					propiedadesIndex.get(PropiedadValorDefinidoDTO.PLANTILLA + "|" + plantilla.getLlaveTabla()));

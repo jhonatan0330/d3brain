@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.shared.application.ProcessTemplate;
+import d3.shared.application.SessionContext;
 import d3.shared.application.D3Utils;
 
 import jakarta.annotation.PostConstruct;
@@ -28,7 +29,6 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.infrastructure.PedidoVentaCaracteristicaMapper;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 
@@ -42,12 +42,11 @@ public class PedidoVentaCaracteristicaSvc
 	private final DetallePedidoVentaSvc detallePedidoVentaService;
 	private final DocumentoPlantillaCaracteristicaSvc campoDocumentoService;
 
-	public PedidoVentaCaracteristicaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public PedidoVentaCaracteristicaSvc(
 			@Lazy PedidoVentaCaracteristicaMapper pedidoVentaCaracteristicaMapper,
 			@Lazy ProcessTemplate templatesService, @Lazy CampoAdaptador adaptador,
 			@Lazy DetallePedidoVentaSvc detallePedidoVentaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoDocumentoService) {
-		super(usuarioSesionService);
 		this.pedidoVentaCaracteristicaMapper = pedidoVentaCaracteristicaMapper;
 		this.templatesService = templatesService;
 		this.adaptador = adaptador;
@@ -71,8 +70,7 @@ public class PedidoVentaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaCaracteristicaDTO actualizar(PedidoVentaCaracteristicaDTO dto, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO actualizar(PedidoVentaCaracteristicaDTO dto) throws ServerException {
 		if (dto.getValorNumero() != null && dto.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 			dto.setValorNumero(null);
 		return update(dto);
@@ -82,8 +80,7 @@ public class PedidoVentaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO dto, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO inactivar(PedidoVentaCaracteristicaDTO dto) throws ServerException {
 		if (dto.getTransaccionInactivo() == null)
 			throw new ServerException("Se encesita la transaccion de inactivar");
 		if (dto.getPrincipal() == null)
@@ -99,7 +96,7 @@ public class PedidoVentaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public PedidoVentaCaracteristicaDTO guardar(PedidoVentaCaracteristicaDTO dto, String token) throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardar(PedidoVentaCaracteristicaDTO dto) throws ServerException {
 		if (dto.getPrincipal() == null)
 			throw new ServerException("Se necesita adjuntar el principal para identificar si es historico");
 		if (dto.getValorText() != null && dto.getValorText().length() > 4000)
@@ -119,25 +116,35 @@ public class PedidoVentaCaracteristicaSvc
 		return dto;
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico)
-			throws ServerException {// La plantilla es para optimizar la consultas de la particion
+	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico) {// La plantilla es
+																										// para
+																										// optimizar la
+																										// consultas de
+																										// la particion
 		return listar2Documento(documento, historico, null);
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico, String campo)
-			throws ServerException {// La plantilla es para optimizar la consultas de la particion
+	public List<PedidoVentaCaracteristicaDTO> listar2Documento(String documento, Integer historico, String campo) {// La
+																													// plantilla
+																													// es
+																													// para
+																													// optimizar
+																													// la
+																													// consultas
+																													// de
+																													// la
+																													// particion
 		if (documento == null)
 			return null;
 		if (historico == null || historico == 0) {
 			return pedidoVentaCaracteristicaMapper.listar2Documento(documento, campo);
-		} else {
-			return pedidoVentaCaracteristicaMapper.listar2DocumentoHistorico(documento, campo);
 		}
+		return pedidoVentaCaracteristicaMapper.listar2DocumentoHistorico(documento, campo);
+
 	}
 
 	public List<PedidoVentaCaracteristicaDTO> readCompleteFields(String documentId,
-			List<DocumentoPlantillaCaracteristicaDTO> templateFields, Integer historico, String token)
-			throws ServerException {
+			List<DocumentoPlantillaCaracteristicaDTO> templateFields, Integer historico) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> result = listar2Documento(documentId, historico, null);
 		if (result == null || result.isEmpty())
 			return result;
@@ -149,7 +156,7 @@ public class PedidoVentaCaracteristicaSvc
 						iCurrentField.setDetalles(
 								detallePedidoVentaService.listar2Documento(documentId, iCurrentField.getLlaveTabla()));
 						for (DetallePedidoVentaDTO detalleDocumento : iCurrentField.getDetalles()) {
-							detallePedidoVentaService.createFieldsProduct(detalleDocumento, token,
+							detallePedidoVentaService.createFieldsProduct(detalleDocumento,
 									Propiedades.obtenerValor(iFieldTemplateDTO, Propiedades.ITEM_DETAIL_FORM_VISIBLE));
 						}
 					}
@@ -160,33 +167,28 @@ public class PedidoVentaCaracteristicaSvc
 		return result;
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listarGestionables(String documento) throws ServerException {// La
-																											// plantilla
-																											// es para
-																											// optimizar
-																											// la
-																											// consultas
-																											// de la
-																											// particion
+	public List<PedidoVentaCaracteristicaDTO> listarGestionables(String documento) {
 		return pedidoVentaCaracteristicaMapper.listarGestionables(documento);
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listarParaReporte(String documento) throws ServerException {
+	public List<PedidoVentaCaracteristicaDTO> listarParaReporte(String documento) {
 		return pedidoVentaCaracteristicaMapper.listarParaReporte(documento);
 	}
 
 	public List<PedidoVentaCaracteristicaDTO> listarParaMensaje(String documento, String plantilla, String propiedad,
-			String modificador) throws ServerException {
+			String modificador) {
 		return pedidoVentaCaracteristicaMapper.listarParaMensaje(documento, plantilla, propiedad, modificador);
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listar2Gestor(String documento, String transaccion)
-			throws ServerException {
+	public List<PedidoVentaCaracteristicaDTO> listar2Gestor(String documento, String transaccion) {
 		return pedidoVentaCaracteristicaMapper.listarParaGestor(documento, transaccion);
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos)
-			throws ServerException {// La plantilla es para optimizar la consultas de la particion
+	public List<PedidoVentaCaracteristicaDTO> listar2DocumentoVisible(List<PedidoVentaDTO> documentos) {// La plantilla
+																										// es para
+																										// optimizar la
+																										// consultas de
+																										// la particion
 		if (documentos == null || documentos.isEmpty())
 			return null;
 		List<PedidoVentaDTO> produccion = null;
@@ -238,7 +240,7 @@ public class PedidoVentaCaracteristicaSvc
 		return null;
 	}
 
-	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento, String token,
+	public BigDecimal calcularNumeroFuncion(PropiedadDTO propFunction, String documento,
 			List<PedidoVentaCaracteristicaDTO> dependientes, DocumentoPlantillaCaracteristicaDTO pCampoDTO)
 			throws ServerException {
 		if (propFunction == null)
@@ -258,26 +260,25 @@ public class PedidoVentaCaracteristicaSvc
 						dependientesOrdenados = null;
 				}
 				return pedidoVentaCaracteristicaMapper.calcularNumeroFuncion(
-						D3Utils.formatFunction(propFunction.getLlaveTabla()), documento, token,
-						dependientesOrdenados);
+						D3Utils.formatFunction(propFunction.getLlaveTabla()), documento,
+						SessionContext.getCurrentToken(), dependientesOrdenados);
 			} catch (Exception e) {
 				String _log = "El campo " + pCampoDTO.getNombre() + " de la plantilla " + pCampoDTO.getPlantillaNombre()
 						+ " envia el siguiente error";
 				throw new ServerException(e.getMessage(), _log);
 			}
-		} else {
-			String parameters = templatesService.transformDependsToParams(dependientes);
-			try {
-				String _calculateValue = templatesService.generateOutputFile(propFunction.getValor(), parameters);
-				if (_calculateValue == null)
-					return BigDecimal.ONE.negate();
-				_calculateValue = _calculateValue.replaceAll("\\s+", "");
-				return new BigDecimal(_calculateValue);
-			} catch (NumberFormatException nf) {
-				return BigDecimal.ZERO;
-			}
-
 		}
+		String parameters = templatesService.transformDependsToParams(dependientes);
+		try {
+			String _calculateValue = templatesService.generateOutputFile(propFunction.getValor(), parameters);
+			if (_calculateValue == null)
+				return BigDecimal.ONE.negate();
+			_calculateValue = _calculateValue.replaceAll("\\s+", "");
+			return new BigDecimal(_calculateValue);
+		} catch (NumberFormatException nf) {
+			return BigDecimal.ZERO;
+		}
+
 	}
 
 	private void includeDocumentArray(List<PedidoVentaCaracteristicaDTO> dependientesOrdenados) {
@@ -307,7 +308,7 @@ public class PedidoVentaCaracteristicaSvc
 			dependientesOrdenados.addAll(expedientesMultiples);
 	}
 
-	public Date calcularFechaFuncion(PropiedadDTO sqlFuncionDecision, String documento, String token,
+	public Date calcularFechaFuncion(PropiedadDTO sqlFuncionDecision, String documento,
 			List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		if (sqlFuncionDecision == null)
 			return null;
@@ -317,19 +318,18 @@ public class PedidoVentaCaracteristicaSvc
 				if (dependientesOrdenados != null && dependientesOrdenados.isEmpty())
 					dependientesOrdenados = null;
 				return pedidoVentaCaracteristicaMapper.calcularFechaFuncion(
-						D3Utils.formatFunction(sqlFuncionDecision.getLlaveTabla()), documento, token,
+						D3Utils.formatFunction(sqlFuncionDecision.getLlaveTabla()), documento, SessionContext.getCurrentToken(),
 						dependientesOrdenados);
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(), "");
 			}
-		} else {
-			String parameters = templatesService.transformDependsToParams(dependientes);
-			return D3Utils.toDate(templatesService.generateOutputFile(sqlFuncionDecision.getValor(), parameters));
 		}
+		String parameters = templatesService.transformDependsToParams(dependientes);
+		return D3Utils.toDate(templatesService.generateOutputFile(sqlFuncionDecision.getValor(), parameters));
 
 	}
 
-	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId) throws ServerException {
+	public PedidoVentaCaracteristicaDTO consultarCampoCroquis(String estructuraId) {
 		return pedidoVentaCaracteristicaMapper.consultarCampoCroquis(estructuraId);
 	}
 
@@ -337,10 +337,10 @@ public class PedidoVentaCaracteristicaSvc
 	// del documento
 	// para dibujar los colores y la plantilla
 	public List<PedidoVentaCaracteristicaDTO> camposOcupadosCroquis(String sqlFuncionDecision, String campoId,
-			String token, List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
+			List<PedidoVentaCaracteristicaDTO> dependientes) throws ServerException {
 		try {
-			return pedidoVentaCaracteristicaMapper.consultarCamposOcupados(
-					D3Utils.formatFunction(sqlFuncionDecision), campoId, token, dependientes);
+			return pedidoVentaCaracteristicaMapper.consultarCamposOcupados(D3Utils.formatFunction(sqlFuncionDecision),
+					campoId, SessionContext.getCurrentToken(), dependientes);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage(), "Funcion de campos ocupados : " + sqlFuncionDecision);
 		}
@@ -407,8 +407,7 @@ public class PedidoVentaCaracteristicaSvc
 		return dependentOrderList;
 	}
 
-	public List<PedidoVentaCaracteristicaDTO> removeDuplicateDepends(List<PedidoVentaCaracteristicaDTO> dependents)
-			throws ServerException {
+	public List<PedidoVentaCaracteristicaDTO> removeDuplicateDepends(List<PedidoVentaCaracteristicaDTO> dependents) {
 		for (int i = dependents.size() - 1; i >= 0; i--) {
 			for (int j = i - 1; j >= 0; j--) {
 				if (dependents.get(i).getCampoDTO().getCodigo()
@@ -479,7 +478,7 @@ public class PedidoVentaCaracteristicaSvc
 	 * PARA MOVER A OTRO MAPPER
 	 */
 	public List<PedidoVentaCaracteristicaDTO> listar2getApiCode(List<PedidoVentaCaracteristicaDTO> documentIds,
-			List<RelacionInternaDTO> fieldId) throws ServerException {
+			List<RelacionInternaDTO> fieldId) {
 		if (documentIds == null || documentIds.isEmpty() || fieldId == null || fieldId.isEmpty())
 			return null;
 		return pedidoVentaCaracteristicaMapper.listar2getApiCode(documentIds, fieldId);

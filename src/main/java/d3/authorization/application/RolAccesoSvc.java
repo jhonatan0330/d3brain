@@ -2,13 +2,12 @@ package d3.authorization.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.CacheManager;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -16,9 +15,10 @@ import d3.authorization.domain.UsuarioRolFilterDTO;
 import d3.authorization.infrastructure.RolAccesoMapper;
 import d3.configuration.application.PropertyCRUDSvc;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
-import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("rolAccesoService")
 public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
@@ -29,10 +29,9 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	private final OrganizacionSvc organizationSvc;
 	private final CacheManager cacheManager;
 
-	public RolAccesoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy RolAccesoMapper rolAccesoMapper,
+	public RolAccesoSvc(@Lazy RolAccesoMapper rolAccesoMapper,
 			@Lazy UsuarioRolSvc usuarioRolService, @Lazy PropertyCRUDSvc propertySvc,
 			@Lazy OrganizacionSvc organizationSvc, @Lazy CacheManager cacheManager) {
-		super(usuarioSesionService);
 		this.rolAccesoMapper = rolAccesoMapper;
 		this.usuarioRolService = usuarioRolService;
 		this.propertySvc = propertySvc;
@@ -62,15 +61,15 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public RolAccesoDTO inactivar(RolAccesoDTO dto, String token) throws ServerException {
-		dto = super.inactivar(dto, token);
+	public RolAccesoDTO inactivar(RolAccesoDTO dto) throws ServerException {
+		dto = super.inactivar(dto);
 		UsuarioRolFilterDTO filtro = new UsuarioRolFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		filtro.setRolAcceso(dto.getLlaveTabla());
 		int cont = usuarioRolService.contarResultados(filtro);
 		if (cont != 0)
 			throw new ServerException("No se puede inactivar el rol debido a que tiene usuarios activos. " + cont);
-		propertySvc.inactivateAllPropertiesOfRol(dto.getLlaveTabla(), token);
+		propertySvc.inactivateAllPropertiesOfRol(dto.getLlaveTabla());
 		cacheManager.clearRolesMap();
 		return dto;
 	}
@@ -83,15 +82,15 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		}
 	}
 
-	public boolean usuarioPermisosCompletos(String token) throws ServerException {
-		String user = getUserFlex(token);
+	public boolean usuarioPermisosCompletos() throws ServerException {
+		String user = SessionContext.getCurrentUser();
 		if (user.compareTo("PROCESS") == 0)
 			return true;
 		return organizationSvc.permisosCompletos(user);
 	}
 
-	public boolean usuarioPermisosAuditor(String token) throws ServerException {
-		String user = getUserFlex(token);
+	public boolean usuarioPermisosAuditor() throws ServerException {
+		String user = SessionContext.getCurrentUser();
 		if (user.compareTo("PROCESS") == 0)
 			return true;
 		return organizationSvc.permisosAuditor(user);

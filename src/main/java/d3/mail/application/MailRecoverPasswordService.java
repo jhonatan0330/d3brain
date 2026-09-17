@@ -8,13 +8,12 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import d3.shared.application.MailUtils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
-import d3.shared.application.MailUtils;
 import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
-
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -37,7 +36,7 @@ public class MailRecoverPasswordService {
 		return servidores.get(0);
 	}
 
-	public void callNumber(String correo, String key, String code, String urlServer) throws ServerException {
+	public void callNumber(String correo, String code, String urlServer) throws ServerException {
 		ServidorDTO _server = getServer();
 
 		JavaMailSenderImpl mailSender = MailUtils.getMailSender(_server);
@@ -61,7 +60,7 @@ public class MailRecoverPasswordService {
 		}
 	}
 
-	public void callLink(String correo, String key, String code, String urlServer) throws ServerException {
+	public void callLink(String correo, String key, String urlServer) throws ServerException {
 		ServidorDTO _server = getServer();
 
 		JavaMailSenderImpl mailSender = MailUtils.getMailSender(_server);

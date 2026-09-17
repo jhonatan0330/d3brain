@@ -14,7 +14,6 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.SharedIdResponse;
-import d3.shared.domain.SharedToken;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceExecuteAPI;
 import d3.webservice.domain.WebServiceEjecucionDTO;
@@ -39,9 +38,9 @@ public class VoucherReCreateService {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(VoucherPrepareRequest pItem, SharedToken pToken) throws ServerException {
+	public SharedIdResponse call(VoucherPrepareRequest pItem) throws ServerException {
 
-		TypeDTO type = typeFindSvc.call(pItem.getServiceId(), null, pToken);
+		TypeDTO type = typeFindSvc.call(pItem.getServiceId(), null);
 
 		VoucherFilterDTO _filter = new VoucherFilterDTO();
 		_filter.setDocument(pItem.getDocumentId());
@@ -53,12 +52,11 @@ public class VoucherReCreateService {
 		WebServiceEjecucionDTO _service = webServiceEjecucionSvc.getServiceVoucherActive(pItem.getServiceId(),
 				pItem.getDocumentId());
 		if (_service != null)
-			return new SharedIdResponse(pItem.getDocumentId(), null, null,
-					apiService.applyScheduleToExecute(_service, pToken.getToken()));
+			return new SharedIdResponse(pItem.getDocumentId(), null, null, apiService.applyScheduleToExecute(_service));
 
 		PedidoVentaDTO _document = pedidoVentaService.consultaXId(pItem.getDocumentId());
 		return new SharedIdResponse(pItem.getDocumentId(), _document.getNombre(), _document.getEstadoNombre(),
-				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, pToken.getToken(), null));
+				apiService.prepareApiToExecution(pItem.getServiceId(), _document, null, null, null));
 
 	}
 

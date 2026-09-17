@@ -1,13 +1,15 @@
 package d3.document.application;
 
-import java.util.List;
-
-import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import d3.authorization.application.UsuarioRolProductoSvc;
 import d3.authorization.domain.UsuarioRolProductoDTO;
 import d3.authorization.domain.UsuarioRolProductoFilterDTO;
@@ -24,19 +26,14 @@ import d3.document.infrastructure.DetallePedidoVentaMapper;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.tariff.application.base.TarifaSvc;
 import d3.tariff.domain.TarifaDTO;
 import d3.tariff.domain.TarifaFilterDTO;
-
-import org.springframework.context.annotation.Lazy;
-
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import d3.shared.application.BasicSvc;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("detallePedidoVentaService")
 public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, DetallePedidoVentaFilterDTO> {
@@ -50,12 +47,11 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	private final PropertyGetWithCacheService cacheService;
 	private final CallDocumentCRUD crudservice;
 
-	public DetallePedidoVentaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public DetallePedidoVentaSvc(
 			@Lazy DetallePedidoVentaMapper detallePedidoVentaMapper, @Lazy ProductoSvc productoService,
 			@Lazy PedidoVentaSvc documentoService, @Lazy UsuarioRolProductoSvc usuarioRolProductoService,
 			@Lazy TarifaSvc tarifaService, @Lazy PropiedadSvc configuracionSvc,
 			@Lazy PropertyGetWithCacheService cacheService, @Lazy CallDocumentCRUD crudservice) {
-		super(usuarioSesionService);
 		this.detallePedidoVentaMapper = detallePedidoVentaMapper;
 		this.productoService = productoService;
 		this.documentoService = documentoService;
@@ -81,17 +77,17 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	@Override
-	public DetallePedidoVentaDTO activar(DetallePedidoVentaDTO dto, String token) throws ServerException {
+	public DetallePedidoVentaDTO activar(DetallePedidoVentaDTO dto) throws ServerException {
 		return activate(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DetallePedidoVentaDTO actualizar(DetallePedidoVentaDTO dto, String token) throws ServerException {
+	public DetallePedidoVentaDTO actualizar(DetallePedidoVentaDTO dto) throws ServerException {
 		if (dto.getPlantillaDetalle() != null) {
-			dto.getDocumentoDetalle().setFuncionario(getUserFlex(token));
+			dto.getDocumentoDetalle().setFuncionario(SessionContext.getCurrentUser());
 			dto.getDocumentoDetalle().setPlantilla(dto.getPlantillaDetalle());
-			crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false);
+			crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), false);
 		}
 		dto = update(dto);
 		return dto;
@@ -99,7 +95,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DetallePedidoVentaDTO inactivar(DetallePedidoVentaDTO dto, String token) throws ServerException {
+	public DetallePedidoVentaDTO inactivar(DetallePedidoVentaDTO dto) throws ServerException {
 		if (dto.getTransaccionInactivo() == null)
 			throw new ServerException("Ingrese la transaccion de inactivar");
 		DetallePedidoVentaDTO bd = consultaXId(dto.getLlaveTabla());
@@ -110,13 +106,13 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto, String token) throws ServerException {
+	public DetallePedidoVentaDTO guardar(DetallePedidoVentaDTO dto) throws ServerException {
 
 		if (dto.getPlantillaDetalle() != null) {
-			dto.getDocumentoDetalle().setFuncionario(getUserFlex(token));
+			dto.getDocumentoDetalle().setFuncionario(SessionContext.getCurrentUser());
 			dto.getDocumentoDetalle().setPlantilla(dto.getPlantillaDetalle());
 			if (dto.getDetalleId() == null) {
-				dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), token, false));
+				dto.setDocumentoDetalle(crudservice.saveWithoutTransaction(dto.getDocumentoDetalle(), false));
 				dto.setDetalleId(dto.getDocumentoDetalle().getLlaveTabla());
 			} else {
 				// aqui debo mejorar para que no se hagan procesos si no tuvieron modificaciones
@@ -129,8 +125,8 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				}
 				if (iContadorModificadas) {
 					dto.getDocumentoDetalle().setLlaveTabla(dto.getDetalleId());
-					dto.setDocumentoDetalle(crudservice.updateWithoutTransaction(dto.getDocumentoDetalle(),
-							dto.getDetalleId(), token, false));
+					dto.setDocumentoDetalle(
+							crudservice.updateWithoutTransaction(dto.getDocumentoDetalle(), dto.getDetalleId(), false));
 				}
 			}
 
@@ -140,7 +136,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	}
 
 	public List<DetallePedidoVentaDTO> listarCompleto(String pDocumento, List<PropiedadDTO> tarifario,
-			String propiedadFuncion, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, String token,
+			String propiedadFuncion, List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario,
 			String newOnlyFormProcess, String tercero, String pCampo) throws ServerException {
 		List<DetallePedidoVentaDTO> base = listar2Documento(pDocumento, pCampo);
 		if (base == null || base.isEmpty())
@@ -155,16 +151,16 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		productosSimplificados = simplificarConsultaBDProductos(productosSimplificados);
 		for (DetallePedidoVentaDTO detallePedidoVentaDTO : base) {
 			result.add(consultaCompleta(detallePedidoVentaDTO, tarifario, tercero, propiedadFuncion,
-					parametrosFuncionTarifario, productosSimplificados, token, newOnlyFormProcess));
+					parametrosFuncionTarifario, productosSimplificados, newOnlyFormProcess));
 		}
 		return result;
 	}
 
-	public List<DetallePedidoVentaDTO> listar2Documento(String pDocumento, String pCampo) throws ServerException {
+	public List<DetallePedidoVentaDTO> listar2Documento(String pDocumento, String pCampo) {
 		return detallePedidoVentaMapper.listar2Documento(pDocumento, pCampo);
 	}
 
-	public List<ProductoDTO> simplificarConsultaBDProductos(List<ProductoDTO> productos) throws ServerException {
+	public List<ProductoDTO> simplificarConsultaBDProductos(List<ProductoDTO> productos) {
 		List<ProductoDTO> result = productoService.listarProductoSimplificar(productos);
 		List<ProductoDTO> bases = new ArrayList<ProductoDTO>();
 		for (ProductoDTO productoDTO : result) {
@@ -199,11 +195,13 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 				}
 			}
 			if (productoDTO.getPropiedades().isEmpty() && productoDTO.getProductoBase() != null) {
-				for (ProductoDTO iBase : bases) {
-					if (iBase.getCategoria() != null
-							&& productoDTO.getProductoBase().compareTo(iBase.getCategoria()) == 0) {
-						productoDTO.setPropiedades(iBase.getPropiedades());
-						break;
+				if (bases != null && bases.size() != 0) {
+					for (ProductoDTO iBase : bases) {
+						if (iBase.getCategoria() != null
+								&& productoDTO.getProductoBase().compareTo(iBase.getCategoria()) == 0) {
+							productoDTO.setPropiedades(iBase.getPropiedades());
+							break;
+						}
 					}
 				}
 			}
@@ -218,7 +216,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DetallePedidoVentaDTO consultaCompleta(DetallePedidoVentaDTO dto, List<PropiedadDTO> tarifario,
 			String tercero, String propiedadFuncionTarifario,
 			List<PedidoVentaCaracteristicaDTO> parametrosFuncionTarifario, List<ProductoDTO> productosSimplificados,
-			String token, String newOnlyFormProcess) throws ServerException {
+			String newOnlyFormProcess) throws ServerException {
 		DetallePedidoVentaDTO result;
 		if (dto.getProducto() == null)
 			throw new ServerException("Para esta operacion se debe colocar el producto");
@@ -296,23 +294,21 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		if (result.getValorUnitario() == null)
 			result.setValorUnitario(BigDecimal.ZERO);
 		if (result.getDetalleId() != null) {
-			result.setDocumentoDetalle(documentoService.consultaCompleta(result.getDetalleId(), token));
+			result.setDocumentoDetalle(documentoService.consultaCompleta(result.getDetalleId()));
 		}
-		createFieldsProduct(result, token, newOnlyFormProcess);
+		createFieldsProduct(result, newOnlyFormProcess);
 		return result;
 	}
 
-	public void createFieldsProduct(DetallePedidoVentaDTO field, String token, String newOnlyFormProcess)
-			throws ServerException {
+	public void createFieldsProduct(DetallePedidoVentaDTO field, String newOnlyFormProcess) throws ServerException {
 
 		if (field.getDocumentoDetalle() == null) {
 			field.setDocumentoDetalle(new PedidoVentaDTO());
 			if (field.getPlantillaDetalle() != null) {
 				field.getDocumentoDetalle().setPlantilla(field.getPlantillaDetalle());
-				documentoService.obtenerCamposCompletos(field.getDocumentoDetalle(), null);
-				String usuario = null; // copia de ocumeto plantillapara no hacer una refecia circular
-				if (token != null)
-					usuario = getUserFlex(token);
+				documentoService.obtenerCamposCompletos(field.getDocumentoDetalle());
+				String usuario = SessionContext.getCurrentUser();
+
 				for (PedidoVentaCaracteristicaDTO iField : field.getDocumentoDetalle().getCaracteristicas()) {
 					iField.getCampoDTO().setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
 							iField.getCampoDTO().getLlaveTabla(), null, usuario));
@@ -349,7 +345,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			baseValorUnitario.setLlaveTabla("***UNIDAD");
 			baseValorUnitario.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
+					Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE));
 			PedidoVentaCaracteristicaDTO cpValorUnitario = new PedidoVentaCaracteristicaDTO();
 			cpValorUnitario.setDocumento(field.getLlaveTabla());
 			cpValorUnitario.setValorNumero(valorUnitario);
@@ -358,7 +354,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			cpValorUnitario.setCampo("***UNIDAD");
 			field.getDocumentoDetalle().getCaracteristicas().add(0, cpValorUnitario);
 			field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO, baseValorUnitario.getLlaveTabla(), null));
+					Propiedades.PRODUCTO_CAMPO_VALOR_UNITARIO, baseValorUnitario.getLlaveTabla()));
 		} else {
 			for (PedidoVentaCaracteristicaDTO iFieldValorUnitario : field.getDocumentoDetalle().getCaracteristicas()) {
 				if (iFieldValorUnitario.getCampo().compareTo(pCampoUnitario.getValor()) == 0) {
@@ -389,7 +385,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			baseCantidad.setLlaveTabla("***CANTIDAD");
 			baseCantidad.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseCantidad.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE, null));
+					Propiedades.PERMISO_CAMPO_MODIFICABLE, Propiedades.TRUE));
 			PedidoVentaCaracteristicaDTO cpCantidad = new PedidoVentaCaracteristicaDTO();
 			cpCantidad.setCampoDTO(baseCantidad);
 			cpCantidad.setDocumento(field.getLlaveTabla());
@@ -399,7 +395,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			cpCantidad.setCampo("***CANTIDAD");
 			field.getDocumentoDetalle().getCaracteristicas().add(0, cpCantidad);
 			field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PRODUCTO_CAMPO_CANTIDAD, baseCantidad.getLlaveTabla(), null));
+					Propiedades.PRODUCTO_CAMPO_CANTIDAD, baseCantidad.getLlaveTabla()));
 			//
 		} else {
 			for (PedidoVentaCaracteristicaDTO iFieldCantidad : field.getDocumentoDetalle().getCaracteristicas()) {
@@ -440,15 +436,15 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			baseTotal.setLlaveTabla("***TOTAL");
 			baseTotal.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE, null));
+					Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE));
 			// baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 			// null, Propiedades.MODIFICABLE, Propiedades.TRUE, null));
 			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.NUMERO_FORMULA, baseCantidad.getCodigo() + "*" + baseValorUnitario.getCodigo(), null));
+					Propiedades.NUMERO_FORMULA, baseCantidad.getCodigo() + "*" + baseValorUnitario.getCodigo()));
 			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
+					Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla()));
 			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.DEPENDE, baseCantidad.getLlaveTabla(), null));
+					Propiedades.DEPENDE, baseCantidad.getLlaveTabla()));
 			PedidoVentaCaracteristicaDTO cpTotal = new PedidoVentaCaracteristicaDTO();
 			cpTotal.setDocumento(field.getLlaveTabla());
 			cpTotal.setValorNumero(field.getValorTotal());
@@ -458,7 +454,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			cpTotal.setCampo("***TOTAL");
 			field.getDocumentoDetalle().getCaracteristicas().add(cpTotal);
 			field.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-					Propiedades.PRODUCTO_CAMPO_TOTAL, baseTotal.getLlaveTabla(), null));
+					Propiedades.PRODUCTO_CAMPO_TOTAL, baseTotal.getLlaveTabla()));
 			//
 		} else {
 			for (PedidoVentaCaracteristicaDTO iFieldTotal : field.getDocumentoDetalle().getCaracteristicas()) {
@@ -468,9 +464,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 						baseTotal.setPropiedades(new ArrayList<>());
 					}
 					baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-							Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla(), null));
+							Propiedades.DEPENDE, baseValorUnitario.getLlaveTabla()));
 					baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-							Propiedades.DEPENDE, baseCantidad.getLlaveTabla(), null));
+							Propiedades.DEPENDE, baseCantidad.getLlaveTabla()));
 					break;
 				}
 			}
@@ -488,8 +484,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		return field.getTarifas().get(0).getValor();
 	}
 
-	private List<TarifaDTO> consultarTarifas(List<PropiedadDTO> tarifario, String tercero, String producto)
-			throws ServerException {
+	private List<TarifaDTO> consultarTarifas(List<PropiedadDTO> tarifario, String tercero, String producto) {
 		if (tarifario == null || tarifario.isEmpty())
 			return null;
 		if (tercero != null && tercero.isEmpty())
@@ -514,7 +509,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		baseProducto.setLlaveTabla("***PRODUCTO");
 		baseProducto.setPropiedades(new ArrayList<PropiedadDTO>());
 		baseProducto.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
-				Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE, null));// NO se puede modificar
+				Propiedades.PERMISO_CAMPO_BLOQUEAR, Propiedades.TRUE));// NO se puede modificar
 		return baseProducto;
 	}
 
@@ -574,7 +569,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		}
 	}
 
-	public void actualizarCamposNovedadParcial(DetallePedidoVentaDTO detail) throws ServerException {
+	public void actualizarCamposNovedadParcial(DetallePedidoVentaDTO detail) {
 
 		PropiedadDTO pCampoCantidad = Propiedades.obtenerParametro(detail, Propiedades.PRODUCTO_CAMPO_CANTIDAD);
 		String keyCampoCantidad = "***CANTIDAD";
@@ -606,7 +601,7 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 
 	}
 
-	public List<ProductoDTO> getCompleteDetailFromProductId(String productId, String token) throws ServerException {
+	public List<ProductoDTO> getCompleteDetailFromProductId(String productId) throws ServerException {
 		DetallePedidoVentaDTO result = new DetallePedidoVentaDTO();
 		result.setProducto(productId);
 		List<ProductoDTO> productos = new ArrayList<>();
@@ -617,11 +612,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 		for (ProductoDTO productoDTO : productos) {
 			DetallePedidoVentaDTO filtroPlantilla = new DetallePedidoVentaDTO();
 			filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
-			productoDTO.setDetallePlantilla(
-					consultaCompleta(filtroPlantilla, null, null, null, null, productos, token, null));
+			productoDTO.setDetallePlantilla(consultaCompleta(filtroPlantilla, null, null, null, null, productos, null));
 		}
 		return productos;
 	}
-
 
 }

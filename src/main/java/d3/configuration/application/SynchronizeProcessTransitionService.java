@@ -2,16 +2,15 @@ package d3.configuration.application;
 
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.ProcesoTransicionDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeProcessTransitionService {
@@ -25,8 +24,7 @@ public class SynchronizeProcessTransitionService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) {
 		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare == null || localToErase == null)
@@ -67,8 +65,8 @@ public class SynchronizeProcessTransitionService {
 		}
 	}
 
-	public void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
-			boolean compare) throws ServerException {
+	public void callAfterCreateAll(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
 		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
@@ -79,7 +77,7 @@ public class SynchronizeProcessTransitionService {
 					log.setRoot("Sincronizando el proceso " + local.getProcesoNombre() + " la transicion de nombre"
 							+ local.getNombre());
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.TRANSICION, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}

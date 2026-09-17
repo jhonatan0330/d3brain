@@ -9,22 +9,22 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.CacheManager;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
-import d3.document.application.CallDocumentCommons;
-import d3.document.application.field.Propiedades;
-import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.D3Utils;
-import d3.shared.application.BasicSvc;
-import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
-import d3.process.infrastructure.DocumentoPlantillaCaracteristicaMapper;
-import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.document.application.CallDocumentCommons;
+import d3.document.application.field.Propiedades;
+import d3.document.domain.PedidoVentaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
+import d3.process.infrastructure.DocumentoPlantillaCaracteristicaMapper;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import jakarta.annotation.PostConstruct;
 
 @Service("documentoPlantillaCaracteristicaService")
 public class DocumentoPlantillaCaracteristicaSvc
@@ -36,11 +36,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 	private final CallSearchProcessFromText searchProcessFromText;
 	private final CacheManager cacheService;
 
-	public DocumentoPlantillaCaracteristicaSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public DocumentoPlantillaCaracteristicaSvc(
 			@Lazy DocumentoPlantillaCaracteristicaMapper documentoPlantillaCaracteristicaMapper,
 			@Lazy PropiedadSvc parametroService, @Lazy PropertyGetWithCacheService propertyManagerService,
 			@Lazy CallSearchProcessFromText searchProcessFromText, @Lazy CacheManager cacheService) {
-		super(usuarioSesionService);
 		this.documentoPlantillaCaracteristicaMapper = documentoPlantillaCaracteristicaMapper;
 		this.parametroService = parametroService;
 		this.propertyManagerService = propertyManagerService;
@@ -60,7 +59,8 @@ public class DocumentoPlantillaCaracteristicaSvc
 		DocumentoPlantillaCaracteristicaFilterDTO dto = new DocumentoPlantillaCaracteristicaFilterDTO();
 		dto.setLlaveTabla(llave);
 		_db = documentoPlantillaCaracteristicaMapper.consultar(dto);
-		if(_db != null) cacheService.putField(llave, _db);
+		if (_db != null)
+			cacheService.putField(llave, _db);
 		return _db;
 	}
 
@@ -71,17 +71,17 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaCaracteristicaDTO actualizar(DocumentoPlantillaCaracteristicaDTO dto, String token)
+	public DocumentoPlantillaCaracteristicaDTO actualizar(DocumentoPlantillaCaracteristicaDTO dto)
 			throws ServerException {
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
-		dto = super.actualizar(dto, token);
-		organizar(dto, token);
+		dto = super.actualizar(dto);
+		organizar(dto);
 		parametroService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		PropiedadDTO differenceProperty = parametroService.getPropertyDifferenceField(dto.getLlaveTabla());
 		if (differenceProperty == null) {
 			PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
 			if (filtroPlantilla != null)
-				createFieldDifference(dto, filtroPlantilla.getValor(), token);
+				createFieldDifference(dto, filtroPlantilla.getValor());
 		} else {
 			DocumentoPlantillaCaracteristicaDTO fieldDifference = consultaXId(differenceProperty.getValor());
 			if (fieldDifference.getFormato().compareTo(dto.getFormato()) != 0) {
@@ -95,10 +95,10 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaCaracteristicaDTO inactivar(DocumentoPlantillaCaracteristicaDTO dto, String token)
+	public DocumentoPlantillaCaracteristicaDTO inactivar(DocumentoPlantillaCaracteristicaDTO dto)
 			throws ServerException {
-		dto = super.inactivar(dto, token);
-		organizar(dto, token);
+		dto = super.inactivar(dto);
+		organizar(dto);
 		// validar que el campo no se use en ninguna propiedad
 		cacheService.clearFieldsMap();
 		return dto;
@@ -116,14 +116,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 		// if(dtoCarga.getDocumentos()==null || dtoCarga.getDocumentos().isEmpty())
 		// throw new ServerException("En el campo documentos debes incluir los
 		// documentos a validar, en este caso estan vacios");
-		DocumentoPlantillaCaracteristicaDTO dtoCarga = cargarComplementos(consultaXId(dto.getLlaveTabla()),
-				dto.getSecurityToken());
+		DocumentoPlantillaCaracteristicaDTO dtoCarga = cargarComplementos(consultaXId(dto.getLlaveTabla()));
 		List<PedidoVentaDTO> documentAproval = new ArrayList<>();
 		for (PedidoVentaDTO iDoc : dto.getDocumentos()) {
 			PedidoVentaDTO addItem = new PedidoVentaDTO();
 			try {
-				String keyOfDocument = searchProcessFromText.getValueOptionFromText(dto.getSecurityToken(),
-						iDoc.getNombre(), dtoCarga);
+				String keyOfDocument = searchProcessFromText.getValueOptionFromText(iDoc.getNombre(), dtoCarga);
 				addItem.setLlaveTabla(keyOfDocument);
 			} catch (Exception e) {
 				CallDocumentCommons.addMessageError(addItem, e.getMessage());
@@ -137,8 +135,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoPlantillaCaracteristicaDTO guardar(DocumentoPlantillaCaracteristicaDTO dto, String token)
-			throws ServerException {
+	public DocumentoPlantillaCaracteristicaDTO guardar(DocumentoPlantillaCaracteristicaDTO dto) throws ServerException {
 		if (dto.getPlantilla() == null)
 			throw new ServerException("Es necesario la plantilla a la que pertenece el campo");
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCantidad = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -158,16 +155,16 @@ public class DocumentoPlantillaCaracteristicaSvc
 		dto.setNombre(dto.getNombre().toUpperCase());
 		dto.setOrden(cantidadCampos);
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
-		dto = super.guardar(dto, token);
+		dto = super.guardar(dto);
 		PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());
 		if (filtroPlantilla != null)
-			createFieldDifference(dto, filtroPlantilla.getValor(), token);
+			createFieldDifference(dto, filtroPlantilla.getValor());
 		cacheService.clearFieldsMap();
 		return dto;
 	}
 
-	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId,
-			String token) throws ServerException {
+	public void createFieldDifference(DocumentoPlantillaCaracteristicaDTO iCampo, String templateDifferenceId)
+			throws ServerException {
 
 		// Primero valido que no exista el campo
 		DocumentoPlantillaCaracteristicaFilterDTO filterField = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -188,48 +185,40 @@ public class DocumentoPlantillaCaracteristicaSvc
 			// newCampo.setObjetivo(".");
 			newCampo.setOrden(iCampo.getOrden() + 1);
 			newCampo.setPlantilla(templateDifferenceId);
-			newCampo = guardar(newCampo, token);
+			newCampo = guardar(newCampo);
 
 			// Esto lo quite por el tipo fecha pero no se exactamente porque lo tenia
 			// parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 			// newCampo.getLlaveTabla(),
 			// Propiedades.PERMISO_CAMPO_BLOQUEAR, "1", token), token);
 			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-					newCampo.getLlaveTabla(), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+					newCampo.getLlaveTabla(), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
 		}
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, iCampo.getLlaveTabla(),
-				Propiedades.CAMPO_DIFERENCIAS, newCampo.getLlaveTabla(), token), token);
+				Propiedades.CAMPO_DIFERENCIAS, newCampo.getLlaveTabla()));
 
 	}
 
-	public DocumentoPlantillaCaracteristicaDTO consultaUnicaConComplementos(String id, String token)
-			throws ServerException {
+	public DocumentoPlantillaCaracteristicaDTO consultaUnicaConComplementos(String id) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campo = consultaXId(id);
-		// if (campo == null) {// Seguramente viende de un producto
-		// campo = consultaUnicaProducto(id);
-		// }
-		return cargarComplementos(campo, token);
+		return cargarComplementos(campo);
 	}
 
-	public DocumentoPlantillaCaracteristicaDTO cargarComplementos(DocumentoPlantillaCaracteristicaDTO campo,
-			String token) throws ServerException {
-		String usuario = null;
-		if (token != null)
-			usuario = getUserFlex(token);
+	public DocumentoPlantillaCaracteristicaDTO cargarComplementos(DocumentoPlantillaCaracteristicaDTO campo)
+			throws ServerException {
+		String usuario = SessionContext.getCurrentUserOrNull();
 		if (campo != null)
 			campo.setPropiedades(propertyManagerService.obtenerPropiedades(PropiedadValorDefinidoDTO.CAMPO,
 					campo.getLlaveTabla(), null, usuario));
 		return campo;
 	}
 
-	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantilla(String plantilla, String token)
-			throws ServerException {
+	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantilla(String plantilla) throws ServerException {
 		if (plantilla == null)
 			throw new ServerException("Para consultar los datos de una plantilla debes enviar el id de la plantilla");
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCampo.setEstado(SharedConstants.STATE_ACTIVE);
-		filtroCampo.setSecurityToken(token);
 		filtroCampo.setPlantilla(plantilla);
 		// Aumentar a 500 la cantidad de campos de un formulario, de preguntas
 		filtroCampo.setPaginacionRegistroFinal(500);
@@ -237,17 +226,17 @@ public class DocumentoPlantillaCaracteristicaSvc
 	}
 
 	public List<DocumentoPlantillaCaracteristicaDTO> listarCamposPlantillaConComplementos(String plantilla,
-			String token, boolean external) throws ServerException {
-		List<DocumentoPlantillaCaracteristicaDTO> campos = listarCamposPlantilla(plantilla, token);
+			boolean external) throws ServerException {
+		List<DocumentoPlantillaCaracteristicaDTO> campos = listarCamposPlantilla(plantilla);
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : campos) {
-			iCampo = cargarComplementos(iCampo, token);
+			iCampo = cargarComplementos(iCampo);
 			if (external)
 				Propiedades.clearPropertiesToOut(iCampo.getPropiedades());
 		}
 		return campos;
 	}
 
-	private void organizar(DocumentoPlantillaCaracteristicaDTO dto, String token) throws ServerException {
+	private void organizar(DocumentoPlantillaCaracteristicaDTO dto) throws ServerException {
 		// Consulto todas las caracteristicas del documento
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
@@ -264,7 +253,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 						cont++;
 					if (campo.getOrden() != cont) {
 						campo.setOrden(cont);
-						super.actualizar(campo, token);
+						super.actualizar(campo);
 					}
 					cont++;
 				} else {
@@ -276,15 +265,15 @@ public class DocumentoPlantillaCaracteristicaSvc
 		// Debo validar que las dependencias si se puedan
 	}
 
-	public void actualizarFiltros(String llaveTabla) throws ServerException {
+	public void actualizarFiltros(String llaveTabla) {
 		documentoPlantillaCaracteristicaMapper.actualizarFiltros(llaveTabla);
 	}
 
-	public void actualizarDescripcion(String pTemplate, String pField) throws ServerException {
+	public void actualizarDescripcion(String pTemplate, String pField) {
 		documentoPlantillaCaracteristicaMapper.actualizarDescripcion(pTemplate, pField);
 	}
 
-	public String crearCampoNombre(String plantilla, String token) throws ServerException {
+	public String crearCampoNombre(String plantilla) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -298,13 +287,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoNombre.setOrden(1);
 			campoNombre.setPlantilla(plantilla);
-			campoNombre = guardar(campoNombre, token);
+			campoNombre = guardar(campoNombre);
 		}
 		return campoNombre.getLlaveTabla();
 	}
 
-	public String createField(String template, String fieldCode, String type, Integer order, String token)
-			throws ServerException {
+	public String createField(String template, String fieldCode, String type, Integer order) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO filter = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filter.setCodigo(fieldCode);
 		filter.setPlantilla(template);
@@ -316,12 +304,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 			field.setFormato(type);
 			field.setPlantilla(template);
 			field.setOrden(order);
-			field = guardar(field, token);
+			field = guardar(field);
 		}
 		return field.getLlaveTabla();
 	}
 
-	public String crearCampoIdentificacion(String plantilla, String token) throws ServerException {
+	public String crearCampoIdentificacion(String plantilla) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -335,12 +323,12 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			campoNombre.setOrden(2);
 			campoNombre.setPlantilla(plantilla);
-			campoNombre = guardar(campoNombre, token);
+			campoNombre = guardar(campoNombre);
 		}
 		return campoNombre.getLlaveTabla();
 	}
 
-	public String crearCampoTelefono(String plantilla, String token) throws ServerException {
+	public String crearCampoTelefono(String plantilla) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -354,17 +342,17 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoTelefono.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoTelefono.setOrden(4);
 			campoTelefono.setPlantilla(plantilla);
-			campoTelefono = guardar(campoTelefono, token);
+			campoTelefono = guardar(campoTelefono);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-					campoTelefono.getLlaveTabla(), Propiedades.FORMATO, "T", token);
+					campoTelefono.getLlaveTabla(), Propiedades.FORMATO, "T");
 			prop.setPropiedadValor("PROP_75");
-			parametroService.guardar(prop, token);
+			parametroService.guardar(prop);
 		}
 		return campoTelefono.getLlaveTabla();
 	}
 
-	public String crearCampoCorreo(String plantilla, String token) throws ServerException {
+	public String crearCampoCorreo(String plantilla) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -378,17 +366,17 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoCorreo.setFormato(DocumentoPlantillaCaracteristicaDTO.TEXTO);
 			campoCorreo.setOrden(3);
 			campoCorreo.setPlantilla(plantilla);
-			campoCorreo = guardar(campoCorreo, token);
+			campoCorreo = guardar(campoCorreo);
 			// Como no se tuvo en cuenta la categoria entonces toca colocar este
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoCorreo.getLlaveTabla(),
-					Propiedades.FORMATO, "E", token);
+					Propiedades.FORMATO, "E");
 			prop.setPropiedadValor("PROP_75");
-			parametroService.guardar(prop, token);
+			parametroService.guardar(prop);
 		}
 		return campoCorreo.getLlaveTabla();
 	}
 
-	public String crearCampoMotivo(String plantilla, String token) throws ServerException {
+	public String crearCampoMotivo(String plantilla) throws ServerException {
 		// Primero filtro si existe el campo nombre, eso evita un error al copiar
 		// plantilla
 		DocumentoPlantillaCaracteristicaFilterDTO filtro = new DocumentoPlantillaCaracteristicaFilterDTO();
@@ -403,17 +391,17 @@ public class DocumentoPlantillaCaracteristicaSvc
 			campoNombre.setOrden(2);
 			campoNombre.setPlantilla(plantilla);
 			;
-			campoNombre = guardar(campoNombre, token);
+			campoNombre = guardar(campoNombre);
 
 			PropiedadDTO prop = Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, campoNombre.getLlaveTabla(),
-					Propiedades.FORMATO, "E", token);
+					Propiedades.FORMATO, "E");
 			prop.setPropiedadValor("PROP_01");
-			parametroService.guardar(prop, token);
+			parametroService.guardar(prop);
 		}
 		return campoNombre.getLlaveTabla();
 	}
 
-	public String crearCampoTiempoReporte(String plantilla, String token, boolean rango) throws ServerException {
+	public String crearCampoTiempoReporte(String plantilla, boolean rango) throws ServerException {
 		DocumentoPlantillaCaracteristicaFilterDTO campoTiempoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 		campoTiempoFilter.setCodigo("FECHA");
 		campoTiempoFilter.setPlantilla(plantilla);
@@ -428,11 +416,11 @@ public class DocumentoPlantillaCaracteristicaSvc
 		campoTiempo.setOrden(1);
 		campoTiempo.setPlantilla(plantilla);
 		// campoTiempo.setObjetivo("Contiene las fechas del reporte");
-		campoTiempo = guardar(campoTiempo, token);
+		campoTiempo = guardar(campoTiempo);
 
 		if (rango) {
 			parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-					campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*", token), token);
+					campoTiempo.getLlaveTabla(), Propiedades.FECHA_RANGO, "*"));
 			// Esto lo quite porque al final para el usuario es mejor el rango que los
 			// campos separados
 		}
@@ -440,30 +428,30 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return campoTiempo.getLlaveTabla();
 	}
 
-	public String crearCampoProcesos(String plantilla, String token) throws ServerException {
+	public String crearCampoProcesos(String plantilla) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campoProceso = new DocumentoPlantillaCaracteristicaDTO();
 		campoProceso.setCodigo("PROCESO");
 		campoProceso.setNombre("PROCESO");
 		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
 		campoProceso.setOrden(1);
 		campoProceso.setPlantilla(plantilla);
-		campoProceso = guardar(campoProceso, token);
+		campoProceso = guardar(campoProceso);
 
 		parametroService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				campoProceso.getLlaveTabla(), Propiedades.PROCESO_GESTIONAR_ESTADOS, "*", token), token);
+				campoProceso.getLlaveTabla(), Propiedades.PROCESO_GESTIONAR_ESTADOS, "*"));
 
 		return campoProceso.getLlaveTabla();
 
 	}
 
-	public String crearCampoValor(String plantilla, String token) throws ServerException {
+	public String crearCampoValor(String plantilla) throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO campoValor = new DocumentoPlantillaCaracteristicaDTO();
 		campoValor.setCodigo("VALOR");
 		campoValor.setNombre("VALOR");
 		campoValor.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 		campoValor.setPlantilla(plantilla);
 		// campoValor.setObjetivo("Define el valor total del documento");
-		campoValor = guardar(campoValor, token);
+		campoValor = guardar(campoValor);
 		return campoValor.getLlaveTabla();
 	}
 
@@ -498,7 +486,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return super.contarResultados(filtroCampo);
 	}
 
-	public int countFieldsDependent(String pTemplate, String pField) throws ServerException {
+	public int countFieldsDependent(String pTemplate, String pField) {
 		DocumentoPlantillaCaracteristicaFilterDTO filtroCampo = new DocumentoPlantillaCaracteristicaFilterDTO();
 		filtroCampo.setLlaveTabla(pField);
 		filtroCampo.setPlantilla(pTemplate);

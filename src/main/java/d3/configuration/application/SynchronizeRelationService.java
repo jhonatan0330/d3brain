@@ -3,22 +3,21 @@ package d3.configuration.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
-import d3.shared.application.D3Utils;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.D3Utils;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Service
 public class SynchronizeRelationService {
@@ -36,8 +35,7 @@ public class SynchronizeRelationService {
 		this.templateService = templateService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
 		if (hierarchy.getProperties() == null || hierarchy.getProperties().isEmpty())
 			return;
 		if (hierarchy.getRelations() == null || hierarchy.getRelations().isEmpty())
@@ -91,7 +89,7 @@ public class SynchronizeRelationService {
 					if (findProperty.getMotivo() != null)
 						_msgError = _msgError + " con el motivo : " + findProperty.getMotivo();
 					log.setRoot(templateRoot + _msgError);
-					synchronizeRelations(hierarchy, findProperty, remoteProperty, token, log, compare);
+					synchronizeRelations(hierarchy, findProperty, remoteProperty, log, compare);
 					break;
 				}
 				default:
@@ -102,8 +100,7 @@ public class SynchronizeRelationService {
 	}
 
 	private void synchronizeRelations(HierarchyExporterDTO hierarchy, PropiedadDTO newProperty,
-			PropiedadDTO remoteProperty, String token, LogConfigurationDTO log, boolean compare)
-			throws ServerException {
+			PropiedadDTO remoteProperty, LogConfigurationDTO log, boolean compare) throws ServerException {
 		if (newProperty == null) {
 			log.error("Propiedad no se encuentra");
 			return;
@@ -148,7 +145,7 @@ public class SynchronizeRelationService {
 								newRelation.setPlantilla(_field.getPlantilla());
 								newRelation.setPropiedad(newProperty.getLlaveTabla());
 								try {
-									newRelation = relationsService.guardar(newRelation, token);
+									newRelation = relationsService.guardar(newRelation);
 									if (newRelation == null) {
 										log.error("RELACION NO CREADA -" + remoteRelation.getPropiedad() + " - "
 												+ remoteRelation.getPlantillaNombre() + ".."

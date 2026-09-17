@@ -20,9 +20,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 
 import jakarta.annotation.PostConstruct;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("trazabilidadProductoInventarioService")
 public class TrazabilidadProductoInventarioSvc
@@ -32,10 +32,9 @@ public class TrazabilidadProductoInventarioSvc
 	private final ProductoInventarioSvc productoInventarioService;
 	private final ProductoSvc productoService;
 
-	public TrazabilidadProductoInventarioSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public TrazabilidadProductoInventarioSvc(
 			@Lazy TrazabilidadProductoInventarioMapper trazabilidadProductoInventarioMapper,
 			@Lazy ProductoInventarioSvc productoInventarioService, @Lazy ProductoSvc productoService) {
-		super(usuarioSesionService);
 		this.trazabilidadProductoInventarioMapper = trazabilidadProductoInventarioMapper;
 		this.productoInventarioService = productoInventarioService;
 		this.productoService = productoService;
@@ -56,23 +55,23 @@ public class TrazabilidadProductoInventarioSvc
 	}
 
 	@Override
-	public TrazabilidadProductoInventarioDTO activar(TrazabilidadProductoInventarioDTO dto, String token)
+	public TrazabilidadProductoInventarioDTO activar(TrazabilidadProductoInventarioDTO dto)
 			throws ServerException {
-		return super.activar(dto, token);
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TrazabilidadProductoInventarioDTO actualizar(TrazabilidadProductoInventarioDTO dto, String token)
+	public TrazabilidadProductoInventarioDTO actualizar(TrazabilidadProductoInventarioDTO dto)
 			throws ServerException {
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public TrazabilidadProductoInventarioDTO inactivar(TrazabilidadProductoInventarioDTO dto, String token)
+	public TrazabilidadProductoInventarioDTO inactivar(TrazabilidadProductoInventarioDTO dto)
 			throws ServerException {
-		return super.inactivar(dto, token);
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -93,7 +92,7 @@ public class TrazabilidadProductoInventarioSvc
 	}
 
 	@Override
-	public TrazabilidadProductoInventarioDTO guardar(TrazabilidadProductoInventarioDTO dto, String token)
+	public TrazabilidadProductoInventarioDTO guardar(TrazabilidadProductoInventarioDTO dto)
 			throws ServerException {
 		TrazabilidadProductoInventarioDTO trazabilidad = dto;
 		if (trazabilidad.getCantidad() == null)
@@ -133,9 +132,9 @@ public class TrazabilidadProductoInventarioSvc
 			// Solo se acualiza hasta el final el produto para realizar los calculos en la
 			// trazabilidad
 			inventario.setCantidadModificar(trazabilidad.getCantidad());
-			trazabilidad.setResponsable(getUserFlex(token));
-			trazabilidad = super.guardar(trazabilidad, token);
-			inventario = productoInventarioService.actualizar(inventario, token);
+			trazabilidad.setResponsable(SessionContext.getCurrentUser());
+			trazabilidad = super.guardar(trazabilidad);
+			inventario = productoInventarioService.actualizar(inventario);
 		}
 		return trazabilidad;
 	}

@@ -36,8 +36,10 @@ import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.process.infrastructure.ProcesoTransicionMapper;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.shared.domain.SharedToken;
 import d3.users.domain.UsuarioDTO;
 import d3.webservice.application.WebServiceExecuteAPI;
 
@@ -102,11 +104,10 @@ public class CallManageTransition {
 
 	public ProcesoTransicionDTO execute(ProcesoTransicionDTO dto, String expediente, PedidoVentaDTO documentoDTO,
 			BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
-			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep,
+			DocumentoRelacionGestorDTO relacionAnterior, String transaccion, String previousStep,
 			PedidoVentaDTO pGenerator) throws ServerException {
-		String userID = getUserId(token);
 		return executeInternal(dto, expediente, documentoDTO, valorModificador, dineroProcesado, relacionAnterior,
-				token, transaccion, previousStep, userID, new HashMap<>(), pGenerator);
+				transaccion, previousStep, SessionContext.getCurrentUser(), new HashMap<>(), pGenerator);
 	}
 
 	/**
@@ -130,8 +131,8 @@ public class CallManageTransition {
 	 */
 	private ProcesoTransicionDTO executeInternal(ProcesoTransicionDTO pTransitionProcess, String expediente,
 			PedidoVentaDTO documentoDTO, BigDecimal valorModificador, PedidoVentaDineroDTO dineroProcesado,
-			DocumentoRelacionGestorDTO relacionAnterior, String token, String transaccion, String previousStep,
-			String userID, Map<String, List<PedidoVentaDTO>> documentRecentCreateInTransition,
+			DocumentoRelacionGestorDTO relacionAnterior, String transaccion, String previousStep, String userID,
+			Map<String, List<PedidoVentaDTO>> documentRecentCreateInTransition,
 
 			PedidoVentaDTO pGenerator) throws ServerException {
 
@@ -139,8 +140,8 @@ public class CallManageTransition {
 		if (pTransitionProcess.getPropiedades() == null)
 			pTransitionProcess.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
 					pTransitionProcess.getLlaveTabla(), null, userID));
-		propiedadService.validarFuncionConsultandoPropiedad(pTransitionProcess, PropiedadValorDefinidoDTO.TRANSICION,
-				expediente, documentoDTO.getLlaveTabla(), userID);
+		propiedadService.validarFuncionConsultandoPropiedad(pTransitionProcess, expediente,
+				documentoDTO.getLlaveTabla());
 		ProcesoTransicionDTO respuesta = pTransitionProcess;
 		PedidoVentaDTO expedienteDTO = pedidoService.consultaXId(expediente);
 		ProcesoEstadoDTO _stateTo = estadoService.consultaXId(pTransitionProcess.getEstadoLLegada());
@@ -161,13 +162,13 @@ public class CallManageTransition {
 		String nameTrace = (previousStep == null) ? pTransitionProcess.getNombre()
 				: previousStep + "->" + pTransitionProcess.getNombre();
 		if (_stateFrom != null && _stateFrom.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) == 0) {
-			afectado = iterateInState(respuesta, expedienteDTO, documentoDTO, token, relacionAnterior,
+			afectado = iterateInState(respuesta, expedienteDTO, documentoDTO, relacionAnterior,
 					documentRecentCreateInTransition, dineroProcesado);
 		} else {
 			modificadorId = documentoDTO.getLlaveTabla();
 			// Genero documento en caso que toque
 			if (pTransitionProcess.getPlantilla() != null) {
-				String tokenToGenerateDocument = token;
+				String tokenToGenerateDocument = SessionContext.getCurrentToken();
 				// En caso de los apis si no habia colocado el permiso fallaba por ese permiso
 				// pero el api se enviaba asi que peligro porque terminaba haciend varias veces
 				// lo mismo Varios SMS, Varios Manifiestos
@@ -175,10 +176,17 @@ public class CallManageTransition {
 					tokenToGenerateDocument = autenticacionService.generateAdministratorToken().getLlaveTabla();
 				// Tengo que optimizar esto siempre va a preguntar si tiene documentos para
 				// generar
-				PedidoVentaDTO automatico = createDocumentSinceProperties.generateDocuments(pTransitionProcess,
-						(pGenerator == null) ? documentoDTO : pGenerator, expedienteDTO, documentoDTO.getTransaccion(),
-						tokenToGenerateDocument, 0, documentRecentCreateInTransition,
-						(pGenerator == null) ? pGenerator : documentoDTO);
+				PedidoVentaDTO automatico = null;
+				SharedToken adminSession = SessionContext.getCurrent();
+				try {
+					SessionContext.setCurrent(autenticacionService.getUserToken(tokenToGenerateDocument));
+					automatico = createDocumentSinceProperties.generateDocuments(pTransitionProcess,
+							(pGenerator == null) ? documentoDTO : pGenerator, expedienteDTO,
+							documentoDTO.getTransaccion(),  0, documentRecentCreateInTransition,
+							(pGenerator == null) ? pGenerator : documentoDTO);
+				} finally {
+					SessionContext.setCurrent(adminSession);
+				}
 				// Por si es la transicion inicial no le quite el poder del documento que genero
 				if (automatico != null) {
 					// No se porque a los 2 por el momento asi
@@ -195,15 +203,15 @@ public class CallManageTransition {
 			// modificador del nuevo documento creado
 			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
 					pTransitionProcess.getAfectaSaldo());
-			afectado = moveBalanceDocument(expediente, token, pTransitionProcess, valorModificador, dineroProcesado);
+			afectado = moveBalanceDocument(expediente,  pTransitionProcess, valorModificador, dineroProcesado);
 
 			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(),
 					documentoDTO.getNombre());
 			// Creo la relacion del documento Gestor
 			relacionAnterior = relacionGestorService.trazar(expedienteDTO.getLlaveTabla(), modificadorId, nameTrace,
 					pTransitionProcess.getEstadoPartida(), pTransitionProcess.getEstadoLLegada(),
-					(afectado == null) ? null : afectado.getLlaveTabla(), token, relacionAnterior,
-					expedienteDTO.getHistorico(), transaccion, false);
+					(afectado == null) ? null : afectado.getLlaveTabla(),  relacionAnterior,
+					expedienteDTO.getHistorico(), transaccion);
 		}
 		// Se actualiza pedido
 		// si son los mismo creo que no necesito update ???????????
@@ -217,27 +225,35 @@ public class CallManageTransition {
 		switch (pTransitionProcess.getEstadoLlegadaTipo()) {
 		case ProcesoEstadoDTO.TIPO_DECISION:
 			respuesta = resolveStateDesition(pTransitionProcess.getEstadoLLegada(), expediente,
-					documentoDTO.getLlaveTabla(), token);
+					documentoDTO.getLlaveTabla());
 			UsuarioSesionDTO tokenSystem = autenticacionService.generateAdministratorToken();
 			// Aqui clean los documentos creados se supone que ya se tuv o que hacer lo de
 			// la iteracion
-			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
-					relacionAnterior, tokenSystem.getLlaveTabla(), transaccion, nameTrace, userID, new HashMap<>(),
-					pGenerator);
+			SharedToken adminSession = SessionContext.getCurrent();
+			try {
+				SessionContext.setCurrent(autenticacionService.getUserToken(tokenSystem.getLlaveTabla()));
+				respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
+						relacionAnterior,
+						//tokenSystem.getLlaveTabla(), 
+						transaccion, nameTrace, userID, new HashMap<>(),
+						pGenerator);
+			} finally {
+				SessionContext.setCurrent(adminSession);
+			}
 			break;
 		case ProcesoEstadoDTO.TIPO_ITERADOR:
 			respuesta = getNextTransition(pTransitionProcess.getEstadoLLegada(), null);
 			// Por si siguen decisiones
 			respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
-					relacionAnterior, token, transaccion, nameTrace, userID, documentRecentCreateInTransition,
+					relacionAnterior,  transaccion, nameTrace, userID, documentRecentCreateInTransition,
 					pGenerator);
 			// Aqui tambien gestiona mensajes se duplica porque no evalue bien que eimpato
 			// tiene ponerlo antes o despues
-			generateMessageService.call(expedienteDTO, pTransitionProcess, null, documentoDTO, token);
+			generateMessageService.call(expedienteDTO, pTransitionProcess, null, documentoDTO);
 			break;
 		case ProcesoEstadoDTO.TIPO_API:
 			try {
-				respuesta = executeAPI(pTransitionProcess.getEstadoLLegada(), expedienteDTO, documentoDTO, token,
+				respuesta = executeAPI(pTransitionProcess.getEstadoLLegada(), expedienteDTO, documentoDTO, 
 						documentRecentCreateInTransition);
 			} catch (Exception e) {
 				CallDocumentCommons.addMessageError(documentoDTO, e.getMessage());
@@ -247,7 +263,7 @@ public class CallManageTransition {
 			try {
 				// Por si siguen decisiones
 				respuesta = executeInternal(respuesta, expediente, documentoDTO, valorModificador, afectado,
-						relacionAnterior, token, transaccion,
+						relacionAnterior,  transaccion,
 						(previousStep == null) ? pTransitionProcess.getEstadoLlegadaNombre()
 								: previousStep + "->" + pTransitionProcess.getEstadoLlegadaNombre(),
 						userID, documentRecentCreateInTransition, pGenerator);
@@ -265,19 +281,17 @@ public class CallManageTransition {
 				_stateTo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
 						_stateTo.getLlaveTabla(), null, userID));
 			}
-			UsuarioDTO responsable = assignResponsibleToActivity(expediente, _stateTo, documentoDTO.getLlaveTabla(),
-					token);
-			generateMessageService.call(expedienteDTO, pTransitionProcess, responsable, documentoDTO, token);
+			UsuarioDTO responsable = assignResponsibleToActivity(expediente, _stateTo, documentoDTO.getLlaveTabla());
+			generateMessageService.call(expedienteDTO, pTransitionProcess, responsable, documentoDTO);
 			activateHistoric(expedienteDTO);
-			accountManager(expedienteDTO, token);
-			PedidoVentaCaracteristicaDTO _locationToApi = obtenerUbicacion(expedienteDTO, documentoDTO, _stateTo,
-					token);
+			accountManager(expedienteDTO);
+			PedidoVentaCaracteristicaDTO _locationToApi = obtenerUbicacion(expedienteDTO, documentoDTO, _stateTo);
 			// Esto lo movi estaba en CallBPM gestionarExpedienteDependientes y de hay viene
 			// pero necesitaba que solo se hiciera cuando es un estado y no en apis o
 			// decisiones
-			saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO, token);
+			saveUpdateInactivateDocumentFunction.saveRole(expedienteDTO);
 			if (expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-				saveUpdateInactivateDocumentFunction.deleteVinculateDocument(expedienteDTO, token);
+				saveUpdateInactivateDocumentFunction.deleteVinculateDocument(expedienteDTO);
 			}
 			List<PropiedadDTO> _PropertyListToAPis = Propiedades.obtenerVariosParametro(_stateTo, Propiedades.API);
 			if (_PropertyListToAPis != null && !_PropertyListToAPis.isEmpty()) {
@@ -292,7 +306,7 @@ public class CallManageTransition {
 								+ SharedConstants.IGUAL + _locationToApi.getValorText();
 				}
 				for (PropiedadDTO _iApi : _PropertyListToAPis) {
-					apiService.prepareApiToExecution(_iApi.getValor(), expedienteDTO, documentoDTO, null, token,
+					apiService.prepareApiToExecution(_iApi.getValor(), expedienteDTO, documentoDTO, null, 
 							_parameterState);
 				}
 			}
@@ -311,12 +325,12 @@ public class CallManageTransition {
 		}
 	}
 
-	private void accountManager(PedidoVentaDTO expedienteDTO, String pToken) throws ServerException {
+	private void accountManager(PedidoVentaDTO expedienteDTO) throws ServerException {
 		if (expedienteDTO == null)
 			return;
 		if (expedienteDTO.getEstado() != null
 				&& expedienteDTO.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
-			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), expedienteDTO.getPlantilla(), pToken);
+			voucherDeleteService.callByDocument(expedienteDTO.getLlaveTabla(), expedienteDTO.getPlantilla());
 		}
 	}
 
@@ -338,7 +352,7 @@ public class CallManageTransition {
 	 */
 	// aqui hay algo para mejorar
 	private PedidoVentaDineroDTO iterateInState(ProcesoTransicionDTO pTransition, PedidoVentaDTO pDocumentPrincipal,
-			PedidoVentaDTO pDocumentoModificador, String pToken, DocumentoRelacionGestorDTO pRelationBack,
+			PedidoVentaDTO pDocumentoModificador, DocumentoRelacionGestorDTO pRelationBack,
 			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction, PedidoVentaDineroDTO dineroProcesado)
 			throws ServerException {
 
@@ -357,8 +371,7 @@ public class CallManageTransition {
 		} else {
 			try {
 				_documentsToCreate = pedidoService.iteracionesProceso(
-						D3Utils.formatFunction(_propertyFuncionSQL.getLlaveTabla()),
-						pDocumentPrincipal.getLlaveTabla(),
+						D3Utils.formatFunction(_propertyFuncionSQL.getLlaveTabla()), pDocumentPrincipal.getLlaveTabla(),
 						(pDocumentoModificador == null) ? null : pDocumentoModificador.getLlaveTabla());
 			} catch (Exception e) {
 				throw new ServerException(e.getMessage(), "Iteracion : " + _stateInitial.getNombre());
@@ -387,18 +400,18 @@ public class CallManageTransition {
 					// que sea asi, deberia ser el expediente??, o talvez todos
 					PedidoVentaDTO _newDocumentOfIteration = createDocumentSinceProperties.generateDocuments(
 							pTransition, pDocumentoModificador, pDocumentPrincipal, iDocumentoIterar.getTransaccion(),
-							pToken, i + 1, pStackDocumentsCreateInTransaction, iDocumentoIterar);
+							i + 1, pStackDocumentsCreateInTransaction, iDocumentoIterar);
 					// Creo la relacion del documento Gestor
 					relacionGestorService.trazar(pDocumentPrincipal.getLlaveTabla(),
 							(_newDocumentOfIteration == null) ? null : _newDocumentOfIteration.getLlaveTabla(),
 							pTransition.getNombre(), pTransition.getEstadoPartida(), pTransition.getEstadoLLegada(),
-							null, pToken, pRelationBack, pDocumentPrincipal.getHistorico(), null, false);
+							null, pRelationBack, pDocumentPrincipal.getHistorico(), null);
 					if (_newDocumentOfIteration != null) {
 						_result.add(_newDocumentOfIteration);
 						// Esto es porque cuando son iteradores no se gestionaba el dinero
 						if (_newDocumentOfIteration.getDinero() != null
 								&& _newDocumentOfIteration.getDinero().getSaldo() != null)
-							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pToken, pTransition,
+							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pTransition,
 									_newDocumentOfIteration.getDinero().getValorTotal(), null);
 						PropiedadDTO _propertyAgreggate = cacheService.obtenerPropiedad(
 								PropiedadValorDefinidoDTO.ESTADO, _stateInitial.getLlaveTabla(),
@@ -412,47 +425,46 @@ public class CallManageTransition {
 										+ pTransition.getProcesoNombre() + " con estado inicial "
 										+ pTransition.getEstadoPartidaNombre()
 										+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas utilizar");
-							} else {
-								// En comporbante de egreso necesito tener las conciliraciones 1x1 para el
-								// comprobante contable
-								// aun asi puedo relacionar con un campo de el principal del modificador o de
-								// uno que se va a crear
-								// ejemplo en rodamiento al legalizar
-								List<PedidoVentaCaracteristicaDTO> _fieldsToAdd = new ArrayList<>();
-								if (pDocumentoModificador != null && pDocumentoModificador.getCaracteristicas() != null)
-									_fieldsToAdd.addAll(pDocumentoModificador.getCaracteristicas());
-								if (pDocumentPrincipal != null && pDocumentPrincipal.getCaracteristicas() != null)
-									_fieldsToAdd.addAll(pDocumentPrincipal.getCaracteristicas());
+							}
+							// En comporbante de egreso necesito tener las conciliraciones 1x1 para el
+							// comprobante contable
+							// aun asi puedo relacionar con un campo de el principal del modificador o de
+							// uno que se va a crear
+							// ejemplo en rodamiento al legalizar
+							List<PedidoVentaCaracteristicaDTO> _fieldsToAdd = new ArrayList<>();
+							if (pDocumentoModificador != null && pDocumentoModificador.getCaracteristicas() != null)
+								_fieldsToAdd.addAll(pDocumentoModificador.getCaracteristicas());
+							if (pDocumentPrincipal != null && pDocumentPrincipal.getCaracteristicas() != null)
+								_fieldsToAdd.addAll(pDocumentPrincipal.getCaracteristicas());
 
-								for (RelacionInternaDTO _iRelacion : _relationToAdd) {
-									boolean _found = false;
-									for (PedidoVentaCaracteristicaDTO _iFieldDocumentPrincipal : _fieldsToAdd) {
-										if (_iFieldDocumentPrincipal.getCampo().compareTo(_iRelacion.getCampo()) == 0) {
-											relacionExpedienteService.relacionarExpedienteDocumento(
-													_iFieldDocumentPrincipal.getLlaveTabla(),
-													_newDocumentOfIteration.getLlaveTabla(), pToken,
-													_iRelacion.getCampoNombre(),
-													(_newDocumentOfIteration.getDinero() != null)
-															? _newDocumentOfIteration.getDinero().getSaldo()
-															: null,
-													(pDocumentoModificador == null) ? pDocumentPrincipal.getLlaveTabla()
-															: pDocumentoModificador.getLlaveTabla());
-											_found = true;
-											break;
-										}
+							for (RelacionInternaDTO _iRelacion : _relationToAdd) {
+								boolean _found = false;
+								for (PedidoVentaCaracteristicaDTO _iFieldDocumentPrincipal : _fieldsToAdd) {
+									if (_iFieldDocumentPrincipal.getCampo().compareTo(_iRelacion.getCampo()) == 0) {
+										relacionExpedienteService.relacionarExpedienteDocumento(
+												_iFieldDocumentPrincipal.getLlaveTabla(),
+												_newDocumentOfIteration.getLlaveTabla(), _iRelacion.getCampoNombre(),
+												(_newDocumentOfIteration.getDinero() != null)
+														? _newDocumentOfIteration.getDinero().getSaldo()
+														: null,
+												(pDocumentoModificador == null) ? pDocumentPrincipal.getLlaveTabla()
+														: pDocumentoModificador.getLlaveTabla());
+										_found = true;
+										break;
 									}
-									if (!_found) {
-										if (pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo()) == null) {
-											List<PedidoVentaDTO> _list = new ArrayList<>();
-											_list.add(_newDocumentOfIteration);
-											pStackDocumentsCreateInTransaction.put(_iRelacion.getCampo(), _list);
-										} else {
-											pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo())
-													.add(_newDocumentOfIteration);
-										}
+								}
+								if (!_found) {
+									if (pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo()) == null) {
+										List<PedidoVentaDTO> _list = new ArrayList<>();
+										_list.add(_newDocumentOfIteration);
+										pStackDocumentsCreateInTransaction.put(_iRelacion.getCampo(), _list);
+									} else {
+										pStackDocumentsCreateInTransaction.get(_iRelacion.getCampo())
+												.add(_newDocumentOfIteration);
 									}
 								}
 							}
+
 						} else {
 							if (pStackDocumentsCreateInTransaction.get(pTransition.getLlaveTabla()) == null) {
 								List<PedidoVentaDTO> _list = new ArrayList<>();
@@ -480,13 +492,13 @@ public class CallManageTransition {
 	}
 
 	private ProcesoTransicionDTO executeAPI(String estadoLlegada, PedidoVentaDTO expedienteDTO,
-			PedidoVentaDTO documentoDTO, String token,
-			Map<String, List<PedidoVentaDTO>> documentRecentCreateInTransition) throws ServerException {
+			PedidoVentaDTO documentoDTO, Map<String, List<PedidoVentaDTO>> documentRecentCreateInTransition)
+			throws ServerException {
 		ProcesoEstadoDTO apiDTO = estadoService.consultaXId(estadoLlegada);
 		if (apiDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El punto del api " + apiDTO.getNombre() + " esta inactivo");
 		apiDTO.setPropiedades(cacheService.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, estadoLlegada,
-				null, getUserId(token)));
+				null, SessionContext.getCurrentUserOrNull()));
 
 		PropiedadDTO propAPI = Propiedades.obtenerParametro(apiDTO, Propiedades.API);
 		String _apiKey = null;
@@ -509,7 +521,7 @@ public class CallManageTransition {
 
 		String resultAPI = SharedConstants.OK;
 		if (documentRecentCreateInTransition == null || documentRecentCreateInTransition.isEmpty()) {
-			resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null, token,
+			resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null,
 					apiService.prepareParameterFromProperties(null,
 							Propiedades.obtenerVariosParametro(apiDTO, Propiedades.API_PARAMETER), _apiKey));
 		} else {
@@ -528,7 +540,7 @@ public class CallManageTransition {
 					}
 				}
 
-				resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null, token,
+				resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO, null,
 						stringToDocumentsToAPI);
 			} else {
 				// en caso de error solo ejecuto en la proxima trnsaccion los que fueron
@@ -538,7 +550,7 @@ public class CallManageTransition {
 					for (int i = 0; i < entry.getValue().size(); i++) {
 						PedidoVentaDTO pedidoVentaDTO = entry.getValue().get(i);
 						resultAPI = apiService.prepareApiToExecution(_apiKey, expedienteDTO, documentoDTO,
-								pedidoVentaDTO, token,
+								pedidoVentaDTO,
 								SharedConstants.PUNTO_COMA_DOBLE + "ITERADOR_NUMBER" + SharedConstants.IGUAL + i);
 						if (resultAPI.compareTo(SharedConstants.OK) != 0) {
 							// Esto es
@@ -557,21 +569,20 @@ public class CallManageTransition {
 	}
 
 	private ProcesoTransicionDTO resolveStateDesition(String decision, String llaveTablaDocumento,
-			String llaveModificador, String token) throws ServerException {
+			String llaveModificador) throws ServerException {
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(decision);
 		if (decisionDTO.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("La decision " + decisionDTO.getNombre() + " esta inactiva");
 		PropiedadDTO propiedadFuncion = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ESTADO, decision,
-				Propiedades.DECISION_SQL, getUserId(token));
+				Propiedades.DECISION_SQL, SessionContext.getCurrentUser());
 		String resultado = null;
 		if (propiedadFuncion == null) {
 			resultado = "OK";
 		} else {
 			try {
 				// ramdom por problemas del framework se repetia la respuesta cuando iteraba
-				resultado = procesoTransicionMapper.decision(
-						D3Utils.formatFunction(propiedadFuncion.getLlaveTabla()), llaveTablaDocumento,
-						llaveModificador, estadoService.generarLlave());
+				resultado = procesoTransicionMapper.decision(D3Utils.formatFunction(propiedadFuncion.getLlaveTabla()),
+						llaveTablaDocumento, llaveModificador, estadoService.generarLlave());
 			} catch (BadSqlGrammarException e) {
 				throw new ServerException(e.getCause().getMessage(), "Decision : " + decisionDTO.getNombre());
 			} catch (Exception e) {
@@ -632,22 +643,18 @@ public class CallManageTransition {
 		throw new ServerException(msgException);
 	}
 
-	private String getUserId(String token) throws ServerException {
-		return transicionService.getUserFlex(token);
-	}
-
-	public UsuarioDTO assignResponsibleToActivity(String pedido, ProcesoEstadoDTO pState, String modificador,
-			String token) throws ServerException {
+	public UsuarioDTO assignResponsibleToActivity(String pedido, ProcesoEstadoDTO pState, String modificador)
+			throws ServerException {
 		if (pState == null)
 			return null;
 		if (pState.getPropiedades() == null) {
 			pState.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
-					pState.getLlaveTabla(), null, getUserId(token)));
+					pState.getLlaveTabla(), null, SessionContext.getCurrentUser()));
 		}
 		ActividadDTO responsable = new ActividadDTO();
 		PropiedadDTO propiedadFuncion = Propiedades.obtenerParametro(pState, Propiedades.FUNCION_SQL_ESTADO_ASIGNAR);
 		if (propiedadFuncion != null) {
-			responsable.setResponsable(estadoService.obtenerResponsable(propiedadFuncion, pedido, modificador, token));
+			responsable.setResponsable(estadoService.obtenerResponsable(propiedadFuncion, pedido, modificador));
 		} else {
 			propiedadFuncion = Propiedades.obtenerParametro(pState, Propiedades.ESTADO_ASIGNAR);
 			if (propiedadFuncion != null) {
@@ -672,12 +679,11 @@ public class CallManageTransition {
 		}
 		responsable.setDocumento(pedido);
 		responsable.setComentario(pState.getNombre());
-		return actividadService.crearActividad(responsable, token);
+		return actividadService.crearActividad(responsable);
 	}
 
-	private PedidoVentaDineroDTO moveBalanceDocument(String expediente, String securityToken,
-			ProcesoTransicionDTO transicion, BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial)
-			throws ServerException {
+	private PedidoVentaDineroDTO moveBalanceDocument(String expediente, ProcesoTransicionDTO transicion,
+			BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial) throws ServerException {
 		PedidoVentaDineroDTO dinero = dineroDocumentoInicial;
 		PedidoVentaDTO pExpediente = pedidoService.consultaXId(expediente);
 		if (dinero == null) {
@@ -734,13 +740,12 @@ public class CallManageTransition {
 		// + ")" + saldosCalculados.getSaldo() + " - " + saldoDocumento + " = " +
 		// saldosCalculados.getSaldo());
 		if (saldosCalculados.getSaldo().compareTo(BigDecimal.ZERO) < 0) {
-			throw new ServerException(
-					transicion.getNombre() + " (" + documentoService.consultaXId(pExpediente.getPlantilla()).getNombre()
-							+ " " + pExpediente.getNombre() + " : Por un total de "
-							+ D3Utils.formatMoney(saldosCalculados.getValorTotal()) + ")\n\n Saldos "
-							+ D3Utils.formatMoney(saldosCalculados.getSaldo().add(saldoDocumento)) + " - "
-							+ D3Utils.formatMoney(saldoDocumento) + " = "
-							+ D3Utils.formatMoney(saldosCalculados.getSaldo()));
+			throw new ServerException(transicion.getNombre() + " ("
+					+ documentoService.consultaXId(pExpediente.getPlantilla()).getNombre() + " "
+					+ pExpediente.getNombre() + " : Por un total de "
+					+ D3Utils.formatMoney(saldosCalculados.getValorTotal()) + ")\n\n Saldos "
+					+ D3Utils.formatMoney(saldosCalculados.getSaldo().add(saldoDocumento)) + " - "
+					+ D3Utils.formatMoney(saldoDocumento) + " = " + D3Utils.formatMoney(saldosCalculados.getSaldo()));
 		}
 		if (saldosCalculados.getSaldo().compareTo(saldosCalculados.getValorTotal()) > 0) {
 			throw new ServerException("Revise porque el saldo del documento es mayor al valor total.\nDocumento: "
@@ -750,7 +755,7 @@ public class CallManageTransition {
 	}
 
 	public PedidoVentaCaracteristicaDTO obtenerUbicacion(PedidoVentaDTO pExpediente, PedidoVentaDTO pedido,
-			ProcesoEstadoDTO pStateTo, String token) throws ServerException {
+			ProcesoEstadoDTO pStateTo) throws ServerException {
 		if (pStateTo == null)
 			return null;
 		// PropiedadDTO ubicacion =
@@ -763,6 +768,7 @@ public class CallManageTransition {
 		List<RelacionInternaDTO> relaciones = relacionService.relacionesPropiedad(ubicacion.getLlaveTabla());
 		if (relaciones == null || relaciones.isEmpty()) {
 			ubicacionService.close(pExpediente.getLlaveTabla(), pExpediente.getHistorico());
+			return null;
 		}
 		for (RelacionInternaDTO iRelacion : relaciones) {
 			if (iRelacion.getPlantilla().compareTo(pedido.getPlantilla()) == 0) {
@@ -786,7 +792,7 @@ public class CallManageTransition {
 	 * cambio esto
 	 */
 	public ProcesoTransicionDTO gestionarTransicionReversa(ProcesoTransicionDTO pTransitionProcess, String expediente,
-			PedidoVentaDTO documento, String token) throws ServerException {
+			PedidoVentaDTO documento) throws ServerException {
 		ProcesoTransicionDTO respuesta = pTransitionProcess;
 		PedidoVentaDTO anterior = pedidoService.consultaXId(expediente);
 		ProcesoEstadoDTO _stateFrom = estadoService.consultaXId(pTransitionProcess.getEstadoPartida());
@@ -802,7 +808,7 @@ public class CallManageTransition {
 			_stateTo.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
 					_stateTo.getLlaveTabla(), null, null));
 		}
-		obtenerUbicacion(anterior, documento, _stateTo, token);
+		obtenerUbicacion(anterior, documento, _stateTo);
 		BigDecimal valorModificador = null;
 		if (pTransitionProcess.getAfectaSaldo() != null) {
 			if (pTransitionProcess.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO) == 0) {
@@ -814,13 +820,12 @@ public class CallManageTransition {
 					expediente);
 		}
 		// aqui es nulo porque ya existe
-		PedidoVentaDineroDTO nuevoValor = moveBalanceDocument(expediente, token, pTransitionProcess, valorModificador,
-				null);
+		PedidoVentaDineroDTO nuevoValor = moveBalanceDocument(expediente, pTransitionProcess, valorModificador, null);
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), documento.getLlaveTabla(),
 				pTransitionProcess.getNombre(), _stateTo.getLlaveTabla(), pTransitionProcess.getEstadoPartida(),
-				(nuevoValor == null) ? null : nuevoValor.getLlaveTabla(), token, null, anterior.getHistorico(),
-				documento.getTransaccion(), false);
+				(nuevoValor == null) ? null : nuevoValor.getLlaveTabla(), null, anterior.getHistorico(),
+				documento.getTransaccion());
 		// Se actualiza pedido
 		System.out.println(
 				anterior.getNombre() + " : " + _stateFrom.getNombre() + "(" + anterior.getEstadoNombre() + ")");
@@ -829,7 +834,7 @@ public class CallManageTransition {
 		// No se porque tenia esta
 		// linea//anterior.setEstadoNombre(filtroEst+*ado.getNombre());
 		pedidoService.update(anterior);
-		assignResponsibleToActivity(expediente, _stateFrom, documento.getLlaveTabla(), token);
+		assignResponsibleToActivity(expediente, _stateFrom, documento.getLlaveTabla());
 		return respuesta;
 	}
 

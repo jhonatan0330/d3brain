@@ -1,17 +1,18 @@
 package d3.webservice.application;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.SharedConstants;
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
+import d3.shared.domain.SharedIdResponse;
 import d3.webservice.domain.WebServiceDTO;
-import org.springframework.context.annotation.Lazy;
 
 @Component
 public class WebServiceCopyAPI {
@@ -28,7 +29,7 @@ public class WebServiceCopyAPI {
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public SharedIdResponse call(String serviceId, String token) throws ServerException {
+	public SharedIdResponse call(String serviceId) throws ServerException {
 
 		WebServiceDTO service = webServiceSvc.consultaXId(serviceId);
 		if (service == null)
@@ -36,7 +37,7 @@ public class WebServiceCopyAPI {
 		if (service.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			throw new ServerException("El servicio " + service.getNombre() + " no se encuentra Activo." + serviceId);
 		// Obtengo propiedades del servicio
-		String userId = webServiceSvc.getUserFlex(token);
+		String userId = SessionContext.getCurrentUser();
 		service.setPropiedades(
 				cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.API_SERVICE, serviceId, null, userId));
 
@@ -50,7 +51,7 @@ public class WebServiceCopyAPI {
 			return new SharedIdResponse(newAPi.getLlaveTabla());
 
 		newAPi.setPropiedades(
-				propiedadesSvc.copiarPropiedades(service.getPropiedades(), newAPi.getLlaveTabla(), token));
+				propiedadesSvc.copiarPropiedades(service.getPropiedades(), newAPi.getLlaveTabla()));
 
 		return new SharedIdResponse(newAPi.getLlaveTabla());
 	}

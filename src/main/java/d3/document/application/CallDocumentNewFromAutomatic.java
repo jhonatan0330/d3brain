@@ -23,6 +23,7 @@ import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.ProcesoTransicionDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
+import d3.shared.application.SessionContext;
 
 @Component
 public class CallDocumentNewFromAutomatic {
@@ -54,11 +55,11 @@ public class CallDocumentNewFromAutomatic {
 	}
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion,
-			PedidoVentaDTO expedienteDTO, String transaccion, String token,
+			PedidoVentaDTO expedienteDTO, String transaccion,
 			PedidoVentaCaracteristicaDTO vieneAutomatica) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		camposNuevos.add(vieneAutomatica);
-		return processNewFields(transicion, transaccion, token, camposNuevos, null);
+		return processNewFields(transicion, transaccion,  camposNuevos, null);
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class CallDocumentNewFromAutomatic {
 	 * @throws ServerException
 	 */
 	public PedidoVentaDTO generateDocuments(ProcesoTransicionDTO transicion, PedidoVentaDTO pGenerator,
-			PedidoVentaDTO expedienteDTO, String transaccion, String token, int iterationNumber,
+			PedidoVentaDTO expedienteDTO, String transaccion,  int iterationNumber,
 			Map<String, List<PedidoVentaDTO>> stackDocumentsCreateInTransaction, PedidoVentaDTO pDocumentIterate)
 			throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
@@ -83,9 +84,8 @@ public class CallDocumentNewFromAutomatic {
 		// intente refactor pero salio un aviso asi que deje quieto mientras
 		if (transicion.getPlantilla() == null)
 			return null;
-		String user = getUserId(token);
 		transicion.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
-				transicion.getLlaveTabla(), null, user));
+				transicion.getLlaveTabla(), null, SessionContext.getCurrentUserOrNull()));
 		String[] cars = { Propiedades.GENERA_DOCUMENTO_CAMPO, Propiedades.GENERA_DOCUMENTO_TEXTO,
 				Propiedades.GENERA_DOCUMENTO_FUNCION_SQL, Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_EXPEDIENTE,
 				Propiedades.GENERA_DOCUMENTO_CAMPO_FROM_GENERADOR,
@@ -238,7 +238,7 @@ public class CallDocumentNewFromAutomatic {
 		}
 		if (stackDocumentsCreateInTransaction != null && stackDocumentsCreateInTransaction.size() > 0) {
 			List<DocumentoPlantillaCaracteristicaDTO> _fieldsOfTemplate = this.fieldsOfTemplateService
-					.listarCamposPlantilla(transicion.getPlantilla(), token);
+					.listarCamposPlantilla(transicion.getPlantilla());
 			for (Map.Entry<String, List<PedidoVentaDTO>> _entry : stackDocumentsCreateInTransaction.entrySet()) {
 				for (DocumentoPlantillaCaracteristicaDTO _iCampo : _fieldsOfTemplate) {
 					if (_entry.getKey().compareTo(_iCampo.getLlaveTabla()) == 0) {
@@ -263,10 +263,10 @@ public class CallDocumentNewFromAutomatic {
 			}
 		}
 
-		return processNewFields(transicion, transaccion, token, camposNuevos, pGenerator);
+		return processNewFields(transicion, transaccion,  camposNuevos, pGenerator);
 	}
 
-	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion, String transaccion, String token,
+	private PedidoVentaDTO processNewFields(ProcesoTransicionDTO transicion, String transaccion,
 			List<PedidoVentaCaracteristicaDTO> camposNuevos, PedidoVentaDTO pGenerator) throws ServerException {
 		if (!camposNuevos.isEmpty()) {
 			String userAdmin = autenticacionService.getUserSystemKey();
@@ -274,16 +274,13 @@ public class CallDocumentNewFromAutomatic {
 				throw new ServerException("Es indispensable configurar el usuario administrador");
 			TemplateDTO pPlantilla = new TemplateDTO();
 			pPlantilla.setLlaveTabla(transicion.getPlantilla());
-			pPlantilla = plantillaService.obtenerCampos(pPlantilla, token, false);
-			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion, token, camposNuevos,
+			pPlantilla = plantillaService.obtenerCampos(pPlantilla,  false);
+			PedidoVentaDTO nuevo = CallDocumentCommons.generateNewDocument(pPlantilla, transaccion,  camposNuevos,
 					userAdmin);
-			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo, token, true, pGenerator);
-		} else {
+			return saveUpdateInactivateDocumentFunction.saveWithoutTransaction(nuevo,  true, pGenerator);
+		} 
 			return null;
-		}
+		
 	}
 
-	private String getUserId(String token) throws ServerException {
-		return plantillaService.getUserFlex(token);
-	}
 }

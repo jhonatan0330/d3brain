@@ -20,7 +20,8 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("pIdsFiltered") List<String> pIdsFiltered);
 
 	List<PedidoVentaDTO> listarPermitidos(@Param("dto") PedidoVentaFilterDTO dto,
-			@Param("filtroEstados") List<String> filtroEstados, @Param("campoFiltro") List<String> campoFiltro,
+			@Param("sesionUsuario") String sesionUsuario, @Param("filtroEstados") List<String> filtroEstados,
+			@Param("campoFiltro") List<String> campoFiltro,
 			@Param("valorFiltro") String valorFiltro, @Param("ordenNombre") String ordenNombre,
 			@Param("ascendente") String ascendente, @Param("filtroTexto") List<String> filtroTexto,
 			@Param("filtroEstadoGeneralesMultiple") List<String> filtroEstadosGeneralesMultiple,
@@ -42,7 +43,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("funcionBusqueda") String funcionBusqueda, @Param("filtroEstados") List<String> filtroEstados,
-			@Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros);
+			@Param("parametros") List<PedidoVentaCaracteristicaDTO> parametros, @Param("sesionUsuario") String sesionUsuario);
 
 	List<PedidoVentaDTO> listarExpedientesPertenecenCampo(String campo);
 

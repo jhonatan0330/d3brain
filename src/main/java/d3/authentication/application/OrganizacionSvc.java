@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authentication.infrastructure.OrganizacionMapper;
@@ -13,6 +12,7 @@ import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.BasicSvc;
+import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
 
 @Service("organizacionService")
@@ -21,9 +21,8 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private final OrganizacionMapper organizacionMapper;
 	private final PropertyGetWithCacheService cacheService;
 
-	public OrganizacionSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy OrganizacionMapper organizacionMapper,
+	public OrganizacionSvc(@Lazy OrganizacionMapper organizacionMapper,
 			@Lazy PropertyGetWithCacheService cacheService) {
-		super(usuarioSesionService);
 		this.organizacionMapper = organizacionMapper;
 		this.cacheService = cacheService;
 	}
@@ -45,9 +44,9 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 
 	@Override
-	public OrganizacionDTO actualizar(OrganizacionDTO dto, String token) throws ServerException {
+	public OrganizacionDTO actualizar(OrganizacionDTO dto) throws ServerException {
 		mainOrganization = null;
-		return super.actualizar(dto, token);
+		return super.actualizar(dto);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return super.listarConsulta(dto);
 	}
 
-	public OrganizacionDTO obtenerPrincipalPublic(String ipRequest) throws ServerException {
+	public OrganizacionDTO obtenerPrincipalPublic() throws ServerException {
 		try {
 			OrganizacionDTO result = obtenerPrincipal();
 			// Por el momento no se usa el usuario publico, pero se deja comentado por si se

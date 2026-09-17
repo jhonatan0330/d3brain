@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeTemplateFieldService {
@@ -26,7 +26,7 @@ public class SynchronizeTemplateFieldService {
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
 
-	public void call(String token, HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
+	public void call(HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
 				fieldService.getFullToSynchronize(null), localTemplate);
@@ -68,7 +68,7 @@ public class SynchronizeTemplateFieldService {
 			}
 			log.setRoot(templateRoot);
 		}
-		callAfterCreateAll(token, hierarchy, remoteTemplate, localTemplate, log, compare);
+		callAfterCreateAll(hierarchy, remoteTemplate, localTemplate, log, compare);
 	}
 
 	private void changeTemplateInRelations(List<RelacionInternaDTO> array, String remote, String local) {
@@ -79,8 +79,8 @@ public class SynchronizeTemplateFieldService {
 		}
 	}
 
-	private void callAfterCreateAll(String token, HierarchyExporterDTO hierarchy, String remoteTemplate,
-			String localTemplate, LogConfigurationDTO log, boolean compare) throws ServerException {
+	private void callAfterCreateAll(HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
+			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
 				fieldService.getFullToSynchronize(null), localTemplate);
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(),
@@ -94,7 +94,7 @@ public class SynchronizeTemplateFieldService {
 					log.setRoot(templateRoot + ".... Campo ->" + remote.getNombre());
 					localListToErase.remove(local);
 					propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), token, log, compare);
+							PropiedadValorDefinidoDTO.CAMPO, local.getLlaveTabla(), log, compare);
 				}
 			}
 		}

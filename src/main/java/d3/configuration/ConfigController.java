@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -116,29 +115,20 @@ public class ConfigController {
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
 
-	public ConfigController(
-			@Lazy ConsecutivoSvc consecutivoService,
-			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService,
-			@Lazy OrganizacionSvc organizacionService,
-			@Lazy ServidorSvc servidorService,
-			@Lazy WebServiceSvc webServiceService,
-			@Lazy WebServiceEjecucionSvc webServiceEjecucionService,
-			@Lazy MensajeSvc mensajeService,
+	public ConfigController(@Lazy ConsecutivoSvc consecutivoService,
+			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
+			@Lazy ServidorSvc servidorService, @Lazy WebServiceSvc webServiceService,
+			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy MensajeSvc mensajeService,
 			@Lazy MensajePlantillaCorreoSvc mensajePlantillaCorreoService,
 			@Lazy MailUserSendMessage mailUserSendMessage,
 			@Lazy ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService,
 			@Lazy DocumentoPlantillaSvc documentoPlantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
-			@Lazy ReporteBaseSvc reporteBaseService,
-			@Lazy ProcesoSvc procesoService,
-			@Lazy ProcesoTransicionSvc procesoTransicionService,
-			@Lazy PropiedadSvc propiedadService,
-			@Lazy RelacionInternaSvc relacionInternaService,
-			@Lazy ExportConfigurationFileService exportService,
-			@Lazy ImportConfigurationFileService importService,
-			@Lazy SincronizacionArbolSvc sincronizacionArbolService,
-			@Lazy IndicatorService indicadorService,
-			@Lazy RolAccesoSvc rolAccesoService,
+			@Lazy ReporteBaseSvc reporteBaseService, @Lazy ProcesoSvc procesoService,
+			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc propiedadService,
+			@Lazy RelacionInternaSvc relacionInternaService, @Lazy ExportConfigurationFileService exportService,
+			@Lazy ImportConfigurationFileService importService, @Lazy SincronizacionArbolSvc sincronizacionArbolService,
+			@Lazy IndicatorService indicadorService, @Lazy RolAccesoSvc rolAccesoService,
 			@Lazy UsuarioSvc usuarioService) {
 		this.consecutivoService = consecutivoService;
 		this.propiedadValorDefinidoService = propiedadValorDefinidoService;
@@ -157,7 +147,7 @@ public class ConfigController {
 		this.procesoTransicionService = procesoTransicionService;
 		this.propiedadService = propiedadService;
 		this.relacionInternaService = relacionInternaService;
-this.exportService = exportService;
+		this.exportService = exportService;
 		this.importService = importService;
 		this.sincronizacionArbolService = sincronizacionArbolService;
 		this.propertyTypeService = propiedadValorDefinidoService;
@@ -167,7 +157,8 @@ this.exportService = exportService;
 	}
 
 	private void limpiarFiltro(Object filter) {
-		if (filter == null) return;
+		if (filter == null)
+			return;
 		try {
 			for (java.lang.reflect.Field f : filter.getClass().getDeclaredFields()) {
 				if (f.getType() == String.class) {
@@ -209,34 +200,30 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/consecutives/create")
-	public ConsecutivoDTO guardarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return consecutivoService.guardar(dto, token);
+	public ConsecutivoDTO guardarConsecutivo(@RequestBody ConsecutivoDTO dto) throws ServerException {
+		return consecutivoService.guardar(dto);
 	}
 
 	@PostMapping("/consecutives/update")
-	public ConsecutivoDTO actualizarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return consecutivoService.actualizar(dto, token);
+	public ConsecutivoDTO actualizarConsecutivo(@RequestBody ConsecutivoDTO dto) throws ServerException {
+		return consecutivoService.actualizar(dto);
 	}
 
 	@PostMapping("/consecutives/{key}/inactivate")
-	public ConsecutivoDTO inactivarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return consecutivoService.inactivar(dto, token);
+	public ConsecutivoDTO inactivarConsecutivo(@RequestBody ConsecutivoDTO dto) throws ServerException {
+		return consecutivoService.inactivar(dto);
 	}
 
 	@PostMapping("/consecutives/{key}/assign")
-	public ConsecutivoDTO asignarConsecutivo(@RequestBody ConsecutivoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return consecutivoService.asignarConsecutivo(dto, token);
+	public ConsecutivoDTO asignarConsecutivo(@RequestBody ConsecutivoDTO dto) throws ServerException {
+		return consecutivoService.asignarConsecutivo(dto);
 	}
 
 	// ==================== PROPERTY VALUES ====================
 
 	@PostMapping("/property-values/list")
-	public List<PropiedadValorDefinidoDTO> listarValoresDefinidos(
-			@RequestBody PropiedadValorDefinidoFilterDTO filter) throws ServerException {
+	public List<PropiedadValorDefinidoDTO> listarValoresDefinidos(@RequestBody PropiedadValorDefinidoFilterDTO filter)
+			throws ServerException {
 		limpiarFiltro(filter);
 		return propiedadValorDefinidoService.listarConsulta(filter);
 	}
@@ -247,28 +234,28 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/property-values/by-origen")
-	public List<PropiedadValorDefinidoDTO> listarPorOrigen(
-			@RequestBody PropiedadValorDefinidoFilterDTO filter) throws ServerException {
+	public List<PropiedadValorDefinidoDTO> listarPorOrigen(@RequestBody PropiedadValorDefinidoFilterDTO filter)
+			throws ServerException {
 		limpiarFiltro(filter);
 		return propiedadValorDefinidoService.listarConsulta(filter);
 	}
 
 	@PostMapping("/property-values/create")
-	public PropiedadValorDefinidoDTO guardarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadValorDefinidoService.guardar(dto, token);
+	public PropiedadValorDefinidoDTO guardarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws ServerException {
+		return propiedadValorDefinidoService.guardar(dto);
 	}
 
 	@PostMapping("/property-values/update")
-	public PropiedadValorDefinidoDTO actualizarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadValorDefinidoService.actualizar(dto, token);
+	public PropiedadValorDefinidoDTO actualizarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws ServerException {
+		return propiedadValorDefinidoService.actualizar(dto);
 	}
 
 	@PostMapping("/property-values/{key}/inactivate")
-	public PropiedadValorDefinidoDTO inactivarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadValorDefinidoService.inactivar(dto, token);
+	public PropiedadValorDefinidoDTO inactivarValorDefinido(@RequestBody PropiedadValorDefinidoDTO dto)
+			throws ServerException {
+		return propiedadValorDefinidoService.inactivar(dto);
 	}
 
 	// ==================== ORGANIZATIONS ====================
@@ -286,26 +273,23 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/organizations/principal")
-	public OrganizacionDTO obtenerPrincipal(@RequestBody OrganizacionFilterDTO filter) throws ServerException {
+	public OrganizacionDTO obtenerPrincipal() throws ServerException {
 		return organizacionService.obtenerPrincipal();
 	}
 
 	@PostMapping("/organizations/create")
-	public OrganizacionDTO guardarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return organizacionService.guardar(dto, token);
+	public OrganizacionDTO guardarOrganizacion(@RequestBody OrganizacionDTO dto) throws ServerException {
+		return organizacionService.guardar(dto);
 	}
 
 	@PostMapping("/organizations/update")
-	public OrganizacionDTO actualizarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return organizacionService.actualizar(dto, token);
+	public OrganizacionDTO actualizarOrganizacion(@RequestBody OrganizacionDTO dto) throws ServerException {
+		return organizacionService.actualizar(dto);
 	}
 
 	@PostMapping("/organizations/{key}/inactivate")
-	public OrganizacionDTO inactivarOrganizacion(@RequestBody OrganizacionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return organizacionService.inactivar(dto, token);
+	public OrganizacionDTO inactivarOrganizacion(@RequestBody OrganizacionDTO dto) throws ServerException {
+		return organizacionService.inactivar(dto);
 	}
 
 	// ==================== SERVERS ====================
@@ -322,21 +306,18 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/servers/create")
-	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return servidorService.guardar(dto, token);
+	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto) throws ServerException {
+		return servidorService.guardar(dto);
 	}
 
 	@PostMapping("/servers/update")
-	public ServidorDTO actualizarServidor(@RequestBody ServidorDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return servidorService.actualizar(dto, token);
+	public ServidorDTO actualizarServidor(@RequestBody ServidorDTO dto) throws ServerException {
+		return servidorService.actualizar(dto);
 	}
 
 	@PostMapping("/servers/{key}/inactivate")
-	public ServidorDTO inactivarServidor(@RequestBody ServidorDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return servidorService.inactivar(dto, token);
+	public ServidorDTO inactivarServidor(@RequestBody ServidorDTO dto) throws ServerException {
+		return servidorService.inactivar(dto);
 	}
 
 	// ==================== WEB SERVICES ====================
@@ -353,48 +334,49 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/web-services/create")
-	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return webServiceService.guardar(dto, token);
+	public WebServiceDTO guardarWebService(@RequestBody WebServiceDTO dto) throws ServerException {
+		return webServiceService.guardar(dto);
 	}
 
 	@PostMapping("/web-services/update")
-	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return webServiceService.actualizar(dto, token);
+	public WebServiceDTO actualizarWebService(@RequestBody WebServiceDTO dto) throws ServerException {
+		return webServiceService.actualizar(dto);
 	}
 
 	@PostMapping("/web-services/{key}/inactivate")
-	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return webServiceService.inactivar(dto, token);
+	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto) throws ServerException {
+		return webServiceService.inactivar(dto);
 	}
 
 	public static class EjecutarWSRequest {
 		private String parametros;
-		public String getParametros() { return parametros; }
-		public void setParametros(String parametros) { this.parametros = parametros; }
+
+		public String getParametros() {
+			return parametros;
+		}
+
+		public void setParametros(String parametros) {
+			this.parametros = parametros;
+		}
 	}
 
 	@PostMapping("/web-services/{key}/execute")
 	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable("key") String pKey,
-			@RequestBody EjecutarWSRequest request,
-			@RequestHeader("Authorization") String token) throws ServerException {
+			@RequestBody EjecutarWSRequest request) throws ServerException {
 		WebServiceEjecucionDTO ejecucion = new WebServiceEjecucionDTO();
 		ejecucion.setServicio(pKey);
 		ejecucion.setParametros(request.getParametros());
 		ejecucion.setSincrona("A");
-		ejecucion = webServiceEjecucionService.guardar(ejecucion, token);
+		ejecucion = webServiceEjecucionService.guardar(ejecucion);
 
 		WebServiceEjecucionFilterDTO filter = new WebServiceEjecucionFilterDTO();
 		filter.setLlaveTabla(ejecucion.getLlaveTabla());
-		filter.setSecurityToken(token);
 		return webServiceEjecucionService.ejecutarAPI(filter);
 	}
 
 	@PostMapping("/web-services/executions")
-	public List<WebServiceEjecucionDTO> listarEjecuciones(
-			@RequestBody WebServiceEjecucionFilterDTO filter) throws ServerException {
+	public List<WebServiceEjecucionDTO> listarEjecuciones(@RequestBody WebServiceEjecucionFilterDTO filter)
+			throws ServerException {
 		if (filter.getFechaEjecucionMin() == null || filter.getFechaEjecucionMax() == null) {
 			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar ejecuciones");
 		}
@@ -404,8 +386,8 @@ this.exportService = exportService;
 
 	@PostMapping("/web-services/{webServiceKey}/executions")
 	public List<WebServiceEjecucionDTO> listarEjecucionesPorWebService(
-			@PathVariable("webServiceKey") String pWebServiceKey,
-			@RequestBody WebServiceEjecucionFilterDTO filter) throws ServerException {
+			@PathVariable("webServiceKey") String pWebServiceKey, @RequestBody WebServiceEjecucionFilterDTO filter)
+			throws ServerException {
 		limpiarFiltro(filter);
 		filter.setServicio(pWebServiceKey);
 		return webServiceEjecucionService.listarConsulta(filter);
@@ -422,22 +404,70 @@ this.exportService = exportService;
 		private String titulo;
 		private Integer paginacionRegistroInicial;
 		private Integer paginacionRegistroFinal;
-		public String getEstado() { return estado; }
-		public void setEstado(String estado) { this.estado = estado; }
-		public Date getFechaDesde() { return fechaDesde; }
-		public void setFechaDesde(Date fechaDesde) { this.fechaDesde = fechaDesde; }
-		public Date getFechaHasta() { return fechaHasta; }
-		public void setFechaHasta(Date fechaHasta) { this.fechaHasta = fechaHasta; }
-		public String getEnviado() { return enviado; }
-		public void setEnviado(String enviado) { this.enviado = enviado; }
-		public String getUsuario() { return usuario; }
-		public void setUsuario(String usuario) { this.usuario = usuario; }
-		public String getTitulo() { return titulo; }
-		public void setTitulo(String titulo) { this.titulo = titulo; }
-		public Integer getPaginacionRegistroInicial() { return paginacionRegistroInicial; }
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) { this.paginacionRegistroInicial = paginacionRegistroInicial; }
-		public Integer getPaginacionRegistroFinal() { return paginacionRegistroFinal; }
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) { this.paginacionRegistroFinal = paginacionRegistroFinal; }
+
+		public String getEstado() {
+			return estado;
+		}
+
+		public void setEstado(String estado) {
+			this.estado = estado;
+		}
+
+		public Date getFechaDesde() {
+			return fechaDesde;
+		}
+
+		public void setFechaDesde(Date fechaDesde) {
+			this.fechaDesde = fechaDesde;
+		}
+
+		public Date getFechaHasta() {
+			return fechaHasta;
+		}
+
+		public void setFechaHasta(Date fechaHasta) {
+			this.fechaHasta = fechaHasta;
+		}
+
+		public String getEnviado() {
+			return enviado;
+		}
+
+		public void setEnviado(String enviado) {
+			this.enviado = enviado;
+		}
+
+		public String getUsuario() {
+			return usuario;
+		}
+
+		public void setUsuario(String usuario) {
+			this.usuario = usuario;
+		}
+
+		public String getTitulo() {
+			return titulo;
+		}
+
+		public void setTitulo(String titulo) {
+			this.titulo = titulo;
+		}
+
+		public Integer getPaginacionRegistroInicial() {
+			return paginacionRegistroInicial;
+		}
+
+		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
+			this.paginacionRegistroInicial = paginacionRegistroInicial;
+		}
+
+		public Integer getPaginacionRegistroFinal() {
+			return paginacionRegistroFinal;
+		}
+
+		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
+			this.paginacionRegistroFinal = paginacionRegistroFinal;
+		}
 	}
 
 	@PostMapping("/messages/list")
@@ -469,19 +499,17 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/messages/{key}/resend")
-	public MensajeDTO reenviarMensaje(@PathVariable("key") String pKey,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public MensajeDTO reenviarMensaje(@PathVariable("key") String pKey) throws ServerException {
 		MensajeFilterDTO filter = new MensajeFilterDTO();
 		filter.setLlaveTabla(pKey);
-		filter.setSecurityToken(token);
 		return mailUserSendMessage.call(filter);
 	}
 
 	// ==================== MESSAGE TEMPLATES ====================
 
 	@PostMapping("/message-templates/list")
-	public List<MensajePlantillaCorreoDTO> listarPlantillasCorreo(
-			@RequestBody MensajePlantillaCorreoFilterDTO filter) throws ServerException {
+	public List<MensajePlantillaCorreoDTO> listarPlantillasCorreo(@RequestBody MensajePlantillaCorreoFilterDTO filter)
+			throws ServerException {
 		limpiarFiltro(filter);
 		return mensajePlantillaCorreoService.listarConsulta(filter);
 	}
@@ -492,21 +520,21 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/message-templates/create")
-	public MensajePlantillaCorreoDTO guardarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return mensajePlantillaCorreoService.guardar(dto, token);
+	public MensajePlantillaCorreoDTO guardarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws ServerException {
+		return mensajePlantillaCorreoService.guardar(dto);
 	}
 
 	@PostMapping("/message-templates/update")
-	public MensajePlantillaCorreoDTO actualizarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return mensajePlantillaCorreoService.actualizar(dto, token);
+	public MensajePlantillaCorreoDTO actualizarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws ServerException {
+		return mensajePlantillaCorreoService.actualizar(dto);
 	}
 
 	@PostMapping("/message-templates/{key}/inactivate")
-	public MensajePlantillaCorreoDTO inactivarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return mensajePlantillaCorreoService.inactivar(dto, token);
+	public MensajePlantillaCorreoDTO inactivarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
+			throws ServerException {
+		return mensajePlantillaCorreoService.inactivar(dto);
 	}
 
 	// ==================== AUTO TASKS ====================
@@ -522,31 +550,91 @@ this.exportService = exportService;
 		private Boolean activa;
 		private Integer paginacionRegistroInicial;
 		private Integer paginacionRegistroFinal;
-		public String getEstado() { return estado; }
-		public void setEstado(String estado) { this.estado = estado; }
-		public String getTransicion() { return transicion; }
-		public void setTransicion(String transicion) { this.transicion = transicion; }
-		public String getPlantilla() { return plantilla; }
-		public void setPlantilla(String plantilla) { this.plantilla = plantilla; }
-		public String getPlantillaNombre() { return plantillaNombre; }
-		public void setPlantillaNombre(String plantillaNombre) { this.plantillaNombre = plantillaNombre; }
-		public String getPropiedad() { return propiedad; }
-		public void setPropiedad(String propiedad) { this.propiedad = propiedad; }
-		public Date getFechaDesde() { return fechaDesde; }
-		public void setFechaDesde(Date fechaDesde) { this.fechaDesde = fechaDesde; }
-		public Date getFechaHasta() { return fechaHasta; }
-		public void setFechaHasta(Date fechaHasta) { this.fechaHasta = fechaHasta; }
-		public Boolean getActiva() { return activa; }
-		public void setActiva(Boolean activa) { this.activa = activa; }
-		public Integer getPaginacionRegistroInicial() { return paginacionRegistroInicial; }
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) { this.paginacionRegistroInicial = paginacionRegistroInicial; }
-		public Integer getPaginacionRegistroFinal() { return paginacionRegistroFinal; }
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) { this.paginacionRegistroFinal = paginacionRegistroFinal; }
+
+		public String getEstado() {
+			return estado;
+		}
+
+		public void setEstado(String estado) {
+			this.estado = estado;
+		}
+
+		public String getTransicion() {
+			return transicion;
+		}
+
+		public void setTransicion(String transicion) {
+			this.transicion = transicion;
+		}
+
+		public String getPlantilla() {
+			return plantilla;
+		}
+
+		public void setPlantilla(String plantilla) {
+			this.plantilla = plantilla;
+		}
+
+		public String getPlantillaNombre() {
+			return plantillaNombre;
+		}
+
+		public void setPlantillaNombre(String plantillaNombre) {
+			this.plantillaNombre = plantillaNombre;
+		}
+
+		public String getPropiedad() {
+			return propiedad;
+		}
+
+		public void setPropiedad(String propiedad) {
+			this.propiedad = propiedad;
+		}
+
+		public Date getFechaDesde() {
+			return fechaDesde;
+		}
+
+		public void setFechaDesde(Date fechaDesde) {
+			this.fechaDesde = fechaDesde;
+		}
+
+		public Date getFechaHasta() {
+			return fechaHasta;
+		}
+
+		public void setFechaHasta(Date fechaHasta) {
+			this.fechaHasta = fechaHasta;
+		}
+
+		public Boolean getActiva() {
+			return activa;
+		}
+
+		public void setActiva(Boolean activa) {
+			this.activa = activa;
+		}
+
+		public Integer getPaginacionRegistroInicial() {
+			return paginacionRegistroInicial;
+		}
+
+		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
+			this.paginacionRegistroInicial = paginacionRegistroInicial;
+		}
+
+		public Integer getPaginacionRegistroFinal() {
+			return paginacionRegistroFinal;
+		}
+
+		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
+			this.paginacionRegistroFinal = paginacionRegistroFinal;
+		}
 	}
 
 	@PostMapping("/auto-tasks/list")
-	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(
-			@RequestBody AutoTaskFilterRequest request) throws ServerException {
+	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(@RequestBody AutoTaskFilterRequest request)
+			throws ServerException {
 		limpiarFiltro(request);
 		ProcesoTransicionAutomaticaFilterDTO filter = new ProcesoTransicionAutomaticaFilterDTO();
 		filter.setEstado(request.getEstado());
@@ -562,63 +650,70 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/auto-tasks/{key}")
-	public ProcesoTransicionAutomaticaDTO consultarTareaAutomatica(@PathVariable("key") String pKey) throws ServerException {
+	public ProcesoTransicionAutomaticaDTO consultarTareaAutomatica(@PathVariable("key") String pKey)
+			throws ServerException {
 		return procesoTransicionAutomaticaService.consultaXId(pKey);
 	}
 
 	@PostMapping("/auto-tasks/create")
-	public ProcesoTransicionAutomaticaDTO guardarTareaAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionAutomaticaService.guardar(dto, token);
+	public ProcesoTransicionAutomaticaDTO guardarTareaAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto)
+			throws ServerException {
+		return procesoTransicionAutomaticaService.guardar(dto);
 	}
 
 	@PostMapping("/auto-tasks/update")
-	public ProcesoTransicionAutomaticaDTO actualizarTareaAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionAutomaticaService.actualizar(dto, token);
+	public ProcesoTransicionAutomaticaDTO actualizarTareaAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto)
+			throws ServerException {
+		return procesoTransicionAutomaticaService.actualizar(dto);
 	}
 
 	@PostMapping("/auto-tasks/{key}/inactivate")
-	public ProcesoTransicionAutomaticaDTO inactivarTareaAutomatica(
-			@RequestBody ProcesoTransicionAutomaticaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionAutomaticaService.inactivar(dto, token);
+	public ProcesoTransicionAutomaticaDTO inactivarTareaAutomatica(@RequestBody ProcesoTransicionAutomaticaDTO dto)
+			throws ServerException {
+		return procesoTransicionAutomaticaService.inactivar(dto);
 	}
 
 	public static class ProgramarRequest {
 		private String tipo;
 		private String cron;
 		private Date fecha;
-		public String getTipo() { return tipo; }
-		public void setTipo(String tipo) { this.tipo = tipo; }
-		public String getCron() { return cron; }
-		public void setCron(String cron) { this.cron = cron; }
-		public Date getFecha() { return fecha; }
-		public void setFecha(Date fecha) { this.fecha = fecha; }
+
+		public String getTipo() {
+			return tipo;
+		}
+
+		public void setTipo(String tipo) {
+			this.tipo = tipo;
+		}
+
+		public String getCron() {
+			return cron;
+		}
+
+		public void setCron(String cron) {
+			this.cron = cron;
+		}
+
+		public Date getFecha() {
+			return fecha;
+		}
+
+		public void setFecha(Date fecha) {
+			this.fecha = fecha;
+		}
 	}
 
 	@PostMapping("/auto-tasks/{key}/schedule")
-	public ProcesoTransicionAutomaticaDTO programarTareaAutomatica(
-			@PathVariable("key") String pKey,
-			@RequestBody ProgramarRequest request,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		ProcesoTransicionAutomaticaDTO dto = new ProcesoTransicionAutomaticaDTO();
-		dto.setLlaveTabla(pKey);
-		dto.setPropiedad(request.getTipo());
-		dto.setPlantilla(request.getCron());
-		dto.setFecha(request.getFecha());
-		return procesoTransicionAutomaticaService.programar(dto, token);
+	public ProcesoTransicionAutomaticaDTO programarTareaAutomatica() throws ServerException {
+		return procesoTransicionAutomaticaService.programar();
 	}
 
 	@PostMapping("/auto-tasks/{key}/execute")
-	public ProcesoTransicionAutomaticaDTO ejecutarTareaAutomatica(
-			@PathVariable("key") String pKey,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public ProcesoTransicionAutomaticaDTO ejecutarTareaAutomatica(@PathVariable("key") String pKey)
+			throws ServerException {
 		ProcesoTransicionAutomaticaDTO dto = new ProcesoTransicionAutomaticaDTO();
 		dto.setLlaveTabla(pKey);
-		return procesoTransicionAutomaticaService.ejecutar(dto, token);
+		return procesoTransicionAutomaticaService.ejecutar(dto);
 	}
 
 	// ==================== DOCUMENT TEMPLATES ====================
@@ -636,43 +731,37 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/document-templates/admin")
-	public List<TemplateDTO> listarPlantillasAdministrador(
-			@RequestBody DocumentoPlantillaFilterDTO filter) throws ServerException {
+	public List<DocumentoPlantillaDTO> listarPlantillasAdministrador(@RequestBody DocumentoPlantillaFilterDTO filter)
+			throws ServerException {
 		limpiarFiltro(filter);
-		return documentoPlantillaService.consultaAdministrador(filter);
+		return documentoPlantillaService.listarConsulta(filter);
 	}
 
 	@PostMapping("/document-templates/create")
-	public DocumentoPlantillaDTO guardarPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaService.guardar(dto, token);
+	public DocumentoPlantillaDTO guardarPlantilla(@RequestBody DocumentoPlantillaDTO dto) throws ServerException {
+		return documentoPlantillaService.guardar(dto);
 	}
 
 	@PostMapping("/document-templates/update")
-	public DocumentoPlantillaDTO actualizarPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaService.actualizar(dto, token);
+	public DocumentoPlantillaDTO actualizarPlantilla(@RequestBody DocumentoPlantillaDTO dto) throws ServerException {
+		return documentoPlantillaService.actualizar(dto);
 	}
 
 	@PostMapping("/document-templates/{key}/inactivate")
-	public DocumentoPlantillaDTO inactivarPlantilla(@RequestBody DocumentoPlantillaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaService.inactivar(dto, token);
+	public DocumentoPlantillaDTO inactivarPlantilla(@RequestBody DocumentoPlantillaDTO dto) throws ServerException {
+		return documentoPlantillaService.inactivar(dto);
 	}
 
 	@PostMapping("/document-templates/{key}/duplicate")
-	public DocumentoPlantillaDTO duplicarPlantilla(@PathVariable("key") String pKey,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public DocumentoPlantillaDTO duplicarPlantilla(@PathVariable("key") String pKey) throws ServerException {
 		DocumentoPlantillaDTO dto = new DocumentoPlantillaDTO();
 		dto.setLlaveTabla(pKey);
-		return documentoPlantillaService.duplicar(dto, token);
+		return documentoPlantillaService.duplicar(dto);
 	}
 
-	@PostMapping("/document-templates/{key}/fields-complete")
-	public TemplateDTO obtenerCamposPlantilla(@PathVariable("key") String pKey,
-			@RequestBody TemplateDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaService.obtenerCampos(dto, token, true);
+	@PostMapping("/document-templates/fields-complete")
+	public TemplateDTO obtenerCamposPlantilla(@RequestBody TemplateDTO dto) throws ServerException {
+		return documentoPlantillaService.obtenerCampos(dto, true);
 	}
 
 	// --- Fields (Caracteristicas) ---
@@ -693,31 +782,27 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/document-templates/fields")
-	public DocumentoPlantillaCaracteristicaDTO guardarCampo(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaCaracteristicaService.guardar(dto, token);
+	public DocumentoPlantillaCaracteristicaDTO guardarCampo(@RequestBody DocumentoPlantillaCaracteristicaDTO dto)
+			throws ServerException {
+		return documentoPlantillaCaracteristicaService.guardar(dto);
 	}
 
 	@PostMapping("/document-templates/fields/{key}/update")
-	public DocumentoPlantillaCaracteristicaDTO actualizarCampo(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaCaracteristicaService.actualizar(dto, token);
+	public DocumentoPlantillaCaracteristicaDTO actualizarCampo(@RequestBody DocumentoPlantillaCaracteristicaDTO dto)
+			throws ServerException {
+		return documentoPlantillaCaracteristicaService.actualizar(dto);
 	}
 
 	@PostMapping("/document-templates/fields/{key}/inactivate")
-	public DocumentoPlantillaCaracteristicaDTO inactivarCampo(
-			@RequestBody DocumentoPlantillaCaracteristicaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return documentoPlantillaCaracteristicaService.inactivar(dto, token);
+	public DocumentoPlantillaCaracteristicaDTO inactivarCampo(@RequestBody DocumentoPlantillaCaracteristicaDTO dto)
+			throws ServerException {
+		return documentoPlantillaCaracteristicaService.inactivar(dto);
 	}
 
 	// --- Reports ---
 
 	@PostMapping("/document-templates/{templateKey}/reports")
-	public List<ReporteBaseDTO> listarReportesPlantilla(
-			@PathVariable("templateKey") String pTemplateKey,
+	public List<ReporteBaseDTO> listarReportesPlantilla(@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody ReporteBaseFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
 		filter.setPlantilla(pTemplateKey);
@@ -730,21 +815,18 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/document-templates/reports")
-	public ReporteBaseDTO guardarReporte(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return reporteBaseService.guardar(dto, token);
+	public ReporteBaseDTO guardarReporte(@RequestBody ReporteBaseDTO dto) throws ServerException {
+		return reporteBaseService.guardar(dto);
 	}
 
 	@PostMapping("/document-templates/reports/{key}/update")
-	public ReporteBaseDTO actualizarReporte(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return reporteBaseService.actualizar(dto, token);
+	public ReporteBaseDTO actualizarReporte(@RequestBody ReporteBaseDTO dto) throws ServerException {
+		return reporteBaseService.actualizar(dto);
 	}
 
 	@PostMapping("/document-templates/reports/{key}/inactivate")
-	public ReporteBaseDTO inactivarReporte(@RequestBody ReporteBaseDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return reporteBaseService.inactivar(dto, token);
+	public ReporteBaseDTO inactivarReporte(@RequestBody ReporteBaseDTO dto) throws ServerException {
+		return reporteBaseService.inactivar(dto);
 	}
 
 	// ==================== PROCESSES ====================
@@ -774,28 +856,24 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/processes/create")
-	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoService.guardar(dto, token);
+	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto) throws ServerException {
+		return procesoService.guardar(dto);
 	}
 
 	@PostMapping("/processes/update")
-	public ProcesoDTO actualizarProceso(@RequestBody ProcesoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoService.actualizar(dto, token);
+	public ProcesoDTO actualizarProceso(@RequestBody ProcesoDTO dto) throws ServerException {
+		return procesoService.actualizar(dto);
 	}
 
 	@PostMapping("/processes/{key}/inactivate")
-	public ProcesoDTO inactivarProceso(@RequestBody ProcesoDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoService.inactivar(dto, token);
+	public ProcesoDTO inactivarProceso(@RequestBody ProcesoDTO dto) throws ServerException {
+		return procesoService.inactivar(dto);
 	}
 
 	// --- Transitions ---
 
 	@PostMapping("/processes/{processKey}/transitions")
-	public List<ProcesoTransicionDTO> listarTransiciones(
-			@PathVariable("processKey") String pProcessKey,
+	public List<ProcesoTransicionDTO> listarTransiciones(@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
 		limpiarFiltro(filter);
 		filter.setProceso(pProcessKey);
@@ -808,21 +886,18 @@ this.exportService = exportService;
 	}
 
 	@PostMapping("/processes/transitions")
-	public ProcesoTransicionDTO guardarTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionService.guardar(dto, token);
+	public ProcesoTransicionDTO guardarTransicion(@RequestBody ProcesoTransicionDTO dto) throws ServerException {
+		return procesoTransicionService.guardar(dto);
 	}
 
 	@PostMapping("/processes/transitions/{key}/update")
-	public ProcesoTransicionDTO actualizarTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionService.actualizar(dto, token);
+	public ProcesoTransicionDTO actualizarTransicion(@RequestBody ProcesoTransicionDTO dto) throws ServerException {
+		return procesoTransicionService.actualizar(dto);
 	}
 
 	@PostMapping("/processes/transitions/{key}/inactivate")
-	public ProcesoTransicionDTO inactivarTransicion(@RequestBody ProcesoTransicionDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return procesoTransicionService.inactivar(dto, token);
+	public ProcesoTransicionDTO inactivarTransicion(@RequestBody ProcesoTransicionDTO dto) throws ServerException {
+		return procesoTransicionService.inactivar(dto);
 	}
 
 	// ==================== PROPERTIES ====================
@@ -835,20 +910,62 @@ this.exportService = exportService;
 		private String valor;
 		private Integer paginacionRegistroInicial;
 		private Integer paginacionRegistroFinal;
-		public String getEstado() { return estado; }
-		public void setEstado(String estado) { this.estado = estado; }
-		public String getCampo() { return campo; }
-		public void setCampo(String campo) { this.campo = campo; }
-		public String getTipo() { return tipo; }
-		public void setTipo(String tipo) { this.tipo = tipo; }
-		public String getNombre() { return nombre; }
-		public void setNombre(String nombre) { this.nombre = nombre; }
-		public String getValor() { return valor; }
-		public void setValor(String valor) { this.valor = valor; }
-		public Integer getPaginacionRegistroInicial() { return paginacionRegistroInicial; }
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) { this.paginacionRegistroInicial = paginacionRegistroInicial; }
-		public Integer getPaginacionRegistroFinal() { return paginacionRegistroFinal; }
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) { this.paginacionRegistroFinal = paginacionRegistroFinal; }
+
+		public String getEstado() {
+			return estado;
+		}
+
+		public void setEstado(String estado) {
+			this.estado = estado;
+		}
+
+		public String getCampo() {
+			return campo;
+		}
+
+		public void setCampo(String campo) {
+			this.campo = campo;
+		}
+
+		public String getTipo() {
+			return tipo;
+		}
+
+		public void setTipo(String tipo) {
+			this.tipo = tipo;
+		}
+
+		public String getNombre() {
+			return nombre;
+		}
+
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+
+		public String getValor() {
+			return valor;
+		}
+
+		public void setValor(String valor) {
+			this.valor = valor;
+		}
+
+		public Integer getPaginacionRegistroInicial() {
+			return paginacionRegistroInicial;
+		}
+
+		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
+			this.paginacionRegistroInicial = paginacionRegistroInicial;
+		}
+
+		public Integer getPaginacionRegistroFinal() {
+			return paginacionRegistroFinal;
+		}
+
+		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
+			this.paginacionRegistroFinal = paginacionRegistroFinal;
+		}
 	}
 
 	@PostMapping("/properties/list")
@@ -868,34 +985,42 @@ this.exportService = exportService;
 	public static class PropertyByIdRequest {
 		private String campo;
 		private String estado;
-		public String getCampo() { return campo; }
-		public void setCampo(String campo) { this.campo = campo; }
-		public String getEstado() { return estado; }
-		public void setEstado(String estado) { this.estado = estado; }
+
+		public String getCampo() {
+			return campo;
+		}
+
+		public void setCampo(String campo) {
+			this.campo = campo;
+		}
+
+		public String getEstado() {
+			return estado;
+		}
+
+		public void setEstado(String estado) {
+			this.estado = estado;
+		}
 	}
 
 	@PostMapping("/properties/by-id")
-	public PropiedadDTO consultarPropiedad(@RequestBody PropertyByIdRequest request,
-			@RequestHeader("Authorization") String token) throws ServerException {
+	public PropiedadDTO consultarPropiedad(@RequestBody PropertyByIdRequest request) throws ServerException {
 		return propiedadService.consultaXId(request.getCampo());
 	}
 
 	@PostMapping("/properties/create")
-	public PropiedadDTO guardarPropiedad(@RequestBody PropiedadDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadService.guardar(dto, token);
+	public PropiedadDTO guardarPropiedad(@RequestBody PropiedadDTO dto) throws ServerException {
+		return propiedadService.guardar(dto);
 	}
 
 	@PostMapping("/properties/update")
-	public PropiedadDTO actualizarPropiedad(@RequestBody PropiedadDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadService.actualizar(dto, token);
+	public PropiedadDTO actualizarPropiedad(@RequestBody PropiedadDTO dto) throws ServerException {
+		return propiedadService.actualizar(dto);
 	}
 
 	@PostMapping("/properties/inactivate")
-	public PropiedadDTO inactivarPropiedad(@RequestBody PropiedadDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return propiedadService.inactivar(dto, token);
+	public PropiedadDTO inactivarPropiedad(@RequestBody PropiedadDTO dto) throws ServerException {
+		return propiedadService.inactivar(dto);
 	}
 
 	// --- Relations ---
@@ -907,25 +1032,19 @@ this.exportService = exportService;
 		return relacionInternaService.relacionesPropiedad(pPropiedad);
 	}
 
-	@PostMapping("/properties/{propiedad}/relations/create")
-	public RelacionInternaDTO guardarRelacion(@PathVariable("propiedad") String pPropiedad,
-			@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return relacionInternaService.guardar(dto, token);
+	@PostMapping("/properties/relations/create")
+	public RelacionInternaDTO guardarRelacion(@RequestBody RelacionInternaDTO dto) throws ServerException {
+		return relacionInternaService.guardar(dto);
 	}
 
-	@PostMapping("/properties/{propiedad}/relations/update")
-	public RelacionInternaDTO actualizarRelacion(@PathVariable("propiedad") String pPropiedad,
-			@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return relacionInternaService.actualizar(dto, token);
+	@PostMapping("/properties/relations/update")
+	public RelacionInternaDTO actualizarRelacion(@RequestBody RelacionInternaDTO dto) throws ServerException {
+		return relacionInternaService.actualizar(dto);
 	}
 
-	@PostMapping("/properties/{propiedad}/relations/inactivate")
-	public RelacionInternaDTO inactivarRelacion(@PathVariable("propiedad") String pPropiedad,
-			@RequestBody RelacionInternaDTO dto,
-			@RequestHeader("Authorization") String token) throws ServerException {
-		return relacionInternaService.inactivar(dto, token);
+	@PostMapping("/properties/relations/inactivate")
+	public RelacionInternaDTO inactivarRelacion(@RequestBody RelacionInternaDTO dto) throws ServerException {
+		return relacionInternaService.inactivar(dto);
 	}
 
 	// ==================== ROLES (acceso) ====================
@@ -939,7 +1058,8 @@ this.exportService = exportService;
 		return rolAccesoService.listarConsulta(filter);
 	}
 
-	// ==================== USERS (búsqueda usuario propietario) ====================
+	// ==================== USERS (búsqueda usuario propietario)
+	// ====================
 
 	@PostMapping("/users/search")
 	public List<UsuarioDTO> listarUsuarios(@RequestBody UsuarioFilterDTO filter) throws ServerException {
@@ -955,63 +1075,57 @@ this.exportService = exportService;
 		return usuarioService.consultaXId(key);
 	}
 
-	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*) ====================
+	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
+	// ====================
 
 	@GetMapping("/configuration/export")
-	private CargaArchivoDTO generateFileWithConfiguration(@RequestHeader("Authorization") String token) throws ServerException {
-		return exportService.call(token);
+	private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
+		return exportService.call();
 	}
 
 	@PostMapping("/configuration/module")
-	private CargaArchivoDTO generateFileWithConfigurationModule(@RequestHeader("Authorization") String token,
-			@RequestBody ExportListRequest modules) throws ServerException {
-		return exportService.call(token, modules);
+	private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
+			throws ServerException {
+		return exportService.call(modules);
 	}
 
 	@PostMapping("/configuration/import")
-	private CargaArchivoDTO loadConfiguration(@RequestHeader("Authorization") String token, @RequestBody CargaArchivoDTO file)
-			throws ServerException {
-		return importService.call(token, file);
+	private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
+		return importService.call(file);
 	}
 
 	@PostMapping("/configuration/compare")
-	private CargaArchivoDTO compare(@RequestHeader("Authorization") String token, @RequestBody CargaArchivoDTO file)
-			throws ServerException {
-		return importService.compare(token, file);
+	private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
+		return importService.compare(file);
 	}
 
 	// ==================== CONFIGURATION TREE (arbol generico) ====================
 
 	@PostMapping("/tree")
-	private TreeNodeDTO getConfigTree(@RequestHeader("Authorization") String token,
-			@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return sincronizacionArbolService.obtenerArbol(token, filter);
+	private TreeNodeDTO getConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return sincronizacionArbolService.obtenerArbol(filter);
 	}
 
 	@PostMapping("/tree/export")
-	private CargaArchivoDTO exportConfigTree(@RequestHeader("Authorization") String token,
-			@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return sincronizacionArbolService.exportarArbol(token, filter);
+	private CargaArchivoDTO exportConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+		return sincronizacionArbolService.exportarArbol(filter);
 	}
 
 	@PostMapping("/tree/compare")
-	private List<DiferenciaDTO> compareTree(@RequestHeader("Authorization") String token,
-			@RequestBody CompararArbolRequestDTO request) throws ServerException {
-		return sincronizacionArbolService.compararArbol(token, request.getArbol(), request.getFilter());
+	private List<DiferenciaDTO> compareTree(@RequestBody CompararArbolRequestDTO request) throws ServerException {
+		return sincronizacionArbolService.compararArbol(request.getArbol(), request.getFilter());
 	}
 
 	@PostMapping("/tree/sync")
-	private CargaArchivoDTO syncTree(@RequestHeader("Authorization") String token,
-			@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
-		return sincronizacionArbolService.sincronizar(token, request);
+	private CargaArchivoDTO syncTree(@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
+		return sincronizacionArbolService.sincronizar(request);
 	}
 
 	// ==================== PROPERTY LOOKUP (antes /property/*) ====================
 
 	@GetMapping("/property/{type}/{field}")
-	public List<PropiedadDTO> getFullProperties(@RequestHeader("Authorization") String token,
-			@PathVariable(name = "type") String pType, @PathVariable(name = "field") String pField)
-			throws ServerException {
+	public List<PropiedadDTO> getFullProperties(@PathVariable(name = "type") String pType,
+			@PathVariable(name = "field") String pField) throws ServerException {
 		PropiedadFilterDTO filter = new PropiedadFilterDTO();
 		filter.setTipo(pType);
 		filter.setCampo(pField);
@@ -1020,9 +1134,8 @@ this.exportService = exportService;
 	}
 
 	@GetMapping("/property/type/{type}/{filterName}")
-	public List<PropiedadValorDefinidoDTO> getTypeProperty(@RequestHeader("Authorization") String token,
-			@PathVariable(name = "type") String pType, @PathVariable(name = "filterName") String pFilterName)
-			throws ServerException {
+	public List<PropiedadValorDefinidoDTO> getTypeProperty(@PathVariable(name = "type") String pType,
+			@PathVariable(name = "filterName") String pFilterName) throws ServerException {
 		PropiedadValorDefinidoFilterDTO filter = new PropiedadValorDefinidoFilterDTO();
 		filter.setOrigen(pType);
 		filter.setFiltroParametro(pFilterName);
@@ -1031,15 +1144,13 @@ this.exportService = exportService;
 	}
 
 	@GetMapping("/property/{key}")
-	public PropiedadDTO getPropertyByKey(@RequestHeader("Authorization") String token,
-			@PathVariable(name = "key") String pKey) throws ServerException {
+	public PropiedadDTO getPropertyByKey(@PathVariable(name = "key") String pKey) throws ServerException {
 		return propiedadService.consultaXId(pKey);
 	}
 
 	@PostMapping("/property/")
-	public PropiedadDTO createProperty(@RequestHeader("Authorization") String token, @RequestBody PropiedadDTO property)
-			throws ServerException {
-		return propiedadService.guardar(property, token);
+	public PropiedadDTO createProperty(@RequestBody PropiedadDTO property) throws ServerException {
+		return propiedadService.guardar(property);
 	}
 
 	// ==================== INDICATORS ====================
@@ -1058,10 +1169,22 @@ this.exportService = exportService;
 	public static class IndicadorResultadoRequest {
 		private String indicadorId;
 		private PeriodoDTO periodo;
-		public String getIndicadorId() { return indicadorId; }
-		public void setIndicadorId(String indicadorId) { this.indicadorId = indicadorId; }
-		public PeriodoDTO getPeriodo() { return periodo; }
-		public void setPeriodo(PeriodoDTO periodo) { this.periodo = periodo; }
+
+		public String getIndicadorId() {
+			return indicadorId;
+		}
+
+		public void setIndicadorId(String indicadorId) {
+			this.indicadorId = indicadorId;
+		}
+
+		public PeriodoDTO getPeriodo() {
+			return periodo;
+		}
+
+		public void setPeriodo(PeriodoDTO periodo) {
+			this.periodo = periodo;
+		}
 	}
 
 	@PostMapping("/indicators/result")
@@ -1087,8 +1210,8 @@ this.exportService = exportService;
 		return dto;
 	}
 
-	@PostMapping("/indicators/{key}/inactivate")
-	public IndicatorDTO inactivarIndicador(@PathVariable("key") String pKey, @RequestBody IndicatorDTO dto) throws ServerException {
+	@PostMapping("/indicators/inactivate")
+	public IndicatorDTO inactivarIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
 		if (dto == null || dto.getKey() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
 		return indicadorService.delete(dto.getKey());

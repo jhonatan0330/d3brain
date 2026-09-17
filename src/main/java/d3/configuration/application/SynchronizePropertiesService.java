@@ -3,16 +3,15 @@ package d3.configuration.application;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.shared.application.D3Utils;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizePropertiesService {
@@ -28,7 +27,7 @@ public class SynchronizePropertiesService {
 		this.typeService = typeService;
 	}
 
-	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal, String token,
+	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades(type, entityLocal, null, null);
 		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type,
@@ -114,7 +113,7 @@ public class SynchronizePropertiesService {
 							}
 						}
 						try {
-							findProperty = propertiesService.guardar(newProperty, token);
+							findProperty = propertiesService.guardar(newProperty);
 							log.info("NEW PROPERTY " + remoteProperty.getPropiedadValor());
 							remoteProperty.setUsuarioEliminacion("YA");
 							remoteProperty.setUsuarioCreacion(findProperty.getLlaveTabla());
@@ -142,7 +141,7 @@ public class SynchronizePropertiesService {
 		// elimino las propiedades que no estaban en la sincronizacion y no tenian
 		// usuario especifico
 		// for (PropiedadDTO propiedadDTO : localPropertiesToErase) {
-		// propertiesService.inactivar(propiedadDTO, token);
+		// propertiesService.inactivar(propiedadDTO);
 		// }
 
 	}

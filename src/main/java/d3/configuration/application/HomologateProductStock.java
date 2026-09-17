@@ -3,10 +3,9 @@ package d3.configuration.application;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentCommons;
@@ -20,8 +19,9 @@ import d3.inventory.domain.ProductoInventarioDTO;
 import d3.inventory.domain.ProductoInventarioFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-
-import org.springframework.context.annotation.Lazy;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 
 @Component
 public class HomologateProductStock {
@@ -34,35 +34,35 @@ public class HomologateProductStock {
 		this.productService = productService;
 	}
 
-	public void createFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createFields(String templateId,  DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService, CallDocumentCRUD crudService) throws ServerException {
 		List<String> fieldsTemplate = new ArrayList<>();
-		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO,
-				1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO, 1));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "BODEGA", DocumentoPlantillaCaracteristicaDTO.PROCESO, 2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "BODEGA", DocumentoPlantillaCaracteristicaDTO.PROCESO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "MINIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "MINIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
-		fieldsTemplate.add(
-				campoService.createField(templateId, "MAXIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "MAXIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 
-		sincronize(templateId, fieldsTemplate, token, crudService);
+		sincronize(templateId, fieldsTemplate,  crudService);
 	}
 
-	private void sincronize(String templateId, List<String> fieldsTemplate, String token, CallDocumentCRUD crudService)
+	private void sincronize(String templateId, List<String> fieldsTemplate, CallDocumentCRUD crudService)
 			throws ServerException {
 		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -96,8 +96,8 @@ public class HomologateProductStock {
 				fieldDim2.setValorNumero(iPid.getCantidadMaxima());
 				document.getCaracteristicas().add(fieldDim2);
 
-				document.setFuncionario(stockService.getUserFlex(token));
-				document = crudService.saveWithoutTransaction(document, token, true);
+				document.setFuncionario(SessionContext.getCurrentUser());
+				document = crudService.saveWithoutTransaction(document,  true);
 				iPid.setDocumento(document.getLlaveTabla());
 				stockService.update(iPid);
 			}
@@ -105,7 +105,7 @@ public class HomologateProductStock {
 		}
 	}
 
-	public void create(PedidoVentaDTO document, String token) throws ServerException {
+	public void create(PedidoVentaDTO document) throws ServerException {
 		ProductoInventarioFilterDTO filter = new ProductoInventarioFilterDTO();
 		filter.setDocumento(document.getLlaveTabla());
 		ProductoInventarioDTO newItem = stockService.consultaUnica(filter);
@@ -116,7 +116,7 @@ public class HomologateProductStock {
 			newItem.setBodega(CallDocumentCommons.getValueOption(document, "BODEGA"));
 			newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
 			newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
-			stockService.guardar(newItem, token);
+			stockService.guardar(newItem);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				if (newItem.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
@@ -129,7 +129,7 @@ public class HomologateProductStock {
 				newItem.setCantidadMinima(CallDocumentCommons.getValueNumber(document, "MINIMA"));
 				newItem.setCantidadMaxima(CallDocumentCommons.getValueNumber(document, "MAXIMA"));
 				newItem.setEstado(SharedConstants.STATE_ACTIVE);
-				stockService.actualizar(newItem, token);
+				stockService.actualizar(newItem);
 			}
 		}
 	}

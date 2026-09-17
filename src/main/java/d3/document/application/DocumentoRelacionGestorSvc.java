@@ -13,19 +13,18 @@ import d3.document.domain.DocumentoRelacionGestorDTO;
 import d3.document.domain.DocumentoRelacionGestorFilterDTO;
 import d3.document.infrastructure.DocumentoRelacionGestorMapper;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("documentoRelacionGestorService")
 public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestorDTO, DocumentoRelacionGestorFilterDTO> {
 
 	private final DocumentoRelacionGestorMapper documentoRelacionGestorMapper;
 
-	public DocumentoRelacionGestorSvc(@Lazy UsuarioSesionSvc usuarioSesionService,
+	public DocumentoRelacionGestorSvc(
 			@Lazy DocumentoRelacionGestorMapper documentoRelacionGestorMapper) {
-		super(usuarioSesionService);
 		this.documentoRelacionGestorMapper = documentoRelacionGestorMapper;
 	}
 
@@ -90,20 +89,17 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public DocumentoRelacionGestorDTO guardar(DocumentoRelacionGestorDTO dto, String token) throws ServerException {
+	public DocumentoRelacionGestorDTO guardar(DocumentoRelacionGestorDTO dto) throws ServerException {
 		if (documentoRelacionGestorMapper.isActual(dto.getDocumentoPrincipal()) != null) {
-			return super.guardar(dto, token);
-		} else {
-			getUserFlex(token);
+			return super.guardar(dto);
+		} 
+			SessionContext.getCurrentUser();
 			return documentoRelacionGestorMapper.insertHistoricTable(dto);
-		}
+		
 	}
 
 	public DocumentoRelacionGestorDTO trazar(String principal, String modificador, String nombre, String estadoInicial,
-			String estadoFinal, String valores,
-
-			String token, DocumentoRelacionGestorDTO anterior, Integer historico, String transaccion,
-			boolean isUpdateDocument) throws ServerException {
+			String estadoFinal, String valores, DocumentoRelacionGestorDTO anterior, Integer historico, String transaccion ) throws ServerException {
 		DocumentoRelacionGestorDTO actual;
 		if (anterior == null) {
 			actual = documentoRelacionGestorMapper.ultimoRegistro(principal, (historico == null) ? null : "historico");
@@ -161,7 +157,7 @@ public class DocumentoRelacionGestorSvc extends BasicSvc<DocumentoRelacionGestor
 			// if((modificador == null || isUpdateDocument) && gestor.getUbicacion()==null)
 			// gestor.setUbicacion( actual.getUbicacion());
 		}
-		gestor.setUsuario(getUserFlex(token));
+		gestor.setUsuario(SessionContext.getCurrentUser());
 		if (historico == null) {
 			gestor = save(gestor);
 		} else {

@@ -21,52 +21,52 @@ public class VoucherCreateFromTemplateService {
 	private final VoucherCreateService createVoucherService;
 	private final PlanGetAccountService getAccountService;
 
-	public VoucherCreateFromTemplateService(@Lazy VoucherCreateService createVoucherService,@Lazy PlanGetAccountService getAccountService) {
+	public VoucherCreateFromTemplateService(@Lazy VoucherCreateService createVoucherService,
+			@Lazy PlanGetAccountService getAccountService) {
 		this.createVoucherService = createVoucherService;
 		this.getAccountService = getAccountService;
 	}
 
-	public SharedIdResponse call(String _token, PedidoVentaDTO _item) throws ServerException {
-		
-		/*VoucherRequest vr = new VoucherRequest();
-		vr.setDocument(_item.getLlaveTabla());
-		vr.setFactDate(_item.getFecha());
-		if(_item.getDinero()!=null) {
-			vr.setValue(_item.getDinero().getValorTotal());			
-		}*/
-		
+	public SharedIdResponse call(PedidoVentaDTO _item) throws ServerException {
+
+		/*
+		 * VoucherRequest vr = new VoucherRequest();
+		 * vr.setDocument(_item.getLlaveTabla()); vr.setFactDate(_item.getFecha());
+		 * if(_item.getDinero()!=null) { vr.setValue(_item.getDinero().getValorTotal());
+		 * }
+		 */
+
 		VoucherDTO header = new VoucherDTO();
 		header.setFactDate(_item.getFecha());
 		header.setDocument(_item.getLlaveTabla());
 		header.setCode(_item.getNombre());
-		
+
 		List<VoucherLine> lines = new ArrayList<>();
-		
+
 		AccountRecordDTO line = new AccountRecordDTO();
-		
+
 		line.setAccount(getAccountService.findAccountByTemplateId(_item.getPlantilla()).getKey());
-		if(_item.getDinero()!=null) {
+		if (_item.getDinero() != null) {
 			line.setPositive(_item.getDinero().getValorTotal());
-		}else {
+		} else {
 			line.setPositive(BigDecimal.ONE);
 		}
-		
-		//line.setNote(accountRecordDTO.getNote());
-		//line.setType(accountRecordDTO.getType());
-		//line.setMainDocument(accountRecordDTO.getMainDocument());
-		//line.setAccountLink(accountRecordDTO.getAccountLink());
-		
+
+		// line.setNote(accountRecordDTO.getNote());
+		// line.setType(accountRecordDTO.getType());
+		// line.setMainDocument(accountRecordDTO.getMainDocument());
+		// line.setAccountLink(accountRecordDTO.getAccountLink());
+
 		VoucherLine voucherLine = new VoucherLine();
 		voucherLine.setLine(line);
-		
+
 		lines.add(voucherLine);
-		
+
 		Voucher voucher = new Voucher();
 		voucher.setHeader(header);
 		voucher.setRecords(lines);
-		
-		return createVoucherService.call(voucher, null);//tokenService.validate(token, null));
+
+		return createVoucherService.call(voucher);
 	}
 
-	
 }

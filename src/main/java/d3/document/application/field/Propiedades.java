@@ -298,7 +298,7 @@ public class Propiedades {
 	public static final String APP_READER = "APP_READER";
 	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
 	public static final String APP_DFA = "APP_DFA";
-	
+
 	// ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";
 
@@ -306,7 +306,7 @@ public class Propiedades {
 			Propiedades.INFORMATIVE_DATA, Propiedades.RELACIONAR_DOCUMENTOS, Propiedades.RETIRAR_DOCUMENTOS,
 			Propiedades.UPDATE_INFORMATIVE_FIELD, Propiedades.FECHA_MAXIMA_CAMPO, Propiedades.FECHA_MINIMA_CAMPO };
 
-	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor, String token) {
+	public static PropiedadDTO crearParametro(String tipo, String campo, String key, String valor) {
 		PropiedadDTO parametroTipo = new PropiedadDTO();
 		parametroTipo.setTipo(tipo);
 		parametroTipo.setCampo(campo);
@@ -391,13 +391,13 @@ public class Propiedades {
 								int horaFinal = Integer.parseInt(iBloqueo.substring(7, 9));
 								if (timeToValidate.get(Calendar.HOUR_OF_DAY) < horaFinal) {
 									return false;
-								} else {
-									int minutoFinal = Integer.parseInt(iBloqueo.substring(10, 12));
-									if (timeToValidate.get(Calendar.HOUR_OF_DAY) == horaFinal
-											&& timeToValidate.get(Calendar.MINUTE) < minutoFinal) {
-										return false;
-									}
 								}
+								int minutoFinal = Integer.parseInt(iBloqueo.substring(10, 12));
+								if (timeToValidate.get(Calendar.HOUR_OF_DAY) == horaFinal
+										&& timeToValidate.get(Calendar.MINUTE) < minutoFinal) {
+									return false;
+								}
+
 							}
 						}
 					}

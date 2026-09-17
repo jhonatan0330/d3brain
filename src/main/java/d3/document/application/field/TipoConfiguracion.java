@@ -6,8 +6,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
@@ -20,14 +18,15 @@ import d3.document.domain.PedidoVentaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
 import d3.inventory.domain.ProductoFilterDTO;
-import d3.process.application.ProcesoSvc;
-import d3.process.domain.ProcesoDTO;
-import d3.process.domain.ProcesoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.application.ProcesoSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.process.domain.DocumentoPlantillaFilterDTO;
+import d3.process.domain.ProcesoDTO;
+import d3.process.domain.ProcesoFilterDTO;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.tariff.application.base.TarifarioService;
 import d3.tariff.domain.TarifarioDTO;
 import d3.tariff.domain.TarifarioFilterDTO;
@@ -83,54 +82,54 @@ public class TipoConfiguracion {
 					ProcesoDTO proceso = procesoService.consultaXId(pCampo.getValorOpcion());
 					if (proceso == null) {
 						throw new ServerException("No se identifica el categoria");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(proceso.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(proceso.getCodigo());
-						adaptado.setDescripcion(proceso.getNombre());
-						pCampo.setPrincipal(adaptado);
 					}
+					PedidoVentaDTO adaptado = new PedidoVentaDTO();
+					adaptado.setLlaveTabla(proceso.getLlaveTabla());
+					adaptado.setImagen(SharedConstants.LOGO);
+					adaptado.setNombre(proceso.getCodigo());
+					adaptado.setDescripcion(proceso.getNombre());
+					pCampo.setPrincipal(adaptado);
+
 					break;
 				case PRODUCTOS:
 					ProductoDTO producto = productoService.consultaXId(pCampo.getValorOpcion());
 					if (producto == null) {
 						throw new ServerException("No se identifica el producto");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(producto.getLlaveTabla());
-						adaptado.setImagen(producto.getImagen());
-						adaptado.setNombre(producto.getCodigo());
-						adaptado.setDescripcion(producto.getNombre());
-						pCampo.setPrincipal(adaptado);
 					}
+					PedidoVentaDTO adaptado2 = new PedidoVentaDTO();
+					adaptado2.setLlaveTabla(producto.getLlaveTabla());
+					adaptado2.setImagen(producto.getImagen());
+					adaptado2.setNombre(producto.getCodigo());
+					adaptado2.setDescripcion(producto.getNombre());
+					pCampo.setPrincipal(adaptado2);
+
 					break;
 				case CATEGORIA_PRODUCTOS:
 				case PLANTILLAS:
 					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(pCampo.getValorOpcion());
 					if (plantilla == null) {
 						throw new ServerException("No se identifica el categoria");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(plantilla.getLlaveTabla());
-						adaptado.setImagen(plantilla.getImagen());
-						adaptado.setNombre(plantilla.getCodigo());
-						adaptado.setDescripcion(plantilla.getNombre());
-						pCampo.setPrincipal(adaptado);
 					}
+					PedidoVentaDTO adaptado3 = new PedidoVentaDTO();
+					adaptado3.setLlaveTabla(plantilla.getLlaveTabla());
+					adaptado3.setImagen(plantilla.getImagen());
+					adaptado3.setNombre(plantilla.getCodigo());
+					adaptado3.setDescripcion(plantilla.getNombre());
+					pCampo.setPrincipal(adaptado3);
+
 					break;
 				case ROLES:
 					RolAccesoDTO rolAcceso = rolService.consultaXId(pCampo.getValorOpcion());
 					if (rolAcceso == null) {
 						throw new ServerException("No se identifica el rol");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(rolAcceso.getLlaveTabla());
-						adaptado.setImagen(rolAcceso.getImagen());
-						adaptado.setNombre(rolAcceso.getCodigo());
-						adaptado.setDescripcion(rolAcceso.getNombre());
-						pCampo.setPrincipal(adaptado);
 					}
+					PedidoVentaDTO adaptado4 = new PedidoVentaDTO();
+					adaptado4.setLlaveTabla(rolAcceso.getLlaveTabla());
+					adaptado4.setImagen(rolAcceso.getImagen());
+					adaptado4.setNombre(rolAcceso.getCodigo());
+					adaptado4.setDescripcion(rolAcceso.getNombre());
+					pCampo.setPrincipal(adaptado4);
+
 					break;
 				case FORMATO_EXPORTAR:
 					PedidoVentaDTO adaptadoPDF = new PedidoVentaDTO();
@@ -151,14 +150,14 @@ public class TipoConfiguracion {
 					TarifarioDTO tarifario = tarifarioService.getById(pCampo.getValorOpcion());
 					if (tarifario == null) {
 						throw new ServerException("No se identifica tarifario");
-					} else {
-						PedidoVentaDTO adaptado = new PedidoVentaDTO();
-						adaptado.setLlaveTabla(tarifario.getKey());
-						adaptado.setImagen(SharedConstants.LOGO);
-						adaptado.setNombre(tarifario.getNombre());
-						// adaptado.setDescripcion(encuesta.getNombre());
-						pCampo.setPrincipal(adaptado);
 					}
+					PedidoVentaDTO adaptado5 = new PedidoVentaDTO();
+					adaptado5.setLlaveTabla(tarifario.getKey());
+					adaptado5.setImagen(SharedConstants.LOGO);
+					adaptado5.setNombre(tarifario.getNombre());
+					// adaptado.setDescripcion(encuesta.getNombre());
+					pCampo.setPrincipal(adaptado5);
+
 					break;
 				default:
 					break;
@@ -167,7 +166,7 @@ public class TipoConfiguracion {
 		}
 	}
 
-	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, String token, boolean isUpdateAutomatic)
+	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo, boolean isUpdateAutomatic)
 			throws ServerException {
 		// Para las transiciones ponemos el texto
 		if (pCampo.getValorOpcion() == null && pCampo.getValorText() != null) {
@@ -261,34 +260,35 @@ public class TipoConfiguracion {
 					ProcesoDTO proceso = procesoService.consultaXId(pCampo.getValorOpcion());
 					if (proceso == null) {
 						throw new ServerException("No se identifica el procep");
-					} else {
-						pCampo.setValorText(proceso.getNombre());
 					}
+
+					pCampo.setValorText(proceso.getNombre());
+
 					break;
 				case PRODUCTOS:
 					ProductoDTO producto = productoService.consultaXId(pCampo.getValorOpcion());
 					if (producto == null) {
 						throw new ServerException("No se identifica el producto");
-					} else {
-						pCampo.setValorText(producto.getNombre());
 					}
+					pCampo.setValorText(producto.getNombre());
+
 					break;
 				case CATEGORIA_PRODUCTOS:
 				case PLANTILLAS:
 					DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(pCampo.getValorOpcion());
 					if (plantilla == null) {
 						throw new ServerException("No se identifica el categoria");
-					} else {
-						pCampo.setValorText(plantilla.getNombre());
 					}
+					pCampo.setValorText(plantilla.getNombre());
+
 					break;
 				case ROLES:
 					RolAccesoDTO rol = rolService.consultaXId(pCampo.getValorOpcion());
 					if (rol == null) {
 						throw new ServerException("No se identifica el categoria");
-					} else {
-						pCampo.setValorText(rol.getNombre());
 					}
+					pCampo.setValorText(rol.getNombre());
+
 					break;
 				case FORMATO_EXPORTAR:
 					pCampo.setValorText(pCampo.getValorOpcion());
@@ -297,9 +297,9 @@ public class TipoConfiguracion {
 					TarifarioDTO tarifario = tarifarioService.getById(pCampo.getValorOpcion());
 					if (tarifario == null) {
 						throw new ServerException("No se identifica el tarifario");
-					} else {
-						pCampo.setValorText(tarifario.getNombre());
 					}
+					pCampo.setValorText(tarifario.getNombre());
+
 					break;
 
 				default:
@@ -309,36 +309,34 @@ public class TipoConfiguracion {
 		}
 	}
 
-	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo, String token)
-			throws ServerException {
+	public PedidoVentaCaracteristicaDTO guardarCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 		if (bd != null) {
 			if (pCampo.getValorOpcion() == null) {
 				bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
 				bd.setPrincipal(pCampo.getPrincipal());
-				campoService.inactivar(bd, token);
+				campoService.inactivar(bd);
 				return pCampo;
-			} else {
-				if (bd.getValorOpcion() != null && pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
-					return pCampo;
-				} else {
-					bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
-					bd.setPrincipal(pCampo.getPrincipal());
-					campoService.inactivar(bd, token);
-				}
 			}
+			if (bd.getValorOpcion() != null && pCampo.getValorOpcion().compareTo(bd.getValorOpcion()) == 0) {
+				return pCampo;
+			}
+			bd.setTransaccionInactivo(pCampo.getTransaccionRegistro());
+			bd.setPrincipal(pCampo.getPrincipal());
+			campoService.inactivar(bd);
+
 		}
 		if (pCampo.getValorOpcion() == null) {
 			return pCampo;
-		} else {
-			return campoService.guardar(pCampo, token);
 		}
+		return campoService.guardar(pCampo);
+
 	}
 
 	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(PedidoVentaCaracteristicaFilterDTO pCampo)
 			throws ServerException {
 		DocumentoPlantillaCaracteristicaDTO pBase = caracteristicaService
-				.consultaUnicaConComplementos(pCampo.getCampo(), pCampo.getSecurityToken());
+				.consultaUnicaConComplementos(pCampo.getCampo());
 		List<PropiedadDTO> campos = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(), Propiedades.OPCIONES);
 		if (campos != null && !campos.isEmpty()) {
 			pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
@@ -406,20 +404,8 @@ public class TipoConfiguracion {
 			case PLANTILLAS:
 				if (pCampo.getCampoDTO() == null)
 					throw new ServerException("valide el rol para consultar las plantillas");
-				DocumentoPlantillaFilterDTO plantilla = new DocumentoPlantillaFilterDTO();
-				plantilla.setFiltroParametro(pCampo.getFiltroParametro());
-				plantilla.setSecurityToken(pCampo.getSecurityToken());
-				// Pienso que se puede colocar una funcion para traer las plantillas del tipo y
-				// mejorarlas
-				// Tambien pienso que deberia tener un parametro de plantilla y agregar las
-				// plantillas que queremos
-				/*
-				 * if( Propiedades.obtenerParametro(pBase,
-				 * Propiedades.CONFIGURACION_PLANTILLA_TIPO)!=null){
-				 * plantilla.setTipo(Propiedades.obtenerValor(pBase,
-				 * Propiedades.CONFIGURACION_PLANTILLA_TIPO)); }
-				 */
-				List<DocumentoPlantillaDTO> plantillas = plantillaService.listarPlantillaRol(plantilla, false);
+
+				List<DocumentoPlantillaDTO> plantillas = plantillaService.listarPlantillaRol(false);
 				if (plantillas != null && !plantillas.isEmpty()) {
 					pBase.setDocumentos(new ArrayList<PedidoVentaDTO>());
 					for (DocumentoPlantillaDTO iPlantilla : plantillas) {

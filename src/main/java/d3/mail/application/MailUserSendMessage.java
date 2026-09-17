@@ -1,11 +1,11 @@
 package d3.mail.application;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.shared.domain.ServerException;
 import d3.mail.domain.MensajeDTO;
 import d3.mail.domain.MensajeFilterDTO;
-import org.springframework.context.annotation.Lazy;
+import d3.shared.domain.ServerException;
 
 @Service
 public class MailUserSendMessage {
@@ -22,7 +22,6 @@ public class MailUserSendMessage {
 		MensajeDTO bd = messageService.consultaXId(dto.getLlaveTabla());
 		if (bd.getCorreoEnviado() != null)
 			throw new ServerException("Este mensaje ya fue enviado");
-		String usuario = messageService.getUserFlex(dto.getSecurityToken());
-		return sendMessageService.call(bd, usuario, dto.getSecurityToken());
+		return sendMessageService.call(bd);
 	}
 }

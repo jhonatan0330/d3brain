@@ -20,16 +20,14 @@ import d3.process.infrastructure.ConsecutivoMapper;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Lazy;
-import d3.authentication.application.UsuarioSesionSvc;
 
 @Service("consecutivoService")
 public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDTO> {
 
 	private final ConsecutivoMapper consecutivoMapper;
 
-	public ConsecutivoSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ConsecutivoMapper consecutivoMapper,
+	public ConsecutivoSvc(@Lazy ConsecutivoMapper consecutivoMapper,
 			@Lazy DocumentoPlantillaSvc plantillaService) {
-		super(usuarioSesionService);
 		this.consecutivoMapper = consecutivoMapper;
 		this.plantillaService = plantillaService;
 	}
@@ -51,20 +49,20 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	}
 
 	@Override
-	public ConsecutivoDTO activar(ConsecutivoDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public ConsecutivoDTO activar(ConsecutivoDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ConsecutivoDTO actualizar(ConsecutivoDTO dto, String token) throws ServerException {
-		return super.actualizar(dto, token);
+	public ConsecutivoDTO actualizar(ConsecutivoDTO dto) throws ServerException {
+		return super.actualizar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ConsecutivoDTO inactivar(ConsecutivoDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public ConsecutivoDTO inactivar(ConsecutivoDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -83,7 +81,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 	}
 
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ConsecutivoDTO asignarConsecutivo(ConsecutivoDTO dto, String token) throws ServerException {
+	public ConsecutivoDTO asignarConsecutivo(ConsecutivoDTO dto) throws ServerException {
 		if (dto.getLlaveTabla() == null)
 			throw new ServerException("Para asignar el consecutivo se debe enviar la clave del consecutivo");
 		ConsecutivoDTO consecutivoBD = consultaXId(dto.getLlaveTabla());
@@ -129,11 +127,11 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ConsecutivoDTO guardar(ConsecutivoDTO dto, String token) throws ServerException {
-		return super.guardar(dto, token);
+	public ConsecutivoDTO guardar(ConsecutivoDTO dto) throws ServerException {
+		return super.guardar(dto);
 	}
 
-	public void crear(String plantillaId, String token) throws ServerException {
+	public void crear(String plantillaId) throws ServerException {
 		// A veces el numero del consecutivo se repetia en ese caso toca evitar para las
 		// automaticas que se cree error
 		DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(plantillaId);
@@ -149,12 +147,12 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		nuevo.setNumeroInicial(new BigDecimal(100));
 		nuevo.setNumeroActual(new BigDecimal(100));
 		// if(cantidad!=null)nuevo.setNumeroFinal(cantidad.add(augend));
-		nuevo = guardar(nuevo, token);
+		nuevo = guardar(nuevo);
 		plantilla.setConsecutivo(nuevo.getLlaveTabla());
 		plantillaService.update(plantilla);
 	}
 
-	public ConsecutivoDTO crear2Opcion(String consecutivo, String campo, String opcion, String token)
+	public ConsecutivoDTO crear2Opcion(String consecutivo, String opcion)
 			throws ServerException {
 		ConsecutivoDTO actual = consultaXId(consecutivo);
 		if (actual == null)
@@ -183,7 +181,7 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 			nuevo.setNumeroActual(actual.getNumeroFinal());
 			nuevo.setNumeroFinal(nuevo.getNumeroInicial().add(actual.getNumeroFinal()));
 		}
-		return guardar(nuevo, token);
+		return guardar(nuevo);
 	}
 
 	public ConsecutivoDTO consultarConsecutivoManual() throws ServerException {

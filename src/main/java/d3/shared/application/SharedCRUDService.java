@@ -38,6 +38,7 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	public T findById(String llave) throws ServerException {
 		throw new ServerException("Este metodo debe ser sobreescrito en cada servicio");
 	}
@@ -50,7 +51,7 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 		}
 	}
 
-	public T delete(String idToInactivate, String user) throws ServerException {
+	public T delete(String idToInactivate) throws ServerException {
 		T dto = findById(idToInactivate);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
@@ -65,7 +66,7 @@ public class SharedCRUDService<T extends SharedDataObject, TFilter extends Share
 		return dto;
 	}
 
-	public T restore(String idToRestore, String token) throws ServerException {
+	public T restore(String idToRestore) throws ServerException {
 		T dto = findById(idToRestore);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a Activar");

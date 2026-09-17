@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.shared.application.SessionContext;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentCommons;
@@ -35,123 +36,74 @@ public class HomologateFee {
 		this.feeService = feeService;
 	}
 
-	public void createFeeFields(String templateId, String token, DocumentoPlantillaCaracteristicaSvc campoService,
+	public void createFeeFields(String templateId, DocumentoPlantillaCaracteristicaSvc campoService,
 			PropiedadSvc propertyService, CallDocumentCRUD crudService) throws ServerException {
 
 		List<String> fieldsTemplate = new ArrayList<>();
 
 		// ctar_tarifario varchar(32) NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "TARIFARIO",
-				DocumentoPlantillaCaracteristicaDTO.PROCESO, 1, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "TARIFARIO", DocumentoPlantillaCaracteristicaDTO.PROCESO, 1));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
+				fieldsTemplate.get(0), Propiedades.PERMISO_CAMPO_RENDER, "1"));
 		// ctar_producto varchar(32) NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO,
-				2, token));
+		fieldsTemplate
+				.add(campoService.createField(templateId, "PRODUCTO", DocumentoPlantillaCaracteristicaDTO.PROCESO, 2));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
 		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
-		// ctar_recurso varchar(32) NULL,
-		/*
-		 * fieldsTemplate.add( campoService.createField(templateId, "DIM_1",
-		 * DocumentoPlantillaCaracteristicaDTO.PROCESO, 3, token));
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-		 * Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-		 * Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(2),
-		 * Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
-		 */
-		// ctar_dimension2 varchar(32) NULL,
-		/*
-		 * fieldsTemplate.add( campoService.createField(templateId, "DIM_2",
-		 * DocumentoPlantillaCaracteristicaDTO.PROCESO, 4, token));
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-		 * Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-		 * Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(3),
-		 * Propiedades.PERMISO_CAMPO_RENDER, "1", token), token); // ctar_dimension3
-		 * varchar(32) NULL fieldsTemplate.add( campoService.createField(templateId,
-		 * "DIM_3", DocumentoPlantillaCaracteristicaDTO.PROCESO, 5, token));
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
-		 * Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
-		 * Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(4),
-		 * Propiedades.PERMISO_CAMPO_RENDER, "1", token), token); // ctar_dimension4
-		 * varchar(32) NULL, fieldsTemplate.add( campoService.createField(templateId,
-		 * "DIM_4", DocumentoPlantillaCaracteristicaDTO.PROCESO, 6, token));
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
-		 * Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
-		 * Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		 * propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(
-		 * PropiedadValorDefinidoDTO.CAMPO, fieldsTemplate.get(5),
-		 * Propiedades.PERMISO_CAMPO_RENDER, "1", token), token);
-		 */
-		// mtar_valorminimo numeric(18, 6) DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "VALOR_MINIMO",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 3, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(
-				campoService.createField(templateId, "VALOR", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// mtar_valormaximo numeric(18, 6) DEFAULT 0 NOT NUL,
-		fieldsTemplate.add(campoService.createField(templateId, "VALOR_MAXIMO",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 5, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// ntar_cantidadmaxima int4 DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MINIMA",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 6, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(5), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(5), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// ntar_cantidadminima int4 DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "CANTIDAD_MAXIMA",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 7, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(6), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(6), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
-		// mtar_totalminimo numeric(18, 6) DEFAULT 0 NOT NULL,
-		fieldsTemplate.add(campoService.createField(templateId, "TOTAL_MINIMO",
-				DocumentoPlantillaCaracteristicaDTO.NUMERO, 8, token));
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(7), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1", token), token);
-		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
-				fieldsTemplate.get(7), Propiedades.PERMISO_CAMPO_OPCIONAL, "1", token), token);
+				fieldsTemplate.get(1), Propiedades.PERMISO_CAMPO_RENDER, "1"));
 
-		sincronizeFee(templateId, fieldsTemplate, token, crudService);
+		// mtar_valorminimo numeric(18, 6) DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "VALOR_MINIMO", DocumentoPlantillaCaracteristicaDTO.NUMERO, 3));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(2), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+		// mtar_valor numeric(18, 6) DEFAULT 0 NOT NULL,
+		fieldsTemplate
+				.add(campoService.createField(templateId, "VALOR", DocumentoPlantillaCaracteristicaDTO.NUMERO, 4));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(3), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+		// mtar_valormaximo numeric(18, 6) DEFAULT 0 NOT NUL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "VALOR_MAXIMO", DocumentoPlantillaCaracteristicaDTO.NUMERO, 5));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(4), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+		// ntar_cantidadmaxima int4 DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "CANTIDAD_MINIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 6));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(5), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(5), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+		// ntar_cantidadminima int4 DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "CANTIDAD_MAXIMA", DocumentoPlantillaCaracteristicaDTO.NUMERO, 7));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(6), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(6), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+		// mtar_totalminimo numeric(18, 6) DEFAULT 0 NOT NULL,
+		fieldsTemplate.add(
+				campoService.createField(templateId, "TOTAL_MINIMO", DocumentoPlantillaCaracteristicaDTO.NUMERO, 8));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(7), Propiedades.PERMISO_CAMPO_MODIFICABLE, "1"));
+		propertyService.guardarEnCasoQueNoExista(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
+				fieldsTemplate.get(7), Propiedades.PERMISO_CAMPO_OPCIONAL, "1"));
+
+		sincronizeFee(templateId, fieldsTemplate, crudService);
 	}
 
-	private void sincronizeFee(String templateId, List<String> fieldsTemplate, String token,
-			CallDocumentCRUD crudService) throws ServerException {
+	private void sincronizeFee(String templateId, List<String> fieldsTemplate, CallDocumentCRUD crudService)
+			throws ServerException {
 		TarifarioFilterDTO filter = new TarifarioFilterDTO();
 		filter.setState(SharedConstants.STATE_ACTIVE);
 		List<TarifarioDTO> tariffs = tariffService.getMany(filter);
@@ -234,8 +186,8 @@ public class HomologateFee {
 						fieldTotalMin.setValorNumero(iFee.getTotalMinimo());
 						document.getCaracteristicas().add(fieldTotalMin);
 
-						document.setFuncionario(feeService.getUserFlex(token));
-						document = crudService.saveWithoutTransaction(document, token, true);
+						document.setFuncionario(SessionContext.getCurrentUser());
+						document = crudService.saveWithoutTransaction(document, true);
 						iFee.setDocumento(document.getLlaveTabla());
 						feeService.update(iFee);
 					}
@@ -244,7 +196,7 @@ public class HomologateFee {
 		}
 	}
 
-	public void createFee(PedidoVentaDTO document, String token, CallDocumentCRUD crudService) throws ServerException {
+	public void createFee(PedidoVentaDTO document) throws ServerException {
 		TarifaFilterDTO filter = new TarifaFilterDTO();
 		filter.setDocumento(document.getLlaveTabla());
 		// Sucede que el actualizar crea una nueva tarifa asi que toca filtrar por
@@ -266,7 +218,7 @@ public class HomologateFee {
 			newFee.setCantidadMinima(CallDocumentCommons.getValueNumberInt(document, "CANTIDAD_MINIMA"));
 			newFee.setCantidadMaxima(CallDocumentCommons.getValueNumberInt(document, "CANTIDAD_MAXIMA"));
 			newFee.setTotalMinimo(CallDocumentCommons.getValueNumber(document, "TOTAL_MINIMO"));
-			feeService.guardar(newFee, token);
+			feeService.guardar(newFee);
 		} else {
 			if (document.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 				if (newFee.getEstado().compareTo(SharedConstants.STATE_INACTIVE) != 0) {
@@ -291,7 +243,7 @@ public class HomologateFee {
 				// if(newFee.getValor()==null) newFee.setValor(BigDecimal.ZERO);
 
 				newFee.setEstado(SharedConstants.STATE_ACTIVE);
-				feeService.actualizar(newFee, token);
+				feeService.actualizar(newFee);
 			}
 		}
 	}

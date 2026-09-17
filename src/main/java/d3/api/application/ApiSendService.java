@@ -40,16 +40,16 @@ public class ApiSendService {
 		this.saveDocumentService = saveDocumentService;
 	}
 
-	public SharedIdResponse call(String token, DocumentRequest item) throws ServerException {
+	public SharedIdResponse call(DocumentRequest item) throws ServerException {
 		validateItem(item);
 		// Con el codigo de la plantilla consultar la plantilla completa
-		TemplateDTO template = findTemplate(item.getTemplate(), token);
+		TemplateDTO template = findTemplate(item.getTemplate());
 		// crear el documento con todos los campos vacios
 		PedidoVentaDTO document = createDocument(template);
 		// Por cada campo con el codigo del campo colocar
-		assignateValue(document, item.getFields(), token);
+		assignateValue(document, item.getFields());
 		// Envio a guardar el documento
-		document = saveDocumentService.save(document, token, null);
+		document = saveDocumentService.save(document, null);
 		return new SharedIdResponse(document.getLlaveTabla(), document.getNombre(), document.getEstadoNombre(),
 				document.getMessages());
 	}
@@ -69,8 +69,7 @@ public class ApiSendService {
 		}
 	}
 
-	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields, String token)
-			throws ServerException {
+	private void assignateValue(PedidoVentaDTO document, List<FieldRequest> fields) throws ServerException {
 		if (fields == null || fields.isEmpty())
 			return;
 		for (FieldRequest fieldVO : fields) {
@@ -80,10 +79,10 @@ public class ApiSendService {
 					if (iCampo.getValorOpcion() == null && iCampo.getCampoDTO().getFormato()
 							.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 						if (fieldVO.getParentDocument() != null) {
-							String keyExists = searchProcessFromText.findOptionFromText(token, iCampo.getValorText(),
+							String keyExists = searchProcessFromText.findOptionFromText(iCampo.getValorText(),
 									iCampo.getCampoDTO());
 							if (keyExists == null) {
-								SharedIdResponse responseId = call(token, fieldVO.getParentDocument());
+								SharedIdResponse responseId = call(fieldVO.getParentDocument());
 								iCampo.setValorOpcion(responseId.getId());
 							}
 						}
@@ -108,11 +107,11 @@ public class ApiSendService {
 		return document;
 	}
 
-	private TemplateDTO findTemplate(String template, String token) throws ServerException {
+	private TemplateDTO findTemplate(String template) throws ServerException {
 		DocumentoPlantillaDTO templateDTO = plantillaService.consultarPorCodigo(template);
 		if (templateDTO == null)
 			throw new ServerException("La plantilla no se encuentra por el codigo " + template);
-		return plantillaService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), token, true);
+		return plantillaService.obtenerCampos(TemplateDTO.fromDocumentoPlantilla(templateDTO), true);
 	}
 
 }

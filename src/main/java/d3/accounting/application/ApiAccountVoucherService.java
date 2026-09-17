@@ -27,7 +27,6 @@ import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.SharedIdResponse;
-import d3.shared.domain.SharedToken;
 
 @Service
 public class ApiAccountVoucherService {
@@ -50,8 +49,8 @@ public class ApiAccountVoucherService {
 		this.documentService = documentService;
 	}
 
-	public SharedIdResponse call(SharedToken _token, VoucherRequest _item) throws ServerException {
-		validateItem(_item, _token);
+	public SharedIdResponse call(VoucherRequest _item) throws ServerException {
+		validateItem(_item);
 
 		Voucher voucher = new Voucher();
 
@@ -114,10 +113,10 @@ public class ApiAccountVoucherService {
 			lines.add(_line);
 		}
 		voucher.setRecords(lines);
-		return createService.call(voucher, _token);
+		return createService.call(voucher);
 	}
 
-	private void validateItem(VoucherRequest item, SharedToken pToken) throws ServerException {
+	private void validateItem(VoucherRequest item) throws ServerException {
 
 		if (item.getCatalog() == null || item.getCatalog().isEmpty())
 			throw new ServerException("El codigo del catalogo no se reconoce");
@@ -137,7 +136,7 @@ public class ApiAccountVoucherService {
 		if (item.getLines() == null || item.getLines().isEmpty())
 			throw new ServerException("El documento no tiene campos, recuerda usar el tag lines");
 
-		TypeDTO type = typeService.call(item.getType(), catalog.getKey(), pToken);
+		TypeDTO type = typeService.call(item.getType(), catalog.getKey());
 
 		if (type.getService() != null && (item.getDocument() == null || item.getDocument().isEmpty()))
 			throw new ServerException("El tipo de documento es automatico y no se ha enviado el documento");

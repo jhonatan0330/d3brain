@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.application.SharedAuthenticateService;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.SharedToken;
@@ -26,17 +25,15 @@ import d3.authentication.domain.UsuarioSesionErrorDTO;
 import d3.authentication.infrastructure.UsuarioAutenticacionMapper;
 import d3.configuration.domain.PropiedadDTO;
 import d3.document.application.field.Propiedades;
-import d3.shared.application.HttpUtils;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service("usuarioAutenticacionService")
-public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO>
-		implements SharedAuthenticateService {
+public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, UsuarioAutenticacionFilterDTO> {
 
 	private final UsuarioAutenticacionMapper usuarioAutenticacionMapper;
 	private final UsuarioAutenticacionAutorizacionSvc authorizationService;
@@ -49,7 +46,6 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			@Lazy UsuarioAutenticacionMapper usuarioAutenticacionMapper,
 			@Lazy UsuarioAutenticacionAutorizacionSvc authorizationService, @Lazy OrganizacionSvc organizacionService,
 			@Lazy UsuarioSvc usuarioService, @Lazy UsuarioSesionErrorSvc errorService) {
-		super(usuarioSesionService);
 		this.usuarioAutenticacionMapper = usuarioAutenticacionMapper;
 		this.authorizationService = authorizationService;
 		this.organizacionService = organizacionService;
@@ -101,7 +97,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		if (autho != null) {
 			filtro.setUsuario(autho.getUsuario());
 		} else {
-			filtro.setUsuario(getUserFlex(token));
+			filtro.setUsuario(SessionContext.getCurrentUser());
 		}
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		user = consultaUnica(filtro);
@@ -142,13 +138,13 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto, String token) throws ServerException {
+	public UsuarioAutenticacionDTO guardar(UsuarioAutenticacionDTO dto) throws ServerException {
 		dto.setFechaMaxima(getNewMaximunDate(dto.getUsuario()));
 		dto.setFechaCreacion(new Date());
-		return super.guardar(dto, token);
+		return super.guardar(dto);
 	}
 
-	public void crearAutenticacion(String usuario, String token) throws ServerException {
+	public void crearAutenticacion(String usuario) throws ServerException {
 		UsuarioAutenticacionFilterDTO filtro1 = new UsuarioAutenticacionFilterDTO();
 		filtro1.setUsuario(usuario);
 		filtro1.setEstado(SharedConstants.STATE_ACTIVE);
@@ -158,7 +154,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			aut.setUsuario(usuario);
 			aut.setClave(user.getIdentificacion());
 			aut.setSesion(user.getIdentificacion());
-			guardar(aut, token);
+			guardar(aut);
 		}
 	}
 
@@ -247,28 +243,19 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioAutenticacionDTO autenticacion = null;
 
 		UsuarioSesionDTO sesion = null;
-		if (dto.getSecurityToken() != null && dto.getClave() == null) {
-			// Tengo que arreglar el tema del número de sesiones
-			/*
-			 * if(dto.getUsuario()!=null) { sesion =
-			 * usuarioSesionService.getSessionCacheByUser(dto.getUsuario()); if(sesion !=
-			 * null) {
-			 * if(sesion.getLlaveTabla().compareTo(dto.getSecurityToken())!=0)reportarError(
-			 * dto, "Usuario perdio autenticacion por maximo numero de sesiones."); } }
-			 */
-			// if(sesion == null) {
-			sesion = usuarioSesionService.getUserSession(dto.getSecurityToken());
+		if (SessionContext.getCurrentTokenOrNull() != null && dto.getClave() == null) {
+
+			sesion = usuarioSesionService.getUserSession(SessionContext.getCurrentToken());
 			if (sesion == null)
 				reportarError(dto, "Autenticacion incorrecta por token");
-			if (sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+			if (sesion != null && sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 				reportarError(dto, "Se encuentra inactiva la sesion");
-			if (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
+			if (sesion != null && sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)
 				reportarError(dto, "Usuario perdio autenticacion por tiempo.");
-			// }
 			autenticacion = new UsuarioAutenticacionDTO();
-			autenticacion.setUsuario(sesion.getUsuario());
+			autenticacion.setUsuario((sesion != null) ? sesion.getUsuario() : null);
 		} else {
-			if (dto.getClave() != null && dto.getSesion() == null && dto.getSecurityToken() != null) {
+			if (dto.getClave() != null && dto.getSesion() == null && SessionContext.getCurrentTokenOrNull() != null) {
 				autenticacion = consultaXId(dto.getClave());
 			}
 			if (autenticacion == null) {
@@ -284,34 +271,43 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			}
 			if (autenticacion == null)
 				reportarError(dto, "Autenticacion incorrecta");
-			if (autenticacion.getFechaMaxima() != null) {
+			if (autenticacion != null && autenticacion.getFechaMaxima() != null) {
 				if (((autenticacion.getFechaMaxima().getTime() - new Date().getTime()) / (24 * 3600000)) <= -7) {
 					reportarError(dto, "Por seguridad, es necesario actualizar la clave de acceso");
 				}
 			}
 		}
 
-		UsuarioDTO usuario = usuarioService.consultaXId(autenticacion.getUsuario());
+		UsuarioDTO usuario = usuarioService.consultaXId((autenticacion != null) ? autenticacion.getUsuario() : null);
 		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			reportarError(dto, "El usuario no se encuentra activo");
-		autenticacion.setUsuarioDTO(usuario);
+		if (autenticacion != null)
+			autenticacion.setUsuarioDTO(usuario);
 
 		if (!fromApi) {
-			autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
+			if (autenticacion != null)
+				autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
 		} else {
-			sesion = usuarioSesionService.getSessionCacheByUser(usuario.getLlaveTabla());
+			SharedToken cachedSession = usuarioSesionService.getSessionCacheByUser(usuario.getLlaveTabla());
+			if (cachedSession != null) {
+				sesion = new UsuarioSesionDTO();
+				sesion.setLlaveTabla(cachedSession.getToken());
+				sesion.setUsuario(cachedSession.getUser());
+				sesion.setFechaCierre(cachedSession.getFechaCierre());
+				sesion.setPrivada(cachedSession.getPrivada());
+				sesion.setEstado(SharedConstants.STATE_ACTIVE);
+			}
 		}
-
 		if (sesion == null) {
 			sesion = new UsuarioSesionDTO();
 
-			if (sesion.getFechaCierre() == null && autenticacion.getFechaMaxima() != null)
+			if (sesion.getFechaCierre() == null && autenticacion != null && autenticacion.getFechaMaxima() != null)
 				sesion.setFechaCierre(autenticacion.getFechaMaxima());
-			sesion.setUsuario(autenticacion.getUsuario());
+			sesion.setUsuario(usuario.getLlaveTabla());
 			sesion.setIp(dto.getIp());
 			sesion.setPrivada(true);
 			sesion = usuarioSesionService.guardar(sesion);
-			if (autenticacion.getOrganizacion() != null) {
+			if (autenticacion != null && autenticacion.getOrganizacion() != null) {
 				if (Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.APP_DFA) != null) {
 					// Mientras terminamos lo del flex
 					if (dto.getIp() != null)
@@ -320,7 +316,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				}
 			}
 		}
-		autenticacion.setToken(sesion.getLlaveTabla());
+		if (autenticacion != null)
+			autenticacion.setToken(sesion.getLlaveTabla());
 
 		if (!fromApi) {
 
@@ -368,14 +365,15 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		return autenticacion;
 	}
 
-	public UsuarioAutenticacionDTO checkToken(String token, String ip) throws ServerException {
-		UsuarioSesionDTO sesion = usuarioSesionService.checkToken(token);
+	public UsuarioAutenticacionDTO checkToken(String ip) throws ServerException {
+		UsuarioSesionDTO sesion = usuarioSesionService.checkToken();
 		if (sesion == null || sesion.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0
-				|| (sesion.getFechaCierre() != null && sesion.getFecha().compareTo(new Date()) > 0)) {
+				|| (sesion.getFechaCierre() != null && sesion.getFecha() != null
+						&& sesion.getFecha().compareTo(new Date()) > 0)) {
 			UsuarioSesionErrorDTO use = new UsuarioSesionErrorDTO();
 			use.setIp(ip);
 			use.setFecha(new Date());
-			use.setSesion(token);
+			use.setSesion(SessionContext.getCurrentToken());
 			use.setError("Error validando Token");
 			errorService.saveSimple(use);
 			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
@@ -396,49 +394,21 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			Calendar newDate = Calendar.getInstance();
 			newDate.add(Calendar.MONTH, 2);
 			return newDate.getTime();
-		} else {
-			try {
-				int days = Integer.parseInt(timeToNewPassword);
-				if (days == 0) {
-					return null;
-				}
-				Calendar newDate = Calendar.getInstance();
-				newDate.add(Calendar.DAY_OF_MONTH, days);
-				return newDate.getTime();
-			} catch (NumberFormatException e) {
-				throw new ServerException(
-						"Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : "
-								+ timeToNewPassword);
-			}
 		}
 
-	}
-
-	@Override
-	public SharedToken validate(String token, HttpServletRequest request) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (request == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		UsuarioAutenticacionDTO auth = checkToken(token, HttpUtils.getRequestIP(request));
-		UsuarioDTO user = usuarioService.consultaXId(auth.getUsuario());
-		if (user == null || user.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		SharedToken st = new SharedToken();
-		st.setToken(token);
-		st.setUser(user.getLlaveTabla());
-		st.setUserId(user.getIdentificacion());
-		st.setUserName(user.getNombre());
-		return st;
-	}
-
-	@Override
-	public String getUser(String token, HttpServletRequest request) throws ServerException {
-		if (token == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		if (request == null)
-			throw new ServerException("Usuario perdio autenticacion.\nCODE:caud_usuario");
-		return checkToken(token, HttpUtils.getRequestIP(request)).getUsuario();
+		try {
+			int days = Integer.parseInt(timeToNewPassword);
+			if (days == 0) {
+				return null;
+			}
+			Calendar newDate = Calendar.getInstance();
+			newDate.add(Calendar.DAY_OF_MONTH, days);
+			return newDate.getTime();
+		} catch (NumberFormatException e) {
+			throw new ServerException(
+					"Existe un error en la propiedad TIEMPO DE SOLICITAR NUEVA CLAVE, el valor no es numerico : "
+							+ timeToNewPassword + e.getMessage());
+		}
 
 	}
 

@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedConstants;
 import d3.authentication.application.UsuarioSesionSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
@@ -28,10 +26,6 @@ import d3.document.application.PedidoVentaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.shared.application.BasicSvc;
-import d3.shared.application.ProcessTemplate;
-import d3.users.application.UsuarioSvc;
-import d3.users.domain.UsuarioDTO;
 import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.report.domain.ReportDTO;
@@ -40,8 +34,14 @@ import d3.report.domain.ReporteBaseFilterDTO;
 import d3.report.domain.ReporteEjecucionDTO;
 import d3.report.domain.ReporteEjecucionFilterDTO;
 import d3.report.infrastructure.ReporteBaseMapper;
+import d3.shared.application.BasicSvc;
+import d3.shared.application.ProcessTemplate;
+import d3.shared.application.SessionContext;
+import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
-
+import d3.users.application.UsuarioSvc;
+import d3.users.domain.UsuarioDTO;
 import jakarta.annotation.PostConstruct;
 
 @DependsOnDatabaseInitialization
@@ -62,14 +62,13 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	private final JasperReportCache cacheService;
 	private final ProcessTemplate processesTemplate;
 
-	public ReporteBaseSvc(@Lazy UsuarioSesionSvc usuarioSesionService, @Lazy ReporteBaseMapper reporteBaseMapper,
+	public ReporteBaseSvc(@Lazy ReporteBaseMapper reporteBaseMapper,
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService,
 			@Lazy PedidoVentaSvc pedidoVentaService, @Lazy PropiedadSvc propiedadService,
 			@Lazy PropertyGetWithCacheService cachePropertyService, @Lazy UsuarioSesionSvc autenticacionService,
 			@Lazy UsuarioSvc usuarioService, @Lazy ReporteEjecucionSvc ejecucionService, @Lazy UploadSvc uploadService,
 			@Lazy MailSendMessageToAdminService mensajeToAdminService, @Lazy JasperReportCache cacheService,
 			@Lazy ProcessTemplate processesTemplate, @Lazy DataSource dataSource) {
-		super(usuarioSesionService);
 		this.reporteBaseMapper = reporteBaseMapper;
 		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
 		this.pedidoVentaService = pedidoVentaService;
@@ -102,13 +101,13 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	}
 
 	@Override
-	public ReporteBaseDTO activar(ReporteBaseDTO dto, String token) throws ServerException {
-		return super.activar(dto, token);
+	public ReporteBaseDTO activar(ReporteBaseDTO dto) throws ServerException {
+		return super.activar(dto);
 	}
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteBaseDTO actualizar(ReporteBaseDTO dto, String token) throws ServerException {
+	public ReporteBaseDTO actualizar(ReporteBaseDTO dto) throws ServerException {
 		validateUnique(dto);
 		propiedadService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return super.update(dto);
@@ -116,8 +115,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteBaseDTO inactivar(ReporteBaseDTO dto, String token) throws ServerException {
-		return super.inactivar(dto, token);
+	public ReporteBaseDTO inactivar(ReporteBaseDTO dto) throws ServerException {
+		return super.inactivar(dto);
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-	public ReporteBaseDTO guardar(ReporteBaseDTO dto, String token) throws ServerException {
+	public ReporteBaseDTO guardar(ReporteBaseDTO dto) throws ServerException {
 		validateUnique(dto);
 		return super.save(dto);
 	}
@@ -170,11 +169,11 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return result;
 	}
 
-	public List<ReporteBaseDTO> listarMenu() throws ServerException {
+	public List<ReporteBaseDTO> listarMenu() {
 		return reporteBaseMapper.listarMenu();
 	}
 
-	public Map<String, Object> llenarParametros(String keyDocumento) throws ServerException {
+	public Map<String, Object> llenarParametros(String keyDocumento) {
 		Map<String, Object> parametrosJasper = new HashMap<String, Object>();
 		parametrosJasper.put(P_KEY, keyDocumento);
 		List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService
@@ -267,7 +266,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		return consultaUnica(filter);
 	}
 
-	public ReporteBaseDTO validateReport(String reportId, String token) throws ServerException {
+	public ReporteBaseDTO validateReport(String reportId) throws ServerException {
 		ReporteBaseDTO base = consultaXId(reportId);
 		if (base == null) {
 			base = getByCode(reportId, null);
@@ -275,18 +274,12 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				throw new ServerException("Reporte base no encontrado");
 		}
 		base.setPropiedades(cachePropertyService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE,
-				base.getLlaveTabla(), null, getUserFromParameters(token)));// getUserFlex(token)
+				base.getLlaveTabla(), null, SessionContext.getCurrentUserOrNull()));// getUserFlex(token)
 		return base;
 	}
 
-	public String getUserFromParameters(String token) throws ServerException {
-		if (token == null)
-			return null;
-		return getUserFlex(token);
-	}
-
-	public ReportDTO generarReporte(ReporteBaseDTO reporte, String key, Map<String, Object> parametrosJasper,
-			String token) throws Exception {
+	public ReportDTO generarReporte(ReporteBaseDTO reporte, String key, Map<String, Object> parametrosJasper)
+			throws Exception {
 		ReporteEjecucionDTO ejecucion = new ReporteEjecucionDTO();
 		ejecucion.setFechaInicio(new Date());
 		ejecucion.setReporte(reporte.getLlaveTabla());
@@ -296,7 +289,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			uniqueFilter.setDocumento(key);
 			uniqueFilter.setReporte(reporte.getLlaveTabla());
 			List<ReporteEjecucionDTO> ejecuciones = ejecucionService.listarConsulta(uniqueFilter);
-			if (ejecuciones != null & ejecuciones.size() != 0) {
+			if (ejecuciones != null && ejecuciones.size() != 0) {
 				UsuarioDTO usuarioImpresion = usuarioService.consultaXId(ejecuciones.get(0).getUsuario());
 				throw new ServerException(
 						"Este reportes esta configurado para ejecutarse una unica vez, fue impreso el "
@@ -304,7 +297,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 								+ usuarioImpresion.getNombre());
 			}
 		}
-		String usuario = getUserFromParameters(token);
+		String usuario = SessionContext.getCurrentUserOrNull();
 		ejecucion.setDocumento(key);
 		PedidoVentaDTO document = null;
 		if (key != null)
@@ -322,7 +315,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 					throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");
 				}
 			}
-			propiedadService.validarFuncionConsultandoPropiedad(reporte, key, null, usuario, token);
+			propiedadService.validarFuncionConsultandoPropiedad(reporte, key, null);
 			if (parametrosJasper == null)
 				parametrosJasper = new HashMap<String, Object>();
 			ejecucion.setUsuario(usuario);
@@ -409,8 +402,8 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			try {
 				if (Propiedades.obtenerParametro(reporte, Propiedades.REP_EXCLUDE_STORAGE_FILE) == null)
 					ejecucion.setUrl(uploadService.uploadFile(resultado, reporte.getNombre() + "_("
-							+ DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), token,
-							"reports", "private"));
+							+ DateFormat.getInstance().format(new Date()) + ")." + tipoReporte.toLowerCase(), "reports",
+							"private"));
 			} catch (Exception e) {
 			}
 			ejecucion = ejecucionService.saveWithHistoric(ejecucion, historic);
@@ -442,6 +435,5 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	public List<ReporteBaseDTO> getFullToSynchronize(List<String> process) {
 		return reporteBaseMapper.getFullToSynchronize(process);
 	}
-
 
 }
