@@ -23,12 +23,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import d3.accounting.application.StackAccountProccessService;
+import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.infrastructure.SessionFilter;
 import d3.mail.application.MailReleaseMessageQueueService;
 import d3.multitenancy.TenantIteratorService;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.report.ReporteServlet;
 import d3.report.application.ReporteBaseSvc;
+import d3.shared.application.SessionContext;
 import d3.shared.application.SharedTokenService;
 import d3.usage.application.ConsumoUnidadProcesoService;
 import d3.webservice.application.WebServiceEjecucionSvc;
@@ -55,11 +57,13 @@ public class D3Configuration {
 	private final AutowireCapableBeanFactory beanFactory;
 
 	private final ConsumoUnidadProcesoService consumoProcesoService;
+	private final UsuarioSesionSvc autenticacionService;
 
 	public D3Configuration(@Lazy MailReleaseMessageQueueService mail, @Lazy ProcesoTransicionAutomaticaSvc auto,
 			@Lazy WebServiceEjecucionSvc apis, @Lazy ReporteBaseSvc report, @Lazy StackAccountProccessService stack,
 			Environment env, @Lazy TenantIteratorService tenantIteratorService, AutowireCapableBeanFactory beanFactory,
-			@Lazy ConsumoUnidadProcesoService consumoProcesoService, SharedTokenService sharedTokenService) {
+			@Lazy ConsumoUnidadProcesoService consumoProcesoService, SharedTokenService sharedTokenService,
+			@Lazy UsuarioSesionSvc autenticacionService) {
 		this.releaseQueueService = mail;
 		this.transicionservice = auto;
 		this.apiService = apis;
@@ -70,6 +74,7 @@ public class D3Configuration {
 		this.beanFactory = beanFactory;
 		this.consumoProcesoService = consumoProcesoService;
 		this.sharedTokenService = sharedTokenService;
+		this.autenticacionService = autenticacionService;
 	}
 
 	@Bean(name = "sqlSessionFactory")
@@ -88,6 +93,9 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.enabled")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+
 			System.out.println(
 					"******* CORREOS tenant=" + tenantId + " (" + releaseQueueService.call() + ") ***" + new Date());
 		});
@@ -100,6 +108,9 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.task")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+
 			System.out.println("*******TAREAS tenant=" + tenantId + " ("
 					+ transicionservice.lanzarTransaccionesTemporizadas() + ") ***" + new Date());
 			System.out.println("*******TAREAS PROGRAMADAS tenant=" + tenantId + " (" + transicionservice.programateAll()
@@ -114,7 +125,12 @@ public class D3Configuration {
 	public void sendAPI() {
 		if (!"true".equals(env.getProperty("cron.api")))
 			return;
-		tenantIteratorService.executeForAllTenants(tenantId -> apiService.apiToTransaction());
+		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+	
+				apiService.apiToTransaction();
+		});
 
 	}
 
@@ -122,8 +138,12 @@ public class D3Configuration {
 	public void sendAccount() {
 		if (!"true".equals(env.getProperty("cron.account")))
 			return;
-		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println(
-				"******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***" + new Date()));
+		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			System.out.println(
+				"******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***" + new Date());
+		});
 
 	}
 
@@ -131,8 +151,13 @@ public class D3Configuration {
 	public void sendHistorico() {
 		if (!"true".equals(env.getProperty("cron.historico")))
 			return;
-		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println("******* HISTORICO tenant=" + tenantId
-				+ " (" + transicionservice.moverDatosHistoricos() + ") ***" + new Date()));
+		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			System.out.println("******* HISTORICO tenant=" + tenantId
+				+ " (" + transicionservice.moverDatosHistoricos() + ") ***" + new Date());
+		});
+			
 
 	}
 
@@ -140,8 +165,12 @@ public class D3Configuration {
 	public void sendConsumo() {
 		if (!"true".equals(env.getProperty("cron.consumo")))
 			return;
-		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println("******* CONSUMO UNIDADES tenant="
-				+ tenantId + " (" + consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date()));
+		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			System.out.println("******* CONSUMO UNIDADES tenant="
+				+ tenantId + " (" + consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date());
+		});
 
 	}
 
@@ -149,9 +178,12 @@ public class D3Configuration {
 	public void sendConsumoDiario() {
 		if (!"true".equals(env.getProperty("cron.diario")))
 			return;
-		tenantIteratorService.executeForAllTenants(tenantId -> System.out.println("******* CONSUMO DIARIO tenant="
-				+ tenantId + " (" + consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date()));
-
+		tenantIteratorService.executeForAllTenants(tenantId -> {
+			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			System.out.println("******* CONSUMO DIARIO tenant="
+				+ tenantId + " (" + consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date());
+		});
 	}
 
 	@Bean
