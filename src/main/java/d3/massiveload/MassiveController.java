@@ -18,7 +18,7 @@ import d3.massiveload.domain.MassiveMasterRequest;
 import d3.shared.domain.ServerException;
 
 @RestController
-@RequestMapping("massiveload")
+@RequestMapping("massive-load")
 public class MassiveController {
 
 	private final MassiveLoadOrchestratorService orchestratorService;

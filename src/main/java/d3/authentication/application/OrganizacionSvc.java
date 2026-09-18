@@ -87,20 +87,6 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		}
 	}
 
-	public List<OrganizacionDTO> obtenerUsuario(String usuario) throws ServerException {
-		try {
-			List<OrganizacionDTO> organizaciones = organizacionMapper.obtenerUsuario(usuario);
-			if (organizaciones != null && !organizaciones.isEmpty()) {
-				for (OrganizacionDTO organizacionDTO : organizaciones) {
-					organizacionDTO.setPropiedades(cacheService.obtenerPropiedades(
-							PropiedadValorDefinidoDTO.ORGANIZACION, organizacionDTO.getLlaveTabla(), null, null));
-				}
-			}
-			return organizaciones;
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
 
 	public OrganizacionDTO obtenerPrincipalPropiedades(String user) throws ServerException {
 		OrganizacionDTO result = obtenerPrincipal();

@@ -1,4 +1,4 @@
-package d3.report.infrastructure;
+package d3.report;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -23,13 +23,13 @@ import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
 
 @RestController
-@RequestMapping("/api/reports")
+@RequestMapping("/report")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class ReportRestController {
+public class ReportController {
 
 	private final ReporteBaseSvc reporteBaseService;
 
-	public ReportRestController(@Lazy ReporteBaseSvc reporteBaseService) {
+	public ReportController(@Lazy ReporteBaseSvc reporteBaseService) {
 		this.reporteBaseService = reporteBaseService;
 	}
 

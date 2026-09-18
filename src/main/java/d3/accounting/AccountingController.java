@@ -34,15 +34,12 @@ import d3.accounting.domain.VoucherPrepareRequest;
 import d3.accounting.domain.VoucherRangeRequest;
 import d3.accounting.domain.VoucherRequest;
 import d3.api.application.ApiAuthorizeService;
-import d3.authentication.application.UsuarioSesionSvc;
-import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
-import d3.shared.domain.SharedToken;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/acc")
+@RequestMapping("/accounting")
 public class AccountingController {
 
 	private final VoucherCreateService createService;
@@ -56,14 +53,13 @@ public class AccountingController {
 	private final ApiAuthorizeService apiAuthorizeService;
 	private final ApiAccountVoucherService voucherService;
 	private final StackAccountProccessService accountService;
-	private final UsuarioSesionSvc autenticacionService;
 
 	public AccountingController(@Lazy VoucherCreateService createService, @Lazy VoucherDeleteService deleteService,
 			@Lazy VoucherGetService getVoucherService, @Lazy VoucherReCreateService recreateService,
 			@Lazy VoucherRangeService range, @Lazy PlanGetCatalogService getCatalogService,
 			@Lazy PlanGetAccountService getAccountService, @Lazy PlanGetBalanceService getBalanceService,
 			@Lazy ApiAuthorizeService apiAuthorizeService, @Lazy ApiAccountVoucherService voucherService,
-			@Lazy StackAccountProccessService accountService, @Lazy UsuarioSesionSvc autenticacionService) {
+			@Lazy StackAccountProccessService accountService) {
 		this.createService = createService;
 		this.deleteService = deleteService;
 		this.getVoucherService = getVoucherService;
@@ -75,7 +71,6 @@ public class AccountingController {
 		this.apiAuthorizeService = apiAuthorizeService;
 		this.voucherService = voucherService;
 		this.accountService = accountService;
-		this.autenticacionService = autenticacionService;
 	}
 
 	// ==================== VOUCHER ENDPOINTS ====================
@@ -155,16 +150,17 @@ public class AccountingController {
 	@PostMapping("/api/voucher")
 	public SharedIdResponse send(@RequestHeader(name = "x-api-key") String apiKey, @RequestBody VoucherRequest item)
 			throws ServerException {
-		String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-		SharedToken adminToken = autenticacionService.getUserToken(token);
-		apiAuthorizeService.call(apiKey);
-		SharedToken previous = SessionContext.getCurrent();
-		try {
-			SessionContext.setCurrent(adminToken);
+		// TODO: 
+		//String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+		//SharedToken adminToken = autenticacionService.getUserToken(token);
+		//apiAuthorizeService.call(apiKey);
+		//SharedToken previous = SessionContext.getCurrent();
+		//try {
+			//SessionContext.setCurrent(adminToken);
 			return voucherService.call(item);
-		} finally {
-			SessionContext.setCurrent(previous);
-		}
+		//} finally {
+		//	SessionContext.setCurrent(previous);
+		//}
 	}
 
 	@GetMapping("/api/ok")

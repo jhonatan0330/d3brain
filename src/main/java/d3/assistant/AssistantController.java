@@ -1,4 +1,4 @@
-package d3.assistant.infrastructure;
+package d3.assistant;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +13,7 @@ import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 
 @RestController
-@RequestMapping("/api/assistant")
+@RequestMapping("/assistant")
 public class AssistantController {
 
 	private final AssistantChatSvc assistantChatService;

@@ -1,6 +1,5 @@
 package d3.document;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -13,127 +12,52 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.authentication.application.OrganizacionSvc;
-import d3.authentication.application.UsuarioAutenticacionSvc;
-import d3.authentication.application.UsuarioOrganizacionSvc;
-import d3.authentication.application.UsuarioSesionSvc;
-import d3.authentication.domain.OrganizacionDTO;
-import d3.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
-import d3.authentication.domain.UsuarioAutenticacionDTO;
-import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
-import d3.authentication.domain.UsuarioOrganizacionDTO;
-import d3.authentication.domain.UsuarioSesionDTO;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.application.CallDocumentListWithFilters;
+import d3.document.application.DocumentoRelacionGestorSvc;
 import d3.document.application.PedidoVentaAjusteSvc;
+import d3.document.application.PedidoVentaCaracteristicaSvc;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.application.field.CampoAdaptador;
+import d3.document.domain.DocumentoRelacionGestorDTO;
+import d3.document.domain.DocumentoRelacionGestorFilterDTO;
 import d3.document.domain.PedidoVentaAjusteDTO;
+import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.inventory.application.ProductoInventarioSvc;
-import d3.inventory.domain.ProductoInventarioDTO;
-import d3.mail.application.MailReleaseMessageQueueService;
-import d3.notification.application.ActividadSvc;
-import d3.notification.domain.ActividadDTO;
-import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.application.ProcesoTransicionAutomaticaSvc;
-import d3.process.domain.TemplateDTO;
-import d3.shared.application.D3Utils;
-import d3.shared.application.HttpUtils;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedIdResponse;
-import d3.upload.domain.CargaArchivoDTO;
-import d3.users.application.UsuarioSvc;
-import d3.users.domain.UsuarioDTO;
-import d3.users.domain.UsuarioFilterDTO;
-import d3.webservice.application.WebServiceEjecucionSvc;
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/document")
 public class DocumentController {
 
-	private final PedidoVentaSvc pedidoVentaService;
 	private final CallDocumentCRUD saveUpdateDocumentFunction;
 	private final CallDocumentListWithFilters listDocumentWithFiltersFunction;
-	private final ActividadSvc actividadService;
-	private final ProductoInventarioSvc inventoryService;
-	private final MailReleaseMessageQueueService releaseQueueService;
-	private final ProcesoTransicionAutomaticaSvc transicionservice;
-	private final WebServiceEjecucionSvc apiService;
-	private final DocumentoPlantillaSvc plantillaService;
-	private final UsuarioAutenticacionSvc usuarioAutenticacionService;
-	private final UsuarioSesionSvc usuarioSessionService;
-	private final OrganizacionSvc organizacionService;
-	private final UsuarioOrganizacionSvc organizacionUsuarioService;
-	private final UsuarioSvc usuarioService;
-	private final PedidoVentaAjusteSvc pedidoVentaAjusteService;
 	private final CampoAdaptador adaptador;
+	private final DocumentoRelacionGestorSvc gestionService;
+	private final PedidoVentaSvc pedidoVentaService;
+	private final PedidoVentaAjusteSvc pedidoVentaAjusteService;
+	private final PedidoVentaCaracteristicaSvc fieldsService;
 
 	public DocumentController(@Lazy PedidoVentaSvc pedidoVentaService,
 			@Lazy CallDocumentCRUD saveUpdateDocumentFunction,
-			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction, @Lazy ActividadSvc actividadService,
-			@Lazy ProductoInventarioSvc inventoryService, @Lazy MailReleaseMessageQueueService releaseQueueService,
-			@Lazy ProcesoTransicionAutomaticaSvc transicionservice, @Lazy WebServiceEjecucionSvc apiService,
-			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy UsuarioAutenticacionSvc usuarioAutenticacionService,
-			@Lazy UsuarioSesionSvc usuarioSessionService, @Lazy OrganizacionSvc organizacionService,
-			@Lazy UsuarioOrganizacionSvc organizacionUsuarioService, @Lazy UsuarioSvc usuarioService,
+			@Lazy CallDocumentListWithFilters listDocumentWithFiltersFunction,
+			@Lazy PedidoVentaCaracteristicaSvc fieldsService, @Lazy DocumentoRelacionGestorSvc gestionService,
 			@Lazy PedidoVentaAjusteSvc pedidoVentaAjusteService, @Lazy CampoAdaptador adaptador) {
 		this.pedidoVentaService = pedidoVentaService;
 		this.saveUpdateDocumentFunction = saveUpdateDocumentFunction;
 		this.listDocumentWithFiltersFunction = listDocumentWithFiltersFunction;
-		this.actividadService = actividadService;
-		this.inventoryService = inventoryService;
-		this.releaseQueueService = releaseQueueService;
-		this.transicionservice = transicionservice;
-		this.apiService = apiService;
-		this.plantillaService = plantillaService;
-		this.usuarioAutenticacionService = usuarioAutenticacionService;
-		this.usuarioSessionService = usuarioSessionService;
-		this.organizacionService = organizacionService;
-		this.organizacionUsuarioService = organizacionUsuarioService;
-		this.usuarioService = usuarioService;
 		this.pedidoVentaAjusteService = pedidoVentaAjusteService;
 		this.adaptador = adaptador;
+		this.fieldsService = fieldsService;
+		this.gestionService = gestionService;
 	}
-
-	@GetMapping(value = "/test")
-	public String test() {
-		return "OK";
-	}
-
-	@GetMapping(value = "/ping_mail")
-	public String sendMail() throws ServerException {
-		return "******* CORREOS (" + releaseQueueService.call() + ") ***" + new Date().toString();
-	}
-
-	@GetMapping(value = "/ping_task")
-	public String sendTemporizer() throws ServerException {
-		int _launch = transicionservice.lanzarTransaccionesTemporizadas();
-		int _prepare = transicionservice.programateAll();
-		return "*******TAREAS (" + _launch + ") ***  PROGRAMADAS (" + _prepare + ") ***" + new Date().toString();
-	}
-
-	@GetMapping(value = "/ping_api")
-	public String sendApi() throws ServerException {
-		return apiService.apiToTransaction();
-	}
-
-	@PostMapping(value = "/getDocument")
-	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
-		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla());
-	}
-
-	@PostMapping(value = "/getDocuments")
-	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
-		return listDocumentWithFiltersFunction.listarAvanzado(filter);
-	}
-
-	@PostMapping(value = "/saveDocument")
+	
+	/*@PostMapping(value = "/saveDocument")
 	public PedidoVentaDTO guardarDocumento(@RequestBody PedidoVentaDTO document) throws ServerException {
 		PedidoVentaDTO result = new PedidoVentaDTO();
 		if (document.getLlaveTabla() == null) {
@@ -148,99 +72,9 @@ public class DocumentController {
 		result.setEstadoExpediente(document.getEstadoExpediente());
 		result.setEstadoNombre(document.getEstadoNombre());
 		return result;
-	}
-
-	@PostMapping(value = "/readActivity")
-	public ActividadDTO readActivity(@RequestBody ActividadDTO activity) throws ServerException {
-		return actividadService.readActivity(activity.getLlaveTabla());
-	}
-
-	@GetMapping(value = "/getInventory/{id}")
-	public List<ProductoInventarioDTO> getInventory(@PathVariable("id") String pId) throws ServerException {
-		return inventoryService.getByProducto(pId);
-	}
-
-	// ==================== MAIN ENDPOINTS (antes /main/*) ====================
-
-	@GetMapping(value = "/main/obtenerPrincipalOrganizacion")
-	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
-		return organizacionService.obtenerPrincipalPublic();
-	}
-
-	@PostMapping(value = "/main/autenticarUsuarioAutenticacion")
-	public UsuarioAutenticacionDTO autenticarUsuarioAutenticacion(HttpServletRequest request,
-			@RequestBody UsuarioAutenticacionFilterDTO filter) throws ServerException {
-		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.autenticar(filter, (filter.getClaveAnterior() == null),
-				D3Utils.getRequestUrl(request));
-	}
-
-	@PostMapping(value = "/main/checkToken")
-	public UsuarioAutenticacionDTO checkToken(HttpServletRequest request) throws ServerException {
-		return usuarioAutenticacionService.checkToken(HttpUtils.getRequestIP(request));
-	}
-
-	@PostMapping(value = "/main/cambiarClave")
-	public UsuarioAutenticacionDTO cambiarClave(HttpServletRequest request,
-			@RequestHeader(name = "Authorization", required = false) String token,
-			@RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
-		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.cambiarClave(filter, token);
-	}
-
-	@PostMapping(value = "/main/solicitarNuevaClave")
-	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(HttpServletRequest request,
-			@RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
-		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.solicitarNuevaClave(filter, D3Utils.getRequestUrl(request));
-	}
-
-	@PostMapping(value = "/main/cambiarClaveOtherSystem")
-	public UsuarioOrganizacionDTO cambiarClaveOtherSystem(@RequestBody UsuarioOrganizacionDTO dto)
-			throws ServerException {
-		return organizacionUsuarioService.reloadPassword(dto);
-	}
-
-	@GetMapping(value = "/main/checkSession")
-	public UsuarioSesionDTO checkToken() throws ServerException {
-		return usuarioSessionService.checkToken();
-	}
-
-	@GetMapping(value = "/main/consultaUsuarioDocumentoPlantilla")
-	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla()
-			throws ServerException {
-		return plantillaService.consultaUsuario();
-	}
-
-	@PostMapping(value = "/main/listarUsuarioPedidoVenta")
-	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws ServerException {
-		return listDocumentWithFiltersFunction.listarUsuario(dto);
-	}
-
-	// ==================== API ENDPOINTS (antes /rest/*) ====================
-
-	@PostMapping(value = "/api/logOut")
-	public UsuarioDTO logOut(@RequestBody UsuarioAutenticacionDTO autenticacion) throws ServerException {
-		if (autenticacion == null)
-			throw new ServerException("Los datos de autenticacion son nulos");
-		usuarioAutenticacionService.inactivar(autenticacion);
-		return null;
-	}
-
-	@PostMapping(value = "/api/consultarDocumento")
-	public PedidoVentaDTO apiConsultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro)
-			throws ServerException {
-		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla());
-		pedidoVentaService.clearPedidoResponse(_result);
-		return _result;
-	}
-
-	@PostMapping(value = "/api/validateBeforeNew")
-	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro) throws ServerException {
-		return pedidoVentaService.validateBeforeNew(documentoFiltro);
-	}
-
-	@PostMapping(value = "/api/guardarDocumento")
+	}*/
+	
+	@PostMapping(value = "/save")
 	public PedidoVentaDTO apiGuardarDocumento(@RequestBody PedidoVentaDTO documento,
 			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
 		if (documento.getLlaveTabla() == null) {
@@ -258,8 +92,8 @@ public class DocumentController {
 		result.setMessages(documento.getMessages());
 		return result;
 	}
-
-	@PostMapping(value = "/api/saveByMassive")
+	
+	@PostMapping(value = "/saveByMassive")
 	public PedidoVentaDTO saveByMassive(@RequestBody PedidoVentaDTO documento,
 			@RequestHeader(name = "non-duplicate", required = false) String session) throws ServerException {
 		documento = saveUpdateDocumentFunction.massive(documento, session);
@@ -273,34 +107,54 @@ public class DocumentController {
 		result.setMessages(documento.getMessages());
 		return result;
 	}
-
-	@PostMapping(value = "/api/consultarUsuario")
-	public UsuarioDTO consultarUsuario(@RequestBody UsuarioFilterDTO dto) throws ServerException {
-		return usuarioService.consultaUnica(dto);
+	
+	@PostMapping(value = "/get")
+	public List<PedidoVentaDTO> listarDocumentos(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
+		return listDocumentWithFiltersFunction.listarAvanzado(filter);
 	}
 
-	@PostMapping(value = "/api/consultarDatosBase")
-	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(@RequestBody PedidoVentaCaracteristicaFilterDTO dto)
+	@PostMapping(value = "/get-user")
+	public List<PedidoVentaDTO> listarUsuarioPedidoVenta(@RequestBody PedidoVentaFilterDTO dto) throws ServerException {
+		return listDocumentWithFiltersFunction.listarUsuario(dto);
+	}
+	
+	@PostMapping(value = "/getFieldData")
+	public PedidoVentaCaracteristicaFilterDTO consultarDatosBase(
+			@RequestBody PedidoVentaCaracteristicaFilterDTO filterField) throws ServerException {
+		return adaptador.consultarDatosBase(filterField);
+	}
+	
+	@PostMapping(value = "/getTrace")
+	public List<DocumentoRelacionGestorDTO> getTrace(@RequestBody DocumentoRelacionGestorFilterDTO filterField)
 			throws ServerException {
-		return adaptador.consultarDatosBase(dto);
+		return gestionService.listarExpedientesGestionadores(filterField);
+	}
+	
+
+	@PostMapping(value = "/getDocument")
+	public PedidoVentaDTO consultarDocumento(@RequestBody PedidoVentaFilterDTO filter) throws ServerException {
+		return pedidoVentaService.consultaCompleta(filter.getLlaveTabla());
 	}
 
-	@PostMapping(value = "/api/listarDocumentos")
-	public List<PedidoVentaDTO> apiListarDocumentos(@RequestBody PedidoVentaFilterDTO documentoFiltro)
+	@PostMapping(value = "/api/consultarDocumento")
+	public PedidoVentaDTO apiConsultarDocumento(@RequestBody PedidoVentaFilterDTO documentoFiltro)
 			throws ServerException {
-		return listDocumentWithFiltersFunction.listarAvanzado(documentoFiltro);
+		PedidoVentaDTO _result = pedidoVentaService.consultaCompleta(documentoFiltro.getLlaveTabla());
+		pedidoVentaService.clearPedidoResponse(_result);
+		return _result;
 	}
 
-	@PostMapping(value = "/api/obtenerCampos")
-	public TemplateDTO obtenerCampos(@RequestBody TemplateDTO documentoFiltro) throws ServerException {
-		return plantillaService.obtenerCampos(documentoFiltro, true);
+	@PostMapping(value = "/api/validateBeforeNew")
+	public PedidoVentaDTO validateBeforeNew(@RequestBody PedidoVentaFilterDTO documentoFiltro) throws ServerException {
+		return pedidoVentaService.validateBeforeNew(documentoFiltro);
 	}
 
-	@PostMapping(value = "/api/changePicture")
-	public UsuarioDTO cambiarImagen(@RequestBody CargaArchivoDTO request) throws ServerException {
-		if (request == null || request.getUrl() == null || request.getUrl().isEmpty())
-			throw new ServerException("La url de la imagen se encuentra vacia");
-		return usuarioService.changePicture(request.getUrl());
+
+	@GetMapping(value = "/api/getMessageToProcessField/{property}/{fieldValue}")
+	public SharedIdResponse message(@PathVariable(name = "property") String pProperty,
+			@PathVariable(name = "fieldValue") String pFieldValue) throws ServerException {
+		return new SharedIdResponse(null, null, null,
+				pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, SessionContext.getCurrentToken()));
 	}
 
 	@PostMapping(value = "/api/changeState")
@@ -308,11 +162,10 @@ public class DocumentController {
 		return pedidoVentaAjusteService.guardar(ajuste);
 	}
 
-	@GetMapping(value = "/api/getMessageToProcessField/{property}/{fieldValue}")
-	public SharedIdResponse message(@PathVariable(name = "property") String pProperty,
-			@PathVariable(name = "fieldValue") String pFieldValue) throws ServerException {
-		return new SharedIdResponse(null, null, null,
-				pedidoVentaService.getMessageToProcessField(pProperty, pFieldValue, SessionContext.getCurrentToken()));
+	@GetMapping(value = "/getTraceFields/{documentId}/{transaction}")
+	public List<PedidoVentaCaracteristicaDTO> getTraceFields(@PathVariable(name = "documentId") String pDocumentId,
+			@PathVariable(name = "transaction") String pTransaction) {
+		return fieldsService.listar2Gestor(pDocumentId, pTransaction);
 	}
 
 }

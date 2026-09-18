@@ -25,7 +25,7 @@ import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping("/upload")
 public class UploadController {
 
 	private final ServidorSvc servidorService;

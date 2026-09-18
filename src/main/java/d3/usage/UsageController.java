@@ -20,7 +20,7 @@ import d3.shared.domain.ServerException;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-@RequestMapping("/consumo-units")
+@RequestMapping("/usage")
 public class UsageController {
 
 	private final ConsumoUnidadProcesoService consumoUnidadProcesoService;

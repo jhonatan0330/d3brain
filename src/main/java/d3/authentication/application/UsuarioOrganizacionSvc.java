@@ -149,21 +149,7 @@ public class UsuarioOrganizacionSvc extends BasicSvc<UsuarioOrganizacionDTO, Usu
 		}
 	}
 
-	public UsuarioOrganizacionDTO reloadPassword(UsuarioOrganizacionDTO dto) throws ServerException {
-		if (dto.getTokenServer() == null)
-			throw new ServerException("Es necesario incluir la nueva clave");
-		UsuarioOrganizacionFilterDTO filter = new UsuarioOrganizacionFilterDTO();
-		filter.setEstado(SharedConstants.STATE_ACTIVE);
-		;
-		filter.setOrganizacion(dto.getOrganizacion());
-		filter.setUsuario(dto.getUsuario());
-		UsuarioOrganizacionDTO unique = consultaUnica(filter);
-		if (unique != null) {
-			inactivar(unique);
-		}
-		dto.setLlaveTabla(null);
-		return guardar(dto);
-	}
+
 
 	private void validateNotMainOrganization(String organizationId) throws ServerException {
 		var org = organizacionService.consultaXId(organizationId);

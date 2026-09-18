@@ -87,8 +87,8 @@ import d3.webservice.domain.WebServiceEjecucionFilterDTO;
 import d3.webservice.domain.WebServiceFilterDTO;
 
 @RestController
-@RequestMapping("/api/config")
-public class ConfigController {
+@RequestMapping("/configuration")
+public class ConfigurationController {
 
 	private final ConsecutivoSvc consecutivoService;
 	private final PropiedadValorDefinidoSvc propiedadValorDefinidoService;
@@ -115,7 +115,7 @@ public class ConfigController {
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
 
-	public ConfigController(@Lazy ConsecutivoSvc consecutivoService,
+	public ConfigurationController(@Lazy ConsecutivoSvc consecutivoService,
 			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
 			@Lazy ServidorSvc servidorService, @Lazy WebServiceSvc webServiceService,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy MensajeSvc mensajeService,
@@ -1215,5 +1215,11 @@ public class ConfigController {
 		if (dto == null || dto.getKey() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
 		return indicadorService.delete(dto.getKey());
+	}
+	
+	@PostMapping(value = "/getPropertyRelations")
+	public List<RelacionInternaDTO> getPropertyRelations(@RequestBody RelacionInternaFilterDTO filter)
+			throws ServerException {
+		return relacionInternaService.listarConsulta(filter);
 	}
 }

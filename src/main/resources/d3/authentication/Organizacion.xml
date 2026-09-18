@@ -157,57 +157,10 @@
 		<include refid="whereOrganizacionPrimaryKeyFragment" />
 	</select>
 	
-	<sql id="selectSimpleOrganizacionFragment">
-		select
-			corg_llave as  llaveTabla
-			,corg_nombre as  nombre
-			,corg_principal as  principal
-			,corg_servidor as  servidor
-			,corg_usuariosystem as  usuarioSystem
-			,corg_imagen as  imagen
-			,corg_slogan as  slogan
-			,corg_mensajeingreso as  mensajeIngreso
-			,corg_codigo as  codigo
-			,corg_estado as estado
-		from organizacion_orgp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="OrganizacionDTO">
-		<include refid="selectSimpleOrganizacionFragment" />
-		<include refid="whereOrganizacionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="OrganizacionDTO">
-		<include refid="selectSimpleOrganizacionFragment" />
-		<include refid="whereOrganizacionFragment" />
-		order by corg_nombre 
-		<include refid="paginationOrganizacionFragment" />
-	</select>
-	
-
-
-<!--// BEGIN region script-->
-	<select id="obtenerUsuario" resultType="OrganizacionDTO">
-		select
-			corg_llave as  llaveTabla
-			,corg_nombre as  nombre
-			,corg_principal as  principal
-			,corg_servidor as  servidor
-			,cuor_tokenserver as  usuarioSystem
-			,corg_imagen as  imagen
-			,corg_slogan as  slogan
-			,corg_mensajeingreso as  mensajeIngreso
-			,corg_codigo as  codigo
-			,corg_estado as estado
-		from organizacion_orgp , usuarioorganizacion_uorp
-		where corg_estado = 'A' and cuor_organizacion = corg_llave and cuor_estado = 'A' and cuor_usuario = #{usuario}
-	</select>
-	
 	<select id="obtenerPrincipal" resultType="OrganizacionDTO">
 		<include refid="selectOrganizacionFragment" />
 		where corg_principal is null and corg_estado = 'A'
 		<include refid="paginationOrganizacionFragment" />
 	</select>
-<!--// END region script-->
 
 </mapper>
