@@ -377,6 +377,16 @@ public class WebServiceExecuteAPI {
 
 		String urlWithParameters = templatesService.generateOutputFile(
 				Propiedades.obtenerValor(service, Propiedades.API_URL), callWS.getParametersInexecution());
+		if (headerProperties != null && !headerProperties.isEmpty()) {
+		    for (Map.Entry<String, String> entry : headerProperties.entrySet()) {
+		        String newValue = templatesService.generateOutputFile(
+		            entry.getValue(),
+		            callWS.getParametersInexecution()
+		        );
+		        entry.setValue(newValue);
+		    }
+		}
+
 		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una
 		// informacion
 		if (urlWithParameters == null || urlWithParameters.isEmpty()) {
