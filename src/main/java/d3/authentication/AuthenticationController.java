@@ -51,8 +51,6 @@ public class AuthenticationController {
 
 	@GetMapping(value = "/obtenerPrincipalOrganizacion")
 	public OrganizacionDTO obtenerPrincipalOrganizacion() throws ServerException {
-		// Este metodo se usa para obtener los datos de la organizacion pero despues se
-		// vuelve a utilizar para obtener las propiedades
 		return organizationSvc.obtenerPrincipalPublic();
 	}
 
@@ -105,9 +103,8 @@ public class AuthenticationController {
 
 	@PostMapping(value = "/solicitarNuevaClave")
 	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(HttpServletRequest request,
-			@RequestBody UsuarioAutenticacionDTO filter) throws ServerException {
-		filter.setIp(HttpUtils.getRequestIP(request));
-		return usuarioAutenticacionService.solicitarNuevaClave(filter, D3Utils.getRequestUrl(request));
+			@RequestBody UsuarioDTO filter) throws ServerException {
+		return usuarioAutenticacionService.solicitarNuevaClave(filter.getCorreo(), filter.getIdentificacion(),HttpUtils.getRequestIP(request), D3Utils.getRequestUrl(request));
 	}
 	
 	@PostMapping(value = "/logOut")

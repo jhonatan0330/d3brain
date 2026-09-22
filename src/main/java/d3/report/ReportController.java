@@ -20,7 +20,10 @@ import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;
 import d3.shared.application.D3Utils;
+import d3.shared.application.SessionContext;
+import d3.shared.application.SharedTokenService;
 import d3.shared.domain.ServerException;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/report")
@@ -28,19 +31,25 @@ import d3.shared.domain.ServerException;
 public class ReportController {
 
 	private final ReporteBaseSvc reporteBaseService;
+	private final SharedTokenService sharedTokenService;
 
-	public ReportController(@Lazy ReporteBaseSvc reporteBaseService) {
+	public ReportController(@Lazy ReporteBaseSvc reporteBaseService, SharedTokenService sharedTokenService) {
 		this.reporteBaseService = reporteBaseService;
+		this.sharedTokenService = sharedTokenService;
 	}
 
 	@GetMapping("/generate")
-	public ResponseEntity<byte[]> generate(@RequestParam Map<String, String> allParams,
+	public ResponseEntity<byte[]> generate(HttpServletRequest request, @RequestParam Map<String, String> allParams,
 			@RequestParam(name = "P_KEY", required = false) String key) throws ServerException {
 		String nombre = allParams.get("nombre");
 		if (nombre == null)
 			nombre = allParams.get("n");
 		if (nombre == null || nombre.isEmpty())
 			throw new ServerException("Es obligatorio enviar el nombre del reporte");
+		String pTokenInUrl = allParams.get("P_TOKEN");
+		if(pTokenInUrl != null){
+			SessionContext.setCurrent(sharedTokenService.validate(pTokenInUrl, request));
+		}
 		ReporteBaseDTO reportBD = reporteBaseService.validateReport(nombre);
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		for (Map.Entry<String, String> entry : allParams.entrySet()) {

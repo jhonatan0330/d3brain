@@ -98,6 +98,15 @@ public class D3Utils {
 			return "";
 		return format.format(fecha);
 	}
+	
+	public static Date formatTimeDate(String fecha) {
+		try {
+			return new SimpleDateFormat("yyyy/MM/dd hh:mm:ss aa").parse(fecha);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public static String formatWithParameter(Date fecha, String formatString) {
 		DateFormat format = new SimpleDateFormat(formatString);

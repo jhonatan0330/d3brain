@@ -12,6 +12,7 @@ import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.BasicSvc;
+import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import jakarta.annotation.PostConstruct;
 
@@ -55,25 +56,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 
 	public OrganizacionDTO obtenerPrincipalPublic() throws ServerException {
-		try {
-			OrganizacionDTO result = obtenerPrincipal();
-			// Por el momento no se usa el usuario publico, pero se deja comentado por si se
-			// requiere en el futuro
-
-			// String userPublic =
-			// configuracionSvc.obtenerUnica(PropiedadValorDefinidoDTO.ORGANIZACION,
-			// result.getLlaveTabla(), Propiedades.PUBLIC_USER, null);
-			// if (userPublic != null) {
-			// String token = usuarioAutenticacionService.getTokenPublic(userPublic,
-			// ipRequest);
-			// result.setPublicToken(token);
-			// }
-			result.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ORGANIZACION,
-					result.getLlaveTabla(), null, null, false));
-			return result;
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
+		return obtenerPrincipalPropiedades(SessionContext.getCurrentUserOrNull());
 	}
 
 	public OrganizacionDTO obtenerPrincipal() throws ServerException {

@@ -220,7 +220,7 @@ public class MassiveLoadOrchestratorService {
 		return cargaMasivaItemService.findMany(filter);
 	}
 
-	private TemplateDTO obtenerPlantilla(String templateId) throws ServerException {
+	TemplateDTO obtenerPlantilla(String templateId) throws ServerException {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(templateId);
 		TemplateDTO plantilla = plantillaService.obtenerConfiguracionSinCampos(plantillaFilter,

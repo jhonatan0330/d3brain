@@ -2,12 +2,14 @@ package d3.massiveload.application;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -21,16 +23,24 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
 
 @Service
 public class MassiveFileParserService {
 
 	public List<Map<String, String>> parse(MultipartFile file) throws ServerException {
+		return parse(file, null);
+	}
+
+	public List<Map<String, String>> parse(MultipartFile file, String xmlRootTag) throws ServerException {
 		String name = (file.getOriginalFilename() == null) ? "" : file.getOriginalFilename().toLowerCase();
 		try {
 			if (name.endsWith(".json"))
@@ -41,6 +51,12 @@ public class MassiveFileParserService {
 				return parseExcel(new HSSFWorkbook(file.getInputStream()));// , template);
 			if (name.endsWith(".csv"))
 				return parseCsv(file);// , template);
+			if (name.endsWith(".xml")) {
+				if (xmlRootTag == null || xmlRootTag.isEmpty())
+					throw new ServerException(
+							"Para los archivos .xml es necesario indicar la plantilla a la que pertenecen");
+				return parseXml(file.getInputStream(), xmlRootTag);
+			}
 			throw new ServerException(
 					"Formato de archivo no soportado. Use .xlsx, .xls, .csv o .json para la carga masiva");
 		} catch (ServerException e) {
@@ -48,6 +64,35 @@ public class MassiveFileParserService {
 		} catch (Exception e) {
 			throw new ServerException("Error leyendo el archivo de carga masiva: " + e.getMessage());
 		}
+	}
+
+	private List<Map<String, String>> parseXml(InputStream is, String rootTag) throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(is);
+		List<Map<String, String>> result = new ArrayList<>();
+		NodeList nodes = doc.getElementsByTagName(rootTag);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() != Node.ELEMENT_NODE)
+				continue;
+			Map<String, String> row = new LinkedHashMap<>();
+			NodeList children = node.getChildNodes();
+			for (int j = 0; j < children.getLength(); j++) {
+				Node child = children.item(j);
+				if (child.getNodeType() != Node.ELEMENT_NODE)
+					continue;
+				String name = formatStringXML(child.getNodeName());
+				String value = child.getTextContent() == null ? null : child.getTextContent().trim();
+				if (value == null || value.isEmpty())
+					continue;
+				row.put(name, value);
+			}
+			if (!row.isEmpty())
+				result.add(row);
+		}
+		return result;
 	}
 
 	private List<Map<String, String>> parseJson(InputStream is) throws IOException {
@@ -136,7 +181,7 @@ public class MassiveFileParserService {
 			return c.getStringCellValue();
 		case NUMERIC:
 			if (DateUtil.isCellDateFormatted(c))
-				return new SimpleDateFormat("yyyy-MM-dd").format(c.getDateCellValue());
+				return D3Utils.formatDateTime(c.getDateCellValue());
 			double d = c.getNumericCellValue();
 			if (d == Math.floor(d) && !Double.isInfinite(d))
 				return String.valueOf((long) d);

@@ -14,12 +14,16 @@ import d3.process.domain.TemplateDTO;
 public class MassiveDocumentBuilderService {
 
 	public PedidoVentaDTO build(Map<String, String> row, TemplateDTO template) {
+		return build(row, template, false);
+	}
+
+	public PedidoVentaDTO build(Map<String, String> row, TemplateDTO template, boolean includeSections) {
 		PedidoVentaDTO pedido = new PedidoVentaDTO();
 		pedido.setPlantilla(template.getLlaveTabla());
 		pedido.setCaracteristicas(new ArrayList<>());
 		String updateColumn = "UPDATE_" + template.getCodigo();
 		for (DocumentoPlantillaCaracteristicaDTO campoPlantilla : template.getCaracteristicas()) {
-			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getFormato()))
+			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getFormato()) && !includeSections)
 				continue;
 			PedidoVentaCaracteristicaDTO campo = new PedidoVentaCaracteristicaDTO();
 			campo.setCampo(campoPlantilla.getLlaveTabla());

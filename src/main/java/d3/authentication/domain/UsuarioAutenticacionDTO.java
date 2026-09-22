@@ -6,7 +6,6 @@ import org.apache.ibatis.type.Alias;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import d3.shared.domain.BasicDTO;
-import d3.users.domain.UsuarioDTO;
 
 @Alias("UsuarioAutenticacionDTO")
 public class UsuarioAutenticacionDTO extends BasicDTO {
@@ -17,8 +16,7 @@ public class UsuarioAutenticacionDTO extends BasicDTO {
 	private String usuarioNombre;
 	private String claveAnterior;
 	private Integer tableroControl;
-	private UsuarioDTO usuarioDTO;
-	private OrganizacionDTO organizacion;
+	//private OrganizacionDTO organizacion;
 	private String mensaje;
 	private String token;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
@@ -77,21 +75,13 @@ public class UsuarioAutenticacionDTO extends BasicDTO {
 		return tableroControl;
 	}
 
-	public void setUsuarioDTO(UsuarioDTO usuarioDTO) {
-		this.usuarioDTO = usuarioDTO;
-	}
-
-	public UsuarioDTO getUsuarioDTO() {
-		return usuarioDTO;
-	}
-
-	public void setOrganizacion(OrganizacionDTO organizacion) {
+	/*public void setOrganizacion(OrganizacionDTO organizacion) {
 		this.organizacion = organizacion;
 	}
 
 	public OrganizacionDTO getOrganizacion() {
 		return organizacion;
-	}
+	}*/
 
 	public void setMensaje(String mensaje) {
 		this.mensaje = mensaje;

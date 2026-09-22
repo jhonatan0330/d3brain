@@ -173,43 +173,44 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		throw new ServerException(error);
 	}
 
-	private void errorDesdeNuevaClave(UsuarioDTO dto, String ip, String error) throws ServerException {
+	private void errorDesdeNuevaClave(String correo, String id, String ip, String error) throws ServerException {
 		UsuarioAutenticacionFilterDTO uaf = new UsuarioAutenticacionFilterDTO();
-		uaf.setClave(dto.getCorreo());
+		uaf.setClave(correo);
 		uaf.setIp(ip);
-		uaf.setSesion(dto.getIdentificacion());
+		uaf.setSesion(id);
 		reportarError(uaf, error);
 	}
 
-	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(UsuarioAutenticacionDTO dto, String urlServer)
+	public UsuarioAutenticacionAutorizacionDTO solicitarNuevaClave(String correo, String id, String ip,  String urlServer)
 			throws ServerException {
-		if (dto == null || dto.getUsuarioDTO() == null)
-			throw new ServerException("Faltan los datos de recuperacion");
-		if (dto.getUsuarioDTO().getCorreo() == null)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No se envio el correo de recuperacion");
-		if (dto.getUsuarioDTO().getIdentificacion() == null)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), "No se envio la identificacion del usuario");
+		if (correo == null)
+			errorDesdeNuevaClave(correo, id, ip, "No se envio el correo de recuperacion");
+		if (id == null)
+			errorDesdeNuevaClave(correo, id, ip, "No se envio la identificacion del usuario");
 		UsuarioFilterDTO filter = new UsuarioFilterDTO();
-		filter.setIdentificacion(dto.getUsuarioDTO().getIdentificacion());
+		filter.setIdentificacion(id);
 		UsuarioDTO usuario = usuarioService.consultaUnica(filter);
-		if (usuario == null)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
-					"Revisa los datos de acceso. El numero de id no esta en la base de datos");
-		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
-					"Revisa los datos de acceso. El usuario se encuentra inactivo");
-		if (usuario.getCorreo() == null)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
-					"No tienes correo registrado para enviarte la nueva clave");
-		if (usuario.getCorreo().toLowerCase().compareTo(dto.getUsuarioDTO().getCorreo().toLowerCase()) != 0)
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(),
-					"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
-		try {
-			return authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(),
-					urlServer);
-		} catch (Exception e) {
-			errorDesdeNuevaClave(dto.getUsuarioDTO(), dto.getIp(), e.getMessage());
+		if (usuario == null) {
+			errorDesdeNuevaClave(correo, id, ip,
+					"Revisa los datos de acceso. El numero de id no esta en la base de datos");			
+		} else {
+			if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
+				errorDesdeNuevaClave(correo, id, ip,
+						"Revisa los datos de acceso. El usuario se encuentra inactivo");
+			if (usuario.getCorreo() == null)
+				errorDesdeNuevaClave(correo, id, ip,
+						"No tienes correo registrado para enviarte la nueva clave");
+			if (correo !=null && usuario.getCorreo().toLowerCase().compareTo(correo.toLowerCase()) != 0)
+				errorDesdeNuevaClave(correo, id, ip,
+						"Revisa los datos de acceso. el correo electronico no es el mismo que tienes registrado");
+			try {
+				return authorizationService.makeTokenLink(usuario.getLlaveTabla(), usuario.getCorreo(), ip,
+						urlServer);
+			} catch (Exception e) {
+				errorDesdeNuevaClave(correo, id, ip, e.getMessage());
+			}	
 		}
+		
 
 		return null;
 	}
@@ -281,12 +282,10 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		UsuarioDTO usuario = usuarioService.consultaXId((autenticacion != null) ? autenticacion.getUsuario() : null);
 		if (usuario.getEstado().compareTo(SharedConstants.STATE_ACTIVE) != 0)
 			reportarError(dto, "El usuario no se encuentra activo");
-		if (autenticacion != null)
-			autenticacion.setUsuarioDTO(usuario);
-
+		
+		OrganizacionDTO organizacion = null;
 		if (!fromApi) {
-			if (autenticacion != null)
-				autenticacion.setOrganizacion(organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla()));
+			organizacion = organizacionService.obtenerPrincipalPropiedades(usuario.getLlaveTabla());
 		} else {
 			SharedToken cachedSession = usuarioSesionService.getSessionCacheByUser(usuario.getLlaveTabla());
 			if (cachedSession != null) {
@@ -307,8 +306,8 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 			sesion.setIp(dto.getIp());
 			sesion.setPrivada(true);
 			sesion = usuarioSesionService.guardar(sesion);
-			if (autenticacion != null && autenticacion.getOrganizacion() != null) {
-				if (Propiedades.obtenerParametro(autenticacion.getOrganizacion(), Propiedades.APP_DFA) != null) {
+			if (organizacion != null) {
+				if (Propiedades.obtenerParametro(organizacion, Propiedades.APP_DFA) != null) {
 					// Mientras terminamos lo del flex
 					if (dto.getIp() != null)
 						authorizationService.makeTokenNumber(usuario.getLlaveTabla(), usuario.getCorreo(), dto.getIp(),
@@ -321,8 +320,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 
 		if (!fromApi) {
 
-			PropiedadDTO _propLicence = Propiedades.obtenerParametro(autenticacion.getOrganizacion(),
-					Propiedades.OCULTAR_MENSAJE_LICENCIA);
+			PropiedadDTO _propLicence = Propiedades.obtenerParametro(organizacion,	Propiedades.OCULTAR_MENSAJE_LICENCIA);
 			if (_propLicence == null) {
 				String fechaTrial = usuarioAutenticacionMapper.consultarValidez();
 				if (fechaTrial == null)
