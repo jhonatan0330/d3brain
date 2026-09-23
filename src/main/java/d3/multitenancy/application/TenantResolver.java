@@ -8,11 +8,6 @@ import java.util.regex.Pattern;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.multitenancy.DatabaseTenantMetadataProvider;
-import d3.multitenancy.DatabaseTenantRegistry;
-import d3.multitenancy.TenantContext;
-import d3.multitenancy.TenantMetadataProvider;
-import d3.multitenancy.TenantRegistry;
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
 import d3.multitenancy.infrastructure.TenantMapper;
@@ -72,7 +67,7 @@ public class TenantResolver {
 				}
 				TenantContext.setCurrentTenant(context);
 				TenantFilterDTO filter = new TenantFilterDTO();
-				filter.setKey(segment);
+				filter.setName(segment);
 				filter.setState(SharedConstants.STATE_ACTIVE);
 				TenantDTO tenant = tenantMapper.getOne(filter);
 				if (tenant == null) {

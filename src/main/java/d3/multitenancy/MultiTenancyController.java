@@ -37,8 +37,8 @@ public class MultiTenancyController {
 	 * antes del bootstrap para fijar el prefijo persistente de la URL.
 	 */
 	@GetMapping("/resolve")
-	public TenantResolveDTO resolve(@RequestParam("path") String path) {
-		List<String> segments = TenantResolver.split(path);
+	public TenantResolveDTO resolve(@RequestParam("path") String pPath) {
+		List<String> segments = TenantResolver.split(pPath);
 		List<String> resolved = tenantResolver.resolveLongestPrefix(segments);
 		TenantResolveDTO dto = new TenantResolveDTO();
 		if (!resolved.isEmpty()) {

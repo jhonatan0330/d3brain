@@ -1,10 +1,9 @@
-package d3.multitenancy;
+package d3.multitenancy.application;
 
 import java.io.IOException;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import d3.multitenancy.application.TenantResolver;
 import d3.multitenancy.infrastructure.ReportTenantFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -26,7 +26,7 @@ import d3.accounting.application.StackAccountProccessService;
 import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.infrastructure.SessionFilter;
 import d3.mail.application.MailReleaseMessageQueueService;
-import d3.multitenancy.TenantIteratorService;
+import d3.multitenancy.application.TenantIteratorService;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.report.ReporteServlet;
 import d3.report.application.ReporteBaseSvc;

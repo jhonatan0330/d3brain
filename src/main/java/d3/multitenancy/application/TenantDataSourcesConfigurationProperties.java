@@ -1,4 +1,4 @@
-package d3.multitenancy;
+package d3.multitenancy.application;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

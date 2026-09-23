@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import d3.multitenancy.TenantContext;
+import d3.multitenancy.application.TenantContext;
 import d3.multitenancy.application.TenantResolver;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

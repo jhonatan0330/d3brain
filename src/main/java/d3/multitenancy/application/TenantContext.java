@@ -1,4 +1,4 @@
-package d3.multitenancy;
+package d3.multitenancy.application;
 
 /**
  * Holds the current tenant id for the executing thread. Used by

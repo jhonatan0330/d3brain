@@ -1,4 +1,4 @@
-package d3.multitenancy;
+package d3.multitenancy.application;
 
 import javax.sql.DataSource;
 
@@ -13,7 +13,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import d3.multitenancy.application.TenantResolver;
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.infrastructure.ReportTenantFilter;
 

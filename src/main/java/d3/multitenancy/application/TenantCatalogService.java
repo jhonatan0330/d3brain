@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.multitenancy.TenantContext;
 import d3.multitenancy.domain.TenantFilterDTO;
 import d3.multitenancy.domain.TenantPublicDTO;
 import d3.multitenancy.infrastructure.TenantMapper;

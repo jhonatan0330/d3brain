@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.CacheManager;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.UsuarioSesionDTO;
 import d3.authentication.domain.UsuarioSesionFilterDTO;
 import d3.authentication.infrastructure.UsuarioSesionMapper;
@@ -32,14 +33,16 @@ public class UsuarioSesionSvc {
 	private final PropertyGetWithCacheService getPropertyService;
 	private final CacheManager cacheService;
 	private final UsuarioSvc usuarioService;
+	private final OrganizacionSvc organizacionService;
 
 	public UsuarioSesionSvc(@Lazy UsuarioSesionMapper usuarioSesionMapper,
 			@Lazy PropertyGetWithCacheService getPropertyService, @Lazy CacheManager cacheService,
-			@Lazy UsuarioSvc usuarioService) {
+			@Lazy UsuarioSvc usuarioService, @Lazy OrganizacionSvc organizacionService) {
 		this.usuarioSesionMapper = usuarioSesionMapper;
 		this.getPropertyService = getPropertyService;
 		this.cacheService = cacheService;
 		this.usuarioService = usuarioService;
+		this.organizacionService = organizacionService;
 	}
 
 	public UsuarioSesionDTO consultaXId(String llave) throws ServerException {
@@ -94,10 +97,13 @@ public class UsuarioSesionSvc {
 	private int getUserSessionTime(String pUser) throws ServerException {
 		Integer _time = cacheService.getSessionTime(pUser);
 		if (_time == null) {
-			if (cacheService.getMainOrganization() == null)
-				cacheService.setMainOrganization(usuarioSesionMapper.obtenerOrganizacion());
+			OrganizacionDTO _org = cacheService.getMainOrganization();
+			if (_org == null) {
+				_org = organizacionService.obtenerPrincipal();
+				cacheService.setMainOrganization(_org);
+			}
 			PropiedadDTO _prop = getPropertyService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION,
-					cacheService.getMainOrganization(), Propiedades.APP_SESSION_TIME, pUser);
+					_org.getLlaveTabla(), Propiedades.APP_SESSION_TIME, pUser);
 			if (_prop == null) {
 				_time = 0;
 			} else {

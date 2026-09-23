@@ -25,9 +25,9 @@ import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import d3.multitenancy.TenantContext;
-import d3.multitenancy.TenantIteratorService;
-import d3.multitenancy.TenantMetadataProvider;
+import d3.multitenancy.application.TenantContext;
+import d3.multitenancy.application.TenantIteratorService;
+import d3.multitenancy.application.TenantMetadataProvider;
 
 @Component
 @Order(2) // ✅ después de que DatabaseTenantMetadataProvider cargue el catalog (Order 1)

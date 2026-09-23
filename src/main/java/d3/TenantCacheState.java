@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import d3.shared.domain.SharedToken;
+import d3.authentication.domain.OrganizacionDTO;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -22,7 +23,7 @@ final class TenantCacheState {
 	private final Map<String, List<String>> userRoleMap = new ConcurrentHashMap<>();
 	private final Map<String, List<PropiedadDTO>> propByKey = new ConcurrentHashMap<>();
 
-	private volatile String mainOrganization;
+	private volatile OrganizacionDTO mainOrganization;
 	private volatile String mainUser;
 	private volatile String mainUserMail;
 
@@ -52,11 +53,11 @@ final class TenantCacheState {
 		return propByKey;
 	}
 
-	String getMainOrganization() {
+	OrganizacionDTO getMainOrganization() {
 		return mainOrganization;
 	}
 
-	void setMainOrganization(String mainOrganization) {
+	void setMainOrganization(OrganizacionDTO mainOrganization) {
 		this.mainOrganization = mainOrganization;
 	}
 

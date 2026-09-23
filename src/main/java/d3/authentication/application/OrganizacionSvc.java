@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import d3.CacheManager;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authentication.infrastructure.OrganizacionMapper;
@@ -21,14 +22,14 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 
 	private final OrganizacionMapper organizacionMapper;
 	private final PropertyGetWithCacheService cacheService;
+	private final CacheManager cacheManager;
 
 	public OrganizacionSvc(@Lazy OrganizacionMapper organizacionMapper,
-			@Lazy PropertyGetWithCacheService cacheService) {
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy CacheManager cacheManager) {
 		this.organizacionMapper = organizacionMapper;
 		this.cacheService = cacheService;
+		this.cacheManager = cacheManager;
 	}
-
-	private OrganizacionDTO mainOrganization;
 
 	@Override
 	public OrganizacionDTO consultaXId(String llave) throws ServerException {
@@ -46,7 +47,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 
 	@Override
 	public OrganizacionDTO actualizar(OrganizacionDTO dto) throws ServerException {
-		mainOrganization = null;
+		cacheManager.clearMainOrganization();
 		return super.actualizar(dto);
 	}
 
@@ -60,10 +61,12 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	}
 
 	public OrganizacionDTO obtenerPrincipal() throws ServerException {
-		if (this.mainOrganization != null)
+		OrganizacionDTO mainOrganization = cacheManager.getMainOrganization();
+		if (mainOrganization != null)
 			return mainOrganization;
 		try {
-			this.mainOrganization = organizacionMapper.obtenerPrincipal();
+			mainOrganization = organizacionMapper.obtenerPrincipal();
+			cacheManager.setMainOrganization(mainOrganization);
 			return mainOrganization;
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());

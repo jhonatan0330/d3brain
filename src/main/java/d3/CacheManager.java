@@ -8,11 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 import d3.shared.domain.SharedToken;
+import d3.authentication.domain.OrganizacionDTO;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
-import d3.multitenancy.TenantContext;
-import d3.multitenancy.TenantDataSourcesConfigurationProperties;
+import d3.multitenancy.application.TenantContext;
+import d3.multitenancy.application.TenantDataSourcesConfigurationProperties;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 
 /**
@@ -118,11 +119,11 @@ public class CacheManager {
 		}
 	}
 
-	public String getMainOrganization() {
+	public OrganizacionDTO getMainOrganization() {
 		return current().getMainOrganization();
 	}
 
-	public void setMainOrganization(String mainOrganization) {
+	public void setMainOrganization(OrganizacionDTO mainOrganization) {
 		current().setMainOrganization(mainOrganization);
 	}
 
