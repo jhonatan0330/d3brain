@@ -12,6 +12,7 @@
 			,cten_username as  datasourceUsername
 			,cten_password as  datasourcePassword
 			,cten_estado as state
+			,cten_imagen as imagen
 		from tenant_ten a
 	</sql>
 

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import d3.multitenancy.infrastructure.ReportTenantFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,7 @@ public class TenantFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
-		return path.startsWith("/static/") || path.startsWith("/error") || ReportTenantFilter.isReportPath(path);
+		return path.startsWith("/static/") || path.startsWith("/error");
 	}
 
 	@Override
@@ -63,6 +62,10 @@ public class TenantFilter extends OncePerRequestFilter {
 		String raw = request.getHeader(headerName);
 		if (raw != null && !raw.isBlank()) {
 			return tenantResolver.resolveFromHeader(raw.trim());
+		}
+		String param = request.getParameter("P_TENANT_ID");
+		if (param != null && !param.isBlank()) {
+			return tenantResolver.resolveFromHeader(param.trim());
 		}
 		if (tenantProperties.isRequired()) {
 			throw new IllegalArgumentException("Missing required header: " + headerName);

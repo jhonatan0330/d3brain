@@ -10,6 +10,9 @@ public class TenantPublicDTO {
 
 	private String name;
 
+	private String imagen;
+
+
 	public String getKey() {
 		return key;
 	}
@@ -24,6 +27,14 @@ public class TenantPublicDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 
 }

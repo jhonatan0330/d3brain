@@ -12,6 +12,7 @@ public class TenantDTO extends SharedDataObject {
 	private String datasourceUrl;
 	private String datasourceUsername;
 	private String datasourcePassword;
+	private String imagen;
 
 	public String getName() {
 		return name;
@@ -51,6 +52,14 @@ public class TenantDTO extends SharedDataObject {
 
 	public void setDriver(String driver) {
 		this.driver = driver;
+	}
+
+	public String getImagen() {
+		return imagen;
+	}
+
+	public void setImagen(String imagen) {
+		this.imagen = imagen;
 	}
 
 }

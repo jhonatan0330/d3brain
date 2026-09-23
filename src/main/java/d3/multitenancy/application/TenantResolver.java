@@ -67,7 +67,7 @@ public class TenantResolver {
 				}
 				TenantContext.setCurrentTenant(context);
 				TenantFilterDTO filter = new TenantFilterDTO();
-				filter.setName(segment);
+				filter.setKey(segment);
 				filter.setState(SharedConstants.STATE_ACTIVE);
 				TenantDTO tenant = tenantMapper.getOne(filter);
 				if (tenant == null) {

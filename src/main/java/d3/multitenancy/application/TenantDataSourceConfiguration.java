@@ -14,7 +14,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import d3.multitenancy.domain.TenantDTO;
-import d3.multitenancy.infrastructure.ReportTenantFilter;
 
 /**
  * Wires lazy {@link TenantRoutingDataSource}, servlet filter, and tenant
@@ -39,19 +38,6 @@ public class TenantDataSourceConfiguration {
 		return reg;
 	}
 
-	@Bean
-	ReportTenantFilter reportTenantFilter(TenantResolver tenantResolver) {
-		return new ReportTenantFilter(tenantResolver);
-	}
-
-	@Bean
-	FilterRegistrationBean<ReportTenantFilter> reportTenantFilterRegistration(ReportTenantFilter reportTenantFilter) {
-		FilterRegistrationBean<ReportTenantFilter> reg = new FilterRegistrationBean<>();
-		reg.setFilter(reportTenantFilter);
-		reg.addUrlPatterns("/*");
-		reg.setOrder(Ordered.HIGHEST_PRECEDENCE + 20);
-		return reg;
-	}
 
 	@Bean(name = "dataSource")
 	@Primary
