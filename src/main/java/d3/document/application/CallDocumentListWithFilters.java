@@ -81,7 +81,7 @@ public class CallDocumentListWithFilters {
 		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().isEmpty())
 			dto.setFiltroParametro(null);
 
-		String filterSession = SessionContext.getCurrentToken();
+		String filterSession = SessionContext.getCurrentUser();
 		// Yo tenia el normalize por BD pero no fue una buena practica porque consume
 		// mucha memoria
 		if (dto.getFiltroParametro() != null)
