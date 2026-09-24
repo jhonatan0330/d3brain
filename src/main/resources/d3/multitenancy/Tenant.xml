@@ -66,6 +66,20 @@
 		<include refid="whereTenantFragment" />
 	</select>
 
+	<select id="listarPorUsuario" parameterType="string" resultType="TenantPublicDTO">
+		select
+			cten_llave as key
+			,cten_nombre as name
+			,cten_imagen as imagen
+		from tenant_ten a
+		inner join tenantusuario_tnu b
+			on b.ctnu_tenant = a.cten_llave
+			and b.ctnu_usuario = #{usuario}
+			and b.ctnu_estado = 'A'
+		where a.cten_estado = 'A'
+		order by cten_nombre
+	</select>
+
 
 	<select id="insert" parameterType="TenantDTO" resultType="TenantDTO">
 		insert into tenant_ten(cten_llave

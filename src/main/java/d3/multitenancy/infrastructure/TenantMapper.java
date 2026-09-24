@@ -5,6 +5,7 @@ import java.util.List;
 import d3.D3SqlConnMapper;
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
+import d3.multitenancy.domain.TenantPublicDTO;
 
 @D3SqlConnMapper(value = "TenantMapper")
 public interface TenantMapper {
@@ -18,4 +19,6 @@ public interface TenantMapper {
 	TenantDTO getOne(TenantFilterDTO filter);
 
 	List<TenantDTO> getMany(TenantFilterDTO filter);
+
+	List<TenantPublicDTO> listarPorUsuario(String usuario);
 }

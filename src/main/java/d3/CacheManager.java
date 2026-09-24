@@ -14,7 +14,6 @@ import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.multitenancy.application.TenantContext;
 import d3.multitenancy.application.TenantDataSourcesConfigurationProperties;
-import d3.multitenancy.domain.TenantPublicDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 
 /**
@@ -29,7 +28,6 @@ public class CacheManager {
 	private final String defaultTenantId;
 	private final int maxCachedTenants;
 	private final Object evictionLock = new Object();
-	private volatile List<TenantPublicDTO> tenantCatalog;
 
 	public CacheManager(TenantDataSourcesConfigurationProperties tenantProperties) {
 		this.defaultTenantId = tenantProperties.getDefaultTenantId();
@@ -189,14 +187,6 @@ public class CacheManager {
 		}
 	}
 
-	public List<TenantPublicDTO> getTenantCatalog() {
-		return tenantCatalog;
-	}
-
-	public void setTenantCatalog(List<TenantPublicDTO> tenantCatalog) {
-		this.tenantCatalog = tenantCatalog;
-	}
-
 	// ---------------------------------------------
 	// CLEAR FUNCTIONS (current tenant)
 	// ---------------------------------------------
@@ -243,10 +233,6 @@ public class CacheManager {
 
 	public void clearRolesMap() {
 		current().getRolesMap().clear();
-	}
-
-	public void clearTenantCatalog() {
-		tenantCatalog = null;
 	}
 
 	// ----------------------------------------------------------
@@ -326,26 +312,18 @@ public class CacheManager {
 
 	/** Clears cache for the current tenant only. */
 	public void clearAll() {
-		String tenantId = resolveTenantId();
 		current().clearAll();
-		if (tenantId.equals(defaultTenantId)) {
-			tenantCatalog = null;
-		}
 	}
 
 	/** Clears cache for a specific tenant (e.g. after metadata sync). */
 	public void clearTenant(String tenantId) {
 		if (tenantId != null) {
 			byTenant.remove(tenantId);
-			if (tenantId.equals(defaultTenantId)) {
-				tenantCatalog = null;
-			}
 		}
 	}
 
 	/** Clears in-memory cache for every tenant. */
 	public void clearAllTenants() {
 		byTenant.clear();
-		tenantCatalog = null;
 	}
 }

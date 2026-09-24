@@ -12,6 +12,7 @@ import d3.multitenancy.application.TenantCatalogService;
 import d3.multitenancy.application.TenantResolver;
 import d3.multitenancy.domain.TenantPublicDTO;
 import d3.multitenancy.domain.TenantResolveDTO;
+import d3.shared.application.SessionContext;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -26,9 +27,23 @@ public class MultiTenancyController {
 		this.tenantResolver = tenantResolver;
 	}
 
+	/**
+	 * Lista tenants. Con parámetro {@code alcance} retorna los tenants de ese
+	 * tenant (el propio más sus hijos). Sin alcance: los visibles para el
+	 * usuario autenticado según la tabla tenantusuario_tnu (siempre con
+	 * "default"); sin autenticación retorna todos los activos del catálogo.
+	 */
 	@GetMapping
-	public List<TenantPublicDTO> listarTenants() {
-		return tenantCatalogService.listarActivos();
+	public List<TenantPublicDTO> listarTenants(
+			@RequestParam(value = "alcance", required = false) String pAlcance) {
+		if (pAlcance != null && !pAlcance.isBlank()) {
+			return tenantCatalogService.listarAlcance(pAlcance);
+		}
+		String usuario = SessionContext.getCurrentUserOrNull();
+		if (usuario == null) {
+			return tenantCatalogService.listarTodos();
+		}
+		return tenantCatalogService.listarPorUsuario(usuario);
 	}
 
 	/**
