@@ -8,6 +8,7 @@
 		select
 			cten_llave as  key
 			,cten_nombre as  name
+			,cten_codigo as codigo
 			,cten_url as  datasourceUrl
 			,cten_username as  datasourceUsername
 			,cten_password as  datasourcePassword
@@ -24,9 +25,12 @@
 			<if test="state!=null">
 				and cten_estado = #{state}
 			</if>
-			<if test="name!=null">
-				and cten_nombre = #{name}
-			</if>
+		<if test="name!=null">
+			and cten_nombre = #{name}
+		</if>
+		<if test="codigo!=null">
+			and cten_codigo = #{codigo}
+		</if>
 			<if test="datasourceUrl!=null">
 				and cten_url = #{datasourceUrl}
 			</if>
@@ -84,6 +88,7 @@
 	<select id="insert" parameterType="TenantDTO" resultType="TenantDTO">
 		insert into tenant_ten(cten_llave
 		<if test="name!=null">,cten_nombre</if>
+		<if test="codigo!=null">,cten_codigo</if>
 		<if test="datasourceUrl!=null">
 			,cten_url
 		</if>
@@ -100,6 +105,9 @@
 			#{key}
 		<if test="nombre!=null">
 			,#{nombre}
+		</if>
+		<if test="codigo!=null">
+			,#{codigo}
 		</if>
 		<if test="datasourceUrl!=null">
 			,#{datasourceUrl}
@@ -124,6 +132,7 @@
 				cten_username = #{datasourceUsername},
 				cten_password = #{datasourcePassword},
 				cten_estado =#{state}
+				<if test="codigo!=null">,cten_codigo = #{codigo}</if>
 		<include refid="whereTenantPrimaryKeyFragment" />
 	</select>
 

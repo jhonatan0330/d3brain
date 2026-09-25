@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
 import d3.multitenancy.domain.TenantPublicDTO;
+import d3.multitenancy.domain.TenantRegistry;
 import d3.multitenancy.infrastructure.TenantMapper;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;

@@ -328,14 +328,14 @@ public class ProcesoTransicionAutomaticaSvc
 							for (PedidoVentaDTO iPedido : documentos) {
 								campoPrinicipal.setValorOpcion(iPedido.getLlaveTabla());
 								PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
-										transicion, iPedido, transaccionDocumento, campoPrinicipal);
+										transicion, transaccionDocumento, campoPrinicipal);
 								transaccionDocumento = nuevo.getTransaccion();
 								dto.setMensaje(dto.getMensaje() + nuevo.getNombre() + " ; ");
 							}
 						} else {
 							campoPrinicipal.setExpedientes(documentos);
 							PedidoVentaDTO nuevo = createDocumentSinceProperties.generateDocumentsFromAutomaticTask(
-									transicion, null, transaccionDocumento, campoPrinicipal);
+									transicion,  transaccionDocumento, campoPrinicipal);
 							if (nuevo != null) {
 								dto.setMensaje(nuevo.getNombre());
 							} else {

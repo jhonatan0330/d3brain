@@ -13,6 +13,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import d3.multitenancy.domain.TenantDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
 
 /**
  * Routes JDBC connections using a {@link ConcurrentHashMap} cache of per-tenant

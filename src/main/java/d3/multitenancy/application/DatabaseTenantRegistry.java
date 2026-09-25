@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import d3.multitenancy.domain.TenantFilterDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
+import d3.multitenancy.domain.TenantRegistry;
 import d3.multitenancy.infrastructure.TenantMapper;
 
 @Component

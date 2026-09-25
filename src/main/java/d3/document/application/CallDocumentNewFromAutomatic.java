@@ -55,7 +55,7 @@ public class CallDocumentNewFromAutomatic {
 	}
 
 	public PedidoVentaDTO generateDocumentsFromAutomaticTask(ProcesoTransicionDTO transicion,
-			PedidoVentaDTO expedienteDTO, String transaccion,
+			String transaccion,
 			PedidoVentaCaracteristicaDTO vieneAutomatica) throws ServerException {
 		List<PedidoVentaCaracteristicaDTO> camposNuevos = new ArrayList<PedidoVentaCaracteristicaDTO>();
 		camposNuevos.add(vieneAutomatica);

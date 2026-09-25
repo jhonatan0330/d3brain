@@ -8,6 +8,7 @@ import d3.shared.domain.SharedDataObject;
 public class TenantDTO extends SharedDataObject {
 
 	private String name;
+	private String codigo;
 	private String driver;
 	private String datasourceUrl;
 	private String datasourceUsername;
@@ -20,6 +21,14 @@ public class TenantDTO extends SharedDataObject {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDatasourceUrl() {

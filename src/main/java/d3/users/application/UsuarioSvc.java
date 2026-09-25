@@ -113,8 +113,6 @@ public class UsuarioSvc extends BasicSvc<UsuarioDTO, UsuarioFilterDTO> {
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		if (contarResultados(filtro) != 0)
 			throw new ServerException("Ya existe ese ID en la BD y esta activo.\n Id : " + dto.getIdentificacion());
-		if (dto.getImagen() == null)
-			dto.setImagen(SharedConstants.AVATAR);
 		if (dto.getCorreo() != null)
 			dto.setCorreo(dto.getCorreo().toLowerCase());
 		return super.guardar(dto);

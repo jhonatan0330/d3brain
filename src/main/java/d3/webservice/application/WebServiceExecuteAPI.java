@@ -43,6 +43,7 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.fe.application.DianSoapSecurityHeader;
 import d3.mail.application.MailSendMessageToAdminService;
+import d3.multitenancy.application.TenantContext;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
@@ -65,6 +66,10 @@ public class WebServiceExecuteAPI {
 	private static Logger log = LoggerFactory.getLogger(WebServiceExecuteAPI.class);
 
 	private static final String ERROR_EXTRAYENDO = "Error extrayendo el siguiente regular pattern (mira la funcion matches de Java String): ";
+
+	private static final String TENANT_HEADER = "X-Tenant-ID";
+
+	private static final String AUTH_HEADER = "Authorization";
 
 	private final DocumentoPlantillaSvc templateService;
 	private final CallDocumentUpdateFromAutomatic documentAutomaticUpdateFunction;
@@ -386,6 +391,7 @@ public class WebServiceExecuteAPI {
 		        entry.setValue(newValue);
 		    }
 		}
+		headerProperties = addTenantHeaderIfLocalhost(urlWithParameters, headerProperties);
 
 		// PAra roa colcoamos unas funciones para que la url del cliente se enviara una
 		// informacion
@@ -932,6 +938,55 @@ public class WebServiceExecuteAPI {
 			}
 		}
 		return result;
+	}
+
+	private Map<String, String> addTenantHeaderIfLocalhost(String url, Map<String, String> headers) {
+		if (!isLocalhostUrl(url))
+			return headers;
+		boolean hasTenant = false;
+		boolean hasAuth = false;
+		if (headers != null) {
+			for (String key : headers.keySet()) {
+				if (TENANT_HEADER.equalsIgnoreCase(key))
+					hasTenant = true;
+				if (AUTH_HEADER.equalsIgnoreCase(key))
+					hasAuth = true;
+			}
+		}
+		if (!hasTenant) {
+			String tenant = TenantContext.getCurrentTenant();
+			if (tenant != null && !tenant.isBlank()) {
+				if (headers == null)
+					headers = new HashMap<>();
+				headers.put(TENANT_HEADER, tenant);
+			}
+		}
+		if (!hasAuth) {
+			String token = SessionContext.getCurrentTokenOrNull();
+			if (token != null && !token.isBlank()) {
+				if (headers == null)
+					headers = new HashMap<>();
+				headers.put(AUTH_HEADER, token);
+			}
+		}
+		return headers;
+	}
+
+	private boolean isLocalhostUrl(String url) {
+		if (url == null || url.isBlank())
+			return false;
+		try {
+			String host = new URI(url).getHost();
+			if (host == null) {
+				String lower = url.toLowerCase();
+				return lower.contains("://localhost") || lower.contains("://127.0.0.1")
+						|| lower.contains("://[::1]") || lower.contains("://0.0.0.0");
+			}
+			return host.equalsIgnoreCase("localhost") || host.equals("127.0.0.1") || host.equals("0.0.0.0")
+					|| host.equals("::1") || host.equals("[::1]") || host.toLowerCase().endsWith(".localhost");
+		} catch (URISyntaxException e) {
+			return false;
+		}
 	}
 
 	/**

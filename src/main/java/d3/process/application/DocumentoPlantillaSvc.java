@@ -310,8 +310,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		// Coloco una imagen por defecto
 		if (dto.getProceso() == null)
 			throw new ServerException("Falta el proceso al cual pertence la plantilla");
-		if (dto.getImagen() == null)
-			dto.setImagen(SharedConstants.LOGO);
 		if (dto.getCodigo() == null) {
 
 			ProcesoDTO _process = procesoService.consultaXId(dto.getProceso());

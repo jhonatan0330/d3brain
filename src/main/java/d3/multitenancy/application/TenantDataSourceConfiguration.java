@@ -14,6 +14,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import d3.multitenancy.domain.TenantDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
+import d3.multitenancy.domain.TenantRegistry;
 
 /**
  * Wires lazy {@link TenantRoutingDataSource}, servlet filter, and tenant

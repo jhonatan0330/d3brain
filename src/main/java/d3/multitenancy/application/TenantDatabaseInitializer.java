@@ -1,8 +1,7 @@
-package d3;
+package d3.multitenancy.application;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,14 +19,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.init.ScriptException;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import d3.multitenancy.application.TenantContext;
-import d3.multitenancy.application.TenantIteratorService;
-import d3.multitenancy.application.TenantMetadataProvider;
+import d3.multitenancy.domain.TenantMetadataProvider;
 
 @Component
 @Order(2) // ✅ después de que DatabaseTenantMetadataProvider cargue el catalog (Order 1)
@@ -114,36 +112,23 @@ public class TenantDatabaseInitializer implements ApplicationRunner {
 	// ── Helpers ───────────────────────────────────────────────────────────────
 
 	private boolean executeScript(DataSource ds, Resource fileSql) {
-		// TransactionManager apuntando directo al DataSource del tenant
 		DataSourceTransactionManager tm = new DataSourceTransactionManager(ds);
 
-		return Boolean.TRUE.equals(new TransactionTemplate(tm).execute(ts -> {
-			Connection conn = null;
-			try {
-				conn = ds.getConnection();
-				conn.setAutoCommit(false);
-				ScriptUtils.executeSqlScript(conn, new EncodedResource(fileSql, "UTF-8"));
-				conn.commit();
-				return false; // sin error
-			} catch (ScriptException | SQLException e) {
-				System.out.println(e.getMessage());
+		try {
+			new TransactionTemplate(tm).executeWithoutResult(ts -> {
+				Connection conn = DataSourceUtils.getConnection(ds);
 				try {
-					if (conn != null)
-						conn.rollback();
-				} catch (SQLException ex) {
-					System.out.println(ex.getMessage());
+					ScriptUtils.executeSqlScript(conn, new EncodedResource(fileSql, "UTF-8"));
+				} catch (ScriptException e) {
+					throw new RuntimeException("Error ejecutando " + fileSql.getFilename() + ": " + e.getMessage(),
+							e);
 				}
-				return true; // con error
-			} finally {
-				if (conn != null) {
-					try {
-						conn.close();
-					} catch (SQLException ex) {
-						System.out.println(ex.getMessage());
-					}
-				}
-			}
-		}));
+			});
+			return false;
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+			return true;
+		}
 	}
 
 	private String getActualDate(DataSource ds) {

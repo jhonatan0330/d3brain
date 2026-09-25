@@ -1,4 +1,4 @@
-package d3.multitenancy.application;
+package d3.multitenancy.domain;
 
 import java.util.Set;
 

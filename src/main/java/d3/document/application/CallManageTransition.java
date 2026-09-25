@@ -163,7 +163,7 @@ public class CallManageTransition {
 				: previousStep + "->" + pTransitionProcess.getNombre();
 		if (_stateFrom != null && _stateFrom.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ITERADOR) == 0) {
 			afectado = iterateInState(respuesta, expedienteDTO, documentoDTO, relacionAnterior,
-					documentRecentCreateInTransition, dineroProcesado);
+					documentRecentCreateInTransition);
 		} else {
 			modificadorId = documentoDTO.getLlaveTabla();
 			// Genero documento en caso que toque
@@ -353,7 +353,7 @@ public class CallManageTransition {
 	// aqui hay algo para mejorar
 	private PedidoVentaDineroDTO iterateInState(ProcesoTransicionDTO pTransition, PedidoVentaDTO pDocumentPrincipal,
 			PedidoVentaDTO pDocumentoModificador, DocumentoRelacionGestorDTO pRelationBack,
-			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction, PedidoVentaDineroDTO dineroProcesado)
+			Map<String, List<PedidoVentaDTO>> pStackDocumentsCreateInTransaction)
 			throws ServerException {
 
 		PedidoVentaDineroDTO afectado = null;

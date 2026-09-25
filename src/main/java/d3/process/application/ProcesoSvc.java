@@ -280,8 +280,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	}
 
 	private void preConfigurar(ProcesoDTO dto) throws ServerException {
-		if (dto.getImagen() == null)
-			dto.setImagen(SharedConstants.LOGO);
 		ProcesoFilterDTO filtroCantidad = new ProcesoFilterDTO();
 		int cantidad = contarResultados(filtroCantidad);
 		cantidad = cantidad + 1;

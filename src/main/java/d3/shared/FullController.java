@@ -1000,7 +1000,7 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/consultaUsuarioDocumentoPlantilla")
-	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
+	public List<TemplateDTO> consultaUsuarioDocumentoPlantilla()
 			throws FlexException {
 		try {
 			return documentoPlantillaService.consultaUsuario();
@@ -1029,7 +1029,7 @@ public class FullController {
 	}
 
 	@PostMapping(value = "/consultaAdministradorDocumentoPlantilla")
-	public List<TemplateDTO> consultaAdministradorDocumentoPlantilla(@RequestBody DocumentoPlantillaFilterDTO dto)
+	public List<TemplateDTO> consultaAdministradorDocumentoPlantilla()
 			throws FlexException {
 		try {
 			return documentoPlantillaService.consultaAdministrador();

@@ -10,3 +10,5 @@ CREATE TABLE IF NOT EXISTS tenantusuario_tnu (
 );
 
 CREATE INDEX IF NOT EXISTS idx_tnu_usuario ON tenantusuario_tnu(ctnu_usuario, ctnu_estado);
+
+ALTER TABLE public.usuario_usrp ALTER COLUMN cusr_imagen DROP NOT NULL;

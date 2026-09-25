@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
 import d3.multitenancy.infrastructure.TenantMapper;
 
 /**

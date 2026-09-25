@@ -352,7 +352,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 				if (diasVigencia < 0)
 					reportarError(dto, "Se ha vencido la licencia del sistema. " + fechaTrial);
 
-				if (diasVigencia >= 0 && diasVigencia <= 5)
+				if (autenticacion!=null && diasVigencia >= 0 && diasVigencia <= 5)
 					autenticacion.setMensaje(
 							"Quedan " + (diasVigencia + 1) + " dias para que se cumpla el periodo de su licencia");
 			}

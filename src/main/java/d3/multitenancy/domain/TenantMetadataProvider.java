@@ -1,8 +1,6 @@
-package d3.multitenancy.application;
+package d3.multitenancy.domain;
 
 import java.util.Optional;
-
-import d3.multitenancy.domain.TenantDTO;
 
 /**
  * Resolves JDBC metadata for a tenant id. Production implementations may load

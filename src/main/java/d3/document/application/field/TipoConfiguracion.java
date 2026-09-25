@@ -85,7 +85,6 @@ public class TipoConfiguracion {
 					}
 					PedidoVentaDTO adaptado = new PedidoVentaDTO();
 					adaptado.setLlaveTabla(proceso.getLlaveTabla());
-					adaptado.setImagen(SharedConstants.LOGO);
 					adaptado.setNombre(proceso.getCodigo());
 					adaptado.setDescripcion(proceso.getNombre());
 					pCampo.setPrincipal(adaptado);
@@ -153,7 +152,6 @@ public class TipoConfiguracion {
 					}
 					PedidoVentaDTO adaptado5 = new PedidoVentaDTO();
 					adaptado5.setLlaveTabla(tarifario.getKey());
-					adaptado5.setImagen(SharedConstants.LOGO);
 					adaptado5.setNombre(tarifario.getNombre());
 					// adaptado.setDescripcion(encuesta.getNombre());
 					pCampo.setPrincipal(adaptado5);
@@ -377,7 +375,6 @@ public class TipoConfiguracion {
 					for (ProcesoDTO iProducto : procesos) {
 						PedidoVentaDTO adaptado = new PedidoVentaDTO();
 						adaptado.setLlaveTabla(iProducto.getLlaveTabla());
-						adaptado.setImagen(SharedConstants.LOGO);
 						adaptado.setNombre(iProducto.getCodigo());
 						adaptado.setDescripcion(iProducto.getNombre());
 						pBase.getDocumentos().add(adaptado);
@@ -461,7 +458,6 @@ public class TipoConfiguracion {
 					for (TarifarioDTO itarifario : tarifarios) {
 						PedidoVentaDTO adaptadoT = new PedidoVentaDTO();
 						adaptadoT.setLlaveTabla(itarifario.getKey());
-						adaptadoT.setImagen(SharedConstants.LOGO);
 						adaptadoT.setNombre(itarifario.getNombre());
 						// adaptado.setDescripcion(iCategoria.getNombre());
 						pBase.getDocumentos().add(adaptadoT);

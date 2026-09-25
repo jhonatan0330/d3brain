@@ -149,12 +149,12 @@ public class CallDocumentListFromFieldProcess {
 							}
 						}
 						// entityFilter.setPlantilla(documentoAuxiliar);
-						entityFilter.setCampoOrigen(pBase.getLlaveTabla());
+						entityFilter.setCampoOrigen(pCampo.getCampoDTO().getLlaveTabla());
 					}
 					try {
 						resultados = listDocumentWithFiltersFunction.listarAvanzado(entityFilter);
 					} catch (ServerException e) {
-						String msgException = e.getMessage() + " Campo :" + pBase.getNombre();
+						String msgException = e.getMessage() + " Campo :" + pCampo.getCampoDTO().getNombre();
 						if (e.getMessage().compareTo("Por favor revise porque el campo no tiene plantilla") == 0)
 							msgException = "Por favor revise porque el campo " + pCampo.getCampoDTO().getNombre()
 									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()

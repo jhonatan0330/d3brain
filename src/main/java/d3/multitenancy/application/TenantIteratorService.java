@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
+import d3.multitenancy.domain.TenantRegistry;
 import d3.multitenancy.infrastructure.TenantMapper;
 import d3.shared.domain.SharedConstants;
 

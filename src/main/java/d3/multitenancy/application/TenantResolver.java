@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import d3.multitenancy.domain.TenantDTO;
 import d3.multitenancy.domain.TenantFilterDTO;
+import d3.multitenancy.domain.TenantMetadataProvider;
+import d3.multitenancy.domain.TenantRegistry;
 import d3.multitenancy.infrastructure.TenantMapper;
 import d3.shared.domain.SharedConstants;
 
@@ -65,14 +67,11 @@ public class TenantResolver {
 				if (!isValidSegment(segment)) {
 					break;
 				}
-				TenantContext.setCurrentTenant(context);
-				TenantFilterDTO filter = new TenantFilterDTO();
-				filter.setKey(segment);
-				filter.setState(SharedConstants.STATE_ACTIVE);
-				TenantDTO tenant = tenantMapper.getOne(filter);
-				if (tenant == null) {
-					break;
-				}
+			TenantContext.setCurrentTenant(context);
+			TenantDTO tenant = buscarTenant(segment);
+			if (tenant == null) {
+				break;
+			}
 				resolved.add(segment);
 				String composite = String.join(SEPARATOR, resolved);
 				tenant.setKey(composite);
@@ -103,6 +102,7 @@ public class TenantResolver {
 	}
 
 	private void register(String composite, TenantDTO tenant) {
+
 		if (metadataProvider instanceof DatabaseTenantMetadataProvider provider) {
 			provider.register(tenant);
 		}
@@ -113,6 +113,20 @@ public class TenantResolver {
 
 	private boolean isValidSegment(String segment) {
 		return segment != null && VALID_SEGMENT.matcher(segment).matches();
+	}
+
+	private TenantDTO buscarTenant(String segmento) {
+		TenantFilterDTO porId = new TenantFilterDTO();
+		porId.setKey(segmento);
+		porId.setState(SharedConstants.STATE_ACTIVE);
+		TenantDTO tenant = tenantMapper.getOne(porId);
+		if (tenant != null) {
+			return tenant;
+		}
+		TenantFilterDTO porCodigo = new TenantFilterDTO();
+		porCodigo.setCodigo(segmento);
+		porCodigo.setState(SharedConstants.STATE_ACTIVE);
+		return tenantMapper.getOne(porCodigo);
 	}
 
 	public static List<String> split(String value) {

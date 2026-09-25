@@ -33,6 +33,4 @@ public class SharedConstants {
 
 	public static final String USER = "USR";
 
-	public static final String LOGO = "https://d3-apps.com/modulo.png";
-	public static final String AVATAR = "https://d3-apps.com/avatar.png";
 }
