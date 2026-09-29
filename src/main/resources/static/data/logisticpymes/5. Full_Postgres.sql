@@ -1013,28 +1013,6 @@ ALTER TABLE ReporteEjecucion_rejp ADD CONSTRAINT FK_ReporteEjecucionreporte FORE
 ALTER TABLE UsuarioOrganizacion_uorp ADD CONSTRAINT FK_UsuarioOrganizacionorganizacion FOREIGN KEY (cuor_organizacion) REFERENCES Organizacion_orgp(corg_llave);
 ALTER TABLE UsuarioAutenticacion_uaup ADD CONSTRAINT FK_UsuarioAutenticacionautorizacionCrea FOREIGN KEY (cuau_autorizacionCrea) REFERENCES UsuarioAutenticacionAutorizacion_uaap(cuaa_llave);
 
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2022.11.29.00' from pg_class where relname = 'usuariosesion_ussp';
-
-CREATE SCHEMA task AUTHORIZATION postgres;
-
-CREATE TABLE task.task_tsk (
-	ctsk_llave varchar(32) NOT NULL,
-	ctsk_user varchar(32) NOT NULL,
-	ctsk_title varchar(200) NOT NULL,
-	ctsk_notes varchar(4000) NULL,
-	dtsk_completed timestamptz NULL,
-	dtsk_duedate timestamptz NULL,
-	ntsk_priority int4 NOT NULL DEFAULT 0,
-	ntsk_order int4 NOT NULL DEFAULT 0,
-	dtsk_createdat timestamptz NOT NULL,
-	ctsk_createduser varchar(32) NOT NULL,
-	dtsk_updatedat timestamptz NULL,
-	ctsk_updateduser varchar(32) NULL,
-	ctsk_state varchar(1) NOT NULL DEFAULT 'A'::character varying,
-	CONSTRAINT pk_task_task_tsk PRIMARY KEY (ctsk_llave)
-);
-
-
 --Valida que no existan 2 modulos iguales para un usaurio
 ALTER TABLE permiso_perp
   ADD CONSTRAINT uk_permiso_rolaccesomodulo UNIQUE(cper_rolacceso , cper_modulo);
@@ -1234,7 +1212,7 @@ CREATE INDEX IF NOT EXISTS ix_procesotransicionautomatica_transicion ON procesot
 --Funciones iniciales
 CREATE OR REPLACE FUNCTION f_convnl(num numeric)
   RETURNS character varying AS
-$BODY$
+'
 DECLARE	
 	d VARCHAR[];f VARCHAR[];g VARCHAR[];numt VARCHAR;txt VARCHAR;a INTEGER;a1 INTEGER;a2 INTEGER;
 	n INTEGER;
@@ -1243,22 +1221,22 @@ DECLARE
 BEGIN
 	-- Maximo 999.999.999,99
 	IF num > 999999999.99 THEN
-		RETURN '---';
+		RETURN ''---'';
 	END IF;
-	txt = '';
-	d = ARRAY[' un',' dos',' tres',' cuatro',' cinco',' seis',' siete',' ocho',' nueve',' diez',' once',' doce',' trece',' catorce',' quince',
-		' dieciseis',' diecisiete',' dieciocho',' diecinueve',' veinte',' veintiun',' veintidos', ' veintitres', ' veinticuatro', ' veinticinco',
-		' veintiseis',' veintisiete',' veintiocho',' veintinueve'];
-	f = ARRAY ['','',' treinta',' cuarenta',' cincuenta',' sesenta',' setenta',' ochenta', ' noventa'];
-	g= ARRAY [' ciento',' doscientos',' trescientos',' cuatrocientos',' quinientos',' seiscientos',' setecientos',' ochocientos',' novecientos'];
-	numt = LPAD((num::numeric(12,2))::text,12,'0');
-	IF strpos(numt,'-') > 0 THEN
+	txt = '''';
+	d = ARRAY['' un'','' dos'','' tres'','' cuatro'','' cinco'','' seis'','' siete'','' ocho'','' nueve'','' diez'','' once'','' doce'','' trece'','' catorce'','' quince'',
+		'' dieciseis'','' diecisiete'','' dieciocho'','' diecinueve'','' veinte'','' veintiun'','' veintidos'', '' veintitres'', '' veinticuatro'', '' veinticinco'',
+		'' veintiseis'','' veintisiete'','' veintiocho'','' veintinueve''];
+	f = ARRAY ['''','''','' treinta'','' cuarenta'','' cincuenta'','' sesenta'','' setenta'','' ochenta'', '' noventa''];
+	g= ARRAY ['' ciento'','' doscientos'','' trescientos'','' cuatrocientos'','' quinientos'','' seiscientos'','' setecientos'','' ochocientos'','' novecientos''];
+	numt = LPAD((num::numeric(12,2))::text,12,''0'');
+	IF strpos(numt,''-'') > 0 THEN
 	   negativo = TRUE;
 	ELSE
 	   negativo = FALSE;
 	END IF;
-	numt = TRANSLATE(numt,'-','0');
-	numt = TRANSLATE(numt,'.,','');
+	numt = TRANSLATE(numt,''-'',''0'');
+	numt = TRANSLATE(numt,''.,'','''');
 	-- Trato 4 grupos: millones, miles, unidades y decimales
 	p = 1;
 	FOR i IN 1..4 LOOP
@@ -1269,12 +1247,12 @@ BEGIN
 		END IF;
 		p = p + 3;
 		IF i = 4 THEN
-			IF txt = '' THEN
-				txt = ' cero';
+			IF txt = '''' THEN
+				txt = '' cero'';
 			END IF;
 			IF n > 0 THEN
 			-- Empieza con los decimales
-				txt = txt || ' con';
+				txt = txt || '' con'';
 			END IF;
 		END IF;
 		-- Centenas 
@@ -1283,9 +1261,9 @@ BEGIN
 			a1 = substring(n::text FROM 2 FOR 2);
 			IF a = 1 THEN
 				IF a1 = 0 THEN
-					txt = txt || ' cien';
+					txt = txt || '' cien'';
 				ELSE
-					txt = txt || ' ciento';
+					txt = txt || '' ciento'';
 				END IF;
 			ELSE
 				txt = txt || g[a];
@@ -1298,11 +1276,11 @@ BEGIN
 		IF a > 0 THEN
 			IF a < 30 THEN
 				IF a = 21 AND (i = 3 OR i = 4) THEN
-					txt = txt || ' veintiuno';
+					txt = txt || '' veintiuno'';
 				ELSIF n = 1 AND i = 2 THEN
 					txt = txt; 
 				ELSIF a = 1 AND (i = 3 OR i = 4)THEN
-					txt = txt || ' uno';
+					txt = txt || '' uno'';
 				ELSE
 					txt = txt || d[a];
 				END IF;
@@ -1310,10 +1288,10 @@ BEGIN
 				a1 = substring(a::text FROM 1 FOR 1);
 				a2 = substring(a::text FROM 2 FOR 1);
 				IF a2 = 1 AND (i = 3 OR i = 4) THEN
-						txt = txt || f[a1] || ' y' || ' uno';
+						txt = txt || f[a1] || '' y'' || '' uno'';
 				ELSE
 					IF a2 <> 0 THEN
-						txt = txt || f[a1] || ' y' || d[a2];
+						txt = txt || f[a1] || '' y'' || d[a2];
 					ELSE
 						txt = txt || f[a1];
 					END IF;
@@ -1323,26 +1301,25 @@ BEGIN
 		IF n > 0 THEN
 			IF i = 1 THEN
 				IF n = 1 THEN
-					txt = txt || ' millon';
+					txt = txt || '' millon'';
 				ELSE
-					txt = txt || ' millones';
+					txt = txt || '' millones'';
 				END IF;
 			ELSIF i = 2 THEN
-				txt = txt || ' mil';
+				txt = txt || '' mil'';
 			END IF;		
 		END IF;
 	END LOOP;
 	txt = LTRIM(txt);
 	IF negativo = TRUE THEN
-	   txt= '-' || txt;
+	   txt= ''-'' || txt;
 	END IF;
     RETURN txt;
 END;
-$BODY$
+'
   LANGUAGE plpgsql VOLATILE
   COST 100;
-ALTER FUNCTION f_convnl(numeric)
-  OWNER TO postgres;
+  
 
 CREATE OR REPLACE VIEW campo_documento AS 
  SELECT pvc.cpvc_llave as cpvc_llave,
@@ -1362,31 +1339,31 @@ CREATE OR REPLACE VIEW campo_documento AS
 CREATE OR REPLACE FUNCTION movimiento_descripcion(id_documento character varying)
  RETURNS character varying
  LANGUAGE plpgsql
-AS $function$
+AS '
 BEGIN 
     return descripcion(id_documento);
 END; 
-$function$
+'
 ;
 
 CREATE OR REPLACE FUNCTION dcs_saldo_cero(character varying)
   RETURNS character varying AS
-$BODY$
+'
 BEGIN
-	IF EXISTS (SELECT mpvd_saldo FROM pedidoventadinero_pvdp WHERE cpvd_documento  = $1 AND cpvd_estado = 'A' AND mpvd_saldo !=0) THEN
-		RETURN 'N';
+	IF EXISTS (SELECT mpvd_saldo FROM pedidoventadinero_pvdp WHERE cpvd_documento  = $1 AND cpvd_estado = ''A'' AND mpvd_saldo !=0) THEN
+		RETURN ''N'';
 	ELSE
-		RETURN 'S';
+		RETURN ''S'';
 	END IF;
 END;
-$BODY$
+'
   LANGUAGE plpgsql VOLATILE
   COST 100;
 
 CREATE OR REPLACE FUNCTION descripcion(id_documento character varying)
  RETURNS character varying
  LANGUAGE plpgsql
-AS $function$
+AS  '
 	DECLARE _documento_actual pedidoventa_pdvp; 
 	DECLARE plantilla_campo_descripcion character varying;
 	DECLARE plantilla_campo_descripcion_nivel2 character varying;
@@ -1397,11 +1374,11 @@ BEGIN
         RETURN NULL;
     END IF;
     SELECT * INTO _documento_actual FROM pedidoventa_pdvp where cpdv_llave = id_documento;
-    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_44';
+    SELECT cppd_valor INTO plantilla_campo_descripcion FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = ''A'' and cppd_propiedadvalor = ''PROP_44'';
     IF plantilla_campo_descripcion IS NOT NULL THEN 
 		RETURN (select cpvc_valortext from campo4id ( id_documento , plantilla_campo_descripcion, _documento_actual.npdv_historico));
     ELSE
-		SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_45';
+		SELECT cppd_valor INTO plantilla_campo_descripcion_nivel2 FROM propiedad_ppdp where cppd_campo = _documento_actual.cpdv_plantilla and cppd_estado = ''A'' and cppd_propiedadvalor = ''PROP_45'';
 		IF plantilla_campo_descripcion_nivel2 IS NOT NULL THEN
 			SELECT cpvc_valoropcion INTO id_documento_principal FROM campo4id (id_documento, plantilla_campo_descripcion_nivel2, _documento_actual.npdv_historico);
 			CASE WHEN id_documento_principal IS  NULL THEN 
@@ -1411,7 +1388,7 @@ BEGIN
 			    IF descripcion_anidada IS NULL THEN
 					RETURN (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal);
 			    ELSE
-					RETURN '(' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||') '|| descripcion_anidada;
+					RETURN ''('' || (select cpdv_nombre from pedidoventa_pdvp pcd where cpdv_llave = id_documento_principal) ||'') ''|| descripcion_anidada;
 			    END IF;
 			END CASE;
 		ELSE
@@ -1419,7 +1396,7 @@ BEGIN
 		END IF;
     END IF;
 END; 
-$function$
+'
 ;
 
 CREATE OR REPLACE VIEW vi_valores
@@ -1434,7 +1411,7 @@ AS SELECT pedidoventadinero_pvdp.cpvd_documento AS vi_vlr_documento,
 CREATE OR REPLACE FUNCTION migrar_campos(_plantilla character varying, _fecha_maxima timestamp with time zone)
  RETURNS numeric
  LANGUAGE plpgsql
-AS $function$
+AS '
 declare 
 	documentos character varying[];
 	campos character varying[];
@@ -1442,7 +1419,7 @@ declare
 	v_cnt numeric;
 begin
 	if
-		(select count(*) from procesotransicion_ptrp where cptr_estado = 'A' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
+		(select count(*) from procesotransicion_ptrp where cptr_estado = ''A'' and cptr_estadopartida is null and cptr_plantilla = _plantilla) = 0
 	then
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
@@ -1454,7 +1431,7 @@ begin
 		select array (
 			select cpdv_llave from pedidoventa_pdvp 
 				where cpdv_plantilla = _plantilla and dpdv_fecha < _fecha_maxima 
-				and npdv_historico is null and cpdv_estado != 'A'
+				and npdv_historico is null and cpdv_estado != ''A''
 				limit 500) 
 			into documentos;
 	end if;	
@@ -1497,7 +1474,7 @@ begin
 	update pedidoventa_pdvp set npdv_historico = 3 where cpdv_llave = any(documentos);
 	GET DIAGNOSTICS v_cnt = ROW_COUNT;
 	return v_cnt;
-END;$function$
+END;'
 ;
 
 CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying)
@@ -1515,7 +1492,7 @@ CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code charac
 	cpvc_transaccioninactivo varchar(32)
 	) 
  LANGUAGE plpgsql
-AS $function$
+AS '
 declare 
 	_documento_actual pedidoventa_pdvp;
 begin
@@ -1536,7 +1513,7 @@ begin
 		from campo4code(_documento, _code, _documento_actual.cpdv_plantilla, _documento_actual.npdv_historico) t;
 	end if;
 	
-END;$function$
+END;'
 ;
 
 CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code character varying, _plantilla character varying, _historico int)
@@ -1554,11 +1531,11 @@ CREATE OR REPLACE FUNCTION campo4code(_documento character varying, _code charac
 	cpvc_transaccioninactivo varchar(32)
 	) 
  LANGUAGE plpgsql
-AS $function$
+AS '
 declare 
 	_campo documentoplantillacaracteristica_dpcp;
 begin
-	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = 'A' and cdpc_codigo = _code;
+	select * into _campo from documentoplantillacaracteristica_dpcp where cdpc_plantilla = _plantilla and cdpc_estado = ''A'' and cdpc_codigo = _code;
 	if found then
 		return query select
 				tb.cpvc_llave,
@@ -1574,7 +1551,7 @@ begin
 				tb.cpvc_transaccioninactivo
 			from campo4id(_documento, _campo.cdpc_llave, _historico) tb;
 	end if;
-END;$function$
+END;'
 ;
 
 CREATE OR REPLACE FUNCTION campo4id(_documento character varying, _id_campo character varying, _historico int)
@@ -1592,7 +1569,7 @@ CREATE OR REPLACE FUNCTION campo4id(_documento character varying, _id_campo char
 	cpvc_transaccioninactivo varchar(32)
 	) 
  LANGUAGE plpgsql
-AS $function$
+AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -1610,7 +1587,7 @@ begin
 				t.cpvc_valorauxiliar,
 				t.cpvc_transaccionregistro,
 				t.cpvc_transaccioninactivo
-			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_campo = _id_campo and t.cpvc_estado = 'A';
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_campo = _id_campo and t.cpvc_estado = ''A'';
 	else
 		return query select
 			z.cpvc_llave,
@@ -1624,9 +1601,9 @@ begin
 			z.cpvc_valorauxiliar,
 			z.cpvc_transaccionregistro,
 			z.cpvc_transaccioninactivo
-		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_campo = _id_campo and z.cpvc_estado = 'A';
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_campo = _id_campo and z.cpvc_estado = ''A'';
 	end if;	
-END;$function$
+END; '
 ;
 
 CREATE OR REPLACE FUNCTION campo4documento(_documento character varying, _historico int) 
@@ -1644,7 +1621,7 @@ CREATE OR REPLACE FUNCTION campo4documento(_documento character varying, _histor
 	cpvc_transaccioninactivo varchar(32)
 	) 
  LANGUAGE plpgsql
-AS $function$
+AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -1662,7 +1639,7 @@ begin
 				t.cpvc_valorauxiliar,
 				t.cpvc_transaccionregistro,
 				t.cpvc_transaccioninactivo
-			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_estado = 'A';
+			from pedidoventacaracteristica_pvcp t where t.cpvc_documento = _documento and t.cpvc_estado = ''A'';
 	else
 		return query select
 			z.cpvc_llave,
@@ -1676,9 +1653,9 @@ begin
 			z.cpvc_valorauxiliar,
 			z.cpvc_transaccionregistro,
 			z.cpvc_transaccioninactivo
-		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_estado = 'A';
+		from z_pvc_pedidoventacaracteristica z where z.cpvc_documento = _documento and z.cpvc_estado = ''A'';
 	end if;
-END;$function$
+END;'
 ;
 
 CREATE OR REPLACE FUNCTION saldo4documento(_documento character varying, _historico int) 
@@ -1691,7 +1668,7 @@ CREATE OR REPLACE FUNCTION saldo4documento(_documento character varying, _histor
 	dpvd_fecha timestamptz
 	) 
  LANGUAGE plpgsql
-AS $function$
+AS '
 begin
 	if _historico = 0 then
 		select npdv_historico into _historico from pedidoventa_pdvp where cpdv_llave = _documento;
@@ -1704,7 +1681,7 @@ begin
 				t.mpvd_saldo, 
 				t.cpvd_estado, 
 				t.dpvd_fecha 
-			from pedidoventadinero_pvdp t where t.cpvd_documento = _documento and t.cpvd_estado = 'A';
+			from pedidoventadinero_pvdp t where t.cpvd_documento = _documento and t.cpvd_estado = ''A'';
 	else
 		return query select
 				z.cpvd_llave, 
@@ -1713,15 +1690,15 @@ begin
 				z.mpvd_saldo, 
 				z.cpvd_estado, 
 				z.dpvd_fecha 
-			from pedidoventadinero_pvdp z where z.cpvd_documento = _documento and z.cpvd_estado = 'A';
+			from pedidoventadinero_pvdp z where z.cpvd_documento = _documento and z.cpvd_estado = ''A'';
 	end if;
-END;$function$
+END;'
 ;
 
 CREATE OR REPLACE FUNCTION public.ultima_gestion(_documento character varying, _estado character varying)
  RETURNS TABLE(cdrg_llave character varying, cdrg_documentoprincipal character varying, cdrg_documentomodificador character varying, ddrg_fecha timestamp with time zone, cdrg_estadoinicial character varying, cdrg_estadofinal character varying, cdrg_estado character varying, cdrg_ubicacion character varying, cdrg_valores character varying, cdrg_usuario character varying, ddrg_cierre timestamp with time zone, cdrg_nombre character varying, cdrg_transaccion character varying)
  LANGUAGE plpgsql
-AS $function$
+AS '
 begin
 	return query select 
 		drg.cdrg_llave,
@@ -1738,8 +1715,8 @@ begin
 		drg.cdrg_nombre,
 		drg.cdrg_transaccion
 	from documentorelaciongestor_drgp drg 
-	where drg.cdrg_documentoprincipal = _documento and drg.cdrg_estado = 'A' and drg.cdrg_estadofinal = _estado and bdrg_ultima = true;	
-END;$function$
+	where drg.cdrg_documentoprincipal = _documento and drg.cdrg_estado = ''A'' and drg.cdrg_estadofinal = _estado and bdrg_ultima = true;	
+END;'
 ;
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_propiedadboolean)
@@ -2239,8 +2216,8 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 	
 
 
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('SYSTEM', 'SYSTEM', 'SYSTEM', 'https://fs.softwareparati.com/imagenes/avatar.png', 'jhonatan.garcia@colombiansofture.com');
-INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'https://fs.softwareparati.com/avatar.png', 'jhonatan.garcia@colombiansofture.com');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('SYSTEM', 'SYSTEM', 'SYSTEM', 'https://d3-apps.com/icons/light_264x264.png', 'admin@d3-apps.com');
+INSERT INTO usuario_usrp(cusr_llave, cusr_identificacion, cusr_nombre, cusr_imagen, cusr_correo) VALUES ('PROCESS', 'PROCESS', 'PROCESS', 'https://d3-apps.com/icons/light_264x264.png', 'admin@d3-apps.com');
 INSERT INTO usuarioautenticacion_uaup(cuau_llave, cuau_usuario, cuau_sesion, cuau_clave)VALUES ('SYSTEM', 'SYSTEM', '1', '1');
 --Modulos
 INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
@@ -2257,17 +2234,21 @@ INSERT INTO modulo_modp(cmod_llave, cmod_nombre, cmod_url, cmod_estado)
 --     VALUES ('UIVotantes', 'UIVotantes', 'Configurar encuestas', 'com.softure.logisticpymes.view.ui.UIVotantes', 'A');
 
 --
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2023-07-13' from pg_class where relname = 'usuario_usrp';
-insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, to_char(CURRENT_TIMESTAMP + CAST('1 Month' AS INTERVAL),'yyyy-MM-dd') from pg_class where relname = 'usuarioautenticacion_uaup';
+--insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, '2023-07-13' from pg_class where relname = 'usuario_usrp';
+COMMENT ON TABLE public.usuario_usrp IS '2023-07-13';
+
+--insert into pg_description (objoid, classoid, objsubid, description) select oid, 1259, 0, to_char(CURRENT_TIMESTAMP + CAST('1 Month' AS INTERVAL),'yyyy-MM-dd') from pg_class where relname = 'usuarioautenticacion_uaup';
+COMMENT ON TABLE public.usuarioautenticacion_uaup IS '2040-10-29';
+
 
 INSERT INTO cambio_cmbp (ccmb_llave, ccmb_nombre, ccmb_motivo, dcmb_fecha, dcmb_fechaaplicacion) 
 	VALUES('SC-1', 'SC-1', 'CONFIGURACION INICIAL DEL SISTEMA', now(), now());
 
 INSERT INTO proceso_prcp ( cprc_llave, cprc_nombre, cprc_codigo, cprc_objetivo, nprc_prioridad, cprc_tipo, cprc_imagen)
-	VALUES ('SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'https://fs.softwareaparati.com/imagenes/modulo.png');
+	VALUES ('SOPORTE', 'PROCESOS DE SOPORTE', 'SOPORTE', 'Agrupar los procesos que permiten realizar la mision de la empresa',100, 'A', 'https://d3-apps.com/icons/light_264x264.png');
 
 INSERT INTO documentoplantilla_dplp(cdpl_llave, cdpl_codigo, cdpl_nombre, cdpl_imagen, cdpl_objetivo, cdpl_proceso)
-    VALUES ('ADMINISTRADOR', 'ADM', 'SOPORTE SOFTWARE PARA TI', 'https://file.softwareparati.com/softure/2019/12/28/f580bc7ca449440f8e9b581b252790c9.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
+    VALUES ('ADMINISTRADOR', 'ADM', 'SOPORTE PLATAFORMA', 'https://d3-apps.com/icons/light_264x264.png', 'Rol inicial para configurar el aplicativo', 'SOPORTE');
 
 INSERT INTO documentoplantillacaracteristica_dpcp(cdpc_llave, cdpc_plantilla, ndpc_orden, cdpc_nombre, cdpc_codigo, cdpc_formato, cdpc_objetivo)
     VALUES ('ADMINISTRADOR-ID', 'ADMINISTRADOR',  1, 'ID', 'ID', 'T', 'Contiene el numero de cedula del administrador');
@@ -2299,7 +2280,7 @@ INSERT INTO rolacceso_racp(crac_llave, brac_permisoscompletos, crac_plantilla)
     VALUES ('ADMINISTRADOR',  true, 'ADMINISTRADOR');
 
 INSERT INTO modulocontratado_mdcp(cmdc_llave, cmdc_modulo, cmdc_nombre, cmdc_imagen)
-    VALUES ('ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'https://fs.softwareaparati.com/imagenes/modulo.png');
+    VALUES ('ADMINISTRACION', 'AdministracionLogisticpymes', 'ADMINISTRACION', 'https://d3-apps.com/icons/light_264x264.png');
     
 INSERT INTO permiso_perp(cper_llave, cper_rolacceso, cper_modulo)
     VALUES ('ADMINISTRADOR', 'ADMINISTRADOR', 'ADMINISTRACION');
@@ -2319,21 +2300,30 @@ INSERT INTO pedidoventacaracteristica_pvcp(cpvc_llave, cpvc_documento, cpvc_camp
 INSERT INTO usuariorol_erlp(cerl_llave, cerl_usuario, cerl_rolacceso, cerl_documento, derl_fechainicial)
     VALUES ('ADMINISTRADOR', 'SYSTEM', 'ADMINISTRADOR', 'SYSTEM', current_timestamp);
     
-INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_imagen, corg_slogan,  corg_mensajeingreso, corg_codigo, corg_usuariosystem) 
-VALUES('ORG1', 'SOFTWARE PARA TI.COM', 'https://fs.softwareparati.com/imagenes/fondo.png', 'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'SW42', 'PROCESS');
+INSERT INTO organizacion_orgp (corg_llave, corg_nombre, corg_slogan,  corg_mensajeingreso, corg_codigo, corg_usuariosystem) 
+VALUES('ORG1', 'D3 APPS',  'Unificar, Simplificar, Optimizar', 'INGRESA TUS DATOS', 'D3APPS', 'PROCESS');
 
 ----------
 -- INSERTS for public.mensajeplantillacorreo_mplp
 -- -------------------
 
-INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado)
-	select 'smtp.gmail.com', 'smtp.gmail.com', 'smtp.gmail.com',  'notificaciones@colombiansofture.com', '$ofture123',  'E', 1, 'A'
-	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='smtp.gmail.com');
-	
-
-INSERT INTO servidor_serp (cser_llave, cser_nombre, cser_url, cser_usuario, cser_clave,  cser_tipo, nser_orden, cser_estado, cser_puerto, cser_base, cser_urlconexion)
-	select 'ftp', 'FILE SERVER', '192.168.2.204',  'softure', 'softure123',  'F', 2, 'A', '21', 'pruebas', 'https://fs6.softwareparati.com/'
-	WHERE NOT EXISTS (SELECT 1 FROM servidor_serp WHERE cser_llave='ftp');
 
 
+CREATE SCHEMA IF NOT EXISTS task;
 
+CREATE TABLE task.task_tsk (
+	ctsk_llave varchar(32) NOT NULL,
+	ctsk_user varchar(32) NOT NULL,
+	ctsk_title varchar(200) NOT NULL,
+	ctsk_notes varchar(4000) NULL,
+	dtsk_completed timestamptz NULL,
+	dtsk_duedate timestamptz NULL,
+	ntsk_priority int4 NOT NULL DEFAULT 0,
+	ntsk_order int4 NOT NULL DEFAULT 0,
+	dtsk_createdat timestamptz NOT NULL,
+	ctsk_createduser varchar(32) NOT NULL,
+	dtsk_updatedat timestamptz NULL,
+	ctsk_updateduser varchar(32) NULL,
+	ctsk_state varchar(1) NOT NULL DEFAULT 'A'::character varying,
+	CONSTRAINT pk_task_task_tsk PRIMARY KEY (ctsk_llave)
+);

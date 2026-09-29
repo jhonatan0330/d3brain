@@ -101,10 +101,13 @@
 		<if test="state!=null">
 			,cten_estado
 		</if>
+		<if test="imagen!=null">
+			,cten_imagen
+		</if>
 		) values (
 			#{key}
-		<if test="nombre!=null">
-			,#{nombre}
+		<if test="name!=null">
+			,#{name}
 		</if>
 		<if test="codigo!=null">
 			,#{codigo}
@@ -120,6 +123,9 @@
 		</if>
 		<if test="state!=null">
 			,#{state}
+		</if>
+		<if test="imagen!=null">
+			,#{imagen}
 		</if>
 		)
 	</select>

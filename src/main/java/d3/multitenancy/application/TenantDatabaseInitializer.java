@@ -1,13 +1,5 @@
 package d3.multitenancy.application;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,31 +7,26 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
-import org.springframework.jdbc.datasource.init.ScriptException;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import d3.multitenancy.domain.TenantMetadataProvider;
 
 @Component
-@Order(2) // ✅ después de que DatabaseTenantMetadataProvider cargue el catalog (Order 1)
+@Order(2)
 public class TenantDatabaseInitializer implements ApplicationRunner {
 
 	private final TenantIteratorService tenantIteratorService;
 	private final DataSource routingDataSource;
 	private final TenantMetadataProvider metadataProvider;
+	private final TenantScriptExecutor scriptExecutor;
 
 	public TenantDatabaseInitializer(@Lazy TenantIteratorService tenantIteratorService,
-			@Qualifier("dataSource") DataSource routingDataSource, TenantMetadataProvider metadataProvider) {
+			@Qualifier("dataSource") DataSource routingDataSource, TenantMetadataProvider metadataProvider,
+			TenantScriptExecutor scriptExecutor) {
 		this.tenantIteratorService = tenantIteratorService;
 		this.routingDataSource = routingDataSource;
 		this.metadataProvider = metadataProvider;
+		this.scriptExecutor = scriptExecutor;
 	}
 
 	@Override
@@ -53,132 +40,10 @@ public class TenantDatabaseInitializer implements ApplicationRunner {
 	}
 
 	private void doSomethingAfterStartup(String tenantId) {
-
-		// ── 1. Obtener DataSource del tenant ──────────────────────────────────
 		DataSource tenantDs = metadataProvider.resolve(tenantId).map(dto -> routingDataSource)
 				.orElseThrow(() -> new IllegalStateException("Tenant no encontrado: " + tenantId));
-
-		// ── 2. Leer fecha actual de la BD del tenant ──────────────────────────
-		String actualString = getActualDate(tenantDs);
+		String actualString = scriptExecutor.leerVersionActual(tenantDs);
 		System.out.println("Fecha actual BD [" + tenantId + "] = " + actualString);
-
-		if (actualString == null) {
-			printError();
-			return;
-		}
-
-		// ── 3. Parsear fecha ──────────────────────────────────────────────────
-		Date actualDate;
-		try {
-			actualDate = new SimpleDateFormat("yyyy-MM-dd").parse(actualString);
-		} catch (ParseException e) {
-			printError();
-			System.out.println(e.getMessage());
-			return;
-		}
-
-		System.out.println("Fecha actual en BD = " + actualDate);
-
-		// ── 4. Iterar días y ejecutar scripts SQL ─────────────────────────────
-		Calendar iterador = Calendar.getInstance();
-		iterador.setTime(actualDate);
-		iterador.add(Calendar.DAY_OF_MONTH, 1);
-
-		System.out.println("*********************************************************");
-		System.out.println("************ COMIENZA A ACTUALIZAR **********************");
-		System.out.println("*********************************************************");
-
-		boolean error = false;
-		while (iterador.getTime().getTime() < new Date().getTime() && !error) {
-			String sqlName = buildSqlPath(iterador);
-			Resource fileSql = new ClassPathResource(sqlName);
-
-			if (fileSql.exists()) {
-				System.out.println("Ejecutando Script = " + sqlName + " -> " + new Date());
-				error = executeScript(tenantDs, fileSql);
-			}
-
-			iterador.add(Calendar.DAY_OF_MONTH, 1);
-		}
-
-		// ── 5. Resultado ──────────────────────────────────────────────────────
-		if (!error) {
-			printSuccess();
-		} else {
-			printScriptError();
-		}
-	}
-
-	// ── Helpers ───────────────────────────────────────────────────────────────
-
-	private boolean executeScript(DataSource ds, Resource fileSql) {
-		DataSourceTransactionManager tm = new DataSourceTransactionManager(ds);
-
-		try {
-			new TransactionTemplate(tm).executeWithoutResult(ts -> {
-				Connection conn = DataSourceUtils.getConnection(ds);
-				try {
-					ScriptUtils.executeSqlScript(conn, new EncodedResource(fileSql, "UTF-8"));
-				} catch (ScriptException e) {
-					throw new RuntimeException("Error ejecutando " + fileSql.getFilename() + ": " + e.getMessage(),
-							e);
-				}
-			});
-			return false;
-		} catch (RuntimeException e) {
-			System.out.println(e.getMessage());
-			return true;
-		}
-	}
-
-	private String getActualDate(DataSource ds) {
-		String result = null;
-		try (Connection conn = ds.getConnection();
-				Statement stmt = conn.createStatement();
-				ResultSet rs = stmt.executeQuery("select description from pg_description "
-						+ "join pg_class on pg_description.objoid = pg_class.oid "
-						+ "join pg_namespace on pg_class.relnamespace = pg_namespace.oid "
-						+ "where relname = 'usuario_usrp';")) {
-			while (rs.next()) {
-				result = rs.getString("description");
-			}
-		} catch (Exception e) {
-			System.err.println(
-					"Error leyendo fecha en tenant " + TenantContext.getCurrentTenant() + ": " + e.getMessage());
-		}
-		return result;
-	}
-
-	private String buildSqlPath(Calendar cal) {
-		String year = String.valueOf(cal.get(Calendar.YEAR));
-		String month = to2String(cal.get(Calendar.MONTH) + 1);
-		String day = to2String(cal.get(Calendar.DAY_OF_MONTH));
-		return "static/data/" + year + "/" + year + month + "/" + year + month + day + ".sql";
-	}
-
-	private String to2String(int value) {
-		return value < 10 ? "0" + value : String.valueOf(value);
-	}
-
-	private void printError() {
-		System.out.println("*********************************************************");
-		System.out.println("*******                ERROR                     ********");
-		System.out.println("*******                                          ********");
-		System.out.println("*********************************************************");
-	}
-
-	private void printSuccess() {
-		System.out.println("*******OKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOKOOKOKOKOKO********");
-		System.out.println("*******     LO HEMOS LOGRADO TODO ACTUALIZADO    ********");
-		System.out.println("*******                                          ********");
-		System.out.println("****************:)****:)***:)***:)***:)******************");
-	}
-
-	private void printScriptError() {
-		System.out.println("*********************************************************");
-		System.out.println("*******     ERROR                   ERROR        ********");
-		System.out.println("*******                                          ********");
-		System.out.println("********!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********");
-		System.out.println("********XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*********");
+		scriptExecutor.ejecutarPendientesHastaHoy(tenantDs);
 	}
 }

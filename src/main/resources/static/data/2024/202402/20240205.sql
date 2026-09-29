@@ -1,6 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2024-02-05';
 
-CREATE SCHEMA config AUTHORIZATION postgres;
+CREATE SCHEMA config;
 
 CREATE TABLE config.configtemplaterelation_ctr (
 	cctr_llave varchar(32) NOT NULL,

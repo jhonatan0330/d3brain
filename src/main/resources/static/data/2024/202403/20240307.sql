@@ -1,6 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2024-03-07';
 
-CREATE SCHEMA learning AUTHORIZATION postgres;
+CREATE SCHEMA learning;
 
 CREATE TABLE learning.article_art (
 	cart_llave varchar(32) NOT NULL,

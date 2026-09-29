@@ -153,7 +153,7 @@ public class AccountingController {
 		// TODO: 
 		//String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 		//SharedToken adminToken = autenticacionService.getUserToken(token);
-		//apiAuthorizeService.call(apiKey);
+		apiAuthorizeService.call(apiKey);
 		//SharedToken previous = SessionContext.getCurrent();
 		//try {
 			//SessionContext.setCurrent(adminToken);

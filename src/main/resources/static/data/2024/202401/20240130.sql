@@ -1,6 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2024-01-30';
 
-CREATE SCHEMA historic AUTHORIZATION postgres;
+CREATE SCHEMA historic;
 
 ALTER TABLE public.z_dcp_detallecaracteristicaproducto SET SCHEMA historic;
 ALTER TABLE public.z_dex_documentorelacionexpediente SET SCHEMA historic;

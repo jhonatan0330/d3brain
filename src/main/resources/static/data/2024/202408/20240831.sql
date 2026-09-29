@@ -20,7 +20,7 @@ INSERT INTO public.documentoplantilla_dplp
 (cdpl_llave, cdpl_codigo, cdpl_nombre,  cdpl_imagen,  cdpl_proceso)
 select 
 	ccpr_llave, 'C-'|| substring(upper(ccpr_llave), 1,3), 
-	'FORMULARIO DETALLE '|| dd.cdpl_nombre , 'https://fs.softwareparati.com/modulo.png', dd.cdpl_proceso 
+	'FORMULARIO DETALLE '|| dd.cdpl_nombre , 'https://d3-apps.com/icons/light_264x264.png', dd.cdpl_proceso 
 from productocaracteristica_pcrp pp 
 inner join producto_prop pp2 on (cpcr_base = pp2.cpro_llave)
 inner join pedidoventa_pdvp pp3 on pp3.cpdv_llave = pp2.cpro_documento  and pp3.cpdv_estado = 'A'

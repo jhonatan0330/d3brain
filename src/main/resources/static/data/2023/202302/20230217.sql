@@ -1,5 +1,0 @@
-COMMENT ON TABLE usuario_usrp IS '2023-02-17';
-
-ALTER TABLE detallecaracteristicaproducto_dcpp DROP CONSTRAINT IF EXISTS fk_detallecaracteristicaproductovaloropcion;
-ALTER TABLE detallecaracteristicaproducto_dcpp DROP CONSTRAINT IF EXISTS fk_z_dcp_detallecaracteristicaproductovaloropcion;
-ALTER TABLE detallecaracteristicaproducto_dcpp DROP CONSTRAINT IF EXISTS fk_z_dcp_detallecaracteristicaproductocampo;

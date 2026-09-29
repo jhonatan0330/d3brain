@@ -1,6 +1,6 @@
 COMMENT ON TABLE usuario_usrp IS '2024-01-14';
 
-CREATE SCHEMA account AUTHORIZATION postgres;
+CREATE SCHEMA account;
 
 CREATE TABLE account.hecho_hch (
 	chch_llave varchar(32) NOT NULL,

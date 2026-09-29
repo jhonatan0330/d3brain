@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="d3.multitenancy.infrastructure.TenantUsuarioMapper">
+
+	<sql id="selectTenantUsuarioFragment">
+		select
+			ctnu_llave as  key
+			,ctnu_usuario as  usuario
+			,ctnu_tenant as  tenant
+			,ctnu_estado as state
+		from tenantusuario_tnu a
+	</sql>
+
+	<sql id="whereTenantUsuarioFragment">
+		where 1=1
+			<if test="key!=null">
+				and ctnu_llave = #{key}
+			</if>
+			<if test="state!=null">
+				and ctnu_estado = #{state}
+			</if>
+			<if test="usuario!=null">
+				and ctnu_usuario = #{usuario}
+			</if>
+			<if test="tenant!=null">
+				and ctnu_tenant = #{tenant}
+			</if>
+	</sql>
+
+	<sql id="paginationTenantUsuarioFragment">
+		<if test="startRow!=null">OFFSET #{startRow}</if>
+		<if test="endRow!=null">LIMIT #{endRow}</if>
+	</sql>
+
+	<select id="getOne" parameterType="TenantUsuarioFilterDTO" resultType="TenantUsuarioDTO">
+		<include refid="selectTenantUsuarioFragment" />
+		<include refid="whereTenantUsuarioFragment" />
+		LIMIT 2
+	</select>
+
+	<select id="getMany" parameterType="TenantUsuarioFilterDTO" resultType="TenantUsuarioDTO">
+		<include refid="selectTenantUsuarioFragment" />
+		<include refid="whereTenantUsuarioFragment" />
+		order by ctnu_usuario, ctnu_tenant
+		<include refid="paginationTenantUsuarioFragment" />
+	</select>
+
+	<select id="count" parameterType="TenantUsuarioFilterDTO" resultType="int">
+		select count(*)
+		from tenantusuario_tnu
+		<include refid="whereTenantUsuarioFragment" />
+	</select>
+
+	<select id="insert" parameterType="TenantUsuarioDTO" resultType="TenantUsuarioDTO">
+		insert into tenantusuario_tnu(ctnu_llave
+		<if test="usuario!=null">,ctnu_usuario</if>
+		<if test="tenant!=null">,ctnu_tenant</if>
+		<if test="state!=null">
+			,ctnu_estado
+		</if>
+		) values (
+			#{key}
+		<if test="usuario!=null">
+			,#{usuario}
+		</if>
+		<if test="tenant!=null">
+			,#{tenant}
+		</if>
+		<if test="state!=null">
+			,#{state}
+		</if>
+		)
+	</select>
+
+</mapper>
