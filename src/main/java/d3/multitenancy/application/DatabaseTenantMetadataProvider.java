@@ -28,10 +28,13 @@ public class DatabaseTenantMetadataProvider implements TenantMetadataProvider, A
 	private final Environment env;
 	private final Map<String, TenantDTO> catalog = new ConcurrentHashMap<>();
 	private final TenantMapper tenantRepository;
+	private final TenantBaseAlias tenantBaseAlias;
 
-	public DatabaseTenantMetadataProvider(Environment env, @Lazy TenantMapper tenantRepository) {
+	public DatabaseTenantMetadataProvider(Environment env, @Lazy TenantMapper tenantRepository,
+			TenantBaseAlias tenantBaseAlias) {
 		this.env = env;
 		this.tenantRepository = tenantRepository;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	@Override
@@ -46,7 +49,22 @@ public class DatabaseTenantMetadataProvider implements TenantMetadataProvider, A
 
 	@Override
 	public boolean isTenantKnown(String tenantId) {
-		return tenantId != null && catalog.containsKey(tenantId);
+		if (tenantId == null) {
+			return false;
+		}
+		if (catalog.containsKey(tenantId)) {
+			return true;
+		}
+		if (tenantBaseAlias != null) {
+			String normalizado = tenantBaseAlias.normalizeCompositeToInternal(tenantId.trim());
+			if (catalog.containsKey(normalizado)) {
+				return true;
+			}
+			if (tenantBaseAlias.isBaseTenant(tenantId)) {
+				return catalog.containsKey(tenantBaseAlias.getDefaultTenantId());
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -54,7 +72,21 @@ public class DatabaseTenantMetadataProvider implements TenantMetadataProvider, A
 		if (tenantId == null) {
 			return Optional.empty();
 		}
-		return Optional.ofNullable(catalog.get(tenantId));
+		TenantDTO directo = catalog.get(tenantId);
+		if (directo != null) {
+			return Optional.of(directo);
+		}
+		if (tenantBaseAlias != null) {
+			String normalizado = tenantBaseAlias.normalizeCompositeToInternal(tenantId.trim());
+			TenantDTO normal = catalog.get(normalizado);
+			if (normal != null) {
+				return Optional.of(normal);
+			}
+			if (tenantBaseAlias.isBaseTenant(tenantId)) {
+				return Optional.ofNullable(catalog.get(tenantBaseAlias.getDefaultTenantId()));
+			}
+		}
+		return Optional.empty();
 	}
 
 	// ✅ método nuevo para registrar en caliente

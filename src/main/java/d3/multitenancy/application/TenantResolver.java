@@ -30,12 +30,14 @@ public class TenantResolver {
 	private final TenantMetadataProvider metadataProvider;
 	private final TenantRegistry tenantRegistry;
 	private final TenantMapper tenantMapper;
+	private final TenantBaseAlias tenantBaseAlias;
 
 	public TenantResolver(TenantMetadataProvider metadataProvider, TenantRegistry tenantRegistry,
-			@Lazy TenantMapper tenantMapper) {
+			@Lazy TenantMapper tenantMapper, TenantBaseAlias tenantBaseAlias) {
 		this.metadataProvider = metadataProvider;
 		this.tenantRegistry = tenantRegistry;
 		this.tenantMapper = tenantMapper;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	/**
@@ -97,8 +99,31 @@ public class TenantResolver {
 	}
 
 	public String resolveFromHeader(String raw) {
-		Optional<String> resolved = resolveChain(split(raw));
-		return resolved.orElse(raw.trim());
+		if (raw == null || raw.isBlank()) {
+			return raw;
+		}
+		String trimmed = raw.trim();
+		if (tenantBaseAlias != null && tenantBaseAlias.isBaseTenant(trimmed)) {
+			return tenantBaseAlias.getDefaultTenantId();
+		}
+		if (tenantBaseAlias != null) {
+			String normalizado = tenantBaseAlias.normalizeCompositeToInternal(trimmed);
+			if (!normalizado.equals(trimmed)) {
+				trimmed = normalizado;
+				if (tenantBaseAlias.isBaseTenant(trimmed)) {
+					return tenantBaseAlias.getDefaultTenantId();
+				}
+			}
+		}
+		List<String> niveles = split(trimmed);
+		if (!niveles.isEmpty() && tenantBaseAlias != null && tenantBaseAlias.isBaseSegment(niveles.get(0))) {
+			niveles = new ArrayList<>(niveles.subList(1, niveles.size()));
+			if (niveles.isEmpty()) {
+				return tenantBaseAlias.getDefaultTenantId();
+			}
+		}
+		Optional<String> resolved = resolveChain(niveles);
+		return resolved.orElse(trimmed);
 	}
 
 	private void register(String composite, TenantDTO tenant) {

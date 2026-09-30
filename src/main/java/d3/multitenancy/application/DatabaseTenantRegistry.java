@@ -18,11 +18,14 @@ public class DatabaseTenantRegistry implements TenantRegistry {
 	private final TenantMapper tenantMapper;
 	private final Set<String> registeredTenants = ConcurrentHashMap.newKeySet();
 	private final TenantMetadataProvider metadataProvider; // ✅ agregar dependencia
+	private final TenantBaseAlias tenantBaseAlias;
 	private volatile boolean loaded = false;
 
-	public DatabaseTenantRegistry(@Lazy TenantMapper tenantMapper, TenantMetadataProvider metadataProvider) {
+	public DatabaseTenantRegistry(@Lazy TenantMapper tenantMapper, TenantMetadataProvider metadataProvider,
+			TenantBaseAlias tenantBaseAlias) {
 		this.tenantMapper = tenantMapper;
 		this.metadataProvider = metadataProvider;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	private void loadIfNeeded() {
@@ -46,7 +49,22 @@ public class DatabaseTenantRegistry implements TenantRegistry {
 	@Override
 	public boolean isRegistered(String tenantId) {
 		loadIfNeeded(); // ✅ carga lazy en el primer uso
-		return registeredTenants.contains(tenantId);
+		if (tenantId == null) {
+			return false;
+		}
+		if (registeredTenants.contains(tenantId)) {
+			return true;
+		}
+		if (tenantBaseAlias != null) {
+			String normalizado = tenantBaseAlias.normalizeCompositeToInternal(tenantId.trim());
+			if (registeredTenants.contains(normalizado)) {
+				return true;
+			}
+			if (tenantBaseAlias.isBaseTenant(tenantId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

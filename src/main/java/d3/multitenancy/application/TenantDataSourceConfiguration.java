@@ -27,8 +27,8 @@ public class TenantDataSourceConfiguration {
 
 	@Bean
 	TenantFilter tenantFilter(TenantDataSourcesConfigurationProperties tenantProperties, TenantRegistry tenantRegistry,
-			TenantResolver tenantResolver) {
-		return new TenantFilter(tenantProperties, tenantRegistry, tenantResolver);
+			TenantResolver tenantResolver, TenantBaseAlias tenantBaseAlias) {
+		return new TenantFilter(tenantProperties, tenantRegistry, tenantResolver, tenantBaseAlias);
 	}
 
 	@Bean
@@ -44,14 +44,14 @@ public class TenantDataSourceConfiguration {
 	@Bean(name = "dataSource")
 	@Primary
 	DataSource dataSource(TenantMetadataProvider metadataProvider, TenantDataSourceFactory factory,
-			TenantDataSourcesConfigurationProperties props, Environment env) {
+			TenantDataSourcesConfigurationProperties props, Environment env, TenantBaseAlias tenantBaseAlias) {
 		// TenantDTO defaultJdbc =
 		// metadataProvider.resolve(props.getDefaultTenantId()).orElseThrow(
 		// () -> new IllegalStateException("Default tenant '" +
 		// props.getDefaultTenantId() + "' not in catalog"));
 		// PooledDataSource defaultPool = factory.createPooledDataSource(defaultJdbc);
 		PooledDataSource defaultPool = buildDefaultFromEnv(factory, env);
-		return new TenantRoutingDataSource(metadataProvider, factory, props, defaultPool);
+		return new TenantRoutingDataSource(metadataProvider, factory, props, defaultPool, tenantBaseAlias);
 	}
 
 	private PooledDataSource buildDefaultFromEnv(TenantDataSourceFactory factory, Environment env) {

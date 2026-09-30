@@ -31,14 +31,17 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource implement
 	private final String defaultTenantId;
 	private final DataSource defaultTenantPhysicalDataSource;
 	private final int maxCacheEntries;
+	private final TenantBaseAlias tenantBaseAlias;
 
 	public TenantRoutingDataSource(TenantMetadataProvider metadataProvider, TenantDataSourceFactory factory,
-			TenantDataSourcesConfigurationProperties props, DataSource defaultTenantPhysicalDataSource) {
+			TenantDataSourcesConfigurationProperties props, DataSource defaultTenantPhysicalDataSource,
+			TenantBaseAlias tenantBaseAlias) {
 		this.metadataProvider = metadataProvider;
 		this.factory = factory;
 		this.defaultTenantId = props.getDefaultTenantId();
 		this.defaultTenantPhysicalDataSource = defaultTenantPhysicalDataSource;
 		this.maxCacheEntries = props.getCacheMaxEntries();
+		this.tenantBaseAlias = tenantBaseAlias;
 		setTargetDataSources(Collections.emptyMap());
 		setDefaultTargetDataSource(defaultTenantPhysicalDataSource);
 		try {
@@ -100,7 +103,16 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource implement
 		if (defaultTenantId.equals(tenantId)) {
 			return defaultTenantPhysicalDataSource;
 		}
-		TenantDTO jdbc = metadataProvider.resolve(tenantId)
+		if (tenantBaseAlias != null && tenantBaseAlias.isBaseTenant(tenantId)) {
+			return defaultTenantPhysicalDataSource;
+		}
+		String normalizado = tenantBaseAlias != null
+				? tenantBaseAlias.normalizeCompositeToInternal(tenantId)
+				: tenantId;
+		if (defaultTenantId.equals(normalizado)) {
+			return defaultTenantPhysicalDataSource;
+		}
+		TenantDTO jdbc = metadataProvider.resolve(normalizado != null ? normalizado : tenantId)
 				.orElseThrow(() -> new IllegalStateException("Unknown tenant: " + tenantId));
 		return factory.createPooledDataSource(jdbc);
 	}

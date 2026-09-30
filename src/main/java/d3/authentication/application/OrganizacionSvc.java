@@ -23,12 +23,15 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	private final OrganizacionMapper organizacionMapper;
 	private final PropertyGetWithCacheService cacheService;
 	private final CacheManager cacheManager;
+	private final d3.multitenancy.application.TenantBaseAlias tenantBaseAlias;
 
 	public OrganizacionSvc(@Lazy OrganizacionMapper organizacionMapper,
-			@Lazy PropertyGetWithCacheService cacheService, @Lazy CacheManager cacheManager) {
+			@Lazy PropertyGetWithCacheService cacheService, @Lazy CacheManager cacheManager,
+			@Lazy d3.multitenancy.application.TenantBaseAlias tenantBaseAlias) {
 		this.organizacionMapper = organizacionMapper;
 		this.cacheService = cacheService;
 		this.cacheManager = cacheManager;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	@Override
@@ -48,6 +51,9 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 	@Override
 	public OrganizacionDTO actualizar(OrganizacionDTO dto) throws ServerException {
 		cacheManager.clearMainOrganization();
+		if (tenantBaseAlias != null) {
+			tenantBaseAlias.invalidateCache();
+		}
 		return super.actualizar(dto);
 	}
 

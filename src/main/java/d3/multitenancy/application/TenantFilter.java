@@ -22,12 +22,14 @@ public class TenantFilter extends OncePerRequestFilter {
 	private final TenantDataSourcesConfigurationProperties tenantProperties;
 	private final TenantRegistry tenantRegistry;
 	private final TenantResolver tenantResolver;
+	private final TenantBaseAlias tenantBaseAlias;
 
 	public TenantFilter(TenantDataSourcesConfigurationProperties tenantProperties, TenantRegistry tenantRegistry,
-			TenantResolver tenantResolver) {
+			TenantResolver tenantResolver, TenantBaseAlias tenantBaseAlias) {
 		this.tenantProperties = tenantProperties;
 		this.tenantRegistry = tenantRegistry;
 		this.tenantResolver = tenantResolver;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	@Override
@@ -62,11 +64,11 @@ public class TenantFilter extends OncePerRequestFilter {
 		String headerName = tenantProperties.getHeaderName();
 		String raw = request.getHeader(headerName);
 		if (raw != null && !raw.isBlank()) {
-			return tenantResolver.resolveFromHeader(raw.trim());
+			return tenantBaseAlias.normalizeCompositeToInternal(tenantResolver.resolveFromHeader(raw.trim()));
 		}
 		String param = request.getParameter("P_TENANT_ID");
 		if (param != null && !param.isBlank()) {
-			return tenantResolver.resolveFromHeader(param.trim());
+			return tenantBaseAlias.normalizeCompositeToInternal(tenantResolver.resolveFromHeader(param.trim()));
 		}
 		if (tenantProperties.isRequired()) {
 			throw new IllegalArgumentException("Missing required header: " + headerName);

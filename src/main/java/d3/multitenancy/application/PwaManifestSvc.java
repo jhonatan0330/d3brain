@@ -12,10 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLConnection;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -59,6 +57,8 @@ public class PwaManifestSvc {
 
 	private final ServidorSvc servidorService;
 
+	private final TenantBaseAlias tenantBaseAlias;
+
 	@Value("${tenant.default-name:Principal}")
 	private String defaultName;
 
@@ -66,12 +66,13 @@ public class PwaManifestSvc {
 
 	public PwaManifestSvc(@Lazy TenantMapper tenantMapper, @Lazy TenantRegistry tenantRegistry,
 			TenantResolver tenantResolver, @Lazy OrganizacionSvc organizacionService,
-			@Lazy ServidorSvc servidorService) {
+			@Lazy ServidorSvc servidorService, TenantBaseAlias tenantBaseAlias) {
 		this.tenantMapper = tenantMapper;
 		this.tenantRegistry = tenantRegistry;
 		this.tenantResolver = tenantResolver;
 		this.organizacionService = organizacionService;
 		this.servidorService = servidorService;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	public PwaManifestDTO construirManifest(String rawTenant, String baseUrl) {
@@ -82,7 +83,7 @@ public class PwaManifestSvc {
 		Branding branding = resolverBranding(rawTenant);
 		String base = baseUrl == null || baseUrl.isBlank() ? "" : baseUrl.replaceAll("/+$", "");
 		String site = normalizarOrigin(frontendOrigin);
-		String ruta = branding.isDefault || branding.slug.isBlank() ? "/" : "/" + branding.slug + "/";
+		String ruta = branding.isDefault ? "/" : "/" + branding.tenantId + "/";
 		String scope = site + ruta;
 		PwaManifestDTO dto = new PwaManifestDTO();
 		dto.setName(branding.displayName);
@@ -146,14 +147,15 @@ public class PwaManifestSvc {
 		String previous = TenantContext.getCurrentTenant();
 		try {
 			String normalizado = normalizar(rawTenant);
-			if (esDefault(normalizado)) {
+			if (esDefault(normalizado)
+					|| (tenantBaseAlias != null && tenantBaseAlias.isBaseTenant(normalizado))) {
 				TenantContext.setCurrentTenant("default");
 				OrganizacionDTO org = obtenerPrincipalSilencioso();
 				String nombre = nombreOrg(org, defaultName);
 				String imagen = org == null ? null : org.getImagen();
 				String descripcion = org == null || org.getSlogan() == null || org.getSlogan().isBlank() ? nombre
 						: org.getSlogan();
-				return new Branding("default", nombre, descripcion, imagen, "", true);
+				return new Branding("default", nombre, descripcion, imagen, true);
 			}
 			List<String> niveles = TenantResolver.split(normalizado);
 			Optional<String> cadena = tenantResolver.resolveChain(niveles);
@@ -176,11 +178,7 @@ public class PwaManifestSvc {
 			String descripcion = org != null && org.getSlogan() != null && !org.getSlogan().isBlank()
 					? org.getSlogan()
 					: nombre;
-			String slug = slugify(nombre);
-			if (slug.isBlank()) {
-				slug = slugify(ultimo);
-			}
-			return new Branding(composite, nombre, descripcion, imagen, slug, false);
+			return new Branding(composite, nombre, descripcion, imagen, false);
 		} finally {
 			TenantContext.setCurrentTenant(previous);
 		}
@@ -356,32 +354,19 @@ public class PwaManifestSvc {
 		return normalizado.isEmpty() || "default".equalsIgnoreCase(normalizado);
 	}
 
-	static String slugify(String nombre) {
-		if (nombre == null) {
-			return "";
-		}
-		String base = Normalizer.normalize(nombre, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
-		base = base.toLowerCase(Locale.ROOT).trim().replaceAll("[\\s_]+", "-").replaceAll("[^a-z0-9-]", "")
-				.replaceAll("-+", "-").replaceAll("^-+|-+$", "");
-		return base;
-	}
-
 	static class Branding {
 		final String tenantId;
 		final String displayName;
 		final String description;
 		final String imagen;
-		final String slug;
 		final boolean isDefault;
 
-		Branding(String tenantId, String displayName, String description, String imagen, String slug,
-				boolean isDefault) {
+		Branding(String tenantId, String displayName, String description, String imagen, boolean isDefault) {
 			this.tenantId = tenantId;
 			this.displayName = displayName == null || displayName.isBlank() ? "D3apps" : displayName.trim();
 			this.description = description == null || description.isBlank() ? this.displayName
 					: description.trim();
 			this.imagen = imagen;
-			this.slug = slug == null ? "" : slug;
 			this.isDefault = isDefault;
 		}
 	}

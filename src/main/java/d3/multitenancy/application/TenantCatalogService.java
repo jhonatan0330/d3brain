@@ -22,15 +22,17 @@ public class TenantCatalogService {
 	private final TenantMapper tenantMapper;
 	private final TenantRegistry tenantRegistry;
 	private final OrganizacionSvc organizacionService;
+	private final TenantBaseAlias tenantBaseAlias;
 
 	@Value("${tenant.default-name:Principal}")
 	private String defaultName;
 
 	public TenantCatalogService(@Lazy TenantMapper tenantMapper, @Lazy TenantRegistry tenantRegistry,
-			@Lazy OrganizacionSvc organizacionService) {
+			@Lazy OrganizacionSvc organizacionService, TenantBaseAlias tenantBaseAlias) {
 		this.tenantMapper = tenantMapper;
 		this.tenantRegistry = tenantRegistry;
 		this.organizacionService = organizacionService;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	/**
@@ -68,7 +70,11 @@ public class TenantCatalogService {
 	 * retorna el catálogo completo. Sin caché.
 	 */
 	public List<TenantPublicDTO> listarAlcance(String alcance) {
-		String normalizado = normalizarAlcance(alcance);
+		String base = normalizarAlcance(alcance);
+		if (tenantBaseAlias != null) {
+			base = tenantBaseAlias.normalizeCompositeToInternal(base);
+		}
+		final String normalizado = base;
 		if (normalizado.isEmpty() || "default".equals(normalizado)
 				|| !tenantRegistry.isRegistered(normalizado)) {
 			return listarTodos();
@@ -136,8 +142,20 @@ public class TenantCatalogService {
 
 	private void agregarPorDefecto(List<TenantPublicDTO> tenants) {
 		TenantPublicDTO defecto = tenantPorDefecto();
+		tenants.removeIf(tenant -> tenant != null && "default".equals(tenant.getKey())
+				&& ! "default".equals(defecto.getKey()));
 		if (tenants.stream().noneMatch(tenant -> defecto.getKey().equals(tenant.getKey()))) {
 			tenants.add(defecto);
+		} else {
+			tenants.stream().filter(tenant -> defecto.getKey().equals(tenant.getKey())).forEach(tenant -> {
+				tenant.setDefecto(true);
+				if (tenant.getName() == null) {
+					tenant.setName(defecto.getName());
+				}
+				if (tenant.getImagen() == null) {
+					tenant.setImagen(defecto.getImagen());
+				}
+			});
 		}
 	}
 
