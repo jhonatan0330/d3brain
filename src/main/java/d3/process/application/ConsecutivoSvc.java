@@ -131,7 +131,8 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		return super.guardar(dto);
 	}
 
-	public void crear(String plantillaId) throws ServerException {
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public ConsecutivoDTO crear(String plantillaId) throws ServerException {
 		// A veces el numero del consecutivo se repetia en ese caso toca evitar para las
 		// automaticas que se cree error
 		DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(plantillaId);
@@ -150,8 +151,10 @@ public class ConsecutivoSvc extends BasicSvc<ConsecutivoDTO, ConsecutivoFilterDT
 		nuevo = guardar(nuevo);
 		plantilla.setConsecutivo(nuevo.getLlaveTabla());
 		plantillaService.update(plantilla);
+		return nuevo;
 	}
 
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ConsecutivoDTO crear2Opcion(String consecutivo, String opcion)
 			throws ServerException {
 		ConsecutivoDTO actual = consultaXId(consecutivo);

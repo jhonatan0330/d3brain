@@ -390,7 +390,7 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 		String timeToNewPassword = Propiedades.obtenerValor(org, Propiedades.TIEMPO_NUEVA_CLAVE);
 		if (timeToNewPassword == null || timeToNewPassword.isEmpty()) {
 			Calendar newDate = Calendar.getInstance();
-			newDate.add(Calendar.MONTH, 2);
+			newDate.add(Calendar.MONTH, 10);
 			return newDate.getTime();
 		}
 

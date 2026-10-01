@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,8 +46,7 @@ import d3.shared.domain.SharedConstants;
 @Service("tenantProvisioningSvc")
 public class TenantProvisioningSvc {
 
-	private static final Pattern URL_PADRE = Pattern
-			.compile("^jdbc:postgresql://([^/:]+)(?::(\\d+))?/([^?]+).*$");
+	private static final Pattern URL_PADRE = Pattern.compile("^jdbc:postgresql://([^/:]+)(?::(\\d+))?/([^?]+).*$");
 	private static final String SCRIPT_INICIAL = "static/data/logisticpymes/5. Full_Postgres.sql";
 	private static final String VERSION_BASE = "2023-06-30";
 
@@ -60,10 +60,9 @@ public class TenantProvisioningSvc {
 	private final Environment env;
 
 	public TenantProvisioningSvc(@Lazy TenantMapper tenantMapper, @Lazy TenantUsuarioMapper tenantUsuarioMapper,
-			TenantMetadataProvider metadataProvider,
-			TenantRegistry tenantRegistry, TenantDataSourceFactory dataSourceFactory,
-			TenantScriptExecutor scriptExecutor, @Lazy MailSendMessageToAdminService mailAdminService,
-			Environment env) {
+			TenantMetadataProvider metadataProvider, TenantRegistry tenantRegistry,
+			TenantDataSourceFactory dataSourceFactory, TenantScriptExecutor scriptExecutor,
+			@Lazy MailSendMessageToAdminService mailAdminService, Environment env) {
 		this.tenantMapper = tenantMapper;
 		this.tenantUsuarioMapper = tenantUsuarioMapper;
 		this.metadataProvider = metadataProvider;
@@ -102,8 +101,7 @@ public class TenantProvisioningSvc {
 			String rol = "d3_" + codigo;
 			String clave = codigo + "123";
 			String url = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + baseDatos;
-			String key = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8)).toString()
-					.replace("-", "");
+			String key = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
 			verificarDuplicados(padre, codigo, url);
 			crearRolYBaseDatos(servidor, datosPadre, baseDatos, rol, clave);
 			aprovisionarBaseDatos(url, rol, clave);
@@ -159,8 +157,8 @@ public class TenantProvisioningSvc {
 			String clave) throws ServerException {
 		cargarDriver(datosPadre);
 		String adminUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/postgres";
-		try (Connection conn = DriverManager.getConnection(adminUrl, datosPadre.getDatasourceUsername(),
-				datosPadre.getDatasourcePassword())) {
+		try (Connection conn = DriverManager.getConnection(adminUrl,
+				propiedadesConexion(datosPadre.getDatasourceUsername(), datosPadre.getDatasourcePassword()))) {
 			conn.setAutoCommit(true);
 			crearRol(conn, rol, clave);
 			crearBaseDatos(conn, baseDatos, rol);
@@ -170,14 +168,14 @@ public class TenantProvisioningSvc {
 		} catch (Exception e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_BASE_DATOS,
 					"No se pudo conectar al motor del tenant padre "
-							+ (datosPadre.getDatasourceUrl() != null ? datosPadre.getDatasourceUrl() : ""), e);
+							+ (datosPadre.getDatasourceUrl() != null ? datosPadre.getDatasourceUrl() : ""),
+					e);
 		}
 	}
 
 	private void crearRol(Connection conn, String rol, String clave) throws ServerException {
 		try {
-			try (PreparedStatement existe = conn
-					.prepareStatement("select 1 from pg_roles where rolname = ?")) {
+			try (PreparedStatement existe = conn.prepareStatement("select 1 from pg_roles where rolname = ?")) {
 				existe.setString(1, rol);
 				try (ResultSet rs = existe.executeQuery()) {
 					if (rs.next()) {
@@ -187,22 +185,19 @@ public class TenantProvisioningSvc {
 				}
 			}
 			try (Statement stmt = conn.createStatement()) {
-				stmt.execute("CREATE ROLE " + entrecomillar(rol) + " WITH LOGIN PASSWORD "
-						+ literal(clave));
+				stmt.execute("CREATE ROLE " + entrecomillar(rol) + " WITH LOGIN PASSWORD " + literal(clave));
 			}
 			System.out.println("Rol creado: " + rol);
 		} catch (ServerException e) {
 			throw e;
 		} catch (Exception e) {
-			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_ROL,
-					"No se pudo crear el rol " + rol, e);
+			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_ROL, "No se pudo crear el rol " + rol, e);
 		}
 	}
 
 	private void crearBaseDatos(Connection conn, String baseDatos, String rol) throws ServerException {
 		try {
-			try (PreparedStatement existe = conn
-					.prepareStatement("select 1 from pg_database where datname = ?")) {
+			try (PreparedStatement existe = conn.prepareStatement("select 1 from pg_database where datname = ?")) {
 				existe.setString(1, baseDatos);
 				try (ResultSet rs = existe.executeQuery()) {
 					if (rs.next()) {
@@ -225,8 +220,7 @@ public class TenantProvisioningSvc {
 
 	private void otorgarPermisos(Connection conn, String baseDatos, String rol) throws ServerException {
 		try (Statement stmt = conn.createStatement()) {
-			stmt.execute("GRANT ALL PRIVILEGES ON DATABASE " + entrecomillar(baseDatos) + " TO "
-					+ entrecomillar(rol));
+			stmt.execute("GRANT ALL PRIVILEGES ON DATABASE " + entrecomillar(baseDatos) + " TO " + entrecomillar(rol));
 		} catch (Exception e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.OTORGAR_PERMISOS,
 					"No se pudo otorgar permisos sobre " + baseDatos + " al rol " + rol, e);
@@ -292,18 +286,18 @@ public class TenantProvisioningSvc {
 			String codigo) throws ServerException {
 		String identificacion = dto.getAdminIdentificacion().trim();
 		String nombreAdmin = dto.getAdminNombre().trim();
-		try (Connection conn = DriverManager.getConnection(url, rol, clave)) {
+		try (Connection conn = DriverManager.getConnection(url, propiedadesConexion(rol, clave))) {
 			conn.setAutoCommit(false);
 			try {
 				if (dto.getImagen() != null && !dto.getImagen().isBlank()) {
 					actualizarUna(conn,
-						"update usuario_usrp set cusr_identificacion = ?, cusr_nombre = ?, cusr_imagen = ?, cusr_correo = ?, cusr_telefono = ? where cusr_llave = 'SYSTEM'",
-						"SYSTEM de usuario_usrp", identificacion, nombreAdmin, dto.getImagen().trim(),
-						dto.getAdminCorreo().trim(), dto.getAdminTelefono());
+							"update usuario_usrp set cusr_identificacion = ?, cusr_nombre = ?, cusr_imagen = ?, cusr_correo = ?, cusr_telefono = ? where cusr_llave = 'SYSTEM'",
+							"SYSTEM de usuario_usrp", identificacion, nombreAdmin, dto.getImagen().trim(),
+							dto.getAdminCorreo().trim(), dto.getAdminTelefono());
 				} else {
 					actualizarUna(conn,
-						"update usuario_usrp set cusr_identificacion = ?, cusr_nombre = ?, cusr_correo = ?, cusr_telefono = ? where cusr_llave = 'SYSTEM'",
-						"SYSTEM de usuario_usrp", identificacion, nombreAdmin, dto.getAdminCorreo().trim(),
+							"update usuario_usrp set cusr_identificacion = ?, cusr_nombre = ?, cusr_correo = ?, cusr_telefono = ? where cusr_llave = 'SYSTEM'",
+							"SYSTEM de usuario_usrp", identificacion, nombreAdmin, dto.getAdminCorreo().trim(),
 							dto.getAdminTelefono());
 				}
 				Calendar vigencia = Calendar.getInstance();
@@ -359,8 +353,7 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void actualizarUna(Connection conn, String sql, String fila, Object... valores)
-			throws ServerException {
+	private void actualizarUna(Connection conn, String sql, String fila, Object... valores) throws ServerException {
 		try (PreparedStatement ps = conn.prepareStatement(sql)) {
 			for (int i = 0; i < valores.length; i++) {
 				ps.setObject(i + 1, valores[i]);
@@ -418,10 +411,10 @@ public class TenantProvisioningSvc {
 			String acceso = base != null ? base + "/" + ruta
 					: "la aplicacion (selecciona el tenant " + codigo + " en el selector)";
 			String titulo = "Acceso a " + nombreTenant;
-			String texto = "Hola " + dto.getAdminNombre().trim() + ",\n\nSe creo el tenant " + nombreTenant
-					+ " (" + codigo + ") y quedaste como administrador.\n\nPara ingresar:\n- URL: " + acceso
-					+ "\n- Tenant: " + codigo + "\n- Usuario (sesion): " + identificacion + "\n- Clave inicial: "
-					+ identificacion + "\n\nPor seguridad cambia tu clave en el primer ingreso.";
+			String texto = "Hola " + dto.getAdminNombre().trim() + ",\n\nSe creo el tenant " + nombreTenant + " ("
+					+ codigo + ") y quedaste como administrador.\n\nPara ingresar:\n- URL: " + acceso + "\n- Tenant: "
+					+ codigo + "\n- Usuario (sesion): " + identificacion + "\n- Clave inicial: " + identificacion
+					+ "\n\nPor seguridad cambia tu clave en el primer ingreso.";
 			mailAdminService.call(titulo, texto, dto.getAdminCorreo().trim());
 			System.out.println("Instrucciones de acceso enviadas a " + dto.getAdminCorreo().trim());
 		} catch (Exception e) {
@@ -435,8 +428,7 @@ public class TenantProvisioningSvc {
 
 	private String obtenerBaseRequest() {
 		try {
-			ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder
-					.getRequestAttributes();
+			ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 			if (attrs == null) {
 				return null;
 			}
@@ -466,8 +458,9 @@ public class TenantProvisioningSvc {
 						}
 						TenantContext.setCurrentTenant(contexto);
 						TenantDTO fila = buscarPorKeyOCodigo(segmento);
-						String codigoNivel = fila != null && fila.getCodigo() != null
-								&& !fila.getCodigo().isBlank() ? fila.getCodigo().trim() : segmento;
+						String codigoNivel = fila != null && fila.getCodigo() != null && !fila.getCodigo().isBlank()
+								? fila.getCodigo().trim()
+								: segmento;
 						if (ruta.length() > 0) {
 							ruta.append("/");
 						}
@@ -522,9 +515,9 @@ public class TenantProvisioningSvc {
 			System.out.println("Tenant registrado en catalogo de " + padre + ": key=" + key);
 		} catch (Exception e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.REGISTRAR_CATALOGO,
-					"No se pudo registrar el tenant en el catalogo de " + padre
-							+ ". Limpieza manual: DROP DATABASE " + entrecomillar("produccion_" + codigo)
-							+ "; DROP ROLE " + entrecomillar("d3_" + codigo) + ";",
+					"No se pudo registrar el tenant en el catalogo de " + padre + ". Limpieza manual: DROP DATABASE "
+							+ entrecomillar("produccion_" + codigo) + "; DROP ROLE " + entrecomillar("d3_" + codigo)
+							+ ";",
 					e);
 		} finally {
 			TenantContext.setCurrentTenant(anterior);
@@ -550,22 +543,29 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void avisarAdministrador(String padre, String nombre, String codigo,
-			ServerException error) {
+	private void avisarAdministrador(String padre, String nombre, String codigo, ServerException error) {
 		String anterior = TenantContext.getCurrentTenant();
 		try {
 			TenantContext.setCurrentTenant(padre);
 			String titulo = "Fallo creacion tenant " + nombre + " (" + codigo + ")";
-			String texto = "Padre: " + padre + "\nFase: " + error.getOrigen() + "\nCausa: "
-					+ error.getTextMessage() + "\nFecha: " + new Date()
-					+ "\nLimpieza manual: DROP DATABASE produccion_" + codigo + "; DROP ROLE d3_" + codigo
-					+ "; delete from tenant_ten where cten_codigo = '" + codigo + "';";
+			String texto = "Padre: " + padre + "\nFase: " + error.getOrigen() + "\nCausa: " + error.getTextMessage()
+					+ "\nFecha: " + new Date() + "\nLimpieza manual: DROP DATABASE produccion_" + codigo
+					+ "; DROP ROLE d3_" + codigo + "; delete from tenant_ten where cten_codigo = '" + codigo + "';";
 			mailAdminService.call(titulo, texto);
 		} catch (Exception e) {
 			System.out.println("No se pudo avisar al administrador: " + e.getMessage());
 		} finally {
 			TenantContext.setCurrentTenant(anterior);
 		}
+	}
+
+	private Properties propiedadesConexion(String usuario, String clave) {
+		Properties props = new Properties();
+		props.setProperty("user", usuario);
+		props.setProperty("password", clave);
+		props.setProperty("connectTimeout", "10");
+		props.setProperty("socketTimeout", "60");
+		return props;
 	}
 
 	private ServidorPadre extraerServidor(TenantDTO datosPadre) throws ServerException {
@@ -576,8 +576,7 @@ public class TenantProvisioningSvc {
 		Matcher matcher = URL_PADRE.matcher(datosPadre.getDatasourceUrl().trim());
 		if (!matcher.matches()) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.VERIFICAR_DUPLICADOS,
-					"La URL del tenant padre no tiene formato postgres esperado: "
-							+ datosPadre.getDatasourceUrl());
+					"La URL del tenant padre no tiene formato postgres esperado: " + datosPadre.getDatasourceUrl());
 		}
 		ServidorPadre servidor = new ServidorPadre();
 		servidor.host = matcher.group(1);

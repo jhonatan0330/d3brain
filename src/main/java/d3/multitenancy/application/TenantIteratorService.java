@@ -44,7 +44,7 @@ public class TenantIteratorService {
 				pendientes.add(normalizado);
 			}
 		}
-		System.out.println("******* CRON [" + corrida + "] inicio, pendientes=" + pendientes.size() + " ***" + new Date());
+		//System.out.println("******* CRON [" + corrida + "] inicio, pendientes=" + pendientes.size() + " ***" + new Date());
 		int ejecutados = 0;
 		int omitidos = 0;
 		while (!pendientes.isEmpty()) {
@@ -56,16 +56,16 @@ public class TenantIteratorService {
 			String urlNormalizada = normalizarUrl(url);
 			if (urlNormalizada != null && !urlsVistas.add(urlNormalizada)) {
 				omitidos++;
-				System.out.println("******* CRON [" + corrida + "] OMITIDO duplicado tenant=" + tenantId
-						+ " url=" + urlNormalizada + " ***" + new Date());
+				//System.out.println("******* CRON [" + corrida + "] OMITIDO duplicado tenant=" + tenantId
+						//+ " url=" + urlNormalizada + " ***" + new Date());
 				continue;
 			}
 			try {
 				TenantContext.setCurrentTenant(tenantId);
 				task.execute(tenantId);
 				ejecutados++;
-				System.out.println("******* CRON [" + corrida + "] OK tenant=" + tenantId
-						+ " url=" + urlNormalizada + " ***" + new Date());
+				//System.out.println("******* CRON [" + corrida + "] OK tenant=" + tenantId
+						//+ " url=" + urlNormalizada + " ***" + new Date());
 				for (TenantDTO hijo : listarHijos()) {
 					String composite = tenantId.equals("default") ? hijo.getKey()
 							: tenantId + "/" + hijo.getKey();

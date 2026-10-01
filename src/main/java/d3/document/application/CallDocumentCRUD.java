@@ -903,8 +903,9 @@ public class CallDocumentCRUD {
 				// propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 				// plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL,
 				// getUserFlex(token));
-				// if(consecProperty ==null)
-				consecutivoService.crear(plantilla.getLlaveTabla());
+			// if(consecProperty ==null)
+			ConsecutivoDTO nuevoConsecutivo = consecutivoService.crear(plantilla.getLlaveTabla());
+			plantilla.setConsecutivo(nuevoConsecutivo.getLlaveTabla());
 			}
 
 		}

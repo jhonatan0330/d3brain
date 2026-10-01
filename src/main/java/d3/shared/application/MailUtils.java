@@ -27,6 +27,9 @@ public class MailUtils {
 		prop.put("mail.smtp.starttls.enable", "true");
 		prop.put("mail.debug", "false");
 		prop.put("mail.smtp.ssl.trust", servidor.getUrl());
+		prop.put("mail.smtp.connectiontimeout", "10000");
+		prop.put("mail.smtp.timeout", "10000");
+		prop.put("mail.smtp.writetimeout", "10000");
 		return mailSender;
 	}
 
