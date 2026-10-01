@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import d3.shared.application.MailUtils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.multitenancy.application.TenantBaseAlias;
+import d3.multitenancy.application.TenantContext;
 import d3.users.application.ServidorSvc;
 import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
@@ -21,9 +23,11 @@ import jakarta.mail.internet.MimeMessage;
 public class MailRecoverPasswordService {
 
 	private final ServidorSvc servidorService;
+	private final TenantBaseAlias tenantBaseAlias;
 
-	public MailRecoverPasswordService(@Lazy ServidorSvc servidorService) {
+	public MailRecoverPasswordService(@Lazy ServidorSvc servidorService, TenantBaseAlias tenantBaseAlias) {
 		this.servidorService = servidorService;
+		this.tenantBaseAlias = tenantBaseAlias;
 	}
 
 	private ServidorDTO getServer() throws ServerException {
@@ -34,6 +38,16 @@ public class MailRecoverPasswordService {
 		if (servidores == null || servidores.isEmpty())
 			throw new ServerException("No se encuentra el servidor de correo configurado");
 		return servidores.get(0);
+	}
+
+	private String rutaTenant() {
+		String tenant = TenantContext.getCurrentTenant();
+		if (tenant == null || tenant.isBlank() || tenantBaseAlias.isBaseTenant(tenant.trim()))
+			return "";
+		String ruta = tenant.trim().replaceAll("^/+", "").replaceAll("/+$", "");
+		if (ruta.isEmpty())
+			return "";
+		return "/" + ruta;
 	}
 
 	public void callNumber(String correo, String code, String urlServer) throws ServerException {
@@ -73,7 +87,7 @@ public class MailRecoverPasswordService {
 			mailMsg.setSubject(urlServer + " Autorizacion de acceso");
 			mailMsg.setText(
 					"<table style=\"height: 164px;\" width=\"600\" bgcolor=\"#0d47a1\"><tbody><tr style=\"height: 18px;\"><td style=\"height: 18px; width: 590px;\" bgcolor=\"#0d47a1\">&nbsp;</td></tr><tr style=\"text-align: center;\"><td style=\"height: 132px; width: 590px; text-align: center;\" bgcolor=\"#E4E4E4\"><a style=\"border-radius: 4px; display: inline-block; font-weight: bold; padding: 12px 24px; !important; color: #ffffff !important; background-color: #80bf2e;\" href=\""
-							+ urlServer + "/sessions/new/" + key
+							+ urlServer + rutaTenant() + "/sessions/new/" + key
 							+ "\" target=\"_blank\">PRESIONA PARA INGRESAR</a></td></tr></tbody></table>",
 					true);
 			mailSender.send(mimeMessage);

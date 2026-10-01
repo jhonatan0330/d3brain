@@ -14,7 +14,10 @@ import d3.usage.application.MovimientoConsumoSvc;
 import d3.usage.domain.CompraConsumoDTO;
 import d3.usage.domain.MovimientoConsumoDTO;
 import d3.usage.domain.MovimientoConsumoFilterDTO;
+import d3.usage.domain.MovimientoHijoRequest;
 import d3.usage.domain.SaldoConsumoDTO;
+import d3.usage.domain.TenantKeyRequest;
+import d3.usage.domain.TransferenciaConsumoDTO;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 
@@ -50,6 +53,30 @@ public class UsageController {
 			throws ServerException {
 		SessionContext.getCurrentUser();
 		return consumoUnidadProcesoService.comprar(compra);
+	}
+
+	@PostMapping(value = "/transfer")
+	public MovimientoConsumoDTO transfer(@RequestBody(required = false) TransferenciaConsumoDTO dto)
+			throws ServerException {
+		SessionContext.getCurrentUser();
+		return consumoUnidadProcesoService.transferir(dto);
+	}
+
+	@PostMapping(value = "/balance-hijo")
+	public SaldoConsumoDTO balanceHijo(@RequestBody(required = false) TenantKeyRequest body)
+			throws ServerException {
+		SessionContext.getCurrentUser();
+		String tenantKey = body != null ? body.getTenantKey() : null;
+		return consumoUnidadProcesoService.consultarSaldoHijo(tenantKey);
+	}
+
+	@PostMapping(value = "/movements-hijo")
+	public List<MovimientoConsumoDTO> movementsHijo(@RequestBody(required = false) MovimientoHijoRequest body)
+			throws ServerException {
+		SessionContext.getCurrentUser();
+		String tenantKey = body != null ? body.getTenantKey() : null;
+		MovimientoConsumoFilterDTO filter = body != null ? body.getFilter() : null;
+		return consumoUnidadProcesoService.listarMovimientosHijo(tenantKey, filter);
 	}
 
 }

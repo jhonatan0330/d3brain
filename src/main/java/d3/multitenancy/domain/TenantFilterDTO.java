@@ -1,5 +1,7 @@
 package d3.multitenancy.domain;
 
+import java.util.Date;
+
 import org.apache.ibatis.type.Alias;
 
 import d3.shared.domain.SharedDataObjectFilter;
@@ -13,6 +15,7 @@ public class TenantFilterDTO extends SharedDataObjectFilter {
 	private String datasourceUrl;
 	private String datasourceUsername;
 	private String datasourcePassword;
+	private Date fechaValidez;
 
 	public String getName() {
 		return name;
@@ -60,6 +63,14 @@ public class TenantFilterDTO extends SharedDataObjectFilter {
 
 	public void setDriver(String driver) {
 		this.driver = driver;
+	}
+
+	public Date getFechaValidez() {
+		return fechaValidez;
+	}
+
+	public void setFechaValidez(Date fechaValidez) {
+		this.fechaValidez = fechaValidez;
 	}
 
 }

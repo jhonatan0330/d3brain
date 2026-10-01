@@ -1,7 +1,6 @@
 package d3;
 
 import java.io.IOException;
-import java.util.Date;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,11 +20,9 @@ public class WebApplication extends SpringBootServletInitializer implements WebM
 		SpringApplication.run(WebApplication.class, args);
 	}
 
-	// Soporta CORS
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**");
-		System.out.println("*******CORS****" + new Date().toString());
 	}
 
 	// Soporta que la SPA de angular funcione con solo el jar

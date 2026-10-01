@@ -74,4 +74,17 @@
 		)
 	</select>
 
+	<sql id="whereTenantUsuarioPrimaryKeyFragment">
+		where ctnu_llave = #{key}
+	</sql>
+
+	<select id="update" parameterType="TenantUsuarioDTO" resultType="TenantUsuarioDTO">
+		update tenantusuario_tnu
+			set
+				ctnu_usuario = #{usuario},
+				ctnu_tenant = #{tenant},
+				ctnu_estado = #{state}
+		<include refid="whereTenantUsuarioPrimaryKeyFragment" />
+	</select>
+
 </mapper>

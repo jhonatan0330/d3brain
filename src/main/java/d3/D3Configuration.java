@@ -9,6 +9,7 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -30,6 +31,7 @@ import d3.multitenancy.application.TenantIteratorService;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.report.ReporteServlet;
 import d3.report.application.ReporteBaseSvc;
+import d3.shared.application.BlankToNullStringDeserializer;
 import d3.shared.application.SessionContext;
 import d3.shared.application.SharedTokenService;
 import d3.usage.application.ConsumoUnidadProcesoService;
@@ -128,8 +130,8 @@ public class D3Configuration {
 		tenantIteratorService.executeForAllTenants(tenantId -> {
 			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-	
-				apiService.apiToTransaction();
+
+			apiService.apiToTransaction();
 		});
 
 	}
@@ -142,7 +144,7 @@ public class D3Configuration {
 			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 			SessionContext.setCurrent(autenticacionService.getUserToken(token));
 			System.out.println(
-				"******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***" + new Date());
+					"******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***" + new Date());
 		});
 
 	}
@@ -154,10 +156,9 @@ public class D3Configuration {
 		tenantIteratorService.executeForAllTenants(tenantId -> {
 			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* HISTORICO tenant=" + tenantId
-				+ " (" + transicionservice.moverDatosHistoricos() + ") ***" + new Date());
+			System.out.println("******* HISTORICO tenant=" + tenantId + " (" + transicionservice.moverDatosHistoricos()
+					+ ") ***" + new Date());
 		});
-			
 
 	}
 
@@ -168,8 +169,8 @@ public class D3Configuration {
 		tenantIteratorService.executeForAllTenants(tenantId -> {
 			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* CONSUMO UNIDADES tenant="
-				+ tenantId + " (" + consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date());
+			System.out.println("******* CONSUMO UNIDADES tenant=" + tenantId + " ("
+					+ consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date());
 		});
 
 	}
@@ -181,8 +182,8 @@ public class D3Configuration {
 		tenantIteratorService.executeForAllTenants(tenantId -> {
 			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
 			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* CONSUMO DIARIO tenant="
-				+ tenantId + " (" + consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date());
+			System.out.println("******* CONSUMO DIARIO tenant=" + tenantId + " ("
+					+ consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date());
 		});
 	}
 
@@ -209,6 +210,11 @@ public class D3Configuration {
 		reg.addUrlPatterns("/*");
 		reg.setOrder(Ordered.HIGHEST_PRECEDENCE + 11);
 		return reg;
+	}
+
+	@Bean
+	Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
+		return builder -> builder.deserializerByType(String.class, new BlankToNullStringDeserializer());
 	}
 
 }

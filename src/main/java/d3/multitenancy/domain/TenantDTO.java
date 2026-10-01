@@ -1,5 +1,9 @@
 package d3.multitenancy.domain;
 
+import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import org.apache.ibatis.type.Alias;
 
 import d3.shared.domain.SharedDataObject;
@@ -14,6 +18,8 @@ public class TenantDTO extends SharedDataObject {
 	private String datasourceUsername;
 	private String datasourcePassword;
 	private String imagen;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Bogota")
+	private Date fechaValidez;
 
 	public String getName() {
 		return name;
@@ -69,6 +75,14 @@ public class TenantDTO extends SharedDataObject {
 
 	public void setImagen(String imagen) {
 		this.imagen = imagen;
+	}
+
+	public Date getFechaValidez() {
+		return fechaValidez;
+	}
+
+	public void setFechaValidez(Date fechaValidez) {
+		this.fechaValidez = fechaValidez;
 	}
 
 }

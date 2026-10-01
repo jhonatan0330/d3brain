@@ -6,6 +6,8 @@ public interface ConsumoUnidadConstantes {
 	String TIPO_INICIAL = "I";
 	String TIPO_DIARIO = "D";
 	String TIPO_COMPRA = "P";
+	String TIPO_TRANSFERENCIA_ENVIADA = "T";
+	String TIPO_TRANSFERENCIA_RECIBIDA = "E";
 
 	String UNIDAD_MB = "MB";
 	String UNIDAD_GB = "GB";

@@ -11,6 +11,8 @@ public interface TenantUsuarioMapper {
 
 	TenantUsuarioDTO insert(TenantUsuarioDTO dto);
 
+	TenantUsuarioDTO update(TenantUsuarioDTO dto);
+
 	int count(TenantUsuarioFilterDTO filter);
 
 	TenantUsuarioDTO getOne(TenantUsuarioFilterDTO filter);
