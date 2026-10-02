@@ -68,26 +68,41 @@ public class WebServiceEjecucionSvc extends BasicSvc<WebServiceEjecucionDTO, Web
 		return super.guardar(dto);
 	}
 
-	public String apiToTransaction() throws ServerException {
+	public String apiToTransaction() {
 		List<WebServiceEjecucionDTO> tareasPendientes = webServiceEjecucionMapper.apisTransaccion();
 
 		if (tareasPendientes == null || tareasPendientes.isEmpty())
 			return "*******APIS ASYNC (0) ****" + new Date().toString();
-		//TODO : UsuarioSesionDTO sessionAdmin = autenticacionService.generateAdministratorToken();
+		int ok = 0;
+		int fallidos = 0;
+		StringBuilder errores = new StringBuilder();
 		for (WebServiceEjecucionDTO iMessage : tareasPendientes) {
-			if (iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC) == 0) {
-				//executeAPIFunction.applyScheduleToExecute(iMessage, sessionAdmin.getLlaveTabla());
-				executeAPIFunction.applyScheduleToExecute(iMessage );
-			} else {
-
-				WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
-				if (service == null)
-					throw new ServerException("El id del servicio no se encuentra en la BD.");
-				//executeAPIFunction.executeApi(service, iMessage, sessionAdmin.getLlaveTabla(), null, null, null);
-				executeAPIFunction.executeApi(service, iMessage,  null, null, null);
+			try {
+				if (iMessage.getSincrona().compareTo(DocumentoTransaccionSvc.API_PREPARE_ASYNC) == 0) {
+					executeAPIFunction.applyScheduleToExecute(iMessage);
+				} else {
+					WebServiceDTO service = webServiceSvc.consultaXId(iMessage.getServicio());
+					if (service == null)
+						throw new ServerException("El id del servicio " + iMessage.getServicio()
+								+ " no se encuentra en la BD. Ejecucion " + iMessage.getLlaveTabla());
+					executeAPIFunction.executeApi(service, iMessage, null, null, null);
+				}
+				ok++;
+			} catch (Exception e) {
+				fallidos++;
+				System.err.println("Error ejecutando API " + iMessage.getLlaveTabla() + ": " + e.getMessage());
+				if (errores.length() < 2000) {
+					if (errores.length() > 0)
+						errores.append(" | ");
+					errores.append(iMessage.getLlaveTabla()).append(": ").append(e.getMessage());
+				}
 			}
 		}
-		return "*******APIS ASYNC (" + tareasPendientes.size() + ") ****" + new Date().toString();
+		String resumen = "*******APIS ASYNC (total=" + tareasPendientes.size() + " ok=" + ok + " fallidos=" + fallidos
+				+ ") ****" + new Date().toString();
+		if (errores.length() > 0)
+			resumen = resumen + " Errores: " + errores;
+		return resumen;
 	}
 
 	public WebServiceEjecucionDTO getServiceVoucherActive(String pServiceId, String pDocumentId)

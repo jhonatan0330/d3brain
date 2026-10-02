@@ -95,11 +95,15 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.enabled")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
 
-			System.out.println(
-					"******* CORREOS tenant=" + tenantId + " (" + releaseQueueService.call() + ") ***" + new Date());
+				System.out.println("******* CORREOS tenant=" + tenantId + " (" + releaseQueueService.call() + ") ***"
+						+ new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -110,13 +114,17 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.task")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
 
-			System.out.println("*******TAREAS tenant=" + tenantId + " ("
-					+ transicionservice.lanzarTransaccionesTemporizadas() + ") ***" + new Date());
-			System.out.println("*******TAREAS PROGRAMADAS tenant=" + tenantId + " (" + transicionservice.programateAll()
-					+ ") ***" + new Date());
+				System.out.println("*******TAREAS tenant=" + tenantId + " ("
+						+ transicionservice.lanzarTransaccionesTemporizadas() + ") ***" + new Date());
+				System.out.println("*******TAREAS PROGRAMADAS tenant=" + tenantId + " ("
+						+ transicionservice.programateAll() + ") ***" + new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -128,10 +136,15 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.api")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
 
-			apiService.apiToTransaction();
+				System.out.println("******* APIS tenant=" + tenantId + " (" + apiService.apiToTransaction() + ") ***"
+						+ new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -141,10 +154,14 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.account")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println(
-					"******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***" + new Date());
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
+				System.out.println("******* ACUMULADOR tenant=" + tenantId + " (" + accountService.call() + ") ***"
+						+ new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -154,10 +171,14 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.historico")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* HISTORICO tenant=" + tenantId + " (" + transicionservice.moverDatosHistoricos()
-					+ ") ***" + new Date());
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
+				System.out.println("******* HISTORICO tenant=" + tenantId + " ("
+						+ transicionservice.moverDatosHistoricos() + ") ***" + new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -167,10 +188,14 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.consumo")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* CONSUMO UNIDADES tenant=" + tenantId + " ("
-					+ consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date());
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
+				System.out.println("******* CONSUMO UNIDADES tenant=" + tenantId + " ("
+						+ consumoProcesoService.procesarConsumoHorario() + ") ***" + new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 
 	}
@@ -180,10 +205,14 @@ public class D3Configuration {
 		if (!"true".equals(env.getProperty("cron.diario")))
 			return;
 		tenantIteratorService.executeForAllTenants(tenantId -> {
-			String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
-			SessionContext.setCurrent(autenticacionService.getUserToken(token));
-			System.out.println("******* CONSUMO DIARIO tenant=" + tenantId + " ("
-					+ consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date());
+			try {
+				String token = autenticacionService.generateAdministratorToken().getLlaveTabla();
+				SessionContext.setCurrent(autenticacionService.getUserToken(token));
+				System.out.println("******* CONSUMO DIARIO tenant=" + tenantId + " ("
+						+ consumoProcesoService.procesarIncrementoDiario() + ") ***" + new Date());
+			} finally {
+				SessionContext.clear();
+			}
 		});
 	}
 

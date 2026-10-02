@@ -56,34 +56,48 @@ public class TenantIteratorService {
 			String urlNormalizada = normalizarUrl(url);
 			if (urlNormalizada != null && !urlsVistas.add(urlNormalizada)) {
 				omitidos++;
-				//System.out.println("******* CRON [" + corrida + "] OMITIDO duplicado tenant=" + tenantId
-						//+ " url=" + urlNormalizada + " ***" + new Date());
+				try {
+					TenantContext.setCurrentTenant(tenantId);
+					encolarHijos(tenantId, pendientes, visitados);
+				} catch (Exception e) {
+					System.err.println("Error encolando hijos de tenant duplicado " + tenantId + ": "
+							+ e.getMessage());
+				} finally {
+					TenantContext.clear();
+				}
 				continue;
 			}
 			try {
 				TenantContext.setCurrentTenant(tenantId);
-				task.execute(tenantId);
-				ejecutados++;
-				//System.out.println("******* CRON [" + corrida + "] OK tenant=" + tenantId
-						//+ " url=" + urlNormalizada + " ***" + new Date());
-				for (TenantDTO hijo : listarHijos()) {
-					String composite = tenantId.equals("default") ? hijo.getKey()
-							: tenantId + "/" + hijo.getKey();
-					composite = normalizarTenant(composite);
-					hijo.setKey(composite);
-					registrar(composite, hijo);
-					if (!visitados.contains(composite)) {
-						pendientes.add(composite);
-					}
+				try {
+					task.execute(tenantId);
+					ejecutados++;
+				} catch (Exception e) {
+					System.err.println("Error en tenant " + tenantId + ": " + e.getMessage());
 				}
-			} catch (Exception e) {
-				System.err.println("Error en tenant " + tenantId + ": " + e.getMessage());
+				try {
+					encolarHijos(tenantId, pendientes, visitados);
+				} catch (Exception e) {
+					System.err.println("Error encolando hijos de tenant " + tenantId + ": " + e.getMessage());
+				}
 			} finally {
 				TenantContext.clear();
 			}
 		}
 		System.out.println("******* CRON [" + corrida + "] fin, ejecutados=" + ejecutados + " omitidos=" + omitidos
 				+ " visitados=" + visitados.size() + " ***" + new Date());
+	}
+
+	private void encolarHijos(String tenantId, Deque<String> pendientes, Set<String> visitados) {
+		for (TenantDTO hijo : listarHijos()) {
+			String composite = tenantId.equals("default") ? hijo.getKey() : tenantId + "/" + hijo.getKey();
+			composite = normalizarTenant(composite);
+			hijo.setKey(composite);
+			registrar(composite, hijo);
+			if (!visitados.contains(composite)) {
+				pendientes.add(composite);
+			}
+		}
 	}
 
 	private List<TenantDTO> listarHijos() {

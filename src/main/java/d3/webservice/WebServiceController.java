@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import d3.shared.domain.ServerException;
 import d3.webservice.application.WebServiceEjecucionSvc;
 
 @RestController
@@ -19,7 +18,7 @@ public class WebServiceController {
 	}
 
 	@GetMapping(value = "/ping_api")
-	public String sendApi() throws ServerException {
+	public String sendApi() {
 		return apiService.apiToTransaction();
 	}
 
