@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import d3.configuration.domain.ConfigurationExportDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
@@ -62,7 +63,8 @@ public class ImportConfigurationFileService {
 
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
-			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+			Object payload = mapper.readValue(inputStream, Object.class);
+			HierarchyExporterDTO hierarchy = parseHierarchy(payload);
 
 			return uploadFile(sincronize(hierarchy).getLogs());
 
@@ -73,11 +75,10 @@ public class ImportConfigurationFileService {
 
 	public CargaArchivoDTO compare(CargaArchivoDTO file) throws ServerException {
 
-		ObjectMapper mapper = new ObjectMapper();
-
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
-			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+			Object payload = mapper.readValue(inputStream, Object.class);
+			HierarchyExporterDTO hierarchy = parseHierarchy(payload);
 
 			return uploadFile(compareFile(hierarchy).getLogs());
 
@@ -87,14 +88,20 @@ public class ImportConfigurationFileService {
 	}
 
 	public LogConfigurationDTO sincronize(HierarchyExporterDTO hierarchy) throws ServerException {
+		if (hierarchy == null)
+			throw new ServerException("La configuracion a sincronizar se encuentra vacia");
+		if (hierarchy.getProperties() == null)
+			hierarchy.setProperties(new java.util.ArrayList<>());
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") == 0))
+				.filter(property -> (property.getPropiedadValor() != null
+						&& property.getPropiedadValor().compareTo("PROP_141") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") != 0))
+				.filter(property -> (property.getPropiedadValor() == null
+						|| property.getPropiedadValor().compareTo("PROP_141") != 0))
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -106,11 +113,13 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") == 0))
+				.filter(property -> (property.getPropiedadValor() != null
+						&& property.getPropiedadValor().compareTo("PROP_78") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") != 0))
+				.filter(property -> (property.getPropiedadValor() == null
+						|| property.getPropiedadValor().compareTo("PROP_78") != 0))
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
@@ -142,21 +151,22 @@ public class ImportConfigurationFileService {
 		sincronizeTemplateService.call(hierarchy, logs, false);
 		logs.setRoot("");
 		sincronizeRelationService.call(hierarchy, logs, false);
-		// No sincornizamos propiedades de rol
-		// sincronizeMessageService.call(token, hierarchy);
-		// sincronizeRolService.callAfterRol(token, hierarchy);
 		return logs;
 	}
 
-	private LogConfigurationDTO compareFile(HierarchyExporterDTO hierarchy) throws ServerException {
-		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
-		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
+	public LogConfigurationDTO compareFile(HierarchyExporterDTO hierarchy) throws ServerException {
+		if (hierarchy == null)
+			throw new ServerException("La configuracion a comparar se encuentra vacia");
+		if (hierarchy.getProperties() == null)
+			hierarchy.setProperties(new java.util.ArrayList<>());
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") == 0))
+				.filter(property -> (property.getPropiedadValor() != null
+						&& property.getPropiedadValor().compareTo("PROP_141") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") != 0))
+				.filter(property -> (property.getPropiedadValor() == null
+						|| property.getPropiedadValor().compareTo("PROP_141") != 0))
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -168,11 +178,13 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") == 0))
+				.filter(property -> (property.getPropiedadValor() != null
+						&& property.getPropiedadValor().compareTo("PROP_78") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") != 0))
+				.filter(property -> (property.getPropiedadValor() == null
+						|| property.getPropiedadValor().compareTo("PROP_78") != 0))
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
@@ -205,6 +217,29 @@ public class ImportConfigurationFileService {
 		logs.setRoot("");
 		sincronizeRelationService.call(hierarchy, logs, true);
 		return logs;
+	}
+
+	public HierarchyExporterDTO parseHierarchy(Object payload) throws ServerException {
+		if (payload == null)
+			throw new ServerException("El archivo de configuracion esta vacio");
+		if (payload instanceof HierarchyExporterDTO)
+			return (HierarchyExporterDTO) payload;
+		if (payload instanceof ConfigurationExportDTO) {
+			ConfigurationExportDTO wrapper = (ConfigurationExportDTO) payload;
+			if (wrapper.getHierarchy() != null)
+				return wrapper.getHierarchy();
+			throw new ServerException("El archivo exportado no contiene configuracion (hierarchy)");
+		}
+		if (payload instanceof com.fasterxml.jackson.databind.JsonNode) {
+			com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) payload;
+			if (node.has("hierarchy") && node.get("hierarchy").isObject())
+				return mapper.convertValue(node.get("hierarchy"), HierarchyExporterDTO.class);
+			if (node.has("arbol") && node.get("arbol").isObject())
+				throw new ServerException(
+						"El archivo contiene un arbol; use el flujo de arbol (/configuration/tree) para sincronizar");
+			return mapper.convertValue(node, HierarchyExporterDTO.class);
+		}
+		throw new ServerException("Formato de configuracion no reconocido");
 	}
 
 	private CargaArchivoDTO uploadFile(String logs) throws ServerException {

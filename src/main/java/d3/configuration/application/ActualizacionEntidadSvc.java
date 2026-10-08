@@ -1,6 +1,7 @@
 package d3.configuration.application;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -60,20 +61,41 @@ public class ActualizacionEntidadSvc {
 	}
 
 	public void actualizarArbol(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
+		actualizarArbol(remoto, local, null);
+	}
+
+	public void actualizarArbol(TreeNodeDTO remoto, TreeNodeDTO local,
+			List<d3.configuration.domain.SeleccionSincronizacionDTO> selecciones) throws ServerException {
 		if (remoto == null || local == null)
 			return;
 		Map<String, TreeNodeDTO> index = indexar(local);
-		actualizarNodo(remoto, index.get(remoto.getCamino()));
+		actualizarNodo(remoto, index.get(remoto.getCamino()), selecciones);
 		if (remoto.getHijos() != null) {
 			for (TreeNodeDTO hijo : remoto.getHijos()) {
-				actualizarArbol(hijo, local);
+				actualizarArbol(hijo, local, selecciones);
 			}
 		}
 	}
 
-	private void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
-		if (local == null || remoto.getDato() == null || local.getDato() == null)
+	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
+		actualizarNodo(remoto, local, null);
+	}
+
+	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local,
+			List<d3.configuration.domain.SeleccionSincronizacionDTO> selecciones) throws ServerException {
+		if (local == null || remoto == null || remoto.getDato() == null || local.getDato() == null)
 			return;
+		if (selecciones != null) {
+			String camino = remoto.getCamino() != null ? remoto.getCamino() : local.getCamino();
+			for (d3.configuration.domain.SeleccionSincronizacionDTO seleccion : selecciones) {
+				if (seleccion.getCamino() != null && seleccion.getCamino().equals(camino)) {
+					if (d3.configuration.domain.SeleccionSincronizacionDTO.OMITIR.equals(seleccion.getAccion()))
+						return;
+					if (d3.configuration.domain.SeleccionSincronizacionDTO.CREAR.equals(seleccion.getAccion()))
+						return;
+				}
+			}
+		}
 		switch (remoto.getTipo()) {
 		case TreeNodeDTO.PROCESO_MACRO:
 		case TreeNodeDTO.PROCESO:

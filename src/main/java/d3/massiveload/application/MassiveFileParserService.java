@@ -43,19 +43,24 @@ public class MassiveFileParserService {
 	public List<Map<String, String>> parse(MultipartFile file, String xmlRootTag) throws ServerException {
 		String name = (file.getOriginalFilename() == null) ? "" : file.getOriginalFilename().toLowerCase();
 		try {
-			if (name.endsWith(".json"))
+			
+			if (name.endsWith(".json")) {
 				return parseJson(file.getInputStream());
-			if (name.endsWith(".xlsx"))
-				return parseExcel(new XSSFWorkbook(file.getInputStream()));// , template);
-			if (name.endsWith(".xls"))
-				return parseExcel(new HSSFWorkbook(file.getInputStream()));// , template);
-			if (name.endsWith(".csv"))
-				return parseCsv(file);// , template);
+			}
+			if (name.endsWith(".xlsx")) {
+				return parseExcel(new XSSFWorkbook(file.getInputStream()));
+			}
+			if (name.endsWith(".csv")) {
+				return parseCsv(file);
+			}
 			if (name.endsWith(".xml")) {
 				if (xmlRootTag == null || xmlRootTag.isEmpty())
 					throw new ServerException(
 							"Para los archivos .xml es necesario indicar la plantilla a la que pertenecen");
 				return parseXml(file.getInputStream(), xmlRootTag);
+			}
+			if (name.endsWith(".xls")) {
+				return parseExcel(new HSSFWorkbook(file.getInputStream()));
 			}
 			throw new ServerException(
 					"Formato de archivo no soportado. Use .xlsx, .xls, .csv o .json para la carga masiva");

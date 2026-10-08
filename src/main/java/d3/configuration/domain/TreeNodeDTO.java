@@ -31,6 +31,8 @@ public class TreeNodeDTO extends BasicParamDTO {
 	private String tipo;
 	private String camino;
 	private Object dato;
+	private Boolean tieneHijos;
+	private Integer totalHijos;
 	private List<TreeNodeDTO> hijos;
 
 	public void setNombre(String nombre) {
@@ -79,6 +81,22 @@ public class TreeNodeDTO extends BasicParamDTO {
 
 	public Object getDato() {
 		return dato;
+	}
+
+	public Boolean getTieneHijos() {
+		return tieneHijos;
+	}
+
+	public void setTieneHijos(Boolean tieneHijos) {
+		this.tieneHijos = tieneHijos;
+	}
+
+	public Integer getTotalHijos() {
+		return totalHijos;
+	}
+
+	public void setTotalHijos(Integer totalHijos) {
+		this.totalHijos = totalHijos;
 	}
 
 	public void setHijos(List<TreeNodeDTO> hijos) {

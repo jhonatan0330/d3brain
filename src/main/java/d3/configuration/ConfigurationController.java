@@ -23,6 +23,7 @@ import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
+import d3.configuration.application.ArbolConfiguracionSvc;
 import d3.configuration.application.ExportConfigurationFileService;
 import d3.configuration.application.ImportConfigurationFileService;
 import d3.configuration.application.PropiedadSvc;
@@ -51,6 +52,7 @@ import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
+import d3.process.application.ProcesoEstadoSvc;
 import d3.process.application.ProcesoSvc;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.process.application.ProcesoTransicionSvc;
@@ -61,6 +63,8 @@ import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.DocumentoPlantillaFilterDTO;
 import d3.process.domain.ProcesoDTO;
+import d3.process.domain.ProcesoEstadoDTO;
+import d3.process.domain.ProcesoEstadoFilterDTO;
 import d3.process.domain.ProcesoFilterDTO;
 import d3.process.domain.ProcesoTransicionAutomaticaDTO;
 import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
@@ -104,12 +108,14 @@ public class ConfigurationController {
 	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
 	private final ReporteBaseSvc reporteBaseService;
 	private final ProcesoSvc procesoService;
+	private final ProcesoEstadoSvc procesoEstadoService;
 	private final ProcesoTransicionSvc procesoTransicionService;
 	private final PropiedadSvc propiedadService;
 	private final RelacionInternaSvc relacionInternaService;
 	private final ExportConfigurationFileService exportService;
 	private final ImportConfigurationFileService importService;
 	private final SincronizacionArbolSvc sincronizacionArbolService;
+	private final ArbolConfiguracionSvc arbolConfiguracionService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
 	private final IndicatorService indicadorService;
 	private final RolAccesoSvc rolAccesoService;
@@ -125,9 +131,11 @@ public class ConfigurationController {
 			@Lazy DocumentoPlantillaSvc documentoPlantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
 			@Lazy ReporteBaseSvc reporteBaseService, @Lazy ProcesoSvc procesoService,
+			@Lazy ProcesoEstadoSvc procesoEstadoService,
 			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc propiedadService,
 			@Lazy RelacionInternaSvc relacionInternaService, @Lazy ExportConfigurationFileService exportService,
 			@Lazy ImportConfigurationFileService importService, @Lazy SincronizacionArbolSvc sincronizacionArbolService,
+			@Lazy ArbolConfiguracionSvc arbolConfiguracionService,
 			@Lazy IndicatorService indicadorService, @Lazy RolAccesoSvc rolAccesoService,
 			@Lazy UsuarioSvc usuarioService) {
 		this.consecutivoService = consecutivoService;
@@ -144,12 +152,14 @@ public class ConfigurationController {
 		this.documentoPlantillaCaracteristicaService = documentoPlantillaCaracteristicaService;
 		this.reporteBaseService = reporteBaseService;
 		this.procesoService = procesoService;
+		this.procesoEstadoService = procesoEstadoService;
 		this.procesoTransicionService = procesoTransicionService;
 		this.propiedadService = propiedadService;
 		this.relacionInternaService = relacionInternaService;
 		this.exportService = exportService;
 		this.importService = importService;
 		this.sincronizacionArbolService = sincronizacionArbolService;
+		this.arbolConfiguracionService = arbolConfiguracionService;
 		this.propertyTypeService = propiedadValorDefinidoService;
 		this.indicadorService = indicadorService;
 		this.rolAccesoService = rolAccesoService;
@@ -900,6 +910,36 @@ public class ConfigurationController {
 		return procesoTransicionService.inactivar(dto);
 	}
 
+	// --- States ---
+
+	@PostMapping("/processes/{processKey}/states")
+	public List<ProcesoEstadoDTO> listarEstados(@PathVariable("processKey") String pProcessKey,
+			@RequestBody ProcesoEstadoFilterDTO filter) throws ServerException {
+		limpiarFiltro(filter);
+		filter.setProceso(pProcessKey);
+		return procesoEstadoService.listarConsulta(filter);
+	}
+
+	@PostMapping("/processes/states/{key}")
+	public ProcesoEstadoDTO consultarEstado(@PathVariable("key") String pKey) throws ServerException {
+		return procesoEstadoService.consultaXId(pKey);
+	}
+
+	@PostMapping("/processes/states")
+	public ProcesoEstadoDTO guardarEstado(@RequestBody ProcesoEstadoDTO dto) throws ServerException {
+		return procesoEstadoService.guardar(dto);
+	}
+
+	@PostMapping("/processes/states/{key}/update")
+	public ProcesoEstadoDTO actualizarEstado(@RequestBody ProcesoEstadoDTO dto) throws ServerException {
+		return procesoEstadoService.actualizar(dto);
+	}
+
+	@PostMapping("/processes/states/{key}/inactivate")
+	public ProcesoEstadoDTO inactivarEstado(@RequestBody ProcesoEstadoDTO dto) throws ServerException {
+		return procesoEstadoService.inactivar(dto);
+	}
+
 	// ==================== PROPERTIES ====================
 
 	public static class PropertyListRequest {
@@ -1111,6 +1151,18 @@ public class ConfigurationController {
 		return sincronizacionArbolService.exportarArbol(filter);
 	}
 
+	@PostMapping("/tree/node")
+	private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
+			throws ServerException {
+		return arbolConfiguracionService.construirHijos(request);
+	}
+
+	@PostMapping("/tree/from-hierarchy")
+	private TreeNodeDTO treeFromHierarchy(@RequestBody Object payload) throws ServerException {
+		d3.configuration.domain.HierarchyExporterDTO hierarchy = importService.parseHierarchy(payload);
+		return arbolConfiguracionService.construirArbol(hierarchy);
+	}
+
 	@PostMapping("/tree/compare")
 	private List<DiferenciaDTO> compareTree(@RequestBody CompararArbolRequestDTO request) throws ServerException {
 		return sincronizacionArbolService.compararArbol(request.getArbol(), request.getFilter());
@@ -1119,6 +1171,12 @@ public class ConfigurationController {
 	@PostMapping("/tree/sync")
 	private CargaArchivoDTO syncTree(@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
 		return sincronizacionArbolService.sincronizar(request);
+	}
+
+	@PostMapping("/tree/sync-node")
+	private d3.configuration.domain.SincronizacionNodoResultDTO syncTreeNode(
+			@RequestBody d3.configuration.domain.SincronizacionNodoDTO request) throws ServerException {
+		return sincronizacionArbolService.sincronizarNodo(request);
 	}
 
 	// ==================== PROPERTY LOOKUP (antes /property/*) ====================

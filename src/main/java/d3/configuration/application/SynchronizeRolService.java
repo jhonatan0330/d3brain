@@ -29,16 +29,33 @@ public class SynchronizeRolService {
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeRolService");
 			for (RolAccesoDTO remote : remoteList) {
+				if (remote.getCodigo() == null || remote.getCodigo().isEmpty()) {
+					log.warn("SKIP ROL SIN CODIGO - " + remote.getNombre());
+					continue;
+				}
 				RolAccesoDTO local = findTemplateInList(localListToErase, remote.getCodigo());
-				// Creo el nuevo proceso
 				if (local != null) {
 					localListToErase.remove(local);
 					log.info("EXIST ROL " + remote.getCodigo() + " - " + remote.getNombre());
-					// propertiesSynchronizeService.call(hierarchy, remote.getLlaveTabla(),
-					// PropiedadValorDefinidoDTO.ROL, local.getLlaveTabla(), token, log, compare);
-					boolean isToMigrate = false;
+				} else {
+					RolAccesoDTO nuevo = new RolAccesoDTO();
+					nuevo.setCodigo(remote.getCodigo());
+					nuevo.setNombre(remote.getNombre());
+					nuevo.setImagen(remote.getImagen());
+					nuevo.setPlantilla(remote.getPlantilla());
+					try {
+						local = rolService.guardar(nuevo);
+						localListToErase.add(local);
+						log.info("NEW ROL " + remote.getCodigo() + " - " + remote.getNombre());
+					} catch (Exception e) {
+						log.error("NEW ROL " + remote.getCodigo() + " - " + remote.getNombre() + " : "
+								+ e.getMessage());
+						continue;
+					}
+				}
+				if (propierties != null) {
 					for (PropiedadDTO iProperty : propierties) {
-						isToMigrate = false;
+						boolean isToMigrate = false;
 						if (iProperty.getRol() != null && iProperty.getRol().compareTo(remote.getLlaveTabla()) == 0) {
 							iProperty.setRol(local.getLlaveTabla());
 							isToMigrate = true;
@@ -48,14 +65,12 @@ public class SynchronizeRolService {
 							iProperty.setRolExcluyente(local.getLlaveTabla());
 							isToMigrate = true;
 						}
-
 						if (isToMigrate && iProperty.getEstado() == null) {
 							propertiesWithReplaceRol.add(iProperty);
 							iProperty.setEstado("YA");
 						}
 					}
 				}
-				// Uy seria muy raro else
 			}
 		}
 		return propertiesWithReplaceRol;

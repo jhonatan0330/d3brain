@@ -71,7 +71,7 @@ public class ExportConfigurationFileService {
 	}
 
 	public CargaArchivoDTO call() throws ServerException {
-		return uploadFile(construirHierarchy());
+		return uploadFile(construirHierarchy(), null);
 	}
 
 	public HierarchyExporterDTO construirHierarchy() throws ServerException {
@@ -125,17 +125,39 @@ public class ExportConfigurationFileService {
 		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
 		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
 
-		return uploadFile(hierarchy);
+		return uploadFile(hierarchy, modules.getModulesCode());
 	}
 
-	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy) throws ServerException {
-		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", "export", "private");
+	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy, List<String> modulos) throws ServerException {
+		d3.configuration.domain.ConfigurationExportDTO wrapper = new d3.configuration.domain.ConfigurationExportDTO();
+		wrapper.setHierarchy(hierarchy);
+		wrapper.setFechaExport(new java.util.Date());
+		try {
+			wrapper.setTenantOrigen(SessionContext.getCurrentUser());
+		} catch (Exception e) {
+			wrapper.setTenantOrigen(null);
+		}
+		wrapper.setModulos(modulos);
+		return uploadService.uploadFileDTO(convert(wrapper), nombreArchivo(modulos), "export", "private");
 	}
 
-	private byte[] convert(HierarchyExporterDTO hierarchy) throws ServerException {
+	private String nombreArchivo(List<String> modulos) {
+		String base = modulos == null || modulos.isEmpty() ? "Configuracion" : "Configuracion-Modulos";
+		String tenant = null;
+		try {
+			tenant = SessionContext.getCurrentUser();
+		} catch (Exception e) {
+			tenant = null;
+		}
+		java.text.SimpleDateFormat formato = new java.text.SimpleDateFormat("yyyyMMdd-HHmm");
+		return base + "-" + (tenant != null ? tenant : "tenant") + "-" + formato.format(new java.util.Date())
+				+ ".json";
+	}
+
+	private byte[] convert(Object payload) throws ServerException {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			return mapper.writeValueAsBytes(hierarchy);
+			return mapper.writeValueAsBytes(payload);
 		} catch (JsonProcessingException e) {
 			throw new ServerException(e.getMessage());
 		}

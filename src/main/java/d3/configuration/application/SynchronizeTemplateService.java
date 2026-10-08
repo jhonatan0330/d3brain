@@ -55,6 +55,8 @@ public class SynchronizeTemplateService {
 						newProcess.setImagen(remote.getImagen());
 						newProcess.setProceso(remote.getProceso());
 						newProcess.setNombre(remote.getNombre());
+						newProcess.setTipo(remote.getTipo());
+						newProcess.setPadre(remote.getPadre());
 						try {
 							local = templateService.save(newProcess);
 							log.info("NEW TEMPLATE " + remote.getCodigo() + " - " + remote.getNombre());
