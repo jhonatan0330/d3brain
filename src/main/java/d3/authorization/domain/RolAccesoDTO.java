@@ -16,6 +16,15 @@ public class RolAccesoDTO extends BasicDTO {
 	private String nombre;
 	private String codigo;
 	private String imagen;
+	private String proceso;
+
+	public void setProceso(String proceso) {
+		this.proceso = proceso;
+	}
+
+	public String getProceso() {
+		return proceso;
+	}
 
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;

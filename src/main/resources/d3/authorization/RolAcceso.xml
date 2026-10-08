@@ -117,6 +117,8 @@
 			,crac_plantilla as  plantilla
 			,cdpl_codigo as  codigo
 			,crac_estado as estado
+			,cdpl_nombre as nombre
+			,cdpl_proceso as proceso
 		from rolacceso_racp
 			inner join documentoplantilla_dplp dd on (cdpl_llave = crac_plantilla)
 		where crac_estado ='A' and dd.cdpl_estado = 'A'
