@@ -2,7 +2,6 @@ package d3.document.application;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,9 +74,6 @@ public class CallDocumentListWithFilters {
 	public List<PedidoVentaDTO> listarAvanzado(PedidoVentaFilterDTO dto) throws ServerException {
 		if (dto == null)
 			throw new ServerException("Tronco de error");
-		System.out.println(
-				new Date().toString() + " : ListarAvanzado (" + dto.getPlantilla() + "), llave (" + dto.getLlaveTabla()
-						+ "), filtro ( " + dto.getFiltroParametro() + "), nombre ( " + dto.getNombre() + ")");
 		if (dto.getFiltroParametro() != null && dto.getFiltroParametro().isEmpty())
 			dto.setFiltroParametro(null);
 
