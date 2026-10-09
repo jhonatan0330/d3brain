@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Duration;
@@ -50,6 +52,7 @@ import d3.shared.domain.SharedConstants;
 import freemarker.core.InvalidReferenceException;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import freemarker.template.TemplateMethodModelEx;
 
 @Component
 public class ProcessTemplate {
@@ -79,57 +82,87 @@ public class ProcessTemplate {
 	public String generateOutputFile(String plantilla, String parametros) {
 		if (plantilla == null || plantilla.isEmpty())
 			return plantilla;
-		if (parametros != null && !parametros.isEmpty()) {
-			Map<String, Object> mapParams = D3Utils.createMaptoString(parametros);
-			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-				if (entry.getValue() != null
-						&& entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
-					// Esto lo hago porque el replace all no me funciona con parentesis
-					String codeToEvaluate = "{{" + entry.getKey() + "}}";
-					while (plantilla.contains(codeToEvaluate)) {
-						plantilla = plantilla.replace(codeToEvaluate, (String) entry.getValue());
-					}
-				}
-			}
-			plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
+		if (parametros == null || parametros.isEmpty()) {
 			if (plantilla.contains("$") || plantilla.contains("<#")) {
-				Map<String, Object> newMap = new HashMap<String, Object>();
-				// En fremarker sale error con los parentesis
-				for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
-					if (entry.getKey().contains("(")) {
-						String newKey = entry.getKey();
-						while (newKey.contains("(")) {
-							newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_")
-									.replace("/", "_").replace("-", "_");
-						}
-						newMap.put(newKey, entry.getValue());
-						// mapParams.remove(entry.getKey());
-						// Por el momento no borro las entradas para una proxima
-					}
-				}
-				mapParams.putAll(newMap);
-				String result;
-				try {
-					result = ejecutarFreeMarker(plantilla, mapParams);
-				} catch (InvalidReferenceException e) {
-					notificarErrorPlantilla(e, plantilla);
-					result = e.getFTLInstructionStack();
-				} catch (Exception ex) {
-					notificarErrorPlantilla(ex, plantilla);
-					result = ex.getMessage();
-				}
-				return result;
+				parametros = "";
+			} else {
+				return plantilla;	
 			}
 		}
+			
+		Map<String, Object> mapParams = D3Utils.createMaptoString(parametros);
+		for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
+			if (entry.getValue() != null && entry.getValue().getClass().getName().compareTo("java.lang.String") == 0) {
+				// Esto lo hago porque el replace all no me funciona con parentesis
+				String codeToEvaluate = "{{" + entry.getKey() + "}}";
+				while (plantilla.contains(codeToEvaluate)) {
+					plantilla = plantilla.replace(codeToEvaluate, (String) entry.getValue());
+				}
+			}
+		}
+		plantilla = plantilla.replaceAll("\\{\\{[A-Za-z0-9_/():\\-\\[\\]]*\\}\\}", "");
+		if (plantilla.contains("$") || plantilla.contains("<#")) {
+			Map<String, Object> newMap = new HashMap<String, Object>();
+			// En fremarker sale error con los parentesis
+			for (Map.Entry<String, Object> entry : mapParams.entrySet()) {
+				if (entry.getKey().contains("(")) {
+					String newKey = entry.getKey();
+					while (newKey.contains("(")) {
+						newKey = entry.getKey().replace("(", "_").replace(")", "").replace(":", "_").replace("/", "_")
+								.replace("-", "_");
+					}
+					newMap.put(newKey, entry.getValue());
+					// mapParams.remove(entry.getKey());
+					// Por el momento no borro las entradas para una proxima
+				}
+			}
+			mapParams.putAll(newMap);
+			String result;
+			try {
+				result = ejecutarFreeMarker(plantilla, mapParams);
+			} catch (InvalidReferenceException e) {
+				notificarErrorPlantilla(e, plantilla);
+				result = e.getFTLInstructionStack();
+			} catch (Exception ex) {
+				notificarErrorPlantilla(ex, plantilla);
+				result = ex.getMessage();
+			}
+			return result;
+		}
 		return plantilla;
+
 	}
 
 	private String ejecutarFreeMarker(String plantilla, Map<String, Object> mapParams) throws Exception {
 		StringWriter out = new StringWriter();
 		Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+		if (plantilla.contains("sha256")) {
+			mapParams.put("sha256", (TemplateMethodModelEx) arguments -> sha256(arguments.get(0).toString()));
+	    }
 		Template t = new Template("templateName", plantilla, cfg);
 		t.process(mapParams, out);
 		return out.toString();
+	}
+
+	private String sha256(String texto) {
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(texto.getBytes(StandardCharsets.UTF_8));
+
+			StringBuilder hexString = new StringBuilder();
+			for (byte b : hash) {
+				String hex = Integer.toHexString(0xff & b);
+				if (hex.length() == 1) {
+					hexString.append('0');
+				}
+				hexString.append(hex);
+			}
+
+			return hexString.toString();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+
 	}
 
 	private void notificarErrorPlantilla(Exception e, String plantilla) {

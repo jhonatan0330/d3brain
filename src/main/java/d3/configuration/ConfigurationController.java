@@ -83,6 +83,7 @@ import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
+import d3.webservice.application.WebServiceCopyAPI;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
@@ -99,6 +100,7 @@ public class ConfigurationController {
 	private final OrganizacionSvc organizacionService;
 	private final ServidorSvc servidorService;
 	private final WebServiceSvc webServiceService;
+	private final WebServiceCopyAPI webServiceCopyAPI;
 	private final WebServiceEjecucionSvc webServiceEjecucionService;
 	private final MensajeSvc mensajeService;
 	private final MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
@@ -124,6 +126,7 @@ public class ConfigurationController {
 	public ConfigurationController(@Lazy ConsecutivoSvc consecutivoService,
 			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
 			@Lazy ServidorSvc servidorService, @Lazy WebServiceSvc webServiceService,
+			@Lazy WebServiceCopyAPI webServiceCopyAPI,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy MensajeSvc mensajeService,
 			@Lazy MensajePlantillaCorreoSvc mensajePlantillaCorreoService,
 			@Lazy MailUserSendMessage mailUserSendMessage,
@@ -143,6 +146,7 @@ public class ConfigurationController {
 		this.organizacionService = organizacionService;
 		this.servidorService = servidorService;
 		this.webServiceService = webServiceService;
+		this.webServiceCopyAPI = webServiceCopyAPI;
 		this.webServiceEjecucionService = webServiceEjecucionService;
 		this.mensajeService = mensajeService;
 		this.mensajePlantillaCorreoService = mensajePlantillaCorreoService;
@@ -356,6 +360,12 @@ public class ConfigurationController {
 	@PostMapping("/web-services/{key}/inactivate")
 	public WebServiceDTO inactivarWebService(@RequestBody WebServiceDTO dto) throws ServerException {
 		return webServiceService.inactivar(dto);
+	}
+
+	@PostMapping("/web-services/{key}/copy")
+	public d3.shared.domain.SharedIdResponse copiarWebService(@PathVariable("key") String pKey)
+			throws ServerException {
+		return webServiceCopyAPI.call(pKey);
 	}
 
 	public static class EjecutarWSRequest {

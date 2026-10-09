@@ -3,10 +3,13 @@ package d3.upload;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +70,15 @@ public class UploadController {
 
 			return ResponseEntity.ok()
 					.contentType(MediaType.parseMediaType(mimeType != null ? mimeType : "application/octet-stream"))
-					.contentLength(file.length()).body(resource);
+					.contentLength(file.length())
+					.header(
+			                HttpHeaders.CONTENT_DISPOSITION,
+			                ContentDisposition.attachment()
+			                    .filename(file.getName(), StandardCharsets.UTF_8)
+			                    .build()
+			                    .toString()
+			            )
+					.body(resource);
 
 		} catch (IOException e) {
 			throw new ServerException("Error al leer el archivo: " + e.getMessage(), e);
