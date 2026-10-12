@@ -248,10 +248,9 @@ public class ConfigurationController {
 	}
 
 	@PostMapping("/property-values/by-origen")
-	public List<PropiedadValorDefinidoDTO> listarPorOrigen(@RequestBody PropiedadValorDefinidoFilterDTO filter)
-			throws ServerException {
+	public List<PropiedadValorDefinidoDTO> listarPorOrigen(@RequestBody PropiedadValorDefinidoFilterDTO filter){
 		limpiarFiltro(filter);
-		return propiedadValorDefinidoService.listarConsulta(filter);
+		return propiedadValorDefinidoService.listarPorOrigen(filter);
 	}
 
 	@PostMapping("/property-values/create")

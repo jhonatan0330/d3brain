@@ -280,30 +280,9 @@
 <!--// BEGIN region script-->
 	<select id="listarPorOrigen" parameterType="PropiedadValorDefinidoDTO" resultType="PropiedadValorDefinidoDTO">
 		<include refid="selectPropiedadValorDefinidoFragment" />
-		where 1=1
-			<if test="estado!=null">
-				and cpvd_estado = #{estado}
-			</if>
-			<if test="origen!=null">
-				and cpvd_origen = #{origen}
-			</if>
-			<if test="origenCategoria!=null">
-				and (cpvd_origencategoria = #{origenCategoria} or cpvd_origencategoria is null)
-			</if>
-			<if test="codigo!=null">
-				and cpvd_codigo = #{codigo}
-			</if>
-			<if test="nombre!=null">
-				and cpvd_nombre = #{nombre}
-			</if>
-			<if test="grupo!=null">
-				and cpvd_grupo = #{grupo}
-			</if>
-			<if test="filtroParametro!=null">
-				and (upper(cpvd_nombre) like upper('%' || #{filtroParametro} || '%'))
-			</if>
-		order by cpvd_origen 
-		, cpvd_nombre 
+		where cpvd_estado = 'A'
+			and cpvd_origen = #{origen} and (cpvd_origencategoria = #{origenCategoria} or cpvd_origencategoria is null)
+		order by cpvd_origen , cpvd_nombre 
 	</select>
 	
 	<select id="getFullToSynchronize" resultType="PropiedadValorDefinidoDTO">
