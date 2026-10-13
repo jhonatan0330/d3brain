@@ -108,6 +108,23 @@ public class IndicatorService {
 		return dto;
 	}
 
+	public IndicatorDTO activar(IndicatorDTO dto) throws ServerException {
+		IndicatorDTO result = getById(dto.getKey());
+		if (result == null)
+			throw new ServerException("No se identifica el objeto a Activar");
+		if (result.getState() != null && result.getState().compareTo(SharedConstants.STATE_ACTIVE) == 0)
+			throw new ServerException("Este objeto ya se encuentra Activo");
+		result.setState(SharedConstants.STATE_ACTIVE);
+		try {
+			mapper.update(result);
+		} catch (BindingException ex) {
+			throw new ServerException(ex.getMessage());
+		} catch (Exception e) {
+			throw new ServerException(e.getCause() == null ? e.getMessage() : e.getCause().getMessage());
+		}
+		return result;
+	}
+
 	public IndicatorResultadoDTO getResultado(String indicadorId, PeriodoDTO periodo) throws ServerException {
 		IndicatorDTO indicador = getById(indicadorId);
 		if (indicador == null)
@@ -130,18 +147,18 @@ public class IndicatorService {
 		if (codigo == null)
 			return "0";
 		switch (codigo.trim().toLowerCase()) {
-			case "ventas_totales":
-				return "125000000";
-			case "cantidad_ventas":
-				return "3480";
-			case "ticket_promedio":
-				return "35977";
-			case "crecimiento_ventas":
-				return "18.5";
-			case "cumplimiento_meta":
-				return "92.4";
-			default:
-				return "0";
+		case "ventas_totales":
+			return "125000000";
+		case "cantidad_ventas":
+			return "3480";
+		case "ticket_promedio":
+			return "35977";
+		case "crecimiento_ventas":
+			return "18.5";
+		case "cumplimiento_meta":
+			return "92.4";
+		default:
+			return "0";
 		}
 	}
 

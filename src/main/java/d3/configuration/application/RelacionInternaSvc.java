@@ -70,6 +70,28 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		return bd;
 	}
 
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public void reactivarRelacionesDePropiedad(String propiedad) throws ServerException {
+		if (propiedad == null)
+			return;
+		RelacionInternaFilterDTO filtro = new RelacionInternaFilterDTO();
+		filtro.setPropiedad(propiedad);
+		filtro.setEstado(SharedConstants.STATE_INACTIVE);
+		filtro.setPaginacionRegistroInicial(0);
+		filtro.setPaginacionRegistroFinal(1000);
+		List<RelacionInternaDTO> inactivas = super.listarConsulta(filtro);
+		if (inactivas == null || inactivas.isEmpty())
+			return;
+		for (RelacionInternaDTO iRelation : inactivas) {
+			iRelation.setEstado(SharedConstants.STATE_ACTIVE);
+			iRelation.setFechaEliminacion(null);
+			iRelation.setUsuarioEliminacion(null);
+			super.update(iRelation);
+		}
+		relacionInternaMapper.updatePropertyRelations(propiedad);
+		cacheService.clearProperties();
+	}
+
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public RelacionInternaDTO guardar(RelacionInternaDTO dto) throws ServerException {

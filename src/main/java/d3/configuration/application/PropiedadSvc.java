@@ -242,6 +242,40 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return bd;
 	}
 
+	@Override
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public PropiedadDTO activar(PropiedadDTO dto) throws ServerException {
+		if (!rolService.usuarioPermisosCompletos())
+			throw new ServerException("Solo los usuarios ADMIN pueden modificar las propiedades");
+		if (dto == null || dto.getLlaveTabla() == null)
+			throw new ServerException("La llave del DTO se encuentra vacia. Propiedad");
+		PropiedadDTO bd = consultaXId(dto.getLlaveTabla());
+		if (bd == null)
+			throw new ServerException("No se identifica la propiedad a activar");
+		if (bd.getEstado() != null && bd.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
+			throw new ServerException("Esta propiedad ya se encuentra activa");
+		bd.setEstado(SharedConstants.STATE_ACTIVE);
+		bd.setFechaEliminacion(null);
+		bd.setUsuarioEliminacion(null);
+		bd = super.update(bd);
+		restaurarTipoPlantilla(bd);
+		aplicarEfectosPosteriores(new PropiedadDTO(bd));
+		relacionService.reactivarRelacionesDePropiedad(bd.getLlaveTabla());
+		cacheService.clearProperties();
+		return bd;
+	}
+
+	private void restaurarTipoPlantilla(PropiedadDTO bd) throws ServerException {
+		if (bd.getKey() == null)
+			return;
+		if (bd.getKey().compareTo(Propiedades.PLANTILLA_ANULAR) == 0)
+			plantillaService.actualizarTipoPadre(bd.getValor(), DocumentoPlantillaDTO.ANULACION, bd.getCampo());
+		if (bd.getKey().compareTo(Propiedades.PLANTILLA_ACTIVAR) == 0)
+			plantillaService.actualizarTipoPadre(bd.getValor(), DocumentoPlantillaDTO.ACTIVACION, bd.getCampo());
+		if (bd.getKey().compareTo(Propiedades.PLANTILLA_DIFERENCIAS) == 0)
+			plantillaService.actualizarTipoPadre(bd.getValor(), DocumentoPlantillaDTO.MODIFICACION, bd.getCampo());
+	}
+
 	private String getLocationError(String type, String fieldId) throws ServerException {
 		switch (type) {
 		case PropiedadValorDefinidoDTO.PLANTILLA: {
@@ -334,6 +368,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		dto.setFechaDefinicion(new Date());
 		dto.setUsuarioCreacion(SessionContext.getCurrentUser());
 		dto = super.guardar(dto);
+		aplicarEfectosPosteriores(dto);
+		return dto;
+	}
+
+	private void aplicarEfectosPosteriores(PropiedadDTO dto) throws ServerException {
+		if (dto == null || dto.getKey() == null)
+			return;
 		if (dto.getKey().compareTo(Propiedades.PLANTILLA_TIPO_REPORTE) == 0) {
 			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(dto.getCampo());
 			if (plantilla != null)
@@ -422,7 +463,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (dto.getKey().compareTo(Propiedades.DESCRIPCION) == 0)
 			campoService.actualizarDescripcion(dto.getCampo(), dto.getValor());
 		cacheService.clearProperties();
-		return dto;
 	}
 
 	public PropiedadValorDefinidoDTO consultarValorDefinido(String tipo, String key) throws ServerException {
