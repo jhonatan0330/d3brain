@@ -93,10 +93,11 @@ public class PropertyGetWithCacheService {
 					p -> p.getRolExcluyente() != null && !_roleFinalToManageError.contains(p.getRolExcluyente()));
 
 		} else {
-			_propertiesType.removeIf(p -> p.getUsuario() != null);
-			_propertiesType.removeIf(p -> p.getUsuarioExcluyente() != null);
-			_propertiesType.removeIf(p -> p.getRol() != null);
-			_propertiesType.removeIf(p -> p.getRolExcluyente() != null);
+			// Se supone que ahora cuando el user es null es porque quiero todas las propiedades
+			//_propertiesType.removeIf(p -> p.getUsuario() != null);
+			//_propertiesType.removeIf(p -> p.getUsuarioExcluyente() != null);
+			//_propertiesType.removeIf(p -> p.getRol() != null);
+			//_propertiesType.removeIf(p -> p.getRolExcluyente() != null);
 		}
 		if (_propertiesType.isEmpty())
 			return _propertiesType;

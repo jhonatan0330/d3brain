@@ -1,5 +1,6 @@
 package d3.configuration.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import d3.authentication.domain.OrganizacionDTO;
@@ -131,6 +132,33 @@ public class HierarchyExporterDTO {
 
 	public void setTransitions(List<ProcesoTransicionDTO> transitions) {
 		this.transitions = transitions;
+	}
+
+	public void normalizar() {
+		if (process == null)
+			process = new ArrayList<>();
+		if (states == null)
+			states = new ArrayList<>();
+		if (transitions == null)
+			transitions = new ArrayList<>();
+		if (templates == null)
+			templates = new ArrayList<>();
+		if (fields == null)
+			fields = new ArrayList<>();
+		if (reports == null)
+			reports = new ArrayList<>();
+		if (roles == null)
+			roles = new ArrayList<>();
+		if (apis == null)
+			apis = new ArrayList<>();
+		if (messages == null)
+			messages = new ArrayList<>();
+		if (properties == null)
+			properties = new ArrayList<>();
+		if (relations == null)
+			relations = new ArrayList<>();
+		if (propertyTypes == null)
+			propertyTypes = new ArrayList<>();
 	}
 
 }

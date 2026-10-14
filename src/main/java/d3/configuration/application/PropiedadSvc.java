@@ -1156,17 +1156,10 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		WebServiceDTO bd = apiService.consultaXId(dto.getValor());
 		// Si es actualizar valido por el id
 		if (bd == null) {
-			// VAlido por el nombre
 			WebServiceFilterDTO bdFilter = new WebServiceFilterDTO();
-			bdFilter.setNombre(dto.getValor().toUpperCase());
+			bdFilter.setFiltroParametro(dto.getValor().toUpperCase());
 			bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			bd = apiService.consultaUnica(bdFilter);
-			if (bd == null) {// Consulto por codigo
-				bdFilter = new WebServiceFilterDTO();
-				bdFilter.setCodigo(dto.getValor().toUpperCase());
-				bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
-				bd = apiService.consultaUnica(bdFilter);
-			}
 			if (bd == null) {
 				throw new ServerException("El api " + dto.getValor().toUpperCase()
 						+ " no fue reconocido para la propiedad " + dto.getKey());

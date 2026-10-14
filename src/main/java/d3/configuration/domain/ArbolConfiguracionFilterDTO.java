@@ -9,6 +9,7 @@ public class ArbolConfiguracionFilterDTO extends BasicFilterDTO {
 
 	private String profundidad;
 	private Boolean listarPropiedades;
+	private Boolean ligero;
 
 	public void setProfundidad(String profundidad) {
 		this.profundidad = profundidad;
@@ -24,6 +25,14 @@ public class ArbolConfiguracionFilterDTO extends BasicFilterDTO {
 
 	public Boolean getListarPropiedades() {
 		return listarPropiedades;
+	}
+
+	public void setLigero(Boolean ligero) {
+		this.ligero = ligero;
+	}
+
+	public Boolean getLigero() {
+		return ligero;
 	}
 
 }

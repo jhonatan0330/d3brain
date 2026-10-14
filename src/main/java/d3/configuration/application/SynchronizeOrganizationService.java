@@ -27,9 +27,10 @@ public class SynchronizeOrganizationService {
 			return;
 		log.setRoot("SynchronizeOrganization");
 		OrganizacionDTO mainOrganization = organizationService.obtenerPrincipal();
-		// hierarchy.getOrganization().setLlaveTabla(mainOrganization.getLlaveTabla());
-		propertiesSynchronizeService.call(hierarchy, mainOrganization.getLlaveTabla(),
-				PropiedadValorDefinidoDTO.ORGANIZACION, hierarchy.getOrganization().getLlaveTabla(), log, compare);
+		if (mainOrganization == null || mainOrganization.getLlaveTabla() == null)
+			return;
+		propertiesSynchronizeService.call(hierarchy, hierarchy.getOrganization().getLlaveTabla(),
+				PropiedadValorDefinidoDTO.ORGANIZACION, mainOrganization.getLlaveTabla(), log, compare);
 	}
 
 }

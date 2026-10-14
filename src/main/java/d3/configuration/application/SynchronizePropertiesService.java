@@ -29,6 +29,11 @@ public class SynchronizePropertiesService {
 
 	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
+		call(hierarchy, entityRemote, type, entityLocal, log, compare, false);
+	}
+
+	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal,
+			LogConfigurationDTO log, boolean compare, boolean eliminarFaltantes) throws ServerException {
 		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades(type, entityLocal, null, null);
 		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type,
 				entityRemote);
@@ -138,20 +143,30 @@ public class SynchronizePropertiesService {
 
 			}
 		}
-		// elimino las propiedades que no estaban en la sincronizacion y no tenian
-		// usuario especifico
-		// for (PropiedadDTO propiedadDTO : localPropertiesToErase) {
-		// propertiesService.inactivar(propiedadDTO);
-		// }
+		if (eliminarFaltantes) {
+			for (PropiedadDTO propiedadDTO : localPropertiesToErase) {
+				if (propiedadDTO.getUsuario() != null && !propiedadDTO.getUsuario().isEmpty()) {
+					log.info("PROPERTY KEEP (usuario especifico) " + propiedadDTO.getPropiedadValor());
+					continue;
+				}
+				try {
+					propertiesService.inactivar(propiedadDTO);
+					log.info("PROPERTY REMOVED " + propiedadDTO.getPropiedadValor());
+				} catch (Exception e) {
+					log.error("PROPERTY REMOVE ERROR " + propiedadDTO.getPropiedadValor() + " : " + e.getMessage());
+				}
+			}
+		}
 
 	}
 
 	private List<PropiedadDTO> filterPropertiesToTypeAndEntity(List<PropiedadDTO> propertiesFull, String type,
 			String entity) {
-		if (propertiesFull == null || propertiesFull.isEmpty())
+		if (propertiesFull == null || propertiesFull.isEmpty() || type == null || entity == null)
 			return null;
-		return propertiesFull.stream().filter(
-				property -> (property.getCampo().compareTo(entity) == 0 && property.getTipo().compareTo(type) == 0))
+		return propertiesFull.stream()
+				.filter(property -> property.getCampo() != null && property.getTipo() != null
+						&& property.getCampo().compareTo(entity) == 0 && property.getTipo().compareTo(type) == 0)
 				.collect(Collectors.toList());
 	}
 

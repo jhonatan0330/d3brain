@@ -7,6 +7,7 @@ public class CompararArbolRequestDTO {
 
 	private TreeNodeDTO arbol;
 	private ArbolConfiguracionFilterDTO filter;
+	private String arbolId;
 
 	public TreeNodeDTO getArbol() {
 		return arbol;
@@ -22,6 +23,14 @@ public class CompararArbolRequestDTO {
 
 	public void setFilter(ArbolConfiguracionFilterDTO filter) {
 		this.filter = filter;
+	}
+
+	public String getArbolId() {
+		return arbolId;
+	}
+
+	public void setArbolId(String arbolId) {
+		this.arbolId = arbolId;
 	}
 
 }

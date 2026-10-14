@@ -90,6 +90,7 @@ public class ArbolConfiguracionSvc {
 
 	public TreeNodeDTO construirArbolSimple(ArbolConfiguracionFilterDTO filter) throws ServerException {
 		boolean listarPropiedades = filter != null && Boolean.TRUE.equals(filter.getListarPropiedades());
+		boolean ligero = filter != null && Boolean.TRUE.equals(filter.getLigero());
 		TreeNodeDTO raiz = new TreeNodeDTO();
 		raiz.setTipo(TreeNodeDTO.ORGANIZACION);
 		raiz.setCamino(TreeNodeDTO.ORGANIZACION);
@@ -100,11 +101,12 @@ public class ArbolConfiguracionSvc {
 			raiz.setNombre(org.getNombre());
 			raiz.setCodigo(org.getCodigo());
 			raiz.setImagen(org.getImagen());
-			raiz.setDato(org);
+			if (!ligero)
+				raiz.setDato(org);
 		}
 		raiz.setTieneHijos(true);
 		List<TreeNodeDTO> hijos = construirHijosNivel(TreeNodeDTO.ORGANIZACION, raiz.getLlaveTabla(),
-				TreeNodeDTO.ORGANIZACION, listarPropiedades);
+				TreeNodeDTO.ORGANIZACION, listarPropiedades, ligero);
 		raiz.setHijos(hijos.isEmpty() ? null : hijos);
 		raiz.setTotalHijos(hijos.size());
 		return raiz;
@@ -114,12 +116,13 @@ public class ArbolConfiguracionSvc {
 		if (request == null || request.getTipo() == null || request.getTipo().isEmpty())
 			throw new ServerException("El tipo del nodo es obligatorio");
 		boolean listarPropiedades = Boolean.TRUE.equals(request.getListarPropiedades());
+		boolean ligero = Boolean.TRUE.equals(request.getLigero());
 		String tipoPadre = request.getTipo();
 		String llavePadre = request.getLlaveTabla();
 		String caminoPadre = request.getCamino();
 		if (caminoPadre == null || caminoPadre.isEmpty())
 			caminoPadre = tipoPadre;
-		List<TreeNodeDTO> hijos = construirHijosNivel(tipoPadre, llavePadre, caminoPadre, listarPropiedades);
+		List<TreeNodeDTO> hijos = construirHijosNivel(tipoPadre, llavePadre, caminoPadre, listarPropiedades, ligero);
 		TreeNodeDTO nodo = new TreeNodeDTO();
 		nodo.setTipo(tipoPadre);
 		nodo.setCamino(caminoPadre);
@@ -145,7 +148,7 @@ public class ArbolConfiguracionSvc {
 	}
 
 	private List<TreeNodeDTO> construirHijosNivel(String tipoPadre, String llavePadre, String caminoPadre,
-			boolean listarPropiedades) throws ServerException {
+			boolean listarPropiedades, boolean ligero) throws ServerException {
 		List<TreeNodeDTO> hijos = new ArrayList<>();
 		if (TreeNodeDTO.ORGANIZACION.equals(tipoPadre)) {
 			try {
@@ -158,7 +161,7 @@ public class ArbolConfiguracionSvc {
 							continue;
 						hijos.add(nodoConfig(proceso.getLlaveTabla(), proceso.getEstado(), proceso.getNombre(),
 								proceso.getCodigo(), proceso.getImagen(), tipoNodoProceso(proceso), caminoPadre,
-								proceso, true, null));
+								ligero ? null : proceso, true, null));
 					}
 				}
 				List<RolAccesoDTO> roles = rolService.getFullToSynchronize(null);
@@ -168,7 +171,7 @@ public class ArbolConfiguracionSvc {
 						if (procesoRol != null && !procesoRol.isEmpty() && llavesProcesos.contains(procesoRol))
 							continue;
 						hijos.add(nodoConfig(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-								rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, rol, false, null));
+								rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, ligero ? null : rol, false, null));
 					}
 				}
 				List<WebServiceDTO> apis = apiService.getFullToSynchronize(null);
@@ -178,14 +181,14 @@ public class ArbolConfiguracionSvc {
 						if (procesoApi != null && !procesoApi.isEmpty() && llavesProcesos.contains(procesoApi))
 							continue;
 						hijos.add(nodoConfig(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
-								null, TreeNodeDTO.API, caminoPadre, api, listarPropiedades, null));
+								null, TreeNodeDTO.API, caminoPadre, ligero ? null : api, listarPropiedades, null));
 					}
 				}
 				List<MensajePlantillaCorreoDTO> mensajes = mensajeService.getFullToSynchronize(null);
 				if (mensajes != null) {
 					for (MensajePlantillaCorreoDTO mensaje : mensajes) {
 						hijos.add(nodoConfig(mensaje.getLlaveTabla(), mensaje.getEstado(), mensaje.getNombre(), null,
-								null, TreeNodeDTO.MENSAJE, caminoPadre, mensaje, false, null));
+								null, TreeNodeDTO.MENSAJE, caminoPadre, ligero ? null : mensaje, false, null));
 					}
 				}
 			} catch (ServerException e) {
@@ -200,8 +203,8 @@ public class ArbolConfiguracionSvc {
 					if (esRaiz(proceso) || !llavePadre.equals(proceso.getMacroproceso()))
 						continue;
 					hijos.add(nodoConfig(proceso.getLlaveTabla(), proceso.getEstado(), proceso.getNombre(),
-							proceso.getCodigo(), proceso.getImagen(), tipoNodoProceso(proceso), caminoPadre, proceso,
-							listarPropiedades, null));
+							proceso.getCodigo(), proceso.getImagen(), tipoNodoProceso(proceso), caminoPadre,
+							ligero ? null : proceso, listarPropiedades, null));
 				}
 			}
 			List<String> procesoLlave = List.of(llavePadre);
@@ -209,8 +212,8 @@ public class ArbolConfiguracionSvc {
 			if (estados != null) {
 				for (ProcesoEstadoDTO estado : estados) {
 					hijos.add(nodoConfig(estado.getLlaveTabla(), estado.getEstado(), estado.getNombre(),
-							estado.getCodigo(), null, TreeNodeDTO.ESTADO, caminoPadre, estado, listarPropiedades,
-							null));
+							estado.getCodigo(), null, TreeNodeDTO.ESTADO, caminoPadre, ligero ? null : estado,
+							listarPropiedades, null));
 				}
 			}
 			List<ProcesoTransicionDTO> transiciones = transicionService.getFullToSynchronize(procesoLlave);
@@ -218,7 +221,7 @@ public class ArbolConfiguracionSvc {
 				for (ProcesoTransicionDTO transicion : transiciones) {
 					hijos.add(nodoConfig(transicion.getLlaveTabla(), transicion.getEstado(), transicion.getNombre(),
 							transicion.getCodigo(), transicion.getImagen(), TreeNodeDTO.TRANSICION, caminoPadre,
-							transicion, listarPropiedades, null));
+							ligero ? null : transicion, listarPropiedades, null));
 				}
 			}
 			List<DocumentoPlantillaDTO> plantillas = plantillaService.getFullToSynchronize(procesoLlave);
@@ -229,7 +232,7 @@ public class ArbolConfiguracionSvc {
 					boolean tieneHijos = plantillaTieneHijos(plantilla.getLlaveTabla(), plantillas);
 					TreeNodeDTO nodo = nodoConfig(plantilla.getLlaveTabla(), plantilla.getEstado(),
 							plantilla.getNombre(), plantilla.getCodigo(), plantilla.getImagen(),
-							TreeNodeDTO.PLANTILLA, caminoPadre, plantilla, listarPropiedades, null);
+							TreeNodeDTO.PLANTILLA, caminoPadre, ligero ? null : plantilla, listarPropiedades, null);
 					nodo.setTieneHijos(true);
 					nodo.setTotalHijos(tieneHijos ? 1 : 0);
 					hijos.add(nodo);
@@ -239,7 +242,7 @@ public class ArbolConfiguracionSvc {
 			if (roles != null) {
 				for (RolAccesoDTO rol : roles) {
 					hijos.add(nodoConfig(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-							rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, rol, false, null));
+							rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, ligero ? null : rol, false, null));
 				}
 			}
 			List<WebServiceDTO> apis = apiService.getFullToSynchronize(null);
@@ -248,7 +251,7 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(api.getProceso()))
 						continue;
 					hijos.add(nodoConfig(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
-							null, TreeNodeDTO.API, caminoPadre, api, listarPropiedades, null));
+							null, TreeNodeDTO.API, caminoPadre, ligero ? null : api, listarPropiedades, null));
 				}
 			}
 			return hijos;
@@ -260,8 +263,8 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(campo.getPlantilla()))
 						continue;
 					hijos.add(nodoConfig(campo.getLlaveTabla(), campo.getEstado(), campo.getNombre(),
-							campo.getCodigo(), campo.getImagen(), TreeNodeDTO.CAMPO, caminoPadre, campo,
-							listarPropiedades, null));
+							campo.getCodigo(), campo.getImagen(), TreeNodeDTO.CAMPO, caminoPadre,
+							ligero ? null : campo, listarPropiedades, null));
 				}
 			}
 			List<ReporteBaseDTO> reportes = reporteService.getFullToSynchronize(null);
@@ -270,7 +273,7 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(reporte.getPlantilla()))
 						continue;
 					hijos.add(nodoConfig(reporte.getLlaveTabla(), reporte.getEstado(), reporte.getNombre(),
-							reporte.getCodigo(), null, TreeNodeDTO.REPORTE, caminoPadre, reporte,
+							reporte.getCodigo(), null, TreeNodeDTO.REPORTE, caminoPadre, ligero ? null : reporte,
 							listarPropiedades, null));
 				}
 			}
@@ -287,8 +290,8 @@ public class ArbolConfiguracionSvc {
 					else if (PlantillaTipo.activacion(plantilla.getTipo()))
 						tipoNodo = TreeNodeDTO.PLANTILLA_ACTIVACION;
 					hijos.add(nodoConfig(plantilla.getLlaveTabla(), plantilla.getEstado(), plantilla.getNombre(),
-							plantilla.getCodigo(), plantilla.getImagen(), tipoNodo, caminoPadre, plantilla,
-							listarPropiedades, null));
+							plantilla.getCodigo(), plantilla.getImagen(), tipoNodo, caminoPadre,
+							ligero ? null : plantilla, listarPropiedades, null));
 				}
 			}
 			return hijos;

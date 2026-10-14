@@ -230,8 +230,9 @@ public class ImportConfigurationFileService {
 				return wrapper.getHierarchy();
 			throw new ServerException("El archivo exportado no contiene configuracion (hierarchy)");
 		}
-		if (payload instanceof com.fasterxml.jackson.databind.JsonNode) {
-			com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) payload;
+		Object material = payload instanceof java.util.Map ? mapper.valueToTree(payload) : payload;
+		if (material instanceof com.fasterxml.jackson.databind.JsonNode) {
+			com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) material;
 			if (node.has("hierarchy") && node.get("hierarchy").isObject())
 				return mapper.convertValue(node.get("hierarchy"), HierarchyExporterDTO.class);
 			if (node.has("arbol") && node.get("arbol").isObject())

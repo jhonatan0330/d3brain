@@ -1160,69 +1160,7 @@ public class ConfigurationController {
 		return usuarioService.consultaXId(key);
 	}
 
-	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
-	// ====================
-
-	@GetMapping("/configuration/export")
-	private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
-		return exportService.call();
-	}
-
-	@PostMapping("/configuration/module")
-	private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
-			throws ServerException {
-		return exportService.call(modules);
-	}
-
-	@PostMapping("/configuration/import")
-	private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
-		return importService.call(file);
-	}
-
-	@PostMapping("/configuration/compare")
-	private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
-		return importService.compare(file);
-	}
-
-	// ==================== CONFIGURATION TREE (arbol generico) ====================
-
-	@PostMapping("/tree")
-	private TreeNodeDTO getConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return sincronizacionArbolService.obtenerArbol(filter);
-	}
-
-	@PostMapping("/tree/export")
-	private CargaArchivoDTO exportConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-		return sincronizacionArbolService.exportarArbol(filter);
-	}
-
-	@PostMapping("/tree/node")
-	private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
-			throws ServerException {
-		return arbolConfiguracionService.construirHijos(request);
-	}
-
-	@PostMapping("/tree/from-hierarchy")
-	private TreeNodeDTO treeFromHierarchy(@RequestBody Object payload) throws ServerException {
-		d3.configuration.domain.HierarchyExporterDTO hierarchy = importService.parseHierarchy(payload);
-		return arbolConfiguracionService.construirArbol(hierarchy);
-	}
-
-	@PostMapping("/tree/compare")
-	private List<DiferenciaDTO> compareTree(@RequestBody CompararArbolRequestDTO request) throws ServerException {
-		return sincronizacionArbolService.compararArbol(request.getArbol(), request.getFilter());
-	}
-
-	@PostMapping("/tree/sync")
-	private CargaArchivoDTO syncTree(@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
-		return sincronizacionArbolService.sincronizar(request);
-	}
-
-	@PostMapping("/tree/sync-node")
-	private d3.configuration.domain.SincronizacionNodoResultDTO syncTreeNode(
-			@RequestBody d3.configuration.domain.SincronizacionNodoDTO request) throws ServerException {
-		return sincronizacionArbolService.sincronizarNodo(request);
-	}
+	
 
 	// ==================== PROPERTY LOOKUP (antes /property/*) ====================
 
@@ -1332,4 +1270,75 @@ public class ConfigurationController {
 			throws ServerException {
 		return relacionInternaService.listarConsulta(filter);
 	}
+	
+	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
+		// ====================
+
+		@GetMapping("/configuration/export")
+		private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
+			return exportService.call();
+		}
+
+		@PostMapping("/configuration/module")
+		private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
+				throws ServerException {
+			return exportService.call(modules);
+		}
+
+		@PostMapping("/configuration/import")
+		private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
+			return importService.call(file);
+		}
+
+		@PostMapping("/configuration/compare")
+		private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
+			return importService.compare(file);
+		}
+
+		// ==================== CONFIGURATION TREE (arbol generico) ====================
+
+		@PostMapping("/tree")
+		private TreeNodeDTO getConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+			return sincronizacionArbolService.obtenerArbol(filter);
+		}
+
+		@PostMapping("/tree/export")
+		private CargaArchivoDTO exportConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
+			return sincronizacionArbolService.exportarArbol(filter);
+		}
+
+		@PostMapping("/tree/node")
+		private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
+				throws ServerException {
+			return arbolConfiguracionService.construirHijos(request);
+		}
+
+		@PostMapping("/tree/from-hierarchy")
+		private TreeNodeDTO treeFromHierarchy(@RequestBody Object payload) throws ServerException {
+			d3.configuration.domain.HierarchyExporterDTO hierarchy = importService.parseHierarchy(payload);
+			return arbolConfiguracionService.construirArbol(hierarchy);
+		}
+
+		@PostMapping("/tree/register")
+		private d3.configuration.domain.RegistroArbolDTO registerRemoteTree(@RequestBody Object payload)
+				throws ServerException {
+			return sincronizacionArbolService.registrarArbolRemoto(payload);
+		}
+
+		@PostMapping("/tree/compare")
+		private List<DiferenciaDTO> compareTree(@RequestBody CompararArbolRequestDTO request) throws ServerException {
+			return sincronizacionArbolService.compararArbol(request);
+		}
+
+		@PostMapping("/tree/sync")
+		private CargaArchivoDTO syncTree(@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
+			return sincronizacionArbolService.sincronizar(request);
+		}
+
+		@PostMapping("/tree/sync-node")
+		private d3.configuration.domain.SincronizacionNodoResultDTO syncTreeNode(
+				@RequestBody d3.configuration.domain.SincronizacionNodoDTO request) throws ServerException {
+			return sincronizacionArbolService.sincronizarNodo(request);
+		}
+		
 }

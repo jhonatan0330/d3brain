@@ -80,7 +80,7 @@ public class D3Configuration {
 	}
 
 	@Bean(name = "sqlSessionFactory")
-	SqlSessionFactory sqlSessionFactory(@Lazy @Qualifier("dataSource") DataSource dataSource) throws Exception {
+	SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 		factoryBean.setDataSource(dataSource);
 		factoryBean.setTypeAliasesPackage("d3.*.domain");// Specify base package

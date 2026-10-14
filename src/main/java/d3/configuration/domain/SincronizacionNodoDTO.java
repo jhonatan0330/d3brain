@@ -15,6 +15,7 @@ public class SincronizacionNodoDTO {
 	private String accion;
 	private Boolean incluirHijos;
 	private Boolean crearAncestros;
+	private String arbolId;
 
 	public TreeNodeDTO getNodo() {
 		return nodo;
@@ -22,6 +23,14 @@ public class SincronizacionNodoDTO {
 
 	public void setNodo(TreeNodeDTO nodo) {
 		this.nodo = nodo;
+	}
+
+	public String getArbolId() {
+		return arbolId;
+	}
+
+	public void setArbolId(String arbolId) {
+		this.arbolId = arbolId;
 	}
 
 	public String getCamino() {
