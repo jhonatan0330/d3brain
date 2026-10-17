@@ -19,6 +19,7 @@ import d3.accounting.domain.CatalogFilterDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
+import d3.configuration.application.homologate.HomologateAdapterService;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -29,9 +30,6 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.inventory.application.ProductoSvc;
 import d3.inventory.domain.ProductoDTO;
-import d3.mail.application.MensajePlantillaCorreoSvc;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
-import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
@@ -73,7 +71,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 
 	public PropiedadSvc(@Lazy CatalogService catalogService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy DocumentoPlantillaSvc plantillaService,
-			@Lazy MensajePlantillaCorreoSvc mensajeService, @Lazy ProcesoSvc procesoService,
+			@Lazy ProcesoSvc procesoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
 			@Lazy ProcesoTransicionAutomaticaSvc automatizadorService, @Lazy ProductoSvc productoService,
 			@Lazy PropiedadValorDefinidoSvc valorDefinidoService, @Lazy TarifarioService tarifarioService,
@@ -85,7 +83,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		this.catalogService = catalogService;
 		this.campoService = campoService;
 		this.plantillaService = plantillaService;
-		this.mensajeService = mensajeService;
+		
 		this.procesoService = procesoService;
 		this.estadoService = estadoService;
 		this.transicionService = transicionService;
@@ -111,7 +109,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	private final CatalogService catalogService;
 	private final DocumentoPlantillaCaracteristicaSvc campoService;
 	private final DocumentoPlantillaSvc plantillaService;
-	private final MensajePlantillaCorreoSvc mensajeService;
 	private final ProcesoSvc procesoService;
 	private final ProcesoEstadoSvc estadoService;
 	private final ProcesoTransicionSvc transicionService;
@@ -1050,10 +1047,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			break;
 		}
 
-		case Propiedades.MENSAJE: {
-			identificadorMensaje(dto);
-			break;
-		}
+		case Propiedades.MENSAJE:
 		case Propiedades.API_AUTHENTICATION:
 		case Propiedades.API_BASE:
 		case Propiedades.API_TRANSACCION:
@@ -1133,22 +1127,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		if (dto.getTexto() == null)
 			throw new ServerException(
 					"Cuando registras una propiedad de temporizador debes colocar en el texto la clave de tiempo de repeticion. Observa la ayuda");
-	}
-
-	private void identificadorMensaje(PropiedadDTO dto) throws ServerException {
-		MensajePlantillaCorreoDTO bd = mensajeService.consultaXId(dto.getValor());
-		// Si es actualizar valido por el id
-		if (bd == null) {
-			// VAlido por el nombre
-			MensajePlantillaCorreoFilterDTO bdFilter = new MensajePlantillaCorreoFilterDTO();
-			bdFilter.setNombre(dto.getValor().toUpperCase());
-			bdFilter.setEstado(SharedConstants.STATE_ACTIVE);
-			bd = mensajeService.consultaUnica(bdFilter);
-			if (bd == null)
-				throw new ServerException("El mensaje no fue reconocido");
-		}
-		dto.setValor(bd.getLlaveTabla());
-		dto.setTexto(bd.getNombre());
 	}
 
 	private void identificadorApi(PropiedadDTO dto) throws ServerException {

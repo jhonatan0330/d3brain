@@ -660,3 +660,9 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, bpvd_textoculto) 
 	VALUES('PROP_309' , 'E', 'QUERY REPORTE MAESTRO', 'REPORT_QUERY_ENCABEZADO', 'REQUISITO', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_310' , 'O', 'MAIL SERVER', 'MAIL_SERVER', 'REQUISITO',  true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_311' , 'O', 'MAIL SERVER DE RESPALDO', 'MAIL_SERVER_BACKUP', 'REQUISITO',  true);

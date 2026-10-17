@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.document.application.CallDocumentListWithFilters;
 import d3.document.application.PedidoVentaSvc;
 import d3.document.domain.PedidoVentaDTO;
-import d3.mail.application.MailGenerateMessageService;
 import d3.notification.domain.ActividadDTO;
 import d3.notification.domain.ActividadFilterDTO;
 import d3.notification.infrastructure.ActividadMapper;
@@ -22,6 +21,7 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
+import d3.webservice.application.MailGenerateMessageService;
 import jakarta.annotation.PostConstruct;
 
 @Service("actividadService")

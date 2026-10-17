@@ -23,7 +23,6 @@ public class TreeNodeDTO extends BasicParamDTO {
 	public static final String REPORTE = "REPORTE";
 	public static final String ROL = "ROL";
 	public static final String API = "API";
-	public static final String MENSAJE = "MENSAJE";
 
 	private String nombre;
 	private String codigo;

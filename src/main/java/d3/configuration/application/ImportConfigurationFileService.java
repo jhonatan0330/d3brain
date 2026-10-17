@@ -12,7 +12,15 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.configuration.domain.ConfigurationExportDTO;
+import d3.configuration.application.sinchronize.SynchronizeApiService;
+import d3.configuration.application.sinchronize.SynchronizeOrganizationService;
+import d3.configuration.application.sinchronize.SynchronizeProcessService;
+import d3.configuration.application.sinchronize.SynchronizeProcessStateService;
+import d3.configuration.application.sinchronize.SynchronizeProcessTransitionService;
+import d3.configuration.application.sinchronize.SynchronizeRelationService;
+import d3.configuration.application.sinchronize.SynchronizeRolService;
+import d3.configuration.application.sinchronize.SynchronizeTemplateService;
+import d3.configuration.application.sinchronize.SynchronizeTypePropertiesService;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
@@ -24,7 +32,6 @@ import d3.upload.domain.CargaArchivoDTO;
 public class ImportConfigurationFileService {
 
 	private final SynchronizeTypePropertiesService sincronizeTypeService;
-	private final SynchronizeMessageService sincronizeMessageService;
 	private final SynchronizeApiService sincronizeApiService;
 	private final SynchronizeOrganizationService sincronizeOrganizationService;
 	private final SynchronizeProcessService sincronizeProcessService;
@@ -37,7 +44,7 @@ public class ImportConfigurationFileService {
 	private final ObjectMapper mapper;
 
 	public ImportConfigurationFileService(@Lazy SynchronizeTypePropertiesService sincronizeTypeService,
-			@Lazy SynchronizeMessageService sincronizeMessageService, @Lazy SynchronizeApiService sincronizeApiService,
+			@Lazy SynchronizeApiService sincronizeApiService,
 			@Lazy SynchronizeOrganizationService sincronizeOrganizationService,
 			@Lazy SynchronizeProcessService sincronizeProcessService,
 			@Lazy SynchronizeProcessStateService sincronizeProcessStateService,
@@ -46,7 +53,6 @@ public class ImportConfigurationFileService {
 			@Lazy SynchronizeRelationService sincronizeRelationService,
 			@Lazy SynchronizeRolService sincronizeRolService, @Lazy UploadSvc uploadService, ObjectMapper mapper) {
 		this.sincronizeTypeService = sincronizeTypeService;
-		this.sincronizeMessageService = sincronizeMessageService;
 		this.sincronizeApiService = sincronizeApiService;
 		this.sincronizeOrganizationService = sincronizeOrganizationService;
 		this.sincronizeProcessService = sincronizeProcessService;
@@ -63,8 +69,9 @@ public class ImportConfigurationFileService {
 
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
-			Object payload = mapper.readValue(inputStream, Object.class);
-			HierarchyExporterDTO hierarchy = parseHierarchy(payload);
+			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+			//Object payload = mapper.readValue(inputStream, Object.class);
+			//HierarchyExporterDTO hierarchy = parseHierarchy(payload);
 
 			return uploadFile(sincronize(hierarchy).getLogs());
 
@@ -74,11 +81,15 @@ public class ImportConfigurationFileService {
 	}
 
 	public CargaArchivoDTO compare(CargaArchivoDTO file) throws ServerException {
+		
+		ObjectMapper mapper = new ObjectMapper();
 
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
-			Object payload = mapper.readValue(inputStream, Object.class);
-			HierarchyExporterDTO hierarchy = parseHierarchy(payload);
+			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
+			
+			//Object payload = mapper.readValue(inputStream, Object.class);
+			//HierarchyExporterDTO hierarchy = parseHierarchy(payload);
 
 			return uploadFile(compareFile(hierarchy).getLogs());
 
@@ -95,13 +106,11 @@ public class ImportConfigurationFileService {
 		// aparto las propiedades TIPO_ROL porque al sincronizar las propiedades no se
 		// actuzlaiban los campos y salia un error de esta propiedad ya fue definida
 		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() != null
-						&& property.getPropiedadValor().compareTo("PROP_141") == 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() == null
-						|| property.getPropiedadValor().compareTo("PROP_141") != 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") != 0))
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -113,21 +122,18 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() != null
-						&& property.getPropiedadValor().compareTo("PROP_78") == 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() == null
-						|| property.getPropiedadValor().compareTo("PROP_78") != 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") != 0))
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
 		sincronizeTypeService.call(hierarchy, logs, false);
-		sincronizeMessageService.call(hierarchy, logs, false);
-		sincronizeApiService.call(hierarchy, logs, false);
 		sincronizeOrganizationService.call(hierarchy, logs, false);
 		sincronizeProcessService.call(hierarchy, logs, false);
+		sincronizeApiService.call(hierarchy, logs, false);
 		sincronizeProcessStateService.call(hierarchy, logs, false);
 		sincronizeTemplateService.call(hierarchy, logs, false);
 		sincronizeProcessTransitionService.call(hierarchy, logs, false);
@@ -140,9 +146,9 @@ public class ImportConfigurationFileService {
 		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
 		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
-		sincronizeApiService.call(hierarchy, logs, false);
 		sincronizeOrganizationService.call(hierarchy, logs, false);
 		sincronizeProcessService.call(hierarchy, logs, false);
+		sincronizeApiService.call(hierarchy, logs, false);
 		sincronizeProcessStateService.call(hierarchy, logs, false);
 		sincronizeTemplateService.call(hierarchy, logs, false);
 		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, false);
@@ -165,8 +171,7 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() == null
-						|| property.getPropiedadValor().compareTo("PROP_141") != 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") != 0))
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
@@ -178,8 +183,7 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() != null
-						&& property.getPropiedadValor().compareTo("PROP_78") == 0))
+				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") == 0))
 				.collect(Collectors.toList());
 
 		hierarchy.setProperties(hierarchy.getProperties().stream()
@@ -189,7 +193,6 @@ public class ImportConfigurationFileService {
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
 		sincronizeTypeService.call(hierarchy, logs, true);
-		sincronizeMessageService.call(hierarchy, logs, true);
 		sincronizeApiService.call(hierarchy, logs, true);
 		sincronizeOrganizationService.call(hierarchy, logs, true);
 		sincronizeProcessService.call(hierarchy, logs, true);
@@ -219,7 +222,7 @@ public class ImportConfigurationFileService {
 		return logs;
 	}
 
-	public HierarchyExporterDTO parseHierarchy(Object payload) throws ServerException {
+	/*public HierarchyExporterDTO parseHierarchy(Object payload) throws ServerException {
 		if (payload == null)
 			throw new ServerException("El archivo de configuracion esta vacio");
 		if (payload instanceof HierarchyExporterDTO)
@@ -241,7 +244,7 @@ public class ImportConfigurationFileService {
 			return mapper.convertValue(node, HierarchyExporterDTO.class);
 		}
 		throw new ServerException("Formato de configuracion no reconocido");
-	}
+	}*/
 
 	private CargaArchivoDTO uploadFile(String logs) throws ServerException {
 		return uploadService.uploadFileDTO(logs.getBytes(), "Entrada.txt", "import", "private");

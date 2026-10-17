@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionFilterDTO;
 import d3.authentication.infrastructure.UsuarioAutenticacionAutorizacionMapper;
-import d3.mail.application.MailRecoverPasswordService;
 import d3.shared.application.BasicSvc;
 import d3.shared.application.D3Utils;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.webservice.application.MailRecoverPasswordService;
 import jakarta.annotation.PostConstruct;
 
 @Service("usuarioAutenticacionAutorizacionService")

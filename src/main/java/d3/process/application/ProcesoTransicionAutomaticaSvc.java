@@ -26,7 +26,6 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.domain.ProcesoTransicionAutomaticaDTO;
 import d3.process.domain.ProcesoTransicionAutomaticaFilterDTO;
 import d3.process.domain.ProcesoTransicionDTO;
@@ -37,6 +36,7 @@ import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedToken;
 import d3.upload.application.UploadSvc;
+import d3.webservice.application.MailSendMessageToAdminService;
 import jakarta.annotation.PostConstruct;
 
 @Service("procesoTransicionAutomaticaService")

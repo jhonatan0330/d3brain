@@ -255,8 +255,6 @@ public class ComparacionArbolSvc {
 			return List.of("formato", "orden", "objetivo");
 		case TreeNodeDTO.REPORTE:
 			return List.of("descripcion", "version", "servidor", "publico", "multiplesId", "soloExistente");
-		case TreeNodeDTO.MENSAJE:
-			return List.of("titulo", "texto", "servidor");
 		case TreeNodeDTO.API:
 			return List.of("nombre");
 		case TreeNodeDTO.ROL:
@@ -298,7 +296,7 @@ public class ComparacionArbolSvc {
 		}
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	private Map<String, Object> aMapa(TreeNodeDTO nodo) {
 		if (nodo.getDato() == null)
 			return null;

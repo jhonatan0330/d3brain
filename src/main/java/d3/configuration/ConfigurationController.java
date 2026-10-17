@@ -42,13 +42,6 @@ import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
 import d3.configuration.domain.SincronizacionSeleccionadaDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.mail.application.MailUserSendMessage;
-import d3.mail.application.MensajePlantillaCorreoSvc;
-import d3.mail.application.MensajeSvc;
-import d3.mail.domain.MensajeDTO;
-import d3.mail.domain.MensajeFilterDTO;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
-import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
@@ -83,9 +76,13 @@ import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
+import d3.webservice.application.MailUserSendMessage;
+import d3.webservice.application.MensajeSvc;
 import d3.webservice.application.WebServiceCopyAPI;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceSvc;
+import d3.webservice.domain.MensajeDTO;
+import d3.webservice.domain.MensajeFilterDTO;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
 import d3.webservice.domain.WebServiceEjecucionFilterDTO;
@@ -103,7 +100,6 @@ public class ConfigurationController {
 	private final WebServiceCopyAPI webServiceCopyAPI;
 	private final WebServiceEjecucionSvc webServiceEjecucionService;
 	private final MensajeSvc mensajeService;
-	private final MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
 	private final MailUserSendMessage mailUserSendMessage;
 	private final ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService;
 	private final DocumentoPlantillaSvc documentoPlantillaService;
@@ -128,7 +124,6 @@ public class ConfigurationController {
 			@Lazy ServidorSvc servidorService, @Lazy WebServiceSvc webServiceService,
 			@Lazy WebServiceCopyAPI webServiceCopyAPI,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy MensajeSvc mensajeService,
-			@Lazy MensajePlantillaCorreoSvc mensajePlantillaCorreoService,
 			@Lazy MailUserSendMessage mailUserSendMessage,
 			@Lazy ProcesoTransicionAutomaticaSvc procesoTransicionAutomaticaService,
 			@Lazy DocumentoPlantillaSvc documentoPlantillaService,
@@ -149,7 +144,6 @@ public class ConfigurationController {
 		this.webServiceCopyAPI = webServiceCopyAPI;
 		this.webServiceEjecucionService = webServiceEjecucionService;
 		this.mensajeService = mensajeService;
-		this.mensajePlantillaCorreoService = mensajePlantillaCorreoService;
 		this.mailUserSendMessage = mailUserSendMessage;
 		this.procesoTransicionAutomaticaService = procesoTransicionAutomaticaService;
 		this.documentoPlantillaService = documentoPlantillaService;
@@ -520,43 +514,6 @@ public class ConfigurationController {
 		return mailUserSendMessage.call(filter);
 	}
 
-	// ==================== MESSAGE TEMPLATES ====================
-
-	@PostMapping("/message-templates/list")
-	public List<MensajePlantillaCorreoDTO> listarPlantillasCorreo(@RequestBody MensajePlantillaCorreoFilterDTO filter)
-			throws ServerException {
-		
-		return mensajePlantillaCorreoService.listarConsulta(filter);
-	}
-
-	@PostMapping("/message-templates/{key}")
-	public MensajePlantillaCorreoDTO consultarPlantillaCorreo(@PathVariable("key") String pKey) throws ServerException {
-		return mensajePlantillaCorreoService.consultaXId(pKey);
-	}
-
-	@PostMapping("/message-templates/create")
-	public MensajePlantillaCorreoDTO guardarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws ServerException {
-		return mensajePlantillaCorreoService.guardar(dto);
-	}
-
-	@PostMapping("/message-templates/update")
-	public MensajePlantillaCorreoDTO actualizarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws ServerException {
-		return mensajePlantillaCorreoService.actualizar(dto);
-	}
-
-	@PostMapping("/message-templates/{key}/inactivate")
-	public MensajePlantillaCorreoDTO inactivarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws ServerException {
-		return mensajePlantillaCorreoService.inactivar(dto);
-	}
-
-	@PostMapping("/message-templates/{key}/activate")
-	public MensajePlantillaCorreoDTO activarPlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws ServerException {
-		return mensajePlantillaCorreoService.activar(dto);
-	}
 
 	// ==================== AUTO TASKS ====================
 
@@ -1274,23 +1231,23 @@ public class ConfigurationController {
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
 		// ====================
 
-		@GetMapping("/configuration/export")
+		@GetMapping("/export")
 		private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
 			return exportService.call();
 		}
 
-		@PostMapping("/configuration/module")
+		@PostMapping("/module")
 		private CargaArchivoDTO generateFileWithConfigurationModule(@RequestBody ExportListRequest modules)
 				throws ServerException {
 			return exportService.call(modules);
 		}
 
-		@PostMapping("/configuration/import")
+		@PostMapping("/import")
 		private CargaArchivoDTO loadConfiguration(@RequestBody CargaArchivoDTO file) throws ServerException {
 			return importService.call(file);
 		}
 
-		@PostMapping("/configuration/compare")
+		@PostMapping("/compare")
 		private CargaArchivoDTO compare(@RequestBody CargaArchivoDTO file) throws ServerException {
 			return importService.compare(file);
 		}
@@ -1313,11 +1270,11 @@ public class ConfigurationController {
 			return arbolConfiguracionService.construirHijos(request);
 		}
 
-		@PostMapping("/tree/from-hierarchy")
+		/*@PostMapping("/tree/from-hierarchy")
 		private TreeNodeDTO treeFromHierarchy(@RequestBody Object payload) throws ServerException {
 			d3.configuration.domain.HierarchyExporterDTO hierarchy = importService.parseHierarchy(payload);
 			return arbolConfiguracionService.construirArbol(hierarchy);
-		}
+		}*/
 
 		@PostMapping("/tree/register")
 		private d3.configuration.domain.RegistroArbolDTO registerRemoteTree(@RequestBody Object payload)

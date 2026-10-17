@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import d3.mail.application.MailSendMessageToAdminService;
 import d3.multitenancy.domain.TenantCodigoNormalizer;
 import d3.multitenancy.domain.TenantCrearDTO;
 import d3.multitenancy.domain.TenantDTO;
@@ -42,6 +41,7 @@ import d3.shared.application.D3Utils;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
+import d3.webservice.application.MailSendMessageToAdminService;
 
 @Service("tenantProvisioningSvc")
 public class TenantProvisioningSvc {

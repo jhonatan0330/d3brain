@@ -25,7 +25,6 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.document.domain.PedidoVentaUbicacionDTO;
-import d3.mail.application.MailGenerateMessageService;
 import d3.notification.application.ActividadSvc;
 import d3.notification.domain.ActividadDTO;
 import d3.process.application.DocumentoPlantillaSvc;
@@ -41,6 +40,7 @@ import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.shared.domain.SharedToken;
 import d3.users.domain.UsuarioDTO;
+import d3.webservice.application.MailGenerateMessageService;
 import d3.webservice.application.WebServiceExecuteAPI;
 
 @Component

@@ -13,7 +13,6 @@ import d3.authentication.application.OrganizacionSvc;
 import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.domain.ExportListRequest;
 import d3.configuration.domain.HierarchyExporterDTO;
-import d3.mail.application.MensajePlantillaCorreoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
@@ -44,7 +43,6 @@ public class ExportConfigurationFileService {
 	private final DocumentoPlantillaSvc templateService;
 	private final ReporteBaseSvc reportService;
 	private final DocumentoPlantillaCaracteristicaSvc fieldService;
-	private final MensajePlantillaCorreoSvc messageService;
 	private final WebServiceSvc apiService;
 
 	public ExportConfigurationFileService(@Lazy PropiedadValorDefinidoSvc typePropertiesService,
@@ -53,7 +51,7 @@ public class ExportConfigurationFileService {
 			@Lazy ProcesoSvc procesoService, @Lazy ProcesoEstadoSvc stateService,
 			@Lazy ProcesoTransicionSvc transitionService, @Lazy DocumentoPlantillaSvc templateService,
 			@Lazy ReporteBaseSvc reportService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
-			@Lazy MensajePlantillaCorreoSvc messageService, @Lazy WebServiceSvc apiService) {
+			@Lazy WebServiceSvc apiService) {
 		this.typePropertiesService = typePropertiesService;
 		this.organizationService = organizationService;
 		this.uploadService = uploadService;
@@ -66,19 +64,17 @@ public class ExportConfigurationFileService {
 		this.templateService = templateService;
 		this.reportService = reportService;
 		this.fieldService = fieldService;
-		this.messageService = messageService;
 		this.apiService = apiService;
 	}
 
 	public CargaArchivoDTO call() throws ServerException {
-		return uploadFile(construirHierarchy(), null);
+		return uploadFile(construirHierarchy());
 	}
 
 	public HierarchyExporterDTO construirHierarchy() throws ServerException {
 		SessionContext.getCurrentUser();
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
-		hierarchy.setMessages(messageService.getFullToSynchronize(null));
 		hierarchy.setApis(apiService.getFullToSynchronize(null));
 		hierarchy.setOrganization(organizationService.obtenerPrincipal());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
@@ -113,7 +109,6 @@ public class ExportConfigurationFileService {
 		if (processToInclude.isEmpty())
 			throw new ServerException("No se identifica un modulo con el codigos elegidos ");
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
-		hierarchy.setMessages(messageService.getFullToSynchronize(processToInclude));
 		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
@@ -125,9 +120,25 @@ public class ExportConfigurationFileService {
 		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
 		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
 
-		return uploadFile(hierarchy, modules.getModulesCode());
+		return uploadFile(hierarchy);
+	}
+	
+
+	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy) throws ServerException {
+		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", "export", "private");
 	}
 
+	private byte[] convert(HierarchyExporterDTO hierarchy) throws ServerException {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsBytes(hierarchy);
+		} catch (JsonProcessingException e) {
+			throw new ServerException(e.getMessage());
+		}
+	}
+
+
+	/*
 	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy, List<String> modulos) throws ServerException {
 		d3.configuration.domain.ConfigurationExportDTO wrapper = new d3.configuration.domain.ConfigurationExportDTO();
 		wrapper.setHierarchy(hierarchy);
@@ -161,7 +172,7 @@ public class ExportConfigurationFileService {
 		} catch (JsonProcessingException e) {
 			throw new ServerException(e.getMessage());
 		}
-	}
+	}*/
 
 	private List<String> getProcessFromMacro(String parentProcess) throws ServerException {
 		List<String> processToInclude = new ArrayList<>();

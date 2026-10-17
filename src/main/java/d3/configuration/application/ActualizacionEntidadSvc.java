@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.mail.application.MensajePlantillaCorreoSvc;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
@@ -41,13 +39,11 @@ public class ActualizacionEntidadSvc {
 	private final ReporteBaseSvc reporteBaseSvc;
 	private final RolAccesoSvc rolAccesoSvc;
 	private final WebServiceSvc webServiceSvc;
-	private final MensajePlantillaCorreoSvc mensajePlantillaCorreoSvc;
 
 	public ActualizacionEntidadSvc(ObjectMapper mapper, ProcesoSvc procesoSvc, ProcesoEstadoSvc procesoEstadoSvc,
 			ProcesoTransicionSvc procesoTransicionSvc, DocumentoPlantillaSvc documentoPlantillaSvc,
 			DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaSvc, ReporteBaseSvc reporteBaseSvc,
-			RolAccesoSvc rolAccesoSvc, WebServiceSvc webServiceSvc,
-			MensajePlantillaCorreoSvc mensajePlantillaCorreoSvc) {
+			RolAccesoSvc rolAccesoSvc, WebServiceSvc webServiceSvc) {
 		this.mapper = mapper;
 		this.procesoSvc = procesoSvc;
 		this.procesoEstadoSvc = procesoEstadoSvc;
@@ -57,7 +53,6 @@ public class ActualizacionEntidadSvc {
 		this.reporteBaseSvc = reporteBaseSvc;
 		this.rolAccesoSvc = rolAccesoSvc;
 		this.webServiceSvc = webServiceSvc;
-		this.mensajePlantillaCorreoSvc = mensajePlantillaCorreoSvc;
 	}
 
 	public void actualizarArbol(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
@@ -142,9 +137,6 @@ public class ActualizacionEntidadSvc {
 			break;
 		case TreeNodeDTO.API:
 			actualizarApi(remoto, local, mapeoLlaves);
-			break;
-		case TreeNodeDTO.MENSAJE:
-			actualizarMensaje(remoto, local, mapeoLlaves);
 			break;
 		default:
 			break;
@@ -291,17 +283,6 @@ public class ActualizacionEntidadSvc {
 		updateApi(entidad);
 	}
 
-	private void actualizarMensaje(TreeNodeDTO remoto, TreeNodeDTO local, Map<String, String> mapeoLlaves)
-			throws ServerException {
-		MensajePlantillaCorreoDTO entidad = mapper.convertValue(local.getDato(), MensajePlantillaCorreoDTO.class);
-		MensajePlantillaCorreoDTO datos = datosRemotos(remoto, MensajePlantillaCorreoDTO.class, mapeoLlaves);
-		entidad.setNombre(datos.getNombre());
-		entidad.setTitulo(datos.getTitulo());
-		entidad.setTexto(datos.getTexto());
-		entidad.setServidor(datos.getServidor());
-		updateMensaje(entidad);
-	}
-
 	private Map<String, String> mapearLlaves(TreeNodeDTO remoto, TreeNodeDTO local) {
 		Map<String, String> mapa = new LinkedHashMap<>();
 		if (remoto == null || local == null)
@@ -368,8 +349,5 @@ public class ActualizacionEntidadSvc {
 		webServiceSvc.update(entidad);
 	}
 
-	private void updateMensaje(MensajePlantillaCorreoDTO entidad) throws ServerException {
-		mensajePlantillaCorreoSvc.update(entidad);
-	}
 
 }

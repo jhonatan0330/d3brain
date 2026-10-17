@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authorization.domain.RolAccesoDTO;
+import d3.configuration.application.sinchronize.SynchronizePropertiesService;
 import d3.configuration.domain.ArbolConfiguracionFilterDTO;
 import d3.configuration.domain.ConfigurationExportDTO;
 import d3.configuration.domain.DiferenciaDTO;
@@ -24,7 +25,6 @@ import d3.configuration.domain.SincronizacionNodoDTO;
 import d3.configuration.domain.SincronizacionNodoResultDTO;
 import d3.configuration.domain.SincronizacionSeleccionadaDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoDTO;
@@ -67,6 +67,30 @@ public class SincronizacionArbolSvc {
 		return arbolConfiguracionSvc.construirArbolActual(filter);
 	}
 
+	public HierarchyExporterDTO parseHierarchy(Object payload) throws ServerException {
+		if (payload == null)
+			throw new ServerException("El archivo de configuracion esta vacio");
+		if (payload instanceof HierarchyExporterDTO)
+			return (HierarchyExporterDTO) payload;
+		if (payload instanceof ConfigurationExportDTO) {
+			ConfigurationExportDTO wrapper = (ConfigurationExportDTO) payload;
+			if (wrapper.getHierarchy() != null)
+				return wrapper.getHierarchy();
+			throw new ServerException("El archivo exportado no contiene configuracion (hierarchy)");
+		}
+		Object material = payload instanceof java.util.Map ? mapper.valueToTree(payload) : payload;
+		if (material instanceof com.fasterxml.jackson.databind.JsonNode) {
+			com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) material;
+			if (node.has("hierarchy") && node.get("hierarchy").isObject())
+				return mapper.convertValue(node.get("hierarchy"), HierarchyExporterDTO.class);
+			if (node.has("arbol") && node.get("arbol").isObject())
+				throw new ServerException(
+						"El archivo contiene un arbol; use el flujo de arbol (/configuration/tree) para sincronizar");
+			return mapper.convertValue(node, HierarchyExporterDTO.class);
+		}
+		throw new ServerException("Formato de configuracion no reconocido");
+	}
+	
 	public RegistroArbolDTO registrarArbolRemoto(Object payload) throws ServerException {
 		if (payload == null)
 			throw new ServerException("El archivo de configuracion esta vacio");
@@ -75,7 +99,7 @@ public class SincronizacionArbolSvc {
 		HierarchyExporterDTO hierarchy;
 		TreeNodeDTO arbolCompleto;
 		try {
-			hierarchy = importService.parseHierarchy(payload);
+			hierarchy = parseHierarchy(payload);
 			hierarchy.normalizar();
 			ArbolConfiguracionFilterDTO filtro = filtroCompleto();
 			filtro.setProfundidad(ArbolConfiguracionFilterDTO.PROFUNDIDAD_COMPLETA);
@@ -358,7 +382,7 @@ public class SincronizacionArbolSvc {
 		List<PropiedadDTO> propiedades = new ArrayList<>();
 		Map<String, TreeNodeDTO> vacio = new LinkedHashMap<>();
 		for (TreeNodeDTO ancestro : rutaRemota) {
-			agregarEntidadAHierarchy(ancestro, hierarchy, creados, vacio);
+			agregarEntidadAHierarchy(ancestro, hierarchy,  vacio);
 			acumularPropiedadesPropias(ancestro, propiedades);
 		}
 		if (incluirHijos && nodo.getHijos() != null) {
@@ -372,7 +396,7 @@ public class SincronizacionArbolSvc {
 
 	private void agregarSubarbolConPropiedades(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy, List<String> creados,
 			Map<String, TreeNodeDTO> indexLocal, List<PropiedadDTO> propiedades) throws ServerException {
-		agregarEntidadAHierarchy(nodo, hierarchy, creados, indexLocal);
+		agregarEntidadAHierarchy(nodo, hierarchy,  indexLocal);
 		acumularPropiedadesPropias(nodo, propiedades);
 		if (nodo.getHijos() != null) {
 			for (TreeNodeDTO hijo : nodo.getHijos())
@@ -480,7 +504,7 @@ public class SincronizacionArbolSvc {
 		}
 	}
 
-	private void agregarEntidadAHierarchy(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy, List<String> creados,
+	private void agregarEntidadAHierarchy(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy,
 			Map<String, TreeNodeDTO> indexLocal)  {
 		if (nodo == null || nodo.getTipo() == null || nodo.getDato() == null)
 			return;
@@ -561,14 +585,6 @@ public class SincronizacionArbolSvc {
 					: new ArrayList<WebServiceDTO>();
 			apis.add(api);
 			hierarchy.setApis(apis);
-			break;
-		}
-		case TreeNodeDTO.MENSAJE: {
-			MensajePlantillaCorreoDTO mensaje = mapper.convertValue(nodo.getDato(), MensajePlantillaCorreoDTO.class);
-			List<MensajePlantillaCorreoDTO> messages = hierarchy.getMessages() != null ? hierarchy.getMessages()
-					: new ArrayList<MensajePlantillaCorreoDTO>();
-			messages.add(mensaje);
-			hierarchy.setMessages(messages);
 			break;
 		}
 		default:

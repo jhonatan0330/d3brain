@@ -5,12 +5,11 @@ import java.util.List;
 
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authorization.domain.RolAccesoDTO;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
+import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
-import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
 import d3.report.domain.ReporteBaseDTO;
 import d3.webservice.domain.WebServiceDTO;
 
@@ -27,7 +26,6 @@ public class HierarchyExporterDTO {
 	private List<RolAccesoDTO> roles;
 	private List<ReporteBaseDTO> reports;
 	private List<PropiedadValorDefinidoDTO> propertyTypes;
-	private List<MensajePlantillaCorreoDTO> messages;
 	private List<WebServiceDTO> apis;
 
 	public OrganizacionDTO getOrganization() {
@@ -110,14 +108,6 @@ public class HierarchyExporterDTO {
 		this.propertyTypes = propertyTypes;
 	}
 
-	public List<MensajePlantillaCorreoDTO> getMessages() {
-		return messages;
-	}
-
-	public void setMessages(List<MensajePlantillaCorreoDTO> messages) {
-		this.messages = messages;
-	}
-
 	public List<WebServiceDTO> getApis() {
 		return apis;
 	}
@@ -151,8 +141,6 @@ public class HierarchyExporterDTO {
 			roles = new ArrayList<>();
 		if (apis == null)
 			apis = new ArrayList<>();
-		if (messages == null)
-			messages = new ArrayList<>();
 		if (properties == null)
 			properties = new ArrayList<>();
 		if (relations == null)

@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import d3.accounting.application.StackAccountProccessService;
 import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.infrastructure.SessionFilter;
-import d3.mail.application.MailReleaseMessageQueueService;
 import d3.multitenancy.application.TenantIteratorService;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
 import d3.report.ReporteServlet;
@@ -35,6 +34,7 @@ import d3.shared.application.BlankToNullStringDeserializer;
 import d3.shared.application.SessionContext;
 import d3.shared.application.SharedTokenService;
 import d3.usage.application.ConsumoUnidadProcesoService;
+import d3.webservice.application.MailReleaseMessageQueueService;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import jakarta.servlet.http.HttpServlet;
 

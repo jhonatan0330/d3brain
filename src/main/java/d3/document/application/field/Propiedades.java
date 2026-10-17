@@ -298,6 +298,8 @@ public class Propiedades {
 	public static final String APP_READER = "APP_READER";
 	public static final String APP_SESSION_TIME = "APP_SESSION_TIME";
 	public static final String APP_DFA = "APP_DFA";
+	public static final String MAIL_SERVER = "MAIL_SERVER";
+	public static final String MAIL_SERVER_BACKUP = "MAIL_SERVER_BACKUP";
 
 	// ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";

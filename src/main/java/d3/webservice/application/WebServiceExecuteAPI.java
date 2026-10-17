@@ -42,7 +42,6 @@ import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.fe.application.DianSoapSecurityHeader;
-import d3.mail.application.MailSendMessageToAdminService;
 import d3.multitenancy.application.TenantContext;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;

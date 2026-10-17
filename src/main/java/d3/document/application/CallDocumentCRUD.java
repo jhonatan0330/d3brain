@@ -23,9 +23,9 @@ import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
 import d3.authorization.domain.UsuarioRolDTO;
 import d3.authorization.domain.UsuarioRolFilterDTO;
-import d3.configuration.application.HomologateAdapterService;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
+import d3.configuration.application.homologate.HomologateAdapterService;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.document.application.field.CampoAdaptador;
@@ -36,7 +36,6 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaDineroDTO;
 import d3.document.domain.TransaccionLogFilterDTO;
-import d3.mail.application.MailGenerateMessageService;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
@@ -58,6 +57,7 @@ import d3.shared.domain.SharedConstants;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
+import d3.webservice.application.MailGenerateMessageService;
 import d3.webservice.application.WebServiceExecuteAPI;
 
 @Component
@@ -903,9 +903,9 @@ public class CallDocumentCRUD {
 				// propiedadService.obtenerPropiedad(PropiedadValorDefinidoDTO.PLANTILLA,
 				// plantilla.getLlaveTabla(), Propiedades.PLANTILLA_TIPO_ROL,
 				// getUserFlex(token));
-			// if(consecProperty ==null)
-			ConsecutivoDTO nuevoConsecutivo = consecutivoService.crear(plantilla.getLlaveTabla());
-			plantilla.setConsecutivo(nuevoConsecutivo.getLlaveTabla());
+				// if(consecProperty ==null)
+				ConsecutivoDTO nuevoConsecutivo = consecutivoService.crear(plantilla.getLlaveTabla());
+				plantilla.setConsecutivo(nuevoConsecutivo.getLlaveTabla());
 			}
 
 		}

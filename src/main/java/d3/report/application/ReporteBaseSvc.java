@@ -26,7 +26,6 @@ import d3.document.application.PedidoVentaSvc;
 import d3.document.application.field.Propiedades;
 import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaDTO;
-import d3.mail.application.MailSendMessageToAdminService;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.report.domain.ReportDTO;
 import d3.report.domain.ReporteBaseDTO;
@@ -42,6 +41,7 @@ import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
 import d3.users.application.UsuarioSvc;
 import d3.users.domain.UsuarioDTO;
+import d3.webservice.application.MailSendMessageToAdminService;
 import jakarta.annotation.PostConstruct;
 
 @DependsOnDatabaseInitialization

@@ -52,13 +52,6 @@ import d3.document.domain.PedidoVentaCaracteristicaDTO;
 import d3.document.domain.PedidoVentaCaracteristicaFilterDTO;
 import d3.document.domain.PedidoVentaDTO;
 import d3.document.domain.PedidoVentaFilterDTO;
-import d3.mail.application.MailUserSendMessage;
-import d3.mail.application.MensajePlantillaCorreoSvc;
-import d3.mail.application.MensajeSvc;
-import d3.mail.domain.MensajeDTO;
-import d3.mail.domain.MensajeFilterDTO;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
-import d3.mail.domain.MensajePlantillaCorreoFilterDTO;
 import d3.money.application.CuentaSvc;
 import d3.money.application.MovimientoSvc;
 import d3.money.domain.CuentaDTO;
@@ -110,8 +103,12 @@ import d3.users.domain.ServidorDTO;
 import d3.users.domain.ServidorFilterDTO;
 import d3.users.domain.UsuarioDTO;
 import d3.users.domain.UsuarioFilterDTO;
+import d3.webservice.application.MailUserSendMessage;
+import d3.webservice.application.MensajeSvc;
 import d3.webservice.application.WebServiceEjecucionSvc;
 import d3.webservice.application.WebServiceSvc;
+import d3.webservice.domain.MensajeDTO;
+import d3.webservice.domain.MensajeFilterDTO;
 import d3.webservice.domain.WebServiceDTO;
 import d3.webservice.domain.WebServiceEjecucionDTO;
 import d3.webservice.domain.WebServiceEjecucionFilterDTO;
@@ -140,7 +137,6 @@ public class FullController {
 			@Lazy PuestoSvc puestoService, @Lazy RolAccesoSvc rolAccesoService, @Lazy WebServiceSvc webServiceService,
 			@Lazy MensajeSvc mensajeService, @Lazy MailUserSendMessage userSendMessage,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy ServidorSvc servidorService,
-			@Lazy MensajePlantillaCorreoSvc mensajePlantillaCorreoService,
 			@Lazy UsuarioRolProductoSvc usuarioRolProductoService, @Lazy ReporteBaseSvc reporteBaseService,
 			@Lazy UsuarioOrganizacionSvc usuarioOrganizacionService,
 			@Lazy UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService,
@@ -174,7 +170,6 @@ public class FullController {
 		this.userSendMessage = userSendMessage;
 		this.webServiceEjecucionService = webServiceEjecucionService;
 		this.servidorService = servidorService;
-		this.mensajePlantillaCorreoService = mensajePlantillaCorreoService;
 		this.usuarioRolProductoService = usuarioRolProductoService;
 		this.reporteBaseService = reporteBaseService;
 		this.usuarioOrganizacionService = usuarioOrganizacionService;
@@ -1948,77 +1943,6 @@ public class FullController {
 	public ServidorDTO guardarServidor(@RequestBody ServidorDTO dto) throws FlexException {
 		try {
 			return servidorService.guardar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	private final MensajePlantillaCorreoSvc mensajePlantillaCorreoService;
-
-	@PostMapping(value = "/consultaXIdMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO consultaXIdMensajePlantillaCorreo(@RequestBody String llave) throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/consultaUnicaMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO consultaUnicaMensajePlantillaCorreo(
-			@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/listarConsultaMensajePlantillaCorreo")
-	public List<MensajePlantillaCorreoDTO> listarConsultaMensajePlantillaCorreo(
-			@RequestBody MensajePlantillaCorreoFilterDTO dto) throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/activarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO activarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.activar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/inactivarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO inactivarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.inactivar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/actualizarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO actualizarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.actualizar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/guardarMensajePlantillaCorreo")
-	public MensajePlantillaCorreoDTO guardarMensajePlantillaCorreo(@RequestBody MensajePlantillaCorreoDTO dto)
-			throws FlexException {
-		try {
-			return mensajePlantillaCorreoService.guardar(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

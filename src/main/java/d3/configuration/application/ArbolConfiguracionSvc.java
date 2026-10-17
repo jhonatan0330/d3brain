@@ -23,8 +23,6 @@ import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.SeleccionSincronizacionDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.mail.application.MensajePlantillaCorreoSvc;
-import d3.mail.domain.MensajePlantillaCorreoDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoEstadoSvc;
@@ -59,15 +57,13 @@ public class ArbolConfiguracionSvc {
 	private final ReporteBaseSvc reporteService;
 	private final RolAccesoSvc rolService;
 	private final WebServiceSvc apiService;
-	private final MensajePlantillaCorreoSvc mensajeService;
 
 	public ArbolConfiguracionSvc(@Lazy ExportConfigurationFileService exportService, ObjectMapper mapper,
 			@Lazy OrganizacionSvc organizacionService, @Lazy ProcesoSvc procesoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
 			@Lazy DocumentoPlantillaSvc plantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy ReporteBaseSvc reporteService,
-			@Lazy RolAccesoSvc rolService, @Lazy WebServiceSvc apiService,
-			@Lazy MensajePlantillaCorreoSvc mensajeService) {
+			@Lazy RolAccesoSvc rolService, @Lazy WebServiceSvc apiService) {
 		this.exportService = exportService;
 		this.mapper = mapper;
 		this.organizacionService = organizacionService;
@@ -79,7 +75,6 @@ public class ArbolConfiguracionSvc {
 		this.reporteService = reporteService;
 		this.rolService = rolService;
 		this.apiService = apiService;
-		this.mensajeService = mensajeService;
 	}
 
 	public TreeNodeDTO construirArbolActual( ArbolConfiguracionFilterDTO filter) throws ServerException {
@@ -182,13 +177,6 @@ public class ArbolConfiguracionSvc {
 							continue;
 						hijos.add(nodoConfig(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
 								null, TreeNodeDTO.API, caminoPadre, ligero ? null : api, listarPropiedades, null));
-					}
-				}
-				List<MensajePlantillaCorreoDTO> mensajes = mensajeService.getFullToSynchronize(null);
-				if (mensajes != null) {
-					for (MensajePlantillaCorreoDTO mensaje : mensajes) {
-						hijos.add(nodoConfig(mensaje.getLlaveTabla(), mensaje.getEstado(), mensaje.getNombre(), null,
-								null, TreeNodeDTO.MENSAJE, caminoPadre, ligero ? null : mensaje, false, null));
 					}
 				}
 			} catch (ServerException e) {
@@ -393,13 +381,6 @@ public class ArbolConfiguracionSvc {
 				hijos.add(nodoBase(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(), null,
 						TreeNodeDTO.API, raiz.getCamino(), api, listarPropiedades,
 						propiedadesIndex.get(PropiedadValorDefinidoDTO.API_SERVICE + "|" + api.getLlaveTabla())));
-			}
-		}
-
-		if (hierarchy.getMessages() != null) {
-			for (MensajePlantillaCorreoDTO mensaje : hierarchy.getMessages()) {
-				hijos.add(nodoBase(mensaje.getLlaveTabla(), mensaje.getEstado(), mensaje.getNombre(), null, null,
-						TreeNodeDTO.MENSAJE, raiz.getCamino(), mensaje, false, null));
 			}
 		}
 
@@ -656,9 +637,8 @@ public class ArbolConfiguracionSvc {
 		List<ReporteBaseDTO> reports = new ArrayList<>();
 		List<RolAccesoDTO> roles = new ArrayList<>();
 		List<WebServiceDTO> apis = new ArrayList<>();
-		List<MensajePlantillaCorreoDTO> messages = new ArrayList<>();
 		List<PropiedadDTO> properties = new ArrayList<>();
-		agregarDatos(raiz, hierarchy, process, states, transitions, templates, fields, reports, roles, apis, messages,
+		agregarDatos(raiz, hierarchy, process, states, transitions, templates, fields, reports, roles, apis, 
 				properties);
 		hierarchy.setProcess(process.isEmpty() ? null : process);
 		hierarchy.setStates(states.isEmpty() ? null : states);
@@ -668,7 +648,6 @@ public class ArbolConfiguracionSvc {
 		hierarchy.setReports(reports.isEmpty() ? null : reports);
 		hierarchy.setRoles(roles.isEmpty() ? null : roles);
 		hierarchy.setApis(apis.isEmpty() ? null : apis);
-		hierarchy.setMessages(messages.isEmpty() ? null : messages);
 		hierarchy.setProperties(properties.isEmpty() ? null : properties);
 		return hierarchy;
 	}
@@ -676,7 +655,7 @@ public class ArbolConfiguracionSvc {
 	private void agregarDatos(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy, List<ProcesoDTO> process,
 			List<ProcesoEstadoDTO> states, List<ProcesoTransicionDTO> transitions, List<DocumentoPlantillaDTO> templates,
 			List<DocumentoPlantillaCaracteristicaDTO> fields, List<ReporteBaseDTO> reports, List<RolAccesoDTO> roles,
-			List<WebServiceDTO> apis, List<MensajePlantillaCorreoDTO> messages, List<PropiedadDTO> properties)
+			List<WebServiceDTO> apis,  List<PropiedadDTO> properties)
 			throws ServerException {
 		if (nodo.getPropiedades() != null) {
 			properties.addAll(nodo.getPropiedades());
@@ -714,9 +693,6 @@ public class ArbolConfiguracionSvc {
 			case TreeNodeDTO.API:
 				apis.add(mapper.convertValue(nodo.getDato(), WebServiceDTO.class));
 				break;
-			case TreeNodeDTO.MENSAJE:
-				messages.add(mapper.convertValue(nodo.getDato(), MensajePlantillaCorreoDTO.class));
-				break;
 			default:
 				break;
 			}
@@ -724,7 +700,7 @@ public class ArbolConfiguracionSvc {
 		if (nodo.getHijos() != null) {
 			for (TreeNodeDTO hijo : nodo.getHijos()) {
 				agregarDatos(hijo, hierarchy, process, states, transitions, templates, fields, reports, roles, apis,
-						messages, properties);
+						 properties);
 			}
 		}
 	}
