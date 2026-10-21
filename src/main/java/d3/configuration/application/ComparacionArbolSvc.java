@@ -1,37 +1,29 @@
 package d3.configuration.application;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import d3.configuration.domain.DetalleCampoDTO;
 import d3.configuration.domain.DiferenciaDTO;
-import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.TreeNodeDTO;
 
 @Service
 public class ComparacionArbolSvc {
 
-	private static final String SIN_VALOR = "—";
+	//private static final String SIN_VALOR = "—";
 
-	private final ObjectMapper mapper;
+	//private final ObjectMapper mapper;
 
-	public ComparacionArbolSvc(ObjectMapper mapper) {
-		this.mapper = mapper;
+	public ComparacionArbolSvc() {//ObjectMapper mapper) {
+		//this.mapper = mapper;
 	}
 
 	public List<DiferenciaDTO> comparar(TreeNodeDTO actual, TreeNodeDTO remoto) {
 		List<DiferenciaDTO> resultado = new ArrayList<>();
 		if (actual == null || remoto == null)
 			return resultado;
-		ContextoComparacion contexto = new ContextoComparacion();
+		/*ContextoComparacion contexto = new ContextoComparacion();
 		contexto.llavesLocal = indexarLlaves(actual);
 		contexto.llavesRemoto = indexarLlaves(remoto);
 		Map<String, TreeNodeDTO> localHijos = indexar(actual.getHijos());
@@ -49,10 +41,10 @@ public class ComparacionArbolSvc {
 					resultado.add(construirLocalSinRemoto(localHijo));
 				}
 			}
-		}
+		}*/
 		return resultado;
 	}
-
+/*
 	private DiferenciaDTO compararNodo(TreeNodeDTO local, TreeNodeDTO remoto, ContextoComparacion contexto) {
 		if (local == null) {
 			DiferenciaDTO diferencia = new DiferenciaDTO();
@@ -163,7 +155,7 @@ public class ComparacionArbolSvc {
 		return detalles;
 	}
 
-	private boolean esLlaveForanea(String campo) {
+	/*private boolean esLlaveForanea(String campo) {
 		return "plantilla".equals(campo) || "proceso".equals(campo) || "padre".equals(campo)
 				|| "estadoPartida".equals(campo) || "estadoLLegada".equals(campo) || "macroproceso".equals(campo);
 	}
@@ -239,7 +231,6 @@ public class ComparacionArbolSvc {
 
 	private List<String> camposPorTipo(String tipo) {
 		switch (tipo) {
-		case TreeNodeDTO.PROCESO_MACRO:
 		case TreeNodeDTO.PROCESO:
 			return List.of("objetivo", "prioridad", "tipo", "macroproceso");
 		case TreeNodeDTO.ESTADO:
@@ -247,9 +238,6 @@ public class ComparacionArbolSvc {
 		case TreeNodeDTO.TRANSICION:
 			return List.of("afectaSaldo", "documentador", "rapida", "plantilla", "estadoPartida", "estadoLLegada");
 		case TreeNodeDTO.PLANTILLA:
-		case TreeNodeDTO.PLANTILLA_MODIFICACION:
-		case TreeNodeDTO.PLANTILLA_ANULACION:
-		case TreeNodeDTO.PLANTILLA_ACTIVACION:
 			return List.of("consecutivo", "tipo", "padre");
 		case TreeNodeDTO.CAMPO:
 			return List.of("formato", "orden", "objetivo");
@@ -257,13 +245,11 @@ public class ComparacionArbolSvc {
 			return List.of("descripcion", "version", "servidor", "publico", "multiplesId", "soloExistente");
 		case TreeNodeDTO.API:
 			return List.of("nombre");
-		case TreeNodeDTO.ROL:
-			return List.of("nombre");
 		default:
 			return List.of();
 		}
-	}
-
+	}*/
+/*
 	private TreeNodeDTO nodoLigero(TreeNodeDTO origen) {
 		if (origen == null)
 			return null;
@@ -294,9 +280,9 @@ public class ComparacionArbolSvc {
 			for (TreeNodeDTO hijo : nodo.getHijos())
 				indexarLlavesNodo(hijo, index);
 		}
-	}
+	}*/
 
-	@SuppressWarnings({ "unchecked" })
+	/*@SuppressWarnings({ "unchecked" })
 	private Map<String, Object> aMapa(TreeNodeDTO nodo) {
 		if (nodo.getDato() == null)
 			return null;
@@ -305,9 +291,9 @@ public class ComparacionArbolSvc {
 		} catch (Exception e) {
 			return null;
 		}
-	}
+	}*/
 
-	private Object valorCampo(Map<String, Object> dato, String campo) {
+	/*private Object valorCampo(Map<String, Object> dato, String campo) {
 		return dato.get(campo);
 	}
 
@@ -326,5 +312,5 @@ public class ComparacionArbolSvc {
 		private Map<String, String> llavesLocal;
 		private Map<String, String> llavesRemoto;
 	}
-
+*/
 }

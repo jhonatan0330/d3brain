@@ -50,7 +50,7 @@ public class UploadSvc {
 		CargaArchivoDTO registro = new CargaArchivoDTO();
 		registro.setFechaInicio(new Date());
 		registro.setSize(bytes.length);
-		registro.setUsuario(SessionContext.getCurrentUser());
+		registro.setUsuario(SessionContext.getCurrentUserOrNull());
 		ServidorDTO _server = servidorService.resolveServer();
 		registro.setServidor(_server.getLlaveTabla());
 

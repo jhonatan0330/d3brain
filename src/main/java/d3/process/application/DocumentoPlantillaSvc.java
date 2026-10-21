@@ -97,6 +97,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaDTO actualizar(DocumentoPlantillaDTO dto) throws ServerException {
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
+		if(dto.getTipo().equals(DocumentoPlantillaDTO.PRINCIPAL) || dto.getTipo().equals(DocumentoPlantillaDTO.ROL) || dto.getTipo().equals(DocumentoPlantillaDTO.REPORTE))
+			dto.setPadre(dto.getProceso());
 		dto = super.actualizar(dto);
 		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
 		return dto;

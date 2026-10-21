@@ -18,9 +18,10 @@ SELECT REPLACE(gen_random_uuid()::TEXT, '-', ''), 'PROP_299', 'W', cmpl_llave, c
 FROM public.mensajeplantillacorreo_mplp
 where cmpl_estado = 'A';
 
-ALTER TABLE public.mensaje_msjp DROP CONSTRAINT fk_mensajetemplate;
+ALTER TABLE public.mensaje_msjp DROP CONSTRAINT IF EXISTS fk_mensajetemplate;
 
-ALTER TABLE public.mensaje_msjp ADD CONSTRAINT fk_mensajetemplate FOREIGN KEY (cmsj_template) REFERENCES webservice_wbsp(cwbs_llave);
+-- No pase los inactivos
+--ALTER TABLE public.mensaje_msjp ADD CONSTRAINT fk_mensajetemplate FOREIGN KEY (cmsj_template) REFERENCES webservice_wbsp(cwbs_llave);
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto)
     SELECT 'PROP_310' , 'O', 'MAIL_SERVER', 'MAIL SERVER',  'REQUISITO',  true

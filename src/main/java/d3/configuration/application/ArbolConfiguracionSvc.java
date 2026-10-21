@@ -10,12 +10,8 @@ import java.util.Set;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
-import d3.authorization.application.RolAccesoSvc;
-import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.ArbolConfiguracionFilterDTO;
 import d3.configuration.domain.ArbolNodoRequestDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
@@ -47,7 +43,6 @@ public class ArbolConfiguracionSvc {
 	public static final String PLANTILLA_ACTIVACION = "A";
 
 	private final ExportConfigurationFileService exportService;
-	private final ObjectMapper mapper;
 	private final OrganizacionSvc organizacionService;
 	private final ProcesoSvc procesoService;
 	private final ProcesoEstadoSvc estadoService;
@@ -55,17 +50,15 @@ public class ArbolConfiguracionSvc {
 	private final DocumentoPlantillaSvc plantillaService;
 	private final DocumentoPlantillaCaracteristicaSvc campoService;
 	private final ReporteBaseSvc reporteService;
-	private final RolAccesoSvc rolService;
 	private final WebServiceSvc apiService;
 
-	public ArbolConfiguracionSvc(@Lazy ExportConfigurationFileService exportService, ObjectMapper mapper,
+	public ArbolConfiguracionSvc(@Lazy ExportConfigurationFileService exportService,
 			@Lazy OrganizacionSvc organizacionService, @Lazy ProcesoSvc procesoService,
 			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,
 			@Lazy DocumentoPlantillaSvc plantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy ReporteBaseSvc reporteService,
-			@Lazy RolAccesoSvc rolService, @Lazy WebServiceSvc apiService) {
+			@Lazy WebServiceSvc apiService) {
 		this.exportService = exportService;
-		this.mapper = mapper;
 		this.organizacionService = organizacionService;
 		this.procesoService = procesoService;
 		this.estadoService = estadoService;
@@ -73,7 +66,6 @@ public class ArbolConfiguracionSvc {
 		this.plantillaService = plantillaService;
 		this.campoService = campoService;
 		this.reporteService = reporteService;
-		this.rolService = rolService;
 		this.apiService = apiService;
 	}
 
@@ -85,7 +77,7 @@ public class ArbolConfiguracionSvc {
 
 	public TreeNodeDTO construirArbolSimple(ArbolConfiguracionFilterDTO filter) throws ServerException {
 		boolean listarPropiedades = filter != null && Boolean.TRUE.equals(filter.getListarPropiedades());
-		boolean ligero = filter != null && Boolean.TRUE.equals(filter.getLigero());
+
 		TreeNodeDTO raiz = new TreeNodeDTO();
 		raiz.setTipo(TreeNodeDTO.ORGANIZACION);
 		raiz.setCamino(TreeNodeDTO.ORGANIZACION);
@@ -96,12 +88,11 @@ public class ArbolConfiguracionSvc {
 			raiz.setNombre(org.getNombre());
 			raiz.setCodigo(org.getCodigo());
 			raiz.setImagen(org.getImagen());
-			if (!ligero)
-				raiz.setDato(org);
+			
 		}
 		raiz.setTieneHijos(true);
 		List<TreeNodeDTO> hijos = construirHijosNivel(TreeNodeDTO.ORGANIZACION, raiz.getLlaveTabla(),
-				TreeNodeDTO.ORGANIZACION, listarPropiedades, ligero);
+				TreeNodeDTO.ORGANIZACION, listarPropiedades);
 		raiz.setHijos(hijos.isEmpty() ? null : hijos);
 		raiz.setTotalHijos(hijos.size());
 		return raiz;
@@ -111,13 +102,13 @@ public class ArbolConfiguracionSvc {
 		if (request == null || request.getTipo() == null || request.getTipo().isEmpty())
 			throw new ServerException("El tipo del nodo es obligatorio");
 		boolean listarPropiedades = Boolean.TRUE.equals(request.getListarPropiedades());
-		boolean ligero = Boolean.TRUE.equals(request.getLigero());
+		
 		String tipoPadre = request.getTipo();
 		String llavePadre = request.getLlaveTabla();
 		String caminoPadre = request.getCamino();
 		if (caminoPadre == null || caminoPadre.isEmpty())
 			caminoPadre = tipoPadre;
-		List<TreeNodeDTO> hijos = construirHijosNivel(tipoPadre, llavePadre, caminoPadre, listarPropiedades, ligero);
+		List<TreeNodeDTO> hijos = construirHijosNivel(tipoPadre, llavePadre, caminoPadre, listarPropiedades);
 		TreeNodeDTO nodo = new TreeNodeDTO();
 		nodo.setTipo(tipoPadre);
 		nodo.setCamino(caminoPadre);
@@ -129,7 +120,7 @@ public class ArbolConfiguracionSvc {
 	}
 
 	private boolean admiteHijos(String tipo) {
-		return TreeNodeDTO.ORGANIZACION.equals(tipo) || TreeNodeDTO.PROCESO_MACRO.equals(tipo)
+		return TreeNodeDTO.ORGANIZACION.equals(tipo) 
 				|| TreeNodeDTO.PROCESO.equals(tipo) || TreeNodeDTO.PLANTILLA.equals(tipo);
 	}
 
@@ -138,12 +129,9 @@ public class ArbolConfiguracionSvc {
 		return macro == null || macro.isEmpty() || macro.equals(proceso.getLlaveTabla());
 	}
 
-	private String tipoNodoProceso(ProcesoDTO proceso) {
-		return ProcesoDTO.AGRUPADOR.equals(proceso.getTipo()) ? TreeNodeDTO.PROCESO_MACRO : TreeNodeDTO.PROCESO;
-	}
 
 	private List<TreeNodeDTO> construirHijosNivel(String tipoPadre, String llavePadre, String caminoPadre,
-			boolean listarPropiedades, boolean ligero) throws ServerException {
+			boolean listarPropiedades) throws ServerException {
 		List<TreeNodeDTO> hijos = new ArrayList<>();
 		if (TreeNodeDTO.ORGANIZACION.equals(tipoPadre)) {
 			try {
@@ -155,18 +143,8 @@ public class ArbolConfiguracionSvc {
 						if (!esRaiz(proceso))
 							continue;
 						hijos.add(nodoConfig(proceso.getLlaveTabla(), proceso.getEstado(), proceso.getNombre(),
-								proceso.getCodigo(), proceso.getImagen(), tipoNodoProceso(proceso), caminoPadre,
-								ligero ? null : proceso, true, null));
-					}
-				}
-				List<RolAccesoDTO> roles = rolService.getFullToSynchronize(null);
-				if (roles != null) {
-					for (RolAccesoDTO rol : roles) {
-						String procesoRol = rol.getProceso();
-						if (procesoRol != null && !procesoRol.isEmpty() && llavesProcesos.contains(procesoRol))
-							continue;
-						hijos.add(nodoConfig(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-								rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, ligero ? null : rol, false, null));
+								proceso.getCodigo(), proceso.getImagen(), TreeNodeDTO.PROCESO, caminoPadre,
+								 true, null, proceso.getTipo()));
 					}
 				}
 				List<WebServiceDTO> apis = apiService.getFullToSynchronize(null);
@@ -176,23 +154,22 @@ public class ArbolConfiguracionSvc {
 						if (procesoApi != null && !procesoApi.isEmpty() && llavesProcesos.contains(procesoApi))
 							continue;
 						hijos.add(nodoConfig(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
-								null, TreeNodeDTO.API, caminoPadre, ligero ? null : api, listarPropiedades, null));
+								null, TreeNodeDTO.API, caminoPadre,  listarPropiedades, null, null));
 					}
 				}
 			} catch (ServerException e) {
 			}
 			return hijos;
 		}
-		if ((TreeNodeDTO.PROCESO_MACRO.equals(tipoPadre) || TreeNodeDTO.PROCESO.equals(tipoPadre))
-				&& llavePadre != null) {
+		if (TreeNodeDTO.PROCESO.equals(tipoPadre) && llavePadre != null) {
 			List<ProcesoDTO> procesos = procesoService.getFullToSynchronize(null);
 			if (procesos != null) {
 				for (ProcesoDTO proceso : procesos) {
 					if (esRaiz(proceso) || !llavePadre.equals(proceso.getMacroproceso()))
 						continue;
 					hijos.add(nodoConfig(proceso.getLlaveTabla(), proceso.getEstado(), proceso.getNombre(),
-							proceso.getCodigo(), proceso.getImagen(), tipoNodoProceso(proceso), caminoPadre,
-							ligero ? null : proceso, listarPropiedades, null));
+							proceso.getCodigo(), proceso.getImagen(), TreeNodeDTO.PROCESO, caminoPadre,
+							 listarPropiedades, null, proceso.getTipo()));
 				}
 			}
 			List<String> procesoLlave = List.of(llavePadre);
@@ -200,8 +177,8 @@ public class ArbolConfiguracionSvc {
 			if (estados != null) {
 				for (ProcesoEstadoDTO estado : estados) {
 					hijos.add(nodoConfig(estado.getLlaveTabla(), estado.getEstado(), estado.getNombre(),
-							estado.getCodigo(), null, TreeNodeDTO.ESTADO, caminoPadre, ligero ? null : estado,
-							listarPropiedades, null));
+							estado.getCodigo(), null, TreeNodeDTO.ESTADO, caminoPadre, 
+							listarPropiedades, null, estado.getTipo()));
 				}
 			}
 			List<ProcesoTransicionDTO> transiciones = transicionService.getFullToSynchronize(procesoLlave);
@@ -209,28 +186,21 @@ public class ArbolConfiguracionSvc {
 				for (ProcesoTransicionDTO transicion : transiciones) {
 					hijos.add(nodoConfig(transicion.getLlaveTabla(), transicion.getEstado(), transicion.getNombre(),
 							transicion.getCodigo(), transicion.getImagen(), TreeNodeDTO.TRANSICION, caminoPadre,
-							ligero ? null : transicion, listarPropiedades, null));
+							 listarPropiedades, null, null));
 				}
 			}
 			List<DocumentoPlantillaDTO> plantillas = plantillaService.getFullToSynchronize(procesoLlave);
 			if (plantillas != null) {
 				for (DocumentoPlantillaDTO plantilla : plantillas) {
-					if (plantilla.getTipo() == null || !plantilla.getTipo().equals("P"))
+					if (plantilla.getTipo() == null || !plantilla.getPadre().equals(llavePadre))
 						continue;
 					boolean tieneHijos = plantillaTieneHijos(plantilla.getLlaveTabla(), plantillas);
 					TreeNodeDTO nodo = nodoConfig(plantilla.getLlaveTabla(), plantilla.getEstado(),
 							plantilla.getNombre(), plantilla.getCodigo(), plantilla.getImagen(),
-							TreeNodeDTO.PLANTILLA, caminoPadre, ligero ? null : plantilla, listarPropiedades, null);
+							TreeNodeDTO.PLANTILLA, caminoPadre,  listarPropiedades, null, plantilla.getTipo());
 					nodo.setTieneHijos(true);
 					nodo.setTotalHijos(tieneHijos ? 1 : 0);
 					hijos.add(nodo);
-				}
-			}
-			List<RolAccesoDTO> roles = rolService.getFullToSynchronize(procesoLlave);
-			if (roles != null) {
-				for (RolAccesoDTO rol : roles) {
-					hijos.add(nodoConfig(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-							rol.getImagen(), TreeNodeDTO.ROL, caminoPadre, ligero ? null : rol, false, null));
 				}
 			}
 			List<WebServiceDTO> apis = apiService.getFullToSynchronize(null);
@@ -239,7 +209,7 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(api.getProceso()))
 						continue;
 					hijos.add(nodoConfig(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
-							null, TreeNodeDTO.API, caminoPadre, ligero ? null : api, listarPropiedades, null));
+							null, TreeNodeDTO.API, caminoPadre,  listarPropiedades, null, null));
 				}
 			}
 			return hijos;
@@ -252,7 +222,7 @@ public class ArbolConfiguracionSvc {
 						continue;
 					hijos.add(nodoConfig(campo.getLlaveTabla(), campo.getEstado(), campo.getNombre(),
 							campo.getCodigo(), campo.getImagen(), TreeNodeDTO.CAMPO, caminoPadre,
-							ligero ? null : campo, listarPropiedades, null));
+							 listarPropiedades, null, campo.getFormato()));
 				}
 			}
 			List<ReporteBaseDTO> reportes = reporteService.getFullToSynchronize(null);
@@ -261,8 +231,8 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(reporte.getPlantilla()))
 						continue;
 					hijos.add(nodoConfig(reporte.getLlaveTabla(), reporte.getEstado(), reporte.getNombre(),
-							reporte.getCodigo(), null, TreeNodeDTO.REPORTE, caminoPadre, ligero ? null : reporte,
-							listarPropiedades, null));
+							reporte.getCodigo(), null, TreeNodeDTO.REPORTE, caminoPadre, 
+							listarPropiedades, null, null));
 				}
 			}
 			List<DocumentoPlantillaDTO> plantillas = plantillaService.getFullToSynchronize(null);
@@ -271,15 +241,9 @@ public class ArbolConfiguracionSvc {
 					if (!llavePadre.equals(plantilla.getPadre()))
 						continue;
 					String tipoNodo = TreeNodeDTO.PLANTILLA;
-					if (PlantillaTipo.modificacion(plantilla.getTipo()))
-						tipoNodo = TreeNodeDTO.PLANTILLA_MODIFICACION;
-					else if (PlantillaTipo.anulacion(plantilla.getTipo()))
-						tipoNodo = TreeNodeDTO.PLANTILLA_ANULACION;
-					else if (PlantillaTipo.activacion(plantilla.getTipo()))
-						tipoNodo = TreeNodeDTO.PLANTILLA_ACTIVACION;
 					hijos.add(nodoConfig(plantilla.getLlaveTabla(), plantilla.getEstado(), plantilla.getNombre(),
 							plantilla.getCodigo(), plantilla.getImagen(), tipoNodo, caminoPadre,
-							ligero ? null : plantilla, listarPropiedades, null));
+							listarPropiedades, null, plantilla.getTipo()));
 				}
 			}
 			return hijos;
@@ -298,8 +262,8 @@ public class ArbolConfiguracionSvc {
 	}
 
 	private TreeNodeDTO nodoConfig(String llave, String estado, String nombre, String codigo, String imagen,
-			String tipoNodo, String caminoPadre, Object dato, boolean listarPropiedades,
-			List<PropiedadDTO> propiedades) {
+			String tipoNodo, String caminoPadre, boolean listarPropiedades,
+			List<PropiedadDTO> propiedades, String categoria) {
 		TreeNodeDTO nodo = new TreeNodeDTO();
 		nodo.setLlaveTabla(llave);
 		nodo.setEstado(estado);
@@ -307,9 +271,10 @@ public class ArbolConfiguracionSvc {
 		nodo.setCodigo(codigo);
 		nodo.setImagen(imagen);
 		nodo.setTipo(tipoNodo);
+		nodo.setCategoria(categoria);
 		String padre = (caminoPadre == null || caminoPadre.isEmpty()) ? TreeNodeDTO.ORGANIZACION : caminoPadre;
 		nodo.setCamino(padre + "/" + tipoNodo + ":" + etiqueta(nombre, codigo, llave));
-		nodo.setDato(dato);
+		//nodo.setDato(dato);
 		nodo.setTieneHijos(admiteHijos(tipoNodo));
 		if (listarPropiedades && propiedades != null)
 			nodo.setPropiedades(propiedades);
@@ -334,7 +299,7 @@ public class ArbolConfiguracionSvc {
 			raiz.setNombre(org.getNombre());
 			raiz.setCodigo(org.getCodigo());
 			raiz.setImagen(org.getImagen());
-			raiz.setDato(org);
+			//raiz.setDato(org);
 			if (listarPropiedades)
 				raiz.setPropiedades(propiedadesIndex.get(PropiedadValorDefinidoDTO.ORGANIZACION + "|" + org.getLlaveTabla()));
 		}
@@ -363,23 +328,13 @@ public class ArbolConfiguracionSvc {
 				llavesProcesos.add(proceso.getLlaveTabla());
 		}
 
-		if (hierarchy.getRoles() != null) {
-			for (RolAccesoDTO rol : hierarchy.getRoles()) {
-				String procesoRol = rol.getProceso();
-				if (procesoRol != null && !procesoRol.isEmpty() && llavesProcesos.contains(procesoRol))
-					continue;
-				hijos.add(nodoBase(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-						rol.getImagen(), TreeNodeDTO.ROL, raiz.getCamino(), rol, false, null));
-			}
-		}
-
 		if (hierarchy.getApis() != null) {
 			for (WebServiceDTO api : hierarchy.getApis()) {
 				String procesoApi = api.getProceso();
 				if (procesoApi != null && !procesoApi.isEmpty() && llavesProcesos.contains(procesoApi))
 					continue;
 				hijos.add(nodoBase(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(), null,
-						TreeNodeDTO.API, raiz.getCamino(), api, listarPropiedades,
+						TreeNodeDTO.API, raiz.getCamino(),  listarPropiedades,
 						propiedadesIndex.get(PropiedadValorDefinidoDTO.API_SERVICE + "|" + api.getLlaveTabla())));
 			}
 		}
@@ -391,9 +346,9 @@ public class ArbolConfiguracionSvc {
 	private TreeNodeDTO construirNodoProceso(ProcesoDTO proceso, HierarchyExporterDTO hierarchy,
 			Map<String, List<ProcesoDTO>> procesosHijos, boolean listarPropiedades,
 			Map<String, List<PropiedadDTO>> propiedadesIndex, String caminoPadre) {
-		String tipoNodo = tipoNodoProceso(proceso);
+
 		TreeNodeDTO nodo = nodoBase(proceso.getLlaveTabla(), proceso.getEstado(), proceso.getNombre(),
-				proceso.getCodigo(), proceso.getImagen(), tipoNodo, caminoPadre, proceso, listarPropiedades,
+				proceso.getCodigo(), proceso.getImagen(), TreeNodeDTO.PROCESO, caminoPadre,  listarPropiedades,
 				propiedadesIndex.get(PropiedadValorDefinidoDTO.PROCESO + "|" + proceso.getLlaveTabla()));
 
 		List<TreeNodeDTO> hijos = new ArrayList<>();
@@ -409,7 +364,7 @@ public class ArbolConfiguracionSvc {
 			for (ProcesoEstadoDTO estado : hierarchy.getStates()) {
 				if (proceso.getLlaveTabla().equals(estado.getProceso())) {
 					hijos.add(nodoBase(estado.getLlaveTabla(), estado.getEstado(), estado.getNombre(),
-							estado.getCodigo(), null, TreeNodeDTO.ESTADO, nodo.getCamino(), estado,
+							estado.getCodigo(), null, TreeNodeDTO.ESTADO, nodo.getCamino(), 
 							listarPropiedades,
 							propiedadesIndex.get(PropiedadValorDefinidoDTO.ESTADO + "|" + estado.getLlaveTabla())));
 				}
@@ -420,7 +375,7 @@ public class ArbolConfiguracionSvc {
 				if (proceso.getLlaveTabla().equals(transicion.getProceso())) {
 					hijos.add(nodoBase(transicion.getLlaveTabla(), transicion.getEstado(), transicion.getNombre(),
 							transicion.getCodigo(), transicion.getImagen(), TreeNodeDTO.TRANSICION,
-							nodo.getCamino(), transicion, listarPropiedades,
+							nodo.getCamino(),  listarPropiedades,
 							propiedadesIndex.get(PropiedadValorDefinidoDTO.TRANSICION + "|"
 									+ transicion.getLlaveTabla())));
 				}
@@ -429,21 +384,12 @@ public class ArbolConfiguracionSvc {
 		hijos.addAll(construirNodosPlantillas(hierarchy, proceso.getLlaveTabla(), listarPropiedades,
 				propiedadesIndex, nodo.getCamino()));
 
-		if (hierarchy.getRoles() != null) {
-			for (RolAccesoDTO rol : hierarchy.getRoles()) {
-				if (!proceso.getLlaveTabla().equals(rol.getProceso()))
-					continue;
-				hijos.add(nodoBase(rol.getLlaveTabla(), rol.getEstado(), rol.getNombre(), rol.getCodigo(),
-						rol.getImagen(), TreeNodeDTO.ROL, nodo.getCamino(), rol, false, null));
-			}
-		}
-
 		if (hierarchy.getApis() != null) {
 			for (WebServiceDTO api : hierarchy.getApis()) {
 				if (!proceso.getLlaveTabla().equals(api.getProceso()))
 					continue;
 				hijos.add(nodoBase(api.getLlaveTabla(), api.getEstado(), api.getNombre(), api.getCodigo(),
-						null, TreeNodeDTO.API, nodo.getCamino(), api, false, null));
+						null, TreeNodeDTO.API, nodo.getCamino(),  false, null));
 			}
 		}
 
@@ -456,18 +402,12 @@ public class ArbolConfiguracionSvc {
 		List<TreeNodeDTO> nodos = new ArrayList<>();
 		if (hierarchy.getTemplates() == null)
 			return nodos;
-		Map<String, List<DocumentoPlantillaDTO>> modificacionPorPadre = new LinkedHashMap<>();
-		Map<String, List<DocumentoPlantillaDTO>> anulacionPorPadre = new LinkedHashMap<>();
-		Map<String, List<DocumentoPlantillaDTO>> activacionPorPadre = new LinkedHashMap<>();
+		
+		Map<String, List<DocumentoPlantillaDTO>> porPadre = new LinkedHashMap<>();
+		
 		for (DocumentoPlantillaDTO plantilla : hierarchy.getTemplates()) {
 			if (llaveProceso.equals(plantilla.getProceso())) {
-				if (PlantillaTipo.modificacion(plantilla.getTipo()) && plantilla.getPadre() != null) {
-					modificacionPorPadre.computeIfAbsent(plantilla.getPadre(), k -> new ArrayList<>()).add(plantilla);
-				} else if (PlantillaTipo.anulacion(plantilla.getTipo()) && plantilla.getPadre() != null) {
-					anulacionPorPadre.computeIfAbsent(plantilla.getPadre(), k -> new ArrayList<>()).add(plantilla);
-				} else if (PlantillaTipo.activacion(plantilla.getTipo()) && plantilla.getPadre() != null) {
-					activacionPorPadre.computeIfAbsent(plantilla.getPadre(), k -> new ArrayList<>()).add(plantilla);
-				}
+				porPadre.computeIfAbsent(plantilla.getPadre(), k -> new ArrayList<>()).add(plantilla);
 			}
 		}
 
@@ -477,7 +417,7 @@ public class ArbolConfiguracionSvc {
 				continue;
 			TreeNodeDTO nodoPlantilla = nodoBase(plantilla.getLlaveTabla(), plantilla.getEstado(),
 					plantilla.getNombre(), plantilla.getCodigo(), plantilla.getImagen(), TreeNodeDTO.PLANTILLA,
-					caminoPadre, plantilla, listarPropiedades,
+					caminoPadre,  listarPropiedades,
 					propiedadesIndex.get(PropiedadValorDefinidoDTO.PLANTILLA + "|" + plantilla.getLlaveTabla()));
 
 			List<TreeNodeDTO> hijos = new ArrayList<>();
@@ -485,7 +425,7 @@ public class ArbolConfiguracionSvc {
 				for (DocumentoPlantillaCaracteristicaDTO campo : hierarchy.getFields()) {
 					if (plantilla.getLlaveTabla().equals(campo.getPlantilla())) {
 						hijos.add(nodoBase(campo.getLlaveTabla(), campo.getEstado(), campo.getNombre(), campo.getCodigo(),
-								campo.getImagen(), TreeNodeDTO.CAMPO, nodoPlantilla.getCamino(), campo,
+								campo.getImagen(), TreeNodeDTO.CAMPO, nodoPlantilla.getCamino(), 
 								listarPropiedades,
 								propiedadesIndex.get(PropiedadValorDefinidoDTO.CAMPO + "|" + campo.getLlaveTabla())));
 					}
@@ -495,17 +435,13 @@ public class ArbolConfiguracionSvc {
 				for (ReporteBaseDTO reporte : hierarchy.getReports()) {
 					if (plantilla.getLlaveTabla().equals(reporte.getPlantilla())) {
 						hijos.add(nodoBase(reporte.getLlaveTabla(), reporte.getEstado(), reporte.getNombre(),
-								reporte.getCodigo(), null, TreeNodeDTO.REPORTE, nodoPlantilla.getCamino(), reporte,
+								reporte.getCodigo(), null, TreeNodeDTO.REPORTE, nodoPlantilla.getCamino(), 
 								listarPropiedades,
 								propiedadesIndex.get(PropiedadValorDefinidoDTO.REPORTE + "|" + reporte.getLlaveTabla())));
 					}
 				}
 			}
-			hijos.addAll(susPlantillas(modificacionPorPadre.get(plantilla.getLlaveTabla()), TreeNodeDTO.PLANTILLA_MODIFICACION,
-					nodoPlantilla.getCamino(), listarPropiedades, propiedadesIndex));
-			hijos.addAll(susPlantillas(anulacionPorPadre.get(plantilla.getLlaveTabla()), TreeNodeDTO.PLANTILLA_ANULACION,
-					nodoPlantilla.getCamino(), listarPropiedades, propiedadesIndex));
-			hijos.addAll(susPlantillas(activacionPorPadre.get(plantilla.getLlaveTabla()), TreeNodeDTO.PLANTILLA_ACTIVACION,
+			hijos.addAll(susPlantillas(porPadre.get(plantilla.getLlaveTabla()), plantilla.getTipo(),
 					nodoPlantilla.getCamino(), listarPropiedades, propiedadesIndex));
 			nodoPlantilla.setHijos(hijos.isEmpty() ? null : hijos);
 			nodos.add(nodoPlantilla);
@@ -520,14 +456,14 @@ public class ArbolConfiguracionSvc {
 			return nodos;
 		for (DocumentoPlantillaDTO plantilla : plantillas) {
 			nodos.add(nodoBase(plantilla.getLlaveTabla(), plantilla.getEstado(), plantilla.getNombre(),
-					plantilla.getCodigo(), plantilla.getImagen(), tipoNodo, caminoPadre, plantilla, listarPropiedades,
+					plantilla.getCodigo(), plantilla.getImagen(), tipoNodo, caminoPadre,  listarPropiedades,
 					propiedadesIndex.get(PropiedadValorDefinidoDTO.PLANTILLA + "|" + plantilla.getLlaveTabla())));
 		}
 		return nodos;
 	}
 
 	private TreeNodeDTO nodoBase(String llave, String estado, String nombre, String codigo, String imagen,
-			String tipoNodo, String caminoPadre, Object dato, boolean listarPropiedades, List<PropiedadDTO> propiedades) {
+			String tipoNodo, String caminoPadre,  boolean listarPropiedades, List<PropiedadDTO> propiedades) {
 		TreeNodeDTO nodo = new TreeNodeDTO();
 		nodo.setLlaveTabla(llave);
 		nodo.setEstado(estado);
@@ -536,7 +472,7 @@ public class ArbolConfiguracionSvc {
 		nodo.setImagen(imagen);
 		nodo.setTipo(tipoNodo);
 		nodo.setCamino(caminoPadre + "/" + tipoNodo + ":" + etiqueta(nombre, codigo, llave));
-		nodo.setDato(dato);
+		//nodo.setDato(dato);
 		if (listarPropiedades)
 			nodo.setPropiedades(propiedades);
 		return nodo;
@@ -623,7 +559,7 @@ public class ArbolConfiguracionSvc {
 		destino.setImagen(origen.getImagen());
 		destino.setTipo(origen.getTipo());
 		destino.setCamino(origen.getCamino());
-		destino.setDato(origen.getDato());
+		//destino.setDato(origen.getDato());
 		destino.setPropiedades(origen.getPropiedades());
 	}
 
@@ -635,10 +571,9 @@ public class ArbolConfiguracionSvc {
 		List<DocumentoPlantillaDTO> templates = new ArrayList<>();
 		List<DocumentoPlantillaCaracteristicaDTO> fields = new ArrayList<>();
 		List<ReporteBaseDTO> reports = new ArrayList<>();
-		List<RolAccesoDTO> roles = new ArrayList<>();
 		List<WebServiceDTO> apis = new ArrayList<>();
 		List<PropiedadDTO> properties = new ArrayList<>();
-		agregarDatos(raiz, hierarchy, process, states, transitions, templates, fields, reports, roles, apis, 
+		agregarDatos(raiz, hierarchy, process, states, transitions, templates, fields, reports,  apis, 
 				properties);
 		hierarchy.setProcess(process.isEmpty() ? null : process);
 		hierarchy.setStates(states.isEmpty() ? null : states);
@@ -646,7 +581,6 @@ public class ArbolConfiguracionSvc {
 		hierarchy.setTemplates(templates.isEmpty() ? null : templates);
 		hierarchy.setFields(fields.isEmpty() ? null : fields);
 		hierarchy.setReports(reports.isEmpty() ? null : reports);
-		hierarchy.setRoles(roles.isEmpty() ? null : roles);
 		hierarchy.setApis(apis.isEmpty() ? null : apis);
 		hierarchy.setProperties(properties.isEmpty() ? null : properties);
 		return hierarchy;
@@ -654,18 +588,17 @@ public class ArbolConfiguracionSvc {
 
 	private void agregarDatos(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy, List<ProcesoDTO> process,
 			List<ProcesoEstadoDTO> states, List<ProcesoTransicionDTO> transitions, List<DocumentoPlantillaDTO> templates,
-			List<DocumentoPlantillaCaracteristicaDTO> fields, List<ReporteBaseDTO> reports, List<RolAccesoDTO> roles,
+			List<DocumentoPlantillaCaracteristicaDTO> fields, List<ReporteBaseDTO> reports, 
 			List<WebServiceDTO> apis,  List<PropiedadDTO> properties)
 			throws ServerException {
 		if (nodo.getPropiedades() != null) {
 			properties.addAll(nodo.getPropiedades());
 		}
-		if (nodo.getDato() != null) {
+		/*if (nodo.getDato() != null) {
 			switch (nodo.getTipo()) {
 			case TreeNodeDTO.ORGANIZACION:
 				hierarchy.setOrganization(mapper.convertValue(nodo.getDato(), OrganizacionDTO.class));
 				break;
-			case TreeNodeDTO.PROCESO_MACRO:
 			case TreeNodeDTO.PROCESO:
 				process.add(mapper.convertValue(nodo.getDato(), ProcesoDTO.class));
 				break;
@@ -676,9 +609,6 @@ public class ArbolConfiguracionSvc {
 				transitions.add(mapper.convertValue(nodo.getDato(), ProcesoTransicionDTO.class));
 				break;
 			case TreeNodeDTO.PLANTILLA:
-			case TreeNodeDTO.PLANTILLA_MODIFICACION:
-			case TreeNodeDTO.PLANTILLA_ANULACION:
-			case TreeNodeDTO.PLANTILLA_ACTIVACION:
 				templates.add(mapper.convertValue(nodo.getDato(), DocumentoPlantillaDTO.class));
 				break;
 			case TreeNodeDTO.CAMPO:
@@ -687,35 +617,18 @@ public class ArbolConfiguracionSvc {
 			case TreeNodeDTO.REPORTE:
 				reports.add(mapper.convertValue(nodo.getDato(), ReporteBaseDTO.class));
 				break;
-			case TreeNodeDTO.ROL:
-				roles.add(mapper.convertValue(nodo.getDato(), RolAccesoDTO.class));
-				break;
 			case TreeNodeDTO.API:
 				apis.add(mapper.convertValue(nodo.getDato(), WebServiceDTO.class));
 				break;
 			default:
 				break;
 			}
-		}
+		}*/
 		if (nodo.getHijos() != null) {
 			for (TreeNodeDTO hijo : nodo.getHijos()) {
-				agregarDatos(hijo, hierarchy, process, states, transitions, templates, fields, reports, roles, apis,
+				agregarDatos(hijo, hierarchy, process, states, transitions, templates, fields, reports,  apis,
 						 properties);
 			}
-		}
-	}
-
-	private static class PlantillaTipo {
-		static boolean modificacion(String tipo) {
-			return PLANTILLA_MODIFICACION.equals(tipo);
-		}
-
-		static boolean anulacion(String tipo) {
-			return PLANTILLA_ANULACION.equals(tipo);
-		}
-
-		static boolean activacion(String tipo) {
-			return PLANTILLA_ACTIVACION.equals(tipo);
 		}
 	}
 

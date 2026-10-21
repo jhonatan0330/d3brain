@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -19,8 +21,6 @@ import javax.sql.DataSource;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -47,8 +47,7 @@ import d3.webservice.application.MailSendMessageToAdminService;
 public class TenantProvisioningSvc {
 
 	private static final Pattern URL_PADRE = Pattern.compile("^jdbc:postgresql://([^/:]+)(?::(\\d+))?/([^?]+).*$");
-	private static final String SCRIPT_INICIAL = "static/data/logisticpymes/5. Full_Postgres.sql";
-	private static final String VERSION_BASE = "2023-06-30";
+	private static final String BASE_PLANTILLA = "safir_template";
 
 	private final TenantMapper tenantMapper;
 	private final TenantUsuarioMapper tenantUsuarioMapper;
@@ -103,8 +102,8 @@ public class TenantProvisioningSvc {
 			String url = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + baseDatos;
 			String key = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
 			verificarDuplicados(padre, codigo, url);
-			crearRolYBaseDatos(servidor, datosPadre, baseDatos, rol, clave);
-			aprovisionarBaseDatos(url, rol, clave);
+			clonarBaseDatos(servidor, datosPadre, baseDatos, rol, clave);
+			aprovisionarDesdePlantilla(url, rol, clave);
 			crearAdministrador(url, rol, clave, dto, nombre, codigo);
 			registrarCatalogo(padre, key, nombre, codigo, url, rol, clave, dto.getImagen());
 			asignarUsuario(key, codigo, solicitante);
@@ -153,26 +152,6 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void crearRolYBaseDatos(ServidorPadre servidor, TenantDTO datosPadre, String baseDatos, String rol,
-			String clave) throws ServerException {
-		cargarDriver(datosPadre);
-		String adminUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/postgres";
-		try (Connection conn = DriverManager.getConnection(adminUrl,
-				propiedadesConexion(datosPadre.getDatasourceUsername(), datosPadre.getDatasourcePassword()))) {
-			conn.setAutoCommit(true);
-			crearRol(conn, rol, clave);
-			crearBaseDatos(conn, baseDatos, rol);
-			otorgarPermisos(conn, baseDatos, rol);
-		} catch (ServerException e) {
-			throw e;
-		} catch (Exception e) {
-			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_BASE_DATOS,
-					"No se pudo conectar al motor del tenant padre "
-							+ (datosPadre.getDatasourceUrl() != null ? datosPadre.getDatasourceUrl() : ""),
-					e);
-		}
-	}
-
 	private void crearRol(Connection conn, String rol, String clave) throws ServerException {
 		try {
 			try (PreparedStatement existe = conn.prepareStatement("select 1 from pg_roles where rolname = ?")) {
@@ -195,7 +174,130 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void crearBaseDatos(Connection conn, String baseDatos, String rol) throws ServerException {
+	private void otorgarPermisos(Connection conn, String baseDatos, String rol) throws ServerException {
+		try (Statement stmt = conn.createStatement()) {
+			stmt.execute("GRANT ALL PRIVILEGES ON DATABASE " + entrecomillar(baseDatos) + " TO " + entrecomillar(rol));
+		} catch (Exception e) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.OTORGAR_PERMISOS,
+					"No se pudo otorgar permisos sobre " + baseDatos + " al rol " + rol, e);
+		}
+	}
+
+	private void clonarBaseDatos(ServidorPadre servidor, TenantDTO datosPadre, String baseDatos, String rol, String clave)
+			throws ServerException {
+		cargarDriver(datosPadre);
+		String adminUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/postgres";
+		String plantillaUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + BASE_PLANTILLA;
+		Properties adminProps = propiedadesConexion(datosPadre.getDatasourceUsername(),
+				datosPadre.getDatasourcePassword());
+		try (Connection admin = DriverManager.getConnection(adminUrl, adminProps)) {
+			admin.setAutoCommit(true);
+			validarPlantilla(admin, BASE_PLANTILLA);
+			List<String> duenos = leerDueniosPlantilla(plantillaUrl, adminProps);
+			validarPlantillaSinConexiones(admin, BASE_PLANTILLA);
+			crearRol(admin, rol, clave);
+			crearBaseDatosConPlantilla(admin, baseDatos, BASE_PLANTILLA, rol);
+			otorgarPermisos(admin, baseDatos, rol);
+			reasignarPropiedadesPlantilla(servidor, baseDatos, adminProps, duenos, rol);
+		} catch (ServerException e) {
+			throw e;
+		} catch (Exception e) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_BASE_DATOS,
+					"No se pudo conectar al motor del tenant padre "
+							+ (datosPadre.getDatasourceUrl() != null ? datosPadre.getDatasourceUrl() : ""),
+					e);
+		}
+	}
+
+	private void validarPlantilla(Connection admin, String plantilla) throws ServerException {
+		try (PreparedStatement ps = admin.prepareStatement("select 1 from pg_database where datname = ?")) {
+			ps.setString(1, plantilla);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (!rs.next()) {
+					throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+							"No existe la base de datos plantilla " + plantilla + " en el motor del padre");
+				}
+			}
+		} catch (ServerException e) {
+			throw e;
+		} catch (Exception e) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+					"No se pudo verificar la plantilla " + plantilla, e);
+		}
+	}
+
+	private void validarPlantillaSinConexiones(Connection admin, String plantilla) throws ServerException {
+		try (PreparedStatement ps = admin.prepareStatement(
+				"select count(*) from pg_stat_activity where datname = ? and pid <> pg_backend_pid()")) {
+			ps.setString(1, plantilla);
+			try (ResultSet rs = ps.executeQuery()) {
+				int conexiones = 0;
+				if (rs.next()) {
+					conexiones = rs.getInt(1);
+				}
+				if (conexiones > 0) {
+					throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+							"La plantilla " + plantilla + " tiene " + conexiones
+									+ " conexion(es) activa(s); libere la plantilla e intente de nuevo");
+				}
+			}
+		} catch (ServerException e) {
+			throw e;
+		} catch (Exception e) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+					"No se pudo verificar el uso de la plantilla " + plantilla, e);
+		}
+	}
+
+	private List<String> leerDueniosPlantilla(String plantillaUrl, Properties adminProps) throws ServerException {
+		List<String> duenos = new ArrayList<>();
+		try (Connection conn = DriverManager.getConnection(plantillaUrl, adminProps)) {
+			String sello = null;
+			try (Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery("select description from pg_description "
+							+ "join pg_class on pg_description.objoid = pg_class.oid "
+							+ "join pg_namespace on pg_class.relnamespace = pg_namespace.oid "
+							+ "where relname = 'usuario_usrp';")) {
+				while (rs.next()) {
+					sello = rs.getString("description");
+				}
+			}
+			if (sello == null || sello.isBlank()) {
+				throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+						"La plantilla " + BASE_PLANTILLA
+								+ " no tiene sello de version (COMMENT ON TABLE usuario_usrp); aplique los deltas sobre la plantilla");
+			}
+			try (Statement stmt = conn.createStatement();
+					ResultSet rs = stmt.executeQuery(
+							"select distinct pg_get_userbyid(nspowner) from pg_namespace where nspname = 'public' "
+									+ "union "
+									+ "select distinct pg_get_userbyid(c.relowner) from pg_class c "
+									+ "inner join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' "
+									+ "union "
+									+ "select distinct pg_get_userbyid(p.proowner) from pg_proc p "
+									+ "inner join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public'")) {
+				while (rs.next()) {
+					String dueno = rs.getString(1);
+					if (dueno != null && !dueno.isBlank() && !duenos.contains(dueno)) {
+						duenos.add(dueno);
+					}
+				}
+			}
+		} catch (ServerException e) {
+			throw e;
+		} catch (Exception e) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+					"No se pudo leer la plantilla " + BASE_PLANTILLA, e);
+		}
+		if (duenos.isEmpty()) {
+			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
+					"La plantilla " + BASE_PLANTILLA + " no tiene objetos en el esquema public");
+		}
+		return duenos;
+	}
+
+	private void crearBaseDatosConPlantilla(Connection conn, String baseDatos, String plantilla, String rol)
+			throws ServerException {
 		try {
 			try (PreparedStatement existe = conn.prepareStatement("select 1 from pg_database where datname = ?")) {
 				existe.setString(1, baseDatos);
@@ -207,49 +309,46 @@ public class TenantProvisioningSvc {
 				}
 			}
 			try (Statement stmt = conn.createStatement()) {
-				stmt.execute("CREATE DATABASE " + entrecomillar(baseDatos) + " OWNER " + entrecomillar(rol));
+				stmt.execute("CREATE DATABASE " + entrecomillar(baseDatos) + " WITH TEMPLATE " + entrecomillar(plantilla)
+						+ " OWNER " + entrecomillar(rol));
 			}
-			System.out.println("Base de datos creada: " + baseDatos);
+			System.out.println("Base de datos creada desde plantilla " + plantilla + ": " + baseDatos);
 		} catch (ServerException e) {
 			throw e;
 		} catch (Exception e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.CREAR_BASE_DATOS,
-					"No se pudo crear la base de datos " + baseDatos, e);
+					"No se pudo crear la base de datos " + baseDatos + " desde la plantilla " + plantilla, e);
 		}
 	}
 
-	private void otorgarPermisos(Connection conn, String baseDatos, String rol) throws ServerException {
-		try (Statement stmt = conn.createStatement()) {
-			stmt.execute("GRANT ALL PRIVILEGES ON DATABASE " + entrecomillar(baseDatos) + " TO " + entrecomillar(rol));
+	private void reasignarPropiedadesPlantilla(ServidorPadre servidor, String baseDatos, Properties adminProps,
+			List<String> duenos, String rol) throws ServerException {
+		String nuevaUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + baseDatos;
+		try (Connection conn = DriverManager.getConnection(nuevaUrl, adminProps)) {
+			conn.setAutoCommit(true);
+			for (String dueno : duenos) {
+				if (rol.equals(dueno)) {
+					continue;
+				}
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute("REASSIGN OWNED BY " + entrecomillar(dueno) + " TO " + entrecomillar(rol));
+				}
+				System.out.println("Propiedades reasignadas de " + dueno + " a " + rol);
+			}
 		} catch (Exception e) {
-			throw TenantProvisionFase.fallar(TenantProvisionFase.OTORGAR_PERMISOS,
-					"No se pudo otorgar permisos sobre " + baseDatos + " al rol " + rol, e);
+			throw TenantProvisionFase.fallar(TenantProvisionFase.REASIGNAR_PROPIEDADES,
+					"No se pudieron reasignar las propiedades de la plantilla al rol " + rol, e);
 		}
 	}
 
-	private void aprovisionarBaseDatos(String url, String rol, String clave) throws ServerException {
+	private void aprovisionarDesdePlantilla(String url, String rol, String clave) throws ServerException {
 		TenantDTO temporal = new TenantDTO();
 		temporal.setDatasourceUrl(url);
 		temporal.setDatasourceUsername(rol);
 		temporal.setDatasourcePassword(clave);
 		DataSource nuevaDs = dataSourceFactory.createPooledDataSource(temporal);
 		try {
-			Resource inicial = new ClassPathResource(SCRIPT_INICIAL);
-			try {
-				if (!inicial.exists()) {
-					throw TenantProvisionFase.fallar(TenantProvisionFase.SCRIPT_INICIAL,
-							"No se encontro el script de inicializacion " + SCRIPT_INICIAL);
-				}
-				System.out.println("Ejecutando Script = " + SCRIPT_INICIAL + " -> " + new Date());
-				scriptExecutor.ejecutarScriptExigente(nuevaDs, inicial);
-			} catch (ServerException e) {
-				if (TenantProvisionFase.SCRIPTS_DELTAS.equals(e.getOrigen())) {
-					throw TenantProvisionFase.fallar(TenantProvisionFase.SCRIPT_INICIAL,
-							"Fallo ejecutando el script de inicializacion " + SCRIPT_INICIAL, e);
-				}
-				throw e;
-			}
-			scriptExecutor.sellarVersionBase(nuevaDs, VERSION_BASE);
+			System.out.println("Aplicando deltas pendientes sobre BD clonada -> " + new Date());
 			scriptExecutor.ejecutarPendientesHastaHoyExigente(nuevaDs);
 		} finally {
 			if (nuevaDs instanceof PooledDataSource pooled) {

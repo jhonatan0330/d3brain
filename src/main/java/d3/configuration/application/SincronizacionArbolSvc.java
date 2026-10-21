@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.authentication.domain.OrganizacionDTO;
-import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.application.sinchronize.SynchronizePropertiesService;
 import d3.configuration.domain.ArbolConfiguracionFilterDTO;
 import d3.configuration.domain.ConfigurationExportDTO;
@@ -25,16 +23,9 @@ import d3.configuration.domain.SincronizacionNodoDTO;
 import d3.configuration.domain.SincronizacionNodoResultDTO;
 import d3.configuration.domain.SincronizacionSeleccionadaDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
-import d3.process.domain.ProcesoDTO;
-import d3.process.domain.ProcesoEstadoDTO;
-import d3.process.domain.ProcesoTransicionDTO;
-import d3.report.domain.ReporteBaseDTO;
 import d3.shared.domain.ServerException;
 import d3.upload.application.UploadSvc;
 import d3.upload.domain.CargaArchivoDTO;
-import d3.webservice.domain.WebServiceDTO;
 
 @Service
 public class SincronizacionArbolSvc {
@@ -313,9 +304,9 @@ public class SincronizacionArbolSvc {
 			nodoRemoto = request.getNodo();
 		if (nodoRemoto == null)
 			throw new ServerException("El nodo a sincronizar es obligatorio");
-		if (nodoRemoto.getDato() == null)
-			throw new ServerException("El nodo " + (camino != null ? camino : nodoRemoto.getNombre())
-					+ " no tiene datos de configuracion; registre primero el arbol remoto (POST /configuration/tree/register)");
+		//if (nodoRemoto.getDato() == null)
+		//	throw new ServerException("El nodo " + (camino != null ? camino : nodoRemoto.getNombre())
+		//			+ " no tiene datos de configuracion; registre primero el arbol remoto (POST /configuration/tree/register)");
 
 		TreeNodeDTO local = arbolConfiguracionSvc.construirArbolActual(filtroCompleto());
 		Map<String, TreeNodeDTO> indexLocal = indexar(local);
@@ -382,7 +373,7 @@ public class SincronizacionArbolSvc {
 		List<PropiedadDTO> propiedades = new ArrayList<>();
 		Map<String, TreeNodeDTO> vacio = new LinkedHashMap<>();
 		for (TreeNodeDTO ancestro : rutaRemota) {
-			agregarEntidadAHierarchy(ancestro, hierarchy,  vacio);
+			//agregarEntidadAHierarchy(ancestro, hierarchy,  vacio);
 			acumularPropiedadesPropias(ancestro, propiedades);
 		}
 		if (incluirHijos && nodo.getHijos() != null) {
@@ -396,7 +387,7 @@ public class SincronizacionArbolSvc {
 
 	private void agregarSubarbolConPropiedades(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy, List<String> creados,
 			Map<String, TreeNodeDTO> indexLocal, List<PropiedadDTO> propiedades) throws ServerException {
-		agregarEntidadAHierarchy(nodo, hierarchy,  indexLocal);
+		//agregarEntidadAHierarchy(nodo, hierarchy,  indexLocal);
 		acumularPropiedadesPropias(nodo, propiedades);
 		if (nodo.getHijos() != null) {
 			for (TreeNodeDTO hijo : nodo.getHijos())
@@ -433,7 +424,7 @@ public class SincronizacionArbolSvc {
 	private String tipoPropiedadPorTipoNodo(String tipo) {
 		if (TreeNodeDTO.ORGANIZACION.equals(tipo))
 			return d3.configuration.domain.PropiedadValorDefinidoDTO.ORGANIZACION;
-		if (TreeNodeDTO.PROCESO.equals(tipo) || TreeNodeDTO.PROCESO_MACRO.equals(tipo))
+		if (TreeNodeDTO.PROCESO.equals(tipo))
 			return d3.configuration.domain.PropiedadValorDefinidoDTO.PROCESO;
 		if (TreeNodeDTO.ESTADO.equals(tipo))
 			return d3.configuration.domain.PropiedadValorDefinidoDTO.ESTADO;
@@ -504,7 +495,7 @@ public class SincronizacionArbolSvc {
 		}
 	}
 
-	private void agregarEntidadAHierarchy(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy,
+	/*private void agregarEntidadAHierarchy(TreeNodeDTO nodo, HierarchyExporterDTO hierarchy,
 			Map<String, TreeNodeDTO> indexLocal)  {
 		if (nodo == null || nodo.getTipo() == null || nodo.getDato() == null)
 			return;
@@ -518,7 +509,6 @@ public class SincronizacionArbolSvc {
 			hierarchy.setOrganization(org);
 			break;
 		}
-		case TreeNodeDTO.PROCESO_MACRO:
 		case TreeNodeDTO.PROCESO: {
 			ProcesoDTO proceso = mapper.convertValue(nodo.getDato(), ProcesoDTO.class);
 			List<ProcesoDTO> process = hierarchy.getProcess() != null ? hierarchy.getProcess()
@@ -543,10 +533,7 @@ public class SincronizacionArbolSvc {
 			hierarchy.setTransitions(transitions);
 			break;
 		}
-		case TreeNodeDTO.PLANTILLA:
-		case TreeNodeDTO.PLANTILLA_MODIFICACION:
-		case TreeNodeDTO.PLANTILLA_ANULACION:
-		case TreeNodeDTO.PLANTILLA_ACTIVACION: {
+		case TreeNodeDTO.PLANTILLA:  {
 			DocumentoPlantillaDTO plantilla = mapper.convertValue(nodo.getDato(), DocumentoPlantillaDTO.class);
 			List<DocumentoPlantillaDTO> templates = hierarchy.getTemplates() != null ? hierarchy.getTemplates()
 					: new ArrayList<DocumentoPlantillaDTO>();
@@ -571,14 +558,6 @@ public class SincronizacionArbolSvc {
 			hierarchy.setReports(reports);
 			break;
 		}
-		case TreeNodeDTO.ROL: {
-			RolAccesoDTO rol = mapper.convertValue(nodo.getDato(), RolAccesoDTO.class);
-			List<RolAccesoDTO> roles = hierarchy.getRoles() != null ? hierarchy.getRoles()
-					: new ArrayList<RolAccesoDTO>();
-			roles.add(rol);
-			hierarchy.setRoles(roles);
-			break;
-		}
 		case TreeNodeDTO.API: {
 			WebServiceDTO api = mapper.convertValue(nodo.getDato(), WebServiceDTO.class);
 			List<WebServiceDTO> apis = hierarchy.getApis() != null ? hierarchy.getApis()
@@ -590,7 +569,7 @@ public class SincronizacionArbolSvc {
 		default:
 			break;
 		}
-	}
+	}*/
 
 	private String nombreArchivoExport(String base) {
 		String tenant = obtenerTenant();

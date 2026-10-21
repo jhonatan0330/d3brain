@@ -343,16 +343,7 @@ public class FullController {
 			throw new FlexException(e.getMessage());
 		}
 	}
-
-	@PostMapping(value = "/obtenerProcesoParaGraficarProceso")
-	public ProcesoDTO obtenerProcesoParaGraficarProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException {
-		try {
-			return procesoService.obtenerProcesoParaGraficar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
+	
 	private final ProcesoEstadoSvc procesoEstadoService;
 
 	@PostMapping(value = "/consultaXIdProcesoEstado")

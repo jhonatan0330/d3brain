@@ -6,53 +6,34 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import d3.authorization.application.RolAccesoSvc;
-import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.TreeNodeDTO;
-import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.application.ProcesoEstadoSvc;
-import d3.process.application.ProcesoSvc;
-import d3.process.application.ProcesoTransicionSvc;
-import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
-import d3.process.domain.DocumentoPlantillaDTO;
-import d3.process.domain.ProcesoDTO;
-import d3.process.domain.ProcesoEstadoDTO;
-import d3.process.domain.ProcesoTransicionDTO;
-import d3.report.application.ReporteBaseSvc;
-import d3.report.domain.ReporteBaseDTO;
 import d3.shared.domain.ServerException;
-import d3.webservice.application.WebServiceSvc;
-import d3.webservice.domain.WebServiceDTO;
 
 @Service
 public class ActualizacionEntidadSvc {
 
-	private final ObjectMapper mapper;
+	/*private final ObjectMapper mapper;
 	private final ProcesoSvc procesoSvc;
 	private final ProcesoEstadoSvc procesoEstadoSvc;
 	private final ProcesoTransicionSvc procesoTransicionSvc;
 	private final DocumentoPlantillaSvc documentoPlantillaSvc;
 	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaSvc;
 	private final ReporteBaseSvc reporteBaseSvc;
-	private final RolAccesoSvc rolAccesoSvc;
-	private final WebServiceSvc webServiceSvc;
+	private final WebServiceSvc webServiceSvc;*/
 
-	public ActualizacionEntidadSvc(ObjectMapper mapper, ProcesoSvc procesoSvc, ProcesoEstadoSvc procesoEstadoSvc,
+	public ActualizacionEntidadSvc() {
+			/*	ObjectMapper mapper, ProcesoSvc procesoSvc, ProcesoEstadoSvc procesoEstadoSvc,
 			ProcesoTransicionSvc procesoTransicionSvc, DocumentoPlantillaSvc documentoPlantillaSvc,
 			DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaSvc, ReporteBaseSvc reporteBaseSvc,
-			RolAccesoSvc rolAccesoSvc, WebServiceSvc webServiceSvc) {
-		this.mapper = mapper;
+			WebServiceSvc webServiceSvc) {
+		/*this.mapper = mapper;
 		this.procesoSvc = procesoSvc;
 		this.procesoEstadoSvc = procesoEstadoSvc;
 		this.procesoTransicionSvc = procesoTransicionSvc;
 		this.documentoPlantillaSvc = documentoPlantillaSvc;
 		this.documentoPlantillaCaracteristicaSvc = documentoPlantillaCaracteristicaSvc;
 		this.reporteBaseSvc = reporteBaseSvc;
-		this.rolAccesoSvc = rolAccesoSvc;
-		this.webServiceSvc = webServiceSvc;
+		this.webServiceSvc = webServiceSvc;*/
 	}
 
 	public void actualizarArbol(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
@@ -82,19 +63,19 @@ public class ActualizacionEntidadSvc {
 		}
 	}
 
-	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local) throws ServerException {
+	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local) {
 		actualizarNodo(remoto, local, null, mapearLlaves(remoto, local));
 	}
 
 	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local, Map<String, String> mapeoLlaves)
-			throws ServerException {
+			 {
 		actualizarNodo(remoto, local, null, mapeoLlaves);
 	}
 
 	public void actualizarNodo(TreeNodeDTO remoto, TreeNodeDTO local,
 			List<d3.configuration.domain.SeleccionSincronizacionDTO> selecciones, Map<String, String> mapeoLlaves)
-			throws ServerException {
-		if (local == null || remoto == null || remoto.getDato() == null || local.getDato() == null)
+			{
+		if (local == null || remoto == null)// || remoto.getDato() == null || local.getDato() == null)
 			return;
 		if (selecciones != null) {
 			String camino = remoto.getCamino() != null ? remoto.getCamino() : local.getCamino();
@@ -109,8 +90,7 @@ public class ActualizacionEntidadSvc {
 		}
 		if (mapeoLlaves == null)
 			mapeoLlaves = mapearLlaves(remoto, local);
-		switch (remoto.getTipo()) {
-		case TreeNodeDTO.PROCESO_MACRO:
+		/*switch (remoto.getTipo()) {
 		case TreeNodeDTO.PROCESO:
 			actualizarProceso(remoto, local, mapeoLlaves);
 			break;
@@ -121,9 +101,6 @@ public class ActualizacionEntidadSvc {
 			actualizarTransicion(remoto, local, mapeoLlaves);
 			break;
 		case TreeNodeDTO.PLANTILLA:
-		case TreeNodeDTO.PLANTILLA_MODIFICACION:
-		case TreeNodeDTO.PLANTILLA_ANULACION:
-		case TreeNodeDTO.PLANTILLA_ACTIVACION:
 			actualizarPlantilla(remoto, local, mapeoLlaves);
 			break;
 		case TreeNodeDTO.CAMPO:
@@ -132,18 +109,15 @@ public class ActualizacionEntidadSvc {
 		case TreeNodeDTO.REPORTE:
 			actualizarReporte(remoto, local, mapeoLlaves);
 			break;
-		case TreeNodeDTO.ROL:
-			actualizarRol(remoto, local, mapeoLlaves);
-			break;
 		case TreeNodeDTO.API:
 			actualizarApi(remoto, local, mapeoLlaves);
 			break;
 		default:
 			break;
-		}
+		}*/
 	}
 
-	private static final List<String> CAMPOS_LLAVE_FORANEA = List.of("proceso", "plantilla", "padre",
+	/*private static final List<String> CAMPOS_LLAVE_FORANEA = List.of("proceso", "plantilla", "padre",
 			"macroproceso", "estadoPartida", "estadoLLegada");
 
 	@SuppressWarnings("unchecked")
@@ -162,8 +136,9 @@ public class ActualizacionEntidadSvc {
 			}
 		}
 		return mapper.convertValue(mapa, tipo);
-	}
+	}*/
 
+	/*
 	private void actualizarProceso(TreeNodeDTO remoto, TreeNodeDTO local, Map<String, String> mapeoLlaves)
 			throws ServerException {
 		ProcesoDTO entidad = mapper.convertValue(local.getDato(), ProcesoDTO.class);
@@ -260,19 +235,6 @@ public class ActualizacionEntidadSvc {
 		updateReporte(entidad);
 	}
 
-	private void actualizarRol(TreeNodeDTO remoto, TreeNodeDTO local, Map<String, String> mapeoLlaves)
-			throws ServerException {
-		RolAccesoDTO entidad = mapper.convertValue(local.getDato(), RolAccesoDTO.class);
-		RolAccesoDTO datos = datosRemotos(remoto, RolAccesoDTO.class, mapeoLlaves);
-		entidad.setNombre(datos.getNombre());
-		entidad.setImagen(datos.getImagen());
-		if (datos.getProceso() != null)
-			entidad.setProceso(datos.getProceso());
-		if (datos.getPlantilla() != null)
-			entidad.setPlantilla(datos.getPlantilla());
-		updateRol(entidad);
-	}
-
 	private void actualizarApi(TreeNodeDTO remoto, TreeNodeDTO local, Map<String, String> mapeoLlaves)
 			throws ServerException {
 		WebServiceDTO entidad = mapper.convertValue(local.getDato(), WebServiceDTO.class);
@@ -281,7 +243,7 @@ public class ActualizacionEntidadSvc {
 		if (datos.getProceso() != null)
 			entidad.setProceso(datos.getProceso());
 		updateApi(entidad);
-	}
+	}*/
 
 	private Map<String, String> mapearLlaves(TreeNodeDTO remoto, TreeNodeDTO local) {
 		Map<String, String> mapa = new LinkedHashMap<>();
@@ -316,7 +278,7 @@ public class ActualizacionEntidadSvc {
 		}
 		return index;
 	}
-
+/*
 	private void updateProceso(ProcesoDTO entidad) throws ServerException {
 		procesoSvc.update(entidad);
 	}
@@ -341,13 +303,9 @@ public class ActualizacionEntidadSvc {
 		reporteBaseSvc.update(entidad);
 	}
 
-	private void updateRol(RolAccesoDTO entidad) throws ServerException {
-		rolAccesoSvc.update(entidad);
-	}
-
 	private void updateApi(WebServiceDTO entidad) throws ServerException {
 		webServiceSvc.update(entidad);
-	}
+	}*/
 
 
 }
