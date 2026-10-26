@@ -11,7 +11,6 @@ import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authentication.infrastructure.OrganizacionMapper;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
-import d3.document.application.field.Propiedades;
 import d3.shared.application.BasicSvc;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
@@ -89,17 +88,6 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return result;
 	}
 
-	public boolean permisosCompletos(String user) throws ServerException {
-		OrganizacionDTO _main = obtenerPrincipal();
-		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
-				Propiedades.APP_ADMIN, user) != null);
-	}
-
-	// Esto toca unirlo con lo anterior lo estoy haciendo rapido
-	public boolean permisosAuditor(String user) throws ServerException {
-		OrganizacionDTO _main = obtenerPrincipal();
-		return (cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.ORGANIZACION, _main.getLlaveTabla(),
-				Propiedades.APP_READER, user) != null);
-	}
+	
 
 }

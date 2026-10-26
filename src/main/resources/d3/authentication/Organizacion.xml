@@ -9,11 +9,7 @@
 			corg_llave as  llaveTabla
 			,corg_nombre as  nombre
 			,corg_principal as  principal
-			,corg_servidor as  servidor
-			,corg_usuariosystem as  usuarioSystem
 			,corg_imagen as  imagen
-			,corg_slogan as  slogan
-			,corg_mensajeingreso as  mensajeIngreso
 			,corg_codigo as  codigo
 			,corg_estado as estado
 		from organizacion_orgp a
@@ -32,12 +28,6 @@
 			</if>
 			<if test="principal!=null">
 				and corg_principal = #{principal}
-			</if>
-			<if test="servidor!=null">
-				and corg_servidor = #{servidor}
-			</if>
-			<if test="usuarioSystem!=null">
-				and corg_usuariosystem = #{usuarioSystem}
 			</if>
 			<if test="codigo!=null">
 				and corg_codigo = #{codigo}
@@ -89,20 +79,8 @@
 		<if test="principal!=null">
 			,corg_principal
 		</if>
-		<if test="servidor!=null">
-			,corg_servidor
-		</if>
-		<if test="usuarioSystem!=null">
-			,corg_usuariosystem
-		</if>
 		<if test="imagen!=null">
 			,corg_imagen
-		</if>
-		<if test="slogan!=null">
-			,corg_slogan
-		</if>
-		<if test="mensajeIngreso!=null">
-			,corg_mensajeingreso
 		</if>
 		<if test="codigo!=null">
 			,corg_codigo
@@ -118,20 +96,8 @@
 		<if test="principal!=null">
 			,#{principal}
 		</if>
-		<if test="servidor!=null">
-			,#{servidor}
-		</if>
-		<if test="usuarioSystem!=null">
-			,#{usuarioSystem}
-		</if>
 		<if test="imagen!=null">
 			,#{imagen}
-		</if>
-		<if test="slogan!=null">
-			,#{slogan}
-		</if>
-		<if test="mensajeIngreso!=null">
-			,#{mensajeIngreso}
 		</if>
 		<if test="codigo!=null">
 			,#{codigo}
@@ -147,11 +113,7 @@
 			set
 				corg_nombre = #{nombre},
 				corg_principal = #{principal},
-				corg_servidor = #{servidor},
-				corg_usuariosystem = #{usuarioSystem},
 				corg_imagen = #{imagen},
-				corg_slogan = #{slogan},
-				corg_mensajeingreso = #{mensajeIngreso},
 				corg_codigo = #{codigo},
 				corg_estado =#{estado}
 		<include refid="whereOrganizacionPrimaryKeyFragment" />

@@ -8,7 +8,6 @@
 		select
 			cprc_llave as  llaveTabla
 			,cprc_tipo as  tipo
-			,cprc_objetivo as  objetivo
 			,cprc_imagen as  imagen
 			,nprc_prioridad as  prioridad
 			,cprc_macroproceso as  macroproceso
@@ -84,9 +83,6 @@
 		<if test="tipo!=null">
 			,cprc_tipo
 		</if>
-		<if test="objetivo!=null">
-			,cprc_objetivo
-		</if>
 		<if test="imagen!=null">
 			,cprc_imagen
 		</if>
@@ -109,9 +105,6 @@
 			#{llaveTabla}
 		<if test="tipo!=null">
 			,#{tipo}
-		</if>
-		<if test="objetivo!=null">
-			,#{objetivo}
 		</if>
 		<if test="imagen!=null">
 			,#{imagen}
@@ -138,7 +131,6 @@
 		update proceso_prcp
 			set
 				cprc_tipo = #{tipo},
-				cprc_objetivo = #{objetivo},
 				cprc_imagen = #{imagen},
 				nprc_prioridad = #{prioridad},
 				cprc_macroproceso = #{macroproceso},
@@ -152,7 +144,6 @@
 		select
 			cprc_llave as  llaveTabla
 			,cprc_tipo as  tipo
-			,cprc_objetivo as  objetivo
 			,cprc_imagen as  imagen
 			,nprc_prioridad as  prioridad
 			,cprc_macroproceso as  macroproceso
@@ -175,14 +166,10 @@
 		<include refid="paginationProcesoFragment" />
 	</select>
 	
-
-
-<!--// BEGIN region script-->
 	<select id="getFullToSynchronize" resultType="ProcesoDTO">
 		select
 			cprc_llave as  llaveTabla
 			,cprc_tipo as  tipo
-			,cprc_objetivo as  objetivo
 			,cprc_imagen as  imagen
 			,nprc_prioridad as  prioridad
 			,cprc_macroproceso as  macroproceso
@@ -193,6 +180,5 @@
 		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by nprc_prioridad, cprc_nombre 
 	</select>
-<!--// END region script-->
 
 </mapper>

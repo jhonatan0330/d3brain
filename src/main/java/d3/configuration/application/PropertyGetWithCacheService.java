@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import d3.CacheManager;
+import d3.authentication.domain.OrganizacionDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -245,6 +246,11 @@ public class PropertyGetWithCacheService {
 		List<PropiedadDTO> _props = getCacheRolProperties(pUser, false, _filter);
 		_props.removeIf(p -> p.getValor() == null || !p.getValor().equals(pValue));
 		return _props;
+	}
+
+	public String getMainOrganization() {
+		OrganizacionDTO org = cacheService.getMainOrganization();
+		return org==null?null:org.getLlaveTabla();
 	}
 
 }

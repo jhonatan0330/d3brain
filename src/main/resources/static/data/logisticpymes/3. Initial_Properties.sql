@@ -664,5 +664,23 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
 	VALUES('PROP_310' , 'O', 'MAIL SERVER', 'MAIL_SERVER', 'REQUISITO',  true);
 	
-INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_codigo, cpvd_nombre, cpvd_grupo,  bpvd_textoculto) 
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo,  bpvd_textoculto) 
 	VALUES('PROP_311' , 'O', 'MAIL SERVER DE RESPALDO', 'MAIL_SERVER_BACKUP', 'REQUISITO',  true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_312' , 'O', 'CORREO NOTIFICACION ADMINISTRACION', 'MAIL_ADMIN_NOTIFICATION', 'REQUISITO',  true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_313' , 'O', 'USUARIO AUTOMATICO', 'ADMIN_USER_ORGANIZATION', 'REQUISITO',  true);	
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_314' , 'E', 'REPORTE PUBLICO', 'REPORT_PUBLIC', 'REQUISITO', true);
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_315' , 'E', 'VARIABLES ADICIONALES PARA GENERACION DEL REPORTE', 'REPORT_VARIABLES', 'REQUISITO',  true);
+	
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo,  bpvd_textoculto) 
+	VALUES('PROP_316' , 'T', 'FORMA DE AFECTAR SALDOS DEL PROCESO', 'AFECTA_SALDO', 'REQUISITO',  true);	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo, bpvd_propiedadboolean) 
+	VALUES('PROP_317' , 'T', 'TRANSICION RAPIDA AL GUARDAR DOCUMENTO', 'TRANSICION_RAPIDA', 'REQUISITO',  true);	

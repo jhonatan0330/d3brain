@@ -12,10 +12,4 @@ public interface UsuarioSesionMapper extends IBasicMapper<UsuarioSesionDTO, Usua
 
 	void closeAllSession(@Param("userId") String userId, @Param("token") String token);
 
-	String obtenerPrincipal();
-
-	String obtenerOrganizacion();
-
-	String obtenerPrincipalMail();
-
 }

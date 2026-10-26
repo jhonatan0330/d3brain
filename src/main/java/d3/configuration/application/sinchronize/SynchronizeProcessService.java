@@ -57,7 +57,6 @@ public class SynchronizeProcessService {
 						newProcess.setImagen(remoteProcess.getImagen());
 						// newProcess.setMacroproceso(remoteProcess.getMacroproceso());
 						newProcess.setNombre(remoteProcess.getNombre());
-						newProcess.setObjetivo(remoteProcess.getObjetivo());
 						newProcess.setPrioridad(remoteProcess.getPrioridad());
 						newProcess.setTipo(remoteProcess.getTipo());
 						local = processService.save(newProcess);

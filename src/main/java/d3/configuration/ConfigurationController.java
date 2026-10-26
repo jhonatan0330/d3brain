@@ -836,17 +836,13 @@ public class ConfigurationController {
 		return procesoService.consultaXId(pKey);
 	}
 
-	@PostMapping("/processes/tree")
-	public List<ProcesoDTO> consultarArbol(@RequestBody ProcesoFilterDTO filter) throws ServerException {
-		
-		return procesoService.consultarArbol(filter);
-	}
-
+	
 	@PostMapping("/processes/{key}/graph")
 	public ProcesoDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
 		ProcesoFilterDTO filter = new ProcesoFilterDTO();
 		filter.setLlaveTabla(pKey);
-		return procesoService.obtenerProcesoParaGraficar(filter);
+		//return procesoService.obtenerProcesoParaGraficar(filter);
+		return null;
 	}
 
 	@PostMapping("/processes/create")

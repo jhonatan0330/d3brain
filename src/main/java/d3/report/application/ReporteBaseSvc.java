@@ -109,7 +109,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ReporteBaseDTO actualizar(ReporteBaseDTO dto) throws ServerException {
 		validateUnique(dto);
-		propiedadService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
+		propiedadService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		return super.update(dto);
 	}
 
@@ -250,6 +250,15 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 							propiedadDTO.getValor().substring(propiedadDTO.getValor().indexOf(",") + 1));
 					break;
 				}
+				case Propiedades.REPORT_VARIABLES: {
+					String[] partes = propiedadDTO.getValor().split("=", 2);
+
+				    if (partes.length == 2) {
+				        parametrosJasper.put(partes[0].trim(), partes[1].trim());
+				    }
+					
+					break;
+				}
 				default:
 					parametrosJasper.put(propiedadDTO.getKey(), propiedadDTO.getValor());
 				}
@@ -309,7 +318,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 		ReportDTO finish = new ReportDTO();
 		try {
 			if (usuario == null) {
-				if (reporte.getPublico()) {
+				if (Propiedades.obtenerParametro(reporte, Propiedades.REPORT_PUBLIC)!=null) {
 					usuario = autenticacionService.getUserSystemKey();
 				} else {
 					throw new ServerException("Este reporte no es publico y no puede generar el token con el usuario");

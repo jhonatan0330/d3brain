@@ -144,7 +144,9 @@ public class UsuarioSesionSvc {
 		if (cacheService.getMainUser() != null)
 			return cacheService.getMainUser();
 		try {
-			cacheService.setMainUser(usuarioSesionMapper.obtenerPrincipal());
+			OrganizacionDTO principal = organizacionService.obtenerPrincipalPropiedades(SessionContext.getCurrentUserOrNull());
+			String userAdmin = Propiedades.obtenerValor(principal, Propiedades.ADMIN_USER_ORGANIZATION);
+			cacheService.setMainUser(userAdmin);
 			if (cacheService.getMainUser() == null)
 				throw new ServerException(
 						"Revisa la organizacion principal, revisa el usuario system y tambien valida que el usuario se encuentre activo");
@@ -154,40 +156,24 @@ public class UsuarioSesionSvc {
 		}
 	}
 
-	public String getUserSystemMail() throws ServerException {
-		if (cacheService.getMainUserMail() != null)
-			return cacheService.getMainUserMail();
-		try {
-			cacheService.setMainUserMail(usuarioSesionMapper.obtenerPrincipalMail());
-			if (cacheService.getMainUserMail() == null)
-				throw new ServerException(
-						"Revisa la organizacion principal, revisa el usuario system y tambien valida que el usuario se encuentre activo");
-			return cacheService.getMainUserMail();
-		} catch (BindingException ex) {
-			throw new ServerException(ex.getMessage());
-		} catch (Exception e) {
-			throw new ServerException(e.getCause().getMessage());
-		}
-	}
-
 	public UsuarioSesionDTO generateAdministratorToken() throws ServerException {
-		String usuarioSystem = getUserSystemKey();
-		SharedToken st = cacheService.getSession(usuarioSystem);
+		String usuarioAdmin = getUserSystemKey();
+		SharedToken st = cacheService.getSession(usuarioAdmin);
 		if (st == null) {
-			UsuarioDTO user = usuarioService.consultaXId(usuarioSystem);
+			UsuarioDTO user = usuarioService.consultaXId(usuarioAdmin);
 			st = new SharedToken();
-			st.setToken(usuarioSystem);
-			st.setUser(usuarioSystem);
+			st.setToken(usuarioAdmin);
+			st.setUser(usuarioAdmin);
 			if (user != null) {
 				st.setUserId(user.getIdentificacion());
 				st.setUserName(user.getNombre());
 			}
 			st.setPrivada(true);
-			cacheService.putSession(usuarioSystem, st);
+			cacheService.putSession(usuarioAdmin, st);
 		}
 		UsuarioSesionDTO sesion = new UsuarioSesionDTO();
 		sesion.setFecha(new Date());
-		sesion.setUsuario(usuarioSystem);
+		sesion.setUsuario(usuarioAdmin);
 		sesion.setPrivada(st.getPrivada());
 		sesion.setLlaveTabla(st.getToken());
 		sesion.setEstado(SharedConstants.STATE_ACTIVE);

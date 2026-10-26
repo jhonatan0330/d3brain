@@ -43,15 +43,13 @@ public class SynchronizeProcessTransitionService {
 						log.error("COMPARE NOT EXIST TRANSITION " + remote.getCodigo() + " - " + remote.getNombre());
 					} else {
 						ProcesoTransicionDTO newState = new ProcesoTransicionDTO();
-						newState.setAfectaSaldo(remote.getAfectaSaldo());
 						newState.setCodigo(remote.getCodigo());
-						newState.setDocumentador(remote.getDocumentador());
 						newState.setProceso(remote.getProceso());
 						newState.setPlantilla(remote.getPlantilla());
 						newState.setEstadoLLegada(remote.getEstadoLLegada());
 						newState.setEstadoPartida(remote.getEstadoPartida());
 						newState.setNombre(remote.getNombre());
-						newState.setRapida(remote.getRapida());
+						
 						try {
 							newState = processTransitionService.save(newState);
 							log.info("NEW TRANSITION " + remote.getCodigo() + " - " + remote.getNombre());

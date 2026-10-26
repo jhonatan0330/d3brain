@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import d3.authentication.application.OrganizacionSvc;
-import d3.authentication.application.UsuarioSesionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.document.application.field.Propiedades;
 import d3.shared.application.SessionContext;
@@ -19,16 +18,14 @@ import d3.shared.domain.ServerException;
 public class MailSendMessageToAdminService {
 
 	private final OrganizacionSvc organizacionService;
-	private final UsuarioSesionSvc autenticacionService;
 
-	public MailSendMessageToAdminService( @Lazy OrganizacionSvc organizacionService,
-			@Lazy UsuarioSesionSvc autenticacionService) {
+	public MailSendMessageToAdminService( @Lazy OrganizacionSvc organizacionService) {
 		this.organizacionService = organizacionService;
-		this.autenticacionService = autenticacionService;
 	}
 
 	public void call(String messageTitle, String messageText) throws ServerException {
-		String userAdmin = autenticacionService.getUserSystemMail();
+		OrganizacionDTO principal = organizacionService.obtenerPrincipalPropiedades(SessionContext.getCurrentUserOrNull());
+		String userAdmin = Propiedades.obtenerValor(principal, Propiedades.MAIL_ADMIN_NOTIFICATION);
 		if (userAdmin == null)
 			return;
 		call(messageTitle, messageText, userAdmin);

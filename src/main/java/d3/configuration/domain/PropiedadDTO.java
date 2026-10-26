@@ -19,6 +19,7 @@ public class PropiedadDTO extends BasicDTO {
 	private String campo;
 	private String valor;
 	private String texto;
+	private String codigo;
 	private String rol;
 	private String rolNombre;
 	private String rolExcluyente;
@@ -280,6 +281,14 @@ public class PropiedadDTO extends BasicDTO {
 
 	public void setRelaciones(Integer relaciones) {
 		this.relaciones = relaciones;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 }

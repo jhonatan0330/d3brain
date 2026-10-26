@@ -20,10 +20,9 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 	private String estadoPartidaNombre;
 	private String plantilla;
 	private String plantillaNombre;
-	private boolean documentador;
-	private String afectaSaldo;
+	
 	private String imagen;
-	private boolean rapida;
+	
 	private String estadoLLegada;
 	private String estadoLlegadaNombre;
 	private String estadoLlegadaTipo;
@@ -101,21 +100,6 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 		return plantillaNombre;
 	}
 
-	public void setDocumentador(boolean documentador) {
-		this.documentador = documentador;
-	}
-
-	public boolean getDocumentador() {
-		return documentador;
-	}
-
-	public void setAfectaSaldo(String afectaSaldo) {
-		this.afectaSaldo = afectaSaldo;
-	}
-
-	public String getAfectaSaldo() {
-		return afectaSaldo;
-	}
 
 	public void setImagen(String imagen) {
 		this.imagen = imagen;
@@ -125,14 +109,7 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 		return imagen;
 	}
 
-	public void setRapida(boolean rapida) {
-		this.rapida = rapida;
-	}
-
-	public boolean getRapida() {
-		return rapida;
-	}
-
+	
 	public void setEstadoLLegada(String estadoLLegada) {
 		this.estadoLLegada = estadoLLegada;
 	}

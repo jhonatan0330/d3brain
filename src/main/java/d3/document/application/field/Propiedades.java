@@ -259,8 +259,10 @@ public class Propiedades {
 	public static final String REPORT_QUERY = "REPORT_QUERY";
 	public static final String REPORT_QUERY_ENCABEZADO = "REPORT_QUERY_ENCABEZADO";
 	public static final String CONNECTION_STRING_DB = "CONNECTION_STRING_DB";
-
-	public static final String ROL = "ROL";
+	public static final String REPORT_VARIABLES = "REPORT_VARIABLES";
+	public static final String REPORT_PUBLIC= "REPORT_PUBLIC";
+	
+	//public static final String ROL = "ROL";
 	public static final String FUNCION_SQL_ESTADO_ASIGNAR = "FUNCION_SQL_ESTADO_ASIGNAR";
 	public static final String ESTADO_ASIGNAR = "ESTADO_ASIGNAR";
 	public static final String MODIFICABLE = "MODIFICABLE";
@@ -283,6 +285,7 @@ public class Propiedades {
 	public static final String OCULTAR_MENSAJE_LICENCIA = "OCULTAR_MENSAJE_LICENCIA";
 	public static final String FORCE_NOTIFICATION = "FORCE_NOTIFICACTION";
 	public static final String TABLERO_CONTROL_SQL = "TABLERO_CONTROL_SQL";
+	public static final String AFECTA_SALDO = "AFECTA_SALDO";
 
 	// Organizacion
 	public static final String API_KEY = "API_KEY";
@@ -300,6 +303,8 @@ public class Propiedades {
 	public static final String APP_DFA = "APP_DFA";
 	public static final String MAIL_SERVER = "MAIL_SERVER";
 	public static final String MAIL_SERVER_BACKUP = "MAIL_SERVER_BACKUP";
+	public static final String MAIL_ADMIN_NOTIFICATION = "MAIL_ADMIN_NOTIFICATION";
+	public static final String ADMIN_USER_ORGANIZATION = "ADMIN_USER_ORGANIZATION";
 
 	// ol
 	public static final String TIEMPO_NUEVA_CLAVE = "TIEMPO_NUEVA_CLAVE";

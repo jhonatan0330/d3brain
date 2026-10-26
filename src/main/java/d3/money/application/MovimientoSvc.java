@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authorization.application.RolAccesoSvc;
+import d3.configuration.application.PropiedadSvc;
 import d3.money.domain.CuentaDTO;
 import d3.money.domain.MovimientoDTO;
 import d3.money.domain.MovimientoFilterDTO;
@@ -28,10 +28,10 @@ public class MovimientoSvc extends BasicSvc<MovimientoDTO, MovimientoFilterDTO> 
 	private final MovimientoMapper movimientoMapper;
 	private final TurnoSvc turnoService;
 	private final CuentaSvc cuentaService;
-	private final RolAccesoSvc rolService;
+	private final PropiedadSvc rolService;
 
 	public MovimientoSvc(@Lazy MovimientoMapper movimientoMapper,
-			@Lazy TurnoSvc turnoService, @Lazy CuentaSvc cuentaService, @Lazy RolAccesoSvc rolService) {
+			@Lazy TurnoSvc turnoService, @Lazy CuentaSvc cuentaService, @Lazy PropiedadSvc rolService) {
 		this.movimientoMapper = movimientoMapper;
 		this.turnoService = turnoService;
 		this.cuentaService = cuentaService;

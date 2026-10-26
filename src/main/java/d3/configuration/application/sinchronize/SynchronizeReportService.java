@@ -43,10 +43,7 @@ public class SynchronizeReportService {
 						ReporteBaseDTO newReport = new ReporteBaseDTO();
 						newReport.setPlantilla(remote.getPlantilla());
 						newReport.setCodigo(remote.getCodigo());
-						newReport.setDescripcion(remote.getDescripcion());
-						newReport.setSoloExistente(remote.getSoloExistente());
 						newReport.setNombre(remote.getNombre());
-						newReport.setVariables(remote.getVariables());
 						try {
 							newReport = reportService.save(newReport);
 							log.info("NEW REPORT " + remote.getCodigo() + " - " + remote.getNombre());

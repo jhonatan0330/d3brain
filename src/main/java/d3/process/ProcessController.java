@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.application.ProcesoTransicionAutomaticaSvc;
-import d3.process.application.ProcessCopy;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaFilterDTO;
 import d3.process.domain.TemplateDTO;
 import d3.shared.domain.ServerException;
-import d3.shared.domain.SharedIdResponse;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -30,16 +28,14 @@ public class ProcessController {
 
 	private final DocumentoPlantillaSvc documentoplantillaService;
 	private final DocumentoPlantillaCaracteristicaSvc campoService;
-	private final ProcessCopy copyService;
 	private final ProcesoTransicionAutomaticaSvc transicionservice;
 
 	public ProcessController(@Lazy DocumentoPlantillaSvc documentoplantillaService,
-			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, @Lazy ProcessCopy copyService,
+			@Lazy DocumentoPlantillaCaracteristicaSvc campoService, 
 			@Lazy ProcesoTransicionAutomaticaSvc transicionservice) {
 		this.transicionservice = transicionservice;
 		this.documentoplantillaService = documentoplantillaService;
 		this.campoService = campoService;
-		this.copyService = copyService;
 	}
 
 	// reemplazalo con getTemplates
@@ -79,11 +75,6 @@ public class ProcessController {
 	public DocumentoPlantillaCaracteristicaDTO validateLoad(
 			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter) throws ServerException {
 		return campoService.listarCarga(filter);
-	}
-
-	@PostMapping(value = "/designer/copy")
-	public SharedIdResponse copy(@RequestParam String processId) throws ServerException {
-		return copyService.call(processId);
 	}
 	
 	@GetMapping(value = "/ping_task")

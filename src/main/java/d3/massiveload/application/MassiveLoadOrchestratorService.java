@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.authorization.application.RolAccesoSvc;
+import d3.configuration.application.PropiedadSvc;
 import d3.document.application.CallDocumentCRUD;
 import d3.document.domain.DocumentMessage;
 import d3.document.domain.PedidoVentaDTO;
@@ -37,7 +37,7 @@ public class MassiveLoadOrchestratorService {
 	private final MassiveCRUDMasterService cargaMasivaService;
 	private final MassiveCRUDItemService cargaMasivaItemService;
 	private final DocumentoPlantillaSvc plantillaService;
-	private final RolAccesoSvc rolService;
+	private final PropiedadSvc rolService;
 	private final CallDocumentCRUD callDocumentCRUD;
 
 	private final ObjectMapper mapper = new ObjectMapper();
@@ -45,7 +45,7 @@ public class MassiveLoadOrchestratorService {
 	public MassiveLoadOrchestratorService(@Lazy MassiveFileParserService parserService,
 			@Lazy MassiveDocumentBuilderService builderService, @Lazy MassiveValidationService validationService,
 			@Lazy MassiveCRUDMasterService cargaMasivaService, @Lazy MassiveCRUDItemService cargaMasivaItemService,
-			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy RolAccesoSvc rolService,
+			@Lazy DocumentoPlantillaSvc plantillaService, @Lazy PropiedadSvc rolService,
 			@Lazy CallDocumentCRUD callDocumentCRUD) {
 		this.parserService = parserService;
 		this.builderService = builderService;

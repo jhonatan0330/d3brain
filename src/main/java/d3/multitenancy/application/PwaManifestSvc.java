@@ -153,9 +153,7 @@ public class PwaManifestSvc {
 				OrganizacionDTO org = obtenerPrincipalSilencioso();
 				String nombre = nombreOrg(org, defaultName);
 				String imagen = org == null ? null : org.getImagen();
-				String descripcion = org == null || org.getSlogan() == null || org.getSlogan().isBlank() ? nombre
-						: org.getSlogan();
-				return new Branding("default", nombre, descripcion, imagen, true);
+				return new Branding("default", nombre, nombre, imagen, true);
 			}
 			List<String> niveles = TenantResolver.split(normalizado);
 			Optional<String> cadena = tenantResolver.resolveChain(niveles);
@@ -175,10 +173,7 @@ public class PwaManifestSvc {
 			String imagen = fila != null && fila.getImagen() != null && !fila.getImagen().isBlank()
 					? fila.getImagen()
 					: org == null ? null : org.getImagen();
-			String descripcion = org != null && org.getSlogan() != null && !org.getSlogan().isBlank()
-					? org.getSlogan()
-					: nombre;
-			return new Branding(composite, nombre, descripcion, imagen, false);
+			return new Branding(composite, nombre, nombre, imagen, false);
 		} finally {
 			TenantContext.setCurrentTenant(previous);
 		}

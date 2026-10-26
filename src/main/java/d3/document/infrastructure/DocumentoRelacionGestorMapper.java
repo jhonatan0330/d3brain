@@ -23,7 +23,6 @@ public interface DocumentoRelacionGestorMapper
 	DocumentoRelacionGestorDTO ultimoRegistro(@Param("documentoPrincipal") String documentoPrincipal,
 			@Param("historico") String historico);
 
-	String getSystemUser();
 
 	String isActual(String documento);
 

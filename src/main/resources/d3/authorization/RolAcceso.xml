@@ -107,10 +107,7 @@
 			and cerl_estado='A'
 			and cerl_usuario = #{userId}
 	</select>
-	
 
-<!--// BEGIN region script-->
-	
 	<select id="getFullToSynchronize" resultType="RolAccesoDTO">
 		select
 			crac_llave as  llaveTabla
@@ -124,6 +121,5 @@
 		where crac_estado ='A' and dd.cdpl_estado = 'A'
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 	</select>
-<!--// END region script-->
-
+	
 </mapper>

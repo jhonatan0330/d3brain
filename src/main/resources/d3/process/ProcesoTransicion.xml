@@ -17,10 +17,7 @@
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaNombre
 			,cptr_plantilla as  plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  plantillaNombre
-			,bptr_documentador as  documentador
-			,cptr_afectasaldo as  afectaSaldo
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  imagen
-			,bptr_rapida as  rapida
 			,cptr_estadollegada as  estadoLLegada
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaNombre
 			,(select cpes_tipo from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaTipo
@@ -50,15 +47,6 @@
 			</if>
 			<if test="plantilla!=null">
 				and cptr_plantilla = #{plantilla}
-			</if>
-			<if test="documentadorFilter!=null">
-				and bptr_documentador = #{documentadorFilter}
-			</if>
-			<if test="afectaSaldo!=null">
-				and cptr_afectasaldo = #{afectaSaldo}
-			</if>
-			<if test="rapidaFilter!=null">
-				and bptr_rapida = #{rapidaFilter}
 			</if>
 			<if test="estadoLLegada!=null">
 				and cptr_estadollegada = #{estadoLLegada}
@@ -119,15 +107,6 @@
 		<if test="plantilla!=null">
 			,cptr_plantilla
 		</if>
-		<if test="documentador!=null">
-			,bptr_documentador
-		</if>
-		<if test="afectaSaldo!=null">
-			,cptr_afectasaldo
-		</if>
-		<if test="rapida!=null">
-			,bptr_rapida
-		</if>
 		<if test="estadoLLegada!=null">
 			,cptr_estadollegada
 		</if>
@@ -151,15 +130,6 @@
 		<if test="plantilla!=null">
 			,#{plantilla}
 		</if>
-		<if test="documentador!=null">
-			,#{documentador}
-		</if>
-		<if test="afectaSaldo!=null">
-			,#{afectaSaldo}
-		</if>
-		<if test="rapida!=null">
-			,#{rapida}
-		</if>
 		<if test="estadoLLegada!=null">
 			,#{estadoLLegada}
 		</if>
@@ -177,48 +147,12 @@
 				cptr_proceso = #{proceso},
 				cptr_estadopartida = #{estadoPartida},
 				cptr_plantilla = #{plantilla},
-				bptr_documentador = #{documentador},
-				cptr_afectasaldo = #{afectaSaldo},
-				bptr_rapida = #{rapida},
 				cptr_estadollegada = #{estadoLLegada},
 				cptr_estado =#{estado}
 		<include refid="whereProcesoTransicionPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleProcesoTransicionFragment">
-		select
-			cptr_llave as  llaveTabla
-			,cptr_nombre as  nombre
-			,cptr_codigo as  codigo
-			,cptr_proceso as  proceso
-			,cptr_estadopartida as  estadoPartida
-			,cptr_plantilla as  plantilla
-			,bptr_documentador as  documentador
-			,cptr_afectasaldo as  afectaSaldo
-			,bptr_rapida as  rapida
-			,cptr_estadollegada as  estadoLLegada
-			,cptr_estado as estado
-		from procesotransicion_ptrp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ProcesoTransicionDTO">
-		<include refid="selectSimpleProcesoTransicionFragment" />
-		<include refid="whereProcesoTransicionFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ProcesoTransicionDTO">
-		<include refid="selectSimpleProcesoTransicionFragment" />
-		<include refid="whereProcesoTransicionFragment" />
-		order by procesonombre 
-		, estadopartidaorden 
-		, estadollegadaorden 
-		, cptr_nombre 
-		<include refid="paginationProcesoTransicionFragment" />
-	</select>
-	
 
 
-<!--// BEGIN region script-->
 	<select id="listarTransicionesRol" resultType="ProcesoTransicionDTO">
 		select
 			cptr_llave as  llaveTabla
@@ -230,9 +164,6 @@
 			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
 			,cptr_plantilla as  plantilla
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  plantillaNombre
-			,bptr_documentador as  documentador
-			,cptr_afectasaldo as  afectaSaldo
-			,bptr_rapida as  rapida
 			,(select cdpl_imagen from documentoplantilla_dplp where cdpl_llave = cptr_plantilla) as  imagen
 			,cptr_estadollegada as  estadoLLegada
 			,null as  estadoLlegadaNombre
@@ -240,7 +171,7 @@
 			,null as  estadoLlegadaTipo
 			,cptr_estado as estado
 		from procesotransicion_ptrp a
-		where bptr_documentador = true and cptr_estado ='A'
+		where cptr_estado ='A'
 		<if test="sesionUsuario!=null">
 		and cptr_plantilla in (select distinct(cppd_campo) from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor = 'PROP_77' 
 		and (cppd_rol is null or cppd_rol in (select cerl_rolacceso from usuariorol_erlp  where cerl_estado = 'A' and cerl_usuario = #{sesionUsuario})))
@@ -279,9 +210,6 @@
 			,cptr_proceso as  proceso
 			,cptr_estadopartida as  estadoPartida
 			,cptr_plantilla as  plantilla
-			,bptr_documentador as  documentador
-			,cptr_afectasaldo as  afectaSaldo
-			,bptr_rapida as  rapida
 			,cptr_estadollegada as  estadoLLegada
 			,cptr_estado as estado
 		from procesotransicion_ptrp a
@@ -305,6 +233,5 @@
 		update pedidoventa_pdvp set cpdv_estadoexpediente = null 
 		where cpdv_llave = #{templateId}
 	</select>
-<!--// END region script-->
 
 </mapper>

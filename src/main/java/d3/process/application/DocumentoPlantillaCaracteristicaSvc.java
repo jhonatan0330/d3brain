@@ -76,7 +76,7 @@ public class DocumentoPlantillaCaracteristicaSvc
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		dto = super.actualizar(dto);
 		organizar(dto);
-		parametroService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
+		parametroService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		PropiedadDTO differenceProperty = parametroService.getPropertyDifferenceField(dto.getLlaveTabla());
 		if (differenceProperty == null) {
 			PropiedadDTO filtroPlantilla = parametroService.getPropertyDifferenceTemplate(dto.getPlantilla());

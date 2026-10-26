@@ -15,6 +15,7 @@
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
+			,cppd_codigo as  texto
 			,dppd_fechadefinicion as  fechaDefinicion
 			,dppd_fechaeliminacion as  fechaEliminacion
 			,cppd_usuariocreacion as  usuarioCreacion
@@ -163,6 +164,9 @@
 		<if test="texto!=null">
 			,cppd_texto
 		</if>
+		<if test="codigo!=null">
+			,cppd_codigo
+		</if>
 		<if test="fechaDefinicion!=null">
 			,dppd_fechadefinicion
 		</if>
@@ -219,6 +223,9 @@
 		<if test="texto!=null">
 			,#{texto}
 		</if>
+		<if test="codigo!=null">
+			,#{codigo}
+		</if>
 		<if test="fechaDefinicion!=null">
 			,#{fechaDefinicion}
 		</if>
@@ -269,6 +276,7 @@
 				cppd_campo = #{campo},
 				cppd_valor = #{valor},
 				cppd_texto = #{texto},
+				cppd_codigo = #{codigo},
 				dppd_fechadefinicion = #{fechaDefinicion},
 				dppd_fechaeliminacion = #{fechaEliminacion},
 				cppd_usuariocreacion = #{usuarioCreacion},
@@ -485,7 +493,7 @@ COST 100;
     </select>
     
     <select id="actualizarValorPropiedad" parameterType="PropiedadDTO" resultType="PropiedadDTO">
-    update propiedad_ppdp set cppd_texto  = #{texto} where cppd_valor = #{valor} and cppd_estado = 'A' and cppd_texto is not null
+    update propiedad_ppdp set cppd_texto = #{texto}, cppd_codigo = #{codigo} where cppd_valor = #{valor} and cppd_estado = 'A' and cppd_texto is not null
 	</select>   
 
 	<select id="consultarTemporizadoresPendientes" resultType="PropiedadDTO">

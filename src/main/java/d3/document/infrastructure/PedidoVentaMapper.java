@@ -39,7 +39,7 @@ public interface PedidoVentaMapper extends IBasicMapper<PedidoVentaDTO, PedidoVe
 			@Param("filtroPorRelaciones") List<String> filtroPorRelaciones,
 			@Param("pStaticRelation") List<RelacionInternaDTO> pStaticRelation);
 
-	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
+	//List<PedidoVentaDTO> listarExpedientesDisponiblesDocumento(PedidoVentaFilterDTO dto);
 
 	List<PedidoVentaDTO> listarExpedientesDisponiblesDocumentoFuncion(@Param("dto") PedidoVentaFilterDTO dto,
 			@Param("funcionBusqueda") String funcionBusqueda, @Param("filtroEstados") List<String> filtroEstados,

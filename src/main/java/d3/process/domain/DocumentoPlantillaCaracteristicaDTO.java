@@ -32,7 +32,6 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO {
 	public static final String VINCULO = "C";
 	public static final String INFORMATIVO = "V";
 
-	private String objetivo;
 	private String plantilla;
 	private String plantillaNombre;
 	private String formato;
@@ -50,13 +49,6 @@ public class DocumentoPlantillaCaracteristicaDTO extends BasicParamDTO {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ", timezone = "America/Bogota")
 	private Date fechaCreacion;
 
-	public void setObjetivo(String objetivo) {
-		this.objetivo = objetivo;
-	}
-
-	public String getObjetivo() {
-		return objetivo;
-	}
 
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;

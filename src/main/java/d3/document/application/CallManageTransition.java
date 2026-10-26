@@ -201,9 +201,12 @@ public class CallManageTransition {
 			}
 			// movi esto despues de la creacion de la plantilla para que tome el valor
 			// modificador del nuevo documento creado
+			PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION,
+					pTransitionProcess.getLlaveTabla(), Propiedades.AFECTA_SALDO, SessionContext.getCurrentUserOrNull());
+			String afectaSaldo = prop==null?null:prop.getValor();
 			System.out.format("\n[%s] Afectando saldos con parametro de la transicion %s", expedienteDTO.getNombre(),
-					pTransitionProcess.getAfectaSaldo());
-			afectado = moveBalanceDocument(expediente,  pTransitionProcess, valorModificador, dineroProcesado);
+					afectaSaldo);
+			afectado = moveBalanceDocument(expediente,  pTransitionProcess, valorModificador, dineroProcesado, afectaSaldo);
 
 			System.out.format("\n[%s] Envia a motor de traza por modificador ( %s ) ", expedienteDTO.getNombre(),
 					documentoDTO.getNombre());
@@ -410,9 +413,13 @@ public class CallManageTransition {
 						_result.add(_newDocumentOfIteration);
 						// Esto es porque cuando son iteradores no se gestionaba el dinero
 						if (_newDocumentOfIteration.getDinero() != null
-								&& _newDocumentOfIteration.getDinero().getSaldo() != null)
+								&& _newDocumentOfIteration.getDinero().getSaldo() != null) {
+							
+							PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION,
+									pTransition.getLlaveTabla(), Propiedades.AFECTA_SALDO, SessionContext.getCurrentUserOrNull());
 							afectado = moveBalanceDocument(pDocumentPrincipal.getLlaveTabla(), pTransition,
-									_newDocumentOfIteration.getDinero().getValorTotal(), null);
+									_newDocumentOfIteration.getDinero().getValorTotal(), null, prop==null?null:prop.getValor());
+						}
 						PropiedadDTO _propertyAgreggate = cacheService.obtenerPropiedad(
 								PropiedadValorDefinidoDTO.ESTADO, _stateInitial.getLlaveTabla(),
 								Propiedades.ADD_ITERATION_DOCUMENT, null);
@@ -683,7 +690,7 @@ public class CallManageTransition {
 	}
 
 	private PedidoVentaDineroDTO moveBalanceDocument(String expediente, ProcesoTransicionDTO transicion,
-			BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial) throws ServerException {
+			BigDecimal saldoDocumento, PedidoVentaDineroDTO dineroDocumentoInicial, String afectaSaldo) throws ServerException {
 		PedidoVentaDineroDTO dinero = dineroDocumentoInicial;
 		PedidoVentaDTO pExpediente = pedidoService.consultaXId(expediente);
 		if (dinero == null) {
@@ -691,7 +698,7 @@ public class CallManageTransition {
 					pExpediente.getNombre());
 		}
 
-		if (transicion.getAfectaSaldo() == null)
+		if (afectaSaldo == null)
 			return dinero;
 		if (dinero == null) {
 			throw new ServerException("Revise el documento " + pExpediente.getNombre()
@@ -702,7 +709,7 @@ public class CallManageTransition {
 					+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre() + " solicita un valor");
 
 		BigDecimal factor = BigDecimal.ONE;
-		if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO) == 0)
+		if (afectaSaldo.compareTo(ProcesoTransicionDTO.RESTANDO) == 0)
 			factor = factor.negate();
 
 		BigDecimal _calculateNewSaldo = dinero.getSaldo().add(saldoDocumento.multiply(factor));
@@ -710,7 +717,7 @@ public class CallManageTransition {
 		System.out.format("\n" + transicion.getNombre() + " [" + pExpediente.getNombre() + "] : " + dinero.getSaldo()
 				+ " + " + saldoDocumento.multiply(factor) + " = " + _calculateNewSaldo);
 		if (transicion.getEstadoPartida() == null) { // Para los documentos iniciales
-			if (transicion.getAfectaSaldo().compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
+			if (afectaSaldo.compareTo(ProcesoTransicionDTO.SUMANDO) != 0)
 				throw new ServerException("No es logico que inicie in proceso restando");
 			dinero.setSaldo(_calculateNewSaldo);
 			// Controlar saldo se coloca para poder controlar los cambios de valores dle
@@ -810,17 +817,20 @@ public class CallManageTransition {
 		}
 		obtenerUbicacion(anterior, documento, _stateTo);
 		BigDecimal valorModificador = null;
-		if (pTransitionProcess.getAfectaSaldo() != null) {
-			if (pTransitionProcess.getAfectaSaldo().compareTo(ProcesoTransicionDTO.RESTANDO) == 0) {
-				pTransitionProcess.setAfectaSaldo(ProcesoTransicionDTO.SUMANDO);
+		PropiedadDTO prop = cacheService.obtenerPropiedad(PropiedadValorDefinidoDTO.TRANSICION,
+				pTransitionProcess.getLlaveTabla(), Propiedades.AFECTA_SALDO, SessionContext.getCurrentUserOrNull());
+		String afectaSaldo = prop==null?null:prop.getValor();
+		if (afectaSaldo != null) {
+			if (afectaSaldo.compareTo(ProcesoTransicionDTO.RESTANDO) == 0) {
+				afectaSaldo = ProcesoTransicionDTO.SUMANDO;
 			} else {
-				pTransitionProcess.setAfectaSaldo(ProcesoTransicionDTO.RESTANDO);
+				afectaSaldo = ProcesoTransicionDTO.RESTANDO;
 			}
 			valorModificador = procesoTransicionMapper.valorEntransicionParaRevertir(documento.getLlaveTabla(),
 					expediente);
 		}
 		// aqui es nulo porque ya existe
-		PedidoVentaDineroDTO nuevoValor = moveBalanceDocument(expediente, pTransitionProcess, valorModificador, null);
+		PedidoVentaDineroDTO nuevoValor = moveBalanceDocument(expediente, pTransitionProcess, valorModificador, null, afectaSaldo);
 		// Creo la relacion del documento Gestor
 		relacionGestorService.trazar(anterior.getLlaveTabla(), documento.getLlaveTabla(),
 				pTransitionProcess.getNombre(), _stateTo.getLlaveTabla(), pTransitionProcess.getEstadoPartida(),

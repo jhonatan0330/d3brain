@@ -1,7 +1,5 @@
 package d3.process.domain;
 
-import java.util.List;
-
 import org.apache.ibatis.type.Alias;
 
 import d3.shared.domain.BasicParamDTO;
@@ -13,17 +11,16 @@ public class ProcesoDTO extends BasicParamDTO
 	public static final String EJECUTOR = "E";
 
 	private String tipo;
-	private String objetivo;
 	private String imagen;
 	private Integer prioridad;
 	private String macroproceso;
 	private String nombre;
 	private String codigo;
 	private String macroNombre;
-	private List<ProcesoDTO> hijos;
+	/*private List<ProcesoDTO> hijos;
 	private List<ProcesoEstadoDTO> estados;
 	private List<ProcesoTransicionDTO> transiciones;
-	private List<DocumentoPlantillaDTO> plantillas;
+	private List<DocumentoPlantillaDTO> plantillas;*/
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
@@ -31,14 +28,6 @@ public class ProcesoDTO extends BasicParamDTO
 
 	public String getTipo() {
 		return tipo;
-	}
-
-	public void setObjetivo(String objetivo) {
-		this.objetivo = objetivo;
-	}
-
-	public String getObjetivo() {
-		return objetivo;
 	}
 
 	public void setImagen(String imagen) {
@@ -89,7 +78,7 @@ public class ProcesoDTO extends BasicParamDTO
 		return macroNombre;
 	}
 
-	public void setHijos(List<ProcesoDTO> hijos) {
+	/*public void setHijos(List<ProcesoDTO> hijos) {
 		this.hijos = hijos;
 	}
 
@@ -119,6 +108,6 @@ public class ProcesoDTO extends BasicParamDTO
 
 	public List<DocumentoPlantillaDTO> getPlantillas() {
 		return plantillas;
-	}
+	}*/
 
 }

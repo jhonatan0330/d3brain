@@ -241,7 +241,7 @@ public class CallDocumentCRUD {
 		plantillaFilter.setLlaveTabla(documentDTO.getPlantilla());
 
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos());
+				propiedadService.usuarioPermisosCompletos());
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 
 		// if (!isUpdateAutomatic)
@@ -284,7 +284,7 @@ public class CallDocumentCRUD {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				rolService.usuarioPermisosCompletos());
+				propiedadService.usuarioPermisosCompletos());
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 		if (!isUpdateAutomatic
 				&& Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_MODIFICAR).isEmpty())
@@ -449,7 +449,7 @@ public class CallDocumentCRUD {
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(dto.getPlantilla());
 		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter,
-				(isAutomatic) ? true : rolService.usuarioPermisosCompletos());
+				(isAutomatic) ? true : propiedadService.usuarioPermisosCompletos());
 		if (Propiedades.obtenerValor(plantilla, Propiedades.PERMISO_PLANTILLA_CREAR).isEmpty())
 			throw new ServerException("El usuario no tiene permisos para crear un " + plantilla.getNombre());
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.domain.PropiedadDTO;
@@ -45,14 +44,13 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
 	private final PropiedadSvc propiedadService;
 	private final PropertyGetWithCacheService cacheService;
-	private final RolAccesoSvc rolService;
 
 	public PedidoVentaSvc(@Lazy PedidoVentaMapper pedidoVentaMapper,
 			@Lazy CampoAdaptador adaptador, @Lazy DocumentoPlantillaSvc documentoPlantillaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
 			@Lazy PedidoVentaDineroSvc dineroService,
 			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, @Lazy PropiedadSvc propiedadService,
-			@Lazy PropertyGetWithCacheService cacheService, @Lazy RolAccesoSvc rolService) {
+			@Lazy PropertyGetWithCacheService cacheService) {
 		this.pedidoVentaMapper = pedidoVentaMapper;
 		this.adaptador = adaptador;
 		this.documentoPlantillaService = documentoPlantillaService;
@@ -61,7 +59,6 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
 		this.propiedadService = propiedadService;
 		this.cacheService = cacheService;
-		this.rolService = rolService;
 	}
 
 	@Override
@@ -121,7 +118,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 		}
 		DocumentoPlantillaFilterDTO plantillaFilter = new DocumentoPlantillaFilterDTO();
 		plantillaFilter.setLlaveTabla(bd.getPlantilla());
-		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, rolService.usuarioPermisosCompletos());
+		TemplateDTO plantilla = documentoPlantillaService.obtenerConfiguracionSinCampos(plantillaFilter, propiedadService.usuarioPermisosCompletos());
 		plantilla = documentoPlantillaService.obtenerCampos(plantilla, false);
 		if (plantilla.getCaracteristicas() != null & plantilla.getCaracteristicas().size() != 0) {
 			List<PedidoVentaCaracteristicaDTO> caracteristicasActuales = pedidoVentaCaracteristicaService

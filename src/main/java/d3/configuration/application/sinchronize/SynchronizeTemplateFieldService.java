@@ -52,7 +52,6 @@ public class SynchronizeTemplateFieldService {
 						newField.setImagen(remote.getImagen());
 						newField.setFormato(remote.getFormato());
 						newField.setNombre(remote.getNombre());
-						newField.setObjetivo(remote.getObjetivo());
 						newField.setOrden(remote.getOrden());
 						try {
 							local = fieldService.save(newField);

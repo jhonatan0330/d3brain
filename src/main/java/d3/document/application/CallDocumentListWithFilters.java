@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.RelacionInternaSvc;
@@ -46,7 +45,6 @@ public class CallDocumentListWithFilters {
 	private final PedidoVentaSvc pedidoVentaService;
 	private final DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService;
 	private final PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService;
-	private final RolAccesoSvc rolService;
 	private final CuentaSvc cuentaService;
 	private final PedidoVentaDineroSvc dineroService;
 	private final ProcesoTransicionSvc transicionService;
@@ -55,7 +53,7 @@ public class CallDocumentListWithFilters {
 			@Lazy RelacionInternaSvc relationService, @Lazy PropertyGetWithCacheService cacheService,
 			@Lazy PedidoVentaSvc pedidoVentaService,
 			@Lazy DocumentoPlantillaCaracteristicaSvc documentoPlantillaCaracteristicaService,
-			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, @Lazy RolAccesoSvc rolService,
+			@Lazy PedidoVentaCaracteristicaSvc pedidoVentaCaracteristicaService, 
 			@Lazy CuentaSvc cuentaService, @Lazy PedidoVentaDineroSvc dineroService,
 			@Lazy ProcesoTransicionSvc transicionService) {
 		this.pedidoVentaMapper = pedidoVentaMapper;
@@ -65,7 +63,6 @@ public class CallDocumentListWithFilters {
 		this.pedidoVentaService = pedidoVentaService;
 		this.documentoPlantillaCaracteristicaService = documentoPlantillaCaracteristicaService;
 		this.pedidoVentaCaracteristicaService = pedidoVentaCaracteristicaService;
-		this.rolService = rolService;
 		this.cuentaService = cuentaService;
 		this.dineroService = dineroService;
 		this.transicionService = transicionService;
@@ -318,7 +315,7 @@ public class CallDocumentListWithFilters {
 		// Consulto que la plantilla solicitada tenga permisos
 		if (templateFilter != null) {// && dto.getLlaveTabla()==null){ OJO tengo que revisar poruqe tengo esto
 			boolean verTodos = false;
-			if (rolService.usuarioPermisosCompletos()) {
+			if (propiedadService.usuarioPermisosCompletos()) {
 				verTodos = true;
 			} else {
 				plantilla = new TemplateDTO();
@@ -517,14 +514,15 @@ public class CallDocumentListWithFilters {
 				throw new ServerException(e.getMessage());
 			}
 		}
-		if (dto.getPlantilla() == null)
+		/*if (dto.getPlantilla() == null)
 			throw new ServerException(
 					"Revise la plantilla para consultar los expedientes diponibles. Debe traer la plantilla actual para filtrar las transiciones validas");
 		try {
 			return pedidoVentaMapper.listarExpedientesDisponiblesDocumento(dto);
 		} catch (Exception e) {
 			throw new ServerException(e.getMessage());
-		}
+		}*/
+		return null;
 	}
 
 	private List<String> generateFiltersByStateFromProcess(PedidoVentaFilterDTO dto) {

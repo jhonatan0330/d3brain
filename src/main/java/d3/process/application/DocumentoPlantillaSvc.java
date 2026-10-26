@@ -100,7 +100,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if(dto.getTipo().equals(DocumentoPlantillaDTO.PRINCIPAL) || dto.getTipo().equals(DocumentoPlantillaDTO.ROL) || dto.getTipo().equals(DocumentoPlantillaDTO.REPORTE))
 			dto.setPadre(dto.getProceso());
 		dto = super.actualizar(dto);
-		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
+		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		return dto;
 	}
 
@@ -209,13 +209,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			ReporteBaseDTO newReporte = new ReporteBaseDTO();
 			String newCode = copy.getCodigo() + "-" + iReporte.getCodigo();
 			newReporte.setCodigo(newCode.substring(0, Math.min(newCode.length(), 16)));
-			newReporte.setDescripcion(iReporte.getDescripcion());
 			// newReporte.setJasperText(iReporte.getJasperText());
 			String newName = copy.getCodigo() + "-" + iReporte.getNombre();
 			newReporte.setNombre(newName);
 			newReporte.setPlantilla(copy.getLlaveTabla());
-			newReporte.setSoloExistente(iReporte.getSoloExistente());
-			newReporte.setVariables(iReporte.getVariables());
 			newReporte = reporteService.guardar(newReporte);
 			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla());
 		}
@@ -232,7 +229,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	public List<TemplateDTO> consultaAdministrador() throws ServerException {
-		boolean todosPermisos = rolService.usuarioPermisosCompletos();
+		boolean todosPermisos = configuracionSvc.usuarioPermisosCompletos();
 		if (!todosPermisos)
 			throw new ServerException(
 					"En los roles que tienes asignados no tienes un rol que tenga permisos de consultar todas las plantillas");
@@ -240,7 +237,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	}
 
 	public List<TemplateDTO> consultaAuditor() throws ServerException {
-		boolean todosPermisos = rolService.usuarioPermisosAuditor();
+		boolean todosPermisos = configuracionSvc.usuarioPermisosAuditor();
 		if (!todosPermisos)
 			throw new ServerException("En los roles que tienes asignados no tienes el permiso de auditor");
 		return listarPlantillasUsuario( "READER");
@@ -421,7 +418,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
 		campoProceso.setOrden(1);
 		campoProceso.setPlantilla(templateUpdate.getLlaveTabla());
-		campoProceso.setObjetivo(".");
+		
 		campoProceso = caracteristicaService.guardar(campoProceso);
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
 				campoProceso.getLlaveTabla(), Propiedades.PLANTILLA_AUXILIAR, templateReferenceId));

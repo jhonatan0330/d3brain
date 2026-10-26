@@ -53,7 +53,7 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public WebServiceDTO actualizar(WebServiceDTO dto) throws ServerException {
-		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre());
+		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		return super.actualizar(dto);
 	}

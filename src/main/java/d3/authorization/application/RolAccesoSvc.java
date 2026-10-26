@@ -8,14 +8,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import d3.CacheManager;
-import d3.authentication.application.OrganizacionSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
 import d3.authorization.domain.UsuarioRolFilterDTO;
 import d3.authorization.infrastructure.RolAccesoMapper;
 import d3.configuration.application.PropertyCRUDSvc;
 import d3.shared.application.BasicSvc;
-import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import jakarta.annotation.PostConstruct;
@@ -26,16 +24,14 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 	private final RolAccesoMapper rolAccesoMapper;
 	private final UsuarioRolSvc usuarioRolService;
 	private final PropertyCRUDSvc propertySvc;
-	private final OrganizacionSvc organizationSvc;
 	private final CacheManager cacheManager;
 
 	public RolAccesoSvc(@Lazy RolAccesoMapper rolAccesoMapper,
 			@Lazy UsuarioRolSvc usuarioRolService, @Lazy PropertyCRUDSvc propertySvc,
-			@Lazy OrganizacionSvc organizationSvc, @Lazy CacheManager cacheManager) {
+			 @Lazy CacheManager cacheManager) {
 		this.rolAccesoMapper = rolAccesoMapper;
 		this.usuarioRolService = usuarioRolService;
 		this.propertySvc = propertySvc;
-		this.organizationSvc = organizationSvc;
 		this.cacheManager = cacheManager;
 	}
 
@@ -80,20 +76,6 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		} catch (Exception e) {
 			throw new ServerException(e.getCause().getMessage());
 		}
-	}
-
-	public boolean usuarioPermisosCompletos() throws ServerException {
-		String user = SessionContext.getCurrentUser();
-		if (user.compareTo("PROCESS") == 0)
-			return true;
-		return organizationSvc.permisosCompletos(user);
-	}
-
-	public boolean usuarioPermisosAuditor() throws ServerException {
-		String user = SessionContext.getCurrentUser();
-		if (user.compareTo("PROCESS") == 0)
-			return true;
-		return organizationSvc.permisosAuditor(user);
 	}
 
 	public List<RolAccesoDTO> getFullToSynchronize(List<String> process) {

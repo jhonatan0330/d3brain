@@ -15,6 +15,7 @@ public class PropiedadFilterDTO extends BasicFilterDTO {
 	private String key;
 	private String campo;
 	private String texto;
+	private String codigo;
 	private String rol;
 	private String rolNombre;
 	private String rolExcluyente;
@@ -260,6 +261,14 @@ public class PropiedadFilterDTO extends BasicFilterDTO {
 
 	public void setUsuarioEliminacion(String usuarioEliminacion) {
 		this.usuarioEliminacion = usuarioEliminacion;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 }

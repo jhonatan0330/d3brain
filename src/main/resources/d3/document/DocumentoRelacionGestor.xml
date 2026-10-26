@@ -468,10 +468,6 @@
 		order by ddrg_fecha desc limit 1
 	</select>
 	
-	<select id="getSystemUser" resultType="java.lang.String">
-		select corg_usuariosystem from organizacion_orgp where corg_principal is null and corg_estado = 'A';
-	</select>
-	
 	<select id="isActual" resultType="java.lang.String">
 		select '1' from pedidoventa_pdvp where cpdv_llave = #{documento} and (npdv_historico is null or npdv_historico = 0);
 	</select>

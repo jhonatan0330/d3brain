@@ -11,15 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 import d3.authentication.application.OrganizacionSvc;
 import d3.authentication.application.UsuarioAutenticacionAutorizacionSvc;
 import d3.authentication.application.UsuarioAutenticacionSvc;
-import d3.authentication.application.UsuarioOrganizacionSvc;
 import d3.authentication.domain.OrganizacionDTO;
 import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionAutorizacionFilterDTO;
 import d3.authentication.domain.UsuarioAutenticacionDTO;
 import d3.authentication.domain.UsuarioAutenticacionFilterDTO;
-import d3.authentication.domain.UsuarioOrganizacionDTO;
-import d3.authentication.domain.UsuarioOrganizacionFilterDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.application.UsuarioRolProductoSvc;
 import d3.authorization.application.UsuarioRolSvc;
@@ -138,7 +135,6 @@ public class FullController {
 			@Lazy MensajeSvc mensajeService, @Lazy MailUserSendMessage userSendMessage,
 			@Lazy WebServiceEjecucionSvc webServiceEjecucionService, @Lazy ServidorSvc servidorService,
 			@Lazy UsuarioRolProductoSvc usuarioRolProductoService, @Lazy ReporteBaseSvc reporteBaseService,
-			@Lazy UsuarioOrganizacionSvc usuarioOrganizacionService,
 			@Lazy UsuarioAutenticacionAutorizacionSvc usuarioAutenticacionAutorizacionService,
 			@Lazy ReporteEjecucionSvc reporteEjecucionService, @Lazy ConsecutivoSvc consecutivoService,
 			@Lazy UsuarioAutenticacionSvc usuarioAutenticacionService, @Lazy OrganizacionSvc organizacionService) {
@@ -172,7 +168,6 @@ public class FullController {
 		this.servidorService = servidorService;
 		this.usuarioRolProductoService = usuarioRolProductoService;
 		this.reporteBaseService = reporteBaseService;
-		this.usuarioOrganizacionService = usuarioOrganizacionService;
 		this.usuarioAutenticacionAutorizacionService = usuarioAutenticacionAutorizacionService;
 		this.reporteEjecucionService = reporteEjecucionService;
 		this.consecutivoService = consecutivoService;
@@ -335,14 +330,6 @@ public class FullController {
 		}
 	}
 
-	@PostMapping(value = "/consultarArbolProceso")
-	public List<ProcesoDTO> consultarArbolProceso(@RequestBody ProcesoFilterDTO dto) throws FlexException {
-		try {
-			return procesoService.consultarArbol(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
 	
 	private final ProcesoEstadoSvc procesoEstadoService;
 
@@ -2070,87 +2057,6 @@ public class FullController {
 	public ReporteBaseDTO guardarReporteBase(@RequestBody ReporteBaseDTO dto) throws FlexException {
 		try {
 			return reporteBaseService.guardar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	private final UsuarioOrganizacionSvc usuarioOrganizacionService;
-
-	@PostMapping(value = "/consultaXIdUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO consultaXIdUsuarioOrganizacion(@RequestBody String llave) throws FlexException {
-		try {
-			return usuarioOrganizacionService.consultaXId(llave);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/consultaUnicaUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO consultaUnicaUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.consultaUnica(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/listarConsultaUsuarioOrganizacion")
-	public List<UsuarioOrganizacionDTO> listarConsultaUsuarioOrganizacion(@RequestBody UsuarioOrganizacionFilterDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.listarConsulta(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/activarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO activarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.activar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/inactivarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO inactivarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.inactivar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/actualizarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO actualizarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.actualizar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/guardarUsuarioOrganizacion")
-	public UsuarioOrganizacionDTO guardarUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.guardar(dto);
-		} catch (ServerException e) {
-			throw new FlexException(e.getMessage());
-		}
-	}
-
-	@PostMapping(value = "/sincronizarUsuariosUsuarioOrganizacion")
-	public List<UsuarioOrganizacionDTO> sincronizarUsuariosUsuarioOrganizacion(@RequestBody UsuarioOrganizacionDTO dto)
-			throws FlexException {
-		try {
-			return usuarioOrganizacionService.sincronizarUsuarios(dto);
 		} catch (ServerException e) {
 			throw new FlexException(e.getMessage());
 		}

@@ -416,7 +416,7 @@ public class TenantProvisioningSvc {
 				int organizacion;
 				if (dto.getImagen() != null && !dto.getImagen().isBlank()) {
 					try (PreparedStatement ps = conn.prepareStatement(
-							"update organizacion_orgp set corg_nombre = ?, corg_codigo = ?, corg_imagen = ?, corg_usuariosystem = 'SYSTEM' where corg_llave = 'ORG1'")) {
+							"update organizacion_orgp set corg_nombre = ?, corg_codigo = ?, corg_imagen = ? where corg_llave = 'ORG1'")) {
 						ps.setString(1, nombreTenant);
 						ps.setString(2, codigo.toUpperCase());
 						ps.setString(3, dto.getImagen().trim());
@@ -424,7 +424,7 @@ public class TenantProvisioningSvc {
 					}
 				} else {
 					try (PreparedStatement ps = conn.prepareStatement(
-							"update organizacion_orgp set corg_nombre = ?, corg_codigo = ?, corg_usuariosystem = 'SYSTEM' where corg_llave = 'ORG1'")) {
+							"update organizacion_orgp set corg_nombre = ?, corg_codigo = ? where corg_llave = 'ORG1'")) {
 						ps.setString(1, nombreTenant);
 						ps.setString(2, codigo.toUpperCase());
 						organizacion = ps.executeUpdate();

@@ -18,10 +18,7 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
 	private String estadoPartidaNombre;
 	private String plantilla;
 	private String plantillaNombre;
-	private Boolean documentadorFilter = null;
-	private String afectaSaldo;
 	private String imagen;
-	private Boolean rapidaFilter = null;
 	private String estadoLLegada;
 	private String estadoLlegadaNombre;
 	private String estadoLlegadaTipo;
@@ -98,21 +95,6 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
 		return plantillaNombre;
 	}
 
-	public void setDocumentadorFilter(Boolean documentadorFilter) {
-		this.documentadorFilter = documentadorFilter;
-	}
-
-	public Boolean getDocumentadorFilter() {
-		return documentadorFilter;
-	}
-
-	public void setAfectaSaldo(String afectaSaldo) {
-		this.afectaSaldo = afectaSaldo;
-	}
-
-	public String getAfectaSaldo() {
-		return afectaSaldo;
-	}
 
 	public void setImagen(String imagen) {
 		this.imagen = imagen;
@@ -120,14 +102,6 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
 
 	public String getImagen() {
 		return imagen;
-	}
-
-	public void setRapidaFilter(Boolean rapidaFilter) {
-		this.rapidaFilter = rapidaFilter;
-	}
-
-	public Boolean getRapidaFilter() {
-		return rapidaFilter;
 	}
 
 	public void setEstadoLLegada(String estadoLLegada) {

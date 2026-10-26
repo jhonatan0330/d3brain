@@ -84,7 +84,6 @@ public class HomologateAdapterService {
 			if (reporteService.contarResultados(reporteFilter) == 0) {
 				ReporteBaseDTO reporte = new ReporteBaseDTO();
 				reporte.setCodigo(plantillaPrincipal.getCodigo());
-				reporte.setDescripcion("PENDIENTE");
 				reporte.setNombre(plantillaPrincipal.getNombre());
 				reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
 				reporte = reporteService.guardar(reporte);
