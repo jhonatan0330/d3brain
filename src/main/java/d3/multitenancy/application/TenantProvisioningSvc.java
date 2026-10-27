@@ -183,8 +183,8 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private void clonarBaseDatos(ServidorPadre servidor, TenantDTO datosPadre, String baseDatos, String rol, String clave)
-			throws ServerException {
+	private void clonarBaseDatos(ServidorPadre servidor, TenantDTO datosPadre, String baseDatos, String rol,
+			String clave) throws ServerException {
 		cargarDriver(datosPadre);
 		String adminUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/postgres";
 		String plantillaUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + BASE_PLANTILLA;
@@ -263,18 +263,15 @@ public class TenantProvisioningSvc {
 				}
 			}
 			if (sello == null || sello.isBlank()) {
-				throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
-						"La plantilla " + BASE_PLANTILLA
-								+ " no tiene sello de version (COMMENT ON TABLE usuario_usrp); aplique los deltas sobre la plantilla");
+				throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA, "La plantilla " + BASE_PLANTILLA
+						+ " no tiene sello de version (COMMENT ON TABLE usuario_usrp); aplique los deltas sobre la plantilla");
 			}
 			try (Statement stmt = conn.createStatement();
 					ResultSet rs = stmt.executeQuery(
 							"select distinct pg_get_userbyid(nspowner) from pg_namespace where nspname = 'public' "
-									+ "union "
-									+ "select distinct pg_get_userbyid(c.relowner) from pg_class c "
+									+ "union " + "select distinct pg_get_userbyid(c.relowner) from pg_class c "
 									+ "inner join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' "
-									+ "union "
-									+ "select distinct pg_get_userbyid(p.proowner) from pg_proc p "
+									+ "union " + "select distinct pg_get_userbyid(p.proowner) from pg_proc p "
 									+ "inner join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public'")) {
 				while (rs.next()) {
 					String dueno = rs.getString(1);
@@ -309,8 +306,8 @@ public class TenantProvisioningSvc {
 				}
 			}
 			try (Statement stmt = conn.createStatement()) {
-				stmt.execute("CREATE DATABASE " + entrecomillar(baseDatos) + " WITH TEMPLATE " + entrecomillar(plantilla)
-						+ " OWNER " + entrecomillar(rol));
+				stmt.execute("CREATE DATABASE " + entrecomillar(baseDatos) + " WITH TEMPLATE "
+						+ entrecomillar(plantilla) + " OWNER " + entrecomillar(rol));
 			}
 			System.out.println("Base de datos creada desde plantilla " + plantilla + ": " + baseDatos);
 		} catch (ServerException e) {
@@ -330,8 +327,30 @@ public class TenantProvisioningSvc {
 				if (rol.equals(dueno)) {
 					continue;
 				}
+				String[] esquemas = { "account", "historic", "public", "task" };
+
+				String usuario = entrecomillar(rol);
+
 				try (Statement stmt = conn.createStatement()) {
-					stmt.execute("REASSIGN OWNED BY " + entrecomillar(dueno) + " TO " + entrecomillar(rol));
+					for (String esquema : esquemas) {
+						String schema = entrecomillar(esquema);
+
+						// Permisos sobre el esquema
+						stmt.execute("GRANT ALL PRIVILEGES ON SCHEMA " + schema + " TO " + usuario);
+
+						// Permisos sobre todas las tablas existentes
+						stmt.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA " + schema + " TO " + usuario);
+
+						// Permisos sobre todas las secuencias existentes
+						stmt.execute("GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA " + schema + " TO " + usuario);
+
+						// Permisos de ejecución sobre las funciones
+						stmt.execute("GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA " + schema + " TO " + usuario);
+
+						// Permisos de ejecución sobre los procedimientos
+						stmt.execute("GRANT ALL PRIVILEGES ON ALL PROCEDURES IN SCHEMA " + schema + " TO " + usuario);
+					}
+
 				}
 				System.out.println("Propiedades reasignadas de " + dueno + " a " + rol);
 			}

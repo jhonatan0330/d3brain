@@ -15,7 +15,7 @@
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
-			,cppd_codigo as  texto
+			,cppd_codigo as  codigo
 			,dppd_fechadefinicion as  fechaDefinicion
 			,dppd_fechaeliminacion as  fechaEliminacion
 			,cppd_usuariocreacion as  usuarioCreacion
@@ -528,6 +528,7 @@ COST 100;
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
+			,cppd_codigo as  codigo
 			,cppd_rol as  rol
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
@@ -552,6 +553,7 @@ union
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
+			,cppd_codigo as  codigo
 			,cppd_rol as  rol
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
@@ -572,6 +574,7 @@ union
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
+			,cppd_codigo as  codigo
 			,cppd_rol as  rol
 			,cppd_rolexcluyente as  rolExcluyente
 			,cppd_motivo as  motivo
@@ -619,6 +622,7 @@ union
 			,cppd_campo as  campo
 			,cppd_valor as  valor
 			,cppd_texto as  texto
+			,cppd_codigo as  codigo
 			,dppd_fechadefinicion as  fechaDefinicion
 			,dppd_fechaeliminacion as  fechaEliminacion
 			,cppd_usuariocreacion as  usuarioCreacion
