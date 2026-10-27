@@ -109,7 +109,7 @@
 			,#{nodoSuperior}
 		</if>
 		<if test="tipo!=null">
-			,#{formato}
+			,#{tipo}
 		</if>
 		<if test="nombre!=null">
 			,#{nombre}

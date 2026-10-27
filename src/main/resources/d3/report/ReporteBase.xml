@@ -90,7 +90,7 @@
 		) values (
 			#{llaveTabla}
 		<if test="nodoSuperior!=null">
-			,#{plantilla}
+			,#{nodoSuperior}
 		</if>
 		<if test="nombre!=null">
 			,#{nombre}
