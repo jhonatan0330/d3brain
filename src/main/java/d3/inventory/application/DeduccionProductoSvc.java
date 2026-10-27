@@ -143,7 +143,7 @@ public class DeduccionProductoSvc extends BasicSvc<DeduccionProductoDTO, Deducci
 				for (PropiedadDTO codigo : codigoDepende) {
 					for (PedidoVentaCaracteristicaDTO fieldExpediente : expediente.getCaracteristicas()) {
 						if (codigo.getValor().compareTo(fieldExpediente.getCampo()) == 0) {
-							if (fieldExpediente.getCampoDTO().getFormato()
+							if (fieldExpediente.getCampoDTO().getTipo()
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
 									&& fieldExpediente.getValorOpcion() != null
 									&& fieldExpediente.getExpedientes() == null) {

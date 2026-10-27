@@ -7,13 +7,12 @@
 	<sql id="selectDocumentoPlantillaCaracteristicaFragment">
 		select
 			cdpc_llave as  llaveTabla
-			,cdpc_objetivo as  objetivo
-			,cdpc_plantilla as  plantilla
-			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cdpc_plantilla) as  plantillaNombre
-			,cdpc_formato as  formato
+			,cdpc_plantilla as  nodoSuperior
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = cdpc_plantilla) as  nodoSuperiorNombre
+			,cdpc_formato as  tipo
 			,cdpc_nombre as  nombre
 			,cdpc_codigo as  codigo
-			,ndpc_orden as  orden
+			,ndpc_orden as  prioridad
 			,cdpc_imagen as  imagen
 			,cdpc_estado as estado
 		from documentoplantillacaracteristica_dpcp a
@@ -27,11 +26,11 @@
 			<if test="estado!=null">
 				and cdpc_estado = #{estado}
 			</if>
-			<if test="plantilla!=null">
-				and cdpc_plantilla = #{plantilla}
+			<if test="nodoSuperior!=null">
+				and cdpc_plantilla = #{nodoSuperior}
 			</if>
-			<if test="formato!=null">
-				and cdpc_formato = #{formato}
+			<if test="tipo!=null">
+				and cdpc_formato = #{tipo}
 			</if>
 			<if test="nombre!=null">
 				and cdpc_nombre = #{nombre}
@@ -80,13 +79,10 @@
 	<select id="insertar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
 		insert into documentoplantillacaracteristica_dpcp(
 			cdpc_llave
-		<if test="objetivo!=null">
-			,cdpc_objetivo
-		</if>
-		<if test="plantilla!=null">
+		<if test="nodoSuperior!=null">
 			,cdpc_plantilla
 		</if>
-		<if test="formato!=null">
+		<if test="tipo!=null">
 			,cdpc_formato
 		</if>
 		<if test="nombre!=null">
@@ -95,7 +91,7 @@
 		<if test="codigo!=null">
 			,cdpc_codigo
 		</if>
-		<if test="orden!=null">
+		<if test="prioridad!=null">
 			,ndpc_orden
 		</if>
 		<if test="imagen!=null">
@@ -109,13 +105,10 @@
 		</if>
 		) values (
 			#{llaveTabla}
-		<if test="objetivo!=null">
-			,#{objetivo}
+		<if test="nodoSuperior!=null">
+			,#{nodoSuperior}
 		</if>
-		<if test="plantilla!=null">
-			,#{plantilla}
-		</if>
-		<if test="formato!=null">
+		<if test="tipo!=null">
 			,#{formato}
 		</if>
 		<if test="nombre!=null">
@@ -124,8 +117,8 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
-		<if test="orden!=null">
-			,#{orden}
+		<if test="prioridad!=null">
+			,#{prioridad}
 		</if>
 		<if test="imagen!=null">
 			,#{imagen}
@@ -142,12 +135,11 @@
 	<select id="actualizar" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="DocumentoPlantillaCaracteristicaDTO">
 		update documentoplantillacaracteristica_dpcp
 			set
-				cdpc_objetivo = #{objetivo},
-				cdpc_plantilla = #{plantilla},
-				cdpc_formato = #{formato},
+				cdpc_plantilla = #{nodoSuperior},
+				cdpc_formato = #{tipo},
 				cdpc_nombre = #{nombre},
 				cdpc_codigo = #{codigo},
-				ndpc_orden = #{orden},
+				ndpc_orden = #{prioridad},
 				cdpc_imagen = #{imagen},
 				cdpc_usuarioeliminacion = #{usuarioEliminacion},
 				ddpc_fechaeliminacion = #{fechaEliminacion},
@@ -172,12 +164,11 @@
 	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
 		select
 			cdpc_llave as  llaveTabla
-			,cdpc_objetivo as  objetivo
-			,cdpc_plantilla as  plantilla
-			,cdpc_formato as  formato
+			,cdpc_plantilla as  nodoSuperior
+			,cdpc_formato as  tipo
 			,cdpc_nombre as  nombre
 			,cdpc_codigo as  codigo
-			,ndpc_orden as  orden
+			,ndpc_orden as  prioridad
 			,cdpc_imagen as  imagen
 			,cdpc_estado as estado
 		from documentoplantillacaracteristica_dpcp a
@@ -190,7 +181,7 @@
 	<select id="countDependentsOfField" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
 		select count(*) from documentoplantillacaracteristica_dpcp dd 
 			inner join propiedad_ppdp pp on pp.cppd_campo = dd.cdpc_llave and pp.cppd_estado = 'A'
-		where dd.cdpc_plantilla = #{plantilla} and dd.cdpc_estado = 'A'
+		where dd.cdpc_plantilla = #{nodoSuperior} and dd.cdpc_estado = 'A'
 			and pp.cppd_propiedadvalor = 'PROP_96'
 			and pp.cppd_valor = #{llaveTabla}
 			and dd.cdpc_llave != #{llaveTabla}

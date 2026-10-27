@@ -7,8 +7,8 @@
 	<sql id="selectReporteBaseFragment">
 		select
 			crpb_llave as  llaveTabla
-			,crpb_plantilla as  plantilla
-			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crpb_plantilla) as  plantillaNombre
+			,crpb_plantilla as  nodoSuperior
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crpb_plantilla) as  nodoSuperiorNombre
 			,crpb_nombre as  nombre
 			,crpb_codigo as  codigo
 			,crpb_estado as estado
@@ -23,8 +23,8 @@
 			<if test="estado!=null">
 				and crpb_estado = #{estado}
 			</if>
-			<if test="plantilla!=null">
-				and crpb_plantilla = #{plantilla}
+			<if test="nodoSuperior!=null">
+				and crpb_plantilla = #{nodoSuperior}
 			</if>
 			<if test="nombre!=null">
 				and crpb_nombre = #{nombre}
@@ -59,7 +59,7 @@
 	<select id="listar" parameterType="ReporteBaseDTO" resultType="ReporteBaseDTO">
 		<include refid="selectReporteBaseFragment" />
 		<include refid="whereReporteBaseFragment" />
-		order by plantillanombre 
+		order by nodoSuperiorNombre 
 		, crpb_nombre 
 		<include refid="paginationReporteBaseFragment" />
 	</select>
@@ -74,7 +74,7 @@
 	<select id="insertar" parameterType="ReporteBaseDTO" resultType="ReporteBaseDTO">
 		insert into reportebase_rpbp(
 			crpb_llave
-		<if test="plantilla!=null">
+		<if test="nodoSuperior!=null">
 			,crpb_plantilla
 		</if>
 		<if test="nombre!=null">
@@ -89,7 +89,7 @@
 		</if>
 		) values (
 			#{llaveTabla}
-		<if test="plantilla!=null">
+		<if test="nodoSuperior!=null">
 			,#{plantilla}
 		</if>
 		<if test="nombre!=null">
@@ -107,7 +107,7 @@
 	<select id="actualizar" parameterType="ReporteBaseDTO" resultType="ReporteBaseDTO">
 		update reportebase_rpbp
 			set
-				crpb_plantilla = #{plantilla},
+				crpb_plantilla = #{nodoSuperior},
 				crpb_nombre = #{nombre},
 				crpb_codigo = #{codigo},
 				crpb_estado =#{estado}
@@ -120,7 +120,7 @@
 			crpb_llave as  llaveTabla
 			,crpb_nombre as  nombre
 			,crpb_codigo as  codigo
-			,crpb_plantilla as  plantilla
+			,crpb_plantilla as  nodoSuperior
 			,crpb_estado as estado
 		from reportebase_rpbp a
 		where crpb_estado ='A' and crpb_llave not in (select cppd_valor from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor in ('PROP_72','PROP_70','PROP_100','PROP_137'))
@@ -129,7 +129,8 @@
 	<select id="getFullToSynchronize" resultType="ReporteBaseDTO">
 		select
 			crpb_llave as  llaveTabla
-			,crpb_plantilla as  plantilla
+			,crpb_plantilla as  nodoSuperior
+			,cdpl_nombre as  nodoSuperiorNombre
 			,crpb_nombre as  nombre
 			,crpb_codigo as  codigo
 			,brpb_publico as  publico

@@ -7,12 +7,12 @@
 	<sql id="selectProcesoTransicionFragment">
 		select
 			cptr_llave as  llaveTabla
-			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  procesoNombre
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  nodoSuperiorNombre
 			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
 			,(select coalesce(max(npes_avance) ,100) from procesoestado_pesp where cpes_llave = cptr_estadollegada) as  estadoLlegadaOrden
 			,cptr_nombre as  nombre
 			,cptr_codigo as  codigo
-			,cptr_proceso as  proceso
+			,cptr_proceso as  nodoSuperior
 			,cptr_estadopartida as  estadoPartida
 			,(select cpes_nombre from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaNombre
 			,cptr_plantilla as  plantilla
@@ -39,8 +39,8 @@
 			<if test="codigo!=null">
 				and cptr_codigo = #{codigo}
 			</if>
-			<if test="proceso!=null">
-				and cptr_proceso = #{proceso}
+			<if test="nodoSuperior!=null">
+				and cptr_proceso = #{nodoSuperior}
 			</if>
 			<if test="estadoPartida!=null">
 				and cptr_estadopartida = #{estadoPartida}
@@ -75,7 +75,7 @@
 	<select id="listar" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
 		<include refid="selectProcesoTransicionFragment" />
 		<include refid="whereProcesoTransicionFragment" />
-		order by procesonombre 
+		order by nodoSuperiorNombre 
 		, estadopartidaorden 
 		, estadollegadaorden 
 		, cptr_nombre 
@@ -98,7 +98,7 @@
 		<if test="codigo!=null">
 			,cptr_codigo
 		</if>
-		<if test="proceso!=null">
+		<if test="nodoSuperior!=null">
 			,cptr_proceso
 		</if>
 		<if test="estadoPartida!=null">
@@ -121,8 +121,8 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
-		<if test="proceso!=null">
-			,#{proceso}
+		<if test="nodoSuperior!=null">
+			,#{nodoSuperior}
 		</if>
 		<if test="estadoPartida!=null">
 			,#{estadoPartida}
@@ -144,7 +144,7 @@
 			set
 				cptr_nombre = #{nombre},
 				cptr_codigo = #{codigo},
-				cptr_proceso = #{proceso},
+				cptr_proceso = #{nodoSuperior},
 				cptr_estadopartida = #{estadoPartida},
 				cptr_plantilla = #{plantilla},
 				cptr_estadollegada = #{estadoLLegada},
@@ -158,7 +158,7 @@
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
 			,cptr_codigo as  codigo
-			,cptr_proceso as  proceso
+			,cptr_proceso as  nodoSuperior
 			,cptr_estadopartida as  estadoPartida
 			,null as  estadoPartidaNombre
 			,(select coalesce(max(npes_avance) ,0) from procesoestado_pesp where cpes_llave = cptr_estadopartida) as  estadoPartidaOrden
@@ -184,7 +184,7 @@
 	<select id="listarTransaccionInicial" parameterType="ProcesoTransicionDTO" resultType="ProcesoTransicionDTO">
 		<include refid="selectProcesoTransicionFragment" />, proceso_prcp
 		where cprc_llave = cptr_proceso and cptr_estadopartida is null and cptr_estado = 'A' and cprc_estado = 'A'
-		<if test="plantilla!=null">and cptr_plantilla = #{plantilla}</if><if test="proceso!=null">and cptr_proceso = #{proceso}</if>
+		<if test="plantilla!=null">and cptr_plantilla = #{plantilla}</if><if test="nodoSuperior!=null">and cptr_proceso = #{nodoSuperior}</if>
 	</select>
 	
 	<select id="decision" resultType="java.lang.String">
@@ -205,9 +205,9 @@
 		select
 			cptr_llave as  llaveTabla
 			,cptr_nombre as  nombre
-			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  procesoNombre
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  nodoSuperiorNombre
 			,cptr_codigo as  codigo
-			,cptr_proceso as  proceso
+			,cptr_proceso as  nodoSuperior
 			,cptr_estadopartida as  estadoPartida
 			,cptr_plantilla as  plantilla
 			,cptr_estadollegada as  estadoLLegada
@@ -222,7 +222,7 @@
 			and (pe_inicial.cpes_estado = 'A' or pe_inicial.cpes_estado is null) 
 			and (pe_final.cpes_estado = 'A' or pe_final.cpes_estado is null) 
 			<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by procesoNombre
+		order by nodoSuperiorNombre
 	</select>
 	
 	<select id="funcionRegresarTablaHistoricos" resultType="int">

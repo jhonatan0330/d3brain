@@ -145,7 +145,7 @@ public class TipoProceso {
 							}
 							if (pCampo.getValorOpcion() == null)
 								throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
-										+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " obtiene "
+										+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " obtiene "
 										+ result.getCampoDTO().getDocumentos().size()
 										+ " resultados que concuerdan con el criterio : " + pCampo.getValorText()
 										+ ", tu campo de busqueda debe ser la descripcion o el nombre");
@@ -171,11 +171,11 @@ public class TipoProceso {
 						if (isUpdateAutomatic) {
 							CallDocumentCommons.addMessageError(pCampo.getPrincipal(),
 									"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-											+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+											+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 						} else {
 							throw new ServerException(
 									"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-											+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+											+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 						}
 					}
 				}
@@ -212,7 +212,7 @@ public class TipoProceso {
 			}
 		} else {
 			System.out.format("\n[%s - %s]  Campo heredado = %s, No se valida",
-					pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getCampoDTO().getNombre(), campoHeredado1);
+					pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getCampoDTO().getNombre(), campoHeredado1);
 		}
 	}
 
@@ -233,7 +233,7 @@ public class TipoProceso {
 									Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 							&& (pCampo.getExpedientes() == null || pCampo.getExpedientes().isEmpty()))
 						throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-								+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+								+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 				} else {
 					PedidoVentaCaracteristicaFilterDTO filter = toFilter(pCampo);
 					PedidoVentaCaracteristicaFilterDTO documentosFuncion = consultarDatosBase(filter);
@@ -245,7 +245,7 @@ public class TipoProceso {
 								Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 							throw new ServerException(
 									"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-											+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+											+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 					}
 				}
 
@@ -300,7 +300,7 @@ public class TipoProceso {
 				&& pCampo.getExpedientes().isEmpty()
 				&& Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.AUTOLOAD_SAVE) == null)
 			throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-					+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+					+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 
 		List<PedidoVentaDTO> procesosActuales = null;
 		// Consulto los procesos que estan en BD
@@ -483,7 +483,7 @@ public class TipoProceso {
 				updateInformativeService.call(pCampo);
 
 			} else {
-				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getPlantillaNombre(),
+				System.out.format("\n[%s (%s) - %s] Campo Multiple] = %s", pCampo.getCampoDTO().getNodoSuperiorNombre(),
 						pCampo.getPrincipal().getNombre(), pCampo.getCampoDTO().getNombre(), multiple);
 				if (bd == null) {
 					bd = campoService.guardar(pCampo);
@@ -645,7 +645,7 @@ public class TipoProceso {
 			PedidoVentaDTO documento = pCampo.getPrincipal();
 			if (documento.getDinero() == null)
 				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-						+ pCampo.getCampoDTO().getPlantillaNombre()
+						+ pCampo.getCampoDTO().getNodoSuperiorNombre()
 						+ " reporta Los formularios con campos tipo cuenta deben tener el valor");
 			/*
 			 * if(documento.getDinero()==null){

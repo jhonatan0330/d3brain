@@ -216,7 +216,7 @@ public class PedidoVentaSvc extends BasicSvc<PedidoVentaDTO, PedidoVentaFilterDT
 			throw new ServerException("Desarrollador el pedido y su plantilla no deben venir nulos");
 		DocumentoPlantillaCaracteristicaFilterDTO rcDTOFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 		rcDTOFilter.setEstado(SharedConstants.STATE_ACTIVE);
-		rcDTOFilter.setPlantilla(pedido.getPlantilla());
+		rcDTOFilter.setNodoSuperior(pedido.getPlantilla());
 		List<DocumentoPlantillaCaracteristicaDTO> camposBase = documentoPlantillaCaracteristicaService
 				.listarConsulta(rcDTOFilter);
 		if (camposBase != null && camposBase.size() != 0) {

@@ -266,7 +266,7 @@ public class CallDocumentUpdateFromAutomatic {
 							// por el momento debe tener permisos el usuario
 							newField.setModificado(true);
 
-							if (camposActualesDTO.getFormato()
+							if (camposActualesDTO.getTipo()
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 								organizeDependsNumberToUpdate(newField, currentFields);
 							}

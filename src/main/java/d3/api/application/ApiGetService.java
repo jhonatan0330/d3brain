@@ -73,7 +73,7 @@ public class ApiGetService {
 				filterDTO.setEstadoExpediente("");
 				for (String _iState : filter.getStates()) {
 					ProcesoEstadoFilterDTO pesFilter = new ProcesoEstadoFilterDTO();
-					pesFilter.setProceso(templateBD.getProceso());
+					pesFilter.setNodoSuperior(templateBD.getProceso());
 					pesFilter.setCodigo(_iState);
 					pesFilter.setEstado(SharedConstants.STATE_ACTIVE);
 					ProcesoEstadoDTO _state = stateService.consultaUnica(pesFilter);
@@ -112,7 +112,7 @@ public class ApiGetService {
 				PedidoVentaCaracteristicaFilterDTO result = new PedidoVentaCaracteristicaFilterDTO();
 				result.setCampoDTO(fieldTemplate);
 				result.setCampo(fieldTemplate.getLlaveTabla());
-				if (fieldTemplate.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
+				if (fieldTemplate.getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0)
 					result.setValorOpcion(
 							searchProcessFromText.getValueOptionFromText(fieldRequest.getValue(), fieldTemplate));
 				return result;

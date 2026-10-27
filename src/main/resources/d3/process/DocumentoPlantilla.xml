@@ -8,7 +8,7 @@
 		select
 			cdpl_llave as  llaveTabla
 			,cdpl_tipo as  tipo
-			,cdpl_padre as  padre
+			,cdpl_padre as  nodoSuperior
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
@@ -26,17 +26,14 @@
 			<if test="tipo!=null">
 				and cdpl_tipo = #{tipo}
 			</if>
-			<if test="padre!=null">
-				and cdpl_padre = #{padre}
+			<if test="nodoSuperior!=null">
+				and cdpl_padre = #{nodoSuperior}
 			</if>
 			<if test="estado!=null">
 				and cdpl_estado = #{estado}
 			</if>
 			<if test="nombre!=null">
 				and cdpl_nombre = #{nombre}
-			</if>
-			<if test="consecutivo!=null">
-				and cdpl_consecutivo = #{consecutivo}
 			</if>
 			<if test="codigo!=null">
 				and cdpl_codigo = #{codigo}
@@ -88,7 +85,7 @@
 		<if test="tipo!=null">
 			,cdpl_tipo
 		</if>
-		<if test="padre!=null">
+		<if test="nodoSuperior!=null">
 			,cdpl_padre
 		</if>
 		<if test="nombre!=null">
@@ -114,8 +111,8 @@
 		<if test="tipo!=null">
 			,#{tipo}
 		</if>
-		<if test="padre!=null">
-			,#{padre}
+		<if test="nodoSuperior!=null">
+			,#{nodoSuperior}
 		</if>
 		<if test="nombre!=null">
 			,#{nombre}
@@ -142,7 +139,7 @@
 		update documentoplantilla_dplp
 			set
 				cdpl_tipo = #{tipo},
-				cdpl_padre = #{padre},
+				cdpl_padre = #{nodoSuperior},
 				cdpl_nombre = #{nombre},
 				cdpl_consecutivo = #{consecutivo},
 				cdpl_imagen = #{imagen},
@@ -212,7 +209,7 @@
 			,cdpl_nombre as  nombre
 			,cdpl_imagen as  imagen
 			,cdpl_tipo as  tipo
-			,cdpl_padre as  padre
+			,cdpl_padre as  nodoSuperior
 			,cdpl_codigo as  codigo
 			,cdpl_proceso as  proceso
 			,cdpl_estado as estado
@@ -252,7 +249,7 @@
 		select
 			cdpl_llave as  llaveTabla
 			,cdpl_tipo as  tipo
-			,cdpl_padre as  padre
+			,cdpl_padre as  nodoSuperior
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
@@ -269,7 +266,7 @@
 		select
 			cdpl_llave as  llaveTabla
 			,cdpl_tipo as  tipo
-			,cdpl_padre as  padre
+			,cdpl_padre as  nodoSuperior
 			,cdpl_nombre as  nombre
 			,cdpl_consecutivo as  consecutivo
 			,cdpl_imagen as  imagen
@@ -284,7 +281,7 @@
 	<update id="actualizarTipoPadre">
 		update documentoplantilla_dplp
 			set cdpl_tipo = #{tipo},
-				cdpl_padre = #{padre}
+				cdpl_padre = #{nodoSuperior}
 		where cdpl_llave = #{llaveTabla}
 	</update>
 

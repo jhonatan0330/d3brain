@@ -31,7 +31,7 @@ public class SynchronizeProcessStateService {
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 
 			for (ProcesoEstadoDTO remote : remoteTocompare) {
-				log.setRoot("SynchronizeProcessStateService " + remote.getProcesoNombre());
+				log.setRoot("SynchronizeProcessStateService " + remote.getNodoSuperiorNombre());
 				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
 				if (local != null) {
 					localToErase.remove(local);
@@ -45,8 +45,8 @@ public class SynchronizeProcessStateService {
 						ProcesoEstadoDTO newState = new ProcesoEstadoDTO();
 						newState.setCodigo(remote.getCodigo());
 						newState.setEstadoDocumento(remote.getEstadoDocumento());
-						newState.setProceso(remote.getProceso());
-						newState.setAvance(remote.getAvance());
+						newState.setNodoSuperior(remote.getNodoSuperior());
+						newState.setPrioridad(remote.getPrioridad());
 						newState.setTipo(remote.getTipo());
 						newState.setNombre(remote.getNombre());
 						newState = processStateService.save(newState);
@@ -66,7 +66,7 @@ public class SynchronizeProcessStateService {
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			for (ProcesoEstadoDTO remote : remoteTocompare) {
-				log.setRoot("SynchronizeProcessStateAfterService " + remote.getProcesoNombre());
+				log.setRoot("SynchronizeProcessStateAfterService " + remote.getNodoSuperiorNombre());
 				ProcesoEstadoDTO local = findProcessInList(localToErase, remote);
 				if (local != null) {
 					localToErase.remove(local);
@@ -94,7 +94,7 @@ public class SynchronizeProcessStateService {
 		if (array == null)
 			return null;
 		for (ProcesoEstadoDTO localProcess : array) {
-			if (remote.getProceso().compareTo(localProcess.getProceso()) == 0
+			if (remote.getNodoSuperior().compareTo(localProcess.getNodoSuperior()) == 0
 					&& remote.getNombre().compareTo(localProcess.getNombre()) == 0) {
 				return localProcess;
 			}

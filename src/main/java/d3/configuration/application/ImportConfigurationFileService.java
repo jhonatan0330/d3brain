@@ -70,10 +70,7 @@ public class ImportConfigurationFileService {
 		try (InputStream inputStream = new URI(file.getUrl()).toURL().openStream()) {
 
 			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
-			//Object payload = mapper.readValue(inputStream, Object.class);
-			//HierarchyExporterDTO hierarchy = parseHierarchy(payload);
-
-			return uploadFile(sincronize(hierarchy).getLogs());
+			return uploadFile(sincronize(hierarchy, false).getLogs());
 
 		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
@@ -88,17 +85,14 @@ public class ImportConfigurationFileService {
 
 			HierarchyExporterDTO hierarchy = mapper.readValue(inputStream, HierarchyExporterDTO.class);
 			
-			//Object payload = mapper.readValue(inputStream, Object.class);
-			//HierarchyExporterDTO hierarchy = parseHierarchy(payload);
-
-			return uploadFile(compareFile(hierarchy).getLogs());
+			return uploadFile(sincronize(hierarchy, true).getLogs());
 
 		} catch (IOException | URISyntaxException e) {
 			throw new ServerException(e.getMessage());
 		}
 	}
 
-	public LogConfigurationDTO sincronize(HierarchyExporterDTO hierarchy) throws ServerException {
+	public LogConfigurationDTO sincronize(HierarchyExporterDTO hierarchy, boolean onlyRead) throws ServerException {
 		if (hierarchy == null)
 			throw new ServerException("La configuracion a sincronizar se encuentra vacia");
 		if (hierarchy.getProperties() == null)
@@ -130,121 +124,35 @@ public class ImportConfigurationFileService {
 				.collect(Collectors.toList()));
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
-		sincronizeTypeService.call(hierarchy, logs, false);
-		sincronizeOrganizationService.call(hierarchy, logs, false);
-		sincronizeProcessService.call(hierarchy, logs, false);
-		sincronizeApiService.call(hierarchy, logs, false);
-		sincronizeProcessStateService.call(hierarchy, logs, false);
-		sincronizeTemplateService.call(hierarchy, logs, false);
-		sincronizeProcessTransitionService.call(hierarchy, logs, false);
-		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, false);
-		sincronizeTemplateService.callCreateRol(hierarchy, propertiesToCreateRoles, logs, false);
-		sincronizeProcessStateService.callAfter(hierarchy, logs, false);
-		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, false);
+		sincronizeTypeService.call(hierarchy, logs, onlyRead);
+		sincronizeOrganizationService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessService.call(hierarchy, logs, onlyRead);
+		sincronizeApiService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessStateService.call(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessTransitionService.call(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.callCreateRol(hierarchy, propertiesToCreateRoles, logs, onlyRead);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, onlyRead);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, onlyRead);
 		logs.setRoot("");
-		sincronizeRelationService.call(hierarchy, logs, false);
+		sincronizeRelationService.call(hierarchy, logs, onlyRead);
 		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
 		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
-		sincronizeOrganizationService.call(hierarchy, logs, false);
-		sincronizeProcessService.call(hierarchy, logs, false);
-		sincronizeApiService.call(hierarchy, logs, false);
-		sincronizeProcessStateService.call(hierarchy, logs, false);
-		sincronizeTemplateService.call(hierarchy, logs, false);
-		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, false);
-		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, false);
-		sincronizeProcessStateService.callAfter(hierarchy, logs, false);
-		sincronizeTemplateService.call(hierarchy, logs, false);
+		sincronizeOrganizationService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessService.call(hierarchy, logs, onlyRead);
+		sincronizeApiService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessStateService.call(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.call(hierarchy, logs, onlyRead);
+		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, onlyRead);
+		sincronizeProcessStateService.callAfter(hierarchy, logs, onlyRead);
+		sincronizeTemplateService.call(hierarchy, logs, onlyRead);
 		logs.setRoot("");
-		sincronizeRelationService.call(hierarchy, logs, false);
+		sincronizeRelationService.call(hierarchy, logs, onlyRead);
 		return logs;
 	}
-
-	public LogConfigurationDTO compareFile(HierarchyExporterDTO hierarchy) throws ServerException {
-		if (hierarchy == null)
-			throw new ServerException("La configuracion a comparar se encuentra vacia");
-		if (hierarchy.getProperties() == null)
-			hierarchy.setProperties(new java.util.ArrayList<>());
-		List<PropiedadDTO> propertiesToCreateRoles = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() != null
-						&& property.getPropiedadValor().compareTo("PROP_141") == 0))
-				.collect(Collectors.toList());
-
-		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_141") != 0))
-				.collect(Collectors.toList()));
-
-		List<PropiedadDTO> rolInProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getRol() != null || property.getRolExcluyente() != null))
-				.collect(Collectors.toList());
-
-		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getRol() == null && property.getRolExcluyente() == null))
-				.collect(Collectors.toList()));
-
-		List<PropiedadDTO> templateUpdateProperties = hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor().compareTo("PROP_78") == 0))
-				.collect(Collectors.toList());
-
-		hierarchy.setProperties(hierarchy.getProperties().stream()
-				.filter(property -> (property.getPropiedadValor() == null
-						|| property.getPropiedadValor().compareTo("PROP_78") != 0))
-				.collect(Collectors.toList()));
-
-		LogConfigurationDTO logs = new LogConfigurationDTO();
-		sincronizeTypeService.call(hierarchy, logs, true);
-		sincronizeApiService.call(hierarchy, logs, true);
-		sincronizeOrganizationService.call(hierarchy, logs, true);
-		sincronizeProcessService.call(hierarchy, logs, true);
-		sincronizeProcessStateService.call(hierarchy, logs, true);
-		sincronizeTemplateService.call(hierarchy, logs, true);
-		sincronizeProcessTransitionService.call(hierarchy, logs, true);
-		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, true);
-		sincronizeTemplateService.callCreateRol(hierarchy, propertiesToCreateRoles, logs, true);
-		sincronizeProcessStateService.callAfter(hierarchy, logs, true);
-		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, true);
-		logs.setRoot("");
-		sincronizeRelationService.call(hierarchy, logs, true);
-		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
-		rolInProperties.addAll(templateUpdateProperties);
-		hierarchy.setProperties(rolInProperties);
-		sincronizeApiService.call(hierarchy, logs, true);
-		sincronizeOrganizationService.call(hierarchy, logs, true);
-		sincronizeProcessService.call(hierarchy, logs, true);
-		sincronizeProcessStateService.call(hierarchy, logs, true);
-		sincronizeTemplateService.call(hierarchy, logs, true);
-		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, true);
-		sincronizeTemplateService.callAfterCreateAllTemplate(hierarchy, logs, true);
-		sincronizeProcessStateService.callAfter(hierarchy, logs, true);
-		sincronizeTemplateService.call(hierarchy, logs, true);
-		logs.setRoot("");
-		sincronizeRelationService.call(hierarchy, logs, true);
-		return logs;
-	}
-
-	/*public HierarchyExporterDTO parseHierarchy(Object payload) throws ServerException {
-		if (payload == null)
-			throw new ServerException("El archivo de configuracion esta vacio");
-		if (payload instanceof HierarchyExporterDTO)
-			return (HierarchyExporterDTO) payload;
-		if (payload instanceof ConfigurationExportDTO) {
-			ConfigurationExportDTO wrapper = (ConfigurationExportDTO) payload;
-			if (wrapper.getHierarchy() != null)
-				return wrapper.getHierarchy();
-			throw new ServerException("El archivo exportado no contiene configuracion (hierarchy)");
-		}
-		Object material = payload instanceof java.util.Map ? mapper.valueToTree(payload) : payload;
-		if (material instanceof com.fasterxml.jackson.databind.JsonNode) {
-			com.fasterxml.jackson.databind.JsonNode node = (com.fasterxml.jackson.databind.JsonNode) material;
-			if (node.has("hierarchy") && node.get("hierarchy").isObject())
-				return mapper.convertValue(node.get("hierarchy"), HierarchyExporterDTO.class);
-			if (node.has("arbol") && node.get("arbol").isObject())
-				throw new ServerException(
-						"El archivo contiene un arbol; use el flujo de arbol (/configuration/tree) para sincronizar");
-			return mapper.convertValue(node, HierarchyExporterDTO.class);
-		}
-		throw new ServerException("Formato de configuracion no reconocido");
-	}*/
 
 	private CargaArchivoDTO uploadFile(String logs) throws ServerException {
 		return uploadService.uploadFileDTO(logs.getBytes(), "Entrada.txt", "import", "private");

@@ -19,15 +19,16 @@ public class HierarchyExporterDTO {
 	private List<ProcesoDTO> process;
 	private List<ProcesoEstadoDTO> states;
 	private List<ProcesoTransicionDTO> transitions;
-	private List<PropiedadDTO> properties;
-	private List<RelacionInternaDTO> relations;
 	private List<DocumentoPlantillaDTO> templates;
 	private List<DocumentoPlantillaCaracteristicaDTO> fields;
-	private List<RolAccesoDTO> roles;
 	private List<ReporteBaseDTO> reports;
-	private List<PropiedadValorDefinidoDTO> propertyTypes;
 	private List<WebServiceDTO> apis;
 
+	private List<PropiedadValorDefinidoDTO> propertyTypes;
+	private List<PropiedadDTO> properties;
+	private List<RelacionInternaDTO> relations;
+	private List<RolAccesoDTO> roles;
+	
 	public OrganizacionDTO getOrganization() {
 		return organization;
 	}

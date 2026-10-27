@@ -3,65 +3,14 @@ package d3.process.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.shared.domain.BasicFilterDTO;
+import d3.shared.domain.BasicNodoFilter;
 
 @Alias("ProcesoTransicionFilterDTO")
-public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
-
-	private String procesoNombre;
-	private Integer estadoPartidaOrden;
-	private Integer estadoLlegadaOrden;
-	private String nombre;
-	private String codigo;
-	private String proceso;
+public class ProcesoTransicionFilterDTO extends BasicNodoFilter {
+	
 	private String estadoPartida;
-	private String estadoPartidaNombre;
 	private String plantilla;
-	private String plantillaNombre;
-	private String imagen;
 	private String estadoLLegada;
-	private String estadoLlegadaNombre;
-	private String estadoLlegadaTipo;
-
-	public void setProcesoNombre(String procesoNombre) {
-		this.procesoNombre = procesoNombre;
-	}
-
-	public String getProcesoNombre() {
-		return procesoNombre;
-	}
-
-	public void setEstadoPartidaOrden(Integer estadoPartidaOrden) {
-		this.estadoPartidaOrden = estadoPartidaOrden;
-	}
-
-	public Integer getEstadoPartidaOrden() {
-		return estadoPartidaOrden;
-	}
-
-	public void setEstadoLlegadaOrden(Integer estadoLlegadaOrden) {
-		this.estadoLlegadaOrden = estadoLlegadaOrden;
-	}
-
-	public Integer getEstadoLlegadaOrden() {
-		return estadoLlegadaOrden;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setProceso(String proceso) {
-		this.proceso = proceso;
-	}
-
-	public String getProceso() {
-		return proceso;
-	}
 
 	public void setEstadoPartida(String estadoPartida) {
 		this.estadoPartida = estadoPartida;
@@ -71,38 +20,13 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
 		return estadoPartida;
 	}
 
-	public void setEstadoPartidaNombre(String estadoPartidaNombre) {
-		this.estadoPartidaNombre = estadoPartidaNombre;
-	}
-
-	public String getEstadoPartidaNombre() {
-		return estadoPartidaNombre;
-	}
-
 	public void setPlantilla(String plantilla) {
 		this.plantilla = plantilla;
 	}
 
 	public String getPlantilla() {
 		return plantilla;
-	}
-
-	public void setPlantillaNombre(String plantillaNombre) {
-		this.plantillaNombre = plantillaNombre;
-	}
-
-	public String getPlantillaNombre() {
-		return plantillaNombre;
-	}
-
-
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
-
-	public String getImagen() {
-		return imagen;
-	}
+	}	
 
 	public void setEstadoLLegada(String estadoLLegada) {
 		this.estadoLLegada = estadoLLegada;
@@ -112,29 +36,4 @@ public class ProcesoTransicionFilterDTO extends BasicFilterDTO {
 		return estadoLLegada;
 	}
 
-	public void setEstadoLlegadaNombre(String estadoLlegadaNombre) {
-		this.estadoLlegadaNombre = estadoLlegadaNombre;
-	}
-
-	public String getEstadoLlegadaNombre() {
-		return estadoLlegadaNombre;
-	}
-
-	public void setEstadoLlegadaTipo(String estadoLlegadaTipo) {
-		this.estadoLlegadaTipo = estadoLlegadaTipo;
-	}
-
-	public String getEstadoLlegadaTipo() {
-		return estadoLlegadaTipo;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
-	
 }

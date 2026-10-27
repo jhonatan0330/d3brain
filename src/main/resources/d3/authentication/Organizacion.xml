@@ -8,7 +8,6 @@
 		select
 			corg_llave as  llaveTabla
 			,corg_nombre as  nombre
-			,corg_principal as  principal
 			,corg_imagen as  imagen
 			,corg_codigo as  codigo
 			,corg_estado as estado
@@ -25,9 +24,6 @@
 			</if>
 			<if test="nombre!=null">
 				and corg_nombre = #{nombre}
-			</if>
-			<if test="principal!=null">
-				and corg_principal = #{principal}
 			</if>
 			<if test="codigo!=null">
 				and corg_codigo = #{codigo}
@@ -76,9 +72,6 @@
 		<if test="nombre!=null">
 			,corg_nombre
 		</if>
-		<if test="principal!=null">
-			,corg_principal
-		</if>
 		<if test="imagen!=null">
 			,corg_imagen
 		</if>
@@ -92,9 +85,6 @@
 			#{llaveTabla}
 		<if test="nombre!=null">
 			,#{nombre}
-		</if>
-		<if test="principal!=null">
-			,#{principal}
 		</if>
 		<if test="imagen!=null">
 			,#{imagen}
@@ -112,7 +102,6 @@
 		update organizacion_orgp
 			set
 				corg_nombre = #{nombre},
-				corg_principal = #{principal},
 				corg_imagen = #{imagen},
 				corg_codigo = #{codigo},
 				corg_estado =#{estado}

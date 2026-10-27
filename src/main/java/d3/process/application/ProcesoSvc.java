@@ -57,7 +57,7 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public ProcesoDTO actualizar(ProcesoDTO dto) throws ServerException {
-		validarMacroproceso(dto.getMacroproceso());
+		validarMacroproceso(dto.getNodoSuperior());
 		dto = super.actualizar(dto);
 		organizar(dto);
 		paramService.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
@@ -71,24 +71,6 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		organizar(dto);
 		return dto;
 	}
-
-	
-
-	/*public ProcesoDTO obtenerProcesoParaGraficar(ProcesoFilterDTO dto) throws ServerException {
-		ProcesoDTO bd = null;
-		if (dto.getLlaveTabla() != null) {
-			bd = consultaXId(dto.getLlaveTabla());
-		} else {
-			if (dto.getEstado() != null) {
-				ProcesoEstadoDTO estado = estadoService.consultaXId(dto.getEstado());
-				if (estado == null)
-					throw new ServerException("El estado enviado no se identifica");
-				bd = consultaXId(estado.getProceso());
-			}
-		}
-		bd = completarProceso(bd);
-		return bd;
-	}*/
 
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -132,9 +114,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		ProcesoEstadoDTO estadoActivo = new ProcesoEstadoDTO();
 		estadoActivo.setEstadoDocumento(SharedConstants.STATE_ACTIVE);
 		estadoActivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
-		estadoActivo.setProceso(dto.getLlaveTabla());
+		estadoActivo.setNodoSuperior(dto.getLlaveTabla());
 		estadoActivo.setNombre(dto.getNombre() + " ACTIVO");
-		estadoActivo.setAvance(1);
+		estadoActivo.setPrioridad(1);
 		estadoActivo = estadoService.guardar(estadoActivo);
 
 		PropiedadDTO propiedadModifcable = new PropiedadDTO();
@@ -148,34 +130,34 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		ProcesoEstadoDTO estadoInactivo = new ProcesoEstadoDTO();
 		estadoInactivo.setEstadoDocumento(SharedConstants.STATE_INACTIVE);
 		estadoInactivo.setTipo(ProcesoEstadoDTO.TIPO_ESTADO);
-		estadoInactivo.setAvance(2);
-		estadoInactivo.setProceso(dto.getLlaveTabla());
+		estadoInactivo.setPrioridad(2);
+		estadoInactivo.setNodoSuperior(dto.getLlaveTabla());
 		estadoInactivo.setNombre(dto.getNombre() + "INACTIVO");
 		estadoInactivo = estadoService.guardar(estadoInactivo);
 
 		ProcesoTransicionDTO inicial = new ProcesoTransicionDTO();
 		inicial.setEstadoLLegada(estadoActivo.getLlaveTabla());
 		inicial.setNombre(dto.getNombre());
-		inicial.setProceso(dto.getLlaveTabla());
+		inicial.setNodoSuperior(dto.getLlaveTabla());
 		transicionService.guardarConCodigo(inicial, dto.getCodigo(), plantillainicial);
 
 		ProcesoTransicionDTO anular = new ProcesoTransicionDTO();
 		anular.setEstadoPartida(estadoActivo.getLlaveTabla());
 		anular.setEstadoLLegada(estadoInactivo.getLlaveTabla());
 		anular.setNombre(dto.getNombre() + " - ANULAR");
-		anular.setProceso(dto.getLlaveTabla());
+		anular.setNodoSuperior(dto.getLlaveTabla());
 		transicionService.guardarConCodigo(anular, "X" + dto.getCodigo(), null);
 
 	}
 
-	private void validarMacroproceso(String macroproceso) throws ServerException {
-		if (macroproceso == null)
+	private void validarMacroproceso(String nodoSuperior) throws ServerException {
+		if (nodoSuperior == null)
 			return;
-		ProcesoDTO macro = consultaXId(macroproceso);
+		ProcesoDTO macro = consultaXId(nodoSuperior);
 		if (macro == null)
-			throw new ServerException("El macro proceso no se identifica");
+			throw new ServerException("El nodo superior no se identifica");
 		if (macro.getTipo().compareTo(ProcesoDTO.AGRUPADOR) != 0)
-			throw new ServerException("El macroproceso no es agrupador");
+			throw new ServerException("El nodo superior no es agrupador");
 	}
 
 	private void preConfigurar(ProcesoDTO dto) throws ServerException {
@@ -183,34 +165,9 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		int cantidad = contarResultados(filtroCantidad);
 		cantidad = cantidad + 1;
 		dto.setPrioridad(cantidad);
-		validarMacroproceso(dto.getMacroproceso());
+		validarMacroproceso(dto.getNodoSuperior());
 	}
 
-	/*private ProcesoDTO completarProceso(ProcesoDTO proceso) throws ServerException {
-		ProcesoEstadoFilterDTO filtroEstadoDTO = new ProcesoEstadoFilterDTO();
-		filtroEstadoDTO.setEstado(SharedConstants.STATE_ACTIVE);
-		filtroEstadoDTO.setProceso(proceso.getLlaveTabla());
-		proceso.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
-		for (ProcesoEstadoDTO iEstado : proceso.getEstados()) {
-			iEstado.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
-					iEstado.getLlaveTabla(), null, null));
-		}
-
-		ProcesoTransicionFilterDTO filtroTransicionDTO = new ProcesoTransicionFilterDTO();
-		filtroTransicionDTO.setEstado(SharedConstants.STATE_ACTIVE);
-		filtroTransicionDTO.setProceso(proceso.getLlaveTabla());
-		proceso.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
-		for (ProcesoTransicionDTO iTransicion : proceso.getTransiciones()) {
-			iTransicion.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
-					iTransicion.getLlaveTabla(), null, null));
-			if (iTransicion.getPlantilla() != null) {
-				iTransicion.getPropiedades().addAll(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
-						iTransicion.getPlantilla(), null, null));
-			}
-		}
-
-		return proceso;
-	}*/
 
 	public List<ProcesoDTO> getFullToSynchronize(List<String> process) {
 		return procesoMapper.getFullToSynchronize(process);

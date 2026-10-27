@@ -339,9 +339,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			// creo un campo con el valor unitario
 			baseValorUnitario = new DocumentoPlantillaCaracteristicaDTO();
 			baseValorUnitario.setCodigo("UNIDAD");
-			baseValorUnitario.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
+			baseValorUnitario.setTipo(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			baseValorUnitario.setNombre("UNIDAD");
-			baseValorUnitario.setOrden(3);
+			baseValorUnitario.setPrioridad(3);
 			baseValorUnitario.setLlaveTabla("***UNIDAD");
 			baseValorUnitario.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseValorUnitario.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
@@ -379,9 +379,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 			// creo un campo con el valor unitario
 			baseCantidad = new DocumentoPlantillaCaracteristicaDTO();
 			baseCantidad.setCodigo("CANTIDAD");
-			baseCantidad.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
+			baseCantidad.setTipo(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			baseCantidad.setNombre("CANTIDAD");
-			baseCantidad.setOrden(2);
+			baseCantidad.setPrioridad(2);
 			baseCantidad.setLlaveTabla("***CANTIDAD");
 			baseCantidad.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseCantidad.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
@@ -430,9 +430,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 																		// pero el campo no
 			baseTotal = new DocumentoPlantillaCaracteristicaDTO();
 			baseTotal.setCodigo("TOTAL");
-			baseTotal.setFormato(DocumentoPlantillaCaracteristicaDTO.NUMERO);
+			baseTotal.setTipo(DocumentoPlantillaCaracteristicaDTO.NUMERO);
 			baseTotal.setNombre("TOTAL");
-			baseTotal.setOrden(4);
+			baseTotal.setPrioridad(4);
 			baseTotal.setLlaveTabla("***TOTAL");
 			baseTotal.setPropiedades(new ArrayList<PropiedadDTO>());
 			baseTotal.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,
@@ -503,9 +503,9 @@ public class DetallePedidoVentaSvc extends BasicSvc<DetallePedidoVentaDTO, Detal
 	public DocumentoPlantillaCaracteristicaDTO crearCampoBaseProducto() {
 		DocumentoPlantillaCaracteristicaDTO baseProducto = new DocumentoPlantillaCaracteristicaDTO();
 		baseProducto.setCodigo("PRODUCTO");
-		baseProducto.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
+		baseProducto.setTipo(DocumentoPlantillaCaracteristicaDTO.PROCESO);
 		baseProducto.setNombre("PRODUCTO");
-		baseProducto.setOrden(1);
+		baseProducto.setPrioridad(1);
 		baseProducto.setLlaveTabla("***PRODUCTO");
 		baseProducto.setPropiedades(new ArrayList<PropiedadDTO>());
 		baseProducto.getPropiedades().add(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO, null,

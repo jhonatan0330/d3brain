@@ -105,14 +105,14 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	public String consultarProceso(String plantilla) throws ServerException {
 		ProcesoTransicionDTO filtro = consultarTransaccionInicial(plantilla);
 		if (filtro != null)
-			return filtro.getProceso();
+			return filtro.getNodoSuperior();
 		return null;
 	}
 
 	public List<ProcesoTransicionDTO> listarTransaccionesIniciales(String plantilla, String proceso) {
 		ProcesoTransicionFilterDTO filtro = new ProcesoTransicionFilterDTO();
 		filtro.setPlantilla(plantilla);
-		filtro.setProceso(proceso);
+		filtro.setNodoSuperior(proceso);
 		return procesoTransicionMapper.listarTransaccionInicial(filtro);
 	}
 
@@ -132,7 +132,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	private void validarTransicion(ProcesoTransicionDTO dto) throws ServerException {
 		if (dto == null)
 			throw new ServerException("Transicion nula");
-		if (dto.getProceso() == null)
+		if (dto.getNodoSuperior() == null)
 			throw new ServerException("Transicion sin maquina de estados");
 
 		// YA no necesito estoi porque la llegada es obligatoria
@@ -143,7 +143,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		// dto.setEstadoLLegada(dto.getEstadoPartida());//Esto es para evitar un error
 		// que no encuentra estado de llegada
 		ProcesoEstadoDTO estado = estadoService.consultaXId(dto.getEstadoLLegada());
-		if (estado.getProceso().compareTo(dto.getProceso()) != 0)
+		if (estado.getNodoSuperior().compareTo(dto.getNodoSuperior()) != 0)
 			throw new ServerException("La plantilla del estado de llegada debe ser de la misma maquina de estados");
 		if (estado.getTipo() == null)
 			throw new ServerException("La transicion no tiene tipo");
@@ -163,7 +163,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 		}
 		if (dto.getEstadoPartida() != null) {
 			estado = estadoService.consultaXId(dto.getEstadoPartida());
-			if (estado.getProceso().compareTo(dto.getProceso()) != 0)
+			if (estado.getNodoSuperior().compareTo(dto.getNodoSuperior()) != 0)
 				throw new ServerException("La plantilla del estado de partida debe ser de la misma maquina de estados");
 			if (dto.getPlantilla() == null && estado.getTipo().compareTo(ProcesoEstadoDTO.TIPO_ESTADO) == 0)
 				throw new ServerException("Transicion sin formulario");
@@ -189,17 +189,17 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 								|| dto.getLlaveTabla().compareTo(iTransicion.getLlaveTabla()) != 0)
 							throw new ServerException(
 									"Esta plantilla esta siendo usada como inicio de un proceso diferente. "
-											+ iTransicion.getProcesoNombre() + "\n Nombre : "
+											+ iTransicion.getNodoSuperiorNombre() + "\n Nombre : "
 											+ iTransicion.getNombre());
 					}
 				}
 			}
 			//
 			if (dto.getLlaveTabla() == null) {
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_ACTIVE,
+				organizarEstadosNuevos(dto.getNodoSuperior(), dto.getPlantilla(), SharedConstants.STATE_ACTIVE,
 						dto.getEstadoLLegada());
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_INACTIVE, null);
-				organizarEstadosNuevos(dto.getProceso(), dto.getPlantilla(), SharedConstants.STATE_COMPLETE, null);
+				organizarEstadosNuevos(dto.getNodoSuperior(), dto.getPlantilla(), SharedConstants.STATE_INACTIVE, null);
+				organizarEstadosNuevos(dto.getNodoSuperior(), dto.getPlantilla(), SharedConstants.STATE_COMPLETE, null);
 			}
 			// dto.setDocumentador(true);
 		}
@@ -220,7 +220,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 				// proceso
 				ProcesoEstadoFilterDTO estadoFiltro = new ProcesoEstadoFilterDTO();
 				estadoFiltro.setEstado(SharedConstants.STATE_ACTIVE);
-				estadoFiltro.setProceso(proceso);
+				estadoFiltro.setNodoSuperior(proceso);
 				estadoFiltro.setEstadoDocumento(estadoBase);
 				List<ProcesoEstadoDTO> estados = estadoService.listarConsulta(estadoFiltro);
 				if (estados == null || estados.isEmpty())
@@ -238,7 +238,7 @@ public class ProcesoTransicionSvc extends BasicSvc<ProcesoTransicionDTO, Proceso
 	private String crearPlantilla(ProcesoTransicionDTO dto, String codigoFormulario) throws ServerException {
 		DocumentoPlantillaDTO plantilla = new DocumentoPlantillaDTO();
 
-		plantilla.setProceso(dto.getProceso());
+		plantilla.setProceso(dto.getNodoSuperior());
 		plantilla.setCodigo(codigoFormulario);
 		plantilla.setNombre(dto.getNombre());
 		// Esta es la estrategia para que se cree listable el formularios

@@ -60,7 +60,7 @@ public class PropertyNavigateIntoRelationsToFindFieldsService {
 						// En caso que sea multiple se debe evaluar todos los expedientes internos
 						if (iField.getCampoDTO() != null
 								&& DocumentoPlantillaCaracteristicaDTO.PROCESO
-										.compareTo(iField.getCampoDTO().getFormato()) == 0
+										.compareTo(iField.getCampoDTO().getTipo()) == 0
 								&& Propiedades.obtenerValor(iField.getCampoDTO(), Propiedades.MULTIPLE) != null) {
 							DocumentoRelacionExpedienteFilterDTO relacionExpedienteFilter = new DocumentoRelacionExpedienteFilterDTO();
 							relacionExpedienteFilter.setCampoMaestro(iField.getLlaveTabla());

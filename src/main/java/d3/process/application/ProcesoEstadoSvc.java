@@ -89,15 +89,15 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	public ProcesoEstadoDTO guardar(ProcesoEstadoDTO dto) throws ServerException {
 		colocarSignoPregunta(dto);
 		ProcesoEstadoFilterDTO filtroCantidad = new ProcesoEstadoFilterDTO();
-		filtroCantidad.setProceso(dto.getProceso());
+		filtroCantidad.setNodoSuperior(dto.getNodoSuperior());
 		filtroCantidad.setEstado(SharedConstants.STATE_ACTIVE);
 		int cantidadCampos = contarResultados(filtroCantidad);
-		if (dto.getAvance() != null && dto.getAvance().compareTo(0) != 0) {
-			cantidadCampos = dto.getAvance();
+		if (dto.getPrioridad() != null && dto.getPrioridad().compareTo(0) != 0) {
+			cantidadCampos = dto.getPrioridad();
 		} else {
 			cantidadCampos = cantidadCampos + 1;
 		}
-		dto.setAvance(cantidadCampos);
+		dto.setPrioridad(cantidadCampos);
 		ProcesoEstadoDTO result = super.guardar(dto);
 		// Esto hace fallar el sincronizador
 		/*
@@ -113,7 +113,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		// Consulto todas las caracteristicas del documento
 		ProcesoEstadoFilterDTO _filtro = new ProcesoEstadoFilterDTO();
 		_filtro.setEstado(SharedConstants.STATE_ACTIVE);
-		_filtro.setProceso(pDTO.getProceso());
+		_filtro.setNodoSuperior(pDTO.getNodoSuperior());
 		_filtro.setPaginacionRegistroFinal(500);
 		List<ProcesoEstadoDTO> _estados = listarConsulta(_filtro);
 		if (_estados != null && !_estados.isEmpty()) {
@@ -122,15 +122,15 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 				if (_iEstado.getLlaveTabla().compareTo(pDTO.getLlaveTabla()) != 0) {
 					// asumo que hay dos iguales entonces debo saltar un espacio y el que modifique
 					// lo dejo quieto
-					if (_iEstado.getAvance().compareTo(pDTO.getAvance()) == 0)
+					if (_iEstado.getPrioridad().compareTo(pDTO.getPrioridad()) == 0)
 						cont++;
-					if (_iEstado.getAvance() != cont) {
-						_iEstado.setAvance(cont);
+					if (_iEstado.getPrioridad() != cont) {
+						_iEstado.setPrioridad(cont);
 						super.actualizar(_iEstado);
 					}
 					cont++;
 				} else {
-					if (cont == pDTO.getAvance())
+					if (cont == pDTO.getPrioridad())
 						cont++;
 				}
 			}
@@ -177,7 +177,7 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		} catch (Exception e) {
 			ProcesoEstadoDTO pes = consultaXId(propiedad.getCampo());
 			throw new ServerException(e.getMessage(),
-					"Proceso : " + pes.getProcesoNombre() + "  Estado :" + pes.getNombre());
+					"Proceso : " + pes.getNodoSuperiorNombre() + "  Estado :" + pes.getNombre());
 		}
 		// En Fiel a veces no me retornaba valor porque el campo es opcional
 		return responsable;

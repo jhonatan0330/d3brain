@@ -58,7 +58,7 @@ public class ApiGetFieldDataService {
 				dependent.setCampo(fieldDependent.getLlaveTabla());
 				dependent.setCampoDTO(fieldDependent);
 				ApiCommon.chooseValueToField(iPrecondition, dependent, productoService, detallePedidoVentaService);
-				if (fieldDependent.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+				if (fieldDependent.getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 					if (ApiCommon.isUUID(iPrecondition.getValue())) {
 						dependent.setValorOpcion(iPrecondition.getValue());
 					} else {

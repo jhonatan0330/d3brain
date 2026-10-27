@@ -47,7 +47,7 @@ public class SynchronizeApiService {
 						WebServiceDTO newType = new WebServiceDTO();
 						newType.setCodigo(remote.getCodigo());
 						newType.setNombre(remote.getNombre());
-						newType.setProceso(remote.getProceso());
+						newType.setNodoSuperior(remote.getNodoSuperior());
 						newType = apisService.save(newType);
 						log.info("NEW API " + remote.getCodigo() + " - " + remote.getNombre());
 					}

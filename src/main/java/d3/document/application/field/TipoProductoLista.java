@@ -43,7 +43,7 @@ public class TipoProductoLista {
 			throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getProductosExclusivos() == null || pCampo.getProductosExclusivos().size() == 0))
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 					+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 					+ pCampo.getCampoDTO().getCodigo() + ")");
 		List<UsuarioRolProductoDTO> productosActualesUsuario = null;

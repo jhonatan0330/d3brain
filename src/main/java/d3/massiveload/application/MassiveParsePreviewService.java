@@ -111,7 +111,7 @@ public class MassiveParsePreviewService {
 		DocumentoPlantillaCaracteristicaDTO base = campo.getCampoDTO();
 		if (base == null)
 			return;
-		switch (base.getFormato()) {
+		switch (base.getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.FECHA:
 			prepararFecha(campo, base);
 			break;
@@ -179,8 +179,7 @@ public class MassiveParsePreviewService {
 				trunc.set(Calendar.MILLISECOND, 0);
 				fecha = trunc.getTime();
 			}
-			String textoNormalizado = conHora ? D3Utils.formatDateTime(fecha)
-					: D3Utils.formatDate(fecha);
+			String textoNormalizado = conHora ? D3Utils.formatDateTime(fecha) : D3Utils.formatDate(fecha);
 			campo.setValorText(textoNormalizado);
 		}
 		if (fecha != null) {
@@ -201,7 +200,6 @@ public class MassiveParsePreviewService {
 			return false;
 		}
 	}
-
 
 	private void prepararProceso(PedidoVentaCaracteristicaDTO campo, DocumentoPlantillaCaracteristicaDTO base)
 			throws ServerException {

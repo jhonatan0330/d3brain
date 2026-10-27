@@ -157,7 +157,7 @@ public class CallDocumentListFromFieldProcess {
 						String msgException = e.getMessage() + " Campo :" + pCampo.getCampoDTO().getNombre();
 						if (e.getMessage().compareTo("Por favor revise porque el campo no tiene plantilla") == 0)
 							msgException = "Por favor revise porque el campo " + pCampo.getCampoDTO().getNombre()
-									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " no tiene configurada una fuente de datos que permita buscar datos por el codigo "
 									+ pCampo.getFiltroParametro();
 						throw new ServerException(msgException, e.getOrigen());
@@ -169,7 +169,7 @@ public class CallDocumentListFromFieldProcess {
 								funcionConsulta, campoValor);
 					} catch (ServerException ex) {
 						throw new ServerException("En el campo " + pBase.getNombre() + " de la plantilla "
-								+ pBase.getPlantillaNombre() + " se muestra este mensaje: " + ex.getMessage());
+								+ pBase.getNodoSuperiorNombre() + " se muestra este mensaje: " + ex.getMessage());
 					}
 
 				}

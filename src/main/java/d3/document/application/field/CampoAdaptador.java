@@ -57,7 +57,7 @@ public class CampoAdaptador {
 	public void cargarConsultaCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
-		switch (pCampo.getCampoDTO().getFormato()) {
+		switch (pCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
 			tipoConfiguracion.cargarConsultaCampo(pCampo);
 			break;
@@ -96,7 +96,7 @@ public class CampoAdaptador {
 			throws ServerException {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
-		switch (pCampo.getCampoDTO().getFormato()) {
+		switch (pCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO: {
 			tipoArchivo.validarPrepararCampo(pCampo);
 			break;
@@ -155,7 +155,7 @@ public class CampoAdaptador {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado = null;
-		switch (pCampo.getCampoDTO().getFormato()) {
+		switch (pCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO: {
 			vResultado = tipoArchivo.guardarCampo(pCampo);
 			break;
@@ -230,7 +230,7 @@ public class CampoAdaptador {
 		pCampo.setCampoDTO(fieldService.consultaXId(pCampo.getCampo()));
 		pCampo.setCampoDTO(fieldService.cargarComplementos(pCampo.getCampoDTO()));
 		PedidoVentaCaracteristicaFilterDTO vResultado = null;
-		switch (pCampo.getCampoDTO().getFormato()) {
+		switch (pCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.CONFIGURACION: {
 			vResultado = tipoConfiguracion.consultarDatosBase(pCampo);
 			break;
@@ -287,7 +287,7 @@ public class CampoAdaptador {
 		if (pCampo.getCampoDTO() == null)
 			throw new ServerException("Valida la informacion no se encuentra la caracteristica base");
 		PedidoVentaCaracteristicaDTO vResultado = null;
-		switch (pCampo.getCampoDTO().getFormato()) {
+		switch (pCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.PRODUCTO: {
 			vResultado = tipoDetallePedido.inactivar(pCampo);
 			break;

@@ -47,12 +47,12 @@ public class SynchronizeTemplateFieldService {
 								"COMPARE NOT EXIST FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
 					} else {
 						DocumentoPlantillaCaracteristicaDTO newField = new DocumentoPlantillaCaracteristicaDTO();
-						newField.setPlantilla(localTemplate);
+						newField.setNodoSuperior(localTemplate);
 						newField.setCodigo(remote.getCodigo());
 						newField.setImagen(remote.getImagen());
-						newField.setFormato(remote.getFormato());
+						newField.setTipo(remote.getTipo());
 						newField.setNombre(remote.getNombre());
-						newField.setOrden(remote.getOrden());
+						newField.setPrioridad(remote.getPrioridad());
 						try {
 							local = fieldService.save(newField);
 							log.info("NEW FIELD " + remote.getNombre() + " (Cod: " + remote.getCodigo() + ")");
@@ -113,7 +113,7 @@ public class SynchronizeTemplateFieldService {
 			List<DocumentoPlantillaCaracteristicaDTO> fullToSynchronize, String template) {
 		if (fullToSynchronize == null || fullToSynchronize.isEmpty())
 			return null;
-		return fullToSynchronize.stream().filter(field -> (field.getPlantilla().compareTo(template) == 0))
+		return fullToSynchronize.stream().filter(field -> (field.getNodoSuperior().compareTo(template) == 0))
 				.collect(Collectors.toList());
 	}
 }

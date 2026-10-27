@@ -12,7 +12,5 @@ import d3.process.domain.ProcesoFilterDTO;
 @D3SqlConnMapper(value = "ProcesoMapper")
 public interface ProcesoMapper extends IBasicMapper<ProcesoDTO, ProcesoFilterDTO> {
 
-	List<ProcesoDTO> noUsoSoloQuitoErrorList();
-
 	List<ProcesoDTO> getFullToSynchronize(@Param("process") List<String> process);
 }

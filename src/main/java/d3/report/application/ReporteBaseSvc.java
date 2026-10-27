@@ -160,7 +160,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	public List<ReporteBaseDTO> listarDisponiblesDocumento(String documento) throws ServerException {
 		ReporteBaseFilterDTO filtro = new ReporteBaseFilterDTO();
 		filtro.setEstado(SharedConstants.STATE_ACTIVE);
-		filtro.setPlantilla(documento);
+		filtro.setNodoSuperior(documento);
 		List<ReporteBaseDTO> result = listarConsulta(filtro);
 		for (ReporteBaseDTO reporteBaseDTO : result) {
 			reporteBaseDTO.setPropiedades(cachePropertyService.obtenerPropiedades(PropiedadValorDefinidoDTO.REPORTE,
@@ -270,7 +270,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 	public ReporteBaseDTO getByCode(String code, String template) throws ServerException {
 		ReporteBaseFilterDTO filter = new ReporteBaseFilterDTO();
 		filter.setCodigo(code);
-		filter.setPlantilla(template);
+		filter.setNodoSuperior(template);
 		filter.setEstado(SharedConstants.STATE_ACTIVE);
 		return consultaUnica(filter);
 	}

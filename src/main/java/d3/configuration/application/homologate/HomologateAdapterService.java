@@ -80,12 +80,12 @@ public class HomologateAdapterService {
 			break;
 		case Propiedades.PLANTILLA_TIPO_REPORTE:
 			ReporteBaseFilterDTO reporteFilter = new ReporteBaseFilterDTO();
-			reporteFilter.setPlantilla(plantillaPrincipal.getLlaveTabla());
+			reporteFilter.setNodoSuperior(plantillaPrincipal.getLlaveTabla());
 			if (reporteService.contarResultados(reporteFilter) == 0) {
 				ReporteBaseDTO reporte = new ReporteBaseDTO();
 				reporte.setCodigo(plantillaPrincipal.getCodigo());
 				reporte.setNombre(plantillaPrincipal.getNombre());
-				reporte.setPlantilla(plantillaPrincipal.getLlaveTabla());
+				reporte.setNodoSuperior(plantillaPrincipal.getLlaveTabla());
 				reporte = reporteService.guardar(reporte);
 				propertyService.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.REPORTE,
 						reporte.getLlaveTabla(), Propiedades.REP_AUTOPRINT, "1"));
@@ -132,7 +132,7 @@ public class HomologateAdapterService {
 		List<DocumentoPlantillaCaracteristicaDTO> fields = campoService.listarCamposPlantilla(templateId);
 		for (DocumentoPlantillaCaracteristicaDTO iField : fields) {
 
-			switch (iField.getFormato()) {
+			switch (iField.getTipo()) {
 			case DocumentoPlantillaCaracteristicaDTO.FECHA: {
 				result = result
 						+ "\n	,(select cp.dpvc_valorfecha from campo_documento cp where cp.cdrc_documento = d.cpdv_llave and cp.cdpf_codigo = '"

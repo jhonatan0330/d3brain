@@ -190,10 +190,10 @@ public class TipoConfiguracion {
 				if (isUpdateAutomatic) {
 					CallDocumentCommons.addMessageError(pCampo.getPrincipal(),
 							"Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-									+ pCampo.getCampoDTO().getPlantillaNombre());
+									+ pCampo.getCampoDTO().getNodoSuperiorNombre());
 				} else {
 					throw new ServerException("Es necesario registrar el campo " + pCampo.getCampoDTO().getNombre()
-							+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre());
+							+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 				}
 
 			} else {
@@ -242,7 +242,7 @@ public class TipoConfiguracion {
 				}
 				if (option == null)
 					throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-							+ pCampo.getCampoDTO().getPlantillaNombre() + " No se identifico la opcion a seleccionar "
+							+ pCampo.getCampoDTO().getNodoSuperiorNombre() + " No se identifico la opcion a seleccionar "
 							+ pCampo.getValorOpcion());
 				// Ne bbx teniamos un campo de mas de 32 caracteres, no podia quitar el valos
 				// opcion asi que lo restringui

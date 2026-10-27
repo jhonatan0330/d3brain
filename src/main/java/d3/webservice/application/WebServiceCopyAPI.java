@@ -44,7 +44,7 @@ public class WebServiceCopyAPI {
 		WebServiceDTO newAPi = new WebServiceDTO();
 		newAPi.setCodigo(service.getCodigo() + "COPY");
 		newAPi.setNombre(service.getNombre() + "COPY");
-		newAPi.setProceso(service.getProceso());
+		newAPi.setNodoSuperior(service.getNodoSuperior());
 
 		newAPi = webServiceSvc.save(newAPi);
 		if (service.getPropiedades() == null)

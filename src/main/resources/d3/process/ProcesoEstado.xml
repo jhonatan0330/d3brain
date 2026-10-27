@@ -9,11 +9,11 @@
 			cpes_llave as  llaveTabla
 			,cpes_tipo as  tipo
 			,cpes_estadodocumento as  estadoDocumento
-			,npes_avance as  avance
+			,npes_avance as  prioridad
 			,cpes_nombre as  nombre
 			,cpes_codigo as  codigo
-			,cpes_proceso as  proceso
-			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  procesoNombre
+			,cpes_proceso as  nodoSuperior
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  nodoSuperiorNombre
 			,cpes_estado as estado
 		from procesoestado_pesp a
 	</sql>
@@ -38,8 +38,8 @@
 			<if test="codigo!=null">
 				and cpes_codigo = #{codigo}
 			</if>
-			<if test="proceso!=null">
-				and cpes_proceso = #{proceso}
+			<if test="nodoSuperior!=null">
+				and cpes_proceso = #{nodoSuperior}
 			</if>
 			<if test="filtroParametro!=null">
 				and (upper(cpes_nombre) like upper('%' || #{filtroParametro} || '%'))
@@ -88,7 +88,7 @@
 		<if test="estadoDocumento!=null">
 			,cpes_estadodocumento
 		</if>
-		<if test="avance!=null">
+		<if test="prioridad!=null">
 			,npes_avance
 		</if>
 		<if test="nombre!=null">
@@ -97,7 +97,7 @@
 		<if test="codigo!=null">
 			,cpes_codigo
 		</if>
-		<if test="proceso!=null">
+		<if test="nodoSuperior!=null">
 			,cpes_proceso
 		</if>
 		<if test="estado!=null">
@@ -111,8 +111,8 @@
 		<if test="estadoDocumento!=null">
 			,#{estadoDocumento}
 		</if>
-		<if test="avance!=null">
-			,#{avance}
+		<if test="prioridad!=null">
+			,#{prioridad}
 		</if>
 		<if test="nombre!=null">
 			,#{nombre}
@@ -120,8 +120,8 @@
 		<if test="codigo!=null">
 			,#{codigo}
 		</if>
-		<if test="proceso!=null">
-			,#{proceso}
+		<if test="nodoSuperior!=null">
+			,#{nodoSuperior}
 		</if>
 		<if test="estado!=null">
 			,#{estado}
@@ -134,42 +134,14 @@
 			set
 				cpes_tipo = #{tipo},
 				cpes_estadodocumento = #{estadoDocumento},
-				npes_avance = #{avance},
+				npes_avance = #{prioridad},
 				cpes_nombre = #{nombre},
 				cpes_codigo = #{codigo},
-				cpes_proceso = #{proceso},
+				cpes_proceso = #{nodoSuperior},
 				cpes_estado =#{estado}
 		<include refid="whereProcesoEstadoPrimaryKeyFragment" />
 	</select>
-	
-	<sql id="selectSimpleProcesoEstadoFragment">
-		select
-			cpes_llave as  llaveTabla
-			,cpes_tipo as  tipo
-			,cpes_estadodocumento as  estadoDocumento
-			,npes_avance as  avance
-			,cpes_nombre as  nombre
-			,cpes_codigo as  codigo
-			,cpes_proceso as  proceso
-			,cpes_estado as estado
-		from procesoestado_pesp a
-	</sql>
-	
-	<select id="consultarSimple" resultType="ProcesoEstadoDTO">
-		<include refid="selectSimpleProcesoEstadoFragment" />
-		<include refid="whereProcesoEstadoFragment" />
-	</select>
-	
-	<select id="listarSimple" resultType="ProcesoEstadoDTO">
-		<include refid="selectSimpleProcesoEstadoFragment" />
-		<include refid="whereProcesoEstadoFragment" />
-		order by npes_avance 
-		<include refid="paginationProcesoEstadoFragment" />
-	</select>
-	
 
-
-<!--// BEGIN region script-->
 	<update id="actualizarEstados" parameterType="ProcesoEstadoDTO" >
 		update pedidoventa_pdvp set cpdv_estado = #{estadoDocumento} where cpdv_estadoexpediente = #{llaveTabla}
 	</update >
@@ -184,19 +156,17 @@
 			cpes_llave as  llaveTabla
 			,cpes_tipo as  tipo
 			,cpes_estadodocumento as  estadoDocumento
-			,npes_avance as  avance
+			,npes_avance as  prioridad
 			,cpes_nombre as  nombre
 			,cpes_codigo as  codigo
-			,cpes_proceso as  proceso
-			,(select cprc_nombre from proceso_prcp where cprc_llave = cpes_proceso) as  procesoNombre
+			,cpes_proceso as  nodoSuperior
+			,cprc_nombre  as  nodoSuperiorNombre
 		from procesoestado_pesp a
 		inner join proceso_prcp on (cprc_llave =cpes_proceso)
 		where cpes_estado = 'A' and cprc_estado = 'A'
 		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by procesoNombre
+		order by nodoSuperiorNombre
 	</select>
 	
-	
-<!--// END region script-->
 
 </mapper>

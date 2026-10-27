@@ -82,7 +82,7 @@ public class SynchronizeProcessService {
 
 	private void synchronizeMacroprocessField(List<ProcesoDTO> processRemote) throws ServerException {
 		for (ProcesoDTO remote : processRemote) {
-			if (remote.getMacroproceso() != null) {
+			if (remote.getNodoSuperior() != null) {
 				ProcesoFilterDTO filter = new ProcesoFilterDTO();
 				filter.setCodigo(remote.getCodigo());
 				filter.setEstado(SharedConstants.STATE_ACTIVE);
@@ -94,7 +94,7 @@ public class SynchronizeProcessService {
 							+ remote.getCodigo() + " esta duplicado");
 				}
 				if (db != null) {
-					db.setMacroproceso(remote.getMacroproceso());
+					db.setNodoSuperior(remote.getNodoSuperior());
 					processService.update(db);
 				}
 			}
@@ -111,8 +111,8 @@ public class SynchronizeProcessService {
 
 	private void changeMacroProcesoField(List<ProcesoDTO> processRemote, String remote, String local) {
 		for (ProcesoDTO remoteProcess : processRemote) {
-			if (remoteProcess.getMacroproceso() != null && remoteProcess.getMacroproceso().compareTo(remote) == 0) {
-				remoteProcess.setMacroproceso(local);
+			if (remoteProcess.getNodoSuperior() != null && remoteProcess.getNodoSuperior().compareTo(remote) == 0) {
+				remoteProcess.setNodoSuperior(local);
 			}
 		}
 	}
@@ -121,8 +121,8 @@ public class SynchronizeProcessService {
 		if (array == null)
 			return;
 		for (ProcesoEstadoDTO remoteProcess : array) {
-			if (remoteProcess.getProceso() != null && remoteProcess.getProceso().compareTo(remote) == 0) {
-				remoteProcess.setProceso(local);
+			if (remoteProcess.getNodoSuperior() != null && remoteProcess.getNodoSuperior().compareTo(remote) == 0) {
+				remoteProcess.setNodoSuperior(local);
 			}
 		}
 	}
@@ -131,8 +131,8 @@ public class SynchronizeProcessService {
 		if (array == null)
 			return;
 		for (ProcesoTransicionDTO remoteProcess : array) {
-			if (remoteProcess.getProceso() != null && remoteProcess.getProceso().compareTo(remote) == 0) {
-				remoteProcess.setProceso(local);
+			if (remoteProcess.getNodoSuperior() != null && remoteProcess.getNodoSuperior().compareTo(remote) == 0) {
+				remoteProcess.setNodoSuperior(local);
 			}
 		}
 	}

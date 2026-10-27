@@ -75,15 +75,17 @@ public class ExportConfigurationFileService {
 		SessionContext.getCurrentUser();
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
-		hierarchy.setApis(apiService.getFullToSynchronize(null));
-		hierarchy.setOrganization(organizationService.obtenerPrincipal());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
+		hierarchy.setRoles(rolService.getFullToSynchronize(null));
+		
+		
+		hierarchy.setOrganization(organizationService.obtenerPrincipal());
+		hierarchy.setApis(apiService.getFullToSynchronize(null));
 		hierarchy.setProcess(procesoService.getFullToSynchronize(null));
 		hierarchy.setStates(stateService.getFullToSynchronize(null));
 		hierarchy.setTransitions(transitionService.getFullToSynchronize(null));
 		hierarchy.setTemplates(templateService.getFullToSynchronize(null));
-		hierarchy.setRoles(rolService.getFullToSynchronize(null));
 		hierarchy.setReports(reportService.getFullToSynchronize(null));
 		hierarchy.setFields(fieldService.getFullToSynchronize(null));
 
@@ -109,14 +111,17 @@ public class ExportConfigurationFileService {
 		if (processToInclude.isEmpty())
 			throw new ServerException("No se identifica un modulo con el codigos elegidos ");
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
-		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
+		
+		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
+		hierarchy.setRoles(rolService.getFullToSynchronize(processToInclude));
+		
+		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
 		hierarchy.setProcess(procesoService.getFullToSynchronize(processToInclude));
 		hierarchy.setStates(stateService.getFullToSynchronize(processToInclude));
 		hierarchy.setTransitions(transitionService.getFullToSynchronize(processToInclude));
 		hierarchy.setTemplates(templateService.getFullToSynchronize(processToInclude));
-		hierarchy.setRoles(rolService.getFullToSynchronize(processToInclude));
 		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
 		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
 
@@ -137,48 +142,11 @@ public class ExportConfigurationFileService {
 		}
 	}
 
-
-	/*
-	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy, List<String> modulos) throws ServerException {
-		d3.configuration.domain.ConfigurationExportDTO wrapper = new d3.configuration.domain.ConfigurationExportDTO();
-		wrapper.setHierarchy(hierarchy);
-		wrapper.setFechaExport(new java.util.Date());
-		try {
-			wrapper.setTenantOrigen(SessionContext.getCurrentUser());
-		} catch (Exception e) {
-			wrapper.setTenantOrigen(null);
-		}
-		wrapper.setModulos(modulos);
-		return uploadService.uploadFileDTO(convert(wrapper), nombreArchivo(modulos), "export", "private");
-	}
-
-	private String nombreArchivo(List<String> modulos) {
-		String base = modulos == null || modulos.isEmpty() ? "Configuracion" : "Configuracion-Modulos";
-		String tenant = null;
-		try {
-			tenant = SessionContext.getCurrentUser();
-		} catch (Exception e) {
-			tenant = null;
-		}
-		java.text.SimpleDateFormat formato = new java.text.SimpleDateFormat("yyyyMMdd-HHmm");
-		return base + "-" + (tenant != null ? tenant : "tenant") + "-" + formato.format(new java.util.Date())
-				+ ".json";
-	}
-
-	private byte[] convert(Object payload) throws ServerException {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsBytes(payload);
-		} catch (JsonProcessingException e) {
-			throw new ServerException(e.getMessage());
-		}
-	}*/
-
 	private List<String> getProcessFromMacro(String parentProcess) throws ServerException {
 		List<String> processToInclude = new ArrayList<>();
 		ProcesoFilterDTO filterProcess = new ProcesoFilterDTO();
 		filterProcess.setEstado(SharedConstants.STATE_ACTIVE);
-		filterProcess.setMacroproceso(parentProcess);
+		filterProcess.setNodoSuperior(parentProcess);
 		List<ProcesoDTO> processModule = procesoService.listarConsulta(filterProcess);
 		if (processModule != null && !processModule.isEmpty()) {
 			for (ProcesoDTO procesoDTO : processModule) {

@@ -98,7 +98,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	public DocumentoPlantillaDTO actualizar(DocumentoPlantillaDTO dto) throws ServerException {
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		if(dto.getTipo().equals(DocumentoPlantillaDTO.PRINCIPAL) || dto.getTipo().equals(DocumentoPlantillaDTO.ROL) || dto.getTipo().equals(DocumentoPlantillaDTO.REPORTE))
-			dto.setPadre(dto.getProceso());
+			dto.setNodoSuperior(dto.getProceso());
 		dto = super.actualizar(dto);
 		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		return dto;
@@ -114,7 +114,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		if (pUsados != null && !pUsados.isEmpty()) {
 			String mensaje = "La plantilla se esta usando en las siguientes transiciones : \n";
 			for (ProcesoTransicionDTO iUsado : pUsados) {
-				mensaje = mensaje + "Proceso: " + iUsado.getProcesoNombre() + "  -> Transicion: " + iUsado.getNombre()
+				mensaje = mensaje + "Proceso: " + iUsado.getNodoSuperiorNombre() + "  -> Transicion: " + iUsado.getNombre()
 						+ "\n";
 			}
 			throw new ServerException(mensaje);
@@ -147,7 +147,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 		for (DocumentoPlantillaCaracteristicaDTO campo : dto.getCaracteristicas()) {
 			order++;
-			campo.setOrden(order);
+			campo.setPrioridad(order);
 			if (campo.getImagen() == null) {
 				String imagenCampo = Propiedades.obtenerValor(campo, Propiedades.PLANTILLA_AUXILIAR);
 				if (!imagenCampo.isEmpty()) {
@@ -179,10 +179,10 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		for (DocumentoPlantillaCaracteristicaDTO iCampo : pFieldsBD) {
 			DocumentoPlantillaCaracteristicaDTO newCampo = new DocumentoPlantillaCaracteristicaDTO();
 			newCampo.setCodigo(iCampo.getCodigo());
-			newCampo.setFormato(iCampo.getFormato());
+			newCampo.setTipo(iCampo.getTipo());
 			newCampo.setNombre(iCampo.getNombre());
-			newCampo.setOrden(iCampo.getOrden());
-			newCampo.setPlantilla(copy.getLlaveTabla());
+			newCampo.setPrioridad(iCampo.getPrioridad());
+			newCampo.setNodoSuperior(copy.getLlaveTabla());
 			pFieldsCopy.add(caracteristicaService.guardar(newCampo));
 		}
 		// Primero las propiedades de rol para evitar duplicar
@@ -212,7 +212,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			// newReporte.setJasperText(iReporte.getJasperText());
 			String newName = copy.getCodigo() + "-" + iReporte.getNombre();
 			newReporte.setNombre(newName);
-			newReporte.setPlantilla(copy.getLlaveTabla());
+			newReporte.setNodoSuperior(copy.getLlaveTabla());
 			newReporte = reporteService.guardar(newReporte);
 			configuracionSvc.copiarPropiedades(iReporte.getPropiedades(), newReporte.getLlaveTabla());
 		}
@@ -327,8 +327,8 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		if (dto.getTipo() == null)
 			dto.setTipo(DocumentoPlantillaDTO.PRINCIPAL);
-		if (dto.getPadre() == null)
-			dto.setPadre(dto.getProceso());
+		if (dto.getNodoSuperior() == null)
+			dto.setNodoSuperior(dto.getProceso());
 	}
 
 	public void actualizarTipoPadre(String plantillaId, String tipo, String padre) throws ServerException {
@@ -415,9 +415,9 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		DocumentoPlantillaCaracteristicaDTO campoProceso = new DocumentoPlantillaCaracteristicaDTO();
 		campoProceso.setCodigo("DOCUMENTO_DIFF");
 		campoProceso.setNombre("DOCUMENTO");
-		campoProceso.setFormato(DocumentoPlantillaCaracteristicaDTO.PROCESO);
-		campoProceso.setOrden(1);
-		campoProceso.setPlantilla(templateUpdate.getLlaveTabla());
+		campoProceso.setTipo(DocumentoPlantillaCaracteristicaDTO.PROCESO);
+		campoProceso.setPrioridad(1);
+		campoProceso.setNodoSuperior(templateUpdate.getLlaveTabla());
 		
 		campoProceso = caracteristicaService.guardar(campoProceso);
 		configuracionSvc.guardar(Propiedades.crearParametro(PropiedadValorDefinidoDTO.CAMPO,
@@ -513,6 +513,11 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 			List<PropiedadDTO> todasPropiedadesEstados = cacheService
 					.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.ESTADO, null, null, _user);
 			todasPropiedadesEstados = configuracionSvc.clearResponseProperties(todasPropiedadesEstados);
+			
+			List<PropiedadDTO> todasPropiedadesTransiciones = cacheService
+					.obtenerPropiedadesSinEntidad(PropiedadValorDefinidoDTO.TRANSICION, null, null, _user);
+			todasPropiedadesTransiciones = configuracionSvc.clearResponseProperties(todasPropiedadesTransiciones);
+			
 			List<PropiedadDTO> todasPropiedadesReportes = cacheService.obtenerPropiedadesSinEntidad(
 					PropiedadValorDefinidoDTO.REPORTE, null, Propiedades.REP_VISIBLE_STATE, _user);
 			todasPropiedadesReportes = configuracionSvc.clearResponseProperties(todasPropiedadesReportes);
@@ -564,14 +569,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 							for (ProcesoTransicionDTO procesoTransicionDTO : transicionesIniciales) {
 								if (procesoTransicionDTO.getPlantilla()
 										.compareTo(iplantillaPermitida.getLlaveTabla()) == 0) {
-									procesoInicial = procesoTransicionDTO.getProceso();
+									procesoInicial = procesoTransicionDTO.getNodoSuperior();
 									break;
 								}
 							}
 						}
 						if (procesoInicial != null) {
 							statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
-									procesoInicial);
+									procesoInicial, todasPropiedadesTransiciones);
 							PropiedadDTO propertyTemplateStartProcess = new PropiedadDTO();
 							propertyTemplateStartProcess.setKey(Propiedades.PLANTILLA_INICIA_PROCESO);
 							iplantillaPermitida.getPropiedades().add(propertyTemplateStartProcess);
@@ -583,7 +588,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 						// false));
 						if (_reports != null && !_reports.isEmpty()) {
 							for (ReporteBaseDTO reporteBaseDTO : _reports) {
-								if (reporteBaseDTO.getPlantilla().compareTo(iplantillaPermitida.getLlaveTabla()) == 0) {
+								if (reporteBaseDTO.getNodoSuperior().compareTo(iplantillaPermitida.getLlaveTabla()) == 0) {
 									reporteBaseDTO.setPropiedades(new ArrayList<>());
 									for (PropiedadDTO propiedadDTO : todasPropiedadesReportes) {
 										if (propiedadDTO.getCampo().compareTo(reporteBaseDTO.getLlaveTabla()) == 0)
@@ -603,7 +608,7 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 				TemplateDTO iplantillaPermitida = plantillasPermitidas.get(i);
 				if (iplantillaPermitida.getLlaveTabla() == null) {
 					statesFromProcess(estados, transiciones, todasPropiedadesEstados, iplantillaPermitida,
-							iplantillaPermitida.getProceso());
+							iplantillaPermitida.getProceso(), todasPropiedadesTransiciones);
 					_resultTemplates.add(0, iplantillaPermitida);
 				}
 			}
@@ -614,12 +619,12 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 
 	private void statesFromProcess(List<ProcesoEstadoDTO> estados, List<ProcesoTransicionDTO> transiciones,
 			List<PropiedadDTO> todasPropiedadesEstados, TemplateDTO iplantillaPermitida,
-			String procesoInicial) {
+			String procesoInicial, List<PropiedadDTO> todasPropiedadesTransiciones) {
 		// Los tableros de control por el momento no tienen estado
 		if (procesoInicial == null)
 			return;
 		for (ProcesoEstadoDTO procesoEstadoDTO : estados) {
-			if (procesoEstadoDTO.getProceso().compareTo(procesoInicial) == 0) {
+			if (procesoEstadoDTO.getNodoSuperior().compareTo(procesoInicial) == 0) {
 				if (iplantillaPermitida.getEstados() == null)
 					iplantillaPermitida.setEstados(new ArrayList<ProcesoEstadoDTO>());
 				if (procesoEstadoDTO.getPropiedades() == null) {
@@ -634,6 +639,13 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 					for (ProcesoTransicionDTO procesoTransicionDTO : transiciones) {
 						if (procesoTransicionDTO.getEstadoPartida() != null && procesoTransicionDTO.getEstadoPartida()
 								.compareTo(procesoEstadoDTO.getLlaveTabla()) == 0) {
+							if (procesoTransicionDTO.getPropiedades() == null) {
+								procesoTransicionDTO.setPropiedades(new ArrayList<PropiedadDTO>());
+								for (PropiedadDTO propiedadDTO : todasPropiedadesTransiciones) {
+									if (propiedadDTO.getCampo().compareTo(procesoTransicionDTO.getLlaveTabla()) == 0)
+										procesoTransicionDTO.getPropiedades().add(propiedadDTO);
+								}
+							}
 							procesoEstadoDTO.getTransiciones().add(procesoTransicionDTO);
 						}
 					}

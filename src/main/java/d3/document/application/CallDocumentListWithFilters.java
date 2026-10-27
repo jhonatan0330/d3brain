@@ -661,7 +661,7 @@ public class CallDocumentListWithFilters {
 							DocumentoPlantillaCaracteristicaDTO campo = null;
 							if (!campoValor.isEmpty()) {
 								DocumentoPlantillaCaracteristicaFilterDTO campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
-								campoFilter.setPlantilla(iterador.getPlantilla());
+								campoFilter.setNodoSuperior(iterador.getPlantilla());
 								campoFilter.setCodigo(campoValor);
 								campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 								campo = documentoPlantillaCaracteristicaService.consultaUnica(campoFilter);

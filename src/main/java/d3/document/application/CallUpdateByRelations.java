@@ -234,7 +234,7 @@ public class CallUpdateByRelations {
 
 									if (propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_DOCUMENTOS) == 0
 											|| propiedadDTO.getKey().compareTo(Propiedades.RELACIONAR_MISMOS) == 0) {
-										if (_fieldToReplace.getCampoDTO().getFormato()
+										if (_fieldToReplace.getCampoDTO().getTipo()
 												.compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
 												&& dependiente.getExpedientes() != null
 												&& dependiente.getExpedientes().size() == 1) {
@@ -268,7 +268,7 @@ public class CallUpdateByRelations {
 
 											// Esto aplico en trustmetrans para el rodamiento la descripcion
 											if (documentoPlantillaCaracteristicaService.countFieldsDependent(
-													_fieldToReplace.getCampoDTO().getPlantilla(),
+													_fieldToReplace.getCampoDTO().getNodoSuperior(),
 													_fieldToReplace.getCampo()) != 0) {
 												PedidoVentaDTO updateDocument = pDocumentsToUpdate
 														.get(_fieldToReplace.getDocumento());
@@ -299,7 +299,7 @@ public class CallUpdateByRelations {
 										}
 
 										// Para trustmetrans al agregar un recibo a factura se relacione
-										if (_fieldToReplace.getCampoDTO().getFormato()
+										if (_fieldToReplace.getCampoDTO().getTipo()
 												.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 
 											if (dependiente.getExpedientes().get(0).getLlaveTabla()

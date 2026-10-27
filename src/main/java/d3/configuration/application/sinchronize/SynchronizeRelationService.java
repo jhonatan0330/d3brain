@@ -144,7 +144,7 @@ public class SynchronizeRelationService {
 								RelacionInternaDTO newRelation = new RelacionInternaDTO();
 								newRelation.setAuxiliar(remoteRelation.getAuxiliar());
 								newRelation.setCampo(_field.getLlaveTabla());
-								newRelation.setPlantilla(_field.getPlantilla());
+								newRelation.setPlantilla(_field.getNodoSuperior());
 								newRelation.setPropiedad(newProperty.getLlaveTabla());
 								try {
 									newRelation = relationsService.guardar(newRelation);
@@ -177,7 +177,7 @@ public class SynchronizeRelationService {
 			return null;
 		DocumentoPlantillaCaracteristicaFilterDTO _filter = new DocumentoPlantillaCaracteristicaFilterDTO();
 		_filter.setEstado(SharedConstants.STATE_ACTIVE);
-		_filter.setPlantilla(_template.getLlaveTabla());
+		_filter.setNodoSuperior(_template.getLlaveTabla());
 		_filter.setCodigo(campoCodigo);
 		return fieldsService.consultaUnica(_filter);
 	}

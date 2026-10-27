@@ -76,7 +76,7 @@ public class ApiSendService {
 			for (PedidoVentaCaracteristicaDTO iCampo : document.getCaracteristicas()) {
 				if (iCampo.getCampoDTO().getCodigo().compareTo(fieldVO.getField()) == 0) {
 					ApiCommon.chooseValueToField(fieldVO, iCampo, productoService, detallePedidoVentaService);
-					if (iCampo.getValorOpcion() == null && iCampo.getCampoDTO().getFormato()
+					if (iCampo.getValorOpcion() == null && iCampo.getCampoDTO().getTipo()
 							.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 						if (fieldVO.getParentDocument() != null) {
 							String keyExists = searchProcessFromText.findOptionFromText(iCampo.getValorText(),

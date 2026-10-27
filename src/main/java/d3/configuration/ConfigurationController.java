@@ -1,6 +1,5 @@
 package d3.configuration;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -34,6 +33,7 @@ import d3.configuration.domain.ArbolConfiguracionFilterDTO;
 import d3.configuration.domain.CompararArbolRequestDTO;
 import d3.configuration.domain.DiferenciaDTO;
 import d3.configuration.domain.ExportListRequest;
+import d3.configuration.domain.ProcesoGraphDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -357,29 +357,12 @@ public class ConfigurationController {
 		return webServiceCopyAPI.call(pKey);
 	}
 
-	public static class EjecutarWSRequest {
-		private String parametros;
 
-		public String getParametros() {
-			return parametros;
-		}
-
-		public void setParametros(String parametros) {
-			this.parametros = parametros;
-		}
-	}
 
 	@PostMapping("/web-services/{key}/execute")
-	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable("key") String pKey,
-			@RequestBody EjecutarWSRequest request) throws ServerException {
-		WebServiceEjecucionDTO ejecucion = new WebServiceEjecucionDTO();
-		ejecucion.setServicio(pKey);
-		ejecucion.setParametros(request.getParametros());
-		ejecucion.setSincrona("A");
-		ejecucion = webServiceEjecucionService.guardar(ejecucion);
-
+	public WebServiceEjecucionDTO ejecutarWebService(@PathVariable("key") String pKey) throws ServerException {
 		WebServiceEjecucionFilterDTO filter = new WebServiceEjecucionFilterDTO();
-		filter.setLlaveTabla(ejecucion.getLlaveTabla());
+		filter.setLlaveTabla(pKey);
 		return webServiceEjecucionService.ejecutarAPI(filter);
 	}
 
@@ -404,102 +387,15 @@ public class ConfigurationController {
 
 	// ==================== MESSAGES ====================
 
-	public static class MensajesUsuarioRequest {
-		private String estado;
-		private Date fechaDesde;
-		private Date fechaHasta;
-		private String enviado;
-		private String usuario;
-		private String titulo;
-		private Integer paginacionRegistroInicial;
-		private Integer paginacionRegistroFinal;
-
-		public String getEstado() {
-			return estado;
-		}
-
-		public void setEstado(String estado) {
-			this.estado = estado;
-		}
-
-		public Date getFechaDesde() {
-			return fechaDesde;
-		}
-
-		public void setFechaDesde(Date fechaDesde) {
-			this.fechaDesde = fechaDesde;
-		}
-
-		public Date getFechaHasta() {
-			return fechaHasta;
-		}
-
-		public void setFechaHasta(Date fechaHasta) {
-			this.fechaHasta = fechaHasta;
-		}
-
-		public String getEnviado() {
-			return enviado;
-		}
-
-		public void setEnviado(String enviado) {
-			this.enviado = enviado;
-		}
-
-		public String getUsuario() {
-			return usuario;
-		}
-
-		public void setUsuario(String usuario) {
-			this.usuario = usuario;
-		}
-
-		public String getTitulo() {
-			return titulo;
-		}
-
-		public void setTitulo(String titulo) {
-			this.titulo = titulo;
-		}
-
-		public Integer getPaginacionRegistroInicial() {
-			return paginacionRegistroInicial;
-		}
-
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
-			this.paginacionRegistroInicial = paginacionRegistroInicial;
-		}
-
-		public Integer getPaginacionRegistroFinal() {
-			return paginacionRegistroFinal;
-		}
-
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
-			this.paginacionRegistroFinal = paginacionRegistroFinal;
-		}
-	}
+	
 
 	@PostMapping("/messages/list")
-	public List<MensajeDTO> listarMensajes(@RequestBody MensajesUsuarioRequest request) throws ServerException {
-		if (request.getFechaDesde() == null || request.getFechaHasta() == null) {
+	public List<MensajeDTO> listarMensajes(@RequestBody MensajeFilterDTO request) throws ServerException {
+		if (request.getFechaMin() == null || request.getFechaMax() == null) {
 			throw new ServerException("Las fechas Desde y Hasta son obligatorias para consultar mensajes");
 		}
-		
-		MensajeFilterDTO filter = new MensajeFilterDTO();
-		filter.setEstado(request.getEstado());
-		filter.setFechaMin(request.getFechaDesde());
-		filter.setFechaMax(request.getFechaHasta());
-		filter.setUsuario(request.getUsuario());
-		filter.setTitulo(request.getTitulo());
-		filter.setPaginacionRegistroInicial(request.getPaginacionRegistroInicial());
-		filter.setPaginacionRegistroFinal(request.getPaginacionRegistroFinal());
-
-		if ("1".equals(request.getEnviado())) {
-			filter.setCorreoEnviadoMin(new Date(0));
-		} else if ("0".equals(request.getEnviado())) {
-			filter.setCorreoEnviadoMax(new Date(0));
-		}
-		return mensajeService.mensajesUsuario(filter);
+	
+		return mensajeService.mensajesUsuario(request);
 	}
 
 	@PostMapping("/messages/{key}")
@@ -517,114 +413,12 @@ public class ConfigurationController {
 
 	// ==================== AUTO TASKS ====================
 
-	public static class AutoTaskFilterRequest {
-		private String estado;
-		private String transicion;
-		private String plantilla;
-		private String plantillaNombre;
-		private String propiedad;
-		private Date fechaDesde;
-		private Date fechaHasta;
-		private Boolean activa;
-		private Integer paginacionRegistroInicial;
-		private Integer paginacionRegistroFinal;
-
-		public String getEstado() {
-			return estado;
-		}
-
-		public void setEstado(String estado) {
-			this.estado = estado;
-		}
-
-		public String getTransicion() {
-			return transicion;
-		}
-
-		public void setTransicion(String transicion) {
-			this.transicion = transicion;
-		}
-
-		public String getPlantilla() {
-			return plantilla;
-		}
-
-		public void setPlantilla(String plantilla) {
-			this.plantilla = plantilla;
-		}
-
-		public String getPlantillaNombre() {
-			return plantillaNombre;
-		}
-
-		public void setPlantillaNombre(String plantillaNombre) {
-			this.plantillaNombre = plantillaNombre;
-		}
-
-		public String getPropiedad() {
-			return propiedad;
-		}
-
-		public void setPropiedad(String propiedad) {
-			this.propiedad = propiedad;
-		}
-
-		public Date getFechaDesde() {
-			return fechaDesde;
-		}
-
-		public void setFechaDesde(Date fechaDesde) {
-			this.fechaDesde = fechaDesde;
-		}
-
-		public Date getFechaHasta() {
-			return fechaHasta;
-		}
-
-		public void setFechaHasta(Date fechaHasta) {
-			this.fechaHasta = fechaHasta;
-		}
-
-		public Boolean getActiva() {
-			return activa;
-		}
-
-		public void setActiva(Boolean activa) {
-			this.activa = activa;
-		}
-
-		public Integer getPaginacionRegistroInicial() {
-			return paginacionRegistroInicial;
-		}
-
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
-			this.paginacionRegistroInicial = paginacionRegistroInicial;
-		}
-
-		public Integer getPaginacionRegistroFinal() {
-			return paginacionRegistroFinal;
-		}
-
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
-			this.paginacionRegistroFinal = paginacionRegistroFinal;
-		}
-	}
+	
 
 	@PostMapping("/auto-tasks/list")
-	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(@RequestBody AutoTaskFilterRequest request)
+	public List<ProcesoTransicionAutomaticaDTO> listarTareasAutomaticas(@RequestBody ProcesoTransicionAutomaticaFilterDTO request)
 			throws ServerException {
-		
-		ProcesoTransicionAutomaticaFilterDTO filter = new ProcesoTransicionAutomaticaFilterDTO();
-		filter.setEstado(request.getEstado());
-		filter.setTransicion(request.getTransicion());
-		filter.setPlantilla(request.getPlantilla());
-		filter.setPlantillaNombre(request.getPlantillaNombre());
-		filter.setPropiedad(request.getPropiedad());
-		filter.setFechaMin(request.getFechaDesde());
-		filter.setFechaMax(request.getFechaHasta());
-		filter.setPaginacionRegistroInicial(request.getPaginacionRegistroInicial());
-		filter.setPaginacionRegistroFinal(request.getPaginacionRegistroFinal());
-		return procesoTransicionAutomaticaService.listarConsulta(filter);
+		return procesoTransicionAutomaticaService.listarConsulta(request);
 	}
 
 	@PostMapping("/auto-tasks/{key}")
@@ -657,36 +451,7 @@ public class ConfigurationController {
 		return procesoTransicionAutomaticaService.activar(dto);
 	}
 
-	public static class ProgramarRequest {
-		private String tipo;
-		private String cron;
-		private Date fecha;
-
-		public String getTipo() {
-			return tipo;
-		}
-
-		public void setTipo(String tipo) {
-			this.tipo = tipo;
-		}
-
-		public String getCron() {
-			return cron;
-		}
-
-		public void setCron(String cron) {
-			this.cron = cron;
-		}
-
-		public Date getFecha() {
-			return fecha;
-		}
-
-		public void setFecha(Date fecha) {
-			this.fecha = fecha;
-		}
-	}
-
+	
 	@PostMapping("/auto-tasks/{key}/schedule")
 	public ProcesoTransicionAutomaticaDTO programarTareaAutomatica() throws ServerException {
 		return procesoTransicionAutomaticaService.programar();
@@ -760,7 +525,7 @@ public class ConfigurationController {
 			@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody DocumentoPlantillaCaracteristicaFilterDTO filter) throws ServerException {
 		
-		filter.setPlantilla(pTemplateKey);
+		filter.setNodoSuperior(pTemplateKey);
 		filter.setPaginacionRegistroFinal(500);
 		return documentoPlantillaCaracteristicaService.listarConsulta(filter);
 	}
@@ -794,7 +559,7 @@ public class ConfigurationController {
 	public List<ReporteBaseDTO> listarReportesPlantilla(@PathVariable("templateKey") String pTemplateKey,
 			@RequestBody ReporteBaseFilterDTO filter) throws ServerException {
 		
-		filter.setPlantilla(pTemplateKey);
+		filter.setNodoSuperior(pTemplateKey);
 		return reporteBaseService.listarConsulta(filter);
 	}
 
@@ -836,15 +601,6 @@ public class ConfigurationController {
 		return procesoService.consultaXId(pKey);
 	}
 
-	
-	@PostMapping("/processes/{key}/graph")
-	public ProcesoDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
-		ProcesoFilterDTO filter = new ProcesoFilterDTO();
-		filter.setLlaveTabla(pKey);
-		//return procesoService.obtenerProcesoParaGraficar(filter);
-		return null;
-	}
-
 	@PostMapping("/processes/create")
 	public ProcesoDTO guardarProceso(@RequestBody ProcesoDTO dto) throws ServerException {
 		return procesoService.guardar(dto);
@@ -871,7 +627,7 @@ public class ConfigurationController {
 	public List<ProcesoTransicionDTO> listarTransiciones(@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
 		
-		filter.setProceso(pProcessKey);
+		filter.setNodoSuperior(pProcessKey);
 		return procesoTransicionService.listarConsulta(filter);
 	}
 
@@ -906,7 +662,7 @@ public class ConfigurationController {
 	public List<ProcesoEstadoDTO> listarEstados(@PathVariable("processKey") String pProcessKey,
 			@RequestBody ProcesoEstadoFilterDTO filter) throws ServerException {
 		
-		filter.setProceso(pProcessKey);
+		filter.setNodoSuperior(pProcessKey);
 		return procesoEstadoService.listarConsulta(filter);
 	}
 
@@ -937,110 +693,19 @@ public class ConfigurationController {
 
 	// ==================== PROPERTIES ====================
 
-	public static class PropertyListRequest {
-		private String estado;
-		private String campo;
-		private String tipo;
-		private String nombre;
-		private String valor;
-		private Integer paginacionRegistroInicial;
-		private Integer paginacionRegistroFinal;
-
-		public String getEstado() {
-			return estado;
-		}
-
-		public void setEstado(String estado) {
-			this.estado = estado;
-		}
-
-		public String getCampo() {
-			return campo;
-		}
-
-		public void setCampo(String campo) {
-			this.campo = campo;
-		}
-
-		public String getTipo() {
-			return tipo;
-		}
-
-		public void setTipo(String tipo) {
-			this.tipo = tipo;
-		}
-
-		public String getNombre() {
-			return nombre;
-		}
-
-		public void setNombre(String nombre) {
-			this.nombre = nombre;
-		}
-
-		public String getValor() {
-			return valor;
-		}
-
-		public void setValor(String valor) {
-			this.valor = valor;
-		}
-
-		public Integer getPaginacionRegistroInicial() {
-			return paginacionRegistroInicial;
-		}
-
-		public void setPaginacionRegistroInicial(Integer paginacionRegistroInicial) {
-			this.paginacionRegistroInicial = paginacionRegistroInicial;
-		}
-
-		public Integer getPaginacionRegistroFinal() {
-			return paginacionRegistroFinal;
-		}
-
-		public void setPaginacionRegistroFinal(Integer paginacionRegistroFinal) {
-			this.paginacionRegistroFinal = paginacionRegistroFinal;
-		}
-	}
+	
 
 	@PostMapping("/properties/list")
-	public List<PropiedadDTO> listarPropiedades(@RequestBody PropertyListRequest request) throws ServerException {
-		
-		PropiedadFilterDTO filter = new PropiedadFilterDTO();
-		filter.setEstado(request.getEstado());
-		filter.setCampo(request.getCampo());
-		filter.setTipo(request.getTipo());
-		filter.setNombre(request.getNombre());
-		filter.setValor(request.getValor());
-		filter.setPaginacionRegistroInicial(request.getPaginacionRegistroInicial());
-		filter.setPaginacionRegistroFinal(request.getPaginacionRegistroFinal());
-		return propiedadService.listarConsulta(filter);
+	public List<PropiedadDTO> listarPropiedades(@RequestBody PropiedadFilterDTO request) throws ServerException {
+
+		return propiedadService.listarConsulta(request);
 	}
 
-	public static class PropertyByIdRequest {
-		private String campo;
-		private String estado;
+	
 
-		public String getCampo() {
-			return campo;
-		}
-
-		public void setCampo(String campo) {
-			this.campo = campo;
-		}
-
-		public String getEstado() {
-			return estado;
-		}
-
-		public void setEstado(String estado) {
-			this.estado = estado;
-		}
-	}
-
-	@PostMapping("/properties/by-id")
-	public PropiedadDTO consultarPropiedad(@RequestBody PropertyByIdRequest request) throws ServerException {
-		return propiedadService.consultaXId(request.getCampo());
+	@PostMapping("/properties/by-id/{key}")
+	public PropiedadDTO consultarPropiedad(@PathVariable("key") String pKey) throws ServerException {
+		return propiedadService.consultaXId(pKey);
 	}
 
 	@PostMapping("/properties/create")
@@ -1225,7 +890,6 @@ public class ConfigurationController {
 	}
 	
 	// ==================== CONFIGURATION IMPORT/EXPORT (antes /configuration/*)
-		// ====================
 
 		@GetMapping("/export")
 		private CargaArchivoDTO generateFileWithConfiguration() throws ServerException {
@@ -1248,11 +912,22 @@ public class ConfigurationController {
 			return importService.compare(file);
 		}
 
-		// ==================== CONFIGURATION TREE (arbol generico) ====================
-
+		@PostMapping("/processes/{key}/graph")
+		public ProcesoGraphDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
+			ProcesoFilterDTO filter = new ProcesoFilterDTO();
+			filter.setLlaveTabla(pKey);
+			return sincronizacionArbolService.obtenerProcesoParaGraficar(filter);
+		}
+		
 		@PostMapping("/tree")
 		private TreeNodeDTO getConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
 			return sincronizacionArbolService.obtenerArbol(filter);
+		}
+		
+		@PostMapping("/tree/node")
+		private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
+				throws ServerException {
+			return arbolConfiguracionService.construirHijos(request);
 		}
 
 		@PostMapping("/tree/export")
@@ -1260,17 +935,6 @@ public class ConfigurationController {
 			return sincronizacionArbolService.exportarArbol(filter);
 		}
 
-		@PostMapping("/tree/node")
-		private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
-				throws ServerException {
-			return arbolConfiguracionService.construirHijos(request);
-		}
-
-		/*@PostMapping("/tree/from-hierarchy")
-		private TreeNodeDTO treeFromHierarchy(@RequestBody Object payload) throws ServerException {
-			d3.configuration.domain.HierarchyExporterDTO hierarchy = importService.parseHierarchy(payload);
-			return arbolConfiguracionService.construirArbol(hierarchy);
-		}*/
 
 		@PostMapping("/tree/register")
 		private d3.configuration.domain.RegistroArbolDTO registerRemoteTree(@RequestBody Object payload)
@@ -1293,5 +957,4 @@ public class ConfigurationController {
 				@RequestBody d3.configuration.domain.SincronizacionNodoDTO request) throws ServerException {
 			return sincronizacionArbolService.sincronizarNodo(request);
 		}
-		
 }

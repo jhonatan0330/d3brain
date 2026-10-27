@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="d3.configuration.infrastructure.NodoHijoMapper">
+
+	<sql id="nodoHijoBase">
+		llaveTabla, nombre, codigo, estado, imagen, prioridad, tipo, categoria, nodoSuperior, nodoSuperiorNombre
+	</sql>
+
+	<select id="listarHijos" resultType="d3.configuration.domain.TreeNodeDTO">
+		select *
+		from (
+			-- Hijos de ORGANIZACION: procesos raiz + APIs sin proceso
+			<if test="tipoPadre == 'ORGANIZACION' or tipoPadre == null">
+			select
+				cprc_llave as llaveTabla,
+				cprc_nombre as nombre,
+				cprc_codigo as codigo,
+				cprc_estado as estado,
+				cprc_imagen as imagen,
+				nprc_prioridad as prioridad,
+				'PROCESO' as tipo,
+				cprc_tipo as categoria,
+				cprc_macroproceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cprc_macroproceso) as nodoSuperiorNombre
+			from proceso_prcp a
+			where cprc_estado = 'A' and (cprc_macroproceso is null or cprc_macroproceso = '' or cprc_macroproceso = cprc_llave)
+			union all
+			select
+				cwbs_llave as llaveTabla,
+				cwbs_nombre as nombre,
+				cwbs_codigo as codigo,
+				cwbs_estado as estado,
+				null as imagen,
+				null as prioridad,
+				'API' as tipo,
+				null as categoria,
+				cwbs_proceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cwbs_proceso) as nodoSuperiorNombre
+			from webservice_wbsp a
+			where a.cwbs_estado = 'A' and cwbs_proceso is null
+			</if>
+
+			-- Hijos de PROCESO: sub-procesos, estados, transiciones, plantillas, apis
+			<if test="tipoPadre == 'PROCESO'">
+			select
+				cprc_llave as llaveTabla,
+				cprc_nombre as nombre,
+				cprc_codigo as codigo,
+				cprc_estado as estado,
+				cprc_imagen as imagen,
+				nprc_prioridad as prioridad,
+				'PROCESO' as tipo,
+				cprc_tipo as categoria,
+				cprc_macroproceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cprc_macroproceso) as nodoSuperiorNombre
+			from proceso_prcp a
+			where cprc_estado = 'A' and cprc_macroproceso = #{llavePadre}
+			union all
+			select
+				cpes_llave as llaveTabla,
+				cpes_nombre as nombre,
+				cpes_codigo as codigo,
+				cpes_estado as estado,
+				null as imagen,
+				npes_avance as prioridad,
+				'ESTADO' as tipo,
+				cpes_tipo as categoria,
+				cpes_proceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cpes_proceso) as nodoSuperiorNombre
+			from procesoestado_pesp a
+			where cpes_estado = 'A' and cpes_proceso = #{llavePadre}
+			union all
+			select
+				cptr_llave as llaveTabla,
+				cptr_nombre as nombre,
+				cptr_codigo as codigo,
+				cptr_estado as estado,
+				null as imagen,
+				null as prioridad,
+				'TRANSICION' as tipo,
+				null as categoria,
+				cptr_proceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cptr_proceso) as nodoSuperiorNombre
+			from procesotransicion_ptrp a
+			where a.cptr_estado = 'A' and cptr_proceso = #{llavePadre}
+			union all
+			select
+				cdpl_llave as llaveTabla,
+				cdpl_nombre as nombre,
+				cdpl_codigo as codigo,
+				cdpl_estado as estado,
+				cdpl_imagen as imagen,
+				null as prioridad,
+				'PLANTILLA' as tipo,
+				cdpl_tipo as categoria,
+				cdpl_padre as nodoSuperior,
+				(select cdpl_nombre from documentoplantilla_dplp p2 where p2.cdpl_llave = a.cdpl_padre) as nodoSuperiorNombre
+			from documentoplantilla_dplp a
+			where cdpl_estado = 'A' and cdpl_padre = #{llavePadre}
+			union all
+			select
+				cwbs_llave as llaveTabla,
+				cwbs_nombre as nombre,
+				cwbs_codigo as codigo,
+				cwbs_estado as estado,
+				null as imagen,
+				null as prioridad,
+				'API' as tipo,
+				null as categoria,
+				cwbs_proceso as nodoSuperior,
+				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cwbs_proceso) as nodoSuperiorNombre
+			from webservice_wbsp a
+			where a.cwbs_estado = 'A' and cwbs_proceso = #{llavePadre}
+			</if>
+
+			-- Hijos de PLANTILLA: campos, reportes, sub-plantillas
+			<if test="tipoPadre == 'PLANTILLA'">
+			select
+				cdpc_llave as llaveTabla,
+				cdpc_nombre as nombre,
+				cdpc_codigo as codigo,
+				cdpc_estado as estado,
+				cdpc_imagen as imagen,
+				ndpc_orden as prioridad,
+				'CAMPO' as tipo,
+				cdpc_formato as categoria,
+				cdpc_plantilla as nodoSuperior,
+				(select cdpl_nombre from documentoplantilla_dplp p2 where p2.cdpl_llave = a.cdpc_plantilla) as nodoSuperiorNombre
+			from documentoplantillacaracteristica_dpcp a
+			where cdpc_estado = 'A' and cdpc_plantilla = #{llavePadre}
+			union all
+			select
+				crpb_llave as llaveTabla,
+				crpb_nombre as nombre,
+				crpb_codigo as codigo,
+				crpb_estado as estado,
+				null as imagen,
+				null as prioridad,
+				'REPORTE' as tipo,
+				null as categoria,
+				crpb_plantilla as nodoSuperior,
+				(select cdpl_nombre from documentoplantilla_dplp p2 where p2.cdpl_llave = a.crpb_plantilla) as nodoSuperiorNombre
+			from reportebase_rpbp a
+			where a.crpb_estado = 'A' and crpb_plantilla = #{llavePadre}
+			union all
+			select
+				cdpl_llave as llaveTabla,
+				cdpl_nombre as nombre,
+				cdpl_codigo as codigo,
+				cdpl_estado as estado,
+				cdpl_imagen as imagen,
+				null as prioridad,
+				'PLANTILLA' as tipo,
+				cdpl_tipo as categoria,
+				cdpl_padre as nodoSuperior,
+				(select cdpl_nombre from documentoplantilla_dplp p2 where p2.cdpl_llave = a.cdpl_padre) as nodoSuperiorNombre
+			from documentoplantilla_dplp a
+			where cdpl_estado = 'A' and cdpl_padre = #{llavePadre}
+			</if>
+		) h
+		order by prioridad, nombre
+	</select>
+
+</mapper>

@@ -74,7 +74,7 @@ public class TipoDisponibilidad {
 		pCampo = campoService.guardar(pCampo);
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
 			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
-					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+					pCampo.getCampoDTO().getNodoSuperior(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 		}
 		return pCampo;
 
@@ -137,10 +137,10 @@ public class TipoDisponibilidad {
 			DocumentoPlantillaCaracteristicaDTO pBase) throws ServerException {
 		PropiedadDTO estructura = Propiedades.obtenerParametro(pBase, Propiedades.DISPONIBILIDAD_CROQUIS);
 		if (estructura == null)
-			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getNodoSuperiorNombre()
 					+ "Es necesario colocar la caracteristica del Documento base que tiene el croquis. Tipo Disponibilidad");
 		if (dependents == null || dependents.isEmpty())
-			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getNodoSuperiorNombre()
 					+ "Revise los dependientes. Tipo Disponibilidad");
 		PedidoVentaCaracteristicaDTO vCroquis = null;
 
@@ -160,12 +160,12 @@ public class TipoDisponibilidad {
 
 			if (dependienteCroquis == null)
 				throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla "
-						+ pBase.getPlantillaNombre() + "No se encontro en los dependientes la estructura del croquis");
+						+ pBase.getNodoSuperiorNombre() + "No se encontro en los dependientes la estructura del croquis");
 			vCroquis = campoService.consultarCampoCroquis(dependienteCroquis.getValorOpcion());
 		}
 
 		if (vCroquis == null)
-			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getPlantillaNombre()
+			throw new ServerException("El campo " + pBase.getNombre() + " de la plantilla " + pBase.getNodoSuperiorNombre()
 					+ "La estructura no tiene un campo croquis que se encuentre activo");
 
 		pBase.setImagen(vCroquis.getValorText());
@@ -195,20 +195,20 @@ public class TipoDisponibilidad {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorText() == null)
 			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-					+ pCampo.getCampoDTO().getPlantillaNombre() + "Es necesario registrar el campo ");
+					+ pCampo.getCampoDTO().getNodoSuperiorNombre() + "Es necesario registrar el campo ");
 
 		if (pCampo.getValorText() != null)
 			locations = pCampo.getValorText().split("-");
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (locations == null || locations.length == 0))
 			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-					+ pCampo.getCampoDTO().getPlantillaNombre() + " Es necesario registrar el campo ");
+					+ pCampo.getCampoDTO().getNodoSuperiorNombre() + " Es necesario registrar el campo ");
 		if (locations != null) {
 
 			List<PuestoDTO> currentItems = getOptionsToSelect(pCampo.getDependientes(), pCampo.getCampoDTO());
 			if (currentItems == null || currentItems.isEmpty())
 				throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-						+ pCampo.getCampoDTO().getPlantillaNombre()
+						+ pCampo.getCampoDTO().getNodoSuperiorNombre()
 						+ "No hay opciones para seleccionar una posicion del croquis");
 			int positionCount = 0;
 			for (String actual : locations) {

@@ -17,13 +17,25 @@ import d3.configuration.domain.ConfigurationExportDTO;
 import d3.configuration.domain.DiferenciaDTO;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
+import d3.configuration.domain.ProcesoGraphDTO;
 import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RegistroArbolDTO;
 import d3.configuration.domain.SincronizacionNodoDTO;
 import d3.configuration.domain.SincronizacionNodoResultDTO;
 import d3.configuration.domain.SincronizacionSeleccionadaDTO;
 import d3.configuration.domain.TreeNodeDTO;
+import d3.process.application.ProcesoEstadoSvc;
+import d3.process.application.ProcesoSvc;
+import d3.process.application.ProcesoTransicionSvc;
+import d3.process.domain.ProcesoDTO;
+import d3.process.domain.ProcesoEstadoDTO;
+import d3.process.domain.ProcesoEstadoFilterDTO;
+import d3.process.domain.ProcesoFilterDTO;
+import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.domain.ProcesoTransicionFilterDTO;
 import d3.shared.domain.ServerException;
+import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
 import d3.upload.domain.CargaArchivoDTO;
 
@@ -38,12 +50,17 @@ public class SincronizacionArbolSvc {
 	private final ObjectMapper mapper;
 	private final ArbolRemotoCache arbolRemotoCache;
 	private final SynchronizePropertiesService sincronizePropertiesService;
+	private final ProcesoEstadoSvc estadoService;
+	private final ProcesoTransicionSvc transicionService;
+	private final ProcesoSvc procesoService;
+	private final PropertyGetWithCacheService cacheService;
 
 	public SincronizacionArbolSvc(@Lazy ArbolConfiguracionSvc arbolConfiguracionSvc,
 			@Lazy ComparacionArbolSvc comparacionArbolSvc, @Lazy ActualizacionEntidadSvc actualizacionEntidadSvc,
 			@Lazy ImportConfigurationFileService importService, @Lazy UploadSvc uploadSvc, ObjectMapper mapper,
 			@Lazy ArbolRemotoCache arbolRemotoCache,
-			@Lazy SynchronizePropertiesService sincronizePropertiesService) {
+			@Lazy ProcesoEstadoSvc estadoService, @Lazy ProcesoTransicionSvc transicionService,@Lazy ProcesoSvc procesoService,
+			@Lazy SynchronizePropertiesService sincronizePropertiesService, @Lazy PropertyGetWithCacheService cacheService) {
 		this.arbolConfiguracionSvc = arbolConfiguracionSvc;
 		this.comparacionArbolSvc = comparacionArbolSvc;
 		this.actualizacionEntidadSvc = actualizacionEntidadSvc;
@@ -52,6 +69,10 @@ public class SincronizacionArbolSvc {
 		this.mapper = mapper;
 		this.arbolRemotoCache = arbolRemotoCache;
 		this.sincronizePropertiesService = sincronizePropertiesService;
+		this.estadoService = estadoService;
+		this.transicionService = transicionService;
+		this.procesoService = procesoService;
+		this.cacheService = cacheService;
 	}
 
 	public TreeNodeDTO obtenerArbol(ArbolConfiguracionFilterDTO filter) throws ServerException {
@@ -271,7 +292,7 @@ public class SincronizacionArbolSvc {
 		TreeNodeDTO filtrado = arbolConfiguracionSvc.filtrarArbolPorSeleccion(request.getArbol(),
 				request.getSelecciones());
 		HierarchyExporterDTO hierarchy = arbolConfiguracionSvc.convertirArbolAHierarchy(filtrado);
-		LogConfigurationDTO logs = importService.sincronize(hierarchy);
+		LogConfigurationDTO logs = importService.sincronize(hierarchy, false);
 
 		return uploadSvc.uploadFileDTO(logs.getLogs().getBytes(), "Sincronizacion.txt", "import", "private");
 	}
@@ -340,7 +361,7 @@ public class SincronizacionArbolSvc {
 
 		LogConfigurationDTO logs = new LogConfigurationDTO();
 		try {
-			logs = importService.sincronize(hierarchy);
+			logs = importService.sincronize(hierarchy, false);
 		} catch (Exception e) {
 			resultado.setExito(false);
 			resultado.setMensaje("Error al sincronizar: " + e.getMessage());
@@ -602,6 +623,53 @@ public class SincronizacionArbolSvc {
 		ArbolConfiguracionFilterDTO filter = new ArbolConfiguracionFilterDTO();
 		filter.setListarPropiedades(true);
 		return filter;
+	}
+
+	public ProcesoGraphDTO obtenerProcesoParaGraficar(ProcesoFilterDTO dto) throws ServerException {
+		ProcesoDTO bd = null;
+		if (dto.getLlaveTabla() != null) {
+			bd = procesoService.consultaXId(dto.getLlaveTabla());
+		} else {
+			if (dto.getEstado() != null) {
+				ProcesoEstadoDTO estado = estadoService.consultaXId(dto.getEstado());
+				if (estado == null)
+					throw new ServerException("El estado enviado no se identifica");
+				bd = procesoService.consultaXId(estado.getNodoSuperior());
+			}
+		}
+		return completarProceso(bd);
+	}
+	
+	private ProcesoGraphDTO completarProceso(ProcesoDTO proceso) throws ServerException {
+		ProcesoGraphDTO graph = new ProcesoGraphDTO();
+		graph.setLlaveTabla(proceso.getLlaveTabla());
+		graph.setNombre(proceso.getNombre());
+		graph.setCodigo(proceso.getCodigo());
+		graph.setNodoSuperior(proceso.getNodoSuperior());
+		
+		ProcesoEstadoFilterDTO filtroEstadoDTO = new ProcesoEstadoFilterDTO();
+		filtroEstadoDTO.setEstado(SharedConstants.STATE_ACTIVE);
+		filtroEstadoDTO.setNodoSuperior(proceso.getLlaveTabla());
+		graph.setEstados(estadoService.listarConsulta(filtroEstadoDTO));
+		for (ProcesoEstadoDTO iEstado : graph.getEstados()) {
+			iEstado.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.ESTADO,
+					iEstado.getLlaveTabla(), null, null));
+		}
+
+		ProcesoTransicionFilterDTO filtroTransicionDTO = new ProcesoTransicionFilterDTO();
+		filtroTransicionDTO.setEstado(SharedConstants.STATE_ACTIVE);
+		filtroTransicionDTO.setNodoSuperior(proceso.getLlaveTabla());
+		graph.setTransiciones(transicionService.listarConsulta(filtroTransicionDTO));
+		for (ProcesoTransicionDTO iTransicion : graph.getTransiciones()) {
+			iTransicion.setPropiedades(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.TRANSICION,
+					iTransicion.getLlaveTabla(), null, null));
+			if (iTransicion.getPlantilla() != null) {
+				iTransicion.getPropiedades().addAll(cacheService.obtenerPropiedades(PropiedadValorDefinidoDTO.PLANTILLA,
+						iTransicion.getPlantilla(), null, null));
+			}
+		}
+
+		return graph;
 	}
 
 }

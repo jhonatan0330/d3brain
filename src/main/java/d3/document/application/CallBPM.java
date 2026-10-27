@@ -194,7 +194,7 @@ public class CallBPM {
 						DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(documento.getPlantilla());
 						String mensajeFault = "Revisa porque las plantillas " + plantilla.getNombre() + " ( Codigo = "
 								+ plantilla.getCodigo() + " ) no generan ninguna transicion en el proceso "
-								+ pState.getProcesoNombre();
+								+ pState.getNodoSuperiorNombre();
 						mensajeFault = mensajeFault + " desde el estado " + pState.getNombre() + " (Codigo = "
 								+ pState.getCodigo() + ")";
 						mensajeFault = mensajeFault + ", el campo lo solicita. ( Documento = " + procesoDTO.getNombre()
@@ -432,7 +432,7 @@ public class CallBPM {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_GESTIONAR_ESTADOS) != null) {
 						System.out.format("\n[%s (%s) - %s] Maquina de estados BPM ( %s ) plantilla  ( %s )",
-								pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+								pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
 								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre(), maquinaEstados);
 						List<String> caminosGestionar = getCaminos(pCampo);
 						List<String> documentosGestionados = new ArrayList<String>();
@@ -455,7 +455,7 @@ public class CallBPM {
 						// Esto algun día lo voy a unir con el modificar
 						if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PROCESO_DIVISION) != null) {
 							System.out.format("\n[%s (%s) - %s] Dividir documento...... %s",
-									pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+									pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
 									pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 							dividirDocumento(procesoDTO, updaterDTO, pCampo.getDocumento());
 							// Lo coloco aqui porque se relacionaba todo
@@ -505,7 +505,7 @@ public class CallBPM {
 					if (Propiedades.obtenerParametro(pCampo.getCampoDTO(),
 							Propiedades.PROCESO_INCLUIR_TRAZA_PRINCIPAL) != null) {
 						System.out.format("\n[%s (%s) - %s] Incluir traza..... %s",
-								pCampo.getCampoDTO().getPlantillaNombre(), pCampo.getPrincipal().getNombre(),
+								pCampo.getCampoDTO().getNodoSuperiorNombre(), pCampo.getPrincipal().getNombre(),
 								pCampo.getCampoDTO().getNombre(), procesoDTO.getNombre());
 						relacionarGestor(procesoDTO, updaterDTO, null);
 					}

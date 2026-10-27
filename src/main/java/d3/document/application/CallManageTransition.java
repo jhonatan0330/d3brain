@@ -153,7 +153,7 @@ public class CallManageTransition {
 					"No se encuentra estado de llegada, en caso que no se modifiquen coloque el mismo estado.\n"
 							+ expedienteDTO.getNombre() + " - " + expedienteDTO.getDescripcion());
 		System.out.format("\n\n[%s] Procesando transicion (%s) del proceso (%s)", expedienteDTO.getNombre(),
-				pTransitionProcess.getNombre(), pTransitionProcess.getProcesoNombre());
+				pTransitionProcess.getNombre(), pTransitionProcess.getNodoSuperiorNombre());
 		String modificadorId = null;
 		PedidoVentaDineroDTO afectado = null;
 		// Estos documentos se crean en la transicion y deben ser procesados por el
@@ -429,7 +429,7 @@ public class CallManageTransition {
 							if (_relationToAdd == null || _relationToAdd.isEmpty()) {
 								throw new ServerException("La propiedad " + _propertyAgreggate.getNombre()
 										+ " de la iteracion " + pTransition.getNombre() + " del proceso "
-										+ pTransition.getProcesoNombre() + " con estado inicial "
+										+ pTransition.getNodoSuperiorNombre() + " con estado inicial "
 										+ pTransition.getEstadoPartidaNombre()
 										+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas utilizar");
 							}
@@ -615,7 +615,7 @@ public class CallManageTransition {
 		List<ProcesoTransicionDTO> soluciones = transicionService.listarConsulta(solucionFilter);
 		if (soluciones != null && !soluciones.isEmpty()) {
 			if (soluciones.size() > 1)
-				throw new ServerException("En el proceso " + soluciones.get(0).getProcesoNombre() + " en el estado "
+				throw new ServerException("En el proceso " + soluciones.get(0).getNodoSuperiorNombre() + " en el estado "
 						+ soluciones.get(0).getEstadoPartidaNombre()
 						+ " existen mas de una relacion que cumple con el nombre " + soluciones.get(0).getNombre());
 			return soluciones.get(0);
@@ -634,7 +634,7 @@ public class CallManageTransition {
 			return solucion;
 		ProcesoEstadoDTO decisionDTO = estadoService.consultaXId(estadoActual);
 		String msgException = "La decision " + decisionDTO.getNombre() + " del proceso "
-				+ decisionDTO.getProcesoNombre() + " esta intentando buscar un camino para la respuesta ( "
+				+ decisionDTO.getNodoSuperiorNombre() + " esta intentando buscar un camino para la respuesta ( "
 				+ nombreTransicion + " ), actualmente ";
 		solucionFilter.setNombre(null);
 		List<ProcesoTransicionDTO> responseTransition = transicionService.listarConsulta(solucionFilter);
@@ -706,7 +706,7 @@ public class CallManageTransition {
 		}
 		if (saldoDocumento == null)
 			throw new ServerException("Revise porque el documento no tiene saldo. La transicion "
-					+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre() + " solicita un valor");
+					+ transicion.getNombre() + " del proceso " + transicion.getNodoSuperiorNombre() + " solicita un valor");
 
 		BigDecimal factor = BigDecimal.ONE;
 		if (afectaSaldo.compareTo(ProcesoTransicionDTO.RESTANDO) == 0)

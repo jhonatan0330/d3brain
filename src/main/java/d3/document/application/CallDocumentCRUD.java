@@ -383,7 +383,7 @@ public class CallDocumentCRUD {
 		List<PedidoVentaCaracteristicaDTO> fieldsDifference = new ArrayList<>();
 		for (PedidoVentaCaracteristicaDTO iField : dto.getCaracteristicas()) {
 			if (iField.getDifference() != null
-					&& iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) != 0) {
+					&& iField.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) != 0) {
 				PropiedadDTO fieldDifference = Propiedades.obtenerParametro(iField.getCampoDTO(),
 						Propiedades.CAMPO_DIFERENCIAS);
 				// Esto no se puede hacer porque pide un cambio autorizado
@@ -520,7 +520,7 @@ public class CallDocumentCRUD {
 		if (pDTO.getCaracteristicas() == null)
 			return;
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
-			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
+			if (_iField.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0
 					&& Propiedades.obtenerParametro(_iField.getCampoDTO(),
 							Propiedades.PERMISO_CAMPO_BLOQUEAR) == null) {
 				createDocumentOfVinculateField(_iField);
@@ -552,7 +552,7 @@ public class CallDocumentCRUD {
 		if (pDTO.getCaracteristicas() == null)
 			return;
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
-			if (_iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
+			if (_iField.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
 				tipoVinculoService.updateDocumentVinculate(_iField);
 			}
 		}
@@ -572,7 +572,7 @@ public class CallDocumentCRUD {
 		}
 		for (PedidoVentaCaracteristicaDTO _iField : pDTO.getCaracteristicas()) {
 			if (_iField.getCampoDTO() != null
-					&& _iField.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
+					&& _iField.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.VINCULO) == 0) {
 				_iField.setPrincipal(pDTO);// PAra evitar errores en lafuncion de delete vinculo
 				PedidoVentaDTO _vinculateDocument = tipoVinculoService.deleteDocumentToVinculate(_iField);
 				if (_vinculateDocument != null) {
@@ -712,7 +712,7 @@ public class CallDocumentCRUD {
 					}
 				}
 				if (!campoEncontrado && !isUpdateAutomatic
-						&& campoPlantilla.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.SECCION) != 0)
+						&& campoPlantilla.getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.SECCION) != 0)
 					throw new ServerException("Revisa porque el campo " + campoPlantilla.getNombre()
 							+ " no viene registrado en el documento " + plantilla.getNombre() + "\nCODE:caud_usuario");
 			}
@@ -729,7 +729,7 @@ public class CallDocumentCRUD {
 											Propiedades.PERMISO_CAMPO_BLOQUEAR) == null) {
 								String mensajeError = "El campo " + iCampoDocumento.getCampoDTO().getNombre();
 								mensajeError = mensajeError + " de la plantilla "
-										+ iCampoDocumento.getCampoDTO().getPlantillaNombre()
+										+ iCampoDocumento.getCampoDTO().getNodoSuperiorNombre()
 										+ " se envia a modificar pero el usuario ";
 								mensajeError = mensajeError
 										+ usuarioService.consultaXId(SessionContext.getCurrentUser()).getNombre()
@@ -821,7 +821,7 @@ public class CallDocumentCRUD {
 					break;
 				for (PropiedadDTO iPropertyConsecutive : fieldsConsecutive) {
 					if (iField.getCampo().compareTo(iPropertyConsecutive.getValor()) == 0) {
-						switch (iField.getCampoDTO().getFormato()) {
+						switch (iField.getCampoDTO().getTipo()) {
 						case DocumentoPlantillaCaracteristicaDTO.TEXTO:
 							if (iField.getValorText() != null)
 								fieldFirstValueConsecutive = iField;
@@ -845,7 +845,7 @@ public class CallDocumentCRUD {
 				}
 			}
 			if (fieldFirstValueConsecutive != null) {
-				switch (fieldFirstValueConsecutive.getCampoDTO().getFormato()) {
+				switch (fieldFirstValueConsecutive.getCampoDTO().getTipo()) {
 				case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 					pedido.setConsecutivo(fieldFirstValueConsecutive.getValorNumero());
 					if (pedido.getConsecutivo().compareTo(BigDecimal.ZERO) == 0)
@@ -1003,7 +1003,7 @@ public class CallDocumentCRUD {
 					caracteristicaFecha);
 			if (campoFecha == null)
 				throw new ServerException("Se debe colocar la caracteristica de fecha fecha");
-			if (campoFecha.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.FECHA) != 0)
+			if (campoFecha.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.FECHA) != 0)
 				throw new ServerException("El componente visual no es tipo fecha");
 			pedido.setFecha(campoFecha.getValorFecha());
 			if (pedido.getFecha() == null)
@@ -1108,7 +1108,7 @@ public class CallDocumentCRUD {
 				if (usrId == null && pvc.getCampo().compareTo(campoConsecutivo) == 0) {
 					if (pvc.getCampoDTO() == null)
 						pvc.setCampoDTO(documentoPlantillaCaracteristicaService.consultaXId(pvc.getCampo()));
-					switch (pvc.getCampoDTO().getFormato()) {
+					switch (pvc.getCampoDTO().getTipo()) {
 					case DocumentoPlantillaCaracteristicaDTO.NUMERO:
 						usrId = String.valueOf(pvc.getValorNumero().longValue());
 						break;

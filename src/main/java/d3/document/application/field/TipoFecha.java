@@ -48,7 +48,7 @@ public class TipoFecha {
 			} else {
 				if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null)
 					throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
-							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
+							+ " del formulario " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 			}
 
 		}
@@ -58,10 +58,10 @@ public class TipoFecha {
 			if (!rango.isEmpty()) {
 				if (pCampo.getValorAuxiliar() == null)
 					throw new ServerException("Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
-							+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
+							+ " del formulario " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 				if (pCampo.getValorNumero() == null || pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 					throw new ServerException("En el campo " + pCampo.getCampoDTO().getNombre() + " del formulario "
-							+ pCampo.getCampoDTO().getPlantillaNombre()
+							+ pCampo.getCampoDTO().getNodoSuperiorNombre()
 							+ " Debe colocar el numero de tiempo de la fecha final");
 
 				// long rangoSeleccionadoLong = pCampo.getValorFecha().getTime() -
@@ -196,7 +196,7 @@ public class TipoFecha {
 									Propiedades.PERMISO_CAMPO_OPCIONAL) == null) {
 								throw new ServerException(
 										"Es obligatorio colocar el campo " + pCampo.getCampoDTO().getNombre()
-												+ " del formulario " + pCampo.getCampoDTO().getPlantillaNombre());
+												+ " del formulario " + pCampo.getCampoDTO().getNodoSuperiorNombre());
 							}
 							pCampo.setValorFecha(null);
 
@@ -213,13 +213,13 @@ public class TipoFecha {
 						PedidoVentaCaracteristicaDTO maxField = campoService.getDependent(maximumField,
 								pCampo.getDependientes());
 						if (maxField == null)
-							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " el campo " + pCampo.getCampoDTO().getNombre()
 									+ " no esta consultando el dependiente fecha maxima");
 						if (maxField.getValorFecha() != null) {
 							if (pCampo.getValorFecha().compareTo(maxField.getValorFecha()) > 0)
 								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
-										+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+										+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 										+ " debe ser menor a " + maxField.getCampoDTO().getNombre() + " : "
 										+ D3Utils.formatDateTime(maxField.getValorFecha()));
 						}
@@ -230,13 +230,13 @@ public class TipoFecha {
 						PedidoVentaCaracteristicaDTO minField = campoService.getDependent(minimumField,
 								pCampo.getDependientes());
 						if (minField == null)
-							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+							throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " el campo " + pCampo.getCampoDTO().getNombre()
 									+ " no esta consultando el dependiente fecha minima");
 						if (minField.getValorFecha() != null) {
 							if (pCampo.getValorFecha().compareTo(minField.getValorFecha()) < 0)
 								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
-										+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+										+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 										+ " debe ser mayor a " + minField.getCampoDTO().getNombre() + " : "
 										+ D3Utils.formatDateTime(minField.getValorFecha()));
 						}
@@ -263,11 +263,11 @@ public class TipoFecha {
 							Date fechaMaxima = new Date(fechaMaximaCalendar.getTime().getTime() + tiempoAdicional);
 							if (pCampo.getValorFecha().compareTo(fechaMaxima) > 0)
 								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
-										+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+										+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 										+ " debe ser menor a " + D3Utils.formatDateTime(fechaMaxima));
 						} catch (NumberFormatException exNumber) {
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
-									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " contiene un valor que no puede convertirse en numero como fecha maxima. "
 									+ exNumber.getMessage());
 						}
@@ -295,11 +295,11 @@ public class TipoFecha {
 							Date fechaMinima = new Date(fechaMinimaCalendar.getTime().getTime() - tiempoAdicional);
 							if (pCampo.getValorFecha().compareTo(fechaMinima) < 0)
 								throw new ServerException("La fecha " + pCampo.getCampoDTO().getNombre()
-										+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+										+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 										+ " debe ser mayor a " + D3Utils.formatDateTime(fechaMinima));
 						} catch (NumberFormatException exNumber) {
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
-									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " contiene un valor que no puede convertirse en numero como fecha minima. "
 									+ exNumber.getMessage());
 						}
@@ -357,7 +357,7 @@ public class TipoFecha {
 		List<PedidoVentaCaracteristicaDTO> newDependientes = campoService.ordenarAlfabeticaDepende(dependientes);
 		for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
 			if (iDep.getValorOpcion() == null) {
-				if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+				if (iDep.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 					iDep.setValorOpcion((iDep.getValorNumero() == null) ? "0" : iDep.getValorNumero().toString());
 				}
 			}

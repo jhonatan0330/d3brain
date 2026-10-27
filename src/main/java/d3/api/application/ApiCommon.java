@@ -27,7 +27,7 @@ public class ApiCommon {
 
 	public static void chooseValueToField(FieldRequest fieldVO, PedidoVentaCaracteristicaDTO iCampo,
 			ProductoSvc productoService, DetallePedidoVentaSvc detallePedidoVentaService) throws ServerException {
-		switch (iCampo.getCampoDTO().getFormato()) {
+		switch (iCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.NUMERO: {
 			iCampo.setValorNumero(transformNumber(fieldVO.getValue()));
 			break;

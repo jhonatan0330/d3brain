@@ -49,11 +49,11 @@ public class TipoTexto {
 				&& pCampo.getValorText() == null) {
 			if (isUpdateAutomatic) {
 				CallDocumentCommons.addMessageError(pCampo.getPrincipal(),
-						"En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						"En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 								+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre()
 								+ "(codigo : " + pCampo.getCampoDTO().getCodigo() + ")");
 			} else {
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 						+ pCampo.getCampoDTO().getCodigo() + ")");
 			}
@@ -65,12 +65,12 @@ public class TipoTexto {
 				int maxSize = Integer
 						.valueOf(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD));
 				if (pCampo.getValorText().length() > maxSize)
-					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 							+ " el campo " + pCampo.getCampoDTO().getNombre()
 							+ " supera la cantidad limite de caracteres que son (" + maxSize
 							+ ") el texto que sobra es el siguiente: " + pCampo.getValorText().substring(maxSize));
 			} catch (NumberFormatException e) {
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " el campo "
 						+ pCampo.getCampoDTO().getNombre()
 						+ " tiene mal configurado el valor de la propiedad TEXTO LONGITUD, debe ser un numero");
 			}
@@ -80,11 +80,11 @@ public class TipoTexto {
 				int minSize = Integer
 						.valueOf(Propiedades.obtenerValor(pCampo.getCampoDTO(), Propiedades.TEXTO_LONGITUD_MINIMA));
 				if (pCampo.getValorText().length() < minSize)
-					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 							+ " el campo " + pCampo.getCampoDTO().getNombre() + " debe contener mas de " + minSize
 							+ " caracteres");
 			} catch (NumberFormatException e) {
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " el campo "
 						+ pCampo.getCampoDTO().getNombre()
 						+ " tiene mal configurado el valor de la propiedad TEXTO LONGITUD, debe ser un numero");
 			}
@@ -117,7 +117,7 @@ public class TipoTexto {
 				break;
 			}
 			default:
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " el campo "
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " el campo "
 						+ pCampo.getCampoDTO().getNombre() + " tiene FORMATO no valido :" + formato);
 			}
 
@@ -134,7 +134,7 @@ public class TipoTexto {
 		for (String iRegistro : registros) {
 			if (iRegistro != null && !iRegistro.isEmpty()) {
 				if (!pat.matcher(iRegistro).matches())
-					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 							+ " Revisa el campo " + pCampo.getCampoDTO().getNombre()
 							+ "  ya que no tiene un formato valido, " + iRegistro);
 			}

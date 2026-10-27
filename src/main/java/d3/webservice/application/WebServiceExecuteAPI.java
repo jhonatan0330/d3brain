@@ -882,7 +882,7 @@ public class WebServiceExecuteAPI {
 			} else {
 				final Matcher matcher = Pattern.compile(relacion.getAuxiliar()).matcher(texto);
 				if (matcher.find()) {
-					switch (campo.getFormato()) {
+					switch (campo.getTipo()) {
 					case DocumentoPlantillaCaracteristicaDTO.FECHA:
 						Date dateParsed = D3Utils.toDate(matcher.group(1));
 						if (dateParsed == null)

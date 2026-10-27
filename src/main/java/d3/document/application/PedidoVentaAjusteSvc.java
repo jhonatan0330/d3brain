@@ -81,7 +81,7 @@ public class PedidoVentaAjusteSvc extends BasicSvc<PedidoVentaAjusteDTO, PedidoV
 		ProcesoEstadoDTO estadoFinal = procesoEstadoService.consultaXId(dto.getEstadoFinal());
 		if (estadoFinal == null)
 			throw new ServerException("El estado final del documento no existe");
-		if (estadoFinal.getProceso().compareTo(estadoInicial.getProceso()) != 0)
+		if (estadoFinal.getNodoSuperior().compareTo(estadoInicial.getNodoSuperior()) != 0)
 			throw new ServerException("El estado no pertenece al mismo proceso");
 		dto.setFecha(new Date());
 		dto.setResponsable(SessionContext.getCurrentUser());

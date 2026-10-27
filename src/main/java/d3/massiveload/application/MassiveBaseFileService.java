@@ -28,7 +28,8 @@ public class MassiveBaseFileService {
 	private final MassiveLoadOrchestratorService orchestratorService;
 	private final UploadSvc uploadService;
 
-	public MassiveBaseFileService(@Lazy MassiveLoadOrchestratorService orchestratorService, @Lazy UploadSvc uploadService) {
+	public MassiveBaseFileService(@Lazy MassiveLoadOrchestratorService orchestratorService,
+			@Lazy UploadSvc uploadService) {
 		this.orchestratorService = orchestratorService;
 		this.uploadService = uploadService;
 	}
@@ -60,10 +61,10 @@ public class MassiveBaseFileService {
 			for (int index = 0; index < 2; index++) {
 				xml.append('<').append(nombre).append('>');
 				for (DocumentoPlantillaCaracteristicaDTO iCampo : plantilla.getCaracteristicas()) {
-					if (!DocumentoPlantillaCaracteristicaDTO.SECCION.equals(iCampo.getFormato())) {
+					if (!DocumentoPlantillaCaracteristicaDTO.SECCION.equals(iCampo.getTipo())) {
 						String campoNombre = MassiveFileParserService.formatStringXML(iCampo.getNombre());
 						xml.append('<').append(campoNombre).append('>');
-						xml.append(getXMLBase(iCampo.getFormato()));
+						xml.append(getXMLBase(iCampo.getTipo()));
 						xml.append("</").append(campoNombre).append('>');
 					}
 				}
@@ -100,8 +101,9 @@ public class MassiveBaseFileService {
 				Row header = sheet.createRow(0);
 				int i = 0;
 				for (DocumentoPlantillaCaracteristicaDTO iCampo : plantilla.getCaracteristicas()) {
-					if (!DocumentoPlantillaCaracteristicaDTO.SECCION.equals(iCampo.getFormato())) {
-						header.createCell(i++).setCellValue(MassiveFileParserService.formatStringXML(iCampo.getNombre()));
+					if (!DocumentoPlantillaCaracteristicaDTO.SECCION.equals(iCampo.getTipo())) {
+						header.createCell(i++)
+								.setCellValue(MassiveFileParserService.formatStringXML(iCampo.getNombre()));
 					}
 				}
 			}

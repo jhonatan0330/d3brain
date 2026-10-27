@@ -227,7 +227,7 @@ public class TipoDetallePedido {
 			PedidoVentaCaracteristicaDTO bd = campoService.buscarActivo(pCampo, pCampo.getPrincipal().getHistorico());
 			if (bd != null) {
 				pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
-						pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+						pCampo.getCampoDTO().getNodoSuperior(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 				if (pCampo.getValorText().compareTo(bd.getValorText()) == 0
 						&& ((bd.getValorNumero() == null && pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
 								|| (bd.getValorNumero() != null
@@ -242,7 +242,7 @@ public class TipoDetallePedido {
 			bd = campoService.guardar(pCampo);
 			pCampo.setLlaveTabla(bd.getLlaveTabla());
 			pCampo.setDetalles(validateAndSave.save(pCampo.getDetalles(), pCampo.getDocumento(),
-					pCampo.getCampoDTO().getPlantilla(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
+					pCampo.getCampoDTO().getNodoSuperior(), pCampo.getTransaccionRegistro(), pCampo.getLlaveTabla()));
 
 		}
 
@@ -350,7 +350,7 @@ public class TipoDetallePedido {
 					.simplificarConsultaBDProductos(productos);
 			for (ProductoDTO productoDTO : productos) {
 				DetallePedidoVentaDTO filtroPlantilla = new DetallePedidoVentaDTO();
-				filtroPlantilla.setPlantilla(pCampo.getPlantilla());
+				filtroPlantilla.setPlantilla(pCampo.getNodoSuperior());
 				filtroPlantilla.setProducto(productoDTO.getLlaveTabla());
 				productoDTO.setDetallePlantilla(detallePedidoVentaService.consultaCompleta(filtroPlantilla, tarifario,
 						tercero, propiedadFuncionTarifario, parametrosFuncionTarifario, productosSimplificados,
@@ -479,7 +479,7 @@ public class TipoDetallePedido {
 			// total
 			if (fieldWithDetails != null) {
 				for (PedidoVentaCaracteristicaDTO iCampoExpediente : expediente.getCaracteristicas()) {
-					if (iCampoExpediente.getCampoDTO().getFormato()
+					if (iCampoExpediente.getCampoDTO().getTipo()
 							.compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 						iCampoExpediente
 								.setCampoDTO(caracteristicaService.cargarComplementos(iCampoExpediente.getCampoDTO()));

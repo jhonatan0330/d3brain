@@ -31,7 +31,7 @@ public class MassiveValidationService {
 			return messages;
 		}
 		for (DocumentoPlantillaCaracteristicaDTO campoPlantilla : template.getCaracteristicas()) {
-			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getFormato()))
+			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getTipo()))
 				continue;
 			PedidoVentaCaracteristicaDTO campo = findField(document, campoPlantilla.getLlaveTabla());
 			if (campo == null) {
@@ -39,14 +39,14 @@ public class MassiveValidationService {
 						+ " no viene registrado en el documento " + template.getNombre()));
 				continue;
 			}
-			if (DocumentoPlantillaCaracteristicaDTO.PROCESO.equals(campoPlantilla.getFormato())
-					|| DocumentoPlantillaCaracteristicaDTO.VINCULO.equals(campoPlantilla.getFormato())) {
+			if (DocumentoPlantillaCaracteristicaDTO.PROCESO.equals(campoPlantilla.getTipo())
+					|| DocumentoPlantillaCaracteristicaDTO.VINCULO.equals(campoPlantilla.getTipo())) {
 				boolean optional = Propiedades.obtenerParametro(campoPlantilla,
 						Propiedades.PERMISO_CAMPO_OPCIONAL) != null;
 				if (!optional && (campo.getValorText() == null || campo.getValorText().isEmpty())
 						&& campo.getValorOpcion() == null) {
 					messages.add(message("Es necesario registrar el campo " + campoPlantilla.getNombre()
-							+ " de la plantilla " + campoPlantilla.getPlantillaNombre()));
+							+ " de la plantilla " + campoPlantilla.getNodoSuperiorNombre()));
 				}
 				continue;
 			}

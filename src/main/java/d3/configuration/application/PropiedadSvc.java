@@ -274,11 +274,11 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		}
 		case PropiedadValorDefinidoDTO.CAMPO: {
 			DocumentoPlantillaCaracteristicaDTO campo = campoService.consultaXId(fieldId);
-			return " en el campo " + campo.getNombre() + " la plantilla " + campo.getPlantillaNombre();
+			return " en el campo " + campo.getNombre() + " la plantilla " + campo.getNodoSuperiorNombre();
 		}
 		case PropiedadValorDefinidoDTO.REPORTE: {
 			ReporteBaseDTO campo = reporteService.consultaXId(fieldId);
-			return " en el reporte " + campo.getNombre() + " de la plantilla " + campo.getPlantillaNombre();
+			return " en el reporte " + campo.getNombre() + " de la plantilla " + campo.getNodoSuperiorNombre();
 		}
 		default:
 			return "(" + fieldId + ")";
@@ -655,7 +655,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 						throw new ServerException("Este campo no tiene configurada la plantilla");
 					}
 
-					plantillaId = filtro.getPlantilla();
+					plantillaId = filtro.getNodoSuperior();
 
 				} else {
 
@@ -663,7 +663,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 					case Propiedades.CAMPO_DIFERENCIAS: {
 						// Obtengo la plantilla para que la busqueda sea correcta
 						PropiedadDTO filtroPlantilla = getPropertyDifferenceTemplate(
-								campoService.consultaXId(dto.getCampo()).getPlantilla());
+								campoService.consultaXId(dto.getCampo()).getNodoSuperior());
 						if (filtroPlantilla == null)
 							throw new ServerException(
 									"Este campo no tiene una plantilla de diferencias y validar el campo.\nValor : "
@@ -729,13 +729,13 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			// VAlido por el nombre
 			DocumentoPlantillaCaracteristicaFilterDTO campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 			campoFilter.setNombre(dto.getValor().toUpperCase());
-			campoFilter.setPlantilla(plantilla.getLlaveTabla());
+			campoFilter.setNodoSuperior(plantilla.getLlaveTabla());
 			campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 			campo = campoService.consultaUnica(campoFilter);
 			if (campo == null) {
 				campoFilter = new DocumentoPlantillaCaracteristicaFilterDTO();
 				campoFilter.setCodigo(dto.getValor().toUpperCase());
-				campoFilter.setPlantilla(plantilla.getLlaveTabla());
+				campoFilter.setNodoSuperior(plantilla.getLlaveTabla());
 				campoFilter.setEstado(SharedConstants.STATE_ACTIVE);
 				campo = campoService.consultaUnica(campoFilter);
 				if (campo == null)
@@ -879,12 +879,12 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 			ReporteBaseDTO reporte = reporteService.consultaXId(dto.getCampo());
 			if (reporte == null)
 				throw new ServerException("Revisa porque esta propiedad no pertenece a un reporte");
-			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(reporte.getPlantilla());
+			DocumentoPlantillaDTO plantilla = plantillaService.consultaXId(reporte.getNodoSuperior());
 			if (plantilla == null)
 				throw new ServerException(
 						"Revisa porque el reporte " + reporte.getNombre() + " no esta asociado a una plantilla");
 			ProcesoEstadoFilterDTO estadoFiltro = new ProcesoEstadoFilterDTO();
-			estadoFiltro.setProceso(plantilla.getProceso());
+			estadoFiltro.setNodoSuperior(plantilla.getProceso());
 			estadoFiltro.setNombre(dto.getValor().toUpperCase());
 			estadoFiltro.setEstado(SharedConstants.STATE_ACTIVE);
 			estado = estadoService.consultaUnica(estadoFiltro);
@@ -1448,7 +1448,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		case PropiedadValorDefinidoDTO.TRANSICION:
 			ProcesoTransicionDTO bdTR = transicionService.consultaXId(propiedad.getCampo());
 			return "TRANSICION : " + bdTR.getNombre().toLowerCase() + " \n PROCESO: "
-					+ bdTR.getProcesoNombre().toLowerCase() + " \nPLANTILLA : "
+					+ bdTR.getNodoSuperiorNombre().toLowerCase() + " \nPLANTILLA : "
 					+ bdTR.getPlantillaNombre().toLowerCase() + "\n\n";
 		}
 		return "";

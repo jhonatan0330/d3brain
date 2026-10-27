@@ -40,7 +40,7 @@ public class TipoSeccion {
 					.ordenarAlfabeticaDepende(pCampo.getDependientes());
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
 				if (iDep.getValorOpcion() == null) {
-					if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+					if (iDep.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 						iDep.setValorOpcion((iDep.getValorNumero() == null) ? "0" : iDep.getValorNumero().toString());
 					}
 				}

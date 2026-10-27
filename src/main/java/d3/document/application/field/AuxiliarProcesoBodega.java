@@ -116,20 +116,20 @@ public class AuxiliarProcesoBodega {
 	public List<DeduccionProductoDTO> inventarioDirecto(PedidoVentaCaracteristicaDTO pCampo, String operacion,
 			String pStoreId, String documentoInicial, List<RelacionInternaDTO> relaciones)
 			throws ServerException {
-		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
+		if (pCampo.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 			return inventariarDetalle(pCampo, operacion, pStoreId, documentoInicial);
 		}
 
-		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+		if (pCampo.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 			if (relaciones == null || relaciones.isEmpty())
 				throw new ServerException(
 						"Coloca el camino de profundidad de consulta de inventario en las relaciones de la propiedad"
-								+ "\nPlantilla: " + pCampo.getCampoDTO().getPlantillaNombre() + "\nCampo: "
+								+ "\nPlantilla: " + pCampo.getCampoDTO().getNodoSuperiorNombre() + "\nCampo: "
 								+ pCampo.getCampoDTO().getNombre());
 			return inventariarProceso(pCampo, operacion, pStoreId, documentoInicial, relaciones);
 		}
 
-		if (pCampo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+		if (pCampo.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 			List<PropiedadDTO> codigoDepende = Propiedades.obtenerVariosParametro(pCampo.getCampoDTO(),
 					Propiedades.DEPENDE);
 			if (codigoDepende != null) {
@@ -176,12 +176,12 @@ public class AuxiliarProcesoBodega {
 						if (campoExpediente.getCampo().compareTo(rit.getCampo()) == 0) {
 							System.out.format(
 									"\n[%s (%s) - %s] Inventario anidado de documento operacion(%s) iniciando en campo interno ( %s )",
-									pCampo.getCampoDTO().getPlantillaNombre(), expediente.getNombre(),
+									pCampo.getCampoDTO().getNodoSuperiorNombre(), expediente.getNombre(),
 									pCampo.getCampoDTO().getNombre(), operacion,
 									campoExpediente.getCampoDTO().getNombre());
 							// La siguiente linea es redundante ya que lo consulte el campo completo
 							// //campo.setCampoDTO(caracteristicaService.consultaXId(campo.getCampo()));
-							if (campoExpediente.getCampoDTO().getFormato()
+							if (campoExpediente.getCampoDTO().getTipo()
 									.compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0
 									&& campoExpediente.getLlaveTabla() != null) {
 								campoExpediente.setCampoDTO(
@@ -231,7 +231,7 @@ public class AuxiliarProcesoBodega {
 			throw new ServerException("Revise la operacion de la bodega, no se identifica el factor");
 
 		List<DeduccionProductoDTO> result = null;
-		System.out.format("\n[%s - %s] Gestionando inventario operacion", pCampo.getCampoDTO().getPlantillaNombre(),
+		System.out.format("\n[%s - %s] Gestionando inventario operacion", pCampo.getCampoDTO().getNodoSuperiorNombre(),
 				pCampo.getCampoDTO().getNombre());
 
 		if (pCampo.getDetalles() != null && !pCampo.getDetalles().isEmpty()) {
@@ -240,7 +240,7 @@ public class AuxiliarProcesoBodega {
 				if (pCampo.getPrincipal() == null || detalle.getLlaveTabla() == null || detalle.getEstado() == null
 						|| detalle.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0) {
 					boolean deducirComposicion = false;// En transformacion se hacen las 2 operaciones
-					System.out.format("\n[%s - %s] Revisando producto %s", pCampo.getCampoDTO().getPlantillaNombre(),
+					System.out.format("\n[%s - %s] Revisando producto %s", pCampo.getCampoDTO().getNodoSuperiorNombre(),
 							pCampo.getCampoDTO().getNombre(), detalle.getNombre());
 					if (!operacion.contains("C")) {
 						ProductoInventarioFilterDTO productoFilter = new ProductoInventarioFilterDTO();

@@ -37,7 +37,7 @@ public class TipoCroquis {
 	public void validarPrepararCampo(PedidoVentaCaracteristicaDTO pCampo) throws ServerException {
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& (pCampo.getValorText() == null || pCampo.getValorText().isEmpty()))
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 					+ "Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 					+ pCampo.getCampoDTO().getCodigo() + ")");
 		if (pCampo.getExpedientes() != null && !pCampo.getExpedientes().isEmpty()) {

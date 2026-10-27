@@ -56,7 +56,7 @@ public class SynchronizeTemplateService {
 						newProcess.setProceso(remote.getProceso());
 						newProcess.setNombre(remote.getNombre());
 						newProcess.setTipo(remote.getTipo());
-						newProcess.setPadre(remote.getPadre());
+						newProcess.setNodoSuperior(remote.getNodoSuperior());
 						try {
 							local = templateService.save(newProcess);
 							log.info("NEW TEMPLATE " + remote.getCodigo() + " - " + remote.getNombre());
@@ -80,8 +80,8 @@ public class SynchronizeTemplateService {
 
 	private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote, String local) {
 		for (ReporteBaseDTO remoteProcess : remoteList) {
-			if (remoteProcess.getPlantilla() != null && remoteProcess.getPlantilla().compareTo(remote) == 0) {
-				remoteProcess.setPlantilla(local);
+			if (remoteProcess.getNodoSuperior() != null && remoteProcess.getNodoSuperior().compareTo(remote) == 0) {
+				remoteProcess.setNodoSuperior(local);
 			}
 		}
 	}

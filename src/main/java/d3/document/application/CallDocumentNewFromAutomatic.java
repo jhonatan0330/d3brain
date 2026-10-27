@@ -135,7 +135,7 @@ public class CallDocumentNewFromAutomatic {
 							.relacionesPropiedad(iPropiedadDTO.getLlaveTabla());
 					if (relaciones == null || relaciones.isEmpty()) {
 						throw new ServerException("La propiedad " + iPropiedadDTO.getNombre() + " de la transicion "
-								+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre()
+								+ transicion.getNombre() + " del proceso " + transicion.getNodoSuperiorNombre()
 								+ " con estado inicial " + transicion.getEstadoPartidaNombre()
 								+ ", no tiene relaciones, usa las relaciones para identificar que campo deseas copiar");
 					}
@@ -183,7 +183,7 @@ public class CallDocumentNewFromAutomatic {
 								(pDocumentIterate != null) ? pDocumentIterate.getLlaveTabla() : null);
 					} catch (Exception ex) {
 						throw new ServerException("Se presento un error en la consulta de la transicion "
-								+ transicion.getNombre() + " del proceso " + transicion.getProcesoNombre(),
+								+ transicion.getNombre() + " del proceso " + transicion.getNodoSuperiorNombre(),
 								ex.getMessage());
 					}
 					if (campoGenerado != null) {

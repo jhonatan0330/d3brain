@@ -152,7 +152,7 @@ public class PedidoVentaCaracteristicaSvc
 			for (PedidoVentaCaracteristicaDTO iCurrentField : result) {
 				if (iFieldTemplateDTO.getLlaveTabla().compareTo(iCurrentField.getCampo()) == 0) {
 					iCurrentField.setCampoDTO(iFieldTemplateDTO);
-					if (iFieldTemplateDTO.getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
+					if (iFieldTemplateDTO.getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 						iCurrentField.setDetalles(
 								detallePedidoVentaService.listar2Documento(documentId, iCurrentField.getLlaveTabla()));
 						for (DetallePedidoVentaDTO detalleDocumento : iCurrentField.getDetalles()) {
@@ -263,7 +263,7 @@ public class PedidoVentaCaracteristicaSvc
 						D3Utils.formatFunction(propFunction.getLlaveTabla()), documento,
 						SessionContext.getCurrentToken(), dependientesOrdenados);
 			} catch (Exception e) {
-				String _log = "El campo " + pCampoDTO.getNombre() + " de la plantilla " + pCampoDTO.getPlantillaNombre()
+				String _log = "El campo " + pCampoDTO.getNombre() + " de la plantilla " + pCampoDTO.getNodoSuperiorNombre()
 						+ " envia el siguiente error";
 				throw new ServerException(e.getMessage(), _log);
 			}

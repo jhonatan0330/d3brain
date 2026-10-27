@@ -3,38 +3,26 @@ package d3.process.domain;
 
 import org.apache.ibatis.type.Alias;
 
-import d3.shared.domain.BasicParamDTO;
+import d3.shared.domain.BasicNodoDTO;
 
 @Alias("ProcesoTransicionDTO")
-public class ProcesoTransicionDTO extends BasicParamDTO
+public class ProcesoTransicionDTO extends BasicNodoDTO
 {
 	public static final String RESTANDO = "R";
 	public static final String SUMANDO = "S";
 
-	private String procesoNombre;
-	private Integer estadoPartidaOrden;
-	private Integer estadoLlegadaOrden;
-	private String nombre;
-	private String proceso;
-	private String estadoPartida;
-	private String estadoPartidaNombre;
 	private String plantilla;
 	private String plantillaNombre;
-	
-	private String imagen;
+
+	private Integer estadoPartidaOrden;
+	private String estadoPartida;
+	private String estadoPartidaNombre;
 	
 	private String estadoLLegada;
 	private String estadoLlegadaNombre;
+	private Integer estadoLlegadaOrden;
 	private String estadoLlegadaTipo;
-	private String codigo;
 
-	public void setProcesoNombre(String procesoNombre) {
-		this.procesoNombre = procesoNombre;
-	}
-
-	public String getProcesoNombre() {
-		return procesoNombre;
-	}
 
 	public void setEstadoPartidaOrden(Integer estadoPartidaOrden) {
 		this.estadoPartidaOrden = estadoPartidaOrden;
@@ -52,21 +40,6 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 		return estadoLlegadaOrden;
 	}
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setProceso(String proceso) {
-		this.proceso = proceso;
-	}
-
-	public String getProceso() {
-		return proceso;
-	}
 
 	public void setEstadoPartida(String estadoPartida) {
 		this.estadoPartida = estadoPartida;
@@ -100,15 +73,6 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 		return plantillaNombre;
 	}
 
-
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
-
-	public String getImagen() {
-		return imagen;
-	}
-
 	
 	public void setEstadoLLegada(String estadoLLegada) {
 		this.estadoLLegada = estadoLLegada;
@@ -133,13 +97,5 @@ public class ProcesoTransicionDTO extends BasicParamDTO
 	public String getEstadoLlegadaTipo() {
 		return estadoLlegadaTipo;
 	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
+	
 }

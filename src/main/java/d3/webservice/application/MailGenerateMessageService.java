@@ -74,8 +74,8 @@ public class MailGenerateMessageService {
 				campo = transicionDTO.getLlaveTabla();
 				tipo = PropiedadValorDefinidoDTO.TRANSICION;
 				mensaje = cacheService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
-				if (mensaje == null && transicionDTO.getProceso() != null) {
-					campo = transicionDTO.getProceso();
+				if (mensaje == null && transicionDTO.getNodoSuperior() != null) {
+					campo = transicionDTO.getNodoSuperior();
 					tipo = PropiedadValorDefinidoDTO.PROCESO;
 					mensaje = cacheService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
 				}
@@ -85,8 +85,8 @@ public class MailGenerateMessageService {
 				campo = transicionDTO.getLlaveTabla();
 				tipo = PropiedadValorDefinidoDTO.TRANSICION;
 				mensaje = cacheService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
-				if (mensaje == null && transicionDTO.getProceso() != null) {
-					campo = transicionDTO.getProceso();
+				if (mensaje == null && transicionDTO.getNodoSuperior() != null) {
+					campo = transicionDTO.getNodoSuperior();
 					tipo = PropiedadValorDefinidoDTO.PROCESO;
 					mensaje = cacheService.obtenerPropiedad(tipo, campo, Propiedades.MENSAJE, usuarioToken);
 				}

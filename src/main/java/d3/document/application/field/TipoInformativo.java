@@ -57,11 +57,11 @@ public class TipoInformativo {
 				&& pCampo.getValorText() == null) {
 			if (isUpdateAutomatic) {
 				CallDocumentCommons.addMessageError(pCampo.getPrincipal(),
-						"En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+						"En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 								+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre()
 								+ "(codigo : " + pCampo.getCampoDTO().getCodigo() + ")");
 			} else {
-				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+				throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 						+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 						+ pCampo.getCampoDTO().getCodigo() + ")");
 			}
@@ -98,7 +98,7 @@ public class TipoInformativo {
 				.consultaUnicaConComplementos(pCampo.getCampo());
 		PropiedadDTO dataToGetInformation = Propiedades.obtenerParametro(pBase, Propiedades.INFORMATIVE_DATA);
 		if (dataToGetInformation == null)
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " En el campo "
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " En el campo "
 					+ pCampo.getCampoDTO().getNombre() + " no se ha definido la propiedad de codigo INFORMATIVE_DATA");
 
 		if (pCampo.getDependientes() == null || pCampo.getDependientes().isEmpty()) {
@@ -135,7 +135,7 @@ public class TipoInformativo {
 				.relacionesPropiedad(dataToGetInformation.getLlaveTabla());
 
 		if (relationsOfPropertyData == null || relationsOfPropertyData.isEmpty())
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " En el campo "
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " En el campo "
 					+ pCampo.getCampoDTO().getNombre()
 					+ " no tiene relaciones para identificar cual es campo a consultar");
 		pCampoFilter.setCampo(null);
@@ -149,7 +149,7 @@ public class TipoInformativo {
 
 		if (pCampoFilter.getCampo() == null) {
 			DocumentoPlantillaDTO templateError = templateService.consultaXId(documentToGet.getPlantilla());
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " En el campo "
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " En el campo "
 					+ pCampo.getCampoDTO().getNombre() + " no tiene una relacion relacionada con la plantilla "
 					+ templateError.getNombre());
 		}

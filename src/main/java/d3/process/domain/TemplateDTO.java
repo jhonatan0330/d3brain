@@ -6,46 +6,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import d3.report.domain.ReporteBaseDTO;
-import d3.shared.domain.BasicParamDTO;
+import d3.shared.domain.BasicNodoDTO;
 
 @JsonInclude(Include.NON_NULL)
-public class TemplateDTO extends BasicParamDTO
+public class TemplateDTO extends BasicNodoDTO
 {
 
-	private String tipo;
-	private String padre;
-	private String nombre;
+	private String proceso;
 	private String consecutivo;
-	private String imagen;
+
 	private List<DocumentoPlantillaCaracteristicaDTO> caracteristicas;
 	private List<ProcesoEstadoDTO> estados;
 	private List<ReporteBaseDTO> reportes;
-	private String codigo;
-	private String proceso;
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
-	public String getTipo() {
-		return tipo;
-	}
-
-	public void setPadre(String padre) {
-		this.padre = padre;
-	}
-
-	public String getPadre() {
-		return padre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
 
 	public void setConsecutivo(String consecutivo) {
 		this.consecutivo = consecutivo;
@@ -55,13 +27,7 @@ public class TemplateDTO extends BasicParamDTO
 		return consecutivo;
 	}
 
-	public void setImagen(String imagen) {
-		this.imagen = imagen;
-	}
-
-	public String getImagen() {
-		return imagen;
-	}
+	
 
 	public void setCaracteristicas(List<DocumentoPlantillaCaracteristicaDTO> caracteristicas) {
 		this.caracteristicas = caracteristicas;
@@ -87,14 +53,6 @@ public class TemplateDTO extends BasicParamDTO
 		return reportes;
 	}
 
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-
 	public void setProceso(String proceso) {
 		this.proceso = proceso;
 	}
@@ -111,7 +69,7 @@ public class TemplateDTO extends BasicParamDTO
 		TemplateDTO template = new TemplateDTO();
 		template.setLlaveTabla(documento.getLlaveTabla());
 		template.setTipo(documento.getTipo());
-		template.setPadre(documento.getPadre());
+		template.setNodoSuperior(documento.getNodoSuperior());
 		template.setNombre(documento.getNombre());
 		template.setConsecutivo(documento.getConsecutivo());
 		template.setImagen(documento.getImagen());

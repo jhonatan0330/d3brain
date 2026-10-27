@@ -73,7 +73,7 @@ public class TipoNumero {
 						BigDecimal diferencia = pCampo.getValorNumero().abs().add(valorCalculado.abs().negate());
 						if (diferencia.abs().longValue() > 1)
 							throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre()
-									+ " de la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+									+ " de la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 									+ " no se calculo correctamente, valor esperado : ("
 									+ D3Utils.formatMoney(valorCalculado) + ") y se recibe ("
 									+ D3Utils.formatMoney(pCampo.getValorNumero()) + ")");
@@ -119,7 +119,7 @@ public class TipoNumero {
 		// Revisar que es opcional
 		if (Propiedades.obtenerParametro(pCampo.getCampoDTO(), Propiedades.PERMISO_CAMPO_OPCIONAL) == null
 				&& pCampo.getValorNumero().compareTo(BigDecimal.ZERO) == 0)
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 					+ " Es obligatorio registrar el campo " + pCampo.getCampoDTO().getNombre() + "(codigo : "
 					+ pCampo.getCampoDTO().getCodigo() + ")");
 		// Solo para modificaciones
@@ -133,7 +133,7 @@ public class TipoNumero {
 							+ " no se puede modificar, valor esperado : " + D3Utils.formatMoney(BigDecimal.ZERO));
 			} else {
 				if (!isUpdateAutomatic && pCampo.getValorNumero().compareTo(bd.getValorNumero()) != 0)
-					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre()
+					throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre()
 							+ "El campo " + pCampo.getCampoDTO().getNombre()
 							+ " no se puede modificar, valor esperado : " + D3Utils.formatMoney(bd.getValorNumero())
 							+ " y se envia " + D3Utils.formatMoney(pCampo.getValorNumero()));
@@ -147,7 +147,7 @@ public class TipoNumero {
 				roundInt = Integer.parseInt(roundNumber);
 			pCampo.setValorNumero(pCampo.getValorNumero().setScale(roundInt, RoundingMode.HALF_UP));
 		} catch (NumberFormatException e) {
-			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getPlantillaNombre() + " El campo "
+			throw new ServerException("En la plantilla " + pCampo.getCampoDTO().getNodoSuperiorNombre() + " El campo "
 					+ pCampo.getCampoDTO().getNombre() + "(codigo : " + pCampo.getCampoDTO().getCodigo()
 					+ ") en la propiedad redondeo tiene el siguiente error :" + e.getMessage());
 		}
@@ -247,7 +247,7 @@ public class TipoNumero {
 				// colcoara en cero por dependiente y no se autocalculaba
 				// if (iterable.getValorNumero() == null)
 				// iterable.setValorNumero(BigDecimal.ZERO);
-				if (iterable.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
+				if (iterable.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 					// Esta aprte fue para fenix para calcular valores internos de los productos
 					if (iterable.getDetalles() != null && !iterable.getDetalles().isEmpty()) {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
@@ -286,7 +286,7 @@ public class TipoNumero {
 					}
 					formula = formula.replaceAll(iterable.getCampoDTO().getCodigo() + "_[A-Z]*", "0");
 				}
-				if (iterable.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+				if (iterable.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 					if (iterable.getExpedientes() != null && !iterable.getExpedientes().isEmpty()) {
 						HashMap<String, BigDecimal> valoresDetallesCampo = new HashMap<String, BigDecimal>();
 						for (PedidoVentaDTO iDetalle : iterable.getExpedientes()) {
@@ -339,7 +339,7 @@ public class TipoNumero {
 			return CalculatorUtil.calcular(formula);
 		} catch (Exception e) {
 			throw new ServerException("El campo " + pCampo.getCampoDTO().getNombre() + " de la plantilla "
-					+ pCampo.getCampoDTO().getPlantillaNombre() + " tiene el siguiente error : " + e.getMessage());
+					+ pCampo.getCampoDTO().getNodoSuperiorNombre() + " tiene el siguiente error : " + e.getMessage());
 		}
 	}
 
@@ -356,7 +356,7 @@ public class TipoNumero {
 					.ordenarAlfabeticaDepende(pCampo.getDependientes());
 			for (PedidoVentaCaracteristicaDTO iDep : newDependientes) {
 				if (iDep.getValorOpcion() == null) {
-					if (iDep.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+					if (iDep.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 						iDep.setValorOpcion((iDep.getValorNumero() == null) ? "0" : iDep.getValorNumero().toString());
 					}
 				}

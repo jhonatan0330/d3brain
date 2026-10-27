@@ -23,7 +23,7 @@ public class MassiveDocumentBuilderService {
 		pedido.setCaracteristicas(new ArrayList<>());
 		String updateColumn = "UPDATE_" + template.getCodigo();
 		for (DocumentoPlantillaCaracteristicaDTO campoPlantilla : template.getCaracteristicas()) {
-			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getFormato()) && !includeSections)
+			if (DocumentoPlantillaCaracteristicaDTO.SECCION.equals(campoPlantilla.getTipo()) && !includeSections)
 				continue;
 			PedidoVentaCaracteristicaDTO campo = new PedidoVentaCaracteristicaDTO();
 			campo.setCampo(campoPlantilla.getLlaveTabla());

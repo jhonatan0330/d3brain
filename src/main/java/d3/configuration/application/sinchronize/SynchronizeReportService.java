@@ -41,7 +41,7 @@ public class SynchronizeReportService {
 						log.error("COMPARE NOT EXIST REPORT " + remote.getCodigo() + " - " + remote.getNombre());
 					} else {
 						ReporteBaseDTO newReport = new ReporteBaseDTO();
-						newReport.setPlantilla(remote.getPlantilla());
+						newReport.setNodoSuperior(remote.getNodoSuperior());
 						newReport.setCodigo(remote.getCodigo());
 						newReport.setNombre(remote.getNombre());
 						try {

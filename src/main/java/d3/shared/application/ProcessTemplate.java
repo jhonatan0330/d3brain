@@ -195,7 +195,7 @@ public class ProcessTemplate {
 			parameters = parameters + SharedConstants.PUNTO_COMA_DOBLE + "R_" + iProp.getCampoDTO().getCodigo()
 					+ SharedConstants.IGUAL;
 
-			if (iProp.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
+			if (iProp.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.NUMERO) == 0) {
 				parameters = parameters + ((iProp.getValorNumero() == null) ? "0" : iProp.getValorNumero().toString());
 			} else {
 				parameters = parameters + ((iProp.getValorText() == null) ? "0" : iProp.getValorText());
@@ -279,7 +279,7 @@ public class ProcessTemplate {
 		} else {
 			if (referidas != null && !referidas.isEmpty()) {
 				Map<String, List<RelacionInternaDTO>> relations = null;
-				if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
+				if (campo.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PROCESO) == 0) {
 					if (campo.getExpedientes() == null) {
 						List<DocumentoRelacionExpedienteDTO> documentsInField = documentsInFieldService
 								.listByField(campo.getLlaveTabla());
@@ -338,7 +338,7 @@ public class ProcessTemplate {
 						}
 					}
 				} else {
-					if (campo.getCampoDTO().getFormato().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
+					if (campo.getCampoDTO().getTipo().compareTo(DocumentoPlantillaCaracteristicaDTO.PRODUCTO) == 0) {
 						// Aqui deberia ser obtener por campo
 						List<DetallePedidoVentaDTO> detalleFromDocument = detallePedidoVentaService
 								.listar2Documento(campo.getDocumento(), campo.getLlaveTabla());
@@ -577,7 +577,7 @@ public class ProcessTemplate {
 			throws ServerException {
 		if (iCampo == null || iCampo.getCampoDTO() == null || iCampo.getValorText() == null)
 			return "";
-		switch (iCampo.getCampoDTO().getFormato()) {
+		switch (iCampo.getCampoDTO().getTipo()) {
 		case DocumentoPlantillaCaracteristicaDTO.ARCHIVO:
 			if (auxiliarFormat == null)
 				return iCampo.getValorText();
