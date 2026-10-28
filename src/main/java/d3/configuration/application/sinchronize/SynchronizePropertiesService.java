@@ -46,7 +46,7 @@ public class SynchronizePropertiesService {
 			for (PropiedadDTO remoteProperty : propertiesRemote) {
 				PropiedadDTO findProperty = findPropertyInList(localPropertiesToErase,
 						remoteProperty.getPropiedadValor(), remoteProperty.getValor(), remoteProperty.getTexto(),
-						remoteProperty.getRol(), remoteProperty.getMotivo());
+						remoteProperty.getRol(), remoteProperty.getMotivo(), remoteProperty.getCodigo());
 				// Creo la nueva propiedad
 				if (findProperty != null) {
 					localPropertiesToErase.remove(findProperty);
@@ -117,7 +117,12 @@ public class SynchronizePropertiesService {
 								break;
 							}
 							default:
-								newProperty.setValor(remoteProperty.getTexto());
+								if(remoteProperty.getCodigo()!=null) {
+									newProperty.setValor(remoteProperty.getCodigo());
+								}else {
+									newProperty.setValor(remoteProperty.getTexto());	
+								}
+								
 							}
 						}
 						try {
@@ -173,8 +178,8 @@ public class SynchronizePropertiesService {
 				.collect(Collectors.toList());
 	}
 
-	private PropiedadDTO findPropertyInList(List<PropiedadDTO> array, String code, String value, String text,
-			String role, String motive) {
+	private PropiedadDTO findPropertyInList(List<PropiedadDTO> array, String tipoPropiedad, String value, String text,
+			String role, String motive, String code) {
 		for (PropiedadDTO property : array) {
 			if ((role == null && property.getRol() == null)
 					|| (property.getRol() != null && role != null && role.compareTo(property.getRol()) == 0)) {
@@ -182,7 +187,9 @@ public class SynchronizePropertiesService {
 				// referenciadas y se confundian
 				if ((motive == null && property.getMotivo() == null) || (property.getMotivo() != null && motive != null
 						&& motive.compareTo(property.getMotivo()) == 0)) {
-					if (code.compareTo(property.getPropiedadValor()) == 0) {
+					if (tipoPropiedad.compareTo(property.getPropiedadValor()) == 0) {
+						if (property.getCodigo() != null && code != null && property.getCodigo().compareTo(code) == 0)
+							return property;
 						if (property.getTexto() != null && text != null && property.getTexto().compareTo(text) == 0)
 							return property;
 						if (property.getValor() != null && property.getValor().compareTo(value) == 0)

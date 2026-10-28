@@ -65,6 +65,7 @@ public class OrganizacionSvc extends BasicSvc<OrganizacionDTO, OrganizacionFilte
 		return obtenerPrincipalPropiedades(SessionContext.getCurrentUserOrNull());
 	}
 
+	// TODO esto lo debo mover al cache manager
 	public OrganizacionDTO obtenerPrincipal() throws ServerException {
 		OrganizacionDTO mainOrganization = cacheManager.getMainOrganization();
 		if (mainOrganization != null)

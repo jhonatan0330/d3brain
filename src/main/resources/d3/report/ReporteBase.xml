@@ -129,7 +129,7 @@
 	<select id="getFullToSynchronize" resultType="ReporteBaseDTO">
 		select
 			crpb_llave as  llaveTabla
-			,crpb_plantilla as  nodoSuperior
+			,cdpl_codigo as  nodoSuperior
 			,cdpl_nombre as  nodoSuperiorNombre
 			,crpb_nombre as  nombre
 			,crpb_codigo as  codigo

@@ -12,8 +12,6 @@ import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
-import d3.process.domain.ProcesoTransicionDTO;
-import d3.report.domain.ReporteBaseDTO;
 import d3.shared.domain.ServerException;
 
 @Service
@@ -67,9 +65,9 @@ public class SynchronizeTemplateService {
 
 				}
 				if (local != null) {
-					changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
+					/*changeReportTemplateField(hierarchy.getReports(), remote.getLlaveTabla(), local.getLlaveTabla());
 					changeTemplateInTransitions(hierarchy.getTransitions(), remote.getLlaveTabla(),
-							local.getLlaveTabla());
+							local.getLlaveTabla());*/
 					changeTemplateInRelations(hierarchy.getRelations(), remote.getLlaveTabla(), local.getLlaveTabla());
 				}
 			}
@@ -78,7 +76,7 @@ public class SynchronizeTemplateService {
 		// callAfterCreateAllTemplate(token, hierarchy, log);
 	}
 
-	private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote, String local) {
+	/*private void changeReportTemplateField(List<ReporteBaseDTO> remoteList, String remote, String local) {
 		for (ReporteBaseDTO remoteProcess : remoteList) {
 			if (remoteProcess.getNodoSuperior() != null && remoteProcess.getNodoSuperior().compareTo(remote) == 0) {
 				remoteProcess.setNodoSuperior(local);
@@ -92,7 +90,7 @@ public class SynchronizeTemplateService {
 				remoteProcess.setPlantilla(local);
 			}
 		}
-	}
+	}*/
 
 	private void changeTemplateInRelations(List<RelacionInternaDTO> array, String remote, String local) {
 		for (RelacionInternaDTO remoteRelations : array) {

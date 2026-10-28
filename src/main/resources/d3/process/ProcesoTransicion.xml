@@ -209,7 +209,7 @@
 			,cptr_codigo as  codigo
 			,cptr_proceso as  nodoSuperior
 			,cptr_estadopartida as  estadoPartida
-			,cptr_plantilla as  plantilla
+			,cdpl_codigo as  plantilla
 			,cptr_estadollegada as  estadoLLegada
 			,cptr_estado as estado
 		from procesotransicion_ptrp a

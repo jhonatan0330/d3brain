@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import d3.CacheManager;
 import d3.authentication.domain.OrganizacionDTO;
+import d3.authentication.infrastructure.OrganizacionMapper;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -25,12 +26,14 @@ import d3.shared.domain.SharedConstants;
 public class PropertyGetWithCacheService {
 
 	private final PropertyCacheMapper propiedadMapper;
+	private final OrganizacionMapper organizacionMapper;
 	private final PropiedadValorDefinidoMapper propiedadValorDefinidoMapper;
 	private final CacheManager cacheService;
 
-	public PropertyGetWithCacheService(@Lazy PropertyCacheMapper propiedadMapper,
+	public PropertyGetWithCacheService(@Lazy PropertyCacheMapper propiedadMapper, @Lazy OrganizacionMapper organizacionMapper,
 			@Lazy PropiedadValorDefinidoMapper propiedadValorDefinidoMapper, @Lazy CacheManager cacheService) {
 		this.propiedadMapper = propiedadMapper;
+		this.organizacionMapper = organizacionMapper;
 		this.propiedadValorDefinidoMapper = propiedadValorDefinidoMapper;
 		this.cacheService = cacheService;
 	}
@@ -237,7 +240,7 @@ public class PropertyGetWithCacheService {
 	public List<PropiedadDTO> getByValueWithoutField(String pType, String pKey, String pValue, String pUser)
 			throws ServerException {
 		if (pKey == null)
-			throw new ServerException("Es encesaario colcoar el pKey");
+			throw new ServerException("Es necesario colcoar el pKey");
 		PropiedadValorDefinidoDTO valorDefinido = consultarValorDefinido(pType, pKey);
 		PropiedadFilterDTO _filter = new PropiedadFilterDTO();
 		_filter.setPropiedadValor(valorDefinido.getLlaveTabla());
@@ -248,9 +251,17 @@ public class PropertyGetWithCacheService {
 		return _props;
 	}
 
-	public String getMainOrganization() {
+	public String getMainOrganization() throws ServerException {
 		OrganizacionDTO org = cacheService.getMainOrganization();
-		return org==null?null:org.getLlaveTabla();
+		if (org != null)
+			return org.getLlaveTabla();
+		try {
+			org = organizacionMapper.obtenerPrincipal();
+			cacheService.setMainOrganization(org);
+			return org.getLlaveTabla();
+		} catch (Exception e) {
+			throw new ServerException(e.getCause().getMessage());
+		}
 	}
 
 }

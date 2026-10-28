@@ -104,6 +104,16 @@ public class DocumentoPlantillaCaracteristicaSvc
 		return dto;
 	}
 
+	@Override
+	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+	public DocumentoPlantillaCaracteristicaDTO activar(DocumentoPlantillaCaracteristicaDTO dto)
+			throws ServerException {
+		dto = super.activar(dto);
+		organizar(dto);
+		cacheService.clearFieldsMap();
+		return dto;
+	}
+
 	// Esto lo uso en APiCommon y la idea es que se mejore en las cargas masivas
 	// para que solo consulte de a uno y si es null que gestione los errores por
 	// fuera

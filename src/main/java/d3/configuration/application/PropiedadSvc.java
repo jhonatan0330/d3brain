@@ -946,6 +946,7 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 	}
 
 	private boolean validar(PropiedadDTO dto) throws ServerException {
+		if(dto.getValor()==null)throw new ServerException("Debes registrar un valor");
 		switch (dto.getKey()) {
 		case Propiedades.PROCESO_ACCIONES:
 		case Propiedades.PLANTILLA_AUXILIAR:

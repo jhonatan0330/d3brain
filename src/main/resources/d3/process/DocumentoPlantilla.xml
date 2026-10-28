@@ -281,7 +281,7 @@
 	<update id="actualizarTipoPadre">
 		update documentoplantilla_dplp
 			set cdpl_tipo = #{tipo},
-				cdpl_padre = #{nodoSuperior}
+				cdpl_padre = #{padre}
 		where cdpl_llave = #{llaveTabla}
 	</update>
 

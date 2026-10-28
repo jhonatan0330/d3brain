@@ -553,6 +553,12 @@ public class ConfigurationController {
 		return documentoPlantillaCaracteristicaService.inactivar(dto);
 	}
 
+	@PostMapping("/document-templates/fields/{key}/activate")
+	public DocumentoPlantillaCaracteristicaDTO activarCampo(@RequestBody DocumentoPlantillaCaracteristicaDTO dto)
+			throws ServerException {
+		return documentoPlantillaCaracteristicaService.activar(dto);
+	}
+
 	// --- Reports ---
 
 	@PostMapping("/document-templates/{templateKey}/reports")
@@ -586,6 +592,15 @@ public class ConfigurationController {
 	@PostMapping("/document-templates/reports/{key}/activate")
 	public ReporteBaseDTO activarReporte(@RequestBody ReporteBaseDTO dto) throws ServerException {
 		return reporteBaseService.activar(dto);
+	}
+
+	@PostMapping("/document-templates/{templateKey}/transitions")
+	public List<ProcesoTransicionDTO> listarTransicionesPlantilla(
+			@PathVariable("templateKey") String pTemplateKey,
+			@RequestBody ProcesoTransicionFilterDTO filter) throws ServerException {
+
+		filter.setPlantilla(pTemplateKey);
+		return procesoTransicionService.listarConsulta(filter);
 	}
 
 	// ==================== PROCESSES ====================
