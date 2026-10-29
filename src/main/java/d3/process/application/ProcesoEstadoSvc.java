@@ -183,8 +183,4 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 		return responsable;
 	}
 
-	public List<ProcesoEstadoDTO> getFullToSynchronize(List<String> process) {
-		return procesoEstadoMapper.getFullToSynchronize(process);
-	}
-
 }

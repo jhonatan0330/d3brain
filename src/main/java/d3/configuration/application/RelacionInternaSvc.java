@@ -163,10 +163,6 @@ public class RelacionInternaSvc extends BasicSvc<RelacionInternaDTO, RelacionInt
 		return null;
 	}
 
-	public List<RelacionInternaDTO> getRelationsFullToSynchronize() {
-		return relacionInternaMapper.getRelationsFullToSynchronize();
-	}
-
 	public void copyFromProperty(String propertyIdOld, String propertyIdNew, String pUserCreation,
 			boolean mantainDateInitial) throws ServerException {
 		List<RelacionInternaDTO> relations = relacionesPropiedad(propertyIdOld);

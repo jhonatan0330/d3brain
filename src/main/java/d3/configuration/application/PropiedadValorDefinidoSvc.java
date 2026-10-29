@@ -62,8 +62,4 @@ public class PropiedadValorDefinidoSvc extends BasicSvc<PropiedadValorDefinidoDT
 		return dto;
 	}
 
-	public List<PropiedadValorDefinidoDTO> getFullToSynchronize() {
-		return propiedadValorDefinidoMapper.getFullToSynchronize();
-	}
-
 }

@@ -1,7 +1,5 @@
 package d3.process.infrastructure;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
@@ -16,8 +14,6 @@ public interface DocumentoPlantillaCaracteristicaMapper
 	void actualizarFiltros(String llaveTabla);
 
 	void actualizarDescripcion(@Param("pTemplate") String pTemplate, @Param("pField") String pField);
-
-	List<DocumentoPlantillaCaracteristicaDTO> getFullToSynchronize(@Param("process") List<String> process);
 
 	int countDependentsOfField(DocumentoPlantillaCaracteristicaFilterDTO pFilter);
 

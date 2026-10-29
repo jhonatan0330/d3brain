@@ -24,8 +24,6 @@ public interface ProcesoTransicionMapper extends IBasicMapper<ProcesoTransicionD
 	BigDecimal valorEntransicionParaRevertir(@Param("documento") String documento,
 			@Param("expediente") String expediente);
 
-	List<ProcesoTransicionDTO> getFullToSynchronize(@Param("process") List<String> process);
-
 	int funcionRegresarTablaHistoricos(@Param("documentId") String documentId);
 
 	void clearStateOfDocumentsProcess(@Param("templateId") String templateId);

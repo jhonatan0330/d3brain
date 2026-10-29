@@ -200,31 +200,7 @@
 			and cdex_expedientedetalle = #{expediente}
 			order by dtra_fecha  desc limit 1
 	</select>
-	
-	<select id="getFullToSynchronize" resultType="ProcesoTransicionDTO">
-		select
-			cptr_llave as  llaveTabla
-			,cptr_nombre as  nombre
-			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  nodoSuperiorNombre
-			,cptr_codigo as  codigo
-			,cptr_proceso as  nodoSuperior
-			,cptr_estadopartida as  estadoPartida
-			,cdpl_codigo as  plantilla
-			,cptr_estadollegada as  estadoLLegada
-			,cptr_estado as estado
-		from procesotransicion_ptrp a
-			inner join proceso_prcp on (cprc_llave =cptr_proceso)
-			left join procesoestado_pesp pe_inicial on (pe_inicial.cpes_llave = cptr_estadopartida)
-			left join procesoestado_pesp pe_final on (pe_final.cpes_llave = cptr_estadopartida)
-			left join documentoplantilla_dplp dd on (dd.cdpl_llave = cptr_plantilla) 
-		where cptr_estado = 'A' and cprc_estado = 'A'
-			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null) 
-			and (pe_inicial.cpes_estado = 'A' or pe_inicial.cpes_estado is null) 
-			and (pe_final.cpes_estado = 'A' or pe_final.cpes_estado is null) 
-			<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by nodoSuperiorNombre
-	</select>
-	
+
 	<select id="funcionRegresarTablaHistoricos" resultType="int">
 		select * from regresar_campos(#{documentId})
 	</select>

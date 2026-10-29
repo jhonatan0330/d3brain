@@ -161,23 +161,6 @@
 	where cpdv_plantilla = #{pTemplate}
 	</update >
 	
-	<select id="getFullToSynchronize" resultType="DocumentoPlantillaCaracteristicaDTO">
-		select
-			cdpc_llave as  llaveTabla
-			,cdpc_plantilla as  nodoSuperior
-			,cdpc_formato as  tipo
-			,cdpc_nombre as  nombre
-			,cdpc_codigo as  codigo
-			,ndpc_orden as  prioridad
-			,cdpc_imagen as  imagen
-			,cdpc_estado as estado
-		from documentoplantillacaracteristica_dpcp a
-			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)
-		where cdpc_estado = 'A' and cdpl_estado = 'A'
-		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by cdpc_plantilla, ndpc_orden 
-	</select>
-	
 	<select id="countDependentsOfField" parameterType="DocumentoPlantillaCaracteristicaDTO" resultType="int">
 		select count(*) from documentoplantillacaracteristica_dpcp dd 
 			inner join propiedad_ppdp pp on pp.cppd_campo = dd.cdpc_llave and pp.cppd_estado = 'A'

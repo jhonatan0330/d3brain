@@ -8,6 +8,7 @@ import d3.shared.domain.ServerException;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.webservice.application.WebServiceSvc;
 import d3.webservice.domain.WebServiceDTO;
 import org.springframework.context.annotation.Lazy;
@@ -17,16 +18,18 @@ public class SynchronizeApiService {
 
 	private final WebServiceSvc apisService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeApiService(@Lazy WebServiceSvc apisService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.apisService = apisService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call( HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
+		List<WebServiceDTO> localListToErase = nodoHijoMapper.listarApisFull(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeApi");
@@ -60,7 +63,7 @@ public class SynchronizeApiService {
 
 	private void callAfterCreateAllTemplate( HierarchyExporterDTO hierarchy, LogConfigurationDTO log,
 			boolean compare) throws ServerException {
-		List<WebServiceDTO> localListToErase = apisService.getFullToSynchronize(null);
+		List<WebServiceDTO> localListToErase = nodoHijoMapper.listarApisFull(null);
 		List<WebServiceDTO> remoteList = hierarchy.getApis();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (WebServiceDTO remote : remoteList) {

@@ -245,23 +245,6 @@
 		order by nombre;
 	</select>
 	
-	<select id="getFullToSynchronize" resultType="DocumentoPlantillaDTO">
-		select
-			cdpl_llave as  llaveTabla
-			,cdpl_tipo as  tipo
-			,cdpl_padre as  nodoSuperior
-			,cdpl_nombre as  nombre
-			,cdpl_consecutivo as  consecutivo
-			,cdpl_imagen as  imagen
-			,cdpl_codigo as  codigo
-			,cdpl_proceso as  proceso
-			,cdpl_estado as estado
-		from documentoplantilla_dplp a
-		where cdpl_estado = 'A'
-		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by cdpl_nombre
-	</select>
-	
 	<select id="getTemplateofCategoriesReplace" resultType="DocumentoPlantillaDTO">
 		select
 			cdpl_llave as  llaveTabla

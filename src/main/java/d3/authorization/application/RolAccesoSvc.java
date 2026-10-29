@@ -78,8 +78,4 @@ public class RolAccesoSvc extends BasicSvc<RolAccesoDTO, RolAccesoFilterDTO> {
 		}
 	}
 
-	public List<RolAccesoDTO> getFullToSynchronize(List<String> process) {
-		return rolAccesoMapper.getFullToSynchronize(process);
-	}
-
 }

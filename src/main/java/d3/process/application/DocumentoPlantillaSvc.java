@@ -656,10 +656,6 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 		}
 	}
 
-	public List<DocumentoPlantillaDTO> getFullToSynchronize(List<String> process) {
-		return documentoPlantillaMapper.getFullToSynchronize(process);
-	}
-
 	public List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace()  {
 		return documentoPlantillaMapper.getTemplateofCategoriesReplace();
 	}

@@ -10,6 +10,7 @@ import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.DocumentoPlantillaSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.shared.domain.ServerException;
@@ -21,19 +22,21 @@ public class SynchronizeTemplateService {
 	private final SynchronizeReportService reportSynchronizeService;
 	private final SynchronizeTemplateFieldService fieldSynchronizeService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeTemplateService(@Lazy DocumentoPlantillaSvc templateService,
 			@Lazy SynchronizeReportService reportSynchronizeService,
 			@Lazy SynchronizeTemplateFieldService fieldSynchronizeService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.templateService = templateService;
 		this.reportSynchronizeService = reportSynchronizeService;
 		this.fieldSynchronizeService = fieldSynchronizeService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) {
-		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
+		List<DocumentoPlantillaDTO> localListToErase = nodoHijoMapper.listarPlantillasFull(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeTemplateService");
@@ -102,7 +105,7 @@ public class SynchronizeTemplateService {
 
 	public void callAfterCreateAllTemplate(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
+		List<DocumentoPlantillaDTO> localListToErase = nodoHijoMapper.listarPlantillasFull(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			reportSynchronizeService.call(hierarchy, log, compare);
@@ -158,7 +161,7 @@ public class SynchronizeTemplateService {
 		if (propertiesToCreateRole == null || propertiesToCreateRole.isEmpty())
 			return;
 
-		List<DocumentoPlantillaDTO> localListToErase = templateService.getFullToSynchronize(null);
+		List<DocumentoPlantillaDTO> localListToErase = nodoHijoMapper.listarPlantillasFull(null);
 		List<DocumentoPlantillaDTO> remoteList = hierarchy.getTemplates();
 		if (localListToErase == null || remoteList == null)
 			return;

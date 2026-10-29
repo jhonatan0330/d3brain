@@ -14,6 +14,4 @@ public interface RolAccesoMapper extends IBasicMapper<RolAccesoDTO, RolAccesoFil
 
 	List<RolAccesoDTO> consultaUsuarioDocumento(@Param("userId") String userId);
 
-	List<RolAccesoDTO> getFullToSynchronize(@Param("process") List<String> process);
-
 }

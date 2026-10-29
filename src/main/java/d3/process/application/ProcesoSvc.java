@@ -168,9 +168,4 @@ public class ProcesoSvc extends BasicSvc<ProcesoDTO, ProcesoFilterDTO> {
 		validarMacroproceso(dto.getNodoSuperior());
 	}
 
-
-	public List<ProcesoDTO> getFullToSynchronize(List<String> process) {
-		return procesoMapper.getFullToSynchronize(process);
-	}
-
 }

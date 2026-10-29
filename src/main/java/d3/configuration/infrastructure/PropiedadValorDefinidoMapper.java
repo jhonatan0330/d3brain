@@ -12,6 +12,4 @@ public interface PropiedadValorDefinidoMapper
 		extends IBasicMapper<PropiedadValorDefinidoDTO, PropiedadValorDefinidoFilterDTO> {
 
 	List<PropiedadValorDefinidoDTO> listarPorOrigen(PropiedadValorDefinidoFilterDTO dto);
-
-	List<PropiedadValorDefinidoDTO> getFullToSynchronize();
 }

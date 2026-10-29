@@ -1417,10 +1417,6 @@ public class PropiedadSvc extends BasicSvc<PropiedadDTO, PropiedadFilterDTO> {
 		return propiedadMapper.listarProductoSimplificado(productos);
 	}
 
-	public List<PropiedadDTO> getFullPropertiesToConfiguration() {
-		return propiedadMapper.getFullPropertiesToConfiguration();
-	}
-
 	public PropiedadDTO getByIdWithType(String llave) throws ServerException {
 		if (llave == null)
 			throw new ServerException("La llave del DTO se encuentra vacia. Propiedad");

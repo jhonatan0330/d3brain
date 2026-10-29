@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.ProcesoSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoDTO;
@@ -22,15 +23,17 @@ public class SynchronizeProcessService {
 
 	private final ProcesoSvc processService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeProcessService(@Lazy ProcesoSvc processService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.processService = processService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
-		List<ProcesoDTO> localProcessToErase = processService.getFullToSynchronize(null);
+		List<ProcesoDTO> localProcessToErase = nodoHijoMapper.listarProcesosFull(null);
 
 		List<ProcesoDTO> processRemote = hierarchy.getProcess();
 		if (processRemote != null && !processRemote.isEmpty()) {

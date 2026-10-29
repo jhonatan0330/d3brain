@@ -10,6 +10,7 @@ import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 
@@ -17,15 +18,18 @@ import d3.shared.domain.ServerException;
 public class SynchronizeTypePropertiesService {
 
 	private final PropiedadValorDefinidoSvc typesService;
+	private final NodoHijoMapper nodoHijoMapper;
 
-	public SynchronizeTypePropertiesService(@Lazy PropiedadValorDefinidoSvc typesService) {
+	public SynchronizeTypePropertiesService(@Lazy PropiedadValorDefinidoSvc typesService,
+			@Lazy NodoHijoMapper nodoHijoMapper) {
 		this.typesService = typesService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call( HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
 		SessionContext.getCurrentUser();
-		List<PropiedadValorDefinidoDTO> localListToErase = typesService.getFullToSynchronize();
+		List<PropiedadValorDefinidoDTO> localListToErase = nodoHijoMapper.listarTiposPropiedadFull();
 		List<PropiedadValorDefinidoDTO> remoteList = hierarchy.getPropertyTypes();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			log.setRoot("SynchronizeTypeProperties");

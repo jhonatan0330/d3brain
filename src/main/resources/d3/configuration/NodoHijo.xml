@@ -58,34 +58,6 @@
 			where cprc_estado = 'A' and cprc_macroproceso = #{llavePadre}
 			union all
 			select
-				cpes_llave as llaveTabla,
-				cpes_nombre as nombre,
-				cpes_codigo as codigo,
-				cpes_estado as estado,
-				null as imagen,
-				npes_avance as prioridad,
-				'ESTADO' as tipo,
-				cpes_tipo as categoria,
-				cpes_proceso as nodoSuperior,
-				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cpes_proceso) as nodoSuperiorNombre
-			from procesoestado_pesp a
-			where cpes_estado = 'A' and cpes_proceso = #{llavePadre}
-			union all
-			select
-				cptr_llave as llaveTabla,
-				cptr_nombre as nombre,
-				cptr_codigo as codigo,
-				cptr_estado as estado,
-				null as imagen,
-				null as prioridad,
-				'TRANSICION' as tipo,
-				null as categoria,
-				cptr_proceso as nodoSuperior,
-				(select cprc_nombre from proceso_prcp p2 where p2.cprc_llave = a.cptr_proceso) as nodoSuperiorNombre
-			from procesotransicion_ptrp a
-			where a.cptr_estado = 'A' and cptr_proceso = #{llavePadre}
-			union all
-			select
 				cdpl_llave as llaveTabla,
 				cdpl_nombre as nombre,
 				cdpl_codigo as codigo,
@@ -160,6 +132,309 @@
 			</if>
 		) h
 		order by prioridad, nombre
+	</select>
+
+	<select id="listarTiposPropiedadFull" resultType="PropiedadValorDefinidoDTO">
+		select
+			cpvd_llave as  llaveTabla
+			,cpvd_origen as  origen
+			,cpvd_origencategoria as  origenCategoria
+			,cpvd_codigo as  codigo
+			,cpvd_nombre as  nombre
+			,cpvd_grupo as  grupo
+			,bpvd_textoculto as  textOculto
+			,bpvd_necesitadesarrollo as  necesitaDesarrollo
+			,bpvd_incluirpreloadorigen as  incluirPreloadOrigen
+			,bpvd_multiple as  multiple
+			,bpvd_piderol as  pideRol
+			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
+			,bpvd_propiedadboolean as  propiedadBoolean
+			,bpvd_pideusuario as  pideUsuario
+			,cpvd_uso_motivo as  usoMotivo
+			,cpvd_imagen as  imagen
+			,cpvd_uso_relaciones as  usoRelaciones
+			,bpvd_pidefechas as  pideFechas
+			,cpvd_estado as estado
+		from propiedadvalordefinido_pvdp a
+		where cpvd_estado = 'A' and cpvd_llave not like 'PROP_%'
+	</select>
+
+	<select id="listarPropiedadesFull" resultType="PropiedadDTO">
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_codigo as  codigo
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+		where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+			and cppd_propiedadvalor != 'PROP_117'
+			and cppd_propiedadvalor != 'PROP_136'
+			and cppd_propiedadvalor != 'PROP_243'
+			and cppd_propiedadvalor != 'PROP_219'
+			and cppd_propiedadvalor != 'PROP_220'
+			and (rr.crac_estado = 'A' or rr.crac_estado is null)
+			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+		union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_codigo as  codigo
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+		where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+			and cppd_propiedadvalor = 'PROP_117' and cppd_valor = '*'
+			and (rr.crac_estado = 'A' or rr.crac_estado is null)
+			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+		union
+		select
+			cppd_propiedadvalor as  propiedadValor
+			,(select cpvd_nombre from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  nombre
+			,cppd_tipo as  tipo
+			,cppd_campo as  campo
+			,cppd_valor as  valor
+			,cppd_texto as  texto
+			,cppd_codigo as  codigo
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
+			,cppd_motivo as  motivo
+			,cppd_bloqueo as  bloqueo
+			,cppd_llave as  llaveTabla
+		from propiedad_ppdp a
+			left join rolacceso_racp rr on (rr.crac_llave = cppd_rol)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = rr.crac_plantilla)
+		where cppd_estado = 'A' and cppd_usuario is null and cppd_usuarioexcluyente is null
+			and cppd_propiedadvalor = 'PROP_136' and cppd_valor = '*'
+			and (rr.crac_estado = 'A' or rr.crac_estado is null)
+			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+	</select>
+
+	<select id="listarRelacionesFull" resultType="RelacionInternaDTO">
+		select
+			crit_propiedad as  propiedad
+			,crit_plantilla as  plantilla
+			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaNombre
+			,(select cdpl_codigo from documentoplantilla_dplp where cdpl_llave = crit_plantilla) as  plantillaCodigo
+			,crit_campo as  campo
+			,(select cdpc_nombre from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoNombre
+			,(select cdpc_codigo from documentoplantillacaracteristica_dpcp where cdpc_llave = crit_campo) as  campoCodigo
+			,crit_auxiliar as  auxiliar
+		from relacioninterna_ritp a
+		where crit_estado = 'A'
+	</select>
+
+	<select id="listarRolesFull" resultType="RolAccesoDTO">
+		select
+			crac_llave as  llaveTabla
+			,crac_plantilla as  plantilla
+			,cdpl_codigo as  codigo
+			,crac_estado as estado
+			,cdpl_nombre as nombre
+			,cdpl_proceso as proceso
+		from rolacceso_racp
+			inner join documentoplantilla_dplp dd on (cdpl_llave = crac_plantilla)
+		where crac_estado ='A' and dd.cdpl_estado = 'A'
+	</select>
+
+	<select id="obtenerOrganizacionPrincipal" resultType="OrganizacionDTO">
+		select
+			corg_llave as  llaveTabla
+			,corg_nombre as  nombre
+			,corg_imagen as  imagen
+			,corg_codigo as  codigo
+			,corg_estado as estado
+		from organizacion_orgp a
+		where corg_principal is null and corg_estado = 'A'
+	</select>
+
+	<select id="listarApisFull" resultType="WebServiceDTO">
+		<choose>
+			<when test="process != null and process.size() > 0">
+				select -- APIs Estados
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+				from procesoestado_pesp pes
+					inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
+					inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
+				where pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+				union
+				select -- APIs PLantillas
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+				from documentoplantilla_dplp dd
+					inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
+					inner join webservice_wbsp on (cwbs_llave = pp.cppd_valor and  cwbs_estado = 'A')
+				where dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+				union
+				select -- APIs Estados
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+				from procesoestado_pesp pes
+					inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_campo = pes.cpes_llave and cppd_propiedadvalor= 'PROP_193')
+					inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
+					inner join webservice_wbsp on (cwbs_llave = pp2.cppd_valor and  cwbs_estado = 'A')
+				where pes.cpes_estado = 'A' and pes.cpes_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+				union
+				select -- APIs PLantillas
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+				from documentoplantilla_dplp dd
+					inner join propiedad_ppdp pp on (cppd_estado = 'A' and pp.cppd_valor = dd.cdpl_llave and cppd_propiedadvalor= 'PROP_169')
+					inner join propiedad_ppdp pp2 on (pp2.cppd_estado = 'A' and pp2.cppd_campo = pp.cppd_valor and pp2.cppd_propiedadvalor = 'PROP_195')
+					inner join webservice_wbsp on (cwbs_llave = pp2.cppd_valor and  cwbs_estado = 'A')
+				where dd.cdpl_estado = 'A' and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+				union
+				select -- APIs del proceso
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+				from webservice_wbsp
+				where cwbs_estado = 'A' and cwbs_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)
+			</when>
+			<otherwise>
+				select
+					cwbs_llave as  llaveTabla
+					,cwbs_nombre as  nombre
+					,cwbs_codigo as  codigo
+					,cwbs_proceso as  nodoSuperior
+					,cwbs_estado as estado
+				from webservice_wbsp a
+				where cwbs_estado = 'A'
+				order by cwbs_nombre
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="listarProcesosFull" resultType="ProcesoDTO">
+		select
+			cprc_llave as  llaveTabla
+			,cprc_tipo as  tipo
+			,cprc_imagen as  imagen
+			,nprc_prioridad as  prioridad
+			,cprc_macroproceso as  nodoSuperior
+			,cprc_nombre as  nombre
+			,cprc_codigo as  codigo
+		from proceso_prcp a
+		where cprc_estado = 'A'
+		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by nprc_prioridad, cprc_nombre
+	</select>
+
+	<select id="listarEstadosFull" resultType="ProcesoEstadoDTO">
+		select
+			cpes_llave as  llaveTabla
+			,cpes_tipo as  tipo
+			,cpes_estadodocumento as  estadoDocumento
+			,npes_avance as  prioridad
+			,cpes_nombre as  nombre
+			,cpes_codigo as  codigo
+			,cpes_proceso as  nodoSuperior
+			,cprc_nombre  as  nodoSuperiorNombre
+		from procesoestado_pesp a
+		inner join proceso_prcp on (cprc_llave =cpes_proceso)
+		where cpes_estado = 'A' and cprc_estado = 'A'
+		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by nodoSuperiorNombre
+	</select>
+
+	<select id="listarTransicionesFull" resultType="ProcesoTransicionDTO">
+		select
+			cptr_llave as  llaveTabla
+			,cptr_nombre as  nombre
+			,(select cprc_nombre from proceso_prcp where cprc_llave = cptr_proceso) as  nodoSuperiorNombre
+			,cptr_codigo as  codigo
+			,cptr_proceso as  nodoSuperior
+			,cptr_estadopartida as  estadoPartida
+			,cdpl_codigo as  plantilla
+			,cptr_estadollegada as  estadoLLegada
+			,cptr_estado as estado
+		from procesotransicion_ptrp a
+			inner join proceso_prcp on (cprc_llave =cptr_proceso)
+			left join procesoestado_pesp pe_inicial on (pe_inicial.cpes_llave = cptr_estadopartida)
+			left join procesoestado_pesp pe_final on (pe_final.cpes_llave = cptr_estadopartida)
+			left join documentoplantilla_dplp dd on (dd.cdpl_llave = cptr_plantilla)
+		where cptr_estado = 'A' and cprc_estado = 'A'
+			and (dd.cdpl_estado = 'A' or dd.cdpl_estado is null)
+			and (pe_inicial.cpes_estado = 'A' or pe_inicial.cpes_estado is null)
+			and (pe_final.cpes_estado = 'A' or pe_final.cpes_estado is null)
+			<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by nodoSuperiorNombre
+	</select>
+
+	<select id="listarPlantillasFull" resultType="DocumentoPlantillaDTO">
+		select
+			cdpl_llave as  llaveTabla
+			,cdpl_tipo as  tipo
+			,cdpl_padre as  nodoSuperior
+			,cdpl_nombre as  nombre
+			,cdpl_consecutivo as  consecutivo
+			,cdpl_imagen as  imagen
+			,cdpl_codigo as  codigo
+			,cdpl_proceso as  proceso
+			,cdpl_estado as estado
+		from documentoplantilla_dplp a
+		where cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by cdpl_nombre
+	</select>
+
+	<select id="listarReportesFull" resultType="ReporteBaseDTO">
+		select
+			crpb_llave as  llaveTabla
+			,crpb_plantilla as  nodoSuperior
+			,cdpl_nombre as  nodoSuperiorNombre
+			,crpb_nombre as  nombre
+			,crpb_codigo as  codigo
+			,brpb_publico as  publico
+		from reportebase_rpbp a
+			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = a.crpb_plantilla)
+		where crpb_estado = 'A' and dd.cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+	</select>
+
+	<select id="listarCamposFull" resultType="DocumentoPlantillaCaracteristicaDTO">
+		select
+			cdpc_llave as  llaveTabla
+			,cdpc_plantilla as  nodoSuperior
+			,cdpc_formato as  tipo
+			,cdpc_nombre as  nombre
+			,cdpc_codigo as  codigo
+			,ndpc_orden as  prioridad
+			,cdpc_imagen as  imagen
+			,cdpc_estado as estado
+		from documentoplantillacaracteristica_dpcp a
+			inner join documentoplantilla_dplp on (cdpl_llave = cdpc_plantilla)
+		where cdpc_estado = 'A' and cdpl_estado = 'A'
+		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by cdpc_plantilla, ndpc_orden
 	</select>
 
 </mapper>

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.ProcesoEstadoSvc;
 import d3.process.domain.ProcesoEstadoDTO;
 import d3.process.domain.ProcesoTransicionDTO;
@@ -18,15 +19,17 @@ public class SynchronizeProcessStateService {
 
 	private final ProcesoEstadoSvc processStateService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeProcessStateService(@Lazy ProcesoEstadoSvc processStateService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.processStateService = processStateService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
-		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
+		List<ProcesoEstadoDTO> localToErase = nodoHijoMapper.listarEstadosFull(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 
@@ -62,7 +65,7 @@ public class SynchronizeProcessStateService {
 
 	public void callAfter(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<ProcesoEstadoDTO> localToErase = processStateService.getFullToSynchronize(null);
+		List<ProcesoEstadoDTO> localToErase = nodoHijoMapper.listarEstadosFull(null);
 		List<ProcesoEstadoDTO> remoteTocompare = hierarchy.getStates();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			for (ProcesoEstadoDTO remote : remoteTocompare) {

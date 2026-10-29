@@ -108,18 +108,4 @@
 			and cerl_usuario = #{userId}
 	</select>
 
-	<select id="getFullToSynchronize" resultType="RolAccesoDTO">
-		select
-			crac_llave as  llaveTabla
-			,crac_plantilla as  plantilla
-			,cdpl_codigo as  codigo
-			,crac_estado as estado
-			,cdpl_nombre as nombre
-			,cdpl_proceso as proceso
-		from rolacceso_racp
-			inner join documentoplantilla_dplp dd on (cdpl_llave = crac_plantilla)
-		where crac_estado ='A' and dd.cdpl_estado = 'A'
-		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-	</select>
-	
 </mapper>

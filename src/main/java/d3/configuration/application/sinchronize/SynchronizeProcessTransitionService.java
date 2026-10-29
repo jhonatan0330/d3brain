@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoTransicionDTO;
@@ -20,16 +21,18 @@ public class SynchronizeProcessTransitionService {
 	private final DocumentoPlantillaMapper documentoPlantillaMapper;
 	private final ProcesoTransicionSvc processTransitionService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeProcessTransitionService(@Lazy ProcesoTransicionSvc processTransitionService,@Lazy DocumentoPlantillaMapper documentoPlantillaMapper,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.processTransitionService = processTransitionService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 		this.documentoPlantillaMapper = documentoPlantillaMapper;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) {
-		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
+		List<ProcesoTransicionDTO> localToErase = nodoHijoMapper.listarTransicionesFull(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare == null || localToErase == null)
 			return;
@@ -76,7 +79,7 @@ public class SynchronizeProcessTransitionService {
 
 	public void callAfterCreateAll(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<ProcesoTransicionDTO> localToErase = processTransitionService.getFullToSynchronize(null);
+		List<ProcesoTransicionDTO> localToErase = nodoHijoMapper.listarTransicionesFull(null);
 		List<ProcesoTransicionDTO> remoteTocompare = hierarchy.getTransitions();
 		if (remoteTocompare != null && !remoteTocompare.isEmpty()) {
 			for (ProcesoTransicionDTO remote : remoteTocompare) {

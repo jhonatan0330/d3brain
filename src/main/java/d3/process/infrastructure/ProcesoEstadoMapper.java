@@ -1,7 +1,5 @@
 package d3.process.infrastructure;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
@@ -17,5 +15,4 @@ public interface ProcesoEstadoMapper extends IBasicMapper<ProcesoEstadoDTO, Proc
 	String funcionAsignacion(@Param("estado") String estado, @Param("documento") String documento,
 			@Param("modificador") String modificador, @Param("token") String token);
 
-	List<ProcesoEstadoDTO> getFullToSynchronize(@Param("process") List<String> process);
 }

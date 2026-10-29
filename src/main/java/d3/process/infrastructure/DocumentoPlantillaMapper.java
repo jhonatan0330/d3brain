@@ -16,8 +16,6 @@ public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantill
 
 	List<DocumentoPlantillaDTO> getProcessBoardsToMenu();
 
-	List<DocumentoPlantillaDTO> getFullToSynchronize(@Param("process") List<String> process);
-
 	List<DocumentoPlantillaDTO> getTemplateofCategoriesReplace();
 
 	void actualizarTipoPadre(@Param("llaveTabla") String llaveTabla, @Param("tipo") String tipo,

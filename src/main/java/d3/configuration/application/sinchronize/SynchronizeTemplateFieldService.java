@@ -10,6 +10,7 @@ import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.RelacionInternaDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.shared.domain.ServerException;
@@ -19,17 +20,19 @@ public class SynchronizeTemplateFieldService {
 
 	private final DocumentoPlantillaCaracteristicaSvc fieldService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeTemplateFieldService(@Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.fieldService = fieldService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
-				fieldService.getFullToSynchronize(null), localTemplate);
+				nodoHijoMapper.listarCamposFull(null), localTemplate);
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(),
 				remoteTemplate);
 		if (remoteList != null && !remoteList.isEmpty()) {
@@ -81,7 +84,7 @@ public class SynchronizeTemplateFieldService {
 	private void callAfterCreateAll(HierarchyExporterDTO hierarchy, String remoteTemplate, String localTemplate,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
 		List<DocumentoPlantillaCaracteristicaDTO> localListToErase = getFieldsFromTemplate(
-				fieldService.getFullToSynchronize(null), localTemplate);
+				nodoHijoMapper.listarCamposFull(null), localTemplate);
 		List<DocumentoPlantillaCaracteristicaDTO> remoteList = getFieldsFromTemplate(hierarchy.getFields(),
 				remoteTemplate);
 		if (remoteList != null && !remoteList.isEmpty()) {

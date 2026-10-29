@@ -9,59 +9,30 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import d3.authentication.application.OrganizacionSvc;
 import d3.configuration.domain.ExportListRequest;
 import d3.configuration.domain.HierarchyExporterDTO;
-import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
-import d3.process.application.DocumentoPlantillaSvc;
-import d3.process.application.ProcesoEstadoSvc;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.application.ProcesoSvc;
-import d3.process.application.ProcesoTransicionSvc;
 import d3.process.domain.ProcesoDTO;
 import d3.process.domain.ProcesoFilterDTO;
-import d3.report.application.ReporteBaseSvc;
 import d3.shared.application.SessionContext;
 import d3.shared.domain.ServerException;
 import d3.shared.domain.SharedConstants;
 import d3.upload.application.UploadSvc;
 import d3.upload.domain.CargaArchivoDTO;
-import d3.webservice.application.WebServiceSvc;
 
 @Service
 public class ExportConfigurationFileService {
 
-	private final PropiedadValorDefinidoSvc typePropertiesService;
-	private final OrganizacionSvc organizationService;
 	private final UploadSvc uploadService;
-	private final PropiedadSvc propertyService;
-	private final RelacionInternaSvc relationService;
 	private final ProcesoSvc procesoService;
-	private final ProcesoEstadoSvc stateService;
-	private final ProcesoTransicionSvc transitionService;
-	private final DocumentoPlantillaSvc templateService;
-	private final ReporteBaseSvc reportService;
-	private final DocumentoPlantillaCaracteristicaSvc fieldService;
-	private final WebServiceSvc apiService;
+	private final NodoHijoMapper nodoHijoMapper;
 
-	public ExportConfigurationFileService(@Lazy PropiedadValorDefinidoSvc typePropertiesService,
-			@Lazy OrganizacionSvc organizationService, @Lazy UploadSvc uploadService,
-			@Lazy PropiedadSvc propertyService, @Lazy RelacionInternaSvc relationService, 
-			@Lazy ProcesoSvc procesoService, @Lazy ProcesoEstadoSvc stateService,
-			@Lazy ProcesoTransicionSvc transitionService, @Lazy DocumentoPlantillaSvc templateService,
-			@Lazy ReporteBaseSvc reportService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
-			@Lazy WebServiceSvc apiService) {
-		this.typePropertiesService = typePropertiesService;
-		this.organizationService = organizationService;
+	public ExportConfigurationFileService(@Lazy UploadSvc uploadService, @Lazy ProcesoSvc procesoService,
+			@Lazy NodoHijoMapper nodoHijoMapper) {
 		this.uploadService = uploadService;
-		this.propertyService = propertyService;
-		this.relationService = relationService;
 		this.procesoService = procesoService;
-		this.stateService = stateService;
-		this.transitionService = transitionService;
-		this.templateService = templateService;
-		this.reportService = reportService;
-		this.fieldService = fieldService;
-		this.apiService = apiService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public CargaArchivoDTO call() throws ServerException {
@@ -71,18 +42,18 @@ public class ExportConfigurationFileService {
 	public HierarchyExporterDTO construirHierarchy() throws ServerException {
 		SessionContext.getCurrentUser();
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
-		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
-		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
-		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
-		
-		hierarchy.setOrganization(organizationService.obtenerPrincipal());
-		hierarchy.setApis(apiService.getFullToSynchronize(null));
-		hierarchy.setProcess(procesoService.getFullToSynchronize(null));
-		hierarchy.setStates(stateService.getFullToSynchronize(null));
-		hierarchy.setTransitions(transitionService.getFullToSynchronize(null));
-		hierarchy.setTemplates(templateService.getFullToSynchronize(null));
-		hierarchy.setReports(reportService.getFullToSynchronize(null));
-		hierarchy.setFields(fieldService.getFullToSynchronize(null));
+		hierarchy.setPropertyTypes(nodoHijoMapper.listarTiposPropiedadFull());
+		hierarchy.setProperties(nodoHijoMapper.listarPropiedadesFull());
+		hierarchy.setRelations(nodoHijoMapper.listarRelacionesFull());
+
+		hierarchy.setOrganization(nodoHijoMapper.obtenerOrganizacionPrincipal());
+		hierarchy.setApis(nodoHijoMapper.listarApisFull(null));
+		hierarchy.setProcess(nodoHijoMapper.listarProcesosFull(null));
+		hierarchy.setStates(nodoHijoMapper.listarEstadosFull(null));
+		hierarchy.setTransitions(nodoHijoMapper.listarTransicionesFull(null));
+		hierarchy.setTemplates(nodoHijoMapper.listarPlantillasFull(null));
+		hierarchy.setReports(nodoHijoMapper.listarReportesFull(null));
+		hierarchy.setFields(nodoHijoMapper.listarCamposFull(null));
 
 		return hierarchy;
 	}
@@ -106,22 +77,22 @@ public class ExportConfigurationFileService {
 		if (processToInclude.isEmpty())
 			throw new ServerException("No se identifica un modulo con el codigos elegidos ");
 		HierarchyExporterDTO hierarchy = new HierarchyExporterDTO();
-		
-		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
-		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
-		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
-		
-		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
-		hierarchy.setProcess(procesoService.getFullToSynchronize(processToInclude));
-		hierarchy.setStates(stateService.getFullToSynchronize(processToInclude));
-		hierarchy.setTransitions(transitionService.getFullToSynchronize(processToInclude));
-		hierarchy.setTemplates(templateService.getFullToSynchronize(processToInclude));
-		hierarchy.setReports(reportService.getFullToSynchronize(processToInclude));
-		hierarchy.setFields(fieldService.getFullToSynchronize(processToInclude));
+
+		hierarchy.setPropertyTypes(nodoHijoMapper.listarTiposPropiedadFull());
+		hierarchy.setProperties(nodoHijoMapper.listarPropiedadesFull());
+		hierarchy.setRelations(nodoHijoMapper.listarRelacionesFull());
+
+		hierarchy.setApis(nodoHijoMapper.listarApisFull(processToInclude));
+		hierarchy.setProcess(nodoHijoMapper.listarProcesosFull(processToInclude));
+		hierarchy.setStates(nodoHijoMapper.listarEstadosFull(processToInclude));
+		hierarchy.setTransitions(nodoHijoMapper.listarTransicionesFull(processToInclude));
+		hierarchy.setTemplates(nodoHijoMapper.listarPlantillasFull(processToInclude));
+		hierarchy.setReports(nodoHijoMapper.listarReportesFull(processToInclude));
+		hierarchy.setFields(nodoHijoMapper.listarCamposFull(processToInclude));
 
 		return uploadFile(hierarchy);
 	}
-	
+
 
 	private CargaArchivoDTO uploadFile(HierarchyExporterDTO hierarchy) throws ServerException {
 		return uploadService.uploadFileDTO(convert(hierarchy), "Entrada.txt", "export", "private");

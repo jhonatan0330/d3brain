@@ -65,15 +65,6 @@ public class WebServiceSvc extends BasicSvc<WebServiceDTO, WebServiceFilterDTO> 
 		return super.guardar(dto);
 	}
 
-	public List<WebServiceDTO> getFullToSynchronize(List<String> process) throws ServerException {
-		if (process == null || process.isEmpty()) {
-			WebServiceFilterDTO filter = new WebServiceFilterDTO();
-			filter.setEstado(SharedConstants.STATE_ACTIVE);
-			return listarConsulta(filter);
-		}
-		return webServiceMapper.getFullToSynchronize(process);
-	}
-
 	public WebServiceDTO getByIdFullProperties(String pKey) throws ServerException {
 		WebServiceDTO _service = consultaXId(pKey);
 		if (_service == null)

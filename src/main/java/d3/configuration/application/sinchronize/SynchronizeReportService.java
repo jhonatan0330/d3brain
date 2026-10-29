@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.infrastructure.DocumentoPlantillaMapper;
 import d3.report.application.ReporteBaseSvc;
@@ -20,16 +21,18 @@ public class SynchronizeReportService {
 	private final DocumentoPlantillaMapper documentoPlantillaMapper;
 	private final ReporteBaseSvc reportService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
+	private final NodoHijoMapper nodoHijoMapper;
 
 	public SynchronizeReportService(@Lazy DocumentoPlantillaMapper documentoPlantillaMapper, @Lazy ReporteBaseSvc reportService,
-			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+			@Lazy SynchronizePropertiesService propertiesSynchronizeService, @Lazy NodoHijoMapper nodoHijoMapper) {
 		this.documentoPlantillaMapper = documentoPlantillaMapper;
 		this.reportService = reportService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
-		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
+		List<ReporteBaseDTO> localListToErase = nodoHijoMapper.listarReportesFull(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 
 		if (remoteList != null && !remoteList.isEmpty()) {
@@ -72,7 +75,7 @@ public class SynchronizeReportService {
 
 	private void callAfterCreateAll(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<ReporteBaseDTO> localListToErase = reportService.getFullToSynchronize(null);
+		List<ReporteBaseDTO> localListToErase = nodoHijoMapper.listarReportesFull(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {
@@ -97,7 +100,7 @@ public class SynchronizeReportService {
 
 	public void callAfterRol(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare)
 			throws ServerException {
-		List<ReporteBaseDTO> localToErase = reportService.getFullToSynchronize(null);
+		List<ReporteBaseDTO> localToErase = nodoHijoMapper.listarReportesFull(null);
 		List<ReporteBaseDTO> remoteList = hierarchy.getReports();
 		if (remoteList != null && !remoteList.isEmpty()) {
 			for (ReporteBaseDTO remote : remoteList) {

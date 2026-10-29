@@ -6,25 +6,25 @@ import java.util.List;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
+import d3.configuration.infrastructure.NodoHijoMapper;
 
 @Service
 public class SynchronizeRolService {
 
-	private final RolAccesoSvc rolService;
+	private final NodoHijoMapper nodoHijoMapper;
 
-	public SynchronizeRolService(@Lazy RolAccesoSvc rolService) {
-		this.rolService = rolService;
+	public SynchronizeRolService(@Lazy NodoHijoMapper nodoHijoMapper) {
+		this.nodoHijoMapper = nodoHijoMapper;
 	}
 
 	public List<PropiedadDTO> call( List<PropiedadDTO> propierties, LogConfigurationDTO log) {
 		List<PropiedadDTO> propertiesWithReplaceRol = new ArrayList<>();
 		if (propierties == null || propierties.isEmpty()) 
 			return propertiesWithReplaceRol;
-		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize(null);
+		List<RolAccesoDTO> localListToErase = nodoHijoMapper.listarRolesFull();
 		//List<RolAccesoDTO> remoteList = hierarchy.getRoles();
 		if (localListToErase != null && !localListToErase.isEmpty()) {
 			log.setRoot("SynchronizeRolService");

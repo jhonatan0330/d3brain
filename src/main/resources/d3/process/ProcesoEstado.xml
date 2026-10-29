@@ -151,22 +151,5 @@
 		select propiedad_${estado} (#{documento}, #{modificador}, #{token})
 	</select>
 	
-	<select id="getFullToSynchronize" resultType="ProcesoEstadoDTO">
-		select
-			cpes_llave as  llaveTabla
-			,cpes_tipo as  tipo
-			,cpes_estadodocumento as  estadoDocumento
-			,npes_avance as  prioridad
-			,cpes_nombre as  nombre
-			,cpes_codigo as  codigo
-			,cpes_proceso as  nodoSuperior
-			,cprc_nombre  as  nodoSuperiorNombre
-		from procesoestado_pesp a
-		inner join proceso_prcp on (cprc_llave =cpes_proceso)
-		where cpes_estado = 'A' and cprc_estado = 'A'
-		<if test="process!=null">and cprc_llave in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-		order by nodoSuperiorNombre
-	</select>
-	
 
 </mapper>

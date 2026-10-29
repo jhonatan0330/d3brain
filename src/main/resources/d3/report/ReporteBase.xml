@@ -125,19 +125,5 @@
 		from reportebase_rpbp a
 		where crpb_estado ='A' and crpb_llave not in (select cppd_valor from propiedad_ppdp where cppd_estado = 'A' and cppd_propiedadvalor in ('PROP_72','PROP_70','PROP_100','PROP_137'))
 	</select>
-	
-	<select id="getFullToSynchronize" resultType="ReporteBaseDTO">
-		select
-			crpb_llave as  llaveTabla
-			,cdpl_codigo as  nodoSuperior
-			,cdpl_nombre as  nodoSuperiorNombre
-			,crpb_nombre as  nombre
-			,crpb_codigo as  codigo
-			,brpb_publico as  publico
-		from reportebase_rpbp a 
-			inner join documentoplantilla_dplp dd on (dd.cdpl_llave = a.crpb_plantilla) 
-		where crpb_estado = 'A' and dd.cdpl_estado = 'A'
-		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
-	</select>
 
 </mapper>

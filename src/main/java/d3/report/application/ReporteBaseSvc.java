@@ -441,8 +441,4 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 
 	}
 
-	public List<ReporteBaseDTO> getFullToSynchronize(List<String> process) {
-		return reporteBaseMapper.getFullToSynchronize(process);
-	}
-
 }

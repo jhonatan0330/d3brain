@@ -284,31 +284,6 @@
 			and cpvd_origen = #{origen} and (cpvd_origencategoria = #{origenCategoria} or cpvd_origencategoria is null)
 		order by cpvd_origen , cpvd_nombre 
 	</select>
-	
-	<select id="getFullToSynchronize" resultType="PropiedadValorDefinidoDTO">
-		select
-			cpvd_llave as  llaveTabla
-			,cpvd_origen as  origen
-			,cpvd_origencategoria as  origenCategoria
-			,cpvd_codigo as  codigo
-			,cpvd_nombre as  nombre
-			,cpvd_grupo as  grupo
-			,bpvd_textoculto as  textOculto
-			,bpvd_necesitadesarrollo as  necesitaDesarrollo
-			,bpvd_incluirpreloadorigen as  incluirPreloadOrigen
-			,bpvd_multiple as  multiple
-			,bpvd_piderol as  pideRol
-			,bpvd_pidetiempobloqueo as  pideTiempoBloqueo
-			,bpvd_propiedadboolean as  propiedadBoolean
-			,bpvd_pideusuario as  pideUsuario
-			,cpvd_uso_motivo as  usoMotivo
-			,cpvd_imagen as  imagen
-			,cpvd_uso_relaciones as  usoRelaciones
-			,bpvd_pidefechas as  pideFechas
-			,cpvd_estado as estado
-		from propiedadvalordefinido_pvdp a
-		where cpvd_estado = 'A' and cpvd_llave not like 'PROP_%'
-	</select>
 <!--// END region script-->
 
 </mapper>
