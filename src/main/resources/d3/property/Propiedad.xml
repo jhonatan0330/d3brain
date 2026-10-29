@@ -529,8 +529,8 @@ COST 100;
 			,cppd_valor as  valor
 			,cppd_texto as  texto
 			,cppd_codigo as  codigo
-			,cppd_rol as  rol
-			,cppd_rolexcluyente as  rolExcluyente
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
 			,cppd_llave as  llaveTabla
@@ -554,8 +554,8 @@ union
 			,cppd_valor as  valor
 			,cppd_texto as  texto
 			,cppd_codigo as  codigo
-			,cppd_rol as  rol
-			,cppd_rolexcluyente as  rolExcluyente
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
 			,cppd_llave as  llaveTabla
@@ -575,8 +575,8 @@ union
 			,cppd_valor as  valor
 			,cppd_texto as  texto
 			,cppd_codigo as  codigo
-			,cppd_rol as  rol
-			,cppd_rolexcluyente as  rolExcluyente
+			,dd.cdpl_codigo as  rol
+			,(select d.cdpl_codigo from rolacceso_racp r inner join documentoplantilla_dplp d on (d.cdpl_llave = r.crac_plantilla) where r.crac_llave = cppd_rolexcluyente) as  rolExcluyente
 			,cppd_motivo as  motivo
 			,cppd_bloqueo as  bloqueo
 			,cppd_llave as  llaveTabla

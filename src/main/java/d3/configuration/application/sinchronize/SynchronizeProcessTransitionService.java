@@ -9,19 +9,23 @@ import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.application.ProcesoTransicionSvc;
+import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoTransicionDTO;
+import d3.process.infrastructure.DocumentoPlantillaMapper;
 import d3.shared.domain.ServerException;
 
 @Service
 public class SynchronizeProcessTransitionService {
 
+	private final DocumentoPlantillaMapper documentoPlantillaMapper;
 	private final ProcesoTransicionSvc processTransitionService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
 
-	public SynchronizeProcessTransitionService(@Lazy ProcesoTransicionSvc processTransitionService,
+	public SynchronizeProcessTransitionService(@Lazy ProcesoTransicionSvc processTransitionService,@Lazy DocumentoPlantillaMapper documentoPlantillaMapper,
 			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
 		this.processTransitionService = processTransitionService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
+		this.documentoPlantillaMapper = documentoPlantillaMapper;
 	}
 
 	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) {
@@ -51,8 +55,15 @@ public class SynchronizeProcessTransitionService {
 						newState.setNombre(remote.getNombre());
 						
 						try {
-							newState = processTransitionService.save(newState);
-							log.info("NEW TRANSITION " + remote.getCodigo() + " - " + remote.getNombre());
+							DocumentoPlantillaDTO template = documentoPlantillaMapper.getByCode(remote.getPlantilla());
+							if(template==null) {
+								log.error(" La transicion " + remote.getNombre() + "(Cod. " + remote.getCodigo()
+								+ ") No se logro encontrar la platilla con codigo: " + remote.getPlantilla());
+							} else {
+								newState.setPlantilla(template.getLlaveTabla());
+								newState = processTransitionService.save(newState);
+								log.info("NEW TRANSITION " + remote.getCodigo() + " - " + remote.getNombre());								
+							}
 						} catch (Exception e) {
 							log.error(" La transicion " + remote.getNombre() + "(Cod. " + remote.getCodigo()
 									+ ") Tiene el siguiente error: " + e.getMessage());

@@ -228,6 +228,7 @@ public class PropiedadDTO extends BasicDTO {
 		this.key = other.key;
 		this.campo = other.campo;
 		this.valor = other.valor;
+		this.codigo = other.codigo;
 		this.texto = other.texto;
 		this.fechaDefinicion = (other.fechaDefinicion != null) ? new Date(other.fechaDefinicion.getTime()) : null;
 		this.fechaEliminacion = (other.fechaEliminacion != null) ? new Date(other.fechaEliminacion.getTime()) : null;

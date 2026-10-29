@@ -285,5 +285,9 @@
 		where cdpl_llave = #{llaveTabla}
 	</update>
 
+	<select id="getByCode"  resultType="DocumentoPlantillaDTO">
+		<include refid="selectDocumentoPlantillaFragment" />
+		where cdpl_llave = #{codigo} or cdpl_codigo = #{codigo}
+	</select>
 
 </mapper>

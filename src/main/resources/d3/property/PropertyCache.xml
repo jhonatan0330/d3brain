@@ -13,6 +13,7 @@
 			,(select cpvd_codigo from propiedadvalordefinido_pvdp where cpvd_llave = cppd_propiedadvalor) as  key
 			,cppd_campo as  campo
 			,cppd_valor as  valor
+			,cppd_codigo as  codigo
 			,cppd_texto as  texto
 			,dppd_fechadefinicion as  fechaDefinicion
 			,dppd_fechaimplementacion as  fechaImplementacion
@@ -57,6 +58,7 @@
 				when 'K' then (select ccue_nombre from account.cuenta_cue where ccue_llave = cppd_campo)
 				else cppd_campo 
 			end as valor
+			,cppd_codigo as  codigo
 			,cppd_texto as  texto
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
@@ -88,6 +90,7 @@
 			,cpvd_codigo as  key
 			,cppd_campo as  campo
 			,cppd_valor as valor
+			,cppd_codigo as  codigo
 			,cppd_texto as  texto
 			,cppd_rol as  rol
 			,(select cdpl_nombre from documentoplantilla_dplp where cdpl_llave =(select crac_plantilla from rolacceso_racp where crac_llave = cppd_rol)) as  rolNombre
@@ -133,6 +136,7 @@
             ,cpvd_codigo  as  key
             ,#{campo} as  campo
             ,'1' as  valor
+            ,null as  codigo
             ,null as  texto
             ,null as  fechaDefinicion
             ,null as  fechaImplementacion
@@ -175,6 +179,7 @@
             ,cpvd_codigo  as  key
             ,cdpl_llave as  campo
             ,'1' as  valor
+            ,null as  codigo
             ,null as  texto
             ,null as  fechaDefinicion
             ,null as  fechaImplementacion
@@ -207,6 +212,7 @@
             ,cpvd_codigo  as  key
             ,cdpl_llave as  campo
             ,cdpl_proceso as  valor
+            ,null as  codigo
             ,(select cprc_nombre from proceso_prcp where cprc_llave = cdpl_proceso) as  texto
             ,null as  fechaDefinicion
             ,null as  fechaImplementacion

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import d3.authentication.application.OrganizacionSvc;
-import d3.authorization.application.RolAccesoSvc;
 import d3.configuration.domain.ExportListRequest;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
@@ -36,7 +35,6 @@ public class ExportConfigurationFileService {
 	private final UploadSvc uploadService;
 	private final PropiedadSvc propertyService;
 	private final RelacionInternaSvc relationService;
-	private final RolAccesoSvc rolService;
 	private final ProcesoSvc procesoService;
 	private final ProcesoEstadoSvc stateService;
 	private final ProcesoTransicionSvc transitionService;
@@ -47,7 +45,7 @@ public class ExportConfigurationFileService {
 
 	public ExportConfigurationFileService(@Lazy PropiedadValorDefinidoSvc typePropertiesService,
 			@Lazy OrganizacionSvc organizationService, @Lazy UploadSvc uploadService,
-			@Lazy PropiedadSvc propertyService, @Lazy RelacionInternaSvc relationService, @Lazy RolAccesoSvc rolService,
+			@Lazy PropiedadSvc propertyService, @Lazy RelacionInternaSvc relationService, 
 			@Lazy ProcesoSvc procesoService, @Lazy ProcesoEstadoSvc stateService,
 			@Lazy ProcesoTransicionSvc transitionService, @Lazy DocumentoPlantillaSvc templateService,
 			@Lazy ReporteBaseSvc reportService, @Lazy DocumentoPlantillaCaracteristicaSvc fieldService,
@@ -57,7 +55,6 @@ public class ExportConfigurationFileService {
 		this.uploadService = uploadService;
 		this.propertyService = propertyService;
 		this.relationService = relationService;
-		this.rolService = rolService;
 		this.procesoService = procesoService;
 		this.stateService = stateService;
 		this.transitionService = transitionService;
@@ -77,8 +74,6 @@ public class ExportConfigurationFileService {
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
-		hierarchy.setRoles(rolService.getFullToSynchronize(null));
-		
 		
 		hierarchy.setOrganization(organizationService.obtenerPrincipal());
 		hierarchy.setApis(apiService.getFullToSynchronize(null));
@@ -115,7 +110,6 @@ public class ExportConfigurationFileService {
 		hierarchy.setPropertyTypes(typePropertiesService.getFullToSynchronize());
 		hierarchy.setProperties(propertyService.getFullPropertiesToConfiguration());
 		hierarchy.setRelations(relationService.getRelationsFullToSynchronize());
-		hierarchy.setRoles(rolService.getFullToSynchronize(processToInclude));
 		
 		hierarchy.setApis(apiService.getFullToSynchronize(processToInclude));
 		hierarchy.setProcess(procesoService.getFullToSynchronize(processToInclude));

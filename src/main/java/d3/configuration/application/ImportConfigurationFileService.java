@@ -137,7 +137,7 @@ public class ImportConfigurationFileService {
 		sincronizeProcessTransitionService.callAfterCreateAll(hierarchy, logs, onlyRead);
 		logs.setRoot("");
 		sincronizeRelationService.call(hierarchy, logs, onlyRead);
-		rolInProperties = sincronizeRolService.call(hierarchy, rolInProperties, logs);
+		rolInProperties = sincronizeRolService.call(rolInProperties, logs);
 		rolInProperties.addAll(templateUpdateProperties);
 		hierarchy.setProperties(rolInProperties);
 		sincronizeOrganizationService.call(hierarchy, logs, onlyRead);

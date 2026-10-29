@@ -21,7 +21,7 @@ public class LogConfigurationDTO {
 	public void info(String log) {
 		this.logs = this.logs + "INFO::::" + "[" + LocalDateTime.now().withNano(0).toString() + " - " + this.root
 				+ " ] " + log + SharedConstants.NEW_LINE;
-		System.out.println("[" + this.root + " ]" + log);
+		//System.out.println("[" + this.root + " ]" + log);
 	}
 
 	public void error(String log) {
@@ -29,13 +29,13 @@ public class LogConfigurationDTO {
 				+ " ] " + log + SharedConstants.NEW_LINE;
 		this.logsError = this.logsError + "ERROR:::" + "[" + LocalDateTime.now().withNano(0).toString() + " - "
 				+ this.root + " ] " + log + SharedConstants.NEW_LINE;
-		System.out.println("[" + this.root + " ]" + log);
+		//System.out.println("[" + this.root + " ]" + log);
 	}
 
 	public void warn(String log) {
 		this.logs = this.logs + "WARN:::" + "[" + LocalDateTime.now().withNano(0).toString() + " - " + this.root + " ] "
 				+ log + SharedConstants.NEW_LINE;
-		System.out.println("[" + this.root + " ]" + log);
+		//System.out.println("[" + this.root + " ]" + log);
 	}
 
 	public String getLogs() {

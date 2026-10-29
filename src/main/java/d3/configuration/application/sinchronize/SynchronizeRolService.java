@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
-import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 
@@ -21,15 +20,16 @@ public class SynchronizeRolService {
 		this.rolService = rolService;
 	}
 
-	public List<PropiedadDTO> call(HierarchyExporterDTO hierarchy, List<PropiedadDTO> propierties,
-			LogConfigurationDTO log) {
-		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize(null);
-		List<RolAccesoDTO> remoteList = hierarchy.getRoles();
+	public List<PropiedadDTO> call( List<PropiedadDTO> propierties, LogConfigurationDTO log) {
 		List<PropiedadDTO> propertiesWithReplaceRol = new ArrayList<>();
-		if (remoteList != null && !remoteList.isEmpty()) {
+		if (propierties == null || propierties.isEmpty()) 
+			return propertiesWithReplaceRol;
+		List<RolAccesoDTO> localListToErase = rolService.getFullToSynchronize(null);
+		//List<RolAccesoDTO> remoteList = hierarchy.getRoles();
+		if (localListToErase != null && !localListToErase.isEmpty()) {
 			log.setRoot("SynchronizeRolService");
-			for (RolAccesoDTO remote : remoteList) {
-				if (remote.getCodigo() == null || remote.getCodigo().isEmpty()) {
+			for (RolAccesoDTO remote : localListToErase) {
+				/*if (remote.getCodigo() == null || remote.getCodigo().isEmpty()) {
 					log.warn("SKIP ROL SIN CODIGO - " + remote.getNombre());
 					continue;
 				}
@@ -52,17 +52,17 @@ public class SynchronizeRolService {
 								+ e.getMessage());
 						continue;
 					}
-				}
-				if (propierties != null) {
+				}*/
+				
 					for (PropiedadDTO iProperty : propierties) {
 						boolean isToMigrate = false;
-						if (iProperty.getRol() != null && iProperty.getRol().compareTo(remote.getLlaveTabla()) == 0) {
-							iProperty.setRol(local.getLlaveTabla());
+						if (iProperty.getRol() != null && iProperty.getRol().compareTo(remote.getCodigo()) == 0) {
+							iProperty.setRol(remote.getLlaveTabla());
 							isToMigrate = true;
 						}
 						if (iProperty.getRolExcluyente() != null
-								&& iProperty.getRolExcluyente().compareTo(remote.getLlaveTabla()) == 0) {
-							iProperty.setRolExcluyente(local.getLlaveTabla());
+								&& iProperty.getRolExcluyente().compareTo(remote.getCodigo()) == 0) {
+							iProperty.setRolExcluyente(remote.getLlaveTabla());
 							isToMigrate = true;
 						}
 						if (isToMigrate && iProperty.getEstado() == null) {
@@ -70,21 +70,11 @@ public class SynchronizeRolService {
 							iProperty.setEstado("YA");
 						}
 					}
-				}
+				
 			}
 		}
 		return propertiesWithReplaceRol;
 	}
 
-	private RolAccesoDTO findTemplateInList(List<RolAccesoDTO> array, String code) {
-		if (array == null)
-			return null;
-		for (RolAccesoDTO localProcess : array) {
-			if (code.compareTo(localProcess.getCodigo()) == 0) {
-				return localProcess;
-			}
-		}
-		return null;
-	}
 
 }

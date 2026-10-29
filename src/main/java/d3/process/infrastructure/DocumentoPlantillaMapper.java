@@ -23,4 +23,6 @@ public interface DocumentoPlantillaMapper extends IBasicMapper<DocumentoPlantill
 	void actualizarTipoPadre(@Param("llaveTabla") String llaveTabla, @Param("tipo") String tipo,
 			@Param("padre") String padre);
 
+	DocumentoPlantillaDTO getByCode(@Param("codigo") String codigo);
+	
 }

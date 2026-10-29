@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import d3.authentication.domain.OrganizacionDTO;
-import d3.authorization.domain.RolAccesoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 import d3.process.domain.DocumentoPlantillaDTO;
 import d3.process.domain.ProcesoDTO;
@@ -27,7 +26,6 @@ public class HierarchyExporterDTO {
 	private List<PropiedadValorDefinidoDTO> propertyTypes;
 	private List<PropiedadDTO> properties;
 	private List<RelacionInternaDTO> relations;
-	private List<RolAccesoDTO> roles;
 	
 	public OrganizacionDTO getOrganization() {
 		return organization;
@@ -75,14 +73,6 @@ public class HierarchyExporterDTO {
 
 	public void setStates(List<ProcesoEstadoDTO> states) {
 		this.states = states;
-	}
-
-	public List<RolAccesoDTO> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<RolAccesoDTO> roles) {
-		this.roles = roles;
 	}
 
 	public List<ReporteBaseDTO> getReports() {
@@ -138,8 +128,6 @@ public class HierarchyExporterDTO {
 			fields = new ArrayList<>();
 		if (reports == null)
 			reports = new ArrayList<>();
-		if (roles == null)
-			roles = new ArrayList<>();
 		if (apis == null)
 			apis = new ArrayList<>();
 		if (properties == null)

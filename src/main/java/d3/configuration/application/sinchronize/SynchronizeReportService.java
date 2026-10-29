@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
+import d3.process.domain.DocumentoPlantillaDTO;
+import d3.process.infrastructure.DocumentoPlantillaMapper;
 import d3.report.application.ReporteBaseSvc;
 import d3.report.domain.ReporteBaseDTO;
 import d3.shared.domain.ServerException;
@@ -15,11 +17,13 @@ import d3.shared.domain.ServerException;
 @Service
 public class SynchronizeReportService {
 
+	private final DocumentoPlantillaMapper documentoPlantillaMapper;
 	private final ReporteBaseSvc reportService;
 	private final SynchronizePropertiesService propertiesSynchronizeService;
 
-	public SynchronizeReportService(@Lazy ReporteBaseSvc reportService,
+	public SynchronizeReportService(@Lazy DocumentoPlantillaMapper documentoPlantillaMapper, @Lazy ReporteBaseSvc reportService,
 			@Lazy SynchronizePropertiesService propertiesSynchronizeService) {
+		this.documentoPlantillaMapper = documentoPlantillaMapper;
 		this.reportService = reportService;
 		this.propertiesSynchronizeService = propertiesSynchronizeService;
 	}
@@ -45,8 +49,16 @@ public class SynchronizeReportService {
 						newReport.setCodigo(remote.getCodigo());
 						newReport.setNombre(remote.getNombre());
 						try {
-							newReport = reportService.save(newReport);
-							log.info("NEW REPORT " + remote.getCodigo() + " - " + remote.getNombre());
+							
+							DocumentoPlantillaDTO template = documentoPlantillaMapper.getByCode(remote.getNodoSuperior());
+							if(template==null) {
+								log.error(" La transicion " + remote.getNombre() + "(Cod. " + remote.getCodigo()
+								+ ") No se logro encontrar la platilla con codigo: " + remote.getNodoSuperior());
+							} else {
+								newReport.setNodoSuperior(template.getLlaveTabla());
+								newReport = reportService.save(newReport);
+								log.info("NEW REPORT " + remote.getCodigo() + " - " + remote.getNombre());								
+							}
 						} catch (Exception e) {
 							log.error(remote.getCodigo() + " - " + remote.getNombre() + " : " + e.getMessage());
 						}
