@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import d3.multitenancy.application.PwaManifestSvc;
@@ -142,9 +143,10 @@ public class MultiTenancyController {
 	 */
 	@GetMapping(value = "/manifest/{*tenantPath}", produces = "application/manifest+json")
 	public ResponseEntity<PwaManifestDTO> manifestPorPath(
+			HttpServletRequest request,
 			@PathVariable("tenantPath") String pTenantPath,
 			@RequestParam(value = "origin", required = false) String pOrigin) {
-		return manifestRespuesta(pTenantPath, pOrigin);
+		return manifestRespuesta(pTenantPath, pOrigin, request);
 	}
 
 	/**
@@ -153,9 +155,10 @@ public class MultiTenancyController {
 	 */
 	@GetMapping(value = "/manifest", produces = "application/manifest+json")
 	public ResponseEntity<PwaManifestDTO> manifestPorQuery(
+			HttpServletRequest request,
 			@RequestParam(value = "tenant", required = false) String pTenant,
 			@RequestParam(value = "origin", required = false) String pOrigin) {
-		return manifestRespuesta(pTenant, pOrigin);
+		return manifestRespuesta(pTenant, pOrigin, request);
 	}
 
 	/**
@@ -177,8 +180,15 @@ public class MultiTenancyController {
 		return iconoRespuesta(pTenant, pSize);
 	}
 
-	private ResponseEntity<PwaManifestDTO> manifestRespuesta(String tenant, String origin) {
+	private ResponseEntity<PwaManifestDTO> manifestRespuesta(String tenant, String origin,
+			HttpServletRequest request) {
 		String base = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+		// Forzar HTTPS cuando la aplicación va detrás de un proxy que termina SSL
+		// (el backend ve la conexión interna como HTTP).
+		String forwardedProto = request.getHeader("X-Forwarded-Proto");
+		if ("https".equalsIgnoreCase(forwardedProto) && base.startsWith("http://")) {
+			base = "https://" + base.substring("http://".length());
+		}
 		PwaManifestDTO dto = pwaManifestService.construirManifest(tenant, base, origin);
 		return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofHours(1)).cachePublic())
 				.body(dto);

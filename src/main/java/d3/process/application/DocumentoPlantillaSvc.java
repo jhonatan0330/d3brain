@@ -96,10 +96,14 @@ public class DocumentoPlantillaSvc extends BasicSvc<DocumentoPlantillaDTO, Docum
 	@Override
 	@Transactional(value = "transactionManager", rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
 	public DocumentoPlantillaDTO actualizar(DocumentoPlantillaDTO dto) throws ServerException {
+		DocumentoPlantillaDTO anterior = (dto.getLlaveTabla() == null) ? null : consultaXId(dto.getLlaveTabla());
 		dto.setCodigo(D3Utils.formatFunction(dto.getCodigo()).toUpperCase());
 		if(dto.getTipo().equals(DocumentoPlantillaDTO.PRINCIPAL) || dto.getTipo().equals(DocumentoPlantillaDTO.ROL) || dto.getTipo().equals(DocumentoPlantillaDTO.REPORTE))
 			dto.setNodoSuperior(dto.getProceso());
 		dto = super.actualizar(dto);
+		if (anterior != null && anterior.getProceso() != null && dto.getProceso() != null
+				&& !anterior.getProceso().equals(dto.getProceso()))
+			documentoPlantillaMapper.actualizarProcesoPlantillasHijas(dto.getLlaveTabla(), dto.getProceso());
 		configuracionSvc.actualizarValorPropiedad(dto.getLlaveTabla(), dto.getNombre(), dto.getCodigo());
 		return dto;
 	}

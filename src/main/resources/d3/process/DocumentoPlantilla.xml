@@ -268,6 +268,12 @@
 		where cdpl_llave = #{llaveTabla}
 	</update>
 
+	<update id="actualizarProcesoPlantillasHijas">
+		update documentoplantilla_dplp
+		set cdpl_proceso = #{procesoNuevo}
+		where cdpl_padre = #{plantilla}
+	</update>
+
 	<select id="getByCode"  resultType="DocumentoPlantillaDTO">
 		<include refid="selectDocumentoPlantillaFragment" />
 		where cdpl_llave = #{codigo} or cdpl_codigo = #{codigo}

@@ -1,5 +1,6 @@
 package d3.process.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -110,32 +111,64 @@ public class ProcesoEstadoSvc extends BasicSvc<ProcesoEstadoDTO, ProcesoEstadoFi
 	}
 
 	private void organizar(ProcesoEstadoDTO pDTO) throws ServerException {
-		// Consulto todas las caracteristicas del documento
+		if (pDTO == null || pDTO.getNodoSuperior() == null || pDTO.getLlaveTabla() == null) {
+			return;
+		}
 		ProcesoEstadoFilterDTO _filtro = new ProcesoEstadoFilterDTO();
 		_filtro.setEstado(SharedConstants.STATE_ACTIVE);
 		_filtro.setNodoSuperior(pDTO.getNodoSuperior());
 		_filtro.setPaginacionRegistroFinal(500);
 		List<ProcesoEstadoDTO> _estados = listarConsulta(_filtro);
-		if (_estados != null && !_estados.isEmpty()) {
-			int cont = 1;
-			for (ProcesoEstadoDTO _iEstado : _estados) {
-				if (_iEstado.getLlaveTabla().compareTo(pDTO.getLlaveTabla()) != 0) {
-					// asumo que hay dos iguales entonces debo saltar un espacio y el que modifique
-					// lo dejo quieto
-					if (_iEstado.getPrioridad().compareTo(pDTO.getPrioridad()) == 0)
-						cont++;
-					if (_iEstado.getPrioridad() != cont) {
-						_iEstado.setPrioridad(cont);
-						super.actualizar(_iEstado);
-					}
-					cont++;
-				} else {
-					if (cont == pDTO.getPrioridad())
-						cont++;
-				}
+		if (_estados == null || _estados.isEmpty()) {
+			return;
+		}
+
+		ProcesoEstadoDTO _actualizado = null;
+		List<ProcesoEstadoDTO> _resto = new ArrayList<>();
+		for (ProcesoEstadoDTO _estado : _estados) {
+			if (_estado.getLlaveTabla() != null && _estado.getLlaveTabla().compareTo(pDTO.getLlaveTabla()) == 0) {
+				_actualizado = _estado;
+			} else {
+				_resto.add(_estado);
 			}
 		}
-		// Debo validar que las dependencias si se puedan
+
+		int _total = _estados.size();
+		int _objetivo;
+		if (_actualizado == null) {
+			_objetivo = -1;
+		} else if (pDTO.getPrioridad() != null) {
+			_objetivo = pDTO.getPrioridad();
+		} else {
+			_objetivo = _estados.indexOf(_actualizado) + 1;
+		}
+		if (_objetivo > _total) {
+			_objetivo = _total;
+		}
+		if (_actualizado != null && _objetivo < 1) {
+			_objetivo = 1;
+		}
+
+		int _cont = 1;
+		for (ProcesoEstadoDTO _estado : _resto) {
+			if (_objetivo > 0 && _cont == _objetivo) {
+				_cont++;
+			}
+			Integer _prioridad = _estado.getPrioridad();
+			if (_prioridad == null || _prioridad != _cont) {
+				_estado.setPrioridad(_cont);
+				super.actualizar(_estado);
+			}
+			_cont++;
+		}
+
+		if (_actualizado != null) {
+			Integer _prioridad = _actualizado.getPrioridad();
+			if (_prioridad == null || _prioridad != _objetivo) {
+				_actualizado.setPrioridad(_objetivo);
+				super.actualizar(_actualizado);
+			}
+		}
 	}
 
 	private void colocarSignoPregunta(ProcesoEstadoDTO estado) throws ServerException {

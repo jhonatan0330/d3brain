@@ -10,3 +10,7 @@ update propiedadvalordefinido_pvdp
 set cpvd_uso_relaciones = 'Campo para filtrar por el motivo que se coloque'
 where cpvd_llave in ('PROP_19');
 
+update propiedadvalordefinido_pvdp
+set cpvd_uso_relaciones = 'Campo vinculo a generar'
+where cpvd_llave in ('PROP_294');
+
