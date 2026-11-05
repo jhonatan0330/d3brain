@@ -22,26 +22,20 @@ import d3.authentication.domain.OrganizacionFilterDTO;
 import d3.authorization.application.RolAccesoSvc;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.authorization.domain.RolAccesoFilterDTO;
-import d3.configuration.application.ArbolConfiguracionSvc;
-import d3.configuration.application.ExportConfigurationFileService;
-import d3.configuration.application.ImportConfigurationFileService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.PropiedadValorDefinidoSvc;
 import d3.configuration.application.RelacionInternaSvc;
-import d3.configuration.application.SincronizacionArbolSvc;
-import d3.configuration.domain.ArbolConfiguracionFilterDTO;
-import d3.configuration.domain.CompararArbolRequestDTO;
-import d3.configuration.domain.DiferenciaDTO;
+import d3.configuration.application.sinchronize.ArbolEnsambladorSvc;
+import d3.configuration.application.sinchronize.ExportConfigurationFileService;
+import d3.configuration.application.sinchronize.ImportConfigurationFileService;
 import d3.configuration.domain.ExportListRequest;
-import d3.configuration.domain.ProcesoGraphDTO;
+import d3.configuration.domain.NodoArbolDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadFilterDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.configuration.domain.PropiedadValorDefinidoFilterDTO;
 import d3.configuration.domain.RelacionInternaDTO;
 import d3.configuration.domain.RelacionInternaFilterDTO;
-import d3.configuration.domain.SincronizacionSeleccionadaDTO;
-import d3.configuration.domain.TreeNodeDTO;
 import d3.process.application.ConsecutivoSvc;
 import d3.process.application.DocumentoPlantillaCaracteristicaSvc;
 import d3.process.application.DocumentoPlantillaSvc;
@@ -112,12 +106,12 @@ public class ConfigurationController {
 	private final RelacionInternaSvc relacionInternaService;
 	private final ExportConfigurationFileService exportService;
 	private final ImportConfigurationFileService importService;
-	private final SincronizacionArbolSvc sincronizacionArbolService;
-	private final ArbolConfiguracionSvc arbolConfiguracionService;
+	private final ArbolEnsambladorSvc arbolEnsambladorService;
 	private final PropiedadValorDefinidoSvc propertyTypeService;
 	private final IndicatorService indicadorService;
 	private final RolAccesoSvc rolAccesoService;
 	private final UsuarioSvc usuarioService;
+	
 
 	public ConfigurationController(@Lazy ConsecutivoSvc consecutivoService,
 			@Lazy PropiedadValorDefinidoSvc propiedadValorDefinidoService, @Lazy OrganizacionSvc organizacionService,
@@ -132,8 +126,8 @@ public class ConfigurationController {
 			@Lazy ProcesoEstadoSvc procesoEstadoService,
 			@Lazy ProcesoTransicionSvc procesoTransicionService, @Lazy PropiedadSvc propiedadService,
 			@Lazy RelacionInternaSvc relacionInternaService, @Lazy ExportConfigurationFileService exportService,
-			@Lazy ImportConfigurationFileService importService, @Lazy SincronizacionArbolSvc sincronizacionArbolService,
-			@Lazy ArbolConfiguracionSvc arbolConfiguracionService,
+			@Lazy ImportConfigurationFileService importService,
+			@Lazy ArbolEnsambladorSvc arbolEnsambladorService, 
 			@Lazy IndicatorService indicadorService, @Lazy RolAccesoSvc rolAccesoService,
 			@Lazy UsuarioSvc usuarioService) {
 		this.consecutivoService = consecutivoService;
@@ -156,8 +150,7 @@ public class ConfigurationController {
 		this.relacionInternaService = relacionInternaService;
 		this.exportService = exportService;
 		this.importService = importService;
-		this.sincronizacionArbolService = sincronizacionArbolService;
-		this.arbolConfiguracionService = arbolConfiguracionService;
+		this.arbolEnsambladorService = arbolEnsambladorService;
 		this.propertyTypeService = propiedadValorDefinidoService;
 		this.indicadorService = indicadorService;
 		this.rolAccesoService = rolAccesoService;
@@ -927,49 +920,22 @@ public class ConfigurationController {
 			return importService.compare(file);
 		}
 
-		@PostMapping("/processes/{key}/graph")
-		public ProcesoGraphDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
+		@PostMapping("/tree/{key}/graph")
+		public NodoArbolDTO obtenerProcesoParaGraficar(@PathVariable("key") String pKey) throws ServerException {
 			ProcesoFilterDTO filter = new ProcesoFilterDTO();
 			filter.setLlaveTabla(pKey);
-			return sincronizacionArbolService.obtenerProcesoParaGraficar(filter);
+			return arbolEnsambladorService.obtenerProcesoParaGraficar(filter);
 		}
 		
 		@PostMapping("/tree")
-		private TreeNodeDTO getConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-			return sincronizacionArbolService.obtenerArbol(filter);
+		private NodoArbolDTO getConfigTree() throws ServerException {
+			return arbolEnsambladorService.construirArbolSimple();
 		}
 		
 		@PostMapping("/tree/node")
-		private TreeNodeDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
+		private NodoArbolDTO getTreeNode(@RequestBody d3.configuration.domain.ArbolNodoRequestDTO request)
 				throws ServerException {
-			return arbolConfiguracionService.construirHijos(request);
+			return arbolEnsambladorService.construirHijos(request);
 		}
 
-		@PostMapping("/tree/export")
-		private CargaArchivoDTO exportConfigTree(@RequestBody ArbolConfiguracionFilterDTO filter) throws ServerException {
-			return sincronizacionArbolService.exportarArbol(filter);
-		}
-
-
-		@PostMapping("/tree/register")
-		private d3.configuration.domain.RegistroArbolDTO registerRemoteTree(@RequestBody Object payload)
-				throws ServerException {
-			return sincronizacionArbolService.registrarArbolRemoto(payload);
-		}
-
-		@PostMapping("/tree/compare")
-		private List<DiferenciaDTO> compareTree(@RequestBody CompararArbolRequestDTO request) throws ServerException {
-			return sincronizacionArbolService.compararArbol(request);
-		}
-
-		@PostMapping("/tree/sync")
-		private CargaArchivoDTO syncTree(@RequestBody SincronizacionSeleccionadaDTO request) throws ServerException {
-			return sincronizacionArbolService.sincronizar(request);
-		}
-
-		@PostMapping("/tree/sync-node")
-		private d3.configuration.domain.SincronizacionNodoResultDTO syncTreeNode(
-				@RequestBody d3.configuration.domain.SincronizacionNodoDTO request) throws ServerException {
-			return sincronizacionArbolService.sincronizarNodo(request);
-		}
 }

@@ -1,6 +1,7 @@
 package d3.configuration.domain;
 
 import java.util.Date;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -44,6 +45,7 @@ public class PropiedadDTO extends BasicDTO {
 	private String usuarioEliminacion;
 
 	private Integer relaciones;
+	private List<RelacionInternaDTO> relacionesInternas;
 
 	public void setPropiedadValor(String propiedadValor) {
 		this.propiedadValor = propiedadValor;
@@ -248,6 +250,7 @@ public class PropiedadDTO extends BasicDTO {
 		this.bloqueo = other.bloqueo;
 		this.imagen = other.imagen;
 		this.relaciones = other.relaciones;
+		this.relacionesInternas = other.relacionesInternas;
 		this.setLlaveTabla(other.getLlaveTabla());
 		this.setEstado(other.getEstado());
 	}
@@ -282,6 +285,14 @@ public class PropiedadDTO extends BasicDTO {
 
 	public void setRelaciones(Integer relaciones) {
 		this.relaciones = relaciones;
+	}
+
+	public List<RelacionInternaDTO> getRelacionesInternas() {
+		return relacionesInternas;
+	}
+
+	public void setRelacionesInternas(List<RelacionInternaDTO> relacionesInternas) {
+		this.relacionesInternas = relacionesInternas;
 	}
 
 	public String getCodigo() {

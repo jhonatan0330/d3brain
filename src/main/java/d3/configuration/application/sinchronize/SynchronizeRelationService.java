@@ -1,14 +1,12 @@
 package d3.configuration.application.sinchronize;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.RelacionInternaSvc;
-import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.RelacionInternaDTO;
@@ -37,13 +35,12 @@ public class SynchronizeRelationService {
 		this.templateService = templateService;
 	}
 
-	public void call(HierarchyExporterDTO hierarchy, LogConfigurationDTO log, boolean compare) throws ServerException {
-		if (hierarchy.getProperties() == null || hierarchy.getProperties().isEmpty())
-			return;
-		if (hierarchy.getRelations() == null || hierarchy.getRelations().isEmpty())
+	public void call(ContextoSincronizacion contexto, LogConfigurationDTO log, boolean compare)
+			throws ServerException {
+		if (contexto.getPropiedades() == null || contexto.getPropiedades().isEmpty())
 			return;
 		String templateRoot = log.getRoot() + " sincronizando las relaciones";
-		for (PropiedadDTO remoteProperty : hierarchy.getProperties()) {
+		for (PropiedadDTO remoteProperty : contexto.getPropiedades()) {
 			if (remoteProperty.getUsuarioEliminacion() != null
 					&& remoteProperty.getUsuarioEliminacion().compareTo("YA") == 0) {
 				switch (remoteProperty.getPropiedadValor()) {
@@ -77,10 +74,11 @@ public class SynchronizeRelationService {
 				case "PROP_288": // RELACIONAR DOCUMENTO AL CAMPO DEL NUEVO FORMULARIO
 				case "PROP_292": // FORMULARIO ELIMINACION VINCULO
 				{
-					// List<PropiedadDTO> localPropertiesToErase =
-					// propertiesService.obtenerPropiedades(remoteProperty.getTipo(),
-					// remoteProperty.getCambioCreacion(), remoteProperty.getKey(), null);
 					PropiedadDTO findProperty = propertiesService.getByIdWithType(remoteProperty.getUsuarioCreacion());
+					if (findProperty == null) {
+						log.error("Propiedad no se encuentra");
+						continue;
+					}
 					String _msgError = findProperty.getTipo() + ".... Propiedad " + findProperty.getNombre() + "("
 							+ findProperty.getPropiedadValor() + ") ";
 					if (findProperty.getTexto() != null) {
@@ -91,7 +89,7 @@ public class SynchronizeRelationService {
 					if (findProperty.getMotivo() != null)
 						_msgError = _msgError + " con el motivo : " + findProperty.getMotivo();
 					log.setRoot(templateRoot + _msgError);
-					synchronizeRelations(hierarchy, findProperty, remoteProperty, log, compare);
+					synchronizeRelations(findProperty, remoteProperty, log, compare);
 					break;
 				}
 				default:
@@ -101,16 +99,11 @@ public class SynchronizeRelationService {
 		}
 	}
 
-	private void synchronizeRelations(HierarchyExporterDTO hierarchy, PropiedadDTO newProperty,
-			PropiedadDTO remoteProperty, LogConfigurationDTO log, boolean compare) throws ServerException {
-		if (newProperty == null) {
-			log.error("Propiedad no se encuentra");
-			return;
-		}
+	private void synchronizeRelations(PropiedadDTO newProperty, PropiedadDTO remoteProperty, LogConfigurationDTO log,
+			boolean compare) throws ServerException {
 		List<RelacionInternaDTO> localRelationsToErase = relationsService
 				.relacionesPropiedad(newProperty.getLlaveTabla());
-		List<RelacionInternaDTO> relationsRemote = findRelationsInList(hierarchy.getRelations(),
-				remoteProperty.getLlaveTabla());
+		List<RelacionInternaDTO> relationsRemote = remoteProperty.getRelacionesInternas();
 		if (relationsRemote != null && !relationsRemote.isEmpty()) {
 			for (RelacionInternaDTO remoteRelation : relationsRemote) {
 				RelacionInternaDTO findRelation = findRelationInList(localRelationsToErase,
@@ -182,17 +175,14 @@ public class SynchronizeRelationService {
 		return fieldsService.consultaUnica(_filter);
 	}
 
-	private List<RelacionInternaDTO> findRelationsInList(List<RelacionInternaDTO> array, String property) {
-		if (array == null || array.isEmpty())
-			return null;
-		return array.stream().filter(x -> (x.getPropiedad().compareTo(property) == 0)).collect(Collectors.toList());
-	}
-
 	private RelacionInternaDTO findRelationInList(List<RelacionInternaDTO> array, String template, String field,
 			String auxiliar) {
+		if (array == null)
+			return null;
 		for (RelacionInternaDTO relation : array) {
-			if (template.compareTo(relation.getPlantillaCodigo()) == 0) {
-				if (relation.getCampoCodigo().compareTo(field) == 0) {
+			if (template != null && relation.getPlantillaCodigo() != null
+					&& template.compareTo(relation.getPlantillaCodigo()) == 0) {
+				if (field != null && relation.getCampoCodigo() != null && relation.getCampoCodigo().compareTo(field) == 0) {
 					if ((relation.getAuxiliar() == null && auxiliar == null) || (auxiliar != null
 							&& relation.getAuxiliar() != null && auxiliar.compareTo(relation.getAuxiliar()) == 0))
 						return relation;

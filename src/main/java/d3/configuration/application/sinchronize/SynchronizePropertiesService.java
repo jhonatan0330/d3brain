@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import d3.configuration.application.PropertyGetWithCacheService;
 import d3.configuration.application.PropiedadSvc;
 import d3.configuration.application.PropiedadValorDefinidoSvc;
-import d3.configuration.domain.HierarchyExporterDTO;
 import d3.configuration.domain.LogConfigurationDTO;
 import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
@@ -30,16 +29,15 @@ public class SynchronizePropertiesService {
 		this.typeService = typeService;
 	}
 
-	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal,
+	public void call(List<PropiedadDTO> properties, String entityRemote, String type, String entityLocal,
 			LogConfigurationDTO log, boolean compare) throws ServerException {
-		call(hierarchy, entityRemote, type, entityLocal, log, compare, false);
+		call(properties, entityRemote, type, entityLocal, log, compare, false);
 	}
 
-	public void call(HierarchyExporterDTO hierarchy, String entityRemote, String type, String entityLocal,
+	public void call(List<PropiedadDTO> properties, String entityRemote, String type, String entityLocal,
 			LogConfigurationDTO log, boolean compare, boolean eliminarFaltantes) throws ServerException {
 		List<PropiedadDTO> localPropertiesToErase = cacheService.obtenerPropiedades(type, entityLocal, null, null);
-		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(hierarchy.getProperties(), type,
-				entityRemote);
+		List<PropiedadDTO> propertiesRemote = filterPropertiesToTypeAndEntity(properties, type, entityRemote);
 		// Saco un listado de las propiedades nuevas
 		// Saco un listado de las propiedades a borrar
 		if (propertiesRemote != null && !propertiesRemote.isEmpty()) {
