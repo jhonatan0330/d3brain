@@ -71,18 +71,20 @@ public class ApiController {
 	}
 
 	@PostMapping("/getWithLogin")
-	public List<DocumentResponse> getDocumentFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey,
+	public List<DocumentResponse> getDocumentFromWithLoginApi(HttpServletRequest request,@RequestHeader(name = "x-api-key") String apiKey,
 			@RequestBody DocumentFilterWithLoginRequest filter) throws ServerException {
 		apiAuthorizeService.call(apiKey);
+		apiLoginService.call(filter.getLogin(), request);
 		return transactionLogger.executeWithLogging(filter.getDocument(),
 				() -> apiGetService.call(filter.getDocument()));
 
 	}
 
 	@PostMapping("/getDataFieldWithLogin")
-	public DataFieldResponse getDataFieldFromWithLoginApi(@RequestHeader(name = "x-api-key") String apiKey,
+	public DataFieldResponse getDataFieldFromWithLoginApi(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
 			@RequestBody DataFieldWithLoginRequest filter) throws ServerException {
 		apiAuthorizeService.call(apiKey);
+		apiLoginService.call(filter.getLogin(), request);
 		return transactionLogger.executeWithLogging(filter.getField(),
 				() -> apiGetFieldDataService.call(filter.getField()));
 
@@ -103,9 +105,10 @@ public class ApiController {
 	}
 
 	@PostMapping("/sendWithLogin")
-	public SharedIdResponse sendWithLogin(@RequestHeader(name = "x-api-key") String apiKey,
+	public SharedIdResponse sendWithLogin(HttpServletRequest request, @RequestHeader(name = "x-api-key") String apiKey,
 			@RequestBody DocumentWithLoginRequest item) throws ServerException {
 		apiAuthorizeService.call(apiKey);
+		apiLoginService.call(item.getLogin(), request);
 		return transactionLogger.executeWithLogging(item.getDocument(), () -> apiSendService.call(item.getDocument()));
 	}
 

@@ -265,9 +265,10 @@ public class UsuarioAutenticacionSvc extends BasicSvc<UsuarioAutenticacionDTO, U
 					reportarError(dto, "La sesion no puede estar vacia");
 				if (dto.getClave() == null || dto.getClave().isEmpty())
 					reportarError(dto, "La clave no puede estar vacia");
+				autenticacionF.setEstado(SharedConstants.STATE_ACTIVE);
+				//List<UsuarioAutenticacionDTO> autToReview = listarConsulta(autenticacionF);
 				autenticacionF.setSesion(dto.getSesion());
 				autenticacionF.setClave(dto.getClave());
-				autenticacionF.setEstado(SharedConstants.STATE_ACTIVE);
 				autenticacion = consultaUnica(autenticacionF);
 			}
 			if (autenticacion == null)
