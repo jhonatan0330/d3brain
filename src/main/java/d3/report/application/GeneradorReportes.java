@@ -3,7 +3,6 @@ package d3.report.application;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,6 @@ public class GeneradorReportes {
 	private Connection conexion;
 	private JasperReportCache cache;
 	private String reportKey;
-	private boolean isRemote = false;
 	private final ProcessTemplate processTemplate;
 
 	public Connection getConexion() {
@@ -35,11 +33,14 @@ public class GeneradorReportes {
 		this.processTemplate = pProcessTemplate;
 	}
 
-	public GeneradorReportes(String dataSource, ProcessTemplate pProcessTemplate) throws Exception {
+	public GeneradorReportes(String dataSource, JasperReportCache pCache, String pReportKey,
+			ProcessTemplate pProcessTemplate) throws Exception {
 		String[] grupos = dataSource.split(SharedConstants.PUNTO_COMA_DOBLE);
 		String url = grupos[0];
 		String user = grupos[1];
 		String password = grupos[2];
+		this.cache = pCache;
+		this.reportKey = pReportKey;
 		this.processTemplate = pProcessTemplate;
 		try {
 			// Cargar el driver JDBC de SQL Server
@@ -60,13 +61,7 @@ public class GeneradorReportes {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			closeConnection();
 		}
 	}
 
@@ -76,13 +71,7 @@ public class GeneradorReportes {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			closeConnection();
 		}
 	}
 
@@ -92,13 +81,7 @@ public class GeneradorReportes {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			closeConnection();
 		}
 	}
 
@@ -120,24 +103,16 @@ public class GeneradorReportes {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			try {
-				if (conexion != null) {
-					conexion.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			closeConnection();
 		}
 	}
 
 	public void closeConnection() {
-		if (isRemote) {
-			try {
-				if (conexion != null)
-					conexion.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		try {
+			if (conexion != null)
+				conexion.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }

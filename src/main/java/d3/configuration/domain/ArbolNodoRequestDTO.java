@@ -6,7 +6,6 @@ public class ArbolNodoRequestDTO extends BasicParamDTO {
 
 	private String camino;
 	private String tipo;
-	private Boolean listarPropiedades;
 
 	public String getCamino() {
 		return camino;
@@ -23,14 +22,5 @@ public class ArbolNodoRequestDTO extends BasicParamDTO {
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-
-	public Boolean getListarPropiedades() {
-		return listarPropiedades;
-	}
-
-	public void setListarPropiedades(Boolean listarPropiedades) {
-		this.listarPropiedades = listarPropiedades;
-	}
-
 
 }

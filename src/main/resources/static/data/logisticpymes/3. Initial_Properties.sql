@@ -684,3 +684,6 @@ INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, c
 
 INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo,  cpvd_grupo, bpvd_propiedadboolean) 
 	VALUES('PROP_317' , 'T', 'TRANSICION RAPIDA AL GUARDAR DOCUMENTO', 'TRANSICION_RAPIDA', 'REQUISITO',  true);	
+
+INSERT INTO propiedadvalordefinido_pvdp (cpvd_llave, cpvd_origen, cpvd_nombre, cpvd_codigo, cpvd_grupo, cpvd_origencategoria, bpvd_multiple)
+	VALUES('PROP_318' , 'C', 'ACCIONES CRUD', 'PROCESO_ACCIONES', 'REQUISITO', 'J', true);

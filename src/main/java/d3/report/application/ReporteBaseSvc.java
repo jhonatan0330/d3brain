@@ -316,6 +316,7 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			historic = document.getHistorico();
 		ejecucion.setUsuario(usuario);
 		ReportDTO finish = new ReportDTO();
+		GeneradorReportes generadorReporte = null;
 		try {
 			if (usuario == null) {
 				if (Propiedades.obtenerParametro(reporte, Propiedades.REPORT_PUBLIC)!=null) {
@@ -334,10 +335,10 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			String tipoReporte = (String) parametrosJasper.get("P_JASPERTIPO");
 			Object propiedadExcel = null;
 			// Seccion del reporte
-			GeneradorReportes generadorReporte = null;
 			if (Propiedades.obtenerParametro(reporte, Propiedades.CONNECTION_STRING_DB) != null) {
 				generadorReporte = new GeneradorReportes(
-						Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB), processesTemplate);
+						Propiedades.obtenerValor(reporte, Propiedades.CONNECTION_STRING_DB), cacheService,
+						reporte.getLlaveTabla(), processesTemplate);
 			} else {
 				generadorReporte = new GeneradorReportes(dataSource.getConnection(), cacheService,
 						reporte.getLlaveTabla(), processesTemplate);
@@ -379,9 +380,12 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				break;
 			}
 			case "CSV": {
-				resultado = ReportGenerateFromSql.call(Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY),
-						parametrosJasper, generadorReporte.getConexion());
-				generadorReporte.closeConnection();
+				try {
+					resultado = ReportGenerateFromSql.call(Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY),
+							parametrosJasper, generadorReporte.getConexion());
+				} finally {
+					generadorReporte.closeConnection();
+				}
 				break;
 			}
 			case "FREEMARKER": {
@@ -437,6 +441,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 			} catch (Exception ex) {
 			}
 			throw new Exception(e.getMessage());
+		} finally {
+			if (generadorReporte != null)
+				generadorReporte.closeConnection();
 		}
 
 	}

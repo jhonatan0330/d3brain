@@ -80,18 +80,6 @@ public class ArbolEnsambladorSvc {
 		return null;
 	}
 
-	/*public NodoArbolDTO construirArbolActual(boolean listarPropiedades) {
-		List<NodoArbolDTO> nodos = cargarNodos(null);
-		List<PropiedadDTO> propiedades = null;
-		if (listarPropiedades) {
-			propiedades = nodoHijoMapper.listarPropiedadesFull();
-			adjuntarRelaciones(propiedades, nodoHijoMapper.listarRelacionesFull());
-		}
-		return construirArbol(nodos, propiedades);
-	}*/
-
-
-
 	public NodoArbolDTO construirArbolSimple() throws ServerException {
 		NodoArbolDTO raiz = new NodoArbolDTO();
 		raiz.setCategoria(PropiedadValorDefinidoDTO.ORGANIZACION);

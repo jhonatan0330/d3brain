@@ -14,7 +14,7 @@
 			,cten_password as  datasourcePassword
 			,cten_estado as state
 			,cten_imagen as imagen
-			,cten_fechavalidez as fechaValidez
+			,cten_fechavalidez as fechaBloqueo
 		from tenant_ten a
 	</sql>
 
@@ -41,8 +41,8 @@
 			<if test="datasourcePassword!=null">
 				and cten_password = #{datasourcePassword}
 			</if>
-			<if test="fechaValidez!=null">
-				and cten_fechavalidez = #{fechaValidez}
+			<if test="fechaBloqueo!=null">
+				and cten_fechavalidez = #{fechaBloqueo}
 			</if>
 	</sql>
 
@@ -108,7 +108,7 @@
 		<if test="imagen!=null">
 			,cten_imagen
 		</if>
-		<if test="fechaValidez!=null">
+		<if test="fechaBloqueo!=null">
 			,cten_fechavalidez
 		</if>
 		) values (
@@ -134,8 +134,8 @@
 		<if test="imagen!=null">
 			,#{imagen}
 		</if>
-		<if test="fechaValidez!=null">
-			,#{fechaValidez}
+		<if test="fechaBloqueo!=null">
+			,#{fechaBloqueo}
 		</if>
 		)
 	</select>
@@ -150,7 +150,7 @@
 				cten_estado =#{state}
 				<if test="codigo!=null">,cten_codigo = #{codigo}</if>
 				<if test="imagen!=null">,cten_imagen = #{imagen}</if>
-				,cten_fechavalidez = #{fechaValidez}
+				,cten_fechavalidez = #{fechaBloqueo}
 		<include refid="whereTenantPrimaryKeyFragment" />
 	</select>
 

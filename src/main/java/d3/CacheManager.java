@@ -16,6 +16,8 @@ import d3.multitenancy.application.TenantContext;
 import d3.multitenancy.application.TenantDataSourcesConfigurationProperties;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 
+import net.sf.jasperreports.engine.JasperReport;
+
 /**
  * Tenant-scoped in-memory cache. Resolves the active bucket from
  * {@link TenantContext}; when absent (scheduled tasks, startup), uses
@@ -187,6 +189,10 @@ public class CacheManager {
 		}
 	}
 
+	public Map<String, JasperReport> getReportsMap() {
+		return current().getReportsMap();
+	}
+
 	// ---------------------------------------------
 	// CLEAR FUNCTIONS (current tenant)
 	// ---------------------------------------------
@@ -233,6 +239,11 @@ public class CacheManager {
 
 	public void clearRolesMap() {
 		current().getRolesMap().clear();
+	}
+
+	/** Limpia los reportes compilados solo del tenant actual. */
+	public void clearReports() {
+		current().getReportsMap().clear();
 	}
 
 	// ----------------------------------------------------------

@@ -1,8 +1,7 @@
 package d3.multitenancy.application;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.context.annotation.Lazy;
@@ -24,10 +23,13 @@ public class TenantAdminSvc {
 
 	private final TenantMapper tenantMapper;
 	private final TenantUsuarioMapper tenantUsuarioMapper;
+	private final TenantSqlExecutor tenantSqlExecutor;
 
-	public TenantAdminSvc(@Lazy TenantMapper tenantMapper, @Lazy TenantUsuarioMapper tenantUsuarioMapper) {
+	public TenantAdminSvc(@Lazy TenantMapper tenantMapper, @Lazy TenantUsuarioMapper tenantUsuarioMapper,
+			 TenantSqlExecutor tenantSqlExecutor) {
 		this.tenantMapper = tenantMapper;
 		this.tenantUsuarioMapper = tenantUsuarioMapper;
+		this.tenantSqlExecutor = tenantSqlExecutor;
 	}
 
 	public List<TenantDTO> misSubtenants() throws ServerException {
@@ -51,24 +53,29 @@ public class TenantAdminSvc {
 	}
 
 	public TenantDTO actualizar(String key, TenantDTO cambios) throws ServerException {
-		TenantDTO fila = detalle(key);
-		if (cambios != null) {
-			if (cambios.getName() != null && !cambios.getName().isBlank()) {
-				fila.setName(cambios.getName().trim());
-			}
-			if (cambios.getImagen() != null) {
-				fila.setImagen(cambios.getImagen());
-			}
-			if (cambios.getState() != null && !cambios.getState().isBlank()) {
-				if (!SharedConstants.STATE_ACTIVE.equals(cambios.getState())
-						&& !SharedConstants.STATE_INACTIVE.equals(cambios.getState())) {
-					throw new ServerException("El estado del subtenant debe ser A o I");
-				}
-				fila.setState(cambios.getState());
-			}
-			fila.setFechaValidez(cambios.getFechaValidez());
+		if (cambios == null) {
+			throw new ServerException("Los datos del subtenant son obligatorios");
 		}
-		return tenantMapper.update(fila);
+		LocalDate fechaBloqueo = validar(cambios.getFechaBloqueo());
+		TenantDTO fila = detalle(key);
+		if (cambios.getName() != null && !cambios.getName().isBlank()) {
+			fila.setName(cambios.getName().trim());
+		}
+		if (cambios.getImagen() != null) {
+			fila.setImagen(cambios.getImagen());
+		}
+		if (cambios.getState() != null && !cambios.getState().isBlank()) {
+			if (!SharedConstants.STATE_ACTIVE.equals(cambios.getState())
+					&& !SharedConstants.STATE_INACTIVE.equals(cambios.getState())) {
+				throw new ServerException("El estado del subtenant debe ser A o I");
+			}
+			fila.setState(cambios.getState());
+		}
+		fila.setFechaBloqueo(fechaBloqueo);
+		TenantDTO actualizado = tenantMapper.update(fila);
+		String fechaIso = DateTimeFormatter.ISO_LOCAL_DATE.format(fechaBloqueo);
+		tenantSqlExecutor.actualizarComentarioTabla(fila, fechaIso);
+		return actualizado;
 	}
 
 	public List<TenantUsuarioDTO> listarUsuarios(String key) throws ServerException {
@@ -166,13 +173,8 @@ public class TenantAdminSvc {
 		if (!SharedConstants.STATE_ACTIVE.equals(fila.getState())) {
 			throw new ServerException("Subtenant bloqueado por validez");
 		}
-		if (fila.getFechaValidez() != null) {
-			LocalDate hoy = LocalDate.now(ZoneId.of("America/Bogota"));
-			Date validez = fila.getFechaValidez();
-			LocalDate limite = validez.toInstant().atZone(ZoneId.of("America/Bogota")).toLocalDate();
-			if (limite.isBefore(hoy)) {
-				throw new ServerException("Subtenant bloqueado por validez");
-			}
+		if (estaVencida(fila.getFechaBloqueo())) {
+			throw new ServerException("Subtenant bloqueado por validez");
 		}
 	}
 
@@ -181,6 +183,21 @@ public class TenantAdminSvc {
 		if (usuario == null || usuario.isBlank()) {
 			throw new ServerException("Se requiere un usuario autenticado para administrar tenants");
 		}
+	}
+	
+	private LocalDate validar(LocalDate fechaBloqueo) throws ServerException {
+		if (fechaBloqueo == null) {
+			throw new ServerException(
+					"La fecha de bloqueo es obligatoria y debe ser igual o posterior a la fecha actual");
+		}
+		if (estaVencida(fechaBloqueo)) {
+			throw new ServerException("La fecha de bloqueo debe ser igual o posterior a la fecha actual");
+		}
+		return fechaBloqueo;
+	}
+
+	private boolean estaVencida(LocalDate fechaBloqueo) {
+		return fechaBloqueo != null && fechaBloqueo.isBefore(LocalDate.now());
 	}
 
 }

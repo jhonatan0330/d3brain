@@ -1,6 +1,6 @@
 package d3.multitenancy.domain;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -18,8 +18,8 @@ public class TenantDTO extends SharedDataObject {
 	private String datasourceUsername;
 	private String datasourcePassword;
 	private String imagen;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Bogota")
-	private Date fechaValidez;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate fechaBloqueo;
 
 	public String getName() {
 		return name;
@@ -77,12 +77,12 @@ public class TenantDTO extends SharedDataObject {
 		this.imagen = imagen;
 	}
 
-	public Date getFechaValidez() {
-		return fechaValidez;
+	public LocalDate getFechaBloqueo() {
+		return fechaBloqueo;
 	}
 
-	public void setFechaValidez(Date fechaValidez) {
-		this.fechaValidez = fechaValidez;
+	public void setFechaBloqueo(LocalDate fechaBloqueo) {
+		this.fechaBloqueo = fechaBloqueo;
 	}
 
 }

@@ -11,6 +11,8 @@ import d3.configuration.domain.PropiedadDTO;
 import d3.configuration.domain.PropiedadValorDefinidoDTO;
 import d3.process.domain.DocumentoPlantillaCaracteristicaDTO;
 
+import net.sf.jasperreports.engine.JasperReport;
+
 /**
  * In-memory cache state for a single tenant. One instance per tenant id in
  * {@link CacheManager}.
@@ -32,6 +34,7 @@ final class TenantCacheState {
 
 	private final Map<String, DocumentoPlantillaCaracteristicaDTO> fieldsMap = new ConcurrentHashMap<>();
 	private final Map<String, RolAccesoDTO> rolesMap = new ConcurrentHashMap<>();
+	private final Map<String, JasperReport> reportsMap = new ConcurrentHashMap<>();
 
 	List<PropiedadValorDefinidoDTO> getTypes() {
 		return types;
@@ -93,6 +96,10 @@ final class TenantCacheState {
 		return rolesMap;
 	}
 
+	Map<String, JasperReport> getReportsMap() {
+		return reportsMap;
+	}
+
 	void clearAll() {
 		types = null;
 		propByTypeMap.clear();
@@ -105,5 +112,6 @@ final class TenantCacheState {
 		sessionTimeMap.clear();
 		fieldsMap.clear();
 		rolesMap.clear();
+		reportsMap.clear();
 	}
 }

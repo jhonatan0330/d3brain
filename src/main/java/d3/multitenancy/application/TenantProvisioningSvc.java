@@ -7,10 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -101,11 +101,12 @@ public class TenantProvisioningSvc {
 			String clave = codigo + "123";
 			String url = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + baseDatos;
 			String key = UUID.nameUUIDFromBytes(url.getBytes(StandardCharsets.UTF_8)).toString().replace("-", "");
+			LocalDate fechaBloqueo = LocalDate.now().plusMonths(2);
 			verificarDuplicados(padre, codigo, url);
-			clonarBaseDatos(servidor, datosPadre, baseDatos, rol, clave);
+			clonarBaseDatos(servidor, datosPadre, baseDatos, rol, clave, fechaBloqueo);
 			aprovisionarDesdePlantilla(url, rol, clave);
 			crearAdministrador(url, rol, clave, dto, nombre, codigo);
-			registrarCatalogo(padre, key, nombre, codigo, url, rol, clave, dto.getImagen());
+			registrarCatalogo(padre, key, nombre, codigo, url, rol, clave, dto.getImagen(), fechaBloqueo);
 			asignarUsuario(key, codigo, solicitante);
 			registrarEnCaliente(key, nombre, codigo, url, rol, clave, dto.getImagen());
 			notificarAcceso(padre, dto, nombre, codigo);
@@ -184,21 +185,19 @@ public class TenantProvisioningSvc {
 	}
 
 	private void clonarBaseDatos(ServidorPadre servidor, TenantDTO datosPadre, String baseDatos, String rol,
-			String clave) throws ServerException {
+			String clave, LocalDate fechaBloqueo) throws ServerException {
 		cargarDriver(datosPadre);
 		String adminUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/postgres";
-		String plantillaUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + BASE_PLANTILLA;
 		Properties adminProps = propiedadesConexion(datosPadre.getDatasourceUsername(),
 				datosPadre.getDatasourcePassword());
 		try (Connection admin = DriverManager.getConnection(adminUrl, adminProps)) {
 			admin.setAutoCommit(true);
 			validarPlantilla(admin, BASE_PLANTILLA);
-			List<String> duenos = leerDueniosPlantilla(plantillaUrl, adminProps);
 			validarPlantillaSinConexiones(admin, BASE_PLANTILLA);
 			crearRol(admin, rol, clave);
 			crearBaseDatosConPlantilla(admin, baseDatos, BASE_PLANTILLA, rol);
 			otorgarPermisos(admin, baseDatos, rol);
-			reasignarPropiedadesPlantilla(servidor, baseDatos, adminProps, duenos, rol);
+			reasignarPropiedadesPlantilla(servidor, baseDatos, adminProps, rol, DateTimeFormatter.ISO_LOCAL_DATE.format(fechaBloqueo));
 		} catch (ServerException e) {
 			throw e;
 		} catch (Exception e) {
@@ -249,50 +248,6 @@ public class TenantProvisioningSvc {
 		}
 	}
 
-	private List<String> leerDueniosPlantilla(String plantillaUrl, Properties adminProps) throws ServerException {
-		List<String> duenos = new ArrayList<>();
-		try (Connection conn = DriverManager.getConnection(plantillaUrl, adminProps)) {
-			String sello = null;
-			try (Statement stmt = conn.createStatement();
-					ResultSet rs = stmt.executeQuery("select description from pg_description "
-							+ "join pg_class on pg_description.objoid = pg_class.oid "
-							+ "join pg_namespace on pg_class.relnamespace = pg_namespace.oid "
-							+ "where relname = 'usuario_usrp';")) {
-				while (rs.next()) {
-					sello = rs.getString("description");
-				}
-			}
-			if (sello == null || sello.isBlank()) {
-				throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA, "La plantilla " + BASE_PLANTILLA
-						+ " no tiene sello de version (COMMENT ON TABLE usuario_usrp); aplique los deltas sobre la plantilla");
-			}
-			try (Statement stmt = conn.createStatement();
-					ResultSet rs = stmt.executeQuery(
-							"select distinct pg_get_userbyid(nspowner) from pg_namespace where nspname = 'public' "
-									+ "union " + "select distinct pg_get_userbyid(c.relowner) from pg_class c "
-									+ "inner join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' "
-									+ "union " + "select distinct pg_get_userbyid(p.proowner) from pg_proc p "
-									+ "inner join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public'")) {
-				while (rs.next()) {
-					String dueno = rs.getString(1);
-					if (dueno != null && !dueno.isBlank() && !duenos.contains(dueno)) {
-						duenos.add(dueno);
-					}
-				}
-			}
-		} catch (ServerException e) {
-			throw e;
-		} catch (Exception e) {
-			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
-					"No se pudo leer la plantilla " + BASE_PLANTILLA, e);
-		}
-		if (duenos.isEmpty()) {
-			throw TenantProvisionFase.fallar(TenantProvisionFase.PLANTILLA,
-					"La plantilla " + BASE_PLANTILLA + " no tiene objetos en el esquema public");
-		}
-		return duenos;
-	}
-
 	private void crearBaseDatosConPlantilla(Connection conn, String baseDatos, String plantilla, String rol)
 			throws ServerException {
 		try {
@@ -319,41 +274,31 @@ public class TenantProvisioningSvc {
 	}
 
 	private void reasignarPropiedadesPlantilla(ServidorPadre servidor, String baseDatos, Properties adminProps,
-			List<String> duenos, String rol) throws ServerException {
+			String rol, String fechaBloqueo) throws ServerException {
 		String nuevaUrl = "jdbc:postgresql://" + servidor.host + ":" + servidor.puerto + "/" + baseDatos;
 		try (Connection conn = DriverManager.getConnection(nuevaUrl, adminProps)) {
 			conn.setAutoCommit(true);
-			for (String dueno : duenos) {
-				if (rol.equals(dueno)) {
-					continue;
-				}
+
+			try (Statement stmt = conn.createStatement()) {
+				stmt.execute("SELECT public.migrar_propietarios_esquemas('" + rol + "')");
+				stmt.execute("DROP FUNCTION public.migrar_propietarios_esquemas(text)");
+				stmt.execute("COMMENT ON TABLE public.usuarioautenticacion_uaup IS '" + fechaBloqueo + "'");
+				
 				String[] esquemas = { "account", "historic", "public", "task" };
-
 				String usuario = entrecomillar(rol);
-
-				try (Statement stmt = conn.createStatement()) {
-					for (String esquema : esquemas) {
-						String schema = entrecomillar(esquema);
-
-						// Permisos sobre el esquema
-						stmt.execute("GRANT ALL PRIVILEGES ON SCHEMA " + schema + " TO " + usuario);
-
-						// Permisos sobre todas las tablas existentes
-						stmt.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA " + schema + " TO " + usuario);
-
-						// Permisos sobre todas las secuencias existentes
-						stmt.execute("GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA " + schema + " TO " + usuario);
-
-						// Permisos de ejecución sobre las funciones
-						stmt.execute("GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA " + schema + " TO " + usuario);
-
-						// Permisos de ejecución sobre los procedimientos
-						stmt.execute("GRANT ALL PRIVILEGES ON ALL PROCEDURES IN SCHEMA " + schema + " TO " + usuario);
-					}
-
+				for (String esquema : esquemas) {
+					String schema = entrecomillar(esquema);
+					stmt.execute("GRANT ALL PRIVILEGES ON SCHEMA " + schema + " TO " + usuario);
+					stmt.execute("GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA " + schema + " TO " + usuario);
+					stmt.execute("GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA " + schema + " TO " + usuario);
+					stmt.execute("GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA " + schema + " TO " + usuario);
+					stmt.execute("GRANT ALL PRIVILEGES ON ALL PROCEDURES IN SCHEMA " + schema + " TO " + usuario);					
 				}
-				System.out.println("Propiedades reasignadas de " + dueno + " a " + rol);
+
+				
 			}
+			System.out.println("Propiedades reasignadas a " + rol);
+
 		} catch (Exception e) {
 			throw TenantProvisionFase.fallar(TenantProvisionFase.REASIGNAR_PROPIEDADES,
 					"No se pudieron reasignar las propiedades de la plantilla al rol " + rol, e);
@@ -616,7 +561,7 @@ public class TenantProvisioningSvc {
 	}
 
 	private void registrarCatalogo(String padre, String key, String nombre, String codigo, String url, String rol,
-			String clave, String imagen) throws ServerException {
+			String clave, String imagen, LocalDate fecha) throws ServerException {
 		String anterior = TenantContext.getCurrentTenant();
 		try {
 			TenantContext.setCurrentTenant(padre);
@@ -629,6 +574,7 @@ public class TenantProvisioningSvc {
 			fila.setDatasourcePassword(clave);
 			fila.setState(SharedConstants.STATE_ACTIVE);
 			fila.setImagen(imagen);
+			fila.setFechaBloqueo(fecha);
 			tenantMapper.insert(fila);
 			System.out.println("Tenant registrado en catalogo de " + padre + ": key=" + key);
 		} catch (Exception e) {
