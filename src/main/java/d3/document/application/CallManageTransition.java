@@ -705,7 +705,7 @@ public class CallManageTransition {
 					+ " porque no tiene ningun registro de valores de saldos");
 		}
 		if (saldoDocumento == null)
-			throw new ServerException("Revise porque el documento no tiene saldo. La transicion "
+			throw new ServerException("Revise porque el documento " + pExpediente.getNombre() + " no tiene saldo. La transicion "
 					+ transicion.getNombre() + " del proceso " + transicion.getNodoSuperiorNombre() + " solicita un valor");
 
 		BigDecimal factor = BigDecimal.ONE;

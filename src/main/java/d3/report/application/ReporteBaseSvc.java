@@ -393,9 +393,9 @@ public class ReporteBaseSvc extends BasicSvc<ReporteBaseDTO, ReporteBaseFilterDT
 				if (templateFTL.isEmpty())
 					throw new ServerException(
 							"No se ha definido el template FreeMarker del reporte (propiedad REPORTE_FREEMARKER)");
-				String query = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY);
-				String queryEncabezado = Propiedades.obtenerValor(reporte, Propiedades.REPORT_QUERY_ENCABEZADO);
-				if (query.isEmpty() && queryEncabezado.isEmpty())
+				List<PropiedadDTO> query = Propiedades.obtenerVariosParametro(reporte, Propiedades.REPORT_QUERY);
+				List<PropiedadDTO> queryEncabezado = Propiedades.obtenerVariosParametro(reporte, Propiedades.REPORT_QUERY_ENCABEZADO);
+				if ((query==null || query.isEmpty()) && (queryEncabezado==null || queryEncabezado.isEmpty()))
 					throw new ServerException(
 							"No se ha definido ninguna consulta SQL del reporte (REPORT_QUERY o REPORT_QUERY_ENCABEZADO)");
 				resultado = generadorReporte.generarReporteFreeMarker(templateFTL, query, queryEncabezado,

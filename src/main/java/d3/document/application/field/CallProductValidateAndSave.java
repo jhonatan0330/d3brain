@@ -53,7 +53,7 @@ public class CallProductValidateAndSave {
 			detallePedidoVentaService.definirPropiedad2Caracteristicas(detalle);
 			if (detalle.getCantidad() == null || detalle.getCantidad().compareTo(BigDecimal.ZERO) == 0)
 				throw new ServerException("No se puede registrar un producto con cantidad CERO");
-			boolean agregar = true;
+			/*boolean agregar = true;
 			for (DetallePedidoVentaDTO detalleAgrupado : agrupados) {
 				if (detalleAgrupado.getProducto().compareTo(detalle.getProducto()) == 0) {
 					agregar = sonCaracteristicasIguales(detalleAgrupado, detalle);
@@ -69,7 +69,7 @@ public class CallProductValidateAndSave {
 					break;
 				}
 			}
-			if (agregar)
+			if (agregar)*/
 				agrupados.add(detalle);
 		}
 		return agrupados;

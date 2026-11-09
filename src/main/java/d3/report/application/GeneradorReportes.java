@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import d3.configuration.domain.PropiedadDTO;
 import d3.shared.application.ProcessTemplate;
 import d3.shared.domain.SharedConstants;
 
@@ -85,21 +86,29 @@ public class GeneradorReportes {
 		}
 	}
 
-	public byte[] generarReporteFreeMarker(String templateFTL, String query, String queryEncabezado,
-			Map<String, Object> pParametrosReporte) throws Exception {
+	public byte[] generarReporteFreeMarker(String templateFTL, List<PropiedadDTO> query,
+			List<PropiedadDTO> queryEncabezado, Map<String, Object> pParametrosReporte) throws Exception {
 		try {
 			if (pParametrosReporte == null)
 				pParametrosReporte = new HashMap<String, Object>();
-			if (query != null && !query.trim().isEmpty())
-				pParametrosReporte.put("DATOS", ReportRowsFromSql.consultar(query, pParametrosReporte, conexion));
-			if (queryEncabezado != null && !queryEncabezado.trim().isEmpty()) {
-				List<Map<String, Object>> encabezado = ReportRowsFromSql.consultar(queryEncabezado,
-						pParametrosReporte, conexion);
-				if (encabezado != null && !encabezado.isEmpty())
-					pParametrosReporte.put("ENCABEZADO", encabezado.get(0));
+			if (query != null && !query.isEmpty()) {
+
+				for (PropiedadDTO propiedadDTO : query) {
+					pParametrosReporte.put(propiedadDTO.getMotivo(),
+							ReportRowsFromSql.consultar(propiedadDTO.getValor(), pParametrosReporte, conexion));
+				}
 			}
-			return processTemplate.generateOutputFile(templateFTL, pParametrosReporte)
-					.getBytes(StandardCharsets.UTF_8);
+			if (queryEncabezado != null && !queryEncabezado.isEmpty()) {
+
+				for (PropiedadDTO propiedadDTO : queryEncabezado) {
+					List<Map<String, Object>> encabezado = ReportRowsFromSql.consultar(propiedadDTO.getValor(),
+							pParametrosReporte, conexion);
+					if (encabezado != null && !encabezado.isEmpty())
+						pParametrosReporte.put(propiedadDTO.getMotivo(), encabezado.get(0));
+				}
+			}
+
+			return processTemplate.generateOutputFile(templateFTL, pParametrosReporte).getBytes(StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			throw e;
 		} finally {
