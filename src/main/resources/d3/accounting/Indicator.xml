@@ -6,12 +6,13 @@
 
 	<sql id="selectIndicatorFragment">
 		select
-			cind_llave as key
+			cind_llave as llaveTabla
 			,cind_nombre as nombre
 			,cind_codigo as codigo
-			,cind_proceso as proceso
+			,cind_proceso as nodoSuperior
 			,cind_imagen as imagen
-			,cind_estado as state
+			,cind_estado as estado
+			,'I' as categoria
 		from account.indicador_ind a
 	</sql>
 
@@ -43,7 +44,7 @@
 	</sql>
 
 	<sql id="whereIndicatorPrimaryKeyFragment">
-		where cind_llave = #{key}
+		where cind_llave = #{llaveTabla}
 	</sql>
 
 	<select id="getOne" parameterType="IndicatorFilterDTO" resultType="IndicatorDTO">
@@ -69,15 +70,15 @@
 		insert into account.indicador_ind(cind_llave
 		<if test="nombre!=null">,cind_nombre</if>
 		<if test="codigo!=null">,cind_codigo</if>
-		<if test="proceso!=null">,cind_proceso</if>
+		<if test="nodoSuperior!=null">,cind_proceso</if>
 		<if test="imagen!=null">,cind_imagen</if>
-		<if test="state!=null">,cind_estado</if>
-		) values (#{key}
+		<if test="estado!=null">,cind_estado</if>
+		) values (#{llaveTabla}
 		<if test="nombre!=null">,#{nombre}</if>
 		<if test="codigo!=null">,#{codigo}</if>
-		<if test="proceso!=null">,#{proceso}</if>
+		<if test="nodoSuperior!=null">,#{nodoSuperior}</if>
 		<if test="imagen!=null">,#{imagen}</if>
-		<if test="state!=null">,#{state}</if>
+		<if test="estado!=null">,#{estado}</if>
 		)
 	</select>
 
@@ -86,9 +87,9 @@
 		set
 			cind_nombre = #{nombre},
 			cind_codigo = #{codigo},
-			cind_proceso = #{proceso},
+			cind_proceso = #{nodoSuperior},
 			cind_imagen = #{imagen},
-			cind_estado = #{state}
+			cind_estado = #{estado}
 		<include refid="whereIndicatorPrimaryKeyFragment" />
 	</select>
 

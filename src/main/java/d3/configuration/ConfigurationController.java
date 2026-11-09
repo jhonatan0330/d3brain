@@ -879,14 +879,14 @@ public class ConfigurationController {
 
 	@PostMapping("/indicators/inactivate")
 	public IndicatorDTO inactivarIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
-		if (dto == null || dto.getKey() == null)
+		if (dto == null || dto.getLlaveTabla() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
-		return indicadorService.delete(dto.getKey());
+		return indicadorService.delete(dto.getLlaveTabla());
 	}
 
 	@PostMapping("/indicators/activate")
 	public IndicatorDTO activarIndicador(@RequestBody IndicatorDTO dto) throws ServerException {
-		if (dto == null || dto.getKey() == null)
+		if (dto == null || dto.getLlaveTabla() == null)
 			throw new ServerException("La llave del indicador se encuentra vacia");
 		return indicadorService.activar(dto);
 	}

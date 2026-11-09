@@ -187,10 +187,11 @@ public class ArbolEnsambladorSvc {
 		agregar(nodos, nodoHijoMapper.listarTransicionesFull(process));
 		agregar(nodos, nodoHijoMapper.listarReportesFull(process));
 		agregar(nodos, nodoHijoMapper.listarCamposFull(process));
+		agregar(nodos, nodoHijoMapper.listarIndicadoresFull(process));
 		return nodos;
 	}
 
-	private void agregar(List<NodoArbolDTO> destino, List<NodoArbolDTO> nodos) {
+	private void agregar(List<NodoArbolDTO> destino, List<? extends NodoArbolDTO> nodos) {
 		if (nodos == null)
 			return;
 		for (NodoArbolDTO nodo : nodos) {
@@ -285,6 +286,10 @@ public class ArbolEnsambladorSvc {
 			if (!PropiedadValorDefinidoDTO.PLANTILLA.equals(categoriaPadre))
 				return raiz;
 		}
+		if (PropiedadValorDefinidoDTO.INDICATOR.equals(categoria)) {
+			if (!PropiedadValorDefinidoDTO.PROCESO.equals(categoriaPadre))
+				return raiz;
+		}
 		return padre;
 	}
 
@@ -334,6 +339,8 @@ public class ArbolEnsambladorSvc {
 			return "REPORTE";
 		if (PropiedadValorDefinidoDTO.API_SERVICE.equals(categoria))
 			return "API";
+		if (PropiedadValorDefinidoDTO.INDICATOR.equals(categoria))
+			return "INDICADOR";
 		return categoria;
 	}
 

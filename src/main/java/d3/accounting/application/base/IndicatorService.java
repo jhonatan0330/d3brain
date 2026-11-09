@@ -71,7 +71,7 @@ public class IndicatorService {
 	}
 
 	public void save(IndicatorDTO dto) throws ServerException {
-		dto.setKey(UUID.randomUUID().toString().replaceAll("-", ""));
+		dto.setLlaveTabla(UUID.randomUUID().toString().replaceAll("-", ""));
 		try {
 			mapper.insert(dto);
 		} catch (BindingException ex) {
@@ -95,9 +95,9 @@ public class IndicatorService {
 		IndicatorDTO dto = getById(id);
 		if (dto == null)
 			throw new ServerException("No se identifica el objeto a inactivar");
-		if (dto.getState() != null && dto.getState().compareTo(SharedConstants.STATE_INACTIVE) == 0)
+		if (dto.getEstado() != null && dto.getEstado().compareTo(SharedConstants.STATE_INACTIVE) == 0)
 			throw new ServerException("Este objeto ya se encuentra inactivo");
-		dto.setState(SharedConstants.STATE_INACTIVE);
+		dto.setEstado(SharedConstants.STATE_INACTIVE);
 		try {
 			mapper.update(dto);
 		} catch (BindingException ex) {
@@ -109,12 +109,12 @@ public class IndicatorService {
 	}
 
 	public IndicatorDTO activar(IndicatorDTO dto) throws ServerException {
-		IndicatorDTO result = getById(dto.getKey());
+		IndicatorDTO result = getById(dto.getLlaveTabla());
 		if (result == null)
 			throw new ServerException("No se identifica el objeto a Activar");
-		if (result.getState() != null && result.getState().compareTo(SharedConstants.STATE_ACTIVE) == 0)
+		if (result.getEstado() != null && result.getEstado().compareTo(SharedConstants.STATE_ACTIVE) == 0)
 			throw new ServerException("Este objeto ya se encuentra Activo");
-		result.setState(SharedConstants.STATE_ACTIVE);
+		result.setEstado(SharedConstants.STATE_ACTIVE);
 		try {
 			mapper.update(result);
 		} catch (BindingException ex) {

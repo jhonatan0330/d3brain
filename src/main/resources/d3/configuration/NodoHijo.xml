@@ -58,6 +58,26 @@
                 WHERE a.cwbs_estado = 'A'
                   AND a.cwbs_proceso IS NULL
 
+                UNION ALL
+
+                <!-- Indicadores sin proceso -->
+                SELECT
+                    a.cind_llave AS llaveTabla,
+                    a.cind_nombre AS nombre,
+                    a.cind_codigo AS codigo,
+                    a.cind_estado AS estado,
+                    a.cind_imagen AS imagen,
+                    NULL AS prioridad,
+                    NULL AS tipo,
+                    'I' AS categoria,
+                    a.cind_proceso AS nodoSuperior,
+                    p2.cprc_nombre AS nodoSuperiorNombre
+                FROM account.indicador_ind a
+                LEFT JOIN proceso_prcp p2
+                    ON p2.cprc_llave = a.cind_proceso
+                WHERE a.cind_estado = 'A'
+                  AND a.cind_proceso IS NULL
+
             </when>
 
             <!-- HIJOS DE PROCESO -->
@@ -120,6 +140,26 @@
                     ON p2.cprc_llave = a.cwbs_proceso
                 WHERE a.cwbs_estado = 'A'
                   AND a.cwbs_proceso = #{llavePadre}
+
+                UNION ALL
+
+                <!-- Indicadores -->
+                SELECT
+                    a.cind_llave AS llaveTabla,
+                    a.cind_nombre AS nombre,
+                    a.cind_codigo AS codigo,
+                    a.cind_estado AS estado,
+                    a.cind_imagen AS imagen,
+                    NULL AS prioridad,
+                    NULL AS tipo,
+                    'I' AS categoria,
+                    a.cind_proceso AS nodoSuperior,
+                    p2.cprc_nombre AS nodoSuperiorNombre
+                FROM account.indicador_ind a
+                LEFT JOIN proceso_prcp p2
+                    ON p2.cprc_llave = a.cind_proceso
+                WHERE a.cind_estado = 'A'
+                  AND a.cind_proceso = #{llavePadre}
 
             </when>
 
@@ -463,6 +503,24 @@
 		where cdpc_estado = 'A' and cdpl_estado = 'A'
 		<if test="process!=null">and cdpl_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
 		order by cdpc_plantilla, ndpc_orden
+	</select>
+
+	<select id="listarIndicadoresFull" resultType="IndicatorDTO">
+		select
+			cind_llave as  llaveTabla
+			,null as tipo
+			,'I' as categoria
+			,cind_proceso as  nodoSuperior
+			,cprc_nombre as  nodoSuperiorNombre
+			,cind_nombre as  nombre
+			,cind_codigo as  codigo
+			,cind_imagen as  imagen
+			,cind_estado as estado
+		from account.indicador_ind a
+			left join proceso_prcp p2 on (p2.cprc_llave = a.cind_proceso)
+		where cind_estado = 'A'
+		<if test="process!=null">and cind_proceso in (<foreach item="item" collection="process" separator="," >#{item}</foreach>)</if>
+		order by cind_nombre
 	</select>
 
 </mapper>

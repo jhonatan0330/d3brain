@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 import d3.D3SqlConnMapper;
+import d3.accounting.domain.IndicatorDTO;
 import d3.authorization.domain.RolAccesoDTO;
 import d3.configuration.domain.NodoArbolDTO;
 import d3.configuration.domain.PropiedadDTO;
@@ -41,5 +42,7 @@ public interface NodoHijoMapper {
 	List<NodoArbolDTO> listarReportesFull(@Param("process") List<String> process);
 
 	List<NodoArbolDTO> listarCamposFull(@Param("process") List<String> process);
+
+	List<IndicatorDTO> listarIndicadoresFull(@Param("process") List<String> process);
 
 }
